@@ -11,3 +11,7 @@
 #	[<whitespace>]<filename><whitespace><error message><end-of-line>
 #
 # comment lines begin with '#'
+readers         Won't be able to control read-only access.
+commit_prep     Won't be able to do mail logging.
+log_accum       Won't be able to do mail logging.
+auto_checkout   Won't be able to maintain checked-out copies.

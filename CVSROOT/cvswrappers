@@ -20,3 +20,11 @@
 #  and value is a single-quote delimited value.
 #
 # For example:
+
+# Automatically handle files that show up on web pages but are binary.
+*.jpg   -k 'b' -m 'COPY'
+*.jpeg  -k 'b' -m 'COPY'
+*.gif   -k 'b' -m 'COPY'
+*.gz    -k 'b' -m 'COPY'
+*.zip   -k 'b' -m 'COPY'
+*.png   -k 'b' -m 'COPY'

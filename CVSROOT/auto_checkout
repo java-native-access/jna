@@ -1,0 +1,25 @@
+#!/bin/sh
+
+/bin/date
+
+# cvs only substitutes one % format character in the log_info line,
+# so we have to do both the update-mailing and the cvs update in this
+# script.  commit_prep and log_accum do not correctly find each other
+# when we run log_accum from this script (It looks like the magic
+# filename they use in /tmp has a pid or something that get confused
+# when log_accum is run from here), so we just send out a bogus little
+# by-hand update note.
+
+REPONAME=`echo $1 | sed -e 's,/www/sourceware/htdocs/,,' -e 's,/.*$,,'`
+echo Files modified in the $REPONAME repository. | 
+  /bin/mail -s "$2" green@cygnus.com jsm@cygnus.com
+
+
+# try to avoid a race (this kludge from the cvs docs!)
+/bin/sleep 2
+cd $1
+
+# $1 is of the format "DIRECTORYNAME FILENAME" with no final slash on DNAME.
+
+DIRNAME=`echo $2 | sed -e 's, .*,,' -e 's,^htdocs$,.,' -e 's,htdocs,.,'`
+/usr/local/bin/cvs -q update -d -P -l $DIRNAME
