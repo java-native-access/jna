@@ -25,6 +25,6 @@
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 
-^htdocs ($CVSROOT/CVSROOT/auto_checkout /www/sourceware/htdocs/libffi %{sv} >> $CVSROOT/CVSROOT/updatelog 2>&1 &)
+^htdocs (/usr/sourceware/bin/auto_checkout /www/sourceware/htdocs/libffi %{sv} >> $CVSROOT/CVSROOT/updatelog 2>&1 &)
 
-DEFAULT (QMAILHOST=sourceware.cygnus.com /usr/bin/perl $CVSROOT/CVSROOT/log_accum -m sourceware-cvs-libffi@sourceware.cygnus.com -s %s)
+DEFAULT (/usr/sourceware/bin/log_accum -T libffi -G libffi -m libffi-cvs@sourceware.cygnus.com -s %s)
