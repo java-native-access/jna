@@ -1,3 +1,8 @@
+Thu Jul  8 14:28:42 1999  Anthony Green  <green@cygnus.com>
+
+	* configure.in: Add x86 and powerpc BeOS configurations.
+	From Makoto Kato <m_kato@ga2.so-net.ne.jp>.
+
 1999-05-09  Anthony Green  <green@cygnus.com>
 
 	* configure.in: Add warning about this being beta code.
