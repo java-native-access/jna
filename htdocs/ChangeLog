@@ -1,3 +1,9 @@
+1999-04-26  Jason Molenda  (jsm@bugshack.cygnus.com)
+
+	* index.html: Change links to ftp directory to point to sourceware
+	directory.
+	Change mailing list subscription forms to point to sourceware lists.
+
 1998-11-30  Anthony Green  <green@cygnus.com>
 
 	* index.html: Reformatted and updated to reflect hosting on
