@@ -63,7 +63,7 @@ Libffi has been ported to:
 	Sparc, 64-bit - Linux (Sparc v9)
 
 
-Libffi has been tested with GCC 2.95 and newer compilers. 
+Libffi has been tested with GCC 3.00 and newer compilers. 
 
 You must use GNU make to build libffi.
 	
@@ -379,17 +379,19 @@ single-precision anyway.  This causes one test to fail (the `many
 arguments' test).
 
 
-What's With The Crazy Comments?
-===============================
-
-You might notice a number of cryptic comments in the code, delimited
-by /*@ and @*/. These are annotations read by the program LCLint, a
-tool for statically checking C programs. You can read all about it at
-<http://larch-www.lcs.mit.edu:8001/larch/lclint/index.html>.
-
-
 History
 =======
+
+2.00 ???-??-01
+
+	Many configure improvements.  No more run tests required at
+        configure time so cross compiling should work well.  ffi.h is
+        target independent now and may be installed safely anywhere.
+        ffitest replaced with dejagnu testing infrastructure.  s390
+        port from ????.  ia64 port from Hans Boehm.  General
+        performance improvements.  Closures designed and implemented
+        by Kresten Krab Thorup and ported to ia64 and powerpc by Hans
+        Boehm and ???? respectively.
 
 1.20 Oct-5-98
 	Raffaele Sena produces ARM port.

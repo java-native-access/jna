@@ -25,8 +25,9 @@
 
 #define LIBFFI_ASM	
 #include <ffi.h>
-
-#ifdef SPARC64
+#include <ffi_private.h>
+	
+#if defined(__arch64__) || defined(__sparcv9)
 /* Only compile this in for 64bit builds, because otherwise the object file
    will have inproper architecture due to used instructions.  */
 

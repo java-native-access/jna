@@ -80,8 +80,8 @@ VERSION = @VERSION@
 libffi_basedir = @libffi_basedir@
 
 AUTOMAKE_OPTIONS = foreign no-installinfo
-
-@TESTSUBDIR_TRUE@SUBDIRS = testsuite
+@TESTSUBDIR_TRUE@SUBDIRS = include testsuite
+@TESTSUBDIR_FALSE@SUBDIRS = include
 
 EXTRA_DIST = LICENSE README ChangeLog.v1 alpha/ffi.c arm/ffi.c	   ia64/ffi.c m68k/ffi.c mips/ffi.c powerpc/ffi.c s390/ffi.c	   sparc/ffi.c x86/ffi.c alpha/osf.S arm/sysv.S ia64/unix.S	   m68k/sysv.S mips/n32.S mips/o32.S				   powerpc/sysv.S s390/sysv.S sparc/v8.S sparc/v9.S x86/win32.S	   x86/sysv.S
 
@@ -137,7 +137,7 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DIST_SUBDIRS =  testsuite
+DIST_SUBDIRS =  include testsuite include
 DEP_FILES =  .deps/debug.P .deps/java_raw_api.P .deps/prep_cif.P \
 .deps/raw_api.P .deps/t-asm.P .deps/t-ffi.P .deps/types.P
 SOURCES = $(libffi_la_SOURCES)

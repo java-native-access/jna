@@ -1,3 +1,25 @@
+Sun Apr 22 12:37:44 2001  Anthony Green  <green@redhat.com>
+
+	* README: Update some comments.
+
+	* Makefile.am (SUBDIRS): Add include so ffi.h gets installed.
+	* Makefile.in: Rebuilt.
+
+	* include/ffi.h: Change ALPHA to __alpha__ and SPARC to __sparc__.
+	* types.c: Ditto.
+	* prep_cif.c (ffi_prep_cif): Ditto.
+
+	* alpha/ffi.c, alpha/osf.S, sparc/ffi.c, sparc/v8.S, sparc/v9.S:
+	Include ffi_private.h.
+
+	* include/ffi_private.h (FFI_TYPE_LAST): Define.
+
+Sun Apr 22 11:41:55 2001  Anthony Green  <green@redhat.com>
+
+	* Revolutionary changes.  Target independent ffi.h.  dejagnu
+	testing infrastructure.  Moved source files around.  Configure no
+	longer depends on run tests.
+
 Sat Apr 14 20:49:46 2001  Anthony Green  <green@cygnus.com>
 
 	* mips/ffi.c: Include mips/mips.h.

@@ -28,7 +28,7 @@
 #include <float.h>
 
 /* This is lame. Long double support is barely there under SunOS 4.x  */
-#if defined(SPARC) && (SIZEOF_LONG_DOUBLE != 16)
+#if defined(__sparc__) && (SIZEOF_LONG_DOUBLE != 16)
 #define BROKEN_LONG_DOUBLE
 #endif
 
@@ -222,7 +222,7 @@ int main(/*@unused@*/ int argc, /*@unused@*/ char *argv[])
   signed int si1;
   signed int si2;
 
-#if defined(ALPHA) || defined(IA64) || defined(SPARC64) || (defined(__mips__) && (_MIPS_SIM == _ABIN32))
+#if defined(__alpha__) || defined(IA64) || defined(SPARC64) || (defined(__mips__) && (_MIPS_SIM == _ABIN32))
   long long rint;
 #else
   int rint;

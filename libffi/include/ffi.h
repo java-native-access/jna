@@ -67,14 +67,6 @@ extern "C" {
 #endif
 #endif
 
-/* ---- System specific configurations ----------------------------------- */
-
-#ifdef SPARC
-#if defined(__arch64__) || defined(__sparcv9)
-#define SPARC64
-#endif
-#endif
-
 #ifndef LIBFFI_ASM
 
 /* ---- Generic type definitions ----------------------------------------- */
@@ -299,7 +291,7 @@ struct ffi_ia64_trampoline_struct {
 };
 #define FFI_NATIVE_RAW_API 0
 
-#elif defined(ALPHA)
+#elif defined(__alpha__)
 
 #define FFI_CLOSURES 1
 #define FFI_TRAMPOLINE_SIZE 24

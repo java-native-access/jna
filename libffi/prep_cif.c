@@ -107,7 +107,7 @@ ffi_status ffi_prep_cif(/*@out@*/ /*@partial@*/ ffi_cif *cif,
 #ifndef M68K
   /* Make space for the return structure pointer */
   if (cif->rtype->type == FFI_TYPE_STRUCT
-#ifdef SPARC
+#ifdef __sparc__
       && (cif->abi != FFI_V9 || cif->rtype->size > 32)
 #endif
       )
@@ -123,7 +123,7 @@ ffi_status ffi_prep_cif(/*@out@*/ /*@partial@*/ ffi_cif *cif,
       if (((*ptr)->size == 0) && (initialize_aggregate((*ptr)) != FFI_OK))
 	return FFI_BAD_TYPEDEF;
 
-#ifdef SPARC
+#ifdef __sparc__
       if (((*ptr)->type == FFI_TYPE_STRUCT
 	   && ((*ptr)->size > 16 || cif->abi != FFI_V9))
 	  || ((*ptr)->type == FFI_TYPE_LONGDOUBLE

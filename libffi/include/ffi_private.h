@@ -111,6 +111,7 @@
 #define FFI_TYPE_SINT64     12
 #define FFI_TYPE_STRUCT     13  /* If this changes, update ffi_mips.h. */
 #define FFI_TYPE_POINTER    14
+#define FFI_TYPE_LAST       14
 
 #if _MIPS_SIM==_ABIN32 && defined(_ABIN32)
 #define SIZEOF_ARG 8

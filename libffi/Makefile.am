@@ -3,7 +3,9 @@
 AUTOMAKE_OPTIONS = foreign no-installinfo
 
 if TESTSUBDIR
-SUBDIRS = testsuite
+SUBDIRS = include testsuite
+else
+SUBDIRS = include
 endif
 
 EXTRA_DIST = LICENSE README ChangeLog.v1 alpha/ffi.c arm/ffi.c	\
