@@ -70,20 +70,21 @@ LN_S = @LN_S@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 NM = @NM@
+OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 SHELL = @SHELL@
 TARGET = @TARGET@
 TARGETDIR = @TARGETDIR@
-USE_SYMBOL_UNDERSCORE = @USE_SYMBOL_UNDERSCORE@
 VERSION = @VERSION@
+install_sh = @install_sh@
 
 
 AUTOMAKE_OPTIONS = cygnus
 
 EXTRA_DIST = LICENSE ChangeLog.v1 src/mips/ffi.c src/mips/n32.S \
 		src/mips/n32.s src/mips/o32.S src/mips/o32.s \
-		src/sparc/ffi.c src/sparc/v8.S \
+		src/sparc/ffi.c src/sparc/v8.S src/sparc/v9.S \
 		src/x86/ffi.c src/x86/sysv.S \
 		src/alpha/ffi.c src/alpha/osf.S \
 		src/m68k/ffi.c src/m68k/sysv.S \
@@ -100,9 +101,9 @@ MULTIDIRS =
 MULTISUBDIR = 
 MULTIDO = true
 MULTICLEAN = true
-
-toolexecdir = $(exec_prefix)/$(target_alias)
-toolexeclibdir = $(toolexecdir)/lib$(MULTISUBDIR)
+@USE_LIBDIR_TRUE@toolexeclibdir = @USE_LIBDIR_TRUE@$(libdir)$(MULTISUBDIR)
+@USE_LIBDIR_FALSE@toolexeclibdir = @USE_LIBDIR_FALSE@$(toolexecdir)/lib$(MULTISUBDIR)
+@USE_LIBDIR_FALSE@toolexecdir = @USE_LIBDIR_FALSE@$(exec_prefix)/$(target_alias)
 
 toolexeclib_LTLIBRARIES = libffi.la
 
@@ -114,25 +115,29 @@ ffitest_LDADD = libffi.la
 TARGET_SRC_MIPS_GCC = src/mips/ffi.c src/mips/o32.S src/mips/n32.S
 TARGET_SRC_MIPS_SGI = src/mips/ffi.c src/mips/o32.s src/mips/n32.s
 TARGET_SRC_X86 = src/x86/ffi.c src/x86/sysv.S
-TARGET_SRC_SPARC = src/sparc/ffi.c src/sparc/v8.S
+TARGET_SRC_SPARC = src/sparc/ffi.c src/sparc/v8.S src/sparc/v9.S 
 TARGET_SRC_ALPHA = src/alpha/ffi.c src/alpha/osf.S
+TARGET_SRC_IA64 = src/ia64/ffi.c src/ia64/unix.S
 TARGET_SRC_M68K = src/m68k/ffi.c src/m68k/sysv.S
 TARGET_SRC_POWERPC = src/powerpc/ffi.c src/powerpc/sysv.S
 TARGET_SRC_ARM = src/arm/sysv.S src/arm/ffi.c
 
-libffi_la_common_SOURCES = src/debug.c src/prep_cif.c src/types.c src/raw_api.c 
+libffi_la_common_SOURCES = src/debug.c src/prep_cif.c src/types.c src/raw_api.c src/java_raw_api.c
 @MIPS_GCC_TRUE@libffi_la_SOURCES = @MIPS_GCC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_GCC)
 @MIPS_SGI_TRUE@libffi_la_SOURCES = @MIPS_SGI_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_SGI)
 @X86_TRUE@libffi_la_SOURCES = @X86_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_X86)
 @SPARC_TRUE@libffi_la_SOURCES = @SPARC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_SPARC)
 @ALPHA_TRUE@libffi_la_SOURCES = @ALPHA_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_ALPHA)
+@IA64_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_IA64)
 @M68K_TRUE@libffi_la_SOURCES = @M68K_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_M68K)
 @POWERPC_TRUE@libffi_la_SOURCES = @POWERPC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_POWERPC)
 @ARM_TRUE@libffi_la_SOURCES = @ARM_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_ARM)
 
+AM_CFLAGS = -fexceptions
+
 libffi_la_LDFLAGS = -release $(VERSION) 
 
-INCLUDES = -I$(top_srcdir)/include -Iinclude
+INCLUDES = -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -147,21 +152,21 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libffi_la_LIBADD = 
 @ALPHA_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@ALPHA_TRUE@raw_api.lo ffi.lo osf.lo
+@ALPHA_TRUE@raw_api.lo java_raw_api.lo ffi.lo osf.lo
 @ARM_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@ARM_TRUE@raw_api.lo sysv.lo ffi.lo
+@ARM_TRUE@raw_api.lo java_raw_api.lo sysv.lo ffi.lo
 @M68K_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@M68K_TRUE@raw_api.lo ffi.lo sysv.lo
+@M68K_TRUE@raw_api.lo java_raw_api.lo ffi.lo sysv.lo
 @MIPS_GCC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@MIPS_GCC_TRUE@raw_api.lo ffi.lo o32.lo n32.lo
+@MIPS_GCC_TRUE@raw_api.lo java_raw_api.lo ffi.lo o32.lo n32.lo
 @MIPS_SGI_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@MIPS_SGI_TRUE@raw_api.lo ffi.lo o32.lo n32.lo
+@MIPS_SGI_TRUE@raw_api.lo java_raw_api.lo ffi.lo o32.lo n32.lo
 @POWERPC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@POWERPC_TRUE@raw_api.lo ffi.lo sysv.lo
+@POWERPC_TRUE@raw_api.lo java_raw_api.lo ffi.lo sysv.lo
 @SPARC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@SPARC_TRUE@raw_api.lo ffi.lo v8.lo
+@SPARC_TRUE@raw_api.lo java_raw_api.lo ffi.lo v8.lo v9.lo
 @X86_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@X86_TRUE@raw_api.lo ffi.lo sysv.lo
+@X86_TRUE@raw_api.lo java_raw_api.lo ffi.lo sysv.lo
 libffi_la_OBJECTS =  $(am_libffi_la_OBJECTS)
 noinst_PROGRAMS =  ffitest$(EXEEXT)
 PROGRAMS =  $(noinst_PROGRAMS)
@@ -174,7 +179,7 @@ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CF
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(LIBTOOL) --mode=link "$(CCLD)" $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libffi_la_SOURCES) $(ffitest_SOURCES)
 DIST_COMMON =  README ./stamp-h.in ChangeLog Makefile.am Makefile.in \
 acconfig.h aclocal.m4 config.guess config.sub configure configure.in \
@@ -184,6 +189,7 @@ fficonfig.h.in install-sh ltconfig ltmain.sh missing mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
+depcomp = 
 SOURCES = $(libffi_la_SOURCES) $(ffitest_SOURCES)
 OBJECTS = $(am_libffi_la_OBJECTS) $(am_ffitest_OBJECTS)
 
@@ -251,8 +257,8 @@ install-toolexeclibLTLIBRARIES: $(toolexeclib_LTLIBRARIES)
 	$(mkinstalldirs) $(DESTDIR)$(toolexeclibdir)
 	@list='$(toolexeclib_LTLIBRARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo "$(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(toolexeclibdir)/$$p"; \
-	    $(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(toolexeclibdir)/$$p; \
+	    echo " $(LIBTOOL)  --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(toolexeclibdir)/$$p"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(toolexeclibdir)/$$p; \
 	  else :; fi; \
 	done
 
@@ -286,12 +292,14 @@ debug.lo: src/debug.c
 prep_cif.lo: src/prep_cif.c
 types.lo: src/types.c
 raw_api.lo: src/raw_api.c
+java_raw_api.lo: src/java_raw_api.c
 ffi.lo: src/alpha/ffi.c
 osf.lo: src/alpha/osf.S
 sysv.lo: src/arm/sysv.S
 o32.lo: src/mips/o32.S
 n32.lo: src/mips/n32.S
 v8.lo: src/sparc/v8.S
+v9.lo: src/sparc/v9.S
 
 libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES)
 	$(LINK) -rpath $(toolexeclibdir) $(libffi_la_LDFLAGS) $(libffi_la_OBJECTS) $(libffi_la_LIBADD) $(LIBS)
@@ -324,23 +332,27 @@ ffitest$(EXEEXT): $(ffitest_OBJECTS) $(ffitest_DEPENDENCIES)
 
 tags: TAGS
 
-ID: $(HEADERS) $(SOURCES) $(LISP)
-	list='$(SOURCES) $(HEADERS)'; \
-	unique=`for i in $$list; do echo $$i; done | \
-	  awk '    { files[$$0] = 1; } \
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	here=`pwd` && cd $(srcdir) \
-	  && mkid -f$$here/ID $$unique $(LISP)
+	mkid -f$$here/ID $$unique $(LISP)
 
-TAGS:  $(HEADERS) $(SOURCES) fficonfig.h.in $(TAGS_DEPENDENCIES) $(LISP)
+TAGS:  $(HEADERS) $(SOURCES) fficonfig.h.in $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)'; \
-	unique=`for i in $$list; do echo $$i; done | \
-	  awk '    { files[$$0] = 1; } \
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
 	test -z "$(ETAGS_ARGS)fficonfig.h.in$$unique$(LISP)$$tags" \
-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags fficonfig.h.in $$unique $(LISP) -o $$here/TAGS)
+	  || etags $(ETAGS_ARGS) $$tags fficonfig.h.in $$unique $(LISP)
 
 mostlyclean-tags:
 
@@ -354,41 +366,56 @@ maintainer-clean-tags:
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
 
+
 # This target untars the dist file and tries a VPATH configuration.  Then
 # it guarantees that the distribution is self-contained by making another
 # tarfile.
 distcheck: dist
-	-rm -rf $(distdir)
+	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	GZIP=$(GZIP_ENV) gunzip -c $(distdir).tar.gz | $(AMTAR) xf -
+	chmod -R a-w $(distdir); chmod a+w $(distdir)
 	mkdir $(distdir)/=build
 	mkdir $(distdir)/=inst
-	dc_install_base=`cd $(distdir)/=inst && pwd`; \
-	cd $(distdir)/=build \
+	chmod a-w $(distdir)
+	dc_install_base=`CDPATH=: && cd $(distdir)/=inst && pwd` \
+	  && cd $(distdir)/=build \
 	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
 	  && $(MAKE) $(AM_MAKEFLAGS) \
 	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
 	  && $(MAKE) $(AM_MAKEFLAGS) check \
 	  && $(MAKE) $(AM_MAKEFLAGS) install \
 	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
-	  && $(MAKE) $(AM_MAKEFLAGS) dist
-	-rm -rf $(distdir)
+	  && $(MAKE) $(AM_MAKEFLAGS) uninstall \
+	  && test `find $$dc_install_base -type f -print | wc -l` -le 1 \
+	  && $(MAKE) $(AM_MAKEFLAGS) dist \
+	  && $(MAKE) $(AM_MAKEFLAGS) distclean \
+	  && rm -f $(distdir).tar.gz \
+	  && test `find . -type f -print | wc -l` -eq 0
+	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	@banner="$(distdir).tar.gz is ready for distribution"; \
 	dashes=`echo "$$banner" | sed s/./=/g`; \
 	echo "$$dashes"; \
 	echo "$$banner"; \
 	echo "$$dashes"
 dist: distdir
-	-chmod -R a+r $(distdir)
-	$(AMTAR) ch$(AMTARFLAGS)f - $(distdir) | GZIP=$(GZIP_ENV) gzip -c > $(distdir).tar.gz
-	-rm -rf $(distdir)
+	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
+	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
+	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
+	  ! -type d ! -perm -444 -exec $(SHELL) $(install_sh) -c -m a+r {} {} \; \
+	|| chmod -R a+r $(distdir)
+	$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c > $(distdir).tar.gz
+	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 dist-all: distdir
-	-chmod -R a+r $(distdir)
-	$(AMTAR) ch$(AMTARFLAGS)f - $(distdir) | GZIP=$(GZIP_ENV) gzip -c > $(distdir).tar.gz
-	-rm -rf $(distdir)
+	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
+	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
+	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
+	  ! -type d ! -perm -444 -exec $(SHELL) $(install_sh) -c -m a+r {} {} \; \
+	|| chmod -R a+r $(distdir)
+	$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c > $(distdir).tar.gz
+	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 distdir: $(DISTFILES)
-	-rm -rf $(distdir)
+	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	-chmod 777 $(distdir)
 	$(mkinstalldirs) $(distdir)/src/alpha $(distdir)/src/arm \
 	   $(distdir)/src/m68k $(distdir)/src/mips \
 	   $(distdir)/src/powerpc $(distdir)/src/sparc \
@@ -396,7 +423,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pR $$d/$$file $(distdir); \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -444,6 +471,7 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
+	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-hdr mostlyclean-toolexeclibLTLIBRARIES \
 		mostlyclean-compile mostlyclean-libtool \
 		mostlyclean-noinstPROGRAMS mostlyclean-tags \

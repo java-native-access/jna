@@ -3,7 +3,7 @@
    
    MIPS FFI Definitions
 
-   $Id: ffi_mips.h,v 1.1 1998/11/29 16:48:16 green Exp $
+   $Id: ffi_mips.h,v 1.2 2000/04/17 03:18:45 green Exp $
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the

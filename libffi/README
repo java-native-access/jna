@@ -44,9 +44,13 @@ Libffi has been ported to:
 
 	SunOS 4.1.3 & Solaris 2.x (Sparc v8)
 
+	32- and 64-bit Sparc Linux (Sparc v8 and v9)
+
 	Irix 5.3 & 6.2 (System V/o32 & n32)
 
-	Intel x86 - Linux (System V ABI)
+	Intel IA-32 - Linux (System V ABI)
+
+	Intel IA-64 - Linux (System V ABI)
 
 	Alpha - Linux and OSF/1
 
@@ -56,14 +60,11 @@ Libffi has been ported to:
 
 	ARM - Linux (System V ABI)
 
-Libffi has been tested with the egcs 1.0.2 gcc compiler. Chances are
-that other versions will work.  Libffi has also been built and tested
-with the SGI compiler tools.
+Libffi has been tested with GCC 2.95 and newer compilers. 
 
 On PowerPC, the tests failed (see the note below).
 
-You must use GNU make to build libffi. SGI's make will not work.
-Sun's probably won't either.
+You must use GNU make to build libffi.
 	
 If you port libffi to another platform, please let me know! I assume
 that some will be easy (x86 NetBSD), and others will be more difficult
@@ -477,12 +478,12 @@ libffi was written by Anthony Green <green@cygnus.com>.
 Portions of libffi were derived from Gianni Mariani's free gencall
 library for Silicon Graphics machines.
 
-The closure mechanism was designed and implemented by Kresten Krab
-Thorup.
+The closure mechanism was designed and implemented on IA-32 by Kresten
+Krab Thorup.
 
-The Sparc port was derived from code contributed by the fine folks at
-Visible Decisions Inc <http://www.vdi.com>. Further enhancements were
-made by Gordon Irlam at Cygnus Solutions <http://www.cygnus.com>.
+The initial Sparc port was derived from code contributed by the fine
+folks at Visible Decisions Inc.  Further enhancements were made by
+Gordon Irlam while at Cygnus Solutions.
 
 The Alpha port was written by Richard Henderson at Cygnus Solutions.
 
@@ -492,6 +493,10 @@ bug fixes.
 Geoffrey Keating ported libffi to the PowerPC.
 
 Raffaele Sena ported libffi to the ARM.
+
+Hans Boehm ported libffi to IA-64.
+
+Jakub Jelinek ported libffi to 32- and 64-bit Sparc Linux.
 
 Jesper Skov and Andrew Haley both did more than their fair share of
 stepping through the code and tracking down bugs.

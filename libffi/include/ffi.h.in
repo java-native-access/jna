@@ -1,7 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   libffi @VERSION@ - Copyright (c) 1996-1999  Cygnus Solutions
-
-   $Id: ffi.h.in,v 1.3 1999/08/08 13:05:12 green Exp $
+   libffi 2.00 - Copyright (c) 1996, 1997, 1998, 1999, 2000  Red Hat, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -24,34 +22,45 @@
 
    ----------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------
+   The basic API is described in the README file.
+
+   The raw API is designed to bypass some of the argument packing
+   and unpacking on architectures for which it can be avoided.
+
+   The closure API allows interpreted functions to be packaged up
+   inside a C function pointer, so that they can be called as C functions,
+   with no understanding on the client side that they are interpreted.
+   It can also be used in other cases in which it is necessary to package
+   up a user specified parameter and a function pointer as a single
+   function pointer.
+
+   The closure API must be implemented in order to get its functionality,
+   e.g. for use by gij.  Routines are provided to emulate the raw API
+   if the underlying platform doesn't allow faster implementation.
+
+   More details on the raw and cloure API can be found in:
+
+   http://sourceware.cygnus.com/ml/java-discuss/1999-q3/msg00138.html
+
+   and
+
+   http://sourceware.cygnus.com/ml/java-discuss/1999-q3/msg00174.html
+   -------------------------------------------------------------------- */
+
 #ifndef LIBFFI_H
 #define LIBFFI_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Specify which architecture libffi is configured for. */
 #define @TARGET@
 
 /* ---- System configuration information --------------------------------- */
 
-#ifdef PACKAGE
-#define OLD_PACKAGE PACKAGE
-#undef PACKAGE
-#endif
-#ifdef VERSION
-#define OLD_VERSION VERSION
-#undef VERSION
-#endif
-
 #include <fficonfig.h>
-
-#undef PACKAGE
-#undef VERSION
-
-#ifdef OLD_PACKAGE
-#define PACKAGE OLD_PACKAGE
-#endif
-#ifdef OLD_VERSION
-#define VERSION OLD_VERSION
-#endif
 
 #if !defined(LIBFFI_ASM)
 #include <stddef.h>
@@ -70,75 +79,69 @@
 #define SINT8   signed char
 
 #if SIZEOF_INT == 2
-
-#define UINT16	unsigned int
+#define UINT16  unsigned int
 #define SINT16  int
 #define ffi_type_uint ffi_type_uint16
 #define ffi_type_sint ffi_type_sint16
+#endif
 
-#else 
 #if SIZEOF_SHORT == 2
-
+#undef UINT16
+#undef SINT16
 #define UINT16  unsigned short
 #define SINT16  short
 #define ffi_type_ushort ffi_type_uint16
 #define ffi_type_sshort ffi_type_sint16
-
-#endif
 #endif
 
 #if SIZEOF_INT == 4
-
-#define UINT32	unsigned int
+#define UINT32  unsigned int
 #define SINT32  int
 #define ffi_type_uint ffi_type_uint32
 #define ffi_type_sint ffi_type_sint32
+#endif
 
-#else 
 #if SIZEOF_SHORT == 4
-
+#undef UINT32
+#undef SINT32
 #define UINT32  unsigned short
 #define SINT32  short
 #define ffi_type_ushort ffi_type_uint32
 #define ffi_type_sshort ffi_type_sint32
+#endif
 
-#else
 #if SIZEOF_LONG == 4
-
+#undef UINT32
+#undef SINT32
 #define UINT32  unsigned long
 #define SINT32  long
 #define ffi_type_ulong ffi_type_uint32
 #define ffi_type_slong ffi_type_sint32
-
-#endif
-#endif
 #endif
 
 #if SIZEOF_INT == 8
-
 #define UINT64  unsigned int
 #define SINT64  int
 #define ffi_type_uint ffi_type_uint64
 #define ffi_type_sint ffi_type_sint64
+#endif
 
-#else
 #if SIZEOF_LONG == 8
-
+#undef UINT64
+#undef SINT64
 #define UINT64  unsigned long
 #define SINT64  long
 #define ffi_type_ulong ffi_type_uint64
 #define ffi_type_slong ffi_type_sint64
+#endif
 
-#else
 #if SIZEOF_LONG_LONG == 8
-
+#undef UINT64
+#undef SINT64
 #define UINT64  unsigned long long
 #define SINT64  long long
-#define ffi_type_ulong ffi_type_uint64
-#define ffi_type_slong ffi_type_sint64
-
-#endif
-#endif
+#define ffi_type_ulonglong ffi_type_uint64
+#define ffi_type_slonglong ffi_type_sint64
 #endif
 
 /* ---- System specific configurations ----------------------------------- */
@@ -149,11 +152,19 @@
 #define SIZEOF_ARG SIZEOF_VOID_P
 #endif
 
+#ifdef SPARC
+#if defined(__arch64__) || defined(__sparcv9)
+#define SPARC64
+#endif
+#endif
+
 #ifndef LIBFFI_ASM
 
 /* ---- Generic type definitions ----------------------------------------- */
 
-#define ALIGN(v, a)  (((((unsigned) (v))-1) | ((a)-1))+1)
+#define ALIGN(v, a)  (((((size_t) (v))-1) | ((a)-1))+1)
+/* The closure code assumes that this works on pointers, i.e. a size_t	*/
+/* can hold a pointer.							*/
 
 typedef enum ffi_abi {
 
@@ -163,15 +174,25 @@ typedef enum ffi_abi {
   /* ---- Sparc -------------------- */
 #ifdef SPARC
   FFI_V8,
-  FFI_DEFAULT_ABI = FFI_V8,
   FFI_V8PLUS,
   FFI_V9,
+#ifdef SPARC64
+  FFI_DEFAULT_ABI = FFI_V9,
+#else
+  FFI_DEFAULT_ABI = FFI_V8,
+#endif
 #endif
 
   /* ---- Intel x86 ---------------- */
 #ifdef X86
   FFI_SYSV,
   FFI_DEFAULT_ABI = FFI_SYSV,
+#endif
+
+  /* ---- Intel ia64 ---------------- */
+#ifdef IA64
+  FFI_UNIX,   	/* Linux and all Unix variants use the same conventions	*/
+  FFI_DEFAULT_ABI = FFI_UNIX,
 #endif
 
   /* ---- Mips --------------------- */
@@ -283,6 +304,7 @@ typedef struct {
 typedef union {
   SINT_ARG sint;
   UINT_ARG uint;
+  float	   flt;
   char     data[SIZEOF_ARG];
   void*    ptr;
 } ffi_raw;
@@ -296,8 +318,22 @@ void ffi_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw);
 void ffi_raw_to_ptrarray (ffi_cif *cif, ffi_raw *raw, void **args);
 size_t ffi_raw_size (ffi_cif *cif);
 
+#if !NO_JAVA_RAW_API
 
+/* This is analogous to the raw API, except it uses Java parameter	*/
+/* packing, even on 64-bit machines.  I.e. on 64-bit machines		*/
+/* longs and doubles are followed by an empty 64-bit word.		*/
 
+void ffi_java_raw_call (/*@dependent@*/ ffi_cif *cif, 
+		        void (*fn)(), 
+		        /*@out@*/ void *rvalue, 
+		        /*@dependent@*/ ffi_raw *avalue);
+
+void ffi_java_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw);
+void ffi_java_raw_to_ptrarray (ffi_cif *cif, ffi_raw *raw, void **args);
+size_t ffi_java_raw_size (ffi_cif *cif);
+
+#endif /* !NO_JAVA_RAW_API */
 
 #endif /* !FFI_NO_RAW_API */
 
@@ -308,6 +344,21 @@ size_t ffi_raw_size (ffi_cif *cif);
 #define FFI_CLOSURES 1		/* x86 supports closures */
 #define FFI_TRAMPOLINE_SIZE 10
 #define FFI_NATIVE_RAW_API 1	/* and has native raw api support */
+
+#elif defined(IA64)
+
+#define FFI_CLOSURES 1
+#define FFI_TRAMPOLINE_SIZE 24  /* Really the following struct, which 	*/
+				/* can be interpreted as a C function	*/
+				/* decriptor:				*/
+
+struct ffi_ia64_trampoline_struct {
+    void * code_pointer;	/* Pointer to ffi_closure_UNIX	*/
+    void * fake_gp;		/* Pointer to closure, installed as gp	*/
+    void * real_gp;		/* Real gp value, reinstalled by 	*/
+				/* ffi_closure_UNIX.			*/
+};
+#define FFI_NATIVE_RAW_API 0
 
 #else 
 
@@ -362,6 +413,14 @@ ffi_prep_raw_closure (ffi_raw_closure*,
 		      void (*fun)(ffi_cif*,void*,ffi_raw*,void*),
 		      void *user_data);
 
+#ifndef NO_JAVA_RAW_API
+ffi_status
+ffi_prep_java_raw_closure (ffi_raw_closure*,
+		           ffi_cif *cif,
+		           void (*fun)(ffi_cif*,void*,ffi_raw*,void*),
+		           void *user_data);
+#endif
+
 #endif /* !FFI_NO_RAW_API */
 #endif /* FFI_CLOSURES */
 
@@ -408,6 +467,10 @@ void ffi_call(/*@dependent@*/ ffi_cif *cif,
 
 /* This should always refer to the last type code (for sanity checks) */
 #define FFI_TYPE_LAST       FFI_TYPE_POINTER
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------
    ffi_common.h - Copyright (c) 1996  Cygnus Solutions
 
-   $Id: ffi_common.h,v 1.1 1998/11/29 16:48:16 green Exp $
+   $Id: ffi_common.h,v 1.2 2000/04/17 03:18:45 green Exp $
 
    Common internal definitions and macros. Only necessary for building
    libffi.
@@ -9,6 +9,10 @@
 
 #ifndef FFI_COMMON_H
 #define FFI_COMMON_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Do not move this. Some versions of AIX are very picky about where
    this is positioned. */
@@ -45,10 +49,12 @@ char *alloca ();
 #define TRUE (!FALSE)
 #endif
 
+#ifndef __cplusplus
 /* bool is a keyword in C++ */
 /*@-cppnames@*/
 typedef int bool;
 /*@=cppnames@*/
+#endif
 
 #ifdef FFI_DEBUG
 
@@ -76,5 +82,10 @@ typedef struct
   /*@dependent@*/ void **avalue;
 } extended_cif;
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif
+
 
