@@ -1,0 +1,22 @@
+# This file describes wrappers and other binary files to CVS.
+#
+# Wrappers are the concept where directories of files are to be
+# treated as a single file.  The intended use is to wrap up a wrapper
+# into a single tar such that the tar archive can be treated as a
+# single binary file in CVS.
+#
+# To solve the problem effectively, it was also necessary to be able to
+# prevent rcsmerge from merging these files.
+#
+# Format of wrapper file ($CVSROOT/CVSROOT/cvswrappers or .cvswrappers)
+#
+#  wildcard	[option value][option value]...
+#
+#  where option is one of
+#  -f		from cvs filter		value: path to filter
+#  -t		to cvs filter		value: path to filter
+#  -m		update methodology	value: MERGE or COPY
+#
+#  and value is a single-quote delimited value.
+#
+# For example:

@@ -1,0 +1,2 @@
+# Set this to "no" if pserver shouldn't check system users/passwords
+#SystemAuth=no
