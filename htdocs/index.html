@@ -8,20 +8,26 @@ libffi
 
 <h1>The libffi Home Page</h1>
 
-<b>libffi-1.20</b> was released on October 5, 1998. You can ftp it from <a href="ftp://ftp.cygnus.com:/pub/green/libffi-1.20.tar.gz">ftp.cygnus.com:/pub/green/libffi-1.20.tar.gz</a>. 
+<b>libffi-1.20</b> was released on October 5, 1998. You can ftp it
+from <a
+href="ftp://ftp.cygnus.com:/pub/green/libffi-1.20.tar.gz">ftp.cygnus.com:/pub/green/libffi-1.20.tar.gz</a>.
+However, newer code is available.  See below for details.
 
 <p>
-If you wish to be notified of libffi releases by email, fill out <a href="libffi-form.html">this form</a>.
+
+libffi is free software.  It has a very <a
+href="http://sourceware.cygnus.com/cgi-bin/cvsweb.cgi/~checkout~/libffi/LICENSE?rev=1.1&cvsroot=libffi&hideattic=1&sortbydate=0">liberal
+license</a>.
 
 <h2>What is libffi?</h2>
 
 Compilers for high level languages generate code that follow certain
 conventions. These conventions are necessary, in part, for separate
 compilation to work. One such convention is the "calling
-convention". The "calling convention" is essentially a set of
-assumptions made by the compiler about where function arguments will
-be found on entry to a function. A "calling convention" also specifies
-where the return value for a function is found.
+convention". The "calling convention" is a set of assumptions made by
+the compiler about where function arguments will be found on entry to
+a function. A "calling convention" also specifies where the return
+value for a function is found.
 
 <p>
 
@@ -35,7 +41,8 @@ bridge from the interpreter program to compiled code.
 
 The libffi library provides a portable, high level programming
 interface to various calling conventions. This allows a programmer to
-call any function specified by a call interface description at run-time.  
+call any function specified by a call interface description at
+run-time.
 
 <p>
 
@@ -47,7 +54,7 @@ layer of a fully featured foreign function interface. A layer must
 exist above libffi that handles type conversions for values passed
 between the two languages.
 
-<h2>Supported Platforms and Prerequisites</h2>
+<h2>Supported Platforms</h2>
 
 Libffi has been ported to:
 
@@ -61,126 +68,87 @@ Libffi has been ported to:
 <li> ARM - Linux (System V ABI)
 </ul>
 
-Libffi has been tested with the <a href="http://www.cygnus.com/egcs/">egcs</a> 1.0.2 gcc compiler. Chances are
-that other versions will work.  Libffi has also been built and tested
-with the SGI compiler tools.
+Libffi has been tested with the <a
+href="http://www.cygnus.com/egcs/">egcs</a> 1.0.2 gcc
+compiler. Chances are that other versions will work.  Libffi has also
+been built and tested with the SGI compiler tools.
 	
 If you port libffi to another platform, please let me know! I assume
 that some will be easy (x86 NetBSD), and others will be more difficult
 (HP, AIX).
 
-<h2>History</h2>
+<h2>How to get it</h2>
 
+You can download the latest version from <a href="ftp://ftp.cygnus.com:/pub/green/">ftp.cygnus.com:/pub/green/</a>.  
+
+<p>
+
+You can also check out the very latest version via anonymous cvs.
+Here's how:
 <pre>
-1.20 Oct-5-98
-	Raffaele Sena produces ARM port.
-
-1.19 Oct-5-98
-	Fixed x86 long double and long long return support.
-	m68k bug fixes from Andreas Schwab.
-	Patch for DU assembler compatibility for the Alpha from Richard
-	Henderson.
-
-1.18 Apr-17-98
-	Bug fixes and MIPS configuration changes.
-
-1.17 Feb-24-98
-	Bug fixes and m68k port from Andreas Schwab. PowerPC port from
-	Geoffrey Keating. Various bug x86, Sparc and MIPS bug fixes.
-
-1.16 Feb-11-98
-	Richard Henderson produces Alpha port.
-
-1.15 Dec-4-97
-	Fixed an n32 ABI bug. New libtool, auto* support.
-
-1.14 May-13-96
-	libtool is now used to generate shared and static libraries.
-	Fixed a minor portability problem reported by Russ McManus
-	&lt;mcmanr@eq.gs.com&gt;.
-
-1.13 Dec-2-96
-	Added --enable-purify-safety to keep Purify from complaining
-	about certain low level code.
-	Sparc fix for calling functions with < 6 args.
-	Linux x86 a.out fix.
-
-1.12 Nov-22-96
-	Added missing ffi_type_void, needed for supporting void return 
-	types. Fixed test case for non MIPS machines. Cygnus Support 
-	is now Cygnus Solutions. 
-
-1.11 Oct-30-96
-	Added notes about GNU make.
-
-1.10 Oct-29-96
-	Added configuration fix for non GNU compilers.
-
-1.09 Oct-29-96
-	Added --enable-debug configure switch. Clean-ups based on LCLint 
-	feedback. ffi_mips.h is always installed. Many configuration 
-	fixes. Fixed ffitest.c for sparc builds.
-
-1.08 Oct-15-96
-	Fixed n32 problem. Many clean-ups.
-
-1.07 Oct-14-96
-	Gordon Irlam rewrites v8.S again. Bug fixes.
-
-1.06 Oct-14-96
-	Gordon Irlam improved the sparc port. 
-
-1.05 Oct-14-96
-	Interface changes based on feedback.
-
-1.04 Oct-11-96
-	Sparc port complete (modulo struct passing bug).
-
-1.03 Oct-10-96
-	Passing struct args, and returning struct values works for
-	all architectures/calling conventions. Expanded tests.
-
-1.02 Oct-9-96
-	Added SGI n32 support. Fixed bugs in both o32 and Linux support.
-	Added "make test".
-
-1.01 Oct-8-96
-	Fixed float passing bug in mips version. Restructured some
-	of the code. Builds cleanly with SGI tools.
-
-1.00 Oct-7-96
-	First release. No public announcement.
+ cvs -d :pserver:anoncvs@sourceware.cygnus.com:/cvs/libffi login
+     (password is ``anoncvs'')
+ cvs -d :pserver:anoncvs@sourceware.cygnus.com:/cvs/libffi co libffi
 </pre>
 
-<h2>Authors & Credits</h2>
+Once you have it checked out, you can update it with <tt>cvs update</tt>.
 
-Libffi was written by <b>Anthony Green</b>.
 <p>
-Portions of libffi were derived from <b>Gianni Mariani</b>'s free gencall
+
+You can also <a
+href="http://sourceware.cygnus.com/cgi-bin/cvsweb.cgi/libffi/?cvsroot=libffi">
+view the cvs archive</a> via cvsweb.
+
+<h2>Mailing lists</h2>
+
+For such a small piece of software, there are plenty of mailing lists
+available.
+
+<ul>
+<li><tt>libffi-announce</tt> is a low volume mailing list for libffi release announcements
+<li><tt>libffi-discuss</tt> is a mailing list for asking questions, reporting bugs, etc.
+</ul>
+
+<p>To subscribe to the <code>libffi-announce</code> mailing list, enter your
+e-mail address:
+<form method="get" action="/cgi-bin/subscribe-libffi-announce">
+  <input type="text" name="name" size="16"> <input type="Submit" name="submit" value="Sign me up!">
+</form>
+
+<br>To subscribe to the <code>libffi-discuss</code> mailing list, enter your
+e-mail address:
+<form method="get" action="/cgi-bin/subscribe-libffi-discuss">
+  <input type="text" name="name" size="16"> <input type="Submit" name="submit" value="Sign me up!">
+</form>
+
+<p>
+
+<h2>Authors and Credits</h2>
+
+Libffi was written by <a href="http://www.cygnus.com/~green"><b>Anthony Green</b></a>.
+
+<ul>
+<li> Portions of libffi were derived from <b>Gianni Mariani</b>'s free gencall
 library for Silicon Graphics machines.
-<p>
-The sparc port was derived from code contributed by the fine folks at
+<li> The sparc port was derived from code contributed by the fine folks at
 <b><a href="http://www.vdi.com">Visible Decisions Inc</a></b>. Further enhancements were made by <b>Gordon Irlam</b> at <a href="http://www.cygnus.com">Cygnus Solutions</a>.
-<p>
-The Alpha port was written by <b>Richard Henderson</b> at Cygnus Solutions.
-<p>
-<b>Andreas Schwab</b> ported libffi to m68k Linux and provided a number of
+<li>The Alpha port was written by <b>Richard Henderson</b> at Cygnus Solutions.
+<li><b>Andreas Schwab</b> ported libffi to m68k Linux and provided a number of
 bug fixes.
-<p>
-<b>Geoffrey Keating</b> ported libffi to the PowerPC.
-<p>
-<b>Raffaele Sena</b> ported libffi to the ARM.
-<p>
-<b>Jesper Skov</b> and <b>Andrew Haley</b> both did more than their fair share of
+<li><b>Geoffrey Keating</b> ported libffi to the PowerPC.
+<li><b>Raffaele Sena</b> ported libffi to the ARM.
+<li><b>Jesper Skov</b> and <b>Andrew Haley</b> both did more than their fair share of
 stepping through the code and tracking down bugs.
-<p>
+<li>
 Thanks to <b>Tom Tromey</b> for bug fixes and configuration help.
-<p>
+<li>
 Thanks also to <b>Jim Blandy</b>, who provided some useful feedback on the libffi
 interface.
+</ul>
 <p>
 If you have a problem, or have found a bug, please send a note to
-<a href="mailto:green@cygnus.com">green@cygnus.com</a>.
+<a href="mailto:libffi-discuss@cygnus.com">libffi-discuss@cygnus.com</a> or
+to me directly (<a href="mailto:green@cygnus.com">green@cygnus.com</a>).
 
 </body>
 </html>
