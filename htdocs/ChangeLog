@@ -1,3 +1,7 @@
+1999-05-12  Jason Molenda  (jsm@bugshack.cygnus.com)
+
+	* index.html: Add links to libffi* mail list archives.
+
 1999-04-26  Jason Molenda  (jsm@bugshack.cygnus.com)
 
 	* index.html: Missed a reference to libffi-discuss@cygnus.com.  Fixed.
