@@ -24,7 +24,7 @@
    ----------------------------------------------------------------------- */
 
 #include <ffi.h>
-#include <ffi_common.h>
+#include <ffi_private.h>
 
 #include <stdlib.h>
 

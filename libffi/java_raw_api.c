@@ -34,7 +34,6 @@
 
 #include <ffi.h>
 #include <ffi_private.h>
-#include <ffi_common.h>
 
 #if !defined(NO_JAVA_RAW_API) && !defined(FFI_NO_RAW_API)
 

@@ -34,9 +34,9 @@ proc test_libffi {src} {
 
     $status "$testcase"
 
-    if { $status == "pass" } {
-	remote_file build delete $executable;
-    }
+#    if { $status == "pass" } {
+#	remote_file build delete $executable;
+#    }
 } 
 
 # Local Variables:

@@ -2,5 +2,5 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-noinst_HEADERS=ffi_common.h ffi_private.h
+noinst_HEADERS=ffi_private.h
 include_HEADERS=ffi.h

@@ -16,7 +16,7 @@ static float many(float f1,
 		  float f12,
 		  float f13)
 {
-#if 0
+#if 1
   printf("%f %f %f %f %f %f %f %f %f %f %f %f %f\n",
 	 (double) f1, (double) f2, (double) f3, (double) f4, (double) f5, 
 	 (double) f6, (double) f7, (double) f8, (double) f9, (double) f10,
@@ -60,4 +60,4 @@ main ()
       exit(0);
     else
       abort();
-  }
+}

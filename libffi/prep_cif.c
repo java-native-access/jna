@@ -23,7 +23,6 @@
 
 #include <ffi.h>
 #include <ffi_private.h>
-#include <ffi_common.h>
 #include <stdlib.h>
 
 

@@ -1,3 +1,22 @@
+Sun Apr 22 15:50:08 2001  Anthony Green  <green@redhat.com>
+
+	* include/ffi_common.h: Delete, after moving contents to...
+	* include/ffi_private.h: Subsume contents of ffi_common.h.
+	* include/Makefile.am (noinst_HEADERS): Remove ffi_common.h.
+	* include/Makefile.in: Rebuilt.
+	* arm/ffi.c, m68k/ffi.c, mips/ffi.c, powerpc/ffi.c, s390/ffi.c,
+	ia64/ffi.c: Include ffi_private.h, not ffi_common.h.
+	* alpha/ffi.c, sparc/ffi.c, x86/ffi.c: Don't include ffi_common.h.
+	* types.c, raw_api.c, java_raw_api.c, prep_cif.c: Don't include
+	ffi_common.h.
+	* debug.c: Include ffi_private.h instead of ffi_common.h.
+
+	* mips/ffi.c (calc_n32_struct_flags): Make static.
+	(FIX_ARGP): Remove call to debugging routine ffi_stop_here.
+
+	* mips/n32.S: Include ffi_private.h.
+	* mips/o32.S: Include ffi_private.h.
+
 Sun Apr 22 12:37:44 2001  Anthony Green  <green@redhat.com>
 
 	* README: Update some comments.

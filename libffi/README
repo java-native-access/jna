@@ -476,7 +476,7 @@ History
 Authors & Credits
 =================
 
-libffi was written by Anthony Green <green@cygnus.com>.
+libffi was written by Anthony Green <green@redhat.com>.
 
 Portions of libffi were derived from Gianni Mariani's free gencall
 library for Silicon Graphics machines.
@@ -488,7 +488,7 @@ The initial Sparc port was derived from code contributed by the fine
 folks at Visible Decisions Inc.  Further enhancements were made by
 Gordon Irlam while at Cygnus Solutions.
 
-The Alpha port was written by Richard Henderson at Cygnus Solutions.
+The Alpha port was written by Richard Henderson at Cygnus Solutions/Red Hat.
 
 Andreas Schwab ported libffi to m68k Linux and provided a number of
 bug fixes.

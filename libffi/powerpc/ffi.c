@@ -3,7 +3,7 @@
    
    PowerPC Foreign Function Interface 
 
-   $Id: ffi.c,v 1.1 2001/04/22 18:28:36 green Exp $
+   $Id: ffi.c,v 1.2 2001/04/23 00:32:03 green Exp $
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -26,7 +26,7 @@
    ----------------------------------------------------------------------- */
 
 #include <ffi.h>
-#include <ffi_common.h>
+#include <ffi_private.h>
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -119,3 +119,50 @@
 #define SIZEOF_ARG SIZEOF_VOID_P
 #endif
 
+#ifndef __ASSEMBLER__
+/* This part of the private header file is only for C code.  */
+
+/* Check for the existence of memcpy. */
+#if STDC_HEADERS
+# include <string.h>
+#else
+# ifndef HAVE_MEMCPY
+#  define memcpy(d, s, n) bcopy ((s), (d), (n))
+# endif
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef TRUE
+#define TRUE (!FALSE)
+#endif
+
+#ifndef __cplusplus
+/* bool is a keyword in C++ */
+typedef int bool;
+#endif
+
+#ifdef FFI_DEBUG
+/* Debugging functions */
+void ffi_stop_here(void);
+bool ffi_type_test(ffi_type *a);
+#define FFI_ASSERT(x) ((x) ? 0 : ffi_assert(__FILE__,__LINE__))
+#else
+#define FFI_ASSERT(x) 
+#endif
+
+/* Perform machine dependent cif processing */
+ffi_status ffi_prep_cif_machdep(ffi_cif *cif);
+
+/* Extended cif, used in callback from assembly routine */
+typedef struct
+{
+  ffi_cif *cif;
+  void *rvalue;
+  void **avalue;
+} extended_cif;
+
+#endif /* __ASSEMBLER__ */
+

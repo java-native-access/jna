@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   o32.S - Copyright (c) 1996, 1998  Cygnus Solutions
+   o32.S - Copyright (c) 1996, 1998, 2001  Red Hat, Inc.
    
    MIPS Foreign Function Interface 
 
@@ -25,6 +25,7 @@
 
 #define LIBFFI_ASM	
 #include <ffi.h>
+#include <ffi_private.h>
 #include <mips/mips.h>
 
 /* Only build this code if we are compiling for o32 */	

@@ -24,7 +24,7 @@
    ----------------------------------------------------------------------- */
 
 #include <ffi.h>
-#include <ffi_common.h>
+#include <ffi_private.h>
 #include <mips/mips.h>
 
 #include <stdlib.h>
@@ -35,7 +35,6 @@ FFI_ASSERT(argp <= &stack[bytes]); \
 if (argp == &stack[bytes]) \
 { \
   argp = stack; \
-  ffi_stop_here(); \
 }
 #else
 #define FIX_ARGP 
@@ -194,7 +193,7 @@ static void ffi_prep_args(char *stack,
    passed in an integer register". This code traverses structure
    definitions and generates the appropriate flags. */
 
-unsigned calc_n32_struct_flags(ffi_type *arg, unsigned *shift)
+static unsigned calc_n32_struct_flags(ffi_type *arg, unsigned *shift)
 {
   unsigned flags = 0;
   unsigned index = 0;
