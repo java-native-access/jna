@@ -3,7 +3,7 @@
    
    X86 Foreign Function Interface 
 
-   $Id: sysv.S,v 1.1 1998/11/29 16:48:16 green Exp $
+   $Id: sysv.S,v 1.2 1999/08/04 18:00:05 green Exp $
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -50,7 +50,7 @@ ffi_call_SYSV:
 	# Place all of the ffi_prep_args in position
 	pushl 12(%ebp)
 	pushl %eax
-	call  ffi_prep_args
+	call  *8(%ebp)
 
 	# Return stack to previous state and call the function
 	addl  $8,%esp	

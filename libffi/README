@@ -477,6 +477,9 @@ libffi was written by Anthony Green <green@cygnus.com>.
 Portions of libffi were derived from Gianni Mariani's free gencall
 library for Silicon Graphics machines.
 
+The closure mechanism was designed and implemented by Kresten Krab
+Thorup.
+
 The Sparc port was derived from code contributed by the fine folks at
 Visible Decisions Inc <http://www.vdi.com>. Further enhancements were
 made by Gordon Irlam at Cygnus Solutions <http://www.cygnus.com>.

@@ -32,6 +32,9 @@
    spurious messages. */
 #undef USING_PURIFY
 
+/* Define this if you want the raw api disabled */
+#undef FFI_DISABLE_RAW_API
+
 /* This is the package name */
 #undef PACKAGE
 
@@ -61,3 +64,10 @@
 
 /* Define if you have the memcpy function.  */
 #undef HAVE_MEMCPY
+
+/* Define if target machine is big endian. */
+#undef WORDS_BIGENDIAN
+
+/* The number of bytes in a void pointer.  */
+#undef SIZEOF_VOID_P
+

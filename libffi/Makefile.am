@@ -44,7 +44,7 @@ TARGET_SRC_ARM =  src/arm/sysv.S src/arm/ffi.c
 
 ##libffi_la_SOURCES = src/debug.c src/prep_cif.c src/types.c $(TARGET_SRC_@TARGET@)
 ## Work around automake deficiency
-libffi_la_common_SOURCES = src/debug.c src/prep_cif.c src/types.c
+libffi_la_common_SOURCES = src/debug.c src/prep_cif.c src/types.c src/raw_api.c 
 if MIPS_GCC
 libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_GCC)
 endif

@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------*-C-*-
-   libffi @VERSION@ - Copyright (c) 1996, 1997, 1998  Cygnus Solutions
+   libffi @VERSION@ - Copyright (c) 1996-1999  Cygnus Solutions
 
-   $Id: ffi.h.in,v 1.1 1998/11/29 16:48:16 green Exp $
+   $Id: ffi.h.in,v 1.2 1999/08/04 18:00:05 green Exp $
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -127,7 +127,7 @@
 #ifdef MIPS
 #include <ffi_mips.h>
 #else
-#define SIZEOF_ARG sizeof(void*)
+#define SIZEOF_ARG SIZEOF_VOID_P
 #endif
 
 #ifndef LIBFFI_ASM
@@ -242,6 +242,109 @@ typedef struct {
 #endif
 
 } ffi_cif;
+
+/* ---- Definitions for the raw API -------------------------------------- */
+
+#if !FFI_NO_RAW_API
+
+#if SIZEOF_ARG == 4
+
+#define UINT_ARG UINT32
+#define SINT_ARG SINT32
+
+#endif
+
+#if SIZEOF_ARG == 8
+
+#define UINT_ARG UINT64
+#define SINT_ARG SINT64
+
+#endif
+
+typedef union {
+  SINT_ARG sint;
+  UINT_ARG uint;
+  char     data[SIZEOF_ARG];
+  void*    ptr;
+} ffi_raw;
+
+void ffi_raw_call (/*@dependent@*/ ffi_cif *cif, 
+		   void (*fn)(), 
+		   /*@out@*/ void *rvalue, 
+		   /*@dependent@*/ ffi_raw *avalue);
+
+void ffi_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw);
+void ffi_raw_to_ptrarray (ffi_cif *cif, ffi_raw *raw, void **args);
+size_t ffi_raw_size (ffi_cif *cif);
+
+
+
+
+#endif /* !FFI_NO_RAW_API */
+
+/* ---- Definitions for closures ----------------------------------------- */
+
+#ifdef X86
+
+#define FFI_CLOSURES 1		/* x86 supports closures */
+#define FFI_TRAMPOLINE_SIZE 10
+#define FFI_NATIVE_RAW_API 1	/* and has native raw api support */
+
+#else 
+
+#define FFI_CLOSURES 0
+#define FFI_NATIVE_RAW_API 0
+
+#endif
+
+
+
+#if FFI_CLOSURES
+
+typedef struct {
+  char tramp[FFI_TRAMPOLINE_SIZE];
+  ffi_cif   *cif;
+  void     (*fun)(ffi_cif*,void*,void**,void*);
+  void      *user_data;
+} ffi_closure;
+
+ffi_status
+ffi_prep_closure (ffi_closure*,
+		  ffi_cif *,
+		  void (*fun)(ffi_cif*,void*,void**,void*),
+		  void *user_data);
+
+#if !FFI_NO_RAW_API
+
+typedef struct {
+  char tramp[FFI_TRAMPOLINE_SIZE];
+
+  ffi_cif   *cif;
+
+#if !FFI_NATIVE_RAW_API
+
+  /* if this is enabled, then a raw closure has the same layout 
+     as a regular closure.  We use this to install an intermediate 
+     handler to do the transaltion, void** -> ffi_raw*. */
+
+  void     (*translate_args)(ffi_cif*,void*,void**,void*);
+  void      *this_closure;
+
+#endif
+
+  void     (*fun)(ffi_cif*,void*,ffi_raw*,void*);
+  void      *user_data;
+
+} ffi_raw_closure;
+
+ffi_status
+ffi_prep_raw_closure (ffi_raw_closure*,
+		      ffi_cif *cif,
+		      void (*fun)(ffi_cif*,void*,ffi_raw*,void*),
+		      void *user_data);
+
+#endif /* !FFI_NO_RAW_API */
+#endif /* FFI_CLOSURES */
 
 /* ---- Public interface definition -------------------------------------- */
 
