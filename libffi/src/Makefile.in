@@ -1,11 +1,16 @@
-# Makefile.in generated automatically by automake 1.2 from Makefile.am
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
 
-# Copyright (C) 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
-# gives unlimited permission to copy, distribute and modify it.
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
-SHELL = /bin/sh
+SHELL = @SHELL@
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -25,6 +30,8 @@ mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
 
+DESTDIR =
+
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -40,20 +47,27 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
-NORMAL_INSTALL = true
-PRE_INSTALL = true
-POST_INSTALL = true
-NORMAL_UNINSTALL = true
-PRE_UNINSTALL = true
-POST_UNINSTALL = true
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
 host_alias = @host_alias@
 host_triplet = @host@
+AMTAR = @AMTAR@
+AMTARFLAGS = @AMTARFLAGS@
+AS = @AS@
 CC = @CC@
+DLLTOOL = @DLLTOOL@
+EXEEXT = @EXEEXT@
 LD = @LD@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 NM = @NM@
 PACKAGE = @PACKAGE@
@@ -61,7 +75,9 @@ RANLIB = @RANLIB@
 SHELL = @SHELL@
 TARGET = @TARGET@
 TARGETDIR = @TARGETDIR@
+USE_SYMBOL_UNDERSCORE = @USE_SYMBOL_UNDERSCORE@
 VERSION = @VERSION@
+
 
 AUTOMAKE_OPTIONS = foreign
 
@@ -77,17 +93,17 @@ TARGET_SRC_SPARC = sparc/ffi.c sparc/v8.S
 TARGET_SRC_ALPHA = alpha/ffi.c alpha/osf.S
 TARGET_SRC_M68K = m68k/ffi.c m68k/sysv.S
 TARGET_SRC_POWERPC = powerpc/ffi.c powerpc/sysv.S
-TARGET_SRC_ARM =  arm/sysv.S arm/ffi.c
+TARGET_SRC_ARM = arm/sysv.S arm/ffi.c
 
 libffi_la_common_SOURCES = debug.c prep_cif.c types.c
-@MIPS_GCC_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_GCC)
-@MIPS_SGI_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_SGI)
-@X86_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_X86)
-@SPARC_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_SPARC)
-@ALPHA_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_ALPHA)
-@M68K_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_M68K)
-@POWERPC_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_POWERPC)
-@ARM_TRUE@libffi_la_SOURCES = $(libffi_la_common_SOURCES) $(TARGET_SRC_ARM)
+@MIPS_GCC_TRUE@libffi_la_SOURCES = @MIPS_GCC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_GCC)
+@MIPS_SGI_TRUE@libffi_la_SOURCES = @MIPS_SGI_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_SGI)
+@X86_TRUE@libffi_la_SOURCES = @X86_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_X86)
+@SPARC_TRUE@libffi_la_SOURCES = @SPARC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_SPARC)
+@ALPHA_TRUE@libffi_la_SOURCES = @ALPHA_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_ALPHA)
+@M68K_TRUE@libffi_la_SOURCES = @M68K_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_M68K)
+@POWERPC_TRUE@libffi_la_SOURCES = @POWERPC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_POWERPC)
+@ARM_TRUE@libffi_la_SOURCES = @ARM_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_ARM)
 
 libffi_la_LDFLAGS = -version-info 2:3:1
 ffitest_SOURCES = ffitest.c
@@ -101,9 +117,11 @@ m68k/ffi.c m68k/sysv.S \
 powerpc/ffi.c powerpc/sysv.S powerpc/asm.h \
 arm/ffi.c arm/sysv.S
 
+
 VPATH = @srcdir@:@srcdir@/@TARGETDIR@
 
 INCLUDES = -I$(top_srcdir)/include -I../include
+subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../fficonfig.h
 CONFIG_CLEAN_FILES = 
@@ -115,52 +133,52 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libffi_la_LIBADD = 
-@SPARC_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
-@SPARC_TRUE@v8.lo
-@MIPS_SGI_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
-@MIPS_SGI_TRUE@o32.lo n32.lo
-@MIPS_GCC_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
-@MIPS_GCC_TRUE@o32.lo n32.lo
-@M68K_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
-@M68K_TRUE@sysv.lo
-@ALPHA_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
+@ALPHA_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
 @ALPHA_TRUE@osf.lo
-@X86_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
-@X86_TRUE@sysv.lo
-@ARM_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo sysv.lo \
+@ARM_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo sysv.lo \
 @ARM_TRUE@ffi.lo
-@POWERPC_TRUE@libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
-@POWERPC_TRUE@sysv.lo
+@M68K_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
+@M68K_TRUE@sysv.lo
+@MIPS_GCC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
+@MIPS_GCC_TRUE@ffi.lo o32.lo n32.lo
+@MIPS_SGI_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
+@MIPS_SGI_TRUE@ffi.lo o32.lo n32.lo
+@POWERPC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
+@POWERPC_TRUE@ffi.lo sysv.lo
+@SPARC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
+@SPARC_TRUE@v8.lo
+@X86_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo ffi.lo \
+@X86_TRUE@sysv.lo
+libffi_la_OBJECTS =  $(am_libffi_la_OBJECTS)
+noinst_PROGRAMS =  ffitest$(EXEEXT)
 PROGRAMS =  $(noinst_PROGRAMS)
 
-ffitest_OBJECTS =  ffitest.o
+am_ffitest_OBJECTS =  ffitest.o
+ffitest_OBJECTS =  $(am_ffitest_OBJECTS)
 ffitest_DEPENDENCIES =  libffi.la
 ffitest_LDFLAGS = 
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
-LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@
-DIST_COMMON =  ChangeLog Makefile.am Makefile.in
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES =  $(libffi_la_SOURCES) $(ffitest_SOURCES)
+DIST_COMMON =  Makefile.am Makefile.in
 
 
-DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
-GZIP = --best
-DEP_FILES =  .deps/debug.P .deps/ffi.P .deps/ffitest.P .deps/n32.P \
-.deps/o32.P .deps/osf.P .deps/prep_cif.P .deps/sysv.P .deps/types.P \
-.deps/v8.P
+GZIP_ENV = --best
 SOURCES = $(libffi_la_SOURCES) $(ffitest_SOURCES)
-OBJECTS = $(libffi_la_OBJECTS) $(ffitest_OBJECTS)
+OBJECTS = $(am_libffi_la_OBJECTS) $(am_ffitest_OBJECTS)
 
-default: all
-
+all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .lo .o .s
-$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --cygnus src/Makefile
 
-Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status $(BUILT_SOURCES)
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -168,7 +186,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status $(BUILT_SOURCES)
 mostlyclean-libLTLIBRARIES:
 
 clean-libLTLIBRARIES:
-	test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
 
 distclean-libLTLIBRARIES:
 
@@ -176,45 +194,46 @@ maintainer-clean-libLTLIBRARIES:
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(libdir)
+	$(mkinstalldirs) $(DESTDIR)$(libdir)
 	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo "$(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(libdir)/$$p"; \
-	    $(LIBTOOL)  --mode=install $(INSTALL_PROGRAM) $$p $(libdir)/$$p; \
+	    echo "$(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p; \
 	  else :; fi; \
 	done
 
 uninstall-libLTLIBRARIES:
-	$(NORMAL_UNINSTALL)
-	list='$(lib_LTLIBRARIES)'; for p in $$list; do \
-	  $(LIBTOOL)  --mode=uninstall rm -f $(libdir)/$$p; \
+	@$(NORMAL_UNINSTALL)
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  echo " $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(libdir)/$$p"; \
+	  $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(libdir)/$$p; \
 	done
 
-.c.o:
-	$(COMPILE) -c $<
-
 mostlyclean-compile:
-	rm -f *.o core
+	-rm -f *.o core *.core
 
 clean-compile:
 
 distclean-compile:
-	rm -f *.tab.c
+	-rm -f *.tab.c
 
 maintainer-clean-compile:
 
-.c.lo:
-	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
-
 mostlyclean-libtool:
-	rm -f *.lo
+	-rm -f *.lo
 
 clean-libtool:
-	rm -rf .libs
+	-rm -rf .libs _libs
 
 distclean-libtool:
 
 maintainer-clean-libtool:
+ffi.lo: alpha/ffi.c
+osf.lo: alpha/osf.S
+sysv.lo: arm/sysv.S
+o32.lo: mips/o32.S
+n32.lo: mips/n32.S
+v8.lo: sparc/v8.S
 
 libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libffi_la_LDFLAGS) $(libffi_la_OBJECTS) $(libffi_la_LIBADD) $(LIBS)
@@ -222,141 +241,140 @@ libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES)
 mostlyclean-noinstPROGRAMS:
 
 clean-noinstPROGRAMS:
-	test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 
 distclean-noinstPROGRAMS:
 
 maintainer-clean-noinstPROGRAMS:
 
-ffitest: $(ffitest_OBJECTS) $(ffitest_DEPENDENCIES)
-	@rm -f ffitest
+ffitest$(EXEEXT): $(ffitest_OBJECTS) $(ffitest_DEPENDENCIES)
+	@rm -f ffitest$(EXEEXT)
 	$(LINK) $(ffitest_LDFLAGS) $(ffitest_OBJECTS) $(ffitest_LDADD) $(LIBS)
+.S.o:
+	$(COMPILE) -c $<
+.S.lo:
+	$(LTCOMPILE) -c -o $@ $<
+.c.o:
+	$(COMPILE) -c $<
+.c.lo:
+	$(LTCOMPILE) -c -o $@ $<
+.s.o:
+	$(COMPILE) -c $<
+.s.lo:
+	$(LTCOMPILE) -c -o $@ $<
 
 tags: TAGS
 
-ID: $(HEADERS) $(SOURCES)
-	here=`pwd` && cd $(srcdir) && mkid -f$$here/ID $(SOURCES) $(HEADERS)
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES)
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	test -z "$(ETAGS_ARGS)$(SOURCES)$(HEADERS)$$tags" \
-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $(SOURCES) $(HEADERS) -o $$here/TAGS)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
 
 mostlyclean-tags:
 
 clean-tags:
 
 distclean-tags:
-	rm -f TAGS ID
+	-rm -f TAGS ID
 
 maintainer-clean-tags:
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = src
-
 distdir: $(DISTFILES)
-	here=`cd $(top_builddir) && pwd`; \
-	top_distdir=`cd $(top_distdir) && pwd`; \
-	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --foreign src/Makefile
 	$(mkinstalldirs) $(distdir)/alpha $(distdir)/arm $(distdir)/m68k \
 	   $(distdir)/mips $(distdir)/powerpc $(distdir)/sparc \
 	   $(distdir)/x86
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
-	  test -f $(distdir)/$$file \
-	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
-	  || cp -p $$d/$$file $(distdir)/$$file; \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
 	done
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am:
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-info-am: 
+install-info: install-info-am
+install-exec-am: install-libLTLIBRARIES
+install-exec: install-exec-am
 
-MKDEP = gcc -M $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+install-data-am:
+install-data: install-data-am
 
-DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
--include .deps/.P
-.deps/.P: $(BUILT_SOURCES)
-	echo > $@
-
--include $(DEP_FILES)
-
-mostlyclean-depend:
-
-clean-depend:
-
-distclean-depend:
-
-maintainer-clean-depend:
-	rm -rf .deps
-
-.deps/%.P: %.c
-	@echo "Computing dependencies for $<..."
-	@o='o'; \
-	test -n "$o" && o='$$o'; \
-	$(MKDEP) $< >$@.tmp \
-	  && sed "s,^\(.*\)\.o:,\1.$$o \1.l$$o $@:," < $@.tmp > $@ \
-	  && rm -f $@.tmp
-info:
-dvi:
-check: all
-	$(MAKE)
-installcheck:
-install-exec: install-libLTLIBRARIES
-	@$(NORMAL_INSTALL)
-
-install-data: 
-	@$(NORMAL_INSTALL)
-
-install: install-exec install-data all
-	@:
-
-uninstall: uninstall-libLTLIBRARIES
-
-all: Makefile $(LTLIBRARIES) $(PROGRAMS)
-
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-libLTLIBRARIES
+uninstall: uninstall-am
+all-am: Makefile $(LTLIBRARIES) $(PROGRAMS)
+all-redirect: all-am
 install-strip:
-	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs:
-	$(mkinstalldirs)  $(libdir)
+	$(mkinstalldirs)  $(DESTDIR)$(libdir)
 
 
 mostlyclean-generic:
-	test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
 
 clean-generic:
-	test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
-	rm -f Makefile $(DISTCLEANFILES)
-	rm -f config.cache config.log stamp-h stamp-h[0-9]*
-	test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
-	test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
-mostlyclean:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
+mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
 		mostlyclean-libtool mostlyclean-noinstPROGRAMS \
-		mostlyclean-tags mostlyclean-depend mostlyclean-generic
+		mostlyclean-tags mostlyclean-generic
 
-clean:  clean-libLTLIBRARIES clean-compile clean-libtool \
-		clean-noinstPROGRAMS clean-tags clean-depend \
-		clean-generic mostlyclean
+mostlyclean: mostlyclean-am
 
-distclean:  distclean-libLTLIBRARIES distclean-compile distclean-libtool \
-		distclean-noinstPROGRAMS distclean-tags \
-		distclean-depend distclean-generic clean
-	rm -f config.status
-	rm -f libtool
+clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool \
+		clean-noinstPROGRAMS clean-tags clean-generic \
+		mostlyclean-am
 
-maintainer-clean:  maintainer-clean-libLTLIBRARIES \
+clean: clean-am
+
+distclean-am:  distclean-libLTLIBRARIES distclean-compile \
+		distclean-libtool distclean-noinstPROGRAMS \
+		distclean-tags distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-noinstPROGRAMS maintainer-clean-tags \
-		maintainer-clean-depend maintainer-clean-generic \
-		distclean
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
-.PHONY: default mostlyclean-libLTLIBRARIES distclean-libLTLIBRARIES \
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-libLTLIBRARIES distclean-libLTLIBRARIES \
 clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
 uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
 distclean-compile clean-compile maintainer-clean-compile \
@@ -364,9 +382,10 @@ mostlyclean-libtool distclean-libtool clean-libtool \
 maintainer-clean-libtool mostlyclean-noinstPROGRAMS \
 distclean-noinstPROGRAMS clean-noinstPROGRAMS \
 maintainer-clean-noinstPROGRAMS tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info dvi \
-installcheck install-exec install-data install uninstall all \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-info-am install-info \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
