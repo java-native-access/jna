@@ -1,7 +1,6 @@
-# Makefile.in generated automatically by automake 1.4d from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
-# Free Software Foundation, Inc.
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -11,10 +10,12 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+
 SHELL = @SHELL@
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
+VPATH = @srcdir@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 
@@ -31,6 +32,8 @@ mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
 
+DESTDIR =
+
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -43,11 +46,9 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
-INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -56,18 +57,19 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
 host_alias = @host_alias@
 host_triplet = @host@
+AM_RUNTESTFLAGS = @AM_RUNTESTFLAGS@
 AS = @AS@
 CC = @CC@
 DLLTOOL = @DLLTOOL@
 EXEEXT = @EXEEXT@
+LD = @LD@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+NM = @NM@
 OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
@@ -77,20 +79,12 @@ TARGETDIR = @TARGETDIR@
 VERSION = @VERSION@
 libffi_basedir = @libffi_basedir@
 
+AUTOMAKE_OPTIONS = foreign no-installinfo
 
-AUTOMAKE_OPTIONS = cygnus
+@TESTSUBDIR_TRUE@SUBDIRS = testsuite
 
-EXTRA_DIST = LICENSE ChangeLog.v1 src/mips/ffi.c src/mips/n32.S \
-		src/mips/n32.s src/mips/o32.S src/mips/o32.s \
-		src/sparc/ffi.c src/sparc/v8.S src/sparc/v9.S \
-		src/x86/ffi.c src/x86/sysv.S \
-		src/alpha/ffi.c src/alpha/osf.S \
-		src/m68k/ffi.c src/m68k/sysv.S \
-		src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/asm.h \
-		src/arm/ffi.c src/arm/sysv.S
+EXTRA_DIST = LICENSE README ChangeLog.v1 alpha/ffi.c arm/ffi.c	   ia64/ffi.c m68k/ffi.c mips/ffi.c powerpc/ffi.c s390/ffi.c	   sparc/ffi.c x86/ffi.c alpha/osf.S arm/sysv.S ia64/unix.S	   m68k/sysv.S mips/n32.S mips/o32.S				   powerpc/sysv.S s390/sysv.S sparc/v8.S sparc/v9.S x86/win32.S	   x86/sysv.S
 
-
-VPATH = @srcdir@:@srcdir@/src:@srcdir@/src/@TARGETDIR@
 
 # Multilib support variables.
 MULTISRCTOP = 
@@ -99,46 +93,21 @@ MULTIDIRS =
 MULTISUBDIR = 
 MULTIDO = true
 MULTICLEAN = true
-@USE_LIBDIR_TRUE@toolexeclibdir = @USE_LIBDIR_TRUE@$(libdir)$(MULTISUBDIR)
-@USE_LIBDIR_FALSE@toolexeclibdir = @USE_LIBDIR_FALSE@$(toolexecdir)/lib$(MULTISUBDIR)
-@USE_LIBDIR_FALSE@toolexecdir = @USE_LIBDIR_FALSE@$(exec_prefix)/$(target_alias)
+@USE_LIBDIR_TRUE@toolexeclibdir = $(libdir)$(MULTISUBDIR)
+@USE_LIBDIR_FALSE@toolexeclibdir = $(toolexecdir)/lib$(MULTISUBDIR)
+@USE_LIBDIR_FALSE@toolexecdir = $(exec_prefix)/$(target_alias)
 
 toolexeclib_LTLIBRARIES = libffi.la
 
-noinst_PROGRAMS = ffitest
+nodist_libffi_la_SOURCES = t-ffi.c t-asm.S
+libffi_la_SOURCES = debug.c prep_cif.c types.c 		raw_api.c java_raw_api.c $(nodist_libffi_la_SOURCES)
 
-ffitest_SOURCES = src/ffitest.c
-ffitest_LDADD = libffi.la
-
-TARGET_SRC_MIPS_GCC = src/mips/ffi.c src/mips/o32.S src/mips/n32.S
-TARGET_SRC_MIPS_SGI = src/mips/ffi.c src/mips/o32.s src/mips/n32.s
-TARGET_SRC_X86 = src/x86/ffi.c src/x86/sysv.S
-TARGET_SRC_SPARC = src/sparc/ffi.c src/sparc/v8.S src/sparc/v9.S
-TARGET_SRC_ALPHA = src/alpha/ffi.c src/alpha/osf.S
-TARGET_SRC_IA64 = src/ia64/ffi.c src/ia64/unix.S
-TARGET_SRC_M68K = src/m68k/ffi.c src/m68k/sysv.S
-TARGET_SRC_POWERPC = src/powerpc/ffi.c src/powerpc/sysv.S
-TARGET_SRC_ARM = src/arm/sysv.S src/arm/ffi.c
-
-libffi_la_common_SOURCES = src/debug.c src/prep_cif.c src/types.c \
-		src/raw_api.c src/java_raw_api.c
-
-@MIPS_GCC_TRUE@libffi_la_SOURCES = @MIPS_GCC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_GCC)
-@MIPS_SGI_TRUE@libffi_la_SOURCES = @MIPS_SGI_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_MIPS_SGI)
-@X86_TRUE@libffi_la_SOURCES = @X86_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_X86)
-@SPARC_TRUE@libffi_la_SOURCES = @SPARC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_SPARC)
-@ALPHA_TRUE@libffi_la_SOURCES = @ALPHA_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_ALPHA)
-@IA64_TRUE@libffi_la_SOURCES = @IA64_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_IA64)
-@M68K_TRUE@libffi_la_SOURCES = @M68K_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_M68K)
-@POWERPC_TRUE@libffi_la_SOURCES = @POWERPC_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_POWERPC)
-@ARM_TRUE@libffi_la_SOURCES = @ARM_TRUE@$(libffi_la_common_SOURCES) $(TARGET_SRC_ARM)
 
 AM_CFLAGS = -fexceptions
 
 libffi_la_LDFLAGS = -release $(VERSION) 
 
 INCLUDES = -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
-subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = fficonfig.h
@@ -151,61 +120,40 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libffi_la_LIBADD = 
-@ALPHA_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@ALPHA_TRUE@raw_api.lo java_raw_api.lo ffi.lo osf.lo
-@ARM_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@ARM_TRUE@raw_api.lo java_raw_api.lo sysv.lo ffi.lo
-@IA64_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@IA64_TRUE@raw_api.lo java_raw_api.lo ffi.lo unix.lo
-@M68K_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@M68K_TRUE@raw_api.lo java_raw_api.lo ffi.lo sysv.lo
-@MIPS_GCC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@MIPS_GCC_TRUE@raw_api.lo java_raw_api.lo ffi.lo o32.lo n32.lo
-@MIPS_SGI_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@MIPS_SGI_TRUE@raw_api.lo java_raw_api.lo ffi.lo o32.lo n32.lo
-@POWERPC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@POWERPC_TRUE@raw_api.lo java_raw_api.lo ffi.lo sysv.lo
-@SPARC_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@SPARC_TRUE@raw_api.lo java_raw_api.lo ffi.lo v8.lo v9.lo
-@X86_TRUE@am_libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo \
-@X86_TRUE@raw_api.lo java_raw_api.lo ffi.lo sysv.lo
-libffi_la_OBJECTS =  $(am_libffi_la_OBJECTS)
-noinst_PROGRAMS =  ffitest$(EXEEXT)
-PROGRAMS =  $(noinst_PROGRAMS)
-
-am_ffitest_OBJECTS =  ffitest.o
-ffitest_OBJECTS =  $(am_ffitest_OBJECTS)
-ffitest_DEPENDENCIES =  libffi.la
-ffitest_LDFLAGS = 
+libffi_la_OBJECTS =  debug.lo prep_cif.lo types.lo raw_api.lo \
+java_raw_api.lo t-ffi.lo t-asm.lo
+CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
 CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libffi_la_SOURCES) $(ffitest_SOURCES)
-depcomp = 
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  README ./stamp-h.in ChangeLog Makefile.am Makefile.in \
-acconfig.h aclocal.m4 config.guess config.sub configure configure.in \
-fficonfig.h.in install-sh ltconfig ltmain.sh missing mkinstalldirs
+acconfig.h acinclude.m4 aclocal.m4 config.guess config.sub configure \
+configure.in fficonfig.h.in install-sh ltconfig ltmain.sh missing \
+mkinstalldirs
 
 
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
+TAR = gtar
 GZIP_ENV = --best
-SOURCES = $(libffi_la_SOURCES) $(ffitest_SOURCES)
-OBJECTS = $(am_libffi_la_OBJECTS) $(am_ffitest_OBJECTS)
+DIST_SUBDIRS =  testsuite
+DEP_FILES =  .deps/debug.P .deps/java_raw_api.P .deps/prep_cif.P \
+.deps/raw_api.P .deps/t-asm.P .deps/t-ffi.P .deps/types.P
+SOURCES = $(libffi_la_SOURCES)
+OBJECTS = $(libffi_la_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .lo .o .s
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --cygnus Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --foreign Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
-	  && CONFIG_FILES=$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in 
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in  acinclude.m4
 	cd $(srcdir) && $(ACLOCAL)
 
 config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
@@ -219,25 +167,27 @@ fficonfig.h: stamp-h
 		$(MAKE) stamp-h; \
 	else :; fi
 stamp-h: $(srcdir)/fficonfig.h.in $(top_builddir)/config.status
-	@rm -f stamp-h stamp-hT
-	@echo timestamp > stamp-hT 2> /dev/null
 	cd $(top_builddir) \
 	  && CONFIG_FILES= CONFIG_HEADERS=fficonfig.h \
 	     $(SHELL) ./config.status
-	@mv stamp-hT stamp-h
-$(srcdir)/fficonfig.h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h.in
+	@echo timestamp > stamp-h 2> /dev/null
+$(srcdir)/fficonfig.h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/stamp-h.in
 	@if test ! -f $@; then \
-		rm -f $(srcdir)/./stamp-h.in; \
-		$(MAKE) $(srcdir)/./stamp-h.in; \
+		rm -f $(srcdir)/stamp-h.in; \
+		$(MAKE) $(srcdir)/stamp-h.in; \
 	else :; fi
-$(srcdir)/./stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
-	@rm -f $(srcdir)/./stamp-h.in $(srcdir)/./stamp-h.inT
-	@echo timestamp > $(srcdir)/./stamp-h.inT 2> /dev/null
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
 	cd $(top_srcdir) && $(AUTOHEADER)
-	@mv $(srcdir)/./stamp-h.inT $(srcdir)/./stamp-h.in
+	@echo timestamp > $(srcdir)/stamp-h.in 2> /dev/null
+
+mostlyclean-hdr:
+
+clean-hdr:
 
 distclean-hdr:
 	-rm -f fficonfig.h
+
+maintainer-clean-hdr:
 
 mostlyclean-toolexeclibLTLIBRARIES:
 
@@ -253,23 +203,38 @@ install-toolexeclibLTLIBRARIES: $(toolexeclib_LTLIBRARIES)
 	$(mkinstalldirs) $(DESTDIR)$(toolexeclibdir)
 	@list='$(toolexeclib_LTLIBRARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo " $(LIBTOOL)  --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(toolexeclibdir)/$$p"; \
-	    $(LIBTOOL)  --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(toolexeclibdir)/$$p; \
+	    echo "$(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(toolexeclibdir)/$$p"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(toolexeclibdir)/$$p; \
 	  else :; fi; \
 	done
 
 uninstall-toolexeclibLTLIBRARIES:
 	@$(NORMAL_UNINSTALL)
-	@list='$(toolexeclib_LTLIBRARIES)'; for p in $$list; do \
-	  echo " $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(toolexeclibdir)/$$p"; \
+	list='$(toolexeclib_LTLIBRARIES)'; for p in $$list; do \
 	  $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(toolexeclibdir)/$$p; \
 	done
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
 
+clean-compile:
+
 distclean-compile:
 	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+.s.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.S.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -278,506 +243,229 @@ clean-libtool:
 	-rm -rf .libs _libs
 
 distclean-libtool:
-	-rm -f libtool
-debug.lo: src/debug.c
-prep_cif.lo: src/prep_cif.c
-types.lo: src/types.c
-raw_api.lo: src/raw_api.c
-java_raw_api.lo: src/java_raw_api.c
-ffi.lo: src/alpha/ffi.c
-osf.lo: src/alpha/osf.S
-sysv.lo: src/arm/sysv.S
-unix.lo: src/ia64/unix.S
-o32.lo: src/mips/o32.S
-n32.lo: src/mips/n32.S
-v8.lo: src/sparc/v8.S
-v9.lo: src/sparc/v9.S
+
+maintainer-clean-libtool:
 
 libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES)
 	$(LINK) -rpath $(toolexeclibdir) $(libffi_la_LDFLAGS) $(libffi_la_OBJECTS) $(libffi_la_LIBADD) $(LIBS)
 
-mostlyclean-noinstPROGRAMS:
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
 
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+@SET_MAKE@
 
-distclean-noinstPROGRAMS:
+all-recursive install-data-recursive install-exec-recursive \
+installdirs-recursive install-recursive uninstall-recursive install-info-recursive \
+check-recursive installcheck-recursive info-recursive dvi-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
 
-maintainer-clean-noinstPROGRAMS:
-ffitest.o: src/ffitest.c
-
-ffitest$(EXEEXT): $(ffitest_OBJECTS) $(ffitest_DEPENDENCIES)
-	@rm -f ffitest$(EXEEXT)
-	$(LINK) $(ffitest_LDFLAGS) $(ffitest_OBJECTS) $(ffitest_LDADD) $(LIBS)
-.S.o:
-	$(COMPILE) -c $<
-.S.lo:
-	$(LTCOMPILE) -c -o $@ $<
-.c.o:
-	$(COMPILE) -c $<
-.c.lo:
-	$(LTCOMPILE) -c -o $@ $<
-.s.o:
-	$(COMPILE) -c $<
-.s.lo:
-	$(LTCOMPILE) -c -o $@ $<
+mostlyclean-recursive clean-recursive distclean-recursive \
+maintainer-clean-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
+	  rev="$$subdir $$rev"; \
+	  test "$$subdir" = "." && dot_seen=yes; \
+	done; \
+	test "$$dot_seen" = "no" && rev=". $$rev"; \
+	target=`echo $@ | sed s/-recursive//`; \
+	for subdir in $$rev; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+tags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
+	done
 
 tags: TAGS
 
-ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '    { files[$$0] = 1; } \
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	mkid -fID $$unique $(LISP)
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
 
-TAGS: $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
+TAGS: tags-recursive $(HEADERS) $(SOURCES) fficonfig.h.in $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '    { files[$$0] = 1; } \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+   if test "$$subdir" = .; then :; else \
+	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
+   fi; \
+	done; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
-	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
+	test -z "$(ETAGS_ARGS)fficonfig.h.in$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags fficonfig.h.in $$unique $(LISP) -o $$here/TAGS)
 
-GTAGS:
-	here=`CDPATH=: && cd $(top_builddir) && pwd` \
-	  && cd $(top_srcdir) \
-	  && gtags -i $$here
+mostlyclean-tags:
+
+clean-tags:
 
 distclean-tags:
 	-rm -f TAGS ID
 
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/alpha/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/alpha/ffi.c || echo '$(srcdir)/'`src/alpha/ffi.c
-
-ffi.lo: src/alpha/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/alpha/ffi.c || echo '$(srcdir)/'`src/alpha/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/arm/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/arm/ffi.c || echo '$(srcdir)/'`src/arm/ffi.c
-
-ffi.lo: src/arm/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/arm/ffi.c || echo '$(srcdir)/'`src/arm/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/ia64/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/ia64/ffi.c || echo '$(srcdir)/'`src/ia64/ffi.c
-
-ffi.lo: src/ia64/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/ia64/ffi.c || echo '$(srcdir)/'`src/ia64/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/m68k/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/m68k/ffi.c || echo '$(srcdir)/'`src/m68k/ffi.c
-
-ffi.lo: src/m68k/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/m68k/ffi.c || echo '$(srcdir)/'`src/m68k/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/mips/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/mips/ffi.c || echo '$(srcdir)/'`src/mips/ffi.c
-
-ffi.lo: src/mips/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/mips/ffi.c || echo '$(srcdir)/'`src/mips/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/mips/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/mips/ffi.c || echo '$(srcdir)/'`src/mips/ffi.c
-
-ffi.lo: src/mips/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/mips/ffi.c || echo '$(srcdir)/'`src/mips/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/powerpc/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/powerpc/ffi.c || echo '$(srcdir)/'`src/powerpc/ffi.c
-
-ffi.lo: src/powerpc/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/powerpc/ffi.c || echo '$(srcdir)/'`src/powerpc/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/sparc/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/sparc/ffi.c || echo '$(srcdir)/'`src/sparc/ffi.c
-
-ffi.lo: src/sparc/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/sparc/ffi.c || echo '$(srcdir)/'`src/sparc/ffi.c
-
-debug.o: src/debug.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.o `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-debug.lo: src/debug.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o debug.lo `test -f src/debug.c || echo '$(srcdir)/'`src/debug.c
-
-prep_cif.o: src/prep_cif.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.o `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-prep_cif.lo: src/prep_cif.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o prep_cif.lo `test -f src/prep_cif.c || echo '$(srcdir)/'`src/prep_cif.c
-
-types.o: src/types.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.o `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-types.lo: src/types.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o types.lo `test -f src/types.c || echo '$(srcdir)/'`src/types.c
-
-raw_api.o: src/raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.o `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-raw_api.lo: src/raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o raw_api.lo `test -f src/raw_api.c || echo '$(srcdir)/'`src/raw_api.c
-
-java_raw_api.o: src/java_raw_api.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.o `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-java_raw_api.lo: src/java_raw_api.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o java_raw_api.lo `test -f src/java_raw_api.c || echo '$(srcdir)/'`src/java_raw_api.c
-
-ffi.o: src/x86/ffi.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.o `test -f src/x86/ffi.c || echo '$(srcdir)/'`src/x86/ffi.c
-
-ffi.lo: src/x86/ffi.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libffi_la_CFLAGS) $(CFLAGS) -c -o ffi.lo `test -f src/x86/ffi.c || echo '$(srcdir)/'`src/x86/ffi.c
-
-ffitest.o: src/ffitest.c
-	$(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ffitest_CFLAGS) $(CFLAGS) -c -o ffitest.o `test -f src/ffitest.c || echo '$(srcdir)/'`src/ffitest.c
-
-ffitest.lo: src/ffitest.c
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ffitest_CFLAGS) $(CFLAGS) -c -o ffitest.lo `test -f src/ffitest.c || echo '$(srcdir)/'`src/ffitest.c
+maintainer-clean-tags:
 
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
-
 
 # This target untars the dist file and tries a VPATH configuration.  Then
 # it guarantees that the distribution is self-contained by making another
 # tarfile.
 distcheck: dist
-	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) gunzip -c $(distdir).tar.gz | $(AMTAR) xf -
-	chmod -R a-w $(distdir); chmod a+w $(distdir)
+	-rm -rf $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
 	mkdir $(distdir)/=build
 	mkdir $(distdir)/=inst
-	chmod a-w $(distdir)
-	dc_install_base=`CDPATH=: && cd $(distdir)/=inst && pwd` \
-	  && cd $(distdir)/=build \
+	dc_install_base=`cd $(distdir)/=inst && pwd`; \
+	cd $(distdir)/=build \
 	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
 	  && $(MAKE) $(AM_MAKEFLAGS) \
 	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
 	  && $(MAKE) $(AM_MAKEFLAGS) check \
 	  && $(MAKE) $(AM_MAKEFLAGS) install \
 	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
-	  && $(MAKE) $(AM_MAKEFLAGS) uninstall \
-	  && test `find $$dc_install_base -type f -print | wc -l` -le 1 \
-	  && $(MAKE) $(AM_MAKEFLAGS) dist \
-	  && $(MAKE) $(AM_MAKEFLAGS) distclean \
-	  && rm -f $(distdir).tar.gz \
-	  && test `find . -type f -print | wc -l` -eq 0
-	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
+	  && $(MAKE) $(AM_MAKEFLAGS) dist
+	-rm -rf $(distdir)
 	@banner="$(distdir).tar.gz is ready for distribution"; \
 	dashes=`echo "$$banner" | sed s/./=/g`; \
 	echo "$$dashes"; \
 	echo "$$banner"; \
 	echo "$$dashes"
 dist: distdir
-	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
-	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
-	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
-	  ! -type d ! -perm -444 -exec $(SHELL) $(install_sh) -c -m a+r {} {} \; \
-	|| chmod -R a+r $(distdir)
-	$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c > $(distdir).tar.gz
-	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
+	-chmod -R a+r $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
+	-rm -rf $(distdir)
 dist-all: distdir
-	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
-	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
-	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
-	  ! -type d ! -perm -444 -exec $(SHELL) $(install_sh) -c -m a+r {} {} \; \
-	|| chmod -R a+r $(distdir)
-	$(AMTAR) chof - $(distdir) | GZIP=$(GZIP_ENV) gzip -c > $(distdir).tar.gz
-	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
-
+	-chmod -R a+r $(distdir)
+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
+	-rm -rf $(distdir)
 distdir: $(DISTFILES)
-	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
+	-rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/include $(distdir)/src/alpha $(distdir)/src/arm $(distdir)/src/m68k $(distdir)/src/mips $(distdir)/src/powerpc $(distdir)/src/sparc $(distdir)/src/x86 include src/alpha src/arm src/m68k src/mips src/powerpc src/sparc src/x86
+	-chmod 777 $(distdir)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(distdir) && pwd`; \
+	distdir=`cd $(distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --foreign Makefile
+	$(mkinstalldirs) $(distdir)/alpha $(distdir)/arm $(distdir)/ia64 \
+	   $(distdir)/m68k $(distdir)/mips $(distdir)/powerpc \
+	   $(distdir)/s390 $(distdir)/sparc $(distdir)/x86
 	@for file in $(DISTFILES); do \
-	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pR $$d/$$file $(distdir) \
-	    || exit 1; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
-	    || cp -p $$d/$$file $(distdir)/$$file \
-	    || exit 1; \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
+	for subdir in $(DIST_SUBDIRS); do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d $(distdir)/$$subdir \
+	    || mkdir $(distdir)/$$subdir \
+	    || exit 1; \
+	    chmod 777 $(distdir)/$$subdir; \
+	    (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir=../$(distdir) distdir=../$(distdir)/$$subdir distdir) \
+	      || exit 1; \
+	  fi; \
+	done
+
+DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
+
+-include $(DEP_FILES)
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf .deps
+
+maintainer-clean-depend:
+
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 info-am:
-info: info-am
+info: info-recursive
 dvi-am:
-dvi: dvi-am
-check-am:
-check: check-am
+dvi: dvi-recursive
+check-am: all-am
+check: check-recursive
 installcheck-am:
-installcheck: installcheck-am
+installcheck: installcheck-recursive
 install-info-am: 
-install-info: install-info-am
-all-redirect: fficonfig.h
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+install-info: install-info-recursive
+all-recursive-am: fficonfig.h
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 install-exec-am: install-toolexeclibLTLIBRARIES
-install-exec: install-exec-am
+install-exec: install-exec-recursive
 
 install-data-am:
-install-data: install-data-am
+install-data: install-data-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
+install: install-recursive
 uninstall-am: uninstall-toolexeclibLTLIBRARIES
-uninstall: uninstall-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) fficonfig.h
+uninstall: uninstall-recursive
+all-am: Makefile $(LTLIBRARIES) fficonfig.h
+all-redirect: all-recursive-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs: installdirs-recursive
+installdirs-am:
 	$(mkinstalldirs)  $(DESTDIR)$(toolexeclibdir)
 
 
@@ -790,48 +478,58 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	@echo "This command is intended for maintainers to use"
+mostlyclean-am:  mostlyclean-hdr mostlyclean-toolexeclibLTLIBRARIES \
+		mostlyclean-compile mostlyclean-libtool \
+		mostlyclean-tags mostlyclean-depend mostlyclean-generic
+
+mostlyclean: mostlyclean-recursive
+
+clean-am:  clean-hdr clean-toolexeclibLTLIBRARIES clean-compile \
+		clean-libtool clean-tags clean-depend clean-generic \
+		mostlyclean-am
+
+clean: clean-recursive
+
+distclean-am:  distclean-hdr distclean-toolexeclibLTLIBRARIES \
+		distclean-compile distclean-libtool distclean-tags \
+		distclean-depend distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-recursive
+	-rm -f config.status
+
+maintainer-clean-am:  maintainer-clean-hdr \
+		maintainer-clean-toolexeclibLTLIBRARIES \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f Makefile.in
-clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
-	clean-toolexeclibLTLIBRARIES mostlyclean-am
-
-distclean: distclean-am
+maintainer-clean: maintainer-clean-recursive
 	-rm -f config.status
 
-distclean-am: clean-am distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-noinstPROGRAMS distclean-tags \
-	distclean-toolexeclibLTLIBRARIES
-
-maintainer-clean: maintainer-clean-am
-	-rm -f config.status
-
-maintainer-clean-am: distclean-am maintainer-clean-generic \
-	maintainer-clean-noinstPROGRAMS \
-	maintainer-clean-toolexeclibLTLIBRARIES
-
-mostlyclean: mostlyclean-am
-
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool mostlyclean-noinstPROGRAMS \
-	mostlyclean-toolexeclibLTLIBRARIES
-
-.PHONY: all-redirect check check-am clean clean-generic clean-libtool \
-	clean-noinstPROGRAMS clean-toolexeclibLTLIBRARIES distclean \
-	distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-noinstPROGRAMS distclean-tags \
-	distclean-toolexeclibLTLIBRARIES distdir dvi dvi-am info \
-	info-am install install-am install-data install-data-am \
-	install-exec install-exec-am install-info install-info-am \
-	install-strip install-toolexeclibLTLIBRARIES installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic maintainer-clean-noinstPROGRAMS \
-	maintainer-clean-toolexeclibLTLIBRARIES mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	mostlyclean-noinstPROGRAMS mostlyclean-toolexeclibLTLIBRARIES \
-	tags uninstall uninstall-am uninstall-toolexeclibLTLIBRARIES
+.PHONY: mostlyclean-hdr distclean-hdr clean-hdr maintainer-clean-hdr \
+mostlyclean-toolexeclibLTLIBRARIES distclean-toolexeclibLTLIBRARIES \
+clean-toolexeclibLTLIBRARIES maintainer-clean-toolexeclibLTLIBRARIES \
+uninstall-toolexeclibLTLIBRARIES install-toolexeclibLTLIBRARIES \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile mostlyclean-libtool distclean-libtool \
+clean-libtool maintainer-clean-libtool install-data-recursive \
+uninstall-data-recursive install-exec-recursive \
+uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
+all-recursive check-recursive installcheck-recursive info-recursive \
+dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
+maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir \
+mostlyclean-depend distclean-depend clean-depend \
+maintainer-clean-depend info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-info-am install-info \
+all-recursive-am install-exec-am install-exec install-data-am \
+install-data install-am install uninstall-am uninstall all-redirect \
+all-am all installdirs-am installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

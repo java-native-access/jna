@@ -1,3 +1,30 @@
+Sat Apr 14 20:49:46 2001  Anthony Green  <green@cygnus.com>
+
+	* mips/ffi.c: Include mips/mips.h.
+	* mips/o32.S: Ditto.
+	* mips/n32.S: Ditto.
+	* mips/o32.s: Deleted.
+	* mips/n32.s: Deleted.
+
+Sat Apr 14 20:47:13 2001  Anthony Green  <green@cygnus.com>
+
+	* mips/mips.h: Moved from include/ffi_mips.h.
+
+Sat Apr 14 20:09:05 2001  Anthony Green  <green@cygnus.com>
+
+	* powerpc/asm.h: Remove rcs id.
+
+Sat Apr 14 15:04:08 2001  Anthony Green  <green@cygnus.com>
+
+	* configure.in: Use AC_COMPILE_CHECK_SIZEOF and
+	AC_C_BIGENDIAN_CROSS.
+
+Sat Apr 14 15:02:53 2001  Anthony Green  <green@cygnus.com>
+
+	* aclocal.m4: Rebuilt.
+	* acinclude.m4: New file.  Add AC_COMPILE_CHECK_SIZEOF and
+	AC_C_BIGENDIAN_CROSS.
+
 2001-04-8  Neale Ferguson <Neale.Ferguson@softwareAG-usa.com>
 
 	* src/s390/ffi.c: New file.
