@@ -3,7 +3,7 @@
    
    x86 Foreign Function Interface 
 
-   $Id: ffi.c,v 1.2 1999/08/04 18:00:05 green Exp $
+   $Id: ffi.c,v 1.3 1999/08/08 13:05:12 green Exp $
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -468,12 +468,13 @@ ffi_call_SYSV(void (*)(char *, extended_cif *),
 	      void (*fn)());
 
 void
-ffi_call_raw(/*@dependent@*/ ffi_cif *cif, 
+ffi_raw_call(/*@dependent@*/ ffi_cif *cif, 
 	     void (*fn)(), 
 	     /*@out@*/ void *rvalue, 
-	     /*@dependent@*/ void **avalue)
+	     /*@dependent@*/ ffi_raw *fake_avalue)
 {
   extended_cif ecif;
+  void **avalue = (void **)fake_avalue;
 
   ecif.cif = cif;
   ecif.avalue = avalue;

@@ -25,6 +25,10 @@
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 
+/* Define if your processor stores words with the most significant
+   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
+#undef WORDS_BIGENDIAN
+
 /* Define this if you want extra debugging */
 #undef FFI_DEBUG
 
@@ -32,14 +36,11 @@
    spurious messages. */
 #undef USING_PURIFY
 
-/* Define this if you want the raw api disabled */
-#undef FFI_DISABLE_RAW_API
+/* Define this is you do not want support for aggregate types.  */
+#undef FFI_NO_STRUCTS
 
-/* This is the package name */
-#undef PACKAGE
-
-/* This is the package version */
-#undef VERSION
+/* Define this is you do not want support for the raw API.  */
+#undef FFI_NO_RAW_API
 
 /* The number of bytes in a double.  */
 #undef SIZEOF_DOUBLE
@@ -62,12 +63,15 @@
 /* The number of bytes in a short.  */
 #undef SIZEOF_SHORT
 
+/* The number of bytes in a void *.  */
+#undef SIZEOF_VOID_P
+
 /* Define if you have the memcpy function.  */
 #undef HAVE_MEMCPY
 
-/* Define if target machine is big endian. */
-#undef WORDS_BIGENDIAN
+/* Name of package */
+#undef PACKAGE
 
-/* The number of bytes in a void pointer.  */
-#undef SIZEOF_VOID_P
+/* Version number of package */
+#undef VERSION
 
