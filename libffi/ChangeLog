@@ -1,0 +1,11 @@
+1998-11-29  Anthony Green  <green@raft.ppp.tsoft.net>
+
+	* include/ChangeLog: Remboved.
+	* src/ChangeLog: Remboved.
+	* src/mips/ChangeLog: Remboved.
+	* src/sparc/ChangeLog: Remboved.
+	* src/x86/ChangeLog: Remboved.
+
+	* ChangeLog.v1: Created.
+	
+
