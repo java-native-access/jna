@@ -1,6 +1,6 @@
 2000-04-16  Anthony Green  <green@redhat.com>
 
-	* README: Credit updates.
+	* README: Credit updates.  Update supported platorms.
 
 	* include/ffi.h.in: Important size fixes from William Knottenblet
 	(wjk@doc.ic.ac.uk).

@@ -42,27 +42,26 @@ Supported Platforms and Prerequisites
 
 Libffi has been ported to:
 
-	SunOS 4.1.3 & Solaris 2.x (Sparc v8)
-
-	32- and 64-bit Sparc Linux (Sparc v8 and v9)
-
-	Irix 5.3 & 6.2 (System V/o32 & n32)
-
-	Intel IA-32 - Linux (System V ABI)
-
-	Intel IA-64 - Linux (System V ABI)
-
 	Alpha - Linux and OSF/1
-
-	m68k - Linux (System V ABI)
-
-	PowerPC - Linux (System V ABI)
 
 	ARM - Linux (System V ABI)
 
-Libffi has been tested with GCC 2.95 and newer compilers. 
+	IA-32 - Linux, Solaris, and BeOS (System V ABI)
 
-On PowerPC, the tests failed (see the note below).
+	IA-64 - Linux (System V ABI)
+
+	m68k - Linux (System V ABI)
+
+	MIPS, 32- and 64-bit - Irix (System V/o32 and n32)
+
+	PowerPC - Linux (System V ABI)
+
+	Sparc, 32-bit - SunOS 4.1.3, Solaris 2.x, and Linux (Sparc v8)
+
+	Sparc, 64-bit - Linux (Sparc v9)
+
+
+Libffi has been tested with GCC 2.95 and newer compilers. 
 
 You must use GNU make to build libffi.
 	
