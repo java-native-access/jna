@@ -2,7 +2,16 @@
 
 AUTOMAKE_OPTIONS = cygnus
 
-EXTRA_DIST = LICENSE
+EXTRA_DIST = LICENSE ChangeLog.v1 src/mips/ffi.c src/mips/n32.S \
+		src/mips/n32.s src/mips/o32.S src/mips/o32.s \
+		src/sparc/ffi.c src/sparc/v8.S \
+		src/x86/ffi.c src/x86/sysv.S \
+		src/alpha/ffi.c src/alpha/osf.S \
+		src/m68k/ffi.c src/m68k/sysv.S \
+		src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/asm.h \
+		src/arm/ffi.c src/arm/sysv.S
+
+VPATH = @srcdir@:@srcdir@/src:@srcdir@/src/@TARGETDIR@
 
 # Multilib support variables.
 MULTISRCTOP =
@@ -18,6 +27,11 @@ toolexeclibdir = $(toolexecdir)/lib$(MULTISUBDIR)
 ## We don't use `libz.la' because we don't want to conflict with a
 ## system library of that name.
 toolexeclib_LTLIBRARIES = libffi.la
+
+noinst_PROGRAMS = ffitest
+
+ffitest_SOURCES = src/ffitest.c
+ffitest_LDADD = libffi.la
 
 TARGET_SRC_MIPS_GCC = src/mips/ffi.c src/mips/o32.S src/mips/n32.S
 TARGET_SRC_MIPS_SGI = src/mips/ffi.c src/mips/o32.s src/mips/n32.s

@@ -2,6 +2,13 @@ dnl Process this with autoconf to create configure
 AC_INIT(fficonfig.h.in)
 AM_CONFIG_HEADER(fficonfig.h)
 
+AC_MSG_WARN(***********************************************************)
+AC_MSG_WARN(***********************************************************)
+AC_MSG_WARN(This is beta code.  If you're looking for a stable release)
+AC_MSG_WARN(then use the most recent one - libffi-1.20.)
+AC_MSG_WARN(***********************************************************)
+AC_MSG_WARN(***********************************************************)
+
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE(libffi,2.00)
@@ -59,6 +66,11 @@ AC_ARG_ENABLE(debug,[  --enable-debug          Debugging mode], AC_DEFINE(FFI_DE
 AC_ARG_ENABLE(purify-safety,
 [  --enable-purify-safety  Purify-safe mode], AC_DEFINE(USING_PURIFY))
 
+AC_ARG_ENABLE(debug,[  --disable-structs       Omit code for struct support], AC_DEFINE(FFI_NO_STRUCTS))
+
+AC_ARG_ENABLE(purify-safety,
+[  --enable-purify-safety  Purify-safe mode], AC_DEFINE(USING_PURIFY))
+
 AC_OUTPUT(include/Makefile include/ffi.h Makefile,, 
 test ! -d include && mkdir include
 test ! -f include/fficonfig.h && cp fficonfig.h include/fficonfig.h
@@ -69,4 +81,3 @@ else
 	cp fficonfig.h include/fficonfig.h
 fi
 )
-

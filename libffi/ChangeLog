@@ -1,10 +1,29 @@
-1998-11-29  Anthony Green  <green@raft.ppp.tsoft.net>
+1999-05-09  Anthony Green  <green@cygnus.com>
 
-	* include/ChangeLog: Remboved.
-	* src/ChangeLog: Remboved.
-	* src/mips/ChangeLog: Remboved.
+	* configure.in: Add warning about this being beta code.
+	Remove src/Makefile.am from the picture.
+	* configure: Rebuilt.
+
+	* Makefile.am: Move logic from src/Makefile.am.  Add changes
+	to support libffi as a target library.
+	* Makefile.in: Rebuilt.
+
+	* aclocal.m4, config.guess, config.sub, ltconfig, ltmain.sh:
+	Upgraded to new autoconf, automake, libtool.
+
+	* README: Tweaks.
+
+	* LICENSE: Update copyright date.
+
+	* src/Makefile.am, src/Makefile.in: Removed.
+
+1998-11-29  Anthony Green  <green@cygnus.com>
+
+	* include/ChangeLog: Removed.
+	* src/ChangeLog: Removed.
+	* src/mips/ChangeLog: Removed.
 	* src/sparc/ChangeLog: Remboved.
-	* src/x86/ChangeLog: Remboved.
+	* src/x86/ChangeLog: Removed.
 
 	* ChangeLog.v1: Created.
 	
