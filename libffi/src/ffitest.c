@@ -1,8 +1,6 @@
 /* -----------------------------------------------------------------------
    ffitest.c - Copyright (c) 1996, 1997, 1998  Cygnus Solutions
 
-   $Id: ffitest.c,v 1.1 1998/11/29 16:48:16 green Exp $
-
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
    ``Software''), to deal in the Software without restriction, including
@@ -17,7 +15,7 @@
    THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+   IN NO EVENT SHALL RED HAT BE LIABLE FOR ANY CLAIM, DAMAGES OR
    OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
    OTHER DEALINGS IN THE SOFTWARE.
@@ -196,6 +194,16 @@ static test_structure_5 struct5(test_structure_5 ts1, test_structure_5 ts2)
   return ts1;
 }
 
+/* Take an int and a float argument, together with int userdata, and 	*/
+/* return the sum.							*/
+static void closure_test_fn(ffi_cif* cif,void* resp,void** args, void* userdata)
+{
+    *(int*)resp =
+	 *(int *)args[0] + (int)(*(float *)args[1]) + (int)(long)userdata;
+}
+
+typedef int (*closure_test_type)(int, float);
+
 int main(/*@unused@*/ int argc, /*@unused@*/ char *argv[])
 {
   ffi_cif cif;
@@ -214,7 +222,7 @@ int main(/*@unused@*/ int argc, /*@unused@*/ char *argv[])
   signed int si1;
   signed int si2;
 
-#if defined(ALPHA) || (defined(MIPS) && (_MIPS_SIM == _ABIN32))
+#if defined(ALPHA) || defined(IA64) || defined(SPARC64) || (defined(MIPS) && (_MIPS_SIM == _ABIN32))
   long long rint;
 #else
   int rint;
@@ -285,7 +293,7 @@ int main(/*@unused@*/ int argc, /*@unused@*/ char *argv[])
 
   /* return value tests */
   {
-#if defined(MIPS) || defined(SPARC) /* || defined(ARM) */
+#if defined(MIPS) /* || defined(ARM) */
     puts ("long long tests not run. This is a known bug on this architecture.");
 #else
     args[0] = &ffi_type_sint64;
@@ -533,6 +541,8 @@ int main(/*@unused@*/ int argc, /*@unused@*/ char *argv[])
     printf("%lu promotion tests run\n", ul);
   }
 
+#ifndef X86_WIN32 /* Structures dont work on Win32 */
+
   /* struct tests */
   {
     test_structure_1 ts1_arg;
@@ -690,6 +700,31 @@ int main(/*@unused@*/ int argc, /*@unused@*/ char *argv[])
 
     free (ts5_result);
   }
+
+#else
+  printf("Structure passing doesn't work on Win32.\n");
+#endif /* X86_WIN32 */
+
+# if FFI_CLOSURES
+  /* A simple closure test */
+    {
+      ffi_closure cl;
+      ffi_type * cl_arg_types[3];
+
+      cl_arg_types[0] = &ffi_type_sint;
+      cl_arg_types[1] = &ffi_type_float;
+      cl_arg_types[2] = NULL;
+      
+      /* Initialize the cif */
+      CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, 
+	    	         &ffi_type_sint, cl_arg_types) == FFI_OK);
+
+      CHECK(ffi_prep_closure(&cl, &cif, closure_test_fn,
+			     (void *) 3 /* userdata */)
+	    == FFI_OK);
+      CHECK((*((closure_test_type)(&cl)))(1, 2.0) == 6);
+    }
+# endif
 
   /* If we arrived here, all is good */
   (void) puts("\nLooks good. No surprises.\n");

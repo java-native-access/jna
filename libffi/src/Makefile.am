@@ -27,6 +27,7 @@ TARGET_SRC_ALPHA = alpha/ffi.c alpha/osf.S
 TARGET_SRC_M68K = m68k/ffi.c m68k/sysv.S
 TARGET_SRC_POWERPC = powerpc/ffi.c powerpc/sysv.S
 TARGET_SRC_ARM =  arm/sysv.S arm/ffi.c
+TARGET_SRC_S390 = s390/sysv.S s390/ffi.c
 
 ##libffi_la_SOURCES = debug.c prep_cif.c types.c $(TARGET_SRC_@TARGET@)
 ## Work around automake deficiency

@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------
-   ffi_common.h - Copyright (c) 1996  Cygnus Solutions
+   ffi_common.h - Copyright (c) 1996  Red Hat, Inc.
 
-   $Id: ffi_common.h,v 1.2 2000/04/17 03:18:45 green Exp $
+   $Id: ffi_common.h,v 1.3 2001/04/09 00:58:37 green Exp $
 
    Common internal definitions and macros. Only necessary for building
    libffi.

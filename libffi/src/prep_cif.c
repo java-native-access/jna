@@ -1,8 +1,6 @@
 /* -----------------------------------------------------------------------
    prep_cif.c - Copyright (c) 1996, 1998  Cygnus Solutions
 
-   $Id: prep_cif.c,v 1.1 1998/11/29 16:48:16 green Exp $
-
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
    ``Software''), to deal in the Software without restriction, including
@@ -17,7 +15,7 @@
    THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+   IN NO EVENT SHALL RED HAT BE LIABLE FOR ANY CLAIM, DAMAGES OR
    OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
    OTHER DEALINGS IN THE SOFTWARE.
@@ -107,7 +105,11 @@ ffi_status ffi_prep_cif(/*@out@*/ /*@partial@*/ ffi_cif *cif,
 
 #ifndef M68K
   /* Make space for the return structure pointer */
-  if (cif->rtype->type == FFI_TYPE_STRUCT)
+  if (cif->rtype->type == FFI_TYPE_STRUCT
+#ifdef SPARC
+      && (cif->abi != FFI_V9 || cif->rtype->size > 32)
+#endif
+      )
     bytes = STACK_ARG_SIZE(sizeof(void*));
 #endif
 
@@ -121,8 +123,10 @@ ffi_status ffi_prep_cif(/*@out@*/ /*@partial@*/ ffi_cif *cif,
 	return FFI_BAD_TYPEDEF;
 
 #ifdef SPARC
-      if ((*ptr)->type == FFI_TYPE_STRUCT
-	  || (*ptr)->type == FFI_TYPE_LONGDOUBLE)
+      if (((*ptr)->type == FFI_TYPE_STRUCT
+	   && ((*ptr)->size > 16 || cif->abi != FFI_V9))
+	  || ((*ptr)->type == FFI_TYPE_LONGDOUBLE
+	      && cif->abi != FFI_V9))
 	bytes += sizeof(void*);
       else
 #endif
@@ -140,4 +144,3 @@ ffi_status ffi_prep_cif(/*@out@*/ /*@partial@*/ ffi_cif *cif,
   /* Perform machine dependent cif processing */
   return ffi_prep_cif_machdep(cif);
 }
-

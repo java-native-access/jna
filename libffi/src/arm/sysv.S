@@ -3,8 +3,6 @@
    
    ARM Foreign Function Interface 
 
-   $Id: sysv.S,v 1.1 1998/11/29 16:48:16 green Exp $
-
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
    ``Software''), to deal in the Software without restriction, including
@@ -97,19 +95,13 @@ ENTRY(ffi_call_SYSV)
 	beq   epilogue
 
 # return FLOAT
-	cmp   a4, #FFI_TYPE_FLOAT
-        bne   retdouble
-	stfs  f0, [a3]
-	b     epilogue
+	cmp     a4, #FFI_TYPE_FLOAT
+	stfeqs  f0, [a3]
+	beq     epilogue
 
 # return DOUBLE or LONGDOUBLE
-retdouble:
-	cmp   a4, #FFI_TYPE_DOUBLE
-	bne   epilogue
-
-	stfs  f0, [a3, #0]
-	stfs  f1, [a3, #4]
-	b     epilogue
+	cmp     a4, #FFI_TYPE_DOUBLE
+	stfeqd  f0, [a3]
 
 epilogue:
         ldmfd sp!, {a1-a4, fp, pc}

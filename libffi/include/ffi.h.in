@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------*-C-*-
-   libffi 2.00 - Copyright (c) 1996, 1997, 1998, 1999, 2000  Red Hat, Inc.
+   libffi @VERSION@ - Copyright (C) 1996, 1997, 1998, 1999, 2000, 
+                                    2001  Red Hat, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -15,7 +16,7 @@
    THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+   IN NO EVENT SHALL RED HAT BE LIABLE FOR ANY CLAIM, DAMAGES OR
    OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
    OTHER DEALINGS IN THE SOFTWARE.
@@ -41,11 +42,11 @@
 
    More details on the raw and cloure API can be found in:
 
-   http://sourceware.cygnus.com/ml/java-discuss/1999-q3/msg00138.html
+   http://gcc.gnu.org/ml/java/1999-q3/msg00138.html
 
    and
 
-   http://sourceware.cygnus.com/ml/java-discuss/1999-q3/msg00174.html
+   http://gcc.gnu.org/ml/java/1999-q3/msg00174.html
    -------------------------------------------------------------------- */
 
 #ifndef LIBFFI_H
@@ -79,69 +80,75 @@ extern "C" {
 #define SINT8   signed char
 
 #if SIZEOF_INT == 2
-#define UINT16  unsigned int
+
+#define UINT16	unsigned int
 #define SINT16  int
 #define ffi_type_uint ffi_type_uint16
 #define ffi_type_sint ffi_type_sint16
-#endif
 
+#else 
 #if SIZEOF_SHORT == 2
-#undef UINT16
-#undef SINT16
+
 #define UINT16  unsigned short
 #define SINT16  short
 #define ffi_type_ushort ffi_type_uint16
 #define ffi_type_sshort ffi_type_sint16
+
+#endif
 #endif
 
 #if SIZEOF_INT == 4
-#define UINT32  unsigned int
+
+#define UINT32	unsigned int
 #define SINT32  int
 #define ffi_type_uint ffi_type_uint32
 #define ffi_type_sint ffi_type_sint32
-#endif
 
+#else 
 #if SIZEOF_SHORT == 4
-#undef UINT32
-#undef SINT32
+
 #define UINT32  unsigned short
 #define SINT32  short
 #define ffi_type_ushort ffi_type_uint32
 #define ffi_type_sshort ffi_type_sint32
-#endif
 
+#else
 #if SIZEOF_LONG == 4
-#undef UINT32
-#undef SINT32
+
 #define UINT32  unsigned long
 #define SINT32  long
 #define ffi_type_ulong ffi_type_uint32
 #define ffi_type_slong ffi_type_sint32
+
+#endif
+#endif
 #endif
 
 #if SIZEOF_INT == 8
+
 #define UINT64  unsigned int
 #define SINT64  int
 #define ffi_type_uint ffi_type_uint64
 #define ffi_type_sint ffi_type_sint64
-#endif
 
+#else
 #if SIZEOF_LONG == 8
-#undef UINT64
-#undef SINT64
+
 #define UINT64  unsigned long
 #define SINT64  long
 #define ffi_type_ulong ffi_type_uint64
 #define ffi_type_slong ffi_type_sint64
-#endif
 
+#else
 #if SIZEOF_LONG_LONG == 8
-#undef UINT64
-#undef SINT64
+
 #define UINT64  unsigned long long
 #define SINT64  long long
-#define ffi_type_ulonglong ffi_type_uint64
-#define ffi_type_slonglong ffi_type_sint64
+#define ffi_type_ulong ffi_type_uint64
+#define ffi_type_slong ffi_type_sint64
+
+#endif
+#endif
 #endif
 
 /* ---- System specific configurations ----------------------------------- */
@@ -189,6 +196,12 @@ typedef enum ffi_abi {
   FFI_DEFAULT_ABI = FFI_SYSV,
 #endif
 
+  /* ---- Intel x86 Win32 ---------- */
+#ifdef X86_WIN32
+  FFI_SYSV,
+  FFI_DEFAULT_ABI = FFI_SYSV,
+#endif
+
   /* ---- Intel ia64 ---------------- */
 #ifdef IA64
   FFI_UNIX,   	/* Linux and all Unix variants use the same conventions	*/
@@ -223,6 +236,12 @@ typedef enum ffi_abi {
 
   /* ---- ARM  --------------------- */
 #ifdef ARM
+  FFI_SYSV,
+  FFI_DEFAULT_ABI = FFI_SYSV,
+#endif
+
+  /* ---- S390 --------------------- */
+#ifdef S390
   FFI_SYSV,
   FFI_DEFAULT_ABI = FFI_SYSV,
 #endif
@@ -345,6 +364,12 @@ size_t ffi_java_raw_size (ffi_cif *cif);
 #define FFI_TRAMPOLINE_SIZE 10
 #define FFI_NATIVE_RAW_API 1	/* and has native raw api support */
 
+#elif defined(X86_WIN32)
+
+#define FFI_CLOSURES 1		/* x86 supports closures */
+#define FFI_TRAMPOLINE_SIZE 10
+#define FFI_NATIVE_RAW_API 1	/* and has native raw api support */
+
 #elif defined(IA64)
 
 #define FFI_CLOSURES 1
@@ -358,6 +383,18 @@ struct ffi_ia64_trampoline_struct {
     void * real_gp;		/* Real gp value, reinstalled by 	*/
 				/* ffi_closure_UNIX.			*/
 };
+#define FFI_NATIVE_RAW_API 0
+
+#elif defined(ALPHA)
+
+#define FFI_CLOSURES 1
+#define FFI_TRAMPOLINE_SIZE 24
+#define FFI_NATIVE_RAW_API 0
+
+#elif defined(POWERPC)
+
+#define FFI_CLOSURES 1
+#define FFI_TRAMPOLINE_SIZE 40
 #define FFI_NATIVE_RAW_API 0
 
 #else 

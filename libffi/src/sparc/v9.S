@@ -3,8 +3,6 @@
    
    Sparc 64bit Foreign Function Interface 
 
-   $Id: v9.S,v 1.1 2000/04/17 03:18:46 green Exp $
-
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
    ``Software''), to deal in the Software without restriction, including

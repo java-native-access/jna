@@ -2,12 +2,12 @@
 # mkinstalldirs --- make directory hierarchy
 # Author: Noah Friedman <friedman@prep.ai.mit.edu>
 # Created: 1993-05-16
+# Last modified: 1994-03-25
 # Public domain
 
 errstatus=0
 
-for file
-do
+for file in ${1+"$@"} ; do 
    set fnord `echo ":$file" | sed -ne 's/^:\//#/;s/^://;s/\// /g;s/^#/\//;p'`
    shift
 
@@ -20,7 +20,11 @@ do
 
      if test ! -d "$pathcomp"; then
         echo "mkdir $pathcomp" 1>&2
-        mkdir "$pathcomp" || errstatus=$?
+        mkdir "$pathcomp" > /dev/null 2>&1 || lasterr=$?
+     fi
+
+     if test ! -d "$pathcomp"; then
+	errstatus=$lasterr
      fi
 
      pathcomp="$pathcomp/"

@@ -19,7 +19,7 @@
    THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+   IN NO EVENT SHALL RED HAT BE LIABLE FOR ANY CLAIM, DAMAGES OR
    OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
    OTHER DEALINGS IN THE SOFTWARE.
@@ -202,13 +202,13 @@ void ffi_raw_call (/*@dependent@*/ ffi_cif *cif,
 #if FFI_CLOSURES		/* base system provides closures */
 
 static void 
-ffi_translate_args (ffi_cif *cif, void *ravlue,
+ffi_translate_args (ffi_cif *cif, void *rvalue,
 		    void **avalue, void *user_data)
 {
   ffi_raw *raw = (ffi_raw*)alloca (ffi_raw_size (cif));
-  ffi_ptrarray_to_raw (cif, avalue, raw);
-
   ffi_raw_closure *cl = (ffi_raw_closure*)user_data;
+
+  ffi_ptrarray_to_raw (cif, avalue, raw);
   (*cl->fun) (cif, rvalue, raw, cl->user_data);
 }
 
@@ -226,7 +226,7 @@ ffi_prep_raw_closure (ffi_raw_closure* cl,
 
   status = ffi_prep_closure ((ffi_closure*) cl, 
 			     cif,
-			     &ffi_closure_translate,
+			     &ffi_translate_args,
 			     (void*)cl);
   if (status == FFI_OK)
     {
