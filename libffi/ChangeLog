@@ -1,3 +1,17 @@
+Sun Oct 21 12:15:17 2001  Anthony Green  <green@redhat.com>
+
+	* testsuite/lib/libffi.exp, testsuite/libffi.call/float.c,
+	testsuite/libffi.call/many.c, testsuite/libffi.call/strlen.c,
+	testsuite/libffi.call/ffitest.h, testsuite/libffi.call/call.exp,
+	testsuite/config/default.exp, testsuite/Makefile.am,
+	testsuite/Makefile.in: New files.
+	
+	* include/ffi.h: Remove /*@ comments.
+	(FFI_ALIGN_RVALUE): Define.
+
+	* Makefile.am (libffi_la_LDFLAGS): Remove -I$(srcdir)/src.
+	* Makefile.in: Rebuilt.
+
 Sun Apr 22 15:50:08 2001  Anthony Green  <green@redhat.com>
 
 	* include/ffi_common.h: Delete, after moving contents to...

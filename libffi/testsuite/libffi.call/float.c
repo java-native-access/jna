@@ -19,7 +19,7 @@ main ()
   float f;
   double d;
   long double ld;
-  int rint __attribute__((aligned(8)));
+  int rint FFI_ALIGN_RVALUE;
 
   args[0] = &ffi_type_sint;
   values[0] = &si1;

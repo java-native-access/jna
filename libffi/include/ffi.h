@@ -20,7 +20,6 @@
    OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
    OTHER DEALINGS IN THE SOFTWARE.
-
    ----------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------
@@ -234,10 +233,10 @@ typedef union {
   void*    ptr;
 } ffi_raw;
 
-void ffi_raw_call (/*@dependent@*/ ffi_cif *cif, 
+void ffi_raw_call (ffi_cif *cif, 
 		   void (*fn)(), 
-		   /*@out@*/ void *rvalue, 
-		   /*@dependent@*/ ffi_raw *avalue);
+		   void *rvalue, 
+		   ffi_raw *avalue);
 
 void ffi_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw);
 void ffi_raw_to_ptrarray (ffi_cif *cif, ffi_raw *raw, void **args);
@@ -249,10 +248,10 @@ size_t ffi_raw_size (ffi_cif *cif);
 /* packing, even on 64-bit machines.  I.e. on 64-bit machines		*/
 /* longs and doubles are followed by an empty 64-bit word.		*/
 
-void ffi_java_raw_call (/*@dependent@*/ ffi_cif *cif, 
+void ffi_java_raw_call (ffi_cif *cif, 
 		        void (*fn)(), 
-		        /*@out@*/ void *rvalue, 
-		        /*@dependent@*/ ffi_raw *avalue);
+		        void *rvalue, 
+		        ffi_raw *avalue);
 
 void ffi_java_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw);
 void ffi_java_raw_to_ptrarray (ffi_cif *cif, ffi_raw *raw, void **args);
@@ -261,6 +260,11 @@ size_t ffi_java_raw_size (ffi_cif *cif);
 #endif /* !NO_JAVA_RAW_API */
 
 #endif /* !FFI_NO_RAW_API */
+
+/* ---- Return type alignment -------------------------------------------- */
+
+/* This is more than enough for all supported architectures.  */
+#define FFI_ALIGN_RVALUE __attribute__((aligned(8)))
 
 /* ---- Definitions for closures ----------------------------------------- */
 

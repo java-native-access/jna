@@ -43,4 +43,4 @@ AM_CFLAGS = -fexceptions
 
 libffi_la_LDFLAGS = -release $(VERSION) 
 
-INCLUDES = -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+INCLUDES = -I$(top_srcdir)/include -Iinclude

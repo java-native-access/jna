@@ -11,7 +11,7 @@ main ()
   ffi_cif cif;
   ffi_type *args[1];
   void *values[1];
-  int rint __attribute__((aligned(8)));
+  int rint FFI_ALIGN_RVALUE;
   char *s;
 
   args[0] = &ffi_type_pointer;
