@@ -1,0 +1,291 @@
+/* -----------------------------------------------------------------*-C-*-
+   libffi @VERSION@ - Copyright (c) 1996, 1997, 1998  Cygnus Solutions
+
+   $Id: ffi.h.in,v 1.1 1998/11/29 16:48:16 green Exp $
+
+   Permission is hereby granted, free of charge, to any person obtaining
+   a copy of this software and associated documentation files (the
+   ``Software''), to deal in the Software without restriction, including
+   without limitation the rights to use, copy, modify, merge, publish,
+   distribute, sublicense, and/or sell copies of the Software, and to
+   permit persons to whom the Software is furnished to do so, subject to
+   the following conditions:
+
+   The above copyright notice and this permission notice shall be included
+   in all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+   OTHER DEALINGS IN THE SOFTWARE.
+
+   ----------------------------------------------------------------------- */
+
+#ifndef LIBFFI_H
+#define LIBFFI_H
+
+/* Specify which architecture libffi is configured for. */
+#define @TARGET@
+
+/* ---- System configuration information --------------------------------- */
+
+#include <fficonfig.h>
+
+#if !defined(LIBFFI_ASM)
+#include <stddef.h>
+#if defined(FFI_DEBUG) 
+#include <stdio.h>
+#endif
+#endif
+
+/* ---- Generic type definitions ----------------------------------------- */
+
+#define FLOAT32 float
+#define FLOAT64 double
+#define FLOAT80 long double
+
+#define UINT8   unsigned char
+#define SINT8   signed char
+
+#if SIZEOF_INT == 2
+
+#define UINT16	unsigned int
+#define SINT16  int
+#define ffi_type_uint ffi_type_uint16
+#define ffi_type_sint ffi_type_sint16
+
+#else 
+#if SIZEOF_SHORT == 2
+
+#define UINT16  unsigned short
+#define SINT16  short
+#define ffi_type_ushort ffi_type_uint16
+#define ffi_type_sshort ffi_type_sint16
+
+#endif
+#endif
+
+#if SIZEOF_INT == 4
+
+#define UINT32	unsigned int
+#define SINT32  int
+#define ffi_type_uint ffi_type_uint32
+#define ffi_type_sint ffi_type_sint32
+
+#else 
+#if SIZEOF_SHORT == 4
+
+#define UINT32  unsigned short
+#define SINT32  short
+#define ffi_type_ushort ffi_type_uint32
+#define ffi_type_sshort ffi_type_sint32
+
+#else
+#if SIZEOF_LONG == 4
+
+#define UINT32  unsigned long
+#define SINT32  long
+#define ffi_type_ulong ffi_type_uint32
+#define ffi_type_slong ffi_type_sint32
+
+#endif
+#endif
+#endif
+
+#if SIZEOF_INT == 8
+
+#define UINT64  unsigned int
+#define SINT64  int
+#define ffi_type_uint ffi_type_uint64
+#define ffi_type_sint ffi_type_sint64
+
+#else
+#if SIZEOF_LONG == 8
+
+#define UINT64  unsigned long
+#define SINT64  long
+#define ffi_type_ulong ffi_type_uint64
+#define ffi_type_slong ffi_type_sint64
+
+#else
+#if SIZEOF_LONG_LONG == 8
+
+#define UINT64  unsigned long long
+#define SINT64  long long
+#define ffi_type_ulong ffi_type_uint64
+#define ffi_type_slong ffi_type_sint64
+
+#endif
+#endif
+#endif
+
+/* ---- System specific configurations ----------------------------------- */
+
+#ifdef MIPS
+#include <ffi_mips.h>
+#else
+#define SIZEOF_ARG sizeof(void*)
+#endif
+
+#ifndef LIBFFI_ASM
+
+/* ---- Generic type definitions ----------------------------------------- */
+
+#define ALIGN(v, a)  (((((unsigned) (v))-1) | ((a)-1))+1)
+
+typedef enum ffi_abi {
+
+  /* Leave this for debugging purposes */
+  FFI_FIRST_ABI = 0,
+
+  /* ---- Sparc -------------------- */
+#ifdef SPARC
+  FFI_V8,
+  FFI_DEFAULT_ABI = FFI_V8,
+  FFI_V8PLUS,
+  FFI_V9,
+#endif
+
+  /* ---- Intel x86 ---------------- */
+#ifdef X86
+  FFI_SYSV,
+  FFI_DEFAULT_ABI = FFI_SYSV,
+#endif
+
+  /* ---- Mips --------------------- */
+#ifdef MIPS
+  FFI_O32,
+  FFI_N32,
+  FFI_N64,
+#endif
+
+  /* ---- Alpha -------------------- */
+#ifdef ALPHA
+  FFI_OSF,
+  FFI_DEFAULT_ABI = FFI_OSF,
+#endif
+
+  /* ---- Motorola m68k ------------ */
+#ifdef M68K
+  FFI_SYSV,
+  FFI_DEFAULT_ABI = FFI_SYSV,
+#endif
+
+  /* ---- PowerPC ------------------ */
+#ifdef POWERPC
+  FFI_SYSV,
+  FFI_GCC_SYSV,
+  FFI_DEFAULT_ABI = FFI_GCC_SYSV,
+#endif
+
+  /* ---- ARM  --------------------- */
+#ifdef ARM
+  FFI_SYSV,
+  FFI_DEFAULT_ABI = FFI_SYSV,
+#endif
+
+  /* Leave this for debugging purposes */
+  FFI_LAST_ABI
+
+} ffi_abi;
+
+typedef struct _ffi_type
+{
+  size_t size;
+  unsigned short alignment;
+  unsigned short type;
+  /*@null@*/ struct _ffi_type **elements;
+} ffi_type;
+
+/* These are defined in ffi.c */
+extern ffi_type ffi_type_void;
+extern ffi_type ffi_type_uint8;
+extern ffi_type ffi_type_sint8;
+extern ffi_type ffi_type_uint16;
+extern ffi_type ffi_type_sint16;
+extern ffi_type ffi_type_uint32;
+extern ffi_type ffi_type_sint32;
+extern ffi_type ffi_type_uint64;
+extern ffi_type ffi_type_sint64;
+extern ffi_type ffi_type_float;
+extern ffi_type ffi_type_double;
+extern ffi_type ffi_type_longdouble;
+extern ffi_type ffi_type_pointer;
+
+/* Characters are 8 bit integral types */
+#define ffi_type_schar ffi_type_sint8
+#define ffi_type_uchar ffi_type_uint8
+
+typedef enum {
+  FFI_OK = 0,
+  FFI_BAD_TYPEDEF,
+  FFI_BAD_ABI 
+} ffi_status;
+
+typedef unsigned FFI_TYPE;
+
+typedef struct {
+  ffi_abi abi;
+  unsigned nargs;
+  /*@dependent@*/ ffi_type **arg_types;
+  /*@dependent@*/ ffi_type *rtype;
+  unsigned bytes;
+  unsigned flags;
+
+#ifdef MIPS
+#if _MIPS_SIM == _ABIN32
+  unsigned rstruct_flag;
+#endif
+#endif
+
+} ffi_cif;
+
+/* ---- Public interface definition -------------------------------------- */
+
+ffi_status ffi_prep_cif(/*@out@*/ /*@partial@*/ ffi_cif *cif, 
+			ffi_abi abi,
+			unsigned int nargs, 
+			/*@dependent@*/ /*@out@*/ /*@partial@*/ ffi_type *rtype, 
+			/*@dependent@*/ ffi_type **atypes);
+
+void ffi_call(/*@dependent@*/ ffi_cif *cif, 
+	      void (*fn)(), 
+	      /*@out@*/ void *rvalue, 
+	      /*@dependent@*/ void **avalue);
+
+/* Useful for eliminating compiler warnings */
+#define FFI_FN(f) ((void (*)())f)
+
+/* ---- Definitions shared with assembly code ---------------------------- */
+
+#endif
+
+#define FFI_TYPE_VOID       0    
+#define FFI_TYPE_INT        1
+#define FFI_TYPE_FLOAT      2    
+#define FFI_TYPE_DOUBLE     3
+#if SIZEOF_LONG_DOUBLE == SIZEOF_DOUBLE
+#define FFI_TYPE_LONGDOUBLE FFI_TYPE_DOUBLE
+#else
+#define FFI_TYPE_LONGDOUBLE 4
+#endif
+
+#define FFI_TYPE_UINT8      5   /* If this changes, update ffi_mips.h. */
+#define FFI_TYPE_SINT8      6   /* If this changes, update ffi_mips.h. */
+#define FFI_TYPE_UINT16     7 
+#define FFI_TYPE_SINT16     8
+#define FFI_TYPE_UINT32     9
+#define FFI_TYPE_SINT32     10
+#define FFI_TYPE_UINT64     11
+#define FFI_TYPE_SINT64     12
+#define FFI_TYPE_STRUCT     13  /* If this changes, update ffi_mips.h. */
+#define FFI_TYPE_POINTER    14
+
+/* This should always refer to the last type code (for sanity checks) */
+#define FFI_TYPE_LAST       FFI_TYPE_POINTER
+
+#endif
+
