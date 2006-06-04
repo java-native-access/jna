@@ -27,4 +27,4 @@
 
 ^htdocs (/usr/sourceware/bin/auto_checkout /www/sourceware/htdocs/libffi %{sv} >> $CVSROOT/CVSROOT/updatelog 2>&1 &)
 
-DEFAULT (/usr/sourceware/bin/log_accum -T libffi -G libffi -m libffi-cvs@sourceware.cygnus.com -s %s)
+DEFAULT (/usr/sourceware/bin/log_accum -T libffi -G libffi -m libffi-cvs@sourceware.org -s %s)
