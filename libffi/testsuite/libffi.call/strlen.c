@@ -1,3 +1,10 @@
+/* Area:	ffi_call
+   Purpose:	Check strlen function call.
+   Limitations:	none.
+   PR:		none.
+   Originator:	From the original ffitest.c  */
+
+/* { dg-do run } */
 #include "ffitest.h"
 
 static size_t my_strlen(char *s)
@@ -5,18 +12,17 @@ static size_t my_strlen(char *s)
   return (strlen(s));
 }
 
-int 
-main ()
+int main (void)
 {
   ffi_cif cif;
-  ffi_type *args[1];
-  void *values[1];
-  int rint FFI_ALIGN_RVALUE;
+  ffi_type *args[MAX_ARGS];
+  void *values[MAX_ARGS];
+  ffi_arg rint;
   char *s;
 
   args[0] = &ffi_type_pointer;
   values[0] = (void*) &s;
-    
+  
   /* Initialize the cif */
   CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, 
 		     &ffi_type_sint, args) == FFI_OK);

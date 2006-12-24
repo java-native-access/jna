@@ -1,3 +1,10 @@
+/* Area:	ffi_call
+   Purpose:	Check return value float, with many arguments
+   Limitations:	none.
+   PR:		none.
+   Originator:	From the original ffitest.c  */
+
+/* { dg-do run } */
 #include "ffitest.h"
 
 #include <float.h>
@@ -26,8 +33,7 @@ static float many(float f1,
   return ((f1/f2+f3/f4+f5/f6+f7/f8+f9/f10+f11/f12) * f13);
 }
 
-int 
-main ()
+int main (void)
 {
   ffi_cif cif;
   ffi_type *args[13];
