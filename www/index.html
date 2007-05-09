@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,ctypes,pinvoke,jdirect,java platform invoke,java native library access,java native access,call native from java,java c library,easy jni,call c code from java,java native method call,java native function call,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-04-27">
+<meta name="date" content="2007-05-09">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -13,7 +13,7 @@
 <p>The JNA library uses a small native library stub to dynamically invoke native code without the developer having to write JNI code. The developer describes functions and structures from the target native library in a Java interface. From his perspective, he interacts only with Java code. This makes it quite easy to take advantage of native platform features without getting into the major hassle of writing your own JNI code. It also facilitates implementing cross-platofrm features withing incurring the high overhead of configuring and building JNI for multiple platforms.</p>
 <p>JNA's design aims to provide native access in a natural way with a minimum of effort.  No boilerplate or generated code is required.  While some attention is paid to performance, correctness and ease of use take priority.</p>
  <p>This work is based on a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. Since that time, Todd Fast updated the library to fix bugs and support the <code>STDCALL</code> calling convention on Windows, and completely rewrote the Java part of the library to use annotations to declare native library interfaces. </p>
-<p>Timothy Wall has contributed the latest development on the <a href="https://jna.dev.java.net/source/browse/jna/jnalib/?only_with_tag=BRANCH_V2">BRANCH_V2 CVS branch</a>, which introduced the following features:<br>
+<p>Timothy Wall has contributed the latest development (now under subversion), which introduced the following features:<br>
 <ul>
 <li>Function arguments (callbacks from native code to Java code)
 <li>By-reference (pointer-to-type) arguments
@@ -86,7 +86,7 @@ public interface Kernel32 extends StdCallLibrary {
     void GetSystemTime(SYSTEMTIME result);
 }</textarea>
   </li>
-  <li>Simply invoke methods on the returned Java instance just like any other Java class. The JNA library marshals values to and from native code and invokes native functions using the <code>jnidispatch</code> library. For a more extensive example, see the <a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/WindowUtils.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=markup">WindowUtils</a> and <a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/ShapedWindowDemo.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=markup">ShapedWindowDemo</a> classes.
+  <li>Simply invoke methods on the returned Java instance just like any other Java class. The JNA library marshals values to and from native code and invokes native functions using the <code>jnidispatch</code> library. For a more extensive example, see the <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/WindowUtils.java?rev=HEAD&view=markup">WindowUtils</a> and <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo</a> classes.
     <br>    
     <textarea name="textarea4" cols="80" rows="6" readonly="readonly">
 Kernel32 lib = Kernel32.INSTANCE;
@@ -164,12 +164,12 @@ The project also includes <a href="http://netbeans.org">NetBeans</a> and <a href
 In the <code>com.sun.jna.examples</code> package are some examples of using
 the JNA library (and are pretty nifty utilities in and of themselves).
 <ul>
-<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/ShapedWindowDemo.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">ShapedWindowDemo</a>: Non-rectangular windows (a circular clock) (<a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/WindowUtils.java?rev=1.1.2.3&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">WindowUtils code</a>).<p>
+<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo</a>: Non-rectangular windows (a circular clock) (<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/WindowUtils.java?rev=HEAD&view=markup">WindowUtils code</a>).<p>
 <a href="demo/ShapedWindowDemo.jnlp"><img src="http://swinglabs.org/images/demobutton.png" /></a>
-<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/BalloonManagerDemo.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">BalloonManagerDemo</a>: Speech-balloon windows (a la Google Maps) (<a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/BalloonManager.java?rev=1.1.2.3&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">BalloonManager code</a>).<p>
+<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/BalloonManagerDemo.java?rev=HEAD&view=markup">BalloonManagerDemo</a>: Speech-balloon windows (a la Google Maps) (<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/BalloonManager.java?rev=HEAD&view=markup">BalloonManager code</a>).<p>
 <a href="demo/BalloonManagerDemo.jnlp"><img src="http://swinglabs.org/images/demobutton.png" /></a>
-<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/FileUtils.java?rev=1.1.2.1&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">FileUtils</a>: Cross-platform move-to-trash functionality
-<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/FileMonitor.java?rev=1.1.2.1&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">FileMonitor</a>: Cross-platform file change notification (still needs inotify and kqueues implementations)
+<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/FileUtils.java?rev=HEAD&view=markup">FileUtils</a>: Cross-platform move-to-trash functionality
+<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/FileMonitor.java?rev=HEAD&view=markup">FileMonitor</a>: Cross-platform file change notification (still needs inotify and kqueues implementations)
 </ul>
 
 <script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript">
@@ -188,3 +188,4 @@ time-stamp-format: "%:y-%02m-%02d"
 time-stamp-end: "\">"
 End:
 -->
+
