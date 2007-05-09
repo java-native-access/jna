@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generic JNLP/Web Start Configuration -->
+<jnlp spec="1.0" codebase="http://abbot.sf.net/demo" href="DnDDemo.jnlp">
+  <information>
+    <title>Ghosted Drag Image</title>
+    <vendor>Technomage</vendor>
+    <homepage href="http://rabbit-hole.blogger.com"/>
+    <description>Demo of a ghosted drag image.</description>
+    <description kind="short">Ghosted Drag Image</description>
+  </information>
+  <resources>
+    <j2se version="1.3+" href="http://java.sun.com/products/autodl/j2se"/>
+    <!-- Required for w32 window transparency -->
+    <property name="sun.java2d.noddraw" value="true"/>
+    <jar href="examples.jar" main="true"/>
+    <jar href="jna.jar"/>
+  </resources>
+  <resources os="Windows" arch="x86">
+    <nativelib href="win32-x86.jar"/>
+  </resources>
+  <resources os="Linux" arch="i386">
+    <!-- Use 32-bit X11 libs on 64-bit systems (Ubuntu) -->
+    <property name="jna.library.path" value="/usr/X11R6/lib:/usr/lib32:/usr/lib"/>
+    <nativelib href="linux-i386.jar"/>
+  </resources>
+  <resources os="Mac" arch="i386">
+    <nativelib href="darwin-i386.jar"/>
+  </resources>
+  <resources os="Mac" arch="ppc">
+    <nativelib href="darwin-ppc.jar"/>
+  </resources>
+  <application-desc main-class="com.sun.jna.examples.dnd.GhostedDragImageDemo"/>
+  <security>
+    <all-permissions/>
+  </security>
+</jnlp>

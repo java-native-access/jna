@@ -1,0 +1,162 @@
+# FUTURE DEMOS:
+* test keyboard keys' state (needs OSX)
+* get system process information, basic process control
+* additional file utilities (meta info, free space, etc)
+* enforce window minimum/maximum size (workaround java bug)
+
+# TODO:
+* fix dnd on linux (no hole?)
+
+* design: 
+  o no permanent references to java objects in native code (hard to get rid of)
+    this means no java object arguments to callbacks; use some sort of integer
+    key instead (hashcode?) callbacks can hold local data anyway...
+  o make simplest Java usage map to most common C usage
+    - additional constructs provided for esoteric cases (WString)
+  o structure is treated as a pointer, except within a struct
+  o primitive types are passed directly
+  o arrays are treated as pointers, except within a struct
+    - in structure (inline; otherwise pointer-to-X should be used)
+    - as function argument (auto-convert to pointer via Memory)
+    - how to do pointer to struct in struct? (Pointer to start with)
+    - pointer to type in struct should be handled with Pointer
+* move callback asm templates into dispatch_<arch>.c
+* per-library jna.library.path: many libraries have a "standard" location (or
+  several); let the library author indicate what these are (X11, for example)
+* return array of struct (annotation to indicate which argument has the
+  length of the returned value might be nice)
+* determine display name from current java program (if any); null is ok
+  since it uses getenv(DISPLAY), which is what java would do
+  note: DISPLAY may be avilable in GraphicsDevice->getIDstring
+* split unit tests
+* universal OSX build w/cross-compile (callbacks fail)
+* universal GCC build w/cross-compile
+* catch native crash/exception/faults and re-throw as java exception
+* use libffi from gcc to handle calls and callbacks?
+* auto-generate stdcall decorated symbols (try if undecorated lookup fails)
+* make Pointer free-able (system allocates memory, client frees it); actually,
+this should probably be automatic so the user doesn't have to think about it.
+Maybe a custom type representing "function-allocated-pointer" or
+"pointer-requiring-free" (which is just Memory).
+* "free" should be invisible wherever possible
+* callbacks need a dispose if they are to live beyond the lifetime of the
+function to which they are passed; maybe a simpler callback interface for
+transient callbacks, and require callback+dispose for most callbacks?
+  TransientCallback: callback
+  NonTransientCallback: callback+dispose
+
+* use proxy for callbacks to enable auto-conversion of arguments and/or return
+  value (in java-land instead of C-land). 
+* interface "lvalue", which can provide a pointer to itself (reference() or
+  addressOf())?
+* how to do direct struct argument (vs struct pointer) (uncommon)? 
+* how to do struct return (vs struct pointer) (uncommon)? 
+* more tests for argument types (2 args, all permutations of basic data types)
+   ensures native stack handling is done properly
+* flag string(/wstring)-returning methods which need to free their result
+   to avoid leaking memory whan auto-creating strings from the result
+   (since normally we don't take explicit ownership of any returned pointers)
+   this is a special case for returned strings only, since other returned
+   pointers are available to the user for later "freeing"
+   Use a map on library creation, an iface for the library, or annotation
+   NOTE: how many methods actually do this? strdup...
+   Maybe make function return "Memory", which can then be converted to a
+   Structure or some other type.  Then memory will free itself when no longer
+   referenced. 
+* unions (copy-on-call is problematic: which member is active?) must require
+  explicit write, either per member or whole object before export
+* verify get/set methods vs read/write is for performance (Pointer)?
+* type safety between returned and passed in pointers (w32 API)
+* Dispose/unload library on GC (use ref queue)
+* bitfields et al. for structs
+* auto-convert strings in w32 functions ending in 'W'?  would this introduce
+  any ambiguity?
+* use annotations + result codes + GetLastError/errno/errstr to auto-generate
+  runtime exceptions? (cf P/Invoke; also useful for X11 return types)
+  provide annotation/custom invocation handler/hook to examine return value and
+  throw and exception if the return value indicates an error
+
+
+
+
+
+
+
+
+# DONE
+* transparent/shaped drag image
+* windows handles need to be Pointer (void*), not 'int'
+* other demos: move to trash, file change notification
+* tests for other primitive array types
+* build test dll/dispatch lib w/cygwin/gcc instead of msvc (?) under w32
+* nested struct alignment (4/8 byte?  depends on first element?)
+* nested structs in structs: easier to define using struct; use pointer
+   if you need a pointer
+   struct auto-converts to pointer as argument, should be inline in struct
+   (struct should require explicit pointer, argument should require explicit
+   non-pointer) (maybe use object version of basic type as "pointer" version)
+* provide JNA-only search path for libraries
+* callbacks
+* move javah-generated files to own space
+* darwin/PPC asm layer
+* enable w32 build with either GCC or MSVC (GCC-built dll doesn't work yet)
+* support pointer to basic type argument (int *) w/type safety - what's the
+   best API from a user perspective? new Pointer(int)? new Pointer<int>?
+   Base class "pointer to" gets converted to Pointer in invocation handler;
+   provide a getValue() to retrieve the result; otherwise the memory is opaque
+
+  o IntPtr, WCharPtr, CharPtr, ShortPtr, LongPtr, DoublePtr, FloatPtr, 
+    Handle (PtrPtr), getValue(), getPointer()
+  o add getCharArray() et al. to Pointer?
+
+* inline arrays of primitive types
+* remove debug flags (they're not useful)
+* Use WString to identify return type and arg
+* use interface to identify native, instead of annotation
+* isolate stdcall to w32 (should be private to platform)
+* generic gcc build/osx(ppc/x86)/linux
+* remove generics/enable build under 1.4
+* tests for structs
+* test float/double
+* offset placeholders for structs (explicit alignment)
+* vanilla ant build file
+* build native stuff from build.xml
+* implement basic junit tests
+* auto-align struct fields
+* handle long/byte/short
+* make annotations for native method names optional
+// hard clip for now, alpha transparency later
+// also allow ImageIcon to be used as clip (getImage())
+void setWindowMask(Window w, Shape clip);
+// needs:
+int findNativeWindow(Window w);
+
+# SIMILAR PROJECTS: 
+# nlink.dev.java.net: 
+#   pros: simple definitions (same as jna)
+#   cons: w32 only
+# sf.net/projects/jnative: 
+#   cons: boilerplate, manual code generation by calling setup methods
+#   pros: callbacks, byref args?
+# JNIWrapper: kinda like jnative (commercial), includes platform "packs"
+# coroutine for Java, like jnative (commercial)
+# jnieasy: c++ mappings (http://www.innowhere.com:8080/webapp/jsp/products/jnieasy/index.jsp?_page=products.jnieasy)
+# j2native (www.smardec.com)
+# j-interop.sf.net
+# jawinproject.sf.net
+# nativecall.sf.net (minimal)
+# cxxwrap.sf.net
+# xFunction (osx)
+# J/Direct (defunct)
+# NoodleGlue
+# SWIG
+# ctypes4j.sf.net
+# ctypes-java (out of date)
+# jnbridge
+# xFunction (http://excelsior-usa.com/xfunction.html, commercial)
+# libffi (now part of GCC) (this might be useful as the dispatch layer)
+# JACE c++ mappings
+# JNI options: http://staff.develop.com/halloway/JavaWin32.html
+# JAW Java API wrapper http://www.aplu.ch/home/apluhome.jsp?site=5
+# List of JNI alternatives: http://weblog.janek.org/Archive/2005/07/28/AlternativestoJavaNativeI.html
+

@@ -1,69 +1,350 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="JNA_Library" default="default" basedir=".">
-    <description>Builds, tests, and runs the project JNA Library.</description>
-    <import file="nbproject/build-impl.xml"/>
+<project name="JNA" default="default" basedir=".">
+  <description>Builds and tests JNA</description>
+
+  <!--  
+  Conventions (since ant can't easily specify arbitrary file dependencies):
+  The uptodate property for a given target TARGET is "-TARGET"; the actual
+  target to generate the uptodate property is named ":TARGET".
+
+  Properties (except for uptodate properties) separate words by dots, targets
+  by dashes. 
+  -->
+
+  <!-- global properties -->
+  <!-- (all build-related props should go in dynamic-properties) -->
+  <property name="name" value="jna"/>
+  <property name="jar" value="${name}.jar"/>
+  <property name="debug" value="true"/>
+  <property name="debug.native" value="false"/>
+  <property name="native" location="native"/>
+  <property name="src" location="src"/>
+  <property name="dist" location="dist"/>
+  <property name="test.src" location="test"/>
+  <property name="doc" location="doc"/>
+  <property name="stylesheet" location="${doc}/api/doc/css/javadoc.css"/>
+  <property name="company" value="Technomage"/>
+  <property name="company.full" value="Timothy Wall"/>
+  <property name="copyright"
+            value="Copyright &amp;copy; 2007 ${company.full}. All Rights Reserved."/>
+
+  <property name="version" value="2.3.1"/>
+  <property name="jdk" value="1.4"/>
+
+  <!-- Miscellaneous -->
+  <property name="build.compiler.emacs" value="true"/>
+
+  <target name="default" depends="test" description="Build and Test."/>
+
+  <target name="dynamic-properties">
+    <echo>Java version: ${java.version}</echo>
+    <echo>Build ${version}</echo>
+    <property name="build" location="build"/>
+    <property name="classes" location="${build}/classes"/>
+    <property name="test.classes" location="${build}/test-classes"/>
+    <property name="reports" value="${build}/reports"/>
+
+    <!-- Add other supported platforms here -->
+    <condition property="os.prefix" value="win32-${os.arch}">
+      <os family="windows"/>
+    </condition>
+    <condition property="os.prefix" value="linux-${os.arch}">
+      <os name="Linux"/>
+    </condition>
+    <condition property="os.prefix" value="darwin-${os.arch}">
+      <os family="mac"/>
+    </condition>
+    <condition property="os.prefix" value="sunos-${os.arch}">
+      <os family="unix" arch="sparc"/>
+    </condition>
+    <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${os.arch})"/>
+    <condition property="jdk.home" value="${java.home}">
+      <available file="${java.home}/include"/>
+    </condition>
+    <condition property="jdk.home" value="${java.home}/..">
+      <available file="${java.home}/../include"/>
+    </condition>
+    <fail unless="jdk.home" message="JAVA_HOME/java.home must be a JDK, not JRE"/>
+
+    <property name="native.jar" value="${os.prefix}.jar"/>
+    <property name="build.native" location="${build}/native"/>
+
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build.native}"/>
+    <mkdir dir="${classes}"/>
+    <mkdir dir="${test.classes}"/>
+    <mkdir dir="${reports}"/>
+    <mkdir dir="${doc}"/>
+
+  </target>
+
+  <target name="setup" depends="dynamic-properties">
+    <path id="compile-test.path">
+      <pathelement path="${test.src}"/>
+      <path id="test.libs">
+        <fileset dir="lib">
+          <include name="junit.jar"/>   
+        </fileset>
+        <pathelement path="${classes}"/>
+      </path>
+      <path id="compile.path">
+        <path id="src.path">
+          <pathelement location="${src}"/>
+        </path>
+      </path>                           
+    </path>                           
+
+    <path id="test.runpath">
+      <pathelement path="${build}/${jar}"/>
+      <pathelement path="${build}/examples.jar"/>
+      <pathelement path="${test.classes}"/>
+      <pathelement path="${ant.home}/lib/clover.jar"/>
+    </path>
+  </target>
+
+  <target name="compile" depends="setup"
+          description="Compile all Java source">
+    <javac classpathref="compile.path"
+           source="${jdk}"
+           target="${jdk}"
+           destdir="${classes}" 
+           deprecation="on" debug="${debug}">
+      <src path="${src}"/>
+    </javac>
+  </target>
+
+  <target name=":jar">
+    <uptodate property="-jar" targetfile="${build}/${jar}">
+      <srcfiles dir="${classes}">
+        <patternset id="jar-compiled">
+          <include name="com/sun/jna/*"/>
+          <include name="com/sun/jna/**/*"/>
+          <exclude name="com/sun/jna/examples/*"/>
+          <exclude name="com/sun/jna/examples/**/*"/>
+        </patternset>
+      </srcfiles>
+    </uptodate>
+  </target>
+  <target name="jar" depends="setup,compile-tests,native,:jar" unless="-jar"
+          description="Build primary jar">
+    <jar jarfile="${build}/${jar}">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${company.full}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Specification-Vendor" value="${company.full}"/>
+        <attribute name="Specification-Version" value="${version}"/>
+      </manifest>
+      <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
+    </jar>
+  </target>
+  <target name="examples-jar" depends="jar,native-jar">
+    <jar jarfile="${build}/examples.jar">
+      <manifest>
+        <attribute name="Class-Path" value="jna.jar"/>
+        <attribute name="Main-Class" value="com.sun.jna.examples.ShapedWindowDemo"/>
+      </manifest>
+      <fileset dir="${src}" includes="**/examples/**/*.png"/>
+      <fileset dir="${classes}" includes="**/examples/*,**/examples/**/*"/>
+      <fileset dir="${classes}" includes="jnidispatch.dll"/>
+    </jar>
+  </target>
+  <target name="native-jar" depends="native,jar" 
+          description="Build native jar">
+    <!-- For web start, native libraries need to be in a separate jar file -->
+    <!-- at the root -->
+    <jar jarfile="${build}/${native.jar}">
+      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
+    </jar>
+  </target>
+
+  <target name="javah" depends="compile">
+    <javah classpath="${classes}" destdir="${build.native}" force="yes">
+      <class name="com.sun.jna.Function"/>
+      <class name="com.sun.jna.Pointer"/>
+      <class name="com.sun.jna.Memory"/>
+      <class name="com.sun.jna.Library$Handler"/>
+      <class name="com.sun.jna.Native"/>
+    </javah>
+  </target>
+
+  <target name="native" depends="setup,javah"
+          description="Build native libraries.  Use 'ant -DCC=gcc' to build using gcc on w32">
+    <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
+      <isset property="CC"/>
+    </condition>
+    <condition property="make.ARCH" value="ARCH=${ARCH}" else="IGNORE=">
+      <isset property="ARCH"/>
+    </condition>
+    <condition property="make.SDKROOT" value="SDKROOT=${SDKROOT}">
+      <isset property="SDKROOT"/>
+    </condition>
+    <condition property="make.SDKROOT" value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
+      <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
+    </condition>
+    <exec executable="make" dir="${native}" failonerror="true">
+      <!-- FIXME can't use the location directly, since drive letters are
+           problematic with gnu make --> 
+      <!--<arg value="BUILD=${build.native}"/>-->
+      <arg value="BUILD=../build/native"/>
+      <arg value="JAVA_HOME=${jdk.home}"/>
+      <arg value="JAVAH=${build.native}"/>
+      <arg value="DEBUG=${debug.native}"/>
+      <arg value="${make.CC}"/>
+      <arg value="${make.SDKROOT}"/>
+      <arg value="${make.ARCH}"/>
+    </exec>
+    <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
+    <copy todir="${classes}/com/sun/jna/${os.prefix}">
+      <fileset dir="${build.native}" 
+               includes="jnidispatch.dll,libjnidispatch.*"/>
+    </copy>
+  </target>
+
+  <target name="compile-tests" depends="compile"
+          description="Compile all test code">
+    <javac classpathref="compile-test.path"
+           source="${jdk}"
+           target="${jdk}"
+           destdir="${test.classes}" 
+           deprecation="on" debug="${debug}">
+      <src path="${test.src}"/>
+    </javac>
+  </target>
+
+  <!-- When running tests from an IDE, be sure to set jna.library.path -->
+  <!-- to where the test library (testlib) is found -->
+  <target name="test" depends="jar,examples-jar,compile-tests"
+          description="Run all unit tests">
+    <property name="test.fork" value="yes"/>
+    <property name="reports.junit" location="${reports}/junit"/>
+    <property name="results.junit" location="${build}/junit-results"/>
+    <mkdir dir="${results.junit}"/>
+    <echo>Saving test results in ${results.junit}</echo>
+    <condition property="tests.w32" value="**/win32/*Test.java">
+      <os family="windows"/>
+    </condition>
+    <condition property="tests.unix" value="**/unix/*Test.java">
+      <and>
+        <os family="unix"/>
+        <not><os family="mac"/></not>
+      </and>
+    </condition>
+    <junit printsummary="yes" fork="${test.fork}">
+      <!--<jvmarg value="-verbose:jni"/>-->
+      <jvmarg value="-Djna.library.path=${build.native}"/>
+      <classpath><path refid="test.runpath"/></classpath>
+      <formatter type="xml"/>
+      <batchtest todir="${results.junit}">
+        <fileset dir="${test.src}">
+          <include name="com/sun/jna/*Test.java"/>
+          <include name="com/sun/jna/examples/*Test.java"/>
+          <include name="${tests.w32}"/>
+          <include name="${tests.unix}"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <junitreport todir="${results.junit}">
+      <fileset dir="${results.junit}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report todir="${reports.junit}"/>
+    </junitreport>
+    <echo>View test report in file://${reports.junit}/index.html</echo>
+  </target>
+
+  <target name="with.clover" description="Enable code coverage for tests">
+    <taskdef resource="clovertasks"/>
+    <property name="build" value="build.clover"/>
+    <property name="clover.include" value="**/*.java"/>
+    <clover-setup initString="${build}/coverage.db">
+      <fileset dir="${src}" includes="${clover.include}"/>
+    </clover-setup>
+  </target>
+
+  <target name="clover" depends="with.clover,test"
+          description="Generate test code coverage reports">
+    <property name="reports.clover" value="${reports}/clover"/>
+    <mkdir dir="${reports.clover}"/>
+    <clover-report>
+      <current outfile="${reports.clover}" title="clover">
+        <format type="html"/>
+      </current>
+    </clover-report>
+    <echo>Reports generated in ${reports.clover}</echo>
+  </target>
+
+  <target name="javadoc" depends="setup">
+    <property name="header"
+              value="&lt;b&gt;JNA API&lt;/&gt;&lt;font size=&quot;-1&quot;&gt; ${version}&lt;/font&gt;"/>
+    <property name="footer"
+              value="&lt;center&gt;&lt;i&gt;${copyright}&lt;/i&gt;&lt;/center&gt;"/>
+
+    <mkdir dir="${doc}/api"/>
+    <javadoc package="true"
+             windowtitle="JNA API"
+             sourcepathref="src.path"
+             classpathref="compile.path"
+             maxmemory="256m"
+             packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.examples,com.sun.jna.examples.win32,com.sun.jna.exmaples.unix"
+             overview="${src}/com/sun/jna/overview.html"
+             destdir="${doc}/api">
+      <!-- stylesheetfile="${stylesheet}" -->
+      <doctitle>JNA API Documentation</doctitle>
+      <header>${header}</header>
+      <bottom>${footer}</bottom>
+      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+
+      <packageset dir="${src}" defaultexcludes="yes">
+        <patternset>
+          <include name="com/sun/jna/**/*"/>
+        </patternset>
+      </packageset>
+
+      <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr"/>
+      <group title="Examples" packages="com.sun.jna.examples"/>
+      <group title="Unix Examples" packages="com.sun.jna.examples.unix"/>
+      <group title="Windows Examples" packages="com.sun.jna.examples.win32"/>
+
+    </javadoc>
+  </target>
+
+  <target name="dist" depends="jar,native-jar,examples-jar"
+          description="Build examples">
+    <jar jarfile="${dist}/jna.jar" duplicate="preserve">
+      <zipfileset src="${build}/${jar}"/>
+      <zipfileset src="${dist}/win32-x86.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/win32-x86"/>
+      <zipfileset src="${dist}/darwin-i386.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/darwin-i386"/>
+      <zipfileset src="${dist}/darwin-ppc.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/darwin-ppc"/>
+      <zipfileset src="${dist}/linux-i386.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-i386"/>
+    </jar>
+    <copy todir="${dist}">
+      <fileset dir="${build}">
+        <include name="${native.jar}"/>
+        <include name="examples.jar"/>
+      </fileset>
+    </copy>
     <!--
+    <copy todir="${dist}/doc">
+      <fileset dir="${doc}"/>
+    </copy>-->
+  </target>
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+  <target name="clean" depends="dynamic-properties">
+    <delete failOnError="false" includeEmptyDirs="true">
+      <fileset dir="${build}"/>
+    </delete>
+    <delete quiet="true" includeEmptyDirs="true">
+      <fileset dir="${doc}/api"/>
+      <fileset dir="." includes="*~,**/*~"/>
+    </delete>
+  </target>
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
-
-    (Targets beginning with '-' are not intended to be called on their own.)
-
-    Example of inserting an obfuscator after compilation could look like this:
-
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
-
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
-
-
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
-
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
-
-    An example of overriding the target for project execution could look like this:
-
-        <target name="run" depends="JNA_Library-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
-
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
-
-    -->
 </project>
