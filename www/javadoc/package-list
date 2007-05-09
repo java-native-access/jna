@@ -1,0 +1,7 @@
+com.sun.jna
+com.sun.jna.examples
+com.sun.jna.examples.dnd
+com.sun.jna.examples.unix
+com.sun.jna.examples.win32
+com.sun.jna.ptr
+com.sun.jna.win32

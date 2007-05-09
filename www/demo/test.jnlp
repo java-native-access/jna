@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generic JNLP/Web Start Configuration -->
+<jnlp spec="1.0" codebase="http://abbot.sf.net/demo" href="http://abbot.sf.net/demo/ShapedWindowDemo.jnlp">
+  <information>
+    <title>Shaped Window Demo</title>
+    <vendor>Technomage</vendor>
+    <homepage href="http://rabbit-hole.blogger.com"/>
+    <description>Demo of a non-rectangular window.</description>
+    <description kind="short">Shaped Window</description>
+  </information>
+  <resources>
+    <j2se version="1.3+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="examples.jar" main="true"/>
+    <jar href="jna.jar"/>
+  </resources>
+  <resources os="Windows" arch="x86">
+    <nativelib href="win32.jar"/>
+  </resources>
+  <resources os="Linux" arch="i386">
+    <!-- Use 32-bit X11 libs on 64-bit systems (Ubuntu) -->
+    <property name="jna.library.path" value="/usr/X11R6/lib:/usr/lib32"/>
+    <nativelib href="linux-i386.jar"/>
+  </resources>
+  <resources os="Mac" arch="ppc">
+    <nativelib href="darwin-ppc.jar"/>
+  </resources>
+  <resources os="Mac" arch="i386">
+    <nativelib href="darwin-i386.jar"/>
+  </resources>
+  <application-desc main-class="com.sun.jna.examples.ShapedWindowDemo"/>
+  <security>
+    <all-permissions/>
+  </security>
+</jnlp>

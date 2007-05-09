@@ -1,45 +1,190 @@
 <html>
 <head>
-<title>Project Home Page</title>
+<meta name="author" content="Timothy Wall">
+<meta name="keywords" content="java,jna,jni,c/c++,native,ctypes,pinvoke,jdirect,java platform invoke,java native library access,java native access,call native from java,java c library,easy jni,call c code from java,java native method call,java native function call,avoid jni">
+<meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
+<meta name="date" content="2007-04-27">
+<title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
-
-<body bgcolor="#FFFFFF" text="#000000">
-<h1>Default project home page </h1>
-<p>Congratulations on your new java.net project! </p>
-<p>This page is the home page for your new project. This content is appearing 
-  because you have selected the option <b>Use project index.html</b>. To edit 
-  the information displayed on this page, just use CVS to check out your project's 
-  CVS repository and edit index.html in directory www. You can get more information 
-  on how to set-up your local CVS client, click on <b>Version Control</b> on the 
-  left nav bar. </p>
-<p>If you don't want to use CVS to manage your home page, click on the <b>Edit 
-  project</b> link on this page and unclick the option <b>Use project index.html</b>. 
-  Your project home page contents will be generated from the <b>Edit project</b> 
-  field <b>Description</b>. Edit the text on that field to change your home page 
-  contents. Click on <b>Submit changes</b> to save your edits. </p>
-<p>If you are looking for <a href="https://java-net.dev.java.net/ProjectPages.html#templates">sample 
-  home page templates</a>, check out the <a href="https://java-net.dev.java.net/ProjectPages.html">java.net 
-  Project Starter Kit</a>. Copy either of the templates into your project's html 
-  to get started on your project's home page. </p>
-<p>You can find lots of helpful information in the Starter Kit to get your project 
-  started. Some of the things you will find in there include:</p>
+<body>
+<h2>Java Native Access (JNA) </h2>
+<p>A small set of Java language utilities and conventions for dynamically accessing native libraries (for example, <code>.dll</code>'s on Windows or <code>.so</code>'s on Solaris) on any supported platform without writing anything but Java code&#8212;no JNI or native code is required, and access is dynamic at runtime without code generation. </p>
+<p>The JNA library uses a small native library stub to dynamically invoke native code without the developer having to write JNI code. The developer describes functions and structures from the target native library in a Java interface. From his perspective, he interacts only with Java code. This makes it quite easy to take advantage of native platform features without getting into the major hassle of writing your own JNI code. It also facilitates implementing cross-platofrm features withing incurring the high overhead of configuring and building JNI for multiple platforms.</p>
+<p>JNA's design aims to provide native access in a natural way with a minimum of effort.  No boilerplate or generated code is required.  While some attention is paid to performance, correctness and ease of use take priority.</p>
+ <p>This work is based on a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. Since that time, Todd Fast updated the library to fix bugs and support the <code>STDCALL</code> calling convention on Windows, and completely rewrote the Java part of the library to use annotations to declare native library interfaces. </p>
+<p>Timothy Wall has contributed the latest development on the <a href="https://jna.dev.java.net/source/browse/jna/jnalib/?only_with_tag=BRANCH_V2">BRANCH_V2 CVS branch</a>, which introduced the following features:<br>
 <ul>
-  <li>Hints on how to <a href="https://java-net.dev.java.net/ProjectPages.html#pages">set-up 
-    your project's</a> home page</li>
-  <li>Ideas on how to <a href="https://java-net.dev.java.net/ProjectPages.html#publicity">publicize 
-    your project</a> including RSS feeds</li>
-  <li>Hints on <a href="https://java-net.dev.java.net/pagedesign.html">project 
-    page HTML</a></li>
-  <li>Setting up project <a href="https://java-net.dev.java.net/ProjectPages.html#wiki">wiki 
-    pages</a></li>
-  <li>And places to go if <a href="https://java-net.dev.java.net/ProjectPages.html#feedback">you 
-    have questions</a>.</li>
+<li>Function arguments (callbacks from native code to Java code)
+<li>By-reference (pointer-to-type) arguments
+<li>Java array arguments (primitive types and pointers)
+<li>Nested structures and arrays
+<li><code>wchar_t</code>-based strings
+<li>64-bit value support (Java <code>long</code>)
+<li><a href="#demos">Full-blown demo applications</a>
+<li>Linux (x86), Mac OS X (PPC and x86), and w32+gcc support
+<li>Complete automated build and test of Java and native code
+<li>JUnit test coverage
+<li>Builds/runs on 1.4 VMs (and possibly older)
 </ul>
-<p>Remember that you will attract more new members and your project team will 
-  work more effectively if you, as the project owner, supply sufficient information 
-  about your project for visitors to your project space. Good luck with your new 
-  project! </p>
+
+Peruse the <a href="javadoc/overview-summary.html">JavaDoc</a>.<p>
+
+ <h3>Community</h3>
+ <p>Please use the appropriate <a href="https://jna.dev.java.net/servlets/ProjectMailingListList">mailing list</a> to ask for help, suggest ideas, contribute patches, etc.  All contributions are welcome.</p>
+ <h3>Development Tasks</h3>
+ <p>The library works fairly well now, but there are a number of tasks with which we'd appreciate help:</p>
+ <ul>
+   <li>More comprehensive documentation on using JNA, including examples of Java to native conversions of data types, function usage, and proper memory management.</li>
+   <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.</li>
+   <li>Peer review the design and suggest improvements and enhancements</li>
+   <li>Port the <code>jnidispatch</code> library to Solaris and any other desired platform (possibly using libffi from gcc).</li>
+   <li>Testing on various JDK versions and platforms.</li>
+   <li>Documentation on multithreaded usage of JNA: Likely danger areas, failure modes, best practices.</li>
+   <li>Tests of JNA overhead compared to straight JNI calls (I did some of this a long time ago and the results were quite favorable, but it would be nice to have some more recent quantitative data).</li>
+ </ul>
+ <h3>How To Get Started Using JNA</h3>
+ <p>Java Native Access (JNA) has a single component, <code>jna.jar</code>; the supporting native library (<code>jnidispatch</code>) is included in the jar file to avoid extra configuration steps. JNA is capable of extracting and loading the library on its own, so you don't need to reconfigure your native library path in any way.  The native library is also available in a platform-specific jar file for use with Java Web Start.</p>
+<p>A simple introduction to using JNA: </p>
+<ol>
+  <li>From the <a href="https://jna.dev.java.net/servlets/ProjectDocumentList?folderID=7062&expandFolder=7062&folderID=6470">download page</a>, download <code>jna.jar</code>.</li>
+  <li>Identify a native <em>target library</em> that you want to invoke from your Java code. This can be any library with exported functions, and it must be loadable from the JDK just like any native library.  A good example is the local C library (libc.so on linux or msvcrt.dll on windows).</li>
+  <li>Note that your target library must be available to your Java program. There are several ways to do this:
+    <ul>
+      <li>The path to the target library (not the jnidispatch library) may be specified by defining the <code>jna.library.path</code> system property, which behaves similarly to <code>java.library.path</code> but only applies to libraries loaded by JNA.  This is the preferred method.</li>
+      <li>Add the path to the library to Java's <code>java.library.path</code> system property from the command line. For example, <code>java -Djava.library.path=path/to/jnidispatch/lib ...</code>.</li>
+      <li>Change the appropriate library access environment variable.  This is PATH on Windows, LD_LIBRARY_PATH on Linux, and DYLD_LIBRARY_PATH on OSX.</li>
+      <li>Add the libraries as extensions to your JDK installation. See the JDK documentation for details on this.</li>
+    </ul>
+  </li>
+  <li>Declare a Java interface to hold the native library methods by extending the <a href="javadoc/com/sun/jna/Library.html"><code>Library</code></a> interface.  Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function. Following is an example of mapping for the Windows kernel32 library.</li>
+  <li>You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures). You can add normal Java methods also, but they will not be used by JNA.</li>
+  <li>In your interface, allocate an instance of the native library using the <code>Native.loadLibrary(Class)</code> method, providing the native library interface you defined in step (4).<br>    
+    <textarea name="textarea" cols="80" rows="24" readonly="readonly">
+package com.sun.jna.examples.win32;
+
+import com.sun.jna.*;
+
+// kernel32.dll uses the __stdcall calling convention
+// Most C libraries will just extend com.sun.jna.Library
+public interface Kernel32 extends StdCallLibrary { 
+
+    Kernel32 INSTANCE = (Kernel32)
+        Native.loadLibrary("kernel32", Kernel32.class);
+
+    public static class SYSTEMTIME extends Structure {
+        public short wYear;
+        public short wMonth;
+        public short wDayOfWeek;
+        public short wDay;
+        public short wHour;
+        public short wMinute;
+        public short wSecond;
+        public short wMilliseconds;
+    }
+
+    void GetSystemTime(SYSTEMTIME result);
+}</textarea>
+  </li>
+  <li>Simply invoke methods on the returned Java instance just like any other Java class. The JNA library marshals values to and from native code and invokes native functions using the <code>jnidispatch</code> library. For a more extensive example, see the <a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/WindowUtils.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=markup">WindowUtils</a> and <a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/ShapedWindowDemo.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=markup">ShapedWindowDemo</a> classes.
+    <br>    
+    <textarea name="textarea4" cols="80" rows="6" readonly="readonly">
+Kernel32 lib = Kernel32.INSTANCE;
+SYSTEMTIME time = new SYSTEMTIME();
+lib.GetSystemTime(time);
+System.out.println("Today's integer value is " + time.wDay);
+</textarea>
+  </li>
+</ol>
+<h3>By-reference Arguments</h3>
+When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value.  For example:<br>
+<blockquote>
+    <textarea name="textarea4" cols="80" rows="13" readonly="readonly">
+// C code
+void allocate_buffer(char **bufp, int* lenp);
+
+// Java interface
+void allocate_buffer(PointerByReference bufp, IntByReference lenp);
+
+// Usage
+PointerByReference pref = new PointerByReference();
+IntByReference iref = new IntByReference();
+lib.allocate_buffer(pref, iref);
+Pointer p = pref.getValue();
+byte[] buffer = p.getByteArray(0, iref.getValue());
+    </textarea>
+</blockquote>
+
+The <a href="javadoc/com/sun/jna/Pointer.html"><code>Pointer</code></a> class provides a number of accessor methods similar to <a href="javadoc/com/sun/jna/Pointer.html#getByteArray"><code>getByteArray</code></a> which effectively function as a typecast onto the memory.
+
+<h3>Callbacks</h3>
+Callback declarations consist of a simple interface that extends the Callback
+interface and implements a <code>callback</code> method.  Callbacks are
+implemented by wrapping a Java object method in a little bit of C glue code.
+The simplest usage resembles using anonymous inner classes to register event
+listeners.  Following is an example of callback usage:<br> 
+<blockquote>
+    <textarea name="textarea4" cols="80" rows="18" readonly="readonly">
+public interface User32 extends StdCallLibrary {
+    interface WNDENUMPROC extends StdCallCallback {
+        /** Return whether to continue enumeration. */
+        boolean callback(Pointer hWnd, Pointer arg);
+    }
+    boolean EnumWindows(WNDENUMPROC lpEnumFunc, Pointer arg);
+}
+...
+User32 user32 = User32.INSTANCE;
+
+user32.EnumWindows(new WNDENUMPROC() {
+    int count;
+    public boolean callback(Pointer hWnd, Pointer userData) {
+        System.out.println("Found window " + hWnd + ", total " + ++count);
+        return true;
+    }
+}, null);
+</textarea>
+</blockquote>
+See the <a href="javadoc/overview-summary.html">JavaDoc overview</a> for additional details.<p>
+
+<h3>Building and Multi-platform support</h3>
+JNA has been built and tested on OSX (GCC, PPC and x86), linux (GCC, x86), and
+Windows (MSVC and GCC, x86).  There's some old dispatch code for sparc, but I
+don't have a machine to run or test it on.  The ant build script's test target
+will build and run the test suite, which has decent coverage and is a quick
+way to determine if your environment is set up correctly.<p>
+If you want to do a build yourself, you'll need <a href="http://ant.apache.org">ANT</a>, <a href="http://directory.fsf.org/make.html">GNU make</a> and a compiler.  On windows, you can use either <a href="http://www.cygwin.com">gcc (cygwin)</a> or MSVC.  To rebuild <code>jna.jar</code>, and run the unit tests, do<br>
+<blockquote><code><pre>
+% ant dist test
+</pre></code></blockquote>
+<p>
+The project also includes <a href="http://netbeans.org">NetBeans</a> and <a href="http://www.eclipse.org">Eclipse</a> project configurations, if you're so inclined.<p>
+
+<a name=demos></a>
+<h3>Examples</h3>
+In the <code>com.sun.jna.examples</code> package are some examples of using
+the JNA library (and are pretty nifty utilities in and of themselves).
+<ul>
+<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/ShapedWindowDemo.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">ShapedWindowDemo</a>: Non-rectangular windows (a circular clock) (<a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/WindowUtils.java?rev=1.1.2.3&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">WindowUtils code</a>).<p>
+<a href="demo/ShapedWindowDemo.jnlp"><img src="http://swinglabs.org/images/demobutton.png" /></a>
+<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/BalloonManagerDemo.java?rev=1.1.2.2&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">BalloonManagerDemo</a>: Speech-balloon windows (a la Google Maps) (<a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/BalloonManager.java?rev=1.1.2.3&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">BalloonManager code</a>).<p>
+<a href="demo/BalloonManagerDemo.jnlp"><img src="http://swinglabs.org/images/demobutton.png" /></a>
+<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/FileUtils.java?rev=1.1.2.1&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">FileUtils</a>: Cross-platform move-to-trash functionality
+<li><a href="https://jna.dev.java.net/source/browse/jna/jnalib/src/com/sun/jna/examples/Attic/FileMonitor.java?rev=1.1.2.1&only_with_tag=BRANCH_V2&view=auto&content-type=text/vnd.viewcvs-markup">FileMonitor</a>: Cross-platform file change notification (still needs inotify and kqueues implementations)
+</ul>
+
+<script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-1166339-4";
+urchinTracker();
+</script>
 </body>
 </html>
-
+<!-- 
+Local variables:
+eval: (add-hook 'write-file-hooks 'time-stamp)
+time-stamp-start: "<meta name=\"date\" content=\""
+time-stamp-format: "%:y-%02m-%02d"
+time-stamp-end: "\">"
+End:
+-->
