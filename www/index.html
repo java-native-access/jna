@@ -12,7 +12,7 @@
 <p>A small set of Java language utilities and conventions for dynamically accessing native libraries (for example, <code>.dll</code>'s on Windows or <code>.so</code>'s on Solaris) on any supported platform without writing anything but Java code&#8212;no JNI or native code is required, and access is dynamic at runtime without code generation. </p>
 <p>The JNA library uses a small native library stub to dynamically invoke native code without the developer having to write JNI code. The developer describes functions and structures from the target native library in a Java interface. From his perspective, he interacts only with Java code. This makes it quite easy to take advantage of native platform features without getting into the major hassle of writing your own JNI code. It also facilitates implementing cross-platofrm features withing incurring the high overhead of configuring and building JNI for multiple platforms.</p>
 <p>JNA's design aims to provide native access in a natural way with a minimum of effort.  No boilerplate or generated code is required.  While some attention is paid to performance, correctness and ease of use take priority.</p>
- <p>This work is based on a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. Since that time, Todd Fast updated the library to fix bugs and support the <code>STDCALL</code> calling convention on Windows, and completely rewrote the Java part of the library to use annotations to declare native library interfaces. </p>
+ <p>This work is based on a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. Since that time, Todd Fast updated the library to fix bugs and support the <code>STDCALL</code> calling convention on Windows, and to use annotations to declare native library interfaces. </p>
 <p>Timothy Wall has contributed the latest development (now under subversion), which introduced the following features:<br>
 <ul>
 <li>Function arguments (callbacks from native code to Java code)
@@ -25,7 +25,7 @@
 <li>Linux (x86), Mac OS X (PPC and x86), and w32+gcc support
 <li>Complete automated build and test of Java and native code
 <li>JUnit test coverage
-<li>Builds/runs on 1.4 VMs (and possibly older)
+<li>Builds/runs on 1.4 VMs (annotations are no longer used)
 </ul>
 
 Peruse the <a href="javadoc/overview-summary.html">JavaDoc</a>.<p>
