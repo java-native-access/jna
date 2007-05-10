@@ -77,11 +77,21 @@ public class CallbacksTest extends TestCase {
         
         cb = null;
         System.gc();
+        for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
+            try {
+                Thread.sleep(1); // Give the GC a chance to run
+            } finally {}
+        }
         assertNull("Callback not GC'd", ref.get());
         assertFalse("Callback still in map", refs.containsValue(ref));
         
         ref = null;
         System.gc();
+        for (int i = 0; i < 100 && cbstruct.peer != 0; ++i) {
+            try {
+                Thread.sleep(1); // Give the GC a chance to run
+            } finally {}
+        }
         assertEquals("Callback trampoline not freed", 0, cbstruct.peer);
     }
     
