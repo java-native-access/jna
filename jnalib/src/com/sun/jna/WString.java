@@ -30,7 +30,7 @@ public final class WString implements CharSequence, Comparable {
         return toString().hashCode();
     }
     public int compareTo(Object o) {
-        return toString().compareTo(o);
+        return toString().compareTo(o.toString());
     }
     public int length() {
         return toString().length();
