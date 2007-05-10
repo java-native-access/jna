@@ -210,6 +210,7 @@ static void dispatch(JNIEnv *env, jobject self, jint callconv,
           // TODO: treat as byte[]?
           throwByName(env,"java/lang/IllegalArgumentException",
                       "Non-direct ByteBuffer is not supported");
+          goto cleanup;
         }
         nwords += sizeof(void *)/sizeof(word_t);
       }
