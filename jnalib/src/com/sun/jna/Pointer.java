@@ -10,6 +10,7 @@
  */
 package com.sun.jna;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -116,14 +117,15 @@ public class Pointer {
                 }
             }
         }
+        // Avoid dependent library link errors on w32 (this is handled
+        // internal to the jnidispatch library for X11-based platforms)
         String os = System.getProperty("os.name");
         if (os.startsWith("Windows")) {
-            // Avoid dependent library link errors on w32 (this is handled
-            // internal to the jnidispatch library for X11-based platforms)
-            try { System.loadLibrary("awt"); } 
-            catch(UnsatisfiedLinkError e) { }
+            // Ensure AWT library ("awt") is loaded by the proper class loader, 
+            // otherwise Toolkit class init will fail
+            Toolkit.getDefaultToolkit();
             try { System.loadLibrary("jawt"); } 
-            catch(UnsatisfiedLinkError e) { }
+            catch(UnsatisfiedLinkError e) { e.printStackTrace(); }
         }
         System.load(lib.getAbsolutePath());
         return true;

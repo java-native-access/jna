@@ -12,6 +12,9 @@
  */
 package com.sun.jna;
 
+import java.awt.Toolkit;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import junit.framework.TestCase;
 
 // TODO: verify load from jna.library.path
@@ -30,6 +33,12 @@ public class LibraryLoadTest extends TestCase {
     public void testLoadCLibrary() {
         Native.loadLibrary(System.getProperty("os.name").startsWith("Windows")
                            ? "msvcrt" : "c", CLibrary.class);
+    }
+    
+    public void testLoadAWTAfterJNA() {
+        if (Pointer.SIZE > 0) {
+            Toolkit.getDefaultToolkit();
+        }
     }
     
     public static void main(String[] args) {
