@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,ctypes,pinvoke,jdirect,java platform invoke,java native library access,java native access,call native from java,java c library,easy jni,call c code from java,java native method call,java native function call,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-05-10">
+<meta name="date" content="2007-05-11">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -12,9 +12,14 @@
 <p>A small set of Java language utilities and conventions for dynamically accessing native libraries (for example, <code>.dll</code>'s on Windows or <code>.so</code>'s on Solaris) on any supported platform without writing anything but Java code&#8212;no JNI or native code is required, and access is dynamic at runtime without code generation. </p>
 <p>The JNA library uses a small native library stub to dynamically invoke native code without the developer having to write JNI code. The developer describes functions and structures from the target native library in a Java interface. From his perspective, he interacts only with Java code. This makes it quite easy to take advantage of native platform features without getting into the major hassle of writing your own JNI code. It also facilitates implementing cross-platofrm features withing incurring the high overhead of configuring and building JNI for multiple platforms.</p>
 <p>JNA's design aims to provide native access in a natural way with a minimum of effort.  No boilerplate or generated code is required.  While some attention is paid to performance, correctness and ease of use take priority.</p>
- <p>This work is based on a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. Since that time, Todd Fast updated the library to fix bugs and support the <code>STDCALL</code> calling convention on Windows, and to use annotations to declare native library interfaces. </p>
-<p>Timothy Wall has contributed the latest development (now under subversion), which introduced the following features:<br>
+The <a href="javadoc/overview-summary.html">JavaDoc is available online.</a><p>
+
+ <h3>Features</h3>
 <ul>
+<li>Automatic mapping from Java interface to native function
+<li>8-, 16-, 32-bit basic data types
+<li>Structure pointer arguments
+<!-- Newer functionality -->
 <li>Function arguments (callbacks from native code to Java code)
 <li>By-reference (pointer-to-type) arguments
 <li>Java array arguments (primitive types and pointers)
@@ -27,8 +32,6 @@
 <li>JUnit test coverage
 <li>Builds/runs on 1.4 VMs (annotations are no longer used)
 </ul>
-
-Peruse the <a href="javadoc/overview-summary.html">JavaDoc</a>.<p>
 
  <h3>Community</h3>
  <p>Please use the appropriate <a href="https://jna.dev.java.net/servlets/ProjectMailingListList">mailing list</a> to ask for help, suggest ideas, contribute patches, etc.  All contributions are welcome.</p>
@@ -46,9 +49,9 @@ Peruse the <a href="javadoc/overview-summary.html">JavaDoc</a>.<p>
    <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.</li>
    <li>Peer review the design and suggest improvements and enhancements</li>
    <li>Port the <code>jnidispatch</code> library to Solaris and any other desired platform (possibly using libffi from gcc).</li>
-   <li>Testing on various JDK versions and platforms.</li>
+   <li>Testing on various JDK versions and platforms (linux flavors!).</li>
    <li>Documentation on multithreaded usage of JNA: Likely danger areas, failure modes, best practices.</li>
-   <li>Tests of JNA overhead compared to straight JNI calls (I did some of this a long time ago and the results were quite favorable, but it would be nice to have some more recent quantitative data).</li>
+   <li>Tests of JNA overhead compared to straight JNI calls (Todd Fast did some of this a long time ago and the results were quite favorable, but it would be nice to have some more recent quantitative data).</li>
  </ul>
  <h3>How To Get Started Using JNA</h3>
  <p>Java Native Access (JNA) has a single component, <code>jna.jar</code>; the supporting native library (<code>jnidispatch</code>) is included in the jar file to avoid extra configuration steps. JNA is capable of extracting and loading the library on its own, so you don't need to reconfigure your native library path in any way.  The native library is also available in a platform-specific jar file for use with Java Web Start.</p>
@@ -178,6 +181,29 @@ the JNA library (and are pretty nifty utilities in and of themselves).
 <li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/FileUtils.java?rev=HEAD&view=markup">FileUtils</a>: Cross-platform move-to-trash functionality
 <li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/FileMonitor.java?rev=HEAD&view=markup">FileMonitor</a>: Cross-platform file change notification (still needs inotify and kqueues implementations)
 </ul>
+
+<h3>History</h3>
+<p>This work is based on a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. <p>
+Todd Fast first published this project on dev.java.net in fall of 2006 (the state of this code is still available in the SVN repo under the <a href="https://jna.dev.java.net/svn/jna/tags/CVS%20HEAD">CVS HEAD</a> tag).  From the original project announcement:
+<blockquote><pre>
+Headline        Initial JNA code checked in
+Date            Nov 30, 2006
+Contributed by 	toddfast
+Announcement
+
+Thanks everyone for your interest in the Java Native Access (JNA) project! I've just checked in the initial code. I've worked on this little project off-and-on for the better part of 6-7 years, and this release comes about a year after I last looked at it. Therefore, I'm only just now getting familiar with it again after refactoring and redesigning for JDK 5 last year, so there may be any number of issues or shortcomings leftover since my last time with it. Please look through the code and get involved!
+
+The Java library code is contained in a NetBeans 5.x project. If you want to build it, please use NetBeans or use the Ant build script in the root of the jnalib/ directory. I will upload a binary at some point to make it a bit easier to get started.
+
+I've checked in binaries of the jnidispatch library and the testlib library for Win32 (.dll's), but don't have convenient access to build these for other platforms. I would greatly appreciate help from others to compile and test versions for other platforms, particularly Mac OS.
+
+To get an idea how to use JNA, please refer to the JUnit tests in the test/ directory. These are crufty and not meant to be examples, but will have to suffice until real samples are available (I would definitely appreciate community help with those as well). Note that you will need to modify your java.library.path system property to include the jnidispatch binary (and possibly the testlib binary) in order to use JNA or run the unit tests. For example:
+java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
+</pre></blockquote>
+
+<p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  Rather than start my own project immediately, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/TODO">TODO</a> file for some of the projects I found).  JNA had the best existing architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots), and was the least problematic to getting things working cross-platform with a consistent build process.<p>
+
+Many thanks to Sheng Liang, Todd Fast, and anyone else who might have contributed namelessly to sharing the roots of this project.
 
 <script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript">
 </script>
