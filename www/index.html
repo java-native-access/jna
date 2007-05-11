@@ -190,13 +190,13 @@ Headline        Initial JNA code checked in
 Date            Nov 30, 2006
 Contributed by 	toddfast
 </pre>
-Announcement
+Announcement<p>
 
-Thanks everyone for your interest in the Java Native Access (JNA) project! I've just checked in the initial code. I've worked on this little project off-and-on for the better part of 6-7 years, and this release comes about a year after I last looked at it. Therefore, I'm only just now getting familiar with it again after refactoring and redesigning for JDK 5 last year, so there may be any number of issues or shortcomings leftover since my last time with it. Please look through the code and get involved!
+Thanks everyone for your interest in the Java Native Access (JNA) project! I've just checked in the initial code. I've worked on this little project off-and-on for the better part of 6-7 years, and this release comes about a year after I last looked at it. Therefore, I'm only just now getting familiar with it again after refactoring and redesigning for JDK 5 last year, so there may be any number of issues or shortcomings leftover since my last time with it. Please look through the code and get involved!<p>
 
-The Java library code is contained in a NetBeans 5.x project. If you want to build it, please use NetBeans or use the Ant build script in the root of the jnalib/ directory. I will upload a binary at some point to make it a bit easier to get started.
+The Java library code is contained in a NetBeans 5.x project. If you want to build it, please use NetBeans or use the Ant build script in the root of the jnalib/ directory. I will upload a binary at some point to make it a bit easier to get started.<p>
 
-I've checked in binaries of the jnidispatch library and the testlib library for Win32 (.dll's), but don't have convenient access to build these for other platforms. I would greatly appreciate help from others to compile and test versions for other platforms, particularly Mac OS.
+I've checked in binaries of the jnidispatch library and the testlib library for Win32 (.dll's), but don't have convenient access to build these for other platforms. I would greatly appreciate help from others to compile and test versions for other platforms, particularly Mac OS.<p>
 
 To get an idea how to use JNA, please refer to the JUnit tests in the test/ directory. These are crufty and not meant to be examples, but will have to suffice until real samples are available (I would definitely appreciate community help with those as well). Note that you will need to modify your java.library.path system property to include the jnidispatch binary (and possibly the testlib binary) in order to use JNA or run the unit tests. For example:
 java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
