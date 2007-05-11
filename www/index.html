@@ -189,6 +189,7 @@ Todd Fast first published this project on dev.java.net in fall of 2006 (the stat
 Headline        Initial JNA code checked in
 Date            Nov 30, 2006
 Contributed by 	toddfast
+</pre>
 Announcement
 
 Thanks everyone for your interest in the Java Native Access (JNA) project! I've just checked in the initial code. I've worked on this little project off-and-on for the better part of 6-7 years, and this release comes about a year after I last looked at it. Therefore, I'm only just now getting familiar with it again after refactoring and redesigning for JDK 5 last year, so there may be any number of issues or shortcomings leftover since my last time with it. Please look through the code and get involved!
@@ -199,7 +200,7 @@ I've checked in binaries of the jnidispatch library and the testlib library for 
 
 To get an idea how to use JNA, please refer to the JUnit tests in the test/ directory. These are crufty and not meant to be examples, but will have to suffice until real samples are available (I would definitely appreciate community help with those as well). Note that you will need to modify your java.library.path system property to include the jnidispatch binary (and possibly the testlib binary) in order to use JNA or run the unit tests. For example:
 java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
-</pre></blockquote>
+</blockquote>
 
 <p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  Rather than start my own project immediately, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/TODO">TODO</a> file for some of the projects I found).  JNA had the best existing architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots), and was the least problematic to getting things working cross-platform with a consistent build process.<p>
 
