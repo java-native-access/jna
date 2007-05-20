@@ -33,14 +33,9 @@ public class Function extends Pointer {
     /** Alternate convention (currently used only for w32 stdcall). */
     public static final int ALT_CONVENTION = 1;
 
-    private static String[] sys_paths;
-    private static String[] usr_paths;
-    private static String[] jna_paths;
-    private static Map libraries = new HashMap();
-    
-    private int callingConvention;
-    private String libraryName;
+    private NativeLibrary library;
     private String functionName;
+    private int callingConvention;
 
     /**
      * Create a new {@link Function} that is linked with a native 
@@ -77,69 +72,32 @@ public class Function extends Pointer {
      */
     public Function(String libraryName, String functionName, 
                     int callingConvention) {
+        this(NativeLibrary.getInstance(libraryName), functionName, callingConvention);
+    }
+    
+    /**
+     * Create a new @{link Function} that is linked with a native 
+     * function that follows a given calling convention.
+     * 
+     * <p>The allocated instance represents a pointer to the named native 
+     * function from the supplied library, called with the named calling 
+     * convention.
+     *
+     * @param  library
+     *                 Library in which to find the function
+     * @param  functionName
+     *                 Name of the native function to be linked with
+     * @param  callingConvention
+     *                 Calling convention used by the native function
+     */
+    Function(NativeLibrary library, String functionName, int callingConvention) {
         checkCallingConvention(callingConvention);
-        this.libraryName = libraryName;
+        this.library = library;
         this.functionName = functionName;
         this.callingConvention = callingConvention;
-        String libPath = getAbsoluteLibraryPath(libraryName);
-        peer = find(libPath, functionName);
+        peer = library.getFunctionAddress(functionName);
     }
     
-    private synchronized static String getAbsoluteLibraryPath(String libName) {
-        String path = (String)libraries.get(libName);
-        if (path == null) {
-            path = findLibrary(libName);
-            libraries.put(libName, path);
-        }
-        return path;
-    }
-    
-    private static String[] initPaths(String key) {
-        return System.getProperty(key, "").split(File.pathSeparator);      
-    }
-
-    /** Use standard library search paths to find the library. */
-    private static String findLibrary(String libName) {
-        synchronized(Function.class) {
-            if (sys_paths == null) {
-                sys_paths = initPaths("sun.boot.library.path");
-                usr_paths = initPaths("java.library.path");
-                jna_paths = initPaths("jna.library.path");
-            }
-        }
-        String name = mapLibraryName(libName);
-        String path = findPath(sys_paths, name);
-        if (path != null)
-            return path;
-        if ((path = findPath(usr_paths, name)) != null)
-            return path;
-        if ((path = findPath(jna_paths, name)) != null)
-            return path;
-        
-        return libName;
-    }
-
-    private static String mapLibraryName(String libName) {
-        String name = System.mapLibraryName(libName);
-        if (System.getProperty("os.name").startsWith("Mac")) {
-            // On OSX, we want dylib, not jnilib
-            if (name.endsWith(".jnilib")) {
-                name = name.substring(0, name.lastIndexOf(".jnilib")) + ".dylib";
-            }
-        }
-        return name;
-    }
-    
-    private static String findPath(String[] paths, String name) {
-        for (int i=0;i < paths.length;i++) {
-            File file = new File(paths[i], name);
-            if (file.exists()) {
-                return file.getAbsolutePath();
-            }
-        }
-        return null;
-    }
-
     private void checkCallingConvention(int convention)
         throws IllegalArgumentException {
         switch(convention) {
@@ -153,7 +111,7 @@ public class Function extends Pointer {
     }
 
     public String getLibraryName() {
-        return libraryName;
+        return library.getName();
     }
 
     public String getName() {
@@ -317,15 +275,6 @@ public class Function extends Pointer {
      */
     public native Pointer invokePointer(int callingConvention, Object[] args);
 
-    /**
-     * Find named function in the named library.  Note, this may also be useful
-     * to obtain the pointer to a function and pass it back into native code.
-     * The library name argument should be the full path to the library file,
-     * otherwise the library lookup will use a search algorithm dependent on 
-     * the native shared library loading implementation.
-     */
-    public native long find(String libraryPath, String fname);
-    
     /** Create a callback function pointer. */
     static native Pointer createCallback(Library library,
                                          Callback callback, Method method, 
@@ -335,6 +284,6 @@ public class Function extends Pointer {
     static native void freeCallback(long ptr);
     
     public String toString() {
-        return functionName + "(" + libraryName + ")";
+        return "Function: " + functionName + "(" + library.getName() + ")";
     }
 }

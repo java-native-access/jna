@@ -28,7 +28,7 @@
   <property name="copyright"
             value="Copyright &amp;copy; 2007 ${company.full}. All Rights Reserved."/>
 
-  <property name="version" value="2.3.1"/>
+  <property name="version" value="2.4"/>
   <property name="jdk" value="1.4"/>
 
   <!-- Miscellaneous -->
@@ -164,6 +164,7 @@
       <class name="com.sun.jna.Memory"/>
       <class name="com.sun.jna.Library$Handler"/>
       <class name="com.sun.jna.Native"/>
+      <class name="com.sun.jna.NativeLibrary"/>
     </javah>
   </target>
 

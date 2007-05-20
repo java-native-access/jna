@@ -980,10 +980,8 @@ public class WindowUtils {
                     int w = getWidth();
                     int h = getHeight();
                     if (w > 0 && h > 0) {
-                        BufferedImage buf = new BufferedImage(
-                                                              w,
-                                                              h,
-                                                              BufferedImage.TYPE_INT_ARGB);
+                        BufferedImage buf =
+                            new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
                         Graphics2D g = buf.createGraphics();
                         g.setComposite(AlphaComposite.Clear);
                         g.fillRect(0, 0, w, h);

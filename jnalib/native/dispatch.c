@@ -17,6 +17,7 @@
 #define LOAD_LIBRARY(name) LoadLibrary(name)
 #define FREE_LIBRARY(handle) FreeLibrary(handle)
 #define FIND_ENTRY(lib, name) GetProcAddress(lib, name)
+#define dlerror() ""
 #else
 #include <dlfcn.h>
 #define LOAD_LIBRARY(name) dlopen(name, RTLD_LAZY)
@@ -362,44 +363,6 @@ Java_com_sun_jna_Function_invokeVoid(JNIEnv *env, jobject self,
     dispatch(env, self, callconv, arr, TYPE_INT32, &result);
 }
 
-/*
- * Class:     Function
- * Method:    find
- * Signature: (Ljava/lang/String;Ljava/lang/String;)J
- */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_Function_find
-    (JNIEnv *env, jobject self, jstring lib, jstring fun)
-{
-    void *handle;
-    void *func = NULL;
-    char *libname = NULL;
-    char *funname = NULL;
-
-    if ((libname = newCString(env, lib)) == 0) {
-        goto ret;
-    }
-    if ((funname = newCString(env, fun)) == 0) {
-        goto ret;
-    }
-    if ((handle = (void *)LOAD_LIBRARY(libname)) == NULL) {
-        throwByName(env, "java/lang/UnsatisfiedLinkError", libname);
-        goto ret;
-    }
-    if ((func = (void *)FIND_ENTRY(handle, funname)) == NULL) {
-        const char* fmt = "no such function '%s' in library '%s'";
-        char *buf = alloca(strlen(funname) + strlen(libname) + strlen(fmt) + 1);
-        sprintf(buf, fmt, funname, libname);
-        throwByName(env, "java/lang/UnsatisfiedLinkError", buf);
-        goto ret;
-    }
-
- ret:
-    free(libname);
-    free(funname);
-    return (jlong)A2L(func);
-}
-
-
 JNIEXPORT jobject JNICALL
 Java_com_sun_jna_Function_createCallback(JNIEnv *env,
                                          jobject handler,
@@ -425,6 +388,54 @@ Java_com_sun_jna_Function_freeCallback(JNIEnv *env, jobject obj,
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   free(cb->insns);
   free(cb);
+}
+
+/*
+ * Class:     com_sun_jna_NativeLibrary
+ * Method:    open
+ * Signature: (Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL
+Java_com_sun_jna_NativeLibrary_open(JNIEnv *env, jclass cls, jstring lib){
+    void *handle = NULL;
+    char *libname = NULL;
+
+    if ((libname = newCString(env, lib)) != NULL) {
+	handle = (void *)LOAD_LIBRARY(libname);
+	free(libname);
+    }
+    return (jlong)A2L(handle);
+}
+
+/*
+ * Class:     com_sun_jna_NativeLibrary
+ * Method:    close
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL
+Java_com_sun_jna_NativeLibrary_close(JNIEnv *env, jclass cls, jlong handle)
+{
+    FREE_LIBRARY(L2A(handle));
+}
+
+/*
+ * Class:     com_sun_jna_NativeLibrary
+ * Method:    findSymbol
+ * Signature: (JLjava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_jna_NativeLibrary_findSymbol(JNIEnv *env,
+    jclass cls, jlong libHandle, jstring fun) {
+
+    void *handle = L2A(libHandle);
+    void *func = NULL;
+    char *funname = NULL;
+
+    if ((funname = newCString(env, fun)) != NULL) {
+	func = (void *)FIND_ENTRY(handle, funname);
+	free(funname);
+    }
+    return (jlong)A2L(func);
+
 }
 
 /*

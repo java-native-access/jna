@@ -5,7 +5,10 @@
 * enforce window minimum/maximum size (workaround java bug)
 
 # TODO:
-* fix dnd on linux (no hole?)
+
+* review/use refactor nativelibrary/function
+* review/use ByteBuffer everywhere
+
 
 * design: 
   o no permanent references to java objects in native code (hard to get rid of)
@@ -67,7 +70,6 @@ transient callbacks, and require callback+dispose for most callbacks?
   explicit write, either per member or whole object before export
 * verify get/set methods vs read/write is for performance (Pointer)?
 * type safety between returned and passed in pointers (w32 API)
-* Dispose/unload library on GC (use ref queue)
 * bitfields et al. for structs
 * auto-convert strings in w32 functions ending in 'W'?  would this introduce
   any ambiguity?
@@ -84,6 +86,8 @@ transient callbacks, and require callback+dispose for most callbacks?
 
 
 # DONE
+* Dispose/unload library on GC (use ref queue)
+* fix dnd on linux (no hole?) (mostly fixed, still some artifacts)
 * transparent/shaped drag image
 * windows handles need to be Pointer (void*), not 'int'
 * other demos: move to trash, file change notification

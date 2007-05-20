@@ -51,7 +51,7 @@ public abstract class Structure {
     private Map nativeStrings = new HashMap();
 
     public static int defaultAlignment() {
-        if (System.getProperty("os.name").startsWith("Windows"))
+        if (Platform.isWindows())
             return ALIGN_MSVC;
         return ALIGN_GNUC;
     }

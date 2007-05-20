@@ -49,11 +49,18 @@ struct CheckFieldAlignment {
   double doubleField;
 };
 
+static int _callCount;
+
 static void nonleaf() {
   static int dummy = 1;
   dummy = dummy ^ 0x12345678;
   if (dummy == 0x12345678) 
     printf("%c", 0);
+}
+
+EXPORT int
+callCount() {
+  return ++_callCount;
 }
 
 EXPORT int  
