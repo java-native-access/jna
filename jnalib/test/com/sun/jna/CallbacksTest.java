@@ -14,7 +14,6 @@ package com.sun.jna;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
-import com.sun.jna.Library.Handler.CallbackReference;
 import junit.framework.TestCase;
 
 /** Exercise a range of native methods.
@@ -70,7 +69,7 @@ public class CallbacksTest extends TestCase {
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
         
-        Map refs = Library.Handler.callbackMap;
+        Map refs = CallbackReference.callbackMap;
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = (CallbackReference)refs.get(cb);
         Pointer cbstruct = ref.cbstruct;

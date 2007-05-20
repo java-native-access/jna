@@ -14,6 +14,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import com.sun.jna.ptr.ByReference;
 
 /**
  * An abstraction for a native function pointer.  An instance of 
@@ -27,6 +28,8 @@ import java.util.Map;
  * @see Pointer
  */
 public class Function extends Pointer {
+    /** Maximum number of arguments supported by a JNA function call. */
+    public static final int MAX_NARGS = 32;
 
     /** Standard C calling convention. */
     public static final int C_CONVENTION = 0;
@@ -84,7 +87,7 @@ public class Function extends Pointer {
      * convention.
      *
      * @param  library
-     *                 Library in which to find the function
+     *                 {@link NativeLibrary} in which to find the function
      * @param  functionName
      *                 Name of the native function to be linked with
      * @param  callingConvention
@@ -123,6 +126,131 @@ public class Function extends Pointer {
         return callingConvention;
     }
 
+    /** Invoke the native function with the given arguments, returning the
+     * native result as an Object.
+     */
+    public Object invoke(Class returnType, Object[] inArgs) {
+        Object result = null;
+
+        // Clone the argument array
+        Object[] args = { };
+        if (inArgs != null) {
+            args = new Object[inArgs.length];
+            System.arraycopy(inArgs, 0, args, 0, args.length);
+        }
+
+        // String arguments are converted to native pointers here rather
+        // than in native code so that the values will be valid until
+        // this method returns.  At one point the conversion was in native
+        // code, which left the pointer values invalid before this method
+        // returned (so you couldn't do something like strstr).
+        for (int i=0; i < args.length; i++) {
+            Object arg = args[i];
+            if (arg == null 
+                || (arg.getClass().isArray() 
+                    && arg.getClass().getComponentType().isPrimitive())) { 
+                continue;
+            }
+            
+            // Convert Structures to native pointers 
+            if (arg instanceof Structure) {
+                Structure struct = (Structure)arg;
+                struct.write();
+                args[i] = struct.getPointer();
+            }
+            // Convert reference class to pointer
+            else if (arg instanceof ByReference) {
+                args[i] = ((ByReference)arg).getPointer();
+            }
+            // Convert Callback to Pointer
+            else if (arg instanceof Callback) {
+                CallbackReference cbref = CallbackReference.getInstance((Callback)arg, callingConvention);
+                // Use pointer to trampoline (callback->insns, see dispatch.h)
+                args[i] = cbref.getTrampoline();
+            }
+            // Convert String to native pointer (const)
+            else if (arg instanceof String) {
+                args[i] = new NativeString((String)arg, false).getPointer();
+            }
+            // Convert WString to native pointer (const)
+            else if (arg instanceof WString) {
+                args[i] = new NativeString(arg.toString(), true).getPointer();
+            }
+            // Convert boolean to int
+            // NOTE: this is specifically for BOOL on w32; most other 
+            // platforms simply use an 'int' or 'char' argument.
+            else if (arg instanceof Boolean) {
+                args[i] = new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
+            }
+            else if (arg.getClass().isArray()) {
+                throw new IllegalArgumentException("Unsupported array type: " + arg.getClass());
+            }
+        }
+
+        if (returnType==Void.TYPE || returnType==Void.class) {
+            invokeVoid(callingConvention, args);
+        }
+        else if (returnType==Boolean.TYPE || returnType==Boolean.class) {
+            result = new Boolean(invokeInt(callingConvention, args) != 0);
+        }
+        else if (returnType==Byte.TYPE || returnType==Byte.class) {
+            result = new Byte((byte)invokeInt(callingConvention, args));
+        }
+        else if (returnType==Short.TYPE || returnType==Short.class) {
+            result = new Short((short)invokeInt(callingConvention, args));
+        }
+        else if (returnType==Integer.TYPE || returnType==Integer.class) {
+            result = new Integer(invokeInt(callingConvention, args));
+        }
+        else if (returnType==Long.TYPE || returnType==Long.class) {
+            result = new Long(invokeLong(callingConvention, args));
+        }
+        else if (returnType==Float.TYPE || returnType==Float.class) {
+            result = new Float(invokeFloat(callingConvention, args));
+        }
+        else if (returnType==Double.TYPE || returnType==Double.class) {
+            result = new Double(invokeDouble(callingConvention, args));
+        }
+        else if (returnType==String.class) {
+            result = invokeString(args, false);
+        }
+        else if (returnType==WString.class) {
+            result = new WString(invokeString(args, true));
+        }
+        else if (Pointer.class.isAssignableFrom(returnType)) {
+            result = invokePointer(callingConvention, args);
+        }
+        else if (Structure.class.isAssignableFrom(returnType)) {
+            result = invokePointer(callingConvention, args);
+            try {
+                Structure s = (Structure)returnType.newInstance();
+                s.useMemory((Pointer)result);
+                s.read();
+                result = s;
+            }
+            catch(Exception e) {
+                throw new IllegalArgumentException("Can't instantiate "
+                                                   + returnType + ": " + e);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported return type "
+                                               + returnType);
+        }
+
+        // Sync java fields in structures to native memory after invocation
+        if (inArgs != null) {
+            for (int i=0; i < inArgs.length; i++) {
+                Object arg = inArgs[i];
+                if (arg instanceof Structure) {
+                    ((Structure)arg).read();
+                }
+            }
+        }
+                        
+        return result;
+    }
+    
     /**
      * Call the native function being represented by this object
      *
@@ -131,7 +259,7 @@ public class Function extends Pointer {
      * @return	The value returned by the target function
      */
     public int invokeInt(Object[] args) {
-        return invokeInt(callingConvention, args);
+        return ((Integer)invoke(Integer.class, args)).intValue();
     }
 
 
@@ -152,7 +280,7 @@ public class Function extends Pointer {
      * @return	The value returned by the target function
      */
     public long invokeLong(Object[] args) {
-        return invokeLong(callingConvention, args);
+        return ((Long)invoke(Long.class, args)).longValue();
     }
 
 
@@ -173,7 +301,7 @@ public class Function extends Pointer {
      * @return	The value returned by the target function
      */
     public boolean invokeBoolean(Object[] args) {
-        return invokeInt(callingConvention, args) != 0;
+        return Boolean.TRUE.equals(invoke(Boolean.class, args));
     }
 
 
@@ -184,7 +312,7 @@ public class Function extends Pointer {
      *			Arguments to pass to the native function
      */
     public void invoke(Object[] args) {
-        invokeVoid(callingConvention, args);
+        invoke(Void.class, args);
     }
 
 
@@ -204,7 +332,7 @@ public class Function extends Pointer {
      * @return	The value returned by the target native function
      */
     public float invokeFloat(Object[] args) {
-        return invokeFloat(callingConvention, args);
+        return ((Float)invoke(Float.class, args)).floatValue();
     }
 
 
@@ -225,7 +353,7 @@ public class Function extends Pointer {
      * @return	The value returned by the target native function
      */
     public double invokeDouble(Object[] args) {
-        return invokeDouble(callingConvention, args);
+        return ((Double)invoke(Double.class, args)).doubleValue();
     }
 
 
@@ -246,7 +374,7 @@ public class Function extends Pointer {
      * @return	The value returned by the target native function
      */
     public String invokeString(Object[] args, boolean wide) {
-        Pointer ptr = invokePointer(callingConvention, args);
+        Pointer ptr = invokePointer(args);
         String s = null;
         if (ptr != null) {
             s = ptr.getString(0, wide);
@@ -262,7 +390,7 @@ public class Function extends Pointer {
      * @return	The native pointer returned by the target native function
      */
     public Pointer invokePointer(Object[] args) {
-        return invokePointer(callingConvention, args);
+        return (Pointer)invoke(Pointer.class, args);
     }
 
 
@@ -276,10 +404,10 @@ public class Function extends Pointer {
     public native Pointer invokePointer(int callingConvention, Object[] args);
 
     /** Create a callback function pointer. */
-    static native Pointer createCallback(Library library,
-                                         Callback callback, Method method, 
+    static native Pointer createCallback(Callback callback, Method method, 
                                          Class[] parameterTypes, 
-                                         Class returnType);
+                                         Class returnType,
+                                         int callingConvention);
     /** Free the given callback function pointer. */
     static native void freeCallback(long ptr);
     

@@ -11,7 +11,6 @@
 package com.sun.jna;
 
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -45,27 +44,9 @@ import com.sun.jna.ptr.ByReference;
  * @author twall@users.sf.net
  */
 public interface Library {
-    /** Maximum number of allowable arguments in a mapped function. */
-    int MAX_NARGS = 32;
 
     static class Handler implements InvocationHandler {
 
-        static class CallbackReference extends WeakReference {
-            Pointer cbstruct;
-            public CallbackReference(Callback callback, Pointer cbstruct) {
-                super(callback);
-                this.cbstruct = cbstruct;
-            }
-            public Pointer getTrampoline() {
-                return cbstruct.getPointer(0);
-            }
-            protected void finalize() {
-                Function.freeCallback(cbstruct.peer);
-                cbstruct.peer = 0;
-            }
-        }
-        static final Map callbackMap = new WeakHashMap();
-        
         private NativeLibrary nativeLibrary;
         private Class interfaceClass;
 
@@ -97,159 +78,19 @@ public interface Library {
             return interfaceClass;
         }
         
-        private Pointer createCallback(Library library,  Callback obj) {
-            Method[] mlist = obj.getClass().getMethods();
-            for (int i=0;i < mlist.length;i++) {
-                if (Callback.METHOD_NAME.equals(mlist[i].getName())) {
-                    Method m = mlist[i];
-                    Class[] paramTypes = m.getParameterTypes();
-                    Class rtype = m.getReturnType();
-                    if (paramTypes.length > MAX_NARGS) {
-                        String msg = "Method signature exceeds the maximum "
-                            + "parameter count: " + m;
-                        throw new IllegalArgumentException(msg);
-                    }
-                    return Function.createCallback(library, obj, m, paramTypes, rtype);
-                }
-            }
-            String msg = "Callback must implement method named '"
-                + Callback.METHOD_NAME + "'";
-            throw new IllegalArgumentException(msg);
-        }
-
         public Object invoke(Object proxy, Method method, Object[] inArgs)
             throws Throwable {
-            Object result=null;
-
-            // Clone the argument array
-            Object[] args = { };
-            if (inArgs != null) {
-                args = new Object[inArgs.length];
-                System.arraycopy(inArgs, 0, args, 0, args.length);
-            }
-
-            // String arguments are converted to native pointers here rather
-            // than in native code so that the values will be valid until
-            // this method returns.  At one point the conversion was in native
-            // code, which left the pointer values invalid before this method
-            // returned (so you couldn't do something like strstr).
-            for (int i=0; i < args.length; i++) {
-                Object arg = args[i];
-                if (arg == null 
-                    || (arg.getClass().isArray() 
-                        && arg.getClass().getComponentType().isPrimitive())) { 
-                    continue;
-                }
-                
-                // Convert Structures to native pointers 
-                if (arg instanceof Structure) {
-                    Structure struct = (Structure)arg;
-                    struct.write();
-                    args[i] = struct.getPointer();
-                }
-                // Convert reference class to pointer
-                else if (arg instanceof ByReference) {
-                    args[i] = ((ByReference)arg).getPointer();
-                }
-                // Convert Callback to Pointer
-                else if (arg instanceof Callback) {
-                    CallbackReference cbref;
-                    synchronized(callbackMap) {
-                        cbref = (CallbackReference)callbackMap.get(arg);
-                        if (cbref == null) {
-                            Pointer cbstruct = createCallback((Library)proxy, (Callback)arg);
-                            cbref = new CallbackReference((Callback)arg, cbstruct);
-                            callbackMap.put(arg, cbref);
-                        }
-                    }
-                    // Use pointer to trampoline (callback->insns, see dispatch.h)
-                    args[i] = cbref.getTrampoline();
-                }
-                // Convert String to native pointer (const)
-                else if (arg instanceof String) {
-                    args[i] = new NativeString((String)arg, false).getPointer();
-                }
-                // Convert WString to native pointer (const)
-                else if (arg instanceof WString) {
-                    args[i] = new NativeString(arg.toString(), true).getPointer();
-                }
-                // Convert boolean to int
-                // NOTE: this is specifically for BOOL on w32; most other 
-                // platforms simply use an 'int' or 'char' argument.
-                else if (arg instanceof Boolean) {
-                    args[i] = new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
-                }
-                else if (arg.getClass().isArray()) {
-                    throw new IllegalArgumentException("Unsupported array type: " + arg.getClass());
-                }
-            }
-
+            
             // Find the function to invoke
             String methodName = method.getName();
             if (functionMap.containsKey(methodName)) {
                 methodName = (String)functionMap.get(methodName);
             }
-            Function function = AltCallingConvention.class.isAssignableFrom(interfaceClass) 
-                ? nativeLibrary.getFunction(methodName, Function.ALT_CONVENTION)
-                : nativeLibrary.getFunction(methodName);
-
-            Class returnType = method.getReturnType();
-            if (returnType==Void.TYPE || returnType==Void.class) {
-                function.invoke(args);
-            }
-            else if (returnType==Boolean.TYPE || returnType==Boolean.class) {
-                result = new Boolean(function.invokeBoolean(args));
-            }
-            else if (returnType==Byte.TYPE || returnType==Byte.class) {
-                result = new Byte((byte)function.invokeInt(args));
-            }
-            else if (returnType==Short.TYPE || returnType==Short.class) {
-                result = new Short((short)function.invokeInt(args));
-            }
-            else if (returnType==Integer.TYPE || returnType==Integer.class) {
-                result = new Integer(function.invokeInt(args));
-            }
-            else if (returnType==Long.TYPE || returnType==Long.class) {
-                result = new Long(function.invokeLong(args));
-            }
-            else if (returnType==Float.TYPE || returnType==Float.class) {
-                result = new Float(function.invokeFloat(args));
-            }
-            else if (returnType==Double.TYPE || returnType==Double.class) {
-                result = new Double(function.invokeDouble(args));
-            }
-            else if (returnType==String.class) {
-                result = function.invokeString(args, false);
-            }
-            else if (returnType==WString.class) {
-                result = new WString(function.invokeString(args, true));
-            }
-            else if (Pointer.class.isAssignableFrom(returnType)) {
-                result = function.invokePointer(args);
-            }
-            else if (Structure.class.isAssignableFrom(returnType)) {
-                result = function.invokePointer(args);
-                Structure s = (Structure)returnType.newInstance();
-                s.useMemory((Pointer)result);
-                s.read();
-                result = s;
-            }
-            else {
-                throw new IllegalArgumentException("Unsupported return type "
-                                                   + returnType);
-            }
-
-            // Sync java fields in structures to native memory after invocation
-            if (inArgs != null) {
-                for (int i=0; i < inArgs.length; i++) {
-                    Object arg = inArgs[i];
-                    if (arg instanceof Structure) {
-                        ((Structure)arg).read();
-                    }
-                }
-            }
-			
-            return result;
+            int callingConvention = 
+                proxy instanceof AltCallingConvention
+                ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+            Function f = nativeLibrary.getFunction(methodName, callingConvention);
+            return f.invoke(method.getReturnType(), inArgs);
         }
     }
 }
