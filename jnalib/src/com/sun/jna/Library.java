@@ -66,9 +66,9 @@ public interface Library {
         }
         static final Map callbackMap = new WeakHashMap();
         
-        private String libname;
+        private NativeLibrary nativeLibrary;
         private Class interfaceClass;
-        private Map functions = new HashMap();
+
         // Map java names to native function names
         private Map functionMap;
         
@@ -84,13 +84,13 @@ public interface Library {
                                                    + interfaceClass + "\"");
             }
 
-            this.libname = libname;
+            this.nativeLibrary = NativeLibrary.getInstance(libname);
             this.interfaceClass = interfaceClass;
             this.functionMap = functionMap;
         }
 
         public String getLibraryName() {
-            return libname;
+            return nativeLibrary.getName();
         }
 
         public Class getInterfaceClass() {
@@ -189,20 +189,10 @@ public interface Library {
             if (functionMap.containsKey(methodName)) {
                 methodName = (String)functionMap.get(methodName);
             }
-            Function function;
-            synchronized(functions) {
-                function = (Function)functions.get(methodName);
-                if (function == null) {
-                    if (AltCallingConvention.class.isAssignableFrom(interfaceClass)) {
-                        function = new Function(libname, methodName,
-                                                Function.ALT_CONVENTION);
-                    }
-                    else {
-                        function = new Function(libname, methodName);
-                    }
-                    functions.put(methodName, function);
-                }
-            }
+            Function function = AltCallingConvention.class.isAssignableFrom(interfaceClass) 
+                ? nativeLibrary.getFunction(methodName, Function.ALT_CONVENTION)
+                : nativeLibrary.getFunction(methodName);
+
             Class returnType = method.getReturnType();
             if (returnType==Void.TYPE || returnType==Void.class) {
                 function.invoke(args);

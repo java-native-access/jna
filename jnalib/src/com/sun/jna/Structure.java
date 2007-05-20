@@ -42,7 +42,6 @@ public abstract class Structure {
     protected static final int CALCULATE_SIZE = -1;
 
     private Pointer memory;
-    private boolean freed;
     private int size = -1;
     private int alignType;
     private int structAlignment;
@@ -88,11 +87,7 @@ public abstract class Structure {
      * memory.
      */
     protected void useMemory(Pointer m, int offset) {
-        if (memory instanceof Memory) {
-            ((Memory)memory).free();
-        }
         this.memory = m.share(offset, size());
-        this.freed = false;
     }
     
     protected Pointer getMemory() {
@@ -112,17 +107,9 @@ public abstract class Structure {
         }
         
         if (size > 0) {
-            if (memory instanceof Memory) {
-                ((Memory)memory).free();
-            }
             memory = new Memory(size);
             this.size = size;
-            this.freed = false;
         }
-    }
-
-    protected void finalize() {
-        free();
     }
 
     public int size() {
@@ -134,20 +121,6 @@ public abstract class Structure {
 
     public void clear() {
         memory.clear(size);
-    }
-
-    /**
-     * Free the memory for the struct. Note, this method is not threadsafe! 
-     */
-    public void free() {
-
-        if (memory instanceof Memory) {
-            ((Memory)memory).free();
-        }
-        // The memory used by the native strings will be reclaimed as
-        // the objects are GC'd
-        nativeStrings.clear();
-        freed = true;
     }
 
     /** Return a {@link Pointer} object to this structure. */
@@ -165,10 +138,6 @@ public abstract class Structure {
      * Reads the fields of the struct from native memory
      */
     public void read() {
-        if (freed) {
-            throw new IllegalStateException("No structure memory is available");
-        }
-
         // Read all fields
         for (Iterator i=structFields.values().iterator();i.hasNext();) {
             StructField f = (StructField)i.next();
@@ -291,9 +260,6 @@ public abstract class Structure {
      * Writes the fields of the struct to native memory
      */
     public void write() {
-        if (freed) {
-            throw new IllegalStateException("Memory has been freed");
-        }
         // convenience: allocate memory if it hasn't been already; this
         // allows structures to inline arrays of primitive types and not have
         // to explicitly call allocateMemory in the ctor
