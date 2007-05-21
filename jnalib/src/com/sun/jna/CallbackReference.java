@@ -17,7 +17,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/** Provides a reference to a native callback closure. */
+/** Provides a reference to an association between a native callback closure
+ * and a Java {@link Callback} closure. 
+ */
 
 public class CallbackReference extends WeakReference {
     
@@ -44,6 +46,18 @@ public class CallbackReference extends WeakReference {
         throw new IllegalArgumentException(msg);
     }
 
+    /** Return a CallbackReference associated with the given callback, using
+     * the calling convention appropriate to the given callback. 
+     */
+    public static CallbackReference getInstance(Callback callback) {
+        int callingConvention = callback instanceof AltCallingConvention
+            ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+        return getInstance(callback, callingConvention);
+    }
+    
+    /** Return a CallbackReference associated with the given callback, using
+     * the requested calling convention. 
+     */
     public static CallbackReference getInstance(Callback callback, int callingConvention) {
         Map map = callingConvention == Function.ALT_CONVENTION
             ? altCallbackMap : callbackMap;

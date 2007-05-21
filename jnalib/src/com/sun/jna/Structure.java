@@ -199,6 +199,11 @@ public abstract class Structure {
             Pointer p = memory.getPointer(offset);
             result = p != null ? new NativeString(p, true).toString() : null;
         }
+        else if (Callback.class.isAssignableFrom(fieldType)) {
+            // ignore; Callback members are write-only (don't try to convert
+            // a native function pointer to a Java Callback)
+            return;
+        }
         else if (fieldType.isArray()) {
             Class cls = fieldType.getComponentType();
             int length = 0;
@@ -247,7 +252,7 @@ public abstract class Structure {
 
         // Set the value on the field
         try {
-            structField.field.set(this,result);
+            structField.field.set(this, result);
         }
         catch (Exception e) {
             throw new RuntimeException("Exception setting field \""
@@ -375,6 +380,14 @@ public abstract class Structure {
             s.useMemory(memory, offset);
             s.write();
         }
+        else if (Callback.class.isAssignableFrom(fieldType)) {
+            Pointer p = null;
+            if (value != null) {
+                CallbackReference cbref = CallbackReference.getInstance((Callback)value);
+                p = cbref.getTrampoline();
+            }
+            memory.setPointer(offset, p);
+        }
         else {
             throw new IllegalArgumentException("Field \"" + structField.name
                                                + "\" was declared as an "
@@ -475,6 +488,7 @@ public abstract class Structure {
             alignment = size;
         }
         else if (Pointer.class.isAssignableFrom(type)
+                 || Callback.class.isAssignableFrom(type)
                  || WString.class.isAssignableFrom(type)
                  || String.class.isAssignableFrom(type)) {
             alignment = Pointer.SIZE;
@@ -519,7 +533,8 @@ public abstract class Structure {
         else if (byte.class == type || Byte.class == type) {
             return 1;
         }
-        else if (Pointer.class.isAssignableFrom(type)) {
+        else if (Pointer.class.isAssignableFrom(type)
+                 || Callback.class.isAssignableFrom(type)) {
             return Pointer.SIZE;
         }
         else if (value instanceof Structure) {

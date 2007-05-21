@@ -12,6 +12,7 @@
  */
 package com.sun.jna;
 
+import java.util.Map;
 import junit.framework.TestCase;
 
 /** TODO: need more alignment tests, especially platform-specific behavior
@@ -113,4 +114,38 @@ public class StructureTest extends TestCase {
         }
     }
     
+    static class CbStruct extends Structure {
+        public Callback cb;
+    }
+    static interface CbTest extends Library {
+        CbTest INSTANCE = (CbTest)
+            Native.loadLibrary("testlib", CbTest.class);
+        public void callCallbackInStruct(CbStruct cbstruct);
+    }
+    public void testCallbackWrite() {
+        final CbStruct s = new CbStruct();
+        s.cb = new Callback() {
+            public void callback() {
+            }
+        };
+        s.write();
+        Pointer func = s.getPointer().getPointer(0);
+        assertNotNull("Callback trampoline not set", func);
+        Map refs = CallbackReference.callbackMap;
+        assertTrue("Callback not cached", refs.containsKey(s.cb));
+        CallbackReference ref = (CallbackReference)refs.get(s.cb);
+        assertEquals("Wrong trampoline", ref.getTrampoline(), func);
+    }
+    
+    public void testCallCallbackInStructure() {
+        final boolean[] flag = {false};
+        final CbStruct s = new CbStruct();
+        s.cb = new Callback() {
+            public void callback() {
+                flag[0] = true;
+            }
+        };
+        CbTest.INSTANCE.callCallbackInStruct(s);
+        assertTrue("Callback not invoked", flag[0]);
+    }
 }

@@ -23,7 +23,7 @@
     - as function argument (auto-convert to pointer via Memory)
     - how to do pointer to struct in struct? (Pointer to start with)
     - pointer to type in struct should be handled with Pointer
-* move callback asm templates into dispatch_<arch>.c
+* auto-convert struct pointers in callback args to Java Structure
 * per-library jna.library.path: many libraries have a "standard" location (or
   several); let the library author indicate what these are (X11, for example)
 * return array of struct (annotation to indicate which argument has the
@@ -36,6 +36,7 @@
 * universal GCC build w/cross-compile
 * catch native crash/exception/faults and re-throw as java exception
 * use libffi from gcc to handle calls and callbacks?
+  or move callback asm templates into dispatch_<arch>.c
 * auto-generate stdcall decorated symbols (try if undecorated lookup fails)
 * make Pointer free-able (system allocates memory, client frees it); actually,
 this should probably be automatic so the user doesn't have to think about it.

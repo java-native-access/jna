@@ -1,0 +1,13 @@
+Release 2.4
+Features
+* Structure supports Callback members
+* getByteBuffer from Pointer/Memory
+* Allow GC of native libraries
+* Facilitate use from non-Java contexts (JRuby et al.)
+* Improve library path searching
+* Handle Structure[] arguments
+
+Bug Fixes
+* Structure.toArray failed to initialize members
+* Disallow explicit free of Structure/Memory
+* Ensure native libraries are only loaded once until released
