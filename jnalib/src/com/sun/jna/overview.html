@@ -138,15 +138,39 @@ the platform's native C <code>struct</code>s.
 <h4>Array-of-Structure Arguments</h4>
 To pass an array of structures, simply use a Java array of the desired
 structure type.  If the array is uninitialized, it will be auto-initialized
-prior to the function call.
+prior to the function call.<p>
+<code><pre>
+// C code
+void get_devices(struct Device[], int size);
 
-<h4>Returned Pointer is an Array of <code>struct</code></h4>
+// Java
+int size = ...
+Device[] devices = new Device[size];
+lib.get_devices(devices, devices.length);
+</pre></code>
+
+<h4>Array of <code>struct</code>s Returned</h4>
 Declare the method as returning a {@link com.sun.jna.Structure} of the
 appropriate type, then invoke {@link com.sun.jna.Structure#toArray(int)} to
 convert to an array of initialized structures of the appropriate size.  Note
 that your {@link com.sun.jna.Structure} class must have a no-args constructor,
 and you are responsible for freeing the returned memory if applicable in
-whatever way is appropriate for the called function.
+whatever way is appropriate for the called function.<p>
+<code><pre>
+// C code
+struct Display* get_displays(int* pcount);
+void free_displays(struct Display* displays);
+
+// Java
+Display get_displays(InteByReference pcount);
+void free_displays(Display[] displays);
+...
+IntByReference pcount = new IntByReference();
+Display d = lib.get_displays(pcount);
+Display[] displays = (Display[])d.toArray(new Display[pcount.getValue()]);
+...
+lib.free_displays(displays);
+</pre></code>
 
 <h4>Nested Structure Definitions</h4>
 Nested structures are treated as consecutive memory (as opposed to pointers to
