@@ -97,6 +97,54 @@ public class StructureTest extends TestCase {
                      3, s.buffer[0]);
     }
     
+    public void testNativeLongSize() throws Exception {
+        class TestStructure extends Structure {
+            public NativeLong l;
+        }
+        Structure s = new TestStructure();
+        assertEquals("Wrong size", NativeLong.SIZE, s.size());
+    }
+    
+    public void testNativeLongRead() throws Exception {
+        class TestStructure extends Structure {
+            public int i;
+            public NativeLong l;
+        }
+        TestStructure s = new TestStructure();
+        if (NativeLong.SIZE == 8) {
+            final long MAGIC = 0x1234567887654321L;
+            s.getPointer().setLong(4, MAGIC);
+            s.read();
+            assertEquals("NativeLong field mismatch", MAGIC, s.l.longValue());
+        } 
+        else {
+            final int MAGIC = 0xABEDCF23;
+            s.getPointer().setInt(4, MAGIC);
+            s.read();
+            assertEquals("NativeLong field mismatch", MAGIC, s.l.intValue());
+        }
+    }
+    
+    public void testNativeLongWrite() throws Exception {
+        class TestStructure extends Structure {
+            public int i;
+            public NativeLong l;
+        }
+        TestStructure s = new TestStructure();
+        if (NativeLong.SIZE == 8) {
+            final long MAGIC = 0x1234567887654321L;
+            s.l = new NativeLong(MAGIC);
+            long l = s.getPointer().getLong(4);
+            assertEquals("NativeLong field mismatch", MAGIC, l);
+        } 
+        else {
+            final int MAGIC = 0xABEDCF23;
+            s.l = new NativeLong(MAGIC);
+            int i = s.getPointer().getInt(4);
+            assertEquals("NativeLong field mismatch", MAGIC, i);
+        }
+    }
+    
     public static class TestStructure extends Structure {
         public int value;
     }

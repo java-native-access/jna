@@ -182,6 +182,9 @@ public abstract class Structure {
         else if (fieldType == Long.TYPE || fieldType == Long.class) {
             result = new Long(memory.getLong(offset));
         }
+        else if (fieldType == NativeLong.class) {
+            result = memory.getNativeLong(offset);
+        }
         else if (fieldType == Float.TYPE || fieldType == Float.class) {
             result=new Float(memory.getFloat(offset));
         }
@@ -325,6 +328,9 @@ public abstract class Structure {
         else if (fieldType == Long.TYPE || fieldType == Long.class) {
             memory.setLong(offset, ((Long)value).longValue());
         }
+        else if (fieldType == NativeLong.class) {
+            memory.setNativeLong(offset, ((NativeLong)value));
+        }
         else if (fieldType == Float.TYPE || fieldType == Float.class) {
             memory.setFloat(offset, ((Float)value).floatValue());
         }
@@ -439,6 +445,9 @@ public abstract class Structure {
                                 throw new IllegalArgumentException(msg);
                             }
                         }
+                        else if (NativeLong.class == type) {
+                            field.set(this, value = new NativeLong(0));
+                        }
                         else if (type.isArray()) {
                             // can't calculate yet, defer until later
                             return -1;
@@ -482,6 +491,7 @@ public abstract class Structure {
         int alignment = 1;
         int size = getNativeSize(type, value);
         if (type.isPrimitive() || Long.class == type || Integer.class == type
+            || NativeLong.class == type
             || Short.class == type || Character.class == type 
             || Byte.class == type 
             || Float.class == type || Double.class == type) {
@@ -512,6 +522,10 @@ public abstract class Structure {
         if (long.class == type || Long.class == type) {
             structAlignment = Math.max(8, structAlignment);
             return 8;
+        }
+        else if (NativeLong.class == type) {
+            structAlignment = Math.max(NativeLong.SIZE, structAlignment);
+            return NativeLong.SIZE;
         }
         else if (double.class == type || Double.class == type) {
             structAlignment = Math.max(8, structAlignment);

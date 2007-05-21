@@ -133,6 +133,26 @@ returnInt64Argument(int64 arg) {
   return NOP(arg);
 }
 
+EXPORT long
+returnLongZero() {
+  long value = 0;
+  nonleaf();
+  return value;
+}
+
+EXPORT long  
+returnLongMagic() {
+  long value = sizeof(long) == 4 ? MAGIC32 : MAGIC64;
+  nonleaf();
+  return value;
+}
+
+EXPORT long  
+returnLongArgument(long arg) {
+  nonleaf();
+  return NOP(arg);
+}
+
 EXPORT float  
 returnFloatZero() {
   float value = 0.0;

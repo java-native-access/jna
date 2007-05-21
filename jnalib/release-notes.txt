@@ -6,6 +6,7 @@ Features
 * Facilitate use from non-Java contexts (JRuby et al.)
 * Improve library path searching
 * Handle Structure[] arguments
+* Handle native long type
 
 Bug Fixes
 * Structure.toArray failed to initialize members

@@ -496,7 +496,15 @@ Java_com_sun_jna_Pointer_initIDs(JNIEnv *env, jclass cls)
     return sizeof(void *);
 }
 
-
+/*
+ * Class:     Pointer
+ * Method:    longSize
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL 
+Java_com_sun_jna_Pointer_longSize(JNIEnv *env, jclass cls) {
+  return sizeof(long);
+}
 
 /*
  * Class:     Pointer

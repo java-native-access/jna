@@ -39,6 +39,7 @@ public class Pointer {
 
     /** The size of a native pointer on the current platform */
     public static final int SIZE;
+    public static final int LONG_SIZE;
     
     /** Convenience constant, same as <code>null</code>. */
     public static final Pointer NULL = null;
@@ -51,6 +52,7 @@ public class Pointer {
             System.loadLibrary("jnidispatch");
         }
         SIZE = initIDs();
+        LONG_SIZE = longSize();
     }
     
     private static String getNativeLibraryResourcePath() {
@@ -139,6 +141,9 @@ public class Pointer {
      * Returns the size of a native pointer.
      **/
     private static native int initIDs();
+
+    /** Return the size of a native <code>long</code>. */
+    private static native int longSize();
     
     /** Pointer value of the real native pointer. Use long to be 64-bit safe. 
      */
@@ -438,7 +443,18 @@ public class Pointer {
      */
     public native long getLong(int offset);
 
-
+    /**
+     * Indirect the native pointer as a pointer to <code>long</code>.  This is
+     * equivalent to the expression
+     * <code>*((long *)((char *)Pointer + offset))</code>.
+     *
+     * @param offset byte offset from pointer to perform the indirection
+     * @return the <code>long</code> value being pointed to
+     */
+    public NativeLong getNativeLong(int offset) {
+        return new NativeLong(SIZE == 8 ? getLong(offset) : getInt(offset));
+    }
+    
     /**
      * Indirect the native pointer as a pointer to <code>float</code>.  This is
      * equivalent to the expression
@@ -605,6 +621,22 @@ public class Pointer {
      */
     public native void setLong(int offset, long value);
 
+    /**
+     * Set <code>value</code> at location being pointed to. This is equivalent
+     * to the expression
+     * <code>*((long *)((char *)Pointer + offset)) = value</code>.
+     *
+     * @param offset byte offset from pointer at which <code>value</code>
+     *               must be set
+     * @param value <code>long</code> value to set
+     */
+    public void setNativeLong(int offset, NativeLong value) {
+        if (SIZE == 8) {
+            setLong(offset, value.longValue());
+        } else {
+            setInt(offset, value.intValue());
+        }
+    }
 
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
