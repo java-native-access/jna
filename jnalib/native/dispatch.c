@@ -709,6 +709,18 @@ JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getPointer
 }
 
 /*
+ * Class:     com_sun_jna_Pointer
+ * Method:    getDirectByteBuffer
+ * Signature: (II)Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getDirectByteBuffer
+    (JNIEnv *env, jobject self, jint offset, jint length)
+{
+    jbyte *peer = (jbyte *)getNativeAddress(env, self);
+    return (*env)->NewDirectByteBuffer(env, peer + offset, length);
+}
+
+/*
  * Class:     Pointer
  * Method:    getDouble
  * Signature: (I)D

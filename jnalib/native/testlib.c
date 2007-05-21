@@ -347,6 +347,15 @@ callDoubleCallback(double (*func)(double arg, double arg2),
   return (*func)(NOP(arg), NOP(arg2));
 }
 
+struct cbstruct {
+  void (*func)();
+};
+
+EXPORT void
+callCallbackInStruct(struct cbstruct *cb) {
+  (*cb->func)();
+}
+
 EXPORT int32 
 fillInt8Buffer(char *buf, int len, char value) {
   int i;
