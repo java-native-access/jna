@@ -6,6 +6,7 @@ extern "C" {
 
 #include <wchar.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 #define EXPORT __declspec(dllexport)
@@ -410,6 +411,42 @@ fillInt64Buffer(int64 *buf, int len, int64 value) {
     buf[i] = value;
   }
   return len;
+}
+
+EXPORT int32
+addInt32VarArgs(const char *fmt, ...) {
+  va_list ap;
+  int32 sum = 0;
+  va_start(ap, fmt);
+  
+  while (*fmt) {
+    switch (*fmt++) {
+    case 'd':
+      sum += va_arg(ap, int32);
+      break;
+    case 'l':
+      sum += (int) va_arg(ap, int64);
+      break;
+    case 'c':
+      sum += (int) va_arg(ap, int);
+      break;
+    default:
+      break;
+    }
+  }
+  va_end(ap);
+  return sum;
+}
+
+EXPORT char *
+returnStringVarArgs(const char *fmt, ...) {
+  char* cp;
+  va_list ap;
+  int32 sum = 0;
+  va_start(ap, fmt);
+  cp = va_arg(ap, char *);
+  va_end(ap);
+  return cp;
 }
 
 #ifdef _WIN32

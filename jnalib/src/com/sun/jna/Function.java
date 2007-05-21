@@ -130,11 +130,17 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs) {
+        // This will be set to the full set of arguments if a varargs
+        // argument is encountered
+        Object[] fullArgs = null;
         Object result = null;
 
         // Clone the argument array
         Object[] args = { };
         if (inArgs != null) {
+            if (inArgs.length > MAX_NARGS) {
+                throw new UnsupportedOperationException("Maximum argument count is " + MAX_NARGS);
+            }
             args = new Object[inArgs.length];
             System.arraycopy(inArgs, 0, args, 0, args.length);
         }
@@ -229,8 +235,28 @@ public class Function extends Pointer {
                 }
             }
             else if (argClass.isArray()) {
-                throw new IllegalArgumentException("Unsupported array type: " 
-                                                   + argClass.getComponentType());
+                // An object array as the final argument is interpreted as
+                // varargs input
+                if (i == inArgs.length - 1 && fullArgs == null) {
+                    Object[] varargs = (Object[]) arg;
+                    int fixedCount = inArgs.length - 1;
+                    int argCount = fixedCount + varargs.length; 
+                    if (argCount > MAX_NARGS) {
+                        throw new UnsupportedOperationException("Maximum argument count is " + MAX_NARGS);
+                    }
+                    Object[] newArgs = new Object[argCount];
+                    // Copy the original arg array (less the current arg)
+                    System.arraycopy(args, 0, newArgs, 0, fixedCount);
+                    
+                    // Copy the varargs array onto the end of the main args array
+                    System.arraycopy(varargs, 0, newArgs, fixedCount, varargs.length);
+                    fullArgs = args = newArgs;
+                    --i; // Jump back and process the first arg of the varargs
+                }
+                else {
+                    throw new IllegalArgumentException("Unsupported array type: " 
+                                                       + argClass.getComponentType());
+                }
             }
         }
 
@@ -292,6 +318,8 @@ public class Function extends Pointer {
 
         // Sync java fields in structures to native memory after invocation
         if (inArgs != null) {
+            if (fullArgs != null)
+                inArgs = fullArgs;
             for (int i=0; i < inArgs.length; i++) {
                 Object arg = inArgs[i];
                 if (arg == null)

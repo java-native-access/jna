@@ -88,14 +88,14 @@ public class NativeLibrary {
         String simplified = libraryName;
         final String BASE = "---";
         String template = mapLibraryName(BASE);
-        int prefix = template.indexOf(BASE);
-        if (prefix != 0) {
-            simplified = simplified.substring(prefix);
+        int prefixEnd = template.indexOf(BASE);
+        if (prefixEnd > 0 && simplified.startsWith(template.substring(0, prefixEnd))) {
+            simplified = simplified.substring(prefixEnd);
         }
-        String end = template.substring(prefix + BASE.length());
-        int suffix = simplified.indexOf(end);
-        if (suffix != -1) {
-            simplified = simplified.substring(0, suffix);
+        String suffix = template.substring(prefixEnd + BASE.length());
+        int suffixStart = simplified.indexOf(suffix);
+        if (suffixStart != -1) {
+            simplified = simplified.substring(0, suffixStart);
         }
         return simplified;
     }

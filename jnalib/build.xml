@@ -37,7 +37,7 @@
   <target name="default" depends="test" description="Build and Test."/>
 
   <target name="dynamic-properties">
-    <echo>Java version: ${java.version}</echo>
+    <echo>Java version: ${java.version}, compatibility=${jdk}</echo>
     <echo>Build ${version}</echo>
     <property name="build" location="build"/>
     <property name="classes" location="${build}/classes"/>
