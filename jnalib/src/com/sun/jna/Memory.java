@@ -61,7 +61,10 @@ public class Memory extends Pointer {
 
     protected Memory() { }
 
-    /** Provide a view onto this structure from the given offset. */
+    /** Provide a view onto this structure from the given offset. 
+     * @throws IndexOutOfBoundsException if the requested memory is outside
+     * the allocated bounds. 
+     */
     Pointer share(int offset, int sz) {
         boundsCheck(offset, sz);
         return new SharedMemory(offset);

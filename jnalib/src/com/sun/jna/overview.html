@@ -142,11 +142,11 @@ prior to the function call.
 
 <h4>Returned Pointer is an Array of <code>struct</code></h4>
 Declare the method as returning a {@link com.sun.jna.Structure} of the
-appropriate type, then invoke {@link com.sun.jna.Structure#toArray()} to
-convert to an array initialized structures of the appropriate size.  Note that
-your {@link com.sun.jna.Structure} class must have a no-args constructor, and
-you are responsible for freeing the returned memory if applicable in whatever
-way is appropriate for the called function.
+appropriate type, then invoke {@link com.sun.jna.Structure#toArray(int)} to
+convert to an array of initialized structures of the appropriate size.  Note
+that your {@link com.sun.jna.Structure} class must have a no-args constructor,
+and you are responsible for freeing the returned memory if applicable in
+whatever way is appropriate for the called function.
 
 <h4>Nested Structure Definitions</h4>
 Nested structures are treated as consecutive memory (as opposed to pointers to
