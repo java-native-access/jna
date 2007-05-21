@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * An abstraction for a native pointer data type.  A Pointer instance 
@@ -469,6 +471,27 @@ public class Pointer {
      * <code>NULL</code>; 
      */
     public native Pointer getPointer(int offset);
+
+    /**
+     * Get a ByteBuffer mapped to the memory pointed to by the pointer,
+     * ensuring the buffer uses native byte order.
+     *
+     * @param offset byte offset from pointer to start the buffer
+     * @param length Length of ByteBuffer
+     * @return a direct ByteBuffer that accesses the memory being pointed to, 
+     */
+    public ByteBuffer getByteBuffer(int offset, int length) {
+        return getDirectByteBuffer(offset, length).order(ByteOrder.nativeOrder());
+    }
+    
+    /**
+     * Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
+     *
+     * @param offset byte offset from pointer to start the buffer
+     * @param length Length of ByteBuffer
+     * @return a direct ByteBuffer that accesses the memory being pointed to, 
+     */
+    private native ByteBuffer getDirectByteBuffer(int offset, int length);
 
     /**
      * Copy native memory to a Java String.  If <code>wide</code> is true,

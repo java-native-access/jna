@@ -10,6 +10,8 @@
  */
 package com.sun.jna;
 
+import java.nio.ByteBuffer;
+
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a 
@@ -432,6 +434,17 @@ public class Memory extends Pointer {
         return super.getPointer(offset);
     }
 
+    /**
+     * Get a ByteBuffer mapped to a portion of this memory.
+     *
+     * @param offset byte offset from pointer to start the buffer
+     * @param length Length of ByteBuffer
+     * @return a direct ByteBuffer that accesses the memory being pointed to, 
+     */
+    public ByteBuffer getByteBuffer(int offset, int length) {
+        boundsCheck(offset, length);
+        return super.getByteBuffer(offset, length);
+    }
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
