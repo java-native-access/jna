@@ -209,6 +209,24 @@ public class Function extends Pointer {
                         }
                         args[i] = ss[0].getPointer();
                     }
+                    else {
+                        Pointer base = ss[0].getPointer();
+                        int size = ss[0].size();
+                        for (int si=1;si < ss.length;si++) {
+                            try {
+                                Pointer p = base.share(size*si, size);
+                                if (ss[si].getPointer().peer != p.peer) {
+                                    throw new RuntimeException();
+                                }
+                            }
+                            catch(RuntimeException e) {
+                                String msg = "Structure array elements must use"
+                                    + " contiguous memory: " + si;     
+                                throw new IllegalArgumentException(msg);
+                            }
+                        }
+                        args[i] = base;
+                    }
                 }
                 else {
                     throw new IllegalArgumentException("Unsupported array type: " + arg.getClass());

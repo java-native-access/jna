@@ -178,7 +178,7 @@ public class ArgumentsMarshalTest extends TestCase {
                      lib.testSimpleStructurePointerArgument(aligned));
     }
     
-    public void testStructureArrayArgument() {
+    public void testUninitializedStructureArrayArgument() {
         final int LENGTH = 10;
         TestLibrary.CheckFieldAlignment[] block = 
             new TestLibrary.CheckFieldAlignment[LENGTH];
@@ -196,6 +196,20 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
 
+    public void testRejectNoncontiguousStructureArrayArgument() {
+        TestLibrary.CheckFieldAlignment[] block = 
+            new TestLibrary.CheckFieldAlignment[] {
+            new TestLibrary.CheckFieldAlignment(),
+            new TestLibrary.CheckFieldAlignment(),
+        };
+        try {
+            lib.modifyStructureArray(block, block.length);
+            fail("Library invocation should fail");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+    
     public void testByteArrayArgument() {
         byte[] buf = new byte[1024];
         final byte MAGIC = (byte)0xED;
