@@ -20,6 +20,15 @@ typedef enum _vartype {
     TYPE_INT64,
 } type_t;
 
+#include "com_sun_jna_Function.h"
+/* These are the calling conventions an invocation can handle. */
+typedef enum _callconv {
+    CALLCONV_C = com_sun_jna_Function_C_CONVENTION,
+#if defined(_WIN32)
+    CALLCONV_STDCALL = com_sun_jna_Function_ALT_CONVENTION,
+#endif
+} callconv_t;
+
 /* Represents a machine word (one stack element). */
 typedef union _word {
     jint i;
@@ -80,8 +89,8 @@ typedef struct _callback {
 extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern jobject newJavaPointer(JNIEnv *, void *);
 extern char get_jtype(JNIEnv*, jclass);
-extern callback* create_callback(JNIEnv*, jobject, jobject, jobject,
-                                 jobjectArray, jclass);
+extern callback* create_callback(JNIEnv*, jobject, jobject,
+                                 jobjectArray, jclass, callconv_t);
 
 #ifdef __cplusplus
 }

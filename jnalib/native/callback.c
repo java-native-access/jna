@@ -207,8 +207,9 @@ extern void asm_template_end();
 #endif
 
 callback*
-create_callback(JNIEnv* env, jobject lib, jobject obj, jobject method,
-                jobjectArray param_types, jclass return_type) {
+create_callback(JNIEnv* env, jobject obj, jobject method,
+                jobjectArray param_types, jclass return_type,
+                callconv_t call_conv) {
   callback* cb;
   unsigned long* insns;
   int args_size = 0;
@@ -303,10 +304,7 @@ create_callback(JNIEnv* env, jobject lib, jobject obj, jobject method,
     }
 #ifdef _WIN32
     else if (value == CALLEE_SIZE) {
-      jclass cls = (*env)->FindClass(env, "com/sun/jna/win32/StdCall");
-      jboolean stdcall = (*env)->IsInstanceOf(env, obj, cls)
-        || (*env)->IsInstanceOf(env, lib, cls);
-      *addr = stdcall ? args_size : 0;
+      *addr = (call_conv == CALLCONV_STDCALL) ? args_size : 0;
     }
 #endif
   }

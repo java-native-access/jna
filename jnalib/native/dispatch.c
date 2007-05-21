@@ -93,14 +93,6 @@ static char* newCString(JNIEnv *env, jstring jstr);
 static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 static jstring newJavaString(JNIEnv *env, const char *str, jboolean wide);
 
-/* These are the calling conventions an invocation can handle. */
-typedef enum _callconv {
-    CALLCONV_C = com_sun_jna_Function_C_CONVENTION,
-#if defined(_WIN32)
-    CALLCONV_STDCALL = com_sun_jna_Function_ALT_CONVENTION,
-#endif
-} callconv_t;
-
 /* A CPU-dependent assembly routine that passes the arguments to C
  * stack and invoke the function.
  */
@@ -364,26 +356,22 @@ Java_com_sun_jna_Function_invokeVoid(JNIEnv *env, jobject self,
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_sun_jna_Function_createCallback(JNIEnv *env,
-                                         jobject handler,
-                                         jobject library,
-                                         jobject obj,
-                                         jobject method,
+Java_com_sun_jna_Function_createCallback(JNIEnv *env, jclass functionClass,
+                                         jobject obj, jobject method,
                                          jobjectArray param_types,
-                                         jclass return_type) {
+                                         jclass return_type,
+                                         jint call_conv) {
   callback* cb =
-    create_callback(env, library, obj, method, param_types, return_type);
-  if (cb == NULL) {
-    throwByName(env, "java/lang/UnsupportedOperationException",
-                "Callbacks not supported on this platform");
-    return NULL;
+    create_callback(env, obj, method, param_types, return_type, call_conv);
+  if (cb != NULL) {
+    return newJavaPointer(env, cb);
   }
-  return newJavaPointer(env, cb);
+  return NULL;
 }
 
 JNIEXPORT void JNICALL
-Java_com_sun_jna_Function_freeCallback(JNIEnv *env, jobject obj,
-                                                   jlong ptr) {
+Java_com_sun_jna_Function_freeCallback(JNIEnv *env,
+                                       jclass functionClass, jlong ptr) {
   callback* cb = (callback*)L2A(ptr);
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   free(cb->insns);

@@ -278,7 +278,8 @@ checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   return NOP(f) + NOP(d) + NOP(f2) + NOP(d2);
 }
 
-EXPORT int 
+// TODO: not yet supported
+EXPORT int32 
 testSimpleStructureArgument(struct CheckFieldAlignment arg) {
   nonleaf();
   if (arg.int32Field != (int32)1) {
@@ -300,6 +301,18 @@ EXPORT int32
 testSimpleStructurePointerArgument(struct CheckFieldAlignment* arg) {
   return testSimpleStructureArgument(*arg);
 }
+
+EXPORT void
+modifyStructureArray(struct CheckFieldAlignment arg[], int length) {
+  int i;
+  for (i=0;i < length;i++) {
+    arg[i].int32Field = i;
+    arg[i].int64Field = i+1;
+    arg[i].floatField = (float)i+2;
+    arg[i].doubleField = (double)i+3;
+  }
+}
+
 
 EXPORT void
 callVoidCallback(void (*func)()) {
