@@ -49,6 +49,7 @@ public class ArgumentsMarshalTest extends TestCase {
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
         int testSimpleStructurePointerArgument(CheckFieldAlignment p);
+        void modifyStructureArray(CheckFieldAlignment[] p, int length);
         int fillInt8Buffer(byte[] buf, int len, byte value);
         int fillInt16Buffer(short[] buf, int len, short value);
         int fillInt32Buffer(int[] buf, int len, int value);
@@ -175,6 +176,24 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Structure data not properly initialized",
                      aligned.size(), 
                      lib.testSimpleStructurePointerArgument(aligned));
+    }
+    
+    public void testStructureArrayArgument() {
+        final int LENGTH = 10;
+        TestLibrary.CheckFieldAlignment[] block = 
+            new TestLibrary.CheckFieldAlignment[LENGTH];
+        lib.modifyStructureArray(block, block.length);
+        for (int i=0;i < block.length;i++) {
+            assertNotNull("Structure array not initialized at " + i, block[i]);
+            assertEquals("Wrong value for int32 field of structure at " + i,
+                         i, block[i].int32Field);
+            assertEquals("Wrong value for int64 field of structure at " + i,
+                         i + 1, block[i].int64Field);
+            assertEquals("Wrong value for float field of structure at " + i,
+                         i + 2, block[i].floatField, 0);
+            assertEquals("Wrong value for double field of structure at " + i,
+                         i + 3, block[i].doubleField, 0);
+        }
     }
 
     public void testByteArrayArgument() {

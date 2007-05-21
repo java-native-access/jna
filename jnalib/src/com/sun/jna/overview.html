@@ -76,6 +76,8 @@ default type mappings:<br>
 <tr><td>float</td><td>float</td>
 <tr><td>double</td><td>double</td>
 <tr><td>pointer (to type or array as pointer)</td><td>{@link com.sun.jna.Pointer}</td>
+<tr><td>struct* (pointer to struct)</td><td>{@link com.sun.jna.Structure}</td>
+<tr><td>struct[] (array of contiguous structs)</td><td>{@link com.sun.jna.Structure}[]</td>
 <tr><td>nested arrays</td><td>Array of type</td>
 <tr><td>nested structures</td><td>{@link com.sun.jna.Structure}</td>
 <tr><td><i>not yet implemented</i></td>
@@ -132,6 +134,19 @@ subclass, and a pointer to native data memory will be used.  The contents of
 the structure will be passed to the function and updated when the function
 returns.  Structures are packed according to the default alignment rules for
 the platform's native C <code>struct</code>s.  
+
+<h4>Array-of-Structure Arguments</h4>
+To pass an array of structures, simply use a Java array of the desired
+structure type.  If the array is uninitialized, it will be auto-initialized
+prior to the function call.
+
+<h4>Returned Pointer is an Array of <code>struct</code></h4>
+Declare the method as returning a {@link com.sun.jna.Structure} of the
+appropriate type, then invoke {@link com.sun.jna.Structure#toArray()} to
+convert to an array initialized structures of the appropriate size.  Note that
+your {@link com.sun.jna.Structure} class must have a no-args constructor, and
+you are responsible for freeing the returned memory if applicable in whatever
+way is appropriate for the called function.
 
 <h4>Nested Structure Definitions</h4>
 Nested structures are treated as consecutive memory (as opposed to pointers to

@@ -152,6 +152,7 @@ public class Function extends Pointer {
                 continue;
             }
             
+            Class argClass = arg.getClass();
             // Convert Structures to native pointers 
             if (arg instanceof Structure) {
                 Structure struct = (Structure)arg;
@@ -182,8 +183,36 @@ public class Function extends Pointer {
             else if (arg instanceof Boolean) {
                 args[i] = new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
             }
-            else if (arg.getClass().isArray()) {
-                throw new IllegalArgumentException("Unsupported array type: " + arg.getClass());
+            else if (argClass.isArray()) {
+                // Initialize uninitialized arrays of Structure to point
+                // to a single block of memory
+                if (Structure.class.isAssignableFrom(argClass.getComponentType())) {
+                    Structure[] ss = (Structure[])arg;
+                    if (ss.length == 0) {
+                        args[i] = null;
+                    }
+                    else if (ss[0] == null) {
+                        Class type = argClass.getComponentType();
+                        try {
+                            Structure struct = (Structure)type.newInstance(); 
+                            int size = struct.size();
+                            Memory m = new Memory(size * ss.length);
+                            struct.useMemory(m);
+                            Structure[] tmp = struct.toArray(ss.length);
+                            for (int si=0;si < ss.length;si++) {
+                                ss[si] = tmp[si];
+                            }
+                        }
+                        catch(Exception e) {
+                            throw new IllegalArgumentException("Can't instantiate "
+                                                               + type + ": " + e);
+                        }
+                        args[i] = ss[0].getPointer();
+                    }
+                }
+                else {
+                    throw new IllegalArgumentException("Unsupported array type: " + arg.getClass());
+                }
             }
         }
 
@@ -242,8 +271,18 @@ public class Function extends Pointer {
         if (inArgs != null) {
             for (int i=0; i < inArgs.length; i++) {
                 Object arg = inArgs[i];
+                if (arg == null)
+                    continue;
+                Class argClass = arg.getClass();
                 if (arg instanceof Structure) {
                     ((Structure)arg).read();
+                }
+                else if (argClass.isArray()
+                         && Structure.class.isAssignableFrom(argClass.getComponentType())) {
+                    Structure[] ss = (Structure[])arg;
+                    for (int si=0;si < ss.length;si++) {
+                        ss[si].read();
+                    }
                 }
             }
         }
