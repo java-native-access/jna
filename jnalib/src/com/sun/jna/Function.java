@@ -146,9 +146,7 @@ public class Function extends Pointer {
         // returned (so you couldn't do something like strstr).
         for (int i=0; i < args.length; i++) {
             Object arg = args[i];
-            if (arg == null 
-                || (arg.getClass().isArray() 
-                    && arg.getClass().getComponentType().isPrimitive())) { 
+            if (arg == null || isPrimitiveArray(arg.getClass())) { 
                 continue;
             }
             
@@ -183,54 +181,53 @@ public class Function extends Pointer {
             else if (arg instanceof Boolean) {
                 args[i] = new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
             }
-            else if (argClass.isArray()) {
+            else if (isStructureArray(argClass)) {
                 // Initialize uninitialized arrays of Structure to point
                 // to a single block of memory
-                if (Structure.class.isAssignableFrom(argClass.getComponentType())) {
-                    Structure[] ss = (Structure[])arg;
-                    if (ss.length == 0) {
-                        args[i] = null;
-                    }
-                    else if (ss[0] == null) {
-                        Class type = argClass.getComponentType();
-                        try {
-                            Structure struct = (Structure)type.newInstance(); 
-                            int size = struct.size();
-                            Memory m = new Memory(size * ss.length);
-                            struct.useMemory(m);
-                            Structure[] tmp = struct.toArray(ss.length);
-                            for (int si=0;si < ss.length;si++) {
-                                ss[si] = tmp[si];
-                            }
+                Structure[] ss = (Structure[])arg;
+                if (ss.length == 0) {
+                    args[i] = null;
+                }
+                else if (ss[0] == null) {
+                    Class type = argClass.getComponentType();
+                    try {
+                        Structure struct = (Structure)type.newInstance(); 
+                        int size = struct.size();
+                        Memory m = new Memory(size * ss.length);
+                        struct.useMemory(m);
+                        Structure[] tmp = struct.toArray(ss.length);
+                        for (int si=0;si < ss.length;si++) {
+                            ss[si] = tmp[si];
                         }
-                        catch(Exception e) {
-                            throw new IllegalArgumentException("Can't instantiate "
-                                                               + type + ": " + e);
-                        }
-                        args[i] = ss[0].getPointer();
                     }
-                    else {
-                        Pointer base = ss[0].getPointer();
-                        int size = ss[0].size();
-                        for (int si=1;si < ss.length;si++) {
-                            try {
-                                Pointer p = base.share(size*si, size);
-                                if (ss[si].getPointer().peer != p.peer) {
-                                    throw new RuntimeException();
-                                }
-                            }
-                            catch(RuntimeException e) {
-                                String msg = "Structure array elements must use"
-                                    + " contiguous memory: " + si;     
-                                throw new IllegalArgumentException(msg);
-                            }
-                        }
-                        args[i] = base;
+                    catch(Exception e) {
+                        throw new IllegalArgumentException("Can't instantiate "
+                                                           + type + ": " + e);
                     }
+                    args[i] = ss[0].getPointer();
                 }
                 else {
-                    throw new IllegalArgumentException("Unsupported array type: " + arg.getClass());
+                    Pointer base = ss[0].getPointer();
+                    int size = ss[0].size();
+                    for (int si=1;si < ss.length;si++) {
+                        try {
+                            Pointer p = base.share(size*si, size);
+                            if (ss[si].getPointer().peer != p.peer) {
+                                throw new RuntimeException();
+                            }
+                        }
+                        catch(RuntimeException e) {
+                            String msg = "Structure array elements must use"
+                                + " contiguous memory: " + si;     
+                            throw new IllegalArgumentException(msg);
+                        }
+                    }
+                    args[i] = base;
                 }
+            }
+            else if (argClass.isArray()) {
+                throw new IllegalArgumentException("Unsupported array type: " 
+                                                   + argClass.getComponentType());
             }
         }
 
@@ -291,12 +288,10 @@ public class Function extends Pointer {
                 Object arg = inArgs[i];
                 if (arg == null)
                     continue;
-                Class argClass = arg.getClass();
                 if (arg instanceof Structure) {
                     ((Structure)arg).read();
                 }
-                else if (argClass.isArray()
-                         && Structure.class.isAssignableFrom(argClass.getComponentType())) {
+                else if (isStructureArray(arg.getClass())) {
                     Structure[] ss = (Structure[])arg;
                     for (int si=0;si < ss.length;si++) {
                         ss[si].read();
@@ -306,6 +301,18 @@ public class Function extends Pointer {
         }
                         
         return result;
+    }
+
+
+    private boolean isStructureArray(Class argClass) {
+        return argClass.isArray()
+            && Structure.class.isAssignableFrom(argClass.getComponentType());
+    }
+
+
+    private boolean isPrimitiveArray(Class argClass) {
+        return argClass.isArray() 
+            && argClass.getComponentType().isPrimitive();
     }
     
     /**

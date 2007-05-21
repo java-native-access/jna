@@ -557,6 +557,7 @@ public abstract class Structure {
             try {
                 array[i] = (Structure)getClass().newInstance();
                 array[i].useMemory(getPointer().share(i*size, size));
+                array[i].read();
             }
             catch (InstantiationException e) {
                 throw new IllegalArgumentException("Error instantiating "
