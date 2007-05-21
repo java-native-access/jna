@@ -27,12 +27,13 @@ ASMDISPATCH_OBJS=$(BUILD)/dispatch_$(ARCH).o
 JNIDISPATCH_OBJS=$(BUILD)/dispatch.o \
                  $(BUILD)/callback.o \
                  $(ASMDISPATCH_OBJS)
-LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(LIBSFX)
+LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
 
 # Reasonable defaults based on GCC
 LIBPFX=lib
 LIBSFX=.so
+JNISFX=$(LIBSFX)
 CC=gcc
 LD=gcc
 # Default to Sun recommendations for JNI compilation
@@ -109,7 +110,8 @@ endif
 
 ifeq ($(OS),darwin)
 ARCH=$(shell arch)
-LIBSFX=.jnilib
+LIBSFX=.dylib
+JNISFX=.jnilib
 # Use universal binary when updated to work with gcc 4
 ifneq ($(SDKROOT),)
 ifneq ($(UNIVERSAL),)
