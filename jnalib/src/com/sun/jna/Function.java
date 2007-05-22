@@ -209,8 +209,13 @@ public class Function extends Pointer {
                             ss[si] = tmp[si];
                         }
                     }
-                    catch(Exception e) {
-                        throw new IllegalArgumentException("Can't instantiate "
+                    catch(InstantiationException e) {
+                        throw new IllegalArgumentException("Instantiation of "
+                                                           + type + " failed: " 
+                                                           + e);
+                    }
+                    catch(IllegalAccessException e) {
+                        throw new IllegalArgumentException("Not allowed to instantiate "
                                                            + type + ": " + e);
                     }
                     args[i] = ss[0].getPointer();
@@ -300,15 +305,22 @@ public class Function extends Pointer {
         }
         else if (Structure.class.isAssignableFrom(returnType)) {
             result = invokePointer(callingConvention, args);
-            try {
-                Structure s = (Structure)returnType.newInstance();
-                s.useMemory((Pointer)result);
-                s.read();
-                result = s;
-            }
-            catch(Exception e) {
-                throw new IllegalArgumentException("Can't instantiate "
-                                                   + returnType + ": " + e);
+            if (result != null) {
+                try {
+                    Structure s = (Structure)returnType.newInstance();
+                    s.useMemory((Pointer)result);
+                    s.read();
+                    result = s;
+                }
+                catch(InstantiationException e) {
+                    throw new IllegalArgumentException("Instantiation of "
+                                                       + returnType + " failed: " 
+                                                       + e);
+                }
+                catch(IllegalAccessException e) {
+                    throw new IllegalArgumentException("Not allowed to instantiate "
+                                                       + returnType + ": " + e);
+                }
             }
         }
         else {

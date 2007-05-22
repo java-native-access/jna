@@ -102,14 +102,12 @@ public abstract class Structure {
             // Analyze the struct
             size = calculateSize();
         }
-        else if (size <= 0) {
+        if (size <= 0) {
             throw new IllegalArgumentException("Size must be greater than zero");
         }
         
-        if (size > 0) {
-            memory = new Memory(size);
-            this.size = size;
-        }
+        memory = new Memory(size);
+        this.size = size;
     }
 
     public int size() {

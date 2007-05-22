@@ -54,6 +54,7 @@ public class ReturnTypesTest extends TestCase {
         String returnStringMagic();
         WString returnWStringMagic();
         TestStructure returnStaticTestStructure();
+        TestStructure returnNullTestStructure();
     }
 
     TestLibrary lib;
@@ -125,6 +126,11 @@ public class ReturnTypesTest extends TestCase {
     public void testInvokeStructure() {
         TestStructure s = lib.returnStaticTestStructure();
         assertEquals("Expect test structure magic", DOUBLE_MAGIC, s.value, 0d);
+    }
+    
+    public void testInvokeNullStructure() {
+        TestStructure s = lib.returnNullTestStructure();
+        assertNull("Expect null structure return", s);
     }
     
     public static void main(java.lang.String[] argList) {

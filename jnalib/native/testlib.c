@@ -236,6 +236,11 @@ returnStaticTestStructure() {
   return &test_structure;
 }
 
+EXPORT TestStructure*
+returnNullTestStructure() {
+  return NULL;
+}
+
 EXPORT void 
 incrementInt8ByReference(int8 *arg) {
   nonleaf();
