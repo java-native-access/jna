@@ -24,6 +24,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Window;
@@ -94,6 +96,7 @@ public class WindowUtils {
     public static boolean doPaint;
     private static final String TRANSPARENT_OLD_BG = "transparent-old-bg";
     private static final String TRANSPARENT_OLD_OPAQUE = "transparent-old-opaque";
+    private static final String TRANSPARENT_ALPHA = "transparent-alpha";
     /** Use this to clear a window mask. */
     public static final Shape MASK_NONE = null;
 
@@ -461,6 +464,29 @@ public class WindowUtils {
             return false;
         }
 
+        /** Keep track of the alpha level, since we can't read it from
+         * the window itself.
+         */
+        private void storeAlpha(Window w, byte alpha) {
+            if (w instanceof RootPaneContainer) {
+                JRootPane root = ((RootPaneContainer)w).getRootPane();
+                Byte b = alpha == (byte)0xFF ? null : new Byte(alpha);
+                root.putClientProperty(TRANSPARENT_ALPHA, b);
+            }
+        }
+
+        /** Return the last alpha level we set on the window. */
+        private byte getAlpha(Window w) {
+            if (w instanceof RootPaneContainer) {
+                JRootPane root = ((RootPaneContainer)w).getRootPane();
+                Byte b = (Byte)root.getClientProperty(TRANSPARENT_ALPHA);
+                if (b != null) {
+                    return b.byteValue();
+                }
+            }
+            return (byte)0xFF;
+        }
+
         public void setWindowAlpha(final Window w, final float alpha) {
             if (!isWindowAlphaSupported()) {
                 System.err.println("Window alpha not supported");
@@ -471,9 +497,12 @@ public class WindowUtils {
                     Pointer hWnd = getHWnd(w);
                     User32 user = User32.INSTANCE;
                     int flags = user.GetWindowLongA(hWnd, User32.GWL_EXSTYLE);
+                    byte level = (byte)((int)(255 * alpha) & 0xFF);
                     if (isTransparent(w)) {
+                        // If already using UpdateLayeredWindow, continue to 
+                        // do so
                         BLENDFUNCTION blend = new BLENDFUNCTION();
-                        blend.SourceConstantAlpha = (byte)((int)(alpha * 255) & 0xFF);
+                        blend.SourceConstantAlpha = level;
                         blend.AlphaFormat = User32.AC_SRC_ALPHA;
                         user.UpdateLayeredWindow(hWnd, null, null, null, null,
                                                  null, 0, blend,
@@ -486,11 +515,11 @@ public class WindowUtils {
                     else {
                         flags |= User32.WS_EX_LAYERED;
                         user.SetWindowLongA(hWnd, User32.GWL_EXSTYLE, flags);
-                        byte level = (byte)((int)(255 * alpha) & 0xFF);
                         user.SetLayeredWindowAttributes(hWnd, 0, level,
                                                         User32.LWA_ALPHA);
                     }
                     setForceHeavyweightPopups(w, alpha != 1f);
+                    storeAlpha(w, level);
                 }
             });
         }
@@ -508,13 +537,13 @@ public class WindowUtils {
             public void update() {
                 GDI32 gdi = GDI32.INSTANCE;
                 User32 user = User32.INSTANCE;
-                int w = getWidth();
-                int h = getHeight();
+                Window win = SwingUtilities.getWindowAncestor(this);
+                int w = win.getWidth();
+                int h = win.getHeight();
                 Pointer screenDC = user.GetDC(null);
                 Pointer memDC = gdi.CreateCompatibleDC(screenDC);
                 Pointer hBitmap = null;
                 Pointer oldBitmap = null;
-                Window win = SwingUtilities.getWindowAncestor(this);
                 try {
                     BufferedImage buf = 
                         new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
@@ -522,7 +551,9 @@ public class WindowUtils {
                     g.setComposite(AlphaComposite.Clear);
                     g.fillRect(0, 0, w, h);
                     g.setComposite(AlphaComposite.SrcOver);
-                    getParent().paint(g);
+                    Point origin = SwingUtilities.convertPoint(getParent(), 0, 0, win);
+                    getParent().paint(g.create(origin.x, origin.y,
+                                               getWidth(), getHeight()));
                     BITMAPINFO bmi = new BITMAPINFO();
                     bmi.bmiHeader.biWidth = w;
                     bmi.bmiHeader.biHeight = h;
@@ -539,14 +570,14 @@ public class WindowUtils {
                     Raster raster = buf.getData();
                     int[] pixel = new int[4];
                     int[] bits = new int[w * h];
-                    for (int y = 0; y < h; y++) {
-                        for (int x = 0; x < w; x++) {
-                            raster.getPixel(x, h - y - 1, pixel);
+                    for (int row = 0; row < h; row++) {
+                        for (int col = 0; col < w; col++) {
+                            raster.getPixel(col, h - row - 1, pixel);
                             int alpha = (pixel[3] & 0xFF) << 24;
                             int red = (pixel[2] & 0xFF);
                             int green = (pixel[1] & 0xFF) << 8;
                             int blue = (pixel[0] & 0xFF) << 16;
-                            bits[x + y * w] = alpha | red | green | blue;
+                            bits[col + row * w] = alpha | red | green | blue;
                         }
                     }
                     pbits.write(0, bits, 0, bits.length);
@@ -559,13 +590,15 @@ public class WindowUtils {
                     loc.x = win.getX();
                     loc.y = win.getY();
                     Pointer hWnd = Native.getWindowPointer(win);
-                    // extract current constant alpha setting
+                    // extract current constant alpha setting, if possible
                     ByteByReference bref = new ByteByReference();
                     IntByReference iref = new IntByReference();
-                    user.GetLayeredWindowAttributes(hWnd, null, bref, iref);
-                    blend.SourceConstantAlpha = (iref.getValue() & User32.LWA_ALPHA) != 0
-                        ? bref.getValue()
-                        : (byte)0xFF;
+                    byte level = getAlpha(win);
+                    if (user.GetLayeredWindowAttributes(hWnd, null, bref, iref)
+                        && (iref.getValue() & User32.LWA_ALPHA) != 0) {
+                        level = bref.getValue();
+                    }
+                    blend.SourceConstantAlpha = level;
                     blend.AlphaFormat = User32.AC_SRC_ALPHA;
                     user.UpdateLayeredWindow(hWnd, screenDC, loc, size, memDC,
                                              srcLoc, 0, blend, User32.ULW_ALPHA);

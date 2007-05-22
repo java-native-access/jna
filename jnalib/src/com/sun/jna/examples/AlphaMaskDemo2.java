@@ -56,11 +56,9 @@ import javax.swing.event.MouseInputAdapter;
 // rui@ruilopes.com
 // http://www.codeproject.com/cs/media/perpxalpha_sharp.asp?df=100&forumid=3270&exp=0&select=773155
 public class AlphaMaskDemo2 implements Runnable {
-    private static final DataFlavor URL_FLAVOR = new DataFlavor(
-                                                                "application/x-java-url; class=java.net.URL",
+    private static final DataFlavor URL_FLAVOR = new DataFlavor("application/x-java-url; class=java.net.URL",
                                                                 "URL");
-    private static final DataFlavor URI_LIST_FLAVOR = new DataFlavor(
-                                                                     "text/uri-list; class=java.lang.String",
+    private static final DataFlavor URI_LIST_FLAVOR = new DataFlavor("text/uri-list; class=java.lang.String",
                                                                      "URI list");
     private JFrame frame;
     private JWindow alphaWindow;
@@ -104,8 +102,7 @@ public class AlphaMaskDemo2 implements Runnable {
 
     public void run() {
         // Must find a graphics configuration with a depth of 32 bits
-        GraphicsConfiguration gconfig = WindowUtils
-                                                   .getAlphaCompatibleGraphicsConfiguration();
+        GraphicsConfiguration gconfig = WindowUtils.getAlphaCompatibleGraphicsConfiguration();
         frame = new JFrame("Alpha Mask Demo");
         alphaWindow = new JWindow(frame, gconfig);
         icon = new JLabel();

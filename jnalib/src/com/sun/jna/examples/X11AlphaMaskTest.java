@@ -55,57 +55,57 @@ public class X11AlphaMaskTest {
                 g.setComposite(AlphaComposite.Clear);
                 g.fillRect(0, 0, getWidth(), getHeight());
                 g.setComposite(AlphaComposite.SrcOver);
-                int w = getWidth() / 10;
-                int h = getHeight();
+                int barw = getWidth() / 10;
+                int barh = getHeight();
 
                 g.setColor(Color.red);
-                g.fillRect(0, 0, w, h);
+                g.fillRect(0, 0, barw, barh);
                 g.setColor(new Color(255, 0, 0, alpha));
-                g.fillRect(w, 0, w, h / 2);
+                g.fillRect(barw, 0, barw, barh / 2);
                 g.setColor(mix(Color.red, 255));
-                g.fillRect(w, h / 2, w, h / 4);
+                g.fillRect(barw, barh / 2, barw, barh / 4);
                 g.setColor(mix(Color.red, 0));
-                g.fillRect(w, h *3 / 4, w, h / 4);
+                g.fillRect(barw, barh *3 / 4, barw, barh / 4);
 
                 g.setColor(Color.green);
-                g.fillRect(2 * w, 0, w, h);
+                g.fillRect(2 * barw, 0, barw, barh);
                 g.setColor(new Color(0, 255, 0, alpha));
-                g.fillRect(3 * w, 0, w, h / 2);
+                g.fillRect(3 * barw, 0, barw, barh / 2);
                 g.setColor(mix(Color.green, 255));
-                g.fillRect(3 * w, h / 2, w, h / 4);
+                g.fillRect(3 * barw, barh / 2, barw, barh / 4);
                 g.setColor(mix(Color.green, 0));
-                g.fillRect(3 * w, h *3 / 4, w, h / 4);
+                g.fillRect(3 * barw, barh *3 / 4, barw, barh / 4);
 
                 g.setColor(Color.blue);
-                g.fillRect(4 * w, 0, w, h);
+                g.fillRect(4 * barw, 0, barw, barh);
                 g.setColor(new Color(0, 0, 255, alpha));
-                g.fillRect(5 * w, 0, w, h / 2);
+                g.fillRect(5 * barw, 0, barw, barh / 2);
                 g.setColor(mix(Color.blue, 255));
-                g.fillRect(5 * w, h / 2, w, h / 4);
+                g.fillRect(5 * barw, barh / 2, barw, barh / 4);
                 g.setColor(mix(Color.blue, 0));
-                g.fillRect(5 * w, h * 3 / 4, w, h / 4);
+                g.fillRect(5 * barw, barh * 3 / 4, barw, barh / 4);
 
                 g.setColor(Color.white);
-                g.fillRect(6 * w, 0, w, h);
+                g.fillRect(6 * barw, 0, barw, barh);
                 g.setColor(new Color(255, 255, 255, alpha));
-                g.fillRect(7 * w, 0, w, h / 2);
+                g.fillRect(7 * barw, 0, barw, barh / 2);
                 g.setColor(mix(Color.white, 255));
-                g.fillRect(7 * w, h / 2, w, h / 4);
+                g.fillRect(7 * barw, barh / 2, barw, barh / 4);
                 g.setColor(mix(Color.white, 0));
-                g.fillRect(7 * w, h * 3 / 4, w, h / 4);
+                g.fillRect(7 * barw, barh * 3 / 4, barw, barh / 4);
 
                 g.setColor(Color.black);
-                g.fillRect(8 * w, 0, w, h);
+                g.fillRect(8 * barw, 0, barw, barh);
                 g.setColor(new Color(0, 0, 0, alpha));
-                g.fillRect(9 * w, 0, w, h / 2);
+                g.fillRect(9 * barw, 0, barw, barh / 2);
                 g.setColor(mix(Color.black, 255));
-                g.fillRect(9 * w, h / 2, w, h / 4);
+                g.fillRect(9 * barw, barh / 2, barw, barh / 4);
                 g.setColor(mix(Color.black, 0));
-                g.fillRect(9 * w, h * 3 / 4, w, h / 4);
+                g.fillRect(9 * barw, barh * 3 / 4, barw, barh / 4);
 
                 // small bar on top, black 50% alpha
                 g.setColor(new Color(0, 0, 0, 128));
-                g.fillRect(0, 0, getWidth(), h / 10);
+                g.fillRect(0, 0, getWidth(), barh / 10);
 
                 if (false) {
                     BufferedImage prealpha =
