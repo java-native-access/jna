@@ -6,9 +6,11 @@ Features
 * Facilitate use from non-Java contexts (JRuby et al.)
 * Improve library path searching
 * Handle Structure[] arguments
-* Handle native long type
+* Handle native long arguments and return values
+* Handle direct and array-based ByteBuffer arguments
 
 Bug Fixes
 * Structure.toArray failed to initialize members
 * Disallow explicit free of Structure/Memory
 * Ensure native libraries are only loaded once until released
+* Properly handle NULL when the return value is a Structure

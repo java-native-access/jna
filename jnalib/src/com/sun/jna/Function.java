@@ -12,6 +12,7 @@ package com.sun.jna;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import com.sun.jna.ptr.ByReference;
@@ -237,6 +238,15 @@ public class Function extends Pointer {
                         }
                     }
                     args[i] = base;
+                }
+            }
+            else if (arg instanceof ByteBuffer && !((ByteBuffer)arg).isDirect()) {
+                ByteBuffer buf = (ByteBuffer)arg;
+                if (buf.hasArray()) {
+                    args[i] = buf.array();
+                }
+                else {
+                    throw new IllegalArgumentException("Unsupported non-direct ByteBuffer with no array");
                 }
             }
             else if (argClass.isArray()) {
