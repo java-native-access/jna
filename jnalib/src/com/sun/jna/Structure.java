@@ -42,7 +42,7 @@ public abstract class Structure {
     protected static final int CALCULATE_SIZE = -1;
 
     private Pointer memory;
-    private int size = -1;
+    private int size = CALCULATE_SIZE;
     private int alignType;
     private int structAlignment;
     private Map structFields = new LinkedHashMap();
@@ -102,12 +102,15 @@ public abstract class Structure {
             // Analyze the struct
             size = calculateSize();
         }
-        if (size <= 0) {
-            throw new IllegalArgumentException("Size must be greater than zero");
+        else if (size <= 0) {
+            throw new IllegalArgumentException("Size must be greater than zero: " + size);
         }
-        
-        memory = new Memory(size);
-        this.size = size;
+        // May need to defer size calculation if derived class not fully
+        // initialized
+        if (size != CALCULATE_SIZE) {
+            memory = new Memory(size);
+            this.size = size;
+        }
     }
 
     public int size() {
@@ -447,8 +450,8 @@ public abstract class Structure {
                             field.set(this, value = new NativeLong(0));
                         }
                         else if (type.isArray()) {
-                            // can't calculate yet, defer until later
-                            return -1;
+                            // can't calculate size yet, defer until later
+                            return CALCULATE_SIZE;
                         }
                     }
                     structField.size = getNativeSize(field.getType(), value);
