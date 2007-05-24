@@ -132,8 +132,10 @@ public class Function extends Pointer {
      */
     public Object invoke(Class returnType, Object[] inArgs) {
         // This will be set to the full set of arguments if a varargs
-        // argument is encountered
-        Object[] fullArgs = null;
+        // argument is encountered; it contains the original, unprocessed args
+        // which are needed in order to read (possibly altered) memory back
+        // into structure arguments
+        Object[] fullArgs = inArgs;
         Object result = null;
 
         // Clone the argument array
@@ -252,21 +254,30 @@ public class Function extends Pointer {
             else if (argClass.isArray()) {
                 // An object array as the final argument is interpreted as
                 // varargs input
-                if (i == inArgs.length - 1 && fullArgs == null) {
+                if (i == inArgs.length - 1 && fullArgs == inArgs) {
                     Object[] varargs = (Object[]) arg;
                     int fixedCount = inArgs.length - 1;
                     int argCount = fixedCount + varargs.length; 
                     if (argCount > MAX_NARGS) {
                         throw new UnsupportedOperationException("Maximum argument count is " + MAX_NARGS);
                     }
-                    Object[] newArgs = new Object[argCount];
+                    Object[] newArgs = new Object[argCount+1];
+                    fullArgs = new Object[argCount];
                     // Copy the original arg array (less the current arg)
                     System.arraycopy(args, 0, newArgs, 0, fixedCount);
+                    System.arraycopy(fullArgs, 0, inArgs, 0, fixedCount);
                     
                     // Copy the varargs array onto the end of the main args array
                     System.arraycopy(varargs, 0, newArgs, fixedCount, varargs.length);
-                    fullArgs = args = newArgs;
-                    --i; // Jump back and process the first arg of the varargs
+                    System.arraycopy(varargs, 0, fullArgs, fixedCount, varargs.length);
+                    // Automatically set an extra NULL argument to the end 
+                    // of the argument list as a convenience to the Java user.
+                    // If not required, it will be ignored
+                    newArgs[newArgs.length-1] = null;
+                    args = newArgs;
+                    // The first varargs argument has replaced the varargs array
+                    // argument
+                    --i;  
                 }
                 else {
                     throw new IllegalArgumentException("Unsupported array type: " 
@@ -339,11 +350,9 @@ public class Function extends Pointer {
         }
 
         // Sync java fields in structures to native memory after invocation
-        if (inArgs != null) {
-            if (fullArgs != null)
-                inArgs = fullArgs;
-            for (int i=0; i < inArgs.length; i++) {
-                Object arg = inArgs[i];
+        if (fullArgs != null) {
+            for (int i=0; i < fullArgs.length; i++) {
+                Object arg = fullArgs[i];
                 if (arg == null)
                     continue;
                 if (arg instanceof Structure) {

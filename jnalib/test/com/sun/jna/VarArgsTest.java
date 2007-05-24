@@ -14,14 +14,20 @@
 
 package com.sun.jna;
 
+import com.sun.jna.VarArgsTest.TestLibrary.TestStructure;
 import junit.framework.TestCase;
 
 public class VarArgsTest extends TestCase {
+    final int MAGIC32 = 0x12345678;
     public static interface TestLibrary extends Library {
+        public static class TestStructure extends Structure {
+            public int magic = 0;
+        }
         TestLibrary INSTANCE = (TestLibrary)
                 Native.loadLibrary("testlib", TestLibrary.class);
         public int addInt32VarArgs(String fmt, Object[] args);
         public String returnStringVarArgs(String fmt, Object[] args);
+        public void modifyStructureVarArgs(String fmt, Object[] args);
     }
     public void testIntVarArgs() {
         Integer[] args = new Integer[2];
@@ -39,7 +45,7 @@ public class VarArgsTest extends TestCase {
         args[0] = new Short(arg1);
         args[1] = new Short(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
+                     TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
     }
     public void testLongVarArgs() {
         Object[] args = new Object[2];
@@ -54,5 +60,23 @@ public class VarArgsTest extends TestCase {
         String[] args = new String[] { "Test" };
         assertEquals("Did not return correct string", args[0],
                 TestLibrary.INSTANCE.returnStringVarArgs("", args));
+    }
+    
+    public void testAppendNullToVarargs() {
+        Integer[] args = new Integer[] { new Integer(1) };
+        assertEquals("No trailing NULL was appended to varargs list",
+                     1, TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
+    }
+    
+    public void testModifyStructureInVarargs() {
+        TestStructure[] args = new TestStructure[] { new TestStructure() };
+        TestLibrary.INSTANCE.modifyStructureVarArgs("s", args);
+        assertEquals("Structure memory not read in varargs",
+                     MAGIC32, args[0].magic); 
+                     
+    }
+    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(VarArgsTest.class);
     }
 }
