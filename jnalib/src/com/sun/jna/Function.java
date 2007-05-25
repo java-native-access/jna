@@ -30,6 +30,7 @@ import com.sun.jna.ptr.ByReference;
  */
 public class Function extends Pointer {
     /** Maximum number of arguments supported by a JNA function call. */
+    // NOTE: this may be different with libffi
     public static final int MAX_NARGS = 32;
 
     /** Standard C calling convention. */
@@ -131,12 +132,29 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs) {
-        // This will be set to the full set of arguments if a varargs
-        // argument is encountered; it contains the original, unprocessed args
-        // which are needed in order to read (possibly altered) memory back
-        // into structure arguments
-        Object[] fullArgs = inArgs;
         Object result = null;
+
+        // If the final argument is an array of Object, treat it as
+        // varargs and concatenate the previous arguments with the varargs 
+        // elements.
+        if (inArgs != null && inArgs.length > 0) {
+            Object lastArg = inArgs[inArgs.length-1];
+            if (lastArg != null 
+                && lastArg.getClass().isArray() 
+                && !isPrimitiveArray(lastArg.getClass())) {
+                Object[] varArgs = (Object[])lastArg;
+                Object[] fullArgs = new Object[inArgs.length+varArgs.length];
+                System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
+                System.arraycopy(varArgs, 0, fullArgs, inArgs.length-1, varArgs.length);
+                // For convenience, always append a NULL argument to the end
+                // of varargs, whether the called API requires it or not. If
+                // it is not needed, it will be ignored, but if it *is* 
+                // required, it avoids forcing the Java client to always
+                // explicitly add it.
+                fullArgs[fullArgs.length-1] = null;
+                inArgs = fullArgs;
+            }
+        }
 
         // Clone the argument array
         Object[] args = { };
@@ -251,38 +269,9 @@ public class Function extends Pointer {
                     throw new IllegalArgumentException("Unsupported non-direct ByteBuffer with no array");
                 }
             }
-            else if (argClass.isArray()) {
-                // An object array as the final argument is interpreted as
-                // varargs input
-                if (i == inArgs.length - 1 && fullArgs == inArgs) {
-                    Object[] varargs = (Object[]) arg;
-                    int fixedCount = inArgs.length - 1;
-                    int argCount = fixedCount + varargs.length; 
-                    if (argCount > MAX_NARGS) {
-                        throw new UnsupportedOperationException("Maximum argument count is " + MAX_NARGS);
-                    }
-                    Object[] newArgs = new Object[argCount+1];
-                    fullArgs = new Object[argCount];
-                    // Copy the original arg array (less the current arg)
-                    System.arraycopy(args, 0, newArgs, 0, fixedCount);
-                    System.arraycopy(fullArgs, 0, inArgs, 0, fixedCount);
-                    
-                    // Copy the varargs array onto the end of the main args array
-                    System.arraycopy(varargs, 0, newArgs, fixedCount, varargs.length);
-                    System.arraycopy(varargs, 0, fullArgs, fixedCount, varargs.length);
-                    // Automatically set an extra NULL argument to the end 
-                    // of the argument list as a convenience to the Java user.
-                    // If not required, it will be ignored
-                    newArgs[newArgs.length-1] = null;
-                    args = newArgs;
-                    // The first varargs argument has replaced the varargs array
-                    // argument
-                    --i;  
-                }
-                else {
-                    throw new IllegalArgumentException("Unsupported array type: " 
-                                                       + argClass.getComponentType());
-                }
+            else if (argClass.isArray()){
+                throw new IllegalArgumentException("Unsupported array argument type: " 
+                                                   + argClass.getComponentType());
             }
         }
 
@@ -350,9 +339,9 @@ public class Function extends Pointer {
         }
 
         // Sync java fields in structures to native memory after invocation
-        if (fullArgs != null) {
-            for (int i=0; i < fullArgs.length; i++) {
-                Object arg = fullArgs[i];
+        if (inArgs != null) {
+            for (int i=0; i < inArgs.length; i++) {
+                Object arg = inArgs[i];
                 if (arg == null)
                     continue;
                 if (arg instanceof Structure) {

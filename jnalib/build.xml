@@ -162,7 +162,6 @@
       <class name="com.sun.jna.Function"/>
       <class name="com.sun.jna.Pointer"/>
       <class name="com.sun.jna.Memory"/>
-      <class name="com.sun.jna.Library$Handler"/>
       <class name="com.sun.jna.Native"/>
       <class name="com.sun.jna.NativeLibrary"/>
     </javah>

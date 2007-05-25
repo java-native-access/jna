@@ -48,8 +48,8 @@ static int jawt_initialized;
 #include "com_sun_jna_Pointer.h"
 #include "com_sun_jna_Memory.h"
 #include "com_sun_jna_Function.h"
-#include "com_sun_jna_Library_Handler.h"
 #include "com_sun_jna_Native.h"
+#include "com_sun_jna_NativeLibrary.h"
 
 #ifdef __cplusplus
 extern "C"

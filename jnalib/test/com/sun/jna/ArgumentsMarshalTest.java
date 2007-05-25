@@ -61,6 +61,9 @@ public class ArgumentsMarshalTest extends TestCase {
         int fillInt16Buffer(ByteBuffer buf, int len, short value);
         int fillInt32Buffer(ByteBuffer buf, int len, int value);
         int fillInt64Buffer(ByteBuffer buf, int len, long value);
+        
+        // Nonexistent functions 
+        boolean returnBooleanArgument(Object arg);
     }
 
     TestLibrary lib;
@@ -338,6 +341,15 @@ public class ArgumentsMarshalTest extends TestCase {
         lib.fillInt64Buffer(buf, 1024, MAGIC);
         for (int i=0;i < longBuf.capacity();i++) {
             assertEquals("Bad value at index " + i, MAGIC, longBuf.get(i));
+        }
+    }
+    
+    public void testInvalidArgument() {
+        try {
+            lib.returnBooleanArgument(this);
+            fail("Unsupported Java objects should be rejected");
+        }
+        catch(IllegalArgumentException e) {
         }
     }
     

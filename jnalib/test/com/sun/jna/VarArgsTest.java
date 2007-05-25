@@ -10,8 +10,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-
-
 package com.sun.jna;
 
 import com.sun.jna.VarArgsTest.TestLibrary.TestStructure;
@@ -27,7 +25,7 @@ public class VarArgsTest extends TestCase {
                 Native.loadLibrary("testlib", TestLibrary.class);
         public int addInt32VarArgs(String fmt, Object[] args);
         public String returnStringVarArgs(String fmt, Object[] args);
-        public void modifyStructureVarArgs(String fmt, Object[] args);
+        public void modifyStructureVarArgs(String fmt, Object arg1, Object[] args);
     }
     public void testIntVarArgs() {
         Integer[] args = new Integer[2];
@@ -36,7 +34,7 @@ public class VarArgsTest extends TestCase {
         args[0] = new Integer(arg1);
         args[1] = new Integer(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
+                     TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
     }
     public void testShortVarArgs() {
         Object[] args = new Short[2];
@@ -54,12 +52,12 @@ public class VarArgsTest extends TestCase {
         args[0] = new Long(arg1);
         args[1] = new Long(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                TestLibrary.INSTANCE.addInt32VarArgs("ll", args));
+                     TestLibrary.INSTANCE.addInt32VarArgs("ll", args));
     }
     public void testStringVarArgs() {
         String[] args = new String[] { "Test" };
         assertEquals("Did not return correct string", args[0],
-                TestLibrary.INSTANCE.returnStringVarArgs("", args));
+                     TestLibrary.INSTANCE.returnStringVarArgs("", args));
     }
     
     public void testAppendNullToVarargs() {
@@ -69,10 +67,14 @@ public class VarArgsTest extends TestCase {
     }
     
     public void testModifyStructureInVarargs() {
-        TestStructure[] args = new TestStructure[] { new TestStructure() };
-        TestLibrary.INSTANCE.modifyStructureVarArgs("s", args);
+        System.out.println("test modify structure in varargs");
+        TestStructure arg1 = new TestStructure();
+        TestStructure[] varargs = new TestStructure[] { new TestStructure() };
+        TestLibrary.INSTANCE.modifyStructureVarArgs("ss", arg1, varargs);
+        assertEquals("Structure memory not read in fixed arg w/varargs",
+                     MAGIC32, arg1.magic); 
         assertEquals("Structure memory not read in varargs",
-                     MAGIC32, args[0].magic); 
+                     MAGIC32, varargs[0].magic); 
                      
     }
     

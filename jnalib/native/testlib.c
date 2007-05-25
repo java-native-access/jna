@@ -443,6 +443,27 @@ addInt32VarArgs(const char *fmt, ...) {
   return sum;
 }
 
+EXPORT void
+modifyStructureVarArgs(const char* fmt, ...) {
+  struct _ss {
+    int32 magic;
+  } *s;
+  va_list ap;
+  va_start(ap, fmt);
+  while (*fmt) {
+    switch(*fmt++) {
+    case 's': 
+      s = (struct _ss *)va_arg(ap, void*);
+      s->magic = MAGIC32;
+      break;
+    default:
+      break;
+    }
+  }
+
+  va_end(ap);
+}
+
 EXPORT char *
 returnStringVarArgs(const char *fmt, ...) {
   char* cp;
