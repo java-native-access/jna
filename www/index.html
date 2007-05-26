@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,ctypes,pinvoke,jdirect,java platform invoke,java native library access,java native access,call native from java,java c library,easy jni,call c code from java,java native method call,java native function call,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-05-21">
+<meta name="date" content="2007-05-26">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -47,9 +47,9 @@ which includes an overview of specific usage.<p>
  <p>The library works fairly well now, but there are a number of tasks with which we'd appreciate help:</p>
  <ul>
    <li>More comprehensive documentation on using JNA, including examples of Java to native conversions of data types, function usage, and proper memory management.</li>
-   <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.</li>
+   <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.  This is important not for having an exhaustive library definition but to illustrate all the different ways a native library may need to be mapped.</li>
    <li>Peer review the design and suggest improvements and enhancements</li>
-   <li>Port the <code>jnidispatch</code> library to Solaris and any other desired platform (possibly using libffi from gcc).</li>
+   <li>Port the <code>jnidispatch</code> library to Solaris and any other desired platform (the v3 branch is using libffi from gcc, so it may work out of the box if we can just get access to the appropriate build platform).</li>
    <li>Testing on various JDK versions and platforms (linux flavors!).</li>
    <li>Documentation on multithreaded usage of JNA: Likely danger areas, failure modes, best practices.</li>
    <li>Tests of JNA overhead compared to straight JNI calls (Todd Fast did some of this a long time ago and the results were quite favorable, but it would be nice to have some more recent quantitative data).</li>
@@ -156,6 +156,42 @@ user32.EnumWindows(new WNDENUMPROC() {
 </textarea>
 </blockquote>
 See the <a href="javadoc/overview-summary.html">JavaDoc overview</a> for additional details.<p>
+
+<h3>Invocation from Dynamically-Typed Languages</h3>
+Languages such as <a href=http://www.jython.org>Jython</a> or <a href=http://jruby.sf.net>JRuby</a> may find it more convenient to access the NativeLibrary and Function classes directly rather than establishing a dedicated interface.<p>
+Here's a brief example of using JNA from JRuby:
+<blockquote>
+    <textarea name="textarea4" cols="80" rows="16" readonly="readonly">
+require 'java'
+
+module Libc
+  @@lib = com.sun.jna.NativeLibrary.getInstance("c")
+  @@ptr_funcs = [ 'fopen', 'malloc', 'calloc' ]
+  def self.method_missing(meth, *args)
+    if @@ptr_funcs.include?(meth.to_s)
+      @@lib.getFunction(meth.to_s).invokePointer(args.to_java)
+    else
+      @@lib.getFunction(meth.to_s).invokeInt(args.to_java)
+    end
+  end
+  O_RDONLY = 0
+  O_WRONLY = 1
+  O_RDWR = 2
+end
+
+Libc.puts("puts from libc")
+Libc.printf("Hello %s, from printf\n", "World")
+
+file = Libc.open("/dev/stdout", 1, Libc::O_WRONLY)
+n = Libc.write(file, "Test\n", 5)
+puts "Wrote #{n} bytes via Libc"
+
+path = "/dev/stdout"
+fp = Libc.fopen(path, "w+")
+Libc.fprintf(fp, "fprintf to %s via stdio\n", path)
+Libc.fflush(fp)
+Libc.fclose(fp)
+</textarea></blockquote>
 
 <h3>Building and Multi-platform support</h3>
 JNA has been built and tested on OSX (GCC, PPC and x86), linux (GCC, x86), and
