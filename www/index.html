@@ -1,9 +1,9 @@
 <html>
 <head>
 <meta name="author" content="Timothy Wall">
-<meta name="keywords" content="java,jna,jni,c/c++,native,ctypes,pinvoke,jdirect,java platform invoke,java native library access,java native access,call native from java,java c library,easy jni,call c code from java,java native method call,java native function call,avoid jni">
+<meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-05-26">
+<meta name="date" content="2007-05-30">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -18,20 +18,22 @@ which includes an overview of specific usage.<p>
  <h3>Features</h3>
 <ul>
 <li>Automatic mapping from Java interface to native function
-<li>8-, 16-, 32-bit basic data types
+<li>8-, 16-, 32, and 64-bit basic data types
 <li>Structure pointer arguments
+<li>Automatic conversion between C and Java strings
 <!-- Newer functionality -->
-<li>Function arguments (callbacks from native code to Java code)
-<li>By-reference (pointer-to-type) arguments
-<li>Java array arguments (primitive types and pointers)
+<li>Function pointers (callbacks from native code to Java code) as arguments and/or members of a <code>struct</code>
+<li>By-reference (pointer-to-type) arguments 
+<li>Java array and ByteBuffer arguments (primitive types and pointers) as pointer-to-buffer
 <li>Nested structures and arrays
 <li><code>wchar_t</code>-based strings
-<li>64-bit value support (Java <code>long</code>)
+<li>Native <code>long</code> support (32- or 64-bit as appropriate)
 <li><a href="#demos">Full-blown demo applications</a>
-<li>Linux (x86), Mac OS X (PPC and x86), and w32+gcc support
+<li>Linux (x86), Mac OS X (PPC and x86), and w32+gcc support (full multiplatform support coming soon!)
 <li>Complete automated build and test of Java and native code
 <li>JUnit test coverage
 <li>Builds/runs on 1.4 VMs (annotations are no longer used)
+<!--<li>Customizable argument and return value conversions-->
 </ul>
 
  <h3>Community</h3>
@@ -239,9 +241,9 @@ To get an idea how to use JNA, please refer to the JUnit tests in the test/ dire
 java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
 </blockquote>
 
-<p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  Rather than start my own project immediately, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/TODO">TODO</a> file for some of the projects I found).  JNA had the best existing architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots), and was the least problematic to getting things working cross-platform with a consistent build process.<p>
+<p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/TODO">TODO</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
 
-Many thanks to Sheng Liang, Todd Fast, and anyone else who might have contributed namelessly to sharing the roots of this project.
+Many thanks to Sheng Liang and Todd Fast for their contributions to this project.
 
 <script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript">
 </script>
