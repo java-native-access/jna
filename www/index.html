@@ -112,7 +112,7 @@ System.out.println("Today's integer value is " + time.wDay);
 <h3>Pointers and Arrays</h3>
 Primitive array arguments (including <code>struct</code>s) are represented by their corresponding Java types.  For example:
 <blockquote>
-    <textArea name="textarea" cols="80" rows="20" readonly="readonly">
+    <textArea name="textarea" cols="80" rows="6" readonly="readonly">
 // C code
 void fill_buffer(int *buf, int len);
 void fill_buffer(int buf[], int len); // same thing with array syntax
@@ -127,7 +127,7 @@ When passing in an array of <code>Structure</code>, it is not necessary to initi
 <h3>By-reference Arguments</h3>
 When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value.  For example:<br>
 <blockquote>
-    <textarea name="textarea4" cols="80" rows="13" readonly="readonly">
+    <textarea name="textarea4" cols="80" rows="12" readonly="readonly">
 // C code
 void allocate_buffer(char **bufp, int* lenp);
 
@@ -152,7 +152,7 @@ implemented by wrapping a Java object method in a little bit of C glue code.
 The simplest usage resembles using anonymous inner classes to register event
 listeners.  Following is an example of callback usage:<br> 
 <blockquote>
-    <textarea name="textarea4" cols="80" rows="18" readonly="readonly">
+    <textarea name="textarea4" cols="80" rows="17" readonly="readonly">
 public interface User32 extends StdCallLibrary {
     interface WNDENUMPROC extends StdCallCallback {
         /** Return whether to continue enumeration. */
