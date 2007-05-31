@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-05-30">
+<meta name="date" content="2007-05-31">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -101,7 +101,7 @@ public interface Kernel32 extends StdCallLibrary {
   </li>
   <li>Simply invoke methods on the returned Java instance just like any other Java class. The JNA library marshals values to and from native code and invokes native functions using the <code>jnidispatch</code> library. For a more extensive example, see the <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/WindowUtils.java?rev=HEAD&view=markup">WindowUtils</a> and <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo</a> classes.
     <br>    
-    <textarea name="textarea4" cols="80" rows="6" readonly="readonly">
+    <textarea name="textarea4" cols="80" rows="4" readonly="readonly">
 Kernel32 lib = Kernel32.INSTANCE;
 SYSTEMTIME time = new SYSTEMTIME();
 lib.GetSystemTime(time);
@@ -109,6 +109,21 @@ System.out.println("Today's integer value is " + time.wDay);
 </textarea>
   </li>
 </ol>
+<h3>Pointers and Arrays</h3>
+Primitive array arguments (including <code>struct</code>s) are represented by their corresponding Java types.  For example:
+<blockquote>
+    <textArea name="textarea" cols="80" rows="20" readonly="readonly">
+// C code
+void fill_buffer(int *buf, int len);
+void fill_buffer(int buf[], int len); // same thing with array syntax
+
+// Java interface
+void fill_buffer(int[] buf, int len);
+</textarea>
+</blockquote>
+
+When passing in an array of <code>Structure</code>, it is not necessary to initialize the array, unless the function is using the data as input.  If you <em>do</em> initialize the array, all structure members must use the same <code>Memory</code> object at the appropriate corresponding offset (see Structure.useMemory()).
+
 <h3>By-reference Arguments</h3>
 When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value.  For example:<br>
 <blockquote>
