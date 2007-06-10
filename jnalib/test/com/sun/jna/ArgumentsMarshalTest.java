@@ -47,6 +47,8 @@ public class ArgumentsMarshalTest extends TestCase {
         String returnStringArgument(String s);
         WString returnWStringArgument(WString s);
         Pointer returnPointerArgument(Pointer p);
+        String returnFirstCharArrayArgument(String[] args);
+
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
         int testSimpleStructurePointerArgument(CheckFieldAlignment p);

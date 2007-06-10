@@ -1,5 +1,6 @@
 Release 2.4
 Features
+* Support char*[] arguments as Java String[] (write-only)
 * Structure supports Callback members
 * getByteBuffer from Pointer/Memory
 * Allow GC of native libraries

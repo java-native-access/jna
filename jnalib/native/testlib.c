@@ -224,6 +224,12 @@ returnWStringArgument(wchar_t *arg) {
   return arg;
 }
 
+EXPORT char*
+returnFirstCharArrayArgument(char* args[]) {
+  nonleaf();
+  return args[0];
+}
+
 typedef struct _TestStructure {
   double value;
 } TestStructure;

@@ -15,6 +15,8 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import com.sun.jna.ptr.ByReference;
 
 /**
@@ -141,7 +143,9 @@ public class Function extends Pointer {
             Object lastArg = inArgs[inArgs.length-1];
             if (lastArg != null 
                 && lastArg.getClass().isArray() 
-                && !isPrimitiveArray(lastArg.getClass())) {
+                && !String[].class.equals(lastArg.getClass())
+                && !isPrimitiveArray(lastArg.getClass())
+                && !isStructureArray(lastArg.getClass())) {
                 Object[] varArgs = (Object[])lastArg;
                 Object[] fullArgs = new Object[inArgs.length+varArgs.length];
                 System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
@@ -210,6 +214,9 @@ public class Function extends Pointer {
             // platforms simply use an 'int' or 'char' argument.
             else if (arg instanceof Boolean) {
                 args[i] = new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
+            }
+            else if (String[].class.equals(argClass)) {
+                args[i] = new StringArray((String[])arg);
             }
             else if (isStructureArray(argClass)) {
                 // Initialize uninitialized arrays of Structure to point
@@ -533,5 +540,21 @@ public class Function extends Pointer {
     
     public String toString() {
         return "Function: " + functionName + "(" + library.getName() + ")";
+    }
+
+    /** Handle native char*[] type by managing allocation/disposal of native 
+     * strings within an array of pointers. 
+     */
+    private class StringArray extends Memory {
+        private List natives = new ArrayList();
+        public StringArray(String[] strings) {
+            super((strings.length + 1) * Pointer.SIZE);
+            for (int i=0;i < strings.length;i++) {
+                NativeString ns = new NativeString(strings[i]);
+                natives.add(ns);
+                setPointer(Pointer.SIZE * i, ns.getPointer());
+            }
+            setPointer(Pointer.SIZE * strings.length, null);
+        }
     }
 }
