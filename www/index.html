@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-06-08">
+<meta name="date" content="2007-06-11">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -33,7 +33,9 @@ which includes an overview of specific usage.<p>
 <li>Complete automated build and test of Java and native code
 <li>JUnit test coverage
 <li>Builds/runs on 1.4 VMs (annotations are no longer used)
-<!--<li>Customizable argument and return value conversions-->
+<li>Customizable argument and return value conversions
+<li>Customizable mapping from Java method to native function name
+<li>Support for automatic w32 ASCII/UNICODE mappings
 </ul>
 
  <h3>Community</h3>
@@ -51,10 +53,9 @@ which includes an overview of specific usage.<p>
    <li>More comprehensive documentation on using JNA, including examples of Java to native conversions of data types, function usage, and proper memory management.</li>
    <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.  This is important not for having an exhaustive library definition but to illustrate all the different ways a native library may need to be mapped.</li>
    <li>Peer review the design and suggest improvements and enhancements</li>
-   <li>Port the <code>jnidispatch</code> library to Solaris and any other desired platform (the v3 branch is using libffi from gcc, so it may work out of the box if we can just get access to the appropriate build platform).</li>
+   <li>Build the <code>jnidispatch</code> library backend on new platforms (the v3 branch is using libffi from gcc, so it should mostly work out of the box if we can just get access to the appropriate build platform).</li>
    <li>Testing on various JDK versions and platforms (linux flavors!).</li>
-   <li>Documentation on multithreaded usage of JNA: Likely danger areas, failure modes, best practices.</li>
-   <li>Tests of JNA overhead compared to straight JNI calls (Todd Fast did some of this a long time ago and the results were quite favorable, but it would be nice to have some more recent quantitative data).</li>
+   <li>Tips and recommended usage of JNA: Likely danger areas, failure modes, best practices, multithreading, etc.</li>
  </ul>
  <h3>How To Get Started Using JNA</h3>
  <p>Java Native Access (JNA) has a single component, <code>jna.jar</code>; the supporting native library (<code>jnidispatch</code>) is included in the jar file to avoid extra configuration steps. JNA is capable of extracting and loading the library on its own, so you don't need to reconfigure your native library path in any way.  The native library is also available in a platform-specific jar file for use with Java Web Start.</p>
@@ -122,7 +123,9 @@ void fill_buffer(int[] buf, int len);
 </textarea>
 </blockquote>
 
-When passing in an array of <code>Structure</code>, it is not necessary to initialize the array, unless the function is using the data as input.  If you <em>do</em> initialize the array, all structure members must use the same <code>Memory</code> object at the appropriate corresponding offset (see Structure.useMemory()).
+When passing in an array of <code>Structure</code>, it is not necessary to initialize the array, unless the function is using the data as input.  If you <em>do</em> need to initialize the array, you should use the <code>Structure.toArray</code> method to obtain an array of elements continuous in memory.
+<p>
+Arrays of C strings (the <code>char* argv[]</code> to the C <code>main</code>, for example), may be represented by <code>String[]</code> in Java code.
 
 <h3>By-reference Arguments</h3>
 When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value.  For example:<br>
@@ -144,6 +147,11 @@ byte[] buffer = p.getByteArray(0, iref.getValue());
 </blockquote>
 
 The <a href="javadoc/com/sun/jna/Pointer.html"><code>Pointer</code></a> class provides a number of accessor methods similar to <a href="javadoc/com/sun/jna/Pointer.html#getByteArray"><code>getByteArray</code></a> which effectively function as a typecast onto the memory.
+
+<h3>Custom Type and Function Mapping</h3>
+The <a href="javadoc/com/sun/jna/TypeMapper.html">TypeMapper</a> class and related interfaces provide for converting any Java type used as an argument, return value, or structure member to be converted to or from a native type.  The example w32 API interfaces use a type mapper to convert Java boolean into the w32 BOOL type.
+
+Java interface methods may also be arbitrarily mapped onto a native function.  The <a href="javadoc/com/sun/jna/win32/StdCallFunctionMapper.html">StdCallFunctionMapper</a> is one implementation which automatically generates <code>stdcall</code>-decorated function names from a Java interface method signature.
 
 <h3>Callbacks</h3>
 Callback declarations consist of a simple interface that extends the Callback
