@@ -1,0 +1,5 @@
+Compile the two classes in this directory.  Requires Java 1.5+.
+
+javac -cp examples.jar *.java
+java -cp .:examples.jar FilteredTextField
+
