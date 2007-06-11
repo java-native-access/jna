@@ -55,7 +55,7 @@ public class ArgumentsMarshalTest extends TestCase {
 
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
-        int testSimpleStructurePointerArgument(CheckFieldAlignment p);
+        Pointer testSimpleStructurePointerArgument(CheckFieldAlignment p);
         void modifyStructureArray(CheckFieldAlignment[] p, int length);
         
         int fillInt8Buffer(byte[] buf, int len, byte value);
@@ -198,10 +198,10 @@ public class ArgumentsMarshalTest extends TestCase {
     }
 
     public void testSimpleStructurePointerArgument() {
-        TestLibrary.CheckFieldAlignment aligned = new TestLibrary.CheckFieldAlignment();
-        assertEquals("Structure data not properly initialized",
-                     aligned.size(), 
-                     lib.testSimpleStructurePointerArgument(aligned));
+        TestLibrary.CheckFieldAlignment struct = new TestLibrary.CheckFieldAlignment();
+        assertEquals("Native size does not match calculated size",
+                     struct.getPointer(), 
+                     lib.testSimpleStructurePointerArgument(struct));
     }
     
     public void testUninitializedStructureArrayArgument() {

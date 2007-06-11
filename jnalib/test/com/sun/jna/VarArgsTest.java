@@ -28,7 +28,7 @@ public class VarArgsTest extends TestCase {
         public void modifyStructureVarArgs(String fmt, Object arg1, Object[] args);
     }
     public void testIntVarArgs() {
-        Integer[] args = new Integer[2];
+        Object[] args = new Object[2];
         int arg1 = 1;
         int arg2 = 2;
         args[0] = new Integer(arg1);
@@ -37,7 +37,7 @@ public class VarArgsTest extends TestCase {
                      TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
     }
     public void testShortVarArgs() {
-        Object[] args = new Short[2];
+        Object[] args = new Object[2];
         short arg1 = 1;
         short arg2 = 2;
         args[0] = new Short(arg1);
@@ -61,13 +61,12 @@ public class VarArgsTest extends TestCase {
     }
     
     public void testAppendNullToVarargs() {
-        Integer[] args = new Integer[] { new Integer(1) };
+        Object[] args = new Object[] { new Integer(1) };
         assertEquals("No trailing NULL was appended to varargs list",
                      1, TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
     }
     
     public void testModifyStructureInVarargs() {
-        System.out.println("test modify structure in varargs");
         TestStructure arg1 = new TestStructure();
         TestStructure[] varargs = new TestStructure[] { new TestStructure() };
         TestLibrary.INSTANCE.modifyStructureVarArgs("ss", arg1, varargs);

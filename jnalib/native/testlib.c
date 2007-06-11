@@ -324,34 +324,9 @@ checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   return NOP(f) + NOP(d) + NOP(f2) + NOP(d2);
 }
 
-// TODO: direct call with structure arguments not yet supported
-EXPORT int32 
-testSimpleStructureArgument(struct CheckFieldAlignment arg) {
-  nonleaf();
-  if (arg.int8Field != (int8)1) {
-    return -1;
-  }
-  if (arg.int16Field != (int16)2) {
-    return -2;
-  }
-  if (arg.int32Field != (int32)3) {
-    return -3;
-  }
-  if (arg.int64Field != (int64)4) {
-    return -4;
-  }
-  if (arg.floatField != (float)5) {
-    return -5;
-  }
-  if (arg.doubleField != (double)6) {
-    return -6;
-  }
-  return sizeof(arg);
-}
-
-EXPORT int32 
+EXPORT void*
 testSimpleStructurePointerArgument(struct CheckFieldAlignment* arg) {
-  return testSimpleStructureArgument(*arg);
+  return arg;
 }
 
 typedef struct {
@@ -371,11 +346,23 @@ typedef struct {
   int16 field1;
   int32 field2;
 } Align32BitField16_2;
+typedef struct {
+  int32 field0;
+  int64 field1;
+  int32 field2;
+  int64 field3;
+} Align64BitField32;
+typedef struct {
+  int64 field0;
+  int8 field1;
+} PadTrailingSmallField;
 static int STRUCT_SIZES[] = {
   sizeof(Align16BitField8),
   sizeof(Align32BitField8),
   sizeof(Align32BitField16),
   sizeof(Align32BitField16_2),
+  sizeof(Align64BitField32),
+  sizeof(PadTrailingSmallField),
 };
 EXPORT int32
 getStructureSize(unsigned index) {
@@ -414,7 +401,9 @@ testStructureAlignment(void* s, unsigned index, int* offsetp, int64* valuep) {
   case 0: VALIDATE2(Align16BitField8,s); break;
   case 1: VALIDATE2(Align32BitField8,s); break;
   case 2: VALIDATE2(Align32BitField16,s); break;
-  case 3: VALIDATE2(Align32BitField16_2,s); break;
+  case 3: VALIDATE3(Align32BitField16_2,s); break;
+  case 4: VALIDATE4(Align64BitField32,s); break;
+  case 5: VALIDATE2(PadTrailingSmallField,s); break;
   }
   return -2;
 }

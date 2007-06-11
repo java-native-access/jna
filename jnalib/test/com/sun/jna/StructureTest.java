@@ -34,6 +34,36 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong size", 4, s.size());
     }
 
+    // cross-platform smoke test
+    public void testGNUCAlignment() {
+        class TestStructure extends Structure { 
+            public byte b;
+            public short s;
+            public int i;
+            public long l;
+            public float f;
+            public double d;
+        }
+        TestStructure s = new TestStructure();
+        s.setAlignment(Structure.ALIGN_GNUC);
+        assertEquals("Wrong structure size", 28, s.size());
+    }
+    
+    // cross-platform smoke test
+    public void testMSVCAlignment() {
+        class TestStructure extends Structure { 
+            public byte b;
+            public short s;
+            public int i;
+            public long l;
+            public float f;
+            public double d;
+        }
+        TestStructure s = new TestStructure();
+        s.setAlignment(Structure.ALIGN_MSVC);
+        assertEquals("Wrong structure size", 32, s.size());
+    }
+    
     public static class FilledStructure extends Structure {
         public FilledStructure() {
             for (int i=0;i < size();i++) {
@@ -58,6 +88,16 @@ public class StructureTest extends TestCase {
         public int field0 = 0x01010101;
         public short field1 = 0x0202;
         public int field2 = 0x03030303;
+    }
+    public static class TestStructure4 extends FilledStructure {
+        public int field0 = 0x01010101;
+        public long field1 = 0x0202020202020202L;
+        public int field2 = 0x03030303;
+        public long field3 = 0x0404040404040404L;
+    }
+    public static class TestStructure5 extends FilledStructure {
+        public long field0 = 0x0101010101010101L;
+        public byte field1 = 0x02;
     }
     public interface SizeTest extends Library {
         int getStructureSize(int type);
@@ -84,6 +124,12 @@ public class StructureTest extends TestCase {
     }
     public void testStructureSize3() {
         testStructureSize(3);
+    }
+    public void testStructureSize4() {
+        testStructureSize(4);
+    }
+    public void testStructureSize5() {
+        testStructureSize(5);
     }
     
     public interface AlignmentTest extends Library {
@@ -120,6 +166,12 @@ public class StructureTest extends TestCase {
     public void testAlignStruct3() {
         testAlignStruct(3);
     }
+    public void testAlignStruct4() {
+        testAlignStruct(4);
+    }
+    public void testAlignStruct5() {
+        testAlignStruct(5);
+    }
     
     public static class InnerStructure extends Structure {
         public int x, y;
@@ -133,16 +185,6 @@ public class StructureTest extends TestCase {
         assertNotNull("Inner structure should be initialized", s.s1);
         assertEquals("Wrong aggregate size", 
                      s.s1.size() + s.s2.size() + 4, s.size());
-    }
-    
-    public void testStructureSizePadding() {
-        class TestStructure extends Structure {
-            public long bigbits;
-            public byte b;
-        }
-        TestStructure s = new TestStructure();
-        assertEquals("Structure should be padded to longest element",
-                     16, s.size());
     }
     
     public void testNestArray() throws Exception {

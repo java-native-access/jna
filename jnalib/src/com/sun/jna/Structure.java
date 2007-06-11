@@ -584,6 +584,7 @@ public abstract class Structure {
             return 1;
         if (alignType == ALIGN_MSVC)
             return Math.min(8, alignment);
+        // 32-bit GNUC maximum alignment is 4 bytes
         return Math.min(4, alignment);
     }
 
@@ -612,23 +613,17 @@ public abstract class Structure {
         if (Structure.class.isAssignableFrom(type)) {
             Structure s = (Structure)value;
             // inline structure
-            int size = s.size();
-            structAlignment = Math.max(s.structAlignment, structAlignment);
-            return size;
+            return s.size();
         }
         if (type.isArray()) {
             int len = Array.getLength(value);
             if (len > 0) {
                 Object o = Array.get(value, 0);
-                int size = len * getNativeSize(type.getComponentType(), o);
-                structAlignment = Math.max(size, structAlignment);
-                return size;
+                return len * getNativeSize(type.getComponentType(), o);
             }
             // Don't process zero-length arrays
         }
-        int size = getNativeSize(type);
-        structAlignment = Math.max(size, structAlignment);
-        return size;
+        return getNativeSize(type);
     }
     
     public String toString() {
