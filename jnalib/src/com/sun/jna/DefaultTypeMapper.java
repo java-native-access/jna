@@ -28,7 +28,7 @@ import java.util.Map;
  * Object type and vice versa (i.e. you don't have to register both 
  * <code>int.class</code> and <code>Integer.class</code>).
  * If you want different mapping behavior than the default, simply override
- * {@link #getArgumentConverter} and {@link #getResultconverter}.
+ * {@link #getArgumentConverter} and {@link #getResultConverter}.
  * @see Library#OPTION_TYPE_MAPPER 
  */
 public class DefaultTypeMapper implements TypeMapper {
@@ -96,8 +96,8 @@ public class DefaultTypeMapper implements TypeMapper {
             argumentConverters.put(alt, converter);
         }
     }
-    /** Add a {@link ResultConverter} to convert a native result type into
-     * the given Java type.  Converters are checked for in the order added.
+    /** Add a {@link ResultConverter} to convert a native result type into the 
+     * given Java type.  Converters are checked for in the order added.
      */
     protected void addResultConverter(Class cls, ResultConverter converter) {
         resultConverters.put(cls, converter);

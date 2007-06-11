@@ -44,7 +44,7 @@ library name mappings.
 <tr><td>Mac OS X</td><td>libm.dylib</td><td>m</td></tr>
 </table>
 <p>
-Any given native library with a unique filesystem path is represented by a single instance of {@link NativeLibrary} and obtained via {@link NativeLibrary#getInstance()}.  The native library will be unloaded when no longer referenced by any Java code.
+Any given native library with a unique filesystem path is represented by a single instance of {@link com.sun.jna.NativeLibrary} and obtained via {@link com.sun.jna.NativeLibrary#getInstance(String)}.  The native library will be unloaded when no longer referenced by any Java code.
 
 <h2>Function Mapping</h2>
 Function names are mapped directly from their Java interface name to the
@@ -60,7 +60,7 @@ conventions, then you can provide a <code>Map</code> to
 <code>Native.loadLibrary</code> which maps the Java names to the native
 names.  While this keeps your Java code a little cleaner, the additional
 mapping of names may make a little less obvious the native functions being called.<p>
-An instance of the {@link Function} class is obtained through the {@link NativeLibrary} instance corresponding to the containing native library.  This {@link Function} instance handles argument marshalling and delegation to the native function. 
+An instance of the {@link com.sun.jna.Function} class is obtained through the {@link com.sun.jna.NativeLibrary} instance corresponding to the containing native library.  This {@link com.sun.jna.Function} instance handles argument marshalling and delegation to the native function. 
 
 <h2>Function Argument Mapping (Java to Native Type Conversions, or Marshalling/Unmarshalling)</h2>
 Java types are chosen to match native types of the same size.  These are the
