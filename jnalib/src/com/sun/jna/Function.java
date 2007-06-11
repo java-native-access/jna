@@ -527,4 +527,44 @@ public class Function extends Pointer {
             setPointer(Pointer.SIZE * strings.length, null);
         }
     }
+    
+    // The following convenience methods are provided for using a Function
+    // instance directly
+    
+    /** Convenience method for 
+     * {@link #invoke(Class,Object[]) invoke(Pointer.class, args)}.
+     */
+    public Pointer invokePointer(Object[] args) {
+        return (Pointer)invoke(Pointer.class, args);
+    }
+    /** Convenience method for 
+     * {@link #invoke(Class,Object[]) invoke(Integer.class, args)}.
+     */
+    public int invokeInt(Object[] args) {
+        return ((Integer)invoke(Integer.class, args)).intValue();
+    }
+    /** Convenience method for 
+     * {@link #invoke(Class,Object[]) invoke(Long.class, args)}.
+     */
+    public long invokeLong(Object[] args) {
+        return ((Long)invoke(Long.class, args)).longValue();
+    }
+    /** Convenience method for 
+     * {@link #invoke(Class,Object[]) invoke(Float.class, args)}.
+     */
+    public float invokeFloat(Object[] args) {
+        return ((Float)invoke(Float.class, args)).floatValue();
+    }
+    /** Convenience method for 
+     * {@link #invoke(Class,Object[]) invoke(Double.class, args)}.
+     */
+    public double invokeDouble(Object[] args) {
+        return ((Double)invoke(Double.class, args)).doubleValue();
+    }
+    /** Convenience method for 
+     * {@link #invoke(Class,Object[]) invoke(Void.class, args)}.
+     */
+    public void invokeVoid(Object[] args) {
+        invoke(Void.class, args);
+    }
 }
