@@ -10,25 +10,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.ptr;
+package com.sun.jna;
 
-import com.sun.jna.NativeLong;
+import java.lang.reflect.Method;
 
-public class NativeLongByReference extends ByReference {
-    public NativeLongByReference() {
-        this(new NativeLong(0));
-    }
-    
-    public NativeLongByReference(NativeLong value) {
-        super(NativeLong.SIZE);
-        setValue(value);
-    }
-    
-    public void setValue(NativeLong value) {
-        getPointer().setNativeLong(0, value);
-    }
-    
-    public NativeLong getValue() {
-        return getPointer().getNativeLong(0);
-    }
+/** Provides mapping of Java method names to native function names.
+ * @see Library#OPTION_FUNCTION_MAPPER 
+ */
+public interface FunctionMapper {
+    String getFunctionName(NativeLibrary library, Method method);
 }

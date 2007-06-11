@@ -10,25 +10,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.ptr;
+package com.sun.jna;
 
-import com.sun.jna.NativeLong;
+/** Provides converters for conversion to and from native types. */
+public interface TypeMapper {
+    /** Return the {@link ResultConverter} appropriate for the given Java class. 
+     */
+    ResultConverter getResultConverter(Class javaType);
 
-public class NativeLongByReference extends ByReference {
-    public NativeLongByReference() {
-        this(new NativeLong(0));
-    }
-    
-    public NativeLongByReference(NativeLong value) {
-        super(NativeLong.SIZE);
-        setValue(value);
-    }
-    
-    public void setValue(NativeLong value) {
-        getPointer().setNativeLong(0, value);
-    }
-    
-    public NativeLong getValue() {
-        return getPointer().getNativeLong(0);
-    }
+    /** Return the {@link ArgumentConverter} appropriate for the given Java class. 
+     */
+    ArgumentConverter getArgumentConverter(Class javaType);
 }

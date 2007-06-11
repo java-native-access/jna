@@ -14,7 +14,7 @@ package com.sun.jna.examples;
 
 import java.io.File;
 import com.sun.jna.examples.win32.Shell32;
-import com.sun.jna.examples.win32.Shell32.SHFILEOPSTRUCTW;
+import com.sun.jna.examples.win32.Shell32.SHFILEOPSTRUCT;
 
 /** Miscellaneous file utils not provided for by Java. */
 public abstract class FileUtils {
@@ -48,7 +48,7 @@ public abstract class FileUtils {
     private static class W32FileUtils extends FileUtils {
         public boolean moveToTrash(File[] files) {
             Shell32 shell = Shell32.INSTANCE;
-            SHFILEOPSTRUCTW fileop = new SHFILEOPSTRUCTW();
+            SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
             fileop.wFunc = Shell32.FO_DELETE;
             String[] paths = new String[files.length];
             for (int i=0;i < paths.length;i++) {
@@ -56,7 +56,7 @@ public abstract class FileUtils {
             }
             fileop.pFrom = fileop.encodePaths(paths);
             fileop.fFlags = Shell32.FOF_ALLOWUNDO|Shell32.FOF_NOCONFIRMATION|Shell32.FOF_SILENT;
-            return shell.SHFileOperationW(fileop) == 0;
+            return shell.SHFileOperation(fileop) == 0;
         }
     }
 

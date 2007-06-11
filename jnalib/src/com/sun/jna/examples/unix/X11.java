@@ -324,7 +324,7 @@ public interface X11 extends Library {
     int XGetWMName(Pointer display, int window,
                    XTextProperty text_property_return);
     int XQueryKeymap(Pointer display, byte[] keys_return);
-    int XKeycodeToKeysym(Pointer display, int keycode, int index);
+    int XKeycodeToKeysym(Pointer display, byte keycode, int index);
     /** Returns an array of {@link XVisualInfo} which must be freed by {@link #XFree}.
      * Use {@link XVisualInfo#toArray(Structure[]) 
      * toArray(new XVisualInfo[nitems_return.getValue()]} to obtain the array. 

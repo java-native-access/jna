@@ -154,6 +154,7 @@ public class NativeLibrary {
      *
      * @param	functionName
      *			Name of the native function to be linked with
+     * @throw   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName) {
         return getFunction(functionName, Function.C_CONVENTION);
@@ -170,6 +171,7 @@ public class NativeLibrary {
      *			Name of the native function to be linked with
      * @param	callingConvention
      *			Calling convention used by the native function
+     * @throw   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName, int callingConvention) {
         synchronized (functions) {

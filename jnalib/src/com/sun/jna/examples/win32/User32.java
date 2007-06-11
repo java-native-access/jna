@@ -20,25 +20,18 @@ import com.sun.jna.examples.win32.GDI32.RECT;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /** Provides access to the w32 user32 library.
- * Minimal implementation to support demos.
+ * Incomplete implementation to support demos.
  *  
  * @author  Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
-public interface User32 extends StdCallLibrary {
+public interface User32 extends W32API {
 
     User32 INSTANCE = (User32)
-        Native.loadLibrary("user32", User32.class, new HashMap() {
-            {
-                // example of function name remapping, in case you 
-                // are annoyed by MS naming conventions
-                put("loadIcon", "LoadIconA");
-                put("loadImage", "LoadImageA");
-                put("destroyIcon", "DestroyIcon");
-            }
-        });
+        Native.loadLibrary("user32", User32.class, DEFAULT_OPTIONS);
     
     Pointer GetDC(Pointer hWnd);
     int ReleaseDC(Pointer hWnd, Pointer hDC);
@@ -77,8 +70,8 @@ public interface User32 extends StdCallLibrary {
     int LR_COPYFROMRESOURCE =0x4000;
     int LR_SHARED           =0x8000;
 
-    Pointer FindWindowA(String winClass, String title);
-    int GetClassNameA(Pointer hWnd, byte[] lpClassName, int nMaxCount);
+    Pointer FindWindow(String winClass, String title);
+    int GetClassName(Pointer hWnd, byte[] lpClassName, int nMaxCount);
     public static class GUITHREADINFO extends Structure {
         public int cbSize = size();
         public int flags;
@@ -106,9 +99,9 @@ public interface User32 extends StdCallLibrary {
     }
     boolean GetWindowInfo(Pointer hWnd, WINDOWINFO pwi);
     boolean GetWindowRect(Pointer hWnd, RECT rect);
-    int GetWindowTextA(Pointer hWnd, byte[] lpString, int nMaxCount);
+    int GetWindowText(Pointer hWnd, byte[] lpString, int nMaxCount);
     int GetWindowTextLength(Pointer hWnd);
-    int GetWindowModuleFileNameA(Pointer hWnd, byte[] lpszFileName, int cchFileNameMax);
+    int GetWindowModuleFileName(Pointer hWnd, byte[] lpszFileName, int cchFileNameMax);
     int GetWindowThreadProcessId(Pointer hWnd, IntByReference lpdwProcessId);
     interface WNDENUMPROC extends StdCallCallback {
         /** Return whether to continue enumeration. */
@@ -119,17 +112,17 @@ public interface User32 extends StdCallLibrary {
 
     boolean FlashWindowEx(FLASHWINFO info);
 
-    int loadIcon(int hInstance, String iconName);
+    Pointer LoadIcon(Pointer hInstance, String iconName);
 
-    int loadImage(int hinst,   // handle to instance 
-                  String name,  // image to load 
-                  int type,        // image type 
-                  int xDesired,     // desired width 
-                  int yDesired,     // desired height 
-                  int load        // load options 
-                  );
+    Pointer LoadImage(Pointer hinst,   // handle to instance 
+                      String name,  // image to load 
+                      int type,        // image type 
+                      int xDesired,     // desired width 
+                      int yDesired,     // desired height 
+                      int load        // load options 
+    );
 
-    boolean destroyIcon(int hicon);
+    boolean DestroyIcon(Pointer hicon);
 
     int GWL_EXSTYLE = -20;
     int GWL_STYLE = -16;
@@ -143,8 +136,8 @@ public interface User32 extends StdCallLibrary {
     int WS_EX_COMPOSITED = 0x20000000;
     int WS_EX_LAYERED = 0x80000;
     int WS_EX_TRANSPARENT = 32;
-    int GetWindowLongA(Pointer hWnd, int nIndex);
-    int SetWindowLongA(Pointer hWnd, int nIndex, int dwNewLong);
+    int GetWindowLong(Pointer hWnd, int nIndex);
+    int SetWindowLong(Pointer hWnd, int nIndex, int dwNewLong);
 
     int LWA_COLORKEY = 1;
     int LWA_ALPHA = 2;

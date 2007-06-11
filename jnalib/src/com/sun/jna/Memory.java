@@ -573,12 +573,7 @@ public class Memory extends Pointer {
      * @see Pointer#setString
      */
     public void setString(int offset, String value, boolean wide) {
-        if (wide) {
-            boundsCheck(offset, (value.toCharArray().length + 1)*2);
-        }
-        else {
-            boundsCheck(offset, value.getBytes().length + 1);
-        }
+        boundsCheck(offset, (value.length() + 1) * (wide ? Pointer.WCHAR_SIZE : 1));
         super.setString(offset, value, wide);
     }
 

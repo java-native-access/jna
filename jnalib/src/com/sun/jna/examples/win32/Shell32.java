@@ -12,16 +12,25 @@
  */
 package com.sun.jna.examples.win32;
 
+import java.util.HashMap;
+import java.util.Map;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.WString;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APITypeMapper;
 
-public interface Shell32 extends StdCallLibrary {
+/** shellapi.h includes pshpack1.h, which disables automatic alignment
+ * of structure fields.  
+ */
+public interface Shell32 extends W32API {
 
-    Shell32 INSTANCE = (Shell32)Native.loadLibrary("shell32", Shell32.class);
+    int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
+    Shell32 INSTANCE = (Shell32)
+        Native.loadLibrary("shell32", Shell32.class, DEFAULT_OPTIONS);
     
     int FO_MOVE = 1;
     int FO_COPY = 2;
@@ -41,34 +50,24 @@ public interface Shell32 extends StdCallLibrary {
     int FOF_NOERRORUI = 1024;
     int FOF_NOCOPYSECURITYATTRIBS = 2048;
 
-    public static class SHFILEOPSTRUCTW extends Structure {
-        public int hwnd;
+    public static class SHFILEOPSTRUCT extends Structure {
+        public Pointer hwnd;
         public int wFunc;
-        public Pointer pFrom;
-        public Pointer pTo;
+        public String pFrom;
+        public String pTo;
         public short fFlags;
-        public int fAnyOperationsAborted;
+        public boolean fAnyOperationsAborted;
         public Pointer pNameMappings;
-        public WString lpszProgressTitle;
-        public Pointer encodePaths(String[] paths) {
-            int size = 0;
+        public String lpszProgressTitle;
+        /** Use this to encode <code>pFrom/pTo</code> paths. */
+        public String encodePaths(String[] paths) {
+            String encoded = "";
             for (int i=0;i < paths.length;i++) {
-                size += paths[i].length() + 1;
+                encoded += paths[i];
+                encoded += "\0";
             }
-            ++size;
-            Memory m = new Memory(size*2);
-            char[] buf = new char[size];
-            int offset = 0;
-            for (int i=0;i < paths.length;i++) {
-                char[] from = paths[i].toCharArray();
-                System.arraycopy(from, 0, buf, offset, from.length);
-                offset += from.length;
-                buf[offset++] = 0;
-            }
-            buf[offset++] = 0;
-            m.write(0, buf, 0, size);
-            return m;
+            return encoded + "\0";
         }
     }
-    int SHFileOperationW(SHFILEOPSTRUCTW fileop);
+    int SHFileOperation(SHFILEOPSTRUCT fileop);
 }

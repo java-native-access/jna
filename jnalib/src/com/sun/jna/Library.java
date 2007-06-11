@@ -40,20 +40,60 @@ import com.sun.jna.ptr.ByReference;
  * methods on the Java side.  Check your library documentation for its
  * multithreading requirements on the native side.
  * <p>
+ * <b>Optional fields</b><br>
+ * Interface options will be automatically propagated to structures defined
+ * within the library if an <b>INSTANCE</b> field is defined holding the 
+ * results of a {@link Native#loadLibrary(String,Class,Map)} call.  If no
+ * instance is defined, the {@link Structure} constructor will look for
+ * fields named <code>TYPE_MAPPER</code> and <code>STRUCTURE_ALIGNMENT</code>
+ * to obtain non-default values for those options.
+ * 
  * @author  Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
 public interface Library {
+    /** Option key for a {@link TypeMapper} for the library. */
+    String OPTION_TYPE_MAPPER = "type-mapper";
+    /** Option key for a {@link FunctionMapper} for the library. */
+    String OPTION_FUNCTION_MAPPER = "function-mapper";
+    /** Option key for structure alignment type ({@link Integer}). */
+    String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
 
     static class Handler implements InvocationHandler {
+        
+        private static final Method OBJECT_TOSTRING;
+        
+        static {
+            try {
+                OBJECT_TOSTRING = Object.class.getMethod("toString", null);
+            }
+            catch (Exception e) {
+                throw new Error("Error retrieving Object.toString() method");
+            }
+        }
+
+        private static class FunctionNameMap implements FunctionMapper {
+            private final Map map;
+            public FunctionNameMap(Map map) {
+                this.map = new HashMap(map);
+            }
+            public String getFunctionName(NativeLibrary library, Method method) {
+                String name = method.getName();
+                if (map.containsKey(name)) {
+                    return (String)map.get(name);
+                }
+                return name;
+            }
+        }
 
         private NativeLibrary nativeLibrary;
         private Class interfaceClass;
-
-        // Map java names to native function names
-        private Map functionMap;
+        // Library invocation options
+        private Map options;
+        private FunctionMapper functionMapper;
+        private Map functions = new WeakHashMap();
         
-        public Handler(String libname, Class interfaceClass, Map functionMap) {
+        public Handler(String libname, Class interfaceClass, Map options) {
 
             if (libname == null || libname.trim().length() == 0) {
                 throw new IllegalArgumentException("Invalid library name \""
@@ -67,7 +107,12 @@ public interface Library {
 
             this.nativeLibrary = NativeLibrary.getInstance(libname);
             this.interfaceClass = interfaceClass;
-            this.functionMap = functionMap;
+            this.options = options;
+            functionMapper = (FunctionMapper)options.get(OPTION_FUNCTION_MAPPER);
+            if (functionMapper == null) {
+                // backward compatibility; passed-in map is itself the name map
+                functionMapper = new FunctionNameMap(options);
+            }
         }
 
         public String getLibraryName() {
@@ -77,20 +122,30 @@ public interface Library {
         public Class getInterfaceClass() {
             return interfaceClass;
         }
-        
+
         public Object invoke(Object proxy, Method method, Object[] inArgs)
             throws Throwable {
             
-            // Find the function to invoke
-            String methodName = method.getName();
-            if (functionMap.containsKey(methodName)) {
-                methodName = (String)functionMap.get(methodName);
+            // Check for any toString() calls on the proxy
+            if (method == OBJECT_TOSTRING) {
+                return "Proxy interface to " + nativeLibrary.toString();
             }
-            int callingConvention = 
-                proxy instanceof AltCallingConvention
-                ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-            Function f = nativeLibrary.getFunction(methodName, callingConvention);
-            return f.invoke(method.getReturnType(), inArgs);
+
+            Function f = null;
+            synchronized(functions) {
+                f = (Function)functions.get(method);
+                if (f == null) {
+                    // Find the function to invoke
+                    String methodName = 
+                        functionMapper.getFunctionName(nativeLibrary, method);
+                    int callingConvention = 
+                        proxy instanceof AltCallingConvention
+                        ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+                    f = nativeLibrary.getFunction(methodName, callingConvention);
+                    functions.put(method, f);
+                }
+            }
+            return f.invoke(method.getReturnType(), inArgs, options);
         }
     }
 }

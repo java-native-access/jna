@@ -30,10 +30,11 @@ public class KeyboardUtilsTest extends TestCase {
             KeyEvent.VK_CONTROL,
             KeyEvent.VK_A, KeyEvent.VK_Z,
             KeyEvent.VK_0, KeyEvent.VK_9, 
-            KeyEvent.VK_SHIFT, 
+            KeyEvent.VK_SHIFT,
+            KeyEvent.VK_U,
         };
         String[] keystr = {
-            "VK_CONTROL", "VK_A", "VK_Z", "VK_0", "VK_9", "VK_SHIFT", 
+            "VK_CONTROL", "VK_A", "VK_Z", "VK_0", "VK_9", "VK_SHIFT", "VK_U", 
         };
         int[] nonkeys = {
             KeyEvent.VK_B, KeyEvent.VK_1,

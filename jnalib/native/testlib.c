@@ -44,6 +44,8 @@ volatile int __dummy__ = 0;
 
 // TODO: check more fields/alignments
 struct CheckFieldAlignment {
+  int8 int8Field;
+  int16 int16Field;
   int32 int32Field;
   int64 int64Field;
   float floatField;
@@ -230,6 +232,18 @@ returnFirstCharArrayArgument(char* args[]) {
   return args[0];
 }
 
+EXPORT int
+returnRotatedArgumentCount(char* args[]) {
+  int i=0;
+  int count = 0;
+  char* first = args[0];
+  while (args[count] != NULL) {
+    ++count;
+    args[count-1] = args[count] ? args[count] : first;
+  }
+  return count;
+}
+
 typedef struct _TestStructure {
   double value;
 } TestStructure;
@@ -310,21 +324,27 @@ checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   return NOP(f) + NOP(d) + NOP(f2) + NOP(d2);
 }
 
-// TODO: not yet supported
+// TODO: direct call with structure arguments not yet supported
 EXPORT int32 
 testSimpleStructureArgument(struct CheckFieldAlignment arg) {
   nonleaf();
-  if (arg.int32Field != (int32)1) {
+  if (arg.int8Field != (int8)1) {
     return -1;
   }
-  if (arg.int64Field != (int64)2) {
+  if (arg.int16Field != (int16)2) {
     return -2;
   }
-  if (arg.floatField != (float)3) {
+  if (arg.int32Field != (int32)3) {
     return -3;
   }
-  if (arg.doubleField != (double)4) {
+  if (arg.int64Field != (int64)4) {
     return -4;
+  }
+  if (arg.floatField != (float)5) {
+    return -5;
+  }
+  if (arg.doubleField != (double)6) {
+    return -6;
   }
   return sizeof(arg);
 }
@@ -332,6 +352,71 @@ testSimpleStructureArgument(struct CheckFieldAlignment arg) {
 EXPORT int32 
 testSimpleStructurePointerArgument(struct CheckFieldAlignment* arg) {
   return testSimpleStructureArgument(*arg);
+}
+
+typedef struct {
+  int8 field0;
+  int16 field1;
+} Align16BitField8;
+typedef struct {
+  int8 field0;
+  int32 field1;
+} Align32BitField8;
+typedef struct {
+  int16 field0;
+  int32 field1;
+} Align32BitField16;
+typedef struct {
+  int32 field0;
+  int16 field1;
+  int32 field2;
+} Align32BitField16_2;
+static int STRUCT_SIZES[] = {
+  sizeof(Align16BitField8),
+  sizeof(Align32BitField8),
+  sizeof(Align32BitField16),
+  sizeof(Align32BitField16_2),
+};
+EXPORT int32
+getStructureSize(unsigned index) {
+  if (index >= (int)sizeof(STRUCT_SIZES)/sizeof(STRUCT_SIZES[0]))
+    return -1;
+  return STRUCT_SIZES[index];
+}
+
+  extern void exit(int);
+#define FIELD(T,X,N) (((T*)X)->field ## N)
+#define OFFSET(T,X,N) (((char*)&FIELD(T,X,N))-((char*)&FIELD(T,X,0)))
+#define V8(N) (N+1)
+#define V16(N) ((((int32)V8(N))<<8)|V8(N))
+#define V32(N) ((((int32)V16(N))<<16)|V16(N))
+#define V64(N) ((((int64)V32(N))<<32)|V32(N))
+#define VALUE(T,X,N) \
+((sizeof(FIELD(T,X,N)) == 1) \
+ ? V8(N)  : ((sizeof(FIELD(T,X,N)) == 2) \
+ ? V16(N) : ((sizeof(FIELD(T,X,N)) == 4) \
+ ? V32(N) : V64(N))))
+#define VALIDATE_FIELDN(T,X,N) \
+do { if (FIELD(T,X,N) != VALUE(T,X,N)) {*offsetp=OFFSET(T,X,N); *valuep=FIELD(T,X,N); return N;} } while (0)
+#define VALIDATE1(T,X) VALIDATE_FIELDN(T,X,0)
+#define VALIDATE2(T,X) do { VALIDATE1(T,X); VALIDATE_FIELDN(T,X,1); } while(0)
+#define VALIDATE3(T,X) do { VALIDATE2(T,X); VALIDATE_FIELDN(T,X,2); } while(0)
+#define VALIDATE4(T,X) do { VALIDATE3(T,X); VALIDATE_FIELDN(T,X,3); } while(0)
+
+// returns the field index which failed, and the expected field offset
+// returns -2 on success
+EXPORT int32
+testStructureAlignment(void* s, unsigned index, int* offsetp, int64* valuep) {
+  if (index >= sizeof(STRUCT_SIZES)/sizeof(STRUCT_SIZES[0]))
+    return -1;
+
+  switch(index) {
+  case 0: VALIDATE2(Align16BitField8,s); break;
+  case 1: VALIDATE2(Align32BitField8,s); break;
+  case 2: VALIDATE2(Align32BitField16,s); break;
+  case 3: VALIDATE2(Align32BitField16_2,s); break;
+  }
+  return -2;
 }
 
 EXPORT void

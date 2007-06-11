@@ -508,6 +508,16 @@ Java_com_sun_jna_Pointer_longSize(JNIEnv *env, jclass cls) {
 
 /*
  * Class:     Pointer
+ * Method:    wideCharSize
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL 
+Java_com_sun_jna_Pointer_wideCharSize(JNIEnv *env, jclass cls) {
+  return sizeof(wchar_t);
+}
+
+/*
+ * Class:     Pointer
  * Method:    write
  * Signature: (I[BII)V
  */
@@ -904,8 +914,8 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setString
     (JNIEnv *env, jobject self, jint offset, jstring value, jboolean wide)
 {
     char *peer = (char *)getNativeAddress(env, self);
+    int len = (*env)->GetStringLength(env, value);
     if (wide) {
-        int len = (*env)->GetStringLength(env, value);
         wchar_t* str = newWideCString(env, value);
         if (str == NULL) return;
         memcpy(peer + offset, str, (len + 1) * sizeof(wchar_t));
@@ -914,7 +924,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setString
     else {
         char *str = newCString(env, value);
         if (str == NULL) return;
-        strcpy(peer + offset, str);
+        memcpy(peer + offset, str, len + 1);
         free(str);
     }
 }
@@ -1009,7 +1019,7 @@ newWideCString(JNIEnv *env, jstring str)
             (*env)->DeleteLocalRef(env, chars);
             return 0;
         }
-        // TODO: ensure proper conversion from jchar to native wchar_t
+        // TODO: ensure proper encoding conversion from jchar to native wchar_t
         if (sizeof(jchar) == sizeof(wchar_t)) {
             (*env)->GetCharArrayRegion(env, chars, 0, len, (jchar*)result);
         }

@@ -1,17 +1,26 @@
 Release 2.4
 Features
-* Support char*[] arguments as Java String[] (write-only)
-* Structure supports Callback members
-* getByteBuffer from Pointer/Memory
+* Explicitly support unaligned structures
+* Auto-reallocate structure arrays
+* Automatic handling of w32 UNICODE/ASCII variants
+* Automatic mapping of decorated w32 stdcall function names
+* Customizable, automatic type conversion of arguments and results (wmeissner)
+* Support char*[] arguments as Java String[] 
+* Structure supports Callback members (wmeissner)
+* getByteBuffer from Pointer/Memory (wmeissner)
 * Allow GC of native libraries
-* Facilitate use from non-Java contexts (JRuby et al.)
-* Improve library path searching
+* Facilitate use from non-Java contexts (JRuby et al.) (wmeissner)
+* Improve library path searching (wmeissner)
 * Handle Structure[] arguments
 * Handle native long arguments and return values
-* Handle direct and array-based ByteBuffer arguments
+* Handle direct and array-based ByteBuffer arguments (wmeissner)
+* Change default w32 build to use GCC (it's free, yo)
 
 Bug Fixes
 * Structure.toArray failed to initialize members
 * Disallow explicit free of Structure/Memory
 * Ensure native libraries are only loaded once until released
 * Properly handle NULL when the return value is a Structure
+* Proper conversion to wchar_t on linux
+* Copy full length of Java strings to C strings instead of stopping when a NUL
+character is encountered

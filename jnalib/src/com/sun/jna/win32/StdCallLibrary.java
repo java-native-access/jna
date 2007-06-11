@@ -13,9 +13,17 @@
 package com.sun.jna.win32;
 
 import com.sun.jna.Callback;
+import com.sun.jna.Function;
+import com.sun.jna.FunctionMapper;
 import com.sun.jna.Library;
 
 /** Interface for w32 stdcall calling convention. */
 public interface StdCallLibrary extends Library, StdCall {
+    /** Constant identifying the w32 stdcall calling convention. */
+    int STDCALL_CONVENTION = Function.ALT_CONVENTION;
+    /** Provides auto-lookup of stdcall-decorated names. */
+    FunctionMapper FUNCTION_MAPPER = new StdCallFunctionMapper();
+    /** Interface defining a callback using the w32 stdcall calling convention. 
+     */
     interface StdCallCallback extends Callback, StdCall { }
 }

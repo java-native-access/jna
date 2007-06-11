@@ -157,7 +157,7 @@ public class KeyboardUtils {
                         int idx = code / 8;
                         int shift = code % 8;
                         if ((keys[idx] & (1 << shift)) != 0) {
-                            int sym = lib.XKeycodeToKeysym(dpy, code, 0);
+                            int sym = lib.XKeycodeToKeysym(dpy, (byte)code, 0);
                             if (sym == keysym)
                                 return true;
                         }

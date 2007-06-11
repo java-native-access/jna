@@ -20,7 +20,6 @@ package com.sun.jna;
 class NativeString implements CharSequence, Comparable {
 
     private Pointer pointer;
-    private boolean allocatedMemory;
     private boolean wide;
 
     protected NativeString(Pointer pointer) {
@@ -44,16 +43,9 @@ class NativeString implements CharSequence, Comparable {
         else {
             // Allocate the memory to hold the string.  Note, we have to
             // make this 1 byte longer in order to accomodate the terminating 
-            // null (which is accounted for in Memory.setString()).
-            if (wide) {
-                pointer = new Memory((string.toCharArray().length + 1)*2);
-            }
-            else {
-                pointer = new Memory(string.getBytes().length + 1);
-            }
+            // NUL (which is generated in Pointer.setString()).
+            pointer = new Memory((string.length() + 1) * (wide ? Pointer.WCHAR_SIZE : 1));
             pointer.setString(0, string, wide);
-            
-            allocatedMemory = true;
         }
     }
 

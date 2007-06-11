@@ -10,25 +10,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.ptr;
+package com.sun.jna;
 
-import com.sun.jna.NativeLong;
-
-public class NativeLongByReference extends ByReference {
-    public NativeLongByReference() {
-        this(new NativeLong(0));
-    }
+/** Provide result conversion context for a function call. */
+public class FunctionResultContext extends ResultContext {
     
-    public NativeLongByReference(NativeLong value) {
-        super(NativeLong.SIZE);
-        setValue(value);
+    private Function function;
+    private Object[] args;
+    public FunctionResultContext(Class resultClass, Function function, Object[] args) {
+        super(resultClass);
+        this.function = function;
+        this.args = args;
     }
-    
-    public void setValue(NativeLong value) {
-        getPointer().setNativeLong(0, value);
-    }
-    
-    public NativeLong getValue() {
-        return getPointer().getNativeLong(0);
-    }
+    /** Get the function that was invoked. */
+    public Function getFunction() { return function; }
+    /** Get the arguments used in this function call. */
+    public Object[] getArguments() { return args; }
 }

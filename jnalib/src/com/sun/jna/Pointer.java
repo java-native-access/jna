@@ -37,9 +37,12 @@ import java.nio.ByteOrder;
  */
 public class Pointer {
 
-    /** The size of a native pointer on the current platform */
+    /** The size of a native pointer on the current platform, in bytes. */
     public static final int SIZE;
+    /** Size of a native long type, in bytes. */
     public static final int LONG_SIZE;
+    /** Size of a native wchar_t type, in bytes. */
+    public static final int WCHAR_SIZE;
     
     /** Convenience constant, same as <code>null</code>. */
     public static final Pointer NULL = null;
@@ -53,6 +56,7 @@ public class Pointer {
         }
         SIZE = initIDs();
         LONG_SIZE = longSize();
+        WCHAR_SIZE = wideCharSize();
     }
     
     private static String getNativeLibraryResourcePath() {
@@ -144,6 +148,9 @@ public class Pointer {
 
     /** Return the size of a native <code>long</code>. */
     private static native int longSize();
+    
+    /** Return the size of a native <code>wchar_t</code>. */
+    private static native int wideCharSize();
     
     /** Pointer value of the real native pointer. Use long to be 64-bit safe. 
      */
@@ -688,6 +695,6 @@ public class Pointer {
     public native void setString(int offset, String value, boolean wide);
 
     public String toString() {
-        return "Native Pointer <0x" + Long.toHexString(peer) + ">";
+        return "native@0x" + Long.toHexString(peer);
     }
 }

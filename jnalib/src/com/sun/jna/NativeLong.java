@@ -19,6 +19,7 @@ package com.sun.jna;
  * @author wmeissner@gmail.com
  */
 public class NativeLong extends Number {
+    /** Size of a native long, in bytes. */
     public static final int SIZE = Pointer.LONG_SIZE;
     private final Number value;
 

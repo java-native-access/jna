@@ -496,7 +496,7 @@ public class WindowUtils {
                 public void run() {
                     Pointer hWnd = getHWnd(w);
                     User32 user = User32.INSTANCE;
-                    int flags = user.GetWindowLongA(hWnd, User32.GWL_EXSTYLE);
+                    int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
                     byte level = (byte)((int)(255 * alpha) & 0xFF);
                     if (isTransparent(w)) {
                         // If already using UpdateLayeredWindow, continue to 
@@ -510,11 +510,11 @@ public class WindowUtils {
                     }
                     else if (alpha == 1f) {
                         flags &= ~User32.WS_EX_LAYERED;
-                        user.SetWindowLongA(hWnd, User32.GWL_EXSTYLE, flags);
+                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
                     }
                     else {
                         flags |= User32.WS_EX_LAYERED;
-                        user.SetWindowLongA(hWnd, User32.GWL_EXSTYLE, flags);
+                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
                         user.SetLayeredWindowAttributes(hWnd, 0, level,
                                                         User32.LWA_ALPHA);
                     }
@@ -631,18 +631,18 @@ public class WindowUtils {
                 public void run() {
                     User32 user = User32.INSTANCE;
                     Pointer hWnd = getHWnd(w);
-                    int flags = user.GetWindowLongA(hWnd, User32.GWL_EXSTYLE);
+                    int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
                     JRootPane root = ((RootPaneContainer)w).getRootPane();
                     JLayeredPane lp = root.getLayeredPane();
                     if (transparent && !isTransparent(w)) {
                         flags |= User32.WS_EX_LAYERED;
-                        user.SetWindowLongA(hWnd, User32.GWL_EXSTYLE, flags);
+                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
                         lp
                           .add(new W32RepaintTrigger(), JLayeredPane.DRAG_LAYER);
                     }
                     else if (!transparent && isTransparent(w)) {
                         flags &= ~User32.WS_EX_LAYERED;
-                        user.SetWindowLongA(hWnd, User32.GWL_EXSTYLE, flags);
+                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
                         RepaintTrigger.remove(lp);
                     }
                     setLayersTransparent(w, transparent);

@@ -51,14 +51,16 @@ CINCLUDES=$(JAVA_INCLUDES) -I"$(JAVAH)"
 CDEFINES=-D_REENTRANT
 PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses -Werror
 CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES)
-LDFLAGS=-o $@ -shared -Wl,-soname,$@ 
+# -static-libgcc avoids gcc library incompatibilities across linux systems
+LDFLAGS=-o $@ -shared -Wl,-soname,$@ -static-libgcc
 LIBDIR=$(JAVA_HOME)/jre/lib/$(ARCH)
 LIBS=-L"$(LIBDIR)" -ljawt 
 STRIP=strip -x
 # end defaults
 
 ifeq ($(OS),win32)
-CC=cl
+# Uncomment this line to use MSVC
+#CC=cl
 ARCH=i386
 
 ifeq ($(CC),cl)
@@ -77,14 +79,13 @@ CASM=-FAs
 LDFLAGS=/pdb:$(subst .dll,,$@).pdb /implib:$(subst .dll,,$@).lib /debug /machine:i386 /pdbtype:sept /dll /nologo /opt:REF /incremental:no /out:$@ 
 LIBDIR=/libpath:"$(JAVA_HOME)/lib" 
 LIBS=$(LIBDIR) jawt.lib
-TESTDEF=/def:$(subst .dll,,$(@F)).def
 STRIP=@echo
 else
 CDEFINES=-D__int64="long long" -D_JNI_IMPLEMENTATION
 PCFLAGS=-mno-cygwin
 # NOTE: have to recreate specs or dllcrt2.o isn't found
 SPECS=$(BUILD)/specs.new
-LDFLAGS+=-mno-cygwin -Wl,--add-stdcall-alias -specs $(BUILD)/specs.new -L /lib/mingw 
+LDFLAGS+=-mno-cygwin -Wl,--add-stdcall-alias -specs $(SPECS) -L /lib/mingw 
 LIBDIR="$(JAVA_HOME)/lib"
 LIBS=$(LIBDIR)/jawt.lib
 endif
@@ -95,7 +96,8 @@ endif
 
 ifeq ($(OS),linux)
 ARCH=i386
-# Avoid 1.5/1.6 bug linking directly to -ljawt
+PCFLAGS+=-fPIC
+# Avoid 1.5/1.6 bug caused by linking directly to -ljawt
 CDEFINES+=-DNEED_JAWT_HACK
 LIBS=
 endif
@@ -103,7 +105,8 @@ endif
 # FIXME untested
 ifeq ($(OS),sparc)
 ARCH=sparc
-# Avoid 1.5/1.6 bug linking directly to -ljawt
+PCFLAGS+=-fPIC
+# Avoid 1.5/1.6 bug caused by linking directly to -ljawt
 CDEFINES+=-DNEED_JAWT_HACK
 LIBS=
 endif

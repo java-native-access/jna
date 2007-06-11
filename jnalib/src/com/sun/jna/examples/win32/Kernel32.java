@@ -18,14 +18,14 @@ import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APITypeMapper;
 
-/** Minimal definition of <code>kernel32.dll</code>. */
-public interface Kernel32 extends StdCallLibrary, W32Errors {
+/** Definition (incomplete) of <code>kernel32.dll</code>. */
+public interface Kernel32 extends W32API {
     
     Kernel32 INSTANCE = (Kernel32)
-        Native.loadLibrary("kernel32", Kernel32.class);
+        Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
 
-    
     public static class SYSTEMTIME extends Structure {
         public short wYear;
         public short wMonth;
@@ -43,25 +43,33 @@ public interface Kernel32 extends StdCallLibrary, W32Errors {
     int GetLastError();
     int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
     int FORMAT_MESSAGE_IGNORE_INSERTS = 0x200;
-    int FormatMessageA(int dwFlags, Pointer lpSource, int dwMessageId, 
-                       int dwLanguageId, byte[] lpBuffer, int nSize,
+    int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId, 
+                       int dwLanguageId, Pointer lpBuffer, int nSize,
                        Pointer va_list);
 
-    Pointer INVALID_HANDLE_VALUE = Pointer.PM1;
-    
     int FILE_LIST_DIRECTORY = 0x00000001;
     
     int FILE_SHARE_READ = 1;
     int FILE_SHARE_WRITE = 2;
     int FILE_SHARE_DELETE = 4;
     
-    int CREATE_ALWAYS = 2;
-    int OPEN_EXISTING = 3; 
-    int OPEN_ALWAYS = 4;
+    int CREATE_NEW =         1;
+    int CREATE_ALWAYS =      2;
+    int OPEN_EXISTING =      3;
+    int OPEN_ALWAYS =        4;
+    int TRUNCATE_EXISTING =  5;
     
-    int FILE_FLAG_BACKUP_SEMANTICS = 33554432;
-    int FILE_FLAG_OVERLAPPED = 1073741824;
-    
+    int FILE_FLAG_WRITE_THROUGH =        0x80000000;
+    int FILE_FLAG_OVERLAPPED =           0x40000000;
+    int FILE_FLAG_NO_BUFFERING =         0x20000000;
+    int FILE_FLAG_RANDOM_ACCESS =        0x10000000;
+    int FILE_FLAG_SEQUENTIAL_SCAN =      0x08000000;
+    int FILE_FLAG_DELETE_ON_CLOSE =      0x04000000;
+    int FILE_FLAG_BACKUP_SEMANTICS =     0x02000000;
+    int FILE_FLAG_POSIX_SEMANTICS =      0x01000000;
+    int FILE_FLAG_OPEN_REPARSE_POINT =   0x00200000;
+    int FILE_FLAG_OPEN_NO_RECALL =       0x00100000;
+
     int FILE_ATTRIBUTE_READONLY = 0x00000001;
     int FILE_ATTRIBUTE_HIDDEN = 0x00000002;
     int FILE_ATTRIBUTE_SYSTEM = 0x00000004;
@@ -79,15 +87,15 @@ public interface Kernel32 extends StdCallLibrary, W32Errors {
     
     int GENERIC_WRITE = 0x40000000;
     public static class SECURITY_ATTRIBUTES extends Structure {
-        public int nLength;
+        public int nLength = size();
         public Pointer lpSecurityDescriptor;
-        public int bInheritHandle;
+        public boolean bInheritHandle;
     }
-    Pointer CreateFileA(String lpFileName, int dwDesiredAccess, int dwShareMode,
-                        SECURITY_ATTRIBUTES lpSecurityAttributes,
-                        int dwCreationDisposition, int dwFlagsAndAttributes,
-                        Pointer hTemplateFile);
-    boolean CreateDirectoryA();
+    Pointer CreateFile(String lpFileName, int dwDesiredAccess, int dwShareMode,
+                       SECURITY_ATTRIBUTES lpSecurityAttributes,
+                       int dwCreationDisposition, int dwFlagsAndAttributes,
+                       Pointer hTemplateFile);
+    boolean CreateDirectory();
 
     Pointer CreateIoCompletionPort(Pointer FileHandle, 
                                    Pointer ExistingCompletionPort,
@@ -134,7 +142,8 @@ public interface Kernel32 extends StdCallLibrary, W32Errors {
         public int Action;
         public int FileNameLength;
         // filename is not nul-terminated, so we can't use a String/WString
-        public char[] FileName = new char[0];
+        public char[] FileName = new char[1];
+        
         private FILE_NOTIFY_INFORMATION() { } 
         public FILE_NOTIFY_INFORMATION(int size) {
             if (size < size())
@@ -172,6 +181,7 @@ public interface Kernel32 extends StdCallLibrary, W32Errors {
     public static interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
         void callback(int errorCode, int nBytesTransferred, OVERLAPPED overlapped);
     }
+    // NOTE: only exists in unicode form (W suffix)
     boolean ReadDirectoryChangesW(Pointer directory, 
                                   FILE_NOTIFY_INFORMATION info, 
                                   int length,

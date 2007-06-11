@@ -192,9 +192,9 @@ public class AlphaMaskDemo implements Runnable {
         if (!alphaWindow.isDisplayable()) {
             alphaWindow.pack();
             hWnd = Native.getWindowPointer(alphaWindow);
-            int flags = user.GetWindowLongA(hWnd, User32.GWL_EXSTYLE);
+            int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
             flags |= User32.WS_EX_LAYERED;
-            user.SetWindowLongA(hWnd, User32.GWL_EXSTYLE, flags);
+            user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
             Window parent = alphaWindow.getOwner();
             Point where = parent.getLocationOnScreen();
             where.translate(parent.getWidth(), 0);

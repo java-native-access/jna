@@ -250,10 +250,10 @@ public abstract class FileMonitor {
                 | Kernel32.FILE_SHARE_WRITE | Kernel32.FILE_SHARE_DELETE;
             int flags = Kernel32.FILE_FLAG_BACKUP_SEMANTICS
                 | Kernel32.FILE_FLAG_OVERLAPPED;
-            Pointer handle = klib.CreateFileA(file.getAbsolutePath(), 
-                                              Kernel32.FILE_LIST_DIRECTORY,
-                                              mask, null, Kernel32.OPEN_EXISTING,
-                                              flags, null);
+            Pointer handle = klib.CreateFile(file.getAbsolutePath(), 
+                                             Kernel32.FILE_LIST_DIRECTORY,
+                                             mask, null, Kernel32.OPEN_EXISTING,
+                                             flags, null);
             if (Kernel32.INVALID_HANDLE_VALUE.equals(handle)) {
                 throw new IOException("Unable to open " + file + " (" 
                                       + klib.GetLastError() + ")");

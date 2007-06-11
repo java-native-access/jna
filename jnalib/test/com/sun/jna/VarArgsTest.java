@@ -55,7 +55,7 @@ public class VarArgsTest extends TestCase {
                      TestLibrary.INSTANCE.addInt32VarArgs("ll", args));
     }
     public void testStringVarArgs() {
-        String[] args = new String[] { "Test" };
+        Object[] args = new Object[] { "Test" };
         assertEquals("Did not return correct string", args[0],
                      TestLibrary.INSTANCE.returnStringVarArgs("", args));
     }

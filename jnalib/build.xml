@@ -28,6 +28,7 @@
   <property name="copyright"
             value="Copyright &amp;copy; 2007 ${company.full}. All Rights Reserved."/>
 
+  <!-- Software release version -->            
   <property name="version" value="2.4"/>
   <property name="jdk" value="1.4"/>
 
@@ -37,7 +38,7 @@
   <target name="default" depends="test" description="Build and Test."/>
 
   <target name="dynamic-properties">
-    <echo>Java version: ${java.version}, compatibility=${jdk}</echo>
+    <echo>Java version: ${java.version}, compatibility: ${jdk}</echo>
     <echo>Build ${version}</echo>
     <property name="build" location="build"/>
     <property name="classes" location="${build}/classes"/>
@@ -181,15 +182,16 @@
     <condition property="make.SDKROOT" value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
       <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
     </condition>
+    <!-- Windows' drive letters in absolute paths wreak havoc on make -->
+    <condition property="make.BUILD" value="BUILD=../build/native" else="BUILD=${build.native}">
+      <os family="windows"/>
+    </condition>
     <exec executable="make" dir="${native}" failonerror="true">
-      <!-- FIXME can't use the location directly, since drive letters are
-           problematic with gnu make --> 
-      <!--<arg value="BUILD=${build.native}"/>-->
-      <arg value="BUILD=../build/native"/>
       <arg value="JAVA_HOME=${jdk.home}"/>
       <arg value="JAVAH=${build.native}"/>
       <arg value="DEBUG=${debug.native}"/>
       <arg value="${make.CC}"/>
+      <arg value="${make.BUILD}"/>
       <arg value="${make.SDKROOT}"/>
       <arg value="${make.ARCH}"/>
     </exec>
@@ -345,6 +347,16 @@
       <fileset dir="${doc}/api"/>
       <fileset dir="." includes="*~,**/*~"/>
     </delete>
+  </target>
+
+  <target name="profile-single" depends="examples-jar" description="Profile Class">
+    <fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
+    <nbprofiledirect>
+      <classpath> <pathelement location="${build}/examples.jar"/> </classpath>
+    </nbprofiledirect>
+    <java jar="${build}/examples.jar" fork="true">
+      <jvmarg value="${profiler.info.jvmargs.agent}"/>
+    </java>
   </target>
 
 </project>

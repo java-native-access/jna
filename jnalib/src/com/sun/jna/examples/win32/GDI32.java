@@ -18,11 +18,13 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APITypeMapper;
 
-/** Minimal definition of <code>gdi32.dll</code>. */
-public interface GDI32 extends StdCallLibrary {
+/** Definition (incomplete) of <code>gdi32.dll</code>. */
+public interface GDI32 extends W32API {
     
-    GDI32 INSTANCE = (GDI32)Native.loadLibrary("gdi32", GDI32.class);
+    GDI32 INSTANCE = (GDI32)
+        Native.loadLibrary("gdi32", GDI32.class, DEFAULT_OPTIONS);
 
     public static class RECT extends Structure {
         public int left;

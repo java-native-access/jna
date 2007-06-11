@@ -10,25 +10,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.ptr;
+package com.sun.jna.examples.win32;
 
-import com.sun.jna.NativeLong;
+import com.sun.jna.Structure;
+import junit.framework.TestCase;
 
-public class NativeLongByReference extends ByReference {
-    public NativeLongByReference() {
-        this(new NativeLong(0));
-    }
-    
-    public NativeLongByReference(NativeLong value) {
-        super(NativeLong.SIZE);
-        setValue(value);
-    }
-    
-    public void setValue(NativeLong value) {
-        getPointer().setNativeLong(0, value);
-    }
-    
-    public NativeLong getValue() {
-        return getPointer().getNativeLong(0);
+public class Shell32Test extends TestCase {
+    public void testStructurePacking() {
+        Structure s = new Shell32.SHFILEOPSTRUCT();
+        assertEquals("Wrong structure size", 30, s.size());
     }
 }

@@ -11,6 +11,7 @@
 
 
 * design: 
+
   o no permanent references to java objects in native code (hard to get rid of)
     this means no java object arguments to callbacks; use some sort of integer
     key instead (hashcode?) callbacks can hold local data anyway...
@@ -21,14 +22,16 @@
   o arrays are treated as pointers, except within a struct
     - in structure (inline; otherwise pointer-to-X should be used)
     - as function argument (auto-convert to pointer via Memory)
-    - how to do pointer to struct in struct? (Pointer to start with)
     - pointer to type in struct should be handled with Pointer
+    - how to do pointer to struct in struct? (Pointer to start with)
+  o "free" should be invisible wherever possible
 * auto-convert struct pointers in callback args to Java Structure
+  (may need a proxy wrapper around callback to avoid excessive JNI)
 * per-library jna.library.path: many libraries have a "standard" location (or
   several); let the library author indicate what these are (X11, for example)
 * return array of struct (annotation to indicate which argument has the
   length of the returned value might be nice)
-* determine display name from current java program (if any); null is ok
+* determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be avilable in GraphicsDevice->getIDstring
 * split unit tests
@@ -42,13 +45,13 @@
 this should probably be automatic so the user doesn't have to think about it.
 Maybe a custom type representing "function-allocated-pointer" or
 "pointer-requiring-free" (which is just Memory).
-* "free" should be invisible wherever possible
 * callbacks need a dispose if they are to live beyond the lifetime of the
 function to which they are passed; maybe a simpler callback interface for
 transient callbacks, and require callback+dispose for most callbacks?
   TransientCallback: callback
   NonTransientCallback: callback+dispose
 
+* return Pointer.SIZE/LONG_SIZE in bits (for consistency with 1.5)
 * use proxy for callbacks to enable auto-conversion of arguments and/or return
   value (in java-land instead of C-land). 
 * interface "lvalue", which can provide a pointer to itself (reference() or

@@ -13,21 +13,38 @@
 package com.sun.jna;
 
 import java.awt.Window;
+import java.io.ObjectInputStream.GetField;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /** Provides generation of invocation plumbing for a defined native
  * library interface.
- *
+ * <p>
+ * {@link #getTypeMapper} and {@link #getStructureAlignment} are provided
+ * to avoid having to explicitly pass these parameters to {@link Structure}s, 
+ * which would require every {@link Structure} which requries custom mapping
+ * or alignment to define a constructor and pass parameters to the superclass.
+ * To avoid lots of boilerplate, the base {@link Structure} constructor
+ * figures out these properties based on the defining interface.
+ * 
+ * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
 public class Native {
 
+    private static Map typeMappers = Collections.synchronizedMap(new WeakHashMap());
+    private static Map alignments = Collections.synchronizedMap(new WeakHashMap());
+    
     private Native() { }
-
+    
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
      * This method is primarily for X11-based systems, which use an opaque
@@ -78,25 +95,90 @@ public class Native {
     }
 
     /** Load a library interface from the given shared library, providing
-     * the explicit interface class and a map from the interface method
-     * names to the actual shared library function names.
+     * the explicit interface class and a map of options for the library.
+     * If no library options are detected the map is interpreted as a map
+     * of Java method names to native function names.
      * @param name
      * @param interfaceClass
-     * @param functionMap Map of java interface method names to shared library 
-     * function names
+     * @param options Map of library options
      */
     public static Library loadLibrary(String name, 
                                       Class interfaceClass,
-                                      Map functionMap) {
+                                      Map options) {
         if (!Library.class.isAssignableFrom(interfaceClass)) {
             throw new IllegalArgumentException("Not a valid native library interface: " + interfaceClass);
         }
         InvocationHandler handler = 
-            new Library.Handler(name, interfaceClass, functionMap);
+            new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
         Library proxy = (Library)
             Proxy.newProxyInstance(loader, new Class[] {interfaceClass},
                                    handler);
+        if (options.containsKey(Library.OPTION_TYPE_MAPPER))
+            typeMappers.put(interfaceClass, options.get(Library.OPTION_TYPE_MAPPER));
+        if (options.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
+            alignments.put(interfaceClass, options.get(Library.OPTION_STRUCTURE_ALIGNMENT));
         return proxy;
+    }
+    
+    /** Returns whether an instance variable was instantiated. */
+    private static boolean loadInstance(Class cls) {
+        if (cls != null) {
+            try {
+                Field[] fields = cls.getFields();
+                for (int i=0;i < fields.length;i++) {
+                    Field field = fields[i];
+                    if (field.getType() == cls 
+                        && (field.getModifiers() & Modifier.STATIC) != 0) {
+                        field.get(null);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception e) {
+                throw new IllegalArgumentException("Could not access instance of " 
+                                                   + cls + " (" + e + ")");
+            }
+        }
+        return false;
+    }
+    
+    /** Return the preferred {@link TypeMapper} for the given native interface.
+     */
+    public static TypeMapper getTypeMapper(Class interfaceClass) {
+        if (!loadInstance(interfaceClass) 
+            || !typeMappers.containsKey(interfaceClass)) {
+            try {
+                Field field = interfaceClass.getField("TYPE_MAPPER");
+                return (TypeMapper)field.get(null);
+            }
+            catch (NoSuchFieldException e) {
+            }
+            catch (Exception e) {
+                throw new IllegalArgumentException("TYPE_MAPPER must be a public TypeMapper field (" 
+                                                   + e + "): " + interfaceClass);
+            }
+        }
+        return (TypeMapper)typeMappers.get(interfaceClass);
+    }
+
+    /** Return the preferred structure alignment for the given native interface. 
+     */
+    public static int getStructureAlignment(Class interfaceClass) {
+        if (!loadInstance(interfaceClass) 
+            || !alignments.containsKey(interfaceClass)) {
+            try {
+                Field field = interfaceClass.getField("STRUCTURE_ALIGNMENT");
+                return ((Integer)field.get(null)).intValue();
+            }
+            catch(NoSuchFieldException e) {
+            }
+            catch(Exception e) {
+                throw new IllegalArgumentException("STRUCTURE_ALIGNMENT must be a public int field ("
+                                                   + e + "): " + interfaceClass);
+            }
+        }
+        Integer value = (Integer)alignments.get(interfaceClass);
+        return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
     }
 }
