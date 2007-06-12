@@ -25,16 +25,33 @@ import java.util.Map;
  * <p>
  * See the <a href=overview.html>overview</a> for supported type mappings.
  * <p>
- * Note: this class
- * and its methods are not threadsafe! You must ensure that this class is
- * used in a safe manner.<p>
- * Note: Strings are used to represent native C strings because usage of 
- * <code>char *</code> is generally more common than <code>wchar_t *</code>.
+ * NOTE: Strings are used to represent native C strings because usage of 
+ * <code>char *</code> is generally more common than <code>wchar_t *</code>.<p>
+ * NOTE: This class assumes that fields are returned in {@link Class#getFields}
+ * in the same or reverse order as declared.  If your VM returns them in
+ * no particular order, you're out of luck.
  *
  * @author  Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
 public abstract class Structure {
+    
+    private static class MemberOrder {
+        public int first;
+        public int middle;
+        public int last;
+    }
+    
+    private static final boolean REVERSE_FIELDS;
+    
+    static {
+        // IBM and JRockit store fields in reverse order; check for it
+        Field[] fields = MemberOrder.class.getFields();
+        REVERSE_FIELDS = fields[0].getName().equals("last");
+        if (!fields[1].equals("middle")) {
+            throw new Error("This VM does not store fields in a predictable order");
+        }
+    }
 
     public static final int ALIGN_DEFAULT = 0;
     // No alignment, place all fields on nearest 1-byte boundary
@@ -473,6 +490,14 @@ public abstract class Structure {
         structAlignment = 1;
         int calculatedSize = 0;
         Field[] fields = getClass().getFields();
+        if (REVERSE_FIELDS) {
+            for (int i=0;i < fields.length/2;i++) {
+                int idx = fields.length-1-i;
+                Field tmp = fields[i];
+                fields[i] = fields[idx];
+                fields[idx] = tmp;
+            }
+        }
         for (int i=0; i<fields.length; i++) {
             Field field = fields[i];
             if ((field.getModifiers() & Modifier.STATIC) != 0)

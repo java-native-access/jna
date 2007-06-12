@@ -6,7 +6,6 @@
 
 # TODO:
 
-* review/use refactor nativelibrary/function
 * review/use ByteBuffer everywhere
 
 
@@ -25,12 +24,12 @@
     - pointer to type in struct should be handled with Pointer
     - how to do pointer to struct in struct? (Pointer to start with)
   o "free" should be invisible wherever possible
+* use libffi from gcc to handle calls and callbacks?
+  or move callback asm templates into dispatch_<arch>.c
 * auto-convert struct pointers in callback args to Java Structure
   (may need a proxy wrapper around callback to avoid excessive JNI)
-* per-library jna.library.path: many libraries have a "standard" location (or
-  several); let the library author indicate what these are (X11, for example)
-* return array of struct (annotation to indicate which argument has the
-  length of the returned value might be nice)
+  use proxy for callbacks to enable auto-conversion of arguments and/or return
+  value (in java-land instead of C-land). 
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be avilable in GraphicsDevice->getIDstring
@@ -38,22 +37,11 @@
 * universal OSX build w/cross-compile (callbacks fail)
 * universal GCC build w/cross-compile
 * catch native crash/exception/faults and re-throw as java exception
-* use libffi from gcc to handle calls and callbacks?
-  or move callback asm templates into dispatch_<arch>.c
-* auto-generate stdcall decorated symbols (try if undecorated lookup fails)
 * make Pointer free-able (system allocates memory, client frees it); actually,
 this should probably be automatic so the user doesn't have to think about it.
 Maybe a custom type representing "function-allocated-pointer" or
 "pointer-requiring-free" (which is just Memory).
-* callbacks need a dispose if they are to live beyond the lifetime of the
-function to which they are passed; maybe a simpler callback interface for
-transient callbacks, and require callback+dispose for most callbacks?
-  TransientCallback: callback
-  NonTransientCallback: callback+dispose
-
 * return Pointer.SIZE/LONG_SIZE in bits (for consistency with 1.5)
-* use proxy for callbacks to enable auto-conversion of arguments and/or return
-  value (in java-land instead of C-land). 
 * interface "lvalue", which can provide a pointer to itself (reference() or
   addressOf())?
 * how to do direct struct argument (vs struct pointer) (uncommon)? 
@@ -75,8 +63,6 @@ transient callbacks, and require callback+dispose for most callbacks?
 * verify get/set methods vs read/write is for performance (Pointer)?
 * type safety between returned and passed in pointers (w32 API)
 * bitfields et al. for structs
-* auto-convert strings in w32 functions ending in 'W'?  would this introduce
-  any ambiguity?
 * use annotations + result codes + GetLastError/errno/errstr to auto-generate
   runtime exceptions? (cf P/Invoke; also useful for X11 return types)
   provide annotation/custom invocation handler/hook to examine return value and
@@ -90,6 +76,22 @@ transient callbacks, and require callback+dispose for most callbacks?
 
 
 # DONE
+* review/use refactor nativelibrary/function
+* auto-generate stdcall decorated symbols (try if undecorated lookup fails)
+* per-library jna.library.path: many libraries have a "standard" location (or
+  several); let the library author indicate what these are (X11, for example)
+* return array of struct (annotation to indicate which argument has the
+  length of the returned value might be nice) (this can now be done with a
+  type mapper)
+* callbacks need a dispose if they are to live beyond the lifetime of the
+function to which they are passed; maybe a simpler callback interface for
+transient callbacks, and require callback+dispose for most callbacks?
+  TransientCallback: callback
+  NonTransientCallback: callback+dispose
+  (callback is disposed when no longer referenced; user must ensure callback
+  is not GC'd until it is removed as a native callback)
+* auto-convert strings in w32 functions ending in 'W'?  would this introduce
+  any ambiguity?
 * Dispose/unload library on GC (use ref queue)
 * fix dnd on linux (no hole?) (mostly fixed, still some artifacts)
 * transparent/shaped drag image
