@@ -29,7 +29,7 @@
             value="Copyright &amp;copy; 2007 ${company.full}. All Rights Reserved."/>
 
   <!-- Software release version -->            
-  <property name="version" value="2.4"/>
+  <property name="version" value="2.4.1"/>
   <property name="jdk" value="1.4"/>
 
   <!-- Miscellaneous -->
