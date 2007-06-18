@@ -397,7 +397,7 @@ callback_dispatch(JavaVM* jvm, callback* cb, char* ap) {
   }
   else switch(cb->return_jtype) {
   case 'V':
-    resuilt.i = 0; (*env)->CallVoidMethodA(env, obj, mid, args); break;
+    result.i = 0; (*env)->CallVoidMethodA(env, obj, mid, args); break;
   case 'Z':
     result.i = (*env)->CallBooleanMethodA(env, obj, mid, args); break;
   case 'B':
