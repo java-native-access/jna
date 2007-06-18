@@ -317,6 +317,7 @@ public class NativeLibrary {
         
         librarySearchPath.addAll(initPaths("jna.library.path"));
         if (System.getProperty("jna.platform.library.path") == null) {
+            // Add default path lookups for unix-like systems
             if (new File("/lib").exists() 
                 || new File("/usr/lib").exists()
                 || new File("/lib64").exists()
@@ -329,6 +330,5 @@ public class NativeLibrary {
             }
         }
         librarySearchPath.addAll(initPaths("jna.platform.library.path"));
-        librarySearchPath.addAll(initPaths("java.library.path"));
     }
 }

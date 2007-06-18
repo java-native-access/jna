@@ -150,12 +150,16 @@ public class Function extends Pointer {
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
         Object result = null;
 
-        // If the final argument is an array of Object, treat it as
-        // varargs and concatenate the previous arguments with the varargs 
-        // elements.
+        // If the final argument is an array of something other than
+        // primitives, Structure, or String, treat it as varargs and 
+        // concatenate the previous arguments with the varargs elements.
         if (inArgs != null && inArgs.length > 0) {
             Object lastArg = inArgs[inArgs.length-1];
-            if (lastArg != null && Object[].class == lastArg.getClass()) {
+            Class argType = lastArg != null ? lastArg.getClass() : null;
+            if (argType != null && argType.isArray()
+                && !isPrimitiveArray(argType)
+                && !isStructureArray(argType)
+                && argType != String[].class) {
                 Object[] varArgs = (Object[])lastArg;
                 Object[] fullArgs = new Object[inArgs.length+varArgs.length];
                 System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
@@ -207,7 +211,7 @@ public class Function extends Pointer {
             }
             // Convert Callback to Pointer
             else if (arg instanceof Callback) {
-                CallbackReference cbref = CallbackReference.getInstance((Callback)arg, callingConvention);
+                CallbackReference cbref = CallbackReference.getInstance((Callback)arg);
                 // Use pointer to trampoline (callback->insns, see dispatch.h)
                 args[i] = cbref.getTrampoline();
             }
@@ -232,7 +236,7 @@ public class Function extends Pointer {
             else if (arg instanceof Boolean) {
                 args[i] = new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
             }
-            else if (String[].class.equals(argClass)) {
+            else if (String[].class == argClass) {
                 args[i] = new StringArray((String[])arg);
             }
             else if (isStructureArray(argClass)) {
@@ -337,10 +341,10 @@ public class Function extends Pointer {
             result = new Double(invokeDouble(callingConvention, args));
         }
         else if (nativeType==String.class) {
-            result = invokeString(args, false);
+            result = invokeString(callingConvention, args, false);
         }
         else if (nativeType==WString.class) {
-            result = new WString(invokeString(args, true));
+            result = new WString(invokeString(callingConvention, args, true));
         }
         else if (Pointer.class.isAssignableFrom(nativeType)) {
             result = invokePointer(callingConvention, args);
@@ -420,20 +424,22 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
+     * @param   callingConvention calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The value returned by the target native function
      */
-    public native int invokeInt(int callingConvention, Object[] args);
+    private  native int invokeInt(int callingConvention, Object[] args);
 
     /**
      * Call the native function being represented by this object
      *
+     * @param   callingConvention calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The value returned by the target native function
      */
-    public native long invokeLong(int callingConvention, Object[] args);
+    private native long invokeLong(int callingConvention, Object[] args);
 
     /**
      * Call the native function being represented by this object
@@ -449,37 +455,43 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
+     * @param   callingConvention calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      */
-    public native void invokeVoid(int callingConvention, Object[] args);
+    private native void invokeVoid(int callingConvention, Object[] args);
 
     /**
      * Call the native function being represented by this object
      *
+     * @param   callingConvention calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The value returned by the target native function
      */
-    public native float invokeFloat(int callingConvention, Object[] args);
+    private native float invokeFloat(int callingConvention, Object[] args);
 
     /**
      * Call the native function being represented by this object
      *
+     * @param   callingConvention calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The value returned by the target native function
      */
-    public native double invokeDouble(int callingConvention, Object[] args);
+    private native double invokeDouble(int callingConvention, Object[] args);
 
     /**
      * Call the native function being represented by this object
      *
+     * @param   callingConvention calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
-     * @return	The value returned by the target native function
+     * @param   wide whether the native string uses <code>wchar_t</code>;
+     * if false, <code>char</code> is assumed
+     * @return	The value returned by the target native function, as a String
      */
-    public String invokeString(Object[] args, boolean wide) {
+    private String invokeString(int callingConvention, Object[] args, boolean wide) {
         Pointer ptr = invokePointer(callingConvention, args);
         String s = null;
         if (ptr != null) {
@@ -491,11 +503,12 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
+     * @param   callingConvention calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The native pointer returned by the target native function
      */
-    public native Pointer invokePointer(int callingConvention, Object[] args);
+    private native Pointer invokePointer(int callingConvention, Object[] args);
 
     /** Create a callback function pointer. */
     static native Pointer createCallback(Callback callback, Method method, 
@@ -537,6 +550,18 @@ public class Function extends Pointer {
     public Pointer invokePointer(Object[] args) {
         return (Pointer)invoke(Pointer.class, args);
     }
+    /** Convenience method for
+     * {@link #invoke(Class,Object[]) invoke(String.class, args)}
+     * or {@link #invoke(Class,Object[]) invoke(WString.class, args)}
+     * @param args Arguments passed to native function
+     * @param wide Whether the return value is of type <code>wchar_t*</code>;
+     * if false, the return value is of type <code>char*</code>.
+     */
+    public String invokeString(Object[] args, boolean wide) {
+        Object o = invoke(wide ? WString.class : String.class, args);
+        return o != null ? o.toString() : null;
+    }
+
     /** Convenience method for 
      * {@link #invoke(Class,Object[]) invoke(Integer.class, args)}.
      */

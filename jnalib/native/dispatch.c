@@ -59,6 +59,7 @@ extern "C"
 static jclass classObject;
 static jclass classClass;
 static jclass classMethod;
+static jclass classVoid, classPrimitiveVoid;
 static jclass classBoolean, classPrimitiveBoolean;
 static jclass classByte, classPrimitiveByte;
 static jclass classCharacter, classPrimitiveCharacter;
@@ -444,6 +445,7 @@ Java_com_sun_jna_Pointer_initIDs(JNIEnv *env, jclass cls)
     classPointer = cls;
     if (!LOAD_REF(env, classPointer)) return 0;
 
+    if (!LOAD_PCREF(env, Void, "java/lang/Void")) return 0;
     if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return 0;
     if (!LOAD_PCREF(env, Byte, "java/lang/Byte")) return 0;
     if (!LOAD_PCREF(env, Character, "java/lang/Character")) return 0;
@@ -1089,6 +1091,9 @@ newJavaPointer(JNIEnv *env, void *p)
 char
 get_jtype(JNIEnv* env, jclass cls) {
 
+  if ((*env)->IsSameObject(env, classVoid, cls)
+      || (*env)->IsSameObject(env, classPrimitiveVoid, cls))
+    return 'V';
   if ((*env)->IsSameObject(env, classBoolean, cls)
       || (*env)->IsSameObject(env, classPrimitiveBoolean, cls))
     return 'Z';

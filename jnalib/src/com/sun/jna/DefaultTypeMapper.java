@@ -13,8 +13,10 @@
 
 package com.sun.jna;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /** Provide custom mappings to and from native types.  The default lookup
@@ -32,8 +34,16 @@ import java.util.Map;
  * @see Library#OPTION_TYPE_MAPPER 
  */
 public class DefaultTypeMapper implements TypeMapper {
-    private Map argumentConverters = new LinkedHashMap();
-    private Map resultConverters = new LinkedHashMap();
+    private static class Entry {
+        public Class type;
+        public Object converter;
+        public Entry(Class type, Object converter) {
+            this.type = type;
+            this.converter = converter;
+        }
+    }
+    private List argumentConverters = new ArrayList();
+    private List resultConverters = new ArrayList();
     private Class getAltClass(Class cls) {
         if (cls == Boolean.class) {
             return boolean.class;
@@ -90,29 +100,35 @@ public class DefaultTypeMapper implements TypeMapper {
      * checked for in the order added.
      */
     protected void addArgumentConverter(Class cls, ArgumentConverter converter) {
-        argumentConverters.put(cls, converter);
+        argumentConverters.add(new Entry(cls, converter));
         Class alt = getAltClass(cls);
         if (alt != null) {
-            argumentConverters.put(alt, converter);
+            argumentConverters.add(new Entry(alt, converter));
         }
     }
     /** Add a {@link ResultConverter} to convert a native result type into the 
      * given Java type.  Converters are checked for in the order added.
      */
     protected void addResultConverter(Class cls, ResultConverter converter) {
-        resultConverters.put(cls, converter);
+        resultConverters.add(new Entry(cls, converter));
         Class alt = getAltClass(cls);
         if (alt != null) {
-            resultConverters.put(alt, converter);
+            resultConverters.add(new Entry(alt, converter));
         }
     }
+    /** Add a {@link TypeConverter} to provide bidirectional mapping between
+     * a native and Java type.  
+     */
+    protected void addTypeConverter(Class cls, TypeConverter converter) {
+        addResultConverter(cls, converter);
+        addArgumentConverter(cls, converter);
+    }
     
-    private Object lookupConverter(Class javaClass, Map map) {
-        for (Iterator i=map.entrySet().iterator();i.hasNext();) {
-            Map.Entry entry = (Map.Entry)i.next();
-            Class cls = (Class)entry.getKey();
-            if (cls.isAssignableFrom(javaClass)) {
-                return entry.getValue();
+    private Object lookupConverter(Class javaClass, List list) {
+        for (Iterator i=list.iterator();i.hasNext();) {
+            Entry entry = (Entry)i.next();
+            if (entry.type.isAssignableFrom(javaClass)) {
+                return entry.converter;
             }
         }
         return null;

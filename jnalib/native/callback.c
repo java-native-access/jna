@@ -316,6 +316,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 static type_t
 get_type(char type) {
   switch(type) {
+  case 'V':
   case 'Z': 
   case 'B': 
   case 'C': 
@@ -395,6 +396,8 @@ callback_dispatch(JavaVM* jvm, callback* cb, char* ap) {
     result.j = 0;
   }
   else switch(cb->return_jtype) {
+  case 'V':
+    resuilt.i = 0; (*env)->CallVoidMethodA(env, obj, mid, args); break;
   case 'Z':
     result.i = (*env)->CallBooleanMethodA(env, obj, mid, args); break;
   case 'B':

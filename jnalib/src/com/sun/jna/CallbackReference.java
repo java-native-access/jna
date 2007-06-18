@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
  * and a Java {@link Callback} closure. 
  */
 
-public class CallbackReference extends WeakReference {
+class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
     static final Map altCallbackMap = new WeakHashMap();

@@ -1,3 +1,9 @@
+Release 2.4.1
+Features
+
+Bug Fixes
+* Properly handle VMs with reversed Structure member storage.
+
 Release 2.4
 Features
 * Explicitly support unaligned structures

@@ -79,12 +79,14 @@ default type mappings:<br>
 <tr><td>pointer (to type or array as pointer)</td><td>{@link com.sun.jna.Pointer}</td>
 <tr><td>struct* (pointer to struct)</td><td>{@link com.sun.jna.Structure}</td>
 <tr><td>struct[] (array of contiguous structs)</td><td>{@link com.sun.jna.Structure}[]</td>
-<tr><td>nested arrays</td><td>Array of type</td>
-<tr><td>nested structures</td><td>{@link com.sun.jna.Structure}</td>
+<tr><td>arrays within a struct</td><td>Array of (primitive) type</td>
+<tr><td>struct within a struct</td><td>{@link com.sun.jna.Structure}</td>
 <tr><td><i>not yet implemented</i></td>
 <tr><td>unions</td>
 <tr><td>bitfields</td>
 </table>
+<p>
+Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.
 <p>
 
 <h3>Pointers</h3>

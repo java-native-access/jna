@@ -23,12 +23,12 @@ public class VarArgsTest extends TestCase {
         }
         TestLibrary INSTANCE = (TestLibrary)
                 Native.loadLibrary("testlib", TestLibrary.class);
-        public int addInt32VarArgs(String fmt, Object[] args);
+        public int addInt32VarArgs(String fmt, Number[] args);
         public String returnStringVarArgs(String fmt, Object[] args);
         public void modifyStructureVarArgs(String fmt, Object arg1, Object[] args);
     }
     public void testIntVarArgs() {
-        Object[] args = new Object[2];
+        Integer[] args = new Integer[2];
         int arg1 = 1;
         int arg2 = 2;
         args[0] = new Integer(arg1);
@@ -37,7 +37,7 @@ public class VarArgsTest extends TestCase {
                      TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
     }
     public void testShortVarArgs() {
-        Object[] args = new Object[2];
+        Short[] args = new Short[2];
         short arg1 = 1;
         short arg2 = 2;
         args[0] = new Short(arg1);
@@ -46,7 +46,7 @@ public class VarArgsTest extends TestCase {
                      TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
     }
     public void testLongVarArgs() {
-        Object[] args = new Object[2];
+        Long[] args = new Long[2];
         short arg1 = 1;
         short arg2 = 2;
         args[0] = new Long(arg1);
