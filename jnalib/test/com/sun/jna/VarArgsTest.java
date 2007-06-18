@@ -61,7 +61,7 @@ public class VarArgsTest extends TestCase {
     }
     
     public void testAppendNullToVarargs() {
-        Object[] args = new Object[] { new Integer(1) };
+        Number[] args = new Number[] { new Integer(1) };
         assertEquals("No trailing NULL was appended to varargs list",
                      1, TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
     }
