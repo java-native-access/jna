@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-06-11">
+<meta name="date" content="2007-06-15">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -150,17 +150,46 @@ The <a href="javadoc/com/sun/jna/Pointer.html"><code>Pointer</code></a> class pr
 
 <h3>Custom Type and Function Mapping</h3>
 The <a href="javadoc/com/sun/jna/TypeMapper.html">TypeMapper</a> class and related interfaces provide for converting any Java type used as an argument, return value, or structure member to be converted to or from a native type.  The example w32 API interfaces use a type mapper to convert Java boolean into the w32 BOOL type.
-
+<p>
 Java interface methods may also be arbitrarily mapped onto a native function.  The <a href="javadoc/com/sun/jna/win32/StdCallFunctionMapper.html">StdCallFunctionMapper</a> is one implementation which automatically generates <code>stdcall</code>-decorated function names from a Java interface method signature.
 
 <h3>Callbacks</h3>
-Callback declarations consist of a simple interface that extends the Callback
+Callback declarations consist of a simple interface that extends the <a href="javadoc/com/sun/jna/Callback.html">Callback</a>
 interface and implements a <code>callback</code> method.  Callbacks are
 implemented by wrapping a Java object method in a little bit of C glue code.
 The simplest usage resembles using anonymous inner classes to register event
 listeners.  Following is an example of callback usage:<br> 
 <blockquote>
+    <textarea name="textarea4" cols="80" rows="10" readonly="readonly">
+// C code
+typedef void (*FUNCTION)();
+int atexit(FUNCTION);
+
+// Java code
+public interface CLibrary extends Library {
+    interface FUNCTION extends Callback {
+        void callback();        
+    }
+    int atexit(FUNCTION fn);
+}
+...
+CLibrary lib = CLibrary.INSTANCE;
+lib.atexit(new FUNCTION() {
+    public void callback() {
+        System.out.println("exit was called");  
+    }
+});
+</textarea>
+</blockquote>
+
+Here is a more involved example, using the w32 APIs:
+<blockquote>
     <textarea name="textarea4" cols="80" rows="17" readonly="readonly">
+// C code
+typedef int (__stdcall *WNDENUMPROC)(void*,void*);
+int __stdcall EnumWindows(WNDENUMPROC,void*);
+
+// Java code
 public interface User32 extends StdCallLibrary {
     interface WNDENUMPROC extends StdCallCallback {
         /** Return whether to continue enumeration. */
@@ -180,6 +209,7 @@ user32.EnumWindows(new WNDENUMPROC() {
 }, null);
 </textarea>
 </blockquote>
+If your callback needs to live beyond the method invocation where it is used, make sure you keep a reference to it or the native code will call back to an empty stub after the callback object is garbage collected.<p>
 See the <a href="javadoc/overview-summary.html">JavaDoc overview</a> for additional details.<p>
 
 <h3>Invocation from Dynamically-Typed Languages</h3>
