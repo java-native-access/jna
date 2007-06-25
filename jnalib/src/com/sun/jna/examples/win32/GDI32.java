@@ -78,6 +78,8 @@ public interface GDI32 extends W32API {
                                int nWidthEllipse, 
                                int nHeightEllipse);
     
+    boolean SetRectRgn(Pointer p, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+    
     int SetPixel(Pointer hDC, int x, int y, int crColor);
     
     Pointer CreateCompatibleDC(Pointer hDC);

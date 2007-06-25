@@ -1,8 +1,11 @@
 Release 2.4.1
 Features
+* Optimized shaped windows (chris decker & olivier chafik); instantiation time
+improved by about 2-3 orders of magnitude for large, mostly contiguous shapes.
 
 Bug Fixes
 * Properly handle VMs with reversed Structure member storage.
+* Avoid making window undecorated when clearing window mask on X11
 
 Release 2.4
 Features

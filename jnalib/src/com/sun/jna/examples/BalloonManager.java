@@ -56,9 +56,9 @@ public class BalloonManager {
     
     
     private static class DropShadow extends JWindow {
-        private static final float ALPHA = .5f;
-        private static final float YSCALE = .90f;
-        private static final double ANGLE = 2*Math.PI/48;
+        private static final float SHADOW_ALPHA = .25f;
+        private static final float YSCALE = .80f;
+        private static final double ANGLE = 2*Math.PI/24;
         private static final Point OFFSET = new Point(8, 8);
         private static final Color COLOR = new Color(0, 0, 0, 50);
 
@@ -69,7 +69,8 @@ public class BalloonManager {
             setFocusableWindowState(false);
             setName("###overrideRedirect###");
 
-            Point where = parent.getLocation();
+            Point where = parent.isShowing()
+                ? parent.getLocationOnScreen() : parent.getLocation();
             setLocation(where.x + OFFSET.x, where.y + OFFSET.y);
             setBackground(COLOR);
             getContentPane().setBackground(COLOR);
@@ -77,12 +78,15 @@ public class BalloonManager {
             parentMask = mask;
             parent.addComponentListener(listener = new ComponentAdapter() {
                 public void componentMoved(ComponentEvent e) {
-                    Point where = e.getComponent().getLocationOnScreen();
+                    Point where = getOwner().isShowing()
+                        ? getOwner().getLocationOnScreen()
+                        : getOwner().getLocation();
                     setLocation(where.x + OFFSET.x, where.y + OFFSET.y);
                 }
                 public void componentResized(ComponentEvent e) {
                     Component c = e.getComponent();
-                    setSize(c.getWidth(), c.getHeight());
+                    int extra = c.getWidth() + (int)Math.sin(ANGLE)*c.getHeight();
+                    setSize(c.getWidth() + extra, c.getHeight());
                     WindowUtils.setWindowMask(DropShadow.this, getMask());
                 }
                 public void componentShown(ComponentEvent e) {
@@ -101,7 +105,7 @@ public class BalloonManager {
                 }
             });
             WindowUtils.setWindowMask(DropShadow.this, getMask());
-            WindowUtils.setWindowAlpha(DropShadow.this, ALPHA);
+            WindowUtils.setWindowAlpha(DropShadow.this, SHADOW_ALPHA);
             if (parent.isVisible()) {
                 pack();
                 setVisible(true);
@@ -125,13 +129,14 @@ public class BalloonManager {
         private Shape getMask() {
             Area area = new Area(parentMask);
             Area clip = new Area(parentMask);
-            // TODO: shear right and shrink height
-            //AffineTransform tx = new AffineTransform();
-            //tx.shear(-Math.tan(ANGLE), 0);
-            //tx.translate(Math.sin(ANGLE)*getHeight(), getHeight()-getHeight()*YSCALE);
-            //tx.scale(1, YSCALE);
-            //area.transform(tx);
+
             AffineTransform tx = new AffineTransform();
+            tx.translate(Math.sin(ANGLE)*getOwner().getHeight(), 0);
+            tx.shear(-Math.tan(ANGLE), 0);
+            tx.scale(1, YSCALE);
+            tx.translate(0, (1-YSCALE)*getOwner().getHeight());
+            area.transform(tx);
+            tx = new AffineTransform();
             tx.translate(-OFFSET.x, -OFFSET.y);
             clip.transform(tx);
             area.subtract(clip);
@@ -148,7 +153,10 @@ public class BalloonManager {
         private Dimension maskSize;
         private ComponentListener moveTracker = new ComponentAdapter() {
             public void componentMoved(ComponentEvent e) {
-                Point where = e.getComponent().getLocationOnScreen();
+                Point where = 
+                    e.getComponent().isShowing() 
+                    ? e.getComponent().getLocationOnScreen()
+                    : e.getComponent().getLocation();
                 setLocation(where.x - offset.x, where.y - offset.y);
                 // TODO preserve stacking order (linux)
             }
@@ -185,7 +193,8 @@ public class BalloonManager {
             super.setLocation(x, y);
             Window owner = getOwner();
             if (owner != null) {
-                Point ref = owner.getLocationOnScreen();
+                Point ref = owner.isShowing()
+                    ? owner.getLocationOnScreen() : owner.getLocation();
                 offset = new Point(ref.x - x, ref.y - y);
             }
         }
@@ -223,7 +232,9 @@ public class BalloonManager {
 
         // Simulate PopupFactory, ensuring we get a heavyweight "popup"
         final Point origin = 
-            owner == null ? new Point(0, 0) : owner.getLocationOnScreen();
+            owner == null ? new Point(0, 0)
+                : (owner.isShowing()
+                   ? owner.getLocationOnScreen() : owner.getLocation());
         final Window parent = owner != null 
             ? SwingUtilities.getWindowAncestor(owner) : null;
         origin.translate(x, y);

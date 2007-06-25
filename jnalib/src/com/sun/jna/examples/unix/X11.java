@@ -25,6 +25,16 @@ public interface X11 extends Library {
     /** Definition (incomplete) of the Xext library. */
     public interface Xext extends Library {
         Xext INSTANCE = (Xext)Native.loadLibrary("Xext", Xext.class);
+        // Shape Kinds
+        int ShapeBounding = 0;
+        int ShapeClip = 1;
+        int ShapeInput = 2;
+        // Operations
+        int ShapeSet = 0;
+        int ShapeUnion = 1;
+        int ShapeIntersect = 2;
+        int ShapeSubtract = 3;
+        int ShapeInvert = 4;
 
         void XShapeCombineMask(Pointer display, int window, int dest_kind,
                                int x_off, int y_off, int src, int op);

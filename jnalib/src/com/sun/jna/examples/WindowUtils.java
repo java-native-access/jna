@@ -311,7 +311,7 @@ public class WindowUtils {
         /** Set the window mask based on a {@link Shape}. */
         public void setWindowMask(Window w, Shape mask) {
             Raster raster = null;
-            if (mask != null) {
+            if (mask != MASK_NONE) {
                 Rectangle bounds = mask.getBounds();
                 if (bounds.width > 0 && bounds.height > 0) {
                     BufferedImage bitmap = 
@@ -338,8 +338,7 @@ public class WindowUtils {
             if (mask != null) {
                 Rectangle bounds = new Rectangle(0, 0, mask.getIconWidth(),
                                                  mask.getIconHeight());
-                BufferedImage clip = new BufferedImage(
-                                                       bounds.width,
+                BufferedImage clip = new BufferedImage(bounds.width,
                                                        bounds.height,
                                                        BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = clip.createGraphics();
@@ -657,14 +656,30 @@ public class WindowUtils {
                     GDI32 gdi = GDI32.INSTANCE;
                     User32 user = User32.INSTANCE;
                     Pointer hWnd = getHWnd(w);
-                    Pointer p = raster == null
-                        ? gdi.CreateRectRgn(0, 0, w.getWidth(), w.getHeight())
-                        : createRegion(raster);
+                    final Pointer result = gdi.CreateRectRgn(0, 0, 0, 0);
                     try {
-                        user.SetWindowRgn(hWnd, p, true);
+                        if (raster == null) {
+                            gdi.SetRectRgn(result, 0, 0, w.getWidth(), w.getHeight());
+                        }
+                        else {
+                            final Pointer tempRgn = gdi.CreateRectRgn(0, 0, 0, 0);
+                            try {
+                                RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
+                                    public boolean outputRange(int x, int y, int w, int h) {
+                                        GDI32 gdi = GDI32.INSTANCE;
+                                        gdi.SetRectRgn(tempRgn, x, y, x + w, y + h);
+                                        return gdi.CombineRgn(result, result, tempRgn, GDI32.RGN_OR) != GDI32.ERROR;
+                                    }
+                                });
+                            }
+                            finally {
+                                gdi.DeleteObject(tempRgn);
+                            }
+                        }
+                        user.SetWindowRgn(hWnd, result, true);
                     }
                     finally {
-                        gdi.DeleteObject(p);
+                        gdi.DeleteObject(result);
                     }
                     setForceHeavyweightPopups(w, raster != null);
                 }
@@ -673,20 +688,13 @@ public class WindowUtils {
     }
     private static class MacWindowUtils extends NativeWindowUtils {
         private Shape shapeFromRaster(Raster raster) {
-            Area area = new Area(new Rectangle(0, 0, 0, 0));
-            Rectangle bounds = new Rectangle(0, 0, raster.getWidth(),
-                                             raster.getHeight());
-            // brute-force conversion from raster to area
-            int[] bits = new int[bounds.width * bounds.height];
-            raster.getPixels(0, 0, bounds.width, bounds.height, bits);
-            for (int row = 0; row < bounds.height; row++) {
-                for (int col = 0; col < bounds.width; col++) {
-                    int idx = row * bounds.width + col;
-                    if (bits[idx] != 0) {
-                        area.add(new Area(new Rectangle(col, row, 1, 1)));
-                    }
+            final Area area = new Area(new Rectangle(0, 0, 0, 0));
+            RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
+                public boolean outputRange(int x, int y, int w, int h) {
+                    area.add(new Area(new Rectangle(x, y, w, h)));
+                    return true;
                 }
-            }
+            });
             return area;
         }
 
@@ -804,43 +812,34 @@ public class WindowUtils {
         }
     }
     private static class X11WindowUtils extends NativeWindowUtils {
-        private int createBitmap(Pointer dpy, int win, Window w, Raster raster) {
-            X11 x11 = X11.INSTANCE;
-            if (raster == null) {
-                int pm = x11.XCreatePixmap(dpy, win, w.getWidth(),
-                                           w.getHeight(), 1);
-                Pointer gc = x11.XCreateGC(dpy, pm, 0, null);
-                if (gc == null) {
-                    return 0;
-                }
-                x11.XSetForeground(dpy, gc, 1);
-                x11.XFillRectangle(dpy, pm, gc, 0, 0, w.getWidth(),
-                                   w.getHeight());
-                return pm;
-            }
+        private int createBitmap(final Pointer dpy, int win, Window w, Raster raster) {
+            final X11 x11 = X11.INSTANCE;
             Rectangle bounds = raster.getBounds();
             int width = bounds.x + bounds.width;
             int height = bounds.y + bounds.height;
-            int pm = x11.XCreatePixmap(dpy, win, width, height, 1);
-            Pointer gc = x11.XCreateGC(dpy, pm, 0, null);
+            final int pm = x11.XCreatePixmap(dpy, win, width, height, 1);
+            final Pointer gc = x11.XCreateGC(dpy, pm, 0, null);
             if (gc == null) {
-                return 0;
+                return X11.None;
             }
+            x11.XSetForeground(dpy, gc, 0);
+            x11.XFillRectangle(dpy, pm, gc, 0, 0, width, height);
+            final int UNMASKED = 1;
+            x11.XSetForeground(dpy, gc, UNMASKED);
             X11.XWindowAttributes atts = new X11.XWindowAttributes();
             int status = x11.XGetWindowAttributes(dpy, win, atts);
             if (status == 0) {
-                return 0;
+                return X11.None;
             }
-            // Brute force creation of bitmap from image data; kinda
-            // slow
-            int[] bits = new int[bounds.width * bounds.height];
-            raster.getPixels(0, 0, bounds.width, bounds.height, bits);
-            for (int row = 0; row < bounds.height; row++) {
-                for (int col = 0; col < bounds.width; col++) {
-                    int idx = row * bounds.width + col;
-                    x11.XSetForeground(dpy, gc, bits[idx]);
-                    x11.XFillRectangle(dpy, pm, gc, col, row, 1, 1);
-                }
+            try {
+                RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
+                    public boolean outputRange(int x, int y, int w, int h) {
+                        return x11.XFillRectangle(dpy, pm, gc, x, y, w, h) != 0;
+                    }
+                });
+            }
+            finally {
+                x11.XFreeGC(dpy, gc);
             }
             return pm;
         }
@@ -1079,14 +1078,19 @@ public class WindowUtils {
                     int pm = X11.None;
                     try {
                         int win = getDrawable(w);
-                        pm = createBitmap(dpy, win, w, raster);
-                        if (pm == X11.None) {
-                            return;
+                        if (raster == null 
+                            || ((pm = createBitmap(dpy, win, w, raster))
+                                == X11.None)) {
+                            ext.XShapeCombineMask(dpy, win, 
+                                                  X11.Xext.ShapeBounding,
+                                                  0, 0, X11.None,
+                                                  X11.Xext.ShapeSet);
                         }
-                        int ShapeBounding = 0;
-                        int ShapeSet = 0;
-                        ext.XShapeCombineMask(dpy, win, ShapeBounding, 0, 0,
-                                              pm, ShapeSet);
+                        else {
+                            ext.XShapeCombineMask(dpy, win,
+                                                  X11.Xext.ShapeBounding, 0, 0,
+                                                  pm, X11.Xext.ShapeSet);
+                        }
                     }
                     finally {
                         if (pm != X11.None) {
