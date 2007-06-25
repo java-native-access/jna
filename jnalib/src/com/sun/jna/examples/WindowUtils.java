@@ -215,6 +215,9 @@ public class WindowUtils {
                     e.getWindow().removeWindowListener(this);
                     action.run();
                 }
+                public void windowClosed(WindowEvent e) {
+                    e.getWindow().removeWindowListener(this);
+                }
             });
         }
         else {
@@ -223,7 +226,8 @@ public class WindowUtils {
             // changes
             w.addHierarchyListener(new HierarchyListener() {
                 public void hierarchyChanged(HierarchyEvent e) {
-                    if ((e.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) != 0) {
+                    if ((e.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) != 0
+                        && e.getComponent().isDisplayable()) {
                         e.getComponent().removeHierarchyListener(this);
                         action.run();
                     }
