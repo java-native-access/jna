@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.examples.win32;
+package com.sun.jna.win32;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;

@@ -10,7 +10,8 @@
 package com.sun.jna;
 
 /** Provide simplified platform information. */
-final class Platform {
+public final class Platform {
+    private static final int UNSPECIFIED = -1;
     private static final int MAC = 0;
     private static final int LINUX = 1;
     private static final int WINDOWS = 2;
@@ -32,7 +33,7 @@ final class Platform {
             osType = SOLARIS;
         }
         else {
-            osType = ~0;
+            osType = UNSPECIFIED;
         }
     }
     private Platform() { }

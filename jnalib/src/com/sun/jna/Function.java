@@ -148,33 +148,12 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
-        Object result = null;
 
-        // If the final argument is an array of something other than
-        // primitives, Structure, or String, treat it as varargs and 
-        // concatenate the previous arguments with the varargs elements.
-        if (inArgs != null && inArgs.length > 0) {
-            Object lastArg = inArgs[inArgs.length-1];
-            Class argType = lastArg != null ? lastArg.getClass() : null;
-            if (argType != null && argType.isArray()
-                && !isPrimitiveArray(argType)
-                && !isStructureArray(argType)
-                && argType != String[].class) {
-                Object[] varArgs = (Object[])lastArg;
-                Object[] fullArgs = new Object[inArgs.length+varArgs.length];
-                System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
-                System.arraycopy(varArgs, 0, fullArgs, inArgs.length-1, varArgs.length);
-                // For convenience, always append a NULL argument to the end
-                // of varargs, whether the called API requires it or not. If
-                // it is not needed, it will be ignored, but if it *is* 
-                // required, it avoids forcing the Java client to always
-                // explicitly add it.
-                fullArgs[fullArgs.length-1] = null;
-                inArgs = fullArgs;
-            }
-        }
+        // Make sure all args are in a single array
+        inArgs = concatenateVarArgs(inArgs);
 
-        // Clone the argument array
+        // Clone the argument array to obtain a scratch space for modified
+        // types/values
         Object[] args = { };
         if (inArgs != null) {
             if (inArgs.length > MAX_NARGS) {
@@ -188,199 +167,26 @@ public class Function extends Pointer {
             (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
         
         for (int i=0; i < args.length; i++) {
-            Object arg = args[i];
-            if (arg != null && mapper != null) {
-                ArgumentConverter converter = mapper.getArgumentConverter(arg.getClass());
-                if (converter != null) {
-                    args[i] = arg = converter.toNative(arg);
-                }
-            }
-            // Convert Structures to native pointers 
-            if (arg == null || isPrimitiveArray(arg.getClass())) { 
-                continue;
-            }
-            Class argClass = arg.getClass();
-            if (arg instanceof Structure) {
-                Structure struct = (Structure)arg;
-                struct.write();
-                args[i] = struct.getPointer();
-            }
-            // Convert reference class to pointer
-            else if (arg instanceof ByReference) {
-                args[i] = ((ByReference)arg).getPointer();
-            }
-            // Convert Callback to Pointer
-            else if (arg instanceof Callback) {
-                CallbackReference cbref = CallbackReference.getInstance((Callback)arg);
-                // Use pointer to trampoline (callback->insns, see dispatch.h)
-                args[i] = cbref.getTrampoline();
-            }
-            // String arguments are converted to native pointers here rather
-            // than in native code so that the values will be valid until
-            // this method returns.  At one point the conversion was in native
-            // code, which left the pointer values invalid before this method
-            // returned (so you couldn't do something like strstr).
-            // Convert String to native pointer (const)
-            else if (arg instanceof String) {
-                args[i] = new NativeString((String)arg, false).getPointer();
-            }
-            // Convert WString to native pointer (const)
-            else if (arg instanceof WString) {
-                args[i] = new NativeString(arg.toString(), true).getPointer();
-            }
-            else if (arg instanceof NativeLong) {
-                args[i] = ((NativeLong)arg).asNativeValue();
-            }
-            // Default conversion of boolean to int; if you want something
-            // different, use an ArgumentConverter
-            else if (arg instanceof Boolean) {
-                args[i] = new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
-            }
-            else if (String[].class == argClass) {
-                args[i] = new StringArray((String[])arg);
-            }
-            else if (isStructureArray(argClass)) {
-                // Initialize uninitialized arrays of Structure to point
-                // to a single block of memory
-                Structure[] ss = (Structure[])arg;
-                if (ss.length == 0) {
-                    args[i] = null;
-                }
-                else if (ss[0] == null) {
-                    Class type = argClass.getComponentType();
-                    try {
-                        Structure struct = (Structure)type.newInstance(); 
-                        int size = struct.size();
-                        Memory m = new Memory(size * ss.length);
-                        struct.useMemory(m);
-                        Structure[] tmp = struct.toArray(ss.length);
-                        for (int si=0;si < ss.length;si++) {
-                            ss[si] = tmp[si];
-                        }
-                    }
-                    catch(InstantiationException e) {
-                        throw new IllegalArgumentException("Instantiation of "
-                                                           + type + " failed: " 
-                                                           + e);
-                    }
-                    catch(IllegalAccessException e) {
-                        throw new IllegalArgumentException("Not allowed to instantiate "
-                                                           + type + ": " + e);
-                    }
-                    args[i] = ss[0].getPointer();
-                }
-                else {
-                    Pointer base = ss[0].getPointer();
-                    int size = ss[0].size();
-                    for (int si=1;si < ss.length;si++) {
-                        try {
-                            Pointer p = base.share(size*si, size);
-                            if (ss[si].getPointer().peer != p.peer) {
-                                throw new RuntimeException();
-                            }
-                        }
-                        catch(RuntimeException e) {
-                            String msg = "Structure array elements must use"
-                                + " contiguous memory: " + si;     
-                            throw new IllegalArgumentException(msg);
-                        }
-                    }
-                    args[i] = base;
-                }
-            }
-            else if (arg instanceof ByteBuffer && !((ByteBuffer)arg).isDirect()) {
-                ByteBuffer buf = (ByteBuffer)arg;
-                if (buf.hasArray()) {
-                    args[i] = buf.array();
-                }
-                else {
-                    throw new IllegalArgumentException("Unsupported non-direct ByteBuffer with no array");
-                }
-            }
-            else if (argClass.isArray()){
-                throw new IllegalArgumentException("Unsupported array argument type: " 
-                                                   + argClass.getComponentType());
-            }
+            args[i] = convertArgument(args[i], mapper);
         }
         
         Class nativeType = returnType;
-        ResultConverter resultConverter = null;
+        FromNativeConverter resultConverter = null;
         if (mapper != null) {
-            resultConverter = mapper.getResultConverter(returnType);
+            resultConverter = mapper.getFromNativeConverter(returnType);
             if (resultConverter != null) {
                 nativeType = resultConverter.nativeType();
             }
         }
-        if (nativeType == null || nativeType==void.class || nativeType==Void.class) {
-            invokeVoid(callingConvention, args);
-        }
-        else if (nativeType==boolean.class || nativeType==Boolean.class) {
-            result = new Boolean(invokeInt(callingConvention, args) != 0);
-        }
-        else if (nativeType==byte.class || nativeType==Byte.class) {
-            result = new Byte((byte)invokeInt(callingConvention, args));
-        }
-        else if (nativeType==short.class || nativeType==Short.class) {
-            result = new Short((short)invokeInt(callingConvention, args));
-        }
-        else if (nativeType==int.class || nativeType==Integer.class) {
-            result = new Integer(invokeInt(callingConvention, args));
-        }
-        else if (nativeType==long.class || nativeType==Long.class) {
-            result = new Long(invokeLong(callingConvention, args));
-        }
-        else if (nativeType==NativeLong.class) {
-            result = new NativeLong(NativeLong.SIZE == 8
-                                    ? invokeLong(callingConvention, args)
-                                    : invokeInt(callingConvention, args));
-        }
-        else if (nativeType==float.class || nativeType==Float.class) {
-            result = new Float(invokeFloat(callingConvention, args));
-        }
-        else if (nativeType==double.class || nativeType==Double.class) {
-            result = new Double(invokeDouble(callingConvention, args));
-        }
-        else if (nativeType==String.class) {
-            result = invokeString(callingConvention, args, false);
-        }
-        else if (nativeType==WString.class) {
-            result = new WString(invokeString(callingConvention, args, true));
-        }
-        else if (Pointer.class.isAssignableFrom(nativeType)) {
-            result = invokePointer(callingConvention, args);
-        }
-        else if (Structure.class.isAssignableFrom(nativeType)) {
-            result = invokePointer(callingConvention, args);
-            if (result != null) {
-                try {
-                    Structure s = (Structure)nativeType.newInstance();
-                    s.useMemory((Pointer)result);
-                    s.read();
-                    result = s;
-                }
-                catch(InstantiationException e) {
-                    throw new IllegalArgumentException("Instantiation of "
-                                                       + nativeType + " failed: " 
-                                                       + e);
-                }
-                catch(IllegalAccessException e) {
-                    throw new IllegalArgumentException("Not allowed to instantiate "
-                                                       + nativeType + ": " + e);
-                }
-            }
-        }
-        else {
-            throw new IllegalArgumentException("Unsupported return type "
-                                               + nativeType);
-        }
+        Object result = invoke(args, nativeType);
 
         // Convert the result to a custom value/type if appropriate
         if (resultConverter != null) {
-            ResultContext context = new FunctionResultContext(returnType, this, inArgs);
+            FromNativeContext context = new FunctionResultContext(returnType, this, inArgs);
             result = resultConverter.fromNative(result, context);
         }
-        
-        // Sync java fields in structures to native memory after invocation
+
+        // Sync all memory which might have been modified by the native call
         if (inArgs != null) {
             for (int i=0; i < inArgs.length; i++) {
                 Object arg = inArgs[i];
@@ -408,6 +214,217 @@ public class Function extends Pointer {
         }
                         
         return result;
+    }
+
+    /** Concatenate varargs with normal args to obtain a simple argument array. 
+     */
+    private Object[] concatenateVarArgs(Object[] inArgs) {
+        // If the final argument is an array of something other than
+        // primitives, Structure, or String, treat it as varargs and 
+        // concatenate the previous arguments with the varargs elements.
+        if (inArgs != null && inArgs.length > 0) {
+            Object lastArg = inArgs[inArgs.length-1];
+            Class argType = lastArg != null ? lastArg.getClass() : null;
+            if (argType != null && argType.isArray()
+                && !isPrimitiveArray(argType)
+                && !isStructureArray(argType)
+                && argType != String[].class) {
+                Object[] varArgs = (Object[])lastArg;
+                Object[] fullArgs = new Object[inArgs.length+varArgs.length];
+                System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
+                System.arraycopy(varArgs, 0, fullArgs, inArgs.length-1, varArgs.length);
+                // For convenience, always append a NULL argument to the end
+                // of varargs, whether the called API requires it or not. If
+                // it is not needed, it will be ignored, but if it *is* 
+                // required, it avoids forcing the Java client to always
+                // explicitly add it.
+                fullArgs[fullArgs.length-1] = null;
+                inArgs = fullArgs;
+            }
+        }
+        return inArgs;
+    }
+
+    private Object invoke(Object[] args, Class returnType) {
+        if (returnType == null || returnType==void.class || returnType==Void.class) {
+            invokeVoid(callingConvention, args);
+            return null;
+        }
+        else if (returnType==boolean.class || returnType==Boolean.class) {
+            return new Boolean(invokeInt(callingConvention, args) != 0);
+        }
+        else if (returnType==byte.class || returnType==Byte.class) {
+            return new Byte((byte)invokeInt(callingConvention, args));
+        }
+        else if (returnType==short.class || returnType==Short.class) {
+            return new Short((short)invokeInt(callingConvention, args));
+        }
+        else if (returnType==char.class || returnType==Character.class) {
+            return new Character((char)invokeInt(callingConvention, args));
+        }
+        else if (returnType==int.class || returnType==Integer.class) {
+            return new Integer(invokeInt(callingConvention, args));
+        }
+        else if (returnType==long.class || returnType==Long.class) {
+            return  new Long(invokeLong(callingConvention, args));
+        }
+        else if (returnType==NativeLong.class) {
+            return new NativeLong(NativeLong.SIZE == 8
+                                  ? invokeLong(callingConvention, args)
+                                  : invokeInt(callingConvention, args));
+        }
+        else if (returnType==float.class || returnType==Float.class) {
+            return new Float(invokeFloat(callingConvention, args));
+        }
+        else if (returnType==double.class || returnType==Double.class) {
+            return new Double(invokeDouble(callingConvention, args));
+        }
+        else if (returnType==String.class) {
+            return invokeString(callingConvention, args, false);
+        }
+        else if (returnType==WString.class) {
+            return new WString(invokeString(callingConvention, args, true));
+        }
+        else if (Pointer.class.isAssignableFrom(returnType)) {
+            return invokePointer(callingConvention, args);
+        }
+        else if (Structure.class.isAssignableFrom(returnType)) {
+            Object result = invokePointer(callingConvention, args);
+            if (result != null) {
+                try {
+                    Structure s = (Structure)returnType.newInstance();
+                    s.useMemory((Pointer)result);
+                    s.read();
+                    result = s;
+                }
+                catch(InstantiationException e) {
+                    throw new IllegalArgumentException("Instantiation of "
+                                                       + returnType + " failed: " 
+                                                       + e);
+                }
+                catch(IllegalAccessException e) {
+                    throw new IllegalArgumentException("Not allowed to instantiate "
+                                                       + returnType + ": " + e);
+                }
+            }
+            return result;
+        }
+        throw new IllegalArgumentException("Unsupported return type "
+                                           + returnType);
+    }
+    
+    private Object convertArgument(Object arg, TypeMapper mapper) {
+        if (arg != null && mapper != null) {
+            ToNativeConverter converter = mapper.getToNativeConverter(arg.getClass());
+            if (converter != null) {
+                arg = converter.toNative(arg);
+            }
+        }
+        if (arg == null || isPrimitiveArray(arg.getClass())) { 
+            return arg;
+        }
+        Class argClass = arg.getClass();
+        // Convert Structures to native pointers 
+        if (arg instanceof Structure) {
+            Structure struct = (Structure)arg;
+            struct.write();
+            return struct.getPointer();
+        }
+        // Convert reference class to pointer
+        else if (arg instanceof ByReference) {
+            return ((ByReference)arg).getPointer();
+        }
+        // Convert Callback to Pointer
+        else if (arg instanceof Callback) {
+            CallbackReference cbref = CallbackReference.getInstance((Callback)arg);
+            // Use pointer to trampoline (callback->insns, see dispatch.h)
+            return cbref.getTrampoline();
+        }
+        // String arguments are converted to native pointers here rather
+        // than in native code so that the values will be valid until
+        // this method returns.  At one point the conversion was in native
+        // code, which left the pointer values invalid before this method
+        // returned (so you couldn't do something like strstr).
+        // Convert String to native pointer (const)
+        else if (arg instanceof String) {
+            return new NativeString((String)arg, false).getPointer();
+        }
+        // Convert WString to native pointer (const)
+        else if (arg instanceof WString) {
+            return new NativeString(arg.toString(), true).getPointer();
+        }
+        else if (arg instanceof NativeLong) {
+            return ((NativeLong)arg).asNativeValue();
+        }
+        // Default conversion of boolean to int; if you want something
+        // different, use an ArgumentConverter
+        else if (arg instanceof Boolean) {
+            return new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
+        }
+        else if (String[].class == argClass) {
+            return new StringArray((String[])arg);
+        }
+        else if (isStructureArray(argClass)) {
+            // Initialize uninitialized arrays of Structure to point
+            // to a single block of memory
+            Structure[] ss = (Structure[])arg;
+            if (ss.length == 0) {
+                return null;
+            }
+            else if (ss[0] == null) {
+                Class type = argClass.getComponentType();
+                try {
+                    Structure struct = (Structure)type.newInstance(); 
+                    int size = struct.size();
+                    Memory m = new Memory(size * ss.length);
+                    struct.useMemory(m);
+                    Structure[] tmp = struct.toArray(ss.length);
+                    for (int si=0;si < ss.length;si++) {
+                        ss[si] = tmp[si];
+                    }
+                }
+                catch(InstantiationException e) {
+                    throw new IllegalArgumentException("Instantiation of "
+                                                       + type + " failed: " 
+                                                       + e);
+                }
+                catch(IllegalAccessException e) {
+                    throw new IllegalArgumentException("Not allowed to instantiate "
+                                                       + type + ": " + e);
+                }
+                return ss[0].getPointer();
+            }
+            else {
+                Pointer base = ss[0].getPointer();
+                int size = ss[0].size();
+                for (int si=1;si < ss.length;si++) {
+                    try {
+                        Pointer p = base.share(size*si, size);
+                        if (ss[si].getPointer().peer != p.peer) {
+                            throw new RuntimeException();
+                        }
+                    }
+                    catch(RuntimeException e) {
+                        String msg = "Structure array elements must use"
+                            + " contiguous memory: " + si;     
+                        throw new IllegalArgumentException(msg);
+                    }
+                }
+                return base;
+            }
+        }
+        else if (arg instanceof ByteBuffer && !((ByteBuffer)arg).isDirect()) {
+            ByteBuffer buf = (ByteBuffer)arg;
+            if (buf.hasArray()) {
+                return buf.array();
+            }
+            throw new IllegalArgumentException("Unsupported non-direct ByteBuffer with no array");
+        }
+        else if (argClass.isArray()){
+            throw new IllegalArgumentException("Unsupported array argument type: " 
+                                               + argClass.getComponentType());
+        }
+        return arg;
     }
 
     private boolean isStructureArray(Class argClass) {
@@ -510,14 +527,6 @@ public class Function extends Pointer {
      */
     private native Pointer invokePointer(int callingConvention, Object[] args);
 
-    /** Create a callback function pointer. */
-    static native Pointer createCallback(Callback callback, Method method, 
-                                         Class[] parameterTypes, 
-                                         Class returnType,
-                                         int callingConvention);
-    /** Free the given callback function pointer. */
-    static native void freeCallback(long ptr);
-    
     /** Provide a human-readable representation of this object. */
     public String toString() {
         return "native function " + functionName + "(" + library.getName() 

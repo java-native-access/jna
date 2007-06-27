@@ -21,12 +21,17 @@ public class VarArgsTest extends TestCase {
         public static class TestStructure extends Structure {
             public int magic = 0;
         }
-        TestLibrary INSTANCE = (TestLibrary)
-                Native.loadLibrary("testlib", TestLibrary.class);
         public int addInt32VarArgs(String fmt, Number[] args);
         public String returnStringVarArgs(String fmt, Object[] args);
         public void modifyStructureVarArgs(String fmt, Object arg1, Object[] args);
     }
+    TestLibrary lib;
+    protected void setUp() {
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
+    }
+    protected void tearDown() {
+        lib = null;
+    }   
     public void testIntVarArgs() {
         Integer[] args = new Integer[2];
         int arg1 = 1;
@@ -34,7 +39,7 @@ public class VarArgsTest extends TestCase {
         args[0] = new Integer(arg1);
         args[1] = new Integer(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
+                     lib.addInt32VarArgs("dd", args));
     }
     public void testShortVarArgs() {
         Short[] args = new Short[2];
@@ -43,7 +48,7 @@ public class VarArgsTest extends TestCase {
         args[0] = new Short(arg1);
         args[1] = new Short(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
+                     lib.addInt32VarArgs("dd", args));
     }
     public void testLongVarArgs() {
         Long[] args = new Long[2];
@@ -52,24 +57,24 @@ public class VarArgsTest extends TestCase {
         args[0] = new Long(arg1);
         args[1] = new Long(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     TestLibrary.INSTANCE.addInt32VarArgs("ll", args));
+                     lib.addInt32VarArgs("ll", args));
     }
     public void testStringVarArgs() {
         Object[] args = new Object[] { "Test" };
         assertEquals("Did not return correct string", args[0],
-                     TestLibrary.INSTANCE.returnStringVarArgs("", args));
+                     lib.returnStringVarArgs("", args));
     }
     
     public void testAppendNullToVarargs() {
         Number[] args = new Number[] { new Integer(1) };
         assertEquals("No trailing NULL was appended to varargs list",
-                     1, TestLibrary.INSTANCE.addInt32VarArgs("dd", args));
+                     1, lib.addInt32VarArgs("dd", args));
     }
     
     public void testModifyStructureInVarargs() {
         TestStructure arg1 = new TestStructure();
         TestStructure[] varargs = new TestStructure[] { new TestStructure() };
-        TestLibrary.INSTANCE.modifyStructureVarArgs("ss", arg1, varargs);
+        lib.modifyStructureVarArgs("ss", arg1, varargs);
         assertEquals("Structure memory not read in fixed arg w/varargs",
                      MAGIC32, arg1.magic); 
         assertEquals("Structure memory not read in varargs",

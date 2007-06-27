@@ -15,13 +15,14 @@ package com.sun.jna.examples;
 import java.awt.GraphicsEnvironment;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import com.sun.jna.Platform;
 import junit.framework.TestCase;
 
 public class KeyboardUtilsTest extends TestCase {
     
     public void testIsPressed() throws Exception {
-        // Can't run this test headless
-        if (GraphicsEnvironment.isHeadless())
+        // Can't run this test headless; not yet implemented on mac
+        if (GraphicsEnvironment.isHeadless() || Platform.isMac())
             return;
         
         Robot robot = new Robot();

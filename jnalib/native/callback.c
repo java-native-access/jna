@@ -208,8 +208,7 @@ extern void asm_template_end();
 
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
-                jobjectArray param_types, jclass return_type,
-                callconv_t call_conv) {
+                jobjectArray param_types, callconv_t call_conv) {
   callback* cb;
   unsigned long* insns;
   int args_size = 0;
@@ -249,8 +248,6 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       args_size += 4;
     }
   }
-  cb->return_jtype = get_jtype(env, return_type);
-  cb->return_type = get_type(cb->return_jtype);
 
   // initialize and customize the callback template
   memcpy((void*)insns, (void*)callback_asm_template, len);
@@ -339,10 +336,11 @@ static void
 callback_dispatch(JavaVM* jvm, callback* cb, char* ap) {
   jobject obj;
   jmethodID mid;
-  jvalue args[MAX_NARGS];
   jvalue result;
+  type_t return_type;
   JNIEnv* env;
   int attached;
+  jobjectArray args;
   int i;
 
   attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
@@ -354,76 +352,38 @@ callback_dispatch(JavaVM* jvm, callback* cb, char* ap) {
     }
   }
 
-  // NOTE: some targets may require alignment of stack items...
-  for (i=0;i < cb->param_count;i++) {
-    switch(cb->param_jtypes[i]) {
-    case 'L': {
-      int ptr_size = sizeof(void*);
-      jlong ptr = ptr_size == sizeof(jlong) ? *(jlong*)ap : *(jint*)ap;
-      // TODO: create a corresponding java structure type
-      // based on the callback argument type
-      args[i].l = newJavaPointer(env, L2A(ptr));
-      ap += ptr_size;
-      break;
-    }
-    case 'J':
-      args[i].j = *(jlong *)ap;
-      ap += sizeof(jlong);
-      break;
-    case 'F':
-      args[i].f = *(float *)ap;
-      ap += sizeof(float);
-      break;
-    case 'D':
-      args[i].d = *(double *)ap;
-      ap += sizeof(double);
-      break;
-    case 'Z':
-    case 'B':
-    case 'S':
-    case 'I':
-    default:
-      args[i].i = *(int *)ap;
-      ap += sizeof(int);
-      break;
-    }
-  }
-
   obj = (*env)->NewLocalRef(env, cb->object);
   mid = cb->methodID;
+  args = (*env)->NewObjectArray(env, cb->param_count, 
+                                (*env)->FindClass(env, "java/lang/Object"),
+                                NULL);
+
+  // Convert primitive types into objects so we can properly stuff
+  // an array of Object for the callback proxy argument list
+  // NOTE: some targets may require different alignment of stack items...
+  for (i=0;i < cb->param_count;i++) {
+    int size;
+    jobject arg = new_object(env, cb->param_jtypes[i], (void*)ap, &size);
+    ap += size;
+    (*env)->SetObjectArrayElement(env, args, i, arg);
+  }
+
   // Avoid calling back to a GC'd object
   if ((*env)->IsSameObject(env, obj, NULL)) {
+    fprintf(stderr, "Warning: attempt to call GC'd callback\n");
     result.j = 0;
+    return_type = TYPE_VOID;
   }
-  else switch(cb->return_jtype) {
-  case 'V':
-    result.i = 0; (*env)->CallVoidMethodA(env, obj, mid, args); break;
-  case 'Z':
-    result.i = (*env)->CallBooleanMethodA(env, obj, mid, args); break;
-  case 'B':
-    result.i = (*env)->CallByteMethodA(env, obj, mid, args); break;
-  case 'C':
-    result.i = (*env)->CallCharMethodA(env, obj, mid, args); break;
-  case 'S':
-    result.i = (*env)->CallShortMethodA(env, obj, mid, args); break;
-  case 'I':
-    result.i = (*env)->CallIntMethodA(env, obj, mid, args); break;
-  case 'J':
-    result.j = (*env)->CallLongMethodA(env, obj, mid, args); break;
-  case 'F':
-    result.f = (*env)->CallFloatMethodA(env, obj, mid, args); break;
-  case 'D':
-    result.d = (*env)->CallDoubleMethodA(env, obj, mid, args); break;
-  case 'L':
-  default:
-    result.l = (*env)->CallObjectMethodA(env, obj, mid, args); break;
+  else {
+    jobject value = (*env)->CallObjectMethod(env, obj, mid, args);
+    result = extract_value(env, value, &return_type);
   }
 
   if (!attached) {
     (*jvm)->DetachCurrentThread(jvm);
   }
   
-  switch(cb->return_type) {
+  switch(return_type) {
   case TYPE_PTR:
     RETURN_PTR(result.l);
     return;

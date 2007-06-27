@@ -45,8 +45,6 @@ typedef struct _callback {
   jmethodID methodID;
   jsize param_count;
   char param_jtypes[MAX_NARGS];
-  type_t return_type;
-  char return_jtype;
 } callback;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
@@ -90,8 +88,9 @@ extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern jobject newJavaPointer(JNIEnv *, void *);
 extern char get_jtype(JNIEnv*, jclass);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
-                                 jobjectArray, jclass, callconv_t);
-
+                                 jobjectArray, callconv_t);
+extern jvalue extract_value(JNIEnv*, jobject, type_t*);
+extern jobject new_object(JNIEnv*, char, void*, int*);
 #ifdef __cplusplus
 }
 #endif

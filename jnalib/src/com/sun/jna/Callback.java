@@ -19,7 +19,9 @@ package com.sun.jna;
  * a callback which has been GC'd, you will likely crash the VM.  If 
  * there is no method to deregister the callback (e.g. <code>atexit</code>
  * in the C library), you must ensure that you always keep a live reference
- * to the callback object.  
+ * to the callback object.<p>
+ * A callback should generally never throw an exception, since it doesn't
+ * necessarily have an encompassing Java environment to catch it.
  */
 public interface Callback { 
     String METHOD_NAME = "callback";

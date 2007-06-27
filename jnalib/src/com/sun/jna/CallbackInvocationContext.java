@@ -12,18 +12,17 @@
  */
 package com.sun.jna;
 
-/** Provide result conversion context for a function call. */
-public class FunctionResultContext extends FromNativeContext {
-    
-    private Function function;
+import java.lang.reflect.Method;
+
+/** Provide argument conversion context for a callback. */
+public class CallbackInvocationContext extends FromNativeContext {
+    private Method method;
     private Object[] args;
-    public FunctionResultContext(Class resultClass, Function function, Object[] args) {
-        super(resultClass);
-        this.function = function;
+    public CallbackInvocationContext(Class javaType, Method m, Object[] args) {
+        super(javaType);
+        this.method = m;
         this.args = args;
     }
-    /** Get the function that was invoked. */
-    public Function getFunction() { return function; }
-    /** Get the arguments used in this function call. */
+    public Method getMethod() { return method; }
     public Object[] getArguments() { return args; }
 }

@@ -12,18 +12,14 @@
  */
 package com.sun.jna;
 
-/** Provide result conversion context for a function call. */
-public class FunctionResultContext extends FromNativeContext {
-    
-    private Function function;
-    private Object[] args;
-    public FunctionResultContext(Class resultClass, Function function, Object[] args) {
-        super(resultClass);
-        this.function = function;
-        this.args = args;
+/** Provides context for converting a native value into a Java type. */
+public class FromNativeContext {
+    private Class type;
+    public FromNativeContext(Class javaType) {
+        this.type = javaType;
     }
-    /** Get the function that was invoked. */
-    public Function getFunction() { return function; }
-    /** Get the arguments used in this function call. */
-    public Object[] getArguments() { return args; }
+    /** The desired Java type of the result. */
+    public Class getTargetType() {
+        return type;
+    }
 }

@@ -27,8 +27,6 @@ import junit.framework.TestCase;
 public class ArgumentsMarshalTest extends TestCase {
 
     public static interface TestLibrary extends Library {
-        TestLibrary INSTANCE = (TestLibrary)
-            Native.loadLibrary("testlib", TestLibrary.class);
 
         class CheckFieldAlignment extends Structure {
             public byte int8Field = 1;
@@ -41,6 +39,7 @@ public class ArgumentsMarshalTest extends TestCase {
 
         boolean returnBooleanArgument(boolean arg);
         byte returnInt8Argument(byte arg);
+        char returnWideCharArgument(char arg);
         short returnInt16Argument(short arg);
         int returnInt32Argument(int i);
         long returnInt64Argument(long l);
@@ -75,7 +74,7 @@ public class ArgumentsMarshalTest extends TestCase {
 
     TestLibrary lib;
     protected void setUp() {
-        lib = TestLibrary.INSTANCE;
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
     
     protected void tearDown() {
@@ -99,6 +98,18 @@ public class ArgumentsMarshalTest extends TestCase {
         b = -128;
         assertEquals("Wrong value returned", 
                      b, lib.returnInt8Argument(b));
+    }
+    
+    public void testWideCharArgument() {
+        char c = 0;
+        assertEquals("Wrong value returned",
+                     c, lib.returnWideCharArgument(c));
+        c = 0xFFFF;
+        assertEquals("Wrong value returned",
+                     c, lib.returnWideCharArgument(c));
+        c = 0x7FFF;
+        assertEquals("Wrong value returned",
+                     c, lib.returnWideCharArgument(c));
     }
 
     public void testInt16Argument() {

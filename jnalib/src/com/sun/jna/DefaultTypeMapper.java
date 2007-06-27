@@ -24,13 +24,13 @@ import java.util.Map;
  * class to be converted is an instance of the converter's registered class,
  * the converter will be used.<p>  
  * Derived classes should install additional converters using 
- * {@link #addArgumentConverter}
- * and/or {@link #addResultConverter} in the default constructor.  Classes
+ * {@link #addToNativeConverter}
+ * and/or {@link #addFromNativeConverter} in the default constructor.  Classes
  * for primitive types will automatically register for the corresponding
  * Object type and vice versa (i.e. you don't have to register both 
  * <code>int.class</code> and <code>Integer.class</code>).
  * If you want different mapping behavior than the default, simply override
- * {@link #getArgumentConverter} and {@link #getResultConverter}.
+ * {@link #getToNativeConverter} and {@link #getFromNativeConverter}.
  * @see Library#OPTION_TYPE_MAPPER 
  */
 public class DefaultTypeMapper implements TypeMapper {
@@ -42,8 +42,8 @@ public class DefaultTypeMapper implements TypeMapper {
             this.converter = converter;
         }
     }
-    private List argumentConverters = new ArrayList();
-    private List resultConverters = new ArrayList();
+    private List toNativeConverters = new ArrayList();
+    private List fromNativeConverters = new ArrayList();
     private Class getAltClass(Class cls) {
         if (cls == Boolean.class) {
             return boolean.class;
@@ -95,37 +95,37 @@ public class DefaultTypeMapper implements TypeMapper {
         }
         return null;
     }
-    /** Add a {@link ArgumentConverter} to define the conversion into a native
+    /** Add a {@link ToNativeConverter} to define the conversion into a native
      * type from arguments of the given Java type.  Converters are
      * checked for in the order added.
      */
-    protected void addArgumentConverter(Class cls, ArgumentConverter converter) {
-        argumentConverters.add(new Entry(cls, converter));
+    public void addToNativeConverter(Class cls, ToNativeConverter converter) {
+        toNativeConverters.add(new Entry(cls, converter));
         Class alt = getAltClass(cls);
         if (alt != null) {
-            argumentConverters.add(new Entry(alt, converter));
+            toNativeConverters.add(new Entry(alt, converter));
         }
     }
-    /** Add a {@link ResultConverter} to convert a native result type into the 
+    /** Add a {@link FromNativeConverter} to convert a native result type into the 
      * given Java type.  Converters are checked for in the order added.
      */
-    protected void addResultConverter(Class cls, ResultConverter converter) {
-        resultConverters.add(new Entry(cls, converter));
+    public void addFromNativeConverter(Class cls, FromNativeConverter converter) {
+        fromNativeConverters.add(new Entry(cls, converter));
         Class alt = getAltClass(cls);
         if (alt != null) {
-            resultConverters.add(new Entry(alt, converter));
+            fromNativeConverters.add(new Entry(alt, converter));
         }
     }
     /** Add a {@link TypeConverter} to provide bidirectional mapping between
      * a native and Java type.  
      */
     protected void addTypeConverter(Class cls, TypeConverter converter) {
-        addResultConverter(cls, converter);
-        addArgumentConverter(cls, converter);
+        addFromNativeConverter(cls, converter);
+        addToNativeConverter(cls, converter);
     }
     
-    private Object lookupConverter(Class javaClass, List list) {
-        for (Iterator i=list.iterator();i.hasNext();) {
+    private Object lookupConverter(Class javaClass, List converters) {
+        for (Iterator i=converters.iterator();i.hasNext();) {
             Entry entry = (Entry)i.next();
             if (entry.type.isAssignableFrom(javaClass)) {
                 return entry.converter;
@@ -134,15 +134,15 @@ public class DefaultTypeMapper implements TypeMapper {
         return null;
     }
     /* (non-Javadoc)
-     * @see com.sun.jna.TypeMapper#getResultConverter(java.lang.Class)
+     * @see com.sun.jna.TypeMapper#getFromNativeConverter(java.lang.Class)
      */
-    public ResultConverter getResultConverter(Class javaType) {
-        return (ResultConverter)lookupConverter(javaType, resultConverters);
+    public FromNativeConverter getFromNativeConverter(Class javaType) {
+        return (FromNativeConverter)lookupConverter(javaType, fromNativeConverters);
     }
     /* (non-Javadoc)
-     * @see com.sun.jna.TypeMapper#getArgumentConverter(java.lang.Class)
+     * @see com.sun.jna.TypeMapper#getToNativeConverter(java.lang.Class)
      */
-    public ArgumentConverter getArgumentConverter(Class javaType) {
-        return (ArgumentConverter)lookupConverter(javaType, argumentConverters);
+    public ToNativeConverter getToNativeConverter(Class javaType) {
+        return (ToNativeConverter)lookupConverter(javaType, toNativeConverters);
     }
 }

@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
+import com.sun.jna.Platform;
 import com.sun.jna.examples.FileMonitor.FileEvent;
 import com.sun.jna.examples.FileMonitor.FileListener;
 
@@ -41,6 +42,8 @@ public class FileMonitorTest extends TestCase {
     }
     
     public void testNotifyOnFileCreation() throws Exception {
+        if (!Platform.isWindows()) return;
+
         File file = File.createTempFile(getName(), ".tmp", dir);
         file.deleteOnExit();
         FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
@@ -55,6 +58,8 @@ public class FileMonitorTest extends TestCase {
     }
     
     public void testNotifyOnFileDelete() throws Exception {
+        if (!Platform.isWindows()) return;
+
         File file = File.createTempFile(getName(), ".tmp", dir);
         file.delete();
         FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_DELETED));
@@ -69,6 +74,8 @@ public class FileMonitorTest extends TestCase {
     }
     
     public void testNotifyOnFileRename() throws Exception {
+        if (!Platform.isWindows()) return;
+
         File file = File.createTempFile(getName(), ".tmp", dir);
         File newFile = new File(file.getParentFile(), "newfile");
         newFile.deleteOnExit();
@@ -90,6 +97,8 @@ public class FileMonitorTest extends TestCase {
     }
 
     public void testNotifyOnFileModification() throws Exception {
+        if (!Platform.isWindows()) return;
+
         File file = File.createTempFile(getName(), ".tmp", dir);
         file.deleteOnExit();
         FileOutputStream os = new FileOutputStream(file);

@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import junit.framework.TestCase;
 
-/** Exercise a range of native methods.
+/** Exercise callback-related functionality.
  *
  * @author twall@users.sf.net
  */
@@ -26,16 +26,22 @@ public class CallbacksTest extends TestCase {
     private static final float FLOAT_MAGIC = -118.625f;
 
     public static interface TestLibrary extends Library {
-        TestLibrary INSTANCE = (TestLibrary)
-            Native.loadLibrary("testlib", TestLibrary.class);
         interface VoidCallback extends Callback {
             void callback();
         }
         void callVoidCallback(VoidCallback c);
+        interface BooleanCallback extends Callback {
+            boolean callback(boolean arg, boolean arg2);
+        }
+        boolean callBooleanCallback(BooleanCallback c, boolean arg, boolean arg2);
         interface Int32Callback extends Callback {
             int callback(int arg, int arg2);
         }
         int callInt32Callback(Int32Callback c, int arg, int arg2);
+        interface NativeLongCallback extends Callback {
+            NativeLong callback(NativeLong arg, NativeLong arg2);
+        }
+        NativeLong callNativeLongCallback(NativeLongCallback c, NativeLong arg, NativeLong arg2);
         interface Int64Callback extends Callback {
             long callback(long arg, long arg2);
         }
@@ -48,11 +54,26 @@ public class CallbacksTest extends TestCase {
             double callback(double arg, double arg2);
         }
         double callDoubleCallback(DoubleCallback c, double arg, double arg2);
+        public static class TestStructure extends Structure {
+            public double value;
+        }
+        interface StructureCallback extends Callback {
+            TestStructure callback(TestStructure arg);
+        }
+        TestStructure callStructureCallback(StructureCallback c, TestStructure arg);
+        interface StringCallback extends Callback {
+            String callback(String arg);
+        }
+        String callStringCallback(StringCallback c, String arg);
+        interface WideStringCallback extends Callback {
+            WString callback(WString arg);
+        }
+        WString callWideStringCallback(WideStringCallback c, WString arg);
     }
 
     TestLibrary lib;
     protected void setUp() {
-        lib = TestLibrary.INSTANCE;
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
     
     protected void tearDown() {
@@ -164,6 +185,93 @@ public class CallbacksTest extends TestCase {
         
         value = lib.callDoubleCallback(cb, -1d, -2d);
         assertEquals("Wrong callback return", -3d, value, 0);
+    }
+    
+    public void testCallStructureCallback() {
+        final boolean[] called = {false};
+        final Structure[] cbarg = { null };
+        final TestLibrary.TestStructure s = new TestLibrary.TestStructure();
+        TestLibrary.StructureCallback cb = new TestLibrary.StructureCallback() {
+            public TestLibrary.TestStructure callback(TestLibrary.TestStructure arg) {
+                called[0] = true;
+                cbarg[0] = arg;
+                return arg;
+            }
+        };
+        TestLibrary.TestStructure value = lib.callStructureCallback(cb, s);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument", s, cbarg[0]);
+        assertEquals("Wrong structure return", s, value);
+    }
+    
+    public void testCallBooleanCallback() {
+        final boolean[] called = {false};
+        final boolean[] cbargs = { false, false };
+        TestLibrary.BooleanCallback cb = new TestLibrary.BooleanCallback() {
+            public boolean callback(boolean arg, boolean arg2) {
+                called[0] = true;
+                cbargs[0] = arg;
+                cbargs[1] = arg2;
+                return arg && arg2;
+            }
+        };
+        boolean value = lib.callBooleanCallback(cb, true, false);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", true, cbargs[0]);
+        assertEquals("Wrong callback argument 2", false, cbargs[1]);
+        assertFalse("Wrong boolean return", value);
+    }
+    
+    public void testCallNativeLongCallback() {
+        final boolean[] called = {false};
+        final NativeLong[] cbargs = { null, null};
+        TestLibrary.NativeLongCallback cb = new TestLibrary.NativeLongCallback() {
+            public NativeLong callback(NativeLong arg, NativeLong arg2) {
+                called[0] = true;
+                cbargs[0] = arg;
+                cbargs[1] = arg2;
+                return new NativeLong(arg.intValue() +  arg2.intValue());
+            }
+        };
+        NativeLong value = lib.callNativeLongCallback(cb, new NativeLong(1), new NativeLong(2));
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", new NativeLong(1), cbargs[0]);
+        assertEquals("Wrong callback argument 2", new NativeLong(2), cbargs[1]);
+        assertEquals("Wrong boolean return", new NativeLong(3), value);
+    }
+    
+    public void testCallStringCallback() {
+        final boolean[] called = {false};
+        final String[] cbargs = { null };
+        TestLibrary.StringCallback cb = new TestLibrary.StringCallback() {
+            public String callback(String arg) {
+                called[0] = true;
+                cbargs[0] = arg;
+                return arg;
+            }
+        };
+        final String VALUE = "value";
+        String value = lib.callStringCallback(cb, VALUE);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
+        assertEquals("Wrong String return", VALUE, value);
+    }
+    
+    public void testCallWideStringCallback() {
+        final boolean[] called = {false};
+        final WString[] cbargs = { null };
+        TestLibrary.WideStringCallback cb = new TestLibrary.WideStringCallback() {
+            public WString callback(WString arg) {
+                called[0] = true;
+                cbargs[0] = arg;
+                return arg;
+            }
+        };
+        final WString VALUE = new WString("value");
+        WString value = lib.callWideStringCallback(cb, VALUE);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
+        assertEquals("Wrong wide string return", VALUE, value);
     }
     
     public static void main(java.lang.String[] argList) {

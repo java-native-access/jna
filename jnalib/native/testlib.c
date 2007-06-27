@@ -90,6 +90,11 @@ returnInt8Argument(int8 arg) {
   return NOP(arg);
 }
 
+EXPORT wchar_t
+returnWideCharArgument(wchar_t arg) {
+  return arg;
+}
+
 EXPORT int16  
 returnInt16Argument(int16 arg) {
   nonleaf();
@@ -425,9 +430,23 @@ callVoidCallback(void (*func)()) {
   (*func)();
 }
 
+EXPORT int 
+callBooleanCallback(int (*func)(int arg, int arg2),
+                    int arg, int arg2) {
+  nonleaf();
+  return (*func)(NOP(arg), NOP(arg2));
+}
+
 EXPORT int32 
 callInt32Callback(int32 (*func)(int32 arg, int32 arg2),
                   int32 arg, int32 arg2) {
+  nonleaf();
+  return (*func)(NOP(arg), NOP(arg2));
+}
+
+EXPORT long 
+callNativeLongCallback(long (*func)(long arg, long arg2),
+                       long arg, long arg2) {
   nonleaf();
   return (*func)(NOP(arg), NOP(arg2));
 }
@@ -451,6 +470,21 @@ callDoubleCallback(double (*func)(double arg, double arg2),
                    double arg, double arg2) {
   nonleaf();
   return (*func)(NOP(arg), NOP(arg2));
+}
+
+EXPORT TestStructure*
+callStructureCallback(TestStructure* (*func)(TestStructure*), TestStructure* arg) {
+  return (*func)(arg);
+}
+
+EXPORT char*
+callStringCallback(char* (*func)(char* arg), char* arg) {
+  return (*func)(arg);
+}
+
+EXPORT wchar_t*
+callWideStringCallback(wchar_t* (*func)(wchar_t* arg), wchar_t* arg) {
+  return (*func)(arg);
 }
 
 struct cbstruct {

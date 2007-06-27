@@ -12,10 +12,10 @@
  */
 package com.sun.jna.win32;
 
-import com.sun.jna.ArgumentConverter;
+import com.sun.jna.ToNativeConverter;
 import com.sun.jna.Pointer;
-import com.sun.jna.ResultContext;
-import com.sun.jna.ResultConverter;
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.FromNativeConverter;
 import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.TypeConverter;
 import com.sun.jna.TypeMapper;
@@ -42,7 +42,7 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                         return null;
                     return new WString(value.toString());
                 }
-                public Object fromNative(Object value, ResultContext context) {
+                public Object fromNative(Object value, FromNativeContext context) {
                     if (value == null)
                         return null;
                     return ((Pointer)value).getString(0, true);
@@ -51,14 +51,14 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                     return Pointer.class;
                 }
             };
-            addArgumentConverter(String.class, stringConverter);
-            addResultConverter(String.class, stringConverter);
+            addToNativeConverter(String.class, stringConverter);
+            addFromNativeConverter(String.class, stringConverter);
         }
         TypeConverter booleanConverter = new TypeConverter() {
             public Object toNative(Object value) {
                 return new Integer(Boolean.TRUE.equals(value) ? 1 : 0);
             }
-            public Object fromNative(Object value, ResultContext context) {
+            public Object fromNative(Object value, FromNativeContext context) {
                 return Boolean.valueOf(((Integer)value).intValue() != 0);
             }
             public Class nativeType() {
@@ -66,7 +66,7 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                 return Integer.class;
             }
         };
-        addArgumentConverter(Boolean.class, booleanConverter);
-        addResultConverter(Boolean.class, booleanConverter);
+        addToNativeConverter(Boolean.class, booleanConverter);
+        addFromNativeConverter(Boolean.class, booleanConverter);
     }
 }

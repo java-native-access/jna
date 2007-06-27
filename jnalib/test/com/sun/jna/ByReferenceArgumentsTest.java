@@ -28,8 +28,6 @@ import com.sun.jna.ptr.ShortByReference;
 public class ByReferenceArgumentsTest extends TestCase {
 
     public static interface TestLibrary extends Library {
-        TestLibrary INSTANCE = (TestLibrary)
-            Native.loadLibrary("testlib", TestLibrary.class);
 
         void incrementInt8ByReference(ByteByReference b);
         void incrementInt16ByReference(ShortByReference s);
@@ -42,7 +40,7 @@ public class ByReferenceArgumentsTest extends TestCase {
 
     TestLibrary lib;
     protected void setUp() {
-        lib = TestLibrary.INSTANCE;
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
     
     protected void tearDown() {

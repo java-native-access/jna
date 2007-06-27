@@ -25,8 +25,6 @@ public class ReturnTypesTest extends TestCase {
     private static final float FLOAT_MAGIC = -118.625f;
 
     public static interface TestLibrary extends Library {
-        TestLibrary INSTANCE = (TestLibrary)
-            Native.loadLibrary("testlib", TestLibrary.class);
         
         public static class TestStructure extends Structure {
             public double value;
@@ -59,7 +57,7 @@ public class ReturnTypesTest extends TestCase {
 
     TestLibrary lib;
     protected void setUp() {
-        lib = TestLibrary.INSTANCE;
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
     
     protected void tearDown() {

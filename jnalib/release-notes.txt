@@ -1,11 +1,13 @@
 Release 2.4.1
 Features
 * Optimized shaped windows (chris decker & olivier chafik); instantiation time
-improved by about 2-3 orders of magnitude for large, mostly contiguous shapes.
+improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
+* Provide type mapping in callback arguments/results
 
 Bug Fixes
-* Properly handle VMs with reversed Structure member storage.
+* Properly handle VMs with reversed Structure member storage
 * Avoid making window undecorated when clearing window mask on X11
+* Fix structure alignment bug on OSX/PPC when first element is > 4 bytes in size
 
 Release 2.4
 Features

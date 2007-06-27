@@ -283,8 +283,6 @@ public class StructureTest extends TestCase {
         public Callback cb;
     }
     static interface CbTest extends Library {
-        CbTest INSTANCE = (CbTest)
-            Native.loadLibrary("testlib", CbTest.class);
         public void callCallbackInStruct(CbStruct cbstruct);
     }
     public void testCallbackWrite() {
@@ -310,7 +308,8 @@ public class StructureTest extends TestCase {
                 flag[0] = true;
             }
         };
-        CbTest.INSTANCE.callCallbackInStruct(s);
+        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
+        lib.callCallbackInStruct(s);
         assertTrue("Callback not invoked", flag[0]);
     }
 }

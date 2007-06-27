@@ -72,7 +72,6 @@ static jclass classString;
 static jclass classPointer;
 static jclass classByteBuffer;
 
-static jmethodID MID_getClass;
 static jmethodID MID_Class_getComponentType;
 static jmethodID MID_String_getBytes;
 static jmethodID MID_String_toCharArray;
@@ -80,9 +79,19 @@ static jmethodID MID_String_init_bytes;
 static jmethodID MID_Pointer_init;
 static jmethodID MID_Method_getReturnType;
 static jmethodID MID_Method_getParameterTypes;
+static jmethodID MID_Long_init;
+static jmethodID MID_Integer_init;
+static jmethodID MID_Short_init;
+static jmethodID MID_Character_init;
+static jmethodID MID_Byte_init;
+static jmethodID MID_Boolean_init;
+static jmethodID MID_Float_init;
+static jmethodID MID_Double_init;
 
+static jfieldID FID_Boolean_value;
 static jfieldID FID_Byte_value;
 static jfieldID FID_Short_value;
+static jfieldID FID_Character_value;
 static jfieldID FID_Integer_value;
 static jfieldID FID_Long_value;
 static jfieldID FID_Float_value;
@@ -138,6 +147,10 @@ static void dispatch(JNIEnv *env, jobject self, jint callconv,
         c_args[nwords].p = NULL;
         nwords += sizeof(void *) / sizeof(word_t); 
       }
+      else if ((*env)->IsInstanceOf(env, arg, classBoolean)) {
+        arg_types[i] = TYPE_INT32;
+        c_args[nwords++].i = (*env)->GetBooleanField(env, arg, FID_Boolean_value);
+      }
       else if ((*env)->IsInstanceOf(env, arg, classByte)) {
         arg_types[i] = TYPE_INT32;
         c_args[nwords++].i = (*env)->GetByteField(env, arg, FID_Byte_value);
@@ -145,6 +158,10 @@ static void dispatch(JNIEnv *env, jobject self, jint callconv,
       else if ((*env)->IsInstanceOf(env, arg, classShort)) {
         arg_types[i] = TYPE_INT32;
         c_args[nwords++].i = (*env)->GetShortField(env, arg, FID_Short_value);
+      }
+      else if ((*env)->IsInstanceOf(env, arg, classCharacter)) {
+        arg_types[i] = TYPE_INT32;
+        c_args[nwords++].i = (*env)->GetCharField(env, arg, FID_Character_value);
       }
       else if ((*env)->IsInstanceOf(env, arg, classInteger)) {
         arg_types[i] = TYPE_INT32;
@@ -209,8 +226,9 @@ static void dispatch(JNIEnv *env, jobject self, jint callconv,
         nwords += sizeof(void *)/sizeof(word_t);
       }
       else {
-        throwByName(env,"java/lang/IllegalArgumentException",
-                    "Unrecognized argument type");
+        char buf[1024];
+        sprintf(buf, "Unsupported type at parameter %d", i);
+        throwByName(env,"java/lang/IllegalArgumentException", buf);
         goto cleanup;
       }
     }
@@ -227,7 +245,7 @@ static void dispatch(JNIEnv *env, jobject self, jint callconv,
 #endif // _WIN32
       
     default:
-      throwByName(env,"java/lang/IllegalArgumentException","Unrecognized call type");
+      throwByName(env,"java/lang/IllegalArgumentException","Unrecognized calling convention");
     }
 
  cleanup:
@@ -357,13 +375,13 @@ Java_com_sun_jna_Function_invokeVoid(JNIEnv *env, jobject self,
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_sun_jna_Function_createCallback(JNIEnv *env, jclass functionClass,
-                                         jobject obj, jobject method,
-                                         jobjectArray param_types,
-                                         jclass return_type,
-                                         jint call_conv) {
+Java_com_sun_jna_CallbackReference_createCallback(JNIEnv *env,
+                                                  jclass clazz,
+                                                  jobject obj, jobject method,
+                                                  jobjectArray param_types,
+                                                  jint call_conv) {
   callback* cb =
-    create_callback(env, obj, method, param_types, return_type, call_conv);
+    create_callback(env, obj, method, param_types, call_conv);
   if (cb != NULL) {
     return newJavaPointer(env, cb);
   }
@@ -371,8 +389,9 @@ Java_com_sun_jna_Function_createCallback(JNIEnv *env, jclass functionClass,
 }
 
 JNIEXPORT void JNICALL
-Java_com_sun_jna_Function_freeCallback(JNIEnv *env,
-                                       jclass functionClass, jlong ptr) {
+Java_com_sun_jna_CallbackReference_freeCallback(JNIEnv *env,
+                                                jclass clazz,
+                                                jlong ptr) {
   callback* cb = (callback*)L2A(ptr);
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   free(cb->insns);
@@ -424,7 +443,6 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_NativeLibrary_findSymbol(JNIEnv *env,
 	free(funname);
     }
     return (jlong)A2L(func);
-
 }
 
 /*
@@ -458,8 +476,29 @@ Java_com_sun_jna_Pointer_initIDs(JNIEnv *env, jclass cls)
     if (!LOAD_MID(env, MID_Pointer_init, classPointer,
                   "<init>", "(J)V"))
       return 0;
-    if (!LOAD_MID(env, MID_getClass, classObject,
-                  "getClass", "()Ljava/lang/Class;"))
+    if (!LOAD_MID(env, MID_Long_init, classLong,
+                  "<init>", "(J)V"))
+      return 0;
+    if (!LOAD_MID(env, MID_Integer_init, classInteger,
+                  "<init>", "(I)V"))
+      return 0;
+    if (!LOAD_MID(env, MID_Short_init, classShort,
+                  "<init>", "(S)V"))
+      return 0;
+    if (!LOAD_MID(env, MID_Character_init, classCharacter,
+                  "<init>", "(C)V"))
+      return 0;
+    if (!LOAD_MID(env, MID_Byte_init, classByte,
+                  "<init>", "(B)V"))
+      return 0;
+    if (!LOAD_MID(env, MID_Boolean_init, classBoolean,
+                  "<init>", "(Z)V"))
+      return 0;
+    if (!LOAD_MID(env, MID_Float_init, classFloat,
+                  "<init>", "(F)V"))
+      return 0;
+    if (!LOAD_MID(env, MID_Double_init, classDouble,
+                  "<init>", "(D)V"))
       return 0;
     if (!LOAD_MID(env, MID_Class_getComponentType, classClass,
                   "getComponentType", "()Ljava/lang/Class;"))
@@ -480,9 +519,13 @@ Java_com_sun_jna_Pointer_initIDs(JNIEnv *env, jclass cls)
                   "getReturnType", "()Ljava/lang/Class;"))
       return 0;
 
+    if (!LOAD_FID(env, FID_Boolean_value, classBoolean, "value", "Z"))
+      return 0;
     if (!LOAD_FID(env, FID_Byte_value, classByte, "value", "B"))
       return 0;
     if (!LOAD_FID(env, FID_Short_value, classShort, "value", "S"))
+      return 0;
+    if (!LOAD_FID(env, FID_Character_value, classCharacter, "value", "C"))
       return 0;
     if (!LOAD_FID(env, FID_Integer_value, classInteger, "value", "I"))
       return 0;
@@ -1130,7 +1173,7 @@ getNativeAddress(JNIEnv *env, jobject obj) {
 
 static char
 getArrayComponentType(JNIEnv *env, jobject obj) {
-  jclass cls = (*env)->CallObjectMethod(env, obj, MID_getClass);
+  jclass cls = (*env)->GetObjectClass(env, obj);
   jclass type = (*env)->CallObjectMethod(env, cls, MID_Class_getComponentType);
   if (type != NULL) {
     return get_jtype(env, type);
@@ -1300,6 +1343,102 @@ init_jawt(JNIEnv* env) {
 #endif // NEED_JAWT_HACK
 
   return JNI_TRUE;
+}
+
+jvalue
+extract_value(JNIEnv* env, jobject value, type_t* return_type) {
+  jvalue result;
+  if (value == NULL) {
+    result.j = 0;
+    *return_type = TYPE_PTR;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classVoid)) {
+    result.j = 0;
+    *return_type = TYPE_VOID;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classBoolean)) {
+    result.i = (*env)->GetBooleanField(env, value, FID_Boolean_value);
+    *return_type = TYPE_INT32;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classByte)) {
+    result.i = (*env)->GetByteField(env, value, FID_Byte_value);
+    *return_type = TYPE_INT32;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classShort)) {
+    result.i = (*env)->GetShortField(env, value, FID_Short_value);
+    *return_type = TYPE_INT32;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classCharacter)) {
+    result.i = (*env)->GetCharField(env, value, FID_Character_value);
+    *return_type = TYPE_INT32;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classInteger)) {
+    result.i = (*env)->GetIntField(env, value, FID_Integer_value);
+    *return_type = TYPE_INT32;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classLong)) {
+    result.j = (*env)->GetLongField(env, value, FID_Long_value);
+    *return_type = TYPE_INT64;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classFloat)) {
+    result.f = (*env)->GetFloatField(env, value, FID_Float_value);
+    *return_type = TYPE_FP32;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classDouble)) {
+    result.d = (*env)->GetDoubleField(env, value, FID_Double_value);
+    *return_type = TYPE_FP64;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classPointer)) {
+    result.l = getNativeAddress(env, value);
+    *return_type = TYPE_PTR;
+  }
+  else {
+    result.l = value;
+    *return_type = TYPE_PTR;
+  }
+  return result;
+}
+
+jobject
+new_object(JNIEnv* env, char jtype, void* ap, int* sizep) {
+    switch(jtype) {
+    case 'L': 
+      *sizep = sizeof(void*);
+      return newJavaPointer(env, *(void**)ap);
+    case 'J':
+      *sizep = sizeof(jlong);
+      return (*env)->NewObject(env, classLong, MID_Long_init,
+                               *(jlong *)ap);
+    case 'F':
+      *sizep = sizeof(float);
+      return (*env)->NewObject(env, classFloat, MID_Float_init,
+                               *(float *)ap);
+    case 'D':
+      *sizep = sizeof(double);
+      return (*env)->NewObject(env, classDouble, MID_Double_init,
+                               *(double *)ap);
+    case 'Z':
+      *sizep = sizeof(int);
+      return (*env)->NewObject(env, classBoolean, MID_Boolean_init,
+                              (*(int *)ap ? JNI_TRUE : JNI_FALSE));
+    case 'B':
+      *sizep = sizeof(int);
+      return (*env)->NewObject(env, classByte, MID_Byte_init,
+                               *(int *)ap & 0xFF);
+    case 'C':
+      *sizep = sizeof(int);
+      return (*env)->NewObject(env, classCharacter, MID_Character_init,
+                              *(wchar_t *)ap & 0xFFFF);
+    case 'S':
+      *sizep = sizeof(int);
+      return (*env)->NewObject(env, classShort, MID_Short_init,
+                              *(int *)ap & 0xFFFF);
+    case 'I':
+    default:
+      *sizep = sizeof(int);
+      return (*env)->NewObject(env, classInteger, MID_Integer_init,
+                               *(int *)ap);
+    }
 }
 
 #ifdef __cplusplus

@@ -354,9 +354,40 @@
     <nbprofiledirect>
       <classpath> <pathelement location="${build}/examples.jar"/> </classpath>
     </nbprofiledirect>
-    <java jar="${build}/examples.jar" fork="true">
+    <java classname="${main.class}" fork="true">
       <jvmarg value="${profiler.info.jvmargs.agent}"/>
+      <jvmarg value="${profiler.info.jvmargs}"/>
+      <jvmarg value="-Djna.library.path=${build.native}"/>
+      <classpath>
+        <pathelement location="${build}/examples.jar"/>
+      </classpath>
     </java>
   </target>
 
+  <target name="profile-test-single" depends="examples-jar,compile-tests"
+          description="Profile Test Class">
+    <fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
+    <nbprofiledirect>
+      <classpath>
+        <pathelement location="${build}/examples.jar"/>
+        <pathelement location="${test.classes}"/>
+      </classpath>
+    </nbprofiledirect>
+    <junit dir="${build.native}" jvm="${profiler.info.jvm}"
+        failureproperty="tests.failed" errorproperty="tests.failed" fork="true">
+      <jvmarg value="${profiler.info.jvmargs.agent}"/>
+      <jvmarg value="${profiler.info.jvmargs}"/>
+      <jvmarg value="-Djna.library.path=${build.native}"/>
+      <test name="${profile.class}"/>
+      <classpath>
+        <pathelement location="${build}/examples.jar"/>
+        <pathelement location="${test.classes}"/>
+      </classpath>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="xml"/>
+    </junit>
+  </target>
+
 </project>
+
+

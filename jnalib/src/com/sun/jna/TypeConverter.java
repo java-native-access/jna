@@ -16,4 +16,4 @@ package com.sun.jna;
 /** Convenience interface for bidirectional conversion. 
  * @author Wayne Meissner
  */
-public interface TypeConverter extends ResultConverter, ArgumentConverter {}
+public interface TypeConverter extends FromNativeConverter, ToNativeConverter {}

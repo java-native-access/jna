@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.examples.win32;
+package com.sun.jna.win32;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -27,6 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import junit.framework.TestCase;
 import com.sun.jna.Callback;
+import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
@@ -38,10 +39,6 @@ import com.sun.jna.win32.StdCallLibrary;
 public class W32StdCallTest extends TestCase {
 
     public static interface TestLibrary extends StdCallLibrary {
-        TestLibrary INSTANCE = (TestLibrary)
-            Native.loadLibrary("testlib", TestLibrary.class, new HashMap() {
-                { put(OPTION_FUNCTION_MAPPER, FUNCTION_MAPPER); }
-            });
         int returnInt32ArgumentStdCall(int arg);
         interface Int32Callback extends StdCallCallback {
             int callback(int arg, int arg2);
@@ -56,27 +53,16 @@ public class W32StdCallTest extends TestCase {
     private TestLibrary testlib;
     
     protected void setUp() {
-        testlib = TestLibrary.INSTANCE;
+        testlib = (TestLibrary)
+            Native.loadLibrary("testlib", TestLibrary.class, new HashMap() {
+                { put(Library.OPTION_FUNCTION_MAPPER, StdCallLibrary.FUNCTION_MAPPER); }
+            });
     }
     
     protected void tearDown() {
         testlib = null;
     }
 
-    public void testStructureOutArgument() {
-        Kernel32 kernel = Kernel32.INSTANCE;
-        Kernel32.SYSTEMTIME time = new Kernel32.SYSTEMTIME();
-        kernel.GetSystemTime(time);
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        assertEquals("Hour not properly set", 
-                     cal.get(Calendar.HOUR_OF_DAY), time.wHour); 
-        assertEquals("Day not properly set", 
-                     cal.get(Calendar.DAY_OF_WEEK)-1, 
-                     time.wDayOfWeek); 
-        assertEquals("Year not properly set", 
-                     cal.get(Calendar.YEAR), time.wYear); 
-    }
-    
     public void testFunctionMapper() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         Method m = TestLibrary.class.getMethod("returnInt32ArgumentStdCall", new Class[] { int.class });
@@ -102,11 +88,11 @@ public class W32StdCallTest extends TestCase {
         };
         final int EXPECTED = MAGIC*3;
         int value = testlib.callInt32StdCallCallback(cb, MAGIC, MAGIC*2);
-        assertTrue("__stdcall callback not called", called[0]);
-        assertEquals("Wrong __stdcall callback value", Integer.toHexString(EXPECTED), 
+        assertTrue("stdcall callback not called", called[0]);
+        assertEquals("Wrong stdcall callback value", Integer.toHexString(EXPECTED), 
                      Integer.toHexString(value));
         
         value = testlib.callInt32StdCallCallback(cb, -1, -2);
-        assertEquals("Wrong __stdcall callback return", -3, value);
+        assertEquals("Wrong stdcall callback return", -3, value);
     }
 }

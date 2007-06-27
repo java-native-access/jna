@@ -188,7 +188,7 @@ public class Pointer {
     public boolean equals(Object o) {
         if (o == null)
             return peer == 0;
-        return o.getClass().equals(Pointer.class) && ((Pointer)o).peer == peer;
+        return (o instanceof Pointer) && ((Pointer)o).peer == peer;
     }
 
     /**
@@ -603,6 +603,18 @@ public class Pointer {
      * @param value <code>short</code> value to set
      */
     public native void setShort(int offset, short value);
+
+
+    /**
+     * Set <code>value</code> at location being pointed to. This is equivalent
+     * to the expression
+     * <code>*((wchar_t *)((char *)Pointer + offset)) = value</code>.
+     *
+     * @param offset byte offset from pointer at which <code>value</code>
+     *               must be set
+     * @param value <code>char</code> value to set
+     */
+    public native void setChar(int offset, char value);
 
 
     /**

@@ -482,6 +482,20 @@ public class Memory extends Pointer {
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
+     * <code>Pointer.setChar</code>.  But this method performs a bounds 
+     * checks to ensure that the indirection does not cause memory outside the
+     * <code>malloc</code>ed space to be accessed.
+     *
+     * @see Pointer#setChar
+     */
+    public void setChar(int offset, char value) {
+        boundsCheck(offset, Pointer.WCHAR_SIZE);
+        super.setChar(offset, value);
+    }
+
+
+    /**
+     * Indirect the native pointer to <code>malloc</code> space, a la
      * <code>Pointer.setShort</code>.  But this method performs a bounds 
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
