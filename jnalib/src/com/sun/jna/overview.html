@@ -67,18 +67,20 @@ Java types are chosen to match native types of the same size.  These are the
 default type mappings:<br>
 <table>
 <tr><td><b>Native Type</b></td><td><b>Java Type</b></td></tr>
-<tr><td>char</td><td>byte</td>
-<tr><td>char*</td><td>String</td>
-<tr><td>wchar_t</td><td>char</td>
-<tr><td>wchar_t*</td><td>{@link com.sun.jna.WString}</td>
-<tr><td>short</td><td>short</td>
-<tr><td>long</td><td>int</td>
-<tr><td>long long</td><td>long</td>
-<tr><td>float</td><td>float</td>
-<tr><td>double</td><td>double</td>
-<tr><td>pointer (to type or array as pointer)</td><td>{@link com.sun.jna.Pointer}</td>
-<tr><td>struct* (pointer to struct)</td><td>{@link com.sun.jna.Structure}</td>
-<tr><td>struct[] (array of contiguous structs)</td><td>{@link com.sun.jna.Structure}[]</td>
+<tr><td>int (boolean)</td><td><i>boolean</i> (mapping can be customized)</td>
+<tr><td>char</td><td><b>byte</b></td>
+<tr><td>char*</td><td><i>String</i></td>
+<tr><td>wchar_t</td><td><b>char</b></td>
+<tr><td>wchar_t*</td><td><i>{@link com.sun.jna.WString}</i></td>
+<tr><td>short</td><td><b>short</b></td>
+<tr><td>long</td><td><b>int</b></td>
+<tr><td>long long</td><td><b>long</b></td>
+<tr><td>float</td><td><b>float</b></td>
+<tr><td>double</td><td><b>double</b></td>
+<tr><td>pointer (array of type as pointer)</td><td><b><i>&lt;T&gt;[]</i> or <i>{@link java.nio.ByteBuffer}</i></b></td>
+<tr><td>pointer (to type)</td><td><i>{@link com.sun.jna.ptr.ByReference}</i></td>
+<tr><td>struct* (pointer to struct)</td><td><i>{@link com.sun.jna.Structure}</i></td>
+<tr><td>struct[] (array of contiguous structs)</td><td><i>{@link com.sun.jna.Structure}[]</i></td>
 <tr><td>arrays within a struct</td><td>Array of (primitive) type</td>
 <tr><td>struct within a struct</td><td>{@link com.sun.jna.Structure}</td>
 <tr><td><i>not yet implemented</i></td>
@@ -86,7 +88,12 @@ default type mappings:<br>
 <tr><td>bitfields</td>
 </table>
 <p>
-Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.
+Only the Java types indicated in bold are handled directly in native code.
+All other types must eventually be converted to one of these basic types.
+Those Java types in italics are handled by the JNA Java library and converted
+to or from one of the basic types.
+<p>
+Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
 <p>
 
 <h3>Pointers</h3>
