@@ -407,34 +407,6 @@ public class WindowUtils {
     }
 
     private static class W32WindowUtils extends NativeWindowUtils {
-        private Pointer createRegion(Raster raster) {
-            GDI32 gdi = GDI32.INSTANCE;
-            // Brute force creation of region from bitmap; really slow
-            Pointer result = gdi.CreateRectRgn(0, 0, 0, 0);
-            Rectangle bounds = new Rectangle(0, 0, raster.getWidth(),
-                                             raster.getHeight());
-            int[] bits = new int[bounds.width * bounds.height];
-            raster.getPixels(0, 0, bounds.width, bounds.height, bits);
-            for (int row = 0; row < bounds.height; row++) {
-                for (int col = 0; col < bounds.width; col++) {
-                    int idx = row * bounds.width + col;
-                    if (bits[idx] != 0) {
-                        Pointer bit = gdi.CreateRectRgn(bounds.x + col,
-                                                        bounds.y + row,
-                                                        bounds.x + col + 1,
-                                                        bounds.y + row + 1);
-                        int status = gdi.CombineRgn(result, result, bit,
-                                                    GDI32.RGN_OR);
-                        if (status == GDI32.ERROR) {
-                            System.err.println("Error combining regions");
-                        }
-                        gdi.DeleteObject(bit);
-                    }
-                }
-            }
-            return result;
-        }
-
         public Pointer getHWnd(Window w) {
             return Native.getWindowPointer(w);
             /*
@@ -640,8 +612,7 @@ public class WindowUtils {
                     if (transparent && !isTransparent(w)) {
                         flags |= User32.WS_EX_LAYERED;
                         user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
-                        lp
-                          .add(new W32RepaintTrigger(), JLayeredPane.DRAG_LAYER);
+                        lp.add(new W32RepaintTrigger(), JLayeredPane.DRAG_LAYER);
                     }
                     else if (!transparent && isTransparent(w)) {
                         flags &= ~User32.WS_EX_LAYERED;
@@ -731,7 +702,6 @@ public class WindowUtils {
                     w.add(content);
                 }
             }
-            w.setBackground(new Color(0, 0, 0, 0));
             return content;
         }
 
@@ -741,6 +711,7 @@ public class WindowUtils {
             if (!(transparent ^ isTransparent))
                 return;
             installTransparentContent(w);
+            setBackgroundTransparent(w, transparent);
             setLayersTransparent(w, transparent);
         }
 
@@ -809,10 +780,21 @@ public class WindowUtils {
                 }
             }
         }
+        
+        private void setBackgroundTransparent(Window w, boolean transparent) {
+            if (transparent) {
+                w.setBackground(new Color(0,0,0,0));
+            }
+            else {
+                // FIXME restore background
+                w.setBackground(new Window(w.getOwner()).getBackground());
+            }
+        }
 
         public void setWindowMask(Window w, final Shape shape) {
             OSXTransparentContent content = installTransparentContent(w);
             content.setMask(shape);
+            setBackgroundTransparent(w, shape != MASK_NONE);
         }
     }
     private static class X11WindowUtils extends NativeWindowUtils {

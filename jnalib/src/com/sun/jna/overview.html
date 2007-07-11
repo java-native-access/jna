@@ -213,7 +213,7 @@ class Line extends Structure {
 Explicit initialization of nested structures is not required; the objects will
 be created as needed and properly mapped to the parent structure's memory.<p>
 
-If you need a pointer to a structure, do this instead:<br>
+If you need a pointer to a structure (or more generally, a pointer to a buffer), do this instead:<br>
 
 <code><pre>
 // C code
@@ -254,7 +254,7 @@ Calculation of the native size of the structure is deferred until the
 structure is actually used.
 
 <h4>Variable-sized structures</h4>
-Structures with variable size, for example:<br>
+Structures with variable size, or with primitive array elements, for example:<br>
 <code><pre>
 // C code
 typedef struct _Header {
@@ -280,6 +280,15 @@ class Header extends Structure {
   }
 }
 </pre></code>
+
+<h4>Unions</h4>
+Unions are a special type of Structure.  Each declared field within the union
+overlays the same address in native memory.  When writing a union to native
+memory, you <em>must</em> specify which field is to be written by supplying
+the desired field's class to the {@link com.sun.jna.Union#setType}
+method.  On read, all non-pointer-based fields will be initialized from native
+memory.  Structure, String, and WString members will <em>not</em> be
+initialized unless they are selected via {@link com.sun.jna.Union#setType}.
 
 <h3>Java Object arguments</h3>
 In some cases, it would seem convenient to pass a Java object as an opaque

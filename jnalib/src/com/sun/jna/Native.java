@@ -75,6 +75,11 @@ public class Native {
     
     private static native long getWindowHandle0(Window w);
     
+    /** Convert a direct {@link ByteBuffer} into a {@link Pointer}. 
+     * @throws IllegalArgumentException if the byte buffer is not direct.
+     */
+    public static native Pointer getByteBufferPointer(ByteBuffer b);
+    
     /** Obtain a Java String from the given native char array. */
     public static String toString(byte[] buf) {
         String s = new String(buf);

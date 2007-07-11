@@ -105,6 +105,7 @@ public class BalloonManagerDemo {
         f.setSize(new Dimension(300, 300));
         f.setLocation(100, 100);
         try {
+            // Force a load of JNA
             WindowUtils.setWindowMask(f, WindowUtils.MASK_NONE);
             f.setVisible(true);
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,13 +1,16 @@
-Release 2.4.1
+Release 2.5
 Features
-* Optimized shaped windows (chris decker & olivier chafik); instantiation time
+* Unions
+* Optimized shaped windows (chris deckers & olivier chafik); instantiation time
 improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
 * Provide type mapping in callback arguments/results
+* Provide access to ByteBuffer direct address as a Pointer
 
 Bug Fixes
 * Properly handle VMs with reversed Structure member storage
 * Avoid making window undecorated when clearing window mask on X11
 * Fix structure alignment bug on OSX/PPC when first element is > 4 bytes in size
+* Clearing OSX window mask by setting to MASK_NONE now works properly
 
 Release 2.4
 Features

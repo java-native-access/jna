@@ -218,7 +218,7 @@ static void dispatch(JNIEnv *env, jobject self, jint callconv,
         arg_types[i] = TYPE_PTR;
         c_args[nwords].p = (*env)->GetDirectBufferAddress(env, arg);
         if (c_args[nwords].p == NULL) {
-          // TODO: treat as byte[]?
+          // TODO: treat buf.array() as byte[]?
           throwByName(env,"java/lang/IllegalArgumentException",
                       "Non-direct ByteBuffer is not supported");
           goto cleanup;
@@ -1183,7 +1183,7 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
 
 
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject unused, jobject w) {
+Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject classp, jobject w) {
   jlong handle = 0;
   JAWT_DrawingSurface* ds;
   JAWT_DrawingSurfaceInfo* dsi;
@@ -1257,6 +1257,15 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject unused, jobject w)
   return handle;
 }
 
+JNIEXPORT jobject JNICALL
+Java_com_sun_jna_Native_getByteBufferPointer(JNIEnv *env, jobject classp, jobject byteBuffer) {
+  void* addr = (*env)->GetDirectBufferAddress(env, byteBuffer);
+  if (addr == NULL) {
+    throwByName(env,"java/lang/IllegalArgumentException",
+                "Non-direct ByteBuffer is not supported");
+  }
+  return newJavaPointer(env, addr);
+}
 
 static jboolean 
 init_jawt(JNIEnv* env) {

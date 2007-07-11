@@ -6,6 +6,8 @@
 
 # TODO:
 
+* Union
+
 * review/use ByteBuffer everywhere
 * change/augment getWindowHandle0 to provide any heavyweight component window
 
@@ -30,7 +32,7 @@
 
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
-  note: DISPLAY may be avilable in GraphicsDevice->getIDstring
+  note: DISPLAY may be available in GraphicsDevice->getIDstring
 * universal OSX build w/cross-compile (hard to do with libffi)
 * universal GCC build w/cross-compile
 * catch native crash/exception/faults and re-throw as java exception

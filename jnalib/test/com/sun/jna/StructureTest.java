@@ -12,6 +12,7 @@
  */
 package com.sun.jna;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -45,7 +46,7 @@ public class StructureTest extends TestCase {
             public double d;
         }
         TestStructure s = new TestStructure();
-        s.setAlignment(Structure.ALIGN_GNUC);
+        s.setAlignType(Structure.ALIGN_GNUC);
         assertEquals("Wrong structure size", 28, s.size());
     }
     
@@ -60,7 +61,7 @@ public class StructureTest extends TestCase {
             public double d;
         }
         TestStructure s = new TestStructure();
-        s.setAlignment(Structure.ALIGN_MSVC);
+        s.setAlignType(Structure.ALIGN_MSVC);
         assertEquals("Wrong structure size", 32, s.size());
     }
     
