@@ -14,8 +14,8 @@ package com.sun.jna.examples.win32;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.sun.jna.Pointer;
-import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;

@@ -13,8 +13,7 @@
 package com.sun.jna;
 
 import java.awt.Toolkit;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+
 import junit.framework.TestCase;
 
 // TODO: verify load from jna.library.path

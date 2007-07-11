@@ -10,15 +10,11 @@
  */
 package com.sun.jna;
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
-import com.sun.jna.ptr.ByReference;
 
 /** Derive from this interface for all native library definitions.
  *

@@ -13,7 +13,7 @@
 package com.sun.jna.win32;
 
 import java.lang.reflect.Method;
-import com.sun.jna.Function;
+
 import com.sun.jna.FunctionMapper;
 import com.sun.jna.NativeLibrary;
 

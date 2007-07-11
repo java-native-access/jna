@@ -12,15 +12,12 @@
  */
 package com.sun.jna.examples.win32;
 
-import java.util.HashMap;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.examples.win32.GDI32.RECT;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.win32.StdCallLibrary;
-import com.sun.jna.win32.W32APITypeMapper;
 
 /** Provides access to the w32 user32 library.
  * Incomplete implementation to support demos.

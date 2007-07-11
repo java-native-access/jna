@@ -16,7 +16,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -25,12 +24,13 @@ import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
+
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
+
 import junit.framework.TestCase;
 
 // TODO: test method invocations before/after pack, before/after setvisible

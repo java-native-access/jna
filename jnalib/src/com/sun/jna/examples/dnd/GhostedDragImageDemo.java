@@ -25,11 +25,11 @@ import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.io.IOException;
 import java.net.URL;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /** Demonstrate ghosted drag images.  Unfortunately, Swing drag support hides

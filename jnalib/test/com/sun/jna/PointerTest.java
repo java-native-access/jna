@@ -15,8 +15,8 @@ package com.sun.jna;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
 import junit.framework.TestCase;
-import com.sun.jna.Memory;
 
 
 public class PointerTest extends TestCase {

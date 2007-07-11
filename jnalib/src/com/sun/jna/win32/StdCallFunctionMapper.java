@@ -14,9 +14,9 @@ package com.sun.jna.win32;
 
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+
 import com.sun.jna.Callback;
 import com.sun.jna.FunctionMapper;
-import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;

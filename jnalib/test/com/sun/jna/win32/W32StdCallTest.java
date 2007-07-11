@@ -12,26 +12,14 @@
  */
 package com.sun.jna.win32;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.TimeZone;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+
 import junit.framework.TestCase;
-import com.sun.jna.Callback;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
-import com.sun.jna.Pointer;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * @author twall@users.sf.net

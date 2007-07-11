@@ -12,8 +12,8 @@
  */
 package com.sun.jna;
 
-import java.lang.ref.WeakReference;
 import java.util.Map;
+
 import junit.framework.TestCase;
 
 /** Exercise callback-related functionality.

@@ -12,11 +12,12 @@
  */
 package com.sun.jna;
 
-import java.nio.ByteBuffer;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import junit.framework.TestCase;
 
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net

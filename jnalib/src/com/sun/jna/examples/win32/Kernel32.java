@@ -17,8 +17,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.win32.StdCallLibrary;
-import com.sun.jna.win32.W32APITypeMapper;
 
 /** Definition (incomplete) of <code>kernel32.dll</code>. */
 public interface Kernel32 extends W32API {

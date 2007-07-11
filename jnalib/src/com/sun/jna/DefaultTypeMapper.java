@@ -15,9 +15,7 @@ package com.sun.jna;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Provide custom mappings to and from native types.  The default lookup
  * checks classes corresponding to converters in the order added; if the

@@ -12,11 +12,9 @@
  */
 package com.sun.jna.win32;
 
-import com.sun.jna.ToNativeConverter;
-import com.sun.jna.Pointer;
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.FromNativeConverter;
 import com.sun.jna.DefaultTypeMapper;
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.Pointer;
 import com.sun.jna.TypeConverter;
 import com.sun.jna.TypeMapper;
 import com.sun.jna.WString;
