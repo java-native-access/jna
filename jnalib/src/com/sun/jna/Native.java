@@ -78,16 +78,26 @@ public class Native {
      */
     public static native Pointer getByteBufferPointer(ByteBuffer b);
     
-    /** Obtain a Java String from the given native char array. */
+    /** Obtain a Java String from the given native char array.  If there is
+     * no NUL terminator, the String will comprise the entire array.
+     */
     public static String toString(byte[] buf) {
         String s = new String(buf);
-        return s.substring(0, s.indexOf(0));
+        int term = s.indexOf(0);
+        if (term != -1)
+            s = s.substring(0, term);
+        return s;
     }
     
-    /** Obtain a Java String from the given native wchar_t array. */
+    /** Obtain a Java String from the given native wchar_t array.  If there is
+     * no NUL terminator, the String will comprise the entire array.
+     */
     public static String toString(char[] buf) {
         String s = new String(buf); 
-        return s.substring(0, s.indexOf(0));
+        int term = s.indexOf(0);
+        if (term != -1)
+            s = s.substring(0, term);
+        return s;
     }
     
     /** Load a library interface from the given shared library, providing
