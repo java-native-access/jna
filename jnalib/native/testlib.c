@@ -413,6 +413,16 @@ testStructureAlignment(void* s, unsigned index, int* offsetp, int64* valuep) {
   return -2;
 }
 
+EXPORT int32
+testStructureArrayInitialization(struct CheckFieldAlignment arg[], int len) {
+  int i;
+  for (i=0;i < len;i++) {
+    if (arg[i].int32Field != i)
+      return i;
+  }
+  return -1;
+}
+
 EXPORT void
 modifyStructureArray(struct CheckFieldAlignment arg[], int length) {
   int i;

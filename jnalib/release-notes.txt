@@ -11,6 +11,8 @@ Bug Fixes
 * Avoid making window undecorated when clearing window mask on X11
 * Fix structure alignment bug on OSX/PPC when first element is > 4 bytes in size
 * Clearing OSX window mask by setting to MASK_NONE now works properly
+* Avoid index exceptions if native buffers are not NUL-terminated on string conversions
+* Write initialized Structure[] argument memory prior to function calls
 
 Release 2.4
 Features

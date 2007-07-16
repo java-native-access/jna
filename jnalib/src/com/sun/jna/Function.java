@@ -392,12 +392,14 @@ public class Function extends Pointer {
             else {
                 Pointer base = ss[0].getPointer();
                 int size = ss[0].size();
+                ss[0].write();
                 for (int si=1;si < ss.length;si++) {
                     try {
                         Pointer p = base.share(size*si, size);
                         if (ss[si].getPointer().peer != p.peer) {
                             throw new RuntimeException();
                         }
+                        ss[si].write();
                     }
                     catch(RuntimeException e) {
                         String msg = "Structure array elements must use"

@@ -6,10 +6,10 @@
 
 # TODO:
 
-* Union
-
 * review/use ByteBuffer everywhere
 * change/augment getWindowHandle0 to provide any heavyweight component window
+* use jna.encoding property to affect string encoding instead of just using
+  the system default encoding.
 
 * design: 
 
@@ -30,6 +30,9 @@
   or move callback asm templates into dispatch_<arch>.c
 
 
+* provide library load/unload hooks (Runnables in options?). Examples:
+  o GetLastError in kernel32 
+  o WSAInit?
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be available in GraphicsDevice->getIDstring
@@ -82,6 +85,7 @@
 
 
 # DONE
+* Union
 * rename Argument/Result Converter to be fromNative/toNative
 * split unit tests
 * auto-convert struct pointers in callback args to Java Structure

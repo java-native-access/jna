@@ -1018,7 +1018,7 @@ throwByName(JNIEnv *env, const char *name, const char *msg)
 /* Translates a Java string to a C string using the String.getBytes 
  * method, which uses default local encoding.
  */
-// TODO: make sure encoding is correct
+// TODO: use jna.encoding
 static char *
 newCString(JNIEnv *env, jstring jstr)
 {
@@ -1044,7 +1044,7 @@ newCString(JNIEnv *env, jstring jstr)
 /* Translates a Java string to a wide C string using the String.toCharArray
  * method.
  */
-// TODO: make any required encoding changes
+// TODO: are any encoding changes required?
 static wchar_t *
 newWideCString(JNIEnv *env, jstring str)
 {
