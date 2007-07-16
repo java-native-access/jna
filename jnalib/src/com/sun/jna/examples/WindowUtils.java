@@ -67,9 +67,11 @@ import com.sun.jna.ptr.PointerByReference;
 /**
  * Provides additional features on a Java {@link Window}.
  * <ul>
- * <li>Non-rectangular shape
+ * <li>Non-rectangular shape (bitmap mask, no antialiasing)
  * <li>Transparency (constant alpha applied to window contents or
  * transparent background)
+ * <li>Fully transparent window (the transparency of all painted pixels is
+ * applied to the window).
  * </ul>
  * NOTE: since there is no explicit way to force PopupFactory to use a
  * heavyweight popup, and anything but a heavyweight popup will be
@@ -77,7 +79,7 @@ import com.sun.jna.ptr.PointerByReference;
  * masked windows to implicitly force PopupFactory to use a heavyweight
  * window and avoid clipping.
  * <p>
- * NOTE: {@link #setWindowTransparent} on X11 doesn't seem to composite
+ * NOTE: {@link #setWindowTransparent} on X11 doesn't composite
  * entirely correctly; depending on what's drawn in the window it mey be
  * more or less noticable. 
  * <p>
@@ -1093,7 +1095,8 @@ public class WindowUtils {
 
     /**
      * Applies the given mask to the given window. Does nothing if the
-     * operation is not supported.
+     * operation is not supported.  The mask is treated as a bitmap and
+     * ignores transparency.
      */
     public static void setWindowMask(Window w, Shape mask) {
         getInstance().setWindowMask(w, mask);
@@ -1101,7 +1104,8 @@ public class WindowUtils {
 
     /**
      * Applies the given mask to the given window. Does nothing if the
-     * operation is not supported.
+     * operation is not supported.  The mask is treated as a bitmap and
+     * ignores transparency.
      */
     public static void setWindowMask(Window w, Icon mask) {
         getInstance().setWindowMask(w, mask);
