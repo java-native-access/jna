@@ -31,4 +31,21 @@ public class Kernel32Test extends TestCase {
         assertEquals("Year not properly set", 
                      cal.get(Calendar.YEAR), time.wYear); 
     }
+    
+    public void testGetLastError() {
+        Kernel32 kernel = Kernel32.INSTANCE;
+        kernel.GetLastError();
+        if (kernel.GetProcessId(null) == 0) {
+            final int INVALID_HANDLE = 6;
+            int code = kernel.GetLastError();
+            assertEquals("GetLastError failed", INVALID_HANDLE, code);
+            // Unclear why this fails
+            //int ERRCODE  = 8;
+            //kernel.SetLastError(ERRCODE);
+            //assertEquals("Wrong GetLastError value", ERRCODE, kernel.GetLastError());
+        }
+        else {
+            fail("GetProcessId(NULL) should fail");
+        }
+    }
 }

@@ -20,10 +20,10 @@ import com.sun.jna.ptr.PointerByReference;
 
 /** Definition (incomplete) of <code>kernel32.dll</code>. */
 public interface Kernel32 extends W32API {
-    
+
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
-
+    
     public static class SYSTEMTIME extends Structure {
         public short wYear;
         public short wMonth;
@@ -39,11 +39,13 @@ public interface Kernel32 extends W32API {
     int GetCurrentThreadId();
     int GetCurrentProcessId();
     int GetLastError();
+    void SetLastError(int dwErrCode);
+
     int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
     int FORMAT_MESSAGE_IGNORE_INSERTS = 0x200;
     int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId, 
-                       int dwLanguageId, Pointer lpBuffer, int nSize,
-                       Pointer va_list);
+                      int dwLanguageId, PointerByReference lpBuffer, 
+                      int nSize, Pointer va_list);
 
     int FILE_LIST_DIRECTORY = 0x00000001;
     
@@ -188,4 +190,6 @@ public interface Kernel32 extends W32API {
                                   IntByReference bytesReturned,
                                   OVERLAPPED overlapped, 
                                   OVERLAPPED_COMPLETION_ROUTINE completionRoutine);
+    
+    int GetProcessId(Pointer process);
 }
