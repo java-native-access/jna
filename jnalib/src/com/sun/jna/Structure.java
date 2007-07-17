@@ -258,11 +258,11 @@ public abstract class Structure {
         }
         else if (nativeType == String.class) {
             Pointer p = memory.getPointer(offset);
-            result = p != null ? new NativeString(p, false).toString() : null;
+            result = p != null ? p.getString(0, false) : null;
         }
         else if (nativeType == WString.class) {
             Pointer p = memory.getPointer(offset);
-            result = p != null ? new NativeString(p, true).toString() : null;
+            result = p != null ? new WString(p.getString(0, true)) : null;
         }
         else if (Callback.class.isAssignableFrom(nativeType)) {
             // ignore; Callback members are write-only (don't try to convert
