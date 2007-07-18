@@ -709,7 +709,9 @@ public abstract class Structure {
             Memory m = (Memory)memory;
             int requiredSize = array.length * size();
             if (m.getSize() < requiredSize) {
-                useMemory(new Memory(requiredSize));
+                m = new Memory(requiredSize);
+                m.clear();
+                useMemory(m);
             }
         }
         array[0] = this;

@@ -15,6 +15,7 @@ Bug Fixes
 * Avoid index exceptions if native buffers are not NUL-terminated on string conversions
 * Write initialized Structure[] argument memory prior to function calls
 * Fix IllegalArgumentException reading WString into a Structure
+* Clear memory when allocating a structure block (fixes VM crash)
 
 Release 2.4
 Features

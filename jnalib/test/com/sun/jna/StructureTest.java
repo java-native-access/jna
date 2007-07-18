@@ -35,7 +35,28 @@ public class StructureTest extends TestCase {
         Structure s = new TestStructure();
         assertEquals("Wrong size", 4, s.size());
     }
-
+    
+    public static class TestAllocStructure extends Structure {
+        public int f0;
+        public int f1;
+        public int f2;
+        public int f3;
+    }
+    public void testClearOnAllocate() {
+        TestAllocStructure s = new TestAllocStructure();
+        s.read();
+        assertEquals("Memory not cleared on structure init", 0, s.f0);
+        assertEquals("Memory not cleared on structure init", 0, s.f1);
+        assertEquals("Memory not cleared on structure init", 0, s.f2);
+        assertEquals("Memory not cleared on structure init", 0, s.f3);
+        
+        s = (TestAllocStructure)s.toArray(2)[1];
+        assertEquals("Memory not cleared on array init", 0, s.f0);
+        assertEquals("Memory not cleared on array init", 0, s.f1);
+        assertEquals("Memory not cleared on array init", 0, s.f2);
+        assertEquals("Memory not cleared on array init", 0, s.f3);
+    }
+    
     // cross-platform smoke test
     public void testGNUCAlignment() {
         class TestStructure extends Structure { 
