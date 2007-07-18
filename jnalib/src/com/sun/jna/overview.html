@@ -20,6 +20,7 @@ library for simplified native library access for Java.
 <a href=index.html target=_top>API w/FRAMES</a>&nbsp;
 <p>
 
+<a name="overview"></a>
 <h1>Java Native Access (JNA)</h1>
 JNA provides simplified access to native library methods without requiring any
 additional JNI or native code.
@@ -37,7 +38,7 @@ public interface CLibrary extends Library {
 The <code>String</code> passed to the <code>Native.loadLibrary</code> method
 is the undecorated name of the shared library file.  Here are some examples of
 library name mappings.  
-<table>
+<table border=1>
 <tr><td><b>OS</b></td><td><b>Library Name</b></td><td><b>String</b></td></tr>
 <tr><td>Windows</td><td>user32.dll</td><td>user32</td></tr>
 <tr><td>Linux</td><td>libX11.so</td><td>X11</td></tr>
@@ -55,17 +56,14 @@ public interface CLibrary extends Library {
     int atol(String s);
 }
 </pre></code>
-If you prefer to rename the Java methods to conform to Java coding
-conventions, then you can provide a <code>Map</code> to
-<code>Native.loadLibrary</code> which maps the Java names to the native
-names.  While this keeps your Java code a little cleaner, the additional
-mapping of names may make a little less obvious the native functions being called.<p>
+If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry ({@link com.sun.jna.Library#OPTION_FUNCTION_MAPPER}/{@link com.sun.jna.FunctionMapper}) in the options <code>Map</code> passed to <code>Native.loadLibrary</code> which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
 An instance of the {@link com.sun.jna.Function} class is obtained through the {@link com.sun.jna.NativeLibrary} instance corresponding to the containing native library.  This {@link com.sun.jna.Function} instance handles argument marshalling and delegation to the native function. 
 
+<a name="marshalling"></a>
 <h2>Function Argument Mapping (Java to Native Type Conversions, or Marshalling/Unmarshalling)</h2>
 Java types are chosen to match native types of the same size.  These are the
 default type mappings:<br>
-<table>
+<table border=1>
 <tr><td><b>Native Type</b></td><td><b>Java Type</b></td></tr>
 <tr><td>int (boolean)</td><td><i>boolean</i> (mapping can be customized)</td>
 <tr><td>char</td><td><b>byte</b></td>
@@ -80,12 +78,13 @@ default type mappings:<br>
 <tr><td>pointer (array of type as pointer)</td><td><b><i>&lt;T&gt;[]</i> or <i>{@link java.nio.ByteBuffer}</i></b></td>
 <tr><td>pointer (to type)</td><td><i>{@link com.sun.jna.ptr.ByReference}</i></td>
 <tr><td>struct* (pointer to struct)</td><td><i>{@link com.sun.jna.Structure}</i></td>
-<tr><td>struct[] (array of contiguous structs)</td><td><i>{@link com.sun.jna.Structure}[]</i></td>
+<tr><td>union*</td><td>{@link com.sun.jna.Union}</td>
+<tr><td>struct[] (array of structs contiguous in memory)</td><td><i>{@link com.sun.jna.Structure}[]</i></td>
 <tr><td>arrays within a struct</td><td>Array of (primitive) type</td>
 <tr><td>struct within a struct</td><td>{@link com.sun.jna.Structure}</td>
-<tr><td><i>not yet implemented</i></td>
-<tr><td>unions</td>
+<tr><td colspan=2><i>not yet implemented</i></td>
 <tr><td>bitfields</td>
+<tr><td>struct by value (argument or return value)</td>
 </table>
 <p>
 Only the Java types indicated in bold are handled directly in native code.
@@ -162,7 +161,15 @@ Device[] devices = new Device[size];
 lib.get_devices(devices, devices.length);
 </pre></code>
 
-<h4>Array of <code>struct</code>s Returned</h4>
+Alternatively, you can reallocate a single Structure instance into an array as
+follows:<br>
+<code><pre>
+Device dev = new Device();
+Structure[] structs = dev.toArray(size);
+Device[] devices = (Device[])dev.toArray(new Device[size]);
+</pre></code>
+
+<h4>Returning an Array of <code>struct</code></h4>
 Declare the method as returning a {@link com.sun.jna.Structure} of the
 appropriate type, then invoke {@link com.sun.jna.Structure#toArray(int)} to
 convert to an array of initialized structures of the appropriate size.  Note

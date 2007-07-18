@@ -221,7 +221,7 @@ class CallbackReference extends WeakReference {
         private Object convertArgument(Object value, Class dstType) {
             if (value instanceof Pointer) {
                 if (dstType == String.class) {
-                    value = ((Pointer)value).getString(0, false);
+                    value = ((Pointer)value).getString(0);
                 }
                 else if (dstType == WString.class) {
                     value = new WString(((Pointer)value).getString(0, true));
@@ -272,11 +272,11 @@ class CallbackReference extends WeakReference {
                 return new Integer(Boolean.TRUE.equals(value)?-1:0);
             }
             else if (cls == String.class) {
-                // FIXME: need to prevent GC, but for how long?
+                // FIXME: need to prevent GC, but how and for how long?
                 return new NativeString(value.toString()).getPointer();
             }
             else if (cls == WString.class) {
-                // FIXME: need to prevent GC, but for how long?
+                // FIXME: need to prevent GC, but how and for how long?
                 return new NativeString(value.toString(), true).getPointer();
             }
             else if (!isAllowableNativeType(cls)) {

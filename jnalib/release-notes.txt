@@ -5,6 +5,7 @@ Features
 improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
 * Provide type mapping in callback arguments/results
 * Provide access to ByteBuffer direct address as a Pointer
+* Provide customization of native string encoding with jna.encoding system property 
 
 Bug Fixes
 * Properly handle VMs with reversed Structure member storage
@@ -13,6 +14,7 @@ Bug Fixes
 * Clearing OSX window mask by setting to MASK_NONE now works properly
 * Avoid index exceptions if native buffers are not NUL-terminated on string conversions
 * Write initialized Structure[] argument memory prior to function calls
+* Fix IllegalArgumentException reading WString into a Structure
 
 Release 2.4
 Features

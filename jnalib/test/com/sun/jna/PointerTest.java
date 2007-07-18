@@ -15,6 +15,10 @@ package com.sun.jna;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 
@@ -101,6 +105,34 @@ public class PointerTest extends TestCase {
             final long MAGIC = 0x1234567887654321L;
             m.setNativeLong(0, new NativeLong(MAGIC));
             assertEquals("Native long mismatch", MAGIC, m.getLong(0));
+        }
+    }
+    public void testSetStringWithEncoding() throws Exception {
+        String old = System.getProperty("jna.encoding");
+        String VALUE = "\u0444\u0438\u0441\u0432\u0443";
+        System.setProperty("jna.encoding", "UTF8");
+        try {
+            int size = VALUE.getBytes("UTF8").length+1;
+            Memory m = new Memory(size);
+            m.setString(0, VALUE);
+            assertEquals("UTF8 encoding should be double", 
+                         VALUE.length() * 2 + 1, size);
+            assertEquals("Wrong decoded value", VALUE, m.getString(0));
+        }
+        finally {
+            if (old != null) {
+                System.setProperty("jna.encoding", old);
+            }
+            else {
+                Map props = System.getProperties();
+                props.remove("jna.encoding");
+                Properties newProps = new Properties();
+                for (Iterator i = props.entrySet().iterator();i.hasNext();) {
+                    Entry e = (Entry)i.next();
+                    newProps.setProperty(e.getKey().toString(), e.getValue().toString());
+                }
+                System.setProperties(newProps);
+            }
         }
     }
 }

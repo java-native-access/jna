@@ -213,6 +213,11 @@ public class Pointer {
     // Raw read methods
     //////////////////////////////////////////////////////////////////////////
 
+    /** Returns the offset of the given value in memory from the given offset,
+     * or -1 if the value is not found.
+     */
+    public native int indexOf(int bOff, byte value);
+    
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by 
      * native pointer, into the specified array.
@@ -519,7 +524,7 @@ public class Pointer {
     /**
      * Copy native memory to a Java String.  If <code>wide</code> is true,
      * access the memory as an array of <code>wchar_t</code>, otherwise 
-     * as an array of <code>char</code>, using the native encoding.
+     * as an array of <code>char</code>, using the default platform encoding.
      *
      * @param offset byte offset from pointer to obtain the native string
      * @param wide whether to convert from a wide or standard C string
@@ -527,12 +532,37 @@ public class Pointer {
      */
     public native String getString(int offset, boolean wide);
 
+    /**
+     * Copy native memory to a Java String.  If the system property 
+     * <code>jna.encoding</code> is set, uses it as the native charset
+     * when decoding the value, otherwise falls back to the default platform
+     * encoding.
+     *
+     * @param offset byte offset from pointer to obtain the native string
+     * @return the <code>String</code> value being pointed to 
+     */
+    public String getString(int offset) {
+        String encoding = System.getProperty("jna.encoding");
+        if (encoding != null) {
+            int len = indexOf(offset, (byte)0);
+            if (len != -1) {
+                byte[] data = getByteArray(offset, len);
+                try {
+                    return new String(data, encoding);
+                }
+                catch(UnsupportedEncodingException e) { 
+                }
+            }
+        }
+        return getString(offset, false);
+    }
+
     public byte[] getByteArray(int offset, int arraySize) {
         byte[] buf = new byte[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
-
+    
     public char[] getCharArray(int offset, int arraySize) {
         char[] buf = new char[arraySize];
         read(offset, buf, 0, arraySize);
@@ -702,10 +732,31 @@ public class Pointer {
      *
      * @param offset byte offset from pointer at which characters in
      * 		     <code>value</code> must be set
-     * @param value  <code>java.lang.String</code> value to set 
+     * @param value  <code>java.lang.String</code> value to set
+     * @param wide whether to write the native string as an array of 
+     * <code>wchar_t</code>.  If false, writes as a NUL-terminated array of 
+     * <code>char</code> using the default encoding. 
      */
     public native void setString(int offset, String value, boolean wide);
 
+    /**
+     * Copy string <code>value</code> to the location being pointed to.  Copy
+     * each element in <code>value</code>, converted to native encoding, at an
+     * <code>offset</code>from the location pointed to by this pointer.
+     * Uses the value of the system property <code>jna.encoding</code>, if set, 
+     * to determine the appropriate native charset in which to encode the value.  
+     * If the property is not set, uses the default platform encoding.
+     *
+     * @param offset byte offset from pointer at which characters in
+     *               <code>value</code> must be set
+     * @param value  <code>java.lang.String</code> value to set
+     */
+    public void setString(int offset, String value) {
+        byte[] data = Native.getBytes(value);
+        write(offset, data, 0, data.length);
+        setByte(offset + data.length, (byte)0);
+    }
+    
     public String toString() {
         return "native@0x" + Long.toHexString(peer);
     }

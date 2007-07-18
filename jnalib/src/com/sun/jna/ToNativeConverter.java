@@ -32,7 +32,7 @@ public interface ToNativeConverter {
      * <li>{@link Structure}
      * <li>String
      * <li>{@link WString}
-     * <li>{@link ByteBuffer}
+     * <li>{@link java.nio.ByteBuffer}
      * <li>primitive array
      * </ul>
      */

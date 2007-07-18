@@ -54,7 +54,7 @@ public interface Library {
     String OPTION_FUNCTION_MAPPER = "function-mapper";
     /** Option key for structure alignment type ({@link Integer}). */
     String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
-
+    
     static class Handler implements InvocationHandler {
         
         private static final Method OBJECT_TOSTRING;

@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.awt.Window;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
@@ -78,10 +79,17 @@ public class Native {
      */
     public static native Pointer getByteBufferPointer(ByteBuffer b);
     
-    /** Obtain a Java String from the given native char array.  If there is
+    /** Obtain a Java String from the given native byte array.  If there is
      * no NUL terminator, the String will comprise the entire array.
      */
     public static String toString(byte[] buf) {
+        String encoding = System.getProperty("jna.encoding");
+        if (encoding != null) {
+            try {
+                return new String(buf, encoding);
+            }
+            catch(UnsupportedEncodingException e) { }
+        }
         String s = new String(buf);
         int term = s.indexOf(0);
         if (term != -1)
@@ -193,5 +201,21 @@ public class Native {
         }
         Integer value = (Integer)alignments.get(interfaceClass);
         return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
+    }
+
+    /** Return an byte array corresponding to the given String.  If the
+     * system property <code>jna.encoding</code> is set, it will override
+     * the default platform encoding (if supported).
+     */
+    static byte[] getBytes(String s) {
+        String encoding = System.getProperty("jna.encoding");
+        if (encoding != null) {
+            try {
+                return s.getBytes(encoding);
+            }
+            catch (UnsupportedEncodingException e) {
+            }
+        }
+        return s.getBytes();
     }
 }

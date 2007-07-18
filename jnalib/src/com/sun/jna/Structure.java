@@ -258,7 +258,7 @@ public abstract class Structure {
         }
         else if (nativeType == String.class) {
             Pointer p = memory.getPointer(offset);
-            result = p != null ? p.getString(0, false) : null;
+            result = p != null ? p.getString(0) : null;
         }
         else if (nativeType == WString.class) {
             Pointer p = memory.getPointer(offset);

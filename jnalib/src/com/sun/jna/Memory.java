@@ -455,12 +455,10 @@ public class Memory extends Pointer {
      * @see Pointer#getString(int, boolean)
      */
     public String getString(int offset, boolean wide) {
-        boundsCheck(offset, 0);
+        // NOTE: we only make sure the start of the string is within bounds
+        boundsCheck(offset, 0); 
         return super.getString(offset, wide);
     }
-
-
-
 
     //////////////////////////////////////////////////////////////////////////
     // Java type write methods
@@ -584,13 +582,15 @@ public class Memory extends Pointer {
      * bounds checks to ensure that the indirection does not cause memory 
      * outside the <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#setString
+     * @see Pointer#setString(int,String,boolean)
      */
     public void setString(int offset, String value, boolean wide) {
-        boundsCheck(offset, (value.length() + 1) * (wide ? Pointer.WCHAR_SIZE : 1));
+        if (wide)
+            boundsCheck(offset, (value.length() + 1) * Pointer.WCHAR_SIZE);
+        else
+            boundsCheck(offset, value.getBytes().length + 1);
         super.setString(offset, value, wide);
     }
-
 
     /**
      * Call the real native malloc

@@ -196,7 +196,7 @@ public class Function extends Pointer {
                     StringArray buf = (StringArray)args[i];
                     String[] array = (String[])arg;
                     for (int si=0;si < array.length;si++) {
-                        array[si] = buf.getPointer(si * Pointer.SIZE).getString(0, false);
+                        array[si] = buf.getPointer(si * Pointer.SIZE).getString(0);
                     }
                 }
                 else if (isStructureArray(arg.getClass())) {
@@ -308,7 +308,7 @@ public class Function extends Pointer {
                                            + returnType);
     }
     
-    private Object convertArgument(Object arg, TypeMapper mapper) {
+    private Object convertArgument(Object arg, TypeMapper mapper) { 
         if (arg != null && mapper != null) {
             ToNativeConverter converter = mapper.getToNativeConverter(arg.getClass());
             if (converter != null) {
@@ -352,7 +352,7 @@ public class Function extends Pointer {
             return ((NativeLong)arg).asNativeValue();
         }
         // Default conversion of boolean to int; if you want something
-        // different, use an ArgumentConverter
+        // different, use a ToNativeConverter
         else if (arg instanceof Boolean) {
             return new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
         }
@@ -509,7 +509,10 @@ public class Function extends Pointer {
         Pointer ptr = invokePointer(callingConvention, args);
         String s = null;
         if (ptr != null) {
-            s = ptr.getString(0, wide);
+            if (wide)
+                s = ptr.getString(0, wide);
+            else
+                s = ptr.getString(0);
         }
         return s;
     }
@@ -536,7 +539,7 @@ public class Function extends Pointer {
      */
     private class StringArray extends Memory {
         private List natives = new ArrayList();
-        public StringArray(String[] strings) {
+        public StringArray(String[] strings) { 
             super((strings.length + 1) * Pointer.SIZE);
             for (int i=0;i < strings.length;i++) {
                 NativeString ns = new NativeString(strings[i]);

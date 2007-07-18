@@ -10,6 +10,7 @@
  */
 package com.sun.jna;
 
+
 /** Provides a temporary allocation of an immutable C string 
  * (<code>const char*</code> or <code>const wchar_t*</code>) for use when 
  * converting a Java String into a native memory function argument.  
@@ -19,76 +20,62 @@ package com.sun.jna;
  */
 class NativeString implements CharSequence, Comparable {
 
+    private String value;
     private Pointer pointer;
-    private boolean wide;
 
-    protected NativeString(Pointer pointer) {
-        this(pointer, false);
-    }
-    
-    protected NativeString(Pointer pointer, boolean wide) {
-        this.pointer = pointer;
-        this.wide = wide;
-    }
-
+    /** Create a native string (NUL-terminated array of <code>char</code>).<p>
+     * If the system property <code>jna.encoding</code> is set, its value will
+     * be used to encode the native string.  If not set or if the encoding
+     * is unavailable, the default platform encoding will be used. 
+     */
     public NativeString(String string) {
         this(string, false);
     }
-    
+
+    /** Create a native string as a NUL-terminated array of <code>wchar_t</code>
+     * (if <code>wide</code> is true) or <code>char</code>.<p>
+     * If the system property <code>jna.encoding</code> is set, its value will
+     * be used to encode the native <code>char</code>string.  
+     * If not set or if the encoding is unavailable, the default platform 
+     * encoding will be used. 
+     * 
+     * @param string value to write to native memory
+     * @param wide whether to store the String as <code>wchar_t</code>
+     */
     public NativeString(String string, boolean wide) {
-        this.wide = wide;
+        this.value = string;
         if (string == null) {
-            pointer = null;
+            throw new NullPointerException("String must not be null");
+        }
+        // Allocate the memory to hold the string.  Note, we have to
+        // make this 1 element longer in order to accomodate the terminating 
+        // NUL (which is generated in Pointer.setString()).
+        if (wide) {
+            int len = (string.length() + 1 ) * Pointer.WCHAR_SIZE;
+            pointer = new Memory(len);
+            pointer.setString(0, string, true);
         }
         else {
-            // Allocate the memory to hold the string.  Note, we have to
-            // make this 1 byte longer in order to accomodate the terminating 
-            // NUL (which is generated in Pointer.setString()).
-            pointer = new Memory((string.length() + 1) * (wide ? Pointer.WCHAR_SIZE : 1));
-            pointer.setString(0, string, wide);
+            byte[] data = Native.getBytes(string);
+            pointer = new Memory(data.length + 1);
+            pointer.setString(0, string);
         }
-    }
-
-    public boolean isValid() {
-        return getPointer() != null && getPointer().peer != 0;
     }
 
     public int hashCode() {
-        if (isValid())
-            return toString().hashCode();
-        else
-            return super.hashCode();
+        return value.hashCode();
     }
 
     public boolean equals(Object other) {
 
-        if (!isValid())
-            return false;
-
-        String s1 = null;
-        if (other instanceof NativeString) {
-            NativeString cs = (NativeString)other;
-            if (!cs.isValid() || cs.wide != wide)
-                return false;
-            else
-                s1 = cs.toString();
+        if (other instanceof CharSequence) {
+            return compareTo(other) == 0;
         }
-        else if (other instanceof String) {
-            s1 = (String)other;
-        }
-        else {
-            return false;
-        }
-
-        return s1.equals(toString());
+        return false;
     }
 
     public String toString() {
-        if (!isValid()) {
-            throw new IllegalStateException("String memory has already been freed");
-        }
-
-        return getPointer().getString(0, wide);
+        return value;
     }
 
     public Pointer getPointer() {
@@ -96,45 +83,22 @@ class NativeString implements CharSequence, Comparable {
     }
 
     public char charAt(int index) {
-        return toString().charAt(index);
+        return value.charAt(index);
     }
 
     public int length() {
-        return toString().length();
+        return value.length();
     }
 
     public CharSequence subSequence(int start, int end) {
-        return toString().subSequence(start, end);
+        return value.subSequence(start, end);
     }
 
     public int compareTo(Object other) {
-        if (!isValid()) {
-            if (other instanceof NativeString) {
-                if (!((NativeString)other).isValid())
-                    return 0;
-            }
-            else {
-                return -1;
-            }
-        }
 
         if (other == null)
             return 1;
 
-        String s1=null;
-        if (other instanceof NativeString) {
-            if (!((NativeString)other).isValid())
-                return 1;
-            else
-                s1 = ((NativeString)other).toString();
-        }
-        else if (other instanceof String) {
-            s1 = (String)other;
-        }
-        else {
-            s1 = other.toString();
-        }
-
-        return toString().compareTo(s1);
+        return value.compareTo(other.toString());
     }
 }

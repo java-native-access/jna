@@ -39,7 +39,7 @@ public abstract class Union extends Structure {
         super(size, alignType);
     }
     /** Indicates which field will be used to write to native memory. 
-     * @throw IllegalArgumentException if the type does not correspond to 
+     * @throws IllegalArgumentException if the type does not correspond to 
      * any declared union field.
      */
     public void setType(Class type) {
