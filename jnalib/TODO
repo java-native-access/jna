@@ -169,7 +169,8 @@ int findNativeWindow(Window w);
 # jnieasy: c++ mappings (http://www.innowhere.com:8080/webapp/jsp/products/jnieasy/index.jsp?_page=products.jnieasy)
 # j2native (www.smardec.com)
 # j-interop.sf.net
-# jawinproject.sf.net
+# jawinproject.sf.net (COM DLL access)
+# jacob-project.sf.net (COM DLL access)
 # nativecall.sf.net (minimal)
 # cxxwrap.sf.net
 # xFunction (osx)

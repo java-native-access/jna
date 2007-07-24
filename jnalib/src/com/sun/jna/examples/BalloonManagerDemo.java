@@ -114,7 +114,7 @@ public class BalloonManagerDemo {
             e.printStackTrace();
             String msg = e.getMessage() 
                 + "\nError loading the JNA library after looking in "
-                + System.getProperty("java.library.path");
+                + System.getProperty("jna.library.path");
             JTextArea area = new JTextArea(msg);
             area.setOpaque(false);
             area.setFont(UIManager.getFont("Label.font"));

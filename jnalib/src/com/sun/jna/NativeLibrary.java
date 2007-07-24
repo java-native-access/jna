@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
  * <ol>
  * <li><code>jna.library.path</code> User-customizable path
  * <li><code>jna.platform.library.path</code> Platform-specific paths
- * <li><code>java.library.path</code> Default Java library search path
  * </ol>
  * @author Wayne Meissner, split library loading from Function.java
  */
