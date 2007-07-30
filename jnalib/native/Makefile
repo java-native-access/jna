@@ -118,20 +118,23 @@ LIBSFX=.dylib
 JNISFX=.jnilib
 # Use universal binary when updated to work with gcc 4
 ifneq ($(SDKROOT),)
+SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
+ISYSROOT=-isysroot $(SDKROOT)
 ifneq ($(UNIVERSAL),)
-ARCHFLAGS=-arch ppc -arch i386 -isysroot $(SDKROOT) -Wl,-syslibroot,$(SDKROOT)
+ARCHFLAGS=-arch ppc -arch i386
 ASMDISPATCH_OBJS=$(BUILD)/dispatch_i386.o $(BUILD)/dispatch_ppc.o
 else
-ARCHFLAGS=-arch $(ARCH) -isysroot $(SDKROOT) -Wl,-syslibroot,$(SDKROOT)
+ARCHFLAGS=-arch $(ARCH)
 endif
 endif
-PCFLAGS+=$(ARCHFLAGS) -x objective-c
+PCFLAGS+=$(ARCHFLAGS) $(ISYSROOT) -x objective-c
 CDEFINES=-DTARGET_RT_MAC_CFM=0
 LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -compatibility_version $(shell echo ${VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
   -current_version $(VERSION) \
   -mmacosx-version-min=10.3 \
-  -install_name ${@F}
+  -install_name ${@F} \
+  $(SYSLIBROOT)
 # JAWT linkage handled by -framework JavaVM
 LIBS=
 endif
