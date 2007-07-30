@@ -35,11 +35,7 @@
 // a bug loading libmawt.so.  We'd prefer pure-java access to native window
 // IDs, but that isn't available through WindowPeer until 1.6.
 #include <jawt.h>
-// OSX needs to compile as objc for this to work; don't do that until
-// OSX actually needs or can use a native window ID (NSView*)
-#ifndef __APPLE__
 #include <jawt_md.h>
-#endif
 
 static JAWT awt;
 static int jawt_initialized;
@@ -1237,8 +1233,8 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject classp, jobject w)
       JAWT_Win32DrawingSurfaceInfo* wdsi = 
         (JAWT_Win32DrawingSurfaceInfo*)dsi->platformInfo;
       if (wdsi != NULL) {
-        // FIXME this kills the VM if the window is not realized
-        // wdsi might be a bogus, non-null value
+        // FIXME this kills the VM if the window is not realized;
+        // if not, wdsi might be a bogus, non-null value
         // TODO: fix JVM (right) or ensure window is realized
         handle = (jint)wdsi->hwnd;
         if (!handle) {

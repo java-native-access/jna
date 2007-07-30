@@ -18,6 +18,7 @@ OS=$(shell uname | sed -e 's/CYGWIN.*/win32/g' \
                         -e 's/Darwin.*/darwin/g' \
                         -e 's/Linux.*/linux/g')
 
+VERSION=$(shell sed -n 's/^.*version. value="\(.*\)".*/\1/p' ../build.xml)
 JAVA_INCLUDES=-I"$(JAVA_HOME)/include" \
               -I"$(JAVA_HOME)/include/$(OS)"
 BUILD=../build/native
@@ -118,16 +119,21 @@ JNISFX=.jnilib
 # Use universal binary when updated to work with gcc 4
 ifneq ($(SDKROOT),)
 ifneq ($(UNIVERSAL),)
-ARCHFLAGS=-arch ppc -arch i386 -isysroot $(SDKROOT)
+ARCHFLAGS=-arch ppc -arch i386 -isysroot $(SDKROOT) -Wl,-syslibroot,$(SDKROOT)
 ASMDISPATCH_OBJS=$(BUILD)/dispatch_i386.o $(BUILD)/dispatch_ppc.o
 else
-ARCHFLAGS=-arch $(ARCH) -isysroot $(SDKROOT)
+ARCHFLAGS=-arch $(ARCH) -isysroot $(SDKROOT) -Wl,-syslibroot,$(SDKROOT)
 endif
 endif
-PCFLAGS+=$(ARCHFLAGS)
+PCFLAGS+=$(ARCHFLAGS) -x objective-c
 CDEFINES=-DTARGET_RT_MAC_CFM=0
-LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM 
-LIBDIR=$(SDKROOT)/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Libraries
+LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
+  -compatibility_version $(shell echo ${VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
+  -current_version $(VERSION) \
+  -mmacosx-version-min=10.3 \
+  -install_name ${@F}
+# JAWT linkage handled by -framework JavaVM
+LIBS=
 endif
 
 $(BUILD)/%.o : %.c
@@ -165,3 +171,6 @@ $(TESTLIB): $(BUILD)/testlib.o $(SPECS)
 
 clean:
 	$(RM) -rf $(BUILD)
+
+echo:
+	echo version=$(VERSION)
