@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Represents a native structure with a Java peer class. 
  * <p>
- * See the <a href=overview.html>overview</a> for supported type mappings.
+ * See the <a href={@docRoot}/overview-summary.html>overview</a> for supported type mappings.
  * <p>
  * NOTE: Strings are used to represent native C strings because usage of 
  * <code>char *</code> is generally more common than <code>wchar_t *</code>.<p>

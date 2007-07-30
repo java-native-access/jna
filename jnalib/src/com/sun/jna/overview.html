@@ -167,7 +167,9 @@ Alternatively, you can reallocate a single Structure instance into an array as
 follows:<br>
 <blockquote><code><pre>
 Device dev = new Device();
+// As an array of Structure
 Structure[] structs = dev.toArray(size);
+// As an array of Device
 Device[] devices = (Device[])dev.toArray(new Device[size]);
 </pre></code></blockquote>
 
