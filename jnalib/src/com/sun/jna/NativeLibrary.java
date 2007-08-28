@@ -51,8 +51,13 @@ public class NativeLibrary {
     // Dummy to force load of the jnidispatch library
     private static final Pointer NULL = Pointer.NULL;
 
-    private NativeLibrary(String libraryName) {
+    private NativeLibrary(String libraryName, String libraryPath, long handle) {
         this.libraryName = getLibraryName(libraryName);
+        this.libraryPath = libraryPath;
+        this.handle = handle;
+    }
+    
+    private static NativeLibrary loadLibrary(String libraryName) {
         List searchPath = new LinkedList(librarySearchPath);
         
         //
@@ -64,8 +69,8 @@ public class NativeLibrary {
                 searchPath.addAll(0, customPaths);
             }
         }
-        libraryPath = findLibraryPath(libraryName, searchPath);
-        handle = open(libraryPath);
+        String libraryPath = findLibraryPath(libraryName, searchPath);
+        long handle = open(libraryPath);
         if (handle == 0) {
             //
             // Failed to load the library normally - try to match libfoo.so.*
@@ -80,6 +85,7 @@ public class NativeLibrary {
                 throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "'");
             }
         }
+        return new NativeLibrary(libraryName, libraryPath, handle);
     }
     
     private String getLibraryName(String libraryName) {
@@ -115,7 +121,7 @@ public class NativeLibrary {
             WeakReference ref = (WeakReference)libraries.get(libraryName);
             NativeLibrary library = ref != null ? (NativeLibrary)ref.get() : null;
             if (library == null) {
-                library = new NativeLibrary(libraryName);
+                library = loadLibrary(libraryName);
                 ref = new WeakReference(library);
                 libraries.put(library.getName(), ref);
                 libraries.put(library.getFile().getAbsolutePath(), ref);
@@ -206,7 +212,10 @@ public class NativeLibrary {
     }
     /** Close the library when it is no longer referenced. */
     protected void finalize() {
-        close(handle);
+        if (handle != 0) {
+            close(handle);
+            handle = 0;
+        }
     }
     
     private static List initPaths(String key) {

@@ -16,6 +16,8 @@ Bug Fixes
 * Write initialized Structure[] argument memory prior to function calls
 * Fix IllegalArgumentException reading WString into a Structure
 * Clear memory when allocating a structure block (fixes VM crash)
+* Remove versioned JAWT dependency on OSX, allowing use on 10.3/JRE1.4.
+* Avoid attempts to free native library if it failed to load
 
 Release 2.4
 Features
