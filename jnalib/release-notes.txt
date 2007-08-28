@@ -7,6 +7,7 @@ improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
 * Provide access to ByteBuffer direct address as a Pointer
 * Provide customization of native string encoding with jna.encoding system property 
 * Provide access to native peer for java.awt.Component
+* Support MINGW32 builds
 
 Bug Fixes
 * Properly handle VMs with reversed Structure member storage

@@ -14,6 +14,7 @@
 #   to target i386 on OSX/PPC, do 
 #     make ARCH=i386
 OS=$(shell uname | sed -e 's/CYGWIN.*/win32/g' \
+                        -e 's/MINGW32.*/win32/g' \
                         -e 's/SunOS.*/sparc/g' \
                         -e 's/Darwin.*/darwin/g' \
                         -e 's/Linux.*/linux/g')
