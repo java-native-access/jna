@@ -1,3 +1,12 @@
+Release 2.6
+Features
+* Provide access to native peer for java.awt.Component
+* Provide access to native peer on OS X.
+* Support MINGW32 builds
+
+Bug Fixes
+* Avoid attempts to free native library if it failed to load
+
 Release 2.5
 Features
 * Unions
@@ -6,8 +15,6 @@ improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
 * Provide type mapping in callback arguments/results
 * Provide access to ByteBuffer direct address as a Pointer
 * Provide customization of native string encoding with jna.encoding system property 
-* Provide access to native peer for java.awt.Component
-* Support MINGW32 builds
 
 Bug Fixes
 * Properly handle VMs with reversed Structure member storage
@@ -19,7 +26,6 @@ Bug Fixes
 * Fix IllegalArgumentException reading WString into a Structure
 * Clear memory when allocating a structure block (fixes VM crash)
 * Remove versioned JAWT dependency on OSX, allowing use on 10.3/JRE1.4.
-* Avoid attempts to free native library if it failed to load
 
 Release 2.4
 Features

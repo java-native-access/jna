@@ -295,9 +295,6 @@ Java_com_sun_jna_Function_invokePointer(JNIEnv *env, jobject self,
 {
     jvalue result;
     dispatch(env, self, callconv, arr, TYPE_PTR, &result);
-    if ((*env)->ExceptionCheck(env)) {
-        return NULL;
-    }
     return newJavaPointer(env, L2A(result.j));
 }
 
@@ -1065,10 +1062,6 @@ newWideCString(JNIEnv *env, jstring str)
     jcharArray chars = 0;
     wchar_t *result = 0;
 
-    if ((*env)->ExceptionCheck(env)) {
-      return result;
-    }
-
     chars = (*env)->CallObjectMethod(env, str, MID_String_toCharArray);
     if (!(*env)->ExceptionCheck(env)) {
         jint len = (*env)->GetArrayLength(env, chars);
@@ -1246,8 +1239,21 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject classp, jobject w)
         throwByName(env, "java/lang/Error", "Can't get w32 platform info");
       }
 #elif __APPLE__
-      throwByName(env, "java/lang/UnsupportedOperationException",
-                  "Native window handle access not supported on this platform");
+      // WARNING: the view ref is not guaranteed to be stable except during
+      // component paint (see jni_md.h)
+      JAWT_MacOSXDrawingSurfaceInfo* mdsi = 
+        (JAWT_MacOSXDrawingSurfaceInfo*)dsi->platformInfo;
+      if (mdsi != NULL) {
+        handle = (jlong)mdsi->cocoaViewRef;
+        if (!handle) {
+          throwByName(env, "java/lang/IllegalStateException",
+                      "Can't get Cocoa View");
+        }
+      }
+      else {
+        throwByName(env, "java/lang/UnsupportedOperationException",
+                    "Native window handle access not supported on this platform");
+      }
 #else 
       JAWT_X11DrawingSurfaceInfo* xdsi =
         (JAWT_X11DrawingSurfaceInfo*)dsi->platformInfo;
