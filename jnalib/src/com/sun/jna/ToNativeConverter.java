@@ -37,4 +37,6 @@ public interface ToNativeConverter {
      * </ul>
      */
     public Object toNative(Object value);
+    /** Indicate the type expected from {@link #toNative}. */
+    public Class nativeType();
 }

@@ -13,22 +13,24 @@
 #     make ARCH=ppc
 #   to target i386 on OSX/PPC, do 
 #     make ARCH=i386
-OS=$(shell uname | sed -e 's/CYGWIN.*/win32/g' \
-                        -e 's/MINGW32.*/win32/g' \
-                        -e 's/SunOS.*/sparc/g' \
+OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
+                        -e 's/SunOS.*/solaris/g' \
+                        -e 's/FreeBSD.*/freebsd/g' \
                         -e 's/Darwin.*/darwin/g' \
                         -e 's/Linux.*/linux/g')
 
-VERSION=$(shell sed -n 's/^.*version. value="\(.*\)".*/\1/p' ../build.xml)
+VERSION=$(shell sed -n 's/^.*version. value="\(\([0-9][0-9]*\)\(\.[0-9][0-9]*\(\.[0-9][0-9]*\)\?\)\?\).*".*/\1/p' ../build.xml)
 JAVA_INCLUDES=-I"$(JAVA_HOME)/include" \
               -I"$(JAVA_HOME)/include/$(OS)"
 BUILD=../build/native
 JAVAH=$(BUILD)
 INSTALLDIR=../build/$(OS)
-ASMDISPATCH_OBJS=$(BUILD)/dispatch_$(ARCH).o
 JNIDISPATCH_OBJS=$(BUILD)/dispatch.o \
-                 $(BUILD)/callback.o \
-                 $(ASMDISPATCH_OBJS)
+                 $(BUILD)/callback.o 
+FFI_SRC=$(shell pwd)/libffi
+FFI_BUILD=$(BUILD)/libffi
+FFI_LIB=$(FFI_BUILD)/.libs/libffi_convenience.a
+FFI_CONFIG=--disable-static --with-pic=yes
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
 
@@ -49,9 +51,9 @@ ifeq ($(DEBUG),true)
 CDEBUG=-g
 endif
 COUT=-o $@
-CINCLUDES=$(JAVA_INCLUDES) -I"$(JAVAH)"
+CINCLUDES=$(JAVA_INCLUDES) -I"$(JAVAH)" -I$(FFI_BUILD)/include
 CDEFINES=-D_REENTRANT
-PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses -Werror
+PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses
 CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES)
 # -static-libgcc avoids gcc library incompatibilities across linux systems
 LDFLAGS=-o $@ -shared -Wl,-soname,$@ -static-libgcc
@@ -61,7 +63,7 @@ STRIP=strip -x
 # end defaults
 
 ifeq ($(OS),win32)
-# Uncomment this line to use MSVC
+# Uncomment this line to use MSVC (doesn't work with libffi)
 #CC=cl
 ARCH=i386
 
@@ -104,29 +106,50 @@ CDEFINES+=-DNEED_JAWT_HACK
 LIBS=
 endif
 
-# FIXME untested
-ifeq ($(OS),sparc)
-ARCH=sparc
+ifeq ($(OS),freebsd)
+ARCH=i386
 PCFLAGS+=-fPIC
+CINCLUDES+=-I/usr/X11R6/include
+LDFLAGS=-o $@ -shared -pthread
 # Avoid 1.5/1.6 bug caused by linking directly to -ljawt
 CDEFINES+=-DNEED_JAWT_HACK
 LIBS=
 endif
 
+ifeq ($(OS),solaris)
+ifeq ($(ARCH),)
+ARCH=$(shell uname -n)
+endif
+PCFLAGS+=-fPIC
+# Avoid 1.5/1.6 bug caused by linking directly to -ljawt
+CDEFINES+=-DNEED_JAWT_HACK
+LDFLAGS=-o $@ -G
+LIBS=
+ifeq ($(ARCH), sparcv9)
+  # alter CC instead of PCFLAGS, since we need to pass it down to libffi 
+  # configure and some of the other settings in PCFLAGS might make the build 
+  # choke
+  CC += -m64  
+  LDFLAGS += -m64 
+endif
+endif
+
 ifeq ($(OS),darwin)
 ARCH=$(shell arch)
+ifeq ($(ARCH),ppc)
+ALT_ARCH=i386
+OSX_FFI_CONFIG=--host=i386-apple-darwin --disable-dependency-tracking
+else
+ALT_ARCH=ppc
+OSX_FFI_CONFIG=--host=powerpc-apple-darwin --disable-dependency-tracking
+endif
+FFI_ALT_BUILD=$(BUILD)/libffi-$(ALT_ARCH)
 LIBSFX=.dylib
 JNISFX=.jnilib
-# Use universal binary when updated to work with gcc 4
 ifneq ($(SDKROOT),)
 SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
 ISYSROOT=-isysroot $(SDKROOT)
-ifneq ($(UNIVERSAL),)
 ARCHFLAGS=-arch ppc -arch i386
-ASMDISPATCH_OBJS=$(BUILD)/dispatch_i386.o $(BUILD)/dispatch_ppc.o
-else
-ARCHFLAGS=-arch $(ARCH)
-endif
 endif
 PCFLAGS+=$(ARCHFLAGS) $(ISYSROOT) -x objective-c
 CDEFINES=-DTARGET_RT_MAC_CFM=0
@@ -140,20 +163,9 @@ LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
 LIBS=
 endif
 
-$(BUILD)/%.o : %.c
+$(BUILD)/%.o : %.c $(FFI_LIB)
 	@mkdir -p $(BUILD)
 	$(CC) $(CFLAGS) -c $< $(COUT)
-
-$(BUILD)/%.o: %.s
-	@mkdir -p $(BUILD)
-	$(AS) $(ASFLAGS) $< -o $@
-
-# Generate assembly listing 
-$(BUILD)/%.asm: %.c
-	@mkdir -p $(BUILD)
-	$(CC) $(CFLAGS) $(CASM) -c $< 
-	@if [ -f $*.asm ]; then mv $*.asm $@; fi
-	@rm -f $*.obj ${@D}/$*.o
 
 all: $(LIBRARY) $(TESTLIB)
 
@@ -167,14 +179,36 @@ $(BUILD)/test_dispatch: test_dispatch.c $(BUILD)/dispatch.o $(BUILD)/dispatch_$(
 $(BUILD)/specs.new: 
 	gcc -dumpspecs | sed s%dllcrt2%/lib/mingw/dllcrt2%g > $@
 
-$(LIBRARY): $(JNIDISPATCH_OBJS) $(SPECS)
-	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(LIBS)
+$(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB) $(SPECS)
+	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
 
 $(TESTLIB): $(BUILD)/testlib.o $(SPECS)
 	$(LD) $(LDFLAGS) $< $(TESTDEF) 
 
-clean:
-	$(RM) -rf $(BUILD)
+$(FFI_LIB):
+	@mkdir -p $(FFI_BUILD)
+	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
+	  echo "Configuring libffi ($(ARCH))"; \
+	  (cd $(FFI_BUILD) \
+	    && CC="$(CC)" $(FFI_SRC)/configure $(FFI_CONFIG)); \
+	fi
+	$(MAKE) -C $(FFI_BUILD)
+ifeq ($(OS),darwin)
+	@mkdir -p $(FFI_ALT_BUILD)
+	@if [ ! -f $(FFI_ALT_BUILD)/Makefile ]; then \
+	  echo "Configuring libffi ($(ALT_ARCH))"; \
+	  (cd $(FFI_ALT_BUILD) \
+	    && CFLAGS="-arch $(ALT_ARCH) $(ISYSROOT) $(COPT) $(CDEBUG) $(CDEFINES)" \
+               LDFLAGS="-arch $(ALT_ARCH)" \
+               $(FFI_SRC)/configure $(FFI_CONFIG) $(OSX_FFI_CONFIG)); \
+	fi
+	$(MAKE) -C $(FFI_ALT_BUILD)
+	libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F} $(FFI_ALT_BUILD)/.libs/${@F}
+	@mv $@.tmp $@
+endif
 
-echo:
-	echo version=$(VERSION)
+clean:
+	$(RM) -rf $(BUILD) 
+
+version:
+	@echo version=$(VERSION)

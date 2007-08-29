@@ -49,8 +49,7 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                     return Pointer.class;
                 }
             };
-            addToNativeConverter(String.class, stringConverter);
-            addFromNativeConverter(String.class, stringConverter);
+            addTypeConverter(String.class, stringConverter);
         }
         TypeConverter booleanConverter = new TypeConverter() {
             public Object toNative(Object value) {
@@ -64,7 +63,6 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                 return Integer.class;
             }
         };
-        addToNativeConverter(Boolean.class, booleanConverter);
-        addFromNativeConverter(Boolean.class, booleanConverter);
+        addTypeConverter(Boolean.class, booleanConverter);
     }
 }

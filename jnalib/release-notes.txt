@@ -1,5 +1,6 @@
-Release 2.6
+Release 3.0
 Features
+* More supported platforms, via GCC's libffi
 * Provide access to native peer for java.awt.Component
 * Provide access to native peer on OS X.
 * Support MINGW32 builds

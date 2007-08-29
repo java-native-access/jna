@@ -1,26 +1,13 @@
 #ifndef DISPATCH_H
 #define DISPATCH_H
 
+#include "ffi.h"
+#include "com_sun_jna_Function.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* C variable types for arguments and return values. */
-typedef enum _vartype {
-    /* pointer */
-    TYPE_PTR = 0, 
-    /* 32-bit or smaller integer */
-    TYPE_INT32,
-    TYPE_VOID = TYPE_INT32,
-    /* 32-bit floating point */
-    TYPE_FP32,
-    /* 64-bit floating point */
-    TYPE_FP64,
-    /* 64-bit integer */
-    TYPE_INT64,
-} type_t;
-
-#include "com_sun_jna_Function.h"
 /* These are the calling conventions an invocation can handle. */
 typedef enum _callconv {
     CALLCONV_C = com_sun_jna_Function_C_CONVENTION,
@@ -29,23 +16,21 @@ typedef enum _callconv {
 #endif
 } callconv_t;
 
-/* Represents a machine word (one stack element). */
-typedef union _word {
-    jint i;
-    jfloat f;
-    void *p;
-} word_t;
-
 /* Maximum number of allowed arguments. */
 #define MAX_NARGS 32
 
 typedef struct _callback {
-  void *insns;
+  ffi_closure* ffi_closure;
+  ffi_cif ffi_cif;
+  ffi_type* ffi_args[MAX_NARGS];
+  JavaVM* vm;
   jobject object;
   jmethodID methodID;
-  jsize param_count;
   char param_jtypes[MAX_NARGS];
 } callback;
+
+// Size of a register
+typedef long word_t;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
 #define L2A(X) ((void *)(unsigned long)(X))
@@ -87,10 +72,13 @@ typedef struct _callback {
 extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern jobject newJavaPointer(JNIEnv *, void *);
 extern char get_jtype(JNIEnv*, jclass);
+extern jboolean jnidispatch_callback_init(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
-                                 jobjectArray, callconv_t);
-extern jvalue extract_value(JNIEnv*, jobject, type_t*);
-extern jobject new_object(JNIEnv*, char, void*, int*);
+                                 jobjectArray, jclass, 
+                                 callconv_t);
+extern void free_callback(JNIEnv*, callback*);
+extern void extract_value(JNIEnv*, jobject, void*);
+extern jobject new_object(JNIEnv*, char, void*);
 #ifdef __cplusplus
 }
 #endif

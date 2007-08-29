@@ -54,7 +54,7 @@ public class Pointer {
             // Let the system try
             System.loadLibrary("jnidispatch");
         }
-        SIZE = initIDs();
+        SIZE = pointerSize();
         LONG_SIZE = longSize();
         WCHAR_SIZE = wideCharSize();
     }
@@ -66,7 +66,7 @@ public class Pointer {
             osPrefix = "win32-" + arch;
         }
         else if (Platform.isMac()) {
-            osPrefix = "darwin-" + arch;
+            osPrefix = "darwin";
         }
         else if (Platform.isLinux()) {
             osPrefix = "linux-" + arch;
@@ -144,7 +144,7 @@ public class Pointer {
      * Initialize field and method IDs for native methods of this class. 
      * Returns the size of a native pointer.
      **/
-    private static native int initIDs();
+    private static native int pointerSize();
 
     /** Return the size of a native <code>long</code>. */
     private static native int longSize();

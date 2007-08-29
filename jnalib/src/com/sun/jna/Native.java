@@ -66,7 +66,8 @@ public class Native {
         if (!c.isDisplayable()) 
             throw new IllegalStateException("Component must be displayable");
         // On X11 VMs prior to 1.5, the window must be visible
-        if (System.getProperty("java.version").matches("^1\\.4\\..*")) {
+        if (Platform.isX11()
+            && System.getProperty("java.version").matches("^1\\.4\\..*")) {
             if (!c.isVisible()) {
                 throw new IllegalStateException("Component must be visible");
             }

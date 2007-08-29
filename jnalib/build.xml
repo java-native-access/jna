@@ -30,7 +30,7 @@
             value="Copyright &amp;copy; 2007 ${company.full}. All Rights Reserved."/>
 
   <!-- Software release version -->            
-  <property name="version" value="2.6"/>
+  <property name="version" value="3.0"/>
   <property name="jdk" value="1.4"/>
 
   <!-- Miscellaneous -->
@@ -53,11 +53,15 @@
     <condition property="os.prefix" value="linux-${os.arch}">
       <os name="Linux"/>
     </condition>
-    <condition property="os.prefix" value="darwin-${os.arch}">
+    <!-- Darwin builds are universal, no arch required -->
+    <condition property="os.prefix" value="darwin">
       <os family="mac"/>
     </condition>
     <condition property="os.prefix" value="sunos-${os.arch}">
-      <os family="unix" arch="sparc"/>
+      <os name="SunOS"/>
+    </condition>
+    <condition property="os.prefix" value="freebsd-${os.arch}">
+      <os name="FreeBSD"/>
     </condition>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${os.arch})"/>
     <condition property="jdk.home" value="${java.home}">
@@ -101,6 +105,7 @@
       <pathelement path="${build}/examples.jar"/>
       <pathelement path="${test.classes}"/>
       <pathelement path="${ant.home}/lib/clover.jar"/>
+      <path refid="test.libs"/>
     </path>
   </target>
 
@@ -187,7 +192,19 @@
     <condition property="make.BUILD" value="BUILD=../build/native" else="BUILD=${build.native}">
       <os family="windows"/>
     </condition>
-    <exec executable="make" dir="${native}" failonerror="true">
+    <condition property="make.PATH" value="PATH=/usr/sfw/bin:/usr/bin:/usr/ccs/bin" else="IGNORE=">
+      <os name="SunOS"/>
+    </condition>
+    <condition property="make" value="/usr/sfw/bin/gmake">
+      <os name="SunOS"/>
+    </condition>
+    <condition property="make" value="gmake">
+      <os name="FreeBSD"/>
+    </condition>
+    <!-- Default make program -->
+    <property name="make" value="make"/>
+
+    <exec executable="${make}" dir="${native}" failonerror="true">
       <arg value="JAVA_HOME=${jdk.home}"/>
       <arg value="JAVAH=${build.native}"/>
       <arg value="DEBUG=${debug.native}"/>
@@ -195,6 +212,7 @@
       <arg value="${make.BUILD}"/>
       <arg value="${make.SDKROOT}"/>
       <arg value="${make.ARCH}"/>
+      <arg value="${make.PATH}"/>
       <arg value="VERSION=${version}"/>
     </exec>
     <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
@@ -319,15 +337,27 @@
       <zipfileset src="${dist}/win32-x86.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-x86"/>
-      <zipfileset src="${dist}/darwin-i386.jar" 
+      <zipfileset src="${dist}/darwin.jar" 
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/darwin-i386"/>
-      <zipfileset src="${dist}/darwin-ppc.jar" 
-                  includes="*jnidispatch*"
-                  prefix="com/sun/jna/darwin-ppc"/>
+                  prefix="com/sun/jna/darwin"/>
       <zipfileset src="${dist}/linux-i386.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-i386"/>
+      <zipfileset src="${dist}/linux-amd64.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-amd64"/>
+      <zipfileset src="${dist}/sunos-x86.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/sunos-x86"/>
+      <zipfileset src="${dist}/sunos-sparc.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/sunos-sparc"/>
+      <zipfileset src="${dist}/sunos-sparcv9.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/sunos-sparcv9"/>
+      <zipfileset src="${dist}/freebsd-i386.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/freebsd-i386"/>
     </jar>
     <copy todir="${dist}">
       <fileset dir="${build}">

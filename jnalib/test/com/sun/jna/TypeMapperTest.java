@@ -34,6 +34,9 @@ public class TypeMapperTest extends TestCase {
             public Object toNative(Object arg) {
                 return new Integer(Boolean.TRUE.equals(arg) ? MAGIC : 0);
             }
+            public Class nativeType() {
+                return Integer.class;
+            }
         });
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         TestLibrary lib = (TestLibrary) 
@@ -46,6 +49,9 @@ public class TypeMapperTest extends TestCase {
         mapper.addToNativeConverter(String.class, new ToNativeConverter() {
             public Object toNative(Object arg) {
                 return Integer.valueOf((String) arg, 16);
+            }
+            public Class nativeType() {
+                return Integer.class;
             }
         });
         Map options = new HashMap();
@@ -62,6 +68,9 @@ public class TypeMapperTest extends TestCase {
             public Object toNative(Object arg) {
                 return Integer.valueOf(((CharSequence)arg).toString(), 16);
             }
+            public Class nativeType() {
+                return Integer.class;
+            }
         });
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
@@ -77,6 +86,9 @@ public class TypeMapperTest extends TestCase {
         mapper.addToNativeConverter(Double.class, new ToNativeConverter() {
             public Object toNative(Object arg) {
                 return new Integer(((Double)arg).intValue());
+            }
+            public Class nativeType() {
+                return Integer.class;
             }
         });
         Map options = new HashMap();
@@ -98,6 +110,9 @@ public class TypeMapperTest extends TestCase {
         mapper.addToNativeConverter(Boolean.class, new ToNativeConverter() {
             public Object toNative(Object value) {
                 return new Integer(Boolean.TRUE.equals(value) ? MAGIC : 0);
+            }
+            public Class nativeType() {
+                return Integer.class;
             }
         });
         mapper.addFromNativeConverter(Boolean.class, new FromNativeConverter() {
@@ -137,8 +152,7 @@ public class TypeMapperTest extends TestCase {
                 return Integer.class;
             }
         };
-        mapper.addToNativeConverter(Boolean.class, converter);
-        mapper.addFromNativeConverter(Boolean.class, converter);
+        mapper.addTypeConverter(Boolean.class, converter);
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         StructureTestLibrary lib = (StructureTestLibrary)
@@ -162,7 +176,7 @@ public class TypeMapperTest extends TestCase {
         float callInt32Callback(Int32Callback c, float arg, float arg2);
     }
 
-    public void testCallbackArgumentConversion() throws Exception {
+    public void testCallbackTypeMapping() throws Exception {
         final DefaultTypeMapper mapper = new DefaultTypeMapper();
         Map options = new HashMap() {
             { put(Library.OPTION_TYPE_MAPPER, mapper); }
@@ -181,8 +195,7 @@ public class TypeMapperTest extends TestCase {
                 return new Integer(Math.round(((Float)value).floatValue()));
             }
         };
-        mapper.addToNativeConverter(float.class, converter);
-        mapper.addFromNativeConverter(float.class, converter);
+        mapper.addTypeConverter(float.class, converter);
         CallbackTestLibrary.Int32Callback cb = new CallbackTestLibrary.Int32Callback() {
             public float callback(float arg, float arg2) {
                 return arg + arg2;

@@ -10,6 +10,7 @@
  */
 package com.sun.jna;
 
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -433,6 +434,10 @@ public class Function extends Pointer {
     private boolean isPrimitiveArray(Class argClass) {
         return argClass.isArray() 
             && argClass.getComponentType().isPrimitive();
+    }
+    
+    private boolean isVarArgs(Method m, Object[] args) {
+        return false;
     }
     
     /**

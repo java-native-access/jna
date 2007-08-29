@@ -1,227 +1,64 @@
+/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * <p/>
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.  
+ */
 
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 #include <jni.h>
+
+#if !defined(_WIN32)
+#  include <sys/types.h>
+#  include <sys/param.h>
+#  if defined(__linux__)
+#    include <sys/user.h> /* for PAGE_SIZE */
+#  endif
+#  include <sys/mman.h>
+#  ifdef sun
+#    include <sys/sysmacros.h>
+#  endif
+#  include <sys/queue.h>
+#  include <pthread.h>
+#  define MMAP_CLOSURE
+#endif
 #include "dispatch.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef __linux__
-#define NO_UNDERSCORE
+static ffi_type* get_ffi_type(char jtype);
+static ffi_type* get_ffi_rtype(char jtype);
+static void callback_dispatch(ffi_cif*, void*, void**, void*);
+static ffi_closure* alloc_closure(JNIEnv *env);
+static void free_closure(JNIEnv* env, ffi_closure *closure);
+
+#ifdef MMAP_CLOSURE
+static pthread_mutex_t closure_lock;
+static LIST_HEAD(closure_list, closure) closure_list;
 #endif
 
-static type_t get_type(char type);
-static void callback_dispatch(JavaVM*, callback*, char*);
-
-/* Template glue to translate native callback invocations into
- * callback_dispatch which can perform the java invocation.
- */
-#define ARG_JVM 0x11111111
-#define ARG_CB  0x22222222
-#define ARG_DISPATCH 0xdeadbeef
-#define CALLEE_SIZE 0x99999999
-
-#ifdef _MSC_VER
-static void
-callback_asm_template() {
-
-  /* Windows/MSVC -O1 */
-  // push ebp
-  // mov ebp,esp
-  __asm {
-    lea  eax,[ebp+8]
-    push eax
-    push ARG_CB
-    push ARG_JVM
-    lea  eax,callback_dispatch
-    call eax
-    add esp,12
-    // if callback is stdcall, caller expects us to clean up stack
-    mov ecx,CALLEE_SIZE
-    cmp ecx,0
-    je  not_stdcall
-    pop ebp
-    pop ecx
-    add esp,CALLEE_SIZE
-    push ecx
-    push ebp
-not_stdcall:
-  }
-  // pop ebp
-  // ret
-}
-static void __template_end__() { }
-#define TEMPLATE_SIZE \
-  ((char*)__template_end__ - (char*)callback_asm_template)
-
-#define RETURN_INT32(I) __asm mov eax,I
-#define RETURN_INT64(L) { \
-unsigned long _upper = (unsigned long)((L)>>32); \
-unsigned long _lower = (unsigned long)(L); \
-__asm mov eax,_lower __asm mov edx,_upper } 
-#define RETURN_FP32(F) __asm fld F
-#define RETURN_FP64(D) __asm fld D
-#define RETURN_PTR(P) { \
-unsigned long _lower = (unsigned long)(P); \
-__asm mov eax,_lower } 
-
-#endif /* _MSC_VER */
-
-#ifdef __GNUC__
-
-void __template_dummy__() {
-
-#ifdef NO_UNDERSCORE
-  asm(".globl callback_asm_template");
-  asm("\ncallback_asm_template:");
-#else
-  asm(".globl _callback_asm_template");
-  asm("\n_callback_asm_template:");
-#endif
-
-#ifdef __i386__
-
-  asm("push %ebp");
-  asm("mov %esp,%ebp");
-  asm("lea 8(%ebp),%eax"); 
-  asm("pushl %eax");
-  asm("pushl %0" :: "i" (ARG_CB));
-  asm("pushl %0" :: "i" (ARG_JVM));
-  asm("movl %0,%%eax" :: "i" (ARG_DISPATCH));
-  asm("call *%eax");
-  asm("addl $12, %esp");
-#ifdef _WIN32
-  // if callback is stdcall, caller expects us to clean up stack
-  asm("movl %0,%%ecx" :: "i" (CALLEE_SIZE));
-  asm("cmpl $0,%ecx");
-  asm("je  not_stdcall");
-  asm("popl %ebp");
-  asm("popl %ecx");
-  asm("add %0,%%esp" :: "i" (CALLEE_SIZE));
-  asm("pushl %ecx");
-  asm("pushl %ebp");
-  asm("\nnot_stdcall:");
-#endif
-  asm("popl %ebp");
-  asm("ret");
-
-#define RETURN_INT32(I) asm("movl %0,%%eax" :: "g" (I))
-#define RETURN_VOID RETURN_INT32(0)
-#define RETURN_INT64(L) \
-asm("movl %0,%%edx\n\tmovl %1,%%eax" :: \
-    "g" (*((unsigned long*)&(L)+1)), \
-    "g" (*(unsigned long*)&(L)) : "%eax","%edx")
-#define RETURN_FP32(F) asm("flds %0" :: "m" (F))
-#define RETURN_FP64(D) asm("fldl %0" :: "m" (D))
-#define RETURN_PTR(P) RETURN_INT32(((unsigned long)(P))&0xFFFFFFFF)
-
-#elif __ppc__
-  
-#define LINKAGE 24
-#define PARAMS (32*4) // callee params unknown, use max
-#define REGS (0*4)
-#define SPACE (LINKAGE+PARAMS+REGS)
-#define ALIGN ((SPACE + 15) & -16)
-#define ARGS (ALIGN+24)
-#define ARG(N) (ARGS+((N)*4))
-  asm("mflr r0");
-  asm("stw r0,8(r1)");
-  asm("stwu r1,%0(r1)" :: "i" (-ALIGN));
-  asm("li r2,0");
-  asm("\n.set CS_OFFSET,.-_callback_asm_template");
-  asm("ori r2,r2,0");
-
-#define STORE(GR,COUNT) \
-  asm("cmpwi r2,%0" :: "i" (COUNT)); \
-  asm("blt args_done"); \
-  asm("stw " GR ",%0(r1)" :: "i" (ARG(COUNT-1)))
-
-  // ensure any used registers are copied to the stack
-  // callback_dispatch doesn't use any fp regs, so don't need to save any
-  STORE("r3",1);
-  STORE("r4",2);
-  STORE("r5",3);
-  STORE("r6",4);
-  STORE("r7",5);
-  STORE("r8",6);
-  STORE("r9",7);
-  STORE("r10",8);
-  asm("\nargs_done:");
-  asm("li r3,0");
-  asm("\n.set VM_OFFSET,.-_callback_asm_template");
-  asm("ori r3,r3,0");
-  asm("oris r3,r3,0");
-  asm("li r4,0");
-  asm("\n.set CB_OFFSET,.-_callback_asm_template");
-  asm("ori r4,r4,0");
-  asm("oris r4,r4,0");
-  asm("addi r5,r1,%0" :: "i" (ARGS));
-  asm("li r12,0");
-  asm("\n.set B_OFFSET,.-_callback_asm_template");
-  asm("ori r12,r12,0");
-  asm("oris r12,r12,0");
-  asm("mtctr r12");
-  asm("bctrl");
-
-  asm("addi r1,r1,%0" :: "i" (ALIGN));
-  asm("lwz r0,8(r1)");
-  asm("mtlr r0");
-  asm("blr");
-
-#define RETURN_INT32(I) asm("lwz r3,%0" :: "m" (I))
-#define RETURN_INT64(L) \
-asm("mr r4,%0\n\tmr r3,%1" :: \
-    "g" ((unsigned long)((L)&0xFFFFFFFF)), \
-    "g" ((unsigned long)((L)>>32)) : "%r4","%r3")
-#define RETURN_FP32(F) asm("lfs f1,%0" :: "m" (F) : "%f1")
-#define RETURN_FP64(D) asm("lfd f1,%0" :: "m" (D) : "%f1")
-#define RETURN_PTR(P) asm("lwz r3,%0" :: "m" ((unsigned long)(P)) : "%r3")
-
-#endif /* __<arch>__ */
-
-#ifdef NO_UNDERSCORE
-  asm(".globl asm_template_end");
-  asm("\nasm_template_end:");
-#else
-  asm(".globl _asm_template_end");
-  asm("\n_asm_template_end:");
-#endif
-}
-extern void callback_asm_template();
-extern void asm_template_end();
-#define TEMPLATE_SIZE (asm_template_end-callback_asm_template)
-
-#endif /* __GNUC__ */
-
-#ifndef RETURN_INT32
-#define RETURN_INT32(I) return
-#define RETURN_INT64(L) return
-#define RETURN_FP32(F) return
-#define RETURN_FP64(D) return
-#define RETURN_PTR(P) return
-#undef TEMPLATE_SIZE
-#define TEMPLATE_SIZE (0)
-#endif
+static jclass classObject;
 
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
-                jobjectArray param_types, callconv_t call_conv) {
+                jobjectArray param_types, jclass return_type,
+                callconv_t calling_convention) {
   callback* cb;
-  unsigned long* insns;
+  ffi_abi abi = FFI_DEFAULT_ABI;
   int args_size = 0;
   jsize argc;
   JavaVM* vm;
-  int len = TEMPLATE_SIZE;
   int i;
-
-  if (TEMPLATE_SIZE == 0) {
-    throwByName(env, "java/lang/UnsupportedOperationException",
-                "Callbacks not supported on this platform");
-    return NULL;
-  }
 
   if ((*env)->GetJavaVM(env, &vm) != JNI_OK) {
     throwByName(env, "java/lang/UnsatisfiedLinkError",
@@ -230,177 +67,216 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   }
   argc = (*env)->GetArrayLength(env, param_types);
   cb = (callback *)malloc(sizeof(callback));
-  insns = (unsigned long*)malloc(len);
-  cb->insns = insns;
+  cb->ffi_closure = alloc_closure(env);
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
-  cb->param_count = argc;
+  cb->vm = vm;
+ 
   for (i=0;i < argc;i++) {
     jclass cls = (*env)->GetObjectArrayElement(env, param_types, i);
-    char jtype = get_jtype(env, cls);
-    type_t type = get_type(jtype);
-    cb->param_jtypes[i] = jtype;
-    if (type == TYPE_INT64 || type == TYPE_FP64
-        || (type == TYPE_PTR && sizeof(void*) == 8)) {
-      args_size += 8;
-    }
-    else {
-      args_size += 4;
-    }
+    cb->param_jtypes[i] = get_jtype(env, cls);
+    cb->ffi_args[i] = get_ffi_type(cb->param_jtypes[i]);
   }
 
-  // initialize and customize the callback template
-  memcpy((void*)insns, (void*)callback_asm_template, len);
-
-#ifdef __ppc__
-  {
-    // PPC can only load values 16 bits at a time, so it's easier
-    // to track the offsets and insert values directly
-    int vm_offset, cb_offset, cs_offset, b_offset;
-    unsigned long* insn;
-
-    asm("li %0,VM_OFFSET" : "=r" (vm_offset));
-    asm("li %0,CB_OFFSET" : "=r" (cb_offset));
-    asm("li %0,CS_OFFSET" : "=r" (cs_offset));
-    asm("li %0,B_OFFSET" : "=r" (b_offset));
-
-    insn = (unsigned long*)((char*)insns + cs_offset);
-    *insn = (*insn & ~0xFFFF) | (args_size/sizeof(void*));
-    
-    insn = (unsigned long*)((char *)insns + cb_offset);
-    *insn = (*insn & ~0xFFFF) | (((unsigned long)cb) & 0xFFFF);
-    *(insn+1) = (*(insn+1) & ~0xFFFF) | (((unsigned long)cb) >> 16);
-
-    insn = (unsigned long*)((char *)insns + vm_offset);
-    *insn = (*insn & ~0xFFFF) | (((unsigned long)vm) & 0xFFFF);
-    *(insn+1) = (*(insn+1) & ~0xFFFF) | (((unsigned long)vm) >> 16);
-
-    insn = (unsigned long*)((char *)insns + b_offset);
-    *insn = (*insn & ~0xFFFF) | (((unsigned long)callback_dispatch) & 0xFFFF);
-    *(insn+1) = (*(insn+1) & ~0xFFFF) | (((unsigned long)callback_dispatch) >> 16);
-  }
-#endif
-
-#if defined(__i386__) || defined(_WIN32)
-  // lazy way to insert custom arguments, just look for our magic values
-  // and replace them, knowing that they are not re-orged in the asm.
-  for (i=0;i < len-3;i++) {
-    unsigned long* addr = (unsigned long *)((char *)insns + i);
-    unsigned long value = *addr;
-    if (value == ARG_CB) {
-      *addr = (unsigned long)cb;
-      i += 3;
-    }
-    else if (value == ARG_JVM) {
-      *addr = (unsigned long)vm;
-      i += 3;
-    }
-    else if (value == ARG_DISPATCH) {
-      *addr = (unsigned long)callback_dispatch;
-      i += 3;
-    }
 #ifdef _WIN32
-    else if (value == CALLEE_SIZE) {
-      *addr = (call_conv == CALLCONV_STDCALL) ? args_size : 0;
-    }
-#endif
+  if (calling_convention == CALLCONV_STDCALL) {
+    abi = FFI_STDCALL;
   }
-#endif
+#endif // _WIN32
+
+  ffi_prep_cif(&cb->ffi_cif, abi, argc,
+               get_ffi_rtype(get_jtype(env, return_type)),
+               &cb->ffi_args[0]);
+  ffi_prep_closure(cb->ffi_closure, &cb->ffi_cif, callback_dispatch, cb);
 
   return cb;
 }
+void 
+free_callback(JNIEnv* env, callback *cb) {
+  (*env)->DeleteWeakGlobalRef(env, cb->object);
+  free_closure(env, cb->ffi_closure);
+  free(cb);
+}
 
-static type_t
-get_type(char type) {
-  switch(type) {
+static ffi_type*
+get_ffi_type(char jtype) {
+  switch (jtype) {
+  case 'Z': 
+    return &ffi_type_sint;
+  case 'B':
+    return &ffi_type_sint8;
+  case 'C':
+    return &ffi_type_sint;
+  case 'S':
+    return &ffi_type_sshort;
+  case 'I':
+    return &ffi_type_sint;
+  case 'J':
+    return &ffi_type_sint64;
+  case 'F':
+    return &ffi_type_float;
+  case 'D':
+    return &ffi_type_double;
   case 'V':
+    return &ffi_type_void;
+  case 'L':
+  default:
+    return &ffi_type_pointer;
+  }
+}
+static ffi_type*
+get_ffi_rtype(char jtype) {
+  switch (jtype) {
   case 'Z': 
   case 'B': 
   case 'C': 
-  case 'S':
+  case 'S':    
   case 'I':
-    return TYPE_INT32; 
+    /*
+     * Always use a return type the size of a cpu register.  This fixes up
+     * callbacks on big-endian 64bit machines, and does not break things on
+     * i386 or amd64. 
+     */
+    return &ffi_type_slong;
   case 'J':
-    return TYPE_INT64; 
+    return &ffi_type_sint64;
   case 'F':
-    return TYPE_FP32; 
+    return &ffi_type_float;
   case 'D':
-    return TYPE_FP64; 
+    return &ffi_type_double;
+  case 'V':
+    return &ffi_type_void;
   case 'L':
   default:
-    return TYPE_PTR; 
+    return &ffi_type_pointer;
   }
 }
-
-static void 
-callback_dispatch(JavaVM* jvm, callback* cb, char* ap) {
+  
+static void
+callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
+  callback* cb = (callback *) user_data;
+  JavaVM* jvm = cb->vm;
   jobject obj;
-  jmethodID mid;
-  jvalue result;
-  type_t return_type;
   JNIEnv* env;
   int attached;
-  jobjectArray args;
-  int i;
-
+  unsigned int i;
+  jobjectArray array;
+  
   attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
-
   if (!attached) {
     if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "Can't attach to current thread\n");
+      fprintf(stderr, "JNA: Can't attach to current thread\n");
       return;
     }
   }
-
+  
   obj = (*env)->NewLocalRef(env, cb->object);
-  mid = cb->methodID;
-  args = (*env)->NewObjectArray(env, cb->param_count, 
-                                (*env)->FindClass(env, "java/lang/Object"),
-                                NULL);
-
-  // Convert primitive types into objects so we can properly stuff
-  // an array of Object for the callback proxy argument list
-  // NOTE: some targets may require different alignment of stack items...
-  for (i=0;i < cb->param_count;i++) {
-    int size;
-    jobject arg = new_object(env, cb->param_jtypes[i], (void*)ap, &size);
-    ap += size;
-    (*env)->SetObjectArrayElement(env, args, i, arg);
+  array = (*env)->NewObjectArray(env, cif->nargs, classObject, NULL);
+  for (i=0;i < cif->nargs;i++) {
+    jobject obj = new_object(env, cb->param_jtypes[i], cbargs[i]);
+    (*env)->SetObjectArrayElement(env, array, i, obj);
   }
-
+  
   // Avoid calling back to a GC'd object
   if ((*env)->IsSameObject(env, obj, NULL)) {
-    fprintf(stderr, "Warning: attempt to call GC'd callback\n");
-    result.j = 0;
-    return_type = TYPE_VOID;
+    fprintf(stderr, "JNA: callback object has been garbage collected\n");
+    memset(resp, 0, cif->rtype->size); 
   }
   else {
-    jobject value = (*env)->CallObjectMethod(env, obj, mid, args);
-    result = extract_value(env, value, &return_type);
+    jobject ret = (*env)->CallObjectMethod(env, obj, cb->methodID, array);
+    if ((*env)->ExceptionCheck(env)) {
+      fprintf(stderr, "JNA: uncaught exception in callback\n");
+      memset(resp, 0, cif->rtype->size);
+    }
+    else {
+      extract_value(env, ret, resp);
+    }
   }
 
   if (!attached) {
     (*jvm)->DetachCurrentThread(jvm);
   }
-  
-  switch(return_type) {
-  case TYPE_PTR:
-    RETURN_PTR(result.l);
-    return;
-  case TYPE_INT32:
-    RETURN_INT32(result.i);
-    return;
-  case TYPE_INT64:
-    RETURN_INT64(result.j);
-    return;
-  case TYPE_FP32:
-    RETURN_FP32(result.f);
-    return;
-  case TYPE_FP64:
-    RETURN_FP64(result.d);
-    return;
-  }
 }
+
+jboolean 
+jnidispatch_callback_init(JNIEnv* env) {
+
+  if (!LOAD_CREF(env, Object, "java/lang/Object")) return JNI_FALSE;
+
+#ifdef MMAP_CLOSURE
+  /*
+   * Create the lock for the mmap arena
+   */
+  pthread_mutex_init(&closure_lock, NULL);
+  LIST_INIT(&closure_list);
+#endif
+
+  return JNI_TRUE;
+}
+  
+// Use mmap for closure memory, if available
+#ifdef MMAP_CLOSURE
+# ifndef PAGE_SIZE
+#  if defined(PAGESIZE)
+#   define PAGE_SIZE PAGESIZE
+#  elif defined(NBPG)
+#   define PAGE_SIZE NBPG
+#  endif   
+# endif
+typedef struct closure {
+  LIST_ENTRY(closure) list;
+} closure;
+
+static ffi_closure*
+alloc_closure(JNIEnv* env)
+{
+  closure* closure = NULL;
+  pthread_mutex_lock(&closure_lock);
+  
+  if (closure_list.lh_first == NULL) {
+    /*
+     * Get a new page from the kernel and divvy that up
+     */
+    int clsize = roundup(sizeof(ffi_closure), sizeof(void *));
+    int i;
+    caddr_t ptr = mmap(0, PAGE_SIZE, PROT_EXEC | PROT_READ | PROT_WRITE,
+                       MAP_ANON | MAP_PRIVATE, -1, 0);
+    if (ptr == NULL) {
+      pthread_mutex_unlock(&closure_lock);
+      return NULL;
+    }
+    for (i = 0; i <= (int)(PAGE_SIZE - clsize); i += clsize) {
+      closure = (struct closure *)(ptr + i);
+      LIST_INSERT_HEAD(&closure_list, closure, list);            
+    }
+  }
+  closure = closure_list.lh_first;
+  LIST_REMOVE(closure, list);
+  
+  pthread_mutex_unlock(&closure_lock);
+  memset(closure, 0, sizeof(*closure));
+  return (ffi_closure *)closure;
+}
+  
+static void
+free_closure(JNIEnv* env, ffi_closure *ffi_closure) 
+{
+  pthread_mutex_lock(&closure_lock);    
+  LIST_INSERT_HEAD(&closure_list, (closure*)ffi_closure, list);
+  pthread_mutex_unlock(&closure_lock);
+}
+#else
+static ffi_closure*
+alloc_closure(JNIEnv* env)
+{
+  return (ffi_closure *)calloc(1, sizeof(ffi_closure));
+}
+static void
+free_closure(JNIEnv* env, ffi_closure *closure) 
+{
+  free(closure);
+}
+#endif
 
 #ifdef __cplusplus
 }

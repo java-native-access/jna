@@ -121,7 +121,7 @@ public interface Library {
 
         public Object invoke(Object proxy, Method method, Object[] inArgs)
             throws Throwable {
-            
+
             // Check for any toString() calls on the proxy
             if (method == OBJECT_TOSTRING) {
                 return "Proxy interface to " + nativeLibrary.toString();

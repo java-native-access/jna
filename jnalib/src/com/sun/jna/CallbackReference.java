@@ -72,19 +72,29 @@ class CallbackReference extends WeakReference {
             mapper = Native.getTypeMapper(declaring);
         }
         Method m = getCallbackMethod(callback);
-        proxy = new DefaultCallbackProxy(m, mapper);
+        if (callback instanceof CallbackProxy) {
+            proxy = (CallbackProxy)callback;
+        }
+        else {
+            proxy = new DefaultCallbackProxy(m, mapper);
+        }
 
         // Generate a list of parameter types that the native code can 
         // handle.  Let the CallbackProxy to do any further conversion
         // to match the true callback signature
         Class[] nativeParamTypes = proxy.getParameterTypes();
+        Class returnType = proxy.getReturnType();
         if (mapper != null) {
             for (int i=0;i < nativeParamTypes.length;i++) {
                 FromNativeConverter rc = mapper.getFromNativeConverter(nativeParamTypes[i]);
                 if (rc != null) {
                     nativeParamTypes[i] = rc.nativeType();
                 }
-             }
+            }
+            ToNativeConverter tn = mapper.getToNativeConverter(returnType);
+            if (tn != null) {
+                returnType = tn.nativeType();
+            }
         }
         for (int i=0;i < nativeParamTypes.length;i++) {
             Class cls = nativeParamTypes[i];
@@ -112,15 +122,11 @@ class CallbackReference extends WeakReference {
                 throw new IllegalArgumentException("Callback argument " + cls + " requires custom type conversion");
             }
         }
-        try {
-            Method proxyMethod = 
-                CallbackProxy.class.getMethod("callback", new Class[] { Object[].class });
-            cbstruct = createCallback(proxy, proxyMethod, 
-                                      nativeParamTypes, callingConvention);
-        }
-        catch (NoSuchMethodException e) {
-            throw new Error("Unexpectedly missing CallbackProxy.callback(Object[])");
-        }
+
+        Method proxyMethod = getCallbackMethod(proxy);
+        cbstruct = createNativeCallback(proxy, proxyMethod,  
+                                        nativeParamTypes, returnType,
+                                        callingConvention);
     }
     
     private Method getCallbackMethod(Callback callback) {
@@ -145,7 +151,7 @@ class CallbackReference extends WeakReference {
         return cbstruct.getPointer(0);
     }
     protected void finalize() {
-        freeCallback(cbstruct.peer);
+        freeNativeCallback(cbstruct.peer);
         cbstruct.peer = 0;
     }
     
@@ -309,10 +315,11 @@ class CallbackReference extends WeakReference {
     }
     
     /** Create a callback function pointer. */
-    private static native Pointer createCallback(CallbackProxy callback, 
-                                                 Method method, 
-                                                 Class[] parameterTypes, 
-                                                 int callingConvention);
+    private static native Pointer createNativeCallback(CallbackProxy callback, 
+                                                       Method method, 
+                                                       Class[] parameterTypes,
+                                                       Class returnType,
+                                                       int callingConvention);
     /** Free the given callback function pointer. */
-    private static native void freeCallback(long ptr);
+    private static native void freeNativeCallback(long ptr);
 }

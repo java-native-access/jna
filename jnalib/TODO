@@ -31,7 +31,8 @@
 
 
 * provide library load/unload hooks (Runnables in options?). Examples:
-  o GetLastError in kernel32 
+  o GetLastError in kernel32 (note: would need to initialize kernel32 from any
+  other w32 api dll as well)
   o WSAInit?
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
@@ -72,12 +73,17 @@
   deriving from Pointer is that type mapping can be made automatic, without an
   explicit type mapping defined.
 * bitfields et al. for structs
-* use annotations + result codes + GetLastError/errno/errstr to auto-generate
+* if method has "GetLastErrorException/ErrnoException" in its signature, use
+  result codes + GetLastError/errno/errstr to auto-generate 
   runtime exceptions? (cf P/Invoke; also useful for X11 return types)
   provide annotation/custom invocation handler/hook to examine return value and
-  throw and exception if the return value indicates an error
+  throw an exception if the return value indicates an error
 
-
+  o are error return values consistent (if so, a single handler works)?
+    if null -> call GetLastError
+    if nonzero ?
+  o otherwise, need an ExceptionOnZero, ExceptionOnNonZero runtime, from which
+  derive GetLastError/ErrnoExceptionOnZero/NZ
 
 
 

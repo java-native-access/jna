@@ -38,6 +38,9 @@ public interface Kernel32 extends W32API {
     void GetSystemTime(SYSTEMTIME result);
     int GetCurrentThreadId();
     int GetCurrentProcessId();
+    /** NOTE: the first invocation of this method will clear any extant
+     * error, so be sure to call it once <em>before</em> you need its result.
+     */
     int GetLastError();
     void SetLastError(int dwErrCode);
 

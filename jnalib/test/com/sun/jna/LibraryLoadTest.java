@@ -39,7 +39,7 @@ public class LibraryLoadTest extends TestCase {
             Toolkit.getDefaultToolkit();
         }
     }
-    
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(LibraryLoadTest.class);
     }
