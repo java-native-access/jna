@@ -504,12 +504,7 @@ public abstract class Structure {
             s.write();
         }
         else if (Callback.class.isAssignableFrom(nativeType)) {
-            Pointer p = null;
-            if (value != null) {
-                CallbackReference cbref = CallbackReference.getInstance((Callback)value);
-                p = cbref.getTrampoline();
-            }
-            memory.setPointer(offset, p);
+            memory.setPointer(offset, getFunctionPointer((Callback)value));
         }
         else {
             throw new IllegalArgumentException("Field \"" + structField.name
@@ -804,11 +799,10 @@ public abstract class Structure {
     
     private Pointer getFunctionPointer(Callback cb) {
         if (cb == null) return null;
-        if (Proxy.isProxyClass(cb.getClass())
-            && Proxy.getInvocationHandler(cb) instanceof NativeCallbackHandler) {
-            NativeCallbackHandler handler = 
-                (NativeCallbackHandler)Proxy.getInvocationHandler(cb);
-            return handler.getPointer();
+        if (Proxy.isProxyClass(cb.getClass())) {
+            InvocationHandler handler = Proxy.getInvocationHandler(cb);
+            if (handler instanceof NativeCallbackHandler)
+                return ((NativeCallbackHandler)handler).getPointer();
         }
         CallbackReference cbref = CallbackReference.getInstance(cb);
         return cbref.getTrampoline();
@@ -845,7 +839,7 @@ public abstract class Structure {
                 + "=" + value;
         }
     }
-
+    
     /** Enable an auto-generated Java interface proxy for a native function
      * pointer.
      */
