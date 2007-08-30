@@ -31,7 +31,8 @@
 
   <!-- Software release version -->            
   <property name="version" value="3.0"/>
-  <property name="jdk" value="1.4"/>
+  <property name="compatibility" value="1.4"/>
+  <property name="test.compatibility" value="1.5"/>
 
   <!-- Miscellaneous -->
   <property name="build.compiler.emacs" value="true"/>
@@ -39,7 +40,7 @@
   <target name="default" depends="test" description="Build and Test."/>
 
   <target name="dynamic-properties">
-    <echo>Java version: ${java.version}, compatibility: ${jdk}</echo>
+    <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
     <echo>Build ${version}</echo>
     <property name="build" location="build"/>
     <property name="classes" location="${build}/classes"/>
@@ -112,8 +113,8 @@
   <target name="compile" depends="setup"
           description="Compile all Java source">
     <javac classpathref="compile.path"
-           source="${jdk}"
-           target="${jdk}"
+           source="${compatibility}"
+           target="${compatibility}"
            destdir="${classes}" 
            deprecation="on" debug="${debug}">
       <src path="${src}"/>
@@ -225,8 +226,8 @@
   <target name="compile-tests" depends="compile"
           description="Compile all test code">
     <javac classpathref="compile-test.path"
-           source="${jdk}"
-           target="${jdk}"
+           source="${test.compatibility}"
+           target="${test.compatibility}"
            destdir="${test.classes}" 
            deprecation="on" debug="${debug}">
       <src path="${test.src}"/>

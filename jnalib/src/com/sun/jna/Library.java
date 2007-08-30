@@ -57,11 +57,11 @@ public interface Library {
     
     static class Handler implements InvocationHandler {
         
-        private static final Method OBJECT_TOSTRING;
+        static final Method OBJECT_TOSTRING;
         
         static {
             try {
-                OBJECT_TOSTRING = Object.class.getMethod("toString", null);
+                OBJECT_TOSTRING = Object.class.getMethod("toString", new Class[0]);
             }
             catch (Exception e) {
                 throw new Error("Error retrieving Object.toString() method");
@@ -88,6 +88,7 @@ public interface Library {
         private Map options;
         private FunctionMapper functionMapper;
         private Map functions = new WeakHashMap();
+        private Map varargs = new WeakHashMap();
         
         public Handler(String libname, Class interfaceClass, Map options) {
 
@@ -124,10 +125,11 @@ public interface Library {
 
             // Check for any toString() calls on the proxy
             if (method == OBJECT_TOSTRING) {
-                return "Proxy interface to " + nativeLibrary.toString();
+                return "Proxy interface to " + nativeLibrary;
             }
 
             Function f = null;
+            boolean isVarArgs;
             synchronized(functions) {
                 f = (Function)functions.get(method);
                 if (f == null) {
@@ -139,7 +141,14 @@ public interface Library {
                         ? Function.ALT_CONVENTION : Function.C_CONVENTION;
                     f = nativeLibrary.getFunction(methodName, callingConvention);
                     functions.put(method, f);
+                    if (Function.isVarArgs(method)) {
+                        varargs.put(method, Boolean.TRUE);
+                    }
                 }
+                isVarArgs = varargs.get(method) != null;
+            }
+            if (isVarArgs) {
+                inArgs = Function.concatenateVarArgs(inArgs);
             }
             return f.invoke(method.getReturnType(), inArgs, options);
         }

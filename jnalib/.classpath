@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="build.eclipse/test-classes" path="test"/>
 	<classpathentry kind="lib" path="lib/junit.jar" sourcepath="/DEV/junit/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK 1.5.0"/>
 	<classpathentry kind="output" path="build.eclipse/classes"/>
 </classpath>

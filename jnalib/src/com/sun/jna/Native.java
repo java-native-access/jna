@@ -15,6 +15,7 @@ package com.sun.jna;
 import java.awt.Component;
 import java.awt.Window;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
@@ -42,6 +43,7 @@ public class Native {
 
     private static Map typeMappers = Collections.synchronizedMap(new WeakHashMap());
     private static Map alignments = Collections.synchronizedMap(new WeakHashMap());
+    private static Map libraries = Collections.synchronizedMap(new WeakHashMap());
     
     private Native() { }
     
@@ -150,7 +152,7 @@ public class Native {
         if (!Library.class.isAssignableFrom(interfaceClass)) {
             throw new IllegalArgumentException("Not a valid native library interface: " + interfaceClass);
         }
-        InvocationHandler handler = 
+        Library.Handler handler = 
             new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
         Library proxy = (Library)
@@ -165,14 +167,17 @@ public class Native {
     
     /** Returns whether an instance variable was instantiated. */
     private static boolean loadInstance(Class cls) {
+        if (libraries.containsKey(cls)) {
+            return true;
+        }
         if (cls != null) {
             try {
                 Field[] fields = cls.getFields();
                 for (int i=0;i < fields.length;i++) {
                     Field field = fields[i];
                     if (field.getType() == cls 
-                        && (field.getModifiers() & Modifier.STATIC) != 0) {
-                        field.get(null);
+                        && Modifier.isStatic(field.getModifiers())) {
+                        libraries.put(cls, field.get(null));
                         return true;
                     }
                 }
@@ -223,7 +228,7 @@ public class Native {
         Integer value = (Integer)alignments.get(interfaceClass);
         return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
     }
-
+    
     /** Return an byte array corresponding to the given String.  If the
      * system property <code>jna.encoding</code> is set, it will override
      * the default platform encoding (if supported).

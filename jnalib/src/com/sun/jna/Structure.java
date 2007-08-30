@@ -12,7 +12,11 @@ package com.sun.jna;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -204,6 +208,14 @@ public abstract class Structure {
         }
     }
 
+    /** Update the given field from native memory. */
+    public void readField(String name) {
+        StructField f = (StructField)structFields.get(name);
+        if (f == null)
+            throw new IllegalArgumentException("No such field: " + name);
+        readField(f);
+    }
+
     void readField(StructField structField) {
         
         // Get the offset of the field
@@ -253,7 +265,7 @@ public abstract class Structure {
         else if (nativeType == double.class || nativeType == Double.class) {
             result = new Double(memory.getDouble(offset));
         }
-        else if (Pointer.class.isAssignableFrom(nativeType)) {
+        else if (nativeType == Pointer.class) {
             result = memory.getPointer(offset);
         }
         else if (nativeType == String.class) {
@@ -265,11 +277,28 @@ public abstract class Structure {
             result = p != null ? new WString(p.getString(0, true)) : null;
         }
         else if (Callback.class.isAssignableFrom(nativeType)) {
-            // ignore; Callback members are write-only (don't try to convert
-            // a native function pointer to a Java Callback)
-            // TODO: may want to warn if the value has been changed by
-            // native code
-            return;
+            // Overwrite the Java memory if the native pointer is a different
+            // function pointer.
+            Pointer fp = memory.getPointer(offset);
+            if (fp == null) {
+                result = null;
+            }
+            else try {
+                Callback cb = (Callback)structField.field.get(this);
+                Pointer oldfp = getFunctionPointer(cb);
+                if (!fp.equals(oldfp)) {
+                    cb = createNativeCallback(nativeType, fp);
+                }
+                result = cb;
+            }
+            catch (IllegalArgumentException e) {
+                // avoid overwriting Java field
+                return;
+            }
+            catch (IllegalAccessException e) {
+                // avoid overwriting Java field
+                return;
+            }
         }
         else if (nativeType.isArray()) {
             Class cls = nativeType.getComponentType();
@@ -327,7 +356,8 @@ public abstract class Structure {
         }
         catch (Exception e) {
             throw new RuntimeException("Exception setting field \""
-                                       + structField.name+"\"", e);
+                                       + structField.name+"\" to " + result 
+                                       + ": " + e, e);
         }
     }
 
@@ -342,10 +372,21 @@ public abstract class Structure {
         if (size == CALCULATE_SIZE) {
             allocateMemory();
         }
-        // Write all fields
+        // Write all fields, except those marked 'volatile'
         for (Iterator i=structFields.values().iterator();i.hasNext();) {
-            writeField((StructField)i.next());
+            StructField sf = (StructField)i.next();
+            if (!sf.isVolatile) {
+                writeField(sf);
+            }
         }
+    }
+    
+    /** Write the given field to native memory. */
+    public void writeField(String name) {
+        StructField f = (StructField)structFields.get(name);
+        if (f == null)
+            throw new IllegalArgumentException("No such field: " + name);
+        writeField(f);
     }
 
     void writeField(StructField structField) {
@@ -388,7 +429,7 @@ public abstract class Structure {
             }
         }
 
-        // Get the value at the offset according to its type
+        // Set the value at the offset according to its type
         if (nativeType == byte.class || nativeType == Byte.class) {
             memory.setByte(offset, ((Byte)value).byteValue());
         }
@@ -413,7 +454,7 @@ public abstract class Structure {
         else if (nativeType == double.class || nativeType == Double.class) {
             memory.setDouble(offset, ((Double)value).doubleValue());
         }
-        else if (Pointer.class.isAssignableFrom(nativeType)) {
+        else if (nativeType == Pointer.class) {
             memory.setPointer(offset, (Pointer)value);
         }
         else if (nativeType == String.class) {
@@ -505,11 +546,12 @@ public abstract class Structure {
         }
         for (int i=0; i<fields.length; i++) {
             Field field = fields[i];
-            if ((field.getModifiers() & Modifier.STATIC) != 0)
+            if (Modifier.isStatic(field.getModifiers()))
                 continue;
             
             Class type = field.getType();
             StructField structField = new StructField();
+            structField.isVolatile = Modifier.isVolatile(field.getModifiers());
             structField.field = field;
             structField.name = field.getName();
             structField.type = type;
@@ -606,10 +648,10 @@ public abstract class Structure {
             || Float.class == type || Double.class == type) {
             alignment = size;
         }
-        else if (Pointer.class.isAssignableFrom(type)
+        else if (Pointer.class == type
                  || Callback.class.isAssignableFrom(type)
-                 || WString.class.isAssignableFrom(type)
-                 || String.class.isAssignableFrom(type)) {
+                 || WString.class == type
+                 || String.class == type) {
             alignment = Pointer.SIZE;
         }
         else if (Structure.class.isAssignableFrom(type)) {
@@ -647,7 +689,7 @@ public abstract class Structure {
         if (cls == float.class || cls == Float.class) return 4;
         if (cls == double.class || cls == Double.class) return 8;
         if (NativeLong.class.isAssignableFrom(cls)) return Pointer.LONG_SIZE;
-        if (Pointer.class.isAssignableFrom(cls)
+        if (Pointer.class == cls
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
             || WString.class == cls) {
@@ -759,6 +801,29 @@ public abstract class Structure {
     public int hashCode() {
         return getPointer().hashCode();
     }
+    
+    private Pointer getFunctionPointer(Callback cb) {
+        if (cb == null) return null;
+        if (Proxy.isProxyClass(cb.getClass())
+            && Proxy.getInvocationHandler(cb) instanceof NativeCallbackHandler) {
+            NativeCallbackHandler handler = 
+                (NativeCallbackHandler)Proxy.getInvocationHandler(cb);
+            return handler.getPointer();
+        }
+        CallbackReference cbref = CallbackReference.getInstance(cb);
+        return cbref.getTrampoline();
+    }
+
+    /** Create a Callback proxy around a native function pointer. */
+    private Callback createNativeCallback(Class type, Pointer address) {
+        if (!type.isInterface())
+            throw new IllegalArgumentException("Structure Callback field must be an interface");
+        int ctype = AltCallingConvention.class.isAssignableFrom(type)
+            ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+        NativeCallbackHandler h = new NativeCallbackHandler(address, ctype);
+        return (Callback)Proxy.newProxyInstance(getClass().getClassLoader(), 
+                                                new Class[] { type }, h);
+    }
 
     class StructField extends Object {
         public String name;
@@ -766,6 +831,7 @@ public abstract class Structure {
         public Field field;
         public int size = -1;
         public int offset = -1;
+        public boolean isVolatile;
         public FromNativeConverter readConverter;
         public ToNativeConverter writeConverter;
         public FromNativeContext context;
@@ -778,5 +844,31 @@ public abstract class Structure {
             return type + " " + name + "@" + Integer.toHexString(offset) 
                 + "=" + value;
         }
-    }    
+    }
+
+    /** Enable an auto-generated Java interface proxy for a native function
+     * pointer.
+     */
+    private class NativeCallbackHandler implements InvocationHandler {
+        private Function function;
+        
+        public NativeCallbackHandler(Pointer address, int callingConvention) {
+            this.function = new Function(address, callingConvention);
+        }
+        
+        /** Chain invocation to the native function. */
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if (method == Library.Handler.OBJECT_TOSTRING) {
+                return "Proxy interface to function pointer " + function;
+            }
+            if (Function.isVarArgs(method)) {
+                args = Function.concatenateVarArgs(args);
+            }
+            return function.invoke(method.getReturnType(), args);
+        }
+        
+        public Pointer getPointer() {
+            return function;
+        }
+    }
 }

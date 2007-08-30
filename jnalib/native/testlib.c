@@ -506,6 +506,17 @@ callCallbackInStruct(struct cbstruct *cb) {
   (*cb->func)();
 }
 
+static int 
+structCallbackFunction(int arg1, int arg2) {
+  return arg1 + arg2;
+}
+
+EXPORT void
+setCallbackInStruct(struct cbstruct* cb) {
+  cb->func = (void (*)())structCallbackFunction;
+}
+
+
 EXPORT int32 
 fillInt8Buffer(char *buf, int len, char value) {
   int i;

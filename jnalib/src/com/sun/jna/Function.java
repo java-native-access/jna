@@ -10,6 +10,7 @@
  */
 package com.sun.jna;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class Function extends Pointer {
     /** First alternate convention (currently used only for w32 stdcall). */
     public static final int ALT_CONVENTION = 1;
 
-    private NativeLibrary library;
+    private String libName;
     private String functionName;
     private int callingConvention;
 
@@ -83,10 +84,10 @@ public class Function extends Pointer {
     
     /**
      * Create a new @{link Function} that is linked with a native 
-     * function that follows a given calling convention.
+     * function that follows the given calling convention.
      * 
      * <p>The allocated instance represents a pointer to the named native 
-     * function from the supplied library, called with the named calling 
+     * function from the supplied library, called with the given calling 
      * convention.
      *
      * @param  library
@@ -98,10 +99,31 @@ public class Function extends Pointer {
      */
     Function(NativeLibrary library, String functionName, int callingConvention) {
         checkCallingConvention(callingConvention);
-        this.library = library;
+        this.libName= library.getName();
         this.functionName = functionName;
         this.callingConvention = callingConvention;
         this.peer = library.getFunctionAddress(functionName);
+    }
+    
+    /**
+     * Create a new @{link Function} that is linked with a native 
+     * function that follows the given calling convention.
+     * 
+     * <p>The allocated instance represents a pointer to the given 
+     * function address, called with the given calling 
+     * convention.
+     *
+     * @param  functionAddress
+     *                 Address of the native function 
+     * @param  callingConvention
+     *                 Calling convention used by the native function
+     */
+    Function(Pointer functionAddress, int callingConvention) {
+        checkCallingConvention(callingConvention);
+        this.libName = "<undefined>";
+        this.functionName = functionAddress.toString();
+        this.callingConvention = callingConvention;
+        this.peer = functionAddress.peer;
     }
     
     private void checkCallingConvention(int convention)
@@ -114,14 +136,6 @@ public class Function extends Pointer {
             throw new IllegalArgumentException("Unrecognized calling convention: " 
                                                + convention);
         }
-    }
-
-    public NativeLibrary getLibrary() {
-        return library;
-    }
-    
-    public String getLibraryName() {
-        return library.getName();
     }
 
     public String getName() {
@@ -144,9 +158,6 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
-
-        // Make sure all args are in a single array
-        inArgs = concatenateVarArgs(inArgs);
 
         // Clone the argument array to obtain a scratch space for modified
         // types/values
@@ -210,35 +221,6 @@ public class Function extends Pointer {
         }
                         
         return result;
-    }
-
-    /** Concatenate varargs with normal args to obtain a simple argument array. 
-     */
-    private Object[] concatenateVarArgs(Object[] inArgs) {
-        // If the final argument is an array of something other than
-        // primitives, Structure, or String, treat it as varargs and 
-        // concatenate the previous arguments with the varargs elements.
-        if (inArgs != null && inArgs.length > 0) {
-            Object lastArg = inArgs[inArgs.length-1];
-            Class argType = lastArg != null ? lastArg.getClass() : null;
-            if (argType != null && argType.isArray()
-                && !isPrimitiveArray(argType)
-                && !isStructureArray(argType)
-                && argType != String[].class) {
-                Object[] varArgs = (Object[])lastArg;
-                Object[] fullArgs = new Object[inArgs.length+varArgs.length];
-                System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
-                System.arraycopy(varArgs, 0, fullArgs, inArgs.length-1, varArgs.length);
-                // For convenience, always append a NULL argument to the end
-                // of varargs, whether the called API requires it or not. If
-                // it is not needed, it will be ignored, but if it *is* 
-                // required, it avoids forcing the Java client to always
-                // explicitly add it.
-                fullArgs[fullArgs.length-1] = null;
-                inArgs = fullArgs;
-            }
-        }
-        return inArgs;
     }
 
     private Object invoke(Object[] args, Class returnType) {
@@ -333,7 +315,7 @@ public class Function extends Pointer {
         // Convert Callback to Pointer
         else if (arg instanceof Callback) {
             CallbackReference cbref = CallbackReference.getInstance((Callback)arg);
-            // Use pointer to trampoline (callback->insns, see dispatch.h)
+            // Use pointer to trampoline (see dispatch.h)
             return cbref.getTrampoline();
         }
         // String arguments are converted to native pointers here rather
@@ -436,10 +418,6 @@ public class Function extends Pointer {
             && argClass.getComponentType().isPrimitive();
     }
     
-    private boolean isVarArgs(Method m, Object[] args) {
-        return false;
-    }
-    
     /**
      * Call the native function being represented by this object
      *
@@ -534,7 +512,7 @@ public class Function extends Pointer {
 
     /** Provide a human-readable representation of this object. */
     public String toString() {
-        return "native function " + functionName + "(" + library.getName() 
+        return "native function " + functionName + "(" + libName
             + ")@0x" + Long.toHexString(peer);
     }
     
@@ -605,5 +583,53 @@ public class Function extends Pointer {
      */
     public void invokeVoid(Object[] args) {
         invoke(Void.class, args);
+    }
+
+
+    /** Concatenate varargs with normal args to obtain a simple argument 
+     * array. 
+     */
+    static Object[] concatenateVarArgs(Object[] inArgs) {
+        // If the final argument is an array of something other than
+        // primitives, Structure, or String, treat it as varargs and 
+        // concatenate the previous arguments with the varargs elements.
+        if (inArgs != null && inArgs.length > 0) {
+            Object lastArg = inArgs[inArgs.length-1];
+            Class argType = lastArg != null ? lastArg.getClass() : null;
+            if (argType != null && argType.isArray()) {
+                Object[] varArgs = (Object[])lastArg;
+                Object[] fullArgs = new Object[inArgs.length+varArgs.length];
+                System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
+                System.arraycopy(varArgs, 0, fullArgs, inArgs.length-1, varArgs.length);
+                // For convenience, always append a NULL argument to the end
+                // of varargs, whether the called API requires it or not. If
+                // it is not needed, it will be ignored, but if it *is* 
+                // required, it avoids forcing the Java client to always
+                // explicitly add it.
+                fullArgs[fullArgs.length-1] = null;
+                inArgs = fullArgs;
+            }
+        }
+        return inArgs;
+    }
+
+
+    /** Varargs are only supported on 1.5+. */
+    static boolean isVarArgs(Method m) {
+        try {
+            Method v = m.getClass().getMethod("isVarArgs", new Class[0]);
+            return Boolean.TRUE.equals(v.invoke(m, new Object[0]));
+        }
+        catch (SecurityException e) {
+        }
+        catch (NoSuchMethodException e) {
+        }
+        catch (IllegalArgumentException e) {
+        }
+        catch (IllegalAccessException e) {
+        }
+        catch (InvocationTargetException e) {
+        }
+        return false;
     }
 }

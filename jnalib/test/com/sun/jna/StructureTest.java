@@ -290,6 +290,18 @@ public class StructureTest extends TestCase {
         }
     }
     
+    static class BadFieldStructure extends Structure {
+        public Function cb;
+    }
+    public void testDisallowFunctionPointerAsField() {
+        try {
+            BadFieldStructure s = new BadFieldStructure();
+            fail("Function fields should not be allowed");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
     public static class TestStructure extends Structure {
         public int value;
     }
@@ -305,8 +317,15 @@ public class StructureTest extends TestCase {
     static class CbStruct extends Structure {
         public Callback cb;
     }
+    static class CbStruct2 extends Structure {
+        public static interface TestCallback extends Callback {
+            int callback(int arg1, int arg2);
+        }
+        public TestCallback cb;
+    }
     static interface CbTest extends Library {
         public void callCallbackInStruct(CbStruct cbstruct);
+        public void setCallbackInStruct(CbStruct2 cbstruct);
     }
     public void testCallbackWrite() {
         final CbStruct s = new CbStruct();
@@ -334,5 +353,35 @@ public class StructureTest extends TestCase {
         CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
         lib.callCallbackInStruct(s);
         assertTrue("Callback not invoked", flag[0]);
+    }
+    
+    public void testReadFunctionPointerAsCallback() {
+        CbStruct2 s = new CbStruct2();
+        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
+        lib.setCallbackInStruct(s);
+        assertNotNull("Callback field not set", s.cb);
+    }
+    
+    public void testCallProxiedFunctionPointer() {
+        CbStruct2 s = new CbStruct2();
+        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
+        lib.setCallbackInStruct(s);
+        assertEquals("Proxy to native function pointer failed", 
+                     3, s.cb.callback(1, 2));
+    }
+    
+    public static class VolatileStructure extends Structure {
+        public volatile int counter;
+        public int value;
+    }
+    public void testVolatileStructureField() {
+        VolatileStructure s = new VolatileStructure();
+        s.counter = 1;
+        s.value = 1;
+        s.write();
+        assertEquals("Volatile field should not be written", 0, s.getPointer().getInt(0));
+        assertEquals("Non-volatile field should be written", 1, s.getPointer().getInt(4));
+        s.writeField("counter");
+        assertEquals("Explicit volatile field write failed", 1, s.getPointer().getInt(0));
     }
 }

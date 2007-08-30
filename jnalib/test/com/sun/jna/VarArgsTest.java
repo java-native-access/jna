@@ -21,9 +21,9 @@ public class VarArgsTest extends TestCase {
         public static class TestStructure extends Structure {
             public int magic = 0;
         }
-        public int addInt32VarArgs(String fmt, Number[] args);
-        public String returnStringVarArgs(String fmt, Object[] args);
-        public void modifyStructureVarArgs(String fmt, Object arg1, Object[] args);
+        public int addInt32VarArgs(String fmt, Number... args);
+        public String returnStringVarArgs(String fmt, Object... args);
+        public void modifyStructureVarArgs(String fmt, Object arg1, Object... args);
     }
     TestLibrary lib;
     protected void setUp() {
@@ -33,31 +33,22 @@ public class VarArgsTest extends TestCase {
         lib = null;
     }   
     public void testIntVarArgs() {
-        Integer[] args = new Integer[2];
         int arg1 = 1;
         int arg2 = 2;
-        args[0] = new Integer(arg1);
-        args[1] = new Integer(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("dd", args));
+                     lib.addInt32VarArgs("dd", new Integer(arg1), new Integer(arg2)));
     }
     public void testShortVarArgs() {
-        Short[] args = new Short[2];
         short arg1 = 1;
         short arg2 = 2;
-        args[0] = new Short(arg1);
-        args[1] = new Short(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("dd", args));
+                     lib.addInt32VarArgs("dd", new Short(arg1), new Short(arg2)));
     }
     public void testLongVarArgs() {
-        Long[] args = new Long[2];
         short arg1 = 1;
         short arg2 = 2;
-        args[0] = new Long(arg1);
-        args[1] = new Long(arg2);
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("ll", args));
+                     lib.addInt32VarArgs("ll", new Long(arg1), new Long(arg2)));
     }
     public void testStringVarArgs() {
         Object[] args = new Object[] { "Test" };
@@ -74,7 +65,7 @@ public class VarArgsTest extends TestCase {
     public void testModifyStructureInVarargs() {
         TestStructure arg1 = new TestStructure();
         TestStructure[] varargs = new TestStructure[] { new TestStructure() };
-        lib.modifyStructureVarArgs("ss", arg1, varargs);
+        lib.modifyStructureVarArgs("ss", arg1, varargs[0]);
         assertEquals("Structure memory not read in fixed arg w/varargs",
                      MAGIC32, arg1.magic); 
         assertEquals("Structure memory not read in varargs",
