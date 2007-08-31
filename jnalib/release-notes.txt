@@ -1,12 +1,20 @@
 Release 3.0
 Features
-* More supported platforms, via GCC's libffi
-* Provide access to native peer for java.awt.Component
+* More supported platforms, via GCC's libffi (wmeissner)
+* Provide access to native peer for java.awt.Component 
 * Provide access to native peer on OS X.
-* Support MINGW32 builds
+* Support MINGW32 builds (fullung)
+* Allow per-field Structure read/write by field name
+* Avoid writing Structure fields marked 'volatile'
+* Read and wrap function pointers in Structure fields when read with a Java
+  proxy to allow easy Java-side invocation (Ken Larson)
+* Support array-backed Buffers as arguments (wmeissner)
 
 Bug Fixes
-* Avoid attempts to free native library if it failed to load
+* Avoid attempts to free native library if it failed to load (wmeissner)
+* Explicitly check method signatures for varargs instead of heuristically
+  guessing (wmeissner)
+* Disallow declaring Pointer-derived fields in Structures (Function, Memory)
 
 Release 2.5
 Features

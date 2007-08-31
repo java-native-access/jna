@@ -95,7 +95,6 @@ Those Java types in italics are handled by the JNA Java library and converted
 to or from one of the basic types.
 <p>
 Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
-<p>
 
 <h3>Pointers</h3>
 Pointers may be used as an opaque type from which other data types may be
@@ -136,9 +135,51 @@ Use arrays to represent buffers of primitive types.  A native method cannot
 return a Java array, since there is no canonical way to indicate the intended
 length of the returned array.  Instead, use one of the array access methods in
 the Pointer class, supplying the length of the returned array.<p>
-{@link java.nio.ByteBuffer}s may also be used as a memory buffer input
+{@link java.nio.Buffer}s may also be used as a memory buffer input
 argument; direct byte buffers can often provide much improved performance over
 primitive arrays. 
+<p>
+If you need to pass in a subset of a primitive array, you can do so by
+wrapping it in a {@link java.nio.Buffer} subclass, such as {@link
+java.nio.ByteBuffer}, using the {@link
+java.nio.ByteBuffer#wrap(byte[],int,int)} method.
+
+<h3>Function Pointers (aka Callbacks)</h3>
+JNA supports supplying Java callbacks to native code.  You must define an
+interface that extends the {@link com.sun.jna.Callback} interface, and define
+a single <code>callback</code> method with a signature that matches the
+function pointer required by the native code.  The name of the method
+<em>must</em> be "callback", and the arguments and return value follow the
+same rules as for a direct function invocation.
+<p>
+If your native code initializes function pointers within a struct, JNA will
+automatically generate an <code>Callback</code> instance matching the declared
+type.  This enables you to easily call the function supplied by native code
+using proper Java syntax.
+<blockquote><code><pre>
+// C code
+struct _functions {
+  int (*open)(const char*,int);
+  int (*close)(int);
+};
+
+// Java
+public class Functions extends Structure {
+  public static interface OpenFunc extends Callback {
+    int callback(String name, int options);
+  }
+  public static interface CloseFunc extends Callback {
+    int callback(int fd);
+  }
+  public OpenFunc open;
+  public CloseFunc close;
+}
+...
+Functions funcs = new Functions();
+lib.init(funcs);
+int fd = funcs.open.callback("myfile", 0);
+funcs.close.callback(fd);
+</pre></code></blockquote>
 
 <h3>Structures</h3>
 
@@ -291,6 +332,33 @@ class Header extends Structure {
   }
 }
 </pre></code></blockquote>
+
+<h4>Volatile fields</h4>
+Normally, JNA will write the entire contents of a <code>Structure</code> prior
+to a function call and read back from native memory after the function call.
+Sometimes a structure field is not intended for client use, gets modified
+asynchronously by hardware, or otherwise is effectively read-only.
+If you expect any fields of the structure to be modified by any agent outside
+your Java program, you should mark the field <code>volatile</code>.  This
+prevents JNA from automatically updating the native memory from the Java
+value.  You can still force an update of the native memory from the Java value
+by calling {@link com.sun.jna.Structure#writeField(String)} for the field in
+question. 
+<blockquote><code><pre>
+// JNA code
+class Data extends Structure {
+  public volatile int refCount; 
+  public int value;
+}
+...
+Data data = new Data();
+</pre></code></blockquote>
+In the above example, the field <code>refCount</code> will only be updated
+based on the Java value with a call to
+<code>data.writeField("refCount")</code>.  To obtain the current state of
+native memory, call {@link com.sun.jna.Structure#read()} (to update the entire
+structure) or {@link com.sun.jna.Structure#readField(String)
+data.readField("refCount")} (to update just the <code>refCount</code> field). 
 
 <h4>Unions</h4>
 Unions are a special type of Structure.  Each declared field within the union

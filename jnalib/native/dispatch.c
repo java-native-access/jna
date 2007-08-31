@@ -74,7 +74,14 @@ static jclass classFloat, classPrimitiveFloat;
 static jclass classDouble, classPrimitiveDouble;
 static jclass classString;
 static jclass classPointer;
+static jclass classBuffer;
 static jclass classByteBuffer;
+static jclass classCharBuffer;
+static jclass classShortBuffer;
+static jclass classIntBuffer;
+static jclass classLongBuffer;
+static jclass classFloatBuffer;
+static jclass classDoubleBuffer;
 
 static jmethodID MID_Class_getComponentType;
 static jmethodID MID_String_getBytes;
@@ -91,6 +98,20 @@ static jmethodID MID_Byte_init;
 static jmethodID MID_Boolean_init;
 static jmethodID MID_Float_init;
 static jmethodID MID_Double_init;
+static jmethodID MID_ByteBuffer_array;
+static jmethodID MID_ByteBuffer_arrayOffset;
+static jmethodID MID_CharBuffer_array;
+static jmethodID MID_CharBuffer_arrayOffset;
+static jmethodID MID_ShortBuffer_array;
+static jmethodID MID_ShortBuffer_arrayOffset;
+static jmethodID MID_IntBuffer_array;
+static jmethodID MID_IntBuffer_arrayOffset;
+static jmethodID MID_LongBuffer_array;
+static jmethodID MID_LongBuffer_arrayOffset;
+static jmethodID MID_FloatBuffer_array;
+static jmethodID MID_FloatBuffer_arrayOffset;
+static jmethodID MID_DoubleBuffer_array;
+static jmethodID MID_DoubleBuffer_arrayOffset;
 
 static jfieldID FID_Boolean_value;
 static jfieldID FID_Byte_value;
@@ -107,14 +128,16 @@ static char* newCString(JNIEnv *env, jstring jstr);
 static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 static jstring newJavaString(JNIEnv *env, const char *str, jboolean wide);
 
+static void* getBufferArray(JNIEnv* env, jobject buf,
+                            jobject* arrayp, char* typep, void** elemp);
 static char getArrayComponentType(JNIEnv *, jobject);
 static void *getNativeAddress(JNIEnv *, jobject);
 static jboolean init_jawt(JNIEnv*);
 
 /* invoke the real native function */
-static void dispatch(JNIEnv *env, jobject self, jint callconv, 
-                     jobjectArray arr, 
-                     ffi_type *ffi_return, void *resP)
+static void
+dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr, 
+         ffi_type *ffi_return, void *resP)
 {
   int i, nargs, nwords;
   void *func;
@@ -147,71 +170,77 @@ static void dispatch(JNIEnv *env, jobject self, jint callconv,
     jobject arg = (*env)->GetObjectArrayElement(env, arr, i);
     
     if (arg == NULL) {
+      c_args[i].l = NULL;
       ffi_args[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
-      c_args[i].l = NULL;
     }
     else if ((*env)->IsInstanceOf(env, arg, classBoolean)) {
+      c_args[i].i = (*env)->GetBooleanField(env, arg, FID_Boolean_value);
       ffi_args[i] = &ffi_type_sint32;
       ffi_values[i] = &c_args[i].i;
-      c_args[i].i = (*env)->GetBooleanField(env, arg, FID_Boolean_value);
     }
     else if ((*env)->IsInstanceOf(env, arg, classByte)) {
+      c_args[i].b = (*env)->GetByteField(env, arg, FID_Byte_value);
       ffi_args[i] = &ffi_type_sint8;
       ffi_values[i] = &c_args[i].b;
-      c_args[i].b = (*env)->GetByteField(env, arg, FID_Byte_value);
     }
     else if ((*env)->IsInstanceOf(env, arg, classShort)) {
+      c_args[i].s = (*env)->GetShortField(env, arg, FID_Short_value);
       ffi_args[i] = &ffi_type_sint16;
       ffi_values[i] = &c_args[i].s;
-      c_args[i].s = (*env)->GetShortField(env, arg, FID_Short_value);
     }
     else if ((*env)->IsInstanceOf(env, arg, classCharacter)) {
       if (sizeof(wchar_t) == 2) {
+        c_args[i].s = (*env)->GetCharField(env, arg, FID_Character_value);
         ffi_args[i] = &ffi_type_sint16;
         ffi_values[i] = &c_args[i].s;
-        c_args[i].s = (*env)->GetCharField(env, arg, FID_Character_value);
       }
       else {
+        c_args[i].i = (*env)->GetCharField(env, arg, FID_Character_value);
         ffi_args[i] = &ffi_type_sint32;
         ffi_values[i] = &c_args[i].i;
-        c_args[i].i = (*env)->GetCharField(env, arg, FID_Character_value);
       }
     }
     else if ((*env)->IsInstanceOf(env, arg, classInteger)) {
+      c_args[i].i = (*env)->GetIntField(env, arg, FID_Integer_value);
       ffi_args[i] = &ffi_type_sint32;
       ffi_values[i] = &c_args[i].i;
-      c_args[i].i = (*env)->GetIntField(env, arg, FID_Integer_value);
     }
     else if ((*env)->IsInstanceOf(env, arg, classLong)) {
+      c_args[i].j = (*env)->GetLongField(env, arg, FID_Long_value);
       ffi_args[i] = &ffi_type_sint64;
       ffi_values[i] = &c_args[i].j;
-      c_args[i].j = (*env)->GetLongField(env, arg, FID_Long_value);
     }
     else if ((*env)->IsInstanceOf(env, arg, classFloat)) {
+      c_args[i].f = (*env)->GetFloatField(env, arg, FID_Float_value);
       ffi_args[i] = &ffi_type_float;
       ffi_values[i] = &c_args[i].f;
-      c_args[i].f = (*env)->GetFloatField(env, arg, FID_Float_value);
     }
     else if ((*env)->IsInstanceOf(env, arg, classDouble)) {
+      c_args[i].d = (*env)->GetDoubleField(env, arg, FID_Double_value);
       ffi_args[i] = &ffi_type_double;
       ffi_values[i] = &c_args[i].d;
-      c_args[i].d = (*env)->GetDoubleField(env, arg, FID_Double_value);
     }
     else if ((*env)->IsInstanceOf(env, arg, classPointer)) {
-      ffi_args[i] = &ffi_type_pointer;
-      ffi_values[i] = &c_args[i].l;
       c_args[i].l = getNativeAddress(env, arg);
-    }
-    else if ((*env)->IsInstanceOf(env, arg, classByteBuffer)) {
       ffi_args[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
+    }
+    else if ((*env)->IsInstanceOf(env, arg, classBuffer)) {
       c_args[i].l = (*env)->GetDirectBufferAddress(env, arg);
+      ffi_args[i] = &ffi_type_pointer;
+      ffi_values[i] = &c_args[i].l;
       if (c_args[i].l == NULL) {
-        // TODO: treat buf.array() as byte[]?
-        throwByName(env,"java/lang/IllegalArgumentException",
-                    "Non-direct ByteBuffer is not supported");
-        goto cleanup;
+          c_args[i].l =
+              getBufferArray(env, arg, &array_elements[array_count].array,
+                             &array_elements[array_count].type,
+                             &array_elements[array_count].elems);
+          if (c_args[i].l == NULL) {
+              throwByName(env,"java/lang/IllegalArgumentException",
+                          "Buffer arguments must be direct or have a primitive backing array");
+              goto cleanup;
+          }
+          ++array_count;
       }
     }
     else if ((array_pt = getArrayComponentType(env, arg)) != 0
@@ -473,7 +502,14 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_CREF(env, Class, "java/lang/Class")) return JNI_FALSE;
   if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return JNI_FALSE;
   if (!LOAD_CREF(env, String, "java/lang/String")) return JNI_FALSE;
+  if (!LOAD_CREF(env, Buffer, "java/nio/Buffer")) return JNI_FALSE;
   if (!LOAD_CREF(env, ByteBuffer, "java/nio/ByteBuffer")) return JNI_FALSE;
+  if (!LOAD_CREF(env, CharBuffer, "java/nio/CharBuffer")) return JNI_FALSE;
+  if (!LOAD_CREF(env, ShortBuffer, "java/nio/ShortBuffer")) return JNI_FALSE;
+  if (!LOAD_CREF(env, IntBuffer, "java/nio/IntBuffer")) return JNI_FALSE;
+  if (!LOAD_CREF(env, LongBuffer, "java/nio/LongBuffer")) return JNI_FALSE;
+  if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return JNI_FALSE;
+  if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return JNI_FALSE;
   
   if (!LOAD_CREF(env, Pointer, "com/sun/jna/Pointer")) return JNI_FALSE;
   if (!LOAD_REF(env, classPointer)) return JNI_FALSE;
@@ -534,6 +570,36 @@ jnidispatch_init(JNIEnv* env) {
                 "getReturnType", "()Ljava/lang/Class;"))
     return JNI_FALSE;
   
+  if (!LOAD_MID(env, MID_ByteBuffer_array, classByteBuffer, "array", "()[B"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_ByteBuffer_arrayOffset, classByteBuffer, "arrayOffset", "()I"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_CharBuffer_array, classCharBuffer, "array", "()[C"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_CharBuffer_arrayOffset, classCharBuffer, "arrayOffset", "()I"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_ShortBuffer_array, classShortBuffer, "array", "()[S"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_ShortBuffer_arrayOffset, classShortBuffer, "arrayOffset", "()I"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_IntBuffer_array, classIntBuffer, "array", "()[I"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_IntBuffer_arrayOffset, classIntBuffer, "arrayOffset", "()I"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_LongBuffer_array, classLongBuffer, "array", "()[J"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_LongBuffer_arrayOffset, classLongBuffer, "arrayOffset", "()I"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_FloatBuffer_array, classFloatBuffer, "array", "()[F"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_FloatBuffer_arrayOffset, classFloatBuffer, "arrayOffset", "()I"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_DoubleBuffer_array, classDoubleBuffer, "array", "()[D"))
+    return JNI_FALSE;
+  if (!LOAD_MID(env, MID_DoubleBuffer_arrayOffset, classDoubleBuffer, "arrayOffset", "()I"))
+    return JNI_FALSE;
+
+
   if (!LOAD_FID(env, FID_Boolean_value, classBoolean, "value", "Z"))
     return JNI_FALSE;
   if (!LOAD_FID(env, FID_Byte_value, classByte, "value", "B"))
@@ -1222,6 +1288,55 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
 }
 
 
+static void*
+getBufferArray(JNIEnv* env, jobject buf,
+               jobject* arrayp, char* typep, void** elemp) {
+  void *ptr = NULL;
+  int offset = 0;
+  jobject array = NULL;
+
+#define GET_ARRAY(TYPE, ELEM_SIZE, JTYPE) \
+do { jboolean cpy; \
+  array = (*env)->CallObjectMethod(env, buf, MID_##TYPE##Buffer_array); \
+  if (array != NULL) { \
+    offset = \
+       (*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset) \
+       * ELEM_SIZE; \
+    ptr = (*env)->Get##TYPE##ArrayElements(env, array, &cpy); \
+    *typep = (JTYPE); \
+  } \
+} while(0)
+
+  if ((*env)->IsInstanceOf(env, buf, classByteBuffer)) {
+    GET_ARRAY(Byte, 1, 'B');
+  }
+  else if((*env)->IsInstanceOf(env, buf, classCharBuffer)) {
+    GET_ARRAY(Char, 2, 'C');
+  }
+  else if((*env)->IsInstanceOf(env, buf, classShortBuffer)) {
+    GET_ARRAY(Short, 2, 'S');
+  }
+  else if((*env)->IsInstanceOf(env, buf, classIntBuffer)) {
+    GET_ARRAY(Int, 4, 'I');
+  }
+  else if((*env)->IsInstanceOf(env, buf, classLongBuffer)) {
+    GET_ARRAY(Long, 8, 'J');
+  }
+  else if((*env)->IsInstanceOf(env, buf, classFloatBuffer)) {
+    GET_ARRAY(Float, 4, 'F');
+  }
+  else if((*env)->IsInstanceOf(env, buf, classDoubleBuffer)) {
+    GET_ARRAY(Double, 8, 'D');
+  }
+  if (ptr != NULL) {
+    *arrayp = array;
+    *elemp = ptr;
+    ptr = (char *)ptr + offset;
+  }
+  return ptr;
+}
+
+
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject classp, jobject w) {
   jlong handle = 0;
@@ -1311,11 +1426,11 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject classp, jobject w)
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_sun_jna_Native_getByteBufferPointer(JNIEnv *env, jobject classp, jobject byteBuffer) {
-  void* addr = (*env)->GetDirectBufferAddress(env, byteBuffer);
+Java_com_sun_jna_Native_getDirectBufferPointer(JNIEnv *env, jobject classp, jobject buffer) {
+  void* addr = (*env)->GetDirectBufferAddress(env, buffer);
   if (addr == NULL) {
     throwByName(env,"java/lang/IllegalArgumentException",
-                "Non-direct ByteBuffer is not supported");
+                "Non-direct Buffer is not supported");
   }
   return newJavaPointer(env, addr);
 }

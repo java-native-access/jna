@@ -15,6 +15,10 @@ package com.sun.jna;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -107,6 +111,78 @@ public class PointerTest extends TestCase {
             assertEquals("Native long mismatch", MAGIC, m.getLong(0));
         }
     }
+    public void testIntBufferPut() {
+        final int MAGIC = 0xABEDCF23;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        IntBuffer ib = buf.asIntBuffer();
+        ib.put(MAGIC).flip();
+        assertEquals("Int not written to memory", MAGIC, 
+                m.getInt(0));
+    }
+    public void testLongBufferPut() {
+        final long MAGIC = 0x1234567887654321L;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        LongBuffer lb = buf.asLongBuffer();
+        lb.put(MAGIC).flip();
+        assertEquals("Long not written to memory", MAGIC, 
+                m.getLong(0));
+    }
+    public void testFloatBufferPut() {
+        final float MAGIC = 1234.5678f;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        FloatBuffer fb = buf.asFloatBuffer();
+        fb.put(MAGIC).flip();
+        assertEquals("Int not written to memory", MAGIC, 
+                m.getFloat(0));
+    }
+    public void testDoubleBufferPut() {
+        final double MAGIC = 1234.5678;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        DoubleBuffer db = buf.asDoubleBuffer();
+        db.put(MAGIC).flip();
+        assertEquals("Int not written to memory", MAGIC, 
+                m.getDouble(0));
+    }
+    public void testIntBufferGet() {
+        final int MAGIC = 0xABEDCF23;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        IntBuffer ib = buf.asIntBuffer();
+        m.setInt(0, MAGIC);
+        assertEquals("Int not read from memory", MAGIC, 
+                ib.get(0));
+    }
+    public void testLongBufferGet() {
+        final long MAGIC = 0x1234567887654321L;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        LongBuffer lb = buf.asLongBuffer();
+        m.setLong(0, MAGIC);
+        assertEquals("Long not read from memory", MAGIC, 
+                lb.get(0));
+    }
+    public void testFloatBufferGet() {
+        final float MAGIC = 1234.5678f;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        FloatBuffer fb = buf.asFloatBuffer();
+        m.setFloat(0, MAGIC);
+        assertEquals("Float not read from memory", MAGIC, 
+                fb.get(0));
+    }
+    public void testDoubleBufferGet() {
+        final double MAGIC = 1234.5678;
+        Memory m = new Memory(8);
+        ByteBuffer buf = m.getByteBuffer(0, m.getSize()).order(ByteOrder.nativeOrder());
+        DoubleBuffer db = buf.asDoubleBuffer();
+        m.setDouble(0, MAGIC);
+        assertEquals("Double not read from memory", MAGIC, 
+                db.get(0));
+    }
     public void testSetStringWithEncoding() throws Exception {
         String old = System.getProperty("jna.encoding");
         String VALUE = "\u0444\u0438\u0441\u0432\u0443";
@@ -134,5 +210,26 @@ public class PointerTest extends TestCase {
                 System.setProperties(newProps);
             }
         }
+    }
+    
+    public void testDirectBufferPointer() throws Exception {
+        Pointer p = new Memory(1024);
+        ByteBuffer b = p.getByteBuffer(0, 1024);
+        assertEquals("ByteBuffer Pointer does not match", 
+                     p, Native.getDirectBufferPointer(b));
+        assertEquals("ShortBuffer Pointer does not match", 
+                     p, Native.getDirectBufferPointer(b.asShortBuffer()));
+        assertEquals("IntBuffer Pointer does not match", 
+                     p, Native.getDirectBufferPointer(b.asIntBuffer()));
+        assertEquals("LongBuffer Pointer does not match", 
+                     p, Native.getDirectBufferPointer(b.asLongBuffer()));
+        assertEquals("FloatBuffer Pointer does not match", 
+                     p, Native.getDirectBufferPointer(b.asFloatBuffer()));
+        assertEquals("DoubleBuffer Pointer does not match", 
+                     p, Native.getDirectBufferPointer(b.asDoubleBuffer()));
+    }
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(PointerTest.class);
     }
 }

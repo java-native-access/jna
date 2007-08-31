@@ -69,7 +69,9 @@ public class StructureTest extends TestCase {
         }
         TestStructure s = new TestStructure();
         s.setAlignType(Structure.ALIGN_GNUC);
-        assertEquals("Wrong structure size", 28, s.size());
+        boolean isSPARC = "sparc".equals(System.getProperty("os.arch"));
+        final int SIZE = NativeLong.SIZE == 4 && !isSPARC ? 28 : 32;
+        assertEquals("Wrong structure size", SIZE, s.size());
     }
     
     // cross-platform smoke test

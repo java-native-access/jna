@@ -34,6 +34,14 @@ public class CallbacksTest extends TestCase {
             boolean callback(boolean arg, boolean arg2);
         }
         boolean callBooleanCallback(BooleanCallback c, boolean arg, boolean arg2);
+        interface ByteCallback extends Callback {
+            byte callback(byte arg, byte arg2);
+        }
+        byte callInt8Callback(ByteCallback c, byte arg, byte arg2);
+        interface ShortCallback extends Callback {
+            short callback(short arg, short arg2);
+        }
+        short callInt16Callback(ShortCallback c, short arg, short arg2);
         interface Int32Callback extends Callback {
             int callback(int arg, int arg2);
         }
@@ -220,6 +228,62 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong callback argument 1", true, cbargs[0]);
         assertEquals("Wrong callback argument 2", false, cbargs[1]);
         assertFalse("Wrong boolean return", value);
+    }
+    
+    public void testCallInt8Callback() {
+        final boolean[] called = {false};
+        final byte[] cbargs = { 0, 0 };
+        TestLibrary.ByteCallback cb = new TestLibrary.ByteCallback() {
+            public byte callback(byte arg, byte arg2) {
+                called[0] = true;
+                cbargs[0] = arg;
+                cbargs[1] = arg2;
+                return (byte)(arg + arg2);
+            }
+        };
+        final byte MAGIC = 0x11; 
+        byte value = lib.callInt8Callback(cb, MAGIC, (byte)(MAGIC*2));
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", 
+                     Integer.toHexString(MAGIC), 
+                     Integer.toHexString(cbargs[0]));
+        assertEquals("Wrong callback argument 2", 
+                     Integer.toHexString(MAGIC*2), 
+                     Integer.toHexString(cbargs[1]));
+        assertEquals("Wrong byte return", 
+                     Integer.toHexString(MAGIC*3), 
+                     Integer.toHexString(value));
+        
+        value = lib.callInt8Callback(cb, (byte)-1, (byte)-2);
+        assertEquals("Wrong byte return (hi bit)", (byte)-3, value);
+    }
+    
+    public void testCallInt16Callback() {
+        final boolean[] called = {false};
+        final short[] cbargs = { 0, 0 };
+        TestLibrary.ShortCallback cb = new TestLibrary.ShortCallback() {
+            public short callback(short arg, short arg2) {
+                called[0] = true;
+                cbargs[0] = arg;
+                cbargs[1] = arg2;
+                return (short)(arg + arg2);
+            }
+        };
+        final short MAGIC = 0x1111;
+        short value = lib.callInt16Callback(cb, MAGIC, (short)(MAGIC*2));
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", 
+                     Integer.toHexString(MAGIC), 
+                     Integer.toHexString(cbargs[0]));
+        assertEquals("Wrong callback argument 2", 
+                     Integer.toHexString(MAGIC*2), 
+                     Integer.toHexString(cbargs[1]));
+        assertEquals("Wrong short return", 
+                     Integer.toHexString(MAGIC*3), 
+                     Integer.toHexString(value));
+
+        value = lib.callInt16Callback(cb, (short)-1, (short)-2);
+        assertEquals("Wrong short return (hi bit)", (short)-3, value);
     }
     
     public void testCallNativeLongCallback() {

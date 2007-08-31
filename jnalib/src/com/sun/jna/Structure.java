@@ -45,6 +45,9 @@ public abstract class Structure {
     }
     
     private static final boolean REVERSE_FIELDS;
+    static final boolean isPPC;
+    static final boolean isSPARC; 
+    
     
     static {
         // IBM and JRockit store fields in reverse order; check for it
@@ -53,6 +56,9 @@ public abstract class Structure {
         if (!"middle".equals(fields[1].getName())) {
             throw new Error("This VM does not store fields in a predictable order");
         }
+        String arch = System.getProperty("os.arch").toLowerCase();
+        isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
+        isSPARC = "sparc".equals(arch);
     }
 
     public static final int ALIGN_DEFAULT = 0;
@@ -62,7 +68,8 @@ public abstract class Structure {
     public static final int ALIGN_GNUC = 2;
     /** validated for w32/msvc; align on field size */
     public static final int ALIGN_MSVC = 3;
-    
+
+    private static final int MAX_GNUC_ALIGNMENT = isSPARC ? 8 : NativeLong.SIZE;
     protected static final int CALCULATE_SIZE = -1;
 
     private Pointer memory;
@@ -666,8 +673,8 @@ public abstract class Structure {
         if (alignType == ALIGN_GNUC) {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
-            if (!firstElement || !"ppc".equals(System.getProperty("os.arch")))
-                return Math.min(4, alignment);
+            if (!firstElement || !isPPC)
+                return Math.min(MAX_GNUC_ALIGNMENT, alignment);
         }
         return alignment;
     }

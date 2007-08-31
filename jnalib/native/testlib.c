@@ -447,6 +447,16 @@ callBooleanCallback(int (*func)(int arg, int arg2),
   return (*func)(NOP(arg), NOP(arg2));
 }
 
+EXPORT int8
+callInt8Callback(int8 (*func)(int8 arg, int8 arg2), int8 arg, int8 arg2) {
+  return (*func)(arg, arg2);
+}
+
+EXPORT int16
+callInt16Callback(int16 (*func)(int16 arg, int16 arg2), int16 arg, int16 arg2) {
+  return (*func)(arg, arg2);
+}
+
 EXPORT int32 
 callInt32Callback(int32 (*func)(int32 arg, int32 arg2),
                   int32 arg, int32 arg2) {

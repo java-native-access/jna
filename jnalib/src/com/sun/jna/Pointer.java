@@ -75,7 +75,12 @@ public class Pointer {
             osPrefix = "sunos-" + arch;
         }
         else {
-            osPrefix = System.getProperty("os.name");
+            osPrefix = System.getProperty("os.name").toLowerCase();
+            int space = osPrefix.indexOf(" ");
+            if (space != -1) {
+                osPrefix = osPrefix.substring(0, space);
+            }
+            osPrefix += "-" + arch;
         }
         return "/com/sun/jna/" + osPrefix;
     }

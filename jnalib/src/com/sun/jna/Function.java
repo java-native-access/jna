@@ -12,6 +12,7 @@ package com.sun.jna;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -392,13 +393,6 @@ public class Function extends Pointer {
                 }
                 return base;
             }
-        }
-        else if (arg instanceof ByteBuffer && !((ByteBuffer)arg).isDirect()) {
-            ByteBuffer buf = (ByteBuffer)arg;
-            if (buf.hasArray()) {
-                return buf.array();
-            }
-            throw new IllegalArgumentException("Unsupported non-direct ByteBuffer with no array");
         }
         else if (argClass.isArray()){
             throw new IllegalArgumentException("Unsupported array argument type: " 

@@ -16,6 +16,7 @@ public final class Platform {
     private static final int LINUX = 1;
     private static final int WINDOWS = 2;
     private static final int SOLARIS = 3;
+    private static final int FREEBSD = 4;
     private static final int osType;
     
     static {
@@ -31,6 +32,9 @@ public final class Platform {
         }
         else if (osName.startsWith("Solaris") || osName.startsWith("SunOS")) {
             osType = SOLARIS;
+        }
+        else if (osName.startsWith("FreeBSD")) {
+            osType = FREEBSD;
         }
         else {
             osType = UNSPECIFIED;
@@ -48,6 +52,9 @@ public final class Platform {
     }
     public static final boolean isSolaris() {
         return osType == SOLARIS;
+    }
+    public static final boolean isFreeBSD() {
+        return osType == FREEBSD;
     }
     public static final boolean isX11() {
         // TODO: check FS or do some other X11-specific test

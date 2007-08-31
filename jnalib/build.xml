@@ -22,7 +22,7 @@
   <property name="dist" location="dist"/>
   <property name="test.src" location="test"/>
   <property name="doc" location="doc"/>
-  <property name="javadoc" location="${dist}/javadoc"/>
+  <property name="javadoc" location="${doc}/javadoc"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="company" value="Technomage"/>
   <property name="company.full" value="Timothy Wall"/>
@@ -177,6 +177,10 @@
 
   <target name="native" depends="setup,javah"
           description="Build native libraries.  Use 'ant -DCC=gcc' to build using gcc on w32">
+    <!-- ensure ARCH is set properly for SunOS -->
+    <condition property="ARCH" value="${os.arch}">
+      <os name="SunOS"/>
+    </condition>
     <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
       <isset property="CC"/>
     </condition>
@@ -331,7 +335,7 @@
     </javadoc>
   </target>
 
-  <target name="dist" depends="jar,native-jar,examples-jar"
+  <target name="dist" depends="jar,native-jar,examples-jar,javadoc"
           description="Build examples">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <zipfileset src="${build}/${jar}"/>
@@ -366,10 +370,13 @@
         <include name="examples.jar"/>
       </fileset>
     </copy>
-    <!--
-    <copy todir="${dist}/doc">
-      <fileset dir="${doc}"/>
-    </copy>-->
+    <zip zipfile="${dist}/doc.zip">
+      <zipfileset dir="${javadoc}" prefix="doc"/>
+    </zip>
+    <zip zipfile="${dist}/src.zip">
+      <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
+      <zipfileset dir="${native}" prefix="native"/>
+    </zip>
   </target>
 
   <target name="clean" depends="dynamic-properties">

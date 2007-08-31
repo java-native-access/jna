@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Map;
@@ -39,7 +40,7 @@ import java.util.WeakHashMap;
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
-public class Native {
+public final class Native {
 
     private static Map typeMappers = Collections.synchronizedMap(new WeakHashMap());
     private static Map alignments = Collections.synchronizedMap(new WeakHashMap());
@@ -96,11 +97,19 @@ public class Native {
     }
     
     private static native long getWindowHandle0(Component c);
-    
-    /** Convert a direct {@link ByteBuffer} into a {@link Pointer}. 
-     * @throws IllegalArgumentException if the byte buffer is not direct.
+
+    /** Convert a direct {@link Buffer} into a {@link Pointer}. 
+     * @throws IllegalArgumentException if the buffer is not direct.
+     * @deprecated Use {@link #getDirectBufferPointer} instead. 
      */
-    public static native Pointer getByteBufferPointer(ByteBuffer b);
+    public static Pointer getByteBufferPointer(ByteBuffer b) {
+        return getDirectBufferPointer(b);
+    }
+    
+    /** Convert a direct {@link Buffer} into a {@link Pointer}. 
+     * @throws IllegalArgumentException if the buffer is not direct.
+     */
+    public static native Pointer getDirectBufferPointer(Buffer b);
     
     /** Obtain a Java String from the given native byte array.  If there is
      * no NUL terminator, the String will comprise the entire array.

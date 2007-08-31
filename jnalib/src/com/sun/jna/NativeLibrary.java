@@ -325,14 +325,17 @@ public class NativeLibrary {
         librarySearchPath.addAll(initPaths("jna.library.path"));
         if (System.getProperty("jna.platform.library.path") == null) {
             // Add default path lookups for unix-like systems
-            if (new File("/lib").exists() 
-                || new File("/usr/lib").exists()
-                || new File("/lib64").exists()
-                || new File("/usr/lib64").exists()) {
-                String platformPath = "/usr/lib:/lib";
-                if (Pointer.SIZE == 8) {
-                    platformPath = "/usr/lib64:/lib64";
-                }
+            String platformPath = "";
+            String sep = "";
+            if (new File("/usr/lib").exists()) {
+                platformPath += sep + "/usr/lib";
+                sep = File.pathSeparator;
+            }
+            if (new File("/lib").exists()) { 
+                platformPath += sep + "/lib";
+                sep = File.pathSeparator;
+            }
+            if (!"".equals(platformPath)) {
                 System.setProperty("jna.platform.library.path", platformPath);
             }
         }
