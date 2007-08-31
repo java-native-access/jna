@@ -19,23 +19,24 @@ which includes an overview of specific usage.<p>
 <ul>
 <li>Automatic mapping from Java interface to native function
 <li>8-, 16-, 32, and 64-bit basic data types
-<li>Structure pointer arguments
+<li>Structure and Union pointer arguments
 <li>Automatic conversion between C and Java strings
 <!-- Newer functionality -->
 <li>Function pointers (callbacks from native code to Java code) as arguments and/or members of a <code>struct</code>
 <li>By-reference (pointer-to-type) arguments 
-<li>Java array and ByteBuffer arguments (primitive types and pointers) as pointer-to-buffer
+<li>Java array and Buffer arguments (primitive types and pointers) as pointer-to-buffer
 <li>Nested structures and arrays
 <li><code>wchar_t</code>-based strings
 <li>Native <code>long</code> support (32- or 64-bit as appropriate)
 <li><a href="#demos">Full-blown demo applications</a>
-<li>Linux (x86), Mac OS X (PPC and x86), and w32+gcc support (full multiplatform support coming soon!)
-<li>Complete automated build and test of Java and native code
+<li>Linux (x86,amd64), Mac OS X (PPC,x86), SunOS (x86,sparc*), FreeBSD (x86), and w32 (x86) support
 <li>JUnit test coverage
-<li>Builds/runs on 1.4 VMs (annotations are no longer used)
+<li>Requires 1.4 or later JVM
 <li>Customizable argument and return value conversions
 <li>Customizable mapping from Java method to native function name
 <li>Support for automatic w32 ASCII/UNICODE mappings
+<li>Auto-generated proxies for native function pointers in structs
+<li>Varargs support
 </ul>
 
  <h3>Community</h3>
