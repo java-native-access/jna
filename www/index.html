@@ -54,7 +54,7 @@ which includes an overview of specific usage.<p>
    <li>More comprehensive documentation on using JNA, including examples of Java to native conversions of data types, function usage, and proper memory management.</li>
    <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.  This is important not for having an exhaustive library definition but to illustrate all the different ways a native library may need to be mapped.</li>
    <li>Peer review the design and suggest improvements and enhancements</li>
-   <li>Build the <code>jnidispatch</code> library backend on new platforms (the v3 branch is using libffi from gcc, so it should mostly work out of the box if we can just get access to the appropriate build platform).</li>
+   <li>Build the <code>jnidispatch</code> library backend on new platforms (it should mostly work out of the box if we can just get access to the appropriate build platform).</li>
    <li>Testing on various JDK versions and platforms (linux flavors!).</li>
    <li>Tips and recommended usage of JNA: Likely danger areas, failure modes, best practices, multithreading, etc.</li>
  </ul>
@@ -155,7 +155,8 @@ The <a href="javadoc/com/sun/jna/TypeMapper.html">TypeMapper</a> class and relat
 <p>
 You may also customize the mapping of Java method names to the corresponding native function name.  The <a href="javadoc/com/sun/jna/win32/StdCallFunctionMapper.html">StdCallFunctionMapper</a> is one implementation which automatically generates <code>stdcall</code>-decorated function names from a Java interface method signature.
 <p>
-Refer to <a href="javadoc/overview-summary.html#marshalling">this table in the overview</a> for a complete list of type mappings.
+Refer to <a href="javadoc/overview-summary.html#marshalling">this table in the
+overview</a> for a complete list of built-in type mappings.
 <p>
 <h3>Callbacks</h3>
 Callback declarations consist of a simple interface that extends the <a href="javadoc/com/sun/jna/Callback.html">Callback</a>
@@ -262,8 +263,8 @@ href="http://ant.apache.org">ANT</a>, <a
 href="http://directory.fsf.org/make.html">GNU make</a> and <a
 href="http://gcc.gnu.org">GCC</a>.  On windows, you will need either <a
 href="http://www.cygwin.com">cygwin GCC</a> or the MINGW32 version (MSVC will
-build the JNA native library, but will not build the <code>libffi</code>
-library.  To rebuild <code>jna.jar</code>, and run the unit tests, do<br>  
+build most of the JNA native library, but will not build the <code>libffi</code>
+library and chokes on the libffi includes).  To rebuild <code>jna.jar</code>, and run the unit tests, do<br>  
 <blockquote><code><pre>
 % ant dist test
 </pre></code></blockquote>
