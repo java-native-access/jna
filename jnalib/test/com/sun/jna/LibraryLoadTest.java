@@ -28,15 +28,34 @@ public class LibraryLoadTest extends TestCase {
         int strlen(String str);
         int atol(String str);
     }
+
+    private Object load() {
+        return Native.loadLibrary(System.getProperty("os.name").startsWith("Windows")
+                                  ? "msvcrt" : "c", CLibrary.class);
+    }
     
     public void testLoadCLibrary() {
-        Native.loadLibrary(System.getProperty("os.name").startsWith("Windows")
-                           ? "msvcrt" : "c", CLibrary.class);
+        load();
     }
     
     public void testLoadAWTAfterJNA() {
         if (Pointer.SIZE > 0) {
             Toolkit.getDefaultToolkit();
+        }
+    }
+    
+    public void testHandleObjectMethods() {
+        CLibrary lib = (CLibrary)load();
+        String method = "toString";
+        try {
+            lib.toString();
+            method = "hashCode";
+            lib.hashCode();
+            method = "equals";
+            lib.equals(null);
+        }
+        catch(UnsatisfiedLinkError e) {
+            fail("Object method '" + method + "' not handled");
         }
     }
 

@@ -12,6 +12,7 @@ package com.sun.jna;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -58,10 +59,14 @@ public interface Library {
     static class Handler implements InvocationHandler {
         
         static final Method OBJECT_TOSTRING;
+        static final Method OBJECT_HASHCODE;
+        static final Method OBJECT_EQUALS;
         
         static {
             try {
                 OBJECT_TOSTRING = Object.class.getMethod("toString", new Class[0]);
+                OBJECT_HASHCODE= Object.class.getMethod("hashCode", new Class[0]);
+                OBJECT_EQUALS = Object.class.getMethod("equals", new Class[] { Object.class });
             }
             catch (Exception e) {
                 throw new Error("Error retrieving Object.toString() method");
@@ -123,9 +128,19 @@ public interface Library {
         public Object invoke(Object proxy, Method method, Object[] inArgs)
             throws Throwable {
 
-            // Check for any toString() calls on the proxy
-            if (method == OBJECT_TOSTRING) {
+            // Intercept Object methods
+            if (OBJECT_TOSTRING.equals(method)) {
                 return "Proxy interface to " + nativeLibrary;
+            }
+            else if (OBJECT_HASHCODE.equals(method)) {
+                return new Integer(hashCode());
+            }
+            else if (OBJECT_EQUALS.equals(method)) {
+                Object o = inArgs[0];
+                if (o != null && Proxy.isProxyClass(o.getClass())) {
+                    return Boolean.valueOf(Proxy.getInvocationHandler(o) == this);
+                }
+                return Boolean.FALSE;
             }
 
             Function f = null;

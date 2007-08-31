@@ -859,8 +859,18 @@ public abstract class Structure {
         
         /** Chain invocation to the native function. */
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (method == Library.Handler.OBJECT_TOSTRING) {
+            if (Library.Handler.OBJECT_TOSTRING.equals(method)) {
                 return "Proxy interface to function pointer " + function;
+            }
+            else if (Library.Handler.OBJECT_HASHCODE.equals(method)) {
+                return new Integer(hashCode());
+            }
+            else if (Library.Handler.OBJECT_EQUALS.equals(method)) {
+                Object o = args[0];
+                if (o != null && Proxy.isProxyClass(o.getClass())) {
+                    Boolean.valueOf(Proxy.getInvocationHandler(o) == this);
+                }
+                return Boolean.FALSE;
             }
             if (Function.isVarArgs(method)) {
                 args = Function.concatenateVarArgs(args);
