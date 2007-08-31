@@ -1,18 +1,4 @@
-# FUTURE DEMOS:
-* test keyboard keys' state (needs OSX)
-* get system process information, basic process control
-* additional file utilities (meta info, free space, etc)
-* enforce window minimum/maximum size (workaround java bug)
-
-# TODO:
-
-* review/use ByteBuffer everywhere
-* change/augment getWindowHandle0 to provide any heavyweight component window
-* use jna.encoding property to affect string encoding instead of just using
-  the system default encoding.
-
-* design: 
-
+# DESIGN GOALS/REQUIREMENTS
   o no permanent references to java objects in native code (hard to get rid of)
     this means no java object arguments to callbacks; use some sort of integer
     key instead (hashcode?) callbacks can hold local data anyway...
@@ -26,10 +12,22 @@
     - pointer to type in struct should be handled with Pointer
     - how to do pointer to struct in struct? (Pointer to start with)
   o "free" should be invisible wherever possible
-* use libffi from gcc to handle calls and callbacks?
-  or move callback asm templates into dispatch_<arch>.c
 
+# FUTURE DEMOS:
+* test keyboard keys' state (needs OSX)
+* get system process information, basic process control
+* additional file utilities (meta info, free space, etc)
+* enforce window minimum/maximum size (workaround java bug)
 
+# TODO
+
+* review/use ByteBuffer everywhere
+* NativeConvertible: provide interface to automatically convert custom Java
+  type to/from native types. 
+
+* type safety between returned and passed in pointers (w32 API); advantage of
+  deriving from Pointer is that type mapping can be made automatic, without an
+  explicit type mapping defined.
 * provide library load/unload hooks (Runnables in options?). Examples:
   o GetLastError in kernel32 (note: would need to initialize kernel32 from any
   other w32 api dll as well)
@@ -37,8 +35,7 @@
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be available in GraphicsDevice->getIDstring
-* universal OSX build w/cross-compile (hard to do with libffi)
-* universal GCC build w/cross-compile
+* universal GCC build w/cross-compile (needs cross compilers...)
 * catch native crash/exception/faults and re-throw as java exception
   this is mostly for debugging a new mapping to avoid crashing the VM
   could do setjmp/longjmp on *nix and catch C++ exception on w32
@@ -46,10 +43,8 @@
   Long.SIZE, Integer.SIZE, et al.
 * interface "lvalue", which can provide a pointer to itself (reference() or
   addressOf())?
-* how to do direct struct argument (vs struct pointer) (uncommon)? 
-* how to do struct return (vs struct pointer) (uncommon)? 
-* more tests for argument types (2 args, all permutations of basic data types)
-   ensures native stack handling is done properly
+* how to do struct value argument (vs struct pointer) (uncommon)? 
+* how to do struct value return (vs struct pointer) (uncommon)? 
 * make Pointer free-able (system allocates memory, client frees it); actually,
   this should probably be automatic so the user doesn't have to think about it.
   Maybe a custom type representing "function-allocated-pointer" or
@@ -66,12 +61,7 @@
    Maybe make function return "Memory", which can then be converted to a
    Structure or some other type.  Then memory will free itself when no longer
    referenced. 
-* unions (copy-on-call is problematic: which member is active?) must require
-  explicit write, either per member or whole object before export
 * verify get/set methods vs read/write is for performance (Pointer)?
-* type safety between returned and passed in pointers (w32 API); advantage of
-  deriving from Pointer is that type mapping can be made automatic, without an
-  explicit type mapping defined.
 * bitfields et al. for structs
 * if method has "GetLastErrorException/ErrnoException" in its signature, use
   result codes + GetLastError/errno/errstr to auto-generate 
@@ -87,11 +77,18 @@
 
 
 
-
-
-
+
 # DONE
-* Union
+* use libffi from gcc to handle calls and callbacks?
+  or move callback asm templates into dispatch_<arch>.c
+* more tests for argument types (2 args, all permutations of basic data types)
+   ensures native stack handling is done properly (handled by libffi)
+* universal OSX build w/cross-compile (hard to do with libffi)
+* use jna.encoding property to affect string encoding instead of just using
+  the system default encoding.
+* change/augment getWindowHandle0 to provide any heavyweight component window
+* unions (copy-on-call is problematic: which member is active?) must require
+  explicit write, either per member or whole object before export
 * rename Argument/Result Converter to be fromNative/toNative
 * split unit tests
 * auto-convert struct pointers in callback args to Java Structure
@@ -163,7 +160,8 @@ void setWindowMask(Window w, Shape clip);
 // needs:
 int findNativeWindow(Window w);
 
-# SIMILAR PROJECTS: 
+
+# RELATED and/or SIMILAR PROJECTS: 
 # nlink.dev.java.net: 
 #   pros: simple definitions (same as jna)
 #   cons: w32 only
@@ -179,17 +177,17 @@ int findNativeWindow(Window w);
 # jacob-project.sf.net (COM DLL access)
 # nativecall.sf.net (minimal)
 # cxxwrap.sf.net
-# xFunction (osx)
 # J/Direct (defunct)
 # NoodleGlue
 # SWIG
 # ctypes4j.sf.net
 # ctypes-java (out of date)
 # jnbridge
-# xFunction (http://excelsior-usa.com/xfunction.html, commercial)
-# libffi (now part of GCC) (this might be useful as the dispatch layer)
+# xFunction (http://excelsior-usa.com/xfunction.html, commercial, osx)
 # JACE c++ mappings
-# JNI options: http://staff.develop.com/halloway/JavaWin32.html
 # JAW Java API wrapper http://www.aplu.ch/home/apluhome.jsp?site=5
+
+# OTHER REFERENCES
+# JNI options: http://staff.develop.com/halloway/JavaWin32.html
 # List of JNI alternatives: http://weblog.janek.org/Archive/2005/07/28/AlternativestoJavaNativeI.html
 
