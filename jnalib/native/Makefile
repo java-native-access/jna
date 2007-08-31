@@ -151,7 +151,7 @@ SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
 ISYSROOT=-isysroot $(SDKROOT)
 ARCHFLAGS=-arch ppc -arch i386
 endif
-PCFLAGS+=$(ARCHFLAGS) $(ISYSROOT) -x objective-c
+PCFLAGS+=$(ISYSROOT) -x objective-c
 CDEFINES=-DTARGET_RT_MAC_CFM=0
 LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -compatibility_version $(shell echo ${VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
@@ -163,9 +163,17 @@ LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
 LIBS=
 endif
 
+# Unfortunately, we have to use different libffi include files depending on 
+# the target, so we can't do a simple universal build on darwin
 $(BUILD)/%.o : %.c $(FFI_LIB)
 	@mkdir -p $(BUILD)
+ifeq ($(OS),darwin)
+	$(CC) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)
+	$(CC) -arch $(ALT_ARCH) -I$(FFI_ALT_BUILD)/include $(CFLAGS) -c $< -o $@.$(ALT_ARCH)
+	lipo -create -output $@ $@.$(ARCH) $@.$(ALT_ARCH)
+else
 	$(CC) $(CFLAGS) -c $< $(COUT)
+endif
 
 all: $(LIBRARY) $(TESTLIB)
 
