@@ -21,9 +21,12 @@
 
 # TODO
 
-* review/use ByteBuffer everywhere
 * NativeConvertible: provide interface to automatically convert custom Java
   type to/from native types. 
+* update X11 libs for 64-bit
+* review/use direct Buffer in more places
+* Callback/function pointer as return value (e.g. signal())
+* StringBuffer/StringBuilder as mutable char*/wchar_t* argument
 
 * type safety between returned and passed in pointers (w32 API); advantage of
   deriving from Pointer is that type mapping can be made automatic, without an

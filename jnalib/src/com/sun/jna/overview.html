@@ -107,7 +107,7 @@ Java <code>String</code>s perform the same function as the native types
 calling a native function, we have to introduce some sort of annotation to
 identify how the java  <code>String</code> should be converted.
 
-Java <code>String</code>s are automatically converted to <code>char*</code>
+Java <code>String</code>s are normally converted to <code>char*</code>
 since this is the most common usage of strings.  Strings are automatically
 converted to a <code>NUL</code>-terminated array of <code>char</code> across
 the function call.  Returned <code>char*</code> values are automatically
@@ -119,16 +119,17 @@ memory, a return type of {@link com.sun.jna.Pointer} should be used to avoid
 leaking the memory.  It is then up to you to take the necessary steps to free
 the allocated memory.
 <p>
+When converting Java unicode characters into an array of <code>char</code>,
+the default platform encoding is used, unless the system property
+<code>jna.encoding</code> is set to a valid encoding.  This property may be
+set to "UTF8", for example, to ensure all native strings use that encoding.
+<p>
 
 <h3>Wide Strings</h3>
 The {@link com.sun.jna.WString} class is used to identify wide character
 strings, and only requires a little effort to obtain a
 <code>String</code>.  
 <p>
-While it would be possible to identify wide string arguments by tagging the
-strings themselves (for example, with a special prefix like "\u0000W\u0000"),
-that method can't be used to identify wide string return values.  So for
-consistency, the {@link com.sun.jna.WString} type is used in both cases.
 
 <h3>Buffers/Memory Blocks</h3>
 Use arrays to represent buffers of primitive types.  A native method cannot
@@ -142,9 +143,11 @@ primitive arrays.
 If you need to pass in a subset of a primitive array, you can do so by
 wrapping it in a {@link java.nio.Buffer} subclass, such as {@link
 java.nio.ByteBuffer}, using the {@link
-java.nio.ByteBuffer#wrap(byte[],int,int)} method.
+java.nio.ByteBuffer#wrap(byte[],int,int)} method.  Wrapping an array in a
+buffer also allows you to pass only a subset of a Java array to the native
+function. 
 
-<h3>Function Pointers (aka Callbacks)</h3>
+<h3>Callbacks (Function Pointers)</h3>
 JNA supports supplying Java callbacks to native code.  You must define an
 interface that extends the {@link com.sun.jna.Callback} interface, and define
 a single <code>callback</code> method with a signature that matches the
@@ -360,7 +363,7 @@ native memory, call {@link com.sun.jna.Structure#read()} (to update the entire
 structure) or {@link com.sun.jna.Structure#readField(String)
 data.readField("refCount")} (to update just the <code>refCount</code> field). 
 
-<h4>Unions</h4>
+<h3>Unions</h3>
 Unions are a special type of Structure.  Each declared field within the union
 overlays the same address in native memory.  When writing a union to native
 memory, you <em>must</em> specify which field is to be written by supplying
