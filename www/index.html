@@ -38,13 +38,13 @@ which includes an overview of specific usage.<p>
 </ul>
 
  <h3>How To Get Started Using JNA</h3>
- <p>Java Native Access (JNA) has a single component, <code>jna.jar</code>; the supporting native library (<code>jnidispatch</code>) is included in the jar file to avoid extra configuration steps. JNA is capable of extracting and loading the library on its own, so you don't need additional configuration.  The native library is also available in platform-specific jar files for use with Java Web Start.</p>
+ <p>Java Native Access (JNA) has a single component, <code>jna.jar</code>; the supporting native library (<code>jnidispatch</code>) is included in the jar file. JNA is capable of extracting and loading the native library on its own, so you don't need additional configuration.  The native library is also available in platform-specific jar files for use with Java Web Start.</p>
 <ol>
-  <li>From the <a href="https://jna.dev.java.net/servlets/ProjectDocumentList?folderID=7408&expandFolder=7408&folderID=0">download page</a>, download <code>jna.jar</code>.</li>
-  <li>Identify a native <em>target library</em> that you want to invoke from your Java code. This can be any library with exported functions, and it must be loadable from the JDK just like any native library.  A good example is the local C library (libc.so on linux or msvcrt.dll on windows).</li>
+  <li>Download <code>jna.jar</code> from the <a href="https://jna.dev.java.net/servlets/ProjectDocumentList?folderID=7408&expandFolder=7408&folderID=0">download page</a>.</li>
+  <li>Identify a native <em>target library</em> that you want to use. This can be any shared library with exported functions.  A good example is the local C library (libc.so on linux or msvcrt.dll on windows).</li>
   <li>Make your target library available to your Java program. There are two ways to do this:
     <ul>
-      <li>Set the <code>jna.library.path</code> system property to the path to your target library (not the jnidispatch library).  This property behaves similarly to <code>java.library.path</code> but only applies to libraries loaded by JNA.  This is the preferred method.</li> 
+      <li>The preferred method is to set the <code>jna.library.path</code> system property to the path to your target library.  This property is similar to <code>java.library.path</code> but only applies to libraries loaded by JNA.</li> 
       <li>Change the appropriate library access environment variable.  This is PATH on Windows, LD_LIBRARY_PATH on Linux, and DYLD_LIBRARY_PATH on OSX.</li>
     </ul>
   </li>
@@ -67,7 +67,7 @@ public interface Kernel32 extends StdCallLibrary {
 </textarea><br>
 This instance is for convenient reuse.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.
   </li>
-  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to <a href="javadoc/overview-summary.html#marshalling">this table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures). You can add normal Java methods also, but they will not be used by JNA.</li>
+  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to <a href="javadoc/overview-summary.html#marshalling">this table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures). You can add normal Java methods also, but they will not be used by JNA.  You can define as many or as few methods as you actually need; you are not required to map every function provided by the shared library.</li>
     <textarea name="textarea" cols="80" rows="12" readonly="readonly">
     public static class SYSTEMTIME extends Structure {
         public short wYear;
