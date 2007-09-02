@@ -39,7 +39,12 @@ volatile int __dummy__ = 0;
 #define MAGICDOUBLE ((double)(-118.625))
 #define int8 signed char
 #define int16 short
-#define int32 long
+#ifdef _WIN32
+#  define int32 long
+#else
+#  define int32 int
+#endif
+
 #define MAGICDATA "0123456789"
 
 // TODO: check more fields/alignments
