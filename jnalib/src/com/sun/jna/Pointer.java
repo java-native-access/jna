@@ -112,8 +112,7 @@ public class Pointer {
             
             FileOutputStream fos = null;
             try {
-                String ext = libname.substring(libname.lastIndexOf("."));
-                lib = File.createTempFile("jna", ext);
+                lib = File.createTempFile("jna", null);
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
                 int count;
