@@ -21,7 +21,9 @@ public class NativeLibraryTest extends TestCase {
     public static interface TestLibrary extends Library {
         int callCount();
     }
-    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(NativeLibraryTest.class);
+    }
     public void testGCNativeLibrary() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         WeakReference ref = new WeakReference(lib);
@@ -89,4 +91,24 @@ public class NativeLibraryTest extends TestCase {
         int count2 = lib2.callCount();
         assertEquals("Simple library name not aliased", count + 1, count2);
     }
+    public void testFunctionHoldsLibraryReference() throws Exception {
+        NativeLibrary lib = NativeLibrary.getInstance("testlib");
+        WeakReference ref = new WeakReference(lib);
+        Function f = lib.getFunction("callCount");
+        lib = null;
+        System.gc();
+        long start = System.currentTimeMillis();
+        while (ref.get() != null && System.currentTimeMillis() - start < 2000) {
+            Thread.sleep(10);            
+        }
+        assertNotNull("Library GC'd when it should not be", ref.get());
+        f.invokeInt(new Object[0]);
+        f = null;
+        System.gc();
+        while (ref.get() != null && System.currentTimeMillis() - start < 5000) {
+            Thread.sleep(10);            
+        }
+        assertNull("Library not GC'd", ref.get());
+    }
+
 }

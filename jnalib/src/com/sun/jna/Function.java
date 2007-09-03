@@ -12,8 +12,6 @@ package com.sun.jna;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +40,10 @@ public class Function extends Pointer {
     public static final int ALT_CONVENTION = 1;
 
     private String libName;
+    
+    // Keep a reference to the NativeLibrary so it does not get garbage collected
+    // until the function is
+    private NativeLibrary library;
     private String functionName;
     private int callingConvention;
 
@@ -100,10 +102,11 @@ public class Function extends Pointer {
      */
     Function(NativeLibrary library, String functionName, int callingConvention) {
         checkCallingConvention(callingConvention);
+        this.library = library;
         this.libName= library.getName();
         this.functionName = functionName;
         this.callingConvention = callingConvention;
-        this.peer = library.getFunctionAddress(functionName);
+        this.peer = library.getFunctionAddress(functionName);        
     }
     
     /**
