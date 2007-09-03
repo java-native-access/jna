@@ -95,10 +95,13 @@ Those Java types in italics are handled by the JNA Java library and converted
 to or from one of the basic types.
 <p>
 Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
+<p>
+Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the {@link com.sun.jna.NativeMapped} interface.  
 
 <h3>Pointers</h3>
-Pointers may be used as an opaque type from which other data types may be
-extracted.  The user is generally not allowed to construct a Pointer de novo.
+Pointers may be used as an opaque type from which other data types may be extracted.  The user is generally not allowed to construct a Pointer de novo. 
+<p>
+Type-safe pointers may be defined by deriving from the {@link com.sun.jna.PointerType} class.  Any such user-defined type will be treated the same as a {@link com.sun.jna.Pointer}.
 
 <h3>Strings</h3>
 Java <code>String</code>s perform the same function as the native types

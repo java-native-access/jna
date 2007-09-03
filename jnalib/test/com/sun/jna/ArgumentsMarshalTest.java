@@ -180,6 +180,33 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Should return 0x80000000", 
                      value, lib.returnLongArgument(value));
     }
+
+    public interface NativeMappedLibrary extends Library {
+        int returnInt32Argument(Custom arg);
+    }
+    public static class Custom implements NativeMapped {
+        private int value;
+        public Custom() { }
+        public Custom(int value) {
+            this.value = value;
+        }
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            return new Custom(((Integer)nativeValue).intValue());
+        }
+        public Class nativeType() {
+            return Integer.class;
+        }
+        public Object toNative() {
+            return new Integer(value);
+        }
+    }
+    public void testNativeMappedArgument() {
+        NativeMappedLibrary lib = (NativeMappedLibrary)
+            Native.loadLibrary("testlib", NativeMappedLibrary.class);
+        final int MAGIC = 0x12345678;
+        Custom arg = new Custom(MAGIC);
+        assertEquals("Argument not mapped", MAGIC, lib.returnInt32Argument(arg));
+    }
     
     public void testPointerArgumentReturn() {
         assertEquals("Expect null pointer",

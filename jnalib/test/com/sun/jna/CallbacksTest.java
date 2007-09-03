@@ -304,6 +304,51 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong boolean return", new NativeLong(3), value);
     }
     
+    public static class Custom implements NativeMapped {
+        private int value;
+        public Custom() { }
+        public Custom(int value) {
+            this.value = value;
+        }
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            return new Custom(((Integer)nativeValue).intValue());
+        }
+        public Class nativeType() {
+            return Integer.class;
+        }
+        public Object toNative() {
+            return new Integer(value);
+        }
+        public boolean equals(Object o) {
+            return o instanceof Custom && ((Custom)o).value == value;
+        }
+    }
+    public static interface CustomCallback extends Callback {
+        Custom callback(Custom arg1, Custom arg2);
+    }
+    public static interface NativeMappedLibrary extends Library {
+        int callInt32Callback(CustomCallback cb, int arg1, int arg2);
+    }
+    public void testCallNativeMappedCallback() {
+        final boolean[] called = {false};
+        final Custom[] cbargs = { null, null};
+        CustomCallback cb = new CustomCallback() {
+            public Custom callback(Custom arg, Custom arg2) {
+                called[0] = true;
+                cbargs[0] = arg;
+                cbargs[1] = arg2;
+                return new Custom(arg.value + arg2.value);
+            }
+        };
+        NativeMappedLibrary lib = (NativeMappedLibrary)
+            Native.loadLibrary("testlib", NativeMappedLibrary.class);
+        int value = lib.callInt32Callback(cb, 1, 2);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", new Custom(1), cbargs[0]);
+        assertEquals("Wrong callback argument 2", new Custom(2), cbargs[1]);
+        assertEquals("Wrong NativeMapped return", 3, value);
+    }
+    
     public void testCallStringCallback() {
         final boolean[] called = {false};
         final String[] cbargs = { null };

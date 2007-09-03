@@ -112,8 +112,8 @@ class CallbackReference extends WeakReference {
                 } 
                 nativeParamTypes[i] = Pointer.class;
             }
-            else if (NativeLong.class.isAssignableFrom(cls)) {
-                nativeParamTypes[i] = NativeLong.SIZE == 4 ? Integer.class : Long.class;
+            else if (NativeMapped.class.isAssignableFrom(cls)) {
+                nativeParamTypes[i] = new NativeMappedConverter(cls).nativeType();
             }
             else if (cls == String.class || cls == WString.class) {
                 nativeParamTypes[i] = Pointer.class;
@@ -166,10 +166,19 @@ class CallbackReference extends WeakReference {
         public DefaultCallbackProxy(Method callbackMethod, TypeMapper mapper) {
             this.callbackMethod = callbackMethod;
             Class[] argTypes = callbackMethod.getParameterTypes();
+            Class returnType = callbackMethod.getReturnType();
             fromNative = new FromNativeConverter[argTypes.length];
-            if (mapper != null) {
-                toNative = mapper.getToNativeConverter(callbackMethod.getReturnType());
-                for (int i=0;i < fromNative.length;i++) {
+            if (NativeMapped.class.isAssignableFrom(returnType)) {
+                toNative = new NativeMappedConverter(returnType);
+            }
+            else if (mapper != null) {
+                toNative = mapper.getToNativeConverter(returnType);
+            }
+            for (int i=0;i < fromNative.length;i++) {
+                if (NativeMapped.class.isAssignableFrom(argTypes[i])) {
+                    fromNative[i] = new NativeMappedConverter(argTypes[i]);
+                }
+                else if (mapper != null) {
                     fromNative[i] = mapper.getFromNativeConverter(argTypes[i]);
                 }
             }
@@ -194,12 +203,14 @@ class CallbackReference extends WeakReference {
 
             // convert basic supported types to appropriate Java parameter types
             for (int i=0;i < args.length;i++) {
+                Class type = paramTypes[i];
+                Object arg = args[i];
                 if (fromNative[i] != null) {
                     FromNativeContext context = 
-                        new CallbackInvocationContext(paramTypes[i], callbackMethod, args);
-                    args[i] = fromNative[i].fromNative(args[i], context);
+                        new CallbackInvocationContext(type, callbackMethod, args);
+                    arg = fromNative[i].fromNative(arg, context);
                 }
-                callbackArgs[i] = convertArgument(args[i], paramTypes[i]);
+                callbackArgs[i] = convertArgument(arg, type);
             }
 
             Object result = null;
@@ -248,12 +259,6 @@ class CallbackReference extends WeakReference {
                     }
                 }
             }
-            else if (NativeLong.class.isAssignableFrom(dstType)
-                     && (value instanceof Integer || value instanceof Long)) {
-                value = new NativeLong(NativeLong.SIZE == 4
-                                       ? ((Integer)value).intValue()
-                                       : ((Long)value).longValue());
-            }
             else if ((boolean.class == dstType || Boolean.class == dstType)
                      && value instanceof Number) {
                 value = Boolean.valueOf(((Number)value).intValue() != 0);
@@ -270,9 +275,6 @@ class CallbackReference extends WeakReference {
             Class cls = value.getClass();
             if (Structure.class.isAssignableFrom(cls)) {
                 return ((Structure)value).getPointer();
-            }
-            else if (NativeLong.class.isAssignableFrom(cls)) {
-                return ((NativeLong)value).asNativeValue();
             }
             else if (cls == boolean.class || cls == Boolean.class) {
                 return new Integer(Boolean.TRUE.equals(value)?-1:0);
@@ -299,7 +301,7 @@ class CallbackReference extends WeakReference {
     }
 
     /** Returns whether the given class is supported in native code.
-     * Other types (String, WString, Structure, arrays, NativeLong,
+     * Other types (String, WString, Structure, arrays, NativeMapped,
      * etc) are supported in the Java library.
      */
     static boolean isAllowableNativeType(Class cls) {

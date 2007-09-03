@@ -180,7 +180,12 @@ public class Function extends Pointer {
         
         Class nativeType = returnType;
         FromNativeConverter resultConverter = null;
-        if (mapper != null) {
+        if (NativeMapped.class.isAssignableFrom(returnType)) {
+            NativeMappedConverter tc = new NativeMappedConverter(returnType);
+            resultConverter = tc;
+            nativeType = tc.nativeType();
+        }
+        else if (mapper != null) {
             resultConverter = mapper.getFromNativeConverter(returnType);
             if (resultConverter != null) {
                 nativeType = resultConverter.nativeType();
@@ -225,50 +230,46 @@ public class Function extends Pointer {
     }
 
     private Object invoke(Object[] args, Class returnType) {
+        Object result = null;
         if (returnType == null || returnType==void.class || returnType==Void.class) {
             invokeVoid(callingConvention, args);
-            return null;
+            result = null;
         }
         else if (returnType==boolean.class || returnType==Boolean.class) {
-            return new Boolean(invokeInt(callingConvention, args) != 0);
+            result = new Boolean(invokeInt(callingConvention, args) != 0);
         }
         else if (returnType==byte.class || returnType==Byte.class) {
-            return new Byte((byte)invokeInt(callingConvention, args));
+            result = new Byte((byte)invokeInt(callingConvention, args));
         }
         else if (returnType==short.class || returnType==Short.class) {
-            return new Short((short)invokeInt(callingConvention, args));
+            result = new Short((short)invokeInt(callingConvention, args));
         }
         else if (returnType==char.class || returnType==Character.class) {
-            return new Character((char)invokeInt(callingConvention, args));
+            result = new Character((char)invokeInt(callingConvention, args));
         }
         else if (returnType==int.class || returnType==Integer.class) {
-            return new Integer(invokeInt(callingConvention, args));
+            result = new Integer(invokeInt(callingConvention, args));
         }
         else if (returnType==long.class || returnType==Long.class) {
-            return  new Long(invokeLong(callingConvention, args));
-        }
-        else if (returnType==NativeLong.class) {
-            return new NativeLong(NativeLong.SIZE == 8
-                                  ? invokeLong(callingConvention, args)
-                                  : invokeInt(callingConvention, args));
+            result = new Long(invokeLong(callingConvention, args));
         }
         else if (returnType==float.class || returnType==Float.class) {
-            return new Float(invokeFloat(callingConvention, args));
+            result = new Float(invokeFloat(callingConvention, args));
         }
         else if (returnType==double.class || returnType==Double.class) {
-            return new Double(invokeDouble(callingConvention, args));
+            result = new Double(invokeDouble(callingConvention, args));
         }
         else if (returnType==String.class) {
-            return invokeString(callingConvention, args, false);
+            result = invokeString(callingConvention, args, false);
         }
         else if (returnType==WString.class) {
-            return new WString(invokeString(callingConvention, args, true));
+            result = new WString(invokeString(callingConvention, args, true));
         }
         else if (Pointer.class.isAssignableFrom(returnType)) {
-            return invokePointer(callingConvention, args);
+            result = invokePointer(callingConvention, args);
         }
         else if (Structure.class.isAssignableFrom(returnType)) {
-            Object result = invokePointer(callingConvention, args);
+            result = invokePointer(callingConvention, args);
             if (result != null) {
                 try {
                     Structure s = (Structure)returnType.newInstance();
@@ -286,15 +287,24 @@ public class Function extends Pointer {
                                                        + returnType + ": " + e);
                 }
             }
-            return result;
         }
-        throw new IllegalArgumentException("Unsupported return type "
-                                           + returnType);
+        else {
+            throw new IllegalArgumentException("Unsupported return type "
+                                               + returnType);
+        }
+        return result;
     }
     
     private Object convertArgument(Object arg, TypeMapper mapper) { 
-        if (arg != null && mapper != null) {
-            ToNativeConverter converter = mapper.getToNativeConverter(arg.getClass());
+        if (arg != null) {
+            Class type = arg.getClass();
+            ToNativeConverter converter = null;
+            if (NativeMapped.class.isAssignableFrom(type)) {
+                converter = new NativeMappedConverter(type);
+            }
+            else if (mapper != null) {
+                converter = mapper.getToNativeConverter(type);
+            }
             if (converter != null) {
                 arg = converter.toNative(arg);
             }
@@ -331,9 +341,6 @@ public class Function extends Pointer {
         // Convert WString to native pointer (const)
         else if (arg instanceof WString) {
             return new NativeString(arg.toString(), true).getPointer();
-        }
-        else if (arg instanceof NativeLong) {
-            return ((NativeLong)arg).asNativeValue();
         }
         // Default conversion of boolean to int; if you want something
         // different, use a ToNativeConverter

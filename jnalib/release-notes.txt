@@ -9,6 +9,8 @@ Features
 * Read and wrap function pointers in Structure fields when read with a Java
   proxy to allow easy Java-side invocation (Ken Larson)
 * Support array-backed Buffers as arguments (wmeissner)
+* Auto-conversion of custom types (wmeissner)
+* Allow pointer type-safety
 
 Bug Fixes
 * Avoid attempts to free native library if it failed to load (wmeissner)
@@ -17,6 +19,7 @@ Bug Fixes
 * Disallow declaring Pointer-derived fields in Structures (Function, Memory)
 * Ensure Object.toString/hashCode/equals methods are intercepted on proxyied
   interfaces
+* Update X11 library for 64-bit use (wmeissner)
 
 Release 2.5
 Features

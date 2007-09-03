@@ -21,9 +21,7 @@
 
 # TODO
 
-* NativeConvertible: provide interface to automatically convert custom Java
-  type to/from native types. 
-* update X11 libs for 64-bit
+* standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
 * review/use direct Buffer in more places
 * Callback/function pointer as return value (e.g. signal())
 * StringBuffer/StringBuilder as mutable char*/wchar_t* argument
@@ -82,6 +80,9 @@
 
 
 # DONE
+* NativeMapped: provide interface to automatically convert custom Java
+  type to/from native types. 
+* update X11 libs for 64-bit
 * use libffi from gcc to handle calls and callbacks?
   or move callback asm templates into dispatch_<arch>.c
 * more tests for argument types (2 args, all permutations of basic data types)

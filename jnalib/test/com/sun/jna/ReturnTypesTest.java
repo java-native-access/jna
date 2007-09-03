@@ -99,6 +99,36 @@ public class ReturnTypesTest extends TestCase {
         }
     }
 
+    public interface NativeMappedLibrary extends Library {
+        Custom returnInt32Argument(int arg);
+    }
+    public static class Custom implements NativeMapped {
+        private int value;
+        public Custom() { }
+        public Custom(int value) {
+            this.value = value;
+        }
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            return new Custom(((Integer)nativeValue).intValue());
+        }
+        public Class nativeType() {
+            return Integer.class;
+        }
+        public Object toNative() {
+            return new Integer(value);
+        }
+        public boolean equals(Object o) {
+            return o instanceof Custom && ((Custom)o).value == value;
+        }
+    }
+    public void testInvokeNativeMapped() {
+        NativeMappedLibrary lib = (NativeMappedLibrary)
+            Native.loadLibrary("testlib", NativeMappedLibrary.class);
+        final int MAGIC = 0x12345678;
+        final Custom EXPECTED = new Custom(MAGIC);
+        assertEquals("Argument not mapped", EXPECTED, lib.returnInt32Argument(MAGIC));
+    }
+
     public void testInvokeFloat() {
         assertEquals("Expect float zero", 0f, lib.returnFloatZero(), 0d);
         assertEquals("Expect float magic", 

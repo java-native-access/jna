@@ -26,7 +26,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import junit.framework.TestCase;
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.examples.unix.X11.Display;
+import com.sun.jna.examples.unix.X11.GC;
+import com.sun.jna.examples.unix.X11.Pixmap;
+import com.sun.jna.examples.unix.X11.WindowByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -69,7 +74,7 @@ public class X11Test extends TestCase {
             }
         });
         
-        Pointer dpy = x11.XOpenDisplay(null);
+        Display dpy = x11.XOpenDisplay(null);
 
         int WIDTH = 300;
         int HEIGHT = 300;
@@ -78,19 +83,19 @@ public class X11Test extends TestCase {
         //Set windows = findWindow(dpy, root, frame);
         //assertEquals("Expect a single window", 1, windows.size());
         //int w = ((Integer)windows.iterator().next()).intValue();
-        int w = (int)Native.getWindowID(frame);
-        int pm = x11.XCreatePixmap(dpy, w, WIDTH, HEIGHT, 1);
-        if (pm == 0) {
+        X11.Window w = new X11.Window((int)Native.getWindowID(frame));
+        Pixmap pm = x11.XCreatePixmap(dpy, w, WIDTH, HEIGHT, 1);
+        if (pm == null) {
             fail("Can't create pixmap");
         }
-        Pointer gc = x11.XCreateGC(dpy, pm, 0, null);
+        GC gc = x11.XCreateGC(dpy, pm, new NativeLong(0), null);
         if (gc == null) {
             fail("Can't create GC");
         }
         Insets insets = frame.getInsets();
-        x11.XSetForeground(dpy, gc, 0);
+        x11.XSetForeground(dpy, gc, new NativeLong(0));
         x11.XFillRectangle(dpy, pm, gc, 0, 0, WIDTH, HEIGHT);
-        x11.XSetForeground(dpy, gc, 0xFFFFFF);
+        x11.XSetForeground(dpy, gc, new NativeLong(0xFFFFFF));
         x11.XFillRectangle(dpy, pm, gc, 0, 0, WIDTH, (HEIGHT-insets.top)/2);
         x11.XFillArc(dpy, pm, gc, 0, 0, WIDTH, HEIGHT-insets.top, 0, 360*64);
 
@@ -107,7 +112,7 @@ public class X11Test extends TestCase {
     }
 
     // Example of XQueryTree
-    Set findWindow(Pointer dpy, int parent, Window w) {
+    Set findWindow(Display dpy, X11.Window parent, Window w) {
         Set list = new HashSet();
 
         // TODO: how to map a java window to native window?
@@ -115,14 +120,14 @@ public class X11Test extends TestCase {
         X11.XWindowAttributes atts = new X11.XWindowAttributes();
         int status = x11.XGetWindowAttributes(dpy, parent, atts);
         if (status == 0) {
-            System.err.println("skip " + Integer.toHexString(parent));
+            System.err.println("skip " + parent);
             return list;
         }
         X11.XTextProperty tp = new X11.XTextProperty();
         x11.XGetWMName(dpy, parent, tp);
         String name = tp.value;
         if (w instanceof Frame && ((Frame)w).getTitle().equals(name)) {
-            list.add(new Integer(parent));
+            list.add(parent);
         }
         else {
             /*
@@ -134,18 +139,19 @@ public class X11Test extends TestCase {
             }
             */
         }
-        IntByReference rootRef = new IntByReference();
-        IntByReference parentRef = new IntByReference();
+        WindowByReference rootRef = new WindowByReference();
+        WindowByReference parentRef = new WindowByReference();
         PointerByReference kidsRef = new PointerByReference();
         IntByReference kidCount = new IntByReference();
         x11.XQueryTree(dpy, parent, rootRef, parentRef, kidsRef, kidCount);
         
         Pointer p = kidsRef.getValue();
         if (p != null) {
-            int[] kids = p.getIntArray(0, kidCount.getValue());
+            int[] ids = p.getIntArray(0, kidCount.getValue());
             x11.XFree(kidsRef.getValue());
-            for (int i=0;i < kids.length;i++) {
-                list.addAll(findWindow(dpy, kids[i], w));
+            for (int i=0;i < ids.length;i++) {
+                X11.Window child = new X11.Window(ids[i]);
+                list.addAll(findWindow(dpy, child, w));
             }
         }
         return list;

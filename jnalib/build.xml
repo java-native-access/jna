@@ -172,6 +172,7 @@
       <class name="com.sun.jna.Memory"/>
       <class name="com.sun.jna.Native"/>
       <class name="com.sun.jna.NativeLibrary"/>
+      <class name="com.sun.jna.CallbackReference"/>
     </javah>
   </target>
 

@@ -52,8 +52,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.examples.unix.X11;
+import com.sun.jna.examples.unix.X11.Display;
+import com.sun.jna.examples.unix.X11.GC;
+import com.sun.jna.examples.unix.X11.Pixmap;
+import com.sun.jna.examples.unix.X11.Visual;
 import com.sun.jna.examples.unix.X11.XSetWindowAttributes;
 import com.sun.jna.examples.win32.GDI32;
 import com.sun.jna.examples.win32.User32;
@@ -112,19 +117,19 @@ public class AlphaMaskDemo implements Runnable {
 
     private void updateX11(boolean a, boolean i) {
         X11 x11 = X11.INSTANCE;
-        int win = X11.None;
-        Pointer dpy = x11.XOpenDisplay(null);
+        X11.Window win = X11.Window.None;
+        Display dpy = x11.XOpenDisplay(null);
         try {
             if (!alphaWindow.isDisplayable()) {
                 alphaWindow.pack();
                 if (System.getProperty("java.version").matches("^1\\.4\\..*"))
                     alphaWindow.setVisible(true);
-                win = (int)Native.getWindowID(alphaWindow);
+                win = new X11.Window((int)Native.getWindowID(alphaWindow));
                 XSetWindowAttributes xswa = new XSetWindowAttributes();
-                xswa.background_pixel = 0x0;
-                Pointer visual = x11.XDefaultVisual(dpy, x11.XDefaultScreen(dpy));
+                xswa.background_pixel = new NativeLong(0x0);
+                Visual visual = x11.XDefaultVisual(dpy, x11.XDefaultScreen(dpy));
                 xswa.colormap = x11.XCreateColormap(dpy, win, visual, X11.AllocNone);
-                x11.XChangeWindowAttributes(dpy, win, X11.CWBackPixel|X11.CWColormap, xswa);
+                x11.XChangeWindowAttributes(dpy, win, new NativeLong(X11.CWBackPixel|X11.CWColormap), xswa);
                 Window parent = alphaWindow.getOwner();
                 Point where = parent.getLocationOnScreen();
                 where.translate(parent.getWidth(), 0);
@@ -133,7 +138,7 @@ public class AlphaMaskDemo implements Runnable {
                 alphaWindow.setBackground(new Color(0,0,0,0));
             }
             else {
-                win = (int)Native.getWindowID(alphaWindow);
+                win = new X11.Window((int)Native.getWindowID(alphaWindow));
             }
             
             if (i) {
@@ -144,10 +149,10 @@ public class AlphaMaskDemo implements Runnable {
                 Graphics g = buf.getGraphics();
                 g.drawImage(image, 0, 0, w, h, null);
                 
-                Pointer gc = x11.XCreateGC(dpy, win, 0, null);
-                int pixmap = x11.XCreatePixmap(dpy, win, w, h, 32);
+                GC gc = x11.XCreateGC(dpy, win, new NativeLong(0), null);
+                Pixmap pixmap = x11.XCreatePixmap(dpy, win, w, h, 32);
                 try {
-                    x11.XSetForeground(dpy, gc, 0);
+                    x11.XSetForeground(dpy, gc, new NativeLong(0));
                     x11.XFillRectangle(dpy, pixmap, gc, 0, 0, w, h);
                     Raster raster = buf.getData();
                     int[] pixel = new int[4];
@@ -158,7 +163,7 @@ public class AlphaMaskDemo implements Runnable {
                             int red = (pixel[2]&0xFF);
                             int green = (pixel[1]&0xFF)<<8;
                             int blue = (pixel[0]&0xFF)<<16;
-                            x11.XSetForeground(dpy, gc, alpha|red|green|blue);
+                            x11.XSetForeground(dpy, gc, new NativeLong(alpha|red|green|blue));
                             x11.XFillRectangle(dpy, pixmap, gc, x, h-y-1, 1, 1);
                         }
                     }

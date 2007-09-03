@@ -263,9 +263,6 @@ public abstract class Structure {
         else if (nativeType == long.class || nativeType == Long.class) {
             result = new Long(memory.getLong(offset));
         }
-        else if (nativeType == NativeLong.class) {
-            result = memory.getNativeLong(offset);
-        }
         else if (nativeType == float.class || nativeType == Float.class) {
             result=new Float(memory.getFloat(offset));
         }
@@ -452,9 +449,6 @@ public abstract class Structure {
         else if (nativeType == long.class || nativeType == Long.class) {
             memory.setLong(offset, ((Long)value).longValue());
         }
-        else if (nativeType == NativeLong.class) {
-            memory.setNativeLong(offset, ((NativeLong)value));
-        }
         else if (nativeType == float.class || nativeType == Float.class) {
             memory.setFloat(offset, ((Float)value).floatValue());
         }
@@ -548,12 +542,13 @@ public abstract class Structure {
         }
         for (int i=0; i<fields.length; i++) {
             Field field = fields[i];
-            if (Modifier.isStatic(field.getModifiers()))
+            int modifiers = field.getModifiers();
+            if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers))
                 continue;
             
             Class type = field.getType();
             StructField structField = new StructField();
-            structField.isVolatile = Modifier.isVolatile(field.getModifiers());
+            structField.isVolatile = Modifier.isVolatile(modifiers);
             structField.field = field;
             structField.name = field.getName();
             structField.type = type;
@@ -568,13 +563,10 @@ public abstract class Structure {
                             field.set(this, value);
                         }
                         catch(InstantiationException e) {
-                            String msg = "Can't determine size of  nested structure: " 
+                            String msg = "Can't determine size of nested structure: " 
                                 + e.getMessage();
                             throw new IllegalArgumentException(msg);
                         }
-                    }
-                    else if (NativeLong.class == type) {
-                        field.set(this, value = new NativeLong(0));
                     }
                     else if (type.isArray()) {
                         // can't calculate size yet, defer until later
@@ -582,7 +574,16 @@ public abstract class Structure {
                     }
                 }
                 Class nativeType = type;
-                if (typeMapper != null) {
+                if (NativeMapped.class.isAssignableFrom(type)) {
+                    NativeMappedConverter tc = new NativeMappedConverter(type);
+                    value = tc.defaultValue();
+                    nativeType = tc.nativeType();
+                    structField.writeConverter = tc;
+                    structField.readConverter = tc;
+                    structField.context = new StructureReadContext(type, this);
+                    field.set(this, value);
+                }
+                else if (typeMapper != null) {
                     ToNativeConverter writeConverter = typeMapper.getToNativeConverter(type);
                     FromNativeConverter readConverter = typeMapper.getFromNativeConverter(type);
                     if (writeConverter != null && readConverter != null) {
@@ -644,7 +645,6 @@ public abstract class Structure {
         int alignment = 1;
         int size = getNativeSize(type, value);
         if (type.isPrimitive() || Long.class == type || Integer.class == type
-            || NativeLong.class == type
             || Short.class == type || Character.class == type 
             || Byte.class == type 
             || Float.class == type || Double.class == type) {
@@ -690,7 +690,6 @@ public abstract class Structure {
         if (cls == long.class || cls == Long.class) return 8;
         if (cls == float.class || cls == Float.class) return 4;
         if (cls == double.class || cls == Double.class) return 8;
-        if (NativeLong.class.isAssignableFrom(cls)) return Pointer.LONG_SIZE;
         if (Pointer.class == cls
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
@@ -699,6 +698,7 @@ public abstract class Structure {
         }
         throw new IllegalArgumentException("Native type undefined for " + cls);
     }
+
     /** Returns the native size of the given class, in bytes. */
     protected int getNativeSize(Class type, Object value) {
         if (Structure.class.isAssignableFrom(type)) {
@@ -717,7 +717,7 @@ public abstract class Structure {
         }
         return getNativeSize(type);
     }
-    
+
     public String toString() {
         String LS = System.getProperty("line.separator");
         String name = getClass().getName() + "(" + getPointer() + ")";

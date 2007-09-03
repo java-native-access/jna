@@ -18,11 +18,16 @@ package com.sun.jna;
  *
  * @author wmeissner@gmail.com
  */
-public class NativeLong extends Number {
+public class NativeLong extends Number implements NativeMapped {
     /** Size of a native long, in bytes. */
     public static final int SIZE = Pointer.LONG_SIZE;
     private final Number value;
 
+    /** Create a zero-valued NativeLong. */
+    public NativeLong() {
+        this(0);
+    }
+    
     /** Create a NativeLong with the given value. */
     public NativeLong(long value) {
         if (SIZE == 4) {
@@ -35,11 +40,17 @@ public class NativeLong extends Number {
             this.value = new Long(value);
         }
     }
-    /**
-     * Return the appropriate Number sublclass to natively represent this value
-     */
-    Number asNativeValue() {
+    
+    public Object toNative() {
         return value;
+    }
+    
+    public Object fromNative(Object nativeValue, FromNativeContext context) {
+        return new NativeLong(((Number)nativeValue).longValue());
+    }
+    
+    public Class nativeType() {
+        return SIZE == 4 ? Integer.class : Long.class;
     }
     
     public int intValue() {

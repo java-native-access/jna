@@ -49,8 +49,13 @@ import javax.swing.RootPaneContainer;
 import javax.swing.SwingUtilities;
 
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.examples.unix.X11;
+import com.sun.jna.examples.unix.X11.Display;
+import com.sun.jna.examples.unix.X11.Drawable;
+import com.sun.jna.examples.unix.X11.GC;
+import com.sun.jna.examples.unix.X11.Pixmap;
 import com.sun.jna.examples.unix.X11.XVisualInfo;
 import com.sun.jna.examples.unix.X11.Xext;
 import com.sun.jna.examples.unix.X11.Xrender.XRenderPictFormat;
@@ -800,24 +805,26 @@ public class WindowUtils {
         }
     }
     private static class X11WindowUtils extends NativeWindowUtils {
-        private int createBitmap(final Pointer dpy, int win, Window w, Raster raster) {
+        private Pixmap createBitmap(final Display dpy, 
+                                    X11.Window win, 
+                                    Window w, Raster raster) {
             final X11 x11 = X11.INSTANCE;
             Rectangle bounds = raster.getBounds();
             int width = bounds.x + bounds.width;
             int height = bounds.y + bounds.height;
-            final int pm = x11.XCreatePixmap(dpy, win, width, height, 1);
-            final Pointer gc = x11.XCreateGC(dpy, pm, 0, null);
+            final Pixmap pm = x11.XCreatePixmap(dpy, win, width, height, 1);
+            final GC gc = x11.XCreateGC(dpy, pm, new NativeLong(0), null);
             if (gc == null) {
-                return X11.None;
+                return null;
             }
-            x11.XSetForeground(dpy, gc, 0);
+            x11.XSetForeground(dpy, gc, new NativeLong(0));
             x11.XFillRectangle(dpy, pm, gc, 0, 0, width, height);
             final int UNMASKED = 1;
-            x11.XSetForeground(dpy, gc, UNMASKED);
+            x11.XSetForeground(dpy, gc, new NativeLong(UNMASKED));
             X11.XWindowAttributes atts = new X11.XWindowAttributes();
             int status = x11.XGetWindowAttributes(dpy, win, atts);
             if (status == 0) {
-                return X11.None;
+                return null;
             }
             try {
                 RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
@@ -857,8 +864,8 @@ public class WindowUtils {
                         // X11GraphicsConfig.getVisual
                         try {
                             Object o = configs[j].getClass()
-                                                 .getMethod("getVisual", null)
-                                                 .invoke(configs[j], null);
+                                                 .getMethod("getVisual", (Class[])null)
+                                                 .invoke(configs[j], (Object[])null);
                             int visual = ((Integer)o).intValue();
                             for (int k = 0; k < alphaVisuals.length; k++) {
                                 if (visual == alphaVisuals[k])
@@ -880,7 +887,7 @@ public class WindowUtils {
          */
         private int[] getAlphaVisuals() {
             X11 x11 = X11.INSTANCE;
-            Pointer dpy = x11.XOpenDisplay(null);
+            Display dpy = x11.XOpenDisplay(null);
             if (dpy == null)
                 return new int[0];
             XVisualInfo info = null;
@@ -889,9 +896,10 @@ public class WindowUtils {
                 XVisualInfo template = new XVisualInfo();
                 template.screen = screen;
                 template.depth = 32;
-                template.clazz = X11.TrueColor;
-                int mask = X11.VisualScreenMask | X11.VisualDepthMask
-                    | X11.VisualClassMask;
+                template.c_class = X11.TrueColor;
+                NativeLong mask = new NativeLong(X11.VisualScreenMask 
+                                                 | X11.VisualDepthMask
+                                                 | X11.VisualClassMask);
                 IntByReference pcount = new IntByReference();
                 info = x11.XGetVisualInfo(dpy, mask, template, pcount);
                 if (info != null) {
@@ -923,8 +931,11 @@ public class WindowUtils {
             return new int[0];
         }
 
-        public int getDrawable(Window w) {
-            return (int)Native.getWindowID(w);
+        public X11.Window getDrawable(Window w) {
+            int id = (int)Native.getWindowID(w);
+            if (id == X11.None)
+                return null;
+            return new X11.Window(id);
             /*
             WindowPeer peer = (WindowPeer)w.getPeer(); 
             try { 
@@ -948,11 +959,11 @@ public class WindowUtils {
             Runnable action = new Runnable() {
                 public void run() {
                     X11 x11 = X11.INSTANCE;
-                    Pointer dpy = x11.XOpenDisplay(null);
+                    Display dpy = x11.XOpenDisplay(null);
                     if (dpy == null)
                         return;
                     try {
-                        int win = getDrawable(w);
+                        X11.Window win = getDrawable(w);
                         if (alpha == 1f) {
                             x11.XDeleteProperty(dpy, win,
                                                 x11.XInternAtom(dpy, OPACITY,
@@ -1060,18 +1071,17 @@ public class WindowUtils {
                 public void run() {
                     X11 x11 = X11.INSTANCE;
                     Xext ext = Xext.INSTANCE;
-                    Pointer dpy = x11.XOpenDisplay(null);
+                    Display dpy = x11.XOpenDisplay(null);
                     if (dpy == null)
                         return;
-                    int pm = X11.None;
+                    Pixmap pm = null;
                     try {
-                        int win = getDrawable(w);
+                        X11.Window win = getDrawable(w);
                         if (raster == null 
-                            || ((pm = createBitmap(dpy, win, w, raster))
-                                == X11.None)) {
+                            || ((pm = createBitmap(dpy, win, w, raster)) == null)) {
                             ext.XShapeCombineMask(dpy, win, 
                                                   X11.Xext.ShapeBounding,
-                                                  0, 0, X11.None,
+                                                  0, 0, Pixmap.None,
                                                   X11.Xext.ShapeSet);
                         }
                         else {
@@ -1081,7 +1091,7 @@ public class WindowUtils {
                         }
                     }
                     finally {
-                        if (pm != X11.None) {
+                        if (pm != null) {
                             x11.XFreePixmap(dpy, pm);
                         }
                         x11.XCloseDisplay(dpy);

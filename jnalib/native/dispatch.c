@@ -54,6 +54,7 @@ static int jawt_initialized;
 #include "com_sun_jna_Function.h"
 #include "com_sun_jna_Native.h"
 #include "com_sun_jna_NativeLibrary.h"
+#include "com_sun_jna_CallbackReference.h"
 
 #ifdef __cplusplus
 extern "C"
