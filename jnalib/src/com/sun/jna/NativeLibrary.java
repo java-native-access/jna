@@ -323,15 +323,43 @@ public class NativeLibrary {
     static {
         
         librarySearchPath.addAll(initPaths("jna.library.path"));
-        if (System.getProperty("jna.platform.library.path") == null) {
+        if (System.getProperty("jna.platform.library.path") == null
+                && !Platform.isWindows()) {
             // Add default path lookups for unix-like systems
             String platformPath = "";
             String sep = "";
-            if (new File("/usr/lib").exists()) {
+            String archPath = "";
+            
+            //
+            // Search first for an arch specific path, but fall back to the generic
+            // path if it does not exist.  Some older linux amd64 distros did not 
+            // have /usr/lib64, and 32bit distros only have /usr/lib.  
+            // FreeBSD also only has /usr/lib by default, with /usr/lib32 for 32bit compat.
+            // Solaris seems to have both, but defaults to 32bit userland even on 
+            // 64bit machines, so we have to explicitly search the 64bit one when
+            // running a 64bit JVM.
+            //
+            if (Platform.isLinux() || Platform.isSolaris() || Platform.isFreeBSD()) {
+                // Linux & FreeBSD use /usr/lib32, solaris uses /usr/lib/32
+                archPath = (Platform.isSolaris() ? "/" : "") + Pointer.SIZE * 8;
+            }
+                        
+            if (new File("/usr/lib" + archPath).exists()) {
+                platformPath += sep + "/usr/lib" + archPath;
+                sep = File.pathSeparator;
+            }
+            // Use default if arch specific is not found
+            else if (new File("/usr/lib").exists()) {
                 platformPath += sep + "/usr/lib";
                 sep = File.pathSeparator;
             }
-            if (new File("/lib").exists()) { 
+            
+            if (new File("/lib" + archPath).exists()) {
+                platformPath += sep + "/lib" + archPath;
+                sep = File.pathSeparator;
+            }
+            // Use default if arch specific is not found
+            else if (new File("/lib").exists()) { 
                 platformPath += sep + "/lib";
                 sep = File.pathSeparator;
             }
