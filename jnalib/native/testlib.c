@@ -39,10 +39,10 @@ volatile int __dummy__ = 0;
 #define MAGICDOUBLE ((double)(-118.625))
 #define int8 signed char
 #define int16 short
-#ifdef _WIN32
-#  define int32 long
-#else
+#ifdef __LP64__
 #  define int32 int
+#else
+#  define int32 long
 #endif
 
 #define MAGICDATA "0123456789"

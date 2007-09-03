@@ -399,7 +399,15 @@ Java_com_sun_jna_Function_invokeInt(JNIEnv *env, jobject self,
 {
     jvalue result;
     dispatch(env, self, callconv, arr, &ffi_type_sint32, &result.i);
+    /* 
+     * Big endian 64bit machines will put a 32bit return value in the 
+     * upper 4 bytes of the memory area.
+     */
+#if defined (__LP64__)
+    return result.j & 0xffffffff;
+#else
     return result.i;
+#endif
 }
 
 /*

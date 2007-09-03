@@ -26,7 +26,7 @@
 #  ifdef sun
 #    include <sys/sysmacros.h>
 #  endif
-#  include <sys/queue.h>
+#  include "queue.h"
 #  include <pthread.h>
 #  define MMAP_CLOSURE
 #endif
