@@ -1554,7 +1554,7 @@ extract_value(JNIEnv* env, jobject value, void* resp) {
     *(word_t *)resp = (*env)->GetCharField(env, value, FID_Character_value);
   }
   else if ((*env)->IsInstanceOf(env, value, classInteger)) {
-    *(jint *)resp = (*env)->GetIntField(env, value, FID_Integer_value);
+    *(word_t *)resp = (*env)->GetIntField(env, value, FID_Integer_value);
   }
   else if ((*env)->IsInstanceOf(env, value, classLong)) {
     *(jlong *)resp = (*env)->GetLongField(env, value, FID_Long_value);
@@ -1592,13 +1592,13 @@ new_object(JNIEnv* env, char jtype, void* valuep) {
                               (*(int *)valuep ? JNI_TRUE : JNI_FALSE));
     case 'B':
       return (*env)->NewObject(env, classByte, MID_Byte_init,
-                               *(int *)valuep & 0xFF);
+                               *(char *)valuep & 0xFF);
     case 'C':
       return (*env)->NewObject(env, classCharacter, MID_Character_init,
                               *(wchar_t *)valuep & 0xFFFF);
     case 'S':
       return (*env)->NewObject(env, classShort, MID_Short_init,
-                              *(int *)valuep & 0xFFFF);
+                              *(short *)valuep & 0xFFFF);
     case 'I':
     default:
       return (*env)->NewObject(env, classInteger, MID_Integer_init,
