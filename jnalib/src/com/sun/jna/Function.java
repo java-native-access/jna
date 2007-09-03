@@ -198,7 +198,13 @@ public class Function extends Pointer {
 
         // Convert the result to a custom value/type if appropriate
         if (resultConverter != null) {
-            FromNativeContext context = new FunctionResultContext(returnType, this, inArgs);
+            FromNativeContext context;
+            Method m = (Method)options.get(Library.OPTION_INVOKING_METHOD);
+            if (m != null) {
+                context = new MethodResultContext(returnType, this, inArgs, m);
+            } else {
+                context = new FunctionResultContext(returnType, this, inArgs);
+            }
             result = resultConverter.fromNative(result, context);
         }
 

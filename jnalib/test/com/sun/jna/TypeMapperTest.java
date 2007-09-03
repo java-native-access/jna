@@ -13,6 +13,10 @@
 
 package com.sun.jna;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
@@ -205,5 +209,41 @@ public class TypeMapperTest extends TestCase {
         assertEquals("Wrong result", 1, lib.callInt32Callback(cb, 0, 1), 0);
         assertEquals("Wrong result", 2, lib.callInt32Callback(cb, 1, 1), 0);
         assertEquals("Wrong result", -2, lib.callInt32Callback(cb, -1, -1), 0);
+    }
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public static @interface FooBoolean {}
+    public static interface AnnotationTestLibrary extends Library {
+        @FooBoolean
+        boolean returnInt32Argument(boolean b);
+    }
+    public void testAnnotationsOnMethods() throws Exception {
+        final int MAGIC = 0xABEDCF23;
+        Map options = new HashMap();
+        final boolean[] hasAnnotation = {false};
+        DefaultTypeMapper mapper = new DefaultTypeMapper();        
+        mapper.addTypeConverter(Boolean.class, new TypeConverter() {
+            public Object toNative(Object value) {
+                return new Integer(Boolean.TRUE.equals(value) ? MAGIC : 0);
+            }
+            public Object fromNative(Object value, FromNativeContext context) {
+                MethodResultContext mcontext = (MethodResultContext)context;                
+                hasAnnotation[0] = mcontext.getMethod().getAnnotation(FooBoolean.class) != null;
+                return Boolean.valueOf(((Integer) value).intValue() == MAGIC);
+            }
+            public Class nativeType() {
+                return Integer.class;
+            }
+        });
+        
+        options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        AnnotationTestLibrary lib = (AnnotationTestLibrary) 
+            Native.loadLibrary("testlib", AnnotationTestLibrary.class, options);
+        assertEquals("Failed to convert integer return to boolean TRUE", true,
+                     lib.returnInt32Argument(true));
+        assertTrue("Failed to attach annotation to interface method", hasAnnotation[0]);        
+    }
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(TypeMapperTest.class);
     }
 }
