@@ -29,6 +29,8 @@ public class FileMonitorTest extends TestCase {
     File dir;
     
     protected void setUp() throws Exception {
+        if (!Platform.isWindows()) return;
+
         events = new HashMap();
         listener = new FileListener() {
             public void fileChanged(FileEvent e) {

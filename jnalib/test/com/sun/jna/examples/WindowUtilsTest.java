@@ -33,6 +33,8 @@ import javax.swing.event.MouseInputAdapter;
 
 import junit.framework.TestCase;
 
+// NOTE: java.awt.Robot can't properly capture transparent pixels
+// Transparency tests are disabled until this can be resolved
 // TODO: test method invocations before/after pack, before/after setvisible
 // TODO: test RootPaneContainer/non-RootPaneContainer variations
 // TODO: use ComponentTestFixture from abbot
@@ -67,7 +69,8 @@ public class WindowUtilsTest extends TestCase {
     private Robot robot;
     
     protected void setUp() throws Exception {
-        robot = new Robot();
+        if (!GraphicsEnvironment.isHeadless())
+            robot = new Robot();
     }
     
     protected void tearDown() {
@@ -85,7 +88,7 @@ public class WindowUtilsTest extends TestCase {
 
     // Expect failure on windows and x11, since transparent pixels are not 
     // properly captured by java.awt.Robot
-    public void testWindowTransparency() throws Exception {
+    public void xtestWindowTransparency() throws Exception {
         if (GraphicsEnvironment.isHeadless())
             return;
         System.setProperty("sun.java2d.noddraw", "true");
@@ -135,7 +138,7 @@ public class WindowUtilsTest extends TestCase {
     
     // Expect failure on windows and x11, since transparent pixels are not 
     // properly captured by java.awt.Robot
-    public void testWindowAlpha() throws Exception {
+    public void xtestWindowAlpha() throws Exception {
         if (GraphicsEnvironment.isHeadless())
             return;
         System.setProperty("sun.java2d.noddraw", "true");
@@ -195,40 +198,55 @@ public class WindowUtilsTest extends TestCase {
         if (GraphicsEnvironment.isHeadless())
             return;
         Frame root = JOptionPane.getRootFrame();
-        final Window background = new Window(root);
-        background.setBackground(new Color(255, 255, 255));
-        background.setLocation(X, Y);
-        final JWindow foreground = new JWindow(root);
-        Color fgColor = new Color(0, 0, 255);
-        foreground.getContentPane().setBackground(fgColor);
-        foreground.setLocation(X, Y);
+        final Window back = new Window(root);
+        back.setBackground(new Color(255, 255, 255));
+        back.setLocation(X, Y);
+        final JWindow front = new JWindow(root);
+        Color frontColor = new Color(0, 0, 255);
+        front.getContentPane().setBackground(frontColor);
+        front.setLocation(X, Y);
         Area mask = new Area(new Rectangle(0, 0, W, H));
         mask.subtract(new Area(new Rectangle(W/4, H/4, W/2, H/2)));
-        WindowUtils.setWindowMask(foreground, mask);
+        WindowUtils.setWindowMask(front, mask);
         
-        foreground.addMouseListener(handler);
-        foreground.addMouseMotionListener(handler);
+        front.addMouseListener(handler);
+        front.addMouseMotionListener(handler);
 
         SwingUtilities.invokeAndWait(new Runnable() { public void run() {
-            background.pack();
-            background.setSize(new Dimension(W, H));
-            background.setVisible(true);
-            foreground.pack();
-            foreground.setSize(new Dimension(W, H));
-            foreground.setVisible(true);
+            back.pack();
+            back.setSize(new Dimension(W, H));
+            back.setVisible(true);
+            front.pack();
+            front.setSize(new Dimension(W, H));
+            front.setVisible(true);
         }});
         
-        //robot.delay(60000);
-
-        Point where = new Point(foreground.getX() + W/2, 
-                                foreground.getY() + H/2);
-        Color sample = robot.getPixelColor(where.x, where.y);
+        Color sample = robot.getPixelColor(front.getX(), front.getY());
+        long start = System.currentTimeMillis();
+        while (!sample.equals(frontColor)) {
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > 5000)
+                fail("Timed out waiting for window to show");
+            sample = robot.getPixelColor(front.getX(), front.getY());
+        }
+        Point where = new Point(front.getX() + W/4, 
+                                front.getY() + H/4);
+        sample = robot.getPixelColor(where.x, where.y);
         assertEquals("Background window should show through",
-                     background.getBackground(), sample);
+                     back.getBackground(), sample);
+        sample = robot.getPixelColor(where.x + W/2 - 1, where.y);
+        assertEquals("Background window should show through",
+                     back.getBackground(), sample);
+        sample = robot.getPixelColor(where.x + W/2 - 1, where.y + H/2 - 1);
+        assertEquals("Background window should show through",
+                     back.getBackground(), sample);
+        sample = robot.getPixelColor(where.x, where.y + H/2 - 1);
+        assertEquals("Background window should show through",
+                     back.getBackground(), sample);
 
-        sample = robot.getPixelColor(where.x-W/2, where.y-H/2);
+        sample = robot.getPixelColor(where.x-1, where.y-2);
         assertEquals("Foreground window should show through",
-                     fgColor, sample);
+                     frontColor, sample);
     }
     
     public static void main(String[] args) {
