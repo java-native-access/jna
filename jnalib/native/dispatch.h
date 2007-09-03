@@ -47,7 +47,11 @@ typedef long word_t;
 #define alloca _alloca
 #endif
 #else
+#ifdef __FreeBSD__
+#include <stdlib.h>
+#else
 #include <alloca.h>
+#endif
 #endif
 
 /* Convenience macros */
