@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-09-01">
+<meta name="date" content="2007-09-02">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -67,7 +67,7 @@ public interface Kernel32 extends StdCallLibrary {
 </textarea><br>
 This instance is for convenient reuse.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.
   </li>
-  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to <a href="javadoc/overview-summary.html#marshalling">this table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures). You can add normal Java methods also, but they will not be used by JNA.  You can define as many or as few methods as you actually need; you are not required to map every function provided by the shared library.</li>
+  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to <a href="javadoc/overview-summary.html#marshalling">this table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).</li>
     <textarea name="textarea" cols="80" rows="12" readonly="readonly">
     public static class SYSTEMTIME extends Structure {
         public short wYear;
@@ -131,9 +131,13 @@ byte[] buffer = p.getByteArray(0, iref.getValue());
 </blockquote>
 
 The <a href="javadoc/com/sun/jna/Pointer.html"><code>Pointer</code></a> class provides a number of accessor methods in addition to <a href="javadoc/com/sun/jna/Pointer.html#getByteArray"><code>getByteArray()</code></a> which effectively function as a typecast onto the memory.
+<p>
+Type-safe pointers may be declared by deriving from the <a href="javadoc/com/sun/jna/PointerType.html"><code>PointerType</code></a> class.
 
 <h3>Customized Mapping from Java to Native (Types and Function Names)</h3>
 The <a href="javadoc/com/sun/jna/TypeMapper.html">TypeMapper</a> class and related interfaces provide for converting any Java type used as an argument, return value, or structure member to be converted to or from a native type.  The example w32 API interfaces use a type mapper to convert Java boolean into the w32 <code>BOOL</code> type.
+<p>
+Alternatively, user-defined types may implement the <a href="javadoc/com/sun/jna/win32/NativeMapped.html">NativeMapped</a> interface, which determines conversion to and from native types on a class-by-class basis.
 <p>
 You may also customize the mapping of Java method names to the corresponding native function name.  The <a href="javadoc/com/sun/jna/win32/StdCallFunctionMapper.html">StdCallFunctionMapper</a> is one implementation which automatically generates <code>stdcall</code>-decorated function names from a Java interface method signature.
 <p>
@@ -308,6 +312,8 @@ java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ...
 </blockquote>
 
 <p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/TODO">TODO</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
+
+Wayne Meissner contributed enormously in getting libffi and the various additional native libraries working ("a metric buttload of hard work").
 
 Many thanks to Sheng Liang and Todd Fast for their contributions to this project.
 
