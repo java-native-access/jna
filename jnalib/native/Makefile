@@ -211,7 +211,7 @@ ifeq ($(OS),darwin)
                $(FFI_SRC)/configure $(FFI_CONFIG) $(OSX_FFI_CONFIG)); \
 	fi
 	$(MAKE) -C $(FFI_ALT_BUILD)
-	libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F} $(FFI_ALT_BUILD)/.libs/${@F}
+	/usr/bin/libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F} $(FFI_ALT_BUILD)/.libs/${@F}
 	@mv $@.tmp $@
 endif
 
