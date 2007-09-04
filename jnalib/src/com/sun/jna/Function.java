@@ -248,25 +248,25 @@ public class Function extends Pointer {
             result = Boolean.valueOf(invokeInt(callingConvention, args) != 0);
         }
         else if (returnType==byte.class || returnType==Byte.class) {
-            result = Byte.valueOf((byte)invokeInt(callingConvention, args));
+            result = new Byte((byte)invokeInt(callingConvention, args));
         }
         else if (returnType==short.class || returnType==Short.class) {
-            result = Short.valueOf((short)invokeInt(callingConvention, args));
+            result = new Short((short)invokeInt(callingConvention, args));
         }
         else if (returnType==char.class || returnType==Character.class) {
-            result = Character.valueOf((char)invokeInt(callingConvention, args));
+            result = new Character((char)invokeInt(callingConvention, args));
         }
         else if (returnType==int.class || returnType==Integer.class) {
-            result = Integer.valueOf(invokeInt(callingConvention, args));
+            result = new Integer(invokeInt(callingConvention, args));
         }
         else if (returnType==long.class || returnType==Long.class) {
-            result = Long.valueOf(invokeLong(callingConvention, args));
+            result = new Long(invokeLong(callingConvention, args));
         }
         else if (returnType==float.class || returnType==Float.class) {
-            result = Float.valueOf(invokeFloat(callingConvention, args));
+            result = new Float(invokeFloat(callingConvention, args));
         }
         else if (returnType==double.class || returnType==Double.class) {
-            result = Double.valueOf(invokeDouble(callingConvention, args));
+            result = new Double(invokeDouble(callingConvention, args));
         }
         else if (returnType==String.class) {
             result = invokeString(callingConvention, args, false);
@@ -354,7 +354,7 @@ public class Function extends Pointer {
         // Default conversion of boolean to int; if you want something
         // different, use a ToNativeConverter
         else if (arg instanceof Boolean) {
-            return Integer.valueOf(Boolean.TRUE.equals(arg) ? -1 : 0);
+            return new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
         }
         else if (String[].class == argClass) {
             return new StringArray((String[])arg);
