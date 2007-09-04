@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-09-02">
+<meta name="date" content="2007-09-04">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -12,7 +12,7 @@
 <p>JNA provides Java programs easy access to native shared libraries (e.g. DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.  Access is dynamic at runtime without code generation.</p>
 <p>JNA's design aims to provide native access in a natural way with a minimum of effort.  No boilerplate or generated code is required.  While some attention is paid to performance, correctness and ease of use take priority.</p>
 <p>The JNA library uses a small native library stub to dynamically invoke native code without the developer having to write JNI code. The developer describes functions and structures from the target native library in a Java interface. From his perspective, he interacts only with Java code. This makes it quite easy to take advantage of native platform features without getting into the major hassle of writing your own JNI code. It also facilitates implementing cross-platofrm features withing incurring the high overhead of configuring and building JNI for multiple platforms.</p>
-The <a href="javadoc/index.html">JavaDoc is available online</a>,
+The <a href="javadoc/overview-summary.html">JavaDoc is available online</a>,
 which includes an overview of specific usage.<p>
 
  <h3>Features</h3>
