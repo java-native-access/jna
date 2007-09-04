@@ -9,9 +9,9 @@
 </head>
 <body>
 <h2>Java Native Access (JNA) </h2>
-<p>JNA provides Java programs easy access to native shared libraries (e.g. DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.  Access is dynamic at runtime without code generation.</p>
+<p>JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.  Access is dynamic at runtime without code generation.</p>
 <p>JNA's design aims to provide native access in a natural way with a minimum of effort.  No boilerplate or generated code is required.  While some attention is paid to performance, correctness and ease of use take priority.</p>
-<p>The JNA library uses a small native library stub to dynamically invoke native code without the developer having to write JNI code. The developer describes functions and structures from the target native library in a Java interface. From his perspective, he interacts only with Java code. This makes it quite easy to take advantage of native platform features without getting into the major hassle of writing your own JNI code. It also facilitates implementing cross-platofrm features withing incurring the high overhead of configuring and building JNI for multiple platforms.</p>
+<p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code (overhead would otherwise increase with each supported platform). </p>
 The <a href="javadoc/overview-summary.html">JavaDoc is available online</a>,
 which includes an overview of specific usage.<p>
 
@@ -35,6 +35,7 @@ which includes an overview of specific usage.<p>
 <li>Support for automatic w32 ASCII/UNICODE mappings
 <li>Auto-generated proxies for native function pointers in structs
 <li>Varargs support
+<li>Optional type-safety for native pointers
 </ul>
 
  <h3>How To Get Started Using JNA</h3>
