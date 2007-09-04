@@ -14,7 +14,7 @@ package com.sun.jna;
 
 import java.lang.reflect.Method;
 
-/** Provide argument conversion context for a callback. */
+/** Provide argument conversion context for a callback invocation. */
 public class CallbackInvocationContext extends FromNativeContext {
     private Method method;
     private Object[] args;

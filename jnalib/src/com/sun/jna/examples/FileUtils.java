@@ -62,8 +62,7 @@ public abstract class FileUtils {
 
     private static class MacFileUtils extends FileUtils {
         public boolean moveToTrash(File[] files) {
-            // TODO: account for stuff not on the same volume
-            // Also should suffix file by time moved to trash
+            // TODO: use native API for moving to trash (if any)
             File home = new File(System.getProperty("user.home"));
             File trash = new File(home, ".Trash");
             if (trash.exists()) {

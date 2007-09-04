@@ -2,6 +2,8 @@
  * @(#)dispatch.c       1.9 98/03/22
  * 
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
+ * Copyright (c) 2007 Timothy Wall. All Rights Reserved.
+ * Copyright (c) 2007 Wayn Meissner. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

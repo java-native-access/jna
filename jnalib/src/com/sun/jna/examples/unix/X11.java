@@ -124,37 +124,13 @@ public interface X11 extends Library {
         }
     }
     // TODO: define structure
-    public static class Display extends PointerType {
-        public Display() { }
-        public Display(Pointer p) { super(p); }
-        public Object fromNative(Object nativeValue, FromNativeContext context) {
-            return new Display((Pointer)nativeValue);
-        }
-    }
+    public static class Display extends PointerType { }
     // TODO: define structure
-    public static class Visual extends PointerType {
-        public Visual() { }
-        public Visual(Pointer p) { super(p); }
-        public Object fromNative(Object nativeValue, FromNativeContext context) {
-            return new Visual((Pointer)nativeValue);
-        }
-    }
+    public static class Visual extends PointerType { }
     // TODO: define structure
-    public static class Screen extends PointerType {
-        public Screen() { }
-        public Screen(Pointer p) { super(p); }
-        public Object fromNative(Object nativeValue, FromNativeContext context) {
-            return new Screen((Pointer)nativeValue);
-        }
-    }
+    public static class Screen extends PointerType { }
     // TODO: define structure
-    public static class GC extends PointerType {
-        public GC() { }
-        public GC(Pointer p) { super(p); }
-        public Object fromNative(Object nativeValue, FromNativeContext context) {
-            return new GC((Pointer)nativeValue);
-        }
-    }
+    public static class GC extends PointerType { }
     
     /** Definition (incomplete) of the Xext library. */
     public interface Xext extends Library {

@@ -65,6 +65,11 @@ import com.sun.jna.examples.win32.GDI32.BITMAPINFO;
 import com.sun.jna.examples.win32.User32.BLENDFUNCTION;
 import com.sun.jna.examples.win32.User32.POINT;
 import com.sun.jna.examples.win32.User32.SIZE;
+import com.sun.jna.examples.win32.W32API.HANDLE;
+import com.sun.jna.examples.win32.W32API.HBITMAP;
+import com.sun.jna.examples.win32.W32API.HDC;
+import com.sun.jna.examples.win32.W32API.HRGN;
+import com.sun.jna.examples.win32.W32API.HWND;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -414,8 +419,10 @@ public class WindowUtils {
     }
 
     private static class W32WindowUtils extends NativeWindowUtils {
-        public Pointer getHWnd(Window w) {
-            return Native.getWindowPointer(w);
+        public HWND getHWnd(Window w) {
+            HWND hwnd = new HWND();
+            hwnd.setPointer(Native.getWindowPointer(w));
+            return hwnd;
             /*
             try { 
                 WindowPeer peer = (WindowPeer)w.getPeer(); 
@@ -476,7 +483,7 @@ public class WindowUtils {
             }
             whenDisplayable(w, new Runnable() {
                 public void run() {
-                    Pointer hWnd = getHWnd(w);
+                    HWND hWnd = getHWnd(w);
                     User32 user = User32.INSTANCE;
                     int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
                     byte level = (byte)((int)(255 * alpha) & 0xFF);
@@ -522,10 +529,10 @@ public class WindowUtils {
                 Window win = SwingUtilities.getWindowAncestor(this);
                 int w = win.getWidth();
                 int h = win.getHeight();
-                Pointer screenDC = user.GetDC(null);
-                Pointer memDC = gdi.CreateCompatibleDC(screenDC);
-                Pointer hBitmap = null;
-                Pointer oldBitmap = null;
+                HDC screenDC = user.GetDC(null);
+                HDC memDC = gdi.CreateCompatibleDC(screenDC);
+                HBITMAP hBitmap = null;
+                HANDLE oldBitmap = null;
                 try {
                     BufferedImage buf = 
                         new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
@@ -571,7 +578,7 @@ public class WindowUtils {
                     POINT loc = new POINT();
                     loc.x = win.getX();
                     loc.y = win.getY();
-                    Pointer hWnd = Native.getWindowPointer(win);
+                    HWND hWnd = getHWnd(win);
                     // extract current constant alpha setting, if possible
                     ByteByReference bref = new ByteByReference();
                     IntByReference iref = new IntByReference();
@@ -612,7 +619,7 @@ public class WindowUtils {
             whenDisplayable(w, new Runnable() {
                 public void run() {
                     User32 user = User32.INSTANCE;
-                    Pointer hWnd = getHWnd(w);
+                    HWND hWnd = getHWnd(w);
                     int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
                     JRootPane root = ((RootPaneContainer)w).getRootPane();
                     JLayeredPane lp = root.getLayeredPane();
@@ -637,14 +644,14 @@ public class WindowUtils {
                 public void run() {
                     GDI32 gdi = GDI32.INSTANCE;
                     User32 user = User32.INSTANCE;
-                    Pointer hWnd = getHWnd(w);
-                    final Pointer result = gdi.CreateRectRgn(0, 0, 0, 0);
+                    HWND hWnd = getHWnd(w);
+                    final HRGN result = gdi.CreateRectRgn(0, 0, 0, 0);
                     try {
                         if (raster == null) {
                             gdi.SetRectRgn(result, 0, 0, w.getWidth(), w.getHeight());
                         }
                         else {
-                            final Pointer tempRgn = gdi.CreateRectRgn(0, 0, 0, 0);
+                            final HRGN tempRgn = gdi.CreateRectRgn(0, 0, 0, 0);
                             try {
                                 RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
                                     public boolean outputRange(int x, int y, int w, int h) {

@@ -66,6 +66,10 @@ import com.sun.jna.examples.win32.GDI32.BITMAPINFO;
 import com.sun.jna.examples.win32.User32.BLENDFUNCTION;
 import com.sun.jna.examples.win32.User32.POINT;
 import com.sun.jna.examples.win32.User32.SIZE;
+import com.sun.jna.examples.win32.W32API.HANDLE;
+import com.sun.jna.examples.win32.W32API.HBITMAP;
+import com.sun.jna.examples.win32.W32API.HDC;
+import com.sun.jna.examples.win32.W32API.HWND;
 import com.sun.jna.ptr.PointerByReference;
 
 // TODO: put this into a reasonable API; right now this is pretty much
@@ -188,15 +192,21 @@ public class AlphaMaskDemo implements Runnable {
             update(true, true);
         }
     }
+
+    private HWND getHwnd(Window w) {
+        HWND hwnd = new HWND();
+        hwnd.setPointer(Native.getWindowPointer(w));
+        return hwnd;
+    }
     
     private void updateW32(boolean a, boolean i) {
         User32 user = User32.INSTANCE;
         GDI32 gdi = GDI32.INSTANCE;
-        Pointer hWnd = null;
+        HWND hWnd = null;
 
         if (!alphaWindow.isDisplayable()) {
             alphaWindow.pack();
-            hWnd = Native.getWindowPointer(alphaWindow);
+            hWnd = getHwnd(alphaWindow);
             int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
             flags |= User32.WS_EX_LAYERED;
             user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
@@ -206,16 +216,16 @@ public class AlphaMaskDemo implements Runnable {
             alphaWindow.setLocation(where);
         }
         else {
-            hWnd = Native.getWindowPointer(alphaWindow);
+            hWnd = getHwnd(alphaWindow);
         }
     
         if (i) {
             int w = image.getWidth(null);
             int h = image.getHeight(null);
-            Pointer screenDC = user.GetDC(null);
-            Pointer memDC = gdi.CreateCompatibleDC(screenDC);
-            Pointer hBitmap = null;
-            Pointer oldBitmap = null;
+            HDC screenDC = user.GetDC(null);
+            HDC memDC = gdi.CreateCompatibleDC(screenDC);
+            HBITMAP hBitmap = null;
+            HANDLE oldBitmap = null;
             
             try {
                 BufferedImage buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);

@@ -15,7 +15,9 @@ package com.sun.jna.examples.win32;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.jna.FromNativeContext;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIFunctionMapper;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -41,6 +43,22 @@ public interface W32API extends StdCallLibrary, W32Errors {
         }
     };
     Map DEFAULT_OPTIONS = Boolean.getBoolean("w32.ascii") ? ASCII_OPTIONS : UNICODE_OPTIONS;
-
-    Pointer INVALID_HANDLE_VALUE = Pointer.PM1;
+    
+    public static class HANDLE extends PointerType { 
+        public HANDLE() { }
+        public HANDLE(Pointer p) { super(p); }
+    };
+    
+    public static class HDC extends HANDLE { }
+    public static class HICON extends HANDLE { }
+    public static class HBITMAP extends HANDLE { }
+    public static class HRGN extends HANDLE { }
+    public static class HWND extends HANDLE { }
+    public static class HINSTANCE extends HANDLE { }
+    
+    HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.PM1) {
+        public void setPointer(Pointer p) { 
+            throw new UnsupportedOperationException("Immutable reference");
+        }
+    };
 }

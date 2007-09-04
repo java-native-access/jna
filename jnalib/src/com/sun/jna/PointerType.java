@@ -44,7 +44,51 @@ public abstract class PointerType implements NativeMapped {
     }
 
     /** Returns the associated native {@link Pointer}. */
-    protected Pointer getPointer() {
+    public Pointer getPointer() {
         return pointer;
+    }
+    
+    public void setPointer(Pointer p) {
+        this.pointer = p;
+    }
+    
+    /** The default implementation simply creates a new instance of the class
+     * and assigns its pointer field.  Override if you need different behavior,
+     * such as ensuring a single {@link PointerType} instance for each unique
+     * {@link Pointer} value, or instantiating a different {@link PointerType}
+     * subclass.
+     */
+    public Object fromNative(Object nativeValue, FromNativeContext context) {
+        try {
+            PointerType pt = (PointerType)getClass().newInstance();
+            pt.pointer = (Pointer)nativeValue;
+            return pt;
+        }
+        catch (InstantiationException e) {
+            throw new IllegalArgumentException("Can't instantiate " + getClass());
+        }
+        catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Not allowed to instantiate " + getClass());
+        }
+    }
+
+    /** The hash code for a <code>PointerType</code> is the same as that for
+     * its pointer.
+     */
+    public int hashCode() {
+        return pointer != null ? pointer.hashCode() : 0;
+    }
+    
+    /** Instances of <code>PointerType</code> with identical pointers compare
+     * equal by default.
+     */
+    public boolean equals(Object o) {
+        if (o instanceof PointerType) {
+            Pointer p = ((PointerType)o).getPointer();
+            if (pointer == null)
+                return p == null;
+            return pointer.equals(p);
+        }
+        return false;
     }
 }

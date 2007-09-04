@@ -1,0 +1,33 @@
+* RELATED and/or SIMILAR PROJECTS: 
+* Feel free to add notes and/or descriptions here (this should probably go
+* on a wiki somewhere).
+----
+* nlink.dev.java.net: 
+   pros: simple definitions (same as jna)
+   cons: w32 only
+* sf.net/projects/jnative: 
+   cons: boilerplate, manual code generation by calling setup methods
+   pros: callbacks, byref args?
+* JNIWrapper: kinda like jnative (commercial), includes platform "packs"
+* coroutine for Java, like jnative (commercial)
+* jnieasy: c++ mappings (http://www.innowhere.com:8080/webapp/jsp/products/jnieasy/index.jsp?_page=products.jnieasy)
+* j2native (www.smardec.com)
+* j-interop.sf.net
+* jawinproject.sf.net (COM DLL access)
+* jacob-project.sf.net (COM DLL access)
+* nativecall.sf.net (minimal)
+* cxxwrap.sf.net
+* J/Direct (defunct)
+* NoodleGlue
+* SWIG
+* ctypes4j.sf.net
+* ctypes-java (out of date)
+* jnbridge
+* xFunction (http://excelsior-usa.com/xfunction.html, commercial, osx)
+* JACE c++ mappings
+* JAW Java API wrapper http://www.aplu.ch/home/apluhome.jsp?site=5
+
+# OTHER REFERENCES
+# JNI options: http://staff.develop.com/halloway/JavaWin32.html
+# List of JNI alternatives: http://weblog.janek.org/Archive/2005/07/28/AlternativestoJavaNativeI.html
+

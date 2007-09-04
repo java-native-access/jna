@@ -55,7 +55,7 @@ public interface GDI32 extends W32API {
         }
     }
     
-    public Pointer ExtCreateRegion(Pointer lpXform, int nCount, RGNDATA lpRgnData);
+    public HRGN ExtCreateRegion(Pointer lpXform, int nCount, RGNDATA lpRgnData);
 
     int RGN_AND = 1;
     int RGN_OR = 2;
@@ -67,22 +67,22 @@ public interface GDI32 extends W32API {
     int NULLREGION = 1;
     int SIMPLEREGION = 2;
     int COMPLEXREGION = 3;
-    int CombineRgn(Pointer hrgnDest, Pointer hrgnSrc1, Pointer hrgnSrc2, int fnCombineMode);
+    int CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int fnCombineMode);
     
-    Pointer CreateRectRgn(int nLeftRect, int nTopRect,
-                          int nRightRect, int nBottomRect);
+    HRGN CreateRectRgn(int nLeftRect, int nTopRect,
+                       int nRightRect, int nBottomRect);
     
-    Pointer CreateRoundRectRgn(int nLeftRect, int nTopRect,
-                               int nRightRect, int nBottomRect,
-                               int nWidthEllipse, 
-                               int nHeightEllipse);
+    HRGN CreateRoundRectRgn(int nLeftRect, int nTopRect,
+                            int nRightRect, int nBottomRect,
+                            int nWidthEllipse, 
+                            int nHeightEllipse);
     
-    boolean SetRectRgn(Pointer p, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+    boolean SetRectRgn(HRGN hrgn, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
     
-    int SetPixel(Pointer hDC, int x, int y, int crColor);
+    int SetPixel(HDC hDC, int x, int y, int crColor);
     
-    Pointer CreateCompatibleDC(Pointer hDC);
-    boolean DeleteDC(Pointer hDC);
+    HDC CreateCompatibleDC(HDC hDC);
+    boolean DeleteDC(HDC hDC);
     
     int BI_RGB = 0;
     int BI_RLE8 = 1;
@@ -125,13 +125,13 @@ public interface GDI32 extends W32API {
     }
     int DIB_RGB_COLORS = 0;
     int DIB_PAL_COLORS = 1;
-    Pointer CreateDIBitmap(Pointer hDC, BITMAPINFOHEADER lpbmih, int fdwInit,
+    HBITMAP CreateDIBitmap(HDC hDC, BITMAPINFOHEADER lpbmih, int fdwInit,
                            Pointer lpbInit, BITMAPINFO lpbmi, int fuUsage);
-    Pointer CreateDIBSection(Pointer hDC, BITMAPINFO pbmi, int iUsage,
+    HBITMAP CreateDIBSection(HDC hDC, BITMAPINFO pbmi, int iUsage,
                              PointerByReference ppvBits, Pointer hSection,
                              int dwOffset);
-    Pointer CreateCompatibleBitmap(Pointer hDC, int width, int height);
+    HBITMAP CreateCompatibleBitmap(HDC hDC, int width, int height);
     
-    Pointer SelectObject(Pointer hDC, Pointer hGDIObj);
-    boolean DeleteObject(Pointer p);
+    HANDLE SelectObject(HDC hDC, HANDLE hGDIObj);
+    boolean DeleteObject(HANDLE p);
 }

@@ -30,8 +30,8 @@ public interface User32 extends W32API {
     User32 INSTANCE = (User32)
         Native.loadLibrary("user32", User32.class, DEFAULT_OPTIONS);
     
-    Pointer GetDC(Pointer hWnd);
-    int ReleaseDC(Pointer hWnd, Pointer hDC);
+    HDC GetDC(HWND hWnd);
+    int ReleaseDC(HWND hWnd, HDC hDC);
 
     int FLASHW_STOP = 0;
     int FLASHW_CAPTION = 1;
@@ -67,17 +67,17 @@ public interface User32 extends W32API {
     int LR_COPYFROMRESOURCE =0x4000;
     int LR_SHARED           =0x8000;
 
-    Pointer FindWindow(String winClass, String title);
-    int GetClassName(Pointer hWnd, byte[] lpClassName, int nMaxCount);
+    HWND FindWindow(String winClass, String title);
+    int GetClassName(HWND hWnd, byte[] lpClassName, int nMaxCount);
     public static class GUITHREADINFO extends Structure {
         public int cbSize = size();
         public int flags;
-        Pointer hwndActive;
-        Pointer hwndFocus;
-        Pointer hwndCapture;
-        Pointer hwndMenuOwner;
-        Pointer hwndMoveSize;
-        Pointer hwndCaret;
+        HWND hwndActive;
+        HWND hwndFocus;
+        HWND hwndCapture;
+        HWND hwndMenuOwner;
+        HWND hwndMoveSize;
+        HWND hwndCaret;
         RECT rcCaret;
     }
     boolean GetGUIThreadInfo(int idThread, GUITHREADINFO lpgui);
@@ -94,32 +94,32 @@ public interface User32 extends W32API {
         public short atomWindowType;
         public short wCreatorVersion;
     }
-    boolean GetWindowInfo(Pointer hWnd, WINDOWINFO pwi);
-    boolean GetWindowRect(Pointer hWnd, RECT rect);
-    int GetWindowText(Pointer hWnd, byte[] lpString, int nMaxCount);
-    int GetWindowTextLength(Pointer hWnd);
-    int GetWindowModuleFileName(Pointer hWnd, byte[] lpszFileName, int cchFileNameMax);
-    int GetWindowThreadProcessId(Pointer hWnd, IntByReference lpdwProcessId);
+    boolean GetWindowInfo(HWND hWnd, WINDOWINFO pwi);
+    boolean GetWindowRect(HWND hWnd, RECT rect);
+    int GetWindowText(HWND hWnd, byte[] lpString, int nMaxCount);
+    int GetWindowTextLength(HWND hWnd);
+    int GetWindowModuleFileName(HWND hWnd, byte[] lpszFileName, int cchFileNameMax);
+    int GetWindowThreadProcessId(HWND hWnd, IntByReference lpdwProcessId);
     interface WNDENUMPROC extends StdCallCallback {
         /** Return whether to continue enumeration. */
-        boolean callback(Pointer hWnd, Pointer data);
+        boolean callback(HWND hWnd, Pointer data);
     }
     boolean EnumWindows(WNDENUMPROC lpEnumFunc, Pointer data);
     boolean EnumThreadWindows(int dwThreadId, WNDENUMPROC lpEnumFunc, Pointer data);
 
     boolean FlashWindowEx(FLASHWINFO info);
 
-    Pointer LoadIcon(Pointer hInstance, String iconName);
+    HICON LoadIcon(HINSTANCE hInstance, String iconName);
 
-    Pointer LoadImage(Pointer hinst,   // handle to instance 
-                      String name,  // image to load 
-                      int type,        // image type 
-                      int xDesired,     // desired width 
-                      int yDesired,     // desired height 
-                      int load        // load options 
+    HANDLE LoadImage(HINSTANCE hinst,   // handle to instance 
+                     String name,  // image to load 
+                     int type,        // image type 
+                     int xDesired,     // desired width 
+                     int yDesired,     // desired height 
+                     int load        // load options 
     );
 
-    boolean DestroyIcon(Pointer hicon);
+    boolean DestroyIcon(HICON hicon);
 
     int GWL_EXSTYLE = -20;
     int GWL_STYLE = -16;
@@ -133,17 +133,17 @@ public interface User32 extends W32API {
     int WS_EX_COMPOSITED = 0x20000000;
     int WS_EX_LAYERED = 0x80000;
     int WS_EX_TRANSPARENT = 32;
-    int GetWindowLong(Pointer hWnd, int nIndex);
-    int SetWindowLong(Pointer hWnd, int nIndex, int dwNewLong);
+    int GetWindowLong(HWND hWnd, int nIndex);
+    int SetWindowLong(HWND hWnd, int nIndex, int dwNewLong);
 
     int LWA_COLORKEY = 1;
     int LWA_ALPHA = 2;
     int ULW_COLORKEY = 1;
     int ULW_ALPHA = 2;
     int ULW_OPAQUE = 4;
-    boolean SetLayeredWindowAttributes(Pointer hwnd, int crKey, 
+    boolean SetLayeredWindowAttributes(HWND hwnd, int crKey, 
                                        byte bAlpha, int dwFlags);
-    boolean GetLayeredWindowAttributes(Pointer hwnd,
+    boolean GetLayeredWindowAttributes(HWND hwnd,
                                        IntByReference pcrKey,
                                        ByteByReference pbAlpha,
                                        IntByReference pdwFlags);
@@ -166,11 +166,11 @@ public interface User32 extends W32API {
         public byte SourceConstantAlpha;
         public byte AlphaFormat;
     }
-    boolean UpdateLayeredWindow(Pointer hwnd, Pointer hdcDst, 
+    boolean UpdateLayeredWindow(HWND hwnd, HDC hdcDst, 
                                 POINT pptDst, SIZE psize, 
-                                Pointer hdcSrc, POINT pptSrc, int crKey, 
+                                HDC hdcSrc, POINT pptSrc, int crKey, 
                                 BLENDFUNCTION pblend, int dwFlags);
-    int SetWindowRgn(Pointer hWnd, Pointer hRgn, boolean bRedraw);
+    int SetWindowRgn(HWND hWnd, HRGN hRgn, boolean bRedraw);
     int VK_SHIFT = 16;
     int VK_LSHIFT = 0xA0;
     int VK_RSHIFT = 0xA1;

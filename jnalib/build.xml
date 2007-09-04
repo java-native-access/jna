@@ -133,7 +133,7 @@
       </srcfiles>
     </uptodate>
   </target>
-  <target name="jar" depends="setup,compile-tests,native,:jar" unless="-jar"
+  <target name="jar" depends="setup,native,:jar" unless="-jar"
           description="Build primary jar">
     <jar jarfile="${build}/${jar}">
       <manifest>

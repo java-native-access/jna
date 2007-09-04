@@ -159,8 +159,7 @@ public interface Library {
                     f = new FunctionInfo();
                     f.function = nativeLibrary.getFunction(methodName, callingConvention);
                     f.isVarArgs = Function.isVarArgs(method);                    
-                    f.options = new HashMap();
-                    f.options.putAll(this.options);
+                    f.options = new HashMap(this.options);
                     //
                     // Pass in the original method from the Library interface subclass
                     // so annotations present in the interface get passed on.
