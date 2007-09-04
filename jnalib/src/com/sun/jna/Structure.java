@@ -249,25 +249,25 @@ public abstract class Structure {
             result = s;
         }
         else if (nativeType == byte.class || nativeType == Byte.class) {
-            result = new Byte(memory.getByte(offset));
+            result = Byte.valueOf(memory.getByte(offset));
         }
         else if (nativeType == short.class || nativeType == Short.class) {
-            result = new Short(memory.getShort(offset));
+            result = Short.valueOf(memory.getShort(offset));
         }
         else if (nativeType == char.class || nativeType == Character.class) {
-            result = new Character(memory.getChar(offset));
+            result = Character.valueOf(memory.getChar(offset));
         }
         else if (nativeType == int.class || nativeType == Integer.class) {
-            result = new Integer(memory.getInt(offset));
+            result = Integer.valueOf(memory.getInt(offset));
         }
         else if (nativeType == long.class || nativeType == Long.class) {
-            result = new Long(memory.getLong(offset));
+            result = Long.valueOf(memory.getLong(offset));
         }
         else if (nativeType == float.class || nativeType == Float.class) {
-            result=new Float(memory.getFloat(offset));
+            result = Float.valueOf(memory.getFloat(offset));
         }
         else if (nativeType == double.class || nativeType == Double.class) {
-            result = new Double(memory.getDouble(offset));
+            result = Double.valueOf(memory.getDouble(offset));
         }
         else if (nativeType == Pointer.class) {
             result = memory.getPointer(offset);

@@ -141,7 +141,7 @@ public class ReturnTypesTest extends TestCase {
                      DOUBLE_MAGIC, lib.returnDoubleMagic(), 0d);
     }
 
-    final String MAGIC = "magic";
+    static final String MAGIC = "magic";
     public void testInvokeString() {
         assertEquals("Expect string magic", MAGIC, lib.returnStringMagic());
     }

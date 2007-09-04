@@ -217,7 +217,7 @@ public class ArgumentsMarshalTest extends TestCase {
                      lib.returnPointerArgument(s.getPointer()));
     }
 
-    final String MAGIC = "magic";
+    static final String MAGIC = "magic";
     public void testStringArgumentReturn() {
         assertEquals("Expect null pointer", null, lib.returnStringArgument(null));
         assertEquals("Expect string magic", MAGIC, lib.returnStringArgument(MAGIC));

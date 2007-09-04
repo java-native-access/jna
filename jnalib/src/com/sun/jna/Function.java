@@ -245,28 +245,28 @@ public class Function extends Pointer {
             result = null;
         }
         else if (returnType==boolean.class || returnType==Boolean.class) {
-            result = new Boolean(invokeInt(callingConvention, args) != 0);
+            result = Boolean.valueOf(invokeInt(callingConvention, args) != 0);
         }
         else if (returnType==byte.class || returnType==Byte.class) {
-            result = new Byte((byte)invokeInt(callingConvention, args));
+            result = Byte.valueOf((byte)invokeInt(callingConvention, args));
         }
         else if (returnType==short.class || returnType==Short.class) {
-            result = new Short((short)invokeInt(callingConvention, args));
+            result = Short.valueOf((short)invokeInt(callingConvention, args));
         }
         else if (returnType==char.class || returnType==Character.class) {
-            result = new Character((char)invokeInt(callingConvention, args));
+            result = Character.valueOf((char)invokeInt(callingConvention, args));
         }
         else if (returnType==int.class || returnType==Integer.class) {
-            result = new Integer(invokeInt(callingConvention, args));
+            result = Integer.valueOf(invokeInt(callingConvention, args));
         }
         else if (returnType==long.class || returnType==Long.class) {
-            result = new Long(invokeLong(callingConvention, args));
+            result = Long.valueOf(invokeLong(callingConvention, args));
         }
         else if (returnType==float.class || returnType==Float.class) {
-            result = new Float(invokeFloat(callingConvention, args));
+            result = Float.valueOf(invokeFloat(callingConvention, args));
         }
         else if (returnType==double.class || returnType==Double.class) {
-            result = new Double(invokeDouble(callingConvention, args));
+            result = Double.valueOf(invokeDouble(callingConvention, args));
         }
         else if (returnType==String.class) {
             result = invokeString(callingConvention, args, false);
@@ -354,7 +354,7 @@ public class Function extends Pointer {
         // Default conversion of boolean to int; if you want something
         // different, use a ToNativeConverter
         else if (arg instanceof Boolean) {
-            return new Integer(Boolean.TRUE.equals(arg) ? -1 : 0);
+            return Integer.valueOf(Boolean.TRUE.equals(arg) ? -1 : 0);
         }
         else if (String[].class == argClass) {
             return new StringArray((String[])arg);

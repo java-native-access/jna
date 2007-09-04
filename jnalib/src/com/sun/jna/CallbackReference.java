@@ -277,7 +277,7 @@ class CallbackReference extends WeakReference {
                 return ((Structure)value).getPointer();
             }
             else if (cls == boolean.class || cls == Boolean.class) {
-                return new Integer(Boolean.TRUE.equals(value)?-1:0);
+                return Integer.valueOf(Boolean.TRUE.equals(value)?-1:0);
             }
             else if (cls == String.class) {
                 // FIXME: need to prevent GC, but how and for how long?

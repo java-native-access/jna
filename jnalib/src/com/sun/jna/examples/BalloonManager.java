@@ -145,8 +145,8 @@ public class BalloonManager {
     }
     
     private static final class BubbleWindow extends JWindow {
-        private final int Y_OFFSET = 50;
-        private final int ARC = 25;
+        private static final int Y_OFFSET = 50;
+        private static final int ARC = 25;
 
         private Point offset;
         private Area mask;

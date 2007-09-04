@@ -35,9 +35,9 @@ public class NativeLong extends Number implements NativeMapped {
             if (masked != 0 && masked != 0xFFFFFFFF80000000L) {
                 throw new IllegalArgumentException("Argument exceeds native long capacity");
             }
-            this.value = new Integer((int) (value & 0xFFFFFFFF));
+            this.value = Integer.valueOf((int) (value & 0xFFFFFFFF));
         } else {
-            this.value = new Long(value);
+            this.value = Long.valueOf(value);
         }
     }
     
