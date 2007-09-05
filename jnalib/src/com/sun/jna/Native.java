@@ -15,9 +15,7 @@ package com.sun.jna;
 import java.awt.Component;
 import java.awt.Window;
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.nio.Buffer;
@@ -143,7 +141,7 @@ public final class Native {
     /** Load a library interface from the given shared library, providing
      * the explicit interface class.
      */
-    public static Library loadLibrary(String name, Class interfaceClass) {
+    public static Object loadLibrary(String name, Class interfaceClass) {
         return loadLibrary(name, interfaceClass, Collections.EMPTY_MAP);
     }
 
@@ -155,12 +153,9 @@ public final class Native {
      * @param interfaceClass
      * @param options Map of library options
      */
-    public static Library loadLibrary(String name, 
+    public static Object loadLibrary(String name, 
                                       Class interfaceClass,
-                                      Map options) {
-        if (!Library.class.isAssignableFrom(interfaceClass)) {
-            throw new IllegalArgumentException("Not a valid native library interface: " + interfaceClass);
-        }
+                                      Map options) {        
         Library.Handler handler = 
             new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
