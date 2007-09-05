@@ -176,9 +176,9 @@ public class Function extends Pointer {
 
         TypeMapper mapper = 
             (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
-        
+        Method invokingMethod = (Method)options.get(Library.OPTION_INVOKING_METHOD);
         for (int i=0; i < args.length; i++) {
-            args[i] = convertArgument(args[i], mapper);
+            args[i] = convertArgument(args, i, invokingMethod, mapper);
         }
         
         Class nativeType = returnType;
@@ -199,9 +199,9 @@ public class Function extends Pointer {
         // Convert the result to a custom value/type if appropriate
         if (resultConverter != null) {
             FromNativeContext context;
-            Method m = (Method)options.get(Library.OPTION_INVOKING_METHOD);
-            if (m != null) {
-                context = new MethodResultContext(returnType, this, inArgs, m);
+            
+            if (invokingMethod != null) {
+                context = new MethodResultContext(returnType, this, inArgs, invokingMethod);
             } else {
                 context = new FunctionResultContext(returnType, this, inArgs);
             }
@@ -304,7 +304,8 @@ public class Function extends Pointer {
         return result;
     }
     
-    private Object convertArgument(Object arg, TypeMapper mapper) { 
+    private Object convertArgument(Object[] args, int index, Method invokingMethod, TypeMapper mapper) { 
+        Object arg = args[index];
         if (arg != null) {
             Class type = arg.getClass();
             ToNativeConverter converter = null;
@@ -315,7 +316,14 @@ public class Function extends Pointer {
                 converter = mapper.getToNativeConverter(type);
             }
             if (converter != null) {
-                arg = converter.toNative(arg);
+                ToNativeContext context;
+                if (invokingMethod != null) {
+                    context = new MethodParameterContext(this, args, index, invokingMethod) ;
+                }
+                else {
+                    context = new FunctionParameterContext(this, args, index);
+                }
+                arg = converter.toNative(arg, context);
             }
         }
         if (arg == null || isPrimitiveArray(arg.getClass())) { 

@@ -410,7 +410,8 @@ public abstract class Structure {
         Class nativeType = structField.type;
         ToNativeConverter converter = structField.writeConverter;
         if (converter != null) {
-            value = converter.toNative(value);
+            value = converter.toNative(value, 
+                    new StructureWriteContext(this, structField.field));
             // Assume any null values are pointers
             nativeType = value != null ? value.getClass() : Pointer.class;
         }
@@ -587,7 +588,8 @@ public abstract class Structure {
                     ToNativeConverter writeConverter = typeMapper.getToNativeConverter(type);
                     FromNativeConverter readConverter = typeMapper.getFromNativeConverter(type);
                     if (writeConverter != null && readConverter != null) {
-                        value = writeConverter.toNative(value);
+                        value = writeConverter.toNative(value,
+                                new StructureWriteContext(this, structField.field));
                         nativeType = value != null ? value.getClass() : Pointer.class;
                         structField.writeConverter = writeConverter;
                         structField.readConverter = readConverter;

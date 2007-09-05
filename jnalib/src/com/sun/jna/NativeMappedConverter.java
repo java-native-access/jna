@@ -49,7 +49,7 @@ public class NativeMappedConverter implements TypeConverter {
         return nativeType;
     }
 
-    public Object toNative(Object value) {
+    public Object toNative(Object value, ToNativeContext context) {
         return ((NativeMapped)value).toNative();
     }
 }

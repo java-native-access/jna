@@ -268,7 +268,7 @@ class CallbackReference extends WeakReference {
         
         private Object convertResult(Object value) {
             if (toNative != null) {
-                value = toNative.toNative(value);
+                value = toNative.toNative(value, new ToNativeContext());
             }
             if (value == null)
                 return null;

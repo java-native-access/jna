@@ -36,7 +36,7 @@ public interface ToNativeConverter {
      * <li>primitive array
      * </ul>
      */
-    Object toNative(Object value);
+    Object toNative(Object value, ToNativeContext context);
     /** Indicate the type expected from {@link #toNative}. */
     Class nativeType();
 }

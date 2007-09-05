@@ -35,7 +35,7 @@ public class TypeMapperTest extends TestCase {
         Map options = new HashMap();
         DefaultTypeMapper mapper = new DefaultTypeMapper();
         mapper.addToNativeConverter(Boolean.class, new ToNativeConverter() {
-            public Object toNative(Object arg) {
+            public Object toNative(Object arg, ToNativeContext ctx) {
                 return new Integer(Boolean.TRUE.equals(arg) ? MAGIC : 0);
             }
             public Class nativeType() {
@@ -51,7 +51,7 @@ public class TypeMapperTest extends TestCase {
     public void testStringToIntArgumentConversion() {
         DefaultTypeMapper mapper = new DefaultTypeMapper();
         mapper.addToNativeConverter(String.class, new ToNativeConverter() {
-            public Object toNative(Object arg) {
+            public Object toNative(Object arg, ToNativeContext ctx) {
                 return Integer.valueOf((String) arg, 16);
             }
             public Class nativeType() {
@@ -69,7 +69,7 @@ public class TypeMapperTest extends TestCase {
     public void testCharSequenceToIntArgumentConversion() {
         DefaultTypeMapper mapper = new DefaultTypeMapper();
         mapper.addToNativeConverter(CharSequence.class, new ToNativeConverter() {
-            public Object toNative(Object arg) {
+            public Object toNative(Object arg, ToNativeContext ctx) {
                 return Integer.valueOf(((CharSequence)arg).toString(), 16);
             }
             public Class nativeType() {
@@ -88,7 +88,7 @@ public class TypeMapperTest extends TestCase {
     public void testNumberToIntArgumentConversion() {
         DefaultTypeMapper mapper = new DefaultTypeMapper();
         mapper.addToNativeConverter(Double.class, new ToNativeConverter() {
-            public Object toNative(Object arg) {
+            public Object toNative(Object arg, ToNativeContext ctx) {
                 return new Integer(((Double)arg).intValue());
             }
             public Class nativeType() {
@@ -112,7 +112,7 @@ public class TypeMapperTest extends TestCase {
         Map options = new HashMap();
         DefaultTypeMapper mapper = new DefaultTypeMapper();
         mapper.addToNativeConverter(Boolean.class, new ToNativeConverter() {
-            public Object toNative(Object value) {
+            public Object toNative(Object value, ToNativeContext ctx) {
                 return new Integer(Boolean.TRUE.equals(value) ? MAGIC : 0);
             }
             public Class nativeType() {
@@ -146,7 +146,7 @@ public class TypeMapperTest extends TestCase {
     public void testStructureConversion() throws Exception {
         DefaultTypeMapper mapper = new DefaultTypeMapper();
         TypeConverter converter = new TypeConverter() {
-            public Object toNative(Object value) {
+            public Object toNative(Object value, ToNativeContext ctx) {
                 return new Integer(Boolean.TRUE.equals(value) ? 1 : 0);
             }
             public Object fromNative(Object value, FromNativeContext context) {
@@ -195,7 +195,7 @@ public class TypeMapperTest extends TestCase {
             public Class nativeType() {
                 return Integer.class;
             }
-            public Object toNative(Object value) {
+            public Object toNative(Object value, ToNativeContext ctx) {
                 return new Integer(Math.round(((Float)value).floatValue()));
             }
         };
@@ -220,15 +220,17 @@ public class TypeMapperTest extends TestCase {
     public void testAnnotationsOnMethods() throws Exception {
         final int MAGIC = 0xABEDCF23;
         Map options = new HashMap();
-        final boolean[] hasAnnotation = {false};
+        final boolean[] hasAnnotation = {false, false};
         DefaultTypeMapper mapper = new DefaultTypeMapper();        
         mapper.addTypeConverter(Boolean.class, new TypeConverter() {
-            public Object toNative(Object value) {
+            public Object toNative(Object value, ToNativeContext ctx) {
+                MethodParameterContext mcontext = (MethodParameterContext)ctx;
+                hasAnnotation[0] = mcontext.getMethod().getAnnotation(FooBoolean.class) != null;
                 return new Integer(Boolean.TRUE.equals(value) ? MAGIC : 0);
             }
             public Object fromNative(Object value, FromNativeContext context) {
                 MethodResultContext mcontext = (MethodResultContext)context;                
-                hasAnnotation[0] = mcontext.getMethod().getAnnotation(FooBoolean.class) != null;
+                hasAnnotation[1] = mcontext.getMethod().getAnnotation(FooBoolean.class) != null;
                 return Boolean.valueOf(((Integer) value).intValue() == MAGIC);
             }
             public Class nativeType() {
@@ -241,7 +243,8 @@ public class TypeMapperTest extends TestCase {
             Native.loadLibrary("testlib", AnnotationTestLibrary.class, options);
         assertEquals("Failed to convert integer return to boolean TRUE", true,
                      lib.returnInt32Argument(true));
-        assertTrue("Failed to attach annotation to interface method", hasAnnotation[0]);        
+        assertTrue("Failed to get annotation from ParameterContext", hasAnnotation[0]);        
+        assertTrue("Failed to get annotation from ResultContext", hasAnnotation[1]);        
     }
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TypeMapperTest.class);
