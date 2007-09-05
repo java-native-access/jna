@@ -96,14 +96,9 @@ public interface Library {
         private Map functions = new WeakHashMap();        
         public Handler(String libname, Class interfaceClass, Map options) {
 
-            if (libname == null || libname.trim().length() == 0) {
+            if (libname == null || "".equals(libname.trim())) {
                 throw new IllegalArgumentException("Invalid library name \""
                                                    + libname + "\"");
-            }
-
-            if (!Library.class.isAssignableFrom(interfaceClass)) {
-                throw new IllegalArgumentException("Invalid interface class \""
-                                                   + interfaceClass + "\"");
             }
 
             this.nativeLibrary = NativeLibrary.getInstance(libname);
