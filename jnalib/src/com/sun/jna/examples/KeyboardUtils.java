@@ -112,7 +112,7 @@ public class KeyboardUtils {
         }
     }
     private static class X11KeyboardUtils extends NativeKeyboardUtils {
-        // TODO: map from X11 keycodes to java keycodes
+        // TODO: fully map from X11 keycodes to java keycodes
         // this is a minimal implementation
         private int toKeySym(int code, int location) {
             if (code >= KeyEvent.VK_A && code <= KeyEvent.VK_Z)

@@ -76,7 +76,7 @@ DBG=d
 CDEBUG=-D_DEBUG -GZ -Zi
 endif
 COUT=-Fo$@
-CDEFINES=-DWIN32 -D_WINDOWS -D_MBCS -D_USRDLL -DNATIVE_EXPORTS 
+CDEFINES=-DWIN32 -D_WINDOWS -D_MBCS -D_USRDLL -DNATIVE_EXPORTS
 PCFLAGS=-nologo -MD$(DBG) -W3 -WX -GX -YX -Fd$(@D)/$* -Fp$(@D)/$*
 CASM=-FAs
 
@@ -85,7 +85,7 @@ LIBDIR=/libpath:"$(JAVA_HOME)/lib"
 LIBS=$(LIBDIR) jawt.lib
 STRIP=@echo
 else
-CDEFINES=-D__int64="long long" -D_JNI_IMPLEMENTATION
+CDEFINES=-D__int64="long long" -D_JNI_IMPLEMENTATION -DHAVE_PROTECTION
 PCFLAGS=-mno-cygwin
 # NOTE: have to recreate specs or dllcrt2.o isn't found
 SPECS=$(BUILD)/specs.new
@@ -102,7 +102,7 @@ ifeq ($(OS),linux)
 ARCH=i386
 PCFLAGS+=-fPIC
 # Avoid 1.5/1.6 bug caused by linking directly to -ljawt
-CDEFINES+=-DNEED_JAWT_HACK
+CDEFINES+=-DNEED_JAWT_HACK -DHAVE_PROTECTION
 LIBS=
 endif
 
@@ -165,7 +165,7 @@ endif
 
 # Unfortunately, we have to use different libffi include files depending on 
 # the target, so we can't do a simple universal build on darwin
-$(BUILD)/%.o : %.c $(FFI_LIB)
+$(BUILD)/%.o : %.c dispatch.h $(FFI_LIB)
 	@mkdir -p $(BUILD)
 ifeq ($(OS),darwin)
 	$(CC) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)

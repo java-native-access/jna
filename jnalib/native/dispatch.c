@@ -24,6 +24,9 @@
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#ifdef _MSC_VER
+#define alloca _alloca
+#endif
 #define LOAD_LIBRARY(name) LoadLibrary(name)
 #define FREE_LIBRARY(handle) FreeLibrary(handle)
 #define FIND_ENTRY(lib, name) GetProcAddress(lib, name)
@@ -40,15 +43,8 @@
 #include <wchar.h>
 #include <jni.h>
 
-// NOTE: while this is the canonical way to obtain a reference to a native
-// window handle, it won't load easily on linux post-1.4 VMs due to 
-// a bug loading libmawt.so.  We'd prefer pure-java access to native window
-// IDs, but that isn't available through WindowPeer until 1.6.
 #include <jawt.h>
 #include <jawt_md.h>
-
-static JAWT awt;
-static int jawt_initialized;
 
 #include "dispatch.h"
 #include "com_sun_jna_Pointer.h"
@@ -58,8 +54,28 @@ static int jawt_initialized;
 #include "com_sun_jna_NativeLibrary.h"
 #include "com_sun_jna_CallbackReference.h"
 
+#ifdef HAVE_PROTECTION
+#include "protect.h"
+#endif
+
 #ifdef __cplusplus
 extern "C"
+#endif
+
+static JAWT awt;
+static int jawt_initialized;
+
+#ifdef PROTECTED_START
+#define ON_ERROR() throwByName(env, "java/lang/Error", "Invalid memory access")
+#define PSTART() PROTECTED_START()
+#define PEND() PROTECTED_END(ON_ERROR())
+#define MEMCPY(D,S,L) do { \
+  PSTART(); memcpy(D,S,L); PEND(); \
+} while(0)
+#else
+#define PSTART()
+#define PEND()
+#define MEMCPY(D,S,L) memcpy(D,S,L)
 #endif
 
 /* Cached class, field and method IDs */
@@ -300,9 +316,12 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     sprintf(msg, "Bad FFI ABI: %d", (int)callconv); 
     throwByName(env, "java/lang/IllegalArgumentException", msg);
     break;
-  case FFI_OK:
+  case FFI_OK: {
+    PSTART();
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
+    PEND();
     break;
+  }
   default:
     sprintf(msg, "Native call setup failure: %d", status);
     throwByName(env, "java/lang/IllegalArgumentException", msg);
@@ -522,9 +541,6 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return JNI_FALSE;
   if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return JNI_FALSE;
   
-  if (!LOAD_CREF(env, Pointer, "com/sun/jna/Pointer")) return JNI_FALSE;
-  if (!LOAD_REF(env, classPointer)) return JNI_FALSE;
-  
   if (!LOAD_PCREF(env, Void, "java/lang/Void")) return JNI_FALSE;
   if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return JNI_FALSE;
   if (!LOAD_PCREF(env, Byte, "java/lang/Byte")) return JNI_FALSE;
@@ -535,9 +551,6 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_PCREF(env, Float, "java/lang/Float")) return JNI_FALSE;
   if (!LOAD_PCREF(env, Double, "java/lang/Double")) return JNI_FALSE;
   
-  if (!LOAD_MID(env, MID_Pointer_init, classPointer,
-                "<init>", "(J)V"))
-    return JNI_FALSE;
   if (!LOAD_MID(env, MID_Long_init, classLong,
                 "<init>", "(J)V"))
     return JNI_FALSE;
@@ -627,41 +640,8 @@ jnidispatch_init(JNIEnv* env) {
     return JNI_FALSE;
   if (!LOAD_FID(env, FID_Double_value, classDouble, "value", "D"))
     return JNI_FALSE;
-  if (!LOAD_FID(env, FID_Pointer_peer, classPointer, "peer", "J"))
-    return JNI_FALSE;
 
   return JNI_TRUE;
-}
-
-/*
- * Class:     Pointer
- * Method:    pointerSize
- * Signature: (LPointer;)I
- */
-JNIEXPORT jint JNICALL 
-Java_com_sun_jna_Pointer_pointerSize(JNIEnv *env, jclass cls)
-{
-  return sizeof(void *);
-}
-
-/*
- * Class:     Pointer
- * Method:    longSize
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL 
-Java_com_sun_jna_Pointer_longSize(JNIEnv *env, jclass cls) {
-  return sizeof(long);
-}
-
-/*
- * Class:     Pointer
- * Method:    wideCharSize
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL 
-Java_com_sun_jna_Pointer_wideCharSize(JNIEnv *env, jclass cls) {
-  return sizeof(wchar_t);
 }
 
 /*
@@ -860,7 +840,7 @@ JNIEXPORT jbyte JNICALL Java_com_sun_jna_Pointer_getByte
 {
     jbyte res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, peer + offset, sizeof(res));
     return res;
 }
 
@@ -874,7 +854,7 @@ JNIEXPORT jchar JNICALL Java_com_sun_jna_Pointer_getChar
 {
     wchar_t res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, peer + offset, sizeof(res));
     return (jchar)res;
 }
 
@@ -888,7 +868,7 @@ JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getPointer
 {
     void *ptr;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&ptr, peer + offset, sizeof(ptr));
+    MEMCPY(&ptr, peer + offset, sizeof(ptr));
     return newJavaPointer(env, ptr);
 }
 
@@ -914,7 +894,7 @@ JNIEXPORT jdouble JNICALL Java_com_sun_jna_Pointer_getDouble
 {
     jdouble res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, peer + offset, sizeof(res));
     return res;
 }
 
@@ -928,7 +908,7 @@ JNIEXPORT jfloat JNICALL Java_com_sun_jna_Pointer_getFloat
 {
     jfloat res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, peer + offset, sizeof(res));
     return res;
 }
 
@@ -942,7 +922,7 @@ JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_getInt
 {
     jint res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, peer + offset, sizeof(res));
     return res;
 }
 
@@ -956,7 +936,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer_getLong
 {
     jlong res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, peer + offset, sizeof(res));
     return res;
 }
 
@@ -970,7 +950,7 @@ JNIEXPORT jshort JNICALL Java_com_sun_jna_Pointer_getShort
 {
     jshort res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, peer + offset, sizeof(res));
     return res;
 }
 
@@ -995,7 +975,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setByte
     (JNIEnv *env, jobject self, jint offset, jbyte value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(peer + offset, &value, sizeof(value));
+    MEMCPY(peer + offset, &value, sizeof(value));
 }
 
 /*
@@ -1008,7 +988,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setPointer
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     void *ptr = value ? getNativeAddress(env, value) : NULL;
-    memcpy(peer + offset, &ptr, sizeof(void *));
+    MEMCPY(peer + offset, &ptr, sizeof(void *));
 }
 
 /*
@@ -1020,7 +1000,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setDouble
     (JNIEnv *env, jobject self, jint offset, jdouble value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(peer + offset, &value, sizeof(value));
+    MEMCPY(peer + offset, &value, sizeof(value));
 }
 
 /*
@@ -1032,7 +1012,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setFloat
     (JNIEnv *env, jobject self, jint offset, jfloat value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(peer + offset, &value, sizeof(value));
+    MEMCPY(peer + offset, &value, sizeof(value));
 }
 
 /*
@@ -1044,7 +1024,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setInt
     (JNIEnv *env, jobject self, jint offset, jint value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(peer + offset, &value, sizeof(value));
+    MEMCPY(peer + offset, &value, sizeof(value));
 }
 
 /*
@@ -1056,7 +1036,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setLong
     (JNIEnv *env, jobject self, jint offset, jlong value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(peer + offset, &value, sizeof(value));
+    MEMCPY(peer + offset, &value, sizeof(value));
 }
 
 /*
@@ -1068,7 +1048,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setShort
     (JNIEnv *env, jobject self, jint offset, jshort value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    memcpy(peer + offset, &value, sizeof(value));
+    MEMCPY(peer + offset, &value, sizeof(value));
 }
 
 /*
@@ -1081,17 +1061,19 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setString
 {
     char *peer = (char *)getNativeAddress(env, self);
     int len = (*env)->GetStringLength(env, value);
+    void* str;
+    int size = len + 1;
+
     if (wide) {
-        wchar_t* str = newWideCString(env, value);
-        if (str == NULL) return;
-        memcpy(peer + offset, str, (len + 1) * sizeof(wchar_t));
-        free(str);
+      size *= sizeof(wchar_t);
+      str = newWideCString(env, value);
     }
     else {
-        char *str = newCString(env, value);
-        if (str == NULL) return;
-        memcpy(peer + offset, str, len + 1);
-        free(str);
+      str = newCString(env, value);
+    }
+    if (str != NULL) {
+      MEMCPY(peer + offset, str, size);
+      free(str);
     }
 }
 
@@ -1144,13 +1126,13 @@ static char *
 newCString(JNIEnv *env, jstring jstr)
 {
     jbyteArray bytes = 0;
-    char *result = 0;
+    char *result = NULL;
 
     bytes = (*env)->CallObjectMethod(env, jstr, MID_String_getBytes);
     if (!(*env)->ExceptionCheck(env)) {
         jint len = (*env)->GetArrayLength(env, bytes);
         result = (char *)malloc(len + 1);
-        if (result == 0) {
+        if (result == NULL) {
             throwByName(env, "java/lang/OutOfMemoryError", 0);
             (*env)->DeleteLocalRef(env, bytes);
             return NULL;
@@ -1170,16 +1152,16 @@ static wchar_t *
 newWideCString(JNIEnv *env, jstring str)
 {
     jcharArray chars = 0;
-    wchar_t *result = 0;
+    wchar_t *result = NULL;
 
     chars = (*env)->CallObjectMethod(env, str, MID_String_toCharArray);
     if (!(*env)->ExceptionCheck(env)) {
         jint len = (*env)->GetArrayLength(env, chars);
         result = (wchar_t *)malloc(sizeof(wchar_t) * (len + 1));
-        if (result == 0) {
+        if (result == NULL) {
             throwByName(env, "java/lang/OutOfMemoryError", 0);
             (*env)->DeleteLocalRef(env, chars);
-            return 0;
+            return NULL;
         }
         // TODO: ensure proper encoding conversion from jchar to native wchar_t
         if (sizeof(jchar) == sizeof(wchar_t)) {
@@ -1207,6 +1189,7 @@ static jstring
 newJavaString(JNIEnv *env, const char *ptr, jboolean wide) 
 {
     jstring result = 0;
+    PSTART();
 
     if (wide) {
         // TODO: proper conversion from native wchar_t to jchar
@@ -1235,6 +1218,8 @@ newJavaString(JNIEnv *env, const char *ptr, jboolean wide)
             (*env)->DeleteLocalRef(env, bytes);
         }
     }
+    PEND();
+
     return result;
 }
 
@@ -1348,8 +1333,63 @@ do { jboolean cpy; \
 }
 
 
+/*
+ * Class:     Native
+ * Method:    pointerSize
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL 
+Java_com_sun_jna_Native_pointerSize(JNIEnv *env, jclass cls)
+{
+  return sizeof(void *);
+}
+
+/*
+ * Class:     Native
+ * Method:    longSize
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL 
+Java_com_sun_jna_Native_longSize(JNIEnv *env, jclass cls) {
+  return sizeof(long);
+}
+
+/*
+ * Class:     Native
+ * Method:    wideCharSize
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL 
+Java_com_sun_jna_Native_wideCharSize(JNIEnv *env, jclass cls) {
+  return sizeof(wchar_t);
+}
+
+/** Initialize com.sun.jna classes separately from the library load to
+ * avoid initialization inconsistencies.
+ */
+JNIEXPORT void JNICALL 
+Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
+  if (!LOAD_CREF(env, Pointer, "com/sun/jna/Pointer")) {
+    throwByName(env, "java/lang/UnsatisfiedLinkError",
+                "Can't obtain class com.sun.jna.Pointer");
+  }
+  else if (!LOAD_REF(env, classPointer)) {
+    throwByName(env, "java/lang/UnsatisfiedLinkError",
+                "Can't obtain a reference to class com.sun.jna.Pointer");
+  }
+  else if (!LOAD_MID(env, MID_Pointer_init, classPointer,
+                     "<init>", "(J)V")) {
+    throwByName(env, "java/lang/UnsatisfiedLinkError",
+                "Can't obtain constructor for class com.sun.jna.Pointer");
+  }
+  else if (!LOAD_FID(env, FID_Pointer_peer, classPointer, "peer", "J")) {
+    throwByName(env, "java/lang/UnsatisfiedLinkError",
+                "Can't obtain peer field ID for class com.sun.jna.Pointer");
+  }
+}
+  
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject classp, jobject w) {
+Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) {
   jlong handle = 0;
   JAWT_DrawingSurface* ds;
   JAWT_DrawingSurfaceInfo* dsi;
@@ -1437,7 +1477,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jobject classp, jobject w)
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_sun_jna_Native_getDirectBufferPointer(JNIEnv *env, jobject classp, jobject buffer) {
+Java_com_sun_jna_Native_getDirectBufferPointer(JNIEnv *env, jclass classp, jobject buffer) {
   void* addr = (*env)->GetDirectBufferAddress(env, buffer);
   if (addr == NULL) {
     throwByName(env,"java/lang/IllegalArgumentException",
@@ -1446,8 +1486,29 @@ Java_com_sun_jna_Native_getDirectBufferPointer(JNIEnv *env, jobject classp, jobj
   return newJavaPointer(env, addr);
 }
 
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_setProtected(JNIEnv *env, jclass classp, jboolean protect_access) {
+#ifdef HAVE_PROTECTION
+  protect = protect_access;
+#endif
+}
+
+JNIEXPORT jboolean JNICALL
+Java_com_sun_jna_Native_isProtected(JNIEnv *env, jclass classp) {
+#ifdef HAVE_PROTECTION
+  return protect ? JNI_TRUE : JNI_FALSE;
+#else
+  return JNI_FALSE;
+#endif
+}
+
 static jboolean 
 init_jawt(JNIEnv* env) {
+  // NOTE: the canonical way to obtain a reference to a native
+  // window handle involves loading JAWT, but unfortunately it won't load
+  // easily on linux post-1.4 VMs due to a bug loading libmawt.so.  We'd
+  // prefer pure-java access to native window IDs, but that isn't available
+  // through WindowPeer until 1.6. 
 #ifndef NEED_JAWT_HACK
   awt.version = JAWT_VERSION_1_4;
   if (!JAWT_GetAWT(env, &awt))

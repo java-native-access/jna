@@ -10,14 +10,7 @@
  */
 package com.sun.jna;
 
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -37,124 +30,21 @@ import java.nio.ByteOrder;
  */
 public class Pointer {
 
-    /** The size of a native pointer on the current platform, in bytes. */
+    /** Size of a native pointer, in bytes. */
     public static final int SIZE;
-    /** Size of a native long type, in bytes. */
-    public static final int LONG_SIZE;
-    /** Size of a native wchar_t type, in bytes. */
-    public static final int WCHAR_SIZE;
+    
+    static {
+        // Force load of native library
+        if ((SIZE = Native.POINTER_SIZE) == 0) {
+            throw new Error("Native library not initialized");
+        }
+    }
     
     /** Convenience constant, same as <code>null</code>. */
     public static final Pointer NULL = null;
+    
     /** Convenience constant, equivalent to <code>(void*)-1</code>. */
     public static final Pointer PM1 = new Pointer(-1);
-
-    static {
-        if (!loadNativeLibrary()) {
-            // Let the system try
-            System.loadLibrary("jnidispatch");
-        }
-        SIZE = pointerSize();
-        LONG_SIZE = longSize();
-        WCHAR_SIZE = wideCharSize();
-    }
-    
-    private static String getNativeLibraryResourcePath() {
-        String arch = System.getProperty("os.arch");
-        String osPrefix;
-        if (Platform.isWindows()) {
-            osPrefix = "win32-" + arch;
-        }
-        else if (Platform.isMac()) {
-            osPrefix = "darwin";
-        }
-        else if (Platform.isLinux()) {
-            osPrefix = "linux-" + arch;
-        }
-        else if (Platform.isSolaris()) {
-            osPrefix = "sunos-" + arch;
-        }
-        else {
-            osPrefix = System.getProperty("os.name").toLowerCase();
-            int space = osPrefix.indexOf(" ");
-            if (space != -1) {
-                osPrefix = osPrefix.substring(0, space);
-            }
-            osPrefix += "-" + arch;
-        }
-        return "/com/sun/jna/" + osPrefix;
-    }
-
-    private static boolean loadNativeLibrary() {
-        String libname = System.mapLibraryName("jnidispatch");
-        String resourceName = getNativeLibraryResourcePath() + "/" + libname;
-        URL url = Pointer.class.getResource(resourceName);
-        if (url == null) {
-            System.err.println("Warning: jnidispatch (" + resourceName 
-                               + ") not found in resource path");
-            return false;
-        }
-
-        File lib = null;
-        if (url.getProtocol().toLowerCase().equals("file")) {
-            try {
-                lib = new File(URLDecoder.decode(url.getPath(), "UTF8"));
-            }
-            catch(UnsupportedEncodingException e) {
-                throw new Error("JRE is unexpectedly missing UTF8 encoding");
-            }
-        }
-        else {
-            InputStream is = Pointer.class.getResourceAsStream(resourceName);
-            if (is == null) {
-                throw new Error("Can't obtain jnidispatch InputStream");
-            }
-            
-            FileOutputStream fos = null;
-            try {
-                lib = File.createTempFile("jna", null);
-                lib.deleteOnExit();
-                fos = new FileOutputStream(lib);
-                int count;
-                byte[] buf = new byte[1024];
-                while ((count = is.read(buf, 0, buf.length)) > 0) {
-                    fos.write(buf, 0, count);
-                }
-            }
-            catch(IOException e) {
-                throw new Error("Failed to create temporary file for jnidispatch library", e);
-            }
-            finally {
-                try { is.close(); } catch(IOException e) { }
-                if (fos != null) {
-                    try { fos.close(); } catch(IOException e) { }
-                }
-            }
-        }
-        // Avoid dependent library link errors on w32 (this is handled
-        // internal to the jnidispatch library for X11-based platforms)
-        if (Platform.isWindows()) {
-            // Ensure AWT library ("awt") is loaded by the proper class loader, 
-            // otherwise Toolkit class init will fail
-            Toolkit.getDefaultToolkit();
-            try { System.loadLibrary("jawt"); } 
-            catch(UnsatisfiedLinkError e) { e.printStackTrace(); }
-        }
-        System.load(lib.getAbsolutePath());
-        return true;
-    }
-
-    /**
-     * Initialize field and method IDs for native methods of this class. 
-     * Returns the size of a native pointer.
-     **/
-    private static native int pointerSize();
-
-    /** Return the size of a native <code>long</code>. */
-    private static native int longSize();
-    
-    /** Return the size of a native <code>wchar_t</code>. */
-    private static native int wideCharSize();
     
     /** Pointer value of the real native pointer. Use long to be 64-bit safe. 
      */
@@ -468,7 +358,7 @@ public class Pointer {
      * @return the <code>long</code> value being pointed to
      */
     public NativeLong getNativeLong(int offset) {
-        return new NativeLong(SIZE == 8 ? getLong(offset) : getInt(offset));
+        return new NativeLong(NativeLong.SIZE == 8 ? getLong(offset) : getInt(offset));
     }
     
     /**
@@ -606,7 +496,7 @@ public class Pointer {
     public Pointer[] getPointerArray(int offset, int arraySize) {
         Pointer[] buf = new Pointer[arraySize];
         for (int i=0;i < buf.length;i++) {
-            buf[i] = getPointer(offset + i*Pointer.SIZE);
+            buf[i] = getPointer(offset + i*SIZE);
         }
         return buf;
     }
@@ -684,7 +574,7 @@ public class Pointer {
      * @param value <code>long</code> value to set
      */
     public void setNativeLong(int offset, NativeLong value) {
-        if (SIZE == 8) {
+        if (NativeLong.SIZE == 8) {
             setLong(offset, value.longValue());
         } else {
             setInt(offset, value.intValue());

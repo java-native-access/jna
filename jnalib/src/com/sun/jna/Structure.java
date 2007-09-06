@@ -687,7 +687,7 @@ public abstract class Structure {
     protected int getNativeSize(Class cls) {
         if (cls == byte.class || cls == Byte.class) return 1;
         if (cls == short.class || cls == Short.class) return 2; 
-        if (cls == char.class || cls == Character.class) return Pointer.WCHAR_SIZE;
+        if (cls == char.class || cls == Character.class) return Native.WCHAR_SIZE;
         if (cls == int.class || cls == Integer.class) return 4;
         if (cls == long.class || cls == Long.class) return 8;
         if (cls == float.class || cls == Float.class) return 4;

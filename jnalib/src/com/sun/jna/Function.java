@@ -39,8 +39,6 @@ public class Function extends Pointer {
     /** First alternate convention (currently used only for w32 stdcall). */
     public static final int ALT_CONVENTION = 1;
 
-    private String libName;
-    
     // Keep a reference to the NativeLibrary so it does not get garbage collected
     // until the function is
     private NativeLibrary library;
@@ -103,7 +101,6 @@ public class Function extends Pointer {
     Function(NativeLibrary library, String functionName, int callingConvention) {
         checkCallingConvention(callingConvention);
         this.library = library;
-        this.libName= library.getName();
         this.functionName = functionName;
         this.callingConvention = callingConvention;
         this.peer = library.getFunctionAddress(functionName);        
@@ -124,7 +121,6 @@ public class Function extends Pointer {
      */
     Function(Pointer functionAddress, int callingConvention) {
         checkCallingConvention(callingConvention);
-        this.libName = "<undefined>";
         this.functionName = functionAddress.toString();
         this.callingConvention = callingConvention;
         this.peer = functionAddress.peer;
@@ -530,6 +526,7 @@ public class Function extends Pointer {
 
     /** Provide a human-readable representation of this object. */
     public String toString() {
+        String libName = library != null ? library.getName() : "<undefined>";
         return "native function " + functionName + "(" + libName
             + ")@0x" + Long.toHexString(peer);
     }

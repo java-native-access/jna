@@ -56,6 +56,8 @@ public class Memory extends Pointer {
      */
     public Memory(int size) {
         this.size = size;
+        if (size <= 0)
+            throw new IllegalArgumentException("Allocation size must be >= 0"); 
         peer = malloc(size);
         if (peer == 0) 
             throw new OutOfMemoryError();
@@ -430,7 +432,7 @@ public class Memory extends Pointer {
      * @see Pointer#getPointer(int)
      */
     public Pointer getPointer(int offset) {
-        boundsCheck(offset, SIZE);
+        boundsCheck(offset, Pointer.SIZE);
         return super.getPointer(offset);
     }
 
@@ -487,7 +489,7 @@ public class Memory extends Pointer {
      * @see Pointer#setChar
      */
     public void setChar(int offset, char value) {
-        boundsCheck(offset, Pointer.WCHAR_SIZE);
+        boundsCheck(offset, Native.WCHAR_SIZE);
         super.setChar(offset, value);
     }
 
@@ -571,7 +573,7 @@ public class Memory extends Pointer {
      * @see Pointer#setPointer
      */
     public void setPointer(int offset, Pointer value) {
-        boundsCheck(offset, SIZE);
+        boundsCheck(offset, Pointer.SIZE);
         super.setPointer(offset, value);
     }
 
@@ -586,7 +588,7 @@ public class Memory extends Pointer {
      */
     public void setString(int offset, String value, boolean wide) {
         if (wide)
-            boundsCheck(offset, (value.length() + 1) * Pointer.WCHAR_SIZE);
+            boundsCheck(offset, (value.length() + 1) * Native.WCHAR_SIZE);
         else
             boundsCheck(offset, value.getBytes().length + 1);
         super.setString(offset, value, wide);

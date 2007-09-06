@@ -13,11 +13,18 @@
 package com.sun.jna;
 
 import java.awt.Component;
+import java.awt.Toolkit;
 import java.awt.Window;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -44,7 +51,49 @@ public final class Native {
     private static Map alignments = Collections.synchronizedMap(new WeakHashMap());
     private static Map libraries = Collections.synchronizedMap(new WeakHashMap());
     
+    /** The size of a native pointer on the current platform, in bytes. */
+    public static final int POINTER_SIZE;
+    /** Size of a native long type, in bytes. */
+    public static final int LONG_SIZE;
+    /** Size of a native wchar_t type, in bytes. */
+    public static final int WCHAR_SIZE;
+
+    static {
+        if (!loadNativeLibrary()) {
+            // Let the system try
+            System.loadLibrary("jnidispatch");
+        }
+        POINTER_SIZE = pointerSize();
+        LONG_SIZE = longSize();
+        WCHAR_SIZE = wideCharSize();
+        // Defer initialization of other JNA classes until *after* initializing 
+        // this class's fields
+        initIDs();
+        if (Boolean.getBoolean("jna.protected")) {
+            setProtected(true);
+        }
+    }
+
     private Native() { }
+    
+    private static native void initIDs();
+
+    /** Set whether native memory accesses are protected from invalid
+     * accesses.  This should only be set true when testing or debugging,
+     * and should not be considered reliable or robust for multithreaded
+     * applications.  Protected mode will be automatically set if the
+     * system property <code>jna.protected</code> has a value of "true"
+     * when the JNA library is first loaded.<p>
+     * If not supported by the underlying platform, this setting will
+     * have no effect.
+     */
+    public static native void setProtected(boolean enable);
+    
+    /** Returns whether protection is enabled.  Check the result of this method
+     * after calling {@link #setProtected setProtected(true)} to determine
+     * if this platform supports protecting memory accesses.
+     */
+    public static native boolean isProtected();
     
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
@@ -248,4 +297,101 @@ public final class Native {
         }
         return s.getBytes();
     }
+
+    private static String getNativeLibraryResourcePath() {
+        String arch = System.getProperty("os.arch");
+        String osPrefix;
+        if (Platform.isWindows()) {
+            osPrefix = "win32-" + arch;
+        }
+        else if (Platform.isMac()) {
+            osPrefix = "darwin";
+        }
+        else if (Platform.isLinux()) {
+            osPrefix = "linux-" + arch;
+        }
+        else if (Platform.isSolaris()) {
+            osPrefix = "sunos-" + arch;
+        }
+        else {
+            osPrefix = System.getProperty("os.name").toLowerCase();
+            int space = osPrefix.indexOf(" ");
+            if (space != -1) {
+                osPrefix = osPrefix.substring(0, space);
+            }
+            osPrefix += "-" + arch;
+        }
+        return "/com/sun/jna/" + osPrefix;
+    }
+
+    private static boolean loadNativeLibrary() {
+        String libname = System.mapLibraryName("jnidispatch");
+        String resourceName = getNativeLibraryResourcePath() + "/" + libname;
+        URL url = Native.class.getResource(resourceName);
+        if (url == null) {
+            System.err.println("Warning: jnidispatch (" + resourceName 
+                               + ") not found in resource path");
+            return false;
+        }
+    
+        File lib = null;
+        if (url.getProtocol().toLowerCase().equals("file")) {
+            try {
+                lib = new File(URLDecoder.decode(url.getPath(), "UTF8"));
+            }
+            catch(UnsupportedEncodingException e) {
+                throw new Error("JRE is unexpectedly missing UTF8 encoding");
+            }
+        }
+        else {
+            InputStream is = Native.class.getResourceAsStream(resourceName);
+            if (is == null) {
+                throw new Error("Can't obtain jnidispatch InputStream");
+            }
+            
+            FileOutputStream fos = null;
+            try {
+                lib = File.createTempFile("jna", null);
+                lib.deleteOnExit();
+                fos = new FileOutputStream(lib);
+                int count;
+                byte[] buf = new byte[1024];
+                while ((count = is.read(buf, 0, buf.length)) > 0) {
+                    fos.write(buf, 0, count);
+                }
+            }
+            catch(IOException e) {
+                throw new Error("Failed to create temporary file for jnidispatch library", e);
+            }
+            finally {
+                try { is.close(); } catch(IOException e) { }
+                if (fos != null) {
+                    try { fos.close(); } catch(IOException e) { }
+                }
+            }
+        }
+        // Avoid dependent library link errors on w32 (this is handled
+        // internal to the jnidispatch library for X11-based platforms)
+        if (Platform.isWindows()) {
+            // Ensure AWT library ("awt") is loaded by the proper class loader, 
+            // otherwise Toolkit class init will fail
+            Toolkit.getDefaultToolkit();
+            try { System.loadLibrary("jawt"); } 
+            catch(UnsatisfiedLinkError e) { e.printStackTrace(); }
+        }
+        System.load(lib.getAbsolutePath());
+        return true;
+    }
+
+    /**
+     * Initialize field and method IDs for native methods of this class. 
+     * Returns the size of a native pointer.
+     **/
+    private static native int pointerSize();
+
+    /** Return the size of a native <code>long</code>. */
+    private static native int longSize();
+
+    /** Return the size of a native <code>wchar_t</code>. */
+    private static native int wideCharSize();
 }

@@ -382,5 +382,9 @@ problematic in that the native code must become responsible for reference
 tracking.   Until a consistent method or methods of handling these situations
 is formulated, passing Java objects directly is not supported.
 
+<a name="crash-protection"/>
+<h2>VM Crash Protection</h2>
+When defining a new library and writing tests for it, it not uncommon to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.
+
 </body>
 </html>

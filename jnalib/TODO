@@ -37,9 +37,6 @@
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be available in GraphicsDevice->getIDstring
 * universal GCC build w/cross-compile (needs cross compilers...)
-* catch native crash/exception/faults and re-throw as java exception
-  this is mostly for debugging a new mapping to avoid crashing the VM
-  could do setjmp/longjmp on *nix and catch C++ exception on w32
 * return Pointer.SIZE/LONG_SIZE/WCHAR_SIZE in bits (for consistency with 1.5)
   Long.SIZE, Integer.SIZE, et al.
 * interface "lvalue", which can provide a pointer to itself (reference() or
@@ -80,6 +77,9 @@
 
 
 # DONE
+* catch native crash/exception/faults and re-throw as java exception
+  this is mostly for debugging a new mapping to avoid crashing the VM
+  could do setjmp/longjmp on *nix and catch C++ exception on w32
 * NativeMapped: provide interface to automatically convert custom Java
   type to/from native types. 
 * update X11 libs for 64-bit

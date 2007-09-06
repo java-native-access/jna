@@ -51,7 +51,7 @@ class NativeString implements CharSequence, Comparable {
         // make this 1 element longer in order to accomodate the terminating 
         // NUL (which is generated in Pointer.setString()).
         if (wide) {
-            int len = (string.length() + 1 ) * Pointer.WCHAR_SIZE;
+            int len = (string.length() + 1 ) * Native.WCHAR_SIZE;
             pointer = new Memory(len);
             pointer.setString(0, string, true);
         }

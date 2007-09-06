@@ -48,8 +48,11 @@ public class NativeLibrary {
     private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
     private static final List librarySearchPath = new LinkedList();
 
-    // Dummy to force load of the jnidispatch library
-    private static final Pointer NULL = Pointer.NULL;
+    static {
+        // Force initialization of native library
+        if (Native.POINTER_SIZE == 0)
+            throw new Error("Native library not initialized");
+    }
 
     private NativeLibrary(String libraryName, String libraryPath, long handle) {
         this.libraryName = getLibraryName(libraryName);

@@ -11,6 +11,7 @@ Features
 * Support array-backed Buffers as arguments (wmeissner)
 * Auto-conversion of custom types (wmeissner)
 * Allow pointer type-safety
+* Optional VM crash protection, via Native.setProtected(boolean)
 
 Bug Fixes
 * Avoid attempts to free native library if it failed to load (wmeissner)

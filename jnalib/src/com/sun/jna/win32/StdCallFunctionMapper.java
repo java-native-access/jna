@@ -17,6 +17,7 @@ import java.nio.ByteBuffer;
 
 import com.sun.jna.Callback;
 import com.sun.jna.FunctionMapper;
+import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
@@ -33,13 +34,13 @@ public class StdCallFunctionMapper implements FunctionMapper {
     /** Override this to handle any custom class mappings. */
     protected int getArgumentNativeStackSize(Class cls) {
         if (cls == byte.class || cls == Byte.class) return 1;
-        if (cls == char.class || cls == Character.class) return Pointer.WCHAR_SIZE;
+        if (cls == char.class || cls == Character.class) return Native.WCHAR_SIZE;
         if (cls == short.class || cls == Short.class) return 2; 
         if (cls == int.class || cls == Integer.class) return 4;
         if (cls == long.class || cls == Long.class) return 8;
         if (cls == float.class || cls == Float.class) return 4;
         if (cls == double.class || cls == Double.class) return 8;
-        if (NativeLong.class.isAssignableFrom(cls)) return Pointer.LONG_SIZE;
+        if (NativeLong.class.isAssignableFrom(cls)) return Native.LONG_SIZE;
         if (Pointer.class.isAssignableFrom(cls)
             || Callback.class.isAssignableFrom(cls)
             || Structure.class.isAssignableFrom(cls)

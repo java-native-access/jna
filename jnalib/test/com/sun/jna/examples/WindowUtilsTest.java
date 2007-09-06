@@ -224,6 +224,7 @@ public class WindowUtilsTest extends TestCase {
         Color sample = robot.getPixelColor(front.getX(), front.getY());
         long start = System.currentTimeMillis();
         while (!sample.equals(frontColor)) {
+            front.toFront();
             Thread.sleep(10);
             if (System.currentTimeMillis() - start > 5000)
                 fail("Timed out waiting for window to show");

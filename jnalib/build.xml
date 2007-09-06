@@ -228,7 +228,7 @@
     </copy>
   </target>
 
-  <target name="compile-tests" depends="compile"
+  <target name="compile-tests" depends="compile,native"
           description="Compile all test code">
     <javac classpathref="compile-test.path"
            source="${test.compatibility}"
@@ -328,15 +328,15 @@
         </patternset>
       </packageset>
 
-      <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr"/>
-      <group title="Examples" packages="com.sun.jna.examples"/>
+      <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
+      <group title="Examples" packages="com.sun.jna.examples,com.sun.jna.examples.dnd"/>
       <group title="Unix Examples" packages="com.sun.jna.examples.unix"/>
       <group title="Windows Examples" packages="com.sun.jna.examples.win32"/>
 
     </javadoc>
   </target>
 
-  <target name="dist" depends="jar,native-jar,examples-jar,javadoc"
+  <target name="dist" depends="jar,compile-tests,native-jar,examples-jar,javadoc"
           description="Build examples">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <zipfileset src="${build}/${jar}"/>

@@ -20,7 +20,7 @@ package com.sun.jna;
  */
 public class NativeLong extends Number implements NativeMapped {
     /** Size of a native long, in bytes. */
-    public static final int SIZE = Pointer.LONG_SIZE;
+    public static final int SIZE = Native.LONG_SIZE;
     private final Number value;
 
     /** Create a zero-valued NativeLong. */
