@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-09-04">
+<meta name="date" content="2007-09-06">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -35,7 +35,8 @@ which includes an overview of specific usage.<p>
 <li>Support for automatic w32 ASCII/UNICODE mappings
 <li>Auto-generated proxies for native function pointers in structs
 <li>Varargs support
-<li>Optional type-safety for native pointers
+<li>Optional <a href="javadoc/com/sun/jna/PointerType.html">type-safety for native pointers</a>
+<li>Optional <a href="javadoc/com/sun/jna/Native.html#setProtected(boolean)">VM crash protection</a>
 </ul>
 
  <h3>How To Get Started Using JNA</h3>
@@ -113,7 +114,7 @@ When passing in an array of <code>Structure</code>, it is not necessary to initi
 Arrays of C strings (the <code>char* argv[]</code> to the C <code>main</code>, for example), may be represented by <code>String[]</code> in Java code.
 
 <h3>By-reference Arguments</h3>
-When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value.  For example:<br>
+When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value, or subclass your own.  For example:<br>
 <blockquote>
     <textarea name="textarea4" cols="80" rows="12" readonly="readonly">
 // C declaration
@@ -130,6 +131,8 @@ Pointer p = pref.getValue();
 byte[] buffer = p.getByteArray(0, iref.getValue());
     </textarea>
 </blockquote>
+
+Alternatively, you could use a Java array with a single element of the desired type, but the <code>ByReference</code> convention better conveys the intent of the code.<p>
 
 The <a href="javadoc/com/sun/jna/Pointer.html"><code>Pointer</code></a> class provides a number of accessor methods in addition to <a href="javadoc/com/sun/jna/Pointer.html#getByteArray"><code>getByteArray()</code></a> which effectively function as a typecast onto the memory.
 <p>
@@ -312,9 +315,9 @@ To get an idea how to use JNA, please refer to the JUnit tests in the test/ dire
 java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
 </blockquote>
 
-<p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/TODO">TODO</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
+<p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/OTHERS">OTHERS</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
 
-Wayne Meissner contributed enormously in getting libffi and the various additional native libraries working ("a metric buttload of hard work").
+Wayne Meissner contributed enormously ("a metric buttload of hard work") in getting libffi and the various additional native libraries working.
 
 Many thanks to Sheng Liang and Todd Fast for their contributions to this project.
 
