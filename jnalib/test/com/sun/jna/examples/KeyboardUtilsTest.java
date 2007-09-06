@@ -27,15 +27,12 @@ public class KeyboardUtilsTest extends TestCase {
         
         Robot robot = new Robot();
         int[] keys = {
-            // order these to avoid any visible characters
+            // Avoid terminal control letters (like ^Z)
             KeyEvent.VK_CONTROL,
-            KeyEvent.VK_A, KeyEvent.VK_Z,
-            KeyEvent.VK_0, KeyEvent.VK_9, 
             KeyEvent.VK_SHIFT,
-            KeyEvent.VK_U,
         };
         String[] keystr = {
-            "VK_CONTROL", "VK_A", "VK_Z", "VK_0", "VK_9", "VK_SHIFT", "VK_U", 
+            "VK_CONTROL", "VK_SHIFT", 
         };
         int[] nonkeys = {
             KeyEvent.VK_B, KeyEvent.VK_1,
@@ -45,22 +42,22 @@ public class KeyboardUtilsTest extends TestCase {
             "VK_B", "VK_1", "VK_ALT",
         };
         for (int i=0;i < keys.length;i++) {
-            robot.keyPress(keys[i]);
+            try {
+                robot.keyPress(keys[i]);
+                long start = System.currentTimeMillis();
+                while (!KeyboardUtils.isPressed(keys[i])) {
+                    if (System.currentTimeMillis() - start > 5000) {
+                        fail("Timed out waiting for keypress: " + keystr[i]);
+                    }
+                    Thread.sleep(10);
+                }
+            }
+            finally {
+                robot.keyRelease(keys[i]);
+            }
         }
-        robot.delay(1000);
-        try {
-            for (int i=0;i < keys.length;i++) {
-                assertTrue("Key should be pressed: " + keystr[i], KeyboardUtils.isPressed(keys[i]));
-            }
-            for (int i=0;i < nonkeys.length;i++) {
-                assertFalse("Key should not be pressed: " + nonkeystr[i], KeyboardUtils.isPressed(nonkeys[i]));
-            }
-        }
-        finally {
-            for (int i=0;i < keys.length;i++) {
-                try { robot.keyRelease(keys[i]); }
-                catch(Exception e) { }
-            }
+        for (int i=0;i < nonkeys.length;i++) {
+            assertFalse("Key should not be pressed: " + nonkeystr[i], KeyboardUtils.isPressed(nonkeys[i]));
         }
     }
 }
