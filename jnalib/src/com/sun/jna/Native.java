@@ -159,17 +159,22 @@ public final class Native {
     public static native Pointer getDirectBufferPointer(Buffer b);
     
     /** Obtain a Java String from the given native byte array.  If there is
-     * no NUL terminator, the String will comprise the entire array.
+     * no NUL terminator, the String will comprise the entire array.  If the
+     * system property <code>jna.encoding</code> is set, its value will 
+     * override the platform default encoding (if supported).
      */
     public static String toString(byte[] buf) {
         String encoding = System.getProperty("jna.encoding");
+        String s = null;
         if (encoding != null) {
             try {
-                return new String(buf, encoding);
+                s = new String(buf, encoding);
             }
             catch(UnsupportedEncodingException e) { }
         }
-        String s = new String(buf);
+        if (s == null) {
+            s = new String(buf);
+        }
         int term = s.indexOf(0);
         if (term != -1)
             s = s.substring(0, term);
@@ -282,8 +287,8 @@ public final class Native {
         return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
     }
     
-    /** Return an byte array corresponding to the given String.  If the
-     * system property <code>jna.encoding</code> is set, it will override
+    /** Return a byte array corresponding to the given String.  If the
+     * system property <code>jna.encoding</code> is set, its value will override
      * the default platform encoding (if supported).
      */
     static byte[] getBytes(String s) {

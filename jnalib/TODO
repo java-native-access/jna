@@ -21,18 +21,41 @@
 
 # TODO
 
+* support annotations of parameters and return values w/o breaking
+  1.4 compatibility, e.g.
+
+  void my_function(@MarshalAs(off_t)long arg);
+
+  trading off cruft in the interface def to avoid cruft in the usage:
+
+  my_function(0) versus my_function(new off_t(0))
+  
 * standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
 * review/use direct Buffer in more places
 * Callback/function pointer as return value (e.g. signal())
 * StringBuffer/StringBuilder as mutable char*/wchar_t* argument
 
-* type safety between returned and passed in pointers (w32 API); advantage of
-  deriving from Pointer is that type mapping can be made automatic, without an
-  explicit type mapping defined.
+* make Pointer free-able (system allocates memory, client frees it); actually,
+  this should probably be automatic so the user doesn't have to think about it.
+  Maybe a custom type representing "function-allocated-pointer" or
+  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
+  the user to manage the pointer, since they have to define the free method
+  anyway. 
 * provide library load/unload hooks (Runnables in options?). Examples:
   o GetLastError in kernel32 (note: would need to initialize kernel32 from any
   other w32 api dll as well)
   o WSAInit?
+* if method has "GetLastErrorException/ErrnoException" in its signature, use
+  result codes + GetLastError/errno/errstr to auto-generate 
+  runtime exceptions? (cf P/Invoke; also useful for X11 return types)
+  provide annotation/custom invocation handler/hook to examine return value and
+  throw an exception if the return value indicates an error
+
+  o are error return values consistent (if so, a single handler works)?
+    if null -> call GetLastError
+    if nonzero ?
+  o otherwise, need an ExceptionOnZero, ExceptionOnNonZero runtime, from which
+  derive GetLastError/ErrnoExceptionOnZero/NZ
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be available in GraphicsDevice->getIDstring
@@ -43,12 +66,6 @@
   addressOf())?
 * how to do struct value argument (vs struct pointer) (uncommon)? 
 * how to do struct value return (vs struct pointer) (uncommon)? 
-* make Pointer free-able (system allocates memory, client frees it); actually,
-  this should probably be automatic so the user doesn't have to think about it.
-  Maybe a custom type representing "function-allocated-pointer" or
-  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
-  the user to manage the pointer, since they have to define the free method
-  anyway. 
 * flag string(/wstring)-returning methods which need to free their result
    to avoid leaking memory whan auto-creating strings from the result
    (since normally we don't take explicit ownership of any returned pointers)
@@ -61,22 +78,14 @@
    referenced. 
 * verify get/set methods vs read/write is for performance (Pointer)?
 * bitfields et al. for structs
-* if method has "GetLastErrorException/ErrnoException" in its signature, use
-  result codes + GetLastError/errno/errstr to auto-generate 
-  runtime exceptions? (cf P/Invoke; also useful for X11 return types)
-  provide annotation/custom invocation handler/hook to examine return value and
-  throw an exception if the return value indicates an error
-
-  o are error return values consistent (if so, a single handler works)?
-    if null -> call GetLastError
-    if nonzero ?
-  o otherwise, need an ExceptionOnZero, ExceptionOnNonZero runtime, from which
-  derive GetLastError/ErrnoExceptionOnZero/NZ
 
 
 
 
 # DONE
+* type safety between returned and passed in pointers (w32 API); advantage of
+  deriving from Pointer is that type mapping can be made automatic, without an
+  explicit type mapping defined.
 * catch native crash/exception/faults and re-throw as java exception
   this is mostly for debugging a new mapping to avoid crashing the VM
   could do setjmp/longjmp on *nix and catch C++ exception on w32
