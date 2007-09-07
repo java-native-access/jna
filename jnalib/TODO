@@ -21,6 +21,7 @@
 
 # TODO
 
+* review/use direct Buffer in more places if it makes sense
 * support annotations of parameters and return values w/o breaking
   1.4 compatibility, e.g.
 
@@ -30,17 +31,22 @@
 
   my_function(0) versus my_function(new off_t(0))
   
-* standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
-* review/use direct Buffer in more places
-* Callback/function pointer as return value (e.g. signal())
-* StringBuffer/StringBuilder as mutable char*/wchar_t* argument
+  this only really applies to NativeLong types that want to use a primitive
+  value instead of creating an object instance.
 
-* make Pointer free-able (system allocates memory, client frees it); actually,
-  this should probably be automatic so the user doesn't have to think about it.
-  Maybe a custom type representing "function-allocated-pointer" or
-  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
-  the user to manage the pointer, since they have to define the free method
-  anyway. 
+* standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
+* StringBuffer/StringBuilder as mutable char*/wchar_t* argument
+  NOTE: byte[]/char[] is probably better; it's trivial to convert to String
+* flag string(/wstring)-returning methods which need to free their result
+   to avoid leaking memory whan auto-creating strings from the result
+   (since normally we don't take explicit ownership of any returned pointers)
+   this is a special case for returned strings only, since other returned
+   pointers are available to the user for later "freeing"
+   Use a map on library creation, an iface for the library, or annotation
+   NOTE: how many methods actually do this? strdup...
+   Maybe make function return "Memory", which can then be converted to a
+   Structure or some other type.  Then memory will free itself when no longer
+   referenced. 
 * provide library load/unload hooks (Runnables in options?). Examples:
   o GetLastError in kernel32 (note: would need to initialize kernel32 from any
   other w32 api dll as well)
@@ -56,6 +62,12 @@
     if nonzero ?
   o otherwise, need an ExceptionOnZero, ExceptionOnNonZero runtime, from which
   derive GetLastError/ErrnoExceptionOnZero/NZ
+* make Pointer free-able (system allocates memory, client frees it); actually,
+  this should probably be automatic so the user doesn't have to think about it.
+  Maybe a custom type representing "function-allocated-pointer" or
+  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
+  the user to manage the pointer, since they have to define the free method
+  anyway.  use could always put a finalizer on a PointerType-derived type.
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be available in GraphicsDevice->getIDstring
@@ -66,16 +78,6 @@
   addressOf())?
 * how to do struct value argument (vs struct pointer) (uncommon)? 
 * how to do struct value return (vs struct pointer) (uncommon)? 
-* flag string(/wstring)-returning methods which need to free their result
-   to avoid leaking memory whan auto-creating strings from the result
-   (since normally we don't take explicit ownership of any returned pointers)
-   this is a special case for returned strings only, since other returned
-   pointers are available to the user for later "freeing"
-   Use a map on library creation, an iface for the library, or annotation
-   NOTE: how many methods actually do this? strdup...
-   Maybe make function return "Memory", which can then be converted to a
-   Structure or some other type.  Then memory will free itself when no longer
-   referenced. 
 * verify get/set methods vs read/write is for performance (Pointer)?
 * bitfields et al. for structs
 
@@ -83,6 +85,7 @@
 
 
 # DONE
+* Callback/function pointer as return value (e.g. signal())
 * type safety between returned and passed in pointers (w32 API); advantage of
   deriving from Pointer is that type mapping can be made automatic, without an
   explicit type mapping defined.

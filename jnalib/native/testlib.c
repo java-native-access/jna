@@ -267,6 +267,17 @@ returnNullTestStructure() {
   return NULL;
 }
 
+typedef int32 (*callback_t)(int32);
+EXPORT callback_t
+returnCallback() {
+  return returnInt32Argument;
+}
+
+EXPORT callback_t
+returnCallbackArgument(callback_t arg) {
+  return arg;
+}
+
 EXPORT void 
 incrementInt8ByReference(int8 *arg) {
   nonleaf();

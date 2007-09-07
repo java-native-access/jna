@@ -53,6 +53,11 @@ public class ReturnTypesTest extends TestCase {
         WString returnWStringMagic();
         TestStructure returnStaticTestStructure();
         TestStructure returnNullTestStructure();
+        public interface Int32Callback extends Callback {
+            public int callback(int arg);
+        }
+        Int32Callback returnCallback();
+        Int32Callback returnCallbackArgument(Int32Callback cb);
     }
 
     TestLibrary lib;
@@ -159,6 +164,22 @@ public class ReturnTypesTest extends TestCase {
     public void testInvokeNullStructure() {
         TestStructure s = lib.returnNullTestStructure();
         assertNull("Expect null structure return", s);
+    }
+    
+    public void testInvokeCallback() {
+        TestLibrary.Int32Callback cb = lib.returnCallback();
+        assertNotNull("Callback should not be null", cb);
+        assertEquals("Callback should be callable", 1, cb.callback(1));
+        
+        TestLibrary.Int32Callback cb2 = new TestLibrary.Int32Callback() {
+            public int callback(int arg) {
+                return 0;
+            }
+        };
+        assertSame("Java callback should be looked up",
+                   cb2, lib.returnCallbackArgument(cb2));
+        assertSame("Existing native function wrapper should be reused",
+                   cb, lib.returnCallbackArgument(cb));
     }
     
     public static void main(java.lang.String[] argList) {

@@ -12,10 +12,7 @@ package com.sun.jna;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,6 +48,7 @@ public abstract class Structure {
     
     static {
         // IBM and JRockit store fields in reverse order; check for it
+        // GCJ returns an array created from a set, and needs fixing
         Field[] fields = MemberOrder.class.getFields();
         REVERSE_FIELDS = "last".equals(fields[0].getName());
         if (!"middle".equals(fields[1].getName())) {
@@ -289,9 +287,9 @@ public abstract class Structure {
             }
             else try {
                 Callback cb = (Callback)structField.field.get(this);
-                Pointer oldfp = getFunctionPointer(cb);
+                Pointer oldfp = CallbackReference.getFunctionPointer(cb);
                 if (!fp.equals(oldfp)) {
-                    cb = createNativeCallback(nativeType, fp);
+                    cb = CallbackReference.getCallback(nativeType, fp);
                 }
                 result = cb;
             }
@@ -506,7 +504,7 @@ public abstract class Structure {
             s.write();
         }
         else if (Callback.class.isAssignableFrom(nativeType)) {
-            memory.setPointer(offset, getFunctionPointer((Callback)value));
+            memory.setPointer(offset, CallbackReference.getFunctionPointer((Callback)value));
         }
         else {
             throw new IllegalArgumentException("Field \"" + structField.name
@@ -553,6 +551,12 @@ public abstract class Structure {
             structField.field = field;
             structField.name = field.getName();
             structField.type = type;
+
+            if (Callback.class.isAssignableFrom(type) && !type.isInterface()) {
+                throw new IllegalArgumentException("Structure Callback field '"
+                                                   + field.getName() 
+                                                   + "' must be an interface");
+            }
             
             int fieldAlignment = 1;
             try {
@@ -806,28 +810,6 @@ public abstract class Structure {
         return getPointer().hashCode();
     }
     
-    private Pointer getFunctionPointer(Callback cb) {
-        if (cb == null) return null;
-        if (Proxy.isProxyClass(cb.getClass())) {
-            InvocationHandler handler = Proxy.getInvocationHandler(cb);
-            if (handler instanceof NativeCallbackHandler)
-                return ((NativeCallbackHandler)handler).getPointer();
-        }
-        CallbackReference cbref = CallbackReference.getInstance(cb);
-        return cbref.getTrampoline();
-    }
-
-    /** Create a Callback proxy around a native function pointer. */
-    private Callback createNativeCallback(Class type, Pointer address) {
-        if (!type.isInterface())
-            throw new IllegalArgumentException("Structure Callback field must be an interface");
-        int ctype = AltCallingConvention.class.isAssignableFrom(type)
-            ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-        NativeCallbackHandler h = new NativeCallbackHandler(address, ctype);
-        return (Callback)Proxy.newProxyInstance(getClass().getClassLoader(), 
-                                                new Class[] { type }, h);
-    }
-
     class StructField extends Object {
         public String name;
         public Class type;
@@ -846,42 +828,6 @@ public abstract class Structure {
             catch(Exception e) { }
             return type + " " + name + "@" + Integer.toHexString(offset) 
                 + "=" + value;
-        }
-    }
-    
-    /** Enable an auto-generated Java interface proxy for a native function
-     * pointer.
-     */
-    private class NativeCallbackHandler implements InvocationHandler {
-        private Function function;
-        
-        public NativeCallbackHandler(Pointer address, int callingConvention) {
-            this.function = new Function(address, callingConvention);
-        }
-        
-        /** Chain invocation to the native function. */
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (Library.Handler.OBJECT_TOSTRING.equals(method)) {
-                return "Proxy interface to function pointer " + function;
-            }
-            else if (Library.Handler.OBJECT_HASHCODE.equals(method)) {
-                return new Integer(hashCode());
-            }
-            else if (Library.Handler.OBJECT_EQUALS.equals(method)) {
-                Object o = args[0];
-                if (o != null && Proxy.isProxyClass(o.getClass())) {
-                    Boolean.valueOf(Proxy.getInvocationHandler(o) == this);
-                }
-                return Boolean.FALSE;
-            }
-            if (Function.isVarArgs(method)) {
-                args = Function.concatenateVarArgs(args);
-            }
-            return function.invoke(method.getReturnType(), args);
-        }
-        
-        public Pointer getPointer() {
-            return function;
         }
     }
 }

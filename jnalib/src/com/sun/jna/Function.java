@@ -121,7 +121,7 @@ public class Function extends Pointer {
      */
     Function(Pointer functionAddress, int callingConvention) {
         checkCallingConvention(callingConvention);
-        this.functionName = functionAddress.toString();
+        this.functionName = "<unknown>";
         this.callingConvention = callingConvention;
         this.peer = functionAddress.peer;
     }
@@ -293,6 +293,12 @@ public class Function extends Pointer {
                 }
             }
         }
+        else if (Callback.class.isAssignableFrom(returnType)) {
+            result = invokePointer(callingConvention, args);
+            if (result != null) {
+                result = CallbackReference.getCallback(returnType, (Pointer)result);
+            }
+        }
         else {
             throw new IllegalArgumentException("Unsupported return type "
                                                + returnType);
@@ -338,9 +344,7 @@ public class Function extends Pointer {
         }
         // Convert Callback to Pointer
         else if (arg instanceof Callback) {
-            CallbackReference cbref = CallbackReference.getInstance((Callback)arg);
-            // Use pointer to trampoline (see dispatch.h)
-            return cbref.getTrampoline();
+            return CallbackReference.getFunctionPointer((Callback)arg);
         }
         // String arguments are converted to native pointers here rather
         // than in native code so that the values will be valid until
@@ -526,9 +530,11 @@ public class Function extends Pointer {
 
     /** Provide a human-readable representation of this object. */
     public String toString() {
-        String libName = library != null ? library.getName() : "<undefined>";
-        return "native function " + functionName + "(" + libName
-            + ")@0x" + Long.toHexString(peer);
+        if (library != null) {
+            return "native function " + functionName + "(" + library.getName()
+                + ")@0x" + Long.toHexString(peer);
+        }
+        return "native function@0x" + Long.toHexString(peer);
     }
     
     /** Handle native array of char* type by managing allocation/disposal of 
@@ -599,7 +605,18 @@ public class Function extends Pointer {
     public void invokeVoid(Object[] args) {
         invoke(Void.class, args);
     }
-
+    
+    /** Two function pointers are equal if they share the same peer address
+     * and calling convention.
+     */
+    public boolean equals(Object o) {
+        if (o instanceof Function) {
+            Function other = (Function)o;
+            return other.callingConvention == this.callingConvention
+                && other.peer == this.peer;
+        }
+        return false;
+    }
 
     /** Concatenate varargs with normal args to obtain a simple argument 
      * array. 
