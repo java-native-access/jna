@@ -39,6 +39,9 @@
 #endif
 
 #include <stdlib.h>
+#ifdef sun
+#  include <alloca.h>
+#endif
 #include <string.h>
 #include <wchar.h>
 #include <jni.h>
