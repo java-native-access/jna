@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-09-06">
+<meta name="date" content="2007-09-10">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -14,6 +14,7 @@
 <p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code (overhead would otherwise increase with each supported platform). </p>
 The <a href="javadoc/overview-summary.html">JavaDoc is available online</a>,
 which includes an overview of specific usage.<p>
+<b>NOTE: Sun is <em>not</em> sponsoring this project, even though the package name (<code>com.sun.jna</code>) might imply otherwise.</b>
 
  <h3>Features</h3>
 <ul>
@@ -296,8 +297,8 @@ library and chokes on the libffi includes).  To rebuild <code>jna.jar</code>, an
 The project also includes <a href="http://netbeans.org">NetBeans</a> and <a href="http://www.eclipse.org">Eclipse</a> project configurations, if you're so inclined.<p>
 
 <h3>History</h3>
-<p>This work is based on a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. <p>
-Todd Fast first published this project on dev.java.net in fall of 2006 (the state of this code is still available in the SVN repo under the <a href="https://jna.dev.java.net/svn/jna/tags/CVS%20HEAD">CVS HEAD</a> tag).  From the original project announcement:
+<p>Fragments of this project date back to a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. <p>
+Todd Fast (also of Sun) first published JNA on dev.java.net in the fall of 2006 (that code is still available in the SVN repo under the <a href="https://jna.dev.java.net/svn/jna/tags/CVS%20HEAD">CVS HEAD</a> tag).  From the original project announcement:
 <blockquote><pre>
 Headline        Initial JNA code checked in
 Date            Nov 30, 2006
@@ -315,11 +316,9 @@ To get an idea how to use JNA, please refer to the JUnit tests in the test/ dire
 java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
 </blockquote>
 
-<p>Timothy Wall picked up the project in February of 2007, introducing a number of critical features and making the whole accessible to a wider community.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and a cross-platform native file monitor.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/OTHERS">OTHERS</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
+<p>Timothy Wall rebooted the project in February of 2007, introducing a number of critical features, adding linux and OSX ports, and making the library usable to a much wider audience.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and better file system access.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/OTHERS">OTHERS</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
 
-Wayne Meissner contributed enormously ("a metric buttload of hard work") in getting libffi and the various additional native libraries working.
-
-Many thanks to Sheng Liang and Todd Fast for their contributions to this project.
+Wayne Meissner has contributed enormously ("a metric buttload of hard work") in getting libffi and the various additional native libraries working.  His work on a Java interface to the gstreamer library has contributed a number of critical features to JNA.<p>
 
 <script src="https://ssl.google-analytics.com/urchin.js" type="text/javascript">
 </script>
