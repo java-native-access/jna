@@ -38,7 +38,8 @@ public interface CLibrary extends Library {
 The <code>String</code> passed to the <code>Native.loadLibrary</code> method
 is the undecorated name of the shared library file.  Here are some examples of
 library name mappings.<p>  
-<center><table style="background-color: #EAEAEA;" width="50%">
+<center>
+<table style="background-color: #EAEAEA;" width="50">
 <tr><td><b>OS</b></td><td><b>Library Name</b></td><td><b>String</b></td></tr>
 <tr><td>Windows</td><td>user32.dll</td><td>user32</td></tr>
 <tr><td>Linux</td><td>libX11.so</td><td>X11</td></tr>
@@ -60,39 +61,38 @@ If you prefer to rename the Java methods to conform to Java coding conventions, 
 An instance of the {@link com.sun.jna.Function} class is obtained through the {@link com.sun.jna.NativeLibrary} instance corresponding to the containing native library.  This {@link com.sun.jna.Function} instance handles argument marshalling and delegation to the native function. 
 
 <a name="marshalling"></a>
-<h2>Function Argument Mapping (Java to Native Type Conversions, or Marshalling/Unmarshalling)</h2>
-Java types are chosen to match native types of the same size.  These are the
-default type mappings:<p>
-<center><table style="background-color: #EAEAEA;">
-<tr><td><b>Native Type</b></td><td><b>Java Type</b></td></tr>
-<tr><td>int (boolean)</td><td><i>boolean</i> (mapping can be customized)</td>
-<tr><td>char</td><td><b>byte</b></td>
-<tr><td>char*</td><td><i>String</i></td>
-<tr><td>wchar_t</td><td><b>char</b></td>
-<tr><td>wchar_t*</td><td><i>{@link com.sun.jna.WString}</i></td>
-<tr><td>short</td><td><b>short</b></td>
-<tr><td>int</td><td><b>int</b></td>
-<tr><td>long</td><td><i>{@link com.sun.jna.NativeLong}</i></td>
-<tr><td>long long</td><td><b>long</b></td>
-<tr><td>float</td><td><b>float</b></td>
-<tr><td>double</td><td><b>double</b></td>
-<tr><td>pointer (array of primitive type as pointer)</td><td><b>&lt;T&gt;[]</b> or <b>{@link java.nio.ByteBuffer}</b></td>
-<tr><td>pointer (to type)</td><td><i>{@link com.sun.jna.ptr.ByReference}</i></td>
-<tr><td>struct* (pointer to struct)</td><td><i>{@link com.sun.jna.Structure}</i></td>
-<tr><td>union*</td><td><i>{@link com.sun.jna.Union}</i></td>
-<tr><td>struct[] (array of structs contiguous in memory)</td><td><i>{@link com.sun.jna.Structure}[]</i></td>
-<tr><td>primitive arrays within a struct</td><td><b>&lt;T&gt;[]</b> (Array of primitive type)</td>
-<tr><td>struct within a struct</td><td><i>{@link com.sun.jna.Structure}</i></td>
-<tr><td colspan=2><i>not yet implemented</i></td>
-<tr><td>bitfields</td>
-<tr><td>struct by value (argument or return value)</td>
+<h2>Marshalling/Unmarshalling (Java/Native Type Conversions)</h2>
+Java types are chosen to match native types of the same size.  These are types supported by the JNA library.<p>
+<center>
+<table border=1 bordercolor=#CCCCCC style="border-collapse:collapse" width="100%">
+<tr><td><b>Java Type</b></td><td><b>C Type</b></td><td><b>Native Representation</b></td></tr>
+<tr><td>boolean</td><td>int</td><td>32-bit integer (customizable)</td>
+<tr><td>byte</td><td>char</td><td>8-bit integer</td>
+<tr><td>char</td><td>wchar_t</td><td>platform-dependent</td>
+<tr><td>short</td><td>short</td><td>16-bit integer</td>
+<tr><td>int</td><td>int</td><td>32-bit integer</td>
+<tr><td>long</td><td>long long, __int64</td><td>64-bit integer</td>
+<tr><td>float</td><td>float</td><td>32-bit floating point</td>
+<tr><td>double</td><td>double</td><td>64-bit floating point</td>
+<tr><td>{@link java.nio.Buffer}<br>
+{@link com.sun.jna.Pointer}<br>
+&lt;T&gt;[] (array of primitive type)</td><td>pointer</td><td>platform-dependent (32- or 64-bit pointer)</td>
+<tr><td colspan=3>In addition to the above types, which are supported at the native layer, the JNA Java library automatically handles the following types.  All but <code>NativeMapped</code> and <code>NativeLong</code> are converted to {@link com.sun.jna.Pointer} before being passed to the native layer.</td></tr>
+<tr><td>{@link java.lang.String}</td><td>char*</td><td>NUL-terminated array (native encoding)</td>
+<tr><td>{@link com.sun.jna.WString}</td><td>wchar_t*</td><td>NUL-terminated array (unicode)</td>
+<tr><td>{@link com.sun.jna.Structure}</td><td>struct*</td><td>pointer to struct</td>
+<tr><td>{@link com.sun.jna.Union}</td><td>union*</td><td>pointer to union</td>
+<tr><td>{@link com.sun.jna.Structure Structure[]}</td><td>struct[]</td><td>array of structs contiguous in memory</td>
+<tr><td>{@link com.sun.jna.Callback}</td><td>&lt;T&gt; (*fp)()</td><td>function pointer (Java or native)</td>
+<tr><td>{@link com.sun.jna.NativeMapped}</td><td>-</td><td>depends on definition</td>
+<tr><td>{@link com.sun.jna.NativeLong}</td><td>long</td><td>platform-dependent (32- or 64-bit integer)</td>
+<tr><td>{@link com.sun.jna.PointerType}</td><td>pointer</td><td>platform-dependent (32- or 64-bit pointer)</td>
 </table>
 </center>
 <p>
-Only the Java types indicated in bold are handled directly in native code.
-All other types must eventually be converted to one of these basic types.
-Those Java types in italics are handled by the JNA Java library and converted
-to or from one of the basic types.
+Unsigned values may be passed by assigning the corresponding two's-complement representation to the signed type of the same size.  Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in order to access a subset of the array (changing the effective size and/or offest).
+<p>
+Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  Bitfields and structures by value are not currently supported.  All other types must eventually be converted to one of these basic types.  Methods with arguments of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
 <p>
 Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
 <p>
@@ -129,8 +129,7 @@ set to "UTF8", for example, to ensure all native strings use that encoding.
 <p>
 
 <h3>Wide Strings</h3>
-The {@link com.sun.jna.WString} class is used to identify wide character
-strings, and only requires a little effort to obtain a
+The {@link com.sun.jna.WString} class is used to identify wide character strings.  Unicode values are copied directly from the Java <code>char</code> array to a native <code>wchar_t</code> array.
 <code>String</code>.  
 <p>
 
@@ -186,6 +185,40 @@ lib.init(funcs);
 int fd = funcs.open.callback("myfile", 0);
 funcs.close.callback(fd);
 </pre></code></blockquote>
+
+Callbacks may also be used as return values.  Native function pointers are wrapped in a proxy implementing the declared Callback type, to facilitate calling from Java.  
+<blockquote><code><pre>
+// C code
+typedef void (*sig_t)(int);
+sig_t signal(int signal, sig_t sigfunc);
+
+// Java
+public interface CLibrary extends Library {
+    public interface SignalFunction extends Callback {
+        void callback(int signal);
+    }
+    SignalFunction signal(int signal, SignalFunction func);
+}
+</pre></code></blockquote>
+
+<h3>Varargs</h3>
+The C varargs function definition may be mapped to a Java varargs method definition.  For example,
+<blockquote><code><pre>
+// C
+extern int printf(const char* fmt, ...);
+
+// Java
+interface CLibrary extends Library {
+    int printf(String fmt, ...);
+}
+</pre></code></blockquote>
+
+<h3>Java Object arguments</h3>
+In some cases, it would seem convenient to pass a Java object as an opaque
+pointer for later use by a Java callback method.  Unfortunately, this proves
+problematic in that the native code must become responsible for reference
+tracking.   Until a consistent method or methods of handling these situations
+is formulated, passing Java objects directly is not supported.
 
 <h3>Structures</h3>
 
@@ -257,7 +290,7 @@ typedef struct _Line {
   Point end;
 } Line;
 
-// JNA code
+// Java
 class Point extends Structure {
   public int x, y;
 }
@@ -280,7 +313,7 @@ typedef struct _Line2 {
   Point* p2;
 } Line2;
 
-// JNA code
+// Java
 class Line2 extends Structure {
   public Pointer p1;
   public Pointer p2;
@@ -326,7 +359,7 @@ require a constructor which establishes the required size for the structure
 and initializes things appropriately.  For example:<br>
 
 <blockquote><code><pre>
-// JNA code
+// Java
 class Header extends Structure {
   public int flags;
   public int buf_length;
@@ -351,7 +384,7 @@ value.  You can still force an update of the native memory from the Java value
 by calling {@link com.sun.jna.Structure#writeField(String)} for the field in
 question. 
 <blockquote><code><pre>
-// JNA code
+// Java
 class Data extends Structure {
   public volatile int refCount; 
   public int value;
@@ -374,13 +407,6 @@ the desired field's class to the {@link com.sun.jna.Union#setType}
 method.  On read, all non-pointer-based fields will be initialized from native
 memory.  Structure, String, and WString members will <em>not</em> be
 initialized unless they are selected via {@link com.sun.jna.Union#setType}.
-
-<h3>Java Object arguments</h3>
-In some cases, it would seem convenient to pass a Java object as an opaque
-pointer for later use by a Java callback method.  Unfortunately, this proves
-problematic in that the native code must become responsible for reference
-tracking.   Until a consistent method or methods of handling these situations
-is formulated, passing Java objects directly is not supported.
 
 <a name="crash-protection"/>
 <h2>VM Crash Protection</h2>
