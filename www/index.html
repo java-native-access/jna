@@ -21,19 +21,19 @@ which includes an overview of specific usage.<p>
 <li>Most platforms supported
 <li>Automatic mapping from Java interface to native function
 <li>8-, 16-, 32, and 64-bit basic data types
-<li>Structure and Union pointer arguments
+<li><a href="javadoc/com/sun/jna/Structure.html">Structure</a> and <a href="javadoc/com/sun/jna/Union.html">Union</a> pointer arguments
 <li>Automatic conversion between C and Java strings
 <li>Function pointers (callbacks from native code to Java code) as arguments and/or members of a <code>struct</code>
 <li>By-reference (pointer-to-type) arguments 
-<li>Java array and Buffer arguments (primitive types and pointers) as pointer-to-buffer
+<li>Java array and <code>Buffer</code> arguments (primitive types and pointers) as pointer-to-buffer
 <li>Nested structures and arrays
 <li><code>wchar_t</code>-based strings
-<li>Native <code>long</code> support (32- or 64-bit as appropriate)
+<li><a href="javadoc/com/sun/jna/NativeLong.html">Native <code>long</code></a> support (32- or 64-bit as appropriate)
 <li><a href="#demos">Full-blown demo applications</a>
-<li>Supported on 1.4 or later JVMs (earlier can work without NIO support)
-<li>Customizable argument and return value conversions
+<li>Supported on 1.4 or later JVMs (earlier VMs can work without NIO support)
+<li>Customizable marshalling/unmarshalling (argument and return value conversions)
 <li>Customizable mapping from Java method to native function name
-<li>Support for automatic w32 ASCII/UNICODE mappings
+<li>Support for automatic w32 ASCII/UNICODE function mappings
 <li>Auto-generated proxies for native function pointers in structs
 <li>Varargs support
 <li>Optional <a href="javadoc/com/sun/jna/PointerType.html">type-safety for native pointers</a>
@@ -267,6 +267,16 @@ the JNA library (and are pretty nifty utilities in and of themselves).
  <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=dev"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Development Discussion</a>
  <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=issues"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Bugs and Enhancements Issue Tracking</a>
  </ul>
+ <h3>Projects Using JNA</h3>
+ <ul>
+ <a href="http://jruby.codehaus.org">JRuby</a>
+ <a href="http://glossitope.org">Glossitope (AKA ab5k)</a>
+ <a href="http://code.google.com/p/gstreamer-java">gstreamer-java</a>
+ <a href="http://fmj.sf.net">Freedom for Media in Java (FMJ)</a>
+ <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib">Miscellaneous contributed mappings and utilities</a>
+ </ul>
+ Contact twall AT dev DOT java DOT net to include your project in this list, or if you'd likely to contribute a library mapping you've written.
+
  <h3>Development Tasks</h3>
  <p>The library works fairly well now, but there are a number of tasks with which we'd appreciate help:</p>
  <ul>
