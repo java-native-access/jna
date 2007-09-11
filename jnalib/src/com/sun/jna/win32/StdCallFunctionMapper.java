@@ -13,6 +13,7 @@
 package com.sun.jna.win32;
 
 import java.lang.reflect.Method;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 import com.sun.jna.Callback;
@@ -20,19 +21,25 @@ import com.sun.jna.FunctionMapper;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.NativeLong;
+import com.sun.jna.NativeMapped;
+import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 
 /** Provides mapping from simple method names to w32 stdcall-decorated names
  * where the name suffix is "@" followed by the number of bytes popped by
  * the called function.<p>
- * NOTE: if you use custom type mapping, you may need to override 
- * {@link #getArgumentNativeStackSize(Class)}.
+ * NOTE: if you use custom type mapping for primitive types, you may need to 
+ * override {@link #getArgumentNativeStackSize(Class)}.
  */
 public class StdCallFunctionMapper implements FunctionMapper {
     /** Override this to handle any custom class mappings. */
     protected int getArgumentNativeStackSize(Class cls) {
+        if (NativeMapped.class.isAssignableFrom(cls)) {
+            cls = new NativeMappedConverter(cls).nativeType();
+        }
         if (cls == byte.class || cls == Byte.class) return 1;
         if (cls == char.class || cls == Character.class) return Native.WCHAR_SIZE;
         if (cls == short.class || cls == Short.class) return 2; 
@@ -40,14 +47,13 @@ public class StdCallFunctionMapper implements FunctionMapper {
         if (cls == long.class || cls == Long.class) return 8;
         if (cls == float.class || cls == Float.class) return 4;
         if (cls == double.class || cls == Double.class) return 8;
-        if (NativeLong.class.isAssignableFrom(cls)) return Native.LONG_SIZE;
         if (Pointer.class.isAssignableFrom(cls)
             || Callback.class.isAssignableFrom(cls)
             || Structure.class.isAssignableFrom(cls)
             || String.class == cls
             || WString.class == cls
             || cls.isArray()
-            || ByteBuffer.class.isAssignableFrom(cls)) {
+            || Buffer.class.isAssignableFrom(cls)) {
             return Pointer.SIZE;
         }
         throw new IllegalArgumentException("Unknown native stack allocation size for " + cls);

@@ -48,7 +48,6 @@ public abstract class Structure {
     
     static {
         // IBM and JRockit store fields in reverse order; check for it
-        // GCJ returns an array created from a set, and needs fixing
         Field[] fields = MemberOrder.class.getFields();
         REVERSE_FIELDS = "last".equals(fields[0].getName());
         if (!"middle".equals(fields[1].getName())) {
