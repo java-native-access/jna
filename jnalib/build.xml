@@ -375,7 +375,9 @@
       <zipfileset dir="${javadoc}" prefix="doc"/>
     </zip>
     <zip zipfile="${dist}/src.zip">
+      <zipfileset dir="." includes="build.xml"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
+      <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" prefix="native"/>
     </zip>
   </target>
