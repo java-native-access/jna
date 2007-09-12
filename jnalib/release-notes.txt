@@ -12,6 +12,7 @@ Features
 * Auto-conversion of custom types (wmeissner)
 * Allow pointer type-safety
 * Optional VM crash protection, via Native.setProtected(boolean)
+* Auto-convert WString[]
 
 Bug Fixes
 * Avoid attempts to free native library if it failed to load (wmeissner)
@@ -21,6 +22,7 @@ Bug Fixes
 * Ensure Object.toString/hashCode/equals methods are intercepted on proxyied
   interfaces
 * Update X11 library for 64-bit use (wmeissner)
+* Properly map arrays of char*/wchar_t* under w32
 
 Release 2.5
 Features

@@ -1122,9 +1122,8 @@ throwByName(JNIEnv *env, const char *name, const char *msg)
 }
 
 /* Translates a Java string to a C string using the String.getBytes 
- * method, which uses default local encoding.
+ * method, which uses default platform encoding.
  */
-// TODO: use jna.encoding
 static char *
 newCString(JNIEnv *env, jstring jstr)
 {

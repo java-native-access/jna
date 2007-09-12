@@ -49,7 +49,8 @@ public class ArgumentsMarshalTest extends TestCase {
         String returnStringArgument(String s);
         WString returnWStringArgument(WString s);
         Pointer returnPointerArgument(Pointer p);
-        String returnFirstCharArrayArgument(String[] args);
+        String returnFirstStringArrayArgument(String[] args);
+        WString returnFirstWideStringArrayArgument(WString[] args);
         int returnRotatedArgumentCount(String[] args);
 
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
@@ -417,9 +418,14 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
-    public void testCharArrayArgument() {
+    public void testStringArrayArgument() {
         String[] args = { "one", "two", "three" };
-        assertEquals("Wrong argument returned", args[0], lib.returnFirstCharArrayArgument(args));
+        assertEquals("Wrong argument returned", args[0], lib.returnFirstStringArrayArgument(args));
+    }
+    
+    public void testWideStringArrayArgument() {
+        WString[] args = { new WString("one"), new WString("two"), new WString("three") };
+        assertEquals("Wrong argument returned", args[0], lib.returnFirstWideStringArrayArgument(args));
     }
     
     public void testModifiedCharArrayArgument() {

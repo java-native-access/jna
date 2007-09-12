@@ -15,6 +15,7 @@ package com.sun.jna.win32;
 import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.Pointer;
+import com.sun.jna.StringArray;
 import com.sun.jna.ToNativeContext;
 import com.sun.jna.TypeConverter;
 import com.sun.jna.TypeMapper;
@@ -23,7 +24,7 @@ import com.sun.jna.WString;
 /** Provide standard conversion for W32 API types.  This comprises the 
  * following native types:
  * <ul>
- * <li>Unicode or ASCII/MBCS strings, as appropriate
+ * <li>Unicode or ASCII/MBCS strings and arrays of string, as appropriate
  * <li>BOOL
  * </ul>
  * @author twall
@@ -39,6 +40,9 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                 public Object toNative(Object value, ToNativeContext context) {
                     if (value == null)
                         return null;
+                    if (value instanceof String[]) {
+                        return new StringArray((String[])value, true);
+                    }
                     return new WString(value.toString());
                 }
                 public Object fromNative(Object value, FromNativeContext context) {
@@ -51,6 +55,7 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                 }
             };
             addTypeConverter(String.class, stringConverter);
+            addToNativeConverter(String[].class, stringConverter);
         }
         TypeConverter booleanConverter = new TypeConverter() {
             public Object toNative(Object value, ToNativeContext context) {

@@ -193,7 +193,13 @@ public abstract class Structure {
         memory.clear(size);
     }
 
-    /** Return a {@link Pointer} object to this structure. */
+    /** Return a {@link Pointer} object to this structure.  Note that if you
+     * use the structure's pointer as a function argument, you are responsible
+     * for calling {@link #write()} prior to the call and {@link #read()} 
+     * after the call.  These calls are normally handled automatically by the
+     * {@link Function} object when it encounters a {@link Structure} argument
+     * or return value.
+     */
     public Pointer getPointer() {
         return memory;
     }

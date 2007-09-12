@@ -629,7 +629,7 @@ public class Pointer {
      * @param value  <code>java.lang.String</code> value to set
      * @param wide whether to write the native string as an array of 
      * <code>wchar_t</code>.  If false, writes as a NUL-terminated array of 
-     * <code>char</code> using the default encoding. 
+     * <code>char</code> using the default platform encoding. 
      */
     public native void setString(int offset, String value, boolean wide);
 

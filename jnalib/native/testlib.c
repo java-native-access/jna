@@ -233,7 +233,13 @@ returnWStringArgument(wchar_t *arg) {
 }
 
 EXPORT char*
-returnFirstCharArrayArgument(char* args[]) {
+returnFirstStringArrayArgument(char* args[]) {
+  nonleaf();
+  return args[0];
+}
+
+EXPORT wchar_t*
+returnFirstWideStringArrayArgument(wchar_t* args[]) {
   nonleaf();
   return args[0];
 }

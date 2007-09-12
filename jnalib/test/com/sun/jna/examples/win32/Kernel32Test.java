@@ -35,11 +35,6 @@ public class Kernel32Test extends TestCase {
                      cal.get(Calendar.YEAR), time.wYear); 
     }
 
-    public static interface Advapi32 extends W32API {
-        Advapi32 INSTANCE = (Advapi32)Native.loadLibrary("advapi32", Advapi32.class, DEFAULT_OPTIONS);
-        Pointer OpenSCManager(String lpMachineName, String lpDatabaseName, int dwDesiredAccess);
-    }
-    
     public void testGetLastError() {
         Kernel32 kernel = Kernel32.INSTANCE;
         kernel.GetLastError();
@@ -58,7 +53,7 @@ public class Kernel32Test extends TestCase {
         
         /*
         final int GENERIC_EXECUTE = 0x20000000;
-        Pointer h = Advapi32.INSTANCE.OpenSCManager("localhost", null, GENERIC_EXECUTE);
+        Pointer h = AdvAPI32.INSTANCE.OpenSCManager("localhost", null, GENERIC_EXECUTE);
         int code = kernel.GetLastError();
         int EXPECTED = 1722;
         if (h == null) {

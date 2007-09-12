@@ -12,9 +12,7 @@ package com.sun.jna;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import com.sun.jna.ptr.ByReference;
@@ -213,14 +211,10 @@ public class Function extends Pointer {
                 if (arg instanceof Structure) {
                     ((Structure)arg).read();
                 }
-                else if (String[].class == arg.getClass()) {
-                    // Copy back the string values, just in case they were
-                    // modified
-                    StringArray buf = (StringArray)args[i];
-                    String[] array = (String[])arg;
-                    for (int si=0;si < array.length;si++) {
-                        array[si] = buf.getPointer(si * Pointer.SIZE).getString(0);
-                    }
+                else if (args[i] instanceof StringArray) {
+                    // Read back arrays of String, just in case they
+                    // were modified
+                    ((StringArray)args[i]).read();
                 }
                 else if (isStructureArray(arg.getClass())) {
                     Structure[] ss = (Structure[])arg;
@@ -348,9 +342,7 @@ public class Function extends Pointer {
         }
         // String arguments are converted to native pointers here rather
         // than in native code so that the values will be valid until
-        // this method returns.  At one point the conversion was in native
-        // code, which left the pointer values invalid before this method
-        // returned (so you couldn't do something like strstr).
+        // this method returns.  
         // Convert String to native pointer (const)
         else if (arg instanceof String) {
             return new NativeString((String)arg, false).getPointer();
@@ -366,6 +358,9 @@ public class Function extends Pointer {
         }
         else if (String[].class == argClass) {
             return new StringArray((String[])arg);
+        }
+        else if (WString[].class == argClass) {
+            return new StringArray((WString[])arg);
         }
         else if (isStructureArray(argClass)) {
             // Initialize uninitialized arrays of Structure to point
@@ -536,26 +531,6 @@ public class Function extends Pointer {
         }
         return "native function@0x" + Long.toHexString(peer);
     }
-    
-    /** Handle native array of char* type by managing allocation/disposal of 
-     * native strings within an array of pointers.  Always NULL-terminates
-     * the array. 
-     */
-    private class StringArray extends Memory {
-        private List natives = new ArrayList();
-        public StringArray(String[] strings) { 
-            super((strings.length + 1) * Pointer.SIZE);
-            for (int i=0;i < strings.length;i++) {
-                NativeString ns = new NativeString(strings[i]);
-                natives.add(ns);
-                setPointer(Pointer.SIZE * i, ns.getPointer());
-            }
-            setPointer(Pointer.SIZE * strings.length, null);
-        }
-    }
-    
-    // The following convenience methods are provided for using a Function
-    // instance directly
     
     /** Convenience method for 
      * {@link #invoke(Class,Object[]) invoke(Pointer.class, args)}.
