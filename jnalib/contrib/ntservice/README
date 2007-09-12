@@ -1,0 +1,6 @@
+Provides access to Windows accounts, registry and NT service functionality
+
+src/jnacontrib/win32/Win32Service provides an abstract class capable of
+installing/removing/running itself as an NT service.
+
+Contributed by Thomas Boerkel (boerkel)
