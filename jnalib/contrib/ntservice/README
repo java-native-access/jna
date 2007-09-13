@@ -1,6 +1,60 @@
-Provides access to Windows accounts, registry and NT service functionality
+Copyright (c) 2007 Thomas Boerkel, All Rights Reserved
 
-src/jnacontrib/win32/Win32Service provides an abstract class capable of
-installing/removing/running itself as an NT service.
+Disclaimer:
+===========
+This code is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
 
-Contributed by Thomas Boerkel (boerkel)
+This code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.  
+
+
+Description:
+============
+
+Accounts.java:
+--------------
+Static methods for getting information about Win32 accounts (users
+and groups).
+- list all domain users
+- list all domain groups
+- list all local or domain groups where a user belongs to
+- get account by SID
+- get SID of account
+- get domain controller name
+- get domain name
+
+Registry.java:
+--------------
+Static methods for reading and manipulating the Windows Registry.
+Only String and DWORD values supported, but could be easily
+extended.
+- create key
+- delete key
+- delete value
+- read value
+- get all sub keys of a key
+- get all values of a key
+- set value
+- check existence of value
+
+Win32Service.java:
+------------------
+Abstract class to wrap a Win32 service. Derive from this class
+to build your own service. Supports only one type of service and
+startup, but could be easily extended.
+- install service
+- uninstall service
+- start service
+- stop service
+- callback for service start request (onStart), should spawn a thread
+- callback for service stop request (onStop)
+
+TestService.java:
+-----------------
+Very simple example of an implementation of Win32Service.java.
+Does nothing but starting and stopping (no "useful" work).
