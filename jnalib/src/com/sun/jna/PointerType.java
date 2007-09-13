@@ -59,6 +59,10 @@ public abstract class PointerType implements NativeMapped {
      * subclass.
      */
     public Object fromNative(Object nativeValue, FromNativeContext context) {
+        // Always pass along null pointer values
+        if (nativeValue == null) {
+            return null;
+        }
         try {
             PointerType pt = (PointerType)getClass().newInstance();
             pt.pointer = (Pointer)nativeValue;
