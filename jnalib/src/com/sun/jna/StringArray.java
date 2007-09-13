@@ -44,7 +44,7 @@ public class StringArray extends Memory {
         boolean returnWide = original instanceof WString[];
         for (int si=0;si < original.length;si++) {
             String s = getPointer(si * Pointer.SIZE).getString(0, wide);
-            original[si] = returnWide ? new WString(s) : s; 
+            original[si] = returnWide ? new WString(s) : (Object)s; 
         }
     }
 }
