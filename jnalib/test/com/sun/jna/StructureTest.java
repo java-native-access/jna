@@ -372,6 +372,51 @@ public class StructureTest extends TestCase {
                      3, s.cb.callback(1, 2));
     }
     
+    public static class UninitializedArrayFieldStructure extends Structure {
+        public byte[] array;
+    }
+    public void testUninitializedArrayField() {
+        try {
+            Structure s = new UninitializedArrayFieldStructure();
+            assertTrue("Invalid size: " + s.size(), s.size() > 0);
+            fail("Uninitialized array field should cause write failure");
+        }
+        catch(IllegalStateException e) {
+        }
+    }
+    
+    public static class ArrayOfStructure extends Structure {
+        public Structure[] array;
+    }
+    public void testStructureArrayField() {
+        try {
+            new ArrayOfStructure();
+            fail("Structure[] not allowed as a field of Structure");
+        }
+        catch(IllegalArgumentException e) {
+        }
+        catch(Exception e) {
+            fail("Wrong exception thrown on Structure[] field in Structure: " + e);
+        }
+    }
+    
+    public static class ArrayOfPointer extends Structure {
+        final static int SIZE = 10;
+        public Pointer[] array = new Pointer[SIZE];
+    }
+    public void testPointerArrayField() {
+        ArrayOfPointer s = new ArrayOfPointer();
+        int size = s.size();
+        assertEquals("Wrong size", ArrayOfPointer.SIZE * Pointer.SIZE, size);
+        s.array[0] = s.getPointer();
+        s.write();
+        s.array[0] = null;
+        s.read();
+        assertEquals("Wrong first element", s.getPointer(), s.array[0]);
+    }
+    
+    // TODO: array of pointer/pointertype/nativemapped
+    
     public static class VolatileStructure extends Structure {
         public volatile int counter;
         public int value;

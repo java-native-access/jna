@@ -135,10 +135,6 @@ public abstract class Structure {
         this.memory = null;
     }
 
-    protected void allocateMemory() {
-        allocateMemory(calculateSize());
-    }
-        
     /** Set the memory used by this structure.  This method is used to 
      * indicate the given structure is nested within another or otherwise
      * overlaid on some other memory block and thus does not own its own 
@@ -160,17 +156,24 @@ public abstract class Structure {
     protected Pointer getMemory() {
         return memory;
     }
+
+    /** Attempt to allocate memory if sufficient information is available.
+     * Returns whether the operation was successful. 
+     */
+    protected void allocateMemory() {
+        allocateMemory(calculateSize(true));
+    }
     
     /** Provided for derived classes to indicate a different
-     * size than the default.
+     * size than the default.  Returns whether the operation was successful.
      */
     protected void allocateMemory(int size) {
         if (size == CALCULATE_SIZE) {
-            // Analyze the struct
-            size = calculateSize();
+            // Analyze the struct, but don't worry if we can't yet do it
+            size = calculateSize(false);
         }
         else if (size <= 0) {
-            throw new IllegalArgumentException("Size must be greater than zero: " + size);
+            throw new IllegalArgumentException("Structure size must be greater than zero: " + size);
         }
         // May need to defer size calculation if derived class not fully
         // initialized
@@ -184,7 +187,8 @@ public abstract class Structure {
 
     public int size() {
         if (size == CALCULATE_SIZE) {
-            allocateMemory();
+            // force allocation
+            allocateMemory(calculateSize(true));
         }
         return size;
     }
@@ -343,6 +347,9 @@ public abstract class Structure {
             else if (cls == double.class) {
                 result = memory.getDoubleArray(offset, length);
             }
+            else if (Pointer.class.isAssignableFrom(cls)) {
+                result = memory.getPointerArray(offset, length);
+            }
             else {
                 throw new IllegalArgumentException("Array of "
                                                    + cls + " not supported");
@@ -377,7 +384,7 @@ public abstract class Structure {
         // allows structures to inline arrays of primitive types and not have
         // to explicitly call allocateMemory in the ctor
         if (size == CALCULATE_SIZE) {
-            allocateMemory();
+            allocateMemory(calculateSize(true));
         }
         // Write all fields, except those marked 'volatile'
         for (Iterator i=structFields.values().iterator();i.hasNext();) {
@@ -498,6 +505,10 @@ public abstract class Structure {
                 double[] buf = (double[])value;
                 memory.write(offset, buf, 0, buf.length);
             }
+            else if (Pointer.class.isAssignableFrom(cls)) {
+                Pointer[] buf = (Pointer[])value;
+                memory.write(offset, buf, 0, buf.length);
+            }
             else {
                 throw new IllegalArgumentException("Inline array of "
                                                    + cls + " not supported");
@@ -524,8 +535,14 @@ public abstract class Structure {
      * May return {@link #CALCULATE_SIZE} if the size can not yet be 
      * determined (usually due to fields in the derived class not yet
      * being initialized).
+     * <p>
+     * If the <code>force</code> parameter is <code>true</code> will throw
+     * an {@link IllegalStateException} if the size can not be determined.
+     * @throws IllegalStateException an array field is not initialized
+     * @throws IllegalArgumentException when an unsupported field type is 
+     * encountered
      */
-    int calculateSize() {
+    int calculateSize(boolean force) {
         // TODO: maybe cache this information on a per-class basis
         // so that we don't have to re-analyze this static information each 
         // time a struct is allocated.
@@ -557,10 +574,18 @@ public abstract class Structure {
             structField.name = field.getName();
             structField.type = type;
 
+            // Check for illegal field types
             if (Callback.class.isAssignableFrom(type) && !type.isInterface()) {
                 throw new IllegalArgumentException("Structure Callback field '"
                                                    + field.getName() 
                                                    + "' must be an interface");
+            }
+            if (type.isArray() 
+                && Structure.class.equals(type.getComponentType())) {
+                String msg = "Nested Structure arrays must use a "
+                    + "derived Structure type so that the size of "
+                    + "the elements can be determined";
+                throw new IllegalArgumentException(msg);
             }
             
             int fieldAlignment = 1;
@@ -580,6 +605,9 @@ public abstract class Structure {
                     }
                     else if (type.isArray()) {
                         // can't calculate size yet, defer until later
+                        if (force) {
+                            throw new IllegalStateException("Array fields must be initialized");
+                        }
                         return CALCULATE_SIZE;
                     }
                 }

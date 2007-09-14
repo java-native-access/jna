@@ -293,6 +293,19 @@ public class Pointer {
     public native void write(int bOff, double[] buf, int index, int length);
 
 
+    /** Write the given array of Pointer to native memory. 
+     * @param bOff   byte offset from pointer into which data is copied
+     * @param buf    <code>Pointer</code> array from which to copy
+     * @param index  array index from which to start copying
+     * @param length number of elements from <code>buf</code> that must be
+     *               copied
+    */
+    public void write(int bOff, Pointer[] buf, int index, int length) {
+        for (int i=0;i < length;i++) {
+            setPointer(bOff + i * Pointer.SIZE, buf[index + i]);
+        }
+    }
+    
     //////////////////////////////////////////////////////////////////////////
     // Java type read methods
     //////////////////////////////////////////////////////////////////////////

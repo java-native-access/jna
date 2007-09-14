@@ -23,6 +23,7 @@ Bug Fixes
   interfaces
 * Update X11 library for 64-bit use (wmeissner)
 * Properly map arrays of char*/wchar_t* under w32
+* Allow Pointer[] as a Structure field
 
 Release 2.5
 Features
