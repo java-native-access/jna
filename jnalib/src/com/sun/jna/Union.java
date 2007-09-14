@@ -75,8 +75,8 @@ public abstract class Union extends Structure {
     /** Adjust the size to be the size of the largest element, and ensure
      * all fields begin at offset zero. 
      */
-    int calculateSize() {
-        int size = super.calculateSize();
+    int calculateSize(boolean force) {
+        int size = super.calculateSize(force);
         if (size != CALCULATE_SIZE) {
             int fsize = 0;
             for (Iterator i=fields().values().iterator();i.hasNext();) {
