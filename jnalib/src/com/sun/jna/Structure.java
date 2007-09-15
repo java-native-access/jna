@@ -13,7 +13,6 @@ package com.sun.jna;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -317,7 +316,7 @@ public abstract class Structure {
             try {
                 Object o = structField.field.get(this);
                 if (o == null) {
-                    throw new IllegalStateException("Structure array field not initialized");
+                    throw new IllegalStateException("Array field in Structure not initialized");
                 }
                 length = Array.getLength(o);
             }
@@ -369,9 +368,9 @@ public abstract class Structure {
             structField.field.set(this, result);
         }
         catch (Exception e) {
-            throw new RuntimeException("Exception setting field \""
-                                       + structField.name+"\" to " + result 
-                                       + ": " + e, e);
+            throw new Error("Exception setting field \""
+                            + structField.name+"\" to " + result 
+                            + ": " + e, e);
         }
     }
 
@@ -413,8 +412,8 @@ public abstract class Structure {
             value = structField.field.get(this);
         }
         catch (Exception e) {
-            throw new RuntimeException("Exception reading field \""
-                                       + structField.name + "\"", e);
+            throw new Error("Exception reading field \""
+                            + structField.name + "\"", e);
         }
         // Determine the type of the field
         Class nativeType = structField.type;

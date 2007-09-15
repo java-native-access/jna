@@ -23,10 +23,10 @@ public class LongByReference extends ByReference {
     }
     
     public void setValue(long value) {
-        getPointer().setLong(0, value);
+        setLong(0, value);
     }
     
     public long getValue() {
-        return getPointer().getLong(0);
+        return getLong(0);
     }
 }

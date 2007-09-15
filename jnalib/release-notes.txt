@@ -24,6 +24,8 @@ Bug Fixes
 * Update X11 library for 64-bit use (wmeissner)
 * Properly map arrays of char*/wchar_t* under w32
 * Allow Pointer[] as a Structure field
+* Fix some misleading Structure error messages
+* Properly preserve/return GetLastError/errno after native calls
 
 Release 2.5
 Features

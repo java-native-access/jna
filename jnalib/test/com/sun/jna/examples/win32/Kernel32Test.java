@@ -14,9 +14,6 @@ package com.sun.jna.examples.win32;
 
 import java.util.Calendar;
 import java.util.TimeZone;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.win32.StdCallLibrary;
 import junit.framework.TestCase;
 
 public class Kernel32Test extends TestCase {
@@ -34,33 +31,26 @@ public class Kernel32Test extends TestCase {
         assertEquals("Year not properly set", 
                      cal.get(Calendar.YEAR), time.wYear); 
     }
-
+    
     public void testGetLastError() {
         Kernel32 kernel = Kernel32.INSTANCE;
-        kernel.GetLastError();
+        int ERRCODE  = 8;
+        
+        kernel.SetLastError(ERRCODE);
+        int code = kernel.GetLastError();
+        assertEquals("Wrong GetLastError value", ERRCODE, code);
+        
         if (kernel.GetProcessId(null) == 0) {
             final int INVALID_HANDLE = 6;
-            int code = kernel.GetLastError();
+            code = kernel.GetLastError();
             assertEquals("GetLastError failed", INVALID_HANDLE, code);
-            int ERRCODE  = 8;
-            kernel.SetLastError(ERRCODE);
-            code = kernel.GetLastError(); 
-            assertEquals("Wrong GetLastError value", ERRCODE, code);
         }
         else {
             fail("GetProcessId(NULL) should fail");
         }
-        
-        /*
-        final int GENERIC_EXECUTE = 0x20000000;
-        Pointer h = AdvAPI32.INSTANCE.OpenSCManager("localhost", null, GENERIC_EXECUTE);
-        int code = kernel.GetLastError();
-        int EXPECTED = 1722;
-        if (h == null) {
-            assertEquals("Wrong error", EXPECTED, code);
-        }
-        else {
-            fail("Unexpected non-null result");
-        }*/
+    }
+    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(Kernel32Test.class);
     }
 }

@@ -23,11 +23,11 @@ public class FloatByReference extends ByReference {
     }
     
     public void setValue(float value) {
-        getPointer().setFloat(0, value);
+        setFloat(0, value);
     }
     
     public float getValue() {
-        return getPointer().getFloat(0);
+        return getFloat(0);
     }
 
 }

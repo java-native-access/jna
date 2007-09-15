@@ -20,7 +20,6 @@ import java.lang.reflect.Proxy;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
-import com.sun.jna.Library.Handler;
 
 /** Provides a reference to an association between a native callback closure
  * and a Java {@link Callback} closure. 

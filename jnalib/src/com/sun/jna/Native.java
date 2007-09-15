@@ -94,6 +94,16 @@ public final class Native {
      * if this platform supports protecting memory accesses.
      */
     public static native boolean isProtected();
+
+    /** Set whether the system last error result is captured after every
+     * native invocation.  Defaults to <code>true</code>.
+     */
+    public static native void setPreserveLastError(boolean enable);
+    
+    /** Indicates whether the system last error result is preserved
+     * after every invocation.  
+     */
+    public static native boolean getPreserveLastError();
     
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
@@ -208,8 +218,8 @@ public final class Native {
      * @param options Map of library options
      */
     public static Object loadLibrary(String name, 
-                                      Class interfaceClass,
-                                      Map options) {        
+                                     Class interfaceClass,
+                                     Map options) {
         Library.Handler handler = 
             new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
@@ -399,4 +409,29 @@ public final class Native {
 
     /** Return the size of a native <code>wchar_t</code>. */
     private static native int wideCharSize();
+    
+    private static final ThreadLocal lastError = new ThreadLocal() {
+        protected synchronized Object initialValue() {
+            return new Integer(0);
+        }
+    };
+    
+    /** Retrieve the last error set by the OS.  The value is preserved
+     * per-thread, but whether the original value is per-thread depends on
+     * the underlying OS.  The result is undefined If 
+     * {@link #getPreserveLastError} is <code>false</code>.
+     */
+    public static int getLastError() {
+        return ((Integer)lastError.get()).intValue();
+    }
+    
+    /** Set the OS last error code.  Whether the setting is per-thread
+     * or global depends on the underlying OS.
+     */
+    public static native void setLastError(int code);
+
+    /** Update the last error value (called from native code). */
+    static void updateLastError(int e) {
+        lastError.set(new Integer(e));
+    }
 }

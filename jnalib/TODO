@@ -21,6 +21,11 @@
 
 # TODO
 
+* Make a separate jar file for all OS-specific headers
+* Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
+  aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
+  (how useful?)
+
 * review/use direct Buffer in more places if it makes sense
 * support annotations of parameters and return values w/o breaking
   1.4 compatibility, e.g.
@@ -37,6 +42,7 @@
 * standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
 * StringBuffer/StringBuilder as mutable char*/wchar_t* argument
   NOTE: byte[]/char[] is probably better; it's trivial to convert to String
+  and native code can't change the size anyway
 * flag string(/wstring)-returning methods which need to free their result
    to avoid leaking memory whan auto-creating strings from the result
    (since normally we don't take explicit ownership of any returned pointers)
@@ -48,8 +54,7 @@
    Structure or some other type.  Then memory will free itself when no longer
    referenced. 
 * provide library load/unload hooks (Runnables in options?). Examples:
-  o GetLastError in kernel32 (note: would need to initialize kernel32 from any
-  other w32 api dll as well)
+  o GetLastError (no longer required)
   o WSAInit?
 * if method has "GetLastErrorException/ErrnoException" in its signature, use
   result codes + GetLastError/errno/errstr to auto-generate 

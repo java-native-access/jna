@@ -12,6 +12,7 @@
  */
 package com.sun.jna.examples.win32;
 
+import java.nio.Buffer;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -20,7 +21,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 /** Definition (incomplete) of <code>kernel32.dll</code>. */
 public interface Kernel32 extends W32API {
-
+    
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
     
@@ -48,6 +49,9 @@ public interface Kernel32 extends W32API {
     int FORMAT_MESSAGE_IGNORE_INSERTS = 0x200;
     int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId, 
                       int dwLanguageId, PointerByReference lpBuffer, 
+                      int nSize, Pointer va_list);
+    int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId, 
+                      int dwLanguageId, Buffer lpBuffer, 
                       int nSize, Pointer va_list);
 
     int FILE_LIST_DIRECTORY = 0x00000001;

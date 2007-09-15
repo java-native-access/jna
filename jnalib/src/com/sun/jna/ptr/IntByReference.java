@@ -24,10 +24,10 @@ public class IntByReference extends ByReference {
     }
     
     public void setValue(int value) {
-        getPointer().setInt(0, value);
+        setInt(0, value);
     }
     
     public int getValue() {
-        return getPointer().getInt(0);
+        return getInt(0);
     }
 }

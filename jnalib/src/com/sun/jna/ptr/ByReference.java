@@ -15,16 +15,22 @@ package com.sun.jna.ptr;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 
-/** Provides generic "pointer to type" functionality. */
-public abstract class ByReference {
-    
-    private Pointer pointer;
+/** Provides generic "pointer to type" functionality, often used in C
+ * code to return values to the caller in addition to a function result.
+ * <p>
+ * Derived classes should define <code>setValue(&lt;T&gt;)</code>
+ * and <code>&lt;T&gt; getValue()</code> methods which write to/read from
+ * memory.
+ */
+public abstract class ByReference extends Memory {
     
     protected ByReference(int dataSize) {
-        pointer = new Memory(dataSize);
+        super(dataSize);
     }
     
+    /** @deprecated This is equivalent to the object itself. */
     public Pointer getPointer() {
-        return pointer;
+        return this;
     }
+
 }

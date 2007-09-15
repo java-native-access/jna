@@ -15,8 +15,8 @@ package com.sun.jna.examples.unix;
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.NativeMapped;
 import com.sun.jna.NativeLong;
+import com.sun.jna.NativeMapped;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
@@ -29,11 +29,17 @@ import com.sun.jna.ptr.PointerByReference;
 public interface X11 extends Library {
     
     public static class XID implements NativeMapped {
+        public static final XID None = null;
         private Integer id = new Integer(0);
-        public XID() { this(None); }
+        public XID() { this(X11.None); }
         public XID(Integer id) { this.id = id; }
         public XID(int id) { this(new Integer(id)); }
+        protected boolean isNone(Object o) {
+            return ((Integer)o).intValue() == X11.None;
+        }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
             return new XID((Integer)nativeValue);
         }
         public Class nativeType() {
@@ -44,12 +50,16 @@ public interface X11 extends Library {
         }
     }
     public static class Atom extends XID {
+        public static final Atom None = null;
         public Atom() { }
         public Atom(Integer id) { super(id); }
         public Atom(int id) { super(id); }
+        /** Return constants for predefined <code>Atom</code> values. */
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             int value = ((Integer)nativeValue).intValue();
             switch(value) {
+            case 0:
+                return None;
             case 1:
                 return XA_PRIMARY;
             case 2:
@@ -70,56 +80,68 @@ public interface X11 extends Library {
     public static class AtomByReference extends ByReference {
         public AtomByReference() { super(4); }
         public Atom getValue() {
-            return (Atom)new Atom().fromNative(new Integer(getPointer().getInt(0)), null);
+            return (Atom)new Atom().fromNative(new Integer(getInt(0)), null);
         }
     }
     public static class Colormap extends XID {
+        public static final Colormap None = null;
         public Colormap() { }
         public Colormap(Integer id) { super(id); }
         public Colormap(int id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
             return new Colormap((Integer)nativeValue);
         }
     }
     public static class Cursor extends XID {
+        public static final Cursor None = null;
         public Cursor() { }
         public Cursor(Integer id) { super(id); }
         public Cursor(int id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
             return new Cursor((Integer)nativeValue);
         }
     }
     public static class Drawable extends XID {
-        public static final Drawable None = new Drawable(X11.None);
+        public static final Drawable None = null;
         public Drawable() { }
         public Drawable(Integer id) { super(id); }
         public Drawable(int id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
             return new Drawable((Integer)nativeValue);
         }
     }
     public static class Window extends Drawable {
-        public static final Window None = new Window(X11.None);
+        public static final Window None = null;
         public Window() { }
         public Window(Integer id) { super(id); }
         public Window(int id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
             return new Window((Integer)nativeValue);
         }
     }
     public static class WindowByReference extends ByReference {
         public WindowByReference() { super(4); }
         public Window getValue() {
-            int value = getPointer().getInt(0);
+            int value = getInt(0);
             return value == X11.None ? Window.None : new Window(value);
         }
     }
     public static class Pixmap extends Drawable {
-        public static final Pixmap None = new Pixmap(X11.None);
+        public static final Pixmap None = null;
         public Pixmap() { }
         public Pixmap(Integer id) { super(id); }
         public Pixmap(int id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
             return new Pixmap((Integer)nativeValue);
         }
     }
@@ -334,12 +356,14 @@ public interface X11 extends Library {
     int AllocNone = 0;
     int AllocAll = 1;
     
-    Atom XA_PRIMARY = new Atom(0);
-    Atom XA_SECONDARY = new Atom(1);
-    Atom XA_ARC = new Atom(2);
+    Atom XA_PRIMARY = new Atom(1);
+    Atom XA_SECONDARY = new Atom(2);
+    Atom XA_ARC = new Atom(3);
     Atom XA_ATOM = new Atom(4);
     Atom XA_BITMAP = new Atom(5);
     Atom XA_CARDINAL = new Atom(6);
+    Atom XA_COLORMAP = new Atom(7);
+    Atom XA_CURSOR = new Atom(8);
     
     int PropModeReplace = 0;
     int PropModePrepend = 1;

@@ -23,11 +23,11 @@ public class DoubleByReference extends ByReference {
     }
     
     public void setValue(double value) {
-        getPointer().setDouble(0, value);
+        setDouble(0, value);
     }
     
     public double getValue() {
-        return getPointer().getDouble(0);
+        return getDouble(0);
     }
     
 }

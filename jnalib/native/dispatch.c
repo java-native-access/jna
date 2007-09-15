@@ -31,11 +31,16 @@
 #define FREE_LIBRARY(handle) FreeLibrary(handle)
 #define FIND_ENTRY(lib, name) GetProcAddress(lib, name)
 #define dlerror() ""
+#define GET_LAST_ERROR() GetLastError()
+#define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
 #include <dlfcn.h>
+#include <errno.h>
 #define LOAD_LIBRARY(name) dlopen(name, RTLD_LAZY)
 #define FREE_LIBRARY(handle) dlclose(handle)
 #define FIND_ENTRY(lib, name) dlsym(lib, name)
+#define GET_LAST_ERROR() errno
+#define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif
 
 #include <stdlib.h>
@@ -66,8 +71,10 @@ extern "C"
 #endif
 
 static JAWT awt;
-static int jawt_initialized;
+static jboolean jawt_initialized;
+static jboolean preserve_last_error;
 
+// TODO: include address fault information in error message
 #ifdef PROTECTED_START
 #define ON_ERROR() throwByName(env, "java/lang/Error", "Invalid memory access")
 #define PSTART() PROTECTED_START()
@@ -95,7 +102,6 @@ static jclass classLong, classPrimitiveLong;
 static jclass classFloat, classPrimitiveFloat;
 static jclass classDouble, classPrimitiveDouble;
 static jclass classString;
-static jclass classPointer;
 static jclass classBuffer;
 static jclass classByteBuffer;
 static jclass classCharBuffer;
@@ -105,11 +111,13 @@ static jclass classLongBuffer;
 static jclass classFloatBuffer;
 static jclass classDoubleBuffer;
 
+static jclass classPointer;
+static jclass classNative;
+
 static jmethodID MID_Class_getComponentType;
 static jmethodID MID_String_getBytes;
 static jmethodID MID_String_toCharArray;
 static jmethodID MID_String_init_bytes;
-static jmethodID MID_Pointer_init;
 static jmethodID MID_Method_getReturnType;
 static jmethodID MID_Method_getParameterTypes;
 static jmethodID MID_Long_init;
@@ -135,6 +143,9 @@ static jmethodID MID_FloatBuffer_arrayOffset;
 static jmethodID MID_DoubleBuffer_array;
 static jmethodID MID_DoubleBuffer_arrayOffset;
 
+static jmethodID MID_Pointer_init;
+static jmethodID MID_Native_updateLastError;
+
 static jfieldID FID_Boolean_value;
 static jfieldID FID_Byte_value;
 static jfieldID FID_Short_value;
@@ -143,6 +154,7 @@ static jfieldID FID_Integer_value;
 static jfieldID FID_Long_value;
 static jfieldID FID_Float_value;
 static jfieldID FID_Double_value;
+
 static jfieldID FID_Pointer_peer;
 
 /* Forward declarations */
@@ -155,6 +167,7 @@ static void* getBufferArray(JNIEnv* env, jobject buf,
 static char getArrayComponentType(JNIEnv *, jobject);
 static void *getNativeAddress(JNIEnv *, jobject);
 static jboolean init_jawt(JNIEnv*);
+static void update_last_error(JNIEnv*, int);
 
 /* invoke the real native function */
 static void
@@ -323,6 +336,8 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     PSTART();
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
     PEND();
+    if (preserve_last_error)
+      update_last_error(env, GET_LAST_ERROR());
     break;
   }
   default:
@@ -381,7 +396,7 @@ Java_com_sun_jna_Function_invokePointer(JNIEnv *env, jobject self,
                                         jint callconv, jobjectArray arr)
 {
     jvalue result;
-    dispatch(env, self, callconv, arr, &ffi_type_pointer, &result.l);
+    dispatch(env, self, callconv, arr, &ffi_type_pointer, &result);
     return newJavaPointer(env, result.l);
 }
 
@@ -395,7 +410,7 @@ Java_com_sun_jna_Function_invokeDouble(JNIEnv *env, jobject self,
                                        jint callconv, jobjectArray arr)
 {
     jvalue result;
-    dispatch(env, self, callconv, arr, &ffi_type_double, &result.d);
+    dispatch(env, self, callconv, arr, &ffi_type_double, &result);
     return result.d;
 }
 
@@ -409,7 +424,7 @@ Java_com_sun_jna_Function_invokeFloat(JNIEnv *env, jobject self,
                                       jint callconv, jobjectArray arr)
 {
     jvalue result;
-    dispatch(env, self, callconv, arr, &ffi_type_float, &result.f);
+    dispatch(env, self, callconv, arr, &ffi_type_float, &result);
     return result.f;
 }
 
@@ -423,7 +438,7 @@ Java_com_sun_jna_Function_invokeInt(JNIEnv *env, jobject self,
                                     jint callconv, jobjectArray arr)
 {
     jvalue result;
-    dispatch(env, self, callconv, arr, &ffi_type_sint32, &result.i);
+    dispatch(env, self, callconv, arr, &ffi_type_sint32, &result);
     /* 
      * Big endian 64bit machines will put a 32bit return value in the 
      * upper 4 bytes of the memory area.
@@ -445,7 +460,7 @@ Java_com_sun_jna_Function_invokeLong(JNIEnv *env, jobject self,
                                      jint callconv, jobjectArray arr)
 {
     jvalue result;
-    dispatch(env, self, callconv, arr, &ffi_type_sint64, &result.j);
+    dispatch(env, self, callconv, arr, &ffi_type_sint64, &result);
     return result.j;
 }
 
@@ -493,8 +508,8 @@ Java_com_sun_jna_NativeLibrary_open(JNIEnv *env, jclass cls, jstring lib){
     char *libname = NULL;
 
     if ((libname = newCString(env, lib)) != NULL) {
-	handle = (void *)LOAD_LIBRARY(libname);
-	free(libname);
+      handle = (void *)LOAD_LIBRARY(libname);
+      free(libname);
     }
     return (jlong)A2L(handle);
 }
@@ -1183,6 +1198,13 @@ newWideCString(JNIEnv *env, jstring str)
     return result;
 }
 
+/** Update the per-thread last error setting. */
+static void
+update_last_error(JNIEnv* env, int err) {
+  (*env)->CallStaticVoidMethod(env, classNative,
+                               MID_Native_updateLastError, err);
+}
+
 /* Constructs a Java string from a char array (using the String(byte [])
  * constructor, which uses default local encoding) or a short array (using the
  * String(char[]) ctor, which uses the character values unmodified).  
@@ -1371,6 +1393,7 @@ Java_com_sun_jna_Native_wideCharSize(JNIEnv *env, jclass cls) {
  */
 JNIEXPORT void JNICALL 
 Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
+  preserve_last_error = JNI_TRUE;
   if (!LOAD_CREF(env, Pointer, "com/sun/jna/Pointer")) {
     throwByName(env, "java/lang/UnsatisfiedLinkError",
                 "Can't obtain class com.sun.jna.Pointer");
@@ -1387,6 +1410,16 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   else if (!LOAD_FID(env, FID_Pointer_peer, classPointer, "peer", "J")) {
     throwByName(env, "java/lang/UnsatisfiedLinkError",
                 "Can't obtain peer field ID for class com.sun.jna.Pointer");
+  }
+  else if (!(classNative = (*env)->NewGlobalRef(env, cls))) {
+    throwByName(env, "java/lang/UnsatisfiedLinkError",
+                "Can't obtain global reference for class com.sun.jna.Native");
+  }
+  else if (!(MID_Native_updateLastError
+             = (*env)->GetStaticMethodID(env, classNative,
+                                         "updateLastError", "(I)V"))) {
+    throwByName(env, "java/lang/UnsatisfiedLinkError",
+                "Can't obtain updateLastError method for class com.sun.jna.Native");
   }
 }
   
@@ -1498,10 +1531,25 @@ Java_com_sun_jna_Native_setProtected(JNIEnv *env, jclass classp, jboolean protec
 JNIEXPORT jboolean JNICALL
 Java_com_sun_jna_Native_isProtected(JNIEnv *env, jclass classp) {
 #ifdef HAVE_PROTECTION
-  return protect ? JNI_TRUE : JNI_FALSE;
-#else
-  return JNI_FALSE;
+  if (protect) return JNI_TRUE;
 #endif
+  return JNI_FALSE;
+}
+
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_setPreserveLastError(JNIEnv *env, jclass classp, jboolean preserve) {
+  preserve_last_error = preserve;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *env, jclass classp) {
+  return preserve_last_error;
+}
+
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass classp, jint code) {
+  SET_LAST_ERROR(code);
+  update_last_error(env, code);
 }
 
 static jboolean 

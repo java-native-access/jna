@@ -24,11 +24,11 @@ public class ByteByReference extends ByReference {
     }
 
     public void setValue(byte value) {
-        getPointer().setByte(0, value);
+        setByte(0, value);
     }
     
     public byte getValue() {
-        return getPointer().getByte(0);
+        return getByte(0);
     }
 
 }

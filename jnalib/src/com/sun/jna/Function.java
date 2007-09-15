@@ -15,8 +15,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 
-import com.sun.jna.ptr.ByReference;
-
 /**
  * An abstraction for a native function pointer.  An instance of 
  * <code>Function</code> repesents a pointer to some native function.  
@@ -29,7 +27,7 @@ import com.sun.jna.ptr.ByReference;
  */
 public class Function extends Pointer {
     /** Maximum number of arguments supported by a JNA function call. */
-    // NOTE: this may be different with libffi
+    // TODO: make this match libffi's limit (if any)
     public static final int MAX_NARGS = 32;
 
     /** Standard C calling convention. */
@@ -37,6 +35,42 @@ public class Function extends Pointer {
     /** First alternate convention (currently used only for w32 stdcall). */
     public static final int ALT_CONVENTION = 1;
 
+    /** 
+     * Obtain a {@link Function} representing a native 
+     * function that follows the standard "C" calling convention.
+     * 
+     * <p>The allocated instance represents a pointer to the named native 
+     * function from the named library, called with the standard "C" calling
+     * convention.
+     *
+     * @param   libraryName
+     *                  Library in which to find the native function
+     * @param   functionName
+     *                  Name of the native function to be linked with
+     */
+    public static Function getFunction(String libraryName, String functionName) {
+        return NativeLibrary.getInstance(libraryName).getFunction(functionName);
+    }
+    
+    /**
+     * Obtain a {@link Function} representing a native 
+     * function that follows a given calling convention.
+     * 
+     * <p>The allocated instance represents a pointer to the named native 
+     * function from the named library, called with the named calling 
+     * convention.
+     *
+     * @param   libraryName
+     *                  Library in which to find the function
+     * @param   functionName
+     *                  Name of the native function to be linked with
+     * @param   callConvention
+     *                  Call convention used by the native function
+     */
+    public static Function getFunction(String libraryName, String functionName, int callConvention) {
+        return NativeLibrary.getInstance(libraryName).getFunction(functionName, callConvention);
+    }
+    
     // Keep a reference to the NativeLibrary so it does not get garbage collected
     // until the function is
     private NativeLibrary library;
@@ -44,7 +78,7 @@ public class Function extends Pointer {
     private int callingConvention;
 
     /**
-     * Create a new {@link Function} that is linked with a native 
+     * Create a new {@link Function} representing a native 
      * function that follows the standard "C" calling convention.
      * 
      * <p>The allocated instance represents a pointer to the named native 
@@ -55,14 +89,15 @@ public class Function extends Pointer {
      *			Library in which to find the native function
      * @param	functionName
      *			Name of the native function to be linked with
+     * @deprecated Use {@link #getFunction(String,String)} instead.  This 
+     * version bypasses lookup cacheing done by {@link NativeLibrary}.
      */
     public Function(String libraryName, String functionName) {
         this(libraryName, functionName, C_CONVENTION);
     }
-
-
+    
     /**
-     * Create a new @{link Function} that is linked with a native 
+     * Create a new {@link Function} representing a native 
      * function that follows a given calling convention.
      * 
      * <p>The allocated instance represents a pointer to the named native 
@@ -75,6 +110,8 @@ public class Function extends Pointer {
      *			Name of the native function to be linked with
      * @param	callingConvention
      *			Calling convention used by the native function
+     * @deprecated Use {@link #getFunction(String,String,int)} instead.
+     * This version bypasses lookup cacheing done by {@link NativeLibrary}.
      */
     public Function(String libraryName, String functionName, 
                     int callingConvention) {
@@ -188,6 +225,7 @@ public class Function extends Pointer {
                 nativeType = resultConverter.nativeType();
             }
         }
+
         Object result = invoke(args, nativeType);
 
         // Convert the result to a custom value/type if appropriate
@@ -216,7 +254,7 @@ public class Function extends Pointer {
                     // were modified
                     ((StringArray)args[i]).read();
                 }
-                else if (isStructureArray(arg.getClass())) {
+                else if (Structure[].class.isAssignableFrom(arg.getClass())) {
                     Structure[] ss = (Structure[])arg;
                     for (int si=0;si < ss.length;si++) {
                         ss[si].read();
@@ -228,7 +266,7 @@ public class Function extends Pointer {
         return result;
     }
 
-    private Object invoke(Object[] args, Class returnType) {
+    Object invoke(Object[] args, Class returnType) {
         Object result = null;
         if (returnType == null || returnType==void.class || returnType==Void.class) {
             invokeVoid(callingConvention, args);
@@ -332,10 +370,6 @@ public class Function extends Pointer {
             struct.write();
             return struct.getPointer();
         }
-        // Convert reference class to pointer
-        else if (arg instanceof ByReference) {
-            return ((ByReference)arg).getPointer();
-        }
         // Convert Callback to Pointer
         else if (arg instanceof Callback) {
             return CallbackReference.getFunctionPointer((Callback)arg);
@@ -362,7 +396,7 @@ public class Function extends Pointer {
         else if (WString[].class == argClass) {
             return new StringArray((WString[])arg);
         }
-        else if (isStructureArray(argClass)) {
+        else if (Structure[].class.isAssignableFrom(argClass)) {
             // Initialize uninitialized arrays of Structure to point
             // to a single block of memory
             Structure[] ss = (Structure[])arg;
@@ -397,18 +431,13 @@ public class Function extends Pointer {
                 int size = ss[0].size();
                 ss[0].write();
                 for (int si=1;si < ss.length;si++) {
-                    try {
-                        Pointer p = base.share(size*si, size);
-                        if (ss[si].getPointer().peer != p.peer) {
-                            throw new RuntimeException();
-                        }
-                        ss[si].write();
-                    }
-                    catch(RuntimeException e) {
+                    Pointer p = base.share(size*si, size);
+                    if (ss[si].getPointer().peer != p.peer) {
                         String msg = "Structure array elements must use"
-                            + " contiguous memory: " + si;     
+                            + " contiguous memory (at element index " + si + ")";     
                         throw new IllegalArgumentException(msg);
                     }
+                    ss[si].write();
                 }
                 return base;
             }
@@ -419,12 +448,6 @@ public class Function extends Pointer {
         }
         return arg;
     }
-
-    private boolean isStructureArray(Class argClass) {
-        return argClass.isArray()
-            && Structure.class.isAssignableFrom(argClass.getComponentType());
-    }
-
 
     private boolean isPrimitiveArray(Class argClass) {
         return argClass.isArray() 

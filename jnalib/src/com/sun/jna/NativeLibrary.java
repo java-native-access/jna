@@ -58,6 +58,18 @@ public class NativeLibrary {
         this.libraryName = getLibraryName(libraryName);
         this.libraryPath = libraryPath;
         this.handle = handle;
+        // Special workaround for w32 kernel32.GetLastError
+        // Short-circuit the function to use built-in GetLastError access
+        if (Platform.isWindows() && "kernel32".equals(this.libraryName)) {
+            synchronized(functions) {
+                Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION) {
+                    Object invoke(Object[] args, Class returnType) {
+                        return new Integer(Native.getLastError());
+                    }
+                };
+                functions.put("GetLastError", f);
+            }
+        }
     }
     
     private static NativeLibrary loadLibrary(String libraryName) {
