@@ -431,8 +431,7 @@ public class Function extends Pointer {
                 int size = ss[0].size();
                 ss[0].write();
                 for (int si=1;si < ss.length;si++) {
-                    Pointer p = base.share(size*si, size);
-                    if (ss[si].getPointer().peer != p.peer) {
+                    if (ss[si].getPointer().peer != base.peer + size*si) {
                         String msg = "Structure array elements must use"
                             + " contiguous memory (at element index " + si + ")";     
                         throw new IllegalArgumentException(msg);
