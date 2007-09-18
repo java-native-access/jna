@@ -272,6 +272,12 @@ public abstract class Win32Service {
       } catch (InterruptedException ex) {
       }
       reportStatus(WINSVC.SERVICE_STOPPED, WINERROR.NO_ERROR, 0);
+
+      // Avoid returning from ServiceMain, which will cause a crash
+      // See http://support.microsoft.com/kb/201349, which recommends
+      // having init() wait for this thread.  
+      // Waiting on this thread in init() won't fix the crash, though.
+      System.exit(0);
     }
   }
   
@@ -289,7 +295,7 @@ public abstract class Win32Service {
      * @param lpEventData 
      * @param lpContext 
      */
-    public void callback(int dwControl, int dwEventType, Pointer lpEventData, Pointer lpContext) {
+    public int callback(int dwControl, int dwEventType, Pointer lpEventData, Pointer lpContext) {
       switch(dwControl) {
         case WINSVC.SERVICE_CONTROL_STOP:
         case WINSVC.SERVICE_CONTROL_SHUTDOWN:
@@ -299,6 +305,7 @@ public abstract class Win32Service {
             waitObject.notifyAll();
           }
       }
+      return WINERROR.NO_ERROR;
     }
   }
 }

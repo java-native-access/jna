@@ -284,7 +284,7 @@ LONG WINAPI RegEnumValue(
       LPVOID lpEventData,
       LPVOID lpContext
     );*/
-    public void callback(int dwControl, int dwEventType, Pointer lpEventData, Pointer lpContext);
+    public int callback(int dwControl, int dwEventType, Pointer lpEventData, Pointer lpContext);
   }
   
 /*
