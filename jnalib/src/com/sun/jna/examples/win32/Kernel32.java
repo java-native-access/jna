@@ -16,6 +16,7 @@ import java.nio.Buffer;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -24,6 +25,25 @@ public interface Kernel32 extends W32API {
     
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
+
+    public static class HANDLEByReference extends ByReference {
+        public HANDLEByReference() {
+            this(null);
+        }
+        public HANDLEByReference(HANDLE h) {
+            super(Pointer.SIZE);
+            setValue(h);
+        }
+        public void setValue(HANDLE h) {
+            setPointer(0, h != null ? h.getPointer() : null);
+        }
+        public HANDLE getValue() {
+            Pointer p = getPointer(0);
+            if (Pointer.PM1.equals(p))
+                return INVALID_HANDLE_VALUE;
+            return new HANDLE(p);
+        }
+    }
     
     public static class SYSTEMTIME extends Structure {
         public short wYear;
@@ -38,7 +58,10 @@ public interface Kernel32 extends W32API {
     
     void GetSystemTime(SYSTEMTIME result);
     int GetCurrentThreadId();
+    HANDLE GetCurrentThread();
     int GetCurrentProcessId();
+    HANDLE GetCurrentProcess();
+    int GetProcessId(HANDLE process);
     /** NOTE: the first invocation of this method will clear any extant
      * error, so be sure to call it once <em>before</em> you need its result.
      */
@@ -98,28 +121,35 @@ public interface Kernel32 extends W32API {
         public Pointer lpSecurityDescriptor;
         public boolean bInheritHandle;
     }
-    Pointer CreateFile(String lpFileName, int dwDesiredAccess, int dwShareMode,
-                       SECURITY_ATTRIBUTES lpSecurityAttributes,
-                       int dwCreationDisposition, int dwFlagsAndAttributes,
-                       Pointer hTemplateFile);
+    HANDLE CreateFile(String lpFileName, int dwDesiredAccess, int dwShareMode,
+                      SECURITY_ATTRIBUTES lpSecurityAttributes,
+                      int dwCreationDisposition, int dwFlagsAndAttributes,
+                      HANDLE hTemplateFile);
     boolean CreateDirectory();
 
-    Pointer CreateIoCompletionPort(Pointer FileHandle, 
-                                   Pointer ExistingCompletionPort,
-                                   Pointer CompletionKey, 
-                                   int NumberOfConcurrentThreads);
+    HANDLE CreateIoCompletionPort(HANDLE FileHandle, 
+                                  HANDLE ExistingCompletionPort,
+                                  int CompletionKey, 
+                                  int NumberOfConcurrentThreads);
     int INFINITE = 0xFFFFFFFF;
-    boolean GetQueuedCompletionStatus(Pointer CompletionPort, 
+    boolean GetQueuedCompletionStatus(HANDLE CompletionPort, 
                                       IntByReference lpNumberOfBytes,
-                                      PointerByReference lpCompletionKey,
+                                      IntByReference lpCompletionKey,
                                       PointerByReference lpOverlapped, 
                                       int dwMilliseconds);
-    boolean PostQueuedCompletionStatus(Pointer CompletionPort, 
+    boolean PostQueuedCompletionStatus(HANDLE CompletionPort, 
                                        int dwNumberOfBytesTransferred,
-                                       Pointer dwCompletionKey, 
+                                       int dwCompletionKey, 
                                        OVERLAPPED lpOverlapped);
-    int WaitForSingleObject(Pointer hHandle, int dwMilliseconds);
-    boolean CloseHandle(Pointer hObject);
+    int WaitForSingleObject(HANDLE hHandle, int dwMilliseconds);
+    boolean DuplicateHandle(HANDLE hSourceProcessHandle, 
+                            HANDLE hSourceHandle,
+                            HANDLE hTargetProcessHandle,
+                            HANDLEByReference lpTargetHandle,
+                            int dwDesiredAccess,
+                            boolean bInheritHandle,
+                            int dwOptions);
+    boolean CloseHandle(HANDLE hObject);
     
     int FILE_ACTION_ADDED = 1;
     int FILE_ACTION_REMOVED = 2;
@@ -189,7 +219,7 @@ public interface Kernel32 extends W32API {
         void callback(int errorCode, int nBytesTransferred, OVERLAPPED overlapped);
     }
     // NOTE: only exists in unicode form (W suffix)
-    boolean ReadDirectoryChangesW(Pointer directory, 
+    boolean ReadDirectoryChangesW(HANDLE directory, 
                                   FILE_NOTIFY_INFORMATION info, 
                                   int length,
                                   boolean watchSubtree, 
@@ -198,5 +228,4 @@ public interface Kernel32 extends W32API {
                                   OVERLAPPED overlapped, 
                                   OVERLAPPED_COMPLETION_ROUTINE completionRoutine);
     
-    int GetProcessId(Pointer process);
 }

@@ -42,7 +42,7 @@ public interface User32 extends W32API {
     
     public static class FLASHWINFO extends Structure {
         public int cbSize;
-        public Pointer hWnd;
+        public HANDLE hWnd;
         public int dwFlags;
         public int uCount;
         public int dwTimeout;
