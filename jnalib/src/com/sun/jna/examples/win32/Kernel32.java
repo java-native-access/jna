@@ -13,8 +13,11 @@
 package com.sun.jna.examples.win32;
 
 import java.nio.Buffer;
+import com.sun.jna.FromNativeContext;
 import com.sun.jna.Native;
+import com.sun.jna.NativeMapped;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -129,17 +132,18 @@ public interface Kernel32 extends W32API {
 
     HANDLE CreateIoCompletionPort(HANDLE FileHandle, 
                                   HANDLE ExistingCompletionPort,
-                                  int CompletionKey, 
+                                  Pointer CompletionKey, 
                                   int NumberOfConcurrentThreads);
     int INFINITE = 0xFFFFFFFF;
     boolean GetQueuedCompletionStatus(HANDLE CompletionPort, 
                                       IntByReference lpNumberOfBytes,
-                                      IntByReference lpCompletionKey,
+                                      ByReference lpCompletionKey,
                                       PointerByReference lpOverlapped, 
                                       int dwMilliseconds);
+    
     boolean PostQueuedCompletionStatus(HANDLE CompletionPort, 
                                        int dwNumberOfBytesTransferred,
-                                       int dwCompletionKey, 
+                                       Pointer dwCompletionKey, 
                                        OVERLAPPED lpOverlapped);
     int WaitForSingleObject(HANDLE hHandle, int dwMilliseconds);
     boolean DuplicateHandle(HANDLE hSourceProcessHandle, 

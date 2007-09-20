@@ -24,7 +24,9 @@ import java.util.Map;
 import com.sun.jna.Pointer;
 import com.sun.jna.examples.win32.Kernel32;
 import com.sun.jna.examples.win32.Kernel32.FILE_NOTIFY_INFORMATION;
+import com.sun.jna.examples.win32.Kernel32.HANDLEByReference;
 import com.sun.jna.examples.win32.Kernel32.OVERLAPPED;
+import com.sun.jna.examples.win32.W32API.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -140,13 +142,13 @@ public abstract class FileMonitor {
         private static final int BUFFER_SIZE = 4096;
         private class FileInfo {
             public File file;
-            public Pointer handle;
+            public HANDLE handle;
             public int notifyMask;
             public boolean recursive;
             public FILE_NOTIFY_INFORMATION info = new FILE_NOTIFY_INFORMATION(BUFFER_SIZE);
             public IntByReference infoLength = new IntByReference(); 
             public OVERLAPPED overlapped = new OVERLAPPED();
-            public FileInfo(File f, Pointer h, int mask, boolean recurse) {
+            public FileInfo(File f, HANDLE h, int mask, boolean recurse) {
                 this.file = f;
                 this.handle = h;
                 this.notifyMask = mask;
@@ -154,7 +156,7 @@ public abstract class FileMonitor {
             }
         }
         private Thread watcher;
-        private Pointer port;
+        private HANDLE port;
         private Map fileMap = new HashMap();
         private Map handleMap = new HashMap();
         
@@ -198,11 +200,10 @@ public abstract class FileMonitor {
         private FileInfo waitForChange() {
             Kernel32 klib = Kernel32.INSTANCE;
             IntByReference rcount = new IntByReference();
-            PointerByReference rkey = new PointerByReference();
+            HANDLEByReference rkey = new HANDLEByReference();
             PointerByReference roverlap = new PointerByReference();
             klib.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, Kernel32.INFINITE);
-            Pointer handle = rkey.getValue();
-            return (FileInfo)handleMap.get(handle);
+            return (FileInfo)handleMap.get(rkey.getValue());
         }
         private int convertMask(int mask) {
             int result = 0;
@@ -250,10 +251,10 @@ public abstract class FileMonitor {
                 | Kernel32.FILE_SHARE_WRITE | Kernel32.FILE_SHARE_DELETE;
             int flags = Kernel32.FILE_FLAG_BACKUP_SEMANTICS
                 | Kernel32.FILE_FLAG_OVERLAPPED;
-            Pointer handle = klib.CreateFile(file.getAbsolutePath(), 
-                                             Kernel32.FILE_LIST_DIRECTORY,
-                                             mask, null, Kernel32.OPEN_EXISTING,
-                                             flags, null);
+            HANDLE handle = klib.CreateFile(file.getAbsolutePath(), 
+                                            Kernel32.FILE_LIST_DIRECTORY,
+                                            mask, null, Kernel32.OPEN_EXISTING,
+                                            flags, null);
             if (Kernel32.INVALID_HANDLE_VALUE.equals(handle)) {
                 throw new IOException("Unable to open " + file + " (" 
                                       + klib.GetLastError() + ")");
@@ -262,7 +263,7 @@ public abstract class FileMonitor {
             FileInfo finfo = new FileInfo(file, handle, notifyMask, recursive);
             fileMap.put(file, finfo);
             handleMap.put(handle, finfo);
-            port = klib.CreateIoCompletionPort(handle, port, handle, 0);
+            port = klib.CreateIoCompletionPort(handle, port, handle.getPointer(), 0);
             if (Kernel32.INVALID_HANDLE_VALUE.equals(port)) {
                 throw new IOException("Unable to create I/O Completion port "
                                       + "for " + file + " ("
