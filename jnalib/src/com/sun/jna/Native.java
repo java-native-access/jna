@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.net.URL;
@@ -39,7 +41,7 @@ import java.util.WeakHashMap;
  * which would require every {@link Structure} which requries custom mapping
  * or alignment to define a constructor and pass parameters to the superclass.
  * To avoid lots of boilerplate, the base {@link Structure} constructor
- * figures out these properties based on the defining interface.
+ * figures out these properties based on the enclosing interface.
  * 
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
@@ -87,23 +89,23 @@ public final class Native {
      * If not supported by the underlying platform, this setting will
      * have no effect.
      */
-    public static native void setProtected(boolean enable);
+    public static synchronized native void setProtected(boolean enable);
     
     /** Returns whether protection is enabled.  Check the result of this method
      * after calling {@link #setProtected setProtected(true)} to determine
      * if this platform supports protecting memory accesses.
      */
-    public static native boolean isProtected();
+    public static synchronized native boolean isProtected();
 
     /** Set whether the system last error result is captured after every
      * native invocation.  Defaults to <code>true</code>.
      */
-    public static native void setPreserveLastError(boolean enable);
+    public static synchronized native void setPreserveLastError(boolean enable);
     
     /** Indicates whether the system last error result is preserved
      * after every invocation.  
      */
-    public static native boolean getPreserveLastError();
+    public static synchronized native boolean getPreserveLastError();
     
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
@@ -433,5 +435,35 @@ public final class Native {
     /** Update the last error value (called from native code). */
     static void updateLastError(int e) {
         lastError.set(new Integer(e));
+    }
+
+    /**
+     * Returns a synchronized (thread-safe) library backed by the specified
+     * library.  This wrapping will prevent simultaneous invocations of any
+     * functions mapped to a given {@link NativeLibrary}.
+     * <p>
+     * @param  library the library to be "wrapped" in a synchronized library.
+     * @return a synchronized view of the specified library.
+     */
+    public static Library synchronizedLibrary(final Library library) {
+        Class cls = library.getClass();
+        if (!Proxy.isProxyClass(cls)) {
+            throw new IllegalArgumentException("Library must be a proxy class");
+        }
+        InvocationHandler ih = Proxy.getInvocationHandler(library);
+        if (!(ih instanceof Library.Handler)) {
+            throw new IllegalArgumentException("Unrecognized proxy handler: " + ih);
+        }
+        final Library.Handler handler = (Library.Handler)ih; 
+        InvocationHandler newHandler = new InvocationHandler() {
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                synchronized(handler.getNativeLibrary()) {
+                    return handler.invoke(library, method, args);
+                }
+            }
+        };
+        return (Library)Proxy.newProxyInstance(cls.getClassLoader(),
+                                               cls.getInterfaces(),
+                                               newHandler);
     }
 }

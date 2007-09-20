@@ -64,6 +64,32 @@ public class NativeTest extends TestCase {
         }
     }
     
+    public static interface TestLib extends Library {
+        interface VoidCallback extends Callback {
+            void callback();
+        }
+        void callVoidCallback(VoidCallback callback);
+    }
+    public void testSynchronizedAccess() throws Exception {
+        final boolean[] lockHeld = { false };
+        TestLib base = (TestLib)Native.loadLibrary("testlib", TestLib.class);
+        final TestLib lib = (TestLib)Native.synchronizedLibrary(base); 
+        final TestLib.VoidCallback cb = new TestLib.VoidCallback() {
+            public void callback() {
+                lockHeld[0] = Thread.holdsLock(NativeLibrary.getInstance("testlib"));
+            }
+        };
+        Thread t1 = new Thread() {
+            public void run() {
+                lib.callVoidCallback(cb);
+            }
+        };
+        t1.start();
+        t1.join();
+        assertTrue("NativeLibrary lock should be held during native call",
+                   lockHeld[0]);
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeTest.class);
     }

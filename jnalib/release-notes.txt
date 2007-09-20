@@ -13,6 +13,7 @@ Features
 * Allow pointer type-safety
 * Optional VM crash protection, via Native.setProtected(boolean)
 * Auto-convert WString[]
+* Provide library synchronization wrapper similar to Collections.synchronizedX
 
 Bug Fixes
 * Avoid attempts to free native library if it failed to load (wmeissner)

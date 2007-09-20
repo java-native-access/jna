@@ -35,7 +35,9 @@ import java.util.WeakHashMap;
  * <p>
  * This interface supports multiple, concurrent invocations of any library
  * methods on the Java side.  Check your library documentation for its
- * multithreading requirements on the native side.
+ * multithreading requirements on the native side.  If a library is not safe
+ * for multithreaded use, consider using {@link Native#synchronizedLibrary}
+ * to prevent multithreaded access to the native code.
  * <p>
  * <b>Optional fields</b><br>
  * Interface options will be automatically propagated to structures defined
@@ -88,12 +90,12 @@ public interface Library {
             }
         }
 
-        private NativeLibrary nativeLibrary;
-        private Class interfaceClass;
+        private final NativeLibrary nativeLibrary;
+        private final Class interfaceClass;
         // Library invocation options
-        private Map options;
+        private final Map options;
         private FunctionMapper functionMapper;
-        private Map functions = new WeakHashMap();        
+        private final Map functions = new WeakHashMap();        
         public Handler(String libname, Class interfaceClass, Map options) {
 
             if (libname == null || "".equals(libname.trim())) {
@@ -111,6 +113,10 @@ public interface Library {
             }
         }
 
+        public NativeLibrary getNativeLibrary() {
+            return nativeLibrary;
+        }
+        
         public String getLibraryName() {
             return nativeLibrary.getName();
         }
