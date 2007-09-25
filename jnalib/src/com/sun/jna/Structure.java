@@ -822,7 +822,7 @@ public abstract class Structure {
      * backing, the memory will be resized to fit the entire array.
      */
     public Structure[] toArray(int size) {
-        return toArray(new Structure[size]);
+        return toArray((Structure[])Array.newInstance(getClass(), size));
     }
 
     /** This structure is only equal to another based on the same native 
