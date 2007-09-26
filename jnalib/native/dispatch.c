@@ -174,7 +174,7 @@ static void
 dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr, 
          ffi_type *ffi_return, void *resP)
 {
-  int i, nargs, nwords;
+  int i, nargs;
   void *func;
   jvalue c_args[MAX_NARGS];
   char array_pt;
@@ -192,16 +192,17 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
   char msg[1024];
   
   nargs = (*env)->GetArrayLength(env, arr);
+
   if (nargs > MAX_NARGS) {
     sprintf(msg, "Too many arguments (max %d)", MAX_NARGS);
-    throwByName(env,"java/lang/IllegalArgumentException", msg);
+    throwByName(env,"java/lang/UnsupportedOperationException", msg);
     return;
   }
   
   // Get the function pointer
   func = getNativeAddress(env, self);
   
-  for (nwords = 0, i = 0; i < nargs; i++) {
+  for (i = 0; i < nargs; i++) {
     jobject arg = (*env)->GetObjectArrayElement(env, arr, i);
     
     if (arg == NULL) {
@@ -336,8 +337,9 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     PSTART();
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
     PEND();
-    if (preserve_last_error)
+    if (preserve_last_error) {
       update_last_error(env, GET_LAST_ERROR());
+    }
     break;
   }
   default:
