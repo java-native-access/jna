@@ -257,7 +257,7 @@
         <not><os family="mac"/></not>
       </and>
     </condition>
-    <junit printsummary="yes" fork="${test.fork}">
+    <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
       <!--<jvmarg value="-verbose:jni"/>-->
       <jvmarg value="-Djna.library.path=${build.native}"/>
       <classpath><path refid="test.runpath"/></classpath>
@@ -278,6 +278,7 @@
       <report todir="${reports.junit}"/>
     </junitreport>
     <echo>View test report in file://${reports.junit}/index.html</echo>
+    <fail if="testfailure">One or more tests failed</fail>
   </target>
 
   <target name="with.clover" description="Enable code coverage for tests">
