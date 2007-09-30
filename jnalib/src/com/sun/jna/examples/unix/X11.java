@@ -470,8 +470,8 @@ public interface X11 extends Library {
     int XQueryKeymap(Display display, byte[] keys_return);
     int XKeycodeToKeysym(Display display, byte keycode, int index);
     /** Returns an array of {@link XVisualInfo} which must be freed by {@link #XFree}.
-     * Use {@link XVisualInfo#toArray(Structure[]) 
-     * toArray(new XVisualInfo[nitems_return.getValue()]} to obtain the array. 
+     * Use {@link XVisualInfo#toArray(int) 
+     * toArray(nitems_return.getValue()} to obtain the array. 
      */
     XVisualInfo XGetVisualInfo(Display display, NativeLong vinfo_mask, 
                                XVisualInfo vinfo_template,

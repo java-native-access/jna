@@ -309,7 +309,7 @@ public class StructureTest extends TestCase {
     }
     public void testToArray() {
         TestStructure s = new TestStructure();
-        TestStructure[] array = (TestStructure[])s.toArray(new TestStructure[1]);
+        TestStructure[] array = (TestStructure[])s.toArray(1);
         assertEquals("Array should consist of a single element",
                      1, array.length);
         assertEquals("First element should be original", s, array[0]);

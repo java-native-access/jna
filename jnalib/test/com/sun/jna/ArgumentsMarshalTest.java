@@ -255,8 +255,7 @@ public class ArgumentsMarshalTest extends TestCase {
         TestLibrary.CheckFieldAlignment block = new TestLibrary.CheckFieldAlignment();
         block.useMemory(new Memory(block.size() * LENGTH));
         TestLibrary.CheckFieldAlignment[] array = 
-            new TestLibrary.CheckFieldAlignment[LENGTH];
-        block.toArray(array);
+            (TestLibrary.CheckFieldAlignment[])block.toArray(LENGTH);
         for (int i=0;i < array.length;i++) {
             array[i].int32Field = i;
         }
