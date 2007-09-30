@@ -21,9 +21,6 @@ public class NativeLibraryTest extends TestCase {
     public static interface TestLibrary extends Library {
         int callCount();
     }
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(NativeLibraryTest.class);
-    }
     public void testGCNativeLibrary() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         WeakReference ref = new WeakReference(lib);
@@ -110,5 +107,20 @@ public class NativeLibraryTest extends TestCase {
         }
         assertNull("Library not GC'd", ref.get());
     }
+    
+    public void testLoadPathVariations() {
+        if (Platform.isMac()) {
+            try {
+                NativeLibrary lib = NativeLibrary.getInstance("CoreServices");
+                assertNotNull("CoreServices not found", lib);
+            }
+            catch(UnsatisfiedLinkError e) {
+                fail("Should search /System/Library/Frameworks");
+            }
+        }
+    }
 
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(NativeLibraryTest.class);
+    }
 }

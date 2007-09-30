@@ -96,6 +96,13 @@ public class NativeLibrary {
                     handle = open(libraryPath);
                 }
             }
+            // Search framework libraries on OS X
+            else if (Platform.isMac() && !libraryName.endsWith(".dylib")) {
+                libraryPath = "/System/Library/Frameworks/" + libraryName
+                    + ".framework/" + libraryName;
+                handle = open(libraryPath);
+            }
+            
             if (handle == 0) {
                 throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "'");
             }
@@ -260,6 +267,7 @@ public class NativeLibrary {
                 return file.getAbsolutePath();
             }
         }
+        
         //
         // Default to returning the mapped library name and letting the system
         // search for it
@@ -339,7 +347,7 @@ public class NativeLibrary {
         
         librarySearchPath.addAll(initPaths("jna.library.path"));
         if (System.getProperty("jna.platform.library.path") == null
-                && !Platform.isWindows()) {
+            && !Platform.isWindows()) {
             // Add default path lookups for unix-like systems
             String platformPath = "";
             String sep = "";
