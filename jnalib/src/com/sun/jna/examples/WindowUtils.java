@@ -50,6 +50,7 @@ import javax.swing.SwingUtilities;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.examples.unix.X11;
 import com.sun.jna.examples.unix.X11.Display;
@@ -75,7 +76,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
- * Provides additional features on a Java {@link Window}.
+ * Provides additional features on a Java {@link Window}.  
  * <ul>
  * <li>Non-rectangular shape (bitmap mask, no antialiasing)
  * <li>Transparency (constant alpha applied to window contents or
@@ -277,7 +278,7 @@ public class WindowUtils {
          * with whatever is under the window using their alpha values.
          */
         public void setWindowTransparent(Window w, boolean transparent) {
-        // do nothing
+            // do nothing
         }
 
         protected void setLayersTransparent(Window w, boolean transparent) {
@@ -423,17 +424,6 @@ public class WindowUtils {
             HWND hwnd = new HWND();
             hwnd.setPointer(Native.getWindowPointer(w));
             return hwnd;
-            /*
-            try { 
-                WindowPeer peer = (WindowPeer)w.getPeer(); 
-                Method m = peer.getClass().getMethod("getHWnd", null); 
-                return new Pointer(((Long)m.invoke(peer, null)).longValue()); 
-                }
-            catch (NoSuchMethodException e) { 
-                // Method unavailable, fall back to native lookup 
-            } catch (Exception e) { }
-            return null;
-            */
         }
 
         /**
@@ -478,8 +468,7 @@ public class WindowUtils {
 
         public void setWindowAlpha(final Window w, final float alpha) {
             if (!isWindowAlphaSupported()) {
-                System.err.println("Window alpha not supported");
-                return;
+                throw new UnsupportedOperationException("Set sun.java2d.noddraw=true to enable transparent windows");
             }
             whenDisplayable(w, new Runnable() {
                 public void run() {
@@ -609,8 +598,7 @@ public class WindowUtils {
                 throw new IllegalArgumentException("Window must be a RootPaneContainer");
             }
             if (!isWindowAlphaSupported()) {
-                System.err.println("Window alpha not supported");
-                return;
+                throw new UnsupportedOperationException("Set sun.java2d.noddraw=true to enable transparent windows");
             }
             boolean isTransparent = w.getBackground() != null
                 && w.getBackground().getAlpha() == 0;
@@ -911,8 +899,8 @@ public class WindowUtils {
                 info = x11.XGetVisualInfo(dpy, mask, template, pcount);
                 if (info != null) {
                     List list = new ArrayList();
-                    XVisualInfo[] infos = (XVisualInfo[])
-                        info.toArray(new XVisualInfo[pcount.getValue()]);
+                    XVisualInfo[] infos = 
+                        (XVisualInfo[])info.toArray(pcount.getValue());
                     for (int i = 0; i < infos.length; i++) {
                         XRenderPictFormat format = 
                             X11.Xrender.INSTANCE.XRenderFindVisualFormat(dpy,
@@ -943,26 +931,15 @@ public class WindowUtils {
             if (id == X11.None)
                 return null;
             return new X11.Window(id);
-            /*
-            WindowPeer peer = (WindowPeer)w.getPeer(); 
-            try { 
-                Method m = peer.getClass().getMethod("getWindow", null); 
-                return (int)((Long)m.invoke(peer, null)).longValue(); 
-            }
-            catch(NoSuchMethodException e) { 
-                // Method unavailable, fall back to native lookup 
-                e.printStackTrace(); 
-            }
-            catch(Exception e) { 
-            } 
-            return 0;
-            */
         }
 
         private static final long OPAQUE = 0xFFFFFFFFL;
         private static final String OPACITY = "_NET_WM_WINDOW_OPACITY";
 
         public void setWindowAlpha(final Window w, final float alpha) {
+            if (!isWindowAlphaSupported()) {
+                throw new UnsupportedOperationException("This X11 display does not provide a 32-bit visual");
+            }
             Runnable action = new Runnable() {
                 public void run() {
                     X11 x11 = X11.INSTANCE;
@@ -1040,17 +1017,14 @@ public class WindowUtils {
         public void setWindowTransparent(final Window w,
                                          final boolean transparent) {
             if (!(w instanceof RootPaneContainer)) {
-                throw new IllegalArgumentException(
-                                                   "Window must be a RootPaneContainer");
+                throw new IllegalArgumentException("Window must be a RootPaneContainer");
             }
             if (!isWindowAlphaSupported()) {
-                System.err.println("Window alpha not supported");
-                return;
+                throw new UnsupportedOperationException("This X11 display does not provide a 32-bit visual");
             }
             if (!w.getGraphicsConfiguration()
                   .equals(getAlphaCompatibleGraphicsConfiguration())) {
-                throw new IllegalArgumentException(
-                                                   "Window GraphicsConfiguration does not support transparency");
+                throw new IllegalArgumentException("Window GraphicsConfiguration does not support transparency");
             }
             boolean isTransparent = w.getBackground() != null
                 && w.getBackground().getAlpha() == 0;
@@ -1144,7 +1118,9 @@ public class WindowUtils {
     /**
      * Set the overall window transparency. An alpha of 1.0 is fully
      * opaque, 0.0 fully transparent. The alpha level is applied equally
-     * to all window pixels.
+     * to all window pixels.<p>
+     * NOTE: Windows requires that <code>sun.java2d.noddraw=true</code>
+     * in order for alpha to work.
      */
     public static void setWindowAlpha(Window w, float alpha) {
         getInstance().setWindowAlpha(w, Math.max(0f, Math.min(alpha, 1f)));
