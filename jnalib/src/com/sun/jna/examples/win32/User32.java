@@ -12,7 +12,9 @@
  */
 package com.sun.jna.examples.win32;
 
+import com.sun.jna.FromNativeContext;
 import com.sun.jna.Native;
+import com.sun.jna.NativeMapped;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.examples.win32.GDI32.RECT;
@@ -135,6 +137,58 @@ public interface User32 extends W32API {
     int WS_EX_TRANSPARENT = 32;
     int GetWindowLong(HWND hWnd, int nIndex);
     int SetWindowLong(HWND hWnd, int nIndex, int dwNewLong);
+    // Do not use this version on win64
+    Pointer SetWindowLong(HWND hWnd, int nIndex, Pointer dwNewLong);
+    public static class LONG_PTR extends Number implements NativeMapped {
+        public static final int SIZE = Pointer.SIZE;
+        private final Number value;
+        public LONG_PTR() { 
+            this(0);
+        }
+        public LONG_PTR(long value) { 
+            if (SIZE == 4) {
+                if (value != (int)value) {
+                    throw new IllegalArgumentException("Value exceeds native capacity");
+                }
+                this.value = new Integer((int)value);
+            }
+            else {
+                this.value = new Long(value);
+            }
+        }
+        public Class nativeType() {
+            return SIZE == 4 ? Integer.class : Long.class;
+        }
+        public Object toNative() {
+            return value;
+        }
+        public Object fromNative(Object o, FromNativeContext context) {
+            return new LONG_PTR(((Number)o).longValue());
+        }
+        public int intValue() {
+            return value.intValue();
+        }
+        public long longValue() {
+            return value.longValue();
+        }
+        public float floatValue() {
+            return value.floatValue();
+        }
+        public double doubleValue() {
+            return value.doubleValue();
+        }
+        public boolean equals(Object rhs) {
+            return rhs instanceof LONG_PTR && value.equals(((LONG_PTR) rhs).value);
+        }
+        public String toString() {
+            return value.toString();
+        }
+        public int hashCode() {
+            return value.hashCode();
+        }
+    }
+    LONG_PTR SetWindowLongPtr(HWND hWnd, int nIndex, LONG_PTR dwNewLongPtr);
+    Pointer SetWindowLongPtr(HWND hWnd, int nIndex, Pointer dwNewLongPtr);
 
     int LWA_COLORKEY = 1;
     int LWA_ALPHA = 2;
