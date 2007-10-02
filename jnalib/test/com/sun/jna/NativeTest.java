@@ -22,7 +22,17 @@ public class NativeTest extends TestCase {
         // Keep stuff within the extended ASCII range so we work with more
         // limited native encodings
         String unicode = "Un \u00e9l\u00e9ment gr\u00e2ce \u00e0 l'index";
-        String unicodez = "Un \u00e9l\u00e9ment gr\u00e2ce \u00e0 l'index\0more stuff";
+        
+        if (!unicode.equals(new String(unicode.getBytes()))) {
+            // If the extended characters aren't encodable in the default 
+            // encoding, punt and use straight ASCII
+            unicode = "";
+            for (char ch=1;ch < 128;ch++) {
+                unicode += ch;
+            }
+        }
+        String unicodez = unicode + "\0more stuff";
+        
         byte[] defaultEncoded = Native.getBytes(unicode);
         byte[] expected = unicode.getBytes();
         for (int i=0;i < Math.min(defaultEncoded.length, expected.length);i++) {
