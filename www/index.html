@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c/c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c code from java,avoid jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-09-30">
+<meta name="date" content="2007-10-03">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -14,7 +14,8 @@
 <p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code (overhead would otherwise increase with each supported platform). </p>
 The <a href="javadoc/overview-summary.html">JavaDoc is available online</a>,
 which includes an overview of specific usage.<p>
-<b>NOTE: Sun is <em>not</em> sponsoring this project, even though the package name (<code>com.sun.jna</code>) might imply otherwise.</b>
+<b>NOTE: Sun is <em>not</em> sponsoring this project, even though the package name (<code>com.sun.jna</code>) might imply otherwise.</b><p>
+This library is provided under the <a href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html">LGPL</a>, version 2.1 or later.
 
  <h3>Features</h3>
 <ul>
@@ -276,9 +277,10 @@ the JNA library (and are pretty nifty utilities in and of themselves).
  <li><a href="http://sellmic.com/blog/2007/05/22/javafx-clock-update-now-with-transparency">A JavaFX Clock</a> (Augusto Sellhorn)
  <li><a href="http://jruby.codehaus.org">JRuby</a> (Charles Nutter)
  <li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib">Miscellaneous contributed mappings and utilities (including Windows NT Service, Registry, and User Account libraries).</a>
- <li><a href="http://jetbrains.com">IntelliJ</a> (JetBrains)
+ <li><a href="http://jetbrains.com">IntelliJ IDEA</a> (JetBrains)
+ <li><a href="http://omegat.sf.net">OmegaT Computer-Aided Translation</a>, which makes use of the <a href="http://hunspell.sf.net">hunspell spell checker</a>.
  </ul>
- Post to users AT jna DOT dev DOT java DOT net to include your project in this list, or if you'd likely to contribute a library mapping you've written.
+ Post to users AT jna DOT dev DOT java DOT net to include your project in this list, or if you'd like to contribute a library mapping you've written.
 
  <h3>Development Tasks</h3>
  <p>The library works fairly well now, but there are a number of tasks with which we'd appreciate help:</p>
