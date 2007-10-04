@@ -44,6 +44,7 @@
     <echo>Build ${version}</echo>
     <property name="build" location="build"/>
     <property name="classes" location="${build}/classes"/>
+    <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
     <property name="reports" value="${build}/reports"/>
 
@@ -223,6 +224,11 @@
     </exec>
     <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
     <copy todir="${classes}/com/sun/jna/${os.prefix}">
+      <fileset dir="${build.native}" 
+               includes="jnidispatch.dll,libjnidispatch.*"/>
+    </copy>
+    <copy todir="${eclipse.classes}/com/sun/jna/${os.prefix}"
+          failonerror="false">
       <fileset dir="${build.native}" 
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
