@@ -60,4 +60,8 @@ public class KeyboardUtilsTest extends TestCase {
             assertFalse("Key should not be pressed: " + nonkeystr[i], KeyboardUtils.isPressed(nonkeys[i]));
         }
     }
+    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(KeyboardUtilsTest.class);
+    }
 }

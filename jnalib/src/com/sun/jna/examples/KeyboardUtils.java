@@ -44,11 +44,8 @@ public class KeyboardUtils {
             INSTANCE = new MacKeyboardUtils();
             throw new UnsupportedOperationException("No support (yet) for " + os);
         }
-        else if (os.startsWith("Linux") || os.startsWith("SunOS")) {
-            INSTANCE = new X11KeyboardUtils();
-        }
         else {
-            throw new UnsupportedOperationException("No support for " + os);
+            INSTANCE = new X11KeyboardUtils();
         }
     }
     
@@ -144,13 +141,18 @@ public class KeyboardUtils {
         public boolean isPressed(int keycode, int location) {
             X11 lib = X11.INSTANCE;
             Display dpy = lib.XOpenDisplay(null);
+            if (dpy == null) {
+                throw new Error("Can't open X Display");
+            }
             try {
                 byte[] keys = new byte[32];
-                int result = lib.XQueryKeymap(dpy, keys); 
-                if (result != 0) {
+                // NOTE: XQueryKeymap returns "1" on success instead of "0"
+                int result = lib.XQueryKeymap(dpy, keys);
+                if (result != 1) {
                     byte[] buf = new byte[1024];
                     lib.XGetErrorText(dpy, result, buf, buf.length);
-                    throw new RuntimeException("Can't query keyboard: " + Native.toString(buf));
+                    throw new Error("Can't query keyboard: " + Native.toString(buf)
+                                    + " (" + result + ")");
                 }
                 else {
                     int keysym = toKeySym(keycode, location);
