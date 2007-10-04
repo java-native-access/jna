@@ -146,24 +146,16 @@ public class KeyboardUtils {
             }
             try {
                 byte[] keys = new byte[32];
-                // NOTE: XQueryKeymap returns "1" on success instead of "0"
-                int result = lib.XQueryKeymap(dpy, keys);
-                if (result != 1) {
-                    byte[] buf = new byte[1024];
-                    lib.XGetErrorText(dpy, result, buf, buf.length);
-                    throw new Error("Can't query keyboard: " + Native.toString(buf)
-                                    + " (" + result + ")");
-                }
-                else {
-                    int keysym = toKeySym(keycode, location);
-                    for (int code=5;code < 256;code++) {
-                        int idx = code / 8;
-                        int shift = code % 8;
-                        if ((keys[idx] & (1 << shift)) != 0) {
-                            int sym = lib.XKeycodeToKeysym(dpy, (byte)code, 0);
-                            if (sym == keysym)
-                                return true;
-                        }
+                // Ignore the return value
+                lib.XQueryKeymap(dpy, keys);
+                int keysym = toKeySym(keycode, location);
+                for (int code=5;code < 256;code++) {
+                    int idx = code / 8;
+                    int shift = code % 8;
+                    if ((keys[idx] & (1 << shift)) != 0) {
+                        int sym = lib.XKeycodeToKeysym(dpy, (byte)code, 0);
+                        if (sym == keysym)
+                            return true;
                     }
                 }
             }
