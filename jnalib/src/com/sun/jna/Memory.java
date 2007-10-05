@@ -26,10 +26,8 @@ import java.nio.ByteBuffer;
  *		free(buf);
  * </pre>
  *
- * <p><b>Remember to <code>free</code> any <code>malloc</code> space
- * explicitly</b>.  While the <code>finalize</code> method will free
- * allocated memory, you should explicitly free resources when they are
- * no longer in use.
+ * <p>The {@link #finalize} method will free allocated memory when
+ * this object is no longer referenced.
  *
  * @author Sheng Liang, originator
  * @author Todd Fast, suitability modifications
@@ -47,6 +45,10 @@ public class Memory extends Pointer {
         }
         /** No need to free memory. */
         protected void finalize() { } 
+        /** Pass bounds check to parent. */
+        protected void boundsCheck(int off, int sz) {
+            Memory.this.boundsCheck((int)(this.peer - Memory.this.peer) + off, sz);
+        }
     }
     
     /**
@@ -69,7 +71,7 @@ public class Memory extends Pointer {
      * @throws IndexOutOfBoundsException if the requested memory is outside
      * the allocated bounds. 
      */
-    Pointer share(int offset, int sz) {
+    public Pointer share(int offset, int sz) {
         boundsCheck(offset, sz);
         return new SharedMemory(offset);
     }
@@ -101,7 +103,7 @@ public class Memory extends Pointer {
      * malloc'ed space. 
      *
      */
-    private void boundsCheck(int off, int sz) {
+    protected void boundsCheck(int off, int sz) {
         if (off < 0) {
             throw new IndexOutOfBoundsException("Invalid offset: " + off);
         }

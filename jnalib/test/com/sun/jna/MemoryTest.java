@@ -34,4 +34,23 @@ public class MemoryTest extends TestCase {
         }
         assertNull("Memory not GC'd", ref.get());
     }
+
+    public void testSharedMemoryBounds() {
+        Memory base = new Memory(16);
+        Pointer shared = base.share(4, 4);
+        shared.getInt(-4);
+        try {
+            shared.getInt(-8);
+            fail("Bounds check should fail");
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        }
+        shared.getInt(8);
+        try {
+            shared.getInt(12);
+            fail("Bounds check should fail");
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        }
+    }
 }
