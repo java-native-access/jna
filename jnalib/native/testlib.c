@@ -233,15 +233,20 @@ returnWStringArgument(wchar_t *arg) {
 }
 
 EXPORT char*
-returnFirstStringArrayArgument(char* args[]) {
+returnStringArrayElement(char* args[], int which) {
   nonleaf();
-  return args[0];
+  return args[which];
 }
 
 EXPORT wchar_t*
-returnFirstWideStringArrayArgument(wchar_t* args[]) {
+returnWideStringArrayElement(wchar_t* args[], int which) {
   nonleaf();
-  return args[0];
+  return args[which];
+}
+
+EXPORT void*
+returnPointerArrayElement(void* args[], int which) {
+  return args[which];
 }
 
 EXPORT int

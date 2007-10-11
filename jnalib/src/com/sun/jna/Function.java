@@ -254,6 +254,9 @@ public class Function extends Pointer {
                     // were modified
                     ((StringArray)args[i]).read();
                 }
+                else if (args[i] instanceof PointerArray) {
+                    ((PointerArray)args[i]).read();
+                }
                 else if (Structure[].class.isAssignableFrom(arg.getClass())) {
                     Structure[] ss = (Structure[])arg;
                     for (int si=0;si < ss.length;si++) {
@@ -300,7 +303,8 @@ public class Function extends Pointer {
             result = invokeString(callingConvention, args, false);
         }
         else if (returnType==WString.class) {
-            result = new WString(invokeString(callingConvention, args, true));
+            String s = invokeString(callingConvention, args, true);
+            result = s != null ? new WString(s) : null;
         }
         else if (Pointer.class.isAssignableFrom(returnType)) {
             result = invokePointer(callingConvention, args);
@@ -395,6 +399,9 @@ public class Function extends Pointer {
         }
         else if (WString[].class == argClass) {
             return new StringArray((WString[])arg);
+        }
+        else if (Pointer[].class == argClass) {
+            return new PointerArray((Pointer[])arg);
         }
         else if (Structure[].class.isAssignableFrom(argClass)) {
             // Initialize uninitialized arrays of Structure to point
@@ -660,5 +667,22 @@ public class Function extends Pointer {
         catch (InvocationTargetException e) {
         }
         return false;
+    }
+
+    private static class PointerArray extends Memory {
+        private Pointer[] original;
+        public PointerArray(Pointer[] arg) {
+            super(Pointer.SIZE * (arg.length+1));
+            this.original = arg;
+            for (int i=0;i < arg.length;i++) {
+                setPointer(i*Pointer.SIZE, arg[i]);
+            }
+            setPointer(Pointer.SIZE*arg.length, null);
+        }
+        public void read() {
+            for (int i=0;i < original.length;i++) {
+                original[i] = getPointer(i * Pointer.SIZE);
+            }
+        }
     }
 }

@@ -25,7 +25,7 @@ Bug Fixes
   interfaces
 * Update X11 library for 64-bit use (wmeissner)
 * Properly map arrays of char*/wchar_t* under w32
-* Allow Pointer[] as a Structure field
+* Allow Pointer[] as a Structure field and Function argument
 * Fix some misleading Structure error messages
 * Properly preserve/return GetLastError/errno after native calls
 

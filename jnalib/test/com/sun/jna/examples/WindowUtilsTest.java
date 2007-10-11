@@ -18,6 +18,7 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -229,27 +230,17 @@ public class WindowUtilsTest extends TestCase {
             }});
             Thread.sleep(10);
             if (System.currentTimeMillis() - start > 5000)
-                fail("Timed out waiting for window to show");
-            sample = robot.getPixelColor(front.getX(), front.getY());
+                fail("Timed out waiting for shaped window to appear, "
+                     + "expected foreground color (sample="
+                     + sample + " vs expected=" + frontColor + ")");
+            sample = robot.getPixelColor(front.getX()+W/8, front.getY()+H/8);
         }
-        Point where = new Point(front.getX() + W/4, 
-                                front.getY() + H/4);
-        sample = robot.getPixelColor(where.x, where.y);
-        assertEquals("Background window should show through",
-                     back.getBackground(), sample);
-        sample = robot.getPixelColor(where.x + W/2 - 1, where.y);
-        assertEquals("Background window should show through",
-                     back.getBackground(), sample);
-        sample = robot.getPixelColor(where.x + W/2 - 1, where.y + H/2 - 1);
-        assertEquals("Background window should show through",
-                     back.getBackground(), sample);
-        sample = robot.getPixelColor(where.x, where.y + H/2 - 1);
-        assertEquals("Background window should show through",
-                     back.getBackground(), sample);
 
-        sample = robot.getPixelColor(where.x-1, where.y-2);
-        assertEquals("Foreground window should show through",
-                     frontColor, sample);
+        Point where = new Point(front.getX() + W/2, 
+                                front.getY() + H/2);
+        sample = robot.getPixelColor(where.x, where.y);
+        assertEquals("Background window should show through (center)",
+                     back.getBackground(), sample);
     }
     
     public static void main(String[] args) {

@@ -43,14 +43,14 @@ public class MemoryTest extends TestCase {
             shared.getInt(-8);
             fail("Bounds check should fail");
         }
-        catch(ArrayIndexOutOfBoundsException e) {
+        catch(IndexOutOfBoundsException e) {
         }
         shared.getInt(8);
         try {
             shared.getInt(12);
             fail("Bounds check should fail");
         }
-        catch(ArrayIndexOutOfBoundsException e) {
+        catch(IndexOutOfBoundsException e) {
         }
     }
 }

@@ -49,8 +49,9 @@ public class ArgumentsMarshalTest extends TestCase {
         String returnStringArgument(String s);
         WString returnWStringArgument(WString s);
         Pointer returnPointerArgument(Pointer p);
-        String returnFirstStringArrayArgument(String[] args);
-        WString returnFirstWideStringArrayArgument(WString[] args);
+        String returnStringArrayElement(String[] args, int which);
+        WString returnWideStringArrayElement(WString[] args, int which);
+        Pointer returnPointerArrayElement(Pointer[] args, int which);
         int returnRotatedArgumentCount(String[] args);
 
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
@@ -419,14 +420,26 @@ public class ArgumentsMarshalTest extends TestCase {
     
     public void testStringArrayArgument() {
         String[] args = { "one", "two", "three" };
-        assertEquals("Wrong argument returned", args[0], lib.returnFirstStringArrayArgument(args));
+        assertEquals("Wrong value returned", args[0], lib.returnStringArrayElement(args, 0));
+        assertNull("Native String array should be null terminated", 
+                   lib.returnStringArrayElement(args, args.length));
     }
     
     public void testWideStringArrayArgument() {
         WString[] args = { new WString("one"), new WString("two"), new WString("three") };
-        assertEquals("Wrong argument returned", args[0], lib.returnFirstWideStringArrayArgument(args));
+        assertEquals("Wrong value returned", args[0], lib.returnWideStringArrayElement(args, 0));
+        assertNull("Native WString array should be null terminated",
+                   lib.returnWideStringArrayElement(args, args.length));
     }
     
+    public void testPointerArrayArgument() {
+        Pointer[] args = { new NativeString(getName()).getPointer(),
+                           new NativeString(getName()+"2").getPointer() };
+        assertEquals("Wrong value returned", args[0], lib.returnPointerArrayElement(args, 0));
+        assertEquals("Wrong value returned", args[1], lib.returnPointerArrayElement(args, 1));
+        assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 2));
+    }
+
     public void testModifiedCharArrayArgument() {
         String[] args = { "one", "two", "three" };
         assertEquals("Wrong native array count", args.length, lib.returnRotatedArgumentCount(args));
