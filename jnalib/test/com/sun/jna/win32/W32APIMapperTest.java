@@ -31,7 +31,7 @@ public class W32APIMapperTest extends TestCase {
         }
         String returnWStringArgument(String arg);
         boolean returnInt32Argument(boolean arg);
-        String returnFirstWideStringArrayArgument(String[] args);
+        String returnWideStringArrayElement(String[] args, int which);
     }
     public interface ASCIILibrary extends Library {
         public static class TestStructure extends Structure {
@@ -79,7 +79,7 @@ public class W32APIMapperTest extends TestCase {
         String[] args = { "one", "two" };
         assertEquals("String arrays should be converted to wchar_t*[] and back",
                      args[0], 
-                     unicode.returnFirstWideStringArrayArgument(args));
+                     unicode.returnWideStringArrayElement(args, 0));
     }
     
     public void testASCIIMapping() {
