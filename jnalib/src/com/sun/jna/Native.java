@@ -368,7 +368,9 @@ public final class Native {
             
             FileOutputStream fos = null;
             try {
-                lib = File.createTempFile("jna", "");
+                // Suffix is required on windows, or library fails to load
+                // Let Java pick the suffix
+                lib = File.createTempFile("jna", null);
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
                 int count;
