@@ -18,10 +18,9 @@ package com.sun.jna;
  *
  * @author wmeissner@gmail.com
  */
-public class NativeLong extends Number implements NativeMapped {
+public class NativeLong extends IntegerType {
     /** Size of a native long, in bytes. */
     public static final int SIZE = Native.LONG_SIZE;
-    private final Number value;
 
     /** Create a zero-valued NativeLong. */
     public NativeLong() {
@@ -30,51 +29,6 @@ public class NativeLong extends Number implements NativeMapped {
     
     /** Create a NativeLong with the given value. */
     public NativeLong(long value) {
-        if (SIZE == 4) {
-            long masked = value & 0xFFFFFFFF80000000L;
-            if (masked != 0 && masked != 0xFFFFFFFF80000000L) {
-                throw new IllegalArgumentException("Argument exceeds native long capacity");
-            }
-            this.value = new Integer((int) (value & 0xFFFFFFFF));
-        } else {
-            this.value = new Long(value);
-        }
-    }
-    
-    public Object toNative() {
-        return value;
-    }
-    
-    public Object fromNative(Object nativeValue, FromNativeContext context) {
-        return new NativeLong(((Number)nativeValue).longValue());
-    }
-    
-    public Class nativeType() {
-        return SIZE == 4 ? Integer.class : Long.class;
-    }
-    
-    public int intValue() {
-        return value.intValue();
-    }
-    
-    public long longValue() {
-        return value.longValue();
-    }
-    
-    public float floatValue() {
-        return value.floatValue();
-    }
-    
-    public double doubleValue() {
-        return value.doubleValue();
-    }
-    public boolean equals(Object rhs) {
-        return rhs instanceof NativeLong && value.equals(((NativeLong) rhs).value);
-    }
-    public String toString() {
-        return value.toString();
-    }
-    public int hashCode() {
-        return value.hashCode();
+        super(SIZE, value);
     }
 }

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.jna.FromNativeContext;
+import com.sun.jna.IntegerType;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.win32.StdCallLibrary;
@@ -55,10 +56,28 @@ public interface W32API extends StdCallLibrary, W32Errors {
     public static class HRGN extends HANDLE { }
     public static class HWND extends HANDLE { }
     public static class HINSTANCE extends HANDLE { }
+    public static class HMODULE extends HINSTANCE { }
     
     HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.PM1) {
         public void setPointer(Pointer p) { 
             throw new UnsupportedOperationException("Immutable reference");
         }
     };
+    
+    public static class LONG_PTR extends IntegerType { 
+    	public LONG_PTR() { this(0); }
+    	public LONG_PTR(long value) { super(Pointer.SIZE, value); }
+    }
+    public static class LPARAM extends LONG_PTR { 
+    	public LPARAM() { this(0); }
+    	public LPARAM(long value) { super(value); }
+    } 
+    public static class LRESULT extends LONG_PTR { 
+    	public LRESULT() { this(0); }
+    	public LRESULT(long value) { super(value); }
+    } 
+    public static class ULONG_PTR extends IntegerType {
+    	public ULONG_PTR() { super(Pointer.SIZE); }
+    	public ULONG_PTR(long value) { super(Pointer.SIZE, value); }
+    }
 }

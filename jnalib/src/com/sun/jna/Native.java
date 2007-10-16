@@ -38,7 +38,7 @@ import java.util.WeakHashMap;
  * <p>
  * {@link #getTypeMapper} and {@link #getStructureAlignment} are provided
  * to avoid having to explicitly pass these parameters to {@link Structure}s, 
- * which would require every {@link Structure} which requries custom mapping
+ * which would require every {@link Structure} which requires custom mapping
  * or alignment to define a constructor and pass parameters to the superclass.
  * To avoid lots of boilerplate, the base {@link Structure} constructor
  * figures out these properties based on the enclosing interface.
@@ -368,7 +368,7 @@ public final class Native {
             
             FileOutputStream fos = null;
             try {
-                lib = File.createTempFile("jna", null);
+                lib = File.createTempFile("jna", "");
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
                 int count;
