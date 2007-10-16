@@ -17,7 +17,17 @@
 #include <string.h>
 #include <jni.h>
 
-#if !defined(_WIN32)
+#if defined(_WIN32)
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+#  undef SLIST_ENTRY
+#  define MMAP_CLOSURE
+#  define roundup(x,y) ((((x) + ((y) - 1)) / (y)) * (y))
+#  define XM_ALLOC(SIZE) VirtualAlloc(0, SIZE, MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE)
+#  define XM_FREE(P,SIZE) VirtualFree(P,SIZE,MEM_RELEASE)
+#  define PAGE_SIZE w32_page_size()
+typedef void* caddr_t;
+#else
 #  include <sys/types.h>
 #  include <sys/param.h>
 #  if defined(__linux__)
@@ -27,9 +37,9 @@
 #  ifdef sun
 #    include <sys/sysmacros.h>
 #  endif
-#  include "queue.h"
-#  include <pthread.h>
 #  define MMAP_CLOSURE
+#  define XM_ALLOC(SIZE) mmap(0, SIZE, PROT_EXEC|PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,-1,0)
+#  define XM_FREE(P,SIZE) munmap(P,SIZE)
 #endif
 #include "dispatch.h"
 
@@ -44,7 +54,7 @@ static ffi_closure* alloc_closure(JNIEnv *env);
 static void free_closure(JNIEnv* env, ffi_closure *closure);
 
 #ifdef MMAP_CLOSURE
-static pthread_mutex_t closure_lock;
+#include "queue.h"
 static LIST_HEAD(closure_list, closure) closure_list;
 #endif
 
@@ -205,17 +215,16 @@ jnidispatch_callback_init(JNIEnv* env) {
   if (!LOAD_CREF(env, Object, "java/lang/Object")) return JNI_FALSE;
 
 #ifdef MMAP_CLOSURE
-  /*
-   * Create the lock for the mmap arena
-   */
-  pthread_mutex_init(&closure_lock, NULL);
   LIST_INIT(&closure_list);
 #endif
 
   return JNI_TRUE;
 }
   
-// Use mmap for closure memory, if available
+// Use mmap for closure memory, if available.
+// A page of memory is allocated and divided into closure-sized
+// chunks managed in a queue.  The queue is protected by
+// Java synchronization locks to ensure single-threaded access.
 #ifdef MMAP_CLOSURE
 # ifndef PAGE_SIZE
 #  if defined(PAGESIZE)
@@ -227,12 +236,24 @@ jnidispatch_callback_init(JNIEnv* env) {
 typedef struct closure {
   LIST_ENTRY(closure) list;
 } closure;
+#endif
+
+#ifdef _WIN32
+static int w32_page_size() {
+  static int page_size = 0;
+  if (page_size == 0) {
+    SYSTEM_INFO info;
+    GetSystemInfo(&info);
+    page_size = info.dwPageSize;
+  }
+  return page_size;
+}
+#endif
 
 static ffi_closure*
-alloc_closure(JNIEnv* env)
-{
+alloc_closure(JNIEnv* env) {
+#ifdef MMAP_CLOSURE
   closure* closure = NULL;
-  pthread_mutex_lock(&closure_lock);
   
   if (closure_list.lh_first == NULL) {
     /*
@@ -240,10 +261,8 @@ alloc_closure(JNIEnv* env)
      */
     int clsize = roundup(sizeof(ffi_closure), sizeof(void *));
     int i;
-    caddr_t ptr = mmap(0, PAGE_SIZE, PROT_EXEC | PROT_READ | PROT_WRITE,
-                       MAP_ANON | MAP_PRIVATE, -1, 0);
+    caddr_t ptr = XM_ALLOC(PAGE_SIZE);
     if (ptr == NULL) {
-      pthread_mutex_unlock(&closure_lock);
       return NULL;
     }
     for (i = 0; i <= (int)(PAGE_SIZE - clsize); i += clsize) {
@@ -254,30 +273,21 @@ alloc_closure(JNIEnv* env)
   closure = closure_list.lh_first;
   LIST_REMOVE(closure, list);
   
-  pthread_mutex_unlock(&closure_lock);
   memset(closure, 0, sizeof(*closure));
   return (ffi_closure *)closure;
+#else
+  return (ffi_closure *)calloc(1, sizeof(ffi_closure));
+#endif
 }
   
 static void
-free_closure(JNIEnv* env, ffi_closure *ffi_closure) 
-{
-  pthread_mutex_lock(&closure_lock);    
+free_closure(JNIEnv* env, ffi_closure *ffi_closure) {
+#ifdef MMAP_CLOSURE
   LIST_INSERT_HEAD(&closure_list, (closure*)ffi_closure, list);
-  pthread_mutex_unlock(&closure_lock);
-}
 #else
-static ffi_closure*
-alloc_closure(JNIEnv* env)
-{
-  return (ffi_closure *)calloc(1, sizeof(ffi_closure));
-}
-static void
-free_closure(JNIEnv* env, ffi_closure *closure) 
-{
   free(closure);
-}
 #endif
+}
 
 #ifdef __cplusplus
 }

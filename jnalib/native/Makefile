@@ -41,9 +41,6 @@ JNISFX=$(LIBSFX)
 CC=gcc
 LD=gcc
 # Default to Sun recommendations for JNI compilation
-# Optimization causes errors in FP callback return values on linux/x86,
-# crashes osx/x86, and other errors on ppc
-# Turning it off eliminates those failures
 #COPT=-O2 -fomit-frame-pointer
 COPT=-fno-omit-frame-pointer -fno-strict-aliasing 
 CASM=-S
@@ -63,7 +60,7 @@ STRIP=strip -x
 # end defaults
 
 ifeq ($(OS),win32)
-# Uncomment this line to use MSVC (doesn't work with libffi)
+# Uncomment this line to use MSVC (doesn't yet work with libffi)
 #CC=cl
 ARCH=i386
 

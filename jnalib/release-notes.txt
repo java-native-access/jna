@@ -28,6 +28,8 @@ Bug Fixes
 * Allow Pointer[] as a Structure field and Function argument
 * Fix some misleading Structure error messages
 * Properly preserve/return GetLastError/errno after native calls
+* Allocate executable memory on w32 to avoid errors with hardware-enforced
+  data execution protection (DEP)
 
 Release 2.5
 Features

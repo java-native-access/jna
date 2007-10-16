@@ -400,11 +400,11 @@ class CallbackReference extends WeakReference {
     
     /** Create a native trampoline to delegate execution to the Java callback. 
      */
-    private static native Pointer createNativeCallback(CallbackProxy callback, 
-                                                       Method method, 
-                                                       Class[] parameterTypes,
-                                                       Class returnType,
-                                                       int callingConvention);
+    private static synchronized native Pointer createNativeCallback(CallbackProxy callback, 
+                                                                    Method method, 
+                                                                    Class[] parameterTypes,
+                                                                    Class returnType,
+                                                                    int callingConvention);
     /** Free the given callback trampoline. */
-    private static native void freeNativeCallback(long ptr);
+    private static synchronized native void freeNativeCallback(long ptr);
 }
