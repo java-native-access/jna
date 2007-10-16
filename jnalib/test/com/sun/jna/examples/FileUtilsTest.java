@@ -19,6 +19,9 @@ public class FileUtilsTest extends TestCase {
     
     public void testMoveToTrash() throws Exception {
         FileUtils utils = FileUtils.getInstance();
+        if (!utils.hasTrash()) 
+            return;
+
         File home = new File(System.getProperty("user.home"));
         File file = File.createTempFile(getName(), ".tmp", home);
         try {

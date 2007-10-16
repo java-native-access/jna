@@ -19,6 +19,10 @@ import com.sun.jna.examples.win32.Shell32.SHFILEOPSTRUCT;
 /** Miscellaneous file utils not provided for by Java. */
 public abstract class FileUtils {
 
+    public boolean hasTrash() {
+        return false;
+    }
+
     /** Move the given file to the system trash, if one is available.
         Returns whether the operation was successful.
     */
@@ -46,6 +50,9 @@ public abstract class FileUtils {
     }
     
     private static class W32FileUtils extends FileUtils {
+
+        public boolean hasTrash() { return true; }
+
         public boolean moveToTrash(File[] files) {
             Shell32 shell = Shell32.INSTANCE;
             SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
@@ -61,6 +68,9 @@ public abstract class FileUtils {
     }
 
     private static class MacFileUtils extends FileUtils {
+
+        public boolean hasTrash() { return true; }
+
         public boolean moveToTrash(File[] files) {
             // TODO: use native API for moving to trash (if any)
             File home = new File(System.getProperty("user.home"));
@@ -81,10 +91,8 @@ public abstract class FileUtils {
     }
     
     private static class DefaultFileUtils extends FileUtils {
-        /** The default implementation attempts to move the file to 
-         * the desktop "Trash" folder.
-         */
-        public boolean moveToTrash(File[] files) {
+
+        private File getTrashDirectory() {
             // very simple implementation.  should take care of renaming when
             // a file already exists, or any other platform-specific behavior
             File home = new File(System.getProperty("user.home"));
@@ -101,6 +109,18 @@ public abstract class FileUtils {
                     }
                 }
             }
+            return trash;
+        }
+
+        public boolean hasTrash() {
+            return getTrashDirectory().exists();
+        }
+
+        /** The default implementation attempts to move the file to 
+         * the desktop "Trash" folder.
+         */
+        public boolean moveToTrash(File[] files) {
+            File trash = getTrashDirectory();
             if (trash.exists()) {
                 boolean success = true;
                 for (int i=0;i < files.length;i++) {
