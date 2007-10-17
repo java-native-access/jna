@@ -41,7 +41,18 @@ import java.util.WeakHashMap;
  * which would require every {@link Structure} which requires custom mapping
  * or alignment to define a constructor and pass parameters to the superclass.
  * To avoid lots of boilerplate, the base {@link Structure} constructor
- * figures out these properties based on the enclosing interface.
+ * figures out these properties based on the enclosing interface.<p>
+ * <a name=library_loading></a>
+ * <h2>Library Loading</h2>
+ * When JNA classes are loaded, the native shared library (jnidispatch) is
+ * loaded as well.  An attempt is made to load it from the system library path
+ * using {@link System#loadLibrary}.  If not found, the appropriate library
+ * will be extracted from <code>jna.jar</code> into a temporary directory and
+ * loaded from there.  If your system has additional security constraints
+ * regarding execution or load of files, you should probably install the
+ * native library in an accessible location and configure your system
+ * accordingly, rather than relying on JNA to extract the library from its own
+ * jar file.
  * 
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
@@ -61,9 +72,11 @@ public final class Native {
     public static final int WCHAR_SIZE;
 
     static {
-        if (!loadNativeLibrary()) {
-            // Let the system try
+        try {
             System.loadLibrary("jnidispatch");
+        }
+        catch(UnsatisfiedLinkError e) {
+            loadNativeLibrary();
         }
         POINTER_SIZE = pointerSize();
         LONG_SIZE = longSize();
@@ -341,14 +354,13 @@ public final class Native {
         return "/com/sun/jna/" + osPrefix;
     }
 
-    private static boolean loadNativeLibrary() {
+    private static void loadNativeLibrary() {
         String libname = System.mapLibraryName("jnidispatch");
         String resourceName = getNativeLibraryResourcePath() + "/" + libname;
         URL url = Native.class.getResource(resourceName);
         if (url == null) {
-            System.err.println("Warning: jnidispatch (" + resourceName 
-                               + ") not found in resource path");
-            return false;
+            throw new UnsatisfiedLinkError("jnidispatch (" + resourceName 
+                                           + ") not found in resource path");
         }
     
         File lib = null;
@@ -399,7 +411,6 @@ public final class Native {
             catch(UnsatisfiedLinkError e) { e.printStackTrace(); }
         }
         System.load(lib.getAbsolutePath());
-        return true;
     }
 
     /**
