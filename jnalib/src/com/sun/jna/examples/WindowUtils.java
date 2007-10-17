@@ -102,6 +102,12 @@ import com.sun.jna.ptr.PointerByReference;
  * addition, windows must be both displayable <em>and</em> visible
  * before the corresponding native Drawable may be obtained; in later
  * Java versions, the window need only be displayable.
+ * <p>
+ * NOTE: If you use {@link #setWindowMask(Shape)} and override {@link
+ * Window#paint(Graphics)} on OS X, you'll need to explicitly set the clip
+ * mask on the <code>Graphics</code> object with the window mask; only the
+ * content pane of the window and below have the window mask automatically
+ * applied.
  */
 // TODO: setWindowMask() should accept a threshold; some cases want a
 // 50% threshold, some might want zero/non-zero
@@ -788,8 +794,8 @@ public class WindowUtils {
                 w.setBackground(new Color(0,0,0,0));
             }
             else {
-                // FIXME restore background
-                w.setBackground(new Window(w.getOwner()).getBackground());
+                // FIXME restore background to original color
+                w.setBackground(null);
             }
         }
 

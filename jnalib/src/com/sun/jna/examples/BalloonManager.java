@@ -48,12 +48,10 @@ import javax.swing.SwingUtilities;
 // TODO: lightweight popups
 public class BalloonManager {
 
-    // Mac does it's own shadows (as does vista and some x11+xcompmgr)
+    // Avoid using drop shadow in some instances
     private static boolean useDropShadow() {
-        return WindowUtils.isWindowAlphaSupported()
-            && !System.getProperty("os.name").startsWith("Mac");
+        return WindowUtils.isWindowAlphaSupported();
     }
-    
     
     private static class DropShadow extends JWindow {
         private static final float SHADOW_ALPHA = .25f;
@@ -114,6 +112,9 @@ public class BalloonManager {
         
         public void paint(Graphics graphics) {
             Graphics2D g = (Graphics2D)graphics.create();
+            // Workaround for OSX since we only get automatic clipping
+            // on the content pane and below
+            g.setClip(getMask());
             g.setPaint(new GradientPaint(0, getHeight()/2, new Color(0,0,0,0), getWidth(), getHeight()/2, new Color(0,0,0,255)));
             g.fillRect(0, 0, getWidth(), getHeight());
             g.dispose();
