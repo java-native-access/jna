@@ -65,7 +65,7 @@
     <condition property="os.prefix" value="freebsd-${os.arch}">
       <os name="FreeBSD"/>
     </condition>
-    <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${os.arch})"/>
+    <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${os.arch}), edit build.xml and native/Makefile to add it."/>
     <condition property="jdk.home" value="${java.home}">
       <available file="${java.home}/include"/>
     </condition>

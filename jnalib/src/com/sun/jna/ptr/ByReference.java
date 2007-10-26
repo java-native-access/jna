@@ -13,7 +13,9 @@
 package com.sun.jna.ptr;
 
 import com.sun.jna.Memory;
+import com.sun.jna.NativeMapped;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 
 /** Provides generic "pointer to type" functionality, often used in C
  * code to return values to the caller in addition to a function result.
@@ -21,16 +23,13 @@ import com.sun.jna.Pointer;
  * Derived classes should define <code>setValue(&lt;T&gt;)</code>
  * and <code>&lt;T&gt; getValue()</code> methods which write to/read from
  * memory.
+ * <p>This class derives from PointerType instead of Memory in order to
+ * restrict the API to only <code>getValue/setValue</code>.
+ * <p>NOTE: this class would ideally be replaced by a generic.
  */
-public abstract class ByReference extends Memory {
+public abstract class ByReference extends PointerType {
     
     protected ByReference(int dataSize) {
-        super(dataSize);
+        setPointer(new Memory(dataSize));
     }
-    
-    /** @deprecated This is equivalent to the object itself. */
-    public Pointer getPointer() {
-        return this;
-    }
-
 }

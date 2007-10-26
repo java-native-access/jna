@@ -30,10 +30,10 @@ public class PointerByReference extends ByReference {
     }
     
     public void setValue(Pointer value) {
-        setPointer(0, value);
+        getPointer().setPointer(0, value);
     }
     
     public Pointer getValue() {
-        return getPointer(0);
+        return getPointer().getPointer(0);
     }
 }

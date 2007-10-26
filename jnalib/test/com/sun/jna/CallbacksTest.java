@@ -14,6 +14,8 @@ package com.sun.jna;
 
 import java.util.Map;
 
+import com.sun.jna.ptr.IntByReference;
+
 import junit.framework.TestCase;
 
 /** Exercise callback-related functionality.
@@ -77,6 +79,10 @@ public class CallbacksTest extends TestCase {
             WString callback(WString arg);
         }
         WString callWideStringCallback(WideStringCallback c, WString arg);
+        interface CopyArgToByReference extends Callback {
+        	int callback(int arg, IntByReference result);
+        }
+        int callCallbackWithByReferenceArgument(CopyArgToByReference cb, int arg, IntByReference result);
     }
 
     TestLibrary lib;
@@ -381,6 +387,22 @@ public class CallbacksTest extends TestCase {
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
         assertEquals("Wrong wide string return", VALUE, value);
+    }
+    
+    public void testCallCallbackWithByReferenceArgument() {
+    	final boolean[] called = {false};
+        TestLibrary.CopyArgToByReference cb = new TestLibrary.CopyArgToByReference() {
+            public int callback(int arg, IntByReference result) {
+                called[0] = true;
+                result.setValue(arg);
+                return result.getValue();
+            }
+        };
+        final int VALUE = 0;
+        IntByReference ref = new IntByReference(~VALUE);
+        int value = lib.callCallbackWithByReferenceArgument(cb, VALUE, ref);
+        assertEquals("Wrong value returned", VALUE, value);
+        assertEquals("Wrong value in by reference memory", VALUE, ref.getValue());
     }
     
     public static void main(java.lang.String[] argList) {

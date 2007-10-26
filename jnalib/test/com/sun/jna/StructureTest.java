@@ -12,6 +12,8 @@
  */
 package com.sun.jna;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -96,7 +98,7 @@ public class StructureTest extends TestCase {
             }
         }
     }
-    // Do NOT change the order of naming w/o changing testlib.c
+    // Do NOT change the order of naming w/o changing testlib.c as well
     public static class TestStructure0 extends FilledStructure {
         public byte field0 = 0x01;
         public short field1 = 0x0202;
@@ -400,14 +402,14 @@ public class StructureTest extends TestCase {
         }
     }
     
-    public static class ArrayOfPointer extends Structure {
+    public static class ArrayOfPointerStructure extends Structure {
         final static int SIZE = 10;
         public Pointer[] array = new Pointer[SIZE];
     }
     public void testPointerArrayField() {
-        ArrayOfPointer s = new ArrayOfPointer();
+        ArrayOfPointerStructure s = new ArrayOfPointerStructure();
         int size = s.size();
-        assertEquals("Wrong size", ArrayOfPointer.SIZE * Pointer.SIZE, size);
+        assertEquals("Wrong size", ArrayOfPointerStructure.SIZE * Pointer.SIZE, size);
         s.array[0] = s.getPointer();
         s.write();
         s.array[0] = null;
@@ -415,7 +417,20 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong first element", s.getPointer(), s.array[0]);
     }
     
-    // TODO: array of pointer/pointertype/nativemapped
+    public static class BufferStructure extends Structure {
+    	public Buffer buffer;
+    	public BufferStructure(byte[] buf) {
+    		buffer = ByteBuffer.wrap(buf);
+    	}
+    }
+    public void testBufferField() {
+    	try {
+    		new BufferStructure(new byte[1024]);
+    		fail("Buffer fields should fail immediately");
+    	}
+    	catch(IllegalArgumentException e) { 
+    	}
+    }
     
     public static class VolatileStructure extends Structure {
         public volatile int counter;

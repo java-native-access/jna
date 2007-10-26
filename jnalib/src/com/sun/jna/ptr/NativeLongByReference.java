@@ -25,10 +25,10 @@ public class NativeLongByReference extends ByReference {
     }
     
     public void setValue(NativeLong value) {
-        setNativeLong(0, value);
+        getPointer().setNativeLong(0, value);
     }
     
     public NativeLong getValue() {
-        return getNativeLong(0);
+        return getPointer().getNativeLong(0);
     }
 }

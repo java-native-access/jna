@@ -38,10 +38,10 @@ public interface Kernel32 extends W32API {
             setValue(h);
         }
         public void setValue(HANDLE h) {
-            setPointer(0, h != null ? h.getPointer() : null);
+            getPointer().setPointer(0, h != null ? h.getPointer() : null);
         }
         public HANDLE getValue() {
-            Pointer p = getPointer(0);
+            Pointer p = getPointer().getPointer(0);
             if (Pointer.PM1.equals(p))
                 return INVALID_HANDLE_VALUE;
             return new HANDLE(p);

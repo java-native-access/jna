@@ -520,6 +520,11 @@ callStructureCallback(TestStructure* (*func)(TestStructure*), TestStructure* arg
   return (*func)(arg);
 }
 
+EXPORT int
+callCallbackWithByReferenceArgument(int (*func)(int arg, int* result), int arg, int* result) {
+  return (*func)(arg, result);
+}
+
 EXPORT char*
 callStringCallback(char* (*func)(char* arg), char* arg) {
   return (*func)(arg);

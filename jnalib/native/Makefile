@@ -14,7 +14,7 @@
 #   to target i386 on OSX/PPC, do 
 #     make ARCH=i386
 OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
-                        -e 's/SunOS.*/solaris/g' \
+                        -e 's/SunOS.*/sunos/g' \
                         -e 's/FreeBSD.*/freebsd/g' \
                         -e 's/Darwin.*/darwin/g' \
                         -e 's/Linux.*/linux/g')
@@ -113,7 +113,7 @@ CDEFINES+=-DNEED_JAWT_HACK
 LIBS=
 endif
 
-ifeq ($(OS),solaris)
+ifeq ($(OS),sunos)
 ifeq ($(ARCH),)
 ARCH=$(shell uname -n)
 endif

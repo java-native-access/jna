@@ -13,6 +13,7 @@ package com.sun.jna;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -522,10 +523,10 @@ public abstract class Structure {
             memory.setPointer(offset, CallbackReference.getFunctionPointer((Callback)value));
         }
         else {
-            throw new IllegalArgumentException("Field \"" + structField.name
-                                               + "\" was declared as an "
-                                               + "unsupported type \""
-                                               + nativeType + "\"");
+        	String msg = "Structure field \"" + structField.name
+        	    + "\" was declared as " + nativeType 
+        	    + ", which is not supported within a Structure";
+            throw new IllegalArgumentException(msg);
         }
     }
 
@@ -734,7 +735,8 @@ public abstract class Structure {
             || WString.class == cls) {
             return Pointer.SIZE;
         }
-        throw new IllegalArgumentException("Native type undefined for " + cls);
+        throw new IllegalArgumentException("The type \"" + cls.getName() 
+        								   + "\" is not supported as a Structure field");
     }
 
     /** Returns the native size of the given class, in bytes. */

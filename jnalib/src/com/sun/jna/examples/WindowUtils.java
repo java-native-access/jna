@@ -967,7 +967,7 @@ public class WindowUtils {
                                                                 false),
                                                 X11.XA_CARDINAL, 32,
                                                 X11.PropModeReplace,
-                                                patom, 1);
+                                                patom.getPointer(), 1);
                         }
                     }
                     finally {

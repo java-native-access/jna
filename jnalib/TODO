@@ -21,10 +21,16 @@
 
 # TODO
 
+* Does it make sense to define Int16/UInt16, Int32/UInt32, etc?  Probably not
+  the signed versions, but maybe the unsigned ones, to facilitate generating
+  unsigned values.  What about size_t, offset_t, et al.?  Would either need a
+  bunch of native lookup functions (more robust) or java-side conditionals
+  (less robust but easier to change).
+
 * Make a separate jar file for all OS-specific headers
-* Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
+  Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
   aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
-  (how useful?)
+  (how useful would it really be?)
 
 * review/use direct Buffer in more places if it makes sense
 * support annotations of parameters and return values w/o breaking
@@ -36,8 +42,10 @@
 
   my_function(0) versus my_function(new off_t(0))
   
-  this only really applies to NativeLong types that want to use a primitive
-  value instead of creating an object instance.
+  this only really applies to NativeLong/IntegerType types that want to use a
+  primitive value instead of creating an object instance.
+
+* Allow Buffer in Structures (and callbacks)?
 
 * standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
 * StringBuffer/StringBuilder as mutable char*/wchar_t* argument
@@ -54,7 +62,7 @@
    Structure or some other type.  Then memory will free itself when no longer
    referenced. 
 * provide library load/unload hooks (Runnables in options?). Examples:
-  o GetLastError (no longer required)
+  o GetLastError (no longer needed)
   o WSAInit?
 * if method has "GetLastErrorException/ErrnoException" in its signature, use
   result codes + GetLastError/errno/errstr to auto-generate 

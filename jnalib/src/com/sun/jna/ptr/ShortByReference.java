@@ -24,11 +24,11 @@ public class ShortByReference extends ByReference {
     }
     
     public void setValue(short value) {
-        setShort(0, value);
+        getPointer().setShort(0, value);
     }
     
     public short getValue() {
-        return getShort(0);
+        return getPointer().getShort(0);
     }
     
 }

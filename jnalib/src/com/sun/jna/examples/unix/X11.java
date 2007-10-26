@@ -80,7 +80,8 @@ public interface X11 extends Library {
     public static class AtomByReference extends ByReference {
         public AtomByReference() { super(4); }
         public Atom getValue() {
-            return (Atom)new Atom().fromNative(new Integer(getInt(0)), null);
+        	int value = getPointer().getInt(0);
+            return (Atom)new Atom().fromNative(new Integer(value), null);
         }
     }
     public static class Colormap extends XID {
@@ -130,7 +131,7 @@ public interface X11 extends Library {
     public static class WindowByReference extends ByReference {
         public WindowByReference() { super(4); }
         public Window getValue() {
-            int value = getInt(0);
+            int value = getPointer().getInt(0);
             return value == X11.None ? Window.None : new Window(value);
         }
     }
