@@ -1,20 +1,23 @@
 #
-# JNA JNI dispatch and test library
+# Makefile for JNA native bits
 # Copyright (c) 2007 Timothy Wall All Rights Reserved
 #
 # You may need to run 'ant javah' at the root before performing a build from 
 # this directory.
 #
-# To build the JNI headers, do 'ant javah' from the root
-# To build the windows DLL using gcc, do 
-#   make CC=gcc
-# If you have the OSX 10.4 universal SDK installed, 
-#   to target ppc on OSX/i386, do 
-#     make ARCH=ppc
-#   to target i386 on OSX/PPC, do 
-#     make ARCH=i386
+# To build with debug information, use 'make DEBUG=true'
+#
+# Supported platforms (built and tested):
+#
+#   Windows 2000/XP/2003 (x86)
+#   OS X (i386/ppc)
+#   Linux (i386, amd64) 
+#   Solaris (x86, sparc9)
+#   FreeBSD (x86)
+#
+
 OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
-                        -e 's/SunOS.*/sunos/g' \
+                        -e 's/SunOS.*/solaris/g' \
                         -e 's/FreeBSD.*/freebsd/g' \
                         -e 's/Darwin.*/darwin/g' \
                         -e 's/Linux.*/linux/g')
@@ -113,7 +116,7 @@ CDEFINES+=-DNEED_JAWT_HACK
 LIBS=
 endif
 
-ifeq ($(OS),sunos)
+ifeq ($(OS),solaris)
 ifeq ($(ARCH),)
 ARCH=$(shell uname -n)
 endif
