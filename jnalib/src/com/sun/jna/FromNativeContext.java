@@ -15,7 +15,7 @@ package com.sun.jna;
 /** Provides context for converting a native value into a Java type. */
 public class FromNativeContext {
     private Class type;
-    public FromNativeContext(Class javaType) {
+    FromNativeContext(Class javaType) {
         this.type = javaType;
     }
     /** The desired Java type of the result. */

@@ -618,7 +618,7 @@ public abstract class Structure {
                     nativeType = tc.nativeType();
                     structField.writeConverter = tc;
                     structField.readConverter = tc;
-                    structField.context = new StructureReadContext(type, this);
+                    structField.context = new StructureReadContext(this, field);
                     field.set(this, value);
                 }
                 else if (typeMapper != null) {
@@ -630,7 +630,7 @@ public abstract class Structure {
                         nativeType = value != null ? value.getClass() : Pointer.class;
                         structField.writeConverter = writeConverter;
                         structField.readConverter = readConverter;
-                        structField.context = new StructureReadContext(type, this);
+                        structField.context = new StructureReadContext(this, field);
                     }
                     else if (writeConverter != null || readConverter != null) {
                         String msg = "Structures require bidirectional type conversion for " + type;

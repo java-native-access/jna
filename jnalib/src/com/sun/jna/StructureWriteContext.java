@@ -15,20 +15,20 @@ package com.sun.jna;
 import java.lang.reflect.Field;
 
 /** Provide Java to native type conversion context for a {@link Structure} 
- * write. 
+ * field write. 
  */
 public class StructureWriteContext extends ToNativeContext {
-    Structure struct;
-    Field field;
+    private Structure struct;
+    private Field field;
     
     StructureWriteContext(Structure struct, Field field) {
         this.struct = struct;
         this.field = field;                
     }
-    /** Get the Structure the field is a member of. */
+    /** Get the {@link Structure} the field is a member of. */
     public Structure getStructure() { return struct; }
     
-    /** Get the Field. */
+    /** Get the {@link Field} being written to native memory. */
     public Field getField() { return field; }
 }
 

@@ -15,6 +15,6 @@ package com.sun.jna;
 
 /** Context for converting a Java value to a native one. */
 public class ToNativeContext {
-    public ToNativeContext() {
+    ToNativeContext() {
     }
 }

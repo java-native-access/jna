@@ -12,15 +12,22 @@
  */
 package com.sun.jna;
 
+import java.lang.reflect.Field;
+
 /** Provide native to Java type conversion context for a {@link Structure} 
- * read. 
+ * field read. 
  */
 public class StructureReadContext extends FromNativeContext {
     
     private Structure structure;
-    public StructureReadContext(Class resultClass, Structure struct) {
-        super(resultClass);
+    private Field field;
+    StructureReadContext(Structure struct, Field field) {
+        super(field.getType());
         this.structure = struct;
+        this.field = field;
     }
+    /** Get the {@link Structure} the field is a member of. */
     public Structure getStructure() { return structure; }
+    /** Get the {@link Field} being read from native memory. */
+    public Field getField() { return field; }
 }

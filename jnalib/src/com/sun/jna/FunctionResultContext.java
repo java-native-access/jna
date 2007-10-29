@@ -17,7 +17,7 @@ public class FunctionResultContext extends FromNativeContext {
     
     private Function function;
     private Object[] args;
-    public FunctionResultContext(Class resultClass, Function function, Object[] args) {
+    FunctionResultContext(Class resultClass, Function function, Object[] args) {
         super(resultClass);
         this.function = function;
         this.args = args;

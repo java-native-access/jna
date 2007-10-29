@@ -251,7 +251,7 @@ class CallbackReference extends WeakReference {
                 Object arg = args[i];
                 if (fromNative[i] != null) {
                     FromNativeContext context = 
-                        new CallbackInvocationContext(type, callbackMethod, args);
+                        new CallbackParameterContext(type, callbackMethod, args, i);
                     arg = fromNative[i].fromNative(arg, context);
                 }
                 callbackArgs[i] = convertArgument(arg, type);
@@ -312,7 +312,7 @@ class CallbackReference extends WeakReference {
         
         private Object convertResult(Object value) {
             if (toNative != null) {
-                value = toNative.toNative(value, new ToNativeContext());
+                value = toNative.toNative(value, new CallbackResultContext(callbackMethod));
             }
             if (value == null)
                 return null;
