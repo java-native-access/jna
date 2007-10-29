@@ -87,9 +87,7 @@ STRIP=@echo
 else
 CDEFINES=-D__int64="long long" -D_JNI_IMPLEMENTATION -DHAVE_PROTECTION
 PCFLAGS=-mno-cygwin
-# NOTE: have to recreate specs or dllcrt2.o isn't found
-SPECS=$(BUILD)/specs.new
-LDFLAGS+=-mno-cygwin -Wl,--add-stdcall-alias -specs $(SPECS) -L /lib/mingw 
+LDFLAGS+=-mno-cygwin -Wl,--add-stdcall-alias -L /lib/mingw 
 LIBDIR="$(JAVA_HOME)/lib"
 LIBS=$(LIBDIR)/jawt.lib
 endif
@@ -184,13 +182,10 @@ install:
 $(BUILD)/test_dispatch: test_dispatch.c $(BUILD)/dispatch.o $(BUILD)/dispatch_$(ARCH).o $(BUILD)/callback.o 
 	$(CC) $(CFLAGS) $< $(BUILD)/dispatch.o $(BUILD)/dispatch_$(ARCH).o $(BUILD)/callback.o $(COUT)
 
-$(BUILD)/specs.new: 
-	gcc -dumpspecs | sed s%dllcrt2%/lib/mingw/dllcrt2%g > $@
-
-$(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB) $(SPECS)
+$(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB) 
 	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
 
-$(TESTLIB): $(BUILD)/testlib.o $(SPECS)
+$(TESTLIB): $(BUILD)/testlib.o 
 	$(LD) $(LDFLAGS) $< $(TESTDEF) 
 
 $(FFI_LIB):
