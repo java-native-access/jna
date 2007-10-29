@@ -16,6 +16,7 @@ package com.sun.jna;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -241,8 +242,18 @@ public class NativeLibrary {
     }
     
     private static List initPaths(String key) {
-        String[] paths = System.getProperty(key, "").split(File.pathSeparator);
-        return Arrays.asList(paths);
+        String value = System.getProperty(key, "");
+        if ("".equals(value)) {
+            return Collections.EMPTY_LIST;
+        }
+        String[] paths = value.split(File.pathSeparator);
+        List list = new ArrayList();
+        for (int i=0;i < paths.length;i++) {
+            if (!"".equals(paths[i])) {
+                list.add(paths[i]);
+            }
+        }
+        return list;
     }
     
     /** Use standard library search paths to find the library. */

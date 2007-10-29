@@ -41,7 +41,7 @@ import java.util.WeakHashMap;
  * which would require every {@link Structure} which requires custom mapping
  * or alignment to define a constructor and pass parameters to the superclass.
  * To avoid lots of boilerplate, the base {@link Structure} constructor
- * figures out these properties based on the enclosing interface.<p>
+ * figures out these properties based on its enclosing interface.<p>
  * <a name=library_loading></a>
  * <h2>Library Loading</h2>
  * When JNA classes are loaded, the native shared library (jnidispatch) is
@@ -49,10 +49,10 @@ import java.util.WeakHashMap;
  * using {@link System#loadLibrary}.  If not found, the appropriate library
  * will be extracted from <code>jna.jar</code> into a temporary directory and
  * loaded from there.  If your system has additional security constraints
- * regarding execution or load of files, you should probably install the
- * native library in an accessible location and configure your system
- * accordingly, rather than relying on JNA to extract the library from its own
- * jar file.
+ * regarding execution or load of files (SELinux, for example), you should 
+ * probably install the native library in an accessible location and configure 
+ * your system accordingly, rather than relying on JNA to extract the library 
+ * from its own jar file.
  * 
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
@@ -384,6 +384,10 @@ public final class Native {
                 // Let Java pick the suffix
                 lib = File.createTempFile("jna", null);
                 lib.deleteOnExit();
+                // Have to remove the temp file after VM exit on w32
+                if (Platform.isWindows()) {
+                        Runtime.getRuntime().addShutdownHook(new W32Cleanup(lib));
+                }
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];
@@ -431,10 +435,12 @@ public final class Native {
         }
     };
     
-    /** Retrieve the last error set by the OS.  The value is preserved
-     * per-thread, but whether the original value is per-thread depends on
-     * the underlying OS.  The result is undefined If 
-     * {@link #getPreserveLastError} is <code>false</code>.
+    /** Retrieve the last error set by the OS.  This corresponds to
+     * <code>GetLastError()</code> on Windows, and <code>errno</code> on
+     * most other platforms.  The value is preserved per-thread, but whether 
+     * the original value is per-thread depends on the underlying OS.  The 
+     * result is undefined If {@link #getPreserveLastError} is 
+     * <code>false</code>.
      */
     public static int getLastError() {
         return ((Integer)lastError.get()).intValue();
@@ -478,5 +484,46 @@ public final class Native {
         return (Library)Proxy.newProxyInstance(cls.getClassLoader(),
                                                cls.getInterfaces(),
                                                newHandler);
+    }
+    
+    /** For internal use only. */
+    /* Windows won't allow file deletion while
+     * it is in use, and the VM doesn't provide for explicit unloading of 
+     * native libraries (and the implicit method requires GC of a custom class
+     * loader which loaded the class with native bits, which would require
+     * all native bits to be encapsulated in a private class).
+     * Instead, spawn a cleanup task to remove the file *after* the VM exits.
+     */
+    public static class W32Cleanup extends Thread {
+        private File file;
+        public W32Cleanup(File file) {
+            this.file = file;
+        }
+        public void run() {
+            try {
+                Runtime.getRuntime().exec(new String[] {
+                    System.getProperty("java.home") + "/bin/java",
+                    "-cp", System.getProperty("java.class.path"),
+                    getClass().getName(),
+                    file.getAbsolutePath(),
+                });
+            }
+            catch(IOException e) { e.printStackTrace(); }
+        }
+        public static void main(String[] args) {
+            if (args.length == 1) {
+                File file = new File(args[0]);
+                if (file.exists()) { 
+                    long start = System.currentTimeMillis();
+                    while (!file.delete() && file.exists()) {
+                        try { Thread.sleep(10); }
+                        catch(InterruptedException e) { }
+                        if (System.currentTimeMillis() - start > 1000) 
+                            break;
+                    }
+                }
+            }
+            System.exit(0);
+        }
     }
 }
