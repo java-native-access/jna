@@ -12,7 +12,7 @@
   -->
 
   <!-- global properties -->
-  <!-- (all build-related props should go in dynamic-properties) -->
+  <!-- (all build-related props should go in -dynamic-properties) -->
   <property name="name" value="jna"/>
   <property name="jar" value="${name}.jar"/>
   <property name="debug" value="true"/>
@@ -39,7 +39,7 @@
 
   <target name="default" depends="test" description="Build and Test."/>
 
-  <target name="dynamic-properties">
+  <target name="-dynamic-properties">
     <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
     <echo>Build ${version}</echo>
     <property name="build" location="build"/>
@@ -86,7 +86,7 @@
 
   </target>
 
-  <target name="setup" depends="dynamic-properties">
+  <target name="-setup" depends="-dynamic-properties">
     <path id="compile-test.path">
       <pathelement path="${test.src}"/>
       <path id="test.libs">
@@ -111,7 +111,7 @@
     </path>
   </target>
 
-  <target name="compile" depends="setup"
+  <target name="compile" depends="-setup"
           description="Compile all Java source">
     <javac classpathref="compile.path"
            source="${compatibility}"
@@ -134,7 +134,7 @@
       </srcfiles>
     </uptodate>
   </target>
-  <target name="jar" depends="setup,native,:jar" unless="-jar"
+  <target name="jar" depends="-setup,native,:jar" unless="-jar"
           description="Build primary jar">
     <jar jarfile="${build}/${jar}">
       <manifest>
@@ -177,7 +177,7 @@
     </javah>
   </target>
 
-  <target name="native" depends="setup,javah"
+  <target name="native" depends="-setup,javah"
           description="Build native libraries.  Use 'ant -DCC=gcc' to build using gcc on w32">
     <!-- ensure ARCH is set properly for SunOS -->
     <condition property="ARCH" value="${os.arch}">
@@ -308,7 +308,7 @@
     <echo>Reports generated in ${reports.clover}</echo>
   </target>
 
-  <target name="javadoc" depends="setup">
+  <target name="javadoc" depends="-setup">
     <property name="header"
               value="&lt;b&gt;JNA API&lt;/&gt;&lt;font size=&quot;-1&quot;&gt; ${version}&lt;/font&gt;"/>
     <property name="footer"
@@ -389,7 +389,7 @@
     </zip>
   </target>
 
-  <target name="clean" depends="dynamic-properties">
+  <target name="clean" depends="-dynamic-properties">
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build}"/>
     </delete>
