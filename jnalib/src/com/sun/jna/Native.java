@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -245,6 +246,7 @@ public final class Native {
             typeMappers.put(interfaceClass, options.get(Library.OPTION_TYPE_MAPPER));
         if (options.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
             alignments.put(interfaceClass, options.get(Library.OPTION_STRUCTURE_ALIGNMENT));
+        libraries.put(interfaceClass, new WeakReference(proxy));
         return proxy;
     }
     
@@ -260,7 +262,8 @@ public final class Native {
                     Field field = fields[i];
                     if (field.getType() == cls 
                         && Modifier.isStatic(field.getModifiers())) {
-                        libraries.put(cls, field.get(null));
+                        // Ensure the field gets initialized
+                        libraries.put(cls, new WeakReference(field.get(null)));
                         return true;
                     }
                 }

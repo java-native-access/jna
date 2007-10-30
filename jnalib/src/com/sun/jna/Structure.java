@@ -24,6 +24,10 @@ import java.util.Map;
  * <p>
  * See the <a href={@docRoot}/overview-summary.html>overview</a> for supported type mappings.
  * <p>
+ * Structure alignment and type mappings are derived by default from the
+ * enclosing interface definition (if any) by using
+ * {@link Native#getStructureAlignment} and {@link Native#getTypeMapper}.
+ * <p>
  * NOTE: Strings are used to represent native C strings because usage of 
  * <code>char *</code> is generally more common than <code>wchar_t *</code>.<p>
  * NOTE: This class assumes that fields are returned in {@link Class#getFields}

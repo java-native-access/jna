@@ -16,11 +16,13 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
-/** shellapi.h includes pshpack1.h, which disables automatic alignment
- * of structure fields.  
+/** Mapping for w32 Shell API.  
+ * Note that the C header "shellapi.h" includes "pshpack1.h", which disables 
+ * automatic alignment of structure fields.  
  */
 public interface Shell32 extends W32API {
 
+    /** Custom alignment of structures. */
     int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
     Shell32 INSTANCE = (Shell32)
         Native.loadLibrary("shell32", Shell32.class, DEFAULT_OPTIONS);
