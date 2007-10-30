@@ -114,9 +114,9 @@ void fill_buffer(int[] buf, int len);
 Arrays of C strings (the <code>char* argv[]</code> to the C <code>main</code>, for example), may be represented by <code>String[]</code> in Java code.
 
 <h3>Structures/Unions</h3>
-When a function requires a pointer to a <code>struct</code>, a Java <code>Structure</code>s should be used.  Typically you define a <code>public static</code> class derived from <code>Structure</code> within your library interface definition.   This allows the structure to share any custom type mapping defined for the library interface.
+When a function requires a pointer to a <code>struct</code>, a Java <code>Structure</code> should be used.  Typically you define a <code>public static</code> class derived from <code>Structure</code> within your library interface definition.   This allows the structure to share any custom type mapping defined for the library interface.
 <p>
-If a function requires an array of <code>struct</code>, a <code>Structure[]</code> may be used.  When passing in an array of <code>Structure</code>, it is not necessary to initialize the array, unless the function is using the data as input.  If you <em>do</em> need to initialize the array, you should use the <code>Structure.toArray</code> method to obtain an array of <code>Structure</code> elements contiguous in memory, which you can then initialize as needed.
+If a function requires an array of <code>struct</code>, a Java <code>Structure[]</code> may be used.  When passing in an array of <code>Structure</code>, it is not necessary to initialize the array elements (the function call will allocate, zero memory, and assign the elements for you).  If you <em>do</em> need to initialize the array, you should use the <code>Structure.toArray</code> method to obtain an array of <code>Structure</code> elements contiguous in memory, which you can then initialize as needed.
 <p>
 Unions are generally interchangeable with <code>Structure</code>s, but require that you indicate which union field is active with the <code>setType</code> method before it can be properly passed to a function call.
 
