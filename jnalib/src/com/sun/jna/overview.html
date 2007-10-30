@@ -39,7 +39,7 @@ The <code>String</code> passed to the <code>Native.loadLibrary</code> method
 is the undecorated name of the shared library file.  Here are some examples of
 library name mappings.<p>  
 <center>
-<table style="background-color: #EAEAEA;" width="200">
+<table style="background-color: #EAEAEA;" width="400">
 <tr><td><b>OS</b></td><td><b>Library Name</b></td><td><b>String</b></td></tr>
 <tr><td>Windows</td><td>user32.dll</td><td>user32</td></tr>
 <tr><td>Linux</td><td>libX11.so</td><td>X11</td></tr>
@@ -90,13 +90,15 @@ Java types are chosen to match native types of the same size.  These are types s
 </table>
 </center>
 <p>
-Unsigned values may be passed by assigning the corresponding two's-complement representation to the signed type of the same size.  Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in order to access a subset of the array (changing the effective size and/or offest).
-<p>
-Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  Bitfields and structures by value are not currently supported.  All other types must eventually be converted to one of these basic types.  Methods with arguments of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
-<p>
-Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
-<p>
-Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the {@link com.sun.jna.NativeMapped} interface.  
+<b>NOTES</b>
+<ul>
+<li>Unsigned values may be passed by assigning the corresponding
+  two's-complement representation to the signed type of the same size.  
+<li>Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in order to access a subset of the array (changing the effective size and/or offest).
+<li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  Bitfields and structures by value are not currently supported.  All other types must eventually be converted to one of these basic types.  Methods with arguments of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
+<li>Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
+<li>Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the {@link com.sun.jna.NativeMapped} interface.  
+</ul>
 
 <h3>Pointers</h3>
 Pointers may be used as an opaque type from which other data types may be extracted.  The user is generally not allowed to construct a Pointer de novo. 

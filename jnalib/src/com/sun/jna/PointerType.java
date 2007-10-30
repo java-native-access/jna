@@ -13,7 +13,7 @@
 package com.sun.jna;
 
 /** Type representing a type-safe native pointer.
- * Derived classes must implement the {@link NativeMapped#fromNative} method,
+ * Derived classes may override the {@link NativeMapped#fromNative} method,
  * which should instantiate a new object (or look up an existing one)
  * of the appropriate type. 
  */

@@ -379,7 +379,7 @@
       </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
-      <zipfileset dir="${javadoc}" prefix="doc"/>
+      <zipfileset dir="${javadoc}" prefix="javadoc"/>
     </zip>
     <zip zipfile="${dist}/src.zip">
       <zipfileset dir="." includes="build.xml"/>
