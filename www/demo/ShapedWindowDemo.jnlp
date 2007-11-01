@@ -3,8 +3,8 @@
 <jnlp spec="1.0" codebase="http://jna.dev.java.net/demo" href="http://jna.dev.java.net/demo/ShapedWindowDemo.jnlp">
   <information>
     <title>Shaped Window Demo</title>
-    <vendor>Technomage</vendor>
-    <homepage href="http://rabbit-hole.blogger.com"/>
+    <vendor>Java Native Access (JNA)</vendor>
+    <homepage href="http://jna.dev.java.net"/>
     <description>Demo of a non-rectangular window.</description>
     <description kind="short">Shaped Window</description>
   </information>
