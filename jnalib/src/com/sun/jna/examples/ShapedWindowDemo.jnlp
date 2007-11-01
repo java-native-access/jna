@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generic JNLP/Web Start Configuration -->
-<jnlp spec="1.0" codebase="http://abbot.sf.net/demo" href="http://abbot.sf.net/demo/ShapedWindowDemo.jnlp">
+<jnlp spec="1.0" codebase="http://jna.dev.java.net/demo" href="http://jna.dev.java.net/demo/ShapedWindowDemo.jnlp">
   <information>
     <title>Shaped Window Demo</title>
     <vendor>Technomage</vendor>
