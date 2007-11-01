@@ -16,6 +16,13 @@
 #   FreeBSD (x86)
 #
 
+# X11-based builds usually need to avoid 1.5/1.6 bug caused by linking 
+# directly to -ljawt by defining NEED_JAWT_HACK
+
+# Systems which support POSIX signals may be able to support VM crash
+# protection simply by defining HAVE_PROTECTION.  This has been enabled
+# only for those platforms on which it has been tested successfully.
+
 OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
                         -e 's/SunOS.*/solaris/g' \
                         -e 's/FreeBSD.*/freebsd/g' \
@@ -99,7 +106,6 @@ endif
 ifeq ($(OS),linux)
 ARCH=i386
 PCFLAGS+=-fPIC
-# Avoid 1.5/1.6 bug caused by linking directly to -ljawt
 CDEFINES+=-DNEED_JAWT_HACK -DHAVE_PROTECTION
 LIBS=
 endif
@@ -109,8 +115,7 @@ ARCH=i386
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
 LDFLAGS=-o $@ -shared -pthread
-# Avoid 1.5/1.6 bug caused by linking directly to -ljawt
-CDEFINES+=-DNEED_JAWT_HACK
+CDEFINES+=-DNEED_JAWT_HACK -DHAVE_PROTECTION
 LIBS=
 endif
 
@@ -119,7 +124,6 @@ ifeq ($(ARCH),)
 ARCH=$(shell uname -n)
 endif
 PCFLAGS+=-fPIC
-# Avoid 1.5/1.6 bug caused by linking directly to -ljawt
 CDEFINES+=-DNEED_JAWT_HACK
 LDFLAGS=-o $@ -G
 LIBS=
