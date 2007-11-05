@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * An abstraction for a native function pointer.  An instance of 
- * <code>Function</code> repesents a pointer to some native function.  
+ * <code>Function</code> represents a pointer to some native function.  
  * {@link #invoke(Class,Object[],Map)} is the primary means to call
  * the function. 
  *

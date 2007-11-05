@@ -9,11 +9,11 @@
 #
 # Supported platforms (built and tested):
 #
-#   Windows 2000/XP/2003 (x86)
+#   Windows 2000/XP/2003/Vista (x86)
 #   OS X (i386/ppc)
 #   Linux (i386, amd64) 
-#   Solaris (x86, sparc9)
-#   FreeBSD (x86)
+#   Solaris (i386, sparc, sparcv9)
+#   FreeBSD (i386)
 #
 
 # X11-based builds usually need to avoid 1.5/1.6 bug caused by linking 

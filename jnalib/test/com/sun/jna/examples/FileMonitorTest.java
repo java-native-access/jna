@@ -14,19 +14,22 @@ package com.sun.jna.examples;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
 import com.sun.jna.Platform;
 import com.sun.jna.examples.FileMonitor.FileEvent;
 import com.sun.jna.examples.FileMonitor.FileListener;
+import com.sun.jna.examples.win32.Kernel32;
+import com.sun.jna.ptr.PointerByReference;
 
 public class FileMonitorTest extends TestCase {
 
     Map events;
     FileListener listener;
     FileMonitor monitor;
-    File dir;
+    File tmpdir;
     
     protected void setUp() throws Exception {
         if (!Platform.isWindows()) return;
@@ -39,14 +42,18 @@ public class FileMonitorTest extends TestCase {
         };
         monitor = FileMonitor.getInstance();
         monitor.addFileListener(listener);
-        dir = new File(System.getProperty("java.io.tmpdir"));
-        monitor.addWatch(dir);
+        tmpdir = new File(System.getProperty("java.io.tmpdir"));
+    }
+    
+    protected void tearDown() {
+        monitor.dispose();
     }
     
     public void testNotifyOnFileCreation() throws Exception {
         if (!Platform.isWindows()) return;
 
-        File file = File.createTempFile(getName(), ".tmp", dir);
+        monitor.addWatch(tmpdir);
+        File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.deleteOnExit();
         FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
         long start = System.currentTimeMillis();
@@ -62,7 +69,8 @@ public class FileMonitorTest extends TestCase {
     public void testNotifyOnFileDelete() throws Exception {
         if (!Platform.isWindows()) return;
 
-        File file = File.createTempFile(getName(), ".tmp", dir);
+        monitor.addWatch(tmpdir);
+        File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.delete();
         FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_DELETED));
         long start = System.currentTimeMillis();
@@ -78,7 +86,8 @@ public class FileMonitorTest extends TestCase {
     public void testNotifyOnFileRename() throws Exception {
         if (!Platform.isWindows()) return;
 
-        File file = File.createTempFile(getName(), ".tmp", dir);
+        monitor.addWatch(tmpdir);
+        File file = File.createTempFile(getName(), ".tmp", tmpdir);
         File newFile = new File(file.getParentFile(), "newfile");
         newFile.deleteOnExit();
         file.deleteOnExit();
@@ -101,7 +110,8 @@ public class FileMonitorTest extends TestCase {
     public void testNotifyOnFileModification() throws Exception {
         if (!Platform.isWindows()) return;
 
-        File file = File.createTempFile(getName(), ".tmp", dir);
+        monitor.addWatch(tmpdir);
+        File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.deleteOnExit();
         FileOutputStream os = new FileOutputStream(file);
         os.write(getName().getBytes());
@@ -116,8 +126,75 @@ public class FileMonitorTest extends TestCase {
         assertNotNull("No file modified event: " + events, event);
         assertEquals("Wrong target file for event (old)", file, event.getFile());
     }
+    
+    private void delete(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i=0;i < files.length;i++) {
+                delete(files[i]);
+            }
+        }
+        file.delete();
+    }
+    private File createSubdir(File dir, String name) throws IOException {
+        File f = File.createTempFile(name, ".tmp", dir);
+        f.delete();
+        f.mkdirs();
+        return f;
+    }
+    public void testMultipleWatches() throws Exception {
+        if (!Platform.isWindows()) return;
+        
+        File subdir1 = createSubdir(tmpdir, "sub1");
+        File subdir2 = createSubdir(tmpdir, "sub2");
+        try {
+            monitor.addWatch(subdir1);
+            monitor.addWatch(subdir2);
+
+            // trigger change in dir 1
+            File file = File.createTempFile(getName(), ".tmp", subdir1);
+            FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
+            long start = System.currentTimeMillis();
+            while (System.currentTimeMillis() - start < 5000 && event == null) {
+                Thread.sleep(10);
+                event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
+            }
+            assertTrue("No events sent", events.size() != 0);
+            assertNotNull("No creation event: " + events, event);
+            assertEquals("Wrong target file for event", file, event.getFile());
+            events.clear();
+
+            // trigger change in dir 2
+            file = File.createTempFile(getName(), ".tmp", subdir2);
+            event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
+            start = System.currentTimeMillis();
+            while (System.currentTimeMillis() - start < 5000 && event == null) {
+                Thread.sleep(10);
+                event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
+            }
+            assertTrue("No events sent", events.size() != 0);
+            assertNotNull("No creation event: " + events, event);
+            assertEquals("Wrong target file for event", file, event.getFile());
+
+            // trigger change in dir 1
+            file = File.createTempFile(getName(), ".tmp", subdir1);
+            event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
+            start = System.currentTimeMillis();
+            while (System.currentTimeMillis() - start < 5000 && event == null) {
+                Thread.sleep(10);
+                event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
+            }
+            assertTrue("No events sent", events.size() != 0);
+            assertNotNull("No creation event: " + events, event);
+            assertEquals("Wrong target file for event", file, event.getFile());
+        }
+        finally {
+            delete(subdir1);
+            delete(subdir2);
+        }
+    }
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(FileUtilsTest.class);
+        junit.textui.TestRunner.run(FileMonitorTest.class);
     }
 }

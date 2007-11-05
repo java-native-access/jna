@@ -44,7 +44,9 @@ public class Pointer {
     public static final Pointer NULL = null;
     
     /** Convenience constant, equivalent to <code>(void*)-1</code>. */
-    public static final Pointer PM1 = new Pointer(-1);
+    public static final Pointer createConstant(long peer) {
+        return new Opaque(peer);
+    }
     
     /** Pointer value of the real native pointer. Use long to be 64-bit safe. 
      */
@@ -94,13 +96,6 @@ public class Pointer {
     public int hashCode() {
         return (int)((peer >>> 32) + (peer & 0xFFFFFFFF));
     }
-
-
-    public boolean isValid() {
-        return peer != 0;
-    }
-
-
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -666,5 +661,113 @@ public class Pointer {
     
     public String toString() {
         return "native@0x" + Long.toHexString(peer);
+    }
+    
+    /** Pointer which disallows all read/write access. */
+    private static class Opaque extends Pointer {
+        private Opaque(long peer) { super(peer); }
+        private String MSG = "This pointer is opaque: " + this;
+        public int indexOf(int offset, byte value) {
+            throw new UnsupportedOperationException(MSG);
+        }
+        public void read(int bOff, byte[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void read(int bOff, char[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void read(int bOff, short[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void read(int bOff, int[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void read(int bOff, long[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void read(int bOff, float[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void read(int bOff, double[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(int bOff, byte[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(int bOff, char[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(int bOff, short[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(int bOff, int[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(int bOff, long[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(int bOff, float[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(int bOff, double[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public byte getByte(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public char getChar(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public short getShort(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public int getInt(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public long getLong(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public float getFloat(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public double getDouble(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public Pointer getPointer(int bOff) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public String getString(int bOff, boolean wide) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setByte(int bOff, byte value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setChar(int bOff, char value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setShort(int bOff, short value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setInt(int bOff, int value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setLong(int bOff, long value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setFloat(int bOff, float value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setDouble(int bOff, double value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setPointer(int offset, Pointer value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setString(int offset, String value, boolean wide) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public String toString() {
+            return "opaque@0x" + Long.toHexString(peer);
+        }
     }
 }

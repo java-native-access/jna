@@ -157,10 +157,6 @@ public abstract class Structure {
         this.memory = m.share(offset, size());
     }
     
-    protected Pointer getMemory() {
-        return memory;
-    }
-
     /** Attempt to allocate memory if sufficient information is available.
      * Returns whether the operation was successful. 
      */

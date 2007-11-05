@@ -32,6 +32,8 @@ import com.sun.jna.ptr.PointerByReference;
 
 /** Provides notification of file system changes.  Actual capabilities may
  * vary slightly by platform.
+ * <p>
+ * Watched files which are removed from the filesystem are no longer watched.
  * @author twall
  */
 
@@ -181,20 +183,27 @@ public abstract class FileMonitor {
                     event = new FileEvent(file, FILE_NAME_CHANGED_NEW); break;
                 default:
                     // TODO: other actions...
-                    System.err.println("Unrecognized action: " + fni.Action);
+                    System.err.println("Unrecognized file action '" + fni.Action + "'");
                 }
                 if (event != null)
                     notify(event);
                 fni = fni.next();
             } while (fni != null);
+            // Trigger the next read
+            if (!finfo.file.exists()) {
+                unwatch(finfo.file);
+                return;
+            }
             
             if (!klib.ReadDirectoryChangesW(finfo.handle, finfo.info,
                                             finfo.info.size(), finfo.recursive,
                                             finfo.notifyMask, finfo.infoLength, 
                                             finfo.overlapped, null)) {
+                int err = klib.GetLastError();
                 throw new IOException("ReadDirectoryChangesW failed on "
-                                      + finfo.file + " ("
-                                      + klib.GetLastError() + ")");
+                                      + finfo.file + ": '" 
+                                      + getSystemError(err)
+                                      + "' (" + err + ")");
             }
         }
         private FileInfo waitForChange() {
@@ -233,7 +242,7 @@ public abstract class FileMonitor {
             }
             return result;
         }
-        protected void watch(File file, int eventMask, boolean recursive) throws IOException {
+        protected synchronized void watch(File file, int eventMask, boolean recursive) throws IOException {
             File dir = file;
             if (!dir.isDirectory()) {
                 recursive = false;
@@ -263,19 +272,23 @@ public abstract class FileMonitor {
             FileInfo finfo = new FileInfo(file, handle, notifyMask, recursive);
             fileMap.put(file, finfo);
             handleMap.put(handle, finfo);
+            // Existing port is returned
             port = klib.CreateIoCompletionPort(handle, port, handle.getPointer(), 0);
             if (Kernel32.INVALID_HANDLE_VALUE.equals(port)) {
-                throw new IOException("Unable to create I/O Completion port "
-                                      + "for " + file + " ("
-                                      + klib.GetLastError() + ")");
+                throw new IOException("Unable to create/use I/O Completion port "
+                        + "for " + file + " ("
+                        + klib.GetLastError() + ")");
             }
-            // TODO: use callback method instead of a dedicated thread?
+            // TODO: use FileIOCompletionRoutine callback method instead of a 
+            // dedicated thread
             if (!klib.ReadDirectoryChangesW(handle, finfo.info, finfo.info.size(), 
                                             recursive, notifyMask, finfo.infoLength, 
                                             finfo.overlapped, null)) {
+                int err = klib.GetLastError();
                 throw new IOException("ReadDirectoryChangesW failed on "
-                                      + finfo.file + ":" + finfo.handle + " ("
-                                      + klib.GetLastError() + ")");
+                                      + finfo.file 
+                                      + ": '" + getSystemError(err)
+                                      + "' (" + err + ")");
             }
             if (watcher == null) {
                 watcher = new Thread("W32 File Monitor") {
@@ -296,7 +309,7 @@ public abstract class FileMonitor {
                 watcher.start();
             }
         }
-        protected void unwatch(File file) {
+        protected synchronized void unwatch(File file) {
             FileInfo finfo = (FileInfo)fileMap.remove(file);
             if (finfo != null) {
                 handleMap.remove(finfo.handle);
@@ -304,10 +317,24 @@ public abstract class FileMonitor {
                 klib.CloseHandle(finfo.handle);
             }
         }
-        protected void dispose() {
+        protected synchronized void dispose() {
             Kernel32 klib = Kernel32.INSTANCE;
             klib.PostQueuedCompletionStatus(port, 0, null, null);
             klib.CloseHandle(port);
+            port = null;
+            watcher = null;
+        }
+        private String getSystemError(int code) {
+            Kernel32 lib = Kernel32.INSTANCE;
+            PointerByReference pref = new PointerByReference();
+            lib.FormatMessage(Kernel32.FORMAT_MESSAGE_ALLOCATE_BUFFER
+                              |Kernel32.FORMAT_MESSAGE_FROM_SYSTEM
+                              |Kernel32.FORMAT_MESSAGE_IGNORE_INSERTS, 
+                              null, code, 
+                              0, pref, 0, null);
+            String s = pref.getValue().getString(0, !Boolean.getBoolean("w32.ascii"));
+            lib.LocalFree(pref.getValue());
+            return s;
         }
     }
     

@@ -29,25 +29,6 @@ public interface Kernel32 extends W32API {
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
 
-    public static class HANDLEByReference extends ByReference {
-        public HANDLEByReference() {
-            this(null);
-        }
-        public HANDLEByReference(HANDLE h) {
-            super(Pointer.SIZE);
-            setValue(h);
-        }
-        public void setValue(HANDLE h) {
-            getPointer().setPointer(0, h != null ? h.getPointer() : null);
-        }
-        public HANDLE getValue() {
-            Pointer p = getPointer().getPointer(0);
-            if (Pointer.PM1.equals(p))
-                return INVALID_HANDLE_VALUE;
-            return new HANDLE(p);
-        }
-    }
-    
     public static class SYSTEMTIME extends Structure {
         public short wYear;
         public short wMonth;
@@ -58,6 +39,9 @@ public interface Kernel32 extends W32API {
         public short wSecond;
         public short wMilliseconds;
     }
+
+    Pointer LocalFree(Pointer hLocal);
+    Pointer GlobalFree(Pointer hGlobal);
     
     void GetSystemTime(SYSTEMTIME result);
     int GetCurrentThreadId();
@@ -65,12 +49,10 @@ public interface Kernel32 extends W32API {
     int GetCurrentProcessId();
     HANDLE GetCurrentProcess();
     int GetProcessId(HANDLE process);
-    /** NOTE: the first invocation of this method will clear any extant
-     * error, so be sure to call it once <em>before</em> you need its result.
-     */
     int GetLastError();
     void SetLastError(int dwErrCode);
 
+    int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x0100;
     int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
     int FORMAT_MESSAGE_IGNORE_INSERTS = 0x200;
     int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId, 
@@ -193,6 +175,9 @@ public interface Kernel32 extends W32API {
                                                    + size);
             allocateMemory(size);
         }
+        /** WARNING: this filename may be either the short or long form
+         * of the filename.
+         */
         public String getFilename() {
             return new String(FileName, 0, FileNameLength/2);
         }
@@ -200,13 +185,13 @@ public interface Kernel32 extends W32API {
             // avoid reading filename until we know how long it is
             FileName = new char[0];
             super.read();
-            FileName = getMemory().getCharArray(12, FileNameLength/2);
+            FileName = getPointer().getCharArray(12, FileNameLength/2);
         }
         public FILE_NOTIFY_INFORMATION next() {
             if (NextEntryOffset == 0)
                 return null;
             FILE_NOTIFY_INFORMATION next = new FILE_NOTIFY_INFORMATION();
-            next.useMemory(getMemory(), NextEntryOffset);
+            next.useMemory(getPointer(), NextEntryOffset);
             next.read();
             return next;
         }
@@ -222,7 +207,9 @@ public interface Kernel32 extends W32API {
     public static interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
         void callback(int errorCode, int nBytesTransferred, OVERLAPPED overlapped);
     }
-    // NOTE: only exists in unicode form (W suffix)
+    /** NOTE: only exists in unicode form (W suffix).  Define this method 
+     * explicitly with the W suffix to avoid inadvertent calls in ASCII mode. 
+     */
     boolean ReadDirectoryChangesW(HANDLE directory, 
                                   FILE_NOTIFY_INFORMATION info, 
                                   int length,
