@@ -135,6 +135,8 @@ public class Function extends Pointer {
      */
     Function(NativeLibrary library, String functionName, int callingConvention) {
         checkCallingConvention(callingConvention);
+        if (functionName == null)
+            throw new NullPointerException("Function name must not be null");
         this.library = library;
         this.functionName = functionName;
         this.callingConvention = callingConvention;
@@ -156,6 +158,10 @@ public class Function extends Pointer {
      */
     Function(Pointer functionAddress, int callingConvention) {
         checkCallingConvention(callingConvention);
+        if (functionAddress == null
+            || functionAddress.peer == 0) {
+            throw new NullPointerException("Function address may not be null");
+        }
         this.functionName = "<unknown>";
         this.callingConvention = callingConvention;
         this.peer = functionAddress.peer;

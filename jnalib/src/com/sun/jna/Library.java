@@ -154,6 +154,10 @@ public interface Library {
                     // Find the function to invoke
                     String methodName = 
                         functionMapper.getFunctionName(nativeLibrary, method);
+                    if (methodName == null) {
+                        // Just in case the function mapper screwed up
+                        methodName = method.getName();
+                    }
                     int callingConvention = 
                         proxy instanceof AltCallingConvention
                         ? Function.ALT_CONVENTION : Function.C_CONVENTION;
@@ -162,8 +166,9 @@ public interface Library {
                     f.isVarArgs = Function.isVarArgs(method);                    
                     f.options = new HashMap(this.options);
                     //
-                    // Pass in the original method from the Library interface subclass
-                    // so annotations present in the interface get passed on.
+                    // Pass in the original method from the Library interface
+                    // subclass so annotations present in the interface get
+                    // passed on. 
                     //
                     f.options.put(Library.OPTION_INVOKING_METHOD, 
                         interfaceClass.getMethod(method.getName(), method.getParameterTypes()));

@@ -140,6 +140,9 @@ public class NativeLibrary {
      *      the full path to the library (e.g. "/lib/libc.so.6").
      */
     public static final NativeLibrary getInstance(String libraryName) {
+        if (libraryName == null)
+            throw new NullPointerException("Library name may not be null");
+
         synchronized (libraries) {
             WeakReference ref = (WeakReference)libraries.get(libraryName);
             NativeLibrary library = ref != null ? (NativeLibrary)ref.get() : null;
@@ -201,6 +204,8 @@ public class NativeLibrary {
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName, int callingConvention) {
+        if (functionName == null)
+            throw new NullPointerException("Function name may not be null");
         synchronized (functions) {
             Function function = (Function) functions.get(functionName);
             if (function == null) {
@@ -215,6 +220,9 @@ public class NativeLibrary {
      * Used by the Function class to locate a symbol
      */
     long getFunctionAddress(String functionName) {
+        if (handle == 0) {
+            throw new UnsatisfiedLinkError("Library has been unloaded");
+        }
         long func = findSymbol(handle, functionName);
         if (func == 0) {
             throw new UnsatisfiedLinkError("Cannot locate function '" + functionName + "'");
