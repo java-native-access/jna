@@ -24,9 +24,9 @@ import java.util.Map;
 import com.sun.jna.Pointer;
 import com.sun.jna.examples.win32.Kernel32;
 import com.sun.jna.examples.win32.Kernel32.FILE_NOTIFY_INFORMATION;
-import com.sun.jna.examples.win32.Kernel32.HANDLEByReference;
 import com.sun.jna.examples.win32.Kernel32.OVERLAPPED;
 import com.sun.jna.examples.win32.W32API.HANDLE;
+import com.sun.jna.examples.win32.W32API.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
