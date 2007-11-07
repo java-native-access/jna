@@ -46,7 +46,9 @@ public class FileMonitorTest extends TestCase {
     }
     
     protected void tearDown() {
-        monitor.dispose();
+        if (monitor != null) {
+            monitor.dispose();
+        }
     }
     
     public void testNotifyOnFileCreation() throws Exception {
