@@ -15,8 +15,8 @@ package com.sun.jna.examples;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
+
+import com.sun.jna.Platform;
 import com.sun.jna.examples.unix.X11;
 import com.sun.jna.examples.unix.X11.Display;
 import com.sun.jna.examples.win32.User32;
@@ -36,13 +36,13 @@ public class KeyboardUtils {
         if (GraphicsEnvironment.isHeadless()) {
             throw new HeadlessException("KeyboardUtils requires a keyboard");
         }
-        String os = System.getProperty("os.name");
-        if (os.startsWith("Windows")) {
+        if (Platform.isWindows()) {
             INSTANCE = new W32KeyboardUtils();
         }
-        else if (os.startsWith("Mac")) {
+        else if (Platform.isMac()) {
             INSTANCE = new MacKeyboardUtils();
-            throw new UnsupportedOperationException("No support (yet) for " + os);
+            throw new UnsupportedOperationException("No support (yet) for " 
+                                                    + System.getProperty("os.name"));
         }
         else {
             INSTANCE = new X11KeyboardUtils();

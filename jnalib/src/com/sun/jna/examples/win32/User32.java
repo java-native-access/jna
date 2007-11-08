@@ -191,4 +191,44 @@ public interface User32 extends W32API {
     int VK_RMENU = 0xA5;
     boolean GetKeyboardState(byte[] state);
     short GetAsyncKeyState(int vKey);
+
+    int WH_KEYBOARD = 2;
+    int WH_MOUSE = 7;
+    int WH_KEYBOARD_LL = 13;
+    int WH_MOUSE_LL = 14;
+    public static class HHOOK extends HANDLE { }
+    public static interface HOOKPROC extends StdCallCallback { }
+    int WM_KEYDOWN = 256;
+    int WM_KEYUP = 257;
+    int WM_SYSKEYDOWN = 260;
+    int WM_SYSKEYUP = 261;
+    public static class KBDLLHOOKSTRUCT extends Structure {
+        public int vkCode;
+        public int scanCode;
+        public int flags;
+        public int time;
+        public ULONG_PTR dwExtraInfo;
+    }
+    public static interface LowLevelKeyboardProc extends HOOKPROC {
+        LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT lParam);
+    }
+    HHOOK SetWindowsHookEx(int idHook, HOOKPROC lpfn, HINSTANCE hMod, int dwThreadId);
+    LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
+    LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, Pointer lParam);
+    boolean UnhookWindowsHookEx(HHOOK hhk);
+    
+    public static class MSG extends Structure {
+        public HWND hWnd;
+        public int message;
+        public WPARAM wParam;
+        public LPARAM lParam;
+        public int time;
+        public POINT pt;
+    }
+    int GetMessage(MSG lpMsg, HWND hWnd, int wMsgFilterMin, int wMsgFilterMax);
+    boolean PeekMessage(MSG lpMsg, HWND hWnd, int wMsgFilterMin, int wMsgFilterMax, int wRemoveMsg);
+    boolean TranslateMessage(MSG lpMsg);
+    LRESULT DispatchMessage(MSG lpMsg);
+    void PostMessage(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam);
+    void PostQuitMessage(int nExitCode);
 }

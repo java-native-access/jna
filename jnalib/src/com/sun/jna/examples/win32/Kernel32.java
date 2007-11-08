@@ -42,7 +42,8 @@ public interface Kernel32 extends W32API {
 
     Pointer LocalFree(Pointer hLocal);
     Pointer GlobalFree(Pointer hGlobal);
-    
+
+    HMODULE GetModuleHandle(String name);
     void GetSystemTime(SYSTEMTIME result);
     int GetCurrentThreadId();
     HANDLE GetCurrentThread();
