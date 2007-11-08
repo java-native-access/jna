@@ -146,7 +146,7 @@
       <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
     </jar>
   </target>
-  <target name="examples-jar" depends="jar,native-jar">
+  <target name="examples" depends="jar,native">
     <jar jarfile="${build}/examples.jar">
       <manifest>
         <attribute name="Class-Path" value="jna.jar"/>
@@ -155,14 +155,6 @@
       <fileset dir="${src}" includes="**/examples/**/*.png"/>
       <fileset dir="${classes}" includes="**/examples/*,**/examples/**/*"/>
       <fileset dir="${classes}" includes="jnidispatch.dll"/>
-    </jar>
-  </target>
-  <target name="native-jar" depends="native,jar" 
-          description="Build native jar">
-    <!-- For web start, native libraries need to be in a separate jar file -->
-    <!-- at the root -->
-    <jar jarfile="${build}/${native.jar}">
-      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
     </jar>
   </target>
 
@@ -232,6 +224,11 @@
       <fileset dir="${build.native}" 
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
+    <!-- For web start, native libraries need to be in a separate jar file -->
+    <!-- at the root -->
+    <jar jarfile="${build}/${native.jar}">
+      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
+    </jar>
   </target>
 
   <target name="compile-tests" depends="compile,native"
@@ -247,7 +244,7 @@
 
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found -->
-  <target name="test" depends="jar,examples-jar,compile-tests"
+  <target name="test" depends="jar,examples,compile-tests"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>
@@ -343,7 +340,7 @@
     </javadoc>
   </target>
 
-  <target name="dist" depends="jar,compile-tests,native-jar,examples-jar,javadoc"
+  <target name="dist" depends="jar,compile-tests,native,examples,javadoc"
           description="Build examples">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <zipfileset src="${build}/${jar}"/>
@@ -359,6 +356,8 @@
       <zipfileset src="${dist}/linux-amd64.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-amd64"/>
+      <!-- These are disabled until updated for 3.0 -->
+      <!--
       <zipfileset src="${dist}/sunos-x86.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
@@ -368,6 +367,7 @@
       <zipfileset src="${dist}/sunos-sparcv9.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
+      -->
       <zipfileset src="${dist}/freebsd-i386.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-i386"/>
@@ -399,7 +399,7 @@
     </delete>
   </target>
 
-  <target name="profile-single" depends="examples-jar" description="Profile Class">
+  <target name="profile-single" depends="examples" description="Profile Class">
     <fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
     <nbprofiledirect>
       <classpath> <pathelement location="${build}/examples.jar"/> </classpath>
@@ -414,7 +414,7 @@
     </java>
   </target>
 
-  <target name="profile-test-single" depends="examples-jar,compile-tests"
+  <target name="profile-test-single" depends="examples,compile-tests"
           description="Profile Test Class">
     <fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
     <nbprofiledirect>

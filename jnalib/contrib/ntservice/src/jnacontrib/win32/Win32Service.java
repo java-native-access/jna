@@ -277,7 +277,7 @@ public abstract class Win32Service {
       // See http://support.microsoft.com/kb/201349, which recommends
       // having init() wait for this thread.  
       // Waiting on this thread in init() won't fix the crash, though.
-      System.exit(0);
+      //System.exit(0);
     }
   }
   

@@ -235,16 +235,11 @@ class CallbackReference extends WeakReference {
                 }
             }
         }
-        /** Called from native code.  All arguments are in an array of 
-         * Object as the first argument.  Converts all arguments to types
-         * required by the actual callback method signature, and converts
-         * the result back into an appropriate native type.
-         * This method <em>must not</em> throw exceptions. 
-         */
-        public Object callback(Object[] args) {
+        
+        private Object callback_inner(Object[] args) {
             Class[] paramTypes = callbackMethod.getParameterTypes();
             Object[] callbackArgs = new Object[args.length];
-
+            
             // convert basic supported types to appropriate Java parameter types
             for (int i=0;i < args.length;i++) {
                 Class type = paramTypes[i];
@@ -256,7 +251,7 @@ class CallbackReference extends WeakReference {
                 }
                 callbackArgs[i] = convertArgument(arg, type);
             }
-
+            
             Object result = null;
             Callback cb = getCallback();
             if (cb != null) {
@@ -274,6 +269,21 @@ class CallbackReference extends WeakReference {
                 }
             }
             return result;
+        }
+        /** Called from native code.  All arguments are in an array of 
+         * Object as the first argument.  Converts all arguments to types
+         * required by the actual callback method signature, and converts
+         * the result back into an appropriate native type.
+         * This method <em>must not</em> throw exceptions. 
+         */
+        public Object callback(Object[] args) {
+            try {
+                return callback_inner(args);
+            }
+            catch (Throwable t) {
+                t.printStackTrace();
+                return null;
+            }
         }
 
         /** Convert argument from its basic native type to the given

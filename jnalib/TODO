@@ -27,6 +27,10 @@
   bunch of native lookup functions (more robust) or java-side conditionals
   (less robust but easier to change).
 
+* packaging: 'types', 'convert/marshal' subpackages?
+  note: marshal/unmarshal vs tonative/fromnative: to/fromnative is more
+  explicit, since marshal/unmarshal doesn't indicate src/dst.
+
 * Make a separate jar file for all OS-specific headers
   Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
   aggregated per-library (interface CLibrary extends stdlib, stdio, etc)

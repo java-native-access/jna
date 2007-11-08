@@ -104,7 +104,6 @@ public interface W32API extends StdCallLibrary, W32Errors {
     public static class LONG_PTR extends IntegerType { 
         public LONG_PTR() { this(0); }
         public LONG_PTR(long value) { super(Pointer.SIZE, value); }
-        public Pointer toPointer() { return Pointer.createConstant(longValue()); }
     }
     public static class SSIZE_T extends LONG_PTR {
         public SSIZE_T() { this(0); }
@@ -113,7 +112,6 @@ public interface W32API extends StdCallLibrary, W32Errors {
     public static class ULONG_PTR extends IntegerType { 
         public ULONG_PTR() { this(0); }
         public ULONG_PTR(long value) { super(Pointer.SIZE, value); }
-        public Pointer toPointer() { return Pointer.createConstant(longValue()); }
     }
     public static class SIZE_T extends ULONG_PTR {
         public SIZE_T() { this(0); }

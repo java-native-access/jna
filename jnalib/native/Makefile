@@ -197,7 +197,7 @@ $(FFI_LIB):
 	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
 	  echo "Configuring libffi ($(ARCH))"; \
 	  (cd $(FFI_BUILD) \
-	    && CC="$(CC)" $(FFI_SRC)/configure $(FFI_CONFIG)); \
+	    && CC="$(CC) $(CDEBUG)" $(FFI_SRC)/configure $(FFI_CONFIG)); \
 	fi
 	$(MAKE) -C $(FFI_BUILD)
 ifeq ($(OS),darwin)

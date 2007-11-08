@@ -30,6 +30,7 @@ Bug Fixes
 * Properly preserve/return GetLastError/errno after native calls
 * Allocate executable memory on w32 to avoid errors with hardware-enforced
   data execution protection (DEP)
+* Fix VM crash on w32 stdcall callbacks
 
 Release 2.5
 Features

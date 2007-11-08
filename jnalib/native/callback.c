@@ -196,7 +196,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   else {
     jobject ret = (*env)->CallObjectMethod(env, obj, cb->methodID, array);
     if ((*env)->ExceptionCheck(env)) {
-      fprintf(stderr, "JNA: uncaught exception in callback\n");
+      fprintf(stderr, "JNA: uncaught exception in callback, continuing\n");
       memset(resp, 0, cif->rtype->size);
     }
     else {
@@ -259,7 +259,7 @@ alloc_closure(JNIEnv* env) {
     /*
      * Get a new page from the kernel and divvy that up
      */
-    int clsize = roundup(sizeof(ffi_closure), sizeof(void *));
+    int clsize = roundup(sizeof(ffi_closure), sizeof(closure));
     int i;
     caddr_t ptr = XM_ALLOC(PAGE_SIZE);
     if (ptr == NULL) {
