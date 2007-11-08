@@ -1,3 +1,10 @@
+2007-11-08  Timothy Wall  <twall@oculustech.com>
+
+	* src/x86/ffitarget.h: Increase size of trampoline for stdcall
+	closures. 
+	* src/x86/win32.S: Add assembly for stdcall closure.
+	* src/x86/ffi.c: Initialize stdcall closure trampoline.
+	
 2007-05-13  Release Manager
 
 	* GCC 4.2.0 released.
