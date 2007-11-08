@@ -608,9 +608,9 @@ callInt32StdCallCallback(int32 (__stdcall *func)(int32 arg, int32 arg2),
   void* sp2;
   int value;
 
-  asm(" movl %%esp,%0" : "=m" (sp1));
+  asm volatile (" movl %%esp,%0" : "=g" (sp1));
   value = (*func)(arg, arg2);
-  asm(" movl %%esp,%0" : "=m" (sp2));
+  asm volatile (" movl %%esp,%0" : "=g" (sp2));
 
   if (sp1 != sp2) {
     return -1;
