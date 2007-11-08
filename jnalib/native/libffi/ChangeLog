@@ -1,4 +1,4 @@
-2007-11-08  Timothy Wall  <twall@oculustech.com>
+2007-11-08  Timothy Wall  <twall@users.sf.net>
 
 	* src/x86/ffitarget.h: Increase size of trampoline for stdcall
 	closures. 

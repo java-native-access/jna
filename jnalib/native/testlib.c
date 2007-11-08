@@ -24,13 +24,6 @@ extern "C" {
 #error 64-bit type not defined for this platform
 #endif
 
-// Force some local operations so that we don't get false
-// test passes due to arguments and return values accidentally
-// coinciding
-volatile int __dummy__ = 0;
-#undef NOP
-#define NOP(X) ((X)+__dummy__)
-
 #define MAGICSTRING "magic";
 #define MAGICWSTRING L"magic"
 #define MAGIC32 0x12345678L
@@ -55,13 +48,6 @@ struct CheckFieldAlignment {
 
 static int _callCount;
 
-static void nonleaf() {
-  static int dummy = 1;
-  dummy = dummy ^ 0x12345678;
-  if (dummy == 0x12345678) 
-    printf("%c", 0);
-}
-
 EXPORT int
 callCount() {
   return ++_callCount;
@@ -69,26 +55,22 @@ callCount() {
 
 EXPORT int  
 returnFalse() {
-  nonleaf();
   return 0;
 }
 
 EXPORT int  
 returnTrue() {
-  nonleaf();
   return -1;
 }
 
 EXPORT int
 returnBooleanArgument(int arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT int8  
 returnInt8Argument(int8 arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT wchar_t
@@ -98,149 +80,126 @@ returnWideCharArgument(wchar_t arg) {
 
 EXPORT int16  
 returnInt16Argument(int16 arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT int32  
 returnInt32Zero() {
   int32 value = 0;
-  nonleaf();
   return value;
 }
 
 EXPORT int32  
 returnInt32Magic() {
   int32 value = MAGIC32;
-  nonleaf();
   return value;
 }
 
 EXPORT int32  
 returnInt32Argument(int32 arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT int64  
 returnInt64Zero() {
   int64 value = 0;
-  nonleaf();
   return value;
 }
 
 EXPORT int64  
 returnInt64Magic() {
   int64 value = MAGIC64;
-  nonleaf();
   return value;
 }
 
 EXPORT int64  
 returnInt64Argument(int64 arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT long
 returnLongZero() {
   long value = 0;
-  nonleaf();
   return value;
 }
 
 EXPORT long  
 returnLongMagic() {
   long value = sizeof(long) == 4 ? MAGIC32 : MAGIC64;
-  nonleaf();
   return value;
 }
 
 EXPORT long  
 returnLongArgument(long arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT float  
 returnFloatZero() {
   float value = 0.0;
-  nonleaf();
   return value;
 }
 
 EXPORT float  
 returnFloatMagic() {
   float value = MAGICFLOAT;
-  nonleaf();
   return value;
 }
 
 EXPORT float  
 returnFloatArgument(float arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT double  
 returnDoubleZero() {
   double value = (double)0.0;
-  nonleaf();
   return value;
 }
 
 EXPORT double  
 returnDoubleMagic() {
   double value = MAGICDOUBLE;
-  nonleaf();
-  return NOP(value);
+  return value;
 }
 
 EXPORT double  
 returnDoubleArgument(double arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT void* 
 returnPointerArgument(void *arg) {
-  nonleaf();
   return arg;
 }
 
 EXPORT char* 
 returnStringMagic() {
-  nonleaf();
   return MAGICSTRING;
 }
 
 EXPORT char* 
 returnStringArgument(char *arg) {
-  nonleaf();
   return arg;
 }
 
 EXPORT wchar_t* 
 returnWStringMagic() {
-  nonleaf();
   return MAGICWSTRING;
 }
 
 EXPORT wchar_t* 
 returnWStringArgument(wchar_t *arg) {
-  nonleaf();
   return arg;
 }
 
 EXPORT char*
 returnStringArrayElement(char* args[], int which) {
-  nonleaf();
   return args[which];
 }
 
 EXPORT wchar_t*
 returnWideStringArrayElement(wchar_t* args[], int which) {
-  nonleaf();
   return args[which];
 }
 
@@ -268,7 +227,6 @@ typedef struct _TestStructure {
 EXPORT TestStructure*
 returnStaticTestStructure() {
   static TestStructure test_structure;
-  nonleaf();
   test_structure.value = MAGICDOUBLE;
   return &test_structure;
 }
@@ -291,49 +249,41 @@ returnCallbackArgument(callback_t arg) {
 
 EXPORT void 
 incrementInt8ByReference(int8 *arg) {
-  nonleaf();
   if (arg) ++*arg;
 }
 
 EXPORT void 
 incrementInt16ByReference(int16 *arg) {
-  nonleaf();
   if (arg) ++*arg;
 }
 
 EXPORT void 
 incrementInt32ByReference(int32 *arg) {
-  nonleaf();
   if (arg) ++*arg;
 }
 
 EXPORT void 
 incrementInt64ByReference(int64 *arg) {
-  nonleaf();
   if (arg) ++*arg;
 }
 
 EXPORT void 
 complementFloatByReference(float *arg) {
-  nonleaf();
   if (arg) *arg = -*arg;
 }
 
 EXPORT void 
 complementDoubleByReference(double *arg) {
-  nonleaf();
   if (arg) *arg = -*arg;
 }
 
 EXPORT void 
 setPointerByReferenceNull(void **arg) {
-  nonleaf();
   if (arg) *arg = NULL;
 }
 
 EXPORT int64 
 checkInt64ArgumentAlignment(int32 i, int64 j, int32 i2, int64 j2) {
-  nonleaf();
   if (i != 0x10101010 || j != LONG(0x1111111111111111)
       || i2 != 0x01010101 || j2 != LONG(0x2222222222222222))
     return -1;
@@ -345,11 +295,10 @@ EXPORT double
 checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   // float:  1=3f800000 2=40000000 3=40400000 4=40800000
   // double: 1=3ff00... 2=40000... 3=40080... 4=40100...
-  nonleaf();
   if (f != 1 || d != 2 || f2 != 3 || d2 != 4)
     return -1;
 
-  return NOP(f) + NOP(d) + NOP(f2) + NOP(d2);
+  return f + d + f2 + d2;
 }
 
 EXPORT void*
@@ -466,8 +415,7 @@ callVoidCallback(void (*func)()) {
 EXPORT int 
 callBooleanCallback(int (*func)(int arg, int arg2),
                     int arg, int arg2) {
-  nonleaf();
-  return (*func)(NOP(arg), NOP(arg2));
+  return (*func)(arg, arg2);
 }
 
 EXPORT int8
@@ -483,36 +431,31 @@ callInt16Callback(int16 (*func)(int16 arg, int16 arg2), int16 arg, int16 arg2) {
 EXPORT int32 
 callInt32Callback(int32 (*func)(int32 arg, int32 arg2),
                   int32 arg, int32 arg2) {
-  nonleaf();
-  return (*func)(NOP(arg), NOP(arg2));
+  return (*func)(arg, arg2);
 }
 
 EXPORT long 
 callNativeLongCallback(long (*func)(long arg, long arg2),
                        long arg, long arg2) {
-  nonleaf();
-  return (*func)(NOP(arg), NOP(arg2));
+  return (*func)(arg, arg2);
 }
 
 EXPORT int64 
 callInt64Callback(int64 (*func)(int64 arg, int64 arg2),
                   int64 arg, int64 arg2) {
-  nonleaf();
-  return (*func)(NOP(arg), NOP(arg2));
+  return (*func)(arg, arg2);
 }
 
 EXPORT float 
 callFloatCallback(float (*func)(float arg, float arg2),
                   float arg, float arg2) {
-  nonleaf();
-  return (*func)(NOP(arg), NOP(arg2));
+  return (*func)(arg, arg2);
 }
 
 EXPORT double 
 callDoubleCallback(double (*func)(double arg, double arg2),
                    double arg, double arg2) {
-  nonleaf();
-  return (*func)(NOP(arg), NOP(arg2));
+  return (*func)(arg, arg2);
 }
 
 EXPORT TestStructure*
@@ -655,15 +598,25 @@ returnStringVarArgs(const char *fmt, ...) {
 ///////////////////////////////////////////////////////////////////////
 EXPORT int32 __stdcall
 returnInt32ArgumentStdCall(int32 arg) {
-  nonleaf();
-  return NOP(arg);
+  return arg;
 }
 
 EXPORT int32 __stdcall
 callInt32StdCallCallback(int32 (__stdcall *func)(int32 arg, int32 arg2),
                          int32 arg, int32 arg2) {
-  nonleaf();
-  return (*func)(NOP(arg), NOP(arg2));
+  void* sp1;
+  void* sp2;
+  int value;
+
+  asm(" movl %%esp,%0" : "=m" (sp1));
+  value = (*func)(arg, arg2);
+  asm(" movl %%esp,%0" : "=m" (sp2));
+
+  if (sp1 != sp2) {
+    return -1;
+  }
+
+  return value;
 }
 #endif /* _WIN32 */
 

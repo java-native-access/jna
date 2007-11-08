@@ -77,10 +77,16 @@ public class W32StdCallTest extends TestCase {
         final int EXPECTED = MAGIC*3;
         int value = testlib.callInt32StdCallCallback(cb, MAGIC, MAGIC*2);
         assertTrue("stdcall callback not called", called[0]);
+        if (value == -1) {
+            fail("stdcall callback did not restore the stack pointer");
+        }
         assertEquals("Wrong stdcall callback value", Integer.toHexString(EXPECTED), 
                      Integer.toHexString(value));
         
         value = testlib.callInt32StdCallCallback(cb, -1, -2);
+        if (value == -1) {
+            fail("stdcall callback did not restore the stack pointer");
+        }
         assertEquals("Wrong stdcall callback return", -3, value);
     }
 }
