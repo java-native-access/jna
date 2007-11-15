@@ -31,6 +31,7 @@ Bug Fixes
 * Allocate executable memory on w32 to avoid errors with hardware-enforced
   data execution protection (DEP)
 * Fix VM crash on w32 stdcall callbacks
+* Use long offsets and sizes rather than ints (64-bit safe)
 
 Release 2.5
 Features

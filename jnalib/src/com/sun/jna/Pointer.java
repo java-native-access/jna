@@ -447,7 +447,7 @@ public class Pointer {
             long len = indexOf(offset, (byte)0);
             if (len != -1) {
                 if (len > Integer.MAX_VALUE) {
-                    throw new OutOfMemoryError("String exceeds maximum length");
+                    throw new OutOfMemoryError("String exceeds maximum length: " + len);
                 }
                 byte[] data = getByteArray(offset, (int)len);
                 try {

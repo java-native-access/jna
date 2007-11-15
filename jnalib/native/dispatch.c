@@ -756,19 +756,19 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3SII
 /*
  * Class:     Pointer
  * Method:    indexOf
- * Signature: (JB)I
+ * Signature: (JB)J
  */
-JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_indexOf__JB
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer_indexOf__JB
     (JNIEnv *env, jobject self, jlong boff, jbyte value)
 {
   jbyte *peer = (jbyte *)getNativeAddress(env, self) + boff;
-  int i = 0;
+  jlong i = 0;
   while (i >= 0) {
     if (peer[i] == value)
       return i;
     ++i;
   }
-  return -1;
+  return -1L;
 }
 
 /*
