@@ -61,14 +61,13 @@ public class Pointer {
     }
 
     /** Provide a view of this pointer with a different peer base. */
-    public Pointer share(int offset, int sz) {
+    public Pointer share(long offset, long sz) {
         return new Pointer(peer + offset);
     }
 
     /** Zero memory for the given number of bytes. */
-    void clear(int size) {
-        byte[] buffer = new byte[size];
-        write(0, buffer, 0, size);
+    void clear(long size) {
+        setMemory(0, size, (byte)0);
     }
 
     /**
@@ -76,9 +75,8 @@ public class Pointer {
      *
      * @param	o 
      *			A <code>Pointer</code> instance
-     * @return	True if the class of this <code>Pointer</code> object and 
-     *			the class of <code>other</code> are exactly equal, and the C
-     *			pointers being pointed to by these objects are also
+     * @return	True if the other object is a <code>Pointer</code>, 
+     *          and the C pointers being pointed to by these objects are also
      *			equal. Returns false otherwise.
      */
     public boolean equals(Object o) {
@@ -105,7 +103,7 @@ public class Pointer {
     /** Returns the offset of the given value in memory from the given offset,
      * or -1 if the value is not found.
      */
-    public native int indexOf(int bOff, byte value);
+    public native long indexOf(long bOff, byte value);
     
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by 
@@ -116,7 +114,7 @@ public class Pointer {
      * @param index  array index from which to start copying
      * @param length number of elements from native pointer that must be copied
      */
-    public native void read(int bOff, byte[] buf, int index, int length);
+    public native void read(long bOff, byte[] buf, int index, int length);
 
 
     /**
@@ -128,7 +126,7 @@ public class Pointer {
      * @param index  array index to which data is copied
      * @param length number of elements from native pointer that must be copied
      */
-    public native void read(int bOff, short[] buf, int index, int length);
+    public native void read(long bOff, short[] buf, int index, int length);
 
 
     /**
@@ -140,7 +138,7 @@ public class Pointer {
      * @param index  array index to which data is copied
      * @param length number of elements from native pointer that must be copied
      */
-    public native void read(int bOff, char[] buf, int index, int length);
+    public native void read(long bOff, char[] buf, int index, int length);
 
 
     /**
@@ -152,7 +150,7 @@ public class Pointer {
      * @param index  array index to which data is copied
      * @param length number of elements from native pointer that must be copied
      */
-    public native void read(int bOff, int[] buf, int index, int length);
+    public native void read(long bOff, int[] buf, int index, int length);
 
 
     /**
@@ -164,7 +162,7 @@ public class Pointer {
      * @param index  array index to which data is copied
      * @param length number of elements from native pointer that must be copied
      */
-    public native void read(int bOff, long[] buf, int index, int length);
+    public native void read(long bOff, long[] buf, int index, int length);
 
 
     /**
@@ -176,7 +174,7 @@ public class Pointer {
      * @param index  array index to which data is copied
      * @param length number of elements from native pointer that must be copied
      */
-    public native void read(int bOff, float[] buf, int index, int length);
+    public native void read(long bOff, float[] buf, int index, int length);
 
 
     /**
@@ -188,7 +186,7 @@ public class Pointer {
      * @param index  array index to which data is copied
      * @param length number of elements from native pointer that must be copied
      */
-    public native void read(int bOff, double[] buf, int index, int length);
+    public native void read(long bOff, double[] buf, int index, int length);
 
 
 
@@ -207,7 +205,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
      */
-    public native void write(int bOff, byte[] buf, int index, int length);
+    public native void write(long bOff, byte[] buf, int index, int length);
 
 
     /**
@@ -220,7 +218,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
      */
-    public native void write(int bOff, short[] buf, int index, int length);
+    public native void write(long bOff, short[] buf, int index, int length);
 
 
     /**
@@ -233,7 +231,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
      */
-    public native void write(int bOff, char[] buf, int index, int length);
+    public native void write(long bOff, char[] buf, int index, int length);
 
 
     /**
@@ -246,7 +244,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
      */
-    public native void write(int bOff, int[] buf, int index, int length);
+    public native void write(long bOff, int[] buf, int index, int length);
 
 
     /**
@@ -259,7 +257,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
      */
-    public native void write(int bOff, long[] buf, int index, int length);
+    public native void write(long bOff, long[] buf, int index, int length);
 
 
     /**
@@ -272,7 +270,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
      */
-    public native void write(int bOff, float[] buf, int index, int length);
+    public native void write(long bOff, float[] buf, int index, int length);
 
 
     /**
@@ -285,7 +283,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
      */
-    public native void write(int bOff, double[] buf, int index, int length);
+    public native void write(long bOff, double[] buf, int index, int length);
 
 
     /** Write the given array of Pointer to native memory. 
@@ -295,7 +293,7 @@ public class Pointer {
      * @param length number of elements from <code>buf</code> that must be
      *               copied
     */
-    public void write(int bOff, Pointer[] buf, int index, int length) {
+    public void write(long bOff, Pointer[] buf, int index, int length) {
         for (int i=0;i < length;i++) {
             setPointer(bOff + i * Pointer.SIZE, buf[index + i]);
         }
@@ -313,7 +311,7 @@ public class Pointer {
      * @param offset offset from pointer to perform the indirection
      * @return the <code>byte</code> value being pointed to
      */
-    public native byte getByte(int offset);
+    public native byte getByte(long offset);
 
     /**
      * Indirect the native pointer as a pointer to <code>wchar_t</code>.  This 
@@ -323,7 +321,7 @@ public class Pointer {
      * @param offset offset from pointer to perform the indirection
      * @return the <code>wchar_t</code> value being pointed to
      */
-    public native char getChar(int offset);
+    public native char getChar(long offset);
 
     /**
      * Indirect the native pointer as a pointer to <code>short</code>.  This is
@@ -333,7 +331,7 @@ public class Pointer {
      * @param offset byte offset from pointer to perform the indirection
      * @return the <code>short</code> value being pointed to
      */
-    public native short getShort(int offset);
+    public native short getShort(long offset);
 
 
     /**
@@ -344,7 +342,7 @@ public class Pointer {
      * @param offset byte offset from pointer to perform the indirection
      * @return the <code>int</code> value being pointed to
      */
-    public native int getInt(int offset);
+    public native int getInt(long offset);
 
 
     /**
@@ -355,7 +353,7 @@ public class Pointer {
      * @param offset byte offset from pointer to perform the indirection
      * @return the <code>long</code> value being pointed to
      */
-    public native long getLong(int offset);
+    public native long getLong(long offset);
 
     /**
      * Indirect the native pointer as a pointer to <code>long</code>.  This is
@@ -365,7 +363,7 @@ public class Pointer {
      * @param offset byte offset from pointer to perform the indirection
      * @return the <code>long</code> value being pointed to
      */
-    public NativeLong getNativeLong(int offset) {
+    public NativeLong getNativeLong(long offset) {
         return new NativeLong(NativeLong.SIZE == 8 ? getLong(offset) : getInt(offset));
     }
     
@@ -377,7 +375,7 @@ public class Pointer {
      * @param offset byte offset from pointer to perform the indirection
      * @return the <code>float</code> value being pointed to
      */
-    public native float getFloat(int offset);
+    public native float getFloat(long offset);
 
 
     /**
@@ -388,7 +386,7 @@ public class Pointer {
      * @param offset byte offset from pointer to perform the indirection
      * @return the <code>double</code> value being pointed to
      */
-    public native double getDouble(int offset);
+    public native double getDouble(long offset);
 
     /**
      * Indirect the native pointer as a pointer to pointer.  This is equivalent 
@@ -400,7 +398,7 @@ public class Pointer {
      * being pointed to, or <code>null</code> if the pointer value is 
      * <code>NULL</code>; 
      */
-    public native Pointer getPointer(int offset);
+    public native Pointer getPointer(long offset);
 
     /**
      * Get a ByteBuffer mapped to the memory pointed to by the pointer,
@@ -410,7 +408,7 @@ public class Pointer {
      * @param length Length of ByteBuffer
      * @return a direct ByteBuffer that accesses the memory being pointed to, 
      */
-    public ByteBuffer getByteBuffer(int offset, int length) {
+    public ByteBuffer getByteBuffer(long offset, long length) {
         return getDirectByteBuffer(offset, length).order(ByteOrder.nativeOrder());
     }
     
@@ -421,7 +419,7 @@ public class Pointer {
      * @param length Length of ByteBuffer
      * @return a direct ByteBuffer that accesses the memory being pointed to, 
      */
-    private native ByteBuffer getDirectByteBuffer(int offset, int length);
+    private native ByteBuffer getDirectByteBuffer(long offset, long length);
 
     /**
      * Copy native memory to a Java String.  If <code>wide</code> is true,
@@ -432,7 +430,7 @@ public class Pointer {
      * @param wide whether to convert from a wide or standard C string
      * @return the <code>String</code> value being pointed to 
      */
-    public native String getString(int offset, boolean wide);
+    public native String getString(long offset, boolean wide);
 
     /**
      * Copy native memory to a Java String.  If the system property 
@@ -443,12 +441,15 @@ public class Pointer {
      * @param offset byte offset from pointer to obtain the native string
      * @return the <code>String</code> value being pointed to 
      */
-    public String getString(int offset) {
+    public String getString(long offset) {
         String encoding = System.getProperty("jna.encoding");
         if (encoding != null) {
-            int len = indexOf(offset, (byte)0);
+            long len = indexOf(offset, (byte)0);
             if (len != -1) {
-                byte[] data = getByteArray(offset, len);
+                if (len > Integer.MAX_VALUE) {
+                    throw new OutOfMemoryError("String exceeds maximum length");
+                }
+                byte[] data = getByteArray(offset, (int)len);
                 try {
                     return new String(data, encoding);
                 }
@@ -459,49 +460,49 @@ public class Pointer {
         return getString(offset, false);
     }
 
-    public byte[] getByteArray(int offset, int arraySize) {
+    public byte[] getByteArray(long offset, int arraySize) {
         byte[] buf = new byte[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
     
-    public char[] getCharArray(int offset, int arraySize) {
+    public char[] getCharArray(long offset, int arraySize) {
         char[] buf = new char[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
-    public short[] getShortArray(int offset, int arraySize) {
+    public short[] getShortArray(long offset, int arraySize) {
         short[] buf = new short[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
-    public int[] getIntArray(int offset, int arraySize) {
+    public int[] getIntArray(long offset, int arraySize) {
         int[] buf = new int[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
-    public long[] getLongArray(int offset, int arraySize) {
+    public long[] getLongArray(long offset, int arraySize) {
         long[] buf = new long[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
-    public float[] getFloatArray(int offset, int arraySize) {
+    public float[] getFloatArray(long offset, int arraySize) {
         float[] buf = new float[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
-    public double[] getDoubleArray(int offset, int arraySize) {
+    public double[] getDoubleArray(long offset, int arraySize) {
         double[] buf = new double[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
-    public Pointer[] getPointerArray(int offset, int arraySize) {
+    public Pointer[] getPointerArray(long offset, int arraySize) {
         Pointer[] buf = new Pointer[arraySize];
         for (int i=0;i < buf.length;i++) {
             buf[i] = getPointer(offset + i*SIZE);
@@ -513,6 +514,13 @@ public class Pointer {
     // Java type write methods
     //////////////////////////////////////////////////////////////////////////
 
+    /** Write <code>value</code> to the requested bank of memory. 
+     * @param offset byte offset from pointer to start
+     * @param length number of bytes to write
+     * @param value value to be written
+     */
+    public native void setMemory(long offset, long length, byte value);
+    
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
      * to the expression
@@ -522,7 +530,7 @@ public class Pointer {
      *		     must be set
      * @param value <code>byte</code> value to set
      */
-    public native void setByte(int offset, byte value);
+    public native void setByte(long offset, byte value);
 
 
     /**
@@ -534,7 +542,7 @@ public class Pointer {
      *		     must be set
      * @param value <code>short</code> value to set
      */
-    public native void setShort(int offset, short value);
+    public native void setShort(long offset, short value);
 
 
     /**
@@ -546,7 +554,7 @@ public class Pointer {
      *               must be set
      * @param value <code>char</code> value to set
      */
-    public native void setChar(int offset, char value);
+    public native void setChar(long offset, char value);
 
 
     /**
@@ -558,7 +566,7 @@ public class Pointer {
      *		     must be set
      * @param value <code>int</code> value to set
      */
-    public native void setInt(int offset, int value);
+    public native void setInt(long offset, int value);
 
 
     /**
@@ -570,7 +578,7 @@ public class Pointer {
      *               must be set
      * @param value <code>long</code> value to set
      */
-    public native void setLong(int offset, long value);
+    public native void setLong(long offset, long value);
 
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
@@ -581,7 +589,7 @@ public class Pointer {
      *               must be set
      * @param value <code>long</code> value to set
      */
-    public void setNativeLong(int offset, NativeLong value) {
+    public void setNativeLong(long offset, NativeLong value) {
         if (NativeLong.SIZE == 8) {
             setLong(offset, value.longValue());
         } else {
@@ -598,7 +606,7 @@ public class Pointer {
      *               must be set
      * @param value <code>float</code> value to set
      */
-    public native void setFloat(int offset, float value);
+    public native void setFloat(long offset, float value);
     
 
     /**
@@ -610,7 +618,7 @@ public class Pointer {
      *               must be set
      * @param value <code>double</code> value to set
      */
-    public native void setDouble(int offset, double value);
+    public native void setDouble(long offset, double value);
 
 
     /**
@@ -624,7 +632,7 @@ public class Pointer {
      * set, which may be <code>null</code> to indicate a <code>NULL</code>
      * pointer.
      */
-    public native void setPointer(int offset, Pointer value);
+    public native void setPointer(long offset, Pointer value);
 
 
     /**
@@ -639,7 +647,7 @@ public class Pointer {
      * <code>wchar_t</code>.  If false, writes as a NUL-terminated array of 
      * <code>char</code> using the default platform encoding. 
      */
-    public native void setString(int offset, String value, boolean wide);
+    public native void setString(long offset, String value, boolean wide);
 
     /**
      * Copy string <code>value</code> to the location being pointed to.  Copy
@@ -653,7 +661,7 @@ public class Pointer {
      *               <code>value</code> must be set
      * @param value  <code>java.lang.String</code> value to set
      */
-    public void setString(int offset, String value) {
+    public void setString(long offset, String value) {
         byte[] data = Native.getBytes(value);
         write(offset, data, 0, data.length);
         setByte(offset + data.length, (byte)0);
@@ -667,103 +675,103 @@ public class Pointer {
     private static class Opaque extends Pointer {
         private Opaque(long peer) { super(peer); }
         private String MSG = "This pointer is opaque: " + this;
-        public int indexOf(int offset, byte value) {
+        public long indexOf(long offset, byte value) {
             throw new UnsupportedOperationException(MSG);
         }
-        public void read(int bOff, byte[] buf, int index, int length) { 
+        public void read(long bOff, byte[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void read(int bOff, char[] buf, int index, int length) { 
+        public void read(long bOff, char[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void read(int bOff, short[] buf, int index, int length) { 
+        public void read(long bOff, short[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void read(int bOff, int[] buf, int index, int length) { 
+        public void read(long bOff, int[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void read(int bOff, long[] buf, int index, int length) { 
+        public void read(long bOff, long[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void read(int bOff, float[] buf, int index, int length) { 
+        public void read(long bOff, float[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void read(int bOff, double[] buf, int index, int length) { 
+        public void read(long bOff, double[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void write(int bOff, byte[] buf, int index, int length) { 
+        public void write(long bOff, byte[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void write(int bOff, char[] buf, int index, int length) { 
+        public void write(long bOff, char[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void write(int bOff, short[] buf, int index, int length) { 
+        public void write(long bOff, short[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void write(int bOff, int[] buf, int index, int length) { 
+        public void write(long bOff, int[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void write(int bOff, long[] buf, int index, int length) { 
+        public void write(long bOff, long[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void write(int bOff, float[] buf, int index, int length) { 
+        public void write(long bOff, float[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public void write(int bOff, double[] buf, int index, int length) { 
+        public void write(long bOff, double[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
-        public byte getByte(int bOff) {
+        public byte getByte(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public char getChar(int bOff) {
+        public char getChar(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public short getShort(int bOff) {
+        public short getShort(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public int getInt(int bOff) {
+        public int getInt(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public long getLong(int bOff) {
+        public long getLong(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public float getFloat(int bOff) {
+        public float getFloat(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public double getDouble(int bOff) {
+        public double getDouble(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public Pointer getPointer(int bOff) {
+        public Pointer getPointer(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public String getString(int bOff, boolean wide) {
+        public String getString(long bOff, boolean wide) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setByte(int bOff, byte value) {
+        public void setByte(long bOff, byte value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setChar(int bOff, char value) {
+        public void setChar(long bOff, char value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setShort(int bOff, short value) {
+        public void setShort(long bOff, short value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setInt(int bOff, int value) {
+        public void setInt(long bOff, int value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setLong(int bOff, long value) {
+        public void setLong(long bOff, long value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setFloat(int bOff, float value) {
+        public void setFloat(long bOff, float value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setDouble(int bOff, double value) {
+        public void setDouble(long bOff, double value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setPointer(int offset, Pointer value) {
+        public void setPointer(long offset, Pointer value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setString(int offset, String value, boolean wide) {
+        public void setString(long offset, String value, boolean wide) {
             throw new UnsupportedOperationException(MSG); 
         }
         public String toString() {

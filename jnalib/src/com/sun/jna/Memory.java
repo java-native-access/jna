@@ -35,18 +35,18 @@ import java.nio.ByteBuffer;
  */
 public class Memory extends Pointer {
 
-    protected int size; // Size of the malloc'ed space
+    protected long size; // Size of the malloc'ed space
 
     /** Provide a view into the original memory. */
     private class SharedMemory extends Memory {
-        public SharedMemory(int offset) {
+        public SharedMemory(long offset) {
             this.size = Memory.this.size - offset;
             this.peer = Memory.this.peer + offset;
         }
         /** No need to free memory. */
         protected void finalize() { } 
         /** Pass bounds check to parent. */
-        protected void boundsCheck(int off, int sz) {
+        protected void boundsCheck(long off, long sz) {
             Memory.this.boundsCheck((int)(this.peer - Memory.this.peer) + off, sz);
         }
     }
@@ -71,7 +71,7 @@ public class Memory extends Pointer {
      * @throws IndexOutOfBoundsException if the requested memory is outside
      * the allocated bounds. 
      */
-    public Pointer share(int offset, int sz) {
+    public Pointer share(long offset, long sz) {
         boundsCheck(offset, sz);
         return new SharedMemory(offset);
     }
@@ -93,7 +93,7 @@ public class Memory extends Pointer {
         return peer != 0;
     }
 
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 
@@ -103,7 +103,7 @@ public class Memory extends Pointer {
      * malloc'ed space. 
      *
      */
-    protected void boundsCheck(int off, int sz) {
+    protected void boundsCheck(long off, long sz) {
         if (off < 0) {
             throw new IndexOutOfBoundsException("Invalid offset: " + off);
         }
@@ -124,9 +124,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(int,byte[],int,int) 
+     * @see Pointer#read(long,byte[],int,int) 
      */
-    public void read(int bOff, byte[] buf, int index, int length) {
+    public void read(long bOff, byte[] buf, int index, int length) {
         boundsCheck(bOff, length * 1);
         super.read(bOff, buf, index, length);
     }
@@ -138,9 +138,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(int,short[],int,int)
+     * @see Pointer#read(long,short[],int,int)
      */
-    public void read(int bOff, short[] buf, int index, int length) {
+    public void read(long bOff, short[] buf, int index, int length) {
         boundsCheck(bOff, length * 2);
         super.read(bOff, buf, index, length);
     }
@@ -152,9 +152,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(int,char[],int,int) 
+     * @see Pointer#read(long,char[],int,int) 
      */
-    public void read(int bOff, char[] buf, int index, int length) {
+    public void read(long bOff, char[] buf, int index, int length) {
         boundsCheck(bOff, length * 2);
         super.read(bOff, buf, index, length);
     }
@@ -166,9 +166,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(int,int[],int,int)
+     * @see Pointer#read(long,int[],int,int)
      */
-    public void read(int bOff, int[] buf, int index, int length) {
+    public void read(long bOff, int[] buf, int index, int length) {
         boundsCheck(bOff, length * 4);
         super.read(bOff, buf, index, length);
     }
@@ -180,9 +180,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(int,long[],int,int) 
+     * @see Pointer#read(long,long[],int,int) 
      */
-    public void read(int bOff, long[] buf, int index, int length) {
+    public void read(long bOff, long[] buf, int index, int length) {
         boundsCheck(bOff, length * 8);
         super.read(bOff, buf, index, length);
     }
@@ -194,9 +194,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(int,float[],int,int) 
+     * @see Pointer#read(long,float[],int,int) 
      */
-    public void read(int bOff, float[] buf, int index, int length) {
+    public void read(long bOff, float[] buf, int index, int length) {
         boundsCheck(bOff, length * 4);
         super.read(bOff, buf, index, length);
     }
@@ -208,9 +208,9 @@ public class Memory extends Pointer {
      * ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(int,double[],int,int) 
+     * @see Pointer#read(long,double[],int,int) 
      */
-    public void read(int bOff, double[] buf, int index, int length) 
+    public void read(long bOff, double[] buf, int index, int length) 
     {
         boundsCheck(bOff, length * 8);
         super.read(bOff, buf, index, length);
@@ -229,9 +229,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(int,byte[],int,int) 
+     * @see Pointer#write(long,byte[],int,int) 
      */
-    public void write(int bOff, byte[] buf, int index, int length) {
+    public void write(long bOff, byte[] buf, int index, int length) {
         boundsCheck(bOff, length * 1);
         super.write(bOff, buf, index, length);
     }
@@ -243,9 +243,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(int,short[],int,int)
+     * @see Pointer#write(long,short[],int,int)
      */
-    public void write(int bOff, short[] buf, int index, int length) {
+    public void write(long bOff, short[] buf, int index, int length) {
         boundsCheck(bOff, length * 2);
         super.write(bOff, buf, index, length);
     }
@@ -257,9 +257,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(int,char[],int,int)
+     * @see Pointer#write(long,char[],int,int)
      */
-    public void write(int bOff, char[] buf, int index, int length) {
+    public void write(long bOff, char[] buf, int index, int length) {
         boundsCheck(bOff, length * 2);
         super.write(bOff, buf, index, length);
     }
@@ -271,9 +271,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(int,int[],int,int) 
+     * @see Pointer#write(long,int[],int,int) 
      */
-    public void write(int bOff, int[] buf, int index, int length) {
+    public void write(long bOff, int[] buf, int index, int length) {
         boundsCheck(bOff, length * 4);
         super.write(bOff, buf, index, length);
     }
@@ -285,9 +285,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(int,long[],int,int) 
+     * @see Pointer#write(long,long[],int,int) 
      */
-    public void write(int bOff, long[] buf, int index, int length) {
+    public void write(long bOff, long[] buf, int index, int length) {
         boundsCheck(bOff, length * 8);
         super.write(bOff, buf, index, length);
     }
@@ -299,9 +299,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(int,float[],int,int)
+     * @see Pointer#write(long,float[],int,int)
      */
-    public void write(int bOff, float[] buf, int index, int length) {
+    public void write(long bOff, float[] buf, int index, int length) {
         boundsCheck(bOff, length * 4);
         super.write(bOff, buf, index, length);
     }
@@ -313,9 +313,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(int,double[],int,int) 
+     * @see Pointer#write(long,double[],int,int) 
      */
-    public void write(int bOff, double[] buf, int index, int length) {
+    public void write(long bOff, double[] buf, int index, int length) {
         boundsCheck(bOff, length * 8);
         super.write(bOff, buf, index, length);
     }
@@ -333,9 +333,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getByte(int)
+     * @see Pointer#getByte(long)
      */
-    public byte getByte(int offset) {
+    public byte getByte(long offset) {
         boundsCheck(offset, 1);
         return super.getByte(offset);
     }
@@ -347,9 +347,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getByte(int)
+     * @see Pointer#getByte(long)
      */
-    public char getChar(int offset) {
+    public char getChar(long offset) {
         boundsCheck(offset, 1);
         return super.getChar(offset);
     }
@@ -361,9 +361,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getShort(int)
+     * @see Pointer#getShort(long)
      */
-    public short getShort(int offset) {
+    public short getShort(long offset) {
         boundsCheck(offset, 2);
         return super.getShort(offset);
     }
@@ -375,9 +375,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getInt(int)
+     * @see Pointer#getInt(long)
      */
-    public int getInt(int offset) {
+    public int getInt(long offset) {
         boundsCheck(offset, 4);
         return super.getInt(offset);
     }
@@ -389,9 +389,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getLong(int)
+     * @see Pointer#getLong(long)
      */
-    public long getLong(int offset) {
+    public long getLong(long offset) {
         boundsCheck(offset, 8);
         return super.getLong(offset);
     }
@@ -403,9 +403,9 @@ public class Memory extends Pointer {
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getFloat(int)
+     * @see Pointer#getFloat(long)
      */
-    public float getFloat(int offset) {
+    public float getFloat(long offset) {
         boundsCheck(offset, 4);
         return super.getFloat(offset);
     }
@@ -417,9 +417,9 @@ public class Memory extends Pointer {
      * bounds check to ensure that the indirection does not cause memory 
      * outside the <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getDouble(int)
+     * @see Pointer#getDouble(long)
      */
-    public double getDouble(int offset) {
+    public double getDouble(long offset) {
         boundsCheck(offset, 8);
         return super.getDouble(offset);
     }
@@ -431,9 +431,9 @@ public class Memory extends Pointer {
      * a bounds checks to ensure that the indirection does not cause memory 
      * outside the <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getPointer(int)
+     * @see Pointer#getPointer(long)
      */
-    public Pointer getPointer(int offset) {
+    public Pointer getPointer(long offset) {
         boundsCheck(offset, Pointer.SIZE);
         return super.getPointer(offset);
     }
@@ -445,7 +445,7 @@ public class Memory extends Pointer {
      * @param length Length of ByteBuffer
      * @return a direct ByteBuffer that accesses the memory being pointed to, 
      */
-    public ByteBuffer getByteBuffer(int offset, int length) {
+    public ByteBuffer getByteBuffer(long offset, long length) {
         boundsCheck(offset, length);
         return super.getByteBuffer(offset, length);
     }
@@ -456,9 +456,9 @@ public class Memory extends Pointer {
      * bounds checks to ensure that the indirection does not cause memory 
      * outside the <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#getString(int, boolean)
+     * @see Pointer#getString(long, boolean)
      */
-    public String getString(int offset, boolean wide) {
+    public String getString(long offset, boolean wide) {
         // NOTE: we only make sure the start of the string is within bounds
         boundsCheck(offset, 0); 
         return super.getString(offset, wide);
@@ -476,7 +476,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setByte
      */
-    public void setByte(int offset, byte value) {
+    public void setByte(long offset, byte value) {
         boundsCheck(offset, 1);
         super.setByte(offset, value);
     }
@@ -490,7 +490,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setChar
      */
-    public void setChar(int offset, char value) {
+    public void setChar(long offset, char value) {
         boundsCheck(offset, Native.WCHAR_SIZE);
         super.setChar(offset, value);
     }
@@ -504,7 +504,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setShort
      */
-    public void setShort(int offset, short value) {
+    public void setShort(long offset, short value) {
         boundsCheck(offset, 2);
         super.setShort(offset, value);
     }
@@ -518,7 +518,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setInt
      */
-    public void setInt(int offset, int value) {
+    public void setInt(long offset, int value) {
         boundsCheck(offset, 4);
         super.setInt(offset, value);
     }
@@ -532,7 +532,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setLong
      */
-    public void setLong(int offset, long value) {
+    public void setLong(long offset, long value) {
         boundsCheck(offset, 8);
         super.setLong(offset, value);
     }
@@ -546,7 +546,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setFloat
      */
-    public void setFloat(int offset, float value) {
+    public void setFloat(long offset, float value) {
         boundsCheck(offset, 4);
         super.setFloat(offset, value);
     }
@@ -560,7 +560,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setDouble
      */
-    public void setDouble(int offset, double value) {
+    public void setDouble(long offset, double value) {
         boundsCheck(offset, 8);
         super.setDouble(offset, value);
     }
@@ -574,7 +574,7 @@ public class Memory extends Pointer {
      *
      * @see Pointer#setPointer
      */
-    public void setPointer(int offset, Pointer value) {
+    public void setPointer(long offset, Pointer value) {
         boundsCheck(offset, Pointer.SIZE);
         super.setPointer(offset, value);
     }
@@ -586,9 +586,9 @@ public class Memory extends Pointer {
      * bounds checks to ensure that the indirection does not cause memory 
      * outside the <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#setString(int,String,boolean)
+     * @see Pointer#setString(long,String,boolean)
      */
-    public void setString(int offset, String value, boolean wide) {
+    public void setString(long offset, String value, boolean wide) {
         if (wide)
             boundsCheck(offset, (value.length() + 1) * Native.WCHAR_SIZE);
         else
@@ -599,7 +599,7 @@ public class Memory extends Pointer {
     /**
      * Call the real native malloc
      */
-    static native long malloc(int size);
+    static native long malloc(long size);
 
     /**
      * Call the real native free

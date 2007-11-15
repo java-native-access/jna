@@ -82,10 +82,14 @@ static jboolean preserve_last_error;
 #define MEMCPY(D,S,L) do { \
   PSTART(); memcpy(D,S,L); PEND(); \
 } while(0)
+#define MEMSET(D,C,L) do { \
+  PSTART(); memset(D,C,L); PEND(); \
+} while(0)
 #else
 #define PSTART()
 #define PEND()
 #define MEMCPY(D,S,L) memcpy(D,S,L)
+#define MEMSET(D,C,L) memset(D,C,L)
 #endif
 
 /* Cached class, field and method IDs */
@@ -532,8 +536,9 @@ Java_com_sun_jna_NativeLibrary_close(JNIEnv *env, jclass cls, jlong handle)
  * Method:    findSymbol
  * Signature: (JLjava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_NativeLibrary_findSymbol(JNIEnv *env,
-    jclass cls, jlong libHandle, jstring fun) {
+JNIEXPORT jlong JNICALL
+Java_com_sun_jna_NativeLibrary_findSymbol(JNIEnv *env, jclass cls,
+                                          jlong libHandle, jstring fun) {
 
     void *handle = L2A(libHandle);
     void *func = NULL;
@@ -667,10 +672,10 @@ jnidispatch_init(JNIEnv* env) {
 /*
  * Class:     Pointer
  * Method:    write
- * Signature: (I[BII)V
+ * Signature: (J[BII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3BII
-    (JNIEnv *env, jobject self, jint boff, jbyteArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3BII
+    (JNIEnv *env, jobject self, jlong boff, jbyteArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->GetByteArrayRegion(env, arr, off, n, peer + boff);
@@ -679,10 +684,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3BII
 /*
  * Class:     Pointer
  * Method:    write
- * Signature: (I[CII)V
+ * Signature: (J[CII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3CII
-    (JNIEnv *env, jobject self, jint boff, jcharArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3CII
+    (JNIEnv *env, jobject self, jlong boff, jcharArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->GetCharArrayRegion(env, arr, off, n, (jchar *)(peer + boff));
@@ -691,10 +696,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3CII
 /*
  * Class:     Pointer
  * Method:    write
- * Signature: (I[DII)V
+ * Signature: (J[DII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3DII
-    (JNIEnv *env, jobject self, jint boff, jdoubleArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3DII
+    (JNIEnv *env, jobject self, jlong boff, jdoubleArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)(peer + boff));
@@ -703,10 +708,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3DII
 /*
  * Class:     Pointer
  * Method:    write
- * Signature: (I[FII)V
+ * Signature: (J[FII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3FII
-    (JNIEnv *env, jobject self, jint boff, jfloatArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3FII
+    (JNIEnv *env, jobject self, jlong boff, jfloatArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)(peer + boff));
@@ -715,10 +720,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3FII
 /*
  * Class:     Pointer
  * Method:    write
- * Signature: (I[III)V
+ * Signature: (J[III)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3III
-    (JNIEnv *env, jobject self, jint boff, jintArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3III
+    (JNIEnv *env, jobject self, jlong boff, jintArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)(peer + boff));
@@ -727,10 +732,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3III
 /*
  * Class:     Pointer
  * Method:    write
- * Signature: (I[JII)V
+ * Signature: (J[JII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3JII
-    (JNIEnv *env, jobject self, jint boff, jlongArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3JII
+    (JNIEnv *env, jobject self, jlong boff, jlongArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)(peer + boff));
@@ -739,10 +744,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3JII
 /*
  * Class:     Pointer
  * Method:    write
- * Signature: (I[SII)V
+ * Signature: (J[SII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3SII
-    (JNIEnv *env, jobject self, jint boff, jshortArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3SII
+    (JNIEnv *env, jobject self, jlong boff, jshortArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)(peer + boff));
@@ -751,10 +756,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__I_3SII
 /*
  * Class:     Pointer
  * Method:    indexOf
- * Signature: (IB)I
+ * Signature: (JB)I
  */
-JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_indexOf__IB
-    (JNIEnv *env, jobject self, jint boff, jbyte value)
+JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_indexOf__JB
+    (JNIEnv *env, jobject self, jlong boff, jbyte value)
 {
   jbyte *peer = (jbyte *)getNativeAddress(env, self) + boff;
   int i = 0;
@@ -769,10 +774,10 @@ JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_indexOf__IB
 /*
  * Class:     Pointer
  * Method:    read
- * Signature: (I[BII)V
+ * Signature: (J[BII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3BII
-    (JNIEnv *env, jobject self, jint boff, jbyteArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3BII
+    (JNIEnv *env, jobject self, jlong boff, jbyteArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->SetByteArrayRegion(env, arr, off, n, peer + boff);
@@ -781,10 +786,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3BII
 /*
  * Class:     Pointer
  * Method:    read
- * Signature: (I[CII)V
+ * Signature: (J[CII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3CII
-    (JNIEnv *env, jobject self, jint boff, jcharArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3CII
+    (JNIEnv *env, jobject self, jlong boff, jcharArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->SetCharArrayRegion(env, arr, off, n, (jchar*)(peer + boff));
@@ -793,10 +798,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3CII
 /*
  * Class:     Pointer
  * Method:    read
- * Signature: (I[DII)V
+ * Signature: (J[DII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3DII
-    (JNIEnv *env, jobject self, jint boff, jdoubleArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3DII
+    (JNIEnv *env, jobject self, jlong boff, jdoubleArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)(peer + boff));
@@ -805,10 +810,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3DII
 /*
  * Class:     Pointer
  * Method:    read
- * Signature: (I[FII)V
+ * Signature: (J[FII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3FII
-    (JNIEnv *env, jobject self, jint boff, jfloatArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3FII
+    (JNIEnv *env, jobject self, jlong boff, jfloatArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)(peer + boff));
@@ -817,10 +822,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3FII
 /*
  * Class:     Pointer
  * Method:    read
- * Signature: (I[III)V
+ * Signature: (J[III)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3III
-    (JNIEnv *env, jobject self, jint boff, jintArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3III
+    (JNIEnv *env, jobject self, jlong boff, jintArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)(peer + boff));
@@ -829,10 +834,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3III
 /*
  * Class:     Pointer
  * Method:    read
- * Signature: (I[JII)V
+ * Signature: (J[JII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3JII
-    (JNIEnv *env, jobject self, jint boff, jlongArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3JII
+    (JNIEnv *env, jobject self, jlong boff, jlongArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)(peer + boff));
@@ -841,10 +846,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3JII
 /*
  * Class:     Pointer
  * Method:    read
- * Signature: (I[SII)V
+ * Signature: (J[SII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3SII
-    (JNIEnv *env, jobject self, jint boff, jshortArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3SII
+    (JNIEnv *env, jobject self, jlong boff, jshortArray arr, jint off, jint n)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)(peer + boff));
@@ -853,10 +858,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__I_3SII
 /*
  * Class:     Pointer
  * Method:    getByte
- * Signature: (I)B
+ * Signature: (J)B
  */
 JNIEXPORT jbyte JNICALL Java_com_sun_jna_Pointer_getByte
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     jbyte res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -867,10 +872,10 @@ JNIEXPORT jbyte JNICALL Java_com_sun_jna_Pointer_getByte
 /*
  * Class:     Pointer
  * Method:    getChar
- * Signature: (I)C
+ * Signature: (J)C
  */
 JNIEXPORT jchar JNICALL Java_com_sun_jna_Pointer_getChar
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     wchar_t res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -881,10 +886,10 @@ JNIEXPORT jchar JNICALL Java_com_sun_jna_Pointer_getChar
 /*
  * Class:     Pointer
  * Method:    getPointer
- * Signature: (I)LPointer;
+ * Signature: (J)LPointer;
  */
 JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getPointer
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     void *ptr;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -895,10 +900,10 @@ JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getPointer
 /*
  * Class:     com_sun_jna_Pointer
  * Method:    getDirectByteBuffer
- * Signature: (II)Ljava/nio/ByteBuffer;
+ * Signature: (JJ)Ljava/nio/ByteBuffer;
  */
 JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getDirectByteBuffer
-    (JNIEnv *env, jobject self, jint offset, jint length)
+    (JNIEnv *env, jobject self, jlong offset, jlong length)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     return (*env)->NewDirectByteBuffer(env, peer + offset, length);
@@ -907,10 +912,10 @@ JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getDirectByteBuffer
 /*
  * Class:     Pointer
  * Method:    getDouble
- * Signature: (I)D
+ * Signature: (J)D
  */
 JNIEXPORT jdouble JNICALL Java_com_sun_jna_Pointer_getDouble
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     jdouble res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -921,10 +926,10 @@ JNIEXPORT jdouble JNICALL Java_com_sun_jna_Pointer_getDouble
 /*
  * Class:     Pointer
  * Method:    getFloat
- * Signature: (I)F
+ * Signature: (J)F
  */
 JNIEXPORT jfloat JNICALL Java_com_sun_jna_Pointer_getFloat
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     jfloat res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -935,10 +940,10 @@ JNIEXPORT jfloat JNICALL Java_com_sun_jna_Pointer_getFloat
 /*
  * Class:     Pointer
  * Method:    getInt
- * Signature: (I)I
+ * Signature: (J)I
  */
 JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_getInt
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     jint res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -949,10 +954,10 @@ JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_getInt
 /*
  * Class:     Pointer
  * Method:    getLong
- * Signature: (I)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer_getLong
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     jlong res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -963,10 +968,10 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer_getLong
 /*
  * Class:     Pointer
  * Method:    getShort
- * Signature: (I)S
+ * Signature: (J)S
  */
 JNIEXPORT jshort JNICALL Java_com_sun_jna_Pointer_getShort
-    (JNIEnv *env, jobject self, jint offset)
+    (JNIEnv *env, jobject self, jlong offset)
 {
     jshort res;
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
@@ -977,10 +982,10 @@ JNIEXPORT jshort JNICALL Java_com_sun_jna_Pointer_getShort
 /*
  * Class:     Pointer
  * Method:    getString
- * Signature: (IB)Ljava/lang/String;
+ * Signature: (JB)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_com_sun_jna_Pointer_getString
-    (JNIEnv *env, jobject self, jint offset, jboolean wide)
+    (JNIEnv *env, jobject self, jlong offset, jboolean wide)
 {
     char *peer = (char *)getNativeAddress(env, self);
     return newJavaString(env, peer + offset, wide);
@@ -988,11 +993,23 @@ JNIEXPORT jstring JNICALL Java_com_sun_jna_Pointer_getString
 
 /*
  * Class:     Pointer
+ * Method:    setMemory
+ * Signature: (JJB)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setMemory
+    (JNIEnv *env, jobject self, jlong offset, jlong count, jbyte value)
+{
+    jbyte *peer = (jbyte *)getNativeAddress(env, self);
+    MEMSET(peer + offset, (int)value, (size_t)count);
+}
+
+/*
+ * Class:     Pointer
  * Method:    setByte
- * Signature: (IB)V
+ * Signature: (JB)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setByte
-    (JNIEnv *env, jobject self, jint offset, jbyte value)
+    (JNIEnv *env, jobject self, jlong offset, jbyte value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     MEMCPY(peer + offset, &value, sizeof(value));
@@ -1001,10 +1018,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setByte
 /*
  * Class:     Pointer
  * Method:    setPointer
- * Signature: (ILPointer;)V
+ * Signature: (JLPointer;)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setPointer
-    (JNIEnv *env, jobject self, jint offset, jobject value)
+    (JNIEnv *env, jobject self, jlong offset, jobject value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     void *ptr = value ? getNativeAddress(env, value) : NULL;
@@ -1014,10 +1031,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setPointer
 /*
  * Class:     Pointer
  * Method:    setDouble
- * Signature: (ID)V
+ * Signature: (JD)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setDouble
-    (JNIEnv *env, jobject self, jint offset, jdouble value)
+    (JNIEnv *env, jobject self, jlong offset, jdouble value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     MEMCPY(peer + offset, &value, sizeof(value));
@@ -1026,10 +1043,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setDouble
 /*
  * Class:     Pointer
  * Method:    setFloat
- * Signature: (IF)V
+ * Signature: (JF)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setFloat
-    (JNIEnv *env, jobject self, jint offset, jfloat value)
+    (JNIEnv *env, jobject self, jlong offset, jfloat value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     MEMCPY(peer + offset, &value, sizeof(value));
@@ -1038,10 +1055,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setFloat
 /*
  * Class:     Pointer
  * Method:    setInt
- * Signature: (II)V
+ * Signature: (JI)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setInt
-    (JNIEnv *env, jobject self, jint offset, jint value)
+    (JNIEnv *env, jobject self, jlong offset, jint value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     MEMCPY(peer + offset, &value, sizeof(value));
@@ -1050,10 +1067,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setInt
 /*
  * Class:     Pointer
  * Method:    setLong
- * Signature: (IJ)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setLong
-    (JNIEnv *env, jobject self, jint offset, jlong value)
+    (JNIEnv *env, jobject self, jlong offset, jlong value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     MEMCPY(peer + offset, &value, sizeof(value));
@@ -1062,10 +1079,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setLong
 /*
  * Class:     Pointer
  * Method:    setShort
- * Signature: (IS)V
+ * Signature: (JS)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setShort
-    (JNIEnv *env, jobject self, jint offset, jshort value)
+    (JNIEnv *env, jobject self, jlong offset, jshort value)
 {
     jbyte *peer = (jbyte *)getNativeAddress(env, self);
     MEMCPY(peer + offset, &value, sizeof(value));
@@ -1074,10 +1091,10 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setShort
 /*
  * Class:     Pointer
  * Method:    setString
- * Signature: (ILjava/lang/String;B)V
+ * Signature: (JLjava/lang/String;Z)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setString
-    (JNIEnv *env, jobject self, jint offset, jstring value, jboolean wide)
+    (JNIEnv *env, jobject self, jlong offset, jstring value, jboolean wide)
 {
     char *peer = (char *)getNativeAddress(env, self);
     int len = (*env)->GetStringLength(env, value);
@@ -1101,12 +1118,12 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setString
 /*
  * Class:     Memory
  * Method:    malloc
- * Signature: (I)J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_com_sun_jna_Memory_malloc
-    (JNIEnv *env, jclass cls, jint size)
+    (JNIEnv *env, jclass cls, jlong size)
 {
-    return A2L(malloc(size));
+    return A2L(malloc((size_t)size));
 }
 
 /*
