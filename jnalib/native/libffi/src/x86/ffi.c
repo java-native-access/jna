@@ -335,23 +335,24 @@ ffi_prep_closure (ffi_closure* closure,
 		  void (*fun)(ffi_cif*,void*,void**,void*),
 		  void *user_data)
 {
+  if (cif->abi == FFI_SYSV)
+    {
+      FFI_INIT_TRAMPOLINE (&closure->tramp[0], 
+                           &ffi_closure_SYSV,  
+                           (void*)closure);
+    }
 #ifdef X86_WIN32
-  FFI_ASSERT (cif->abi == FFI_SYSV || cif->abi == FFI_STDCALL);
-#else
-  FFI_ASSERT (cif->abi == FFI_SYSV);
+  else if (cif->abi == FFI_STDCALL) 
+    {
+      FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],    
+                                   &ffi_closure_STDCALL,  
+                                   (void*)closure, cif->bytes);
+    }
 #endif
-
-  FFI_INIT_TRAMPOLINE (&closure->tramp[0], \
-		       &ffi_closure_SYSV,  \
-		       (void*)closure);
-
-#ifdef X86_WIN32
-  if (cif->abi == FFI_STDCALL) {
-    FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],    \
-                                 &ffi_closure_STDCALL,  \
-                                 (void*)closure, cif->bytes);
-  }
-#endif
+  else
+    {
+      return FFI_BAD_ABI;
+    }
 
   closure->cif  = cif;
   closure->user_data = user_data;
@@ -372,7 +373,9 @@ ffi_prep_raw_closure (ffi_raw_closure* closure,
 {
   int i;
 
-  FFI_ASSERT (cif->abi == FFI_SYSV);
+  if (cif->abi != FFI_SYSV) {
+    return FFI_BAD_ABI;
+  }
 
   // we currently don't support certain kinds of arguments for raw
   // closures.  This should be implemented by a separate assembly language
