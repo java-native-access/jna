@@ -32,6 +32,7 @@ Bug Fixes
   data execution protection (DEP)
 * Fix VM crash on w32 stdcall callbacks
 * Use long offsets and sizes rather than ints (64-bit safe)
+* Properly clean up references and release closure memory on JNI_Unload
 
 Release 2.5
 Features

@@ -160,6 +160,7 @@ static jfieldID FID_Float_value;
 static jfieldID FID_Double_value;
 
 static jfieldID FID_Pointer_peer;
+static void* jawt = NULL;
 
 /* Forward declarations */
 static char* newCString(JNIEnv *env, jstring jstr);
@@ -1417,10 +1418,6 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, "java/lang/UnsatisfiedLinkError",
                 "Can't obtain class com.sun.jna.Pointer");
   }
-  else if (!LOAD_REF(env, classPointer)) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
-                "Can't obtain a reference to class com.sun.jna.Pointer");
-  }
   else if (!LOAD_MID(env, MID_Pointer_init, classPointer,
                      "<init>", "(J)V")) {
     throwByName(env, "java/lang/UnsatisfiedLinkError",
@@ -1430,7 +1427,7 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, "java/lang/UnsatisfiedLinkError",
                 "Can't obtain peer field ID for class com.sun.jna.Pointer");
   }
-  else if (!(classNative = (*env)->NewGlobalRef(env, cls))) {
+  else if (!(classNative = (*env)->NewWeakGlobalRef(env, cls))) {
     throwByName(env, "java/lang/UnsatisfiedLinkError",
                 "Can't obtain global reference for class com.sun.jna.Native");
   }
@@ -1615,7 +1612,6 @@ init_jawt(JNIEnv* env) {
   char* arch = newCString(env, os_arch);
   char* buf = alloca(strlen(path) + 1024);
   void* mawt = NULL;
-  void* jawt = NULL;
   const char* PATHS[] = {
     "%s/lib/%s/xawt/libmawt.so",
     "%s/lib/%s/motif21/libmawt.so",
@@ -1764,7 +1760,42 @@ JNI_OnLoad(JavaVM *jvm, void *reserved) {
 
 JNIEXPORT void JNICALL 
 JNI_OnUnload(JavaVM *vm, void *reserved) {
-  // empty
+  JNIEnv* env;
+  if ((*vm)->GetEnv(vm, (void*)&env, JNI_VERSION_1_4) == JNI_OK) {
+    jobject* refs[] = {
+      &classObject, &classClass, &classMethod,
+      &classString,
+      &classBuffer, &classByteBuffer, &classCharBuffer,
+      &classShortBuffer, &classIntBuffer, &classLongBuffer,
+      &classFloatBuffer, &classDoubleBuffer,
+      &classVoid, &classPrimitiveVoid,
+      &classBoolean, &classPrimitiveBoolean,
+      &classByte, &classPrimitiveByte,
+      &classCharacter, &classPrimitiveCharacter,
+      &classShort, &classPrimitiveShort,
+      &classInteger, &classPrimitiveInteger,
+      &classLong, &classPrimitiveLong,
+      &classFloat, &classPrimitiveFloat,
+      &classDouble, &classPrimitiveDouble,
+      &classPointer, &classNative,
+    };
+    unsigned i;
+
+    for (i=0;i < sizeof(refs)/sizeof(refs[0]);i++) {
+      if (*refs[i]) {
+        (*env)->DeleteWeakGlobalRef(env, *refs[i]);
+        *refs[i] = NULL;
+      }
+    }
+    
+    if (jawt) {
+      FREE_LIBRARY(jawt);
+      jawt = NULL;
+      jawt_initialized = JNI_FALSE;
+    }
+
+    jnidispatch_callback_dispose(env);
+  }
 }
 
 #ifdef __cplusplus

@@ -55,19 +55,19 @@ typedef long word_t;
 #endif
 
 /* Convenience macros */
-#define LOAD_REF(ENV,VAR) \
+#define LOAD_WEAKREF(ENV,VAR) \
   ((VAR == 0) \
-   ? 0 : ((VAR = (*ENV)->NewGlobalRef(ENV, VAR)) == 0 ? 0 : VAR))
+   ? 0 : ((VAR = (*ENV)->NewWeakGlobalRef(ENV, VAR)) == 0 ? 0 : VAR))
 #define FIND_CLASS(ENV,SIMPLE,NAME) \
   (class ## SIMPLE = (*ENV)->FindClass(ENV, NAME))
 #define FIND_PRIMITIVE_CLASS(ENV,SIMPLE) \
   (classPrimitive ## SIMPLE = (*ENV)->GetStaticObjectField(ENV,class ## SIMPLE,(*ENV)->GetStaticFieldID(ENV,class ## SIMPLE,"TYPE","Ljava/lang/Class;")))
 #define LOAD_CREF(ENV,SIMPLE,NAME) \
-  (FIND_CLASS(ENV,SIMPLE,NAME) && LOAD_REF(ENV,class ## SIMPLE))
+  (FIND_CLASS(ENV,SIMPLE,NAME) && LOAD_WEAKREF(ENV,class ## SIMPLE))
 #define LOAD_PCREF(ENV,SIMPLE,NAME) \
   (LOAD_CREF(ENV,SIMPLE,NAME) \
    && FIND_PRIMITIVE_CLASS(ENV,SIMPLE) \
-   && LOAD_REF(ENV,classPrimitive ## SIMPLE))
+   && LOAD_WEAKREF(ENV,classPrimitive ## SIMPLE))
 #define LOAD_MID(ENV,VAR,CLASS,NAME,SIG) \
    ((VAR = (*ENV)->GetMethodID(ENV, CLASS, NAME, SIG)) ? VAR : 0)
 #define LOAD_FID(ENV,VAR,CLASS,NAME,SIG) \
@@ -77,6 +77,7 @@ extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern jobject newJavaPointer(JNIEnv *, void *);
 extern char get_jtype(JNIEnv*, jclass);
 extern jboolean jnidispatch_callback_init(JNIEnv*);
+extern void jnidispatch_callback_dispose(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass, 
                                  callconv_t);

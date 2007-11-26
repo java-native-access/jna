@@ -55,7 +55,8 @@ static void free_closure(JNIEnv* env, ffi_closure *closure);
 
 #ifdef MMAP_CLOSURE
 #include "queue.h"
-static LIST_HEAD(closure_list, closure) closure_list;
+static LIST_HEAD(closure_list, list_entry) closure_list;
+static LIST_HEAD(alloc_list, list_entry) alloc_list;
 #endif
 
 static jclass classObject;
@@ -167,7 +168,7 @@ static void
 callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   callback* cb = (callback *) user_data;
   JavaVM* jvm = cb->vm;
-  jobject obj;
+  jobject self;
   JNIEnv* env;
   int attached;
   unsigned int i;
@@ -181,26 +182,26 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     }
   }
   
-  obj = (*env)->NewLocalRef(env, cb->object);
-  array = (*env)->NewObjectArray(env, cif->nargs, classObject, NULL);
-  for (i=0;i < cif->nargs;i++) {
-    jobject obj = new_object(env, cb->param_jtypes[i], cbargs[i]);
-    (*env)->SetObjectArrayElement(env, array, i, obj);
-  }
-  
+  self = (*env)->NewLocalRef(env, cb->object);
   // Avoid calling back to a GC'd object
-  if ((*env)->IsSameObject(env, obj, NULL)) {
+  if ((*env)->IsSameObject(env, self, NULL)) {
     fprintf(stderr, "JNA: callback object has been garbage collected\n");
     memset(resp, 0, cif->rtype->size); 
   }
   else {
-    jobject ret = (*env)->CallObjectMethod(env, obj, cb->methodID, array);
+    jobject result;
+    array = (*env)->NewObjectArray(env, cif->nargs, classObject, NULL);
+    for (i=0;i < cif->nargs;i++) {
+      jobject arg = new_object(env, cb->param_jtypes[i], cbargs[i]);
+      (*env)->SetObjectArrayElement(env, array, i, arg);
+    }
+    result = (*env)->CallObjectMethod(env, self, cb->methodID, array);
     if ((*env)->ExceptionCheck(env)) {
       fprintf(stderr, "JNA: uncaught exception in callback, continuing\n");
       memset(resp, 0, cif->rtype->size);
     }
     else {
-      extract_value(env, ret, resp);
+      extract_value(env, result, resp);
     }
   }
 
@@ -209,18 +210,6 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   }
 }
 
-jboolean 
-jnidispatch_callback_init(JNIEnv* env) {
-
-  if (!LOAD_CREF(env, Object, "java/lang/Object")) return JNI_FALSE;
-
-#ifdef MMAP_CLOSURE
-  LIST_INIT(&closure_list);
-#endif
-
-  return JNI_TRUE;
-}
-  
 // Use mmap for closure memory, if available.
 // A page of memory is allocated and divided into closure-sized
 // chunks managed in a queue.  The queue is protected by
@@ -233,9 +222,9 @@ jnidispatch_callback_init(JNIEnv* env) {
 #   define PAGE_SIZE NBPG
 #  endif   
 # endif
-typedef struct closure {
-  LIST_ENTRY(closure) list;
-} closure;
+typedef struct list_entry {
+  LIST_ENTRY(list_entry) list;
+} list_entry;
 #endif
 
 #ifdef _WIN32
@@ -250,31 +239,61 @@ static int w32_page_size() {
 }
 #endif
 
+jboolean 
+jnidispatch_callback_init(JNIEnv* env) {
+
+  if (!LOAD_CREF(env, Object, "java/lang/Object")) return JNI_FALSE;
+
+#ifdef MMAP_CLOSURE
+  LIST_INIT(&closure_list);
+  LIST_INIT(&alloc_list);
+#endif
+
+  return JNI_TRUE;
+}
+  
+void
+jnidispatch_callback_dispose(JNIEnv* env) {
+  if (classObject) {
+    (*env)->DeleteWeakGlobalRef(env, classObject);
+    classObject = NULL;
+  }
+#ifdef MMAP_CLOSURE
+  while (alloc_list.lh_first != NULL) {
+    list_entry* entry = alloc_list.lh_first;
+    XM_FREE((caddr_t)entry, PAGE_SIZE);
+    LIST_REMOVE(entry, list);
+  }
+#endif
+}
+
 static ffi_closure*
 alloc_closure(JNIEnv* env) {
 #ifdef MMAP_CLOSURE
-  closure* closure = NULL;
+  list_entry* entry = NULL;
   
   if (closure_list.lh_first == NULL) {
     /*
      * Get a new page from the kernel and divvy that up
      */
-    int clsize = roundup(sizeof(ffi_closure), sizeof(closure));
+    int clsize = roundup(sizeof(ffi_closure), sizeof(list_entry));
     int i;
     caddr_t ptr = XM_ALLOC(PAGE_SIZE);
     if (ptr == NULL) {
       return NULL;
     }
+    LIST_INSERT_HEAD(&alloc_list, (list_entry*)ptr, list);
+
     for (i = 0; i <= (int)(PAGE_SIZE - clsize); i += clsize) {
-      closure = (struct closure *)(ptr + i);
-      LIST_INSERT_HEAD(&closure_list, closure, list);            
+      entry = (list_entry *)(ptr + i);
+      LIST_INSERT_HEAD(&closure_list, entry, list);            
     }
   }
-  closure = closure_list.lh_first;
-  LIST_REMOVE(closure, list);
+  entry = closure_list.lh_first;
+  LIST_REMOVE(entry, list);
   
-  memset(closure, 0, sizeof(*closure));
-  return (ffi_closure *)closure;
+  memset(entry, 0, sizeof(ffi_closure));
+  return (ffi_closure *)entry;
 #else
   return (ffi_closure *)calloc(1, sizeof(ffi_closure));
 #endif
@@ -283,7 +302,7 @@ alloc_closure(JNIEnv* env) {
 static void
 free_closure(JNIEnv* env, ffi_closure *ffi_closure) {
 #ifdef MMAP_CLOSURE
-  LIST_INSERT_HEAD(&closure_list, (closure*)ffi_closure, list);
+  LIST_INSERT_HEAD(&closure_list, (list_entry*)ffi_closure, list);
 #else
   free(closure);
 #endif
