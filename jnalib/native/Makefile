@@ -93,7 +93,7 @@ LIBS=$(LIBDIR) jawt.lib
 STRIP=@echo
 else
 CDEFINES=-D__int64="long long" -D_JNI_IMPLEMENTATION -DHAVE_PROTECTION
-PCFLAGS=-mno-cygwin
+PCFLAGS+=-mno-cygwin
 LDFLAGS+=-mno-cygwin -Wl,--add-stdcall-alias -L /lib/mingw 
 LIBDIR="$(JAVA_HOME)/lib"
 LIBS=$(LIBDIR)/jawt.lib
@@ -166,10 +166,11 @@ LIBS=
 endif
 
 # Unfortunately, we have to use different libffi include files depending on 
-# the target, so we can't do a simple universal build on darwin
+# the target, so we can't do a simple universal build on darwin.  Do two
+# separate builds, then merge the results.
 $(BUILD)/%.o : %.c dispatch.h $(FFI_LIB)
 	@mkdir -p $(BUILD)
-ifeq ($(OS),darwin)
+ifneq ($(SDKROOT),)
 	$(CC) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)
 	$(CC) -arch $(ALT_ARCH) -I$(FFI_ALT_BUILD)/include $(CFLAGS) -c $< -o $@.$(ALT_ARCH)
 	lipo -create -output $@ $@.$(ARCH) $@.$(ALT_ARCH)
@@ -200,7 +201,7 @@ $(FFI_LIB):
 	    && CC="$(CC) $(CDEBUG)" $(FFI_SRC)/configure $(FFI_CONFIG)); \
 	fi
 	$(MAKE) -C $(FFI_BUILD)
-ifeq ($(OS),darwin)
+ifneq ($(SDKROOT),)
 	@mkdir -p $(FFI_ALT_BUILD)
 	@if [ ! -f $(FFI_ALT_BUILD)/Makefile ]; then \
 	  echo "Configuring libffi ($(ALT_ARCH))"; \
