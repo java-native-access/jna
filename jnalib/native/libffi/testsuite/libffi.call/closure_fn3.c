@@ -6,7 +6,7 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030828	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
 static void closure_test_fn3(ffi_cif* cif __UNUSED__, void* resp, void** args,
@@ -64,13 +64,13 @@ int main (void)
   cl_arg_types[6] = &ffi_type_float;
   cl_arg_types[7] = &ffi_type_float;
   cl_arg_types[8] = &ffi_type_double;
-  cl_arg_types[9] = &ffi_type_uint;
+  cl_arg_types[9] = &ffi_type_sint;
   cl_arg_types[10] = &ffi_type_float;
   cl_arg_types[11] = &ffi_type_float;
-  cl_arg_types[12] = &ffi_type_uint;
+  cl_arg_types[12] = &ffi_type_sint;
   cl_arg_types[13] = &ffi_type_float;
   cl_arg_types[14] = &ffi_type_float;
-  cl_arg_types[15] = &ffi_type_uint;
+  cl_arg_types[15] = &ffi_type_sint;
   cl_arg_types[16] = NULL;
 
   /* Initialize the cif */

@@ -1,0 +1,19 @@
+--- libffi notes ---
+libffi has been copied from GCC (originally 4.2.0, since updated to match the
+trunk). 
+libffi last synched: 071126 by twall
+
+Files required for standalone configure:
+config-ml.in (from root)
+config.guess (from root)
+config.sub (from root)
+depcomp (from root)
+install-sh (from root) 
+ltcf-c.sh (from ???)
+ltconfig (from ???)
+ltmain.sh (from root)
+missing (from root)
+
+Wayne Meissner did the original work to integrate libffi into JNA and to get
+it working on half a dozen different platforms.
+

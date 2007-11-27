@@ -2,6 +2,7 @@
    win32.S - Copyright (c) 1996, 1998, 2001, 2002  Red Hat, Inc.
 	     Copyright (c) 2001  John Beniton
 	     Copyright (c) 2002  Ranjit Mathew
+	     Copyright (c) 2007  Timothy Wall
 			
  
    X86 Foreign Function Interface
