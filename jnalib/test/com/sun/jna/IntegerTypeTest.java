@@ -9,28 +9,35 @@ public class IntegerTypeTest extends TestCase {
 	}
 	
 	public void testCheckArgumentSize() {
-		for (int i=1;i < 8;i*=2) {
-			long value = -1L << (1*8-1); 
+		for (int i=1;i <= 8;i*=2) {
+			long value = -1L << (i*8-1); 
 			new Sized(i, value);
-			new Sized(i, -1L);
+            new Sized(i, -1);
+            new Sized(i, 0);
+            new Sized(i, 1);
 			
-			value = 1L << (1*8-1);
+			value = 1L << (i*8-1);
 			new Sized(i, value);
-			value = 0xFFFFFFFFFFFFFFFFL & ~(0xFFFFFFFFFFFFFFFFL << (1*8));
+			value = -1L & ~(-1L << (i*8));
 			new Sized(i, value);
-			try {
-				value = 1L << (i*8);
-				new Sized(i, value);
-				fail("Value exceeding size (" + i + ") should fail");
+			
+			if (i < 8) {
+			    try {
+			        value = 1L << (i*8);
+			        new Sized(i, value);
+			        fail("Value exceeding size (" + i + ") should fail");
+			    }
+			    catch(IllegalArgumentException e) {
+			    }
 			}
-			catch(IllegalArgumentException e) {
-			}
-			try {
-				value = -1L << (i*8);
-				new Sized(i, value);
-				fail("Negative value (" + value + ") exceeding size (" + i + ") should fail");
-			}
-			catch(IllegalArgumentException e) {
+			if (i < 8) {
+			    try {
+			        value = -1L << (i*8);
+			        new Sized(i, value);
+			        fail("Negative value (" + value + ") exceeding size (" + i + ") should fail");
+			    }
+			    catch(IllegalArgumentException e) {
+			    }
 			}
 		}
 	}

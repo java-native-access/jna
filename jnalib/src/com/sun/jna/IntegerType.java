@@ -57,12 +57,14 @@ public abstract class IntegerType extends Number implements NativeMapped {
         default:
             throw new IllegalArgumentException("Unsupported size: " + size);
         }
-        long mask = (-1L >> size * 8) << (size * 8);
-        if ((value < 0 && truncated != value)
-            || (value >= 0 && (mask & value) != 0)) {
-            throw new IllegalArgumentException("Argument (0x"
-                + Long.toHexString(value) + ") exceeds native capacity ("
-                + size + " bytes)");
+        if (size < 8) {
+            long mask = ~((1L << (size*8)) - 1);
+            if ((value < 0 && truncated != value)
+                    || (value >= 0 && (mask & value) != 0)) {
+                throw new IllegalArgumentException("Argument value 0x"
+                        + Long.toHexString(value) + " exceeds native capacity ("
+                        + size + " bytes) mask=0x" + Long.toHexString(mask));
+            }
         }
     }
 
