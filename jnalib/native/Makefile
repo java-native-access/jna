@@ -16,9 +16,6 @@
 #   FreeBSD (i386)
 #
 
-# X11-based builds usually need to avoid 1.5/1.6 bug caused by linking 
-# directly to -ljawt by defining NEED_JAWT_HACK
-
 # Systems which support POSIX signals may be able to support VM crash
 # protection simply by defining HAVE_PROTECTION.  This has been enabled
 # only for those platforms on which it has been tested successfully.
@@ -106,8 +103,7 @@ endif
 ifeq ($(OS),linux)
 ARCH=i386
 PCFLAGS+=-fPIC
-CDEFINES+=-DNEED_JAWT_HACK -DHAVE_PROTECTION
-LIBS=
+CDEFINES+=-DHAVE_PROTECTION
 endif
 
 ifeq ($(OS),freebsd)
@@ -115,8 +111,7 @@ ARCH=i386
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
 LDFLAGS=-o $@ -shared -pthread
-CDEFINES+=-DNEED_JAWT_HACK -DHAVE_PROTECTION
-LIBS=
+CDEFINES+=-DHAVE_PROTECTION
 endif
 
 ifeq ($(OS),solaris)
@@ -124,9 +119,7 @@ ifeq ($(ARCH),)
 ARCH=$(shell uname -n)
 endif
 PCFLAGS+=-fPIC
-CDEFINES+=-DNEED_JAWT_HACK
 LDFLAGS=-o $@ -G
-LIBS=
 ifeq ($(ARCH), sparcv9)
   # alter CC instead of PCFLAGS, since we need to pass it down to libffi 
   # configure and some of the other settings in PCFLAGS might make the build 

@@ -389,7 +389,7 @@ public final class Native {
                 lib.deleteOnExit();
                 // Have to remove the temp file after VM exit on w32
                 if (Platform.isWindows()) {
-                        Runtime.getRuntime().addShutdownHook(new W32Cleanup(lib));
+                    Runtime.getRuntime().addShutdownHook(new W32Cleanup(lib));
                 }
                 fos = new FileOutputStream(lib);
                 int count;
@@ -408,12 +408,15 @@ public final class Native {
                 }
             }
         }
-        // Avoid dependent library link errors on w32 (this is handled
-        // internal to the jnidispatch library for X11-based platforms)
+        // Ensure the AWT library is loaded prior to loading the JNI library
+        // to avoid dependent library link errors
+        // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
+        // Calling Toolkit.getDefaultToolkit() ensures the AWT library ("awt")
+        // is loaded by the proper class loader, otherwise Toolkit class init
+        // will fail later.
+        Toolkit.getDefaultToolkit();
         if (Platform.isWindows()) {
-            // Ensure AWT library ("awt") is loaded by the proper class loader, 
-            // otherwise Toolkit class init will fail
-            Toolkit.getDefaultToolkit();
+            // Windows needs some extra nudging
             try { System.loadLibrary("jawt"); } 
             catch(UnsatisfiedLinkError e) { e.printStackTrace(); }
         }

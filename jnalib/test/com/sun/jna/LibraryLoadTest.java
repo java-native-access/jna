@@ -12,7 +12,10 @@
  */
 package com.sun.jna;
 
+import java.awt.Frame;
 import java.awt.Toolkit;
+
+import javax.swing.JFrame;
 
 import junit.framework.TestCase;
 
@@ -21,6 +24,17 @@ public class LibraryLoadTest extends TestCase {
     
     public void testLoadJNALibrary() {
         assertTrue("Point size should never be zero", Pointer.SIZE > 0);
+    }
+    
+    public void testLoadJAWT() {
+        Frame f = new Frame(getName());
+        f.pack();
+        try {
+            Native.getWindowPointer(f);
+        }
+        finally {
+            f.dispose();
+        }
     }
     
     public static interface CLibrary extends Library {

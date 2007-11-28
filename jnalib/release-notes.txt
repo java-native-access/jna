@@ -33,6 +33,7 @@ Bug Fixes
 * Fix VM crash on w32 stdcall callbacks
 * Use long offsets and sizes rather than ints (64-bit safe)
 * Properly clean up references and release closure memory on JNI_Unload
+* Use simpler AWT/JAWT library loading workaround
 
 Release 2.5
 Features

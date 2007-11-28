@@ -1570,93 +1570,10 @@ Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass classp, jint code) {
 
 static jboolean 
 init_jawt(JNIEnv* env) {
-  // NOTE: the canonical way to obtain a reference to a native
-  // window handle involves loading JAWT, but unfortunately it won't load
-  // easily on linux post-1.4 VMs due to a bug loading libmawt.so.  We'd
-  // prefer pure-java access to native window IDs, but that isn't available
-  // through WindowPeer until 1.6. 
-#ifndef NEED_JAWT_HACK
+  // NOTE: AWT/JAWT must be manually loaded prior to this code
+  // See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
   awt.version = JAWT_VERSION_1_4;
-  if (!JAWT_GetAWT(env, &awt))
-    return JNI_FALSE;
-#else
-  // Hackery to work around 1.5/1.6 bug linking directly to jawt.
-  // Dynamically look up the function to avoid linkage errors on X11-based
-  // platforms.
-  // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
-  // The suggested workaround is to call System.loadLibrary("awt")
-  // prior to loading the user library, but that fails when headless
-  jboolean (JNICALL *get_jawt)(JNIEnv*,JAWT*);
-  jstring JAVA_HOME = (*env)->NewStringUTF(env, "java.home");
-  jstring OS_ARCH = (*env)->NewStringUTF(env, "os.arch");
-  jclass system = (*env)->FindClass(env, "java/lang/System");
-  if (!system) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError", 
-                "Can't load java.lang.System");
-    return 0;
-  }
-  jmethodID get_property =
-    (*env)->GetStaticMethodID(env, system, "getProperty",
-                              "(Ljava/lang/String;)Ljava/lang/String;");
-  if (!get_property) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
-                "Can't load java.lang.System.getProperty");
-    return 0;
-  }
-
-  jstring java_home =
-    (*env)->CallStaticObjectMethod(env, system, get_property, JAVA_HOME);
-  jstring os_arch =
-    (*env)->CallStaticObjectMethod(env, system, get_property, OS_ARCH);
-  char* path = newCString(env, java_home);
-  char* arch = newCString(env, os_arch);
-  char* buf = alloca(strlen(path) + 1024);
-  void* mawt = NULL;
-  const char* PATHS[] = {
-    "%s/lib/%s/xawt/libmawt.so",
-    "%s/lib/%s/motif21/libmawt.so",
-    "%s/lib/%s/headless/libmawt.so",
-  };
-  unsigned i;
-  
-  // First try in the JRE, then try the paths w/mawt
-  sprintf(buf, "%s/lib/%s/libjawt.so", path, arch);
-  jawt = LOAD_LIBRARY(buf);
-  if (!jawt) {
-    for (i=0;i < sizeof(PATHS)/sizeof(PATHS[0]);i++) {
-      sprintf(buf, PATHS[i], path, arch);
-      mawt = LOAD_LIBRARY(buf);
-      if (mawt) {
-        sprintf(buf, "%s/lib/%s/libjawt.so", path, arch);
-        jawt = LOAD_LIBRARY(buf);
-        if (jawt) 
-          break;
-        FREE_LIBRARY(mawt);
-        mawt = NULL;
-      }
-    }
-  }
-  free(path);
-  free(arch);
-  if (!jawt) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError", dlerror());
-    return JNI_FALSE;
-  }
-  get_jawt = (void *)FIND_ENTRY(jawt, "JAWT_GetAWT");
-  if (!get_jawt) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError", dlerror());
-    return JNI_FALSE;
-  }
-  awt.version = JAWT_VERSION_1_4;
-  if (!get_jawt(env, &awt)) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError", 
-                "Could not initialize JAWT");
-    return JNI_FALSE;
-  }
-
-#endif // NEED_JAWT_HACK
-
-  return JNI_TRUE;
+  return JAWT_GetAWT(env, &awt) ? JNI_TRUE : JNI_FALSE;
 }
 
 // FIXME figure out the data layout FFI wants in the result pointer; may
@@ -1760,41 +1677,45 @@ JNI_OnLoad(JavaVM *jvm, void *reserved) {
 
 JNIEXPORT void JNICALL 
 JNI_OnUnload(JavaVM *vm, void *reserved) {
+  jobject* refs[] = {
+    &classObject, &classClass, &classMethod,
+    &classString,
+    &classBuffer, &classByteBuffer, &classCharBuffer,
+    &classShortBuffer, &classIntBuffer, &classLongBuffer,
+    &classFloatBuffer, &classDoubleBuffer,
+    &classVoid, &classPrimitiveVoid,
+    &classBoolean, &classPrimitiveBoolean,
+    &classByte, &classPrimitiveByte,
+    &classCharacter, &classPrimitiveCharacter,
+    &classShort, &classPrimitiveShort,
+    &classInteger, &classPrimitiveInteger,
+    &classLong, &classPrimitiveLong,
+    &classFloat, &classPrimitiveFloat,
+    &classDouble, &classPrimitiveDouble,
+    &classPointer, &classNative, 
+  };
+  unsigned i;
   JNIEnv* env;
-  if ((*vm)->GetEnv(vm, (void*)&env, JNI_VERSION_1_4) == JNI_OK) {
-    jobject* refs[] = {
-      &classObject, &classClass, &classMethod,
-      &classString,
-      &classBuffer, &classByteBuffer, &classCharBuffer,
-      &classShortBuffer, &classIntBuffer, &classLongBuffer,
-      &classFloatBuffer, &classDoubleBuffer,
-      &classVoid, &classPrimitiveVoid,
-      &classBoolean, &classPrimitiveBoolean,
-      &classByte, &classPrimitiveByte,
-      &classCharacter, &classPrimitiveCharacter,
-      &classShort, &classPrimitiveShort,
-      &classInteger, &classPrimitiveInteger,
-      &classLong, &classPrimitiveLong,
-      &classFloat, &classPrimitiveFloat,
-      &classDouble, &classPrimitiveDouble,
-      &classPointer, &classNative,
-    };
-    unsigned i;
-
-    for (i=0;i < sizeof(refs)/sizeof(refs[0]);i++) {
-      if (*refs[i]) {
-        (*env)->DeleteWeakGlobalRef(env, *refs[i]);
-        *refs[i] = NULL;
-      }
+  int attached = (*vm)->GetEnv(vm, (void*)&env, JNI_VERSION_1_4) == JNI_OK;
+  if (!attached) {
+    if ((*vm)->AttachCurrentThread(vm, (void*)&env, NULL) != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach to JVM thread on unload\n");
+      return;
     }
-    
-    if (jawt) {
-      FREE_LIBRARY(jawt);
-      jawt = NULL;
-      jawt_initialized = JNI_FALSE;
-    }
+  }
 
-    jnidispatch_callback_dispose(env);
+  for (i=0;i < sizeof(refs)/sizeof(refs[0]);i++) {
+    if (*refs[i]) {
+      (*env)->DeleteWeakGlobalRef(env, *refs[i]);
+      *refs[i] = NULL;
+    }
+  }
+  
+  jawt_initialized = JNI_FALSE;
+  jnidispatch_callback_dispose(env);
+
+  if (!attached) {
+    (*vm)->DetachCurrentThread(vm);
   }
 }
 
