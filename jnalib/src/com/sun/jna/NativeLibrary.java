@@ -61,7 +61,7 @@ public class NativeLibrary {
         this.handle = handle;
         // Special workaround for w32 kernel32.GetLastError
         // Short-circuit the function to use built-in GetLastError access
-        if (Platform.isWindows() && "kernel32".equals(this.libraryName)) {
+        if (Platform.isWindows() && "kernel32".equals(this.libraryName.toLowerCase())) {
             synchronized(functions) {
                 Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION) {
                     Object invoke(Object[] args, Class returnType) {

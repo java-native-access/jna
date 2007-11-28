@@ -38,12 +38,12 @@ public class Kernel32Test extends TestCase {
         
         kernel.SetLastError(ERRCODE);
         int code = kernel.GetLastError();
-        assertEquals("Wrong GetLastError value", ERRCODE, code);
+        assertEquals("Wrong error value after SetLastError", ERRCODE, code);
         
         if (kernel.GetProcessId(null) == 0) {
             final int INVALID_HANDLE = 6;
             code = kernel.GetLastError();
-            assertEquals("GetLastError failed", INVALID_HANDLE, code);
+            assertEquals("Wrong error value after failed syscall", INVALID_HANDLE, code);
         }
         else {
             fail("GetProcessId(NULL) should fail");
