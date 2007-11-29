@@ -42,7 +42,7 @@
   <target name="-dynamic-properties">
     <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
     <echo>Build ${version}</echo>
-    <property name="build" location="build"/>
+    <property name="build" value="build"/>
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
@@ -170,10 +170,13 @@
   </target>
 
   <target name="native" depends="-setup,javah"
-          description="Build native libraries.  Use 'ant -DCC=gcc' to build using gcc on w32">
-    <!-- ensure ARCH is set properly for SunOS -->
+          description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
+    <!-- ensure ARCH is set properly for various platforms -->
     <condition property="ARCH" value="${os.arch}">
-      <os name="SunOS"/>
+      <or>
+        <os name="SunOS"/>
+        <os arch="amd64"/>
+      </or>
     </condition>
     <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
       <isset property="CC"/>
@@ -187,8 +190,9 @@
     <condition property="make.SDKROOT" value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
       <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
     </condition>
-    <!-- Windows' drive letters in absolute paths wreak havoc on make -->
-    <condition property="make.BUILD" value="BUILD=../build/native" else="BUILD=${build.native}">
+    <!-- Windows' drive letters and spaces in absolute paths wreak havoc on 
+         make --> 
+    <condition property="make.BUILD" value="BUILD=../${build}/native" else="BUILD=${build.native}">
       <os family="windows"/>
     </condition>
     <condition property="make.PATH" value="PATH=/usr/sfw/bin:/usr/bin:/usr/ccs/bin" else="IGNORE=">
@@ -281,15 +285,17 @@
       <report todir="${reports.junit}"/>
     </junitreport>
     <echo>View test report in file://${reports.junit}/index.html</echo>
-    <fail if="testfailure">One or more tests failed</fail>
+    <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
   <target name="with.clover" description="Enable code coverage for tests">
     <taskdef resource="clovertasks"/>
+    <property name="clover" value="true"/>
     <property name="build" value="build.clover"/>
     <property name="clover.include" value="**/*.java"/>
+    <property name="clover.exclude" value="com/sun/jna/examples/**/*.java"/>
     <clover-setup initString="${build}/coverage.db">
-      <fileset dir="${src}" includes="${clover.include}"/>
+      <fileset dir="${src}" includes="${clover.include}" excludes="${clover.exclude}"/>
     </clover-setup>
   </target>
 
@@ -337,6 +343,7 @@
       <group title="Unix Examples" packages="com.sun.jna.examples.unix"/>
       <group title="Windows Examples" packages="com.sun.jna.examples.win32"/>
 
+      <arg value="-notimestamp"/>
     </javadoc>
   </target>
 
@@ -353,11 +360,11 @@
       <zipfileset src="${dist}/linux-i386.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-i386"/>
+      <!-- These are disabled until updated for 3.0 -->
+      <!--
       <zipfileset src="${dist}/linux-amd64.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-amd64"/>
-      <!-- These are disabled until updated for 3.0 -->
-      <!--
       <zipfileset src="${dist}/sunos-x86.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
