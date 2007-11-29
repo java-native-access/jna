@@ -101,16 +101,16 @@ LIBSFX=.dll
 endif
 
 ifeq ($(OS),linux)
-ARCH=i386
+ARCH=$(shell uname -m | sed 's/i[456]86/i386/g')
 PCFLAGS+=-fPIC
 CDEFINES+=-DHAVE_PROTECTION
 endif
 
 ifeq ($(OS),freebsd)
-ARCH=i386
+ARCH=$(shell uname -m | sed 's/i[456]86/i386/g')
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
-LDFLAGS=-o $@ -shared -pthread
+LDFLAGS=-o $@ -shared 
 CDEFINES+=-DHAVE_PROTECTION
 endif
 
@@ -177,9 +177,6 @@ install:
 	mkdir $(INSTALLDIR)
 	cp $(LIBRARY) $(INSTALLDIR)
 
-$(BUILD)/test_dispatch: test_dispatch.c $(BUILD)/dispatch.o $(BUILD)/dispatch_$(ARCH).o $(BUILD)/callback.o 
-	$(CC) $(CFLAGS) $< $(BUILD)/dispatch.o $(BUILD)/dispatch_$(ARCH).o $(BUILD)/callback.o $(COUT)
-
 $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB) 
 	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
 
@@ -213,3 +210,5 @@ clean:
 
 version:
 	@echo version=$(VERSION)
+
+#EOF
