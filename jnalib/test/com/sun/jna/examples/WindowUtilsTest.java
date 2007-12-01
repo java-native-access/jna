@@ -32,6 +32,10 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.*;
+
 import junit.framework.TestCase;
 
 // NOTE: java.awt.Robot can't properly capture transparent pixels
@@ -200,11 +204,12 @@ public class WindowUtilsTest extends TestCase {
             return;
         Frame root = JOptionPane.getRootFrame();
         final Window back = new Window(root);
-        back.setBackground(new Color(255, 255, 255));
+        final Color BACKGROUND = new Color(0, 128, 128);
+        final Color FOREGROUND = new Color(128, 0, 0);
+        back.setBackground(BACKGROUND);
         back.setLocation(X, Y);
         final JWindow front = new JWindow(root);
-        Color frontColor = new Color(0, 0, 255);
-        front.getContentPane().setBackground(frontColor);
+        front.getContentPane().setBackground(FOREGROUND);
         front.setLocation(X, Y);
         Area mask = new Area(new Rectangle(0, 0, W, H));
         mask.subtract(new Area(new Rectangle(W/4, H/4, W/2, H/2)));
@@ -222,9 +227,11 @@ public class WindowUtilsTest extends TestCase {
             front.setVisible(true);
         }});
         
-        Color sample = robot.getPixelColor(front.getX(), front.getY());
+        Point where = front.getLocationOnScreen();
+        where.translate(W/8, H/8);
+        Color sample = robot.getPixelColor(where.x, where.y);
         long start = System.currentTimeMillis();
-        while (!sample.equals(frontColor)) {
+        while (!sample.equals(FOREGROUND)) {
             SwingUtilities.invokeAndWait(new Runnable() { public void run() {
                 front.toFront(); 
             }});
@@ -232,15 +239,21 @@ public class WindowUtilsTest extends TestCase {
             if (System.currentTimeMillis() - start > 5000)
                 fail("Timed out waiting for shaped window to appear, "
                      + "expected foreground color (sample="
-                     + sample + " vs expected=" + frontColor + ")");
-            sample = robot.getPixelColor(front.getX()+W/8, front.getY()+H/8);
+                     + sample + " vs expected=" + FOREGROUND + ")");
+            sample = robot.getPixelColor(where.x, where.y);
         }
 
-        Point where = new Point(front.getX() + W/2, 
-                                front.getY() + H/2);
+        where = front.getLocationOnScreen();
+        where.translate(W/2, H/2);
         sample = robot.getPixelColor(where.x, where.y);
-        assertEquals("Background window should show through (center)",
-                     back.getBackground(), sample);
+        start = System.currentTimeMillis();
+        while (!sample.equals(BACKGROUND)) {
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > 1000) 
+                assertEquals("Background window should show through (center) "
+                             + where, BACKGROUND, sample);
+            sample = robot.getPixelColor(where.x, where.y);
+        }
     }
     
     public static void main(String[] args) {
