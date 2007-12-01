@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-11-27">
+<meta name="date" content="2007-11-30">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -61,11 +61,11 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
 <li>Most platforms supported
 <li>Automatic mapping from Java interface to native function
 <li>8-, 16-, 32, and 64-bit basic data types
-<li><a href="javadoc/com/sun/jna/Structure.html">Structure</a> and <a href="javadoc/com/sun/jna/Union.html">Union</a> pointer arguments
+<li><a href="javadoc/com/sun/jna/Structure.html">Structure</a> and <a href="javadoc/com/sun/jna/Union.html">Union</a> arguments/return values, by reference and by value
 <li>Automatic conversion between C and Java strings
 <li>Function pointers (callbacks from native code to Java code) as arguments and/or members of a <code>struct</code>
 <li>By-reference (pointer-to-type) arguments 
-<li>Java array and <code>Buffer</code> arguments (primitive types and pointers) as pointer-to-buffer
+<li>Java array and NIO <code>Buffer</code> arguments (primitive types and pointers) as pointer-to-buffer
 <li>Nested structures and arrays
 <li><code>wchar_t</code>-based strings
 <li><a href="javadoc/com/sun/jna/NativeLong.html">Native <code>long</code></a> support (32- or 64-bit as appropriate)
@@ -111,9 +111,9 @@ public interface Kernel32 extends StdCallLibrary {
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class);
 </textarea><br>
-This instance is for convenient reuse.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.  A third <code>Map</code> of options may be provided to customize the library behavior; some options are explained in more detail below.
+This instance is for convenient reuse.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.  A <code>Map</code> of options may be provided as the third argument to customize the library behavior; some of these options are explained in more detail below.
   </li>
-  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to <a href="javadoc/overview-summary.html#marshalling">this table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).</li>
+  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the <a href="#mapping">basic mappings</a> below or <a href="javadoc/overview-summary.html#marshalling">the detailed table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).</li>
     <textarea name="textarea" cols="80" rows="12" readonly="readonly">
     public static class SYSTEMTIME extends Structure {
         public short wYear;
@@ -139,7 +139,7 @@ System.out.println("Today's integer value is " + time.wDay);
 </textarea>
   </li>
 </ol>
-See the <a href="javadoc/overview-summary.html#overview">JavaDoc overview</a> for additional details.<p>
+See the <a href="javadoc/overview-summary.html#overview">JavaDoc overview</a> for more detailed information about JNA usage.<p>
 
 
 <a href=#top>Top</a>
@@ -186,7 +186,8 @@ Arrays of C strings (the <code>char* argv[]</code> to the C <code>main</code>, f
 <a href=#top>Top</a>
 <a name=structures></a>
 <h3>Using Structures/Unions</h3>
-When a function requires a pointer to a <code>struct</code>, a Java <code>Structure</code> should be used.  Typically you define a <code>public static</code> class derived from <code>Structure</code> within your library interface definition.   This allows the structure to share any custom type mapping defined for the library interface.
+When a function requires a pointer to a <code>struct</code>, a Java <a href="javadoc/com/sun/jna/Structure.html">Structure</a> should be used.  See <a href="javadoc/overview-summary.html#byvalue">here</a> for information on passing or returning structures by value.<p>
+Typically you define a <code>public static</code> class derived from <code>Structure</code> within your library interface definition.   This allows the structure to share any options (like custom type mapping) defined for the library interface.  
 <p>
 If a function requires an array of <code>struct</code>, a Java <code>Structure[]</code> may be used.  When passing in an array of <code>Structure</code>, it is not necessary to initialize the array elements (the function call will allocate, zero memory, and assign the elements for you).  If you <em>do</em> need to initialize the array, you should use the <code>Structure.toArray</code> method to obtain an array of <code>Structure</code> elements contiguous in memory, which you can then initialize as needed.
 <p>
@@ -465,7 +466,7 @@ To get an idea how to use JNA, please refer to the JUnit tests in the test/ dire
 java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
 </blockquote>
 
-<p>Timothy Wall rebooted the project in February of 2007, introducing a number of critical features, adding linux and OSX ports, and making the library usable to a much wider audience.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and better file system access.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/OTHERS">OTHERS</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
+<p>Timothy Wall rebooted the project in February of 2007, introducing a number of critical features, adding linux and OSX ports, and making the library usable with more than just rudimentary functions.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and better file system access.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/OTHERS">OTHERS</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
 
 Wayne Meissner has contributed enormously ("a metric buttload of hard work") in getting libffi and the various additional native libraries working.  His work on a Java interface to the gstreamer library has contributed a number of critical features to JNA.<p>
 
