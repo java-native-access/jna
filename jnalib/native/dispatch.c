@@ -26,6 +26,8 @@
 #include <windows.h>
 #ifdef _MSC_VER
 #define alloca _alloca
+#else
+#include <malloc.h>
 #endif
 #define LOAD_LIBRARY(name) LoadLibrary(name)
 #define FREE_LIBRARY(handle) FreeLibrary(handle)
@@ -70,8 +72,6 @@
 extern "C"
 #endif
 
-static JAWT awt;
-static jboolean jawt_initialized;
 static jboolean preserve_last_error;
 
 // TODO: include address fault information in error message
@@ -91,6 +91,13 @@ static jboolean preserve_last_error;
 #define MEMCPY(D,S,L) memcpy(D,S,L)
 #define MEMSET(D,C,L) memset(D,C,L)
 #endif
+
+#define EIllegalArgument "java/lang/IllegalArgumentException"
+#define EOutOfMemory "java/lang/OutOfMemoryError"
+#define EUnsatisfiedLink "java/lang/UnsatisfiedLinkError"
+#define EIllegalState "java/lang/IllegalStateException"
+#define EUnsupportedOperation "java/lang/UnsupportedOperationException"
+#define EError "java/lang/Error"
 
 /* Cached class, field and method IDs */
 static jclass classObject;
@@ -117,6 +124,7 @@ static jclass classDoubleBuffer;
 
 static jclass classPointer;
 static jclass classNative;
+static jclass classStructure;
 
 static jmethodID MID_Class_getComponentType;
 static jmethodID MID_String_getBytes;
@@ -160,7 +168,8 @@ static jfieldID FID_Float_value;
 static jfieldID FID_Double_value;
 
 static jfieldID FID_Pointer_peer;
-static void* jawt = NULL;
+static jfieldID FID_Structure_memory;
+static jfieldID FID_Structure_typeInfo;
 
 /* Forward declarations */
 static char* newCString(JNIEnv *env, jstring jstr);
@@ -171,13 +180,15 @@ static void* getBufferArray(JNIEnv* env, jobject buf,
                             jobject* arrayp, char* typep, void** elemp);
 static char getArrayComponentType(JNIEnv *, jobject);
 static void *getNativeAddress(JNIEnv *, jobject);
-static jboolean init_jawt(JNIEnv*);
+static void *getStructureAddress(JNIEnv *, jobject);
+static ffi_type *getStructureType(JNIEnv *, jobject);
 static void update_last_error(JNIEnv*, int);
+static ffi_type* init_type(JNIEnv*, ffi_type*);
 
 /* invoke the real native function */
 static void
 dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr, 
-         ffi_type *ffi_return, void *resP)
+         ffi_type *ffi_return_type, void *resP)
 {
   int i, nargs;
   void *func;
@@ -190,7 +201,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
   } array_elements[MAX_NARGS];
   int array_count = 0;
   ffi_cif cif;
-  ffi_type* ffi_args[MAX_NARGS];
+  ffi_type* ffi_types[MAX_NARGS];
   void* ffi_values[MAX_NARGS];
   ffi_abi abi;
   ffi_status status;
@@ -200,7 +211,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
 
   if (nargs > MAX_NARGS) {
     sprintf(msg, "Too many arguments (max %d)", MAX_NARGS);
-    throwByName(env,"java/lang/UnsupportedOperationException", msg);
+    throwByName(env, EUnsupportedOperation, msg);
     return;
   }
   
@@ -212,64 +223,74 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     
     if (arg == NULL) {
       c_args[i].l = NULL;
-      ffi_args[i] = &ffi_type_pointer;
+      ffi_types[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
     }
     else if ((*env)->IsInstanceOf(env, arg, classBoolean)) {
       c_args[i].i = (*env)->GetBooleanField(env, arg, FID_Boolean_value);
-      ffi_args[i] = &ffi_type_sint32;
+      ffi_types[i] = &ffi_type_sint32;
       ffi_values[i] = &c_args[i].i;
     }
     else if ((*env)->IsInstanceOf(env, arg, classByte)) {
       c_args[i].b = (*env)->GetByteField(env, arg, FID_Byte_value);
-      ffi_args[i] = &ffi_type_sint8;
+      ffi_types[i] = &ffi_type_sint8;
       ffi_values[i] = &c_args[i].b;
     }
     else if ((*env)->IsInstanceOf(env, arg, classShort)) {
       c_args[i].s = (*env)->GetShortField(env, arg, FID_Short_value);
-      ffi_args[i] = &ffi_type_sint16;
+      ffi_types[i] = &ffi_type_sint16;
       ffi_values[i] = &c_args[i].s;
     }
     else if ((*env)->IsInstanceOf(env, arg, classCharacter)) {
       if (sizeof(wchar_t) == 2) {
         c_args[i].s = (*env)->GetCharField(env, arg, FID_Character_value);
-        ffi_args[i] = &ffi_type_sint16;
+        ffi_types[i] = &ffi_type_sint16;
         ffi_values[i] = &c_args[i].s;
       }
-      else {
+      else if (sizeof(wchar_t) == 4) {
         c_args[i].i = (*env)->GetCharField(env, arg, FID_Character_value);
-        ffi_args[i] = &ffi_type_sint32;
+        ffi_types[i] = &ffi_type_sint32;
         ffi_values[i] = &c_args[i].i;
+      }
+      else {
+        sprintf(msg, "Unsupported wchar_t size (%d)", (int)sizeof(wchar_t));
+        throwByName(env, EUnsupportedOperation, msg);
+        return;
       }
     }
     else if ((*env)->IsInstanceOf(env, arg, classInteger)) {
       c_args[i].i = (*env)->GetIntField(env, arg, FID_Integer_value);
-      ffi_args[i] = &ffi_type_sint32;
+      ffi_types[i] = &ffi_type_sint32;
       ffi_values[i] = &c_args[i].i;
     }
     else if ((*env)->IsInstanceOf(env, arg, classLong)) {
       c_args[i].j = (*env)->GetLongField(env, arg, FID_Long_value);
-      ffi_args[i] = &ffi_type_sint64;
+      ffi_types[i] = &ffi_type_sint64;
       ffi_values[i] = &c_args[i].j;
     }
     else if ((*env)->IsInstanceOf(env, arg, classFloat)) {
       c_args[i].f = (*env)->GetFloatField(env, arg, FID_Float_value);
-      ffi_args[i] = &ffi_type_float;
+      ffi_types[i] = &ffi_type_float;
       ffi_values[i] = &c_args[i].f;
     }
     else if ((*env)->IsInstanceOf(env, arg, classDouble)) {
       c_args[i].d = (*env)->GetDoubleField(env, arg, FID_Double_value);
-      ffi_args[i] = &ffi_type_double;
+      ffi_types[i] = &ffi_type_double;
       ffi_values[i] = &c_args[i].d;
     }
     else if ((*env)->IsInstanceOf(env, arg, classPointer)) {
       c_args[i].l = getNativeAddress(env, arg);
-      ffi_args[i] = &ffi_type_pointer;
+      ffi_types[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
+    }
+    else if ((*env)->IsInstanceOf(env, arg, classStructure)) {
+      c_args[i].l = getStructureAddress(env, arg);
+      ffi_types[i] = getStructureType(env, arg);
+      ffi_values[i] = c_args[i].l;
     }
     else if ((*env)->IsInstanceOf(env, arg, classBuffer)) {
       c_args[i].l = (*env)->GetDirectBufferAddress(env, arg);
-      ffi_args[i] = &ffi_type_pointer;
+      ffi_types[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
       if (c_args[i].l == NULL) {
           c_args[i].l =
@@ -277,7 +298,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
                              &array_elements[array_count].type,
                              &array_elements[array_count].elems);
           if (c_args[i].l == NULL) {
-              throwByName(env,"java/lang/IllegalArgumentException",
+              throwByName(env, EIllegalArgument,
                           "Buffer arguments must be direct or have a primitive backing array");
               goto cleanup;
           }
@@ -300,12 +321,12 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
       case 'D': ptr = (*env)->GetDoubleArrayElements(env, arg, &cpy); break;
       }
       if (!ptr) {
-        throwByName(env,"java/lang/OutOfMemoryException",
+        throwByName(env, EOutOfMemory,
                     "Could not obtain memory for primitive buffer");
         goto cleanup;
       }
       c_args[i].l = ptr;
-      ffi_args[i] = &ffi_type_pointer;
+      ffi_types[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
       array_elements[array_count].type = array_pt;
       array_elements[array_count].array = arg;
@@ -313,7 +334,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     }
     else {
       sprintf(msg, "Unsupported type at parameter %d", i);
-      throwByName(env,"java/lang/IllegalArgumentException", msg);
+      throwByName(env,EIllegalArgument, msg);
       goto cleanup;
     }
   }
@@ -329,14 +350,14 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
 #endif // _WIN32
   default:
     sprintf(msg, "Unrecognized calling convention: %d", (int)callconv);
-    throwByName(env, "java/lang/IllegalArgumentException", msg);
+    throwByName(env, EIllegalArgument, msg);
     goto cleanup;
   }
-  status = ffi_prep_cif(&cif, abi, nargs, ffi_return, ffi_args);
+  status = ffi_prep_cif(&cif, abi, nargs, ffi_return_type, ffi_types);
   switch(status) {
   case FFI_BAD_ABI:
-    sprintf(msg, "Bad FFI ABI: %d", (int)callconv); 
-    throwByName(env, "java/lang/IllegalArgumentException", msg);
+    sprintf(msg, "Invalid calling convention: %d", (int)callconv); 
+    throwByName(env, EIllegalArgument, msg);
     break;
   case FFI_OK: {
     PSTART();
@@ -349,7 +370,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
   }
   default:
     sprintf(msg, "Native call setup failure: %d", status);
-    throwByName(env, "java/lang/IllegalArgumentException", msg);
+    throwByName(env, EIllegalArgument, msg);
     break;
   }
   
@@ -396,7 +417,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
 /*
  * Class:     Function
  * Method:    invokePointer
- * Signature: ([Ljava/lang/Object;)LPointer;
+ * Signature: (I[Ljava/lang/Object;)LPointer;
  */
 JNIEXPORT jobject JNICALL 
 Java_com_sun_jna_Function_invokePointer(JNIEnv *env, jobject self, 
@@ -407,10 +428,27 @@ Java_com_sun_jna_Function_invokePointer(JNIEnv *env, jobject self,
     return newJavaPointer(env, result.l);
 }
 
+
+/*
+ * Class:     Function
+ * Method:    invokeStructure
+ * Signature: (I[Ljava/lang/Object;Lcom/sun/jna/Structure)LStructure;
+ */
+JNIEXPORT jobject JNICALL 
+Java_com_sun_jna_Function_invokeStructure(JNIEnv *env, jobject self, 
+                                          jint callconv, jobjectArray arr,
+                                          jobject result)
+{
+  ffi_type* type = getStructureType(env, result);
+  void* memory = getStructureAddress(env, result);
+  dispatch(env, self, callconv, arr, type, memory);
+  return result;
+}
+
 /*
  * Class:     Function
  * Method:    invokeDouble
- * Signature: ([Ljava/lang/Object;)D
+ * Signature: (I[Ljava/lang/Object;)D
  */
 JNIEXPORT jdouble JNICALL 
 Java_com_sun_jna_Function_invokeDouble(JNIEnv *env, jobject self, 
@@ -424,7 +462,7 @@ Java_com_sun_jna_Function_invokeDouble(JNIEnv *env, jobject self,
 /*
  * Class:     Function
  * Method:    invokeFloat
- * Signature: ([Ljava/lang/Object;)F
+ * Signature: (I[Ljava/lang/Object;)F
  */
 JNIEXPORT jfloat JNICALL
 Java_com_sun_jna_Function_invokeFloat(JNIEnv *env, jobject self, 
@@ -438,7 +476,7 @@ Java_com_sun_jna_Function_invokeFloat(JNIEnv *env, jobject self,
 /*
  * Class:     Function
  * Method:    invokeInt
- * Signature: ([Ljava/lang/Object;)I
+ * Signature: (I[Ljava/lang/Object;)I
  */
 JNIEXPORT jint JNICALL
 Java_com_sun_jna_Function_invokeInt(JNIEnv *env, jobject self, 
@@ -446,11 +484,11 @@ Java_com_sun_jna_Function_invokeInt(JNIEnv *env, jobject self,
 {
     jvalue result;
     dispatch(env, self, callconv, arr, &ffi_type_sint32, &result);
+#if defined (__LP64__)
     /* 
      * Big endian 64bit machines will put a 32bit return value in the 
      * upper 4 bytes of the memory area.
      */
-#if defined (__LP64__)
     return result.j & 0xffffffff;
 #else
     return result.i;
@@ -460,7 +498,7 @@ Java_com_sun_jna_Function_invokeInt(JNIEnv *env, jobject self,
 /*
  * Class:     Function
  * Method:    invokeLong
- * Signature: ([Ljava/lang/Object;)J
+ * Signature: (I[Ljava/lang/Object;)J
  */
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Function_invokeLong(JNIEnv *env, jobject self, 
@@ -474,7 +512,7 @@ Java_com_sun_jna_Function_invokeLong(JNIEnv *env, jobject self,
 /*
  * Class:     Function
  * Method:    invokeVoid
- * Signature: ([Ljava/lang/Object;)V
+ * Signature: (I[Ljava/lang/Object;)V
  */
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Function_invokeVoid(JNIEnv *env, jobject self, 
@@ -1018,6 +1056,18 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setByte
 
 /*
  * Class:     Pointer
+ * Method:    setChar
+ * Signature: (JC)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setChar
+    (JNIEnv *env, jobject self, jlong offset, jchar value)
+{
+    jbyte *peer = (jbyte *)getNativeAddress(env, self);
+    MEMCPY(peer + offset, &value, sizeof(value));
+}
+
+/*
+ * Class:     Pointer
  * Method:    setPointer
  * Signature: (JLPointer;)V
  */
@@ -1170,7 +1220,7 @@ newCString(JNIEnv *env, jstring jstr)
         jint len = (*env)->GetArrayLength(env, bytes);
         result = (char *)malloc(len + 1);
         if (result == NULL) {
-            throwByName(env, "java/lang/OutOfMemoryError", 0);
+            throwByName(env, EOutOfMemory, "Can't allocate C string");
             (*env)->DeleteLocalRef(env, bytes);
             return NULL;
         }
@@ -1196,7 +1246,7 @@ newWideCString(JNIEnv *env, jstring str)
         jint len = (*env)->GetArrayLength(env, chars);
         result = (wchar_t *)malloc(sizeof(wchar_t) * (len + 1));
         if (result == NULL) {
-            throwByName(env, "java/lang/OutOfMemoryError", 0);
+            throwByName(env, EOutOfMemory, 0);
             (*env)->DeleteLocalRef(env, chars);
             return NULL;
         }
@@ -1313,6 +1363,18 @@ get_jtype(JNIEnv* env, jclass cls) {
 }
 
 static void *
+getStructureAddress(JNIEnv *env, jobject obj) {
+  jobject ptr = (*env)->GetObjectField(env, obj, FID_Structure_memory);
+  return getNativeAddress(env, ptr);
+}
+
+static ffi_type*
+getStructureType(JNIEnv *env, jobject obj) {
+  jlong addr = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
+  return init_type(env, (ffi_type*)L2A(addr));
+}
+
+static void *
 getNativeAddress(JNIEnv *env, jobject obj) {
   return L2A((*env)->GetLongField(env, obj, FID_Pointer_peer));
 }
@@ -1415,27 +1477,39 @@ JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   preserve_last_error = JNI_TRUE;
   if (!LOAD_CREF(env, Pointer, "com/sun/jna/Pointer")) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
+    throwByName(env, EUnsatisfiedLink,
                 "Can't obtain class com.sun.jna.Pointer");
   }
   else if (!LOAD_MID(env, MID_Pointer_init, classPointer,
                      "<init>", "(J)V")) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
+    throwByName(env, EUnsatisfiedLink,
                 "Can't obtain constructor for class com.sun.jna.Pointer");
   }
   else if (!LOAD_FID(env, FID_Pointer_peer, classPointer, "peer", "J")) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
+    throwByName(env, EUnsatisfiedLink,
                 "Can't obtain peer field ID for class com.sun.jna.Pointer");
   }
   else if (!(classNative = (*env)->NewWeakGlobalRef(env, cls))) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
+    throwByName(env, EUnsatisfiedLink,
                 "Can't obtain global reference for class com.sun.jna.Native");
   }
   else if (!(MID_Native_updateLastError
              = (*env)->GetStaticMethodID(env, classNative,
                                          "updateLastError", "(I)V"))) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
+    throwByName(env, EUnsatisfiedLink,
                 "Can't obtain updateLastError method for class com.sun.jna.Native");
+  }
+  else if (!LOAD_CREF(env, Structure, "com/sun/jna/Structure")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain class com.sun.jna.Structure");
+  }
+  else if (!LOAD_FID(env, FID_Structure_memory, classStructure, "memory", "Lcom/sun/jna/Pointer;")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain memory field ID for class com.sun.jna.Structure");
+  }
+  else if (!LOAD_FID(env, FID_Structure_typeInfo, classStructure, "typeInfo", "J")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain typeInfo field ID for class com.sun.jna.Structure");
   }
 }
   
@@ -1445,31 +1519,30 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) 
   JAWT_DrawingSurface* ds;
   JAWT_DrawingSurfaceInfo* dsi;
   jint lock;
+  JAWT awt;
   
-  if (!jawt_initialized) {
-    if (!init_jawt(env)) {
-      throwByName(env, "java/lang/UnsatisfiedLinkError",
-                  "Can't initialize JAWT");
-      return 0;
-    }
-    jawt_initialized = JNI_TRUE;
+  // NOTE: AWT/JAWT must be loaded prior to this code's execution
+  // See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
+  awt.version = JAWT_VERSION_1_4;
+  if (!JAWT_GetAWT(env, &awt)) {
+    throwByName(env, EUnsatisfiedLink, "Can't load JAWT");
+    return 0;
   }
 
   ds = awt.GetDrawingSurface(env, w);
   if (ds == NULL) {
-    throwByName(env, "java/lang/Error", "Can't get drawing surface");
+    throwByName(env, EError, "Can't get drawing surface");
   }
   else {
     lock = ds->Lock(ds);
     if ((lock & JAWT_LOCK_ERROR) != 0) {
-      throwByName(env, "java/lang/Error", "Can't get drawing surface lock");
+      throwByName(env, EError, "Can't get drawing surface lock");
       awt.FreeDrawingSurface(ds);
       return 0;
     }
     dsi = ds->GetDrawingSurfaceInfo(ds);
     if (dsi == NULL) {
-        throwByName(env, "java/lang/Error",
-                    "Can't get drawing surface info");
+      throwByName(env, EError, "Can't get drawing surface info");
     }
     else {
 #ifdef _WIN32
@@ -1478,15 +1551,14 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) 
       if (wdsi != NULL) {
         // FIXME this kills the VM if the window is not realized;
         // if not, wdsi might be a bogus, non-null value
-        // TODO: fix JVM (right) or ensure window is realized
+        // TODO: fix JVM (right) or ensure window is realized (done in Java)
         handle = (jint)wdsi->hwnd;
         if (!handle) {
-          throwByName(env, "java/lang/IllegalStateException",
-                      "Can't get HWND");
+          throwByName(env, EIllegalState, "Can't get HWND");
         }
       }
       else {
-        throwByName(env, "java/lang/Error", "Can't get w32 platform info");
+        throwByName(env, EError, "Can't get w32 platform info");
       }
 #elif __APPLE__
       // WARNING: the view ref is not guaranteed to be stable except during
@@ -1496,13 +1568,11 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) 
       if (mdsi != NULL) {
         handle = (unsigned long)mdsi->cocoaViewRef;
         if (!handle) {
-          throwByName(env, "java/lang/IllegalStateException",
-                      "Can't get Cocoa View");
+          throwByName(env, EIllegalState, "Can't get Cocoa View");
         }
       }
       else {
-        throwByName(env, "java/lang/UnsupportedOperationException",
-                    "Native window handle access not supported on this platform");
+        throwByName(env, EError, "Can't get OS X platform info");
       }
 #else 
       JAWT_X11DrawingSurfaceInfo* xdsi =
@@ -1510,12 +1580,11 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) 
       if (xdsi != NULL) {
         handle = xdsi->drawable;
         if (!handle) {
-          throwByName(env, "java/lang/IllegalStateException",
-                      "Can't get Drawable");
+          throwByName(env, EIllegalState, "Can't get Drawable");
         }
       }
       else {
-        throwByName(env, "java/lang/Error", "Can't get X11 platform info");
+        throwByName(env, EError, "Can't get X11 platform info");
       }
 #endif        
       ds->FreeDrawingSurfaceInfo(dsi);
@@ -1531,8 +1600,7 @@ JNIEXPORT jobject JNICALL
 Java_com_sun_jna_Native_getDirectBufferPointer(JNIEnv *env, jclass classp, jobject buffer) {
   void* addr = (*env)->GetDirectBufferAddress(env, buffer);
   if (addr == NULL) {
-    throwByName(env,"java/lang/IllegalArgumentException",
-                "Non-direct Buffer is not supported");
+    throwByName(env, EIllegalArgument, "Non-direct Buffer is not supported");
   }
   return newJavaPointer(env, addr);
 }
@@ -1566,14 +1634,6 @@ JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass classp, jint code) {
   SET_LAST_ERROR(code);
   update_last_error(env, code);
-}
-
-static jboolean 
-init_jawt(JNIEnv* env) {
-  // NOTE: AWT/JAWT must be manually loaded prior to this code
-  // See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
-  awt.version = JAWT_VERSION_1_4;
-  return JAWT_GetAWT(env, &awt) ? JNI_TRUE : JNI_FALSE;
 }
 
 // FIXME figure out the data layout FFI wants in the result pointer; may
@@ -1657,8 +1717,8 @@ JNI_OnLoad(JavaVM *jvm, void *reserved) {
   int result = JNI_VERSION_1_4;
   int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
   if (!attached) {
-    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) == JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach to current thread\n");
+    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach to JVM thread on load\n");
       return 0;
     }
   }
@@ -1692,7 +1752,7 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
     &classLong, &classPrimitiveLong,
     &classFloat, &classPrimitiveFloat,
     &classDouble, &classPrimitiveDouble,
-    &classPointer, &classNative, 
+    &classPointer, &classNative, &classStructure,
   };
   unsigned i;
   JNIEnv* env;
@@ -1711,12 +1771,52 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
     }
   }
   
-  jawt_initialized = JNI_FALSE;
   jnidispatch_callback_dispose(env);
 
   if (!attached) {
     (*vm)->DetachCurrentThread(vm);
   }
+}
+
+// Perform recursive ffi_type initialization for structs
+static ffi_type*
+init_type(JNIEnv* env, ffi_type* typep) {
+  if (typep->type == FFI_TYPE_VOID && typep != &ffi_type_void) {
+    ffi_type** element = &typep->elements[0];
+    while (*element != NULL) {
+      switch((int)*element) {
+      case FFI_TYPE_FLOAT:
+        *element = &ffi_type_float; break;
+      case FFI_TYPE_DOUBLE:
+        *element = &ffi_type_double; break;
+      case FFI_TYPE_SINT8:
+        *element = &ffi_type_sint8; break;
+      case FFI_TYPE_UINT8:
+        *element = &ffi_type_uint8; break;
+      case FFI_TYPE_SINT16:
+        *element = &ffi_type_sint16; break;
+      case FFI_TYPE_UINT16:
+        *element = &ffi_type_uint16; break;
+      case FFI_TYPE_SINT32:
+        *element = &ffi_type_sint32; break;
+      case FFI_TYPE_UINT32:
+        *element = &ffi_type_uint32; break;
+      case FFI_TYPE_SINT64:
+        *element = &ffi_type_sint64; break;
+      case FFI_TYPE_UINT64:
+        *element = &ffi_type_uint64; break;
+      case FFI_TYPE_POINTER:
+        *element = &ffi_type_pointer; break;
+      default:
+        // recursively init structure type info
+        init_type(env, *element);
+        break;
+      }
+      ++element;
+    }
+    typep->type = FFI_TYPE_STRUCT;
+  }
+  return typep;
 }
 
 #ifdef __cplusplus

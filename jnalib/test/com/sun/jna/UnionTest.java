@@ -28,6 +28,7 @@ public class UnionTest extends TestCase {
         public TestStructure structField;
         public String string;
         public WString wstring;
+        public Pointer pointer;
     }
     
     public void testCalculateSize() {
@@ -53,6 +54,7 @@ public class UnionTest extends TestCase {
         assertTrue("byte field not read", u.byteField != 0);
         assertTrue("short field not read", u.shortField != 0);
         assertTrue("long field not read", u.longField != 0);
+        assertNotNull("Unselected Pointer not read", u.pointer);
         assertNull("Unselected structure should not be read", u.structField.value);
         assertNull("Unselected String should be null", u.string);
         assertNull("Unselected WString should be null", u.wstring);

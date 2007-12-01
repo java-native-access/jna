@@ -214,13 +214,6 @@ interface CLibrary extends Library {
 }
 </pre></code></blockquote>
 
-<h3>Java Object arguments</h3>
-In some cases, it would seem convenient to pass a Java object as an opaque
-pointer for later use by a Java callback method.  Unfortunately, this proves
-problematic in that the native code must become responsible for reference
-tracking.   Until a consistent method or methods of handling these situations
-is formulated, passing Java objects directly is not supported.
-
 <h3>Structures</h3>
 
 <h4>Pointer-to-Structure Arguments</h4>
@@ -229,6 +222,44 @@ subclass, and a pointer to native data memory will be used.  The contents of
 the structure will be passed to the function and updated when the function
 returns.  Structures are packed according to the default alignment rules for
 the platform's native C <code>struct</code>s.  
+<blockquote><code><pre>
+// C code
+typedef struct _Point {
+  int x, y;
+} Point;
+
+Point* translate(Point* pt, int dx, int dy);
+
+// Java
+class Point extends Structure { public int x, y; }
+Point translate(Point pt, int x, int y);
+...
+Point pt = new Point();
+Point result = translate(pt, 100, 100);
+</pre></code></blockquote>
+
+<a name="byvalue"></a>
+<h4>Structure by Value Arguments/Return</h4>
+To pass a structure by value, first define the structure, then define an empty
+class from that which implements {@link com.sun.jna.Structure.ByValue}.  Use
+the <code>ByValue</code> class as the argument or return type.<p>
+<blockquote><code><pre>
+// C code
+typedef struct _Point {
+  int x, y;
+} Point;
+
+Point translate(Point pt, int dx, int dy);
+
+// Java
+class Point extends Structure { public int x, y; }
+class PointByValue extends Point implements Structure.ByValue { }
+PointByValue translate(PointByValue pt, int x, int y);
+...
+PointByValue pt = new PointByValue();
+Point result = translate(pt, 100, 100);
+</pre></code></blockquote>
+
 
 <h4>Array-of-Structure Arguments</h4>
 To pass an array of structures, simply use a Java array of the desired
@@ -267,7 +298,7 @@ struct Display* get_displays(int* pcount);
 void free_displays(struct Display* displays);
 
 // Java
-Display get_displays(InteByReference pcount);
+Display get_displays(IntByReference pcount);
 void free_displays(Display[] displays);
 ...
 IntByReference pcount = new IntByReference();
@@ -305,7 +336,26 @@ class Line extends Structure {
 Explicit initialization of nested structures is not required; the objects will
 be created as needed and properly mapped to the parent structure's memory.<p>
 
-If you need a pointer to a structure (or more generally, a pointer to a buffer), do this instead:<br>
+If you need a pointer to a structure within your structure, you can use the
+{@link com.sun.jna.Structure.ByReference} tagging interface to indicate the
+field should be treated as a pointer instead of inlining the full structure.
+<blockquote><code><pre>
+// C code
+typedef struct _Line2 {
+  Point* p1;
+  Point* p2;
+} Line2;
+
+// Java
+class Point extends Structure { public int x, y; }
+class PointByReference extends Point implements Structure.ByReference { }
+class Line2 extends Structure {
+  public PointerByReference p1;
+  public PointerByReference p2;
+}
+</pre></code></blockquote>
+
+The more general case is just a pointer to a buffer:<br>
 
 <blockquote><code><pre>
 // C code
@@ -408,6 +458,13 @@ the desired field's class to the {@link com.sun.jna.Union#setType}
 method.  On read, all non-pointer-based fields will be initialized from native
 memory.  Structure, String, and WString members will <em>not</em> be
 initialized unless they are selected via {@link com.sun.jna.Union#setType}.
+
+<h3>Java Object arguments</h3>
+In some cases, it would seem convenient to pass a Java object as an opaque
+pointer for later use by a Java callback method.  Unfortunately, this proves
+problematic in that the native code must become responsible for reference
+tracking.   Until a consistent method or methods of handling these situations
+is formulated, passing Java objects directly is not supported.
 
 <a name="crash-protection"/>
 <h2>VM Crash Protection</h2>

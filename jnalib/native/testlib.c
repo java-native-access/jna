@@ -236,6 +236,25 @@ returnNullTestStructure() {
   return NULL;
 }
 
+typedef struct _TestByValueStructure {
+  int8 c;
+  int16 s;
+  int32 i;
+  int64 j;
+  TestStructure inner;
+} TestByValueStructure;
+
+EXPORT TestByValueStructure
+returnStructureByValue() {
+  TestByValueStructure v;
+  v.c = 1;
+  v.s = 2;
+  v.i = 3;
+  v.j = 4;
+  v.inner.value = 5;
+  return v;
+}
+
 typedef int32 (*callback_t)(int32);
 EXPORT callback_t
 returnCallback() {
@@ -302,8 +321,14 @@ checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
 }
 
 EXPORT void*
-testSimpleStructurePointerArgument(struct CheckFieldAlignment* arg) {
+testStructurePointerArgument(struct CheckFieldAlignment* arg) {
   return arg;
+}
+
+EXPORT double
+testStructureByValueArgument(struct CheckFieldAlignment arg) {
+  return arg.int8Field + arg.int16Field + arg.int32Field
+    + arg.int64Field + arg.floatField + arg.doubleField;
 }
 
 typedef struct {

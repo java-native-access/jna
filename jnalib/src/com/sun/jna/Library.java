@@ -170,8 +170,8 @@ public interface Library {
                     // subclass so annotations present in the interface get
                     // passed on. 
                     //
-                    f.options.put(Library.OPTION_INVOKING_METHOD, 
-                        interfaceClass.getMethod(method.getName(), method.getParameterTypes()));
+                    Method m = interfaceClass.getMethod(method.getName(), method.getParameterTypes()); 
+                    f.options.put(OPTION_INVOKING_METHOD, m); 
                     functions.put(method, f);
                 }                
             }

@@ -172,6 +172,7 @@
   <target name="native" depends="-setup,javah"
           description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
     <!-- ensure ARCH is set properly for various platforms -->
+    <!-- ARCH is used in native/Makefile to find the JAWT library -->
     <condition property="ARCH" value="${os.arch}">
       <or>
         <os name="SunOS"/>
@@ -255,17 +256,17 @@
     <property name="results.junit" location="${build}/junit-results"/>
     <mkdir dir="${results.junit}"/>
     <echo>Saving test results in ${results.junit}</echo>
-    <condition property="tests.w32" value="**/win32/*Test.java">
+    <condition property="tests.platform" value="**/win32/*Test.java">
       <os family="windows"/>
     </condition>
-    <condition property="tests.unix" value="**/unix/*Test.java">
+    <condition property="tests.platform" value="**/unix/*Test.java">
       <and>
         <os family="unix"/>
         <not><os family="mac"/></not>
       </and>
     </condition>
+    <property name="tests.platform" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
-      <!--<jvmarg value="-verbose:jni"/>-->
       <jvmarg value="-Djna.library.path=${build.native}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="xml"/>
@@ -273,8 +274,8 @@
         <fileset dir="${test.src}">
           <include name="com/sun/jna/*Test.java"/>
           <include name="com/sun/jna/examples/*Test.java"/>
-          <include name="${tests.w32}"/>
-          <include name="${tests.unix}"/>
+          <include name="${tests.platform}"/>
+          <exclude name="${tests.exclude}"/>
         </fileset>
       </batchtest>
     </junit>
@@ -293,9 +294,13 @@
     <property name="clover" value="true"/>
     <property name="build" value="build.clover"/>
     <property name="clover.include" value="**/*.java"/>
-    <property name="clover.exclude" value="com/sun/jna/examples/**/*.java"/>
+    <property name="clover.exclude" value="**/examples/**/*.java"/>
+    <property name="tests.exclude" value="${clover.exclude}"/>
     <clover-setup initString="${build}/coverage.db">
-      <fileset dir="${src}" includes="${clover.include}" excludes="${clover.exclude}"/>
+      <fileset dir="${src}">
+        <include name="${clover.include}"/>
+        <exclude name="${clover.exclude}"/>
+      </fileset>
     </clover-setup>
   </target>
 

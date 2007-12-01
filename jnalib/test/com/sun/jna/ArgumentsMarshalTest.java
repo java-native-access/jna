@@ -37,6 +37,9 @@ public class ArgumentsMarshalTest extends TestCase {
             public double doubleField = 6d;
         }
 
+        class CheckFieldAlignmentByValue extends CheckFieldAlignment 
+            implements Structure.ByValue { }
+        
         boolean returnBooleanArgument(boolean arg);
         byte returnInt8Argument(byte arg);
         char returnWideCharArgument(char arg);
@@ -56,7 +59,8 @@ public class ArgumentsMarshalTest extends TestCase {
 
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
-        Pointer testSimpleStructurePointerArgument(CheckFieldAlignment p);
+        Pointer testStructurePointerArgument(CheckFieldAlignment p);
+        double testStructureByValueArgument(CheckFieldAlignmentByValue p);
         int testStructureArrayInitialization(CheckFieldAlignment[] p, int len);
         void modifyStructureArray(CheckFieldAlignment[] p, int length);
         
@@ -243,11 +247,35 @@ public class ArgumentsMarshalTest extends TestCase {
                      10d, value, 0);
     }
 
-    public void testSimpleStructurePointerArgument() {
+    public void testStructurePointerArgument() {
         TestLibrary.CheckFieldAlignment struct = new TestLibrary.CheckFieldAlignment();
-        assertEquals("Native size does not match calculated size",
+        assertEquals("Native address of structure should be returned",
                      struct.getPointer(), 
-                     lib.testSimpleStructurePointerArgument(struct));
+                     lib.testStructurePointerArgument(struct));
+    }
+
+    public void testStructureByValueArgument() {
+        TestLibrary.CheckFieldAlignmentByValue struct = 
+            new TestLibrary.CheckFieldAlignmentByValue();
+        assertEquals("Wrong sum of fields", 
+                     21d, lib.testStructureByValueArgument(struct));
+    }
+    
+    public void testStructureByValueTypeInfo() {
+        class TestStructure extends Structure implements Structure.ByValue {
+            public byte b;
+            public char c;
+            public short s;
+            public int i;
+            public long j;
+            public float f;
+            public double d;
+            public Pointer[] parray = new Pointer[2];
+            public byte[] barray = new byte[2];
+        }
+        Structure s = new TestStructure();
+        // Force generation of type info
+        s.size();
     }
 
     

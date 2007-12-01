@@ -13,7 +13,9 @@
 package com.sun.jna;
 
 import junit.framework.TestCase;
+
 import com.sun.jna.ReturnTypesTest.TestLibrary.TestStructure;
+import com.sun.jna.ReturnTypesTest.TestLibrary.SimpleStructure;
 
 /** Exercise a range of native methods.
  *
@@ -26,10 +28,20 @@ public class ReturnTypesTest extends TestCase {
 
     public static interface TestLibrary extends Library {
         
-        public static class TestStructure extends Structure {
+        public static class SimpleStructure extends Structure {
             public double value;
         }
-
+        
+        public static class TestStructure extends Structure {
+            public byte c;
+            public short s;
+            public int i;
+            public long j;
+            public SimpleStructure inner;
+        }
+        
+        public static class TestStructureByValue extends TestStructure implements Structure.ByValue { }
+        
         class CheckFieldAlignment extends Structure {
             public int int32Field = 1;
             public long int64Field = 2;
@@ -51,8 +63,9 @@ public class ReturnTypesTest extends TestCase {
         double returnDoubleMagic();
         String returnStringMagic();
         WString returnWStringMagic();
-        TestStructure returnStaticTestStructure();
-        TestStructure returnNullTestStructure();
+        SimpleStructure returnStaticTestStructure();
+        SimpleStructure returnNullTestStructure();
+        TestStructureByValue returnStructureByValue();
         public interface Int32Callback extends Callback {
             public int callback(int arg);
         }
@@ -157,12 +170,12 @@ public class ReturnTypesTest extends TestCase {
     }
     
     public void testInvokeStructure() {
-        TestStructure s = lib.returnStaticTestStructure();
+        SimpleStructure s = lib.returnStaticTestStructure();
         assertEquals("Expect test structure magic", DOUBLE_MAGIC, s.value, 0d);
     }
     
     public void testInvokeNullStructure() {
-        TestStructure s = lib.returnNullTestStructure();
+        SimpleStructure s = lib.returnNullTestStructure();
         assertNull("Expect null structure return", s);
     }
     
@@ -180,6 +193,18 @@ public class ReturnTypesTest extends TestCase {
                    cb2, lib.returnCallbackArgument(cb2));
         assertSame("Existing native function wrapper should be reused",
                    cb, lib.returnCallbackArgument(cb));
+    }
+    
+    public void testReturnStructureByValue() {
+        TestStructure s = lib.returnStructureByValue();
+        assertNotNull("Returned structure must not be null");
+        assertEquals("Wrong char field value", 1, s.c);
+        assertEquals("Wrong short field value", 2, s.s);
+        assertEquals("Wrong int field value", 3, s.i);
+        assertEquals("Wrong long field value", 4, s.j);
+        SimpleStructure ts = s.inner;
+        assertNotNull("Structure not initialized", s.inner);
+        assertEquals("Wrong inner structure value", 5, s.inner.value, 0);
     }
     
     public static void main(java.lang.String[] argList) {

@@ -28,8 +28,8 @@ typedef enum _callconv {
 #endif
 } callconv_t;
 
-/* Maximum number of allowed arguments. */
-#define MAX_NARGS 32
+/* Maximum number of allowed arguments in libffi. */
+#define MAX_NARGS 256
 
 typedef struct _callback {
   ffi_closure* ffi_closure;

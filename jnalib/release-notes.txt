@@ -1,6 +1,8 @@
 Release 3.0
 Features
 * More supported platforms, via GCC's libffi (wmeissner)
+* Support struct by value as parameter and return value
+* Support struct by reference within structures
 * Provide access to native peer for java.awt.Component 
 * Provide access to native peer on OS X.
 * Support MINGW32 builds (fullung)
@@ -34,6 +36,7 @@ Bug Fixes
 * Use long offsets and sizes rather than ints (64-bit safe)
 * Properly clean up references and release closure memory on JNI_Unload
 * Use simpler AWT/JAWT library loading workaround
+* Avoid changing array references within a Structure on read
 
 Release 2.5
 Features

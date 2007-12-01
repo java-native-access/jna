@@ -18,13 +18,21 @@
 * get system process information, basic process control
 * additional file utilities (meta info, free space, etc)
 * enforce window minimum/maximum size (workaround java bug)
+* OSX ObjC access
 
 # TODO
 
+* handle Structure.ByReference array as parameter/return value (cf Pointer[])
+
+* test performance of setByte/getByte and pass pointer field directly if it
+  makes sense to do so.  Direct buffers should be used where hotspot inlining
+  can improve performance.
+
 * Does it make sense to define Int16/UInt16, Int32/UInt32, etc?  Probably not
   the signed versions, but maybe the unsigned ones, to facilitate generating
-  unsigned values.  What about size_t, offset_t, et al.?  Would either need a
-  bunch of native lookup functions (more robust) or java-side conditionals
+  unsigned values (maybe just provide utilities to pack an unsigned int into a
+  signed int).  What about size_t, off_t, et al.?  Would either need a
+  bunch of native lookup functions (more accurate) or java-side conditionals
   (less robust but easier to change).
 
 * packaging: 'types', 'convert/marshal' subpackages?
@@ -34,11 +42,14 @@
 * Make a separate jar file for all OS-specific headers
   Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
   aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
-  (how useful would it really be?)
+  (how useful would it really be, or is this just sorting legos?)
 
 * review/use direct Buffer in more places if it makes sense
 * support annotations of parameters and return values w/o breaking
-  1.4 compatibility, e.g.
+  1.4 compatibility (retroweaver?), e.g.
+  -- retroweaver (requires retroweaver runtime classes to provide annotation
+  features) not yet worth doing
+
 
   void my_function(@MarshalAs(off_t)long arg);
 
@@ -49,7 +60,7 @@
   this only really applies to NativeLong/IntegerType types that want to use a
   primitive value instead of creating an object instance.
 
-* Allow Buffer in Structures (and callbacks)?
+* Allow Buffer in Structures (and callbacks) (auto-wrap in direct byte buffer)?
 
 * standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
 * StringBuffer/StringBuilder as mutable char*/wchar_t* argument
@@ -93,8 +104,6 @@
   Long.SIZE, Integer.SIZE, et al.
 * interface "lvalue", which can provide a pointer to itself (reference() or
   addressOf())?
-* how to do struct value argument (vs struct pointer) (uncommon)? 
-* how to do struct value return (vs struct pointer) (uncommon)? 
 * verify get/set methods vs read/write is for performance (Pointer)?
 * bitfields et al. for structs
 
@@ -102,6 +111,15 @@
 
 
 # DONE
+* docs: split pages: FAQ
+  FAQ: J2ME, new platform builds, stdcall
+
+* struct by reference within structure
+* struct by value
+  (how to do struct value return (vs struct pointer) (uncommon)?)
+  (how to do struct value argument (vs struct pointer) (uncommon)?) 
+* use appropriate size_t and off_t sizes (use long offsets everywhere in
+  Pointer) 
 * Callback/function pointer as return value (e.g. signal())
 * type safety between returned and passed in pointers (w32 API); advantage of
   deriving from Pointer is that type mapping can be made automatic, without an

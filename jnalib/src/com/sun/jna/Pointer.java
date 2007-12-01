@@ -188,7 +188,20 @@ public class Pointer {
      */
     public native void read(long bOff, double[] buf, int index, int length);
 
-
+    /**
+     * Indirect the native pointer, copying <em>from</em> memory pointed to by 
+     * native pointer, into the specified array.
+     *
+     * @param bOff   byte offset from pointer from which data is copied
+     * @param buf    {@link Pointer} array into which data is copied
+     * @param index  array index to which data is copied
+     * @param length number of elements from native pointer that must be copied
+     */
+    public void read(long bOff, Pointer[] buf, int index, int length) {
+        for (int i=0;i < length;i++) {
+            buf[i + index] = getPointer(bOff + i*Pointer.SIZE);
+        }
+    }
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -504,9 +517,7 @@ public class Pointer {
 
     public Pointer[] getPointerArray(long offset, int arraySize) {
         Pointer[] buf = new Pointer[arraySize];
-        for (int i=0;i < buf.length;i++) {
-            buf[i] = getPointer(offset + i*SIZE);
-        }
+        read(offset, buf, 0, arraySize);
         return buf;
     }
 

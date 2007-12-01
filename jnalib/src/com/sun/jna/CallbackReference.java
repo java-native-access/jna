@@ -112,16 +112,7 @@ class CallbackReference extends WeakReference {
             Class cls = nativeParamTypes[i];
             if (Structure.class.isAssignableFrom(cls)) {
                 // Make sure we can instantiate an argument of this type
-                try {
-                    cls.newInstance();
-                }
-                catch (InstantiationException e) {
-                    throw new IllegalArgumentException("Can't instantiate " + cls + ": " + e);
-                }
-                catch (IllegalAccessException e) {
-                    throw new IllegalArgumentException("Instantiation of " + cls 
-                                                       + " not allowed (is it public?): " + e);
-                } 
+                Structure.newInstance(cls);
                 nativeParamTypes[i] = Pointer.class;
             }
             else if (NativeMapped.class.isAssignableFrom(cls)) {
@@ -298,19 +289,10 @@ class CallbackReference extends WeakReference {
                     value = new WString(((Pointer)value).getString(0, true));
                 }
                 else if (Structure.class.isAssignableFrom(dstType)) {
-                    Pointer p = (Pointer)value;
-                    try {
-                        Structure s = (Structure)dstType.newInstance();
-                        s.useMemory(p);
-                        s.read();
-                        value = s;
-                    }
-                    catch(InstantiationException e) {
-                        // can't happen, already checked for
-                    }
-                    catch(IllegalAccessException e) {
-                        // can't happen, already checked for
-                    }
+                    Structure s = Structure.newInstance(dstType);
+                    s.useMemory((Pointer)value);
+                    s.read();
+                    value = s;
                 }
             }
             else if ((boolean.class == dstType || Boolean.class == dstType)

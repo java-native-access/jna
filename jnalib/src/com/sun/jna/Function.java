@@ -13,6 +13,7 @@ package com.sun.jna;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,9 +27,9 @@ import java.util.Map;
  * @see Pointer
  */
 public class Function extends Pointer {
+    
     /** Maximum number of arguments supported by a JNA function call. */
-    // TODO: make this match libffi's limit (if any)
-    public static final int MAX_NARGS = 32;
+    public static final int MAX_NARGS = 256;
 
     /** Standard C calling convention. */
     public static final int C_CONVENTION = 0;
@@ -253,7 +254,9 @@ public class Function extends Pointer {
                 if (arg == null)
                     continue;
                 if (arg instanceof Structure) {
-                    ((Structure)arg).read();
+                    if (!(arg instanceof Structure.ByValue)) {
+                        ((Structure)arg).read();
+                    }
                 }
                 else if (args[i] instanceof StringArray) {
                     // Read back arrays of String, just in case they
@@ -275,6 +278,7 @@ public class Function extends Pointer {
         return result;
     }
 
+    /** @see NativeLibrary#NativeLibrary(String,String,long) implementation */
     Object invoke(Object[] args, Class returnType) {
         Object result = null;
         if (returnType == null || returnType==void.class || returnType==Void.class) {
@@ -316,22 +320,20 @@ public class Function extends Pointer {
             result = invokePointer(callingConvention, args);
         }
         else if (Structure.class.isAssignableFrom(returnType)) {
-            result = invokePointer(callingConvention, args);
-            if (result != null) {
-                try {
-                    Structure s = (Structure)returnType.newInstance();
+            if (Structure.ByValue.class.isAssignableFrom(returnType)) {
+                Structure s = 
+                    invokeStructure(callingConvention, args, 
+                                    Structure.newInstance(returnType));
+                s.read();
+                result = s;
+            }
+            else {
+                result = invokePointer(callingConvention, args);
+                if (result != null) {
+                    Structure s = Structure.newInstance(returnType);
                     s.useMemory((Pointer)result);
                     s.read();
                     result = s;
-                }
-                catch(InstantiationException e) {
-                    throw new IllegalArgumentException("Instantiation of "
-                                                       + returnType + " failed: " 
-                                                       + e);
-                }
-                catch(IllegalAccessException e) {
-                    throw new IllegalArgumentException("Not allowed to instantiate "
-                                                       + returnType + ": " + e);
                 }
             }
         }
@@ -378,7 +380,12 @@ public class Function extends Pointer {
         if (arg instanceof Structure) {
             Structure struct = (Structure)arg;
             struct.write();
-            return struct.getPointer();
+            if (struct instanceof Structure.ByValue) {
+                return struct;
+            }
+            else {
+                return struct.getPointer();
+            }
         }
         // Convert Callback to Pointer
         else if (arg instanceof Callback) {
@@ -418,24 +425,13 @@ public class Function extends Pointer {
             }
             else if (ss[0] == null) {
                 Class type = argClass.getComponentType();
-                try {
-                    Structure struct = (Structure)type.newInstance(); 
-                    int size = struct.size();
-                    Memory m = new Memory(size * ss.length);
-                    struct.useMemory(m);
-                    Structure[] tmp = struct.toArray(ss.length);
-                    for (int si=0;si < ss.length;si++) {
-                        ss[si] = tmp[si];
-                    }
-                }
-                catch(InstantiationException e) {
-                    throw new IllegalArgumentException("Instantiation of "
-                                                       + type + " failed: " 
-                                                       + e);
-                }
-                catch(IllegalAccessException e) {
-                    throw new IllegalArgumentException("Not allowed to instantiate "
-                                                       + type + ": " + e);
+                Structure struct = Structure.newInstance(type);
+                int size = struct.size();
+                Memory m = new Memory(size * ss.length);
+                struct.useMemory(m);
+                Structure[] tmp = struct.toArray(ss.length);
+                for (int si=0;si < ss.length;si++) {
+                    ss[si] = tmp[si];
                 }
                 return ss[0].getPointer();
             }
@@ -557,6 +553,18 @@ public class Function extends Pointer {
      * @return	The native pointer returned by the target native function
      */
     private native Pointer invokePointer(int callingConvention, Object[] args);
+    
+    /**
+     * Call the native function being represented by this object
+     *
+     * @param   callingConvention calling convention to be used
+     * @param   args
+     *          Arguments to pass to the native function
+     * @param   struct Pre-allocated structure to hold the result
+     * @return  The native pointer returned by the target native function
+     */
+    private native Structure invokeStructure(int callingConvention, Object[] args,
+                                             Structure result);
 
     /** Provide a human-readable representation of this object. */
     public String toString() {
@@ -573,6 +581,7 @@ public class Function extends Pointer {
     public Pointer invokePointer(Object[] args) {
         return (Pointer)invoke(Pointer.class, args);
     }
+    
     /** Convenience method for
      * {@link #invoke(Class,Object[]) invoke(String.class, args)}
      * or {@link #invoke(Class,Object[]) invoke(WString.class, args)}
@@ -655,7 +664,6 @@ public class Function extends Pointer {
         return inArgs;
     }
 
-
     /** Varargs are only supported on 1.5+. */
     static boolean isVarArgs(Method m) {
         try {
@@ -674,7 +682,7 @@ public class Function extends Pointer {
         }
         return false;
     }
-
+    
     private static class PointerArray extends Memory {
         private Pointer[] original;
         public PointerArray(Pointer[] arg) {

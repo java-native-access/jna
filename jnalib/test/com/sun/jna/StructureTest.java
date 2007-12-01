@@ -214,13 +214,26 @@ public class StructureTest extends TestCase {
                      s.s1.size() + s.s2.size() + 4, s.size());
     }
     
-    public void testNestArray() throws Exception {
+    public void testNestArray() {
         class TestStructure extends Structure {
             public byte[] buffer = new byte[1024];
         }
         TestStructure s = new TestStructure();
         assertEquals("Wrong size for nested array", 1024, s.size());
         assertNotNull("Array should be initialized", s.buffer);
+    }
+    
+    public void testUninitializedNestedArrayFails() {
+        class TestStructure extends Structure {
+            public Pointer[] buffer;
+        }
+        TestStructure s = new TestStructure();
+        try {
+            s.size();
+            fail("Size can't be calculated unless array fields are initialized");
+        }
+        catch(IllegalStateException e) {
+        }
     }
 
     public void testReadWriteStructure() {
@@ -235,6 +248,7 @@ public class StructureTest extends TestCase {
         s.write();
         s.s1.x = s.s1.y = 0;
         s.buffer[0] = 0;
+        byte[] ref = s.buffer;
         s.read();
         assertEquals("Wrong nested struct field value after write/read (x)",
                      1, s.s1.x);
@@ -242,6 +256,7 @@ public class StructureTest extends TestCase {
                      2, s.s1.y);
         assertEquals("Wrong nested array element value after write/read",
                      3, s.buffer[0]);
+        assertSame("Array field reference should be unchanged", ref, s. buffer);
     }
     
     public void testNativeLongSize() throws Exception {
@@ -306,12 +321,13 @@ public class StructureTest extends TestCase {
         }
     }
 
-    public static class TestStructure extends Structure {
+    // must be publicly accessible
+    public static class PublicTestStructure extends Structure {
         public int value;
     }
     public void testToArray() {
-        TestStructure s = new TestStructure();
-        TestStructure[] array = (TestStructure[])s.toArray(1);
+        PublicTestStructure s = new PublicTestStructure();
+        PublicTestStructure[] array = (PublicTestStructure[])s.toArray(1);
         assertEquals("Array should consist of a single element",
                      1, array.length);
         assertEquals("First element should be original", s, array[0]);
@@ -417,6 +433,7 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong first element", s.getPointer(), s.array[0]);
     }
     
+    // NOTE: may support write-only Buffer fields in the future
     public static class BufferStructure extends Structure {
     	public Buffer buffer;
     	public BufferStructure(byte[] buf) {
@@ -445,5 +462,87 @@ public class StructureTest extends TestCase {
         assertEquals("Non-volatile field should be written", 1, s.getPointer().getInt(4));
         s.writeField("counter");
         assertEquals("Explicit volatile field write failed", 1, s.getPointer().getInt(0));
+    }
+    
+    public static class StructureWithPointers extends Structure {
+        public static class TestStructureByRef extends Structure implements ByReference {
+            public int dummy;
+        }
+        public TestStructureByRef s1;
+        public TestStructureByRef s2;
+    }
+    public void testStructureByReferenceSize() {
+        StructureWithPointers s = new StructureWithPointers();
+        assertEquals("Wrong size for structure with structure references",
+                     Pointer.SIZE * 2, s.size());
+        
+        assertNull("Initial refs should be null", s.s1);
+    }
+    
+    public void testRegenerateStructureByReferenceField() {
+        StructureWithPointers s = new StructureWithPointers();
+        StructureWithPointers.TestStructureByRef inner = 
+            new StructureWithPointers.TestStructureByRef();
+        s.s1 = inner;
+        s.write();
+        s.s1 = null;
+        s.read();
+        assertEquals("Inner structure not regenerated on read", inner, s.s1);
+    }
+
+    public void testPreserveStructureByReferenceWithUnchangedPointer() {
+        StructureWithPointers s = new StructureWithPointers();
+        StructureWithPointers.TestStructureByRef inner = 
+            new StructureWithPointers.TestStructureByRef();
+        
+        s.s1 = inner;
+        s.write();
+        s.read();
+        assertSame("Read should preserve structure object", inner, s.s1); 
+        assertTrue("Read should preserve structure memory", 
+                   inner.getPointer() instanceof Memory);
+    }
+    
+    public void testOverwriteStructureByReferenceField() {
+        StructureWithPointers s = new StructureWithPointers();
+        StructureWithPointers.TestStructureByRef inner = 
+            new StructureWithPointers.TestStructureByRef();
+        StructureWithPointers.TestStructureByRef inner2 = 
+            new StructureWithPointers.TestStructureByRef();
+        s.s1 = inner2;
+        s.write();
+        s.s1 = inner;
+        s.read();
+        assertNotSame("Read should overwrite structure reference", inner, s.s1);
+    }
+    
+    public static class PublicTestStructureByRef extends Structure implements Structure.ByReference {
+        public int field;
+    }
+    public void testInnerByReferenceArray() {
+        class TestStructure extends Structure {
+            public PublicTestStructureByRef[] array = new PublicTestStructureByRef[2];
+        }
+        TestStructure s = new TestStructure();
+        assertEquals("Wrong structure size", 2*Pointer.SIZE, s.size());
+        
+        PublicTestStructureByRef ref = new PublicTestStructureByRef();
+        ref.field = 42;
+        Object aref = s.array;
+        s.array[0] = ref;
+        s.array[1] = new PublicTestStructureByRef();
+        
+        s.write();
+        s.read();
+        
+        assertSame("Array reference should not change", aref, s.array);
+        assertSame("Elements should not be overwritten when unchanged", 
+                   ref, s.array[0]);
+        
+        s.array[0] = null;
+        s.read();
+        assertNotSame("Null should be overwritten with a new ref", ref, s.array[0]);
+        assertNotNull("New ref should not be null", s.array[0]);
+        assertEquals("New ref should be equivalent", ref, s.array[0]);
     }
 }

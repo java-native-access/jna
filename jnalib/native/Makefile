@@ -29,6 +29,7 @@ OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
 VERSION=$(shell sed -n 's/^.*version. value="\(\([0-9][0-9]*\)\(\.[0-9][0-9]*\(\.[0-9][0-9]*\)\?\)\?\).*".*/\1/p' ../build.xml)
 JAVA_INCLUDES=-I"$(JAVA_HOME)/include" \
               -I"$(JAVA_HOME)/include/$(OS)"
+LIBDIR=$(JAVA_HOME)/jre/lib/$(ARCH)
 BUILD=../build/native
 JAVAH=$(BUILD)
 INSTALLDIR=../build/$(OS)
@@ -61,7 +62,6 @@ PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses
 CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES)
 # -static-libgcc avoids gcc library incompatibilities across linux systems
 LDFLAGS=-o $@ -shared -Wl,-soname,$@ -static-libgcc
-LIBDIR=$(JAVA_HOME)/jre/lib/$(ARCH)
 LIBS=-L"$(LIBDIR)" -ljawt 
 STRIP=strip -x
 # end defaults
@@ -69,7 +69,7 @@ STRIP=strip -x
 ifeq ($(OS),win32)
 # Uncomment this line to use MSVC (doesn't yet work with libffi)
 #CC=cl
-ARCH=i386
+ARCH=$(shell uname -m | sed 's/i[456]86/i386/g')
 
 ifeq ($(CC),cl)
 LD=link

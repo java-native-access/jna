@@ -417,6 +417,10 @@ public final class Native {
         Toolkit.getDefaultToolkit();
         if (Platform.isWindows()) {
             // Windows needs some extra nudging
+            // TODO: find a way to ensure JAWT is loaded by the correct
+            // ClassLoader; if already loaded in a different class loader
+            // we get a stack trace here, but if not, someone else is going to
+            // get the error that JAWT is already loaded .
             try { System.loadLibrary("jawt"); } 
             catch(UnsatisfiedLinkError e) { e.printStackTrace(); }
         }
