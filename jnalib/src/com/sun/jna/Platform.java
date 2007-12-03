@@ -24,7 +24,7 @@ public final class Platform {
         if (osName.startsWith("Linux")) {
             osType = LINUX;
         } 
-        else if (osName.startsWith("Mac")) {
+        else if (osName.startsWith("Mac") || osName.startsWith("Darwin")) {
             osType = MAC;
         }
         else if (osName.startsWith("Windows")) {

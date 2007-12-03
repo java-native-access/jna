@@ -361,6 +361,12 @@ public final class Native {
         String libname = System.mapLibraryName("jnidispatch");
         String resourceName = getNativeLibraryResourcePath() + "/" + libname;
         URL url = Native.class.getResource(resourceName);
+                
+        // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual .dylib extension
+        if (url == null && Platform.isMac() && resourceName.endsWith(".dylib")) {
+            resourceName = resourceName.substring(0, resourceName.lastIndexOf(".dylib")) + ".jnilib";
+            url = Native.class.getResource(resourceName);
+        }
         if (url == null) {
             throw new UnsatisfiedLinkError("jnidispatch (" + resourceName 
                                            + ") not found in resource path");
