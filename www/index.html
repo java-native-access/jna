@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-11-30">
+<meta name="date" content="2007-12-04">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -171,11 +171,11 @@ Unsigned types use the same mappings as signed types.  A full list of mappings m
 Primitive array arguments (including <code>struct</code>s) are represented by their corresponding Java types.  For example:
 <blockquote>
     <textArea name="textarea" cols="80" rows="6" readonly="readonly">
-// C declarations
+// Original C declarations
 void fill_buffer(int *buf, int len);
 void fill_buffer(int buf[], int len); // same thing with array syntax
 
-// Java interface method
+// Equivalent JNA mapping
 void fill_buffer(int[] buf, int len);
 </textarea>
 </blockquote>
@@ -200,10 +200,10 @@ Unions are generally interchangeable with <code>Structure</code>s, but require t
 When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value, or subclass your own.  For example:<br>
 <blockquote>
     <textarea name="textarea4" cols="80" rows="12" readonly="readonly">
-// C declaration
+// Original C declaration
 void allocate_buffer(char **bufp, int* lenp);
 
-// Java interface method
+// Equivalent JNA mapping
 void allocate_buffer(PointerByReference bufp, IntByReference lenp);
 
 // Usage
@@ -246,11 +246,11 @@ The simplest usage resembles using anonymous inner classes to register event
 listeners.  Following is an example of callback usage:<br> 
 <blockquote>
     <textarea name="textarea4" cols="80" rows="10" readonly="readonly">
-// C declarations
+// Original C declarations
 typedef void (*FUNCTION)();
 int atexit(FUNCTION);
 
-// Java mappings
+// Equivalent JNA mappings
 public interface CLibrary extends Library {
     interface FUNCTION extends Callback {
         void callback();        
@@ -270,11 +270,11 @@ lib.atexit(new FUNCTION() {
 Here is a more involved example, using the w32 APIs to enumerate all native windows:
 <blockquote>
     <textarea name="textarea4" cols="80" rows="17" readonly="readonly">
-// C declarations
+// Original C declarations
 typedef int (__stdcall *WNDENUMPROC)(void*,void*);
 int __stdcall EnumWindows(WNDENUMPROC,void*);
 
-// Java mappings
+// Equivalent JNA mappings
 public interface User32 extends StdCallLibrary {
     interface WNDENUMPROC extends StdCallCallback {
         /** Return whether to continue enumeration. */
@@ -342,13 +342,15 @@ Libc.fclose(fp)
 <h3>Frequently Asked Questions (FAQ)</h3>
 <ul>
 <li><a href="#w32link">My library mapping causes an UnsatisfiedLinkError</a>
-<li><a href="crash">My library sometimes causes a VM crash</a>
+<li><a href="#crash">My library sometimes causes a VM crash</a>
 <li><a href="#w32crash">My Windows library mapping causes a VM crash on every call</a>
-<li><a href="">Does JNA work with J2ME/Windows Mobile?</a>
+<li><a href="#ptr_values">How do I get an arbitrary Pointer value?</a>
+<li><a href="#j2me">Does JNA work with J2ME/Windows Mobile?</a>
 </ul>
 <a name=w32link></a>
 <h4>My library mapping causes an UnsatisfiedLinkError</h4>
 Use a dump utility to examine the names of your exported functions to make sure they match (<a href=http://linux.die.net/man/1/nm>nm</a> on linux, <a href=http://www.dependencywalker.com>depends</a> on Windows).  On Windows, if the functions have a suffix of the form "@NN", you need to pass a StdCallFunctionMapper as an option when initializing your library interface (<a href=stdcallmapper>see here</a>).
+
 <a name=crash></a>
 <h4>My library sometimes causes a VM crash</h4>
 Double check the signature of the method causing the crash to ensure all arguments are of the appropriate size and type.  Be especially careful with native pointer variations.
@@ -356,6 +358,20 @@ Double check the signature of the method causing the crash to ensure all argumen
 <a name=w32crash></a>
 <h4>My Windows library mapping causes a VM crash on every call</h4>
 If your library uses the <code>stdcall</code> calling convention, your interface should extend the <code>StdCallLibrary</code> interface.  Using the wrong calling convention for a library will usually cause a VM crash.<p>
+
+<a name=ptr_values></a>
+<h4>How do I get an arbitrary Pointer value?</h4>
+First, you probably don't actually want an <em>arbitrary</em> value.  Ask yourself what you're really trying to do.  Remember, type safety is your friend.  
+<ul>
+<li>Pointer.createConstant() should be used when you need a special value that is not really a pointer (NULL usually serves this purpose, but some C programmers like to cast check for special integer values instead).  The Pointer produced by this function can't actually be used to access memory.
+<li>Pointer#share() can be used to generate a new Pointer as an offset from an existing one
+<li>java.nio.Buffer can be used to wrap a Java array with a different offset and length than the original.
+<li>Clean up the sloppy C code by declaring an appropriate function interface.  If your function in C takes either a Pointer or an integer type, simply declare both method signatures in your JNA mapping.  
+</ul>
+If you <em>really</em>, <em>really</em>, <em>HAVE</em> to convert an integer
+value into a Pointer, you can do something like this:<br>
+<code>new IntByReference(value).getPointer().getPointer(0)</code>
+
 <a name=j2me></a>
 <h4>Does JNA work with J2ME/Windows Mobile?</h4>
 JNA requires Java 1.4 (or greater) and uses (but does not depend on) NIO buffers.  A stub NIO buffer implementation may be provided and things should otherwise Just Work.<p> 
