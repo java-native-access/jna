@@ -47,7 +47,7 @@ public class Memory extends Pointer {
         protected void finalize() { } 
         /** Pass bounds check to parent. */
         protected void boundsCheck(long off, long sz) {
-            Memory.this.boundsCheck((int)(this.peer - Memory.this.peer) + off, sz);
+            Memory.this.boundsCheck(this.peer - Memory.this.peer + off, sz);
         }
     }
     
@@ -56,7 +56,7 @@ public class Memory extends Pointer {
      *
      * @param size number of <em>bytes</em> of space to allocate
      */
-    public Memory(int size) {
+    public Memory(long size) {
         this.size = size;
         if (size <= 0)
             throw new IllegalArgumentException("Allocation size must be >= 0"); 
