@@ -77,7 +77,7 @@ Any given native library with a unique filesystem path is represented by a singl
 <p>
 The search path for loaded native libraries may be modified by setting <code>jna.library.path</code>.  See {@link com.sun.jna.NativeLibrary} for details.
 <p>
-<a href="#toc">Top</a>
+<a href="#toc">Table of Contents</a>
 <a name="function-mapping"></a>
 <h2>Function Mapping</h2>
 Function names are mapped directly from their Java interface name to the
@@ -96,10 +96,10 @@ An instance of the {@link com.sun.jna.Function} class is obtained through the {@
 <!-- TODO: other stuff from main html page -->
 
 <p>
-<a href="#toc">Top</a>
+<a href="#toc">Table of Contents</a>
 <a name="marshalling"></a>
 <h2>Marshalling/Unmarshalling (Java/Native Type Conversions)</h2>
-Java types are chosen to match native types of the same size.  These are types supported by the JNA library.<p>
+Java types must be chosen to match native types of the same size.  Following are the types supported by the JNA library.<p>
 <center>
 <table border=1 bordercolor=#CCCCCC style="border-collapse:collapse" width="100%">
 <tr><td><b>Java Type</b></td><td><b>C Type</b></td><td><b>Native Representation</b></td></tr>
@@ -132,7 +132,9 @@ Java types are chosen to match native types of the same size.  These are types s
 <li>Unsigned values may be passed by assigning the corresponding
   two's-complement representation to the signed type of the same size.  
 <li>Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in order to access a subset of the array (changing the effective size and/or offest).
-<li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  Bitfields must be manully packed into an integer type.  All other types must eventually be converted to one of these basic types.  Methods with arguments of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
+<li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
+<li>Bitfields must be manully packed into an integer type.  
+<li>All other types must eventually be converted to one of these basic types.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
 <li>Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
 <li>Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the {@link com.sun.jna.NativeMapped} interface.  
 </ul>
@@ -140,6 +142,29 @@ Java types are chosen to match native types of the same size.  These are types s
 <a name="arrays"></a>
 <h3>Primitive Arrays</h3>
 Java primitive arrays may be used wherever a native primitive array is used.  Any changes made by the native code to an array during a function call will be reflected in the Java array.  If the native code will use the array outside of the function call where the array is provided, {@link com.sun.jna.Memory} or {@link java.nio.Buffer} should be used instead (see <a href="#buffers">Buffers</a>).
+<p>
+To map a native multi-dimensional array, use a single-dimensional Java array with a number of elements equivalent to the full native array, e.g.<br>
+<blockquote><code><pre>
+// Original C code
+int array[2][3];
+int i,j;
+
+for (i=0;i < 2;i++) {
+  for (j=0;j < 3;j++) {
+    array[i][j] = i*3 + j;
+  }
+}
+
+// Equivalent JNA code
+final int DIM0 = 2;
+final int DIM1 = 3;
+int[] array = new int[6];
+for (int i=0;i < 2;i++) {
+  for (int j=0;j < 3;j++) {
+    array[i*3 + j] = i*3 + j;                   
+  }                   
+}
+</pre></code></blockquote>
 
 <a name="pointers"></a>
 <h3>Pointers</h3>
@@ -486,16 +511,15 @@ value.  You can still force an update of the native memory from the Java value
 by calling {@link com.sun.jna.Structure#writeField(String)} for the field in
 question. 
 <blockquote><code><pre>
-// Equivalent JNA mapping
-class Data extends Structure {
-  public volatile int refCount; 
+class Data extends com.sun.jna.Structure {
+  public volatile int refCount;
   public int value;
 }
 ...
 Data data = new Data();
 </pre></code></blockquote>
-In the above example, the field <code>refCount</code> will only be updated
-based on the Java value with a call to
+In the above example, the field <code>refCount</code> will only be written
+to native memory based on the Java value with a call to
 <code>data.writeField("refCount")</code>.  To obtain the current state of
 native memory, call {@link com.sun.jna.Structure#read()} (to update the entire
 structure) or {@link com.sun.jna.Structure#readField(String)
@@ -504,7 +528,7 @@ data.readField("refCount")} (to update just the <code>refCount</code> field).
 <a name="unions"></a>
 <h3>Unions</h3>
 Unions are a special type of Structure.  Each declared field within the union
-overlays the same address in native memory.  When writing a union to native
+overlays the same space in native memory.  When writing a union to native
 memory, you <em>must</em> specify which field is to be written by supplying
 the desired field's class to the {@link com.sun.jna.Union#setType}
 method.  On read, all non-pointer-based fields will be initialized from native
@@ -520,20 +544,20 @@ tracking.   Until a consistent method or methods of handling these situations
 is formulated, passing Java objects directly is not supported.
 
 <p>
-<a href="#toc">Top</a>
-<a name="invocation-mapping"/>
+<a href="#toc">Table of Contents</a>
+<a name="invocation-mapping"></a>
 <h2>Invocation Mapping</h2>
 Sometimes native functions exist only as C preprocessor macros or as inline functions.  If you need to do more than simply change the name of the invoked function (which can be handled via <a href="#function-mapping">Function Mapping</a>, an {@link com.sun.jna.InvocationMapper} allows you to arbitrariley reconfigure the function invocation, including changing the method name and reordering, adding, or removing arguments.  See the {@link com.sun.jna.InvocationMapper} documentation for details.
 
 <p>
-<a href="#toc">Top</a>
-<a name="global-data"/>
+<a href="#toc">Table of Contents</a>
+<a name="global-data"></a>
 <h2>Library Global Data</h2>
 The method {@link com.sun.jna.NativeLibrary#getGlobalVariableAddress} may be used to obtain the address of glboal variables as a {@link com.sun.jna.Pointer}.  Pointer methods may then be used to read or write the value as appropriate for the variable type.
 
 <p>
-<a href="#toc">Top</a>
-<a name="crash-protection"/>
+<a href="#toc">Table of Contents</a>
+<a name="crash-protection"></a>
 <h2>VM Crash Protection</h2>
 When defining a new library and writing tests for it, it not uncommon to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.
 
