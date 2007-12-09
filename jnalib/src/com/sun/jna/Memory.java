@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
  *
  * @author Sheng Liang, originator
  * @author Todd Fast, suitability modifications
+ * @author Timothy Wall
  * @see Pointer
  */
 public class Memory extends Pointer {
@@ -58,11 +59,12 @@ public class Memory extends Pointer {
      */
     public Memory(long size) {
         this.size = size;
-        if (size <= 0)
-            throw new IllegalArgumentException("Allocation size must be >= 0"); 
+        if (size <= 0) {
+            throw new IllegalArgumentException("Allocation size must be >= 0");
+        } 
         peer = malloc(size);
         if (peer == 0) 
-            throw new OutOfMemoryError();
+            throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
     }
 
     protected Memory() { }
@@ -76,6 +78,27 @@ public class Memory extends Pointer {
         return new SharedMemory(offset);
     }
     
+    /** Provid a view onto this structure with the given alignment. 
+     * @param byteBoundary Align memory to this number of bytes; should be a
+     * power of two.
+     * @throws IndexOutOfBoundsException if the requested alignment can
+     * not be met.
+     * @throws IllegalArgumentException if the requested alignment is not
+     * a positive power of two.
+     */
+    public Pointer align(int byteBoundary) {
+        if (byteBoundary <= 0) {
+            throw new IllegalArgumentException("Byte boundary must be positive: " + byteBoundary);
+        }
+        long mask = ~((long)byteBoundary - 1);
+
+        if ((peer & ~mask) != peer) {
+            long newPeer = (peer + ~mask) & mask;
+            return share(newPeer - peer, peer + size - newPeer);
+        }
+        return this;
+    }
+
     protected void finalize() {
         if (peer != 0) {
             free(peer);

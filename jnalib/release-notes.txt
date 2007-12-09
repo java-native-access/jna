@@ -21,6 +21,7 @@ Features
 * Invocation interception to facilitate translation of C preprocessor macros
   and inline functions
 * Provide utility to determine Web Start native library cache location
+* Provide memory alignment
 
 Bug Fixes
 * Avoid attempts to free native library if it failed to load (wmeissner)
