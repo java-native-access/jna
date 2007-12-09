@@ -23,11 +23,8 @@
     <property name="jna.library.path" value="/usr/X11R6/lib:/usr/lib32:/usr/lib"/>
     <nativelib href="linux-i386.jar"/>
   </resources>
-  <resources os="Mac" arch="i386">
-    <nativelib href="darwin-i386.jar"/>
-  </resources>
-  <resources os="Mac" arch="ppc">
-    <nativelib href="darwin-ppc.jar"/>
+  <resources os="Mac">
+    <nativelib href="darwin.jar"/>
   </resources>
   <application-desc main-class="com.sun.jna.examples.AlphaMaskDemo"/>
   <security>

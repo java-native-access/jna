@@ -36,6 +36,8 @@ extern "C" {
 
 #define MAGICDATA "0123456789"
 
+EXPORT int test_global = MAGIC32;
+
 // TODO: check more fields/alignments
 struct CheckFieldAlignment {
   int8 int8Field;

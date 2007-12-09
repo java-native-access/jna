@@ -29,6 +29,7 @@ OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
 VERSION=$(shell sed -n 's/^.*version. value="\(\([0-9][0-9]*\)\(\.[0-9][0-9]*\(\.[0-9][0-9]*\)\?\)\?\).*".*/\1/p' ../build.xml)
 JAVA_INCLUDES=-I"$(JAVA_HOME)/include" \
               -I"$(JAVA_HOME)/include/$(OS)"
+
 LIBDIR=$(JAVA_HOME)/jre/lib/$(ARCH)
 BUILD=../build/native
 JAVAH=$(BUILD)

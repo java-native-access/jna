@@ -33,14 +33,14 @@ public class ReturnTypesTest extends TestCase {
         }
         
         public static class TestStructure extends Structure {
+            public static class ByValue extends TestStructure implements Structure.ByValue { }
+            
             public byte c;
             public short s;
             public int i;
             public long j;
             public SimpleStructure inner;
         }
-        
-        public static class TestStructureByValue extends TestStructure implements Structure.ByValue { }
         
         class CheckFieldAlignment extends Structure {
             public int int32Field = 1;
@@ -65,7 +65,7 @@ public class ReturnTypesTest extends TestCase {
         WString returnWStringMagic();
         SimpleStructure returnStaticTestStructure();
         SimpleStructure returnNullTestStructure();
-        TestStructureByValue returnStructureByValue();
+        TestStructure.ByValue returnStructureByValue();
         public interface Int32Callback extends Callback {
             public int callback(int arg);
         }
@@ -202,7 +202,7 @@ public class ReturnTypesTest extends TestCase {
         assertEquals("Wrong short field value", 2, s.s);
         assertEquals("Wrong int field value", 3, s.i);
         assertEquals("Wrong long field value", 4, s.j);
-        SimpleStructure ts = s.inner;
+
         assertNotNull("Structure not initialized", s.inner);
         assertEquals("Wrong inner structure value", 5, s.inner.value, 0);
     }

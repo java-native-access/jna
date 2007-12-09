@@ -119,6 +119,17 @@ public class NativeLibraryTest extends TestCase {
             }
         }
     }
+    
+    public void testLookupGlobalVariable() {
+        NativeLibrary lib = NativeLibrary.getInstance("testlib");
+        Pointer global = lib.getGlobalVariableAddress("test_global");
+        assertNotNull("Test variable not found", global);
+        final int MAGIC = 0x12345678;
+        assertEquals("Wrong value for library global variable", MAGIC, global.getInt(0));
+        
+        global.setInt(0, MAGIC+1);
+        assertEquals("Library global variable not updated", MAGIC+1, global.getInt(0));
+    }
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeLibraryTest.class);

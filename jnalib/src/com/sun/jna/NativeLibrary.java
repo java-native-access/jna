@@ -215,11 +215,19 @@ public class NativeLibrary {
             return function;
         }
     }
+
+    /** Look up the given global variable within this library.
+     * @param symbolName
+     * @return Pointer representing the global variable address 
+     */
+    public Pointer getGlobalVariableAddress(String symbolName) {
+        return new Pointer(getSymbolAddress(symbolName));
+    }
     
     /**
      * Used by the Function class to locate a symbol
      */
-    long getFunctionAddress(String functionName) {
+    long getSymbolAddress(String functionName) {
         if (handle == 0) {
             throw new UnsatisfiedLinkError("Library has been unloaded");
         }

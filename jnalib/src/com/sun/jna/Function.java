@@ -79,47 +79,6 @@ public class Function extends Pointer {
     private int callingConvention;
 
     /**
-     * Create a new {@link Function} representing a native 
-     * function that follows the standard "C" calling convention.
-     * 
-     * <p>The allocated instance represents a pointer to the named native 
-     * function from the named library, called with the standard "C" calling
-     * convention.
-     *
-     * @param	libraryName
-     *			Library in which to find the native function
-     * @param	functionName
-     *			Name of the native function to be linked with
-     * @deprecated Use {@link #getFunction(String,String)} instead.  This 
-     * version bypasses lookup cacheing done by {@link NativeLibrary}.
-     */
-    public Function(String libraryName, String functionName) {
-        this(libraryName, functionName, C_CONVENTION);
-    }
-    
-    /**
-     * Create a new {@link Function} representing a native 
-     * function that follows a given calling convention.
-     * 
-     * <p>The allocated instance represents a pointer to the named native 
-     * function from the named library, called with the named calling 
-     * convention.
-     *
-     * @param	libraryName
-     *			Library in which to find the function
-     * @param	functionName
-     *			Name of the native function to be linked with
-     * @param	callingConvention
-     *			Calling convention used by the native function
-     * @deprecated Use {@link #getFunction(String,String,int)} instead.
-     * This version bypasses lookup cacheing done by {@link NativeLibrary}.
-     */
-    public Function(String libraryName, String functionName, 
-                    int callingConvention) {
-        this(NativeLibrary.getInstance(libraryName), functionName, callingConvention);
-    }
-    
-    /**
      * Create a new @{link Function} that is linked with a native 
      * function that follows the given calling convention.
      * 
@@ -141,7 +100,7 @@ public class Function extends Pointer {
         this.library = library;
         this.functionName = functionName;
         this.callingConvention = callingConvention;
-        this.peer = library.getFunctionAddress(functionName);        
+        this.peer = library.getSymbolAddress(functionName);        
     }
     
     /**

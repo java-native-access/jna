@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
@@ -89,7 +90,7 @@ public final class Native {
             setProtected(true);
         }
     }
-
+    
     private Native() { }
     
     private static native void initIDs();
@@ -249,7 +250,7 @@ public final class Native {
         libraries.put(interfaceClass, new WeakReference(proxy));
         return proxy;
     }
-    
+
     /** Returns whether an instance variable was instantiated. */
     private static boolean loadInstance(Class cls) {
         if (libraries.containsKey(cls)) {
@@ -475,7 +476,9 @@ public final class Native {
     /**
      * Returns a synchronized (thread-safe) library backed by the specified
      * library.  This wrapping will prevent simultaneous invocations of any
-     * functions mapped to a given {@link NativeLibrary}.
+     * functions mapped to a given {@link NativeLibrary}.  Note that the 
+     * native library may still be sensitive to being called from different
+     * threads.
      * <p>
      * @param  library the library to be "wrapped" in a synchronized library.
      * @return a synchronized view of the specified library.
@@ -502,6 +505,39 @@ public final class Native {
                                                newHandler);
     }
     
+    /** If running web start, determine the location of downloaded native 
+     * libraries.  This value may be used to properly set 
+     * <code>jna.library.path</code> so that JNA can load libraries identified
+     * by the &lt;nativelib&gt; tag in the JNLP configuration file.  Returns 
+     * <code>null</code> if the Web Start native library cache location can not 
+     * be determined.
+     * <p>
+     * Use <code>System.getProperty("javawebstart.version")</code> to detect
+     * whether your code is running under Web Start.
+     * @throws IllegalArgumentException if the library can't be found by the
+     * Web Start class loader, which usually means it wasn't included as 
+     * a &lt;nativelib&gt; resource in the JNLP file.
+     */
+    public static String getWebStartLibraryPath(String libName) {
+        if (System.getProperty("javawebstart.version") == null)
+            return null;
+        try {
+            ClassLoader cl = Native.class.getClassLoader();
+            Method m = ClassLoader.class.getMethod("findLibrary", new Class[] { String.class });
+            m.setAccessible(true);
+            String libpath = (String)m.invoke(cl, new Object[] { libName });
+            if (libpath != null) {
+                return new File(libpath).getParent();
+            }
+            String msg = 
+                "Library '" + libName + "' was not found by class loader " + cl;
+            throw new IllegalArgumentException(msg);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
     /** For internal use only. */
     /* Windows won't allow file deletion while
      * it is in use, and the VM doesn't provide for explicit unloading of 

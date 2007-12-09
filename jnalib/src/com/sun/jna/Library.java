@@ -13,6 +13,8 @@ package com.sun.jna;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -55,8 +57,13 @@ public interface Library {
     String OPTION_TYPE_MAPPER = "type-mapper";
     /** Option key for a {@link FunctionMapper} for the library. */
     String OPTION_FUNCTION_MAPPER = "function-mapper";
-    /** Option key for structure alignment type ({@link Integer}). */
+    /** Option key for a {@link InvocationMapper} for the library. */
+    String OPTION_INVOCATION_MAPPER = "invocation-mapper";
+    /** Option key for structure alignment type ({@link Integer}), which should
+     * be one of the predefined alignment types in {@link Structure}. 
+     */
     String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
+    /** For internal JNA use. */
     String OPTION_INVOKING_METHOD = "invoking-method";
     
     static class Handler implements InvocationHandler {
@@ -95,7 +102,9 @@ public interface Library {
         // Library invocation options
         private final Map options;
         private FunctionMapper functionMapper;
-        private final Map functions = new WeakHashMap();        
+        private InvocationMapper invocationMapper;
+        private final Map functions = new WeakHashMap();
+        private int callingConvention;
         public Handler(String libname, Class interfaceClass, Map options) {
 
             if (libname == null || "".equals(libname.trim())) {
@@ -106,11 +115,15 @@ public interface Library {
             this.nativeLibrary = NativeLibrary.getInstance(libname);
             this.interfaceClass = interfaceClass;
             this.options = options;
+            this.callingConvention = 
+                AltCallingConvention.class.isAssignableFrom(interfaceClass)
+                ? Function.ALT_CONVENTION : Function.C_CONVENTION;
             functionMapper = (FunctionMapper)options.get(OPTION_FUNCTION_MAPPER);
             if (functionMapper == null) {
                 // backward compatibility; passed-in map is itself the name map
                 functionMapper = new FunctionNameMap(options);
             }
+            invocationMapper = (InvocationMapper)options.get(OPTION_INVOCATION_MAPPER);
         }
 
         public NativeLibrary getNativeLibrary() {
@@ -124,11 +137,14 @@ public interface Library {
         public Class getInterfaceClass() {
             return interfaceClass;
         }
+        
         private static class FunctionInfo {
+            InvocationHandler handler;
             Function function;
             boolean isVarArgs;
             Map options;
         }
+
         public Object invoke(Object proxy, Method method, Object[] inArgs)
             throws Throwable {
 
@@ -147,36 +163,35 @@ public interface Library {
                 return Boolean.FALSE;
             }
             
-            FunctionInfo f = null;            
+            FunctionInfo f = null;
             synchronized(functions) {
                 f = (FunctionInfo)functions.get(method);
                 if (f == null) {
-                    // Find the function to invoke
-                    String methodName = 
-                        functionMapper.getFunctionName(nativeLibrary, method);
-                    if (methodName == null) {
-                        // Just in case the function mapper screwed up
-                        methodName = method.getName();
-                    }
-                    int callingConvention = 
-                        proxy instanceof AltCallingConvention
-                        ? Function.ALT_CONVENTION : Function.C_CONVENTION;
                     f = new FunctionInfo();
-                    f.function = nativeLibrary.getFunction(methodName, callingConvention);
-                    f.isVarArgs = Function.isVarArgs(method);                    
-                    f.options = new HashMap(this.options);
-                    //
-                    // Pass in the original method from the Library interface
-                    // subclass so annotations present in the interface get
-                    // passed on. 
-                    //
-                    Method m = interfaceClass.getMethod(method.getName(), method.getParameterTypes()); 
-                    f.options.put(OPTION_INVOKING_METHOD, m); 
+                    f.isVarArgs = Function.isVarArgs(method);
+                    if (invocationMapper != null) {
+                        f.handler = invocationMapper.getInvocationHandler(nativeLibrary, method);
+                    }
+                    if (f.handler == null) {
+                        // Find the function to invoke
+                        String methodName = 
+                            functionMapper.getFunctionName(nativeLibrary, method);
+                        if (methodName == null) {
+                            // Just in case the function mapper screwed up
+                            methodName = method.getName();
+                        }
+                        f.function = nativeLibrary.getFunction(methodName, callingConvention);
+                        f.options = new HashMap(this.options);
+                        f.options.put(OPTION_INVOKING_METHOD, method);
+                    }
                     functions.put(method, f);
-                }                
+                }
             }
             if (f.isVarArgs) {
                 inArgs = Function.concatenateVarArgs(inArgs);
+            }
+            if (f.handler != null) {
+                return f.handler.invoke(proxy, method, inArgs);
             }
             return f.function.invoke(method.getReturnType(), inArgs, f.options);
         }

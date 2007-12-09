@@ -86,6 +86,7 @@ public abstract class Structure {
         isSPARC = "sparc".equals(arch);
     }
 
+    /** Use the platform default alignment. */
     public static final int ALIGN_DEFAULT = 0;
     /** No alignment, place all fields on nearest 1-byte boundary */
     public static final int ALIGN_NONE = 1;

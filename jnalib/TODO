@@ -22,6 +22,15 @@
 
 # TODO
 
+* parser (gluegen? others?) to auto-generate JNA interfaces from headers;
+  ideally get the native library build system to output preprocessed headers,
+  otherwise CPP crap is a nightmare to get right.
+
+* (maybe) move all native functions into Native (limit header files, easier
+  management) 
+
+* hash javah-generated headers; when changed, invalidate platform-specific
+
 * handle Structure.ByReference array as parameter/return value (cf Pointer[])
 
 * test performance of setByte/getByte and pass pointer field directly if it

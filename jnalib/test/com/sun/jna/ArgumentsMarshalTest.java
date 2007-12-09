@@ -29,6 +29,9 @@ public class ArgumentsMarshalTest extends TestCase {
     public static interface TestLibrary extends Library {
 
         class CheckFieldAlignment extends Structure {
+            public static class ByValue extends CheckFieldAlignment 
+                implements Structure.ByValue { }
+        
             public byte int8Field = 1;
             public short int16Field = 2;
             public int int32Field = 3;
@@ -37,9 +40,6 @@ public class ArgumentsMarshalTest extends TestCase {
             public double doubleField = 6d;
         }
 
-        class CheckFieldAlignmentByValue extends CheckFieldAlignment 
-            implements Structure.ByValue { }
-        
         boolean returnBooleanArgument(boolean arg);
         byte returnInt8Argument(byte arg);
         char returnWideCharArgument(char arg);
@@ -60,7 +60,7 @@ public class ArgumentsMarshalTest extends TestCase {
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
         Pointer testStructurePointerArgument(CheckFieldAlignment p);
-        double testStructureByValueArgument(CheckFieldAlignmentByValue p);
+        double testStructureByValueArgument(CheckFieldAlignment.ByValue p);
         int testStructureArrayInitialization(CheckFieldAlignment[] p, int len);
         void modifyStructureArray(CheckFieldAlignment[] p, int length);
         
@@ -255,8 +255,8 @@ public class ArgumentsMarshalTest extends TestCase {
     }
 
     public void testStructureByValueArgument() {
-        TestLibrary.CheckFieldAlignmentByValue struct = 
-            new TestLibrary.CheckFieldAlignmentByValue();
+        TestLibrary.CheckFieldAlignment.ByValue struct = 
+            new TestLibrary.CheckFieldAlignment.ByValue();
         assertEquals("Wrong sum of fields", 
                      21d, lib.testStructureByValueArgument(struct));
     }
