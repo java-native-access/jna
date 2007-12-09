@@ -28,7 +28,9 @@ import java.util.WeakHashMap;
  * </pre></code>
  * <p>
  * By convention, method names are identical to the native names, although you
- * can map java names to different native names by supplying a map to the
+ * can map java names to different native names by providing a 
+ * {@link FunctionMapper} as a value for key {@link #OPTION_FUNCTION_MAPPER}
+ * in the options map passed to the
  * {@link Native#loadLibrary(String, Class, Map)} call.
  * <p>
  * Although the names for structures and structure fields may be chosen 
@@ -37,27 +39,35 @@ import java.util.WeakHashMap;
  * <p>
  * This interface supports multiple, concurrent invocations of any library
  * methods on the Java side.  Check your library documentation for its
- * multithreading requirements on the native side.  If a library is not safe
- * for multithreaded use, consider using {@link Native#synchronizedLibrary}
- * to prevent multithreaded access to the native code.
+ * multi-threading requirements on the native side.  If a library is not safe
+ * for simultaneous multi-threaded access, consider using 
+ * {@link Native#synchronizedLibrary} to prevent simultaneous multi-threaded 
+ * access to the native code.  
  * <p>
  * <b>Optional fields</b><br>
  * Interface options will be automatically propagated to structures defined
- * within the library if an <b>INSTANCE</b> field is defined holding the 
- * results of a {@link Native#loadLibrary(String,Class,Map)} call.  If no
- * instance is defined, the {@link Structure} constructor will look for
- * fields named <code>TYPE_MAPPER</code> and <code>STRUCTURE_ALIGNMENT</code>
- * to obtain non-default values for those options.
+ * within the library provided a call to 
+ * {@link Native#loadLibrary(String,Class,Map)} is made prior to instantiating
+ * any of those structures.  One common way of ensuring this is to declare
+ * an <b>INSTANCE</b> field in the interface which holds the 
+ * <code>loadLibrary</code> result.
+ * <p>
+ * <b>TYPE_MAPPER</b> (an instance of {@link TypeMapper}) and 
+ * <b>STRUCTURE_ALIGNMENT</b> (one of the alignment types defined in 
+ * {@link Structure}) may also be defined.  If no instance of the interface
+ * has been instantiated, these fields will be used to determine customization
+ * settings for structures defined within the interface.
+ * <p>
  * 
  * @author  Todd Fast, todd.fast@sun.com
- * @author twall@users.sf.net
+ * @author  Timothy Wall, twalljava@dev.java.net
  */
 public interface Library {
     /** Option key for a {@link TypeMapper} for the library. */
     String OPTION_TYPE_MAPPER = "type-mapper";
     /** Option key for a {@link FunctionMapper} for the library. */
     String OPTION_FUNCTION_MAPPER = "function-mapper";
-    /** Option key for a {@link InvocationMapper} for the library. */
+    /** Option key for an {@link InvocationMapper} for the library. */
     String OPTION_INVOCATION_MAPPER = "invocation-mapper";
     /** Option key for structure alignment type ({@link Integer}), which should
      * be one of the predefined alignment types in {@link Structure}. 

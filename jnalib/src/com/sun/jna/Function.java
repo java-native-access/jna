@@ -37,7 +37,7 @@ public class Function extends Pointer {
     public static final int ALT_CONVENTION = 1;
 
     /** 
-     * Obtain a {@link Function} representing a native 
+     * Obtain a <code>Function</code> representing a native 
      * function that follows the standard "C" calling convention.
      * 
      * <p>The allocated instance represents a pointer to the named native 
@@ -54,7 +54,7 @@ public class Function extends Pointer {
     }
     
     /**
-     * Obtain a {@link Function} representing a native 
+     * Obtain a <code>Function</code> representing a native 
      * function that follows a given calling convention.
      * 
      * <p>The allocated instance represents a pointer to the named native 
@@ -79,7 +79,7 @@ public class Function extends Pointer {
     private int callingConvention;
 
     /**
-     * Create a new @{link Function} that is linked with a native 
+     * Create a new <code>Function</code> that is linked with a native 
      * function that follows the given calling convention.
      * 
      * <p>The allocated instance represents a pointer to the named native 
@@ -104,7 +104,7 @@ public class Function extends Pointer {
     }
     
     /**
-     * Create a new @{link Function} that is linked with a native 
+     * Create a new <code>Function</code> that is linked with a native 
      * function that follows the given calling convention.
      * 
      * <p>The allocated instance represents a pointer to the given 
