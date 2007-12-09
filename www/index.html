@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2007-12-04">
+<meta name="date" content="2007-12-08">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -29,7 +29,7 @@
 <h2>Java Native Access (JNA) </h2>
 JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.  Access is dynamic at runtime without code generation.</p>
 <p>JNA's design aims to provide native access in a natural way with a minimum of effort.  No boilerplate or generated code is required.  While some attention is paid to performance, correctness and ease of use take priority.</p>
-<p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code (overhead would otherwise increase with each supported platform). </p>
+<p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.</p>
 </td>
 <td valign=center>
 <ul>
@@ -49,7 +49,7 @@ JNA provides Java programs easy access to native shared libraries (DLLs on Windo
 </table>
 <hr>
 The <a href="javadoc/overview-summary.html">JavaDoc is available online</a>,
-which includes an overview of specific usage.<p>
+which includes detailed descriptions of JNA usage in different situations.<p>
 This library is provided under the <a href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html">LGPL</a>, version 2.1 or later.
 <p>
 <b>NOTE: Sun is <em>not</em> sponsoring this project, even though the package name (<code>com.sun.jna</code>) might imply otherwise.</b>
@@ -186,7 +186,7 @@ Arrays of C strings (the <code>char* argv[]</code> to the C <code>main</code>, f
 <a href=#top>Top</a>
 <a name=structures></a>
 <h3>Using Structures/Unions</h3>
-When a function requires a pointer to a <code>struct</code>, a Java <a href="javadoc/com/sun/jna/Structure.html">Structure</a> should be used.  See <a href="javadoc/overview-summary.html#byvalue">here</a> for information on passing or returning structures by value.<p>
+When a function requires a pointer to a <code>struct</code>, a Java <a href="javadoc/com/sun/jna/Structure.html">Structure</a> should be used.  If the <code>struct</code> is passed or returned by value, you need only make <a href="javadoc/overview-summary.html#byvalue">minor modifications</a> to the parameter or return type class declaration.<p>
 Typically you define a <code>public static</code> class derived from <code>Structure</code> within your library interface definition.   This allows the structure to share any options (like custom type mapping) defined for the library interface.  
 <p>
 If a function requires an array of <code>struct</code>, a Java <code>Structure[]</code> may be used.  When passing in an array of <code>Structure</code>, it is not necessary to initialize the array elements (the function call will allocate, zero memory, and assign the elements for you).  If you <em>do</em> need to initialize the array, you should use the <code>Structure.toArray</code> method to obtain an array of <code>Structure</code> elements contiguous in memory, which you can then initialize as needed.
@@ -349,7 +349,7 @@ Libc.fclose(fp)
 </ul>
 <a name=w32link></a>
 <h4>My library mapping causes an UnsatisfiedLinkError</h4>
-Use a dump utility to examine the names of your exported functions to make sure they match (<a href=http://linux.die.net/man/1/nm>nm</a> on linux, <a href=http://www.dependencywalker.com>depends</a> on Windows).  On Windows, if the functions have a suffix of the form "@NN", you need to pass a StdCallFunctionMapper as an option when initializing your library interface (<a href=stdcallmapper>see here</a>).
+Use a dump utility to examine the names of your exported functions to make sure they match (<a href=http://linux.die.net/man/1/nm>nm</a> on linux, <a href=http://www.dependencywalker.com>depends</a> on Windows).  On Windows, if the functions have a suffix of the form "@NN", you need to pass a StdCallFunctionMapper as an option when initializing your library interface (<a href="#stdcallmapper">see here</a>).  In general, you can use a function mapper (<a href="javadoc/com/sun/jna/FunctionMapper.html">FunctionMapper</a>) to change the name of the looked-up method, or an invocation mapper (<a href="javadoc/com/sun/jna/InvocationMapper.html">InvocationMapper</a>) for more extensive control over the method invocation.
 
 <a name=crash></a>
 <h4>My library sometimes causes a VM crash</h4>
@@ -363,10 +363,10 @@ If your library uses the <code>stdcall</code> calling convention, your interface
 <h4>How do I get an arbitrary Pointer value?</h4>
 First, you probably don't actually want an <em>arbitrary</em> value.  Ask yourself what you're really trying to do.  Remember, type safety is your friend.  
 <ul>
-<li>Pointer.createConstant() should be used when you need a special value that is not really a pointer (NULL usually serves this purpose, but some C programmers like to cast check for special integer values instead).  The Pointer produced by this function can't actually be used to access memory.
+<li>Pointer.createConstant() should be used when you need a special value that is not really a pointer (NULL usually serves this purpose, but some C programmers like to check pointers for special integer values instead).  The Pointer produced by this function can't actually be used to access memory.
 <li>Pointer#share() can be used to generate a new Pointer as an offset from an existing one
 <li>java.nio.Buffer can be used to wrap a Java array with a different offset and length than the original.
-<li>Clean up the sloppy C code by declaring an appropriate function interface.  If your function in C takes either a Pointer or an integer type, simply declare both method signatures in your JNA mapping.  
+<li>Clean up the sloppy C code by declaring an appropriate function interface.  If your function in C takes either a Pointer or an integer type, simply declare both method signatures in your JNA interface.  They will both invoke the same function, but you get the added benefit of type checking on the arguments.
 </ul>
 If you <em>really</em>, <em>really</em>, <em>HAVE</em> to convert an integer
 value into a Pointer, you can do something like this:<br>

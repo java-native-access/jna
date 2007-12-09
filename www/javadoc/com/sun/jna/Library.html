@@ -52,7 +52,7 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../com/sun/jna/IntegerType.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?com/sun/jna/Library.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -106,7 +106,9 @@ Derive from this interface for all native library definitions.
  </pre></code>
  <p>
  By convention, method names are identical to the native names, although you
- can map java names to different native names by supplying a map to the
+ can map java names to different native names by providing a 
+ <A HREF="../../../com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A> as a value for key <A HREF="../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><CODE>OPTION_FUNCTION_MAPPER</CODE></A>
+ in the options map passed to the
  <A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary(String, Class, Map)</CODE></A> call.
  <p>
  Although the names for structures and structure fields may be chosen 
@@ -115,23 +117,31 @@ Derive from this interface for all native library definitions.
  <p>
  This interface supports multiple, concurrent invocations of any library
  methods on the Java side.  Check your library documentation for its
- multithreading requirements on the native side.  If a library is not safe
- for multithreaded use, consider using <A HREF="../../../com/sun/jna/Native.html#synchronizedLibrary(com.sun.jna.Library)"><CODE>Native.synchronizedLibrary(com.sun.jna.Library)</CODE></A>
- to prevent multithreaded access to the native code.
+ multi-threading requirements on the native side.  If a library is not safe
+ for simultaneous multi-threaded access, consider using 
+ <A HREF="../../../com/sun/jna/Native.html#synchronizedLibrary(com.sun.jna.Library)"><CODE>Native.synchronizedLibrary(com.sun.jna.Library)</CODE></A> to prevent simultaneous multi-threaded 
+ access to the native code.  
  <p>
  <b>Optional fields</b><br>
  Interface options will be automatically propagated to structures defined
- within the library if an <b>INSTANCE</b> field is defined holding the 
- results of a <A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary(String,Class,Map)</CODE></A> call.  If no
- instance is defined, the <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> constructor will look for
- fields named <code>TYPE_MAPPER</code> and <code>STRUCTURE_ALIGNMENT</code>
- to obtain non-default values for those options.
+ within the library provided a call to 
+ <A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary(String,Class,Map)</CODE></A> is made prior to instantiating
+ any of those structures.  One common way of ensuring this is to declare
+ an <b>INSTANCE</b> field in the interface which holds the 
+ <code>loadLibrary</code> result.
+ <p>
+ <b>TYPE_MAPPER</b> (an instance of <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A>) and 
+ <b>STRUCTURE_ALIGNMENT</b> (one of the alignment types defined in 
+ <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>) may also be defined.  If no instance of the interface
+ has been instantiated, these fields will be used to determine customization
+ settings for structures defined within the interface.
+ <p>
 <P>
 
 <P>
 <DL>
 <DT><B>Author:</B></DT>
-  <DD>Todd Fast, todd.fast@sun.com, twall@users.sf.net</DD>
+  <DD>Todd Fast, todd.fast@sun.com, Timothy Wall, twalljava@dev.java.net</DD>
 </DL>
 <HR>
 
@@ -172,10 +182,18 @@ Derive from this interface for all native library definitions.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for an <A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> for the library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_INVOKING_METHOD">OPTION_INVOKING_METHOD</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For internal JNA use.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -183,7 +201,8 @@ Derive from this interface for all native library definitions.
 <TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>).</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>), which should
+ be one of the predefined alignment types in <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -231,12 +250,25 @@ static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.h
 </DL>
 <HR>
 
+<A NAME="OPTION_INVOCATION_MAPPER"><!-- --></A><H3>
+OPTION_INVOCATION_MAPPER</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_INVOCATION_MAPPER</B></PRE>
+<DL>
+<DD>Option key for an <A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> for the library.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_INVOCATION_MAPPER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
 <A NAME="OPTION_STRUCTURE_ALIGNMENT"><!-- --></A><H3>
 OPTION_STRUCTURE_ALIGNMENT</H3>
 <PRE>
 static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_STRUCTURE_ALIGNMENT</B></PRE>
 <DL>
-<DD>Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>).
+<DD>Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>), which should
+ be one of the predefined alignment types in <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>.
 <P>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_STRUCTURE_ALIGNMENT">Constant Field Values</A></DL>
@@ -248,6 +280,8 @@ OPTION_INVOKING_METHOD</H3>
 <PRE>
 static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_INVOKING_METHOD</B></PRE>
 <DL>
+<DD>For internal JNA use.
+<P>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_INVOKING_METHOD">Constant Field Values</A></DL>
 </DL>
@@ -281,7 +315,7 @@ static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.h
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../com/sun/jna/IntegerType.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?com/sun/jna/Library.html" target="_top"><B>FRAMES</B></A>  &nbsp;

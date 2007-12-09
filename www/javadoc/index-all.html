@@ -133,7 +133,7 @@ Method in class com.sun.jna.examples.dnd.<A HREF="./com/sun/jna/examples/dnd/Dra
  one and there are no modifiers.
 <DT><A HREF="./com/sun/jna/Structure.html#ALIGN_DEFAULT"><B>ALIGN_DEFAULT</B></A> - 
 Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>&nbsp;
+<DD>Use the platform default alignment.
 <DT><A HREF="./com/sun/jna/Structure.html#ALIGN_GNUC"><B>ALIGN_GNUC</B></A> - 
 Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>validated for 32-bit x86 linux/gcc; align field size, max 4 bytes
@@ -1291,21 +1291,13 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/PointerType.html" title="clas
 <DT><A HREF="./com/sun/jna/FromNativeContext.html" title="class in com.sun.jna"><B>FromNativeContext</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Provides context for converting a native value into a Java type.<DT><A HREF="./com/sun/jna/FromNativeContext.html#FromNativeContext(java.lang.Class)"><B>FromNativeContext(Class)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/FromNativeContext.html" title="class in com.sun.jna">FromNativeContext</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/FromNativeConverter.html" title="interface in com.sun.jna"><B>FromNativeConverter</B></A> - Interface in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Define conversion from a native type to the appropriate Java type.<DT><A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna"><B>Function</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>An abstraction for a native function pointer.<DT><A HREF="./com/sun/jna/Function.html#Function(java.lang.String, java.lang.String)"><B>Function(String, String)</B></A> - 
+<DT><A HREF="./com/sun/jna/FromNativeConverter.html" title="interface in com.sun.jna"><B>FromNativeConverter</B></A> - Interface in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Define conversion from a native type to the appropriate Java type.<DT><A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna"><B>Function</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>An abstraction for a native function pointer.<DT><A HREF="./com/sun/jna/Function.html#Function(com.sun.jna.NativeLibrary, java.lang.String, int)"><B>Function(NativeLibrary, String, int)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
-<DD><B>Deprecated.</B>&nbsp;<I>Use <A HREF="./com/sun/jna/Function.html#getFunction(java.lang.String, java.lang.String)"><CODE>Function.getFunction(String,String)</CODE></A> instead.  This 
- version bypasses lookup cacheing done by <A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A>.</I>
-<DT><A HREF="./com/sun/jna/Function.html#Function(java.lang.String, java.lang.String, int)"><B>Function(String, String, int)</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
-<DD><B>Deprecated.</B>&nbsp;<I>Use <A HREF="./com/sun/jna/Function.html#getFunction(java.lang.String, java.lang.String, int)"><CODE>Function.getFunction(String,String,int)</CODE></A> instead.
- This version bypasses lookup cacheing done by <A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A>.</I>
-<DT><A HREF="./com/sun/jna/Function.html#Function(com.sun.jna.NativeLibrary, java.lang.String, int)"><B>Function(NativeLibrary, String, int)</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
-<DD>Create a new @{link Function} that is linked with a native 
+<DD>Create a new <code>Function</code> that is linked with a native 
  function that follows the given calling convention.
 <DT><A HREF="./com/sun/jna/Function.html#Function(com.sun.jna.Pointer, int)"><B>Function(Pointer, int)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
-<DD>Create a new @{link Function} that is linked with a native 
+<DD>Create a new <code>Function</code> that is linked with a native 
  function that follows the given calling convention.
 <DT><A HREF="./com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER"><B>FUNCTION_MAPPER</B></A> - 
 Static variable in interface com.sun.jna.win32.<A HREF="./com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>
@@ -1503,11 +1495,11 @@ Method in interface com.sun.jna.<A HREF="./com/sun/jna/TypeMapper.html" title="i
 <DD>Return the <A HREF="./com/sun/jna/FromNativeConverter.html" title="interface in com.sun.jna"><CODE>FromNativeConverter</CODE></A> appropriate for the given Java class.
 <DT><A HREF="./com/sun/jna/Function.html#getFunction(java.lang.String, java.lang.String)"><B>getFunction(String, String)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
-<DD>Obtain a <A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> representing a native 
+<DD>Obtain a <code>Function</code> representing a native 
  function that follows the standard "C" calling convention.
 <DT><A HREF="./com/sun/jna/Function.html#getFunction(java.lang.String, java.lang.String, int)"><B>getFunction(String, String, int)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
-<DD>Obtain a <A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> representing a native 
+<DD>Obtain a <code>Function</code> representing a native 
  function that follows a given calling convention.
 <DT><A HREF="./com/sun/jna/FunctionParameterContext.html#getFunction()"><B>getFunction()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/FunctionParameterContext.html" title="class in com.sun.jna">FunctionParameterContext</A>
@@ -1523,9 +1515,6 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/NativeLibrary.html" title="cl
 Method in class com.sun.jna.<A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>
 <DD>Create a new  @{link Function} that is linked with a native
  function that follows a given calling convention.
-<DT><A HREF="./com/sun/jna/NativeLibrary.html#getFunctionAddress(java.lang.String)"><B>getFunctionAddress(String)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>
-<DD>Used by the Function class to locate a symbol
 <DT><A HREF="./com/sun/jna/FunctionMapper.html#getFunctionName(com.sun.jna.NativeLibrary, java.lang.reflect.Method)"><B>getFunctionName(NativeLibrary, Method)</B></A> - 
 Method in interface com.sun.jna.<A HREF="./com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna">FunctionMapper</A>
 <DD>&nbsp;
@@ -1540,6 +1529,9 @@ Method in class com.sun.jna.win32.<A HREF="./com/sun/jna/win32/W32APIFunctionMap
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.html" title="class in com.sun.jna">CallbackReference</A>
 <DD>Return a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> to the native function address for the
  given callback.
+<DT><A HREF="./com/sun/jna/NativeLibrary.html#getGlobalVariableAddress(java.lang.String)"><B>getGlobalVariableAddress(String)</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>
+<DD>Look up the given global variable within this library.
 <DT><A HREF="./com/sun/jna/examples/win32/User32.html#GetGUIThreadInfo(int, com.sun.jna.examples.win32.User32.GUITHREADINFO)"><B>GetGUIThreadInfo(int, User32.GUITHREADINFO)</B></A> - 
 Method in interface com.sun.jna.examples.win32.<A HREF="./com/sun/jna/examples/win32/User32.html" title="interface in com.sun.jna.examples.win32">User32</A>
 <DD>&nbsp;
@@ -1568,6 +1560,11 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DT><A HREF="./com/sun/jna/Library.Handler.html#getInterfaceClass()"><B>getInterfaceClass()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/InvocationMapper.html#getInvocationHandler(com.sun.jna.NativeLibrary, java.lang.reflect.Method)"><B>getInvocationHandler(NativeLibrary, Method)</B></A> - 
+Method in interface com.sun.jna.<A HREF="./com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna">InvocationMapper</A>
+<DD>Return an <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/InvocationHandler.html?is-external=true" title="class or interface in java.lang.reflect"><CODE>InvocationHandler</CODE></A> responsible for handling the
+ invocation of the given method, or <code>null</code> if the default
+ handling should be used.
 <DT><A HREF="./com/sun/jna/examples/win32/User32.html#GetKeyboardState(byte[])"><B>GetKeyboardState(byte[])</B></A> - 
 Method in interface com.sun.jna.examples.win32.<A HREF="./com/sun/jna/examples/win32/User32.html" title="interface in com.sun.jna.examples.win32">User32</A>
 <DD>&nbsp;
@@ -1712,6 +1709,9 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/StructureWriteContext.html" t
 <DT><A HREF="./com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)"><B>getStructureAlignment(Class)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Return the preferred structure alignment for the given native interface.
+<DT><A HREF="./com/sun/jna/NativeLibrary.html#getSymbolAddress(java.lang.String)"><B>getSymbolAddress(String)</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>
+<DD>Used by the Function class to locate a symbol
 <DT><A HREF="./com/sun/jna/examples/win32/Kernel32.html#GetSystemTime(com.sun.jna.examples.win32.Kernel32.SYSTEMTIME)"><B>GetSystemTime(Kernel32.SYSTEMTIME)</B></A> - 
 Method in interface com.sun.jna.examples.win32.<A HREF="./com/sun/jna/examples/win32/Kernel32.html" title="interface in com.sun.jna.examples.win32">Kernel32</A>
 <DD>&nbsp;
@@ -1780,6 +1780,10 @@ Method in class com.sun.jna.ptr.<A HREF="./com/sun/jna/ptr/PointerByReference.ht
 <DT><A HREF="./com/sun/jna/ptr/ShortByReference.html#getValue()"><B>getValue()</B></A> - 
 Method in class com.sun.jna.ptr.<A HREF="./com/sun/jna/ptr/ShortByReference.html" title="class in com.sun.jna.ptr">ShortByReference</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Native.html#getWebStartLibraryPath(java.lang.String)"><B>getWebStartLibraryPath(String)</B></A> - 
+Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
+<DD>If running web start, determine the location of downloaded native 
+ libraries.
 <DT><A HREF="./com/sun/jna/Native.html#getWindowID(java.awt.Window)"><B>getWindowID(Window)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Utility method to get the native window ID for a Java <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A>
@@ -2038,7 +2042,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/IntegerType.html" title="clas
 <DT><A HREF="./com/sun/jna/examples/win32/W32API.html#INVALID_HANDLE_VALUE"><B>INVALID_HANDLE_VALUE</B></A> - 
 Static variable in interface com.sun.jna.examples.win32.<A HREF="./com/sun/jna/examples/win32/W32API.html" title="interface in com.sun.jna.examples.win32">W32API</A>
 <DD>Constant value representing an invalid HANDLE.
-<DT><A HREF="./com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><B>invoke(Class, Object[])</B></A> - 
+<DT><A HREF="./com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><B>InvocationMapper</B></A> - Interface in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Provide a method for overriding how a given function is invoked.<DT><A HREF="./com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><B>invoke(Class, Object[])</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>Invoke the native function with the given arguments, returning the
  native result as an Object.
@@ -2350,7 +2354,7 @@ Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title
 Variable in class com.sun.jna.examples.unix.<A HREF="./com/sun/jna/examples/unix/X11.XSizeHints.html" title="class in com.sun.jna.examples.unix">X11.XSizeHints</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna"><B>Memory</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>A <code>Pointer</code> to memory obtained from the native heap via a 
- call to <code>malloc</code>.<DT><A HREF="./com/sun/jna/Memory.html#Memory(int)"><B>Memory(int)</B></A> - 
+ call to <code>malloc</code>.<DT><A HREF="./com/sun/jna/Memory.html#Memory(long)"><B>Memory(long)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
 <DD>Allocate space in the native heap via a call to C's <code>malloc</code>.
 <DT><A HREF="./com/sun/jna/Memory.html#Memory()"><B>Memory()</B></A> - 
@@ -2553,12 +2557,16 @@ Static variable in interface com.sun.jna.examples.win32.<A HREF="./com/sun/jna/e
 <DT><A HREF="./com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><B>OPTION_FUNCTION_MAPPER</B></A> - 
 Static variable in interface com.sun.jna.<A HREF="./com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>
 <DD>Option key for a <A HREF="./com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A> for the library.
+<DT><A HREF="./com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER"><B>OPTION_INVOCATION_MAPPER</B></A> - 
+Static variable in interface com.sun.jna.<A HREF="./com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>
+<DD>Option key for an <A HREF="./com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> for the library.
 <DT><A HREF="./com/sun/jna/Library.html#OPTION_INVOKING_METHOD"><B>OPTION_INVOKING_METHOD</B></A> - 
 Static variable in interface com.sun.jna.<A HREF="./com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>
-<DD>&nbsp;
+<DD>For internal JNA use.
 <DT><A HREF="./com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT"><B>OPTION_STRUCTURE_ALIGNMENT</B></A> - 
 Static variable in interface com.sun.jna.<A HREF="./com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>
-<DD>Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>).
+<DD>Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>), which should
+ be one of the predefined alignment types in <A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>.
 <DT><A HREF="./com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><B>OPTION_TYPE_MAPPER</B></A> - 
 Static variable in interface com.sun.jna.<A HREF="./com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>
 <DD>Option key for a <A HREF="./com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the library.

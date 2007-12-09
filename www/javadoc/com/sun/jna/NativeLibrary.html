@@ -172,11 +172,11 @@ Provides management of native library resources.  One instance of this
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) &nbsp;long</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/NativeLibrary.html#getFunctionAddress(java.lang.String)">getFunctionAddress</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName)</CODE>
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/NativeLibrary.html#getGlobalVariableAddress(java.lang.String)">getGlobalVariableAddress</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;symbolName)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by the Function class to locate a symbol</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Look up the given global variable within this library.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -193,6 +193,14 @@ Provides management of native library resources.  One instance of this
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the simple name of this library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/NativeLibrary.html#getSymbolAddress(java.lang.String)">getSymbolAddress</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by the Function class to locate a symbol</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -299,10 +307,24 @@ public <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna"
 </DL>
 <HR>
 
-<A NAME="getFunctionAddress(java.lang.String)"><!-- --></A><H3>
-getFunctionAddress</H3>
+<A NAME="getGlobalVariableAddress(java.lang.String)"><!-- --></A><H3>
+getGlobalVariableAddress</H3>
 <PRE>
-long <B>getFunctionAddress</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName)</PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getGlobalVariableAddress</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;symbolName)</PRE>
+<DL>
+<DD>Look up the given global variable within this library.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>symbolName</CODE> - 
+<DT><B>Returns:</B><DD>Pointer representing the global variable address</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSymbolAddress(java.lang.String)"><!-- --></A><H3>
+getSymbolAddress</H3>
+<PRE>
+long <B>getSymbolAddress</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName)</PRE>
 <DL>
 <DD>Used by the Function class to locate a symbol
 <P>

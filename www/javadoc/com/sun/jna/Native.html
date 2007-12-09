@@ -264,6 +264,15 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWebStartLibraryPath(java.lang.String)">getWebStartLibraryPath</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If running web start, determine the location of downloaded native 
+ libraries.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;long</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWindowID(java.awt.Window)">getWindowID</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt">Window</A>&nbsp;w)</CODE>
 
@@ -751,12 +760,39 @@ public static <A HREF="../../../com/sun/jna/Library.html" title="interface in co
 <DL>
 <DD>Returns a synchronized (thread-safe) library backed by the specified
  library.  This wrapping will prevent simultaneous invocations of any
- functions mapped to a given <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A>.
+ functions mapped to a given <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A>.  Note that the 
+ native library may still be sensitive to being called from different
+ threads.
  <p>
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>library</CODE> - the library to be "wrapped" in a synchronized library.
 <DT><B>Returns:</B><DD>a synchronized view of the specified library.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWebStartLibraryPath(java.lang.String)"><!-- --></A><H3>
+getWebStartLibraryPath</H3>
+<PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getWebStartLibraryPath</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libName)</PRE>
+<DL>
+<DD>If running web start, determine the location of downloaded native 
+ libraries.  This value may be used to properly set 
+ <code>jna.library.path</code> so that JNA can load libraries identified
+ by the &lt;nativelib&gt; tag in the JNLP configuration file.  Returns 
+ <code>null</code> if the Web Start native library cache location can not 
+ be determined.
+ <p>
+ Use <code>System.getProperty("javawebstart.version")</code> to detect
+ whether your code is running under Web Start.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the library can't be found by the
+ Web Start class loader, which usually means it wasn't included as 
+ a &lt;nativelib&gt; resource in the JNLP file.</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

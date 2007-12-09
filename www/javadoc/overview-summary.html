@@ -172,6 +172,33 @@ JNA provides simplified access to native library methods without requiring any
 additional JNI or native code.
 <p>
 
+<a name="toc"></a>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#library-mapping">Library Mapping</a>
+<li><a href="#function-mapping">Function Mapping</a>
+<li><a href="#marshalling">Type Mapping</a>
+  <ul>
+  <li><a href="#marshalling">Primitive Types</a>
+  <li><a href="#pointers">Pointers</a>
+  <li><a href="#strings">Strings</a>
+  <li><a href="#wide-strings">Wide (UNICODE) Strings</a>
+  <li><a href="#arrays">Primitive Arrays</a>
+  <li><a href="#buffers">Buffers/Memory Blocks</a>
+  <li><a href="#callbacks">Callbacks/Function Pointers</a>
+  <li><a href="#varargs">Variable Argument Lists (Varargs)</a>
+  <li><a href="#structures">Structures</a>
+  <li><a href="#unions">Unions</a>
+  <li><a href="#java-objects">Java Objects</a>
+  </ul>
+<li><a href="#invocation-mapping">Invocation Mapping</a>
+<li><a href="#global-data">Library Global Data</a>
+<li><a href="#crash-protection">VM Crash Protection</a>
+</ul>
+
+<p>
+<a href=#navbar_top>Top</a>
+<a name="library-mapping"></a>
 <h2>Library Mapping</h2>
 When you've determined which shared library holds the methods to which you
 need access, create an interface class corresponding to that library.  For
@@ -193,7 +220,11 @@ library name mappings.<p>
 </table></center>
 <p>
 Any given native library with a unique filesystem path is represented by a single instance of <A HREF="com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> and obtained via <A HREF="com/sun/jna/NativeLibrary.html#getInstance(java.lang.String)"><CODE>NativeLibrary.getInstance(String)</CODE></A>.  The native library will be unloaded when no longer referenced by any Java code.
-
+<p>
+The search path for loaded native libraries may be modified by setting <code>jna.library.path</code>.  See <A HREF="com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> for details.
+<p>
+<a href="#toc">Top</a>
+<a name="function-mapping"></a>
 <h2>Function Mapping</h2>
 Function names are mapped directly from their Java interface name to the
 symbol exported by the native library.  For instance, the function to convert
@@ -203,9 +234,15 @@ public interface CLibrary extends Library {
     int atol(String s);
 }
 </pre></code></blockquote>
-If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry (<A HREF="com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><CODE>Library.OPTION_FUNCTION_MAPPER</CODE></A>/<A HREF="com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A>) in the options <code>Map</code> passed to <code>Native.loadLibrary</code> which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
+If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry (<A HREF="com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><CODE>Library.OPTION_FUNCTION_MAPPER</CODE></A>/<A HREF="com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A>) in the options <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util"><CODE>Map</CODE></A> passed to <A HREF="com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary()</CODE></A> which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
 An instance of the <A HREF="com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> class is obtained through the <A HREF="com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> instance corresponding to the containing native library.  This <A HREF="com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> instance handles argument marshalling and delegation to the native function. 
 
+<!-- TODO cpp, inline, unsatisfiedlinkerror -->
+<!-- TODO: when to use primitive array vs NIO Buffer vs Memory -->
+<!-- TODO: other stuff from main html page -->
+
+<p>
+<a href="#toc">Top</a>
 <a name="marshalling"></a>
 <h2>Marshalling/Unmarshalling (Java/Native Type Conversions)</h2>
 Java types are chosen to match native types of the same size.  These are types supported by the JNA library.<p>
@@ -241,16 +278,22 @@ Java types are chosen to match native types of the same size.  These are types s
 <li>Unsigned values may be passed by assigning the corresponding
   two's-complement representation to the signed type of the same size.  
 <li>Java arrays of primitive type may be wrapped by <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> in order to access a subset of the array (changing the effective size and/or offest).
-<li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  Bitfields must be manually packed into an integer type.  All other types must eventually be converted to one of these basic types.  Methods with arguments of types other than these must either use types deriving from <A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A> or supply type conversion information for the unsupported types.  
+<li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  Bitfields must be manully packed into an integer type.  All other types must eventually be converted to one of these basic types.  Methods with arguments of types other than these must either use types deriving from <A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A> or supply type conversion information for the unsupported types.  
 <li>Type mapping behavior may be customized by providing a <A HREF="com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the <A HREF="com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><CODE>Library.OPTION_TYPE_MAPPER</CODE></A> option when initializing a library interface.  See <A HREF="com/sun/jna/win32/W32APITypeMapper.html" title="class in com.sun.jna.win32"><CODE>W32APITypeMapper</CODE></A> for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
 <li>Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the <A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A> interface.  
 </ul>
 
+<a name="arrays"></a>
+<h3>Primitive Arrays</h3>
+Java primitive arrays may be used wherever a native primitive array is used.  Any changes made by the native code to an array during a function call will be reflected in the Java array.  If the native code will use the array outside of the function call where the array is provided, <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> should be used instead (see <a href="#buffers">Buffers</a>).
+
+<a name="pointers"></a>
 <h3>Pointers</h3>
-Pointers may be used as an opaque type from which other data types may be extracted.  The user is generally not allowed to construct a Pointer de novo. 
+Pointers may be used as an opaque type from which other data types may be extracted.  The Pointer type is a reasonable fallback for any pointer-based type (including arrays).  The user is generally not allowed to construct a Pointer de novo. 
 <p>
 Type-safe pointers may be defined by deriving from the <A HREF="com/sun/jna/PointerType.html" title="class in com.sun.jna"><CODE>PointerType</CODE></A> class.  Any such user-defined type will be treated the same as a <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
 
+<a name="strings"></a>
 <h3>Strings</h3>
 Java <code>String</code>s perform the same function as the native types
 <code>const char*</code> and <code>const wchar_t*</code>
@@ -276,24 +319,24 @@ the default platform encoding is used, unless the system property
 set to "UTF8", for example, to ensure all native strings use that encoding.
 <p>
 
+<a name="wide-strings"></a>
 <h3>Wide Strings</h3>
 The <A HREF="com/sun/jna/WString.html" title="class in com.sun.jna"><CODE>WString</CODE></A> class is used to identify wide character strings.  Unicode values are copied directly from the Java <code>char</code> array to a native <code>wchar_t</code> array.
 <p>
 
+<a name="buffers"></a>
 <h3>Buffers/Memory Blocks</h3>
-Use arrays to represent buffers of primitive types.  A native method cannot
-return a Java array, since there is no canonical way to indicate the intended
-length of the returned array.  Instead, use one of the array access methods in
-the Pointer class, supplying the length of the returned array.<p>
+Use arrays to represent buffers of primitive types passed to a function for use only during the function invocation.  A native method cannot return a Java array, since there is no canonical way to indicate the intended length of the returned array.  Instead, use one of the array access methods in the Pointer class, supplying the length of the returned array.<p>
 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A>s may also be used as a memory buffer input
 argument; direct byte buffers can often provide much improved performance over
-primitive arrays. 
+primitive arrays.  A pointer provided by native code may be converted to a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> by calling <A HREF="com/sun/jna/Pointer.html#getByteBuffer(long, long)"><CODE>Pointer.getByteBuffer(long, long)</CODE></A>.
 <p>
 If you need to pass in a subset of a primitive array, you can do so by
 wrapping it in a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> subclass, such as <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio"><CODE>ByteBuffer</CODE></A>, using the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true#wrap(byte[], int, int)" title="class or interface in java.nio"><CODE>ByteBuffer.wrap(byte[],int,int)</CODE></A> method.  Wrapping an array in a
 buffer also allows you to pass only a subset of a Java array to the native
 function. 
 
+<a name="callbacks"></a>
 <h3>Callbacks (Function Pointers)</h3>
 JNA supports supplying Java callbacks to native code.  You must define an
 interface that extends the <A HREF="com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> interface, and define
@@ -307,13 +350,13 @@ automatically generate an <code>Callback</code> instance matching the declared
 type.  This enables you to easily call the function supplied by native code
 using proper Java syntax.
 <blockquote><code><pre>
-// C code
+// Original C code
 struct _functions {
   int (*open)(const char*,int);
   int (*close)(int);
 };
 
-// Java
+// Equivalent JNA mapping
 public class Functions extends Structure {
   public static interface OpenFunc extends Callback {
     int callback(String name, int options);
@@ -333,11 +376,11 @@ funcs.close.callback(fd);
 
 Callbacks may also be used as return values.  Native function pointers are wrapped in a proxy implementing the declared Callback type, to facilitate calling from Java.  
 <blockquote><code><pre>
-// C code
+// Original C code
 typedef void (*sig_t)(int);
 sig_t signal(int signal, sig_t sigfunc);
 
-// Java
+// Equivalent JNA mapping
 public interface CLibrary extends Library {
     public interface SignalFunction extends Callback {
         void callback(int signal);
@@ -346,19 +389,23 @@ public interface CLibrary extends Library {
 }
 </pre></code></blockquote>
 
+<a name="varargs"></a>
 <h3>Varargs</h3>
 The C varargs function definition may be mapped to a Java varargs method definition.  For example,
 <blockquote><code><pre>
-// C
+// Original C code
 extern int printf(const char* fmt, ...);
 
-// Java
+// Equivalent JNA mapping
 interface CLibrary extends Library {
     int printf(String fmt, ...);
 }
 </pre></code></blockquote>
 
+<a name="structures"></a>
 <h3>Structures</h3>
+
+The Java <A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> represents a native <code>struct</code>.  By default, this type is treated as a pointer to structure (<code>struct *</code>) on the native side when used as a parameter or return value.  When used as a structure field, the structure is interpreted as by value.  To force the complementary interpretation, the tagging interfaces <A HREF="com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>Structure.ByValue</CODE></A> and <A HREF="com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><CODE>Structure.ByReference</CODE></A> are provided.<p>
 
 <h4>Pointer-to-Structure Arguments</h4>
 To pass a pointer to a structure as an argument, simply use the Java structure
@@ -367,14 +414,14 @@ the structure will be passed to the function and updated when the function
 returns.  Structures are packed according to the default alignment rules for
 the platform's native C <code>struct</code>s.  
 <blockquote><code><pre>
-// C code
+// Original C code
 typedef struct _Point {
   int x, y;
 } Point;
 
 Point* translate(Point* pt, int dx, int dy);
 
-// Java
+// Equivalent JNA mapping
 class Point extends Structure { public int x, y; }
 Point translate(Point pt, int x, int y);
 ...
@@ -388,19 +435,21 @@ To pass a structure by value, first define the structure, then define an empty
 class from that which implements <A HREF="com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>Structure.ByValue</CODE></A>.  Use
 the <code>ByValue</code> class as the argument or return type.<p>
 <blockquote><code><pre>
-// C code
+// Original C code
 typedef struct _Point {
   int x, y;
 } Point;
 
 Point translate(Point pt, int dx, int dy);
 
-// Java
-class Point extends Structure { public int x, y; }
-class PointByValue extends Point implements Structure.ByValue { }
-PointByValue translate(PointByValue pt, int x, int y);
+// Equivalent JNA mapping
+class Point extends Structure {
+    public static class ByValue extends Point implements Structure.ByValue { }
+    public int x, y;
+}
+Point.ByValue translate(Point.ByValue pt, int x, int y);
 ...
-PointByValue pt = new PointByValue();
+Point.ByValue pt = new Point.ByValue();
 Point result = translate(pt, 100, 100);
 </pre></code></blockquote>
 
@@ -410,10 +459,10 @@ To pass an array of structures, simply use a Java array of the desired
 structure type.  If the array is uninitialized, it will be auto-initialized
 prior to the function call.<p>
 <blockquote><code><pre>
-// C code
+// Original C code
 void get_devices(struct Device[], int size);
 
-// Java
+// Equivalent JNA mapping
 int size = ...
 Device[] devices = new Device[size];
 lib.get_devices(devices, devices.length);
@@ -437,11 +486,11 @@ that your <A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><COD
 and you are responsible for freeing the returned memory if applicable in
 whatever way is appropriate for the called function.<p>
 <blockquote><code><pre>
-// C code
+// Original C code
 struct Display* get_displays(int* pcount);
 void free_displays(struct Display* displays);
 
-// Java
+// Equivalent JNA mapping
 Display get_displays(IntByReference pcount);
 void free_displays(Display[] displays);
 ...
@@ -456,7 +505,7 @@ lib.free_displays(displays);
 Nested structures are treated as consecutive memory (as opposed to pointers to
 structures).  For example:<br>
 <blockquote><code><pre>
-// C code
+// Original C code
 typedef struct _Point {
   int x, y;
 } Point;
@@ -466,7 +515,7 @@ typedef struct _Line {
   Point end;
 } Line;
 
-// Java
+// Equivalent JNA mapping
 class Point extends Structure {
   public int x, y;
 }
@@ -484,31 +533,33 @@ If you need a pointer to a structure within your structure, you can use the
 <A HREF="com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><CODE>Structure.ByReference</CODE></A> tagging interface to indicate the
 field should be treated as a pointer instead of inlining the full structure.
 <blockquote><code><pre>
-// C code
+// Original C code
 typedef struct _Line2 {
   Point* p1;
   Point* p2;
 } Line2;
 
-// Java
-class Point extends Structure { public int x, y; }
-class PointByReference extends Point implements Structure.ByReference { }
+// Equivalent JNA mapping
+class Point extends Structure {
+    public static class ByReference extends Point implements Structure.ByReference { }
+    public int x, y;
+}
 class Line2 extends Structure {
-  public PointerByReference p1;
-  public PointerByReference p2;
+  public Point.ByReference p1;
+  public Point.ByReference p2;
 }
 </pre></code></blockquote>
 
 The more general case is just a pointer to a buffer:<br>
 
 <blockquote><code><pre>
-// C code
+// Original C code
 typedef struct _Line2 {
   Point* p1;
   Point* p2;
 } Line2;
 
-// Java
+// Equivalent JNA mapping
 class Line2 extends Structure {
   public Pointer p1;
   public Pointer p2;
@@ -542,7 +593,7 @@ structure is actually used.
 <h4>Variable-sized structures</h4>
 Structures with variable size, or with primitive array elements, for example:<br>
 <blockquote><code><pre>
-// C code
+// Original C code
 typedef struct _Header {
   int flags;
   int buf_length;
@@ -554,7 +605,7 @@ require a constructor which establishes the required size for the structure
 and initializes things appropriately.  For example:<br>
 
 <blockquote><code><pre>
-// Java
+// Equivalent JNA mapping
 class Header extends Structure {
   public int flags;
   public int buf_length;
@@ -579,7 +630,7 @@ value.  You can still force an update of the native memory from the Java value
 by calling <A HREF="com/sun/jna/Structure.html#writeField(java.lang.String)"><CODE>Structure.writeField(String)</CODE></A> for the field in
 question. 
 <blockquote><code><pre>
-// Java
+// Equivalent JNA mapping
 class Data extends Structure {
   public volatile int refCount; 
   public int value;
@@ -593,6 +644,7 @@ based on the Java value with a call to
 native memory, call <A HREF="com/sun/jna/Structure.html#read()"><CODE>Structure.read()</CODE></A> (to update the entire
 structure) or <A HREF="com/sun/jna/Structure.html#readField(java.lang.String)"><CODE>data.readField("refCount")</CODE></A> (to update just the <code>refCount</code> field). 
 
+<a name="unions"></a>
 <h3>Unions</h3>
 Unions are a special type of Structure.  Each declared field within the union
 overlays the same address in native memory.  When writing a union to native
@@ -602,6 +654,7 @@ method.  On read, all non-pointer-based fields will be initialized from native
 memory.  Structure, String, and WString members will <em>not</em> be
 initialized unless they are selected via <A HREF="com/sun/jna/Union.html#setType(java.lang.Class)"><CODE>Union.setType(java.lang.Class)</CODE></A>.
 
+<a name="java-objects"></a>
 <h3>Java Object arguments</h3>
 In some cases, it would seem convenient to pass a Java object as an opaque
 pointer for later use by a Java callback method.  Unfortunately, this proves
@@ -609,6 +662,20 @@ problematic in that the native code must become responsible for reference
 tracking.   Until a consistent method or methods of handling these situations
 is formulated, passing Java objects directly is not supported.
 
+<p>
+<a href="#toc">Top</a>
+<a name="invocation-mapping"/>
+<h2>Invocation Mapping</h2>
+Sometimes native functions exist only as C preprocessor macros or as inline functions.  If you need to do more than simply change the name of the invoked function (which can be handled via <a href="#function-mapping">Function Mapping</a>, an <A HREF="com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> allows you to arbitrariley reconfigure the function invocation, including changing the method name and reordering, adding, or removing arguments.  See the <A HREF="com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> documentation for details.
+
+<p>
+<a href="#toc">Top</a>
+<a name="global-data"/>
+<h2>Library Global Data</h2>
+The method <A HREF="com/sun/jna/NativeLibrary.html#getGlobalVariableAddress(java.lang.String)"><CODE>NativeLibrary.getGlobalVariableAddress(java.lang.String)</CODE></A> may be used to obtain the address of glboal variables as a <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.  Pointer methods may then be used to read or write the value as appropriate for the variable type.
+
+<p>
+<a href="#toc">Top</a>
 <a name="crash-protection"/>
 <h2>VM Crash Protection</h2>
 When defining a new library and writing tests for it, it not uncommon to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call <A HREF="com/sun/jna/Native.html#setProtected(boolean)"><CODE>Native.setProtected(true)</CODE></A></code>.
