@@ -29,8 +29,11 @@
   <property name="copyright"
             value="Copyright &amp;copy; 2007 ${company.full}. All Rights Reserved."/>
 
-  <!-- Software release version -->            
-  <property name="version" value="3.0"/>
+  <!-- JNA library release version -->            
+  <property name="jna.version" value="3.0"/>
+  <!-- jnidispatch library release version -->
+  <property name="jni.version" value="3.0"/>
+  <property name="jni.md5" value="919a2e1a9c6e903c36cd61886e23f221"/>
   <property name="compatibility" value="1.4"/>
   <property name="test.compatibility" value="1.5"/>
 
@@ -41,7 +44,7 @@
 
   <target name="-dynamic-properties">
     <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
-    <echo>Build ${version}</echo>
+    <echo>JNA version ${jna.version}, native API version ${jni.version}</echo>
     <property name="build" value="build"/>
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
@@ -139,9 +142,10 @@
     <jar jarfile="${build}/${jar}">
       <manifest>
         <attribute name="Implementation-Vendor" value="${company.full}"/>
-        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Version" value="${jna.version}"/>
         <attribute name="Specification-Vendor" value="${company.full}"/>
-        <attribute name="Specification-Version" value="${version}"/>
+        <attribute name="Specification-Version" value="${jna.version}"/>
+        <attribute name="Native-Version" value="${jni.version}"/>
       </manifest>
       <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
     </jar>
@@ -167,9 +171,28 @@
       <class name="com.sun.jna.NativeLibrary"/>
       <class name="com.sun.jna.CallbackReference"/>
     </javah>
+    <checksum totalproperty="md5">
+      <fileset dir="${build.native}" includes="*.h"/>
+    </checksum>
+    <condition property="jni.valid" value="true">
+      <equals arg1="${jni.md5}" arg2="${md5}" trim="true"/>
+    </condition>
   </target>
 
-  <target name="native" depends="-setup,javah"
+  <!-- Invalidate native libraries when native API changes -->
+  <target name="-native-checksum" depends="javah" unless="jni.valid">
+    <echo>Invalidating native stubs, new checksum is ${md5}</echo>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/darwin.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-x86.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-amd64.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-x86.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparc.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparcv9.jar" overwrite="true"/>
+  </target>
+
+  <target name="native" depends="-setup,javah,-native-checksum"
           description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
     <!-- ensure ARCH is set properly for various platforms -->
     <!-- ARCH is used in native/Makefile to find the JAWT library -->
@@ -217,7 +240,7 @@
       <arg value="${make.SDKROOT}"/>
       <arg value="${make.ARCH}"/>
       <arg value="${make.PATH}"/>
-      <arg value="VERSION=${version}"/>
+      <arg value="VERSION=${jna.version}"/>
     </exec>
     <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
     <copy todir="${classes}/com/sun/jna/${os.prefix}">
@@ -229,10 +252,17 @@
       <fileset dir="${build.native}" 
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
-    <!-- For web start, native libraries need to be in a separate jar file -->
-    <!-- at the root -->
+    <!-- For web start, native libraries may be provided in the root of -->
+    <!-- an included jar file -->
     <jar jarfile="${build}/${native.jar}">
       <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${company.full}"/>
+        <attribute name="Implementation-Version" value="${jni.version}"/>
+        <attribute name="Specification-Vendor" value="${company.full}"/>
+        <attribute name="Specification-Version" value="${jni.version}"/>
+        <attribute name="Native-Version" value="${jni.version}"/>
+      </manifest>
     </jar>
   </target>
 
@@ -318,7 +348,7 @@
 
   <target name="javadoc" depends="-setup">
     <property name="header"
-              value="&lt;b&gt;JNA API&lt;/&gt;&lt;font size=&quot;-1&quot;&gt; ${version}&lt;/font&gt;"/>
+              value="&lt;b&gt;JNA API&lt;/&gt;&lt;font size=&quot;-1&quot;&gt; ${jna.version}&lt;/font&gt;"/>
     <property name="footer"
               value="&lt;center&gt;&lt;i&gt;${copyright}&lt;/i&gt;&lt;/center&gt;"/>
 
@@ -365,8 +395,6 @@
       <zipfileset src="${dist}/linux-i386.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-i386"/>
-      <!-- These are disabled until updated for 3.0 -->
-      <!--
       <zipfileset src="${dist}/linux-amd64.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-amd64"/>
@@ -379,7 +407,6 @@
       <zipfileset src="${dist}/sunos-sparcv9.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      -->
       <zipfileset src="${dist}/freebsd-i386.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-i386"/>

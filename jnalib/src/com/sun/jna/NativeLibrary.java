@@ -373,6 +373,10 @@ public class NativeLibrary {
     static {
         
         librarySearchPath.addAll(initPaths("jna.library.path"));
+        String webstartPath = Native.getWebStartLibraryPath("jnidispatch");
+        if (webstartPath != null) {
+            librarySearchPath.add(webstartPath);
+        }
         if (System.getProperty("jna.platform.library.path") == null
             && !Platform.isWindows()) {
             // Add default path lookups for unix-like systems

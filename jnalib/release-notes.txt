@@ -20,7 +20,8 @@ Features
 * Explicit access to share library global data
 * Invocation interception to facilitate translation of C preprocessor macros
   and inline functions
-* Provide utility to determine Web Start native library cache location
+* Provide utility to determine Web Start native library cache location;
+  auto-include this path if jnidispatch is included as a <nativelib>
 * Provide memory alignment
 
 Bug Fixes
