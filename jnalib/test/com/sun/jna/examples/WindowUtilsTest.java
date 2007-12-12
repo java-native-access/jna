@@ -80,9 +80,11 @@ public class WindowUtilsTest extends TestCase {
     
     protected void tearDown() {
         robot = null;
-        Window[] owned = JOptionPane.getRootFrame().getOwnedWindows();
-        for (int i=0;i < owned.length;i++) {
-            owned[i].dispose();
+        if (!GraphicsEnvironment.isHeadless()) {
+            Window[] owned = JOptionPane.getRootFrame().getOwnedWindows();
+            for (int i=0;i < owned.length;i++) {
+                owned[i].dispose();
+            }
         }
     }
     

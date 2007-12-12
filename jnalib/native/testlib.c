@@ -260,7 +260,7 @@ returnStructureByValue() {
 typedef int32 (*callback_t)(int32);
 EXPORT callback_t
 returnCallback() {
-  return returnInt32Argument;
+  return &returnInt32Argument;
 }
 
 EXPORT callback_t
@@ -631,18 +631,23 @@ returnInt32ArgumentStdCall(int32 arg) {
 EXPORT int32 __stdcall
 callInt32StdCallCallback(int32 (__stdcall *func)(int32 arg, int32 arg2),
                          int32 arg, int32 arg2) {
-  void* sp1;
-  void* sp2;
-  int value;
+  void* sp1 = NULL;
+  void* sp2 = NULL;
+  int value = -1;
 
+#if defined(_MSC_VER)
+  __asm mov sp1, esp;
+  value = (*func)(arg, arg2);
+  __asm mov sp2, esp;
+#elif defined(__GNUC__)
   asm volatile (" movl %%esp,%0" : "=g" (sp1));
   value = (*func)(arg, arg2);
   asm volatile (" movl %%esp,%0" : "=g" (sp2));
+#endif
 
   if (sp1 != sp2) {
     return -1;
   }
-
   return value;
 }
 #endif /* _WIN32 */

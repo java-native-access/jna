@@ -91,14 +91,14 @@ CASM=-FAs
 
 LDFLAGS=/pdb:$(subst .dll,,$@).pdb /implib:$(subst .dll,,$@).lib /debug /machine:i386 /pdbtype:sept /dll /nologo /opt:REF /incremental:no /out:$@ 
 LIBDIR=/libpath:"$(JAVA_HOME)/lib" 
-LIBS=$(LIBDIR) jawt.lib
+#LIBS=$(LIBDIR) jawt.lib
 STRIP=@echo
 else
 CDEFINES=-D__int64="long long" -D_JNI_IMPLEMENTATION -DHAVE_PROTECTION
 PCFLAGS+=-mno-cygwin
 LDFLAGS+=-mno-cygwin -Wl,--add-stdcall-alias -L /lib/mingw 
 LIBDIR="$(JAVA_HOME)/lib"
-LIBS=$(LIBDIR)/jawt.lib
+#LIBS=$(LIBDIR)/jawt.lib
 endif
 
 LIBPFX=

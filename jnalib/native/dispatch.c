@@ -32,7 +32,7 @@
 #define LOAD_LIBRARY(name) LoadLibrary(name)
 #define FREE_LIBRARY(handle) FreeLibrary(handle)
 #define FIND_ENTRY(lib, name) GetProcAddress(lib, name)
-#define dlerror() ""
+#define dlerror() w32_format_error(buf, sizeof(buf))
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
@@ -1513,8 +1513,20 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
 }
   
-#if !defined(__APPLE__) && !defined(_WIN32)
+#if !defined(__APPLE__)
 #define JAWT_HEADLESS_HACK
+#ifdef _WIN32
+#define JAWT_NAME "jawt.dll"
+#define METHOD_NAME (sizeof(void*)==4?"_JAWT_GetAWT@8":"_JAWT_GetAWT@16")
+static char* w32_format_error(char* buf, int len) {
+  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
+                0, buf, len, NULL);
+  return buf;
+}
+#else
+#define JAWT_NAME "libjawt.so"
+#define METHOD_NAME "JAWT_GetAWT"
+#endif
 static void* jawt_handle = NULL;
 static jboolean JNICALL (*pJAWT_GetAWT)(JNIEnv*,JAWT*);
 #define JAWT_GetAWT (*pJAWT_GetAWT)
@@ -1535,15 +1547,15 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) 
   // Java versions 1.5/1.6 throw UnsatisfiedLinkError when run headless
   // Avoid the issue by dynamic linking
   if (!pJAWT_GetAWT) {
-    char buf[1024];
-    if ((jawt_handle = LOAD_LIBRARY("libjawt.so")) == NULL) {
-      sprintf(buf, "Error loading JAWT: %s", dlerror());
-      throwByName(env, EError, buf);
+    char msg[1024], buf[1024];
+    if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME)) == NULL) {
+      sprintf(msg, "Error loading %s: %s", JAWT_NAME, dlerror());
+      throwByName(env, EUnsatisfiedLink, msg);
       return -1;
     }
-    if ((pJAWT_GetAWT = FIND_ENTRY(jawt_handle, "JAWT_GetAWT")) == NULL) {
-      sprintf(buf, "Error looking up JAWT_GetAWT: %s", dlerror());
-      throwByName(env, EError, buf);
+    if ((pJAWT_GetAWT = (void*)FIND_ENTRY(jawt_handle, METHOD_NAME)) == NULL) {
+      sprintf(msg, "Error looking up %s: %s", METHOD_NAME, dlerror());
+      throwByName(env, EUnsatisfiedLink, msg);
       return -1;
     }
   }

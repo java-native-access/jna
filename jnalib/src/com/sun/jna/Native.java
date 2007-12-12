@@ -13,6 +13,8 @@
 package com.sun.jna;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.io.File;
@@ -125,9 +127,10 @@ public final class Native {
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
      * This method is primarily for X11-based systems, which use an opaque
-     * <code>XID</code> (usually <code>long int</code>) to identify windows. 
+     * <code>XID</code> (usually <code>long int</code>) to identify windows.
+     * @throws HeadlessException if the current VM is running headless 
      */
-    public static long getWindowID(Window w) {
+    public static long getWindowID(Window w) throws HeadlessException {
         return getComponentID(w);
     }
     
@@ -135,8 +138,12 @@ public final class Native {
      * {@link Component} as a <code>long</code> value.
      * This method is primarily for X11-based systems, which use an opaque
      * <code>XID</code> (usually <code>long int</code>) to identify windows. 
+     * @throws HeadlessException if the current VM is running headless 
      */
-    public static long getComponentID(Component c) {
+    public static long getComponentID(Component c) throws HeadlessException {
+        if (GraphicsEnvironment.isHeadless()) {
+            throw new HeadlessException("No native windows when headless");
+        }
         if (c.isLightweight()) {
             throw new IllegalArgumentException("Component must be heavyweight");
         }
@@ -149,6 +156,10 @@ public final class Native {
                 throw new IllegalStateException("Component must be visible");
             }
         }
+        // By this point, we're certain that Toolkit.loadLibraries() has
+        // been called, thus avoiding AWT/JAWT link errors
+        // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
+        // Toolkit.getDefaultToolkit();
         return getWindowHandle0(c);
     }
     
@@ -156,8 +167,9 @@ public final class Native {
      * {@link Window} as a {@link Pointer} value.  This method is primarily for 
      * w32, which uses the <code>HANDLE</code> type (actually 
      * <code>void *</code>) to identify windows. 
+     * @throws HeadlessException if the current VM is running headless 
      */
-    public static Pointer getWindowPointer(Window w) {
+    public static Pointer getWindowPointer(Window w) throws HeadlessException {
         return getComponentPointer(w);
     }
     
@@ -165,8 +177,9 @@ public final class Native {
      * {@link Component} as a {@link Pointer} value.  This method is primarily 
      * for w32, which uses the <code>HANDLE</code> type (actually 
      * <code>void *</code>) to identify windows. 
+     * @throws HeadlessException if the current VM is running headless 
      */
-    public static Pointer getComponentPointer(Component c) {
+    public static Pointer getComponentPointer(Component c) throws HeadlessException {
         return new Pointer(getComponentID(c));
     }
     
@@ -414,22 +427,6 @@ public final class Native {
                     try { fos.close(); } catch(IOException e) { }
                 }
             }
-        }
-        // Ensure the AWT library is loaded prior to loading the JNI library
-        // to avoid dependent library link errors
-        // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
-        // Calling Toolkit.getDefaultToolkit() ensures the AWT library ("awt")
-        // is loaded by the proper class loader, otherwise Toolkit class init
-        // will fail later.
-        Toolkit.getDefaultToolkit();
-        if (Platform.isWindows()) {
-            // Windows needs some extra nudging
-            // TODO: find a way to ensure JAWT is loaded by the correct
-            // ClassLoader; if already loaded in a different class loader
-            // we get a stack trace here, but if not, someone else is going to
-            // get the error that JAWT is already loaded .
-            try { System.loadLibrary("jawt"); } 
-            catch(UnsatisfiedLinkError e) { e.printStackTrace(); }
         }
         System.load(lib.getAbsolutePath());
     }
