@@ -17,12 +17,13 @@ Features
 * Auto-convert WString[]
 * Provide library synchronization wrapper similar to Collections.synchronizedX
 * Support lookup of OSX framework libraries by name
-* Explicit access to share library global data
+* Explicit access to shared library global data
 * Invocation interception to facilitate translation of C preprocessor macros
   and inline functions
 * Provide utility to determine Web Start native library cache location;
   auto-include this path if jnidispatch is included as a <nativelib>
-* Provide memory alignment
+  (robertengels) 
+* Provide access to aligned memory
 * Versioning information embedded in jna.jar and native library
 
 Bug Fixes
