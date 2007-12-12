@@ -1798,6 +1798,14 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
   
   jnidispatch_callback_dispose(env);
 
+#ifdef JAWT_HEADLESS_HACK
+  if (jawt_handle != NULL) {
+    FREE_LIBRARY(jawt_handle);
+    jawt_handle = NULL;
+    pJAWT_GetAWT = NULL;
+  }
+#endif
+
   if (!attached) {
     (*vm)->DetachCurrentThread(vm);
   }
