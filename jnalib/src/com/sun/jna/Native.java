@@ -446,6 +446,9 @@ public final class Native {
     /** Return the size of a native <code>wchar_t</code>. */
     private static native int wideCharSize();
     
+    private static native String getNativeVersion();
+    private static native String getAPIChecksum();
+
     private static final ThreadLocal lastError = new ThreadLocal() {
         protected synchronized Object initialValue() {
             return new Integer(0);
@@ -577,5 +580,14 @@ public final class Native {
             }
             System.exit(0);
         }
+    }
+
+    public static void main(String[] args) {
+        Package pkg = Native.class.getPackage();
+        System.out.println(pkg.getSpecificationTitle());
+        System.out.println("Version: " + Native.class.getPackage().getImplementationVersion());
+        System.out.println(" Native: " + getNativeVersion() + " ("
+                           + getAPIChecksum() + ")");
+        System.exit(0);
     }
 }

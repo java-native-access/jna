@@ -24,16 +24,21 @@
   <property name="doc" location="doc"/>
   <property name="javadoc" location="${doc}/javadoc"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
-  <property name="company" value="Technomage"/>
-  <property name="company.full" value="Timothy Wall"/>
+  <property name="vendor" value="JNA Development Team"/>
   <property name="copyright"
-            value="Copyright &amp;copy; 2007 ${company.full}. All Rights Reserved."/>
-
+            value="Copyright &amp;copy; 2007 Timothy Wall. All Rights Reserved."/>
   <!-- JNA library release version -->            
   <property name="jna.version" value="3.0"/>
   <!-- jnidispatch library release version -->
   <property name="jni.version" value="3.0"/>
-  <property name="jni.md5" value="919a2e1a9c6e903c36cd61886e23f221"/>
+  <property name="jni.md5" value="7afb7c686c2f521de9dbc0a9a45e068c"/>
+  <property name="spec.title" value="Java Native Access (JNA)"/>
+  <property name="spec.vendor" value="${vendor}"/>
+  <property name="spec.version" value="${jna.version}"/>
+  <property name="impl.title" value="${spec.title}"/>
+  <property name="impl.vendor" value="${spec.vendor}"/>
+  <property name="impl.version" value="${spec.version}"/>
+
   <property name="compatibility" value="1.4"/>
   <property name="test.compatibility" value="1.5"/>
 
@@ -141,11 +146,13 @@
           description="Build primary jar">
     <jar jarfile="${build}/${jar}">
       <manifest>
-        <attribute name="Implementation-Vendor" value="${company.full}"/>
-        <attribute name="Implementation-Version" value="${jna.version}"/>
-        <attribute name="Specification-Vendor" value="${company.full}"/>
-        <attribute name="Specification-Version" value="${jna.version}"/>
-        <attribute name="Native-Version" value="${jni.version}"/>
+        <attribute name="Implementation-Title" value="${impl.title}"/>
+        <attribute name="Implementation-Vendor" value="${vendor}"/>
+        <attribute name="Implementation-Version" value="${impl.version}"/>
+        <attribute name="Specification-Title" value="${spec.title}"/>
+        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+        <attribute name="Specification-Version" value="${spec.version}"/>
+        <attribute name="Main-Class" value="com.sun.jna.Native"/>
       </manifest>
       <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
     </jar>
@@ -171,17 +178,21 @@
       <class name="com.sun.jna.NativeLibrary"/>
       <class name="com.sun.jna.CallbackReference"/>
     </javah>
-    <checksum totalproperty="md5">
+    <apply executable="grep" parallel="true" relative="true" output="${build.native}/sig">
+      <arg value="-A"/>
+      <arg value="1"/>
+      <arg value="JNIEXPORT"/>
       <fileset dir="${build.native}" includes="*.h"/>
-    </checksum>
+    </apply>
+    <checksum property="md5" file="${build.native}/sig" />
     <condition property="jni.valid" value="true">
       <equals arg1="${jni.md5}" arg2="${md5}" trim="true"/>
     </condition>
   </target>
 
   <!-- Invalidate native libraries when native API changes -->
-  <target name="-native-checksum" depends="javah" unless="jni.valid">
-    <echo>Invalidating native stubs, new checksum is ${md5}</echo>
+  <target name="-native-api-check" depends="javah" unless="jni.valid">
+    <echo>Invalidating native code, new checksum is ${md5}</echo>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/darwin.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-x86.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
@@ -190,9 +201,13 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-x86.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparcv9.jar" overwrite="true"/>
+    <delete failOnError="false" includeEmptyDirs="true">
+      <fileset dir="${build.native}" includes="*.o,*jnidispatch*"/>
+    </delete>
+    <fail>API for native code has changed.  Re-run this build after updating jni.version and jni.md5 in build.xml</fail>
   </target>
 
-  <target name="native" depends="-setup,javah,-native-checksum"
+  <target name="native" depends="-setup,javah,-native-api-check"
           description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
     <!-- ensure ARCH is set properly for various platforms -->
     <!-- ARCH is used in native/Makefile to find the JAWT library -->
@@ -240,7 +255,8 @@
       <arg value="${make.SDKROOT}"/>
       <arg value="${make.ARCH}"/>
       <arg value="${make.PATH}"/>
-      <arg value="VERSION=${jna.version}"/>
+      <arg value="VERSION=${jni.version}"/>
+      <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
     <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
     <copy todir="${classes}/com/sun/jna/${os.prefix}">
@@ -257,11 +273,8 @@
     <jar jarfile="${build}/${native.jar}">
       <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
       <manifest>
-        <attribute name="Implementation-Vendor" value="${company.full}"/>
         <attribute name="Implementation-Version" value="${jni.version}"/>
-        <attribute name="Specification-Vendor" value="${company.full}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
-        <attribute name="Native-Version" value="${jni.version}"/>
       </manifest>
     </jar>
   </target>

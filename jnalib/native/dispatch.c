@@ -1661,6 +1661,22 @@ Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass classp, jint code) {
   update_last_error(env, code);
 }
 
+JNIEXPORT jstring JNICALL
+Java_com_sun_jna_Native_getNativeVersion(JNIEnv *env, jclass classp) {
+#ifndef VERSION
+#define VERSION "undefined"
+#endif
+  return newJavaString(env, VERSION, 0);
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass classp) {
+#ifndef CHECKSUM
+#define CHECKSUM "undefined"
+#endif
+  return newJavaString(env, CHECKSUM, 0);
+}
+
 // FIXME figure out the data layout FFI wants in the result pointer; may
 // be affected by what is told to FFI about the return type size
 void

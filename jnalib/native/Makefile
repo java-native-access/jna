@@ -27,6 +27,7 @@ OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
                         -e 's/Linux.*/linux/g')
 
 VERSION=$(shell sed -n 's/^.*version. value="\(\([0-9][0-9]*\)\(\.[0-9][0-9]*\(\.[0-9][0-9]*\)\?\)\?\).*".*/\1/p' ../build.xml)
+CHECKSUM=$(shell sed -n 's/^.*jni.md5. value="\(.*\)".*/\1/p' ../build.xml)
 JAVA_INCLUDES=-I"$(JAVA_HOME)/include" \
               -I"$(JAVA_HOME)/include/$(OS)"
 
@@ -60,7 +61,8 @@ COUT=-o $@
 CINCLUDES=$(JAVA_INCLUDES) -I"$(JAVAH)" -I$(FFI_BUILD)/include
 CDEFINES=-D_REENTRANT
 PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses
-CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES)
+CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES) \
+       -DVERSION='"$(VERSION)"' -DCHECKSUM='"$(CHECKSUM)"'
 # -static-libgcc avoids gcc library incompatibilities across linux systems
 LDFLAGS=-o $@ -shared -Wl,-soname,$@ -static-libgcc
 # Avoid bug in X11-based 1.5/1.6 VMs; dynamically load instead of linking

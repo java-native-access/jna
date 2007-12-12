@@ -23,6 +23,7 @@ Features
 * Provide utility to determine Web Start native library cache location;
   auto-include this path if jnidispatch is included as a <nativelib>
 * Provide memory alignment
+* Versioning information embedded in jna.jar and native library
 
 Bug Fixes
 * Avoid attempts to free native library if it failed to load (wmeissner)

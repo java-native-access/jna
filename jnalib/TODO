@@ -120,6 +120,8 @@
 
 
 # DONE
+* add main class which spits out version information
+  
 * docs: split pages: FAQ
   FAQ: J2ME, new platform builds, stdcall
 
