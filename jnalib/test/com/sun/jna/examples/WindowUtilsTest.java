@@ -204,8 +204,10 @@ public class WindowUtilsTest extends TestCase {
             return;
         Frame root = JOptionPane.getRootFrame();
         final Window back = new Window(root);
-        final Color BACKGROUND = new Color(0, 128, 128);
-        final Color FOREGROUND = new Color(128, 0, 0);
+        // Avoid display idiosyncrasies by using "standard" colors
+        // (Don't use black, since a failed sample is sometimes black)
+        final Color BACKGROUND = Color.GREEN;
+        final Color FOREGROUND = Color.RED;
         back.setBackground(BACKGROUND);
         back.setLocation(X, Y);
         final JWindow front = new JWindow(root);

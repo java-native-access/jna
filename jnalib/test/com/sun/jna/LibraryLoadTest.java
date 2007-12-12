@@ -14,6 +14,7 @@ package com.sun.jna;
 
 import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.JFrame;
 
@@ -27,6 +28,8 @@ public class LibraryLoadTest extends TestCase {
     }
     
     public void testLoadJAWT() {
+        if (GraphicsEnvironment.isHeadless()) return;
+
         Frame f = new Frame(getName());
         f.pack();
         try {

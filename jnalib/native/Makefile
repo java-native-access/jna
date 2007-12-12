@@ -63,7 +63,9 @@ PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses
 CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES)
 # -static-libgcc avoids gcc library incompatibilities across linux systems
 LDFLAGS=-o $@ -shared -Wl,-soname,$@ -static-libgcc
-LIBS=-L"$(LIBDIR)" -ljawt 
+# Avoid bug in X11-based 1.5/1.6 VMs; dynamically load instead of linking
+# See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
+#LIBS=-L"$(LIBDIR)" -ljawt 
 STRIP=strip -x
 # end defaults
 

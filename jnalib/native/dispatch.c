@@ -1513,6 +1513,13 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
 }
   
+#if !defined(__APPLE__) && !defined(_WIN32)
+#define JAWT_HEADLESS_HACK
+static void* jawt_handle = NULL;
+static jboolean JNICALL (*pJAWT_GetAWT)(JNIEnv*,JAWT*);
+#define JAWT_GetAWT (*pJAWT_GetAWT)
+#endif
+
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) {
   jlong handle = 0;
@@ -1524,6 +1531,24 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) 
   // NOTE: AWT/JAWT must be loaded prior to this code's execution
   // See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
   awt.version = JAWT_VERSION_1_4;
+#ifdef JAWT_HEADLESS_HACK
+  // Java versions 1.5/1.6 throw UnsatisfiedLinkError when run headless
+  // Avoid the issue by dynamic linking
+  if (!pJAWT_GetAWT) {
+    char buf[1024];
+    if ((jawt_handle = LOAD_LIBRARY("libjawt.so")) == NULL) {
+      sprintf(buf, "Error loading JAWT: %s", dlerror());
+      throwByName(env, EError, buf);
+      return -1;
+    }
+    if ((pJAWT_GetAWT = FIND_ENTRY(jawt_handle, "JAWT_GetAWT")) == NULL) {
+      sprintf(buf, "Error looking up JAWT_GetAWT: %s", dlerror());
+      throwByName(env, EError, buf);
+      return -1;
+    }
+  }
+#endif
+
   if (!JAWT_GetAWT(env, &awt)) {
     throwByName(env, EUnsatisfiedLink, "Can't load JAWT");
     return 0;
