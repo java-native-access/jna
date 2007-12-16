@@ -25,7 +25,8 @@ import java.util.Iterator;
  * the String. 
  */
 public abstract class Union extends Structure {
-    private StructField writeField;
+    private StructField activeField;
+    private StructField biggestField;
     /** Create a Union whose size and alignment will be calculated 
      * automatically.
      */
@@ -46,15 +47,16 @@ public abstract class Union extends Structure {
         for (Iterator i=fields().values().iterator();i.hasNext();) {
             StructField f = (StructField)i.next();
             if (f.type == type) {
-                writeField = f;
+                activeField = f;
                 return;
             }
         }
         throw new IllegalArgumentException("No field of type " + type + " in " + this);
     }
+    
     /** Only the currently selected field will be written. */
     void writeField(StructField field) {
-        if (field == writeField) {
+        if (field == activeField) {
             super.writeField(field);
         }
     }
@@ -64,7 +66,7 @@ public abstract class Union extends Structure {
      * crash the VM if not properly initialized.
      */
     void readField(StructField field) {
-        if (field == writeField 
+        if (field == activeField 
             || (!Structure.class.isAssignableFrom(field.type)
                 && !String.class.isAssignableFrom(field.type)
                 && !WString.class.isAssignableFrom(field.type))) {
@@ -82,14 +84,22 @@ public abstract class Union extends Structure {
             for (Iterator i=fields().values().iterator();i.hasNext();) {
                 StructField f = (StructField)i.next();
                 f.offset = 0;
-                fsize = Math.max(fsize, f.size);
+                if (f.size > fsize) {
+                    fsize = f.size;
+                    biggestField = f;
+                }
             }
             size = calculateAlignedSize(fsize);
         }
         return size;
     }
     /** All fields are considered the "first" element. */
-    protected int getNativeAlignment(Class type, Object value, boolean firstElement) {
+    protected int getNativeAlignment(Class type, Object value, boolean isFirstElement) {
         return super.getNativeAlignment(type, value, true);
+    }
+
+    /** Return type information for the largest field. */
+    Pointer getTypeInfo() {
+        return getTypeInfo(getField(activeField != null ? activeField : biggestField));
     }
 }

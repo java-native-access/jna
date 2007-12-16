@@ -1,7 +1,7 @@
 Release 3.0
 Features
 * More supported platforms, via GCC's libffi (wmeissner)
-* Support struct by value as parameter and return value
+* Support struct by value as parameter and return value (duncan)
 * Support struct by reference within structures
 * Provide access to native peer for java.awt.Component 
 * Provide access to native peer on OS X.

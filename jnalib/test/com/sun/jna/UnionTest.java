@@ -60,6 +60,22 @@ public class UnionTest extends TestCase {
         assertNull("Unselected WString should be null", u.wstring);
     }
     
+    public void testReadTypeInfo() {
+        SizedUnion u = new SizedUnion();
+        assertEquals("Type should be that of longest field if no field active",
+                     Structure.getTypeInfo(new Long(0)),
+                     u.getTypeInfo());
+        u.setType(int.class);
+        assertEquals("Union type information should match active field",
+                     Structure.getTypeInfo(new Integer(0)),
+                     u.getTypeInfo());
+        
+        u.setType(Pointer.class);
+        assertEquals("Wrong type information",
+                     Structure.getTypeInfo(null),
+                     u.getTypeInfo());
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(UnionTest.class);
     }

@@ -197,7 +197,7 @@ public class ReturnTypesTest extends TestCase {
     
     public void testReturnStructureByValue() {
         TestStructure s = lib.returnStructureByValue();
-        assertNotNull("Returned structure must not be null");
+        assertNotNull("Returned structure must not be null", s);
         assertEquals("Wrong char field value", 1, s.c);
         assertEquals("Wrong short field value", 2, s.s);
         assertEquals("Wrong int field value", 3, s.i);

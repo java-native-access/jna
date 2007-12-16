@@ -55,13 +55,13 @@ public abstract class Structure {
      * <code>Structure</code> function parameters and return values as by 
      * reference, meaning the address of the structure is used.
      */
-    protected interface ByValue { }
+    public interface ByValue { }
     /** Tagging interface to indicate the address of an instance of the 
      * Structure type is to be used within a <code>Structure</code> definition 
      * rather than nesting the full Structure contents.  The default behavior 
      * is to inline <code>Structure</code> fields.
      */
-    protected interface ByReference { }
+    public interface ByReference { }
     
     private static class MemberOrder {
         public int first;
@@ -97,7 +97,6 @@ public abstract class Structure {
 
     private static final int MAX_GNUC_ALIGNMENT = isSPARC ? 8 : NativeLong.SIZE;
     protected static final int CALCULATE_SIZE = -1;
-    private static Map typeInfoMap = new WeakHashMap(); 
     // This field is accessed by native code
     private Pointer memory;
     private int size = CALCULATE_SIZE;
@@ -210,8 +209,9 @@ public abstract class Structure {
             // Always clear new structure memory
             memory.clear(size);
             this.size = size;
+            // Update native FFI type information, if needed
             if (this instanceof ByValue) {
-                typeInfo = getTypeInfo().peer;
+                getTypeInfo();
             }
         }
     }
@@ -261,6 +261,27 @@ public abstract class Structure {
         readField(f);
     }
 
+    /** Obtain the value currently in the Java field. */
+    Object getField(StructField structField) {
+        try {
+            return structField.field.get(this);
+        }
+        catch (Exception e) {
+            throw new Error("Exception reading field '"
+                            + structField.name + "' in " + getClass(), e);
+        }
+    }
+    
+    private void setField(StructField structField, Object value) {
+        try {
+            structField.field.set(this, value);
+        }
+        catch(IllegalAccessException e) {
+            throw new Error("Unexpectedly unable to write to field '"
+                            + structField.name + "' within " + getClass(), e);
+        }
+    }
+    
     void readField(StructField structField) {
         
         // Get the offset of the field
@@ -276,30 +297,25 @@ public abstract class Structure {
         // Get the value at the offset according to its type
         Object result = null;
         if (Structure.class.isAssignableFrom(nativeType)) {
-            Structure s = null;
-            try {
-                s = (Structure)structField.field.get(this);
-                if (ByReference.class.isAssignableFrom(nativeType)) {
-                    Pointer p = memory.getPointer(offset);
-                    if (p == null) {
-                        s = null;
-                    }
-                    else {
-                        // Only preserve the field value if the pointer
-                        // is unchanged
-                        if (s == null || !p.equals(s.getPointer())) {
-                            s = newInstance(nativeType);
-                            s.useMemory(p);
-                        }
-                        s.read();
-                    }
+            Structure s = (Structure)getField(structField);
+            if (ByReference.class.isAssignableFrom(nativeType)) {
+                Pointer p = memory.getPointer(offset);
+                if (p == null) {
+                    s = null;
                 }
                 else {
-                    s.useMemory(memory, offset);
+                    // Only preserve the field value if the pointer
+                    // is unchanged
+                    if (s == null || !p.equals(s.getPointer())) {
+                        s = newInstance(nativeType);
+                        s.useMemory(p);
+                    }
                     s.read();
                 }
             }
-            catch (IllegalAccessException e) {
+            else {
+                s.useMemory(memory, offset);
+                s.read();
             }
             result = s;
         }
@@ -342,38 +358,24 @@ public abstract class Structure {
             if (fp == null) {
                 result = null;
             }
-            else try {
-                Callback cb = (Callback)structField.field.get(this);
+            else {
+                Callback cb = (Callback)getField(structField);
                 Pointer oldfp = CallbackReference.getFunctionPointer(cb);
                 if (!fp.equals(oldfp)) {
                     cb = CallbackReference.getCallback(nativeType, fp);
                 }
                 result = cb;
             }
-            catch (IllegalArgumentException e) {
-                // avoid overwriting Java field
-                return;
-            }
-            catch (IllegalAccessException e) {
-                // avoid overwriting Java field
-                return;
-            }
         }
         else if (nativeType.isArray()) {
             Class cls = nativeType.getComponentType();
             int length = 0;
-            try {
-                Object o = structField.field.get(this);
-                if (o == null) {
-                    throw new IllegalStateException("Array field in Structure not initialized");
-                }
-                length = Array.getLength(o);
-                result = o;
+            Object o = getField(structField);
+            if (o == null) {
+                throw new IllegalStateException("Array field in Structure not initialized");
             }
-            catch (IllegalArgumentException e) {
-            }
-            catch (IllegalAccessException e) {
-            }
+            length = Array.getLength(o);
+            result = o;
 
             if (cls == byte.class) {
                 memory.read(offset, (byte[])result, 0, length);
@@ -432,14 +434,7 @@ public abstract class Structure {
         }
 
         // Set the value on the field
-        try {
-            structField.field.set(this, result);
-        }
-        catch (Exception e) {
-            throw new Error("Exception setting field \""
-                            + structField.name+"\" to " + result 
-                            + ": " + e, e);
-        }
+        setField(structField, result);
     }
 
 
@@ -453,6 +448,12 @@ public abstract class Structure {
         if (size == CALCULATE_SIZE) {
             allocateMemory();
         }
+
+        // Update native FFI type information, if needed
+        if (this instanceof ByValue) {
+            getTypeInfo();
+        }
+
         // Write all fields, except those marked 'volatile'
         for (Iterator i=structFields.values().iterator();i.hasNext();) {
             StructField sf = (StructField)i.next();
@@ -475,14 +476,8 @@ public abstract class Structure {
         int offset = structField.offset;
 
         // Get the value from the field
-        Object value = null;
-        try {
-            value = structField.field.get(this);
-        }
-        catch (Exception e) {
-            throw new Error("Exception reading field \""
-                            + structField.name + "\"", e);
-        }
+        Object value = getField(structField);
+        
         // Determine the type of the field
         Class nativeType = structField.type;
         ToNativeConverter converter = structField.writeConverter;
@@ -676,61 +671,59 @@ public abstract class Structure {
             }
             
             int fieldAlignment = 1;
-            try {
-                Object value = field.get(this);
-                if (value == null) {
-                    if (Structure.class.isAssignableFrom(type)
-                        && !(ByReference.class.isAssignableFrom(type))) {
-                        try {
-                            value = newInstance(type);
-                            field.set(this, value);
-                        }
-                        catch(IllegalArgumentException e) {
-                            String msg = "Can't determine size of nested structure: " 
-                                + e.getMessage();
-                            throw new IllegalArgumentException(msg);
-                        }
+            if (!Modifier.isPublic(field.getModifiers()))
+                continue;
+            
+            Object value = getField(structField);
+            if (value == null) {
+                if (Structure.class.isAssignableFrom(type)
+                    && !(ByReference.class.isAssignableFrom(type))) {
+                    try {
+                        value = newInstance(type);
+                        setField(structField, value);
                     }
-                    else if (type.isArray()) {
-                        // can't calculate size yet, defer until later
-                        if (force) {
-                            throw new IllegalStateException("Array fields must be initialized");
-                        }
-                        return CALCULATE_SIZE;
-                    }
-                }
-                Class nativeType = type;
-                if (NativeMapped.class.isAssignableFrom(type)) {
-                    NativeMappedConverter tc = new NativeMappedConverter(type);
-                    value = tc.defaultValue();
-                    nativeType = tc.nativeType();
-                    structField.writeConverter = tc;
-                    structField.readConverter = tc;
-                    structField.context = new StructureReadContext(this, field);
-                    field.set(this, value);
-                }
-                else if (typeMapper != null) {
-                    ToNativeConverter writeConverter = typeMapper.getToNativeConverter(type);
-                    FromNativeConverter readConverter = typeMapper.getFromNativeConverter(type);
-                    if (writeConverter != null && readConverter != null) {
-                        value = writeConverter.toNative(value,
-                                new StructureWriteContext(this, structField.field));
-                        nativeType = value != null ? value.getClass() : Pointer.class;
-                        structField.writeConverter = writeConverter;
-                        structField.readConverter = readConverter;
-                        structField.context = new StructureReadContext(this, field);
-                    }
-                    else if (writeConverter != null || readConverter != null) {
-                        String msg = "Structures require bidirectional type conversion for " + type;
+                    catch(IllegalArgumentException e) {
+                        String msg = "Can't determine size of nested structure: " 
+                            + e.getMessage();
                         throw new IllegalArgumentException(msg);
                     }
                 }
-                structField.size = getNativeSize(nativeType, value);
-                fieldAlignment = getNativeAlignment(nativeType, value, i==0);
+                else if (type.isArray()) {
+                    // can't calculate size yet, defer until later
+                    if (force) {
+                        throw new IllegalStateException("Array fields must be initialized");
+                    }
+                    return CALCULATE_SIZE;
+                }
             }
-            catch (IllegalAccessException e) {
-                // ignore non-public fields
+            Class nativeType = type;
+            if (NativeMapped.class.isAssignableFrom(type)) {
+                NativeMappedConverter tc = new NativeMappedConverter(type);
+                value = tc.defaultValue();
+                nativeType = tc.nativeType();
+                structField.writeConverter = tc;
+                structField.readConverter = tc;
+                structField.context = new StructureReadContext(this, field);
+                setField(structField, value);
             }
+            else if (typeMapper != null) {
+                ToNativeConverter writeConverter = typeMapper.getToNativeConverter(type);
+                FromNativeConverter readConverter = typeMapper.getFromNativeConverter(type);
+                if (writeConverter != null && readConverter != null) {
+                    value = writeConverter.toNative(value,
+                                                    new StructureWriteContext(this, structField.field));
+                    nativeType = value != null ? value.getClass() : Pointer.class;
+                    structField.writeConverter = writeConverter;
+                    structField.readConverter = readConverter;
+                    structField.context = new StructureReadContext(this, field);
+                }
+                else if (writeConverter != null || readConverter != null) {
+                    String msg = "Structures require bidirectional type conversion for " + type;
+                    throw new IllegalArgumentException(msg);
+                }
+            }
+            structField.size = getNativeSize(nativeType, value);
+            fieldAlignment = getNativeAlignment(nativeType, value, i==0);
             
             // Align fields as appropriate
             structAlignment = Math.max(structAlignment, fieldAlignment);
@@ -768,7 +761,7 @@ public abstract class Structure {
     // TODO: write getNaturalAlignment(stack/alloc) + getEmbeddedAlignment(structs)
     // TODO: move this into a native call which detects default alignment
     // automatically
-    protected int getNativeAlignment(Class type, Object value, boolean firstElement) {
+    protected int getNativeAlignment(Class type, Object value, boolean isFirstElement) {
         int alignment = 1;
         int size = getNativeSize(type, value);
         if (type.isPrimitive() || Long.class == type || Integer.class == type
@@ -793,7 +786,7 @@ public abstract class Structure {
             }
         }
         else if (type.isArray()) {
-            alignment = getNativeAlignment(type.getComponentType(), null, firstElement);
+            alignment = getNativeAlignment(type.getComponentType(), null, isFirstElement);
         }
         else {
             throw new IllegalArgumentException("Type " + type + " has unknown "
@@ -806,7 +799,7 @@ public abstract class Structure {
         if (alignType == ALIGN_GNUC) {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
-            if (!firstElement || !isPPC)
+            if (!isFirstElement || !isPPC)
                 return Math.min(MAX_GNUC_ALIGNMENT, alignment);
         }
         return alignment;
@@ -932,20 +925,19 @@ public abstract class Structure {
     public int hashCode() {
         return getPointer().hashCode();
     }
-
-    /** Returns field type information for this Structure. */
-    private Pointer getTypeInfo() {
-        synchronized(typeInfoMap) {
-            Pointer info = (Pointer)typeInfoMap.get(getClass());
-            if (info == null) {
-                FFIType type = new FFIType(this);
-                info = type.getPointer();
-                typeInfoMap.put(getClass(), info);
-            }
-            return info;
-        }
+    
+    /** Obtain native type information for this structure. */
+    Pointer getTypeInfo() {
+        Pointer p = getTypeInfo(this);
+        typeInfo = p.peer;
+        return p;
     }
     
+    /** Exposed for testing purposes only. */
+    static Pointer getTypeInfo(Object obj) {
+        return FFIType.get(obj);
+    }
+
     /** Create a new Structure instance of the given type
      * @param type
      * @return the new instance
@@ -992,42 +984,82 @@ public abstract class Structure {
     }
 
     /** This class auto-generates an ffi_type structure appropriate for a given
-     * structure.  It fills in the type info, which gets replaced in the native
-     * layer with actual pointers to ffi_type structures.
+     * structure for use by libffi.  The lifecycle of this structure is easier
+     * to manage on the Java side than in native code.
      */
     private static class FFIType extends Structure {
+        private static Map typeInfoMap = new WeakHashMap(); 
         public static class size_t extends IntegerType {
             public size_t() { this(0); }
             public size_t(long v) { super(Pointer.SIZE, v); }
         }
-
-        private static final int FFI_TYPE_VOID = 0;
-        private static final int FFI_TYPE_INT = 1;
-        private static final int FFI_TYPE_FLOAT = 2;
-        private static final int FFI_TYPE_DOUBLE = 3;
-        private static final int FFI_TYPE_LONGDOUBLE = 4;
-        private static final int FFI_TYPE_UINT8 = 5;
-        private static final int FFI_TYPE_SINT8 = 6;
-        private static final int FFI_TYPE_UINT16 = 6;
-        private static final int FFI_TYPE_SINT16 = 8;
-        private static final int FFI_TYPE_UINT32 = 9;
-        private static final int FFI_TYPE_SINT32 = 10;
-        private static final int FFI_TYPE_UINT64 = 11;
-        private static final int FFI_TYPE_SINT64 = 12;
+        // Native.initIDs initializes these fields to their appropriate
+        // pointer values.  These are in a separate class so that they may
+        // be initialized prior to loading the FFIType class
+        private static class FFITypes {
+            private static Pointer ffi_type_void;
+            private static Pointer ffi_type_float;
+            private static Pointer ffi_type_double;
+            private static Pointer ffi_type_longdouble;
+            private static Pointer ffi_type_uint8;
+            private static Pointer ffi_type_sint8;
+            private static Pointer ffi_type_uint16;
+            private static Pointer ffi_type_sint16;
+            private static Pointer ffi_type_uint32;
+            private static Pointer ffi_type_sint32;
+            private static Pointer ffi_type_uint64;
+            private static Pointer ffi_type_sint64;
+            private static Pointer ffi_type_pointer;
+        }
+        static {
+            if (Native.POINTER_SIZE == 0)
+                throw new Error("Native library not initialized");
+            if (FFITypes.ffi_type_void == null)
+                throw new Error("FFI types not initialized");
+            typeInfoMap.put(void.class, FFITypes.ffi_type_void);
+            typeInfoMap.put(Void.class, FFITypes.ffi_type_void);
+            typeInfoMap.put(float.class, FFITypes.ffi_type_float);
+            typeInfoMap.put(Float.class, FFITypes.ffi_type_float);
+            typeInfoMap.put(double.class, FFITypes.ffi_type_double);
+            typeInfoMap.put(Double.class, FFITypes.ffi_type_double);
+            typeInfoMap.put(long.class, FFITypes.ffi_type_sint64);
+            typeInfoMap.put(Long.class, FFITypes.ffi_type_sint64);
+            typeInfoMap.put(int.class, FFITypes.ffi_type_sint32);
+            typeInfoMap.put(Integer.class, FFITypes.ffi_type_sint32);
+            typeInfoMap.put(short.class, FFITypes.ffi_type_sint16);
+            typeInfoMap.put(Short.class, FFITypes.ffi_type_sint16);
+            Pointer ctype = Native.WCHAR_SIZE == 2 
+                ? FFITypes.ffi_type_uint16 : FFITypes.ffi_type_uint32;
+            typeInfoMap.put(char.class, ctype);
+            typeInfoMap.put(Character.class, ctype);
+            typeInfoMap.put(byte.class, FFITypes.ffi_type_sint8);
+            typeInfoMap.put(Byte.class, FFITypes.ffi_type_sint8);
+            typeInfoMap.put(Pointer.class, FFITypes.ffi_type_pointer);
+            typeInfoMap.put(String.class, FFITypes.ffi_type_pointer);
+            typeInfoMap.put(WString.class, FFITypes.ffi_type_pointer);
+        }
+        // From ffi.h
         private static final int FFI_TYPE_STRUCT = 13;
-        private static final int FFI_TYPE_POINTER = 14;
+        // Structure fields
         public size_t size;
         public short alignment;
-        public short type = FFI_TYPE_VOID;
+        public short type = FFI_TYPE_STRUCT;
         public Pointer elements;
-        public FFIType(Structure ref) {
-            Pointer[] els = getFieldFFITypes(ref);
+        
+        private FFIType(Structure ref) {
+            Pointer[] els = new Pointer[ref.structFields.size() + 1];
+            int idx = 0;
+            for (Iterator i=ref.structFields.values().iterator();i.hasNext();) {
+                StructField sf = (StructField)i.next();
+                els[idx++] = get(ref.getField(sf), sf.type);
+            }
             init(els);
         }
         // Represent fixed-size arrays as structures of N identical elements
-        private FFIType(Class type, int length) {
+        private FFIType(Object array, Class type) {
+            int length = Array.getLength(array);
             Pointer[] els = new Pointer[length+1];
-            Pointer p = getFFIType(type);
+            Pointer p = get(null, type.getComponentType());
             for (int i=0;i < length;i++) {
                 els[i] = p;
             }
@@ -1036,71 +1068,50 @@ public abstract class Structure {
         private void init(Pointer[] els) {
             elements = new Memory(Pointer.SIZE * els.length);
             elements.write(0, els, 0, els.length);
-            allocateMemory();
             write();
         }
-        private Pointer getFFIType(Class cls) {
-            return getFFIType(cls, -1);
+        
+        private static Pointer get(Object obj) {
+            if (obj == null) 
+                return FFITypes.ffi_type_pointer;
+            return get(obj, obj.getClass());
         }
-        private Pointer getFFIType(Class cls, int length) {
-            long value = FFI_TYPE_VOID;
-            if (cls == byte.class || cls == Byte.class) 
-                value = FFI_TYPE_SINT8;
-            else if (cls == short.class || cls == Short.class) 
-                value = FFI_TYPE_SINT16; 
-            else if (cls == char.class || cls == Character.class) 
-                value = Native.WCHAR_SIZE == 2
-                    ? FFI_TYPE_UINT16 : FFI_TYPE_UINT32;
-            else if (cls == int.class || cls == Integer.class) 
-                value = FFI_TYPE_SINT32;
-            else if (cls == long.class || cls == Long.class) 
-                value = FFI_TYPE_SINT64;
-            else if (cls == float.class || cls == Float.class) 
-                value = FFI_TYPE_FLOAT;
-            else if (cls == double.class || cls == Double.class) 
-                value = FFI_TYPE_DOUBLE;
-            else if (Pointer.class == cls
-                     || Buffer.class.isAssignableFrom(cls)
-                     || Callback.class.isAssignableFrom(cls)
-                     || String.class == cls
-                     || WString.class == cls) {
-                value = FFI_TYPE_POINTER;
-            }
-            else if (Structure.class.isAssignableFrom(cls)) {
-                if (ByReference.class.isAssignableFrom(cls))
-                    value = FFI_TYPE_POINTER;
-                else
-                    return newInstance(cls).getTypeInfo();
-            }
-            else if (cls.isArray()) {
-                // Pretend it's a structure with length fields
-                return new FFIType(cls.getComponentType(), length).getPointer();
-            }
-            else {
+        
+        private static Pointer get(Object obj, Class cls) {
+            synchronized(typeInfoMap) {
+                Object o = typeInfoMap.get(cls);
+                if (o instanceof Pointer) {
+                    return (Pointer)o;
+                }
+                if (o instanceof FFIType) {
+                    return ((FFIType)o).getPointer();
+                }
+                if (Buffer.class.isAssignableFrom(cls)
+                    || Callback.class.isAssignableFrom(cls)) {
+                    typeInfoMap.put(cls, FFITypes.ffi_type_pointer);
+                    return FFITypes.ffi_type_pointer;
+                }
+                if (Structure.class.isAssignableFrom(cls)) {
+                    if (obj == null) obj = newInstance(cls);
+                    if (ByReference.class.isAssignableFrom(cls)) {
+                        typeInfoMap.put(cls, FFITypes.ffi_type_pointer);
+                        return FFITypes.ffi_type_pointer;
+                    }
+                    if (Union.class.isAssignableFrom(cls)) {
+                        return ((Union)obj).getTypeInfo();
+                    }
+                    FFIType type = new FFIType((Structure)obj);
+                    typeInfoMap.put(cls, type);
+                    return type.getPointer();
+                }
+                if (cls.isArray()) {
+                    FFIType type = new FFIType(obj, cls);
+                    // Store it in the map to prevent premature GC of type info
+                    typeInfoMap.put(obj, type);
+                    return type.getPointer();
+                }
                 throw new IllegalArgumentException("Unsupported structure field type " + cls);
             }
-            return new Pointer(value);
-        }
-        private Pointer[] getFieldFFITypes(Structure s) {
-            Pointer[] result = new Pointer[s.structFields.size() + 1];
-            int idx = 0;
-            for (Iterator i=s.structFields.values().iterator();i.hasNext();) {
-                StructField sf = (StructField)i.next();
-                int length = -1;
-                if (sf.type.isArray()) {
-                    try {
-                        Object array = sf.field.get(s);
-                        length = Array.getLength(array);
-                    }
-                    catch (IllegalArgumentException e) {
-                    }
-                    catch (IllegalAccessException e) {
-                    }
-                }
-                result[idx++] = getFFIType(sf.type, length);
-            }
-            result[idx] = null;
-            return result;
         }
     }
 }

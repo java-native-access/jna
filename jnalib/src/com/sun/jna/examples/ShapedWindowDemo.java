@@ -245,11 +245,8 @@ public class ShapedWindowDemo {
         try {
             Shape mask = new Area(new Ellipse2D.Float(0, 0, 150, 150));
             WindowUtils.setWindowMask(frame, mask);
-            try {
+            if (WindowUtils.isWindowAlphaSupported()) {
                 WindowUtils.setWindowAlpha(frame, .7f);
-            }
-            catch(UnsupportedOperationException e) {
-                // ignore; this demo is about shaped windows, remember?
             }
             frame.setIconImage(face.getIconImage());
             frame.setResizable(false);

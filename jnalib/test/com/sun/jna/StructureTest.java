@@ -463,7 +463,7 @@ public class StructureTest extends TestCase {
         s.writeField("counter");
         assertEquals("Explicit volatile field write failed", 1, s.getPointer().getInt(0));
     }
-    
+
     public static class StructureWithPointers extends Structure {
         public static class TestStructureByRef extends Structure implements ByReference {
             public int dummy;
@@ -544,5 +544,37 @@ public class StructureTest extends TestCase {
         assertNotSame("Null should be overwritten with a new ref", ref, s.array[0]);
         assertNotNull("New ref should not be null", s.array[0]);
         assertEquals("New ref should be equivalent", ref, s.array[0]);
+    }
+
+    static class NestedTypeInfoStructure extends Structure {
+        public static class Inner extends Structure {
+            public int dummy;
+        }
+        public Inner inner;
+        public int dummy;
+    }
+    public void testNestedStructureTypeInfo() {
+        NestedTypeInfoStructure s = new NestedTypeInfoStructure();
+        Pointer p = s.getTypeInfo();
+        assertNotNull("Type info should not be null", p);
+        Pointer els = p.getPointer(Pointer.SIZE + 4);
+        Pointer inner = s.inner.getTypeInfo();
+        assertEquals("Wrong type information for 'inner' field",
+                     inner, els.getPointer(0));
+        assertEquals("Wront type information for integer field",
+                     s.getTypeInfo(new Integer(0)),
+                     els.getPointer(Pointer.SIZE));
+        assertNull("Type element list should be null-terminated", 
+                   els.getPointer(Pointer.SIZE*2));
+    }
+    
+    public void testInnerArrayTypeInfo() {
+        class TestStructure extends Structure {
+            public int[] inner = new int[5];
+        }
+        TestStructure s = new TestStructure();
+        assertEquals("Wrong structure size", 20, s.size());
+        Pointer p = s.getTypeInfo();
+        assertNotNull("Type info should not be null", p);
     }
 }

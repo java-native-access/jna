@@ -22,6 +22,13 @@
 
 # TODO
 
+* test performance of setByte/getByte and pass pointer field directly if it
+  makes sense to do so (done, halves access time to use pointer field directly,
+  slight variations on 1.4/1.5/1.6).  Direct buffers should be used where
+  hotspot inlining can improve performance.  
+
+* use libffi closure allocation/deallocation
+
 * parser (gluegen? others?) to auto-generate JNA interfaces from headers;
   ideally get the native library build system to output preprocessed headers,
   otherwise CPP crap is a nightmare to get right.
@@ -29,13 +36,7 @@
 * (maybe) move all native functions into Native (limit header files, easier
   management) 
 
-* hash javah-generated headers; when changed, invalidate platform-specific
-
-* handle Structure.ByReference array as parameter/return value (cf Pointer[])
-
-* test performance of setByte/getByte and pass pointer field directly if it
-  makes sense to do so.  Direct buffers should be used where hotspot inlining
-  can improve performance.
+* handle array of Structure.ByReference as parameter/return value (cf Pointer[])
 
 * Does it make sense to define Int16/UInt16, Int32/UInt32, etc?  Probably not
   the signed versions, but maybe the unsigned ones, to facilitate generating
@@ -43,22 +44,27 @@
   signed int).  What about size_t, off_t, et al.?  Would either need a
   bunch of native lookup functions (more accurate) or java-side conditionals
   (less robust but easier to change).
+  o bounds checking is handled by IntegerType (pass in a long, get an
+    exception if the value is out of bounds).
 
 * packaging: 'types', 'convert/marshal' subpackages?
   note: marshal/unmarshal vs tonative/fromnative: to/fromnative is more
   explicit, since marshal/unmarshal doesn't indicate src/dst.
+  o moving conversion contexts to subpackage cleans up top level
+  substantially, but we probably don't want to move things like Structure and
+  Pointer into a types subpackage (which would leave just a few top-level
+  classes).  Javadoc is cluttered by example classes anyway.
 
 * Make a separate jar file for all OS-specific headers
   Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
   aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
   (how useful would it really be, or is this just sorting legos?)
+  o same for windowutils, fileutils, etc.
 
-* review/use direct Buffer in more places if it makes sense
 * support annotations of parameters and return values w/o breaking
   1.4 compatibility (retroweaver?), e.g.
   -- retroweaver (requires retroweaver runtime classes to provide annotation
   features) not yet worth doing
-
 
   void my_function(@MarshalAs(off_t)long arg);
 
@@ -70,6 +76,8 @@
   primitive value instead of creating an object instance.
 
 * Allow Buffer in Structures (and callbacks) (auto-wrap in direct byte buffer)?
+  o this gets tricky when reading structs from native memory; we don't know if
+  the value is already mapped to a buffer (cf CallbackReference)
 
 * standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
 * StringBuffer/StringBuilder as mutable char*/wchar_t* argument
@@ -85,6 +93,12 @@
    Maybe make function return "Memory", which can then be converted to a
    Structure or some other type.  Then memory will free itself when no longer
    referenced. 
+* make Pointer free-able (system allocates memory, client frees it); actually,
+  this should probably be automatic so the user doesn't have to think about it.
+  Maybe a custom type representing "function-allocated-pointer" or
+  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
+  the user to manage the pointer, since they have to define the free method
+  anyway.  use could always put a finalizer on a PointerType-derived type.
 * provide library load/unload hooks (Runnables in options?). Examples:
   o GetLastError (no longer needed)
   o WSAInit?
@@ -99,12 +113,6 @@
     if nonzero ?
   o otherwise, need an ExceptionOnZero, ExceptionOnNonZero runtime, from which
   derive GetLastError/ErrnoExceptionOnZero/NZ
-* make Pointer free-able (system allocates memory, client frees it); actually,
-  this should probably be automatic so the user doesn't have to think about it.
-  Maybe a custom type representing "function-allocated-pointer" or
-  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
-  the user to manage the pointer, since they have to define the free method
-  anyway.  use could always put a finalizer on a PointerType-derived type.
 * determine X11 display name from current java program (if any); null is ok
   since it uses getenv(DISPLAY), which is what java would do
   note: DISPLAY may be available in GraphicsDevice->getIDstring
@@ -113,13 +121,18 @@
   Long.SIZE, Integer.SIZE, et al.
 * interface "lvalue", which can provide a pointer to itself (reference() or
   addressOf())?
-* verify get/set methods vs read/write is for performance (Pointer)?
-* bitfields et al. for structs
+* verify get/set methods vs read/write for performance (Pointer)?
+* bitfields for structs (how?)
 
 
 
 
 # DONE
+* call native to fix up FFIType on creation (avoid multithreading problems)
+  properly handle union by value (or punt; must pass union field instead)
+
+* hash javah-generated headers; when changed, invalidate platform-specific
+
 * add main class which spits out version information
   
 * docs: split pages: FAQ

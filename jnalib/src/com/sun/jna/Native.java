@@ -85,8 +85,8 @@ public final class Native {
         POINTER_SIZE = pointerSize();
         LONG_SIZE = longSize();
         WCHAR_SIZE = wideCharSize();
-        // Defer initialization of other JNA classes until *after* initializing 
-        // this class's fields
+        // Perform initialization of other JNA classes until *after* 
+        // initializing the above final fields
         initIDs();
         if (Boolean.getBoolean("jna.protected")) {
             setProtected(true);

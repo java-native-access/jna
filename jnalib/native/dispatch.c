@@ -183,7 +183,6 @@ static void *getNativeAddress(JNIEnv *, jobject);
 static void *getStructureAddress(JNIEnv *, jobject);
 static ffi_type *getStructureType(JNIEnv *, jobject);
 static void update_last_error(JNIEnv*, int);
-static ffi_type* init_type(JNIEnv*, ffi_type*);
 
 /* invoke the real native function */
 static void
@@ -287,6 +286,11 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
       c_args[i].l = getStructureAddress(env, arg);
       ffi_types[i] = getStructureType(env, arg);
       ffi_values[i] = c_args[i].l;
+      if (!ffi_types[i]) {
+        sprintf(msg, "Structure type info not initialized at argument %d", i);
+        throwByName(env, EIllegalState, msg);
+        goto cleanup;
+      }
     }
     else if ((*env)->IsInstanceOf(env, arg, classBuffer)) {
       c_args[i].l = (*env)->GetDirectBufferAddress(env, arg);
@@ -359,6 +363,10 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     sprintf(msg, "Invalid calling convention: %d", (int)callconv); 
     throwByName(env, EIllegalArgument, msg);
     break;
+  case FFI_BAD_TYPEDEF:
+    sprintf(msg, "Invalid structure definition (native typedef error)");
+    throwByName(env, EIllegalArgument, msg);
+    break;
   case FFI_OK: {
     PSTART();
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
@@ -369,7 +377,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     break;
   }
   default:
-    sprintf(msg, "Native call setup failure: %d", status);
+    sprintf(msg, "Native call setup failure: error code '%d'", status);
     throwByName(env, EIllegalArgument, msg);
     break;
   }
@@ -439,9 +447,14 @@ Java_com_sun_jna_Function_invokeStructure(JNIEnv *env, jobject self,
                                           jint callconv, jobjectArray arr,
                                           jobject result)
 {
-  ffi_type* type = getStructureType(env, result);
   void* memory = getStructureAddress(env, result);
-  dispatch(env, self, callconv, arr, type, memory);
+  ffi_type* type = getStructureType(env, result);
+  if (!type) {
+    throwByName(env, EIllegalState, "Return structure type info not initialized");
+  }
+  else {
+    dispatch(env, self, callconv, arr, type, memory);
+  }
   return result;
 }
 
@@ -710,97 +723,90 @@ jnidispatch_init(JNIEnv* env) {
 
 /*
  * Class:     Pointer
- * Method:    write
+ * Method:    _write
  * Signature: (J[BII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3BII
-    (JNIEnv *env, jobject self, jlong boff, jbyteArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3BII
+    (JNIEnv *env, jclass cls, jlong addr, jbyteArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->GetByteArrayRegion(env, arr, off, n, peer + boff);
+  (*env)->GetByteArrayRegion(env, arr, off, n, L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    write
+ * Method:    _write
  * Signature: (J[CII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3CII
-    (JNIEnv *env, jobject self, jlong boff, jcharArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3CII
+    (JNIEnv *env, jclass cls, jlong addr, jcharArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->GetCharArrayRegion(env, arr, off, n, (jchar *)(peer + boff));
+  (*env)->GetCharArrayRegion(env, arr, off, n, (jchar *)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    write
+ * Method:    _write
  * Signature: (J[DII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3DII
-    (JNIEnv *env, jobject self, jlong boff, jdoubleArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3DII
+    (JNIEnv *env, jclass cls, jlong addr, jdoubleArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)(peer + boff));
+  (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    write
+ * Method:    _write
  * Signature: (J[FII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3FII
-    (JNIEnv *env, jobject self, jlong boff, jfloatArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3FII
+    (JNIEnv *env, jclass cls, jlong addr, jfloatArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)(peer + boff));
+  (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    write
+ * Method:    _write
  * Signature: (J[III)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3III
-    (JNIEnv *env, jobject self, jlong boff, jintArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3III
+    (JNIEnv *env, jclass cls, jlong addr, jintArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)(peer + boff));
+  (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    write
+ * Method:    _write
  * Signature: (J[JII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3JII
-    (JNIEnv *env, jobject self, jlong boff, jlongArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3JII
+    (JNIEnv *env, jclass cls, jlong addr, jlongArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)(peer + boff));
+  (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    write
+ * Method:    _write
  * Signature: (J[SII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_write__J_3SII
-    (JNIEnv *env, jobject self, jlong boff, jshortArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3SII
+    (JNIEnv *env, jclass cls, jlong addr, jshortArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)(peer + boff));
+  (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    indexOf
+ * Method:    _indexOf
  * Signature: (JB)J
  */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer_indexOf__JB
-    (JNIEnv *env, jobject self, jlong boff, jbyte value)
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer__1indexOf__JB
+    (JNIEnv *env, jclass cls, jlong addr, jbyte value)
 {
-  jbyte *peer = (jbyte *)getNativeAddress(env, self) + boff;
+  jbyte *peer = (jbyte *)L2A(addr);
   jlong i = 0;
   while (i >= 0) {
     if (peer[i] == value)
@@ -812,342 +818,315 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer_indexOf__JB
 
 /*
  * Class:     Pointer
- * Method:    read
+ * Method:    _read
  * Signature: (J[BII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3BII
-    (JNIEnv *env, jobject self, jlong boff, jbyteArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3BII
+    (JNIEnv *env, jclass cls, jlong addr, jbyteArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->SetByteArrayRegion(env, arr, off, n, peer + boff);
+  (*env)->SetByteArrayRegion(env, arr, off, n, L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    read
+ * Method:    _read
  * Signature: (J[CII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3CII
-    (JNIEnv *env, jobject self, jlong boff, jcharArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3CII
+    (JNIEnv *env, jclass cls, jlong addr, jcharArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->SetCharArrayRegion(env, arr, off, n, (jchar*)(peer + boff));
+  (*env)->SetCharArrayRegion(env, arr, off, n, (jchar*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    read
+ * Method:    _read
  * Signature: (J[DII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3DII
-    (JNIEnv *env, jobject self, jlong boff, jdoubleArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3DII
+    (JNIEnv *env, jclass cls, jlong addr, jdoubleArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)(peer + boff));
+  (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    read
+ * Method:    _read
  * Signature: (J[FII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3FII
-    (JNIEnv *env, jobject self, jlong boff, jfloatArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3FII
+    (JNIEnv *env, jclass cls, jlong addr, jfloatArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)(peer + boff));
+  (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    read
+ * Method:    _read
  * Signature: (J[III)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3III
-    (JNIEnv *env, jobject self, jlong boff, jintArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3III
+    (JNIEnv *env, jclass cls, jlong addr, jintArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)(peer + boff));
+  (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    read
+ * Method:    _read
  * Signature: (J[JII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3JII
-    (JNIEnv *env, jobject self, jlong boff, jlongArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3JII
+    (JNIEnv *env, jclass cls, jlong addr, jlongArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)(peer + boff));
+  (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    read
+ * Method:    _read
  * Signature: (J[SII)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_read__J_3SII
-    (JNIEnv *env, jobject self, jlong boff, jshortArray arr, jint off, jint n)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3SII
+    (JNIEnv *env, jclass cls, jlong addr, jshortArray arr, jint off, jint n)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)(peer + boff));
+  (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
 }
 
 /*
  * Class:     Pointer
- * Method:    getByte
+ * Method:    _getByte
  * Signature: (J)B
  */
-JNIEXPORT jbyte JNICALL Java_com_sun_jna_Pointer_getByte
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jbyte JNICALL Java_com_sun_jna_Pointer__1getByte
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     jbyte res;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, L2A(addr), sizeof(res));
     return res;
 }
 
 /*
  * Class:     Pointer
- * Method:    getChar
+ * Method:    _getChar
  * Signature: (J)C
  */
-JNIEXPORT jchar JNICALL Java_com_sun_jna_Pointer_getChar
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jchar JNICALL Java_com_sun_jna_Pointer__1getChar
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     wchar_t res;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, L2A(addr), sizeof(res));
     return (jchar)res;
 }
 
 /*
  * Class:     Pointer
- * Method:    getPointer
+ * Method:    _getPointer
  * Signature: (J)LPointer;
  */
-JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getPointer
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer__1getPointer
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     void *ptr;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&ptr, peer + offset, sizeof(ptr));
+    MEMCPY(&ptr, L2A(addr), sizeof(ptr));
     return newJavaPointer(env, ptr);
 }
 
 /*
  * Class:     com_sun_jna_Pointer
- * Method:    getDirectByteBuffer
+ * Method:    _getDirectByteBuffer
  * Signature: (JJ)Ljava/nio/ByteBuffer;
  */
-JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer_getDirectByteBuffer
-    (JNIEnv *env, jobject self, jlong offset, jlong length)
+JNIEXPORT jobject JNICALL Java_com_sun_jna_Pointer__1getDirectByteBuffer
+    (JNIEnv *env, jclass cls, jlong addr, jlong length)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    return (*env)->NewDirectByteBuffer(env, peer + offset, length);
+    return (*env)->NewDirectByteBuffer(env, L2A(addr), length);
 }
 
 /*
  * Class:     Pointer
- * Method:    getDouble
+ * Method:    _getDouble
  * Signature: (J)D
  */
-JNIEXPORT jdouble JNICALL Java_com_sun_jna_Pointer_getDouble
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jdouble JNICALL Java_com_sun_jna_Pointer__1getDouble
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     jdouble res;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, L2A(addr), sizeof(res));
     return res;
 }
 
 /*
  * Class:     Pointer
- * Method:    getFloat
+ * Method:    _getFloat
  * Signature: (J)F
  */
-JNIEXPORT jfloat JNICALL Java_com_sun_jna_Pointer_getFloat
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jfloat JNICALL Java_com_sun_jna_Pointer__1getFloat
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     jfloat res;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, L2A(addr), sizeof(res));
     return res;
 }
 
 /*
  * Class:     Pointer
- * Method:    getInt
+ * Method:    _getInt
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer_getInt
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jint JNICALL Java_com_sun_jna_Pointer__1getInt
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     jint res;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, L2A(addr), sizeof(res));
     return res;
 }
 
 /*
  * Class:     Pointer
- * Method:    getLong
+ * Method:    _getLong
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer_getLong
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer__1getLong
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     jlong res;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, L2A(addr), sizeof(res));
     return res;
 }
 
 /*
  * Class:     Pointer
- * Method:    getShort
+ * Method:    _getShort
  * Signature: (J)S
  */
-JNIEXPORT jshort JNICALL Java_com_sun_jna_Pointer_getShort
-    (JNIEnv *env, jobject self, jlong offset)
+JNIEXPORT jshort JNICALL Java_com_sun_jna_Pointer__1getShort
+    (JNIEnv *env, jclass cls, jlong addr)
 {
     jshort res;
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(&res, peer + offset, sizeof(res));
+    MEMCPY(&res, L2A(addr), sizeof(res));
     return res;
 }
 
 /*
  * Class:     Pointer
- * Method:    getString
+ * Method:    _getString
  * Signature: (JB)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_sun_jna_Pointer_getString
-    (JNIEnv *env, jobject self, jlong offset, jboolean wide)
+JNIEXPORT jstring JNICALL Java_com_sun_jna_Pointer__1getString
+    (JNIEnv *env, jclass cls, jlong addr, jboolean wide)
 {
-    char *peer = (char *)getNativeAddress(env, self);
-    return newJavaString(env, peer + offset, wide);
+  return newJavaString(env, L2A(addr), wide);
 }
 
 /*
  * Class:     Pointer
- * Method:    setMemory
+ * Method:    _setMemory
  * Signature: (JJB)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setMemory
-    (JNIEnv *env, jobject self, jlong offset, jlong count, jbyte value)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setMemory
+    (JNIEnv *env, jclass cls, jlong addr, jlong count, jbyte value)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMSET(peer + offset, (int)value, (size_t)count);
+    MEMSET(L2A(addr), (int)value, (size_t)count);
 }
 
 /*
  * Class:     Pointer
- * Method:    setByte
+ * Method:    _setByte
  * Signature: (JB)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setByte
-    (JNIEnv *env, jobject self, jlong offset, jbyte value)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setByte
+    (JNIEnv *env, jclass cls, jlong addr, jbyte value)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(peer + offset, &value, sizeof(value));
+  MEMCPY(L2A(addr), &value, sizeof(value));
 }
 
 /*
  * Class:     Pointer
- * Method:    setChar
+ * Method:    _setChar
  * Signature: (JC)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setChar
-    (JNIEnv *env, jobject self, jlong offset, jchar value)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setChar
+    (JNIEnv *env, jclass cls, jlong addr, jchar value)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(peer + offset, &value, sizeof(value));
+  MEMCPY(L2A(addr), &value, sizeof(value));
 }
 
 /*
  * Class:     Pointer
- * Method:    setPointer
- * Signature: (JLPointer;)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setPointer
-    (JNIEnv *env, jobject self, jlong offset, jobject value)
-{
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    void *ptr = value ? getNativeAddress(env, value) : NULL;
-    MEMCPY(peer + offset, &ptr, sizeof(void *));
-}
-
-/*
- * Class:     Pointer
- * Method:    setDouble
- * Signature: (JD)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setDouble
-    (JNIEnv *env, jobject self, jlong offset, jdouble value)
-{
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(peer + offset, &value, sizeof(value));
-}
-
-/*
- * Class:     Pointer
- * Method:    setFloat
- * Signature: (JF)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setFloat
-    (JNIEnv *env, jobject self, jlong offset, jfloat value)
-{
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(peer + offset, &value, sizeof(value));
-}
-
-/*
- * Class:     Pointer
- * Method:    setInt
- * Signature: (JI)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setInt
-    (JNIEnv *env, jobject self, jlong offset, jint value)
-{
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(peer + offset, &value, sizeof(value));
-}
-
-/*
- * Class:     Pointer
- * Method:    setLong
+ * Method:    _setPointer
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setLong
-    (JNIEnv *env, jobject self, jlong offset, jlong value)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setPointer
+    (JNIEnv *env, jclass cls, jlong addr, jlong value)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(peer + offset, &value, sizeof(value));
+  void *ptr = L2A(value);
+  MEMCPY(L2A(addr), &ptr, sizeof(void *));
 }
 
 /*
  * Class:     Pointer
- * Method:    setShort
+ * Method:    _setDouble
+ * Signature: (JD)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setDouble
+    (JNIEnv *env, jclass cls, jlong addr, jdouble value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Pointer
+ * Method:    _setFloat
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setFloat
+    (JNIEnv *env, jclass cls, jlong addr, jfloat value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Pointer
+ * Method:    _setInt
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setInt
+    (JNIEnv *env, jclass cls, jlong addr, jint value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Pointer
+ * Method:    _setLong
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setLong
+    (JNIEnv *env, jclass cls, jlong addr, jlong value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Pointer
+ * Method:    _setShort
  * Signature: (JS)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setShort
-    (JNIEnv *env, jobject self, jlong offset, jshort value)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setShort
+    (JNIEnv *env, jclass cls, jlong addr, jshort value)
 {
-    jbyte *peer = (jbyte *)getNativeAddress(env, self);
-    MEMCPY(peer + offset, &value, sizeof(value));
+  MEMCPY(L2A(addr), &value, sizeof(value));
 }
 
 /*
  * Class:     Pointer
- * Method:    setString
+ * Method:    _setString
  * Signature: (JLjava/lang/String;Z)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setString
-    (JNIEnv *env, jobject self, jlong offset, jstring value, jboolean wide)
+JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setString
+    (JNIEnv *env, jclass cls, jlong addr, jstring value, jboolean wide)
 {
-    char *peer = (char *)getNativeAddress(env, self);
     int len = (*env)->GetStringLength(env, value);
     void* str;
     int size = len + 1;
@@ -1160,7 +1139,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer_setString
       str = newCString(env, value);
     }
     if (str != NULL) {
-      MEMCPY(peer + offset, str, size);
+      MEMCPY(L2A(addr), str, size);
       free(str);
     }
 }
@@ -1370,8 +1349,8 @@ getStructureAddress(JNIEnv *env, jobject obj) {
 
 static ffi_type*
 getStructureType(JNIEnv *env, jobject obj) {
-  jlong addr = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
-  return init_type(env, (ffi_type*)L2A(addr));
+  jlong typeInfo = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
+  return (ffi_type*)L2A(typeInfo);
 }
 
 static void *
@@ -1510,6 +1489,42 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   else if (!LOAD_FID(env, FID_Structure_typeInfo, classStructure, "typeInfo", "J")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain typeInfo field ID for class com.sun.jna.Structure");
+  }
+
+  // Initialize type fields within Structure.FFIType
+  {
+#define CFFITYPE "com/sun/jna/Structure$FFIType$FFITypes"
+    jclass cls = (*env)->FindClass(env, CFFITYPE);
+    jfieldID fid;
+    unsigned i;
+    const char* fields[] = {
+      "void", 
+      "float", "double", "longdouble", 
+      "uint8", "sint8", "uint16", "sint16",
+      "uint32", "sint32", "uint64", "sint64",
+      "pointer",
+    };
+    ffi_type* types[] = {
+      &ffi_type_void, 
+      &ffi_type_float, &ffi_type_double, &ffi_type_longdouble,
+      &ffi_type_uint8, &ffi_type_sint8, &ffi_type_uint16, &ffi_type_sint16, 
+      &ffi_type_uint32, &ffi_type_sint32, &ffi_type_uint64, &ffi_type_sint64, 
+      &ffi_type_pointer,
+    };
+    char field[32];
+    if (!cls) {
+      throwByName(env, EUnsatisfiedLink, "Structure$FFIType missing");
+      return;
+    }
+    for (i=0;i < sizeof(fields)/sizeof(fields[0]);i++) {
+      sprintf(field, "ffi_type_%s", fields[i]);
+      fid = (*env)->GetStaticFieldID(env, cls, field, "Lcom/sun/jna/Pointer;");
+      if (!fid) {
+        throwByName(env, EUnsatisfiedLink, field);
+        return;
+      }
+      (*env)->SetStaticObjectField(env, cls, fid, newJavaPointer(env, types[i]));
+    }
   }
 }
   
@@ -1837,47 +1852,6 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
   if (!attached) {
     (*vm)->DetachCurrentThread(vm);
   }
-}
-
-// Perform recursive ffi_type initialization for structs
-static ffi_type*
-init_type(JNIEnv* env, ffi_type* typep) {
-  if (typep->type == FFI_TYPE_VOID && typep != &ffi_type_void) {
-    ffi_type** element = &typep->elements[0];
-    while (*element != NULL) {
-      switch((int)*element) {
-      case FFI_TYPE_FLOAT:
-        *element = &ffi_type_float; break;
-      case FFI_TYPE_DOUBLE:
-        *element = &ffi_type_double; break;
-      case FFI_TYPE_SINT8:
-        *element = &ffi_type_sint8; break;
-      case FFI_TYPE_UINT8:
-        *element = &ffi_type_uint8; break;
-      case FFI_TYPE_SINT16:
-        *element = &ffi_type_sint16; break;
-      case FFI_TYPE_UINT16:
-        *element = &ffi_type_uint16; break;
-      case FFI_TYPE_SINT32:
-        *element = &ffi_type_sint32; break;
-      case FFI_TYPE_UINT32:
-        *element = &ffi_type_uint32; break;
-      case FFI_TYPE_SINT64:
-        *element = &ffi_type_sint64; break;
-      case FFI_TYPE_UINT64:
-        *element = &ffi_type_uint64; break;
-      case FFI_TYPE_POINTER:
-        *element = &ffi_type_pointer; break;
-      default:
-        // recursively init structure type info
-        init_type(env, *element);
-        break;
-      }
-      ++element;
-    }
-    typep->type = FFI_TYPE_STRUCT;
-  }
-  return typep;
 }
 
 #ifdef __cplusplus
