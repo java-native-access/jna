@@ -33,6 +33,8 @@ public class LibraryLoadTest extends TestCase {
         Frame f = new Frame(getName());
         f.pack();
         try {
+            // FIXME: this works as a test, but fails in ShapedWindowDemo
+            // if the JAWT load workaround is not used
             Native.getWindowPointer(f);
         }
         finally {
