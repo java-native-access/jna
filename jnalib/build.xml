@@ -31,7 +31,7 @@
   <property name="jna.version" value="3.0"/>
   <!-- jnidispatch library release version -->
   <property name="jni.version" value="3.0"/>
-  <property name="jni.md5" value="7e48033dfe8ac23f8c87dc61ccaae386"/>
+  <property name="jni.md5" value="892beacd437514d23ed9b1cefeb2ead6"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.version}"/>
@@ -84,6 +84,7 @@
 
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/native"/>
+    <property name="md5.file" location="${build.native}/sig"/>
 
     <mkdir dir="${build}"/>
     <mkdir dir="${build.native}"/>
@@ -178,14 +179,14 @@
       <class name="com.sun.jna.NativeLibrary"/>
       <class name="com.sun.jna.CallbackReference"/>
     </javah>
-    <delete file="${build.native}/sig"/>
-    <apply dir="${build.native}" executable="grep" parallel="true" relative="true" output="${build.native}/sig">
+    <apply dir="${build.native}" executable="grep" parallel="true" relative="true" output="${md5.file}">
       <arg value="-A"/>
       <arg value="1"/>
       <arg value="JNIEXPORT"/>
       <fileset dir="${build.native}" includes="*.h"/>
     </apply>
-    <checksum property="md5" file="${build.native}/sig" />
+    <fixcrlf srcdir="${build.native}" includes="sig" eol="unix"/>
+    <checksum property="md5" file="${md5.file}" />
     <condition property="jni.valid" value="true">
       <equals arg1="${jni.md5}" arg2="${md5}" trim="true"/>
     </condition>
