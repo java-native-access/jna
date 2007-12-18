@@ -457,7 +457,10 @@ Function</H3>
  convention.
 <P>
 <DL>
-<DT><B>Parameters:</B><DD><CODE>library</CODE> - <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callingConvention</CODE> - Calling convention used by the native function</DL>
+<DT><B>Parameters:</B><DD><CODE>library</CODE> - <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callingConvention</CODE> - Calling convention used by the native function
+<DT><B>Throws:</B>
+<DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the given function name is
+ not found within the library.</DL>
 </DL>
 <HR>
 
@@ -502,7 +505,10 @@ public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.s
  convention.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the native function<DD><CODE>functionName</CODE> - Name of the native function to be linked with</DL>
+<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the native function<DD><CODE>functionName</CODE> - Name of the native function to be linked with
+<DT><B>Throws:</B>
+<DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the library is not found or
+ the given function name is not found within the library.</DL>
 </DD>
 </DL>
 <HR>
@@ -522,7 +528,10 @@ public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.s
  convention.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callConvention</CODE> - Call convention used by the native function</DL>
+<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callConvention</CODE> - Call convention used by the native function
+<DT><B>Throws:</B>
+<DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the library is not found or
+ the given function name is not found within the library.</DL>
 </DD>
 </DL>
 <HR>
