@@ -14,6 +14,7 @@ package com.sun.jna;
 
 import java.util.Map;
 
+import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
 import com.sun.jna.ptr.IntByReference;
 
 import junit.framework.TestCase;
@@ -27,6 +28,20 @@ public class CallbacksTest extends TestCase {
     private static final double DOUBLE_MAGIC = -118.625d;
     private static final float FLOAT_MAGIC = -118.625f;
 
+    public static class SmallTestStructure extends Structure {
+        public double value;
+    }
+    public static class TestStructure extends Structure {
+        public static class ByValue extends TestStructure implements Structure.ByValue { }
+        public static interface TestCallback extends Callback {
+            TestStructure.ByValue callback(TestStructure.ByValue s);
+        }
+        public byte c;
+        public short s;
+        public int i;
+        public long j;
+        public SmallTestStructure inner;
+    }
     public static interface TestLibrary extends Library {
         interface VoidCallback extends Callback {
             void callback();
@@ -64,13 +79,10 @@ public class CallbacksTest extends TestCase {
             double callback(double arg, double arg2);
         }
         double callDoubleCallback(DoubleCallback c, double arg, double arg2);
-        public static class TestStructure extends Structure {
-            public double value;
-        }
         interface StructureCallback extends Callback {
-            TestStructure callback(TestStructure arg);
+            SmallTestStructure callback(SmallTestStructure arg);
         }
-        TestStructure callStructureCallback(StructureCallback c, TestStructure arg);
+        SmallTestStructure callStructureCallback(StructureCallback c, SmallTestStructure arg);
         interface StringCallback extends Callback {
             String callback(String arg);
         }
@@ -83,6 +95,11 @@ public class CallbacksTest extends TestCase {
         	int callback(int arg, IntByReference result);
         }
         int callCallbackWithByReferenceArgument(CopyArgToByReference cb, int arg, IntByReference result);
+        TestStructure.ByValue callCallbackWithStructByValue(TestStructure.TestCallback callback, TestStructure.ByValue cbstruct);
+        interface CbCallback extends Callback {
+            CbCallback callback(CbCallback arg);
+        }
+        CbCallback callCallbackWithCallback(CbCallback cb);
     }
 
     TestLibrary lib;
@@ -204,15 +221,15 @@ public class CallbacksTest extends TestCase {
     public void testCallStructureCallback() {
         final boolean[] called = {false};
         final Structure[] cbarg = { null };
-        final TestLibrary.TestStructure s = new TestLibrary.TestStructure();
+        final SmallTestStructure s = new SmallTestStructure();
         TestLibrary.StructureCallback cb = new TestLibrary.StructureCallback() {
-            public TestLibrary.TestStructure callback(TestLibrary.TestStructure arg) {
+            public SmallTestStructure callback(SmallTestStructure arg) {
                 called[0] = true;
                 cbarg[0] = arg;
                 return arg;
             }
         };
-        TestLibrary.TestStructure value = lib.callStructureCallback(cb, s);
+        SmallTestStructure value = lib.callStructureCallback(cb, s);
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong callback argument", s, cbarg[0]);
         assertEquals("Wrong structure return", s, value);
@@ -403,6 +420,40 @@ public class CallbacksTest extends TestCase {
         int value = lib.callCallbackWithByReferenceArgument(cb, VALUE, ref);
         assertEquals("Wrong value returned", VALUE, value);
         assertEquals("Wrong value in by reference memory", VALUE, ref.getValue());
+    }
+    
+    public void testCallCallbackWithStructByValue() {
+        final TestStructure.ByValue s = new TestStructure.ByValue();
+        final TestStructure innerResult = new TestStructure();
+        TestStructure.TestCallback cb = new TestStructure.TestCallback() {
+            public TestStructure.ByValue callback(TestStructure.ByValue s) {
+                Pointer old = innerResult.getPointer();
+                innerResult.useMemory(s.getPointer());
+                innerResult.read();
+                innerResult.useMemory(old);
+                innerResult.write();
+                return s;
+            }
+        };
+        s.c = (byte)0x11;
+        s.s = 0x2222;
+        s.i = 0x33333333;
+        s.j = 0x4444444444444444L;
+        s.inner.value = 5;
+        
+        TestStructure result = lib.callCallbackWithStructByValue(cb, s);
+        assertEquals("Wrong value passed to callback", s, innerResult);
+        assertEquals("Wrong value for result", s, result);
+    }
+    
+    public void testCallCallbackWithCallbackArgumentAndResult() {
+        TestLibrary.CbCallback cb = new TestLibrary.CbCallback() {
+            public CbCallback callback(CbCallback arg) {
+                return arg;
+            }
+        };
+        TestLibrary.CbCallback cb2 = lib.callCallbackWithCallback(cb);
+        assertEquals("Callback reference should be reused", cb, cb2);
     }
     
     public static void main(java.lang.String[] argList) {

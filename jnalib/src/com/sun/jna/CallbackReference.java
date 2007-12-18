@@ -31,10 +31,11 @@ class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
     static final Map altCallbackMap = new WeakHashMap();
+    private static final Map nativeStrings = new WeakHashMap();
     
-    /** Return a CallbackReference associated with the given function pointer.
-     * If the pointer refers to a Java callback trampoline, return the Java
-     * callback.  Otherwise, return a proxy to the native function pointer.
+    /** Return a Callback associated with the given function pointer.
+     * If the pointer refers to a Java callback trampoline, return the original
+     * Java Callback.  Otherwise, return a proxy to the native function pointer.
      */
     public static Callback getCallback(Class type, Pointer p) {
         if (p != null) {
@@ -303,6 +304,9 @@ class CallbackReference extends WeakReference {
                 else if (dstType == WString.class) {
                     value = new WString(((Pointer)value).getString(0, true));
                 }
+                else if (Callback.class.isAssignableFrom(dstType)) {
+                    value = getCallback(dstType, (Pointer)value);
+                }
                 else if (Structure.class.isAssignableFrom(dstType)) {
                     Structure s = Structure.newInstance(dstType);
                     Pointer old = s.getPointer();
@@ -339,19 +343,15 @@ class CallbackReference extends WeakReference {
             else if (cls == boolean.class || cls == Boolean.class) {
                 return new Integer(Boolean.TRUE.equals(value)?-1:0);
             }
-            else if (cls == String.class) {
-                // FIXME: need to prevent GC, but how and for how long?
-                return new NativeString(value.toString()).getPointer();
-            }
-            else if (cls == WString.class) {
-                // FIXME: need to prevent GC, but how and for how long?
-                return new NativeString(value.toString(), true).getPointer();
+            else if (cls == String.class || cls == WString.class) {
+                // Store in a weak hash map to delay GC until string
+                // itself is GC'd.
+                NativeString ns = new NativeString(value.toString(), cls == WString.class);
+                nativeStrings.put(value, ns);
+                return ns.getPointer();
             }
             else if (Callback.class.isAssignableFrom(cls)) {
                 return getFunctionPointer((Callback)value);
-            }
-            else if (!isAllowableNativeType(cls)) {
-                throw new IllegalArgumentException("Return type " + cls + " will be ignored");
             }
             return value;
         }

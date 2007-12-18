@@ -257,14 +257,17 @@ returnStructureByValue() {
   return v;
 }
 
-typedef int32 (*callback_t)(int32);
-EXPORT callback_t
+typedef void (*callback_t)();
+typedef int32 (*int32_callback_t)(int32);
+typedef callback_t (*cb_callback_t)(callback_t);
+
+EXPORT int32_callback_t
 returnCallback() {
   return &returnInt32Argument;
 }
 
-EXPORT callback_t
-returnCallbackArgument(callback_t arg) {
+EXPORT int32_callback_t
+returnCallbackArgument(int32_callback_t arg) {
   return arg;
 }
 
@@ -518,6 +521,11 @@ EXPORT TestStructureByValue
 callCallbackWithStructByValue(TestStructureByValue (*func)(TestStructureByValue),
                               TestStructureByValue s) {
   return (*func)(s);
+}
+
+EXPORT callback_t
+callCallbackWithCallback(cb_callback_t cb) {
+  return (*cb)((callback_t)cb);
 }
 
 static int 
