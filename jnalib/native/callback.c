@@ -47,8 +47,6 @@ typedef void* caddr_t;
 extern "C" {
 #endif
 
-static ffi_type* get_ffi_type(char jtype);
-static ffi_type* get_ffi_rtype(char jtype);
 static void callback_dispatch(ffi_cif*, void*, void**, void*);
 static ffi_closure* alloc_closure(JNIEnv *env);
 static void free_closure(JNIEnv* env, ffi_closure *closure);
@@ -67,14 +65,16 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
                 callconv_t calling_convention) {
   callback* cb;
   ffi_abi abi = FFI_DEFAULT_ABI;
+  ffi_status status;
   int args_size = 0;
   jsize argc;
   JavaVM* vm;
+  char rtype;
+  char msg[64];
   int i;
 
   if ((*env)->GetJavaVM(env, &vm) != JNI_OK) {
-    throwByName(env, "java/lang/UnsatisfiedLinkError",
-                "Can't get Java VM");
+    throwByName(env, EUnsatisfiedLink, "Can't get Java VM");
     return NULL;
   }
   argc = (*env)->GetArrayLength(env, param_types);
@@ -87,7 +87,12 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   for (i=0;i < argc;i++) {
     jclass cls = (*env)->GetObjectArrayElement(env, param_types, i);
     cb->param_jtypes[i] = get_jtype(env, cls);
-    cb->ffi_args[i] = get_ffi_type(cb->param_jtypes[i]);
+    cb->ffi_args[i] = get_ffi_type(env, cls, cb->param_jtypes[i]);
+    if (!cb->param_jtypes[i]) {
+      sprintf(msg, "Unsupported type at parameter %d", i);
+      throwByName(env, EIllegalArgument, msg);
+      goto failure_cleanup;
+    }
   }
 
 #ifdef _WIN32
@@ -96,12 +101,35 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   }
 #endif // _WIN32
 
-  ffi_prep_cif(&cb->ffi_cif, abi, argc,
-               get_ffi_rtype(get_jtype(env, return_type)),
-               &cb->ffi_args[0]);
-  ffi_prep_closure(cb->ffi_closure, &cb->ffi_cif, callback_dispatch, cb);
+  rtype = get_jtype(env, return_type);
+  if (!rtype) {
+    throwByName(env, EIllegalArgument, "Unsupported return type");
+    goto failure_cleanup;
+  }
+  status = ffi_prep_cif(&cb->ffi_cif, abi, argc,
+                        get_ffi_rtype(env, return_type, rtype),
+                        &cb->ffi_args[0]);
+  switch(status) {
+  case FFI_BAD_ABI:
+    sprintf(msg, "Invalid calling convention: %d", (int)calling_convention);
+    throwByName(env, EIllegalArgument, msg);
+    break;
+  case FFI_BAD_TYPEDEF:
+    sprintf(msg, "Invalid structure definition (native typedef error)");
+    throwByName(env, EIllegalArgument, msg);
+    break;
+  case FFI_OK: 
+    ffi_prep_closure(cb->ffi_closure, &cb->ffi_cif, callback_dispatch, cb);
+    return cb;
+  default:
+    sprintf(msg, "Native callback setup failure: error code %d", status);
+    throwByName(env, EIllegalArgument, msg);
+    break;
+  }
 
-  return cb;
+ failure_cleanup:
+  free_callback(env, cb);
+  return NULL;
 }
 void 
 free_callback(JNIEnv* env, callback *cb) {
@@ -110,60 +138,6 @@ free_callback(JNIEnv* env, callback *cb) {
   free(cb);
 }
 
-static ffi_type*
-get_ffi_type(char jtype) {
-  switch (jtype) {
-  case 'Z': 
-    return &ffi_type_sint;
-  case 'B':
-    return &ffi_type_sint8;
-  case 'C':
-    return &ffi_type_sint;
-  case 'S':
-    return &ffi_type_sshort;
-  case 'I':
-    return &ffi_type_sint;
-  case 'J':
-    return &ffi_type_sint64;
-  case 'F':
-    return &ffi_type_float;
-  case 'D':
-    return &ffi_type_double;
-  case 'V':
-    return &ffi_type_void;
-  case 'L':
-  default:
-    return &ffi_type_pointer;
-  }
-}
-static ffi_type*
-get_ffi_rtype(char jtype) {
-  switch (jtype) {
-  case 'Z': 
-  case 'B': 
-  case 'C': 
-  case 'S':    
-  case 'I':
-    /*
-     * Always use a return type the size of a cpu register.  This fixes up
-     * callbacks on big-endian 64bit machines, and does not break things on
-     * i386 or amd64. 
-     */
-    return &ffi_type_slong;
-  case 'J':
-    return &ffi_type_sint64;
-  case 'F':
-    return &ffi_type_float;
-  case 'D':
-    return &ffi_type_double;
-  case 'V':
-    return &ffi_type_void;
-  case 'L':
-  default:
-    return &ffi_type_pointer;
-  }
-}
-  
 static void
 callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   callback* cb = (callback *) user_data;
@@ -201,7 +175,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       memset(resp, 0, cif->rtype->size);
     }
     else {
-      extract_value(env, result, resp);
+      extract_value(env, result, resp, cif->rtype->size);
     }
   }
 

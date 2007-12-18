@@ -54,8 +54,8 @@ public class NativeTest extends TestCase {
         try {
             String encoding = "UTF8";
             System.setProperty("jna.encoding", encoding);
-            String unicode = "\u81ff\u81fe\u4404\u3804\u4104\u3204\u4304";
-            String unicodez = "\u81ff\u81fe\u4404\u3804\u4104\u3204\u4304\0more stuff";
+            String unicode = "\u0444\u043b\u0441\u0432\u0443";
+            String unicodez = unicode + "\0more stuff";
             byte[] utf8 = Native.getBytes(unicode);
             byte[] expected = unicode.getBytes(encoding);
             for (int i=0;i < Math.min(utf8.length, expected.length);i++) {

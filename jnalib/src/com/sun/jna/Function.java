@@ -48,6 +48,8 @@ public class Function extends Pointer {
      *                  Library in which to find the native function
      * @param   functionName
      *                  Name of the native function to be linked with
+     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName) {
         return NativeLibrary.getInstance(libraryName).getFunction(functionName);
@@ -67,6 +69,8 @@ public class Function extends Pointer {
      *                  Name of the native function to be linked with
      * @param   callConvention
      *                  Call convention used by the native function
+     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName, int callConvention) {
         return NativeLibrary.getInstance(libraryName).getFunction(functionName, callConvention);
@@ -92,6 +96,8 @@ public class Function extends Pointer {
      *                 Name of the native function to be linked with
      * @param  callingConvention
      *                 Calling convention used by the native function
+     * @throws {@link UnsatisfiedLinkError} if the given function name is
+     * not found within the library.
      */
     Function(NativeLibrary library, String functionName, int callingConvention) {
         checkCallingConvention(callingConvention);
@@ -100,7 +106,14 @@ public class Function extends Pointer {
         this.library = library;
         this.functionName = functionName;
         this.callingConvention = callingConvention;
-        this.peer = library.getSymbolAddress(functionName);        
+        try {
+            this.peer = library.getSymbolAddress(functionName);
+        }
+        catch(UnsatisfiedLinkError e) {
+            throw new UnsatisfiedLinkError("Error looking up function '" 
+                                           + functionName + "': " 
+                                           + e.getMessage());
+        }
     }
     
     /**

@@ -29,7 +29,7 @@ typedef enum _callconv {
 } callconv_t;
 
 /* Maximum number of allowed arguments in libffi. */
-#define MAX_NARGS 256
+#define MAX_NARGS com_sun_jna_Function_MAX_NARGS
 
 typedef struct _callback {
   ffi_closure* ffi_closure;
@@ -73,16 +73,26 @@ typedef long word_t;
 #define LOAD_FID(ENV,VAR,CLASS,NAME,SIG) \
    ((VAR = (*ENV)->GetFieldID(ENV, CLASS, NAME, SIG)) ? VAR : 0)
 
+// Avoid typos in class names
+#define EIllegalArgument "java/lang/IllegalArgumentException"
+#define EOutOfMemory "java/lang/OutOfMemoryError"
+#define EUnsatisfiedLink "java/lang/UnsatisfiedLinkError"
+#define EIllegalState "java/lang/IllegalStateException"
+#define EUnsupportedOperation "java/lang/UnsupportedOperationException"
+#define EError "java/lang/Error"
+
 extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern jobject newJavaPointer(JNIEnv *, void *);
 extern char get_jtype(JNIEnv*, jclass);
+extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
+extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
 extern jboolean jnidispatch_callback_init(JNIEnv*);
 extern void jnidispatch_callback_dispose(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass, 
                                  callconv_t);
 extern void free_callback(JNIEnv*, callback*);
-extern void extract_value(JNIEnv*, jobject, void*);
+extern void extract_value(JNIEnv*, jobject, void*, size_t size);
 extern jobject new_object(JNIEnv*, char, void*);
 #ifdef __cplusplus
 }

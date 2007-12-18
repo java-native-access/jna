@@ -238,17 +238,17 @@ returnNullTestStructure() {
   return NULL;
 }
 
-typedef struct _TestByValueStructure {
+typedef struct _TestStructureByValue {
   int8 c;
   int16 s;
   int32 i;
   int64 j;
   TestStructure inner;
-} TestByValueStructure;
+} TestStructureByValue;
 
-EXPORT TestByValueStructure
+EXPORT TestStructureByValue
 returnStructureByValue() {
-  TestByValueStructure v;
+  TestStructureByValue v;
   v.c = 1;
   v.s = 2;
   v.i = 3;
@@ -512,6 +512,12 @@ struct cbstruct {
 EXPORT void
 callCallbackInStruct(struct cbstruct *cb) {
   (*cb->func)();
+}
+
+EXPORT TestStructureByValue
+callCallbackWithStructByValue(TestStructureByValue (*func)(TestStructureByValue),
+                              TestStructureByValue s) {
+  return (*func)(s);
 }
 
 static int 

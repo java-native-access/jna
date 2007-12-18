@@ -109,27 +109,42 @@ class CallbackReference extends WeakReference {
             }
         }
         for (int i=0;i < nativeParamTypes.length;i++) {
-            Class cls = nativeParamTypes[i];
-            if (Structure.class.isAssignableFrom(cls)) {
-                // Make sure we can instantiate an argument of this type
-                Structure.newInstance(cls);
-                nativeParamTypes[i] = Pointer.class;
+            nativeParamTypes[i] = getNativeType(nativeParamTypes[i]);
+            if (!isAllowableNativeType(nativeParamTypes[i])) {
+                String msg = "Callback argument " + nativeParamTypes[i] 
+                    + " requires custom type conversion";
+                throw new IllegalArgumentException(msg);
             }
-            else if (NativeMapped.class.isAssignableFrom(cls)) {
-                nativeParamTypes[i] = new NativeMappedConverter(cls).nativeType();
-            }
-            else if (cls == String.class || cls == WString.class) {
-                nativeParamTypes[i] = Pointer.class;
-            }
-            else if (!isAllowableNativeType(cls)) {
-                throw new IllegalArgumentException("Callback argument " + cls + " requires custom type conversion");
-            }
+        }
+        returnType = getNativeType(returnType);
+        if (!isAllowableNativeType(returnType)) {
+            String msg = "Callback return type " + returnType
+                + " requires custom type conversion";
+            throw new IllegalArgumentException(msg);
         }
 
         Method proxyMethod = getCallbackMethod(proxy);
         cbstruct = createNativeCallback(proxy, proxyMethod,  
                                         nativeParamTypes, returnType,
                                         callingConvention);
+    }
+    
+    private Class getNativeType(Class cls) {
+        if (Structure.class.isAssignableFrom(cls)) {
+            // Make sure we can instantiate an argument of this type
+            Structure.newInstance(cls);
+            if (!Structure.ByValue.class.isAssignableFrom(cls))
+                return Pointer.class;
+        }
+        else if (NativeMapped.class.isAssignableFrom(cls)) {
+            return new NativeMappedConverter(cls).nativeType();
+        }
+        else if (cls == String.class 
+                 || cls == WString.class
+                 || Callback.class.isAssignableFrom(cls)) {
+            return Pointer.class;
+        }
+        return cls;
     }
     
     private Method getCallbackMethod(Callback callback) {
@@ -290,8 +305,14 @@ class CallbackReference extends WeakReference {
                 }
                 else if (Structure.class.isAssignableFrom(dstType)) {
                     Structure s = Structure.newInstance(dstType);
+                    Pointer old = s.getPointer();
                     s.useMemory((Pointer)value);
                     s.read();
+                    // If by value, don't hold onto the pointer
+                    if (Structure.ByValue.class.isAssignableFrom(dstType)) {
+                        s.useMemory(old);
+                        s.write();
+                    }
                     value = s;
                 }
             }
@@ -310,6 +331,9 @@ class CallbackReference extends WeakReference {
                 return null;
             Class cls = value.getClass();
             if (Structure.class.isAssignableFrom(cls)) {
+                if (Structure.ByValue.class.isAssignableFrom(cls)) {
+                    return value;
+                }
                 return ((Structure)value).getPointer();
             }
             else if (cls == boolean.class || cls == Boolean.class) {
@@ -379,7 +403,8 @@ class CallbackReference extends WeakReference {
      * etc) are supported in the Java library.
      */
     private static boolean isAllowableNativeType(Class cls) {
-        return cls == boolean.class || cls == Boolean.class
+        return cls == void.class || cls == Void.class
+            || cls == boolean.class || cls == Boolean.class
             || cls == byte.class || cls == Byte.class
             || cls == short.class || cls == Short.class
             || cls == char.class || cls == Character.class
@@ -387,6 +412,8 @@ class CallbackReference extends WeakReference {
             || cls == long.class || cls == Long.class
             || cls == float.class || cls == Float.class
             || cls == double.class || cls == Double.class
+            || (Structure.ByValue.class.isAssignableFrom(cls) 
+                && Structure.class.isAssignableFrom(cls))
             || Pointer.class.isAssignableFrom(cls);
     }
     

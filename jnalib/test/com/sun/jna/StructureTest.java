@@ -335,7 +335,24 @@ public class StructureTest extends TestCase {
     }
     
     static class CbStruct extends Structure {
+        public static interface TestCallback extends Callback {
+            void callback(CbStruct cbs);
+        }
         public Callback cb;
+    }
+    static class TestStructure extends Structure {
+        public static class Inner extends Structure {
+            public double value;
+        }
+        public static class ByValue extends TestStructure implements Structure.ByValue { }
+        public static interface TestCallback extends Callback {
+            TestStructure.ByValue callback(TestStructure.ByValue s);
+        }
+        public byte c;
+        public short s;
+        public int i;
+        public long j;
+        public Inner inner;
     }
     static class CbStruct2 extends Structure {
         public static interface TestCallback extends Callback {
@@ -345,6 +362,7 @@ public class StructureTest extends TestCase {
     }
     static interface CbTest extends Library {
         public void callCallbackInStruct(CbStruct cbstruct);
+        public TestStructure.ByValue callCallbackWithStructByValue(TestStructure.TestCallback callback, TestStructure.ByValue cbstruct);
         public void setCallbackInStruct(CbStruct2 cbstruct);
     }
     public void testCallbackWrite() {
@@ -373,6 +391,31 @@ public class StructureTest extends TestCase {
         CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
         lib.callCallbackInStruct(s);
         assertTrue("Callback not invoked", flag[0]);
+    }
+    
+    public void testCallCallbackWithStructByValue() {
+        final TestStructure.ByValue s = new TestStructure.ByValue();
+        final TestStructure innerResult = new TestStructure();
+        TestStructure.TestCallback cb = new TestStructure.TestCallback() {
+            public TestStructure.ByValue callback(TestStructure.ByValue s) {
+                Pointer old = innerResult.getPointer();
+                innerResult.useMemory(s.getPointer());
+                innerResult.read();
+                innerResult.useMemory(old);
+                innerResult.write();
+                return s;
+            }
+        };
+        s.c = (byte)0x11;
+        s.s = 0x2222;
+        s.i = 0x33333333;
+        s.j = 0x4444444444444444L;
+        s.inner.value = 5;
+        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
+        
+        TestStructure result = lib.callCallbackWithStructByValue(cb, s);
+        assertEquals("Wrong value passed to callback", s, innerResult);
+        assertEquals("Wrong value for result", s, result);
     }
     
     public void testReadFunctionPointerAsCallback() {
@@ -561,7 +604,7 @@ public class StructureTest extends TestCase {
         Pointer inner = s.inner.getTypeInfo();
         assertEquals("Wrong type information for 'inner' field",
                      inner, els.getPointer(0));
-        assertEquals("Wront type information for integer field",
+        assertEquals("Wrong type information for integer field",
                      s.getTypeInfo(new Integer(0)),
                      els.getPointer(Pointer.SIZE));
         assertNull("Type element list should be null-terminated", 

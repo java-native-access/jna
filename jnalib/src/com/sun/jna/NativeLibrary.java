@@ -86,26 +86,33 @@ public class NativeLibrary {
             }
         }
         String libraryPath = findLibraryPath(libraryName, searchPath);
-        long handle = open(libraryPath);
-        if (handle == 0) {
-            //
-            // Failed to load the library normally - try to match libfoo.so.*
-            //
+        long handle = 0;
+        try {
+            handle = open(libraryPath);
+        }
+        catch(UnsatisfiedLinkError e) {
             if (Platform.isLinux()) {
+                //
+                // Failed to load the library normally - try to match libfoo.so.*
+                //
                 libraryPath = matchLibrary(libraryName, searchPath);
                 if (libraryPath != null) {
-                    handle = open(libraryPath);
+                    try { handle = open(libraryPath); }
+                    catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
             }
             // Search framework libraries on OS X
             else if (Platform.isMac() && !libraryName.endsWith(".dylib")) {
                 libraryPath = "/System/Library/Frameworks/" + libraryName
                     + ".framework/" + libraryName;
-                handle = open(libraryPath);
+                if (new File(libraryPath).exists()) {
+                    try { handle = open(libraryPath); }
+                    catch(UnsatisfiedLinkError e2) { e = e2; }
+                }
             }
-            
             if (handle == 0) {
-                throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "'");
+                throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "': "
+                                               + e.getMessage());
             }
         }
         return new NativeLibrary(libraryName, libraryPath, handle);
@@ -218,24 +225,29 @@ public class NativeLibrary {
 
     /** Look up the given global variable within this library.
      * @param symbolName
-     * @return Pointer representing the global variable address 
+     * @return Pointer representing the global variable address
+     * @throws UnsatisfiedLinkError if the symbol is not found 
      */
     public Pointer getGlobalVariableAddress(String symbolName) {
-        return new Pointer(getSymbolAddress(symbolName));
+        try {
+            return new Pointer(getSymbolAddress(symbolName));
+        }
+        catch(UnsatisfiedLinkError e) {
+            throw new UnsatisfiedLinkError("Error looking up '" 
+                                           + symbolName + "': " 
+                                           + e.getMessage());
+        }
     }
     
     /**
      * Used by the Function class to locate a symbol
+     * @throws UnsatisfiedLinkError if the symbol can't be found
      */
-    long getSymbolAddress(String functionName) {
+    long getSymbolAddress(String name) {
         if (handle == 0) {
             throw new UnsatisfiedLinkError("Library has been unloaded");
         }
-        long func = findSymbol(handle, functionName);
-        if (func == 0) {
-            throw new UnsatisfiedLinkError("Cannot locate function '" + functionName + "'");
-        }
-        return func;
+        return findSymbol(handle, name);
     }
     public String toString() {
         return "Native Library <" + libraryPath + "@" + handle + ">";

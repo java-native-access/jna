@@ -22,6 +22,8 @@
 
 # TODO
 
+* test callback arg/return value for callback type
+
 * test performance of setByte/getByte and pass pointer field directly if it
   makes sense to do so (done, halves access time to use pointer field directly,
   slight variations on 1.4/1.5/1.6).  Direct buffers should be used where
@@ -128,6 +130,8 @@
 
 
 # DONE
+* structure by value in callback
+
 * call native to fix up FFIType on creation (avoid multithreading problems)
   properly handle union by value (or punt; must pass union field instead)
 

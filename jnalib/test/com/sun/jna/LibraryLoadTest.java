@@ -15,12 +15,16 @@ package com.sun.jna;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 
 import junit.framework.TestCase;
 
-// TODO: verify load from jna.library.path
 public class LibraryLoadTest extends TestCase {
     
     public void testLoadJNALibrary() {
@@ -48,6 +52,12 @@ public class LibraryLoadTest extends TestCase {
         int atol(String str);
     }
 
+    public void testLoadAWTAfterJNA() {
+        if (Pointer.SIZE > 0) {
+            Toolkit.getDefaultToolkit();
+        }
+    }
+    
     private Object load() {
         return Native.loadLibrary(System.getProperty("os.name").startsWith("Windows")
                                   ? "msvcrt" : "c", CLibrary.class);
@@ -57,10 +67,39 @@ public class LibraryLoadTest extends TestCase {
         load();
     }
     
-    public void testLoadAWTAfterJNA() {
-        if (Pointer.SIZE > 0) {
-            Toolkit.getDefaultToolkit();
+    private static final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";
+    private void copy(File src, File dst) throws Exception {
+        FileInputStream is = new FileInputStream(src);
+        FileOutputStream os = new FileOutputStream(dst);
+        int count;
+        byte[] buf = new byte[1024];
+        try {
+            while ((count = is.read(buf, 0, buf.length)) > 0) {
+                os.write(buf, 0, count);
+            }
         }
+        finally {
+            try { is.close(); } catch(IOException e) { }
+            try { os.close(); } catch(IOException e) { } 
+        }
+    }
+    
+    public void testLoadLibraryWithUnicodeName() throws Exception {
+        String tmp = System.getProperty("java.io.tmpdir");
+        String libName = System.mapLibraryName("jnidispatch");
+        File src = new File("build/native", libName);
+        String newLibName = UNICODE;
+        if (libName.startsWith("lib"))
+            newLibName = "lib" + newLibName;
+        int dot = libName.lastIndexOf(".");
+        if (dot != -1) {
+            newLibName += libName.substring(dot, libName.length());
+        }
+        File dst = new File(tmp, newLibName);
+        //dst.deleteOnExit();
+        copy(src, dst);
+        NativeLibrary.addSearchPath(UNICODE, tmp);
+        NativeLibrary.getInstance(UNICODE);
     }
     
     public void testHandleObjectMethods() {

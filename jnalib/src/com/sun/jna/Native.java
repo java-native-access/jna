@@ -161,21 +161,6 @@ public final class Native {
         // By this point, we're certain that Toolkit.loadLibraries() has
         // been called, thus avoiding AWT/JAWT link errors
         // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
-        // Windows needs a little extra nudging to find JAWT
-        if (Platform.isWindows()) {
-            synchronized(Native.class) {
-                if (!jawt_loaded) {
-                    try {
-                        System.loadLibrary("jawt");
-                    }
-                    catch(UnsatisfiedLinkError e) {
-                        // Usually because of "loaded in a different class loader"
-                        e.printStackTrace();
-                    }
-                }
-                jawt_loaded = true;
-            }
-        }
         return getWindowHandle0(c);
     }
     

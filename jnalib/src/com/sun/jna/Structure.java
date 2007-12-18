@@ -913,10 +913,23 @@ public abstract class Structure {
      * memory address and data type.
      */
     public boolean equals(Object o) {
-        return o == this
-            || (o != null
-                && o.getClass() == getClass()
-                && ((Structure)o).getPointer().equals(getPointer()));
+        if (o == this)
+            return true;
+        if (o instanceof Structure && ((Structure)o).size() == size()) {
+            if (o.getClass().isAssignableFrom(getClass())
+                || getClass().isAssignableFrom(o.getClass())) {
+                Structure s = (Structure)o;
+                Pointer p1 = getPointer();
+                Pointer p2 = s.getPointer();
+                for (int i=0;i < size();i++) {
+                    if (p1.getByte(i) != p2.getByte(i)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
     }
     
     /** Since {@link #equals} depends on the native address, use that
