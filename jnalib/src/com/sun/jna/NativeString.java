@@ -48,7 +48,7 @@ class NativeString implements CharSequence, Comparable {
             throw new NullPointerException("String must not be null");
         }
         // Allocate the memory to hold the string.  Note, we have to
-        // make this 1 element longer in order to accomodate the terminating 
+        // make this 1 element longer in order to accommodate the terminating 
         // NUL (which is generated in Pointer.setString()).
         if (wide) {
             int len = (string.length() + 1 ) * Native.WCHAR_SIZE;

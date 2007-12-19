@@ -319,6 +319,9 @@ public abstract class Structure {
             }
             result = s;
         }
+        else if (nativeType == boolean.class || nativeType == Boolean.class) {
+            result = Boolean.valueOf(memory.getInt(offset) != 0);
+        }
         else if (nativeType == byte.class || nativeType == Byte.class) {
             result = new Byte(memory.getByte(offset));
         }
@@ -507,7 +510,10 @@ public abstract class Structure {
         }
 
         // Set the value at the offset according to its type
-        if (nativeType == byte.class || nativeType == Byte.class) {
+        if (nativeType == boolean.class || nativeType == Boolean.class) {
+            memory.setInt(offset, Boolean.TRUE.equals(value) ? -1 : 0);
+        }
+        else if (nativeType == byte.class || nativeType == Byte.class) {
             memory.setByte(offset, ((Byte)value).byteValue());
         }
         else if (nativeType == short.class || nativeType == Short.class) {
@@ -809,6 +815,8 @@ public abstract class Structure {
      * to determine size.
      */
     protected int getNativeSize(Class cls) {
+        // boolean defaults to 32 bit integer if not otherwise mapped
+        if (cls == boolean.class || cls == Boolean.class) return 4;
         if (cls == byte.class || cls == Byte.class) return 1;
         if (cls == short.class || cls == Short.class) return 2; 
         if (cls == char.class || cls == Character.class) return Native.WCHAR_SIZE;

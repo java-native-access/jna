@@ -69,6 +69,16 @@ public class Memory extends Pointer {
 
     protected Memory() { }
 
+    /** Provide a view onto this structure from the given offset.  The
+     * returned {@link Pointer} will have the same size as the original,
+     * reduced by the offset.
+     * @throws IndexOutOfBoundsException if the requested memory is outside
+     * the allocated bounds. 
+     */
+    public Pointer share(long offset) {
+        return share(offset, getSize() - offset);
+    }
+    
     /** Provide a view onto this structure from the given offset. 
      * @throws IndexOutOfBoundsException if the requested memory is outside
      * the allocated bounds. 
@@ -78,7 +88,7 @@ public class Memory extends Pointer {
         return new SharedMemory(offset);
     }
     
-    /** Provid a view onto this structure with the given alignment. 
+    /** Provide a view onto this structure with the given alignment. 
      * @param byteBoundary Align memory to this number of bytes; should be a
      * power of two.
      * @throws IndexOutOfBoundsException if the requested alignment can
