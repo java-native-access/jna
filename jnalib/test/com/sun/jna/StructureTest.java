@@ -595,11 +595,25 @@ public class StructureTest extends TestCase {
         public Inner inner;
         public int dummy;
     }
+    public static class size_t extends IntegerType { 
+        public size_t() { this(0); }
+        public size_t(long value) { super(Pointer.SIZE, value); }
+    }
     public void testNestedStructureTypeInfo() {
+        class FFIType extends Structure {
+            public FFIType(Pointer p) { 
+                useMemory(p); read();
+            }
+            public size_t size;
+            public short alignment;
+            public short type;
+            public Pointer elements;
+        }
         NestedTypeInfoStructure s = new NestedTypeInfoStructure();
         Pointer p = s.getTypeInfo();
+        FFIType ffi_type = new FFIType(p);
         assertNotNull("Type info should not be null", p);
-        Pointer els = p.getPointer(Pointer.SIZE + 4);
+        Pointer els = ffi_type.elements;
         Pointer inner = s.inner.getTypeInfo();
         assertEquals("Wrong type information for 'inner' field",
                      inner, els.getPointer(0));
