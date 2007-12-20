@@ -876,14 +876,17 @@ public abstract class Structure {
             for (int idx=0;idx < indent;idx++) {
                 contents += "  ";
             }
-            contents += "  " + sf.type + " " 
+            contents += "  " + sf.type.getName() + " " 
                 + sf.name + "@" + Integer.toHexString(sf.offset);
             Object value = getField(sf);
             if (value instanceof Structure
                 && !(value instanceof Structure.ByReference)) {
                 value = ((Structure)value).toString(indent + 1);
             }
-            contents += "=" + value.toString().trim();
+            if (value != null) {
+                value = value.toString().trim();
+            }
+            contents += "=" + value;
             contents += LS;
         }
         if (indent == 0) {
