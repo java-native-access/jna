@@ -22,11 +22,9 @@
 
 # TODO
 
-* test callback arg/return value for callback type
+* allow return of W/String[] or Pointer[], if NULL-terminated?
 
-* test performance of setByte/getByte and pass pointer field directly if it
-  makes sense to do so (done, halves access time to use pointer field directly,
-  slight variations on 1.4/1.5/1.6).  Direct buffers should be used where
+* Direct buffers should be used where
   hotspot inlining can improve performance.  
 
 * use libffi closure allocation/deallocation
@@ -38,8 +36,6 @@
 * (maybe) move all native functions into Native (limit header files, easier
   management) 
 
-* handle array of Structure.ByReference as parameter/return value (cf Pointer[])
-
 * Does it make sense to define Int16/UInt16, Int32/UInt32, etc?  Probably not
   the signed versions, but maybe the unsigned ones, to facilitate generating
   unsigned values (maybe just provide utilities to pack an unsigned int into a
@@ -50,7 +46,7 @@
     exception if the value is out of bounds).
 
 * packaging: 'types', 'convert/marshal' subpackages?
-  note: marshal/unmarshal vs tonative/fromnative: to/fromnative is more
+  note: marshal/unmarshal vs to/fromnative: to/fromnative is more
   explicit, since marshal/unmarshal doesn't indicate src/dst.
   o moving conversion contexts to subpackage cleans up top level
   substantially, but we probably don't want to move things like Structure and
@@ -130,6 +126,11 @@
 
 
 # DONE
+* handle array of Structure.ByReference as parameter/return value (cf Pointer[])
+* test performance of setByte/getByte and pass pointer field directly if it
+  makes sense to do so (done, halves access time to use pointer field directly,
+  slight variations on 1.4/1.5/1.6).
+* test callback arg/return value for callback type 
 * structure by value in callback
 
 * call native to fix up FFIType on creation (avoid multithreading problems)

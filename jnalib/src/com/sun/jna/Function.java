@@ -389,14 +389,22 @@ public class Function extends Pointer {
             return new PointerArray((Pointer[])arg);
         }
         else if (Structure[].class.isAssignableFrom(argClass)) {
-            // Initialize uninitialized arrays of Structure to point
-            // to a single block of memory
             Structure[] ss = (Structure[])arg;
-            if (ss.length == 0) {
-                return null;
+            Class type = argClass.getComponentType();
+            boolean byRef = Structure.ByReference.class.isAssignableFrom(type);
+            if (byRef) {
+                Pointer[] pointers = new Pointer[ss.length + 1];
+                for (int i=0;i < ss.length;i++) {
+                    pointers[i] = ss[i].getPointer();
+                }
+                return new PointerArray(pointers);
+            }
+            else if (ss.length == 0) {
+                throw new IllegalArgumentException("Structure array must have non-zero length");
             }
             else if (ss[0] == null) {
-                Class type = argClass.getComponentType();
+                // Initialize uninitialized arrays of Structure to point
+                // to a single block of memory
                 Structure struct = Structure.newInstance(type);
                 int size = struct.size();
                 Memory m = new Memory(size * ss.length);

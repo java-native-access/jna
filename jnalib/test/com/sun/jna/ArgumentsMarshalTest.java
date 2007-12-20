@@ -18,6 +18,9 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
+
+import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
+
 import junit.framework.TestCase;
 
 /** Exercise a range of native methods.
@@ -27,10 +30,12 @@ import junit.framework.TestCase;
 public class ArgumentsMarshalTest extends TestCase {
 
     public static interface TestLibrary extends Library {
-
+        
         class CheckFieldAlignment extends Structure {
             public static class ByValue extends CheckFieldAlignment 
                 implements Structure.ByValue { }
+            public static class ByReference extends CheckFieldAlignment
+                implements Structure.ByReference { }
         
             public byte int8Field = 1;
             public short int16Field = 2;
@@ -55,6 +60,7 @@ public class ArgumentsMarshalTest extends TestCase {
         String returnStringArrayElement(String[] args, int which);
         WString returnWideStringArrayElement(WString[] args, int which);
         Pointer returnPointerArrayElement(Pointer[] args, int which);
+        CheckFieldAlignment returnPointerArrayElement(CheckFieldAlignment.ByReference[] args, int which);
         int returnRotatedArgumentCount(String[] args);
 
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
@@ -463,6 +469,16 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testPointerArrayArgument() {
         Pointer[] args = { new NativeString(getName()).getPointer(),
                            new NativeString(getName()+"2").getPointer() };
+        assertEquals("Wrong value returned", args[0], lib.returnPointerArrayElement(args, 0));
+        assertEquals("Wrong value returned", args[1], lib.returnPointerArrayElement(args, 1));
+        assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 2));
+    }
+
+    public void testStructureByReferenceArrayArgument() {
+        CheckFieldAlignment.ByReference[] args = { 
+            new CheckFieldAlignment.ByReference(),
+            new CheckFieldAlignment.ByReference()
+        };
         assertEquals("Wrong value returned", args[0], lib.returnPointerArrayElement(args, 0));
         assertEquals("Wrong value returned", args[1], lib.returnPointerArrayElement(args, 1));
         assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 2));

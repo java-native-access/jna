@@ -91,9 +91,7 @@ public interface CLibrary extends Library {
 If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry ({@link com.sun.jna.Library#OPTION_FUNCTION_MAPPER}/{@link com.sun.jna.FunctionMapper}) in the options {@link java.util.Map} passed to {@link com.sun.jna.Native#loadLibrary(String,Class,java.util.Map) Native.loadLibrary()} which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
 An instance of the {@link com.sun.jna.Function} class is obtained through the {@link com.sun.jna.NativeLibrary} instance corresponding to the containing native library.  This {@link com.sun.jna.Function} instance handles argument marshalling and delegation to the native function. 
 
-<!-- TODO cpp, inline, unsatisfiedlinkerror -->
 <!-- TODO: when to use primitive array vs NIO Buffer vs Memory -->
-<!-- TODO: other stuff from main html page -->
 
 <p>
 <a href="#toc">Table of Contents</a>
@@ -112,18 +110,18 @@ Java types must be chosen to match native types of the same size.  Following are
 <tr><td>float</td><td>float</td><td>32-bit floating point</td>
 <tr><td>double</td><td>double</td><td>64-bit floating point</td>
 <tr><td>{@link java.nio.Buffer}<br>
-{@link com.sun.jna.Pointer}<br>
-&lt;T&gt;[] (array of primitive type)</td><td>pointer</td><td>platform-dependent (32- or 64-bit pointer)</td>
+{@link com.sun.jna.Pointer}<td>pointer</td><td>platform-dependent (32- or 64-bit pointer to memory)</td>
+<tr><td>&lt;T&gt;[] (array of primitive type)</td><td>pointer<br>array</td><td>32- or 64-bit pointer to memory (argument/return)<br>contiguous memory (struct member)</td>
 <tr><td colspan=3>In addition to the above types, which are supported at the native layer, the JNA Java library automatically handles the following types.  All but <code>NativeMapped</code> and <code>NativeLong</code> are converted to {@link com.sun.jna.Pointer} before being passed to the native layer.</td></tr>
-<tr><td>{@link java.lang.String}</td><td>char*</td><td>NUL-terminated array (native encoding)</td>
+<tr><td>{@link java.lang.String}</td><td>char*</td><td>NUL-terminated array (native encoding or <code>jna.encoding</code>)</td>
 <tr><td>{@link com.sun.jna.WString}</td><td>wchar_t*</td><td>NUL-terminated array (unicode)</td>
-<tr><td>{@link com.sun.jna.Structure}</td><td>struct*</td><td>pointer to struct</td>
-<tr><td>{@link com.sun.jna.Union}</td><td>union*</td><td>pointer to union</td>
-<tr><td>{@link com.sun.jna.Structure Structure[]}</td><td>struct[]</td><td>array of structs contiguous in memory</td>
+<tr><td>{@link com.sun.jna.Structure}</td><td>struct*<br>struct</td><td>pointer to struct (argument or return) ({@link com.sun.jna.Structure.ByReference or explicitly})<br>struct by value (member of struct) ({@link com.sun.jna.Structure.ByValue or explicitly})</td>
+<tr><td>{@link com.sun.jna.Union}</td><td>union</td><td>same as <code>Structure</code></td>
+<tr><td>{@link com.sun.jna.Structure Structure[]}</td><td>struct[]</td><td>array of structs, contiguous in memory</td>
 <tr><td>{@link com.sun.jna.Callback}</td><td>&lt;T&gt; (*fp)()</td><td>function pointer (Java or native)</td>
-<tr><td>{@link com.sun.jna.NativeMapped}</td><td>-</td><td>depends on definition</td>
+<tr><td>{@link com.sun.jna.NativeMapped}</td><td>varies</td><td>depends on definition</td>
 <tr><td>{@link com.sun.jna.NativeLong}</td><td>long</td><td>platform-dependent (32- or 64-bit integer)</td>
-<tr><td>{@link com.sun.jna.PointerType}</td><td>pointer</td><td>platform-dependent (32- or 64-bit pointer)</td>
+<tr><td>{@link com.sun.jna.PointerType}</td><td>pointer</td><td>same as <code>Pointer</code></td>
 </table>
 </center>
 <p>
@@ -137,6 +135,7 @@ Java types must be chosen to match native types of the same size.  Following are
 <li>All other types must eventually be converted to one of these basic types.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
 <li>Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
 <li>Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the {@link com.sun.jna.NativeMapped} interface.  
+<li><code>Structure</code> and <code>Union</code> are <em>not</em> converted to <code>Pointer</code> when passed by value.
 </ul>
 
 <a name="arrays"></a>
@@ -547,7 +546,7 @@ is formulated, passing Java objects directly is not supported.
 <a href="#toc">Table of Contents</a>
 <a name="invocation-mapping"></a>
 <h2>Invocation Mapping</h2>
-Sometimes native functions exist only as C preprocessor macros or as inline functions.  If you need to do more than simply change the name of the invoked function (which can be handled via <a href="#function-mapping">Function Mapping</a>, an {@link com.sun.jna.InvocationMapper} allows you to arbitrariley reconfigure the function invocation, including changing the method name and reordering, adding, or removing arguments.  See the {@link com.sun.jna.InvocationMapper} documentation for details.
+Sometimes native functions exist only as C preprocessor macros or as inline functions.  If you need to do more than simply change the name of the invoked function (which can be handled via <a href="#function-mapping">Function Mapping</a>), an {@link com.sun.jna.InvocationMapper} allows you to arbitrarily reconfigure the function invocation, including changing the method name and reordering, adding, or removing arguments.  See the {@link com.sun.jna.InvocationMapper} documentation for details.
 
 <p>
 <a href="#toc">Table of Contents</a>
@@ -559,7 +558,7 @@ The method {@link com.sun.jna.NativeLibrary#getGlobalVariableAddress} may be use
 <a href="#toc">Table of Contents</a>
 <a name="crash-protection"></a>
 <h2>VM Crash Protection</h2>
-When defining a new library and writing tests for it, it not uncommon to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.
+It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.
 
 </body>
 </html>

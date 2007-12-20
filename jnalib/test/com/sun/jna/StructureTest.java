@@ -38,6 +38,7 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong size", 4, s.size());
     }
     
+    // must be public to populate array
     public static class TestAllocStructure extends Structure {
         public int f0;
         public int f1;
@@ -133,7 +134,7 @@ public class StructureTest extends TestCase {
         try {
             SizeTest lib = (SizeTest)Native.loadLibrary("testlib", SizeTest.class);
             Class cls = Class.forName(getClass().getName() + "$TestStructure" + index);
-            Structure s = (Structure)cls.newInstance();
+            Structure s = Structure.newInstance(cls);
             assertEquals("Incorrect size: " + s, lib.getStructureSize(index), s.size());
         }
         catch(Exception e) {
@@ -351,10 +352,10 @@ public class StructureTest extends TestCase {
         }
     }
     
-    static class BadFieldStructure extends Structure {
-        public Function cb;
-    }
     public void testDisallowFunctionPointerAsField() {
+        class BadFieldStructure extends Structure {
+            public Function cb;
+        }
         try {
             BadFieldStructure s = new BadFieldStructure();
             fail("Function fields should not be allowed");
@@ -363,7 +364,7 @@ public class StructureTest extends TestCase {
         }
     }
 
-    // must be publicly accessible
+    // must be publicly accessible in order to create array elements
     public static class PublicTestStructure extends Structure {
         public int value;
     }
@@ -432,10 +433,10 @@ public class StructureTest extends TestCase {
                      3, s.cb.callback(1, 2));
     }
     
-    public static class UninitializedArrayFieldStructure extends Structure {
-        public byte[] array;
-    }
     public void testUninitializedArrayField() {
+        class UninitializedArrayFieldStructure extends Structure {
+            public byte[] array;
+        }
         try {
             Structure s = new UninitializedArrayFieldStructure();
             assertTrue("Invalid size: " + s.size(), s.size() > 0);
@@ -460,11 +461,11 @@ public class StructureTest extends TestCase {
         }
     }
     
-    public static class ArrayOfPointerStructure extends Structure {
-        final static int SIZE = 10;
-        public Pointer[] array = new Pointer[SIZE];
-    }
     public void testPointerArrayField() {
+        class ArrayOfPointerStructure extends Structure {
+            final static int SIZE = 10;
+            public Pointer[] array = new Pointer[SIZE];
+        }
         ArrayOfPointerStructure s = new ArrayOfPointerStructure();
         int size = s.size();
         assertEquals("Wrong size", ArrayOfPointerStructure.SIZE * Pointer.SIZE, size);
@@ -475,14 +476,14 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong first element", s.getPointer(), s.array[0]);
     }
     
-    // NOTE: may support write-only Buffer fields in the future
-    public static class BufferStructure extends Structure {
-    	public Buffer buffer;
-    	public BufferStructure(byte[] buf) {
-    		buffer = ByteBuffer.wrap(buf);
-    	}
-    }
     public void testBufferField() {
+        // NOTE: may support write-only Buffer fields in the future
+        class BufferStructure extends Structure {
+            public Buffer buffer;
+            public BufferStructure(byte[] buf) {
+                buffer = ByteBuffer.wrap(buf);
+            }
+        }
     	try {
     		new BufferStructure(new byte[1024]);
     		fail("Buffer fields should fail immediately");
@@ -491,11 +492,11 @@ public class StructureTest extends TestCase {
     	}
     }
     
-    public static class VolatileStructure extends Structure {
-        public volatile int counter;
-        public int value;
-    }
     public void testVolatileStructureField() {
+        class VolatileStructure extends Structure {
+            public volatile int counter;
+            public int value;
+        }
         VolatileStructure s = new VolatileStructure();
         s.counter = 1;
         s.value = 1;
@@ -618,7 +619,7 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong type information for 'inner' field",
                      inner, els.getPointer(0));
         assertEquals("Wrong type information for integer field",
-                     s.getTypeInfo(new Integer(0)),
+                     Structure.getTypeInfo(new Integer(0)),
                      els.getPointer(Pointer.SIZE));
         assertNull("Type element list should be null-terminated", 
                    els.getPointer(Pointer.SIZE*2));
@@ -632,5 +633,26 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong structure size", 20, s.size());
         Pointer p = s.getTypeInfo();
         assertNotNull("Type info should not be null", p);
+    }
+    
+    public void testToString() {
+        class TestStructure extends Structure {
+            public int intField;
+            public InnerStructure inner;
+        }
+        TestStructure s = new TestStructure();
+        final String LS = System.getProperty("line.separator");
+        final String EXPECTED = "(?m).*" + s.size() + " bytes.*" + LS 
+            + "  int intField@0=0" + LS
+            + "  .*InnerStructure inner@4=.*" + LS
+            + "    int x@0=0" + LS
+            + "    int y@4=0" + LS
+            + "memory dump" + LS
+            + "\\[00000000\\]" + LS
+            + "\\[00000000\\]" + LS
+            + "\\[00000000\\]";
+        String actual = s.toString();
+        assertTrue("Improperly formatted toString(): " + actual, 
+                   actual.matches(EXPECTED));
     }
 }

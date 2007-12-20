@@ -65,13 +65,17 @@ public abstract class Union extends Structure {
      * selected.  Structures may contain pointer-based fields which can 
      * crash the VM if not properly initialized.
      */
-    void readField(StructField field) {
+    Object readField(StructField field) {
         if (field == activeField 
             || (!Structure.class.isAssignableFrom(field.type)
                 && !String.class.isAssignableFrom(field.type)
                 && !WString.class.isAssignableFrom(field.type))) {
-            super.readField(field);
+            return super.readField(field);
         }
+        // Field not accessible
+        // TODO: read structure, to the extent possible; need a "recursive"
+        // flag to "read"
+        return null;
     }
     
     /** Adjust the size to be the size of the largest element, and ensure
@@ -100,6 +104,6 @@ public abstract class Union extends Structure {
 
     /** Return type information for the largest field. */
     Pointer getTypeInfo() {
-        return getTypeInfo(getField(activeField != null ? activeField : biggestField));
+        return getTypeInfo(getField(biggestField));
     }
 }

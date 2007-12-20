@@ -253,15 +253,20 @@ public abstract class Structure {
         }
     }
 
-    /** Update the given field from native memory. */
-    public void readField(String name) {
+    /** Force a read of the given field from native memory. 
+     * @return the new field value, after updating
+     * @throws IllegalArgumentException if no field exists with the given name
+     */
+    public Object readField(String name) {
         StructField f = (StructField)structFields.get(name);
         if (f == null)
             throw new IllegalArgumentException("No such field: " + name);
-        readField(f);
+        return readField(f);
     }
 
-    /** Obtain the value currently in the Java field. */
+    /** Obtain the value currently in the Java field.  Does not read from 
+     * memory.
+     */
     Object getField(StructField structField) {
         try {
             return structField.field.get(this);
@@ -281,8 +286,9 @@ public abstract class Structure {
                             + structField.name + "' within " + getClass(), e);
         }
     }
-    
-    void readField(StructField structField) {
+
+    /** Read the given field and return its value. */
+    Object readField(StructField structField) {
         
         // Get the offset of the field
         int offset = structField.offset;
@@ -438,6 +444,7 @@ public abstract class Structure {
 
         // Set the value on the field
         setField(structField, result);
+        return result;
     }
 
 
@@ -635,9 +642,6 @@ public abstract class Structure {
         // so that we don't have to re-analyze this static information each 
         // time a struct is allocated.
 		
-        // Currently, we're not accounting for superclasses with declared
-        // fields.  Since C structs have no inheritance, this shouldn't be
-        // an issue.
         structAlignment = 1;
         int calculatedSize = 0;
         Field[] fields = getClass().getFields();
@@ -814,7 +818,7 @@ public abstract class Structure {
     /** Returns the native size for classes which don't need an object instance
      * to determine size.
      */
-    protected int getNativeSize(Class cls) {
+    private int getNativeSize(Class cls) {
         // boolean defaults to 32 bit integer if not otherwise mapped
         if (cls == boolean.class || cls == Boolean.class) return 4;
         if (cls == byte.class || cls == Byte.class) return 1;
@@ -835,7 +839,7 @@ public abstract class Structure {
     }
 
     /** Returns the native size of the given class, in bytes. */
-    protected int getNativeSize(Class type, Object value) {
+    private int getNativeSize(Class type, Object value) {
         if (Structure.class.isAssignableFrom(type)) {
             if (ByReference.class.isAssignableFrom(type)) {
                 return Pointer.SIZE;
@@ -859,26 +863,43 @@ public abstract class Structure {
     }
 
     public String toString() {
+        return toString(0);
+    }
+    
+    private String toString(int indent) {
         String LS = System.getProperty("line.separator");
         String name = getClass().getName() + "(" + getPointer() + ")";
         String contents = "";
         // Write all fields
         for (Iterator i=structFields.values().iterator();i.hasNext();) {
-            contents += "  " + i.next();
+            StructField sf = (StructField)i.next();
+            for (int idx=0;idx < indent;idx++) {
+                contents += "  ";
+            }
+            contents += "  " + sf.type + " " 
+                + sf.name + "@" + Integer.toHexString(sf.offset);
+            Object value = getField(sf);
+            if (value instanceof Structure
+                && !(value instanceof Structure.ByReference)) {
+                value = ((Structure)value).toString(indent + 1);
+            }
+            contents += "=" + value.toString().trim();
             contents += LS;
         }
-        byte[] buf = getPointer().getByteArray(0, size());
-        final int BYTES_PER_ROW = 4;
-        contents += "memory dump" + LS;
-        for (int i=0;i < buf.length;i++) {
-            if ((i % BYTES_PER_ROW) == 0) contents += "[";
-            if (buf[i] >=0 && buf[i] < 16)
-                contents += "0";
-            contents += Integer.toHexString(buf[i] & 0xFF);
-            if ((i % BYTES_PER_ROW) == BYTES_PER_ROW-1 && i < buf.length-1)
-                contents += "]" + LS;
+        if (indent == 0) {
+            byte[] buf = getPointer().getByteArray(0, size());
+            final int BYTES_PER_ROW = 4;
+            contents += "memory dump" + LS;
+            for (int i=0;i < buf.length;i++) {
+                if ((i % BYTES_PER_ROW) == 0) contents += "[";
+                if (buf[i] >=0 && buf[i] < 16)
+                    contents += "0";
+                contents += Integer.toHexString(buf[i] & 0xFF);
+                if ((i % BYTES_PER_ROW) == BYTES_PER_ROW-1 && i < buf.length-1)
+                    contents += "]" + LS;
+            }
+            contents += "]";
         }
-        contents += "]";
         return name + LS + contents;
     }
     
@@ -993,17 +1014,7 @@ public abstract class Structure {
         public FromNativeConverter readConverter;
         public ToNativeConverter writeConverter;
         public FromNativeContext context;
-        public String toString() {
-            Object value = "<unavailable>";
-            try {
-                value = field.get(Structure.this);
-            }
-            catch(Exception e) { }
-            return type + " " + name + "@" + Integer.toHexString(offset) 
-                + "=" + value;
-        }
     }
-
     /** This class auto-generates an ffi_type structure appropriate for a given
      * structure for use by libffi.  The lifecycle of this structure is easier
      * to manage on the Java side than in native code.
@@ -1068,9 +1079,9 @@ public abstract class Structure {
         public Pointer elements;
         
         private FFIType(Structure ref) {
-            Pointer[] els = new Pointer[ref.structFields.size() + 1];
+            Pointer[] els = new Pointer[ref.fields().size() + 1];
             int idx = 0;
-            for (Iterator i=ref.structFields.values().iterator();i.hasNext();) {
+            for (Iterator i=ref.fields().values().iterator();i.hasNext();) {
                 StructField sf = (StructField)i.next();
                 els[idx++] = get(ref.getField(sf), sf.type);
             }
@@ -1092,7 +1103,7 @@ public abstract class Structure {
             write();
         }
         
-        private static Pointer get(Object obj) {
+        static Pointer get(Object obj) {
             if (obj == null) 
                 return FFITypes.ffi_type_pointer;
             return get(obj, obj.getClass());

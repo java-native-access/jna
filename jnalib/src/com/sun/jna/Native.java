@@ -37,8 +37,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+
 /** Provides generation of invocation plumbing for a defined native
- * library interface.
+ * library interface.  Also provides various utilities for native operations.
  * <p>
  * {@link #getTypeMapper} and {@link #getStructureAlignment} are provided
  * to avoid having to explicitly pass these parameters to {@link Structure}s, 
@@ -51,13 +52,13 @@ import java.util.WeakHashMap;
  * When JNA classes are loaded, the native shared library (jnidispatch) is
  * loaded as well.  An attempt is made to load it from the system library path
  * using {@link System#loadLibrary}.  If not found, the appropriate library
- * will be extracted from <code>jna.jar</code> into a temporary directory and
+ * will be extracted from the class path into a temporary directory and
  * loaded from there.  If your system has additional security constraints
  * regarding execution or load of files (SELinux, for example), you should 
  * probably install the native library in an accessible location and configure 
  * your system accordingly, rather than relying on JNA to extract the library 
  * from its own jar file.
- * 
+ * <p>
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
@@ -506,8 +507,8 @@ public final class Native {
                                                newHandler);
     }
     
-    /** If running web start, determine the location of downloaded native 
-     * libraries.  This value may be used to properly set 
+    /** If running web start, determine the location of a given native 
+     * library.  This value may be used to properly set 
      * <code>jna.library.path</code> so that JNA can load libraries identified
      * by the &lt;nativelib&gt; tag in the JNLP configuration file.  Returns 
      * <code>null</code> if the Web Start native library cache location can not 
@@ -517,7 +518,7 @@ public final class Native {
      * whether your code is running under Web Start.
      * @throws IllegalArgumentException if the library can't be found by the
      * Web Start class loader, which usually means it wasn't included as 
-     * a &lt;nativelib&gt; resource in the JNLP file.
+     * a <code>&lt;nativelib&gt;</code> resource in the JNLP file.
      */
     public static String getWebStartLibraryPath(String libName) {
         if (System.getProperty("javawebstart.version") == null)
