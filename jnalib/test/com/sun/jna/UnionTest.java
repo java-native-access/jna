@@ -66,13 +66,8 @@ public class UnionTest extends TestCase {
                      Structure.getTypeInfo(new Long(0)),
                      u.getTypeInfo());
         u.setType(int.class);
-        assertEquals("Union type information should match active field",
-                     Structure.getTypeInfo(new Integer(0)),
-                     u.getTypeInfo());
-        
-        u.setType(Pointer.class);
-        assertEquals("Wrong type information",
-                     Structure.getTypeInfo(null),
+        assertEquals("Type should be that of longest field if field active",
+                     Structure.getTypeInfo(new Long(0)),
                      u.getTypeInfo());
     }
     

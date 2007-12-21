@@ -792,6 +792,8 @@ public abstract class Structure {
                 alignment = Pointer.SIZE;
             }
             else {
+                if (value == null)
+                    value = newInstance(type);
                 alignment = ((Structure)value).structAlignment;
             }
         }
@@ -845,6 +847,8 @@ public abstract class Structure {
                 return Pointer.SIZE;
             }
             else {
+                if (value == null)
+                    value = newInstance(type);
                 Structure s = (Structure)value;
                 // inline structure
                 return s.size();

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.IntegerType;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
@@ -201,12 +202,14 @@ public class StructureTest extends TestCase {
         testAlignStruct(5);
     }
     
-    public static class InnerStructure extends Structure {
+    // must be publicly accessible in order to create array elements
+    public static class PublicTestStructure extends Structure {
+        public static class ByReference extends PublicTestStructure implements Structure.ByReference { }
         public int x, y;
     }
-    public void testSizeWithNestedStructure() {
+    public void testStructureField() {
         class TestStructure extends Structure {
-            public InnerStructure s1, s2;
+            public PublicTestStructure s1, s2;
             public int after;
         }
         TestStructure s = new TestStructure();
@@ -215,13 +218,22 @@ public class StructureTest extends TestCase {
                      s.s1.size() + s.s2.size() + 4, s.size());
     }
     
-    public void testNestArray() {
+    public void testPrimitiveArrayField() {
         class TestStructure extends Structure {
             public byte[] buffer = new byte[1024];
         }
         TestStructure s = new TestStructure();
-        assertEquals("Wrong size for nested array", 1024, s.size());
+        assertEquals("Wrong size for structure with nested array", 1024, s.size());
         assertNotNull("Array should be initialized", s.buffer);
+    }
+    
+    public void testStructureArrayField() {
+        class TestStructure extends Structure {
+            public PublicTestStructure[] inner = new PublicTestStructure[2];
+        }
+        TestStructure s = new TestStructure();
+        assertEquals("Wrong size for structure with nested array of struct",
+                     s.inner.length * new PublicTestStructure().size(), s.size());
     }
     
     public void testUninitializedNestedArrayFails() {
@@ -258,7 +270,7 @@ public class StructureTest extends TestCase {
             public long[] ja = new long[8];
             public float[] fa = new float[8];
             public double[] da = new double[8];
-            public InnerStructure nested;
+            public PublicTestStructure nested;
         }
         TestStructure s = new TestStructure();
         s.z = true;
@@ -364,10 +376,6 @@ public class StructureTest extends TestCase {
         }
     }
 
-    // must be publicly accessible in order to create array elements
-    public static class PublicTestStructure extends Structure {
-        public int value;
-    }
     public void testToArray() {
         PublicTestStructure s = new PublicTestStructure();
         PublicTestStructure[] array = (PublicTestStructure[])s.toArray(1);
@@ -449,7 +457,7 @@ public class StructureTest extends TestCase {
     public static class ArrayOfStructure extends Structure {
         public Structure[] array;
     }
-    public void testStructureArrayField() {
+    public void testPlainStructureArrayField() {
         try {
             new ArrayOfStructure();
             fail("Structure[] not allowed as a field of Structure");
@@ -508,13 +516,10 @@ public class StructureTest extends TestCase {
     }
 
     public static class StructureWithPointers extends Structure {
-        public static class TestStructureByRef extends Structure implements ByReference {
-            public int dummy;
-        }
-        public TestStructureByRef s1;
-        public TestStructureByRef s2;
+        public PublicTestStructure.ByReference s1;
+        public PublicTestStructure.ByReference s2;
     }
-    public void testStructureByReferenceSize() {
+    public void testStructureByReferenceField() {
         StructureWithPointers s = new StructureWithPointers();
         assertEquals("Wrong size for structure with structure references",
                      Pointer.SIZE * 2, s.size());
@@ -524,8 +529,8 @@ public class StructureTest extends TestCase {
     
     public void testRegenerateStructureByReferenceField() {
         StructureWithPointers s = new StructureWithPointers();
-        StructureWithPointers.TestStructureByRef inner = 
-            new StructureWithPointers.TestStructureByRef();
+        PublicTestStructure.ByReference inner = 
+            new PublicTestStructure.ByReference();
         s.s1 = inner;
         s.write();
         s.s1 = null;
@@ -535,8 +540,8 @@ public class StructureTest extends TestCase {
 
     public void testPreserveStructureByReferenceWithUnchangedPointer() {
         StructureWithPointers s = new StructureWithPointers();
-        StructureWithPointers.TestStructureByRef inner = 
-            new StructureWithPointers.TestStructureByRef();
+        PublicTestStructure.ByReference inner = 
+            new PublicTestStructure.ByReference();
         
         s.s1 = inner;
         s.write();
@@ -548,10 +553,10 @@ public class StructureTest extends TestCase {
     
     public void testOverwriteStructureByReferenceField() {
         StructureWithPointers s = new StructureWithPointers();
-        StructureWithPointers.TestStructureByRef inner = 
-            new StructureWithPointers.TestStructureByRef();
-        StructureWithPointers.TestStructureByRef inner2 = 
-            new StructureWithPointers.TestStructureByRef();
+        PublicTestStructure.ByReference inner = 
+            new PublicTestStructure.ByReference();
+        PublicTestStructure.ByReference inner2 = 
+            new PublicTestStructure.ByReference();
         s.s1 = inner2;
         s.write();
         s.s1 = inner;
@@ -559,21 +564,18 @@ public class StructureTest extends TestCase {
         assertNotSame("Read should overwrite structure reference", inner, s.s1);
     }
     
-    public static class PublicTestStructureByRef extends Structure implements Structure.ByReference {
-        public int field;
-    }
-    public void testInnerByReferenceArray() {
+    public void testStructureByReferenceArrayField() {
         class TestStructure extends Structure {
-            public PublicTestStructureByRef[] array = new PublicTestStructureByRef[2];
+            public PublicTestStructure.ByReference[] array = new PublicTestStructure.ByReference[2];
         }
         TestStructure s = new TestStructure();
         assertEquals("Wrong structure size", 2*Pointer.SIZE, s.size());
         
-        PublicTestStructureByRef ref = new PublicTestStructureByRef();
-        ref.field = 42;
+        PublicTestStructure.ByReference ref = new PublicTestStructure.ByReference();
+        ref.x = 42;
         Object aref = s.array;
         s.array[0] = ref;
-        s.array[1] = new PublicTestStructureByRef();
+        s.array[1] = new PublicTestStructure.ByReference();
         
         s.write();
         s.read();
@@ -596,7 +598,7 @@ public class StructureTest extends TestCase {
         public Inner inner;
         public int dummy;
     }
-    public static class size_t extends IntegerType { 
+    public static class size_t extends IntegerType {
         public size_t() { this(0); }
         public size_t(long value) { super(Pointer.SIZE, value); }
     }
@@ -638,13 +640,13 @@ public class StructureTest extends TestCase {
     public void testToString() {
         class TestStructure extends Structure {
             public int intField;
-            public InnerStructure inner;
+            public PublicTestStructure inner;
         }
         TestStructure s = new TestStructure();
         final String LS = System.getProperty("line.separator");
         final String EXPECTED = "(?m).*" + s.size() + " bytes.*" + LS 
             + "  int intField@0=0" + LS
-            + "  .*InnerStructure inner@4=.*" + LS
+            + "  .* inner@4=.*" + LS
             + "    int x@0=0" + LS
             + "    int y@4=0" + LS
             + "memory dump" + LS
@@ -652,7 +654,8 @@ public class StructureTest extends TestCase {
             + "\\[00000000\\]" + LS
             + "\\[00000000\\]";
         String actual = s.toString();
-        assertTrue("Improperly formatted toString(): " + actual, 
+        assertTrue("Improperly formatted toString(): expected " 
+                   + EXPECTED + "\n" + actual, 
                    actual.matches(EXPECTED));
     }
 }
