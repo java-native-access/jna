@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import com.sun.jna.IntegerType;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.types.size_t;
 
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net
@@ -598,10 +599,6 @@ public class StructureTest extends TestCase {
         public Inner inner;
         public int dummy;
     }
-    public static class size_t extends IntegerType {
-        public size_t() { this(0); }
-        public size_t(long value) { super(Pointer.SIZE, value); }
-    }
     public void testNestedStructureTypeInfo() {
         class FFIType extends Structure {
             public FFIType(Pointer p) { 
@@ -637,6 +634,12 @@ public class StructureTest extends TestCase {
         assertNotNull("Type info should not be null", p);
     }
     
+    public void testTypeInfoForNull() {
+        assertEquals("Wrong type information for 'null'",
+                     Structure.getTypeInfo(new Pointer(0)),
+                     Structure.getTypeInfo(null));
+    }
+    
     public void testToString() {
         class TestStructure extends Structure {
             public int intField;
@@ -644,11 +647,14 @@ public class StructureTest extends TestCase {
         }
         TestStructure s = new TestStructure();
         final String LS = System.getProperty("line.separator");
-        final String EXPECTED = "(?m).*" + s.size() + " bytes.*" + LS 
+        System.setProperty("jna.dump_memory", "true");
+        final String EXPECTED = "(?m).*" + s.size() + " bytes.*\\{" + LS 
             + "  int intField@0=0" + LS
-            + "  .* inner@4=.*" + LS
+            + "  .* inner@4=.*\\{" + LS
             + "    int x@0=0" + LS
             + "    int y@4=0" + LS
+            + "  \\}" + LS
+            + "\\}" + LS
             + "memory dump" + LS
             + "\\[00000000\\]" + LS
             + "\\[00000000\\]" + LS

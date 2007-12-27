@@ -33,6 +33,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -65,9 +66,10 @@ import java.util.WeakHashMap;
  */
 public final class Native {
 
-    private static Map typeMappers = Collections.synchronizedMap(new WeakHashMap());
-    private static Map alignments = Collections.synchronizedMap(new WeakHashMap());
-    private static Map libraries = Collections.synchronizedMap(new WeakHashMap());
+    private static Map typeMappers = new WeakHashMap();
+    private static Map alignments = new WeakHashMap();
+    private static Map options = new WeakHashMap();
+    private static Map libraries = new WeakHashMap();
     
     /** The size of a native pointer on the current platform, in bytes. */
     public static final int POINTER_SIZE;
@@ -135,8 +137,6 @@ public final class Native {
         return getComponentID(w);
     }
 
-    // Workaround for w32 bug
-    private static boolean jawt_loaded;
     /** Utility method to get the native window ID for a heavyweight Java 
      * {@link Component} as a <code>long</code> value.
      * This method is primarily for X11-based systems, which use an opaque
@@ -247,26 +247,34 @@ public final class Native {
      * of Java method names to native function names.
      * @param name
      * @param interfaceClass
-     * @param options Map of library options
+     * @param libOptions Map of library options
      */
     public static Object loadLibrary(String name, 
                                      Class interfaceClass,
-                                     Map options) {
+                                     Map libOptions) {
         Library.Handler handler = 
-            new Library.Handler(name, interfaceClass, options);
+            new Library.Handler(name, interfaceClass, libOptions);
         ClassLoader loader = interfaceClass.getClassLoader();
         Library proxy = (Library)
             Proxy.newProxyInstance(loader, new Class[] {interfaceClass},
                                    handler);
-        if (options.containsKey(Library.OPTION_TYPE_MAPPER))
-            typeMappers.put(interfaceClass, options.get(Library.OPTION_TYPE_MAPPER));
-        if (options.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
-            alignments.put(interfaceClass, options.get(Library.OPTION_STRUCTURE_ALIGNMENT));
-        libraries.put(interfaceClass, new WeakReference(proxy));
+        synchronized(libraries) {
+            if (!libOptions.isEmpty()) 
+                options.put(interfaceClass, libOptions);
+            if (libOptions.containsKey(Library.OPTION_TYPE_MAPPER))
+                typeMappers.put(interfaceClass, libOptions.get(Library.OPTION_TYPE_MAPPER));
+            if (libOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
+                alignments.put(interfaceClass, libOptions.get(Library.OPTION_STRUCTURE_ALIGNMENT));
+            libraries.put(interfaceClass, new WeakReference(proxy));
+        }
         return proxy;
     }
 
-    /** Returns whether an instance variable was instantiated. */
+    /** Attempts to force initialization of an instance of the library interface
+     * by loading a public static field of the requisite type.
+     * Returns whether an instance variable was instantiated. 
+     * Expects that lock on libraries is already held
+     */
     private static boolean loadInstance(Class cls) {
         if (libraries.containsKey(cls)) {
             return true;
@@ -292,43 +300,107 @@ public final class Native {
         return false;
     }
     
-    /** Return the preferred {@link TypeMapper} for the given native interface.
-     */
-    public static TypeMapper getTypeMapper(Class interfaceClass) {
-        if (!loadInstance(interfaceClass) 
-            || !typeMappers.containsKey(interfaceClass)) {
-            try {
-                Field field = interfaceClass.getField("TYPE_MAPPER");
-                return (TypeMapper)field.get(null);
-            }
-            catch (NoSuchFieldException e) {
-            }
-            catch (Exception e) {
-                throw new IllegalArgumentException("TYPE_MAPPER must be a public TypeMapper field (" 
-                                                   + e + "): " + interfaceClass);
-            }
+    static Class findLibraryClass(Class cls) {
+        if (cls == null) { 
+            return null;
         }
-        return (TypeMapper)typeMappers.get(interfaceClass);
+        if (Library.class.isAssignableFrom(cls)) {
+            return cls;
+        }
+        Class fromDeclaring = findLibraryClass(cls.getDeclaringClass());
+        if (fromDeclaring != null) {
+            return fromDeclaring;
+        }
+        return findLibraryClass(cls.getSuperclass());
+    }
+    
+
+    /** Return the preferred native library configuration options for the given 
+     * class.
+     * @see Library 
+     */
+    public static Map getLibraryOptions(Class type) {
+        synchronized(libraries) {
+            Class interfaceClass = findLibraryClass(type);
+            if (interfaceClass == null) 
+                return null;
+            if (!loadInstance(interfaceClass)
+                || !options.containsKey(interfaceClass)) {
+                try {
+                    Field field = interfaceClass.getField("OPTIONS");
+                    options.put(interfaceClass, field.get(null));
+                }
+                catch (NoSuchFieldException e) {
+                }
+                catch (Exception e) {
+                    throw new IllegalArgumentException("OPTIONS must be a public field of type java.util.Map (" 
+                                                       + e + "): " + interfaceClass);
+                }
+            }
+            return (Map)options.get(interfaceClass);
+        }
+    }
+
+    /** Return the preferred {@link TypeMapper} for the given native interface.
+     * @see Library#OPTION_TYPE_MAPPER 
+     */
+    public static TypeMapper getTypeMapper(Class cls) {
+        synchronized(libraries) {
+            Class interfaceClass = findLibraryClass(cls);
+            if (interfaceClass == null)
+                return null;
+            if (!loadInstance(interfaceClass) 
+                || !typeMappers.containsKey(interfaceClass)) {
+                try {
+                    Field field = interfaceClass.getField("TYPE_MAPPER");
+                    typeMappers.put(interfaceClass, field.get(null));
+                }
+                catch (NoSuchFieldException e) {
+                    Map options = getLibraryOptions(cls);
+                    if (options != null
+                        && options.containsKey(Library.OPTION_TYPE_MAPPER)) {
+                        typeMappers.put(interfaceClass, options.get(Library.OPTION_TYPE_MAPPER));
+                    }
+                }
+                catch (Exception e) {
+                    throw new IllegalArgumentException("TYPE_MAPPER must be a public field of type "
+                                                       + TypeMapper.class.getName() + " (" 
+                                                       + e + "): " + interfaceClass);
+                }
+            }
+            return (TypeMapper)typeMappers.get(interfaceClass);
+        }
     }
 
     /** Return the preferred structure alignment for the given native interface. 
+     * @see Library#OPTION_STRUCTURE_ALIGNMENT
      */
-    public static int getStructureAlignment(Class interfaceClass) {
-        if (!loadInstance(interfaceClass) 
-            || !alignments.containsKey(interfaceClass)) {
-            try {
-                Field field = interfaceClass.getField("STRUCTURE_ALIGNMENT");
-                return ((Integer)field.get(null)).intValue();
+    public static int getStructureAlignment(Class cls) {
+        synchronized(libraries) {
+            Class interfaceClass = findLibraryClass(cls);
+            if (interfaceClass == null)
+                return Structure.ALIGN_DEFAULT;
+            if (!loadInstance(interfaceClass) 
+                || !alignments.containsKey(interfaceClass)) {
+                try {
+                    Field field = interfaceClass.getField("STRUCTURE_ALIGNMENT");
+                    alignments.put(interfaceClass, field.get(null));
+                }
+                catch(NoSuchFieldException e) {
+                    Map options = getLibraryOptions(cls);
+                    if (options != null
+                        && options.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
+                        alignments.put(interfaceClass, options.get(Library.OPTION_STRUCTURE_ALIGNMENT));
+                    }
+                }
+                catch(Exception e) {
+                    throw new IllegalArgumentException("STRUCTURE_ALIGNMENT must be a public field of type int ("
+                                                       + e + "): " + interfaceClass);
+                }
             }
-            catch(NoSuchFieldException e) {
-            }
-            catch(Exception e) {
-                throw new IllegalArgumentException("STRUCTURE_ALIGNMENT must be a public int field ("
-                                                   + e + "): " + interfaceClass);
-            }
+            Integer value = (Integer)alignments.get(interfaceClass);
+            return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
         }
-        Integer value = (Integer)alignments.get(interfaceClass);
-        return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
     }
     
     /** Return a byte array corresponding to the given String.  If the

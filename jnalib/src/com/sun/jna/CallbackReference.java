@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -57,8 +58,10 @@ class CallbackReference extends WeakReference {
                 }
                 int ctype = AltCallingConvention.class.isAssignableFrom(type)
                     ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-                NativeFunctionHandler h = new NativeFunctionHandler(p, ctype);
+                Map options = Native.getLibraryOptions(type);
+                NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, options);
                 Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type, NativeFunctionProxy.class }, h);
+                h.options.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(cb));
                 map.put(cb, null);
                 return cb;
             }
@@ -66,12 +69,7 @@ class CallbackReference extends WeakReference {
         return null;
     }
     
-    Pointer cbstruct;
-    // Keep a reference to avoid premature GC
-    CallbackProxy proxy;
-    private CallbackReference(Callback callback, int callingConvention) {
-        super(callback);
-        Class type = callback.getClass();
+    private static Class getCallbackClass(Class type) {
         Class[] ifaces = type.getInterfaces();
         for (int i=0;i < ifaces.length;i++) {
             if (Callback.class.isAssignableFrom(ifaces[i])) {
@@ -79,11 +77,16 @@ class CallbackReference extends WeakReference {
                 break;
             }
         }
-        TypeMapper mapper = null;
-        Class declaring = type.getDeclaringClass();
-        if (declaring != null) {
-            mapper = Native.getTypeMapper(declaring);
-        }
+        return type;
+    }
+    
+    Pointer cbstruct;
+    // Keep a reference to avoid premature GC
+    CallbackProxy proxy;
+    private CallbackReference(Callback callback, int callingConvention) {
+        super(callback);
+        Class type = getCallbackClass(callback.getClass());
+        TypeMapper mapper = Native.getTypeMapper(type);
         Method m = getCallbackMethod(callback);
         if (callback instanceof CallbackProxy) {
             proxy = (CallbackProxy)callback;
@@ -148,7 +151,7 @@ class CallbackReference extends WeakReference {
         return cls;
     }
     
-    private Method getCallbackMethod(Callback callback) {
+    private static Method getCallbackMethod(Callback callback) {
         Method[] mlist = callback.getClass().getMethods();
         for (int mi=0;mi < mlist.length;mi++) {
             Method m = mlist[mi];
@@ -365,12 +368,28 @@ class CallbackReference extends WeakReference {
 
     /** Provide invocation handling for an auto-generated Java interface proxy 
      * for a native function pointer.
+     * Cf. Library.Handler
      */
     private static class NativeFunctionHandler implements InvocationHandler {
         private Function function;
+        private Map options;
         
-        public NativeFunctionHandler(Pointer address, int callingConvention) {
-            this.function = new Function(address, callingConvention);
+        public NativeFunctionHandler(Pointer address, int callingConvention, Map libOptions) {
+            this.function = new Function(address, callingConvention) {
+                public String getName() {
+                    String str = super.getName();
+                    if (options.containsKey(Function.OPTION_INVOKING_METHOD)) {
+                        Method m = (Method)options.get(Function.OPTION_INVOKING_METHOD);
+                        Class cls = getCallbackClass(m.getDeclaringClass());
+                        str += " (" + cls.getName() + ")";
+                    }
+                    return str;
+                }
+            };
+            this.options = new HashMap();
+            if (libOptions != null) {
+                options.putAll(libOptions);
+            }
         }
         
         /** Chain invocation to the native function. */
@@ -391,7 +410,7 @@ class CallbackReference extends WeakReference {
             if (Function.isVarArgs(method)) {
                 args = Function.concatenateVarArgs(args);
             }
-            return function.invoke(method.getReturnType(), args);
+            return function.invoke(method.getReturnType(), args, options);
         }
         
         public Pointer getPointer() {

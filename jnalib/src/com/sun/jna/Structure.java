@@ -17,11 +17,15 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
+
+import com.sun.jna.types.size_t;
 
 /**
  * Represents a native structure with a Java peer class.  When used as a 
@@ -97,6 +101,7 @@ public abstract class Structure {
 
     private static final int MAX_GNUC_ALIGNMENT = isSPARC ? 8 : NativeLong.SIZE;
     protected static final int CALCULATE_SIZE = -1;
+    
     // This field is accessed by native code
     private Pointer memory;
     private int size = CALCULATE_SIZE;
@@ -243,13 +248,24 @@ public abstract class Structure {
     // Data synchronization methods
     //////////////////////////////////////////////////////////////////////////
 
+    // Keep track of what is currently being read to avoid redundant reads
+    // (avoids problems with circular references).
+    private static Set reading = new HashSet();
     /**
      * Reads the fields of the struct from native memory
      */
     public void read() {
-        // Read all fields
+        // Avoid recursive reads
+        synchronized(reading) {
+            if (reading.contains(this))
+                return;
+            reading.add(this);
+        }
         for (Iterator i=structFields.values().iterator();i.hasNext();) {
             readField((StructField)i.next());
+        }
+        synchronized(reading) {
+            reading.remove(this);
         }
     }
 
@@ -287,7 +303,29 @@ public abstract class Structure {
         }
     }
 
+    /** Only keep the original structure if its address is unchanged.  Otherwise
+     * replace it with a new object.
+     * @param type Structure subclass
+     * @param s Original Structure object
+     * @param address the native <code>struct *</code>
+     * @return Updated <code>Structure.ByReference</code> object
+     */
+    static Structure updateStructureByReference(Class type, Structure s, Pointer address) {
+        if (address == null) { 
+            s = null;
+        }
+        else {
+            if (s == null || !address.equals(s.getPointer())) {
+                s = newInstance(type);
+                s.useMemory(address);
+            }
+            s.read();
+        }
+        return s;
+    }
+
     /** Read the given field and return its value. */
+    // TODO: make overridable method with calculated native type, offset, etc
     Object readField(StructField structField) {
         
         // Get the offset of the field
@@ -305,19 +343,7 @@ public abstract class Structure {
         if (Structure.class.isAssignableFrom(nativeType)) {
             Structure s = (Structure)getField(structField);
             if (ByReference.class.isAssignableFrom(nativeType)) {
-                Pointer p = memory.getPointer(offset);
-                if (p == null) {
-                    s = null;
-                }
-                else {
-                    // Only preserve the field value if the pointer
-                    // is unchanged
-                    if (s == null || !p.equals(s.getPointer())) {
-                        s = newInstance(nativeType);
-                        s.useMemory(p);
-                    }
-                    s.read();
-                }
+                s = updateStructureByReference(nativeType, s, memory.getPointer(offset));
             }
             else {
                 s.useMemory(memory, offset);
@@ -415,17 +441,7 @@ public abstract class Structure {
                 Structure[] sarray = (Structure[])result;
                 Pointer[] parray = memory.getPointerArray(offset, sarray.length);
                 for (int i=0;i < sarray.length;i++) {
-                    if (parray[i] == null) {
-                        sarray[i] = null;
-                    }
-                    else {
-                        if (sarray[i] == null 
-                            || !parray[i].equals(sarray[i].getPointer())){
-                            sarray[i] = newInstance(cls);
-                            sarray[i].useMemory(parray[i]);
-                        }
-                        sarray[i].read();
-                    }
+                    sarray[i] = updateStructureByReference(cls, sarray[i], parray[i]);
                 }
             }
             else {
@@ -442,7 +458,7 @@ public abstract class Structure {
             result = readConverter.fromNative(result, structField.context);
         }
 
-        // Set the value on the field
+        // Update the value on the field
         setField(structField, result);
         return result;
     }
@@ -601,13 +617,7 @@ public abstract class Structure {
         else if (Structure.class.isAssignableFrom(nativeType)) {
             Structure s = (Structure)value;
             if (ByReference.class.isAssignableFrom(nativeType)) {
-                if (s == null) {
-                    memory.setPointer(offset, null);
-                }
-                else {
-                    memory.setPointer(offset, s.getPointer());
-                    s.write();
-                }
+                memory.setPointer(offset, s == null ? null : s.getPointer());
             }
             else {
                 s.useMemory(memory, offset);
@@ -766,6 +776,13 @@ public abstract class Structure {
         }
         return calculatedSize;
     }
+    
+    protected int getStructAlignment() {
+        if (size == CALCULATE_SIZE) {
+            calculateSize(true);
+        }
+        return structAlignment;
+    }
 
     /** Overridable in subclasses. */
     // TODO: write getNaturalAlignment(stack/alloc) + getEmbeddedAlignment(structs)
@@ -792,9 +809,9 @@ public abstract class Structure {
                 alignment = Pointer.SIZE;
             }
             else {
-                if (value == null)
+                if (value == null) 
                     value = newInstance(type);
-                alignment = ((Structure)value).structAlignment;
+                alignment = ((Structure)value).getStructAlignment();
             }
         }
         else if (type.isArray()) {
@@ -850,7 +867,6 @@ public abstract class Structure {
                 if (value == null)
                     value = newInstance(type);
                 Structure s = (Structure)value;
-                // inline structure
                 return s.size();
             }
         }
@@ -870,33 +886,57 @@ public abstract class Structure {
         return toString(0);
     }
     
+    private String format(Class type) {
+        String s = type.getName();
+        int dot = s.lastIndexOf(".");
+        return s.substring(dot + 1);
+    }
+    
     private String toString(int indent) {
         String LS = System.getProperty("line.separator");
-        String name = getClass().getName() + "(" + getPointer() + ")";
+        String name = format(getClass()) + "(" + getPointer() + ")";
+        if (!(getPointer() instanceof Memory)) {
+            name += " (" + size() + " bytes)";
+        }
+        String prefix = "";
+        for (int idx=0;idx < indent;idx++) {
+            prefix += "  ";
+        }
         String contents = "";
         // Write all fields
         for (Iterator i=structFields.values().iterator();i.hasNext();) {
             StructField sf = (StructField)i.next();
-            for (int idx=0;idx < indent;idx++) {
-                contents += "  ";
-            }
-            contents += "  " + sf.type.getName() + " " 
-                + sf.name + "@" + Integer.toHexString(sf.offset);
             Object value = getField(sf);
-            if (value instanceof Structure
-                && !(value instanceof Structure.ByReference)) {
-                value = ((Structure)value).toString(indent + 1);
+            String type = format(sf.type);
+            String index = "";
+            contents += prefix;
+            if (sf.type.isArray() && value != null) {
+                type = format(sf.type.getComponentType());
+                index = "[" + Array.getLength(value) + "]";
             }
-            if (value != null) {
-                value = value.toString().trim();
+            contents += "  " + type + " " 
+                + sf.name + index + "@" + Integer.toHexString(sf.offset);
+            if (value instanceof Structure) {
+                if (value instanceof Structure.ByReference) {
+                    String v = value.toString();
+                    if (v.indexOf(LS) != -1) {
+                        v = v.substring(0, v.indexOf(LS));
+                    }
+                    value = v + "...}";
+                }
+                else {
+                    value = ((Structure)value).toString(indent + 1);
+                }
             }
-            contents += "=" + value;
+            contents += "=" + String.valueOf(value).trim();
             contents += LS;
+            if (!i.hasNext())
+                contents += prefix + "}";
         }
-        if (indent == 0) {
+        if (indent == 0 && Boolean.getBoolean("jna.dump_memory")) {
             byte[] buf = getPointer().getByteArray(0, size());
             final int BYTES_PER_ROW = 4;
-            contents += "memory dump" + LS;
+            contents += LS + "memory dump" + LS;
             for (int i=0;i < buf.length;i++) {
                 if ((i % BYTES_PER_ROW) == 0) contents += "[";
                 if (buf[i] >=0 && buf[i] < 16)
@@ -907,7 +947,7 @@ public abstract class Structure {
             }
             contents += "]";
         }
-        return name + LS + contents;
+        return name + " {" + LS + contents;
     }
     
     /** Returns a view of this structure's memory as an array of structures.
@@ -1028,10 +1068,6 @@ public abstract class Structure {
      */
     private static class FFIType extends Structure {
         private static Map typeInfoMap = new WeakHashMap(); 
-        public static class size_t extends IntegerType {
-            public size_t() { this(0); }
-            public size_t(long v) { super(Pointer.SIZE, v); }
-        }
         // Native.initIDs initializes these fields to their appropriate
         // pointer values.  These are in a separate class so that they may
         // be initialized prior to loading the FFIType class

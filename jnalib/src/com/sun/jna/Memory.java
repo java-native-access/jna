@@ -50,6 +50,9 @@ public class Memory extends Pointer {
         protected void boundsCheck(long off, long sz) {
             Memory.this.boundsCheck(this.peer - Memory.this.peer + off, sz);
         }
+        public String toString() {
+            return super.toString() + " (shared from " + Memory.this.toString() + ")";
+        }
     }
     
     /**
@@ -640,7 +643,7 @@ public class Memory extends Pointer {
     static native void free(long ptr);
     
     public String toString() {
-        return "Native Allocated Memory <0x" + Long.toHexString(peer) + "> ("
+        return "allocated@0x" + Long.toHexString(peer) + " ("
             + size + " bytes)";
     }
 }

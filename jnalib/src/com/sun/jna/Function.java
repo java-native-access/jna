@@ -82,6 +82,9 @@ public class Function extends Pointer {
     private String functionName;
     private int callingConvention;
 
+    /** For internal JNA use. */
+    static final String OPTION_INVOKING_METHOD = "invoking-method";
+
     /**
      * Create a new <code>Function</code> that is linked with a native 
      * function that follows the given calling convention.
@@ -135,7 +138,7 @@ public class Function extends Pointer {
             || functionAddress.peer == 0) {
             throw new NullPointerException("Function address may not be null");
         }
-        this.functionName = "<unknown>";
+        this.functionName = functionAddress.toString();
         this.callingConvention = callingConvention;
         this.peer = functionAddress.peer;
     }
@@ -172,7 +175,6 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
-
         // Clone the argument array to obtain a scratch space for modified
         // types/values
         Object[] args = { };
@@ -186,7 +188,7 @@ public class Function extends Pointer {
 
         TypeMapper mapper = 
             (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
-        Method invokingMethod = (Method)options.get(Library.OPTION_INVOKING_METHOD);
+        Method invokingMethod = (Method)options.get(OPTION_INVOKING_METHOD);
         for (int i=0; i < args.length; i++) {
             args[i] = convertArgument(args, i, invokingMethod, mapper);
         }
@@ -236,7 +238,16 @@ public class Function extends Pointer {
                     ((StringArray)args[i]).read();
                 }
                 else if (args[i] instanceof PointerArray) {
-                    ((PointerArray)args[i]).read();
+                    PointerArray array = (PointerArray)args[i];
+                    array.read();
+                    if (Structure.ByReference[].class.isAssignableFrom(arg.getClass())) {
+                        Class type = arg.getClass().getComponentType();
+                        Structure[] ss = (Structure[])arg;
+                        for (int si=0;si < ss.length;si++) {
+                            Pointer p = array.getPointer(Pointer.SIZE * si);
+                            ss[si] = Structure.updateStructureByReference(type, ss[si], p);
+                        }
+                    }
                 }
                 else if (Structure[].class.isAssignableFrom(arg.getClass())) {
                     Structure[] ss = (Structure[])arg;

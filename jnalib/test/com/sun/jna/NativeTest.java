@@ -12,6 +12,8 @@
  */
 package com.sun.jna;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import junit.framework.TestCase;
 
@@ -99,7 +101,91 @@ public class NativeTest extends TestCase {
         assertTrue("NativeLibrary lock should be held during native call",
                    lockHeld[0]);
     }
+
+    interface TestInterface extends Library {
+        static class InnerTestClass extends Structure {
+            interface TestCallback extends Callback { }
+            static class InnerSubclass extends InnerTestClass implements Structure.ByReference { }
+        }
+    }
     
+    public void testFindInterfaceClass() throws Exception {
+        Class interfaceClass = TestInterface.class;
+        Class cls = TestInterface.InnerTestClass.class;
+        Class subClass = TestInterface.InnerTestClass.InnerSubclass.class;
+        Class callbackClass = TestInterface.InnerTestClass.TestCallback.class;
+        assertEquals("Enclosing interface not found for class",
+                     interfaceClass, Native.findLibraryClass(cls));
+        assertEquals("Enclosing interface not found for derived class",
+                     interfaceClass, Native.findLibraryClass(subClass));
+        assertEquals("Enclosing interface not found for callback",
+                     interfaceClass, Native.findLibraryClass(callbackClass));
+    }
+
+    public interface TestInterfaceWithInstance extends Library {
+        int TEST_ALIGNMENT = Structure.ALIGN_NONE;
+        TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        Map TEST_OPTS = new HashMap() { {
+            put(OPTION_TYPE_MAPPER, TEST_MAPPER);
+            put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
+        }};
+        TestInterfaceWithInstance ARBITRARY = (TestInterfaceWithInstance) 
+            Native.loadLibrary("testlib", TestInterfaceWithInstance.class, TEST_OPTS);
+    }
+    public void testOptionsInferenceFromInstanceField() {
+        assertEquals("Wrong options found for interface which provides an instance", 
+                     TestInterfaceWithInstance.TEST_OPTS,
+                     Native.getLibraryOptions(TestInterfaceWithInstance.class));
+        assertEquals("Wrong type mapper found", 
+                     TestInterfaceWithInstance.TEST_MAPPER,
+                     Native.getTypeMapper(TestInterfaceWithInstance.class));
+        assertEquals("Wrong alignment found", 
+                     TestInterfaceWithInstance.TEST_ALIGNMENT,
+                     Native.getStructureAlignment(TestInterfaceWithInstance.class));
+    }
+    
+    public interface TestInterfaceWithOptions extends Library {
+        int TEST_ALIGNMENT = Structure.ALIGN_NONE;
+        TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        Map OPTIONS = new HashMap() { {
+            put(OPTION_TYPE_MAPPER, TEST_MAPPER);
+            put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
+        }};
+    }
+    public void testOptionsInferenceFromOptionsField() {
+        assertEquals("Wrong options found for interface which provides OPTIONS", 
+                     TestInterfaceWithOptions.OPTIONS,
+                     Native.getLibraryOptions(TestInterfaceWithOptions.class));
+        assertEquals("Wrong type mapper found", 
+                     TestInterfaceWithOptions.TEST_MAPPER,
+                     Native.getTypeMapper(TestInterfaceWithOptions.class));
+        assertEquals("Wrong alignment found", 
+                     TestInterfaceWithOptions.TEST_ALIGNMENT,
+                     Native.getStructureAlignment(TestInterfaceWithOptions.class));
+    }
+
+    public interface TestInterfaceWithTypeMapper extends Library {
+        TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        TypeMapper TYPE_MAPPER = TEST_MAPPER;
+    }
+    public void testOptionsInferenceFromTypeMapperField() {
+        assertEquals("Wrong type mapper found for interface which provides TYPE_MAPPER", 
+                     TestInterfaceWithTypeMapper.TEST_MAPPER,
+                     Native.getTypeMapper(TestInterfaceWithTypeMapper.class));
+    }
+
+    public interface TestInterfaceWithAlignment extends Library {
+        int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
+    }
+    public void testOptionsInferenceFromAlignmentField() {
+        assertEquals("Wrong alignment found for interface which provides STRUCTURE_ALIGNMENT", 
+                     Structure.ALIGN_NONE,
+                     Native.getStructureAlignment(TestInterfaceWithAlignment.class));
+    }
+
+    // TODO extract (alignment|typemapper) 
+    // from (variable|options)
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeTest.class);
     }

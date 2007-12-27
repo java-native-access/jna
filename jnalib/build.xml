@@ -380,7 +380,7 @@
              sourcepathref="src.path"
              classpathref="compile.path"
              maxmemory="256m"
-             packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.examples,com.sun.jna.examples.win32,com.sun.jna.exmaples.unix"
+             packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.examples,com.sun.jna.examples.win32,com.sun.jna.exmaples.unix"
              overview="${src}/com/sun/jna/overview.html"
              destdir="${javadoc}">
       <!-- stylesheetfile="${stylesheet}" -->
@@ -395,7 +395,7 @@
         </patternset>
       </packageset>
 
-      <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
+      <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.win32"/>
       <group title="Examples" packages="com.sun.jna.examples,com.sun.jna.examples.dnd"/>
       <group title="Unix Examples" packages="com.sun.jna.examples.unix"/>
       <group title="Windows Examples" packages="com.sun.jna.examples.win32"/>

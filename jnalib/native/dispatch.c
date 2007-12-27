@@ -85,7 +85,6 @@ extern "C"
 
 static jboolean preserve_last_error;
 
-// TODO: include address fault information in error message
 #ifdef PROTECTED_START
 #define ON_ERROR() throwByName(env, "java/lang/Error", "Invalid memory access")
 #define PSTART() PROTECTED_START()
@@ -191,6 +190,19 @@ static void *getStructureAddress(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
 static void update_last_error(JNIEnv*, int);
 
+static void
+println(JNIEnv* env, const char* msg) {
+  jclass cls = (*env)->FindClass(env, "java/lang/System");
+  jfieldID fid = (*env)->GetStaticFieldID(env, cls, "err",
+                                          "Ljava/io/PrintStream;");
+  jobject err = (*env)->GetStaticObjectField(env, cls, fid);
+  jclass pscls = (*env)->FindClass(env, "java/io/PrintStream");
+  jmethodID mid = (*env)->GetMethodID(env, pscls, "println",
+                                      "(Ljava/lang/String;)V");
+  jstring str = newJavaString(env, msg, JNI_FALSE);
+  (*env)->CallObjectMethod(env, err, mid, str);
+}
+
 /* invoke the real native function */
 static void
 dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr, 
@@ -249,19 +261,19 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     }
     else if ((*env)->IsInstanceOf(env, arg, classCharacter)) {
       if (sizeof(wchar_t) == 2) {
-        c_args[i].s = (*env)->GetCharField(env, arg, FID_Character_value);
-        ffi_types[i] = &ffi_type_sint16;
-        ffi_values[i] = &c_args[i].s;
+        c_args[i].c = (*env)->GetCharField(env, arg, FID_Character_value);
+        ffi_types[i] = &ffi_type_uint16;
+        ffi_values[i] = &c_args[i].c;
       }
       else if (sizeof(wchar_t) == 4) {
         c_args[i].i = (*env)->GetCharField(env, arg, FID_Character_value);
-        ffi_types[i] = &ffi_type_sint32;
+        ffi_types[i] = &ffi_type_uint32;
         ffi_values[i] = &c_args[i].i;
       }
       else {
         sprintf(msg, "Unsupported wchar_t size (%d)", (int)sizeof(wchar_t));
         throwByName(env, EUnsupportedOperation, msg);
-        return;
+        goto cleanup;
       }
     }
     else if ((*env)->IsInstanceOf(env, arg, classInteger)) {
@@ -426,6 +438,39 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
       break;
     }
   }
+}
+
+static void
+getChars(JNIEnv* env, wchar_t* dst, jcharArray chars, jint off, jint len) {
+  PSTART();
+  if (sizeof(jchar) == sizeof(wchar_t)) {
+    (*env)->GetCharArrayRegion(env, chars, 0, len, (jchar*)dst);
+  }
+  else {
+    int i;
+    jchar* buf = (jchar *)alloca(len * sizeof(jchar));
+    (*env)->GetCharArrayRegion(env, chars, 0, len, buf);
+    for (i=0;i < len;i++) {
+      dst[i] = (wchar_t)buf[i];
+    }
+  }
+  PEND();
+}
+
+static void
+setChars(JNIEnv* env, wchar_t* src, jcharArray chars, jint off, jint len) {
+  jchar* buf = (jchar*)src;
+  PSTART();
+
+  if (sizeof(jchar) != sizeof(wchar_t)) {
+    int i;
+    buf = (jchar *)alloca(len * sizeof(jchar));
+    for (i=0;i < len;i++) {
+      buf[i] = (jchar)src[i];
+    }
+  }
+  (*env)->SetCharArrayRegion(env, chars, 0, len, buf);
+  PEND();
 }
 
 /*
@@ -743,7 +788,9 @@ jnidispatch_init(JNIEnv* env) {
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3BII
     (JNIEnv *env, jclass cls, jlong addr, jbyteArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->GetByteArrayRegion(env, arr, off, n, L2A(addr));
+  PEND();
 }
 
 /*
@@ -754,7 +801,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3BII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3CII
     (JNIEnv *env, jclass cls, jlong addr, jcharArray arr, jint off, jint n)
 {
-  (*env)->GetCharArrayRegion(env, arr, off, n, (jchar *)L2A(addr));
+  getChars(env, (wchar_t*)L2A(addr), arr, off, n);
 }
 
 /*
@@ -765,7 +812,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3CII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3DII
     (JNIEnv *env, jclass cls, jlong addr, jdoubleArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -776,7 +825,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3DII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3FII
     (JNIEnv *env, jclass cls, jlong addr, jfloatArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -787,7 +838,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3FII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3III
     (JNIEnv *env, jclass cls, jlong addr, jintArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -798,7 +851,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3III
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3JII
     (JNIEnv *env, jclass cls, jlong addr, jlongArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -809,7 +864,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3JII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1write__J_3SII
     (JNIEnv *env, jclass cls, jlong addr, jshortArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -822,12 +879,16 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer__1indexOf__JB
 {
   jbyte *peer = (jbyte *)L2A(addr);
   jlong i = 0;
-  while (i >= 0) {
-    if (peer[i] == value)
-      return i;
+  jlong result = -1L;
+  PSTART();
+  while (i >= 0 && result == -1L) {
+    if (peer[i] == value) 
+      result = i;
     ++i;
   }
-  return -1L;
+  PEND();
+
+  return result;
 }
 
 /*
@@ -838,7 +899,9 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer__1indexOf__JB
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3BII
     (JNIEnv *env, jclass cls, jlong addr, jbyteArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->SetByteArrayRegion(env, arr, off, n, L2A(addr));
+  PEND();
 }
 
 /*
@@ -849,7 +912,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3BII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3CII
     (JNIEnv *env, jclass cls, jlong addr, jcharArray arr, jint off, jint n)
 {
-  (*env)->SetCharArrayRegion(env, arr, off, n, (jchar*)L2A(addr));
+  setChars(env, (wchar_t*)L2A(addr), arr, off, n);
 }
 
 /*
@@ -860,7 +923,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3CII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3DII
     (JNIEnv *env, jclass cls, jlong addr, jdoubleArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -871,7 +936,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3DII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3FII
     (JNIEnv *env, jclass cls, jlong addr, jfloatArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -882,7 +949,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3FII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3III
     (JNIEnv *env, jclass cls, jlong addr, jintArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -893,7 +962,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3III
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3JII
     (JNIEnv *env, jclass cls, jlong addr, jlongArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -904,7 +975,9 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3JII
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1read__J_3SII
     (JNIEnv *env, jclass cls, jlong addr, jshortArray arr, jint off, jint n)
 {
+  PSTART();
   (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
+  PEND();
 }
 
 /*
@@ -1041,7 +1114,7 @@ JNIEXPORT jstring JNICALL Java_com_sun_jna_Pointer__1getString
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setMemory
     (JNIEnv *env, jclass cls, jlong addr, jlong count, jbyte value)
 {
-    MEMSET(L2A(addr), (int)value, (size_t)count);
+  MEMSET(L2A(addr), (int)value, (size_t)count);
 }
 
 /*
@@ -1244,17 +1317,7 @@ newWideCString(JNIEnv *env, jstring str)
             return NULL;
         }
         // TODO: ensure proper encoding conversion from jchar to native wchar_t
-        if (sizeof(jchar) == sizeof(wchar_t)) {
-            (*env)->GetCharArrayRegion(env, chars, 0, len, (jchar*)result);
-        }
-        else {
-            int i;
-            jchar* buf = (jchar *)alloca(len * sizeof(jchar));
-            (*env)->GetCharArrayRegion(env, chars, 0, len, buf);
-            for (i=0;i < len;i++) {
-                result[i] = buf[i];
-            }
-        }
+        getChars(env, result, chars, 0, len);
         result[len] = 0; /* NUL-terminate */
     }
     (*env)->DeleteLocalRef(env, chars);
@@ -1758,7 +1821,7 @@ Java_com_sun_jna_Native_getNativeVersion(JNIEnv *env, jclass classp) {
 #ifndef VERSION
 #define VERSION "undefined"
 #endif
-  return newJavaString(env, VERSION, 0);
+  return newJavaString(env, VERSION, JNI_FALSE);
 }
 
 JNIEXPORT jstring JNICALL
@@ -1766,7 +1829,7 @@ Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass classp) {
 #ifndef CHECKSUM
 #define CHECKSUM "undefined"
 #endif
-  return newJavaString(env, CHECKSUM, 0);
+  return newJavaString(env, CHECKSUM, JNI_FALSE);
 }
 
 void

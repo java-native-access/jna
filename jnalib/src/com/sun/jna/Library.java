@@ -52,11 +52,12 @@ import java.util.WeakHashMap;
  * an <b>INSTANCE</b> field in the interface which holds the 
  * <code>loadLibrary</code> result.
  * <p>
+ * <b>OPTIONS</b> (an instance of {@link Map}),
  * <b>TYPE_MAPPER</b> (an instance of {@link TypeMapper}) and 
  * <b>STRUCTURE_ALIGNMENT</b> (one of the alignment types defined in 
  * {@link Structure}) may also be defined.  If no instance of the interface
  * has been instantiated, these fields will be used to determine customization
- * settings for structures defined within the interface.
+ * settings for structures and methods defined within the interface.
  * <p>
  * 
  * @author  Todd Fast, todd.fast@sun.com
@@ -73,9 +74,6 @@ public interface Library {
      * be one of the predefined alignment types in {@link Structure}. 
      */
     String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
-    /** For internal JNA use. */
-    String OPTION_INVOKING_METHOD = "invoking-method";
-    
     static class Handler implements InvocationHandler {
         
         static final Method OBJECT_TOSTRING;
@@ -192,7 +190,7 @@ public interface Library {
                         }
                         f.function = nativeLibrary.getFunction(methodName, callingConvention);
                         f.options = new HashMap(this.options);
-                        f.options.put(OPTION_INVOKING_METHOD, method);
+                        f.options.put(Function.OPTION_INVOKING_METHOD, method);
                     }
                     functions.put(method, f);
                 }

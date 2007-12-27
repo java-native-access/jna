@@ -22,6 +22,8 @@
 
 # TODO
 
+* should structure offsets be "long"?
+
 * allow return of W/String[] or Pointer[], if NULL-terminated?
 
 * Direct buffers should be used where
@@ -126,6 +128,9 @@
 
 
 # DONE
+* ensure Library options are passed to NativeFunctionHandler
+  (needs getLibraryOptions(Class cls))
+
 * handle array of Structure.ByReference as parameter/return value (cf Pointer[])
 * test performance of setByte/getByte and pass pointer field directly if it
   makes sense to do so (done, halves access time to use pointer field directly,
