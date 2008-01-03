@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import com.sun.jna.Structure.ByReference;
+
 
 /** Provides generation of invocation plumbing for a defined native
  * library interface.  Also provides various utilities for native operations.
@@ -71,13 +73,15 @@ public final class Native {
     private static Map options = new WeakHashMap();
     private static Map libraries = new WeakHashMap();
     
-    /** The size of a native pointer on the current platform, in bytes. */
+    /** The size of a native pointer (<code>void*</code>) on the current 
+     * platform, in bytes. 
+     */
     public static final int POINTER_SIZE;
-    /** Size of a native long type, in bytes. */
+    /** Size of a native <code>long</code> type, in bytes. */
     public static final int LONG_SIZE;
-    /** Size of a native wchar_t type, in bytes. */
+    /** Size of a native <code>wchar_t</code> type, in bytes. */
     public static final int WCHAR_SIZE;
-
+    
     static {
         try {
             System.loadLibrary("jnidispatch");
@@ -651,6 +655,40 @@ public final class Native {
             }
             System.exit(0);
         }
+    }
+
+    /** Returns the native size for a given Java class.  Structures are
+     * assumed to be <code>struct</code> pointers unless they implement
+     * {@link Structure.ByValue}.
+     */
+    public static int getNativeSize(Class cls) {
+        if (NativeMapped.class.isAssignableFrom(cls)) {
+            cls = new NativeMappedConverter(cls).nativeType();
+        }
+        // boolean defaults to 32 bit integer if not otherwise mapped
+        if (cls == boolean.class || cls == Boolean.class) return 4;
+        if (cls == byte.class || cls == Byte.class) return 1;
+        if (cls == short.class || cls == Short.class) return 2; 
+        if (cls == char.class || cls == Character.class) return WCHAR_SIZE;
+        if (cls == int.class || cls == Integer.class) return 4;
+        if (cls == long.class || cls == Long.class) return 8;
+        if (cls == float.class || cls == Float.class) return 4;
+        if (cls == double.class || cls == Double.class) return 8;
+        if (Structure.class.isAssignableFrom(cls)) {
+            if (Structure.ByValue.class.isAssignableFrom(cls)) {
+                return Structure.newInstance(cls).size();
+            }
+            return POINTER_SIZE;
+        }
+        if (Pointer.class == cls
+            || Buffer.class.isAssignableFrom(cls)
+            || Callback.class.isAssignableFrom(cls)
+            || String.class == cls
+            || WString.class == cls) {
+            return POINTER_SIZE;
+        }
+        throw new IllegalArgumentException("Native size for type \"" + cls.getName() 
+        								   + "\" is unknown");
     }
 
     public static void main(String[] args) {

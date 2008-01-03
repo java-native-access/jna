@@ -40,23 +40,15 @@ public class StdCallFunctionMapper implements FunctionMapper {
         if (NativeMapped.class.isAssignableFrom(cls)) {
             cls = new NativeMappedConverter(cls).nativeType();
         }
-        if (cls == byte.class || cls == Byte.class) return 1;
-        if (cls == char.class || cls == Character.class) return Native.WCHAR_SIZE;
-        if (cls == short.class || cls == Short.class) return 2; 
-        if (cls == int.class || cls == Integer.class) return 4;
-        if (cls == long.class || cls == Long.class) return 8;
-        if (cls == float.class || cls == Float.class) return 4;
-        if (cls == double.class || cls == Double.class) return 8;
-        if (Pointer.class.isAssignableFrom(cls)
-            || Callback.class.isAssignableFrom(cls)
-            || Structure.class.isAssignableFrom(cls)
-            || String.class == cls
-            || WString.class == cls
-            || cls.isArray()
-            || Buffer.class.isAssignableFrom(cls)) {
+        if (cls.isArray()) {
             return Pointer.SIZE;
         }
-        throw new IllegalArgumentException("Unknown native stack allocation size for " + cls);
+        try {
+            return Native.getNativeSize(cls);
+        }
+        catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown native stack allocation size for " + cls);
+        }
     }
     /** Convert the given Java method into a decorated stdcall name,
      * if possible.

@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.Structure;
 
 /**
  * @author twall@users.sf.net
@@ -27,7 +28,19 @@ import com.sun.jna.NativeLibrary;
 public class W32StdCallTest extends TestCase {
 
     public static interface TestLibrary extends StdCallLibrary {
+        public static class Inner extends Structure {
+            public double value;
+        }
+        public static class TestStructure extends Structure {
+            public static class ByValue extends TestStructure implements Structure.ByValue { }
+            public byte c;
+            public short s;
+            public int i;
+            public long j;
+            public Inner inner;
+        }
         int returnInt32ArgumentStdCall(int arg);
+        TestStructure.ByValue returnStructureByValueArgumentStdCall(TestStructure.ByValue arg);
         interface Int32Callback extends StdCallCallback {
             int callback(int arg, int arg2);
         }
@@ -55,7 +68,14 @@ public class W32StdCallTest extends TestCase {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         Method m = TestLibrary.class.getMethod("returnInt32ArgumentStdCall", new Class[] { int.class });
         assertEquals("Function mapper should provide decorated name",
-                     "returnInt32ArgumentStdCall@4",
+                     "returnInt32ArgumentStdCall@" + Native.getNativeSize(int.class),
+                     StdCallLibrary.FUNCTION_MAPPER.getFunctionName(lib, m));
+        
+        Class type = TestLibrary.TestStructure.ByValue.class;
+        m = TestLibrary.class.getMethod("returnStructureByValueArgumentStdCall",
+                                        new Class[] { type });
+        assertEquals("Function mapper should provide decorated name for by-value structs",
+                     "returnStructureByValueArgumentStdCall@" + Native.getNativeSize(type),
                      StdCallLibrary.FUNCTION_MAPPER.getFunctionName(lib, m));
     }
     
@@ -63,6 +83,11 @@ public class W32StdCallTest extends TestCase {
         final int MAGIC = 0x12345678;
         assertEquals("Expect zero return", 0, testlib.returnInt32ArgumentStdCall(0));
         assertEquals("Expect magic return", MAGIC, testlib.returnInt32ArgumentStdCall(MAGIC));
+    }
+    
+    public void testStdCallReturnStructureByValueArgument() {
+        TestLibrary.TestStructure.ByValue s = new TestLibrary.TestStructure.ByValue();
+        assertEquals("Wrong value", s, testlib.returnStructureByValueArgumentStdCall(s));
     }
     
     public void testStdCallCallback() {

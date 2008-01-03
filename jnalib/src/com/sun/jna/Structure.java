@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import com.sun.jna.types.size_t;
-
 /**
  * Represents a native structure with a Java peer class.  When used as a 
  * function parameter or return value, this class corresponds to 
@@ -834,42 +832,8 @@ public abstract class Structure {
         return alignment;
     }
 
-    /** Returns the native size for classes which don't need an object instance
-     * to determine size.
-     */
-    private int getNativeSize(Class cls) {
-        // boolean defaults to 32 bit integer if not otherwise mapped
-        if (cls == boolean.class || cls == Boolean.class) return 4;
-        if (cls == byte.class || cls == Byte.class) return 1;
-        if (cls == short.class || cls == Short.class) return 2; 
-        if (cls == char.class || cls == Character.class) return Native.WCHAR_SIZE;
-        if (cls == int.class || cls == Integer.class) return 4;
-        if (cls == long.class || cls == Long.class) return 8;
-        if (cls == float.class || cls == Float.class) return 4;
-        if (cls == double.class || cls == Double.class) return 8;
-        if (Pointer.class == cls
-            || Callback.class.isAssignableFrom(cls)
-            || String.class == cls
-            || WString.class == cls) {
-            return Pointer.SIZE;
-        }
-        throw new IllegalArgumentException("The type \"" + cls.getName() 
-        								   + "\" is not supported as a Structure field");
-    }
-
     /** Returns the native size of the given class, in bytes. */
-    private int getNativeSize(Class type, Object value) {
-        if (Structure.class.isAssignableFrom(type)) {
-            if (ByReference.class.isAssignableFrom(type)) {
-                return Pointer.SIZE;
-            }
-            else {
-                if (value == null)
-                    value = newInstance(type);
-                Structure s = (Structure)value;
-                return s.size();
-            }
-        }
+    private static int getNativeSize(Class type, Object value) {
         if (type.isArray()) {
             int len = Array.getLength(value);
             if (len > 0) {
@@ -877,9 +841,27 @@ public abstract class Structure {
                 return len * getNativeSize(type.getComponentType(), o);
             }
             // Don't process zero-length arrays
-            throw new IllegalArgumentException("Arrays of length zero not allowed in structure: " + this);
+            throw new IllegalArgumentException("Arrays of length zero not allowed in structure: " + type);
         }
-        return getNativeSize(type);
+        // May provide this in future; problematic on read, since we can't
+        // auto-create a java.nio.Buffer w/o knowing its size
+        if (Buffer.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException("the type \"" + type.getName() 
+                                               + "\" is not supported as a structure field");
+        }
+        if (Structure.class.isAssignableFrom(type)
+            && !Structure.ByReference.class.isAssignableFrom(type)) {
+            if (value == null)
+                value = newInstance(type);
+            return ((Structure)value).size();
+        }
+        try {
+            return Native.getNativeSize(type);
+        }
+        catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("The type \"" + type.getName() 
+                                               + "\" is not supported as a structure field");
+        }
     }
 
     public String toString() {
@@ -1032,7 +1014,7 @@ public abstract class Structure {
      * @return the new instance
      * @throws IllegalArgumentException if the instantiation fails
      */
-    static Structure newInstance(Class type) throws IllegalArgumentException {
+    public static Structure newInstance(Class type) throws IllegalArgumentException {
         try {
             Structure s = (Structure)type.newInstance();
             if (s instanceof ByValue) {
@@ -1067,6 +1049,10 @@ public abstract class Structure {
      * to manage on the Java side than in native code.
      */
     private static class FFIType extends Structure {
+        public class size_t extends IntegerType {
+            public size_t() { this(0); }
+            public size_t(long value) { super(Native.POINTER_SIZE, value); }
+        }
         private static Map typeInfoMap = new WeakHashMap(); 
         // Native.initIDs initializes these fields to their appropriate
         // pointer values.  These are in a separate class so that they may

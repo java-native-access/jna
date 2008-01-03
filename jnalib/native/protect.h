@@ -15,22 +15,31 @@
 
 // Native memory access protection
 // 
-// Enable or disable by setting the 'protect' variable.
+// Enable or disable by changing the value of the PROTECT flag.
 //
 // Example usage:
+//
+// #define PROTECT _protect
+// static int _protect;
+// #include "protect.h"
+// 
 // void my_function() {
 //   int variable_decls;
-//   PROTECT_START();
+//   PROTECTED_START();
 //   // do some dangerous stuff here
-//   PROTECT_END();
+//   PROTECTED_END(fprintf(stderr, "Error!"));
 // }
 //
 // The PROTECT_START() macro must immediately follow any variable declarations 
 //
 // The w32 implementation is courtesy of Ranjit Mathew
 // http://gcc.gnu.org/ml/java/2003-03/msg00243.html
-static int protect;
+#ifndef PROTECT
 
+#define PROTECTED_START()
+#define PROTECTED_END(ONERR)
+
+#else
 #ifdef _WIN32
 #include <excpt.h>
 
@@ -62,7 +71,7 @@ exc_handler(struct _EXCEPTION_RECORD* exception_record,
 
 #define PROTECTED_START() \
   exc_rec er; \
-  if (protect) { \
+  if (PROTECT) { \
     er.exc_handling_addr = &&_exc_caught; \
     er.ex_reg.handler = exc_handler; \
     asm volatile ("movl %%fs:0, %0" : "=r" (er.ex_reg.prev)); \
@@ -72,12 +81,12 @@ exc_handler(struct _EXCEPTION_RECORD* exception_record,
 // The initial conditional is required to ensure GCC doesn't consider
 // _exc_caught to be unreachable
 #define PROTECTED_END(ONERR) do { \
-  if (!protect || er.exc_handling_addr != 0) \
+  if (!PROTECT || er.exc_handling_addr != 0) \
     goto _remove_handler; \
  _exc_caught: \
   ONERR; \
  _remove_handler: \
-  if (protect) { asm volatile ("movl %0, %%fs:0" : : "r" (er.ex_reg.prev)); } \
+  if (PROTECT) { asm volatile ("movl %0, %%fs:0" : : "r" (er.ex_reg.prev)); } \
 } while(0)
 
 #else // _WIN32
@@ -97,7 +106,7 @@ static void _exc_handler(int sig) {
   void* _old_segv_handler; \
   void* _old_bus_handler; \
   int _error = 0; \
-  if (protect) { \
+  if (PROTECT) { \
     _old_segv_handler = signal(SIGSEGV, _exc_handler); \
     _old_bus_handler = signal(SIGBUS, _exc_handler); \
     if ((_error = setjmp(context) != 0)) { \
@@ -111,11 +120,13 @@ static void _exc_handler(int sig) {
  _exc_caught: \
   ONERR; \
  _remove_handler: \
-  if (protect) { \
+  if (PROTECT) { \
     signal(SIGSEGV, _old_segv_handler); \
     signal(SIGBUS, _old_bus_handler); \
   } \
 } while(0)
 #endif
+
+#endif // PROTECT
 
 #endif // PROTECT_H

@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import com.sun.jna.IntegerType;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.types.size_t;
 
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net
@@ -598,6 +597,10 @@ public class StructureTest extends TestCase {
         }
         public Inner inner;
         public int dummy;
+    }
+    public static class size_t extends IntegerType {
+        public size_t() { this(0); }
+        public size_t(long value) { super(Native.POINTER_SIZE, value); }
     }
     public void testNestedStructureTypeInfo() {
         class FFIType extends Structure {

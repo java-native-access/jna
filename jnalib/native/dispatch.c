@@ -76,8 +76,10 @@ w32_format_error(char* buf, int len) {
 #include "com_sun_jna_CallbackReference.h"
 
 #ifdef HAVE_PROTECTION
-#include "protect.h"
+static int _protect;
+#define PROTECT _protect
 #endif
+#include "protect.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -85,8 +87,7 @@ extern "C"
 
 static jboolean preserve_last_error;
 
-#ifdef PROTECTED_START
-#define ON_ERROR() throwByName(env, "java/lang/Error", "Invalid memory access")
+#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
 #define PSTART() PROTECTED_START()
 #define PEND() PROTECTED_END(ON_ERROR())
 #define MEMCPY(D,S,L) do { \
@@ -95,12 +96,6 @@ static jboolean preserve_last_error;
 #define MEMSET(D,C,L) do { \
   PSTART(); memset(D,C,L); PEND(); \
 } while(0)
-#else
-#define PSTART()
-#define PEND()
-#define MEMCPY(D,S,L) memcpy(D,S,L)
-#define MEMSET(D,C,L) memset(D,C,L)
-#endif
 
 /* Cached class, field and method IDs */
 static jclass classObject;
@@ -1788,14 +1783,14 @@ Java_com_sun_jna_Native_getDirectBufferPointer(JNIEnv *env, jclass classp, jobje
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setProtected(JNIEnv *env, jclass classp, jboolean protect_access) {
 #ifdef HAVE_PROTECTION
-  protect = protect_access;
+  _protect = protect_access;
 #endif
 }
 
 JNIEXPORT jboolean JNICALL
 Java_com_sun_jna_Native_isProtected(JNIEnv *env, jclass classp) {
 #ifdef HAVE_PROTECTION
-  if (protect) return JNI_TRUE;
+  if (_protect) return JNI_TRUE;
 #endif
   return JNI_FALSE;
 }

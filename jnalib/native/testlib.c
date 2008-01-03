@@ -642,6 +642,11 @@ returnInt32ArgumentStdCall(int32 arg) {
   return arg;
 }
 
+EXPORT TestStructureByValue __stdcall
+returnStructureByValueArgumentStdCall(TestStructureByValue arg) {
+  return arg;
+}
+
 EXPORT int32 __stdcall
 callInt32StdCallCallback(int32 (__stdcall *func)(int32 arg, int32 arg2),
                          int32 arg, int32 arg2) {

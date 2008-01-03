@@ -233,8 +233,6 @@ public class Function extends Pointer {
                     }
                 }
                 else if (args[i] instanceof StringArray) {
-                    // Read back arrays of String, just in case they
-                    // were modified
                     ((StringArray)args[i]).read();
                 }
                 else if (args[i] instanceof PointerArray) {
