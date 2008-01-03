@@ -1049,7 +1049,7 @@ public abstract class Structure {
      * to manage on the Java side than in native code.
      */
     private static class FFIType extends Structure {
-        public class size_t extends IntegerType {
+        public static class size_t extends IntegerType {
             public size_t() { this(0); }
             public size_t(long value) { super(Native.POINTER_SIZE, value); }
         }
