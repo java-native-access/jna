@@ -169,9 +169,12 @@ class CallbackReference extends WeakReference {
         throw new IllegalArgumentException(msg);
     }
     
+    /** Obtain a pointer to the native glue code for this callback. */
     public Pointer getTrampoline() {
         return cbstruct.getPointer(0);
     }
+    
+    /** Free native resources associated with this callback. */
     protected void finalize() {
         freeNativeCallback(cbstruct.peer);
         cbstruct.peer = 0;
@@ -403,7 +406,7 @@ class CallbackReference extends WeakReference {
             else if (Library.Handler.OBJECT_EQUALS.equals(method)) {
                 Object o = args[0];
                 if (o != null && Proxy.isProxyClass(o.getClass())) {
-                    Boolean.valueOf(Proxy.getInvocationHandler(o) == this);
+                    return Boolean.valueOf(Proxy.getInvocationHandler(o) == this);
                 }
                 return Boolean.FALSE;
             }

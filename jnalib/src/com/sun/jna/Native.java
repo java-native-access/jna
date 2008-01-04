@@ -304,6 +304,10 @@ public final class Native {
         return false;
     }
     
+    /** Find the library interface corresponding to the given class.  Checks
+     * all ancestor classes for a declaring class which implements 
+     * {@link Library}.
+     */
     static Class findLibraryClass(Class cls) {
         if (cls == null) { 
             return null;
@@ -691,6 +695,7 @@ public final class Native {
         								   + "\" is unknown");
     }
 
+    /** Prints JNA library details to the console. */
     public static void main(String[] args) {
         Package pkg = Native.class.getPackage();
         System.out.println(pkg.getSpecificationTitle());
