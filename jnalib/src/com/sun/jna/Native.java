@@ -601,7 +601,7 @@ public final class Native {
             return null;
         try {
             ClassLoader cl = Native.class.getClassLoader();
-            Method m = ClassLoader.class.getMethod("findLibrary", new Class[] { String.class });
+            Method m = ClassLoader.class.getDeclaredMethod("findLibrary", new Class[] { String.class });
             m.setAccessible(true);
             String libpath = (String)m.invoke(cl, new Object[] { libName });
             if (libpath != null) {
