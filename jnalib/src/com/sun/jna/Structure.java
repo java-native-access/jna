@@ -448,8 +448,8 @@ public abstract class Structure {
                     for (int i=0;i < sarray.length;i++) {
                         if (sarray[i] == null) {
                             sarray[i] = newInstance(cls);
-                            sarray[i].useMemory(memory, offset + i * sarray[i].size());
                         }
+                        sarray[i].useMemory(memory, offset + i * sarray[i].size());
                         sarray[i].read();
                     }
                 }
@@ -623,8 +623,8 @@ public abstract class Structure {
                     for (int i=0;i < sbuf.length;i++) {
                         if (sbuf[i] == null) {
                             sbuf[i] = newInstance(cls);
-                            sbuf[i].useMemory(memory, offset + i * sbuf[i].size());
                         }
+                        sbuf[i].useMemory(memory, offset + i * sbuf[i].size());
                         sbuf[i].write();
                     }
                 }

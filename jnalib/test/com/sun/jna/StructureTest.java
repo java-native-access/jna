@@ -235,10 +235,14 @@ public class StructureTest extends TestCase {
     public void testStructureArrayField() {
         class TestStructure extends Structure {
             public PublicTestStructure[] inner = new PublicTestStructure[2];
+            public PublicTestStructure[] inner2 = (PublicTestStructure[])
+                new PublicTestStructure().toArray(2);
         }
         TestStructure s = new TestStructure();
+        int innerSize = new PublicTestStructure().size();
         assertEquals("Wrong size for structure with nested array of struct",
-                     s.inner.length * new PublicTestStructure().size(), s.size());
+                     s.inner.length * innerSize + s.inner2.length * innerSize, 
+                     s.size());
         s.write();
         assertNotNull("Inner array elements should auto-initialize", s.inner[0]);
         s.inner[0].x = s.inner[0].y = -1;
@@ -248,6 +252,12 @@ public class StructureTest extends TestCase {
                      0, s.inner[0].x);
         assertEquals("Inner structure array element 1 not properly read",
                      0, s.inner[1].x);
+        
+        assertEquals("Wrong memory for uninitialized nested array",
+                     s.getPointer(), s.inner[0].getPointer());
+        assertEquals("Wrong memory for initialized nested array",
+                     s.getPointer().share(innerSize * s.inner.length), 
+                     s.inner2[0].getPointer());
     }
     
     public void testUninitializedNestedArrayFails() {
