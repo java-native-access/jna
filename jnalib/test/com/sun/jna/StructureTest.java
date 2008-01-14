@@ -217,6 +217,8 @@ public class StructureTest extends TestCase {
         assertNotNull("Inner structure should be initialized", s.s1);
         assertEquals("Wrong aggregate size", 
                      s.s1.size() + s.s2.size() + 4, s.size());
+        s.write();
+        s.read();
     }
     
     public void testPrimitiveArrayField() {
@@ -226,6 +228,8 @@ public class StructureTest extends TestCase {
         TestStructure s = new TestStructure();
         assertEquals("Wrong size for structure with nested array", 1024, s.size());
         assertNotNull("Array should be initialized", s.buffer);
+        s.write();
+        s.read();
     }
     
     public void testStructureArrayField() {
@@ -235,6 +239,15 @@ public class StructureTest extends TestCase {
         TestStructure s = new TestStructure();
         assertEquals("Wrong size for structure with nested array of struct",
                      s.inner.length * new PublicTestStructure().size(), s.size());
+        s.write();
+        assertNotNull("Inner array elements should auto-initialize", s.inner[0]);
+        s.inner[0].x = s.inner[0].y = -1;
+        s.inner[1].x = s.inner[1].y = -1;
+        s.read();
+        assertEquals("Inner structure array element 0 not properly read",
+                     0, s.inner[0].x);
+        assertEquals("Inner structure array element 1 not properly read",
+                     0, s.inner[1].x);
     }
     
     public void testUninitializedNestedArrayFails() {

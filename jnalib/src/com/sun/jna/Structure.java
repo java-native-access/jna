@@ -287,7 +287,8 @@ public abstract class Structure {
         }
         catch (Exception e) {
             throw new Error("Exception reading field '"
-                            + structField.name + "' in " + getClass(), e);
+                            + structField.name + "' in " + getClass() 
+                            + ": " + e);
         }
     }
     
@@ -297,7 +298,8 @@ public abstract class Structure {
         }
         catch(IllegalAccessException e) {
             throw new Error("Unexpectedly unable to write to field '"
-                            + structField.name + "' within " + getClass(), e);
+                            + structField.name + "' within " + getClass()
+                            + ": " + e);
         }
     }
 
@@ -434,12 +436,22 @@ public abstract class Structure {
             else if (Pointer.class.isAssignableFrom(cls)) {
                 memory.read(offset, (Pointer[])result, 0, length);
             }
-            else if (Structure.class.isAssignableFrom(cls)
-                     && ByReference.class.isAssignableFrom(cls)) {
+            else if (Structure.class.isAssignableFrom(cls)) {
                 Structure[] sarray = (Structure[])result;
-                Pointer[] parray = memory.getPointerArray(offset, sarray.length);
-                for (int i=0;i < sarray.length;i++) {
-                    sarray[i] = updateStructureByReference(cls, sarray[i], parray[i]);
+                if (ByReference.class.isAssignableFrom(cls)) {
+                    Pointer[] parray = memory.getPointerArray(offset, sarray.length);
+                    for (int i=0;i < sarray.length;i++) {
+                        sarray[i] = updateStructureByReference(cls, sarray[i], parray[i]);
+                    }
+                }
+                else {
+                    for (int i=0;i < sarray.length;i++) {
+                        if (sarray[i] == null) {
+                            sarray[i] = newInstance(cls);
+                            sarray[i].useMemory(memory, offset + i * sarray[i].size());
+                        }
+                        sarray[i].read();
+                    }
                 }
             }
             else {
@@ -598,14 +610,24 @@ public abstract class Structure {
                 Pointer[] buf = (Pointer[])value;
                 memory.write(offset, buf, 0, buf.length);
             }
-            else if (Structure.class.isAssignableFrom(cls)
-                     && ByReference.class.isAssignableFrom(cls)) {
+            else if (Structure.class.isAssignableFrom(cls)) {
                 Structure[] sbuf = (Structure[])value;
-                Pointer[] buf = new Pointer[sbuf.length];
-                for (int i=0;i < sbuf.length;i++) {
-                    buf[i] = sbuf[i] == null ? null : sbuf[i].getPointer();
+                if (ByReference.class.isAssignableFrom(cls)) {
+                    Pointer[] buf = new Pointer[sbuf.length];
+                    for (int i=0;i < sbuf.length;i++) {
+                        buf[i] = sbuf[i] == null ? null : sbuf[i].getPointer();
+                    }
+                    memory.write(offset, buf, 0, buf.length);
                 }
-                memory.write(offset, buf, 0, buf.length);
+                else {
+                    for (int i=0;i < sbuf.length;i++) {
+                        if (sbuf[i] == null) {
+                            sbuf[i] = newInstance(cls);
+                            sbuf[i].useMemory(memory, offset + i * sbuf[i].size());
+                        }
+                        sbuf[i].write();
+                    }
+                }
             }
             else {
                 throw new IllegalArgumentException("Inline array of "
