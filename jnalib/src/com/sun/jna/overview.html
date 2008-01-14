@@ -376,7 +376,7 @@ void free_displays(Display[] displays);
 ...
 IntByReference pcount = new IntByReference();
 Display d = lib.get_displays(pcount);
-Display[] displays = (Display[])d.toArray(new Display[pcount.getValue()]);
+Display[] displays = (Display[])d.toArray(pcount.getValue());
 ...
 lib.free_displays(displays);
 </pre></code></blockquote>
