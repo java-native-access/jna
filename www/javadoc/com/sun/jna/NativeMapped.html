@@ -97,7 +97,10 @@ Interface NativeMapped</H2>
 </PRE>
 
 <P>
-Implementations of this interface must provide a no-args constructor.
+Provide conversion for a Java type to and from a native type.  
+ <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> and <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> will use this interface to determine
+ how to map a given Java object into a native type.<p>
+ Implementations of this interface must provide a no-args constructor.
 <P>
 
 <P>

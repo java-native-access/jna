@@ -355,29 +355,19 @@ Represents a native structure with a Java peer class.  When used as a
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected &nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#getNativeSize(java.lang.Class)">getNativeSize</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the native size for classes which don't need an object instance
- to determine size.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected &nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#getNativeSize(java.lang.Class, java.lang.Object)">getNativeSize</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
-              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the native size of the given class, in bytes.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#getPointer()">getPointer</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> object to this structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#getStructAlignment()">getStructAlignment</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -406,7 +396,7 @@ Represents a native structure with a Java peer class.  When used as a
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) static&nbsp;<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></FONT></TD>
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#newInstance(java.lang.Class)">newInstance</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
 
 <BR>
@@ -422,19 +412,19 @@ Represents a native structure with a Java peer class.  When used as a
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#readField(java.lang.String)">readField</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Update the given field from native memory.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Force a read of the given field from native memory.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) &nbsp;void</CODE></FONT></TD>
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#readField(com.sun.jna.Structure.StructField)">readField</A></B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;structField)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read the given field and return its value.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -483,6 +473,16 @@ Represents a native structure with a Java peer class.  When used as a
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Structure.html#updateStructureByReference(java.lang.Class, com.sun.jna.Structure, com.sun.jna.Pointer)">updateStructureByReference</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+                           <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>&nbsp;s,
+                           <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;address)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only keep the original structure if its address is unchanged.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -830,12 +830,15 @@ public void <B>read</B>()</PRE>
 <A NAME="readField(java.lang.String)"><!-- --></A><H3>
 readField</H3>
 <PRE>
-public void <B>readField</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>readField</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</PRE>
 <DL>
-<DD>Update the given field from native memory.
+<DD>Force a read of the given field from native memory.
 <P>
 <DD><DL>
-</DL>
+
+<DT><B>Returns:</B><DD>the new field value, after updating
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if no field exists with the given name</DL>
 </DD>
 </DL>
 <HR>
@@ -845,7 +848,8 @@ getField</H3>
 <PRE>
 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>getField</B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;structField)</PRE>
 <DL>
-<DD>Obtain the value currently in the Java field.
+<DD>Obtain the value currently in the Java field.  Does not read from 
+ memory.
 <P>
 <DD><DL>
 </DL>
@@ -853,11 +857,30 @@ getField</H3>
 </DL>
 <HR>
 
+<A NAME="updateStructureByReference(java.lang.Class, com.sun.jna.Structure, com.sun.jna.Pointer)"><!-- --></A><H3>
+updateStructureByReference</H3>
+<PRE>
+static <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A> <B>updateStructureByReference</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+                                            <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>&nbsp;s,
+                                            <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;address)</PRE>
+<DL>
+<DD>Only keep the original structure if its address is unchanged.  Otherwise
+ replace it with a new object.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>type</CODE> - Structure subclass<DD><CODE>s</CODE> - Original Structure object<DD><CODE>address</CODE> - the native <code>struct *</code>
+<DT><B>Returns:</B><DD>Updated <code>Structure.ByReference</code> object</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="readField(com.sun.jna.Structure.StructField)"><!-- --></A><H3>
 readField</H3>
 <PRE>
-void <B>readField</B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;structField)</PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>readField</B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;structField)</PRE>
 <DL>
+<DD>Read the given field and return its value.
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -935,6 +958,17 @@ int <B>calculateAlignedSize</B>(int&nbsp;calculatedSize)</PRE>
 </DL>
 <HR>
 
+<A NAME="getStructAlignment()"><!-- --></A><H3>
+getStructAlignment</H3>
+<PRE>
+protected int <B>getStructAlignment</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getNativeAlignment(java.lang.Class, java.lang.Object, boolean)"><!-- --></A><H3>
 getNativeAlignment</H3>
 <PRE>
@@ -943,34 +977,6 @@ protected int <B>getNativeAlignment</B>(<A HREF="http://java.sun.com/j2se/1.4.2/
                                  boolean&nbsp;isFirstElement)</PRE>
 <DL>
 <DD>Overridable in subclasses.
-<P>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getNativeSize(java.lang.Class)"><!-- --></A><H3>
-getNativeSize</H3>
-<PRE>
-protected int <B>getNativeSize</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
-<DL>
-<DD>Returns the native size for classes which don't need an object instance
- to determine size.
-<P>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getNativeSize(java.lang.Class, java.lang.Object)"><!-- --></A><H3>
-getNativeSize</H3>
-<PRE>
-protected int <B>getNativeSize</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
-                            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value)</PRE>
-<DL>
-<DD>Returns the native size of the given class, in bytes.
 <P>
 <DD><DL>
 </DL>
@@ -1087,8 +1093,8 @@ static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">
 <A NAME="newInstance(java.lang.Class)"><!-- --></A><H3>
 newInstance</H3>
 <PRE>
-static <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A> <B>newInstance</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)
-                      throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></PRE>
+public static <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A> <B>newInstance</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)
+                             throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></PRE>
 <DL>
 <DD>Create a new Structure instance of the given type
 <P>

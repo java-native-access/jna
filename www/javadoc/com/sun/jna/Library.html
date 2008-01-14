@@ -130,11 +130,12 @@ Derive from this interface for all native library definitions.
  an <b>INSTANCE</b> field in the interface which holds the 
  <code>loadLibrary</code> result.
  <p>
+ <b>OPTIONS</b> (an instance of <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util"><CODE>Map</CODE></A>),
  <b>TYPE_MAPPER</b> (an instance of <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A>) and 
  <b>STRUCTURE_ALIGNMENT</b> (one of the alignment types defined in 
  <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>) may also be defined.  If no instance of the interface
  has been instantiated, these fields will be used to determine customization
- settings for structures defined within the interface.
+ settings for structures and methods defined within the interface.
  <p>
 <P>
 
@@ -186,14 +187,6 @@ Derive from this interface for all native library definitions.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for an <A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> for the library.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_INVOKING_METHOD">OPTION_INVOKING_METHOD</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For internal JNA use.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -272,18 +265,6 @@ static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.h
 <P>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_STRUCTURE_ALIGNMENT">Constant Field Values</A></DL>
-</DL>
-<HR>
-
-<A NAME="OPTION_INVOKING_METHOD"><!-- --></A><H3>
-OPTION_INVOKING_METHOD</H3>
-<PRE>
-static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_INVOKING_METHOD</B></PRE>
-<DL>
-<DD>For internal JNA use.
-<P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_INVOKING_METHOD">Constant Field Values</A></DL>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>

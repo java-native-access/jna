@@ -99,7 +99,7 @@ Class Native</H2>
 
 <P>
 Provides generation of invocation plumbing for a defined native
- library interface.
+ library interface.  Also provides various utilities for native operations.
  <p>
  <A HREF="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)"><CODE>getTypeMapper(java.lang.Class)</CODE></A> and <A HREF="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)"><CODE>getStructureAlignment(java.lang.Class)</CODE></A> are provided
  to avoid having to explicitly pass these parameters to <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>s, 
@@ -112,12 +112,13 @@ Provides generation of invocation plumbing for a defined native
  When JNA classes are loaded, the native shared library (jnidispatch) is
  loaded as well.  An attempt is made to load it from the system library path
  using <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html?is-external=true#loadLibrary(java.lang.String)" title="class or interface in java.lang"><CODE>System.loadLibrary(java.lang.String)</CODE></A>.  If not found, the appropriate library
- will be extracted from <code>jna.jar</code> into a temporary directory and
+ will be extracted from the class path into a temporary directory and
  loaded from there.  If your system has additional security constraints
  regarding execution or load of files (SELinux, for example), you should 
  probably install the native library in an accessible location and configure 
  your system accordingly, rather than relying on JNA to extract the library 
  from its own jar file.
+ <p>
 <P>
 
 <P>
@@ -159,7 +160,7 @@ Provides generation of invocation plumbing for a defined native
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#LONG_SIZE">LONG_SIZE</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Size of a native long type, in bytes.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Size of a native <code>long</code> type, in bytes.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -167,7 +168,8 @@ Provides generation of invocation plumbing for a defined native
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#POINTER_SIZE">POINTER_SIZE</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The size of a native pointer on the current platform, in bytes.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The size of a native pointer (<code>void*</code>) on the current 
+ platform, in bytes.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -175,7 +177,7 @@ Provides generation of invocation plumbing for a defined native
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#WCHAR_SIZE">WCHAR_SIZE</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Size of a native wchar_t type, in bytes.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Size of a native <code>wchar_t</code> type, in bytes.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -186,6 +188,14 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#findLibraryClass(java.lang.Class)">findLibraryClass</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find the library interface corresponding to the given class.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -239,6 +249,23 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getLibraryOptions(java.lang.Class)">getLibraryOptions</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the preferred native library configuration options for the given 
+ class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getNativeSize(java.lang.Class)">getNativeSize</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the native size for a given Java class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getPreserveLastError()">getPreserveLastError</A></B>()</CODE>
 
@@ -249,7 +276,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)">getStructureAlignment</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)">getStructureAlignment</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the preferred structure alignment for the given native interface.</TD>
@@ -257,7 +284,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)">getTypeMapper</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)">getTypeMapper</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the preferred <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the given native interface.</TD>
@@ -268,8 +295,8 @@ Provides generation of invocation plumbing for a defined native
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWebStartLibraryPath(java.lang.String)">getWebStartLibraryPath</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libName)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If running web start, determine the location of downloaded native 
- libraries.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If running web start, determine the location of a given native 
+ library.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -299,6 +326,15 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#isSupportedNativeType(java.lang.Class)">isSupportedNativeType</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicate whether the given class is supported as a native argument
+ type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class)">loadLibrary</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</CODE>
@@ -312,7 +348,7 @@ Provides generation of invocation plumbing for a defined native
 <CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)">loadLibrary</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass,
-            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;options)</CODE>
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;libOptions)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load a library interface from the given shared library, providing
@@ -324,7 +360,7 @@ Provides generation of invocation plumbing for a defined native
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#main(java.lang.String[])">main</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;args)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prints JNA library details to the console.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -413,7 +449,8 @@ POINTER_SIZE</H3>
 <PRE>
 public static final int <B>POINTER_SIZE</B></PRE>
 <DL>
-<DD>The size of a native pointer on the current platform, in bytes.
+<DD>The size of a native pointer (<code>void*</code>) on the current 
+ platform, in bytes.
 <P>
 <DL>
 </DL>
@@ -425,7 +462,7 @@ LONG_SIZE</H3>
 <PRE>
 public static final int <B>LONG_SIZE</B></PRE>
 <DL>
-<DD>Size of a native long type, in bytes.
+<DD>Size of a native <code>long</code> type, in bytes.
 <P>
 <DL>
 </DL>
@@ -437,7 +474,7 @@ WCHAR_SIZE</H3>
 <PRE>
 public static final int <B>WCHAR_SIZE</B></PRE>
 <DL>
-<DD>Size of a native wchar_t type, in bytes.
+<DD>Size of a native <code>wchar_t</code> type, in bytes.
 <P>
 <DL>
 </DL>
@@ -674,7 +711,7 @@ loadLibrary</H3>
 <PRE>
 public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>loadLibrary</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
                                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass,
-                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;options)</PRE>
+                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;libOptions)</PRE>
 <DL>
 <DD>Load a library interface from the given shared library, providing
  the explicit interface class and a map of options for the library.
@@ -682,7 +719,36 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.
  of Java method names to native function names.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - <DD><CODE>interfaceClass</CODE> - <DD><CODE>options</CODE> - Map of library options</DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - <DD><CODE>interfaceClass</CODE> - <DD><CODE>libOptions</CODE> - Map of library options</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findLibraryClass(java.lang.Class)"><!-- --></A><H3>
+findLibraryClass</H3>
+<PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A> <B>findLibraryClass</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+<DL>
+<DD>Find the library interface corresponding to the given class.  Checks
+ all ancestor classes for a declaring class which implements 
+ <A HREF="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><CODE>Library</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLibraryOptions(java.lang.Class)"><!-- --></A><H3>
+getLibraryOptions</H3>
+<PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A> <B>getLibraryOptions</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+<DL>
+<DD>Return the preferred native library configuration options for the given 
+ class.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><CODE>Library</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -690,12 +756,12 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.
 <A NAME="getTypeMapper(java.lang.Class)"><!-- --></A><H3>
 getTypeMapper</H3>
 <PRE>
-public static <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A> <B>getTypeMapper</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</PRE>
+public static <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A> <B>getTypeMapper</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Return the preferred <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the given native interface.
 <P>
 <DD><DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><CODE>Library.OPTION_TYPE_MAPPER</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -703,12 +769,12 @@ public static <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in
 <A NAME="getStructureAlignment(java.lang.Class)"><!-- --></A><H3>
 getStructureAlignment</H3>
 <PRE>
-public static int <B>getStructureAlignment</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</PRE>
+public static int <B>getStructureAlignment</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Return the preferred structure alignment for the given native interface.
 <P>
 <DD><DL>
-</DL>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT"><CODE>Library.OPTION_STRUCTURE_ALIGNMENT</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -797,8 +863,8 @@ getWebStartLibraryPath</H3>
 <PRE>
 public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getWebStartLibraryPath</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libName)</PRE>
 <DL>
-<DD>If running web start, determine the location of downloaded native 
- libraries.  This value may be used to properly set 
+<DD>If running web start, determine the location of a given native 
+ library.  This value may be used to properly set 
  <code>jna.library.path</code> so that JNA can load libraries identified
  by the &lt;nativelib&gt; tag in the JNLP configuration file.  Returns 
  <code>null</code> if the Web Start native library cache location can not 
@@ -812,7 +878,36 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.
 <DT><B>Throws:</B>
 <DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the library can't be found by the
  Web Start class loader, which usually means it wasn't included as 
- a &lt;nativelib&gt; resource in the JNLP file.</DL>
+ a <code>&lt;nativelib&gt;</code> resource in the JNLP file.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNativeSize(java.lang.Class)"><!-- --></A><H3>
+getNativeSize</H3>
+<PRE>
+public static int <B>getNativeSize</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+<DL>
+<DD>Returns the native size for a given Java class.  Structures are
+ assumed to be <code>struct</code> pointers unless they implement
+ <A HREF="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>Structure.ByValue</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isSupportedNativeType(java.lang.Class)"><!-- --></A><H3>
+isSupportedNativeType</H3>
+<PRE>
+public static boolean <B>isSupportedNativeType</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+<DL>
+<DD>Indicate whether the given class is supported as a native argument
+ type.
+<P>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -822,6 +917,8 @@ main</H3>
 <PRE>
 public static void <B>main</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;args)</PRE>
 <DL>
+<DD>Prints JNA library details to the console.
+<P>
 <DD><DL>
 </DL>
 </DD>
