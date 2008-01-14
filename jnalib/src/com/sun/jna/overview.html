@@ -430,7 +430,9 @@ class Line2 extends Structure {
 }
 </pre></code></blockquote>
 
-The more general case is just a pointer to a buffer:<br>
+The more general case is just a pointer to memory.  This allows you to define
+the field without necessarily defining the inner structure itself, similar to
+declaring a struct without defining it in C:<br>
 
 <blockquote><code><pre>
 // Original C code
