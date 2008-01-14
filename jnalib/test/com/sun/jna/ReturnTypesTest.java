@@ -49,6 +49,7 @@ public class ReturnTypesTest extends TestCase {
             public double doubleField = 4d;
         }
 
+        Object returnStringArgument(String s);
         boolean returnFalse();
         boolean returnTrue();
         int returnInt32Zero();
@@ -80,6 +81,20 @@ public class ReturnTypesTest extends TestCase {
     
     protected void tearDown() {
         lib = null;
+    }
+    
+    public void testReturnJavaObject() throws Exception {
+        try {
+            lib.returnStringArgument(getName());
+            fail("Java Object return is not supported, should throw IllegalArgumentException");
+        }
+        catch(IllegalArgumentException e) {
+            assertTrue("Exception should include return object type: " + e,
+                       e.getMessage().indexOf("java.lang.Object") != -1);
+        }
+        catch(Throwable e) {
+            fail("Method declared with Java Object return should throw IllegalArgumentException, not " + e);
+        }
     }
 
     public void testInvokeBoolean() {

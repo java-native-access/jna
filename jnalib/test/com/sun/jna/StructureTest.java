@@ -19,6 +19,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import com.sun.jna.IntegerType;
+import com.sun.jna.StructureTest.VariableSizeTest.VariableSizedStructure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
@@ -666,5 +667,25 @@ public class StructureTest extends TestCase {
         assertTrue("Improperly formatted toString(): expected " 
                    + EXPECTED + "\n" + actual, 
                    actual.matches(EXPECTED));
+    }
+    
+    public interface VariableSizeTest extends Library {
+        public static class VariableSizedStructure extends Structure {
+            public int length;
+            public byte[] buffer;
+            public VariableSizedStructure(String arg) {
+                length = arg.length() + 1;
+                buffer = new byte[length];
+                System.arraycopy(arg.getBytes(), 0, buffer, 0, arg.length());
+            }
+        }
+        String returnStringFromVariableSizedStructure(VariableSizedStructure s);
+    }
+    public void testVariableSizedStructureArgument() {
+        VariableSizeTest lib = (VariableSizeTest)Native.loadLibrary("testlib", VariableSizeTest.class);
+        String EXPECTED = getName();
+        VariableSizedStructure s = new VariableSizedStructure(EXPECTED);
+        assertEquals("Wrong string returned from variable sized struct",
+                     EXPECTED, lib.returnStringFromVariableSizedStructure(s));
     }
 }

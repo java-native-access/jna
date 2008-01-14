@@ -326,7 +326,8 @@ public class Function extends Pointer {
         }
         else {
             throw new IllegalArgumentException("Unsupported return type "
-                                               + returnType);
+                                               + returnType
+                                               + " in function " + getName());
         }
         return result;
     }
@@ -442,6 +443,12 @@ public class Function extends Pointer {
         else if (argClass.isArray()){
             throw new IllegalArgumentException("Unsupported array argument type: " 
                                                + argClass.getComponentType());
+        }
+        if (arg != null && !Native.isSupportedNativeType(arg.getClass())) {
+            throw new IllegalArgumentException("Unsupported argument type "
+                                               + arg.getClass().getName()
+                                               + " at parameter " + index
+                                               + " of function " + getName());
         }
         return arg;
     }

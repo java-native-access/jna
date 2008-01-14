@@ -238,6 +238,16 @@ returnNullTestStructure() {
   return NULL;
 }
 
+typedef struct _VariableSizedStructure {
+  int length;
+  char buffer[1];
+} VariableSizedStructure;
+
+EXPORT char*
+returnStringFromVariableSizedStructure(VariableSizedStructure* s) {
+  return s->buffer;
+}
+
 typedef struct _TestStructureByValue {
   int8 c;
   int16 s;

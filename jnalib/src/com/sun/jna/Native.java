@@ -684,7 +684,7 @@ public final class Native {
             }
             return POINTER_SIZE;
         }
-        if (Pointer.class == cls
+        if (Pointer.class.isAssignableFrom(cls)
             || Buffer.class.isAssignableFrom(cls)
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
@@ -693,6 +693,21 @@ public final class Native {
         }
         throw new IllegalArgumentException("Native size for type \"" + cls.getName() 
         								   + "\" is unknown");
+    }
+
+    /** Indicate whether the given class is supported as a native argument
+     * type.
+     */
+    public static boolean isSupportedNativeType(Class cls) {
+        if (Structure.class.isAssignableFrom(cls)) {
+            return true;
+        }
+        try {
+            return getNativeSize(cls) != 0;
+        }
+        catch(IllegalArgumentException e) {
+            return false;
+        }
     }
 
     /** Prints JNA library details to the console. */

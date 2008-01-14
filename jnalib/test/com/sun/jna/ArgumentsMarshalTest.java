@@ -45,6 +45,7 @@ public class ArgumentsMarshalTest extends TestCase {
             public double doubleField = 6d;
         }
 
+        String returnStringArgument(Object arg);
         boolean returnBooleanArgument(boolean arg);
         byte returnInt8Argument(byte arg);
         char returnWideCharArgument(char arg);
@@ -97,6 +98,21 @@ public class ArgumentsMarshalTest extends TestCase {
     
     protected void tearDown() {
         lib = null;
+    }
+    
+    public void testJavaObjectArgument() {
+        Object o = this;
+        try {
+            lib.returnStringArgument(o);
+            fail("Java Object arguments should throw IllegalArgumentException");
+        }
+        catch(IllegalArgumentException e) {
+            assertTrue("Exception should include Object type description: " + e,
+                       e.getMessage().indexOf(o.getClass().getName()) != -1);
+        }
+        catch(Throwable e) {
+            fail("Java Object arguments should throw IllegalArgumentException, not " + e);
+        }
     }
 
     public void testBooleanArgument() {
