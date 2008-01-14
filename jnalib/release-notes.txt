@@ -1,3 +1,8 @@
+Release 3.0.1
+Bug Fixes
+* Ensure nested structure arrays initialized with Structure.toArray use the
+  appropriate native memory.
+
 Release 3.0
 Features
 * More supported platforms, via GCC's libffi (wmeissner)
