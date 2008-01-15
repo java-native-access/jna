@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-01-14">
+<meta name="date" content="2008-01-15">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -58,26 +58,25 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
 <a name=features></a>
 <h3>Features</h3>
 <ul>
-<li>Most platforms supported
-<li>Automatic mapping from Java interface to native function
-<li>8-, 16-, 32, and 64-bit basic data types
+<li>Automatic mapping from Java interface method to native function, with simple mappings for all primitive data types
+<li>Runs on <a href="#building">most platforms which support Java</a>
+<li>Automatic conversion between C and Java strings, with customizable encoding/decoding
 <li><a href="javadoc/com/sun/jna/Structure.html">Structure</a> and <a href="javadoc/com/sun/jna/Union.html">Union</a> arguments/return values, by reference and by value
-<li>Automatic conversion between C and Java strings
-<li>Function pointers (callbacks from native code to Java code) as arguments and/or members of a <code>struct</code>
+<li>Function Pointers, (callbacks from native code to Java) as arguments and/or members of a <code>struct</code>
+<li>Auto-generated Java proxies for native function pointers
 <li>By-reference (pointer-to-type) arguments 
 <li>Java array and NIO <code>Buffer</code> arguments (primitive types and pointers) as pointer-to-buffer
 <li>Nested structures and arrays
-<li><code>wchar_t</code>-based strings
+<li>Wide (<code>wchar_t</code>-based) strings
 <li><a href="javadoc/com/sun/jna/NativeLong.html">Native <code>long</code></a> support (32- or 64-bit as appropriate)
 <li><a href="#demos">Full-blown demo applications</a>
 <li>Supported on 1.4 or later JVMs (earlier VMs may work with stubbed NIO support)
 <li>Customizable marshalling/unmarshalling (argument and return value conversions)
-<li>Customizable mapping from Java method to native function name
+<li>Customizable mapping from Java method to native function name, and customizable invocation to simulate C preprocessor function macros
 <li>Support for automatic Windows ASCII/UNICODE function mappings
-<li>Auto-generated proxies for native function pointers in structs
 <li>Varargs support
-<li>Optional <a href="javadoc/com/sun/jna/PointerType.html">type-safety for native pointers</a>
-<li>Optional <a href="javadoc/com/sun/jna/Native.html#setProtected(boolean)">VM crash protection</a>
+<li><a href="javadoc/com/sun/jna/PointerType.html">Type-safety for native pointers</a>
+<li><a href="javadoc/com/sun/jna/Native.html#setProtected(boolean)">VM crash protection</a> (optional)
 </ul>
 <p>
 
@@ -100,8 +99,9 @@ package com.sun.jna.examples.win32;
 
 import com.sun.jna.*;
 
-// kernel32.dll uses the __stdcall calling convention
-// Most C libraries will just extend com.sun.jna.Library
+// kernel32.dll uses the __stdcall calling convention (check the function
+// declaration for "WINAPI"), so extend StdCallLibrary
+// Most C libraries will just extend com.sun.jna.Library,
 public interface Kernel32 extends StdCallLibrary { 
     // Method declarations, constant and structure definitions go here
 }</textarea>
@@ -344,6 +344,7 @@ Libc.fclose(fp)
 <li><a href="#w32crash">My Windows library mapping causes a VM crash on every call</a>
 <li><a href="#ptr_values">How do I get an arbitrary Pointer value?</a>
 <li><a href="#j2me">Does JNA work with J2ME/Windows Mobile?</a>
+<li><a href="#performance">How does JNA performance compared to custom JNI?</a>
 </ul>
 <a name=w32link></a>
 <h4>My library mapping causes an UnsatisfiedLinkError</h4>
@@ -362,7 +363,7 @@ If your library uses the <code>stdcall</code> calling convention, your interface
 First, you probably don't actually want an <em>arbitrary</em> value.  Ask yourself what you're really trying to do.  Remember, type safety is your friend.  
 <ul>
 <li>Pointer.createConstant() should be used when you need a special value that is not really a pointer (NULL usually serves this purpose, but some C programmers like to check pointers for special integer values instead).  The Pointer produced by this function can't actually be used to access memory.
-<li>Pointer#share() can be used to generate a new Pointer as an offset from an existing one
+<li>Pointer.share() can be used to generate a new Pointer as an offset from an existing one
 <li>java.nio.Buffer can be used to wrap a Java array with a different offset and length than the original.
 <li>Clean up the sloppy C code by declaring an appropriate function interface.  If your function in C takes either a Pointer or an integer type, simply declare both method signatures in your JNA interface.  They will both invoke the same function, but you get the added benefit of type checking on the arguments.
 </ul>
@@ -375,6 +376,27 @@ value into a Pointer, you can do something like this:<br>
 JNA requires Java 1.4 (or greater) and uses (but does not depend on) NIO buffers.  A stub NIO buffer implementation may be provided and things should otherwise Just Work.<p> 
 Windows Mobile is supported by libffi (mingwce) but JNA has not yet been (publicly) built for that target.  Nothing technically should prevent it, though.
 <p>
+
+<a name=performance></a>
+<h4>How does JNA performance compare to custom JNI?</h4>
+<p>
+A simple test calling a function like <code>int testfunc(int)</code> a million
+times with JNA might take 40X the time taken by equivalent custom JNI.  This
+magnitude is typical of the difference between systems using
+dynamically-maintained type information and systems where type information is 
+statically compiled.  
+<p>
+You might expect a speedup of about an order of magnitude moving to custom JNI,
+but the actual difference will vary depending on usage and function
+signatures.  As with any optimization process, you should determine
+first <em>where</cm> you need a speed increase, and then see how much
+difference there is by performing targeted optimizations.  The ease of
+programming everything in Java usually outweighs performance gains when using
+custom JNI. 
+<p>
+Java primitive arrays are generally slower to use than memory
+(Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
+be pinned and possibly copied across the native call.
 
 <a href=#top>Top</a>
 <a name=demos></a>
@@ -439,7 +461,7 @@ the JNA library (and are pretty nifty utilities in and of themselves).
 <a name=building></a>
 <h3>Building and Multi-platform support</h3>
 JNA has been built and tested on OSX (PPC and x86), linux (x86, amd64),
-FreeBSD, SunOS (x86, sparc, sparcv9) and Windows (x86).  The ant build
+FreeBSD (x86), SunOS (x86, sparc, sparcv9) and Windows (x86).  The ant build
 script's test target will build and run the test suite, which has decent
 coverage and is a quick way to determine if your environment is set up
 correctly.<p> 
