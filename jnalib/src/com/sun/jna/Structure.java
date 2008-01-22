@@ -960,7 +960,10 @@ public abstract class Structure {
      * backing, the memory will be resized to fit the entire array.
      */
     public Structure[] toArray(Structure[] array) {
-        if (memory instanceof Memory) {
+        if (size == CALCULATE_SIZE) {
+            allocateMemory();
+        }
+        if (Memory.class.equals(memory.getClass())) {
             // reallocate if necessary
             Memory m = (Memory)memory;
             int requiredSize = array.length * size();

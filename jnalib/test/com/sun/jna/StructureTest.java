@@ -260,6 +260,21 @@ public class StructureTest extends TestCase {
                      s.inner2[0].getPointer());
     }
     
+    public static class ToArrayTestStructure extends Structure {
+        public PublicTestStructure[] inner =
+            (PublicTestStructure[])new PublicTestStructure().toArray(2);
+    }
+    public void testToArrayWithStructureArrayField() {
+        ToArrayTestStructure[] array = 
+            (ToArrayTestStructure[])new ToArrayTestStructure().toArray(2);
+        assertEquals("Wrong address for top-level array element",
+                     array[0].getPointer().share(array[0].size()),
+                     array[1].getPointer());
+        assertEquals("Wrong address for nested array element",
+                     array[1].inner[0].getPointer().share(array[1].inner[0].size()),
+                     array[1].inner[1].getPointer());
+    }
+    
     public void testUninitializedNestedArrayFails() {
         class TestStructure extends Structure {
             public Pointer[] buffer;
