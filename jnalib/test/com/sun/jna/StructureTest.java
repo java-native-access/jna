@@ -338,7 +338,9 @@ public class StructureTest extends TestCase {
         s.read();
         assertTrue("Wrong boolean field value after write/read", s.z);
         assertEquals("Wrong byte field value after write/read", (byte)1, s.b);
-        assertEquals("Wrong char field value after write/read", 'a', s.c);
+        assertEquals("Wrong char field value after write/read", 
+                     "'a' (0x" + Integer.toHexString('a') + ")", 
+                     "'" + s.c + "' (0x" + Integer.toHexString(s.c) + ")");
         assertEquals("Wrong short field value after write/read", 2, s.s);
         assertEquals("Wrong int field value after write/read", 3, s.i);
         assertEquals("Wrong long field value after write/read", 4, s.j);
