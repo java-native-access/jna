@@ -1,4 +1,7 @@
 Release 3.0.1
+Features
+* Improve transparent window drawing performance on w32
+
 Bug Fixes
 * Ensure nested structure arrays initialized with Structure.toArray use the
   appropriate native memory.
