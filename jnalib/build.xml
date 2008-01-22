@@ -179,7 +179,12 @@
       <class name="com.sun.jna.NativeLibrary"/>
       <class name="com.sun.jna.CallbackReference"/>
     </javah>
-    <apply dir="${build.native}" executable="grep" parallel="true" relative="true" output="${md5.file}">
+    <condition property="grep" value="/usr/sfw/bin/ggrep">
+      <os name="SunOS"/>
+    </condition>
+    <property name="grep" value="grep"/>
+    <apply dir="${build.native}" executable="${grep}" parallel="true"
+           failonerror="true" relative="true" output="${md5.file}">
       <arg value="-A"/>
       <arg value="1"/>
       <arg value="JNIEXPORT"/>
