@@ -1131,7 +1131,8 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setByte
 JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setChar
     (JNIEnv *env, jclass cls, jlong addr, jchar value)
 {
-  MEMCPY(L2A(addr), &value, sizeof(value));
+  wchar_t ch = value;
+  MEMCPY(L2A(addr), &ch, sizeof(ch));
 }
 
 /*
