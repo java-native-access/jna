@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
 import javax.swing.*;
+import java.lang.ref.WeakReference;
 import java.awt.*;
 import java.awt.image.*;
 
