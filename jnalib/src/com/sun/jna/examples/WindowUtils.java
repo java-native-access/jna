@@ -130,7 +130,13 @@ public class WindowUtils {
      * target window.
      * <p>
      * Ideally we'd have more control over {@link PopupFactory} but this
-     * is a fairly simple, lightweight workaround.
+     * is a fairly simple, lightweight workaround.  Note that, at least as of
+     * JDK 1.6, the following do not have the desired effect:<br>
+     * <code><pre>
+     * ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+     * JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+     * System.setProperty("JPopupMenu.defaultLWPopupEnabledKey", "false");
+     * </pre></code>
      */
     private static class HeavyweightForcer extends Window {
         private boolean packed;
@@ -143,7 +149,8 @@ public class WindowUtils {
 
         public boolean isVisible() {
             // Only want to be 'visible' once the peer is instantiated
-            // via pack
+            // via pack; this tricks PopupFactory into using a heavyweight
+            // popup to avoid being obscured by this window
             return packed;
         }
 
@@ -451,6 +458,8 @@ public class WindowUtils {
                 Window[] owned = w.getOwnedWindows();
                 for (int i = 0; i < owned.length; i++) {
                     if (owned[i] instanceof HeavyweightForcer) {
+                        if (force)
+                            return;
                         owned[i].dispose();
                     }
                 }

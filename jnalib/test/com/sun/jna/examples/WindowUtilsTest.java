@@ -260,6 +260,40 @@ public class WindowUtilsTest extends TestCase {
         }
     }
     
+    public void testDisposeHeavyweightForcer() throws Exception {
+        Frame root = JOptionPane.getRootFrame();
+        final JWindow w = new JWindow(root);
+        w.getContentPane().add(new JLabel(getName()));
+        final Rectangle mask = new Rectangle(0, 0, 10, 10);
+        SwingUtilities.invokeAndWait(new Runnable() { public void run() {
+            w.pack();
+            WindowUtils.setWindowMask(w, mask);
+            w.setVisible(true);
+        }});
+        Window[] owned  = w.getOwnedWindows();
+        WeakReference ref = null;
+        for (int i=0;i < owned.length;i++) {
+            if (owned[i].getClass().getName().indexOf("Heavy") != -1) {
+                ref = new WeakReference(owned[i]);
+                break;
+            }
+        }
+        owned = null;
+        assertNotNull("Forcer not found", ref);
+        SwingUtilities.invokeAndWait(new Runnable() { public void run() {
+            WindowUtils.setWindowMask(w, WindowUtils.MASK_NONE);
+        }});
+        System.gc();
+        long start = System.currentTimeMillis();
+        while (ref.get() != null) {
+            Thread.sleep(10);
+            System.gc();
+            if (System.currentTimeMillis() - start > 5000)
+                fail("Timed out waiting for forcer to be GC'd");
+        }
+        assertNull("Forcer not GC'd", ref.get());
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(WindowUtilsTest.class);
     }
