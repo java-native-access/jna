@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,6 +12,7 @@
  */
 package com.sun.jna.examples;
 
+import java.awt.event.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -57,8 +58,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.examples.unix.X11;
 import com.sun.jna.examples.unix.X11.Display;
 import com.sun.jna.examples.unix.X11.GC;
-import com.sun.jna.examples.unix.X11.Pixmap;
-import com.sun.jna.examples.unix.X11.Visual;
 import com.sun.jna.examples.unix.X11.XSetWindowAttributes;
 import com.sun.jna.examples.win32.GDI32;
 import com.sun.jna.examples.win32.User32;
@@ -89,6 +88,10 @@ public class AlphaMaskDemo implements Runnable {
     private float alpha = 1f;
     private Image image;
     
+    private void update() {
+        update(false, true);
+    }
+
     private void update(boolean a, boolean i) {
         String os = System.getProperty("os.name");
         if (os.startsWith("Windows"))
@@ -119,6 +122,8 @@ public class AlphaMaskDemo implements Runnable {
         }
     }
 
+    private com.sun.jna.Memory buffer;
+    private int[] pixels;
     private void updateX11(boolean a, boolean i) {
         X11 x11 = X11.INSTANCE;
         X11.Window win = X11.Window.None;
@@ -129,11 +134,6 @@ public class AlphaMaskDemo implements Runnable {
                 if (System.getProperty("java.version").matches("^1\\.4\\..*"))
                     alphaWindow.setVisible(true);
                 win = new X11.Window((int)Native.getWindowID(alphaWindow));
-                XSetWindowAttributes xswa = new XSetWindowAttributes();
-                xswa.background_pixel = new NativeLong(0x0);
-                Visual visual = x11.XDefaultVisual(dpy, x11.XDefaultScreen(dpy));
-                xswa.colormap = x11.XCreateColormap(dpy, win, visual, X11.AllocNone);
-                x11.XChangeWindowAttributes(dpy, win, new NativeLong(X11.CWBackPixel|X11.CWColormap), xswa);
                 Window parent = alphaWindow.getOwner();
                 Point where = parent.getLocationOnScreen();
                 where.translate(parent.getWidth(), 0);
@@ -149,34 +149,54 @@ public class AlphaMaskDemo implements Runnable {
                 int w = image.getWidth(null);
                 int h = image.getHeight(null);
                 alphaWindow.setSize(w, h);
+                if (buffer == null || buffer.getSize() != w*h*4) {
+                    buffer = new com.sun.jna.Memory(w*h*4);
+                    pixels = new int[w*h];
+                }
+
                 BufferedImage buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
                 Graphics g = buf.getGraphics();
                 g.drawImage(image, 0, 0, w, h, null);
                 
+                long start = System.currentTimeMillis();
+                long blitTime, putImageTime, write;
                 GC gc = x11.XCreateGC(dpy, win, new NativeLong(0), null);
-                Pixmap pixmap = x11.XCreatePixmap(dpy, win, w, h, 32);
+                long gcTime = System.currentTimeMillis();
                 try {
-                    x11.XSetForeground(dpy, gc, new NativeLong(0));
-                    x11.XFillRectangle(dpy, pixmap, gc, 0, 0, w, h);
                     Raster raster = buf.getData();
                     int[] pixel = new int[4];
                     for (int y=0;y < h;y++) {
                         for (int x=0;x < w;x++) {
-                            raster.getPixel(x, h-y-1, pixel);
+                            raster.getPixel(x, y, pixel);
                             int alpha = (pixel[3]&0xFF)<<24;
                             int red = (pixel[2]&0xFF);
                             int green = (pixel[1]&0xFF)<<8;
                             int blue = (pixel[0]&0xFF)<<16;
-                            x11.XSetForeground(dpy, gc, new NativeLong(alpha|red|green|blue));
-                            x11.XFillRectangle(dpy, pixmap, gc, x, h-y-1, 1, 1);
+                            pixels[y*w+x] = alpha|red|green|blue;
                         }
                     }
-                    x11.XCopyArea(dpy, pixmap, win, gc, 0, 0, w, h, 0, 0);
+                    blitTime = System.currentTimeMillis();
+                    X11.XWindowAttributes xwa = new X11.XWindowAttributes();
+                    x11.XGetWindowAttributes(dpy, win, xwa);
+                    X11.XImage image = x11.XCreateImage(dpy, xwa.visual,
+                                                        32, X11.ZPixmap,
+                                                        0, buffer, w, h, 32, w*4);
+                    buffer.write(0, pixels, 0, pixels.length);
+                    write = System.currentTimeMillis();
+                    x11.XPutImage(dpy, win, gc, image, 0,0,0,0,w,h);
+                    x11.XFree(image.getPointer());
+                    putImageTime = System.currentTimeMillis();
                 }
                 finally {
                     if (gc != null)
                         x11.XFreeGC(dpy, gc);
                 }
+                long end = System.currentTimeMillis();
+                System.out.println("gc: " + (gcTime-start) + "ms");
+                System.out.println("blit: " + (blitTime-gcTime) + "ms");
+                System.out.println("write: " + (write-blitTime) + "ms");
+                System.out.println("put image: " + (putImageTime-write) + "ms");
+                System.out.println("total: " + (end-start) + "ms");
             }
         }
         finally {
@@ -469,6 +489,11 @@ public class AlphaMaskDemo implements Runnable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         centerOnScreen(frame);
         frame.setVisible(true);
+        p.addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    update();
+                }
+            });
 
         try {
             URL url = getClass().getResource("tardis.png");

@@ -48,6 +48,9 @@ public interface X11 extends Library {
         public Object toNative() {
             return id;
         }
+        public String toString() {
+            return "0x" + Integer.toHexString(id.intValue());
+        }
     }
     public static class Atom extends XID {
         public static final Atom None = null;
@@ -149,11 +152,20 @@ public interface X11 extends Library {
     // TODO: define structure
     public static class Display extends PointerType { }
     // TODO: define structure
-    public static class Visual extends PointerType { }
+    public static class Visual extends PointerType {
+        public int getVisualID() {
+            return getPointer().getInt(Native.POINTER_SIZE);
+        }
+        public String toString() {
+            return "Visual: VisualID=0x" + Integer.toHexString(getVisualID());
+        }
+    }
     // TODO: define structure
     public static class Screen extends PointerType { }
     // TODO: define structure
     public static class GC extends PointerType { }
+    // TODO: define structure
+    public static class XImage extends PointerType { }
     
     /** Definition (incomplete) of the Xext library. */
     public interface Xext extends Library {
@@ -354,6 +366,10 @@ public interface X11 extends Library {
         public int colormap_size;
         public int bits_per_rgb;
     }
+    public static class XPoint extends Structure {
+        public short x, y;
+    }
+
     int AllocNone = 0;
     int AllocAll = 1;
     
@@ -416,6 +432,11 @@ public interface X11 extends Library {
     int XFreePixmap(Display display, Pixmap pixmap);
     GC XCreateGC(Display display, Drawable drawable, NativeLong mask, Pointer values);
     int XFreeGC(Display display, GC gc);
+    int XDrawPoint(Display display, Drawable drawable, GC gc, int x, int y);
+    int CoordModeOrigin = 0;
+    int CoordModePrevious = 1;
+    int XDrawPoints(Display display, Drawable drawable, GC gc,
+                    XPoint[] points, int npoints, int mode);
     int XFillRectangle(Display display, Drawable drawable, GC gc, 
                        int x, int y, int width, int height);
     int XSetForeground(Display display, GC gc, NativeLong color);
@@ -493,4 +514,15 @@ public interface X11 extends Library {
     Atom XInternAtom(Display display, String name, boolean only_if_exists);
     int XCopyArea(Display dpy, Drawable src, Drawable dst, GC gc, 
                   int src_x, int src_y, int w, int h, int dst_x, int dst_y);
+
+    int XYBitmap = 0;
+    int XYPixmap = 1;
+    int ZPixmap = 2;
+    XImage XCreateImage(Display dpy, Visual visual, int depth, int format,
+                        int offset, Pointer data, int width, int height,
+                        int bitmap_pad, int bytes_per_line);
+    int XPutImage(Display dpy, Drawable d, GC gc, XImage image, 
+                  int src_x, int src_y, int dest_x, int dest_y,
+                  int width, int height);
+    int XDestroyImage(XImage image);
 }
