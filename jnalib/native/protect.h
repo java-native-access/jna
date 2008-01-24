@@ -92,7 +92,7 @@ __exc_handler(struct _EXCEPTION_RECORD* exception_record,
 #include <setjmp.h>
 static jmp_buf __context;
 static volatile int __error;
-static void _exc_handler(int sig) {
+static void __exc_handler(int sig) {
   if (sig == SIGSEGV || sig == SIGBUS) {
     longjmp(__context, sig);
   }
