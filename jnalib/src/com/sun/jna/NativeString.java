@@ -10,6 +10,8 @@
  */
 package com.sun.jna;
 
+import java.nio.CharBuffer;
+
 
 /** Provides a temporary allocation of an immutable C string 
  * (<code>const char*</code> or <code>const wchar_t*</code>) for use when 
@@ -91,7 +93,7 @@ class NativeString implements CharSequence, Comparable {
     }
 
     public CharSequence subSequence(int start, int end) {
-        return value.subSequence(start, end);
+        return CharBuffer.wrap(value).subSequence(start, end);
     }
 
     public int compareTo(Object other) {

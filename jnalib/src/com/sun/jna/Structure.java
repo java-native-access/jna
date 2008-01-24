@@ -352,7 +352,7 @@ public abstract class Structure {
             result = s;
         }
         else if (nativeType == boolean.class || nativeType == Boolean.class) {
-            result = Boolean.valueOf(memory.getInt(offset) != 0);
+            result = Function.valueOf(memory.getInt(offset) != 0);
         }
         else if (nativeType == byte.class || nativeType == Byte.class) {
             result = new Byte(memory.getByte(offset));
@@ -738,7 +738,7 @@ public abstract class Structure {
             }
             Class nativeType = type;
             if (NativeMapped.class.isAssignableFrom(type)) {
-                NativeMappedConverter tc = new NativeMappedConverter(type);
+                NativeMappedConverter tc = NativeMappedConverter.getInstance(type);
                 value = tc.defaultValue();
                 nativeType = tc.nativeType();
                 structField.writeConverter = tc;

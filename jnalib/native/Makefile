@@ -183,7 +183,7 @@ install:
 	mkdir $(INSTALLDIR)
 	cp $(LIBRARY) $(INSTALLDIR)
 
-$(RSRC): jnidispatch.rc
+$(RSRC): $(BUILD)/jnidispatch.rc
 	windres -i $< -o $@
 
 $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB) 

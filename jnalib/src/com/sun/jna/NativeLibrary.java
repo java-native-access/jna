@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.StringTokenizer;
 
 /**
  * Provides management of native library resources.  One instance of this 
@@ -263,9 +263,20 @@ public class NativeLibrary {
     }
     /** Close the library when it is no longer referenced. */
     protected void finalize() {
-        if (handle != 0) {
-            close(handle);
-            handle = 0;
+        dispose();
+    }
+    
+    public void dispose() {
+        synchronized(libraries) {
+            libraries.remove(getName());
+            libraries.remove(getFile().getAbsolutePath());
+            libraries.remove(getFile().getName());
+        }
+        synchronized(this) {
+            if (handle != 0) {
+                close(handle);
+                handle = 0;
+            }
         }
     }
     
@@ -274,11 +285,12 @@ public class NativeLibrary {
         if ("".equals(value)) {
             return Collections.EMPTY_LIST;
         }
-        String[] paths = value.split(File.pathSeparator);
+        StringTokenizer st = new StringTokenizer(value, File.pathSeparator);
         List list = new ArrayList();
-        for (int i=0;i < paths.length;i++) {
-            if (!"".equals(paths[i])) {
-                list.add(paths[i]);
+        while (st.hasMoreTokens()) {
+            String path = st.nextToken();
+            if (!"".equals(path)) {
+                list.add(path);
             }
         }
         return list;
@@ -316,7 +328,8 @@ public class NativeLibrary {
     private static String mapLibraryName(String libName) {
         
         if (Platform.isMac()) {
-            if (libName.matches("lib.*\\.(dylib|jnilib)$")) {
+            if (libName.startsWith("lib")
+                && (libName.endsWith(".dylib") || libName.endsWith(".jnilib"))) {
                 return libName;
             }
             String name = System.mapLibraryName(libName);
@@ -327,11 +340,10 @@ public class NativeLibrary {
                 return name.substring(0, name.lastIndexOf(".jnilib")) + ".dylib";
             }
             return name;
-        } else if (Platform.isLinux()) {
-            //
-            // A specific version was requested - use as is for search
-            //
-            if (libName.matches("lib.*\\.so\\.[0-9]+$")) {
+        } 
+        else if (Platform.isLinux()) {
+            if (isVersionedName(libName)) {
+                // A specific version was requested - use as is for search
                 return libName;
             }
         } 
@@ -339,17 +351,32 @@ public class NativeLibrary {
         return System.mapLibraryName(libName);
     }
     
+    private static boolean isVersionedName(String name) {
+        if (name.startsWith("lib")) {
+            int so = name.lastIndexOf(".so.");
+            if (so != -1 && so + 4 < name.length()) {
+                for (int i=so+4;i < name.length();i++) {
+                    char ch = name.charAt(i);
+                    if (!Character.isDigit(ch) && ch != '.') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * matchLibrary is very Linux specific.  It is here to deal with the case
      * where there is no /usr/lib/libc.so, or it is not a valid symlink to
-     * /lib/libc.so.6.
+     * a versioned file (e.g. /lib/libc.so.6).
      */
     private static String matchLibrary(final String libName, List searchPath) {
         
         FilenameFilter filter = new FilenameFilter() {
-            Pattern p = Pattern.compile("lib" + libName + "\\.so\\.[0-9]+$");
             public boolean accept(File dir, String name) {
-                return p.matcher(name).matches();
+                return isVersionedName(name);
             }
         };
         

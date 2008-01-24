@@ -17,6 +17,7 @@ public final class Platform {
     private static final int WINDOWS = 2;
     private static final int SOLARIS = 3;
     private static final int FREEBSD = 4;
+    private static final int WINDOWSCE = 5;
     private static final int osType;
     
     static {
@@ -26,6 +27,9 @@ public final class Platform {
         } 
         else if (osName.startsWith("Mac") || osName.startsWith("Darwin")) {
             osType = MAC;
+        }
+        else if (osName.startsWith("Windows CE")) {
+            osType = WINDOWSCE;
         }
         else if (osName.startsWith("Windows")) {
             osType = WINDOWS;
@@ -47,8 +51,11 @@ public final class Platform {
     public static final boolean isLinux() {
         return osType == LINUX;
     }
+    public static final boolean isWindowsCE() {
+        return osType == WINDOWSCE;
+    }
     public static final boolean isWindows() {
-        return osType == WINDOWS;
+        return osType == WINDOWS || osType == WINDOWSCE;
     }
     public static final boolean isSolaris() {
         return osType == SOLARIS;
@@ -57,7 +64,15 @@ public final class Platform {
         return osType == FREEBSD;
     }
     public static final boolean isX11() {
-        // TODO: check FS or do some other X11-specific test
+        // TODO: check filesystem for /usr/X11 or some other X11-specific test
         return !Platform.isWindows() && !Platform.isMac();
+    }
+    public static final boolean deleteNativeLibraryAfterVMExit() {
+        return osType == WINDOWS;
+    }
+    public static final boolean hasRuntimeExec() {
+        if (isWindowsCE() && "J9".equals(System.getProperty("java.vm.name")))
+            return false;
+        return true;
     }
 }

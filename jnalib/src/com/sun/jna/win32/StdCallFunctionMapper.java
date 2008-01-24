@@ -38,7 +38,7 @@ public class StdCallFunctionMapper implements FunctionMapper {
     /** Override this to handle any custom class mappings. */
     protected int getArgumentNativeStackSize(Class cls) {
         if (NativeMapped.class.isAssignableFrom(cls)) {
-            cls = new NativeMappedConverter(cls).nativeType();
+            cls = NativeMappedConverter.getInstance(cls).nativeType();
         }
         if (cls.isArray()) {
             return Pointer.SIZE;

@@ -8,7 +8,7 @@ import java.util.List;
  * pointers.  An extra NULL pointer is always added to the end of the native
  * pointer array for convenience. 
  */
-public class StringArray extends Memory {
+public class StringArray extends Memory implements Function.PostCallRead {
     private boolean wide;
     private List natives = new ArrayList();
     private Object[] original;

@@ -12,6 +12,8 @@
  */
 package com.sun.jna;
 
+import java.nio.CharBuffer;
+
 /** Simple wrapper class to identify a wide string argument or return type.
  * @author twall@users.sf.net 
  */
@@ -39,6 +41,6 @@ public final class WString implements CharSequence, Comparable {
         return toString().charAt(index);
     }
     public CharSequence subSequence(int start, int end) {
-        return toString().subSequence(start, end);
+        return CharBuffer.wrap(toString()).subSequence(start, end);
     }
 }

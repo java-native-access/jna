@@ -62,7 +62,7 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                 return new Integer(Boolean.TRUE.equals(value) ? 1 : 0);
             }
             public Object fromNative(Object value, FromNativeContext context) {
-                return Boolean.valueOf(((Integer)value).intValue() != 0);
+                return ((Integer)value).intValue() != 0 ? Boolean.TRUE : Boolean.FALSE;
             }
             public Class nativeType() {
                 // BOOL is 32-bit int

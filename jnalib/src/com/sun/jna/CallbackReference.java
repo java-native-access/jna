@@ -141,7 +141,7 @@ class CallbackReference extends WeakReference {
                 return Pointer.class;
         }
         else if (NativeMapped.class.isAssignableFrom(cls)) {
-            return new NativeMappedConverter(cls).nativeType();
+            return NativeMappedConverter.getInstance(cls).nativeType();
         }
         else if (cls == String.class 
                  || cls == WString.class
@@ -226,7 +226,7 @@ class CallbackReference extends WeakReference {
             Class returnType = callbackMethod.getReturnType();
             fromNative = new FromNativeConverter[argTypes.length];
             if (NativeMapped.class.isAssignableFrom(returnType)) {
-                toNative = new NativeMappedConverter(returnType);
+                toNative = NativeMappedConverter.getInstance(returnType);
             }
             else if (mapper != null) {
                 toNative = mapper.getToNativeConverter(returnType);
@@ -328,7 +328,7 @@ class CallbackReference extends WeakReference {
             }
             else if ((boolean.class == dstType || Boolean.class == dstType)
                      && value instanceof Number) {
-                value = Boolean.valueOf(((Number)value).intValue() != 0);
+                value = Function.valueOf(((Number)value).intValue() != 0);
             }
             return value;
         }
@@ -406,7 +406,7 @@ class CallbackReference extends WeakReference {
             else if (Library.Handler.OBJECT_EQUALS.equals(method)) {
                 Object o = args[0];
                 if (o != null && Proxy.isProxyClass(o.getClass())) {
-                    return Boolean.valueOf(Proxy.getInvocationHandler(o) == this);
+                    return Function.valueOf(Proxy.getInvocationHandler(o) == this);
                 }
                 return Boolean.FALSE;
             }

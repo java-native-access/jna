@@ -235,7 +235,8 @@
   </target>
   <target name="rsrc" depends="-setup,:rsrc" unless="-rsrc"
           description="Generate w32 DLL version resource information">
-    <property name="rsrc" location="${native}/jnidispatch.rc"/>
+    <property name="rsrc" location="${build.native}/jnidispatch.rc"/>
+    <copy todir="${build.native}" file="${native}/jnidispatch.rc"/>
     <replaceregexp match="FILEVERSION.*"
                    replace="FILEVERSION ${jni.major},${jni.minor},${jni.revision},${jni.build}"
                    file="${rsrc}" byline="true"/>

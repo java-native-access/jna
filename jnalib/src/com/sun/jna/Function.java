@@ -27,6 +27,16 @@ import java.util.Map;
  * @see Pointer
  */
 public class Function extends Pointer {
+    /** Any argument which implements this interface will have the
+     * {@link #read} method called immediately after function invocation.
+     */
+    public interface PostCallRead {
+        /** Perform any necessary post-call synchronization.  Normally this
+         * just means reading from native memory any changes made by
+         * the native function call.
+         */
+        void read();
+    }
     
     /** Maximum number of arguments supported by a JNA function call. */
     public static final int MAX_NARGS = 256;
@@ -196,7 +206,7 @@ public class Function extends Pointer {
         Class nativeType = returnType;
         FromNativeConverter resultConverter = null;
         if (NativeMapped.class.isAssignableFrom(returnType)) {
-            NativeMappedConverter tc = new NativeMappedConverter(returnType);
+            NativeMappedConverter tc = NativeMappedConverter.getInstance(returnType);
             resultConverter = tc;
             nativeType = tc.nativeType();
         }
@@ -224,31 +234,30 @@ public class Function extends Pointer {
         // Sync all memory which might have been modified by the native call
         if (inArgs != null) {
             for (int i=0; i < inArgs.length; i++) {
-                Object arg = inArgs[i];
-                if (arg == null)
+                Object inArg = inArgs[i];
+                if (inArg == null)
                     continue;
-                if (arg instanceof Structure) {
-                    if (!(arg instanceof Structure.ByValue)) {
-                        ((Structure)arg).read();
+                if (inArg instanceof Structure) {
+                    if (!(inArg instanceof Structure.ByValue)) {
+                        ((Structure)inArg).read();
                     }
                 }
-                else if (args[i] instanceof StringArray) {
-                    ((StringArray)args[i]).read();
-                }
-                else if (args[i] instanceof PointerArray) {
-                    PointerArray array = (PointerArray)args[i];
-                    array.read();
-                    if (Structure.ByReference[].class.isAssignableFrom(arg.getClass())) {
-                        Class type = arg.getClass().getComponentType();
-                        Structure[] ss = (Structure[])arg;
-                        for (int si=0;si < ss.length;si++) {
-                            Pointer p = array.getPointer(Pointer.SIZE * si);
-                            ss[si] = Structure.updateStructureByReference(type, ss[si], p);
+                else if (args[i] instanceof PostCallRead) {
+                    ((PostCallRead)args[i]).read();
+                    if (args[i] instanceof PointerArray) {
+                        PointerArray array = (PointerArray)args[i];
+                        if (Structure.ByReference[].class.isAssignableFrom(inArg.getClass())) {
+                            Class type = inArg.getClass().getComponentType();
+                            Structure[] ss = (Structure[])inArg;
+                            for (int si=0;si < ss.length;si++) {
+                                Pointer p = array.getPointer(Pointer.SIZE * si);
+                                ss[si] = Structure.updateStructureByReference(type, ss[si], p);
+                            }
                         }
                     }
                 }
-                else if (Structure[].class.isAssignableFrom(arg.getClass())) {
-                    Structure[] ss = (Structure[])arg;
+                else if (Structure[].class.isAssignableFrom(inArg.getClass())) {
+                    Structure[] ss = (Structure[])inArg;
                     for (int si=0;si < ss.length;si++) {
                         ss[si].read();
                     }
@@ -267,7 +276,7 @@ public class Function extends Pointer {
             result = null;
         }
         else if (returnType==boolean.class || returnType==Boolean.class) {
-            result = Boolean.valueOf(invokeInt(callingConvention, args) != 0);
+            result = valueOf(invokeInt(callingConvention, args) != 0);
         }
         else if (returnType==byte.class || returnType==Byte.class) {
             result = new Byte((byte)invokeInt(callingConvention, args));
@@ -338,7 +347,7 @@ public class Function extends Pointer {
             Class type = arg.getClass();
             ToNativeConverter converter = null;
             if (NativeMapped.class.isAssignableFrom(type)) {
-                converter = new NativeMappedConverter(type);
+                converter = NativeMappedConverter.getInstance(type);
             }
             else if (mapper != null) {
                 converter = mapper.getToNativeConverter(type);
@@ -679,7 +688,7 @@ public class Function extends Pointer {
         return false;
     }
     
-    private static class PointerArray extends Memory {
+    private static class PointerArray extends Memory implements PostCallRead {
         private Pointer[] original;
         public PointerArray(Pointer[] arg) {
             super(Pointer.SIZE * (arg.length+1));
@@ -694,5 +703,10 @@ public class Function extends Pointer {
                 original[i] = getPointer(i * Pointer.SIZE);
             }
         }
+    }
+    
+    /** Implementation of Boolean.valueOf for older VMs. */
+    static Boolean valueOf(boolean b) {
+        return b ? Boolean.TRUE : Boolean.FALSE;
     }
 }

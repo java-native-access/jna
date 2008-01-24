@@ -12,11 +12,28 @@
  */
 package com.sun.jna;
 
+import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 /** Provides type conversion for instances of {@link NativeMapped}. */
 public class NativeMappedConverter implements TypeConverter {
+    private static Map converters = new WeakHashMap();
     private Class type;
     private Class nativeType;
     private NativeMapped instance;
+    
+    public static NativeMappedConverter getInstance(Class cls) {
+        synchronized(converters) {
+            NativeMappedConverter nmc = (NativeMappedConverter)converters.get(cls);
+            if (nmc == null) {
+                nmc = new NativeMappedConverter(cls);
+                converters.put(cls, nmc);
+            }
+            return nmc;
+        }
+    }
+    
     public NativeMappedConverter(Class type) {
         if (!NativeMapped.class.isAssignableFrom(type))
             throw new IllegalArgumentException("Type must derive from "

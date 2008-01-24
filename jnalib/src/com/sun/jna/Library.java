@@ -166,7 +166,7 @@ public interface Library {
             else if (OBJECT_EQUALS.equals(method)) {
                 Object o = inArgs[0];
                 if (o != null && Proxy.isProxyClass(o.getClass())) {
-                    return Boolean.valueOf(Proxy.getInvocationHandler(o) == this);
+                    return Function.valueOf(Proxy.getInvocationHandler(o) == this);
                 }
                 return Boolean.FALSE;
             }

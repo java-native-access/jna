@@ -81,7 +81,6 @@ public final class Native {
     public static final int LONG_SIZE;
     /** Size of a native <code>wchar_t</code> type, in bytes. */
     public static final int WCHAR_SIZE;
-    
     static {
         try {
             System.loadLibrary("jnidispatch");
@@ -158,7 +157,7 @@ public final class Native {
             throw new IllegalStateException("Component must be displayable");
         // On X11 VMs prior to 1.5, the window must be visible
         if (Platform.isX11()
-            && System.getProperty("java.version").matches("^1\\.4\\..*")) {
+            && System.getProperty("java.version").startsWith("1.4")) {
             if (!c.isVisible()) {
                 throw new IllegalStateException("Component must be visible");
             }
@@ -470,12 +469,8 @@ public final class Native {
     
         File lib = null;
         if (url.getProtocol().toLowerCase().equals("file")) {
-            try {
-                lib = new File(URLDecoder.decode(url.getPath(), "UTF8"));
-            }
-            catch(UnsupportedEncodingException e) {
-                throw new Error("JRE is unexpectedly missing UTF8 encoding");
-            }
+            // NOTE: use older API for 1.3 compatibility
+            lib = new File(URLDecoder.decode(url.getPath()));
         }
         else {
             InputStream is = Native.class.getResourceAsStream(resourceName);
@@ -489,9 +484,8 @@ public final class Native {
                 // Let Java pick the suffix
                 lib = File.createTempFile("jna", null);
                 lib.deleteOnExit();
-                // Have to remove the temp file after VM exit on w32
-                if (Platform.isWindows()) {
-                    Runtime.getRuntime().addShutdownHook(new W32Cleanup(lib));
+                if (Platform.deleteNativeLibraryAfterVMExit()) {
+                    Runtime.getRuntime().addShutdownHook(new DeleteNativeLibrary(lib));
                 }
                 fos = new FileOutputStream(lib);
                 int count;
@@ -501,7 +495,7 @@ public final class Native {
                 }
             }
             catch(IOException e) {
-                throw new Error("Failed to create temporary file for jnidispatch library", e);
+                throw new Error("Failed to create temporary file for jnidispatch library: " + e);
             }
             finally {
                 try { is.close(); } catch(IOException e) { }
@@ -628,9 +622,9 @@ public final class Native {
      * all native bits to be encapsulated in a private class).
      * Instead, spawn a cleanup task to remove the file *after* the VM exits.
      */
-    public static class W32Cleanup extends Thread {
+    public static class DeleteNativeLibrary extends Thread {
         private File file;
-        public W32Cleanup(File file) {
+        public DeleteNativeLibrary(File file) {
             this.file = file;
         }
         public void run() {
@@ -667,7 +661,7 @@ public final class Native {
      */
     public static int getNativeSize(Class cls) {
         if (NativeMapped.class.isAssignableFrom(cls)) {
-            cls = new NativeMappedConverter(cls).nativeType();
+            cls = NativeMappedConverter.getInstance(cls).nativeType();
         }
         // boolean defaults to 32 bit integer if not otherwise mapped
         if (cls == boolean.class || cls == Boolean.class) return 4;
@@ -697,7 +691,7 @@ public final class Native {
 
     /** Indicate whether the given class is supported as a native argument
      * type.
-     */
+     */  
     public static boolean isSupportedNativeType(Class cls) {
         if (Structure.class.isAssignableFrom(cls)) {
             return true;
