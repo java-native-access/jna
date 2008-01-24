@@ -349,7 +349,7 @@ public final class Native {
     }
 
     /** Return the preferred {@link TypeMapper} for the given native interface.
-     * @see Library#OPTION_TYPE_MAPPER 
+     * See {@link com.sun.jna.Library#OPTION_TYPE_MAPPER}. 
      */
     public static TypeMapper getTypeMapper(Class cls) {
         synchronized(libraries) {
@@ -380,7 +380,7 @@ public final class Native {
     }
 
     /** Return the preferred structure alignment for the given native interface. 
-     * @see Library#OPTION_STRUCTURE_ALIGNMENT
+     * See {@link com.sun.jna.Library#OPTION_STRUCTURE_ALIGNMENT}.
      */
     public static int getStructureAlignment(Class cls) {
         synchronized(libraries) {
