@@ -369,14 +369,15 @@ public class NativeLibrary {
     
     /**
      * matchLibrary is very Linux specific.  It is here to deal with the case
-     * where there is no /usr/lib/libc.so, or it is not a valid symlink to
+     * where /usr/lib/libc.so does not exist, or it is not a valid symlink to
      * a versioned file (e.g. /lib/libc.so.6).
      */
     private static String matchLibrary(final String libName, List searchPath) {
         
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return isVersionedName(name);
+                return name.startsWith("lib" + libName)
+                    && isVersionedName(name);
             }
         };
         
