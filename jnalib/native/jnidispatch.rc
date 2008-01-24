@@ -1,0 +1,34 @@
+// Resource file to generate version information for jnidispatch.dll
+// Copyright (c) 2008 Timothy Wall
+// Type: version
+
+// Name: 1
+LANGUAGE 0, 0
+
+1 VERSIONINFO
+ FILEVERSION 3,0,0,0
+ PRODUCTVERSION 3,0,1,0
+ FILEFLAGSMASK 0x3f
+ FILEOS 0x4
+ FILETYPE 0x2
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "000004b0"
+    BEGIN
+      VALUE "CompanyName", "Java(TM) Native Access (JNA)"
+      VALUE "FileDescription", "JNA native library"
+      VALUE "FileVersion","3.0.0"
+      VALUE "Full Version","3.0.0 b0"
+      VALUE "InternalName", "jnidispatch"
+      VALUE "LegalCopyright", "Copyright \251 2008 Timothy Wall"
+      VALUE "OriginalFilename", "jnidispatch.dll"
+      VALUE "ProductName", "Java(TM) Native Access"
+      VALUE "ProductVersion","3"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0, 1200
+  END
+END

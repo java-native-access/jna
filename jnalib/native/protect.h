@@ -42,51 +42,47 @@
 #else
 #ifdef _WIN32
 #include <excpt.h>
+#include <setjmp.h>
 
 typedef struct _exc_rec {
   EXCEPTION_REGISTRATION ex_reg;
-  void* exc_handling_addr;
+  jmp_buf buf;
+  struct _EXCEPTION_RECORD er;
 } exc_rec;
 
 static EXCEPTION_DISPOSITION __cdecl
-exc_handler(struct _EXCEPTION_RECORD* exception_record,
-            void *establisher_frame,
-            struct _CONTEXT *context_record,
-            void* dispatcher_context) {
+__exc_handler(struct _EXCEPTION_RECORD* exception_record,
+              void *establisher_frame,
+              struct _CONTEXT *context_record,
+              void* dispatcher_context) {
   exc_rec* xer = (exc_rec *)establisher_frame;
-
-  /* Unwind from the called function assuming the standard 
-   * function prologue.
-   */
-  context_record->Esp = context_record->Ebp;
-  context_record->Ebp = *((DWORD *)context_record->Esp);
-  context_record->Esp = context_record->Esp - 8;
-
-  /* Restart execution at the handler within the caller */
-  context_record->Eip = (DWORD )(xer->exc_handling_addr);
-
-  /* Tell Windows to restart the "faulting" instruction. */
+  xer->er = *exception_record;
+  longjmp(xer->buf, exception_record->ExceptionCode);
+  // Never reached
   return ExceptionContinueExecution;
 }
 
 #define PROTECTED_START() \
-  exc_rec er; \
+  exc_rec __er; \
+  int __error = 0; \
   if (PROTECT) { \
-    er.exc_handling_addr = &&_exc_caught; \
-    er.ex_reg.handler = exc_handler; \
-    asm volatile ("movl %%fs:0, %0" : "=r" (er.ex_reg.prev)); \
-    asm volatile ("movl %0, %%fs:0" : : "r" (&er)); \
+    __er.ex_reg.handler = __exc_handler; \
+    asm volatile ("movl %%fs:0, %0" : "=r" (__er.ex_reg.prev)); \
+    asm volatile ("movl %0, %%fs:0" : : "r" (&__er)); \
+    if ((__error = setjmp(__er.buf)) != 0) { \
+      goto __exc_caught; \
+    } \
   }
 
 // The initial conditional is required to ensure GCC doesn't consider
 // _exc_caught to be unreachable
 #define PROTECTED_END(ONERR) do { \
-  if (!PROTECT || er.exc_handling_addr != 0) \
-    goto _remove_handler; \
- _exc_caught: \
+  if (!__error) \
+    goto __remove_handler; \
+ __exc_caught: \
   ONERR; \
- _remove_handler: \
-  if (PROTECT) { asm volatile ("movl %0, %%fs:0" : : "r" (er.ex_reg.prev)); } \
+ __remove_handler: \
+  if (PROTECT) { asm volatile ("movl %0, %%fs:0" : : "r" (__er.ex_reg.prev)); } \
 } while(0)
 
 #else // _WIN32
@@ -94,35 +90,35 @@ exc_handler(struct _EXCEPTION_RECORD* exception_record,
 // Catch both SIGSEGV and SIGBUS
 #include <signal.h>
 #include <setjmp.h>
-static jmp_buf context;
-static volatile int _error;
+static jmp_buf __context;
+static volatile int __error;
 static void _exc_handler(int sig) {
   if (sig == SIGSEGV || sig == SIGBUS) {
-    longjmp(context, sig);
+    longjmp(__context, sig);
   }
 }
 
 #define PROTECTED_START() \
-  void* _old_segv_handler; \
-  void* _old_bus_handler; \
-  int _error = 0; \
+  void* __old_segv_handler; \
+  void* __old_bus_handler; \
+  int __error = 0; \
   if (PROTECT) { \
-    _old_segv_handler = signal(SIGSEGV, _exc_handler); \
-    _old_bus_handler = signal(SIGBUS, _exc_handler); \
-    if ((_error = setjmp(context) != 0)) { \
-      goto _exc_caught; \
+    __old_segv_handler = signal(SIGSEGV, __exc_handler); \
+    __old_bus_handler = signal(SIGBUS, __exc_handler); \
+    if ((__error = setjmp(__context) != 0)) { \
+      goto __exc_caught; \
     } \
   }
 
 #define PROTECTED_END(ONERR) do { \
-  if (!_error) \
-    goto _remove_handler; \
- _exc_caught: \
+  if (!__error) \
+    goto __remove_handler; \
+ __exc_caught: \
   ONERR; \
- _remove_handler: \
+ __remove_handler: \
   if (PROTECT) { \
-    signal(SIGSEGV, _old_segv_handler); \
-    signal(SIGBUS, _old_bus_handler); \
+    signal(SIGSEGV, __old_segv_handler); \
+    signal(SIGBUS, __old_bus_handler); \
   } \
 } while(0)
 #endif

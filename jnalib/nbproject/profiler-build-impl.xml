@@ -119,6 +119,7 @@ is divided into following sections:
             <test name="${profile.class}"/>
             <classpath>
                 <path path="${run.test.classpath}"/>
+                <path refid="test.runpath"/>
             </classpath>
             <syspropertyset>
                 <propertyref prefix="test-sys-prop."/>

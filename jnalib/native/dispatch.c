@@ -383,10 +383,10 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
   case FFI_OK: {
     PSTART();
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
-    PEND();
     if (preserve_last_error) {
       update_last_error(env, GET_LAST_ERROR());
     }
+    PEND();
     break;
   }
   default:
