@@ -94,7 +94,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     throwByName(env, EIllegalArgument, msg);
     break;
   case FFI_OK: 
-    ffi_prep_closure(cb->ffi_closure, &cb->ffi_cif, callback_dispatch, cb);
+    ffi_prep_closure_loc(cb->ffi_closure, &cb->ffi_cif, callback_dispatch, cb,
+                         cb->x_closure);
     return cb;
   default:
     sprintf(msg, "Native callback setup failure: error code %d", status);
