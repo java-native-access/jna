@@ -1,6 +1,7 @@
 Release 3.0.1
 Features
 * Improve transparent window drawing performance on w32
+* Use closure allocation from libffi
 
 Bug Fixes
 * Ensure nested structure arrays initialized with Structure.toArray use the

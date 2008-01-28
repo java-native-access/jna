@@ -3,14 +3,14 @@
     this means no java object arguments to callbacks; use some sort of integer
     key instead (hashcode?) callbacks can hold local data anyway...
   o make simplest Java usage map to most common C usage
-    - additional constructs provided for esoteric cases (WString)
+    - additional constructs provided for less-common cases
+      (WString,Structure.ByValue/ByReference)
   o structure is treated as a pointer, except within a struct
   o primitive types are passed directly
   o arrays are treated as pointers, except within a struct
     - in structure (inline; otherwise pointer-to-X should be used)
     - as function argument (auto-convert to pointer via Memory)
-    - pointer to type in struct should be handled with Pointer
-    - how to do pointer to struct in struct? (Pointer to start with)
+  o pointer to type in struct should use Pointer or ByReference
   o "free" should be invisible wherever possible
 
 # FUTURE DEMOS:
@@ -22,18 +22,20 @@
 
 # TODO
 
+* parser (gluegen? swig? others?) to auto-generate JNA interfaces from headers;
+  ideally get the native library build system to output preprocessed headers,
+  otherwise CPP crap is a nightmare to get right.
+  o write SWIG transformer to auto-generate interfaces from header files
+
+* stdcall/w32 underscore prefix issue 
+
 * should structure offsets be "long"?
 
-* allow return of W/String[] or Pointer[], if NULL-terminated?
+* allow return of W/String[] or Pointer[], if array is NULL-terminated?
 
 * Direct buffers should be used where
   hotspot inlining can improve performance.  
 
-* use libffi closure allocation/deallocation
-
-* parser (gluegen? others?) to auto-generate JNA interfaces from headers;
-  ideally get the native library build system to output preprocessed headers,
-  otherwise CPP crap is a nightmare to get right.
 
 * (maybe) move all native functions into Native (limit header files, easier
   management) 
@@ -128,6 +130,9 @@
 
 
 # DONE
+* embed version in DLL ('depends'-done)/so (symlink?)
+* use libffi closure allocation/deallocation
+
 * ensure Library options are passed to NativeFunctionHandler
   (needs getLibraryOptions(Class cls))
 

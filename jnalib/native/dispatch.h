@@ -32,6 +32,8 @@ typedef enum _callconv {
 #define MAX_NARGS com_sun_jna_Function_MAX_NARGS
 
 typedef struct _callback {
+  // Location of this field must agree with CallbackReference.getTrampoline()
+  void* x_closure;
   ffi_closure* ffi_closure;
   ffi_cif ffi_cif;
   ffi_type* ffi_args[MAX_NARGS];
@@ -86,7 +88,7 @@ extern jobject newJavaPointer(JNIEnv *, void *);
 extern char get_jtype(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
 extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
-extern jboolean jnidispatch_callback_init(JNIEnv*);
+extern const char* jnidispatch_callback_init(JNIEnv*);
 extern void jnidispatch_callback_dispose(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass, 

@@ -657,122 +657,122 @@ Java_com_sun_jna_NativeLibrary_findSymbol(JNIEnv *env, jclass cls,
     return (jlong)A2L(func);
 }
 
-static jboolean
+static const char*
 jnidispatch_init(JNIEnv* env) {
-  if (!LOAD_CREF(env, Object, "java/lang/Object")) return JNI_FALSE;
-  if (!LOAD_CREF(env, Class, "java/lang/Class")) return JNI_FALSE;
-  if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return JNI_FALSE;
-  if (!LOAD_CREF(env, String, "java/lang/String")) return JNI_FALSE;
-  if (!LOAD_CREF(env, Buffer, "java/nio/Buffer")) return JNI_FALSE;
-  if (!LOAD_CREF(env, ByteBuffer, "java/nio/ByteBuffer")) return JNI_FALSE;
-  if (!LOAD_CREF(env, CharBuffer, "java/nio/CharBuffer")) return JNI_FALSE;
-  if (!LOAD_CREF(env, ShortBuffer, "java/nio/ShortBuffer")) return JNI_FALSE;
-  if (!LOAD_CREF(env, IntBuffer, "java/nio/IntBuffer")) return JNI_FALSE;
-  if (!LOAD_CREF(env, LongBuffer, "java/nio/LongBuffer")) return JNI_FALSE;
-  if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return JNI_FALSE;
-  if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return JNI_FALSE;
+  if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
+  if (!LOAD_CREF(env, Class, "java/lang/Class")) return "java.lang.Class";
+  if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return "java.lang.reflect.Method";
+  if (!LOAD_CREF(env, String, "java/lang/String")) return "java.lang.String";
+  if (!LOAD_CREF(env, Buffer, "java/nio/Buffer")) return "java.nio.Buffer";
+  if (!LOAD_CREF(env, ByteBuffer, "java/nio/ByteBuffer")) return "java.nio.ByteBuffer";
+  if (!LOAD_CREF(env, CharBuffer, "java/nio/CharBuffer")) return "java.nio.CharBuffer";
+  if (!LOAD_CREF(env, ShortBuffer, "java/nio/ShortBuffer")) return "java.nio.ShortBuffer";
+  if (!LOAD_CREF(env, IntBuffer, "java/nio/IntBuffer")) return "java.nio.IntBuffer";
+  if (!LOAD_CREF(env, LongBuffer, "java/nio/LongBuffer")) return "java.nio.LongBuffer";
+  if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return "java.nio.FloatBuffer";
+  if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return "java.nio.DoubleBuffer";
   
-  if (!LOAD_PCREF(env, Void, "java/lang/Void")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Byte, "java/lang/Byte")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Character, "java/lang/Character")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Short, "java/lang/Short")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Integer, "java/lang/Integer")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Long, "java/lang/Long")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Float, "java/lang/Float")) return JNI_FALSE;
-  if (!LOAD_PCREF(env, Double, "java/lang/Double")) return JNI_FALSE;
+  if (!LOAD_PCREF(env, Void, "java/lang/Void")) return "java.lang.Void";
+  if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return "java.lang.Boolean";
+  if (!LOAD_PCREF(env, Byte, "java/lang/Byte")) return "java.lang.Byte";
+  if (!LOAD_PCREF(env, Character, "java/lang/Character")) return "java.lang.Character";
+  if (!LOAD_PCREF(env, Short, "java/lang/Short")) return "java.lang.Short";
+  if (!LOAD_PCREF(env, Integer, "java/lang/Integer")) return "java.lang.Integer";
+  if (!LOAD_PCREF(env, Long, "java/lang/Long")) return "java.lang.Long";
+  if (!LOAD_PCREF(env, Float, "java/lang/Float")) return "java.lang.Float";
+  if (!LOAD_PCREF(env, Double, "java/lang/Double")) return "java.lang.Double";
   
   if (!LOAD_MID(env, MID_Long_init, classLong,
                 "<init>", "(J)V"))
-    return JNI_FALSE;
+    return "java.lang.Long<init>(J)V";
   if (!LOAD_MID(env, MID_Integer_init, classInteger,
                 "<init>", "(I)V"))
-    return JNI_FALSE;
+    return "java.lang.Integer<init>(I)V";
   if (!LOAD_MID(env, MID_Short_init, classShort,
                 "<init>", "(S)V"))
-    return JNI_FALSE;
+    return "java.lang.Short<init>(S)V";
   if (!LOAD_MID(env, MID_Character_init, classCharacter,
                 "<init>", "(C)V"))
-    return JNI_FALSE;
+    return "java.lang.Character<init>(C)V";
   if (!LOAD_MID(env, MID_Byte_init, classByte,
                 "<init>", "(B)V"))
-    return JNI_FALSE;
+    return "java.lang.Byte<init>(B)V";
   if (!LOAD_MID(env, MID_Boolean_init, classBoolean,
                 "<init>", "(Z)V"))
-    return JNI_FALSE;
+    return "java.lang.Boolean<init>(Z)V";
   if (!LOAD_MID(env, MID_Float_init, classFloat,
                 "<init>", "(F)V"))
-    return JNI_FALSE;
+    return "java.lang.Float<init>(F)V";
   if (!LOAD_MID(env, MID_Double_init, classDouble,
                 "<init>", "(D)V"))
-    return JNI_FALSE;
+    return "java.lang.Double<init>(D)V";
   if (!LOAD_MID(env, MID_Class_getComponentType, classClass,
                 "getComponentType", "()Ljava/lang/Class;"))
-    return JNI_FALSE;
+    return "Class.getComponentType(Class)";
   if (!LOAD_MID(env, MID_String_getBytes, classString,
                 "getBytes", "()[B"))
-    return JNI_FALSE;
+    return "String.getBytes()";
   if (!LOAD_MID(env, MID_String_toCharArray, classString,
                 "toCharArray", "()[C"))
-    return JNI_FALSE;
+    return "String.toCharArray()";
   if (!LOAD_MID(env, MID_String_init_bytes, classString,
                 "<init>", "([B)V"))
-    return JNI_FALSE;
+    return "String<init>([B)V";
   if (!LOAD_MID(env, MID_Method_getParameterTypes, classMethod,
                 "getParameterTypes", "()[Ljava/lang/Class;"))
-    return JNI_FALSE;
+    return "Method.getParameterTypes()";
   if (!LOAD_MID(env, MID_Method_getReturnType, classMethod,
                 "getReturnType", "()Ljava/lang/Class;"))
-    return JNI_FALSE;
+    return "Method.getReturnType()";
   
   if (!LOAD_MID(env, MID_ByteBuffer_array, classByteBuffer, "array", "()[B"))
-    return JNI_FALSE;
+    return "ByteBuffer.array";
   if (!LOAD_MID(env, MID_ByteBuffer_arrayOffset, classByteBuffer, "arrayOffset", "()I"))
-    return JNI_FALSE;
+    return "ByteBuffer.arrayOffset";
   if (!LOAD_MID(env, MID_CharBuffer_array, classCharBuffer, "array", "()[C"))
-    return JNI_FALSE;
+    return "CharBuffer.array";
   if (!LOAD_MID(env, MID_CharBuffer_arrayOffset, classCharBuffer, "arrayOffset", "()I"))
-    return JNI_FALSE;
+    return "CharBuffer.arrayOffset";
   if (!LOAD_MID(env, MID_ShortBuffer_array, classShortBuffer, "array", "()[S"))
-    return JNI_FALSE;
+    return "ShortBuffer.array";
   if (!LOAD_MID(env, MID_ShortBuffer_arrayOffset, classShortBuffer, "arrayOffset", "()I"))
-    return JNI_FALSE;
+    return "ShortBuffer.arrayOffset";
   if (!LOAD_MID(env, MID_IntBuffer_array, classIntBuffer, "array", "()[I"))
-    return JNI_FALSE;
+    return "IntBuffer.array";
   if (!LOAD_MID(env, MID_IntBuffer_arrayOffset, classIntBuffer, "arrayOffset", "()I"))
-    return JNI_FALSE;
+    return "IntBuffer.arrayOffset";
   if (!LOAD_MID(env, MID_LongBuffer_array, classLongBuffer, "array", "()[J"))
-    return JNI_FALSE;
+    return "LongBuffer.array";
   if (!LOAD_MID(env, MID_LongBuffer_arrayOffset, classLongBuffer, "arrayOffset", "()I"))
-    return JNI_FALSE;
+    return "LongBuffer.arrayOffset";
   if (!LOAD_MID(env, MID_FloatBuffer_array, classFloatBuffer, "array", "()[F"))
-    return JNI_FALSE;
+    return "FloatBuffer.array";
   if (!LOAD_MID(env, MID_FloatBuffer_arrayOffset, classFloatBuffer, "arrayOffset", "()I"))
-    return JNI_FALSE;
+    return "FloatBuffer.arrayOffset";
   if (!LOAD_MID(env, MID_DoubleBuffer_array, classDoubleBuffer, "array", "()[D"))
-    return JNI_FALSE;
+    return "DoubleBuffer.array";
   if (!LOAD_MID(env, MID_DoubleBuffer_arrayOffset, classDoubleBuffer, "arrayOffset", "()I"))
-    return JNI_FALSE;
+    return "DoubleBuffer.arrayOffset";
 
 
   if (!LOAD_FID(env, FID_Boolean_value, classBoolean, "value", "Z"))
-    return JNI_FALSE;
+    return "Boolean.value";
   if (!LOAD_FID(env, FID_Byte_value, classByte, "value", "B"))
-    return JNI_FALSE;
+    return "Byte.value";
   if (!LOAD_FID(env, FID_Short_value, classShort, "value", "S"))
-    return JNI_FALSE;
+    return "Short.value";
   if (!LOAD_FID(env, FID_Character_value, classCharacter, "value", "C"))
-    return JNI_FALSE;
+    return "Character.value";
   if (!LOAD_FID(env, FID_Integer_value, classInteger, "value", "I"))
-    return JNI_FALSE;
+    return "Integer.value";
   if (!LOAD_FID(env, FID_Long_value, classLong, "value", "J"))
-    return JNI_FALSE;
+    return "Long.value";
   if (!LOAD_FID(env, FID_Float_value, classFloat, "value", "F"))
-    return JNI_FALSE;
+    return "Float.value";
   if (!LOAD_FID(env, FID_Double_value, classDouble, "value", "D"))
-    return JNI_FALSE;
+    return "Double.value";
 
-  return JNI_TRUE;
+  return NULL;
 }
 
 /*
@@ -1914,6 +1914,8 @@ JNI_OnLoad(JavaVM *jvm, void *reserved) {
   JNIEnv* env;
   int result = JNI_VERSION_1_4;
   int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
+  const char* err;
+
   if (!attached) {
     if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach to JVM thread on load\n");
@@ -1921,8 +1923,12 @@ JNI_OnLoad(JavaVM *jvm, void *reserved) {
     }
   }
 
-  if (!jnidispatch_init(env)
-      || !jnidispatch_callback_init(env)) {
+  if ((err = jnidispatch_init(env)) != NULL) {
+    fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
+    result = 0;
+  }
+  else if ((err = jnidispatch_callback_init(env)) != NULL) {
+    fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
     result = 0;
   }
 
