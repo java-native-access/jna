@@ -262,6 +262,9 @@ public class WindowUtilsTest extends TestCase {
     }
     
     public void testDisposeHeavyweightForcer() throws Exception {
+        if (GraphicsEnvironment.isHeadless())
+            return;
+
         Frame root = JOptionPane.getRootFrame();
         final JWindow w = new JWindow(root);
         w.getContentPane().add(new JLabel(getName()));
