@@ -6,18 +6,8 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030911	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
-
-#if LONG_MAX == 2147483647
-#define ffi_type_mylong ffi_type_uint32
-#else
-#if LONG_MAX == 9223372036854775807
-#define ffi_type_mylong ffi_type_uint64
-#else
-#error "Error, size LONG not defined as expected"
-#endif
-#endif
 
 typedef struct A {
   unsigned long a;
@@ -37,14 +27,15 @@ B B_fn(struct A b0, struct B b1)
   result.x.b = b0.b + b1.x.b + b1.y;
   result.y = b0.b + b1.x.b;
 
-  printf("%d %d %d %d %d: %d %d %d\n", b0.a, b0.b, b1.x.a, b1.x.b, b1.y,
+  printf("%lu %d %lu %d %d: %lu %d %d\n", b0.a, b0.b, b1.x.a, b1.x.b, b1.y,
 	 result.x.a, result.x.b, result.y);
 
   return result;
 }
 
 static void
-B_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+B_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
+     void* userdata __UNUSED__)
 {
   struct A b0;
   struct B b1;
@@ -89,7 +80,7 @@ int main (void)
 
   struct B res_dbl;
 
-  cls_struct_fields[0] = &ffi_type_mylong;
+  cls_struct_fields[0] = &ffi_type_ulong;
   cls_struct_fields[1] = &ffi_type_uchar;
   cls_struct_fields[2] = NULL;
 
@@ -115,7 +106,6 @@ int main (void)
   CHECK( res_dbl.x.b == (e_dbl.b + f_dbl.x.b + f_dbl.y));
   CHECK( res_dbl.y == (e_dbl.b + f_dbl.x.b));
 
-
   CHECK(ffi_prep_closure(pcl, &cif, B_gn, NULL) == FFI_OK);
 
   res_dbl = ((B(*)(A, B))(pcl))(e_dbl, f_dbl);
@@ -123,5 +113,6 @@ int main (void)
   CHECK( res_dbl.x.a == (e_dbl.a + f_dbl.x.a));
   CHECK( res_dbl.x.b == (e_dbl.b + f_dbl.x.b + f_dbl.y));
   CHECK( res_dbl.y == (e_dbl.b + f_dbl.x.b));
+
   exit(0);
 }

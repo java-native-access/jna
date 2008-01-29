@@ -4,17 +4,17 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030828	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
-static void cls_ret_uint_fn(ffi_cif* cif,void* resp,void** args,
-			     void* userdata)
- {
-   *(ffi_arg *)resp = *(unsigned int *)args[0];
+static void cls_ret_uint_fn(ffi_cif* cif __UNUSED__, void* resp, void** args,
+			    void* userdata __UNUSED__)
+{
+  *(ffi_arg *)resp = *(unsigned int *)args[0];
 
-   printf("%d: %d\n",*(unsigned int *)args[0],
-	  *(ffi_arg *)resp);
- }
+  printf("%d: %d\n",*(unsigned int *)args[0],
+	 (int)*(ffi_arg *)(resp));
+}
 typedef unsigned int (*cls_ret_uint)(unsigned int);
 
 int main (void)
@@ -33,12 +33,12 @@ int main (void)
   pcl = &cl;
 #endif
 
-  cl_arg_types[0] = &ffi_type_uint32;
+  cl_arg_types[0] = &ffi_type_uint;
   cl_arg_types[1] = NULL;
 
   /* Initialize the cif */
   CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
-		     &ffi_type_uint32, cl_arg_types) == FFI_OK);
+		     &ffi_type_uint, cl_arg_types) == FFI_OK);
 
   CHECK(ffi_prep_closure(pcl, &cif, cls_ret_uint_fn, NULL)  == FFI_OK);
 

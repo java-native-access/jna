@@ -4,7 +4,7 @@
    PR:		none.
    Originator:	<hos@tamanegi.org> 20031203	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
 typedef struct cls_struct_align {
@@ -28,7 +28,8 @@ cls_struct_align cls_struct_align_fn(struct cls_struct_align a1,
 }
 
 static void
-cls_struct_align_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_struct_align_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
+		    void* userdata __UNUSED__)
 {
 
   struct cls_struct_align a1, a2;
@@ -67,7 +68,7 @@ int main (void)
   struct cls_struct_align res_dbl;
 
   cls_struct_fields[0] = &ffi_type_uchar;
-  cls_struct_fields[1] = &ffi_type_sint16;
+  cls_struct_fields[1] = &ffi_type_sshort;
   cls_struct_fields[2] = &ffi_type_uchar;
   cls_struct_fields[3] = NULL;
 

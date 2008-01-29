@@ -9,6 +9,13 @@
 
 #define CHECK(x) !(x) ? abort() : 0
 
+/* Define __UNUSED__ that also other compilers than gcc can run the tests.  */
+#undef __UNUSED__
+#if defined(__GNUC__)
+#define __UNUSED__ __attribute__((__unused__))
+#else
+#define __UNUSED__
+#endif
 
 /* Prefer MAP_ANON(YMOUS) to /dev/zero, since we don't need to keep a
    file open.  */

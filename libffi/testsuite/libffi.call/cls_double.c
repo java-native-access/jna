@@ -4,11 +4,11 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030828	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
-static void cls_ret_double_fn(ffi_cif* cif,void* resp,void** args,
-			     void* userdata)
+static void cls_ret_double_fn(ffi_cif* cif __UNUSED__, void* resp, void** args,
+			      void* userdata __UNUSED__)
  {
    *(double *)resp = *(double *)args[0];
 

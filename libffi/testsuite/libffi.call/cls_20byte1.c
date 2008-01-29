@@ -5,7 +5,9 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030828	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+
+
+/* { dg-do run } */
 #include "ffitest.h"
 
 typedef struct cls_struct_20byte {
@@ -29,7 +31,8 @@ cls_struct_20byte cls_struct_20byte_fn(struct cls_struct_20byte a1,
 }
 
 static void
-cls_struct_20byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_struct_20byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
+		     void* userdata __UNUSED__)
 {
   struct cls_struct_20byte a1, a2;
 
@@ -66,7 +69,7 @@ int main (void)
   struct cls_struct_20byte f_dbl = { 4, 5.0, 7.0 };
   struct cls_struct_20byte res_dbl;
 
-  cls_struct_fields[0] = &ffi_type_uint32;
+  cls_struct_fields[0] = &ffi_type_sint;
   cls_struct_fields[1] = &ffi_type_double;
   cls_struct_fields[2] = &ffi_type_double;
   cls_struct_fields[3] = NULL;

@@ -6,7 +6,9 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030902	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+
+
+/* { dg-do run } */
 #include "ffitest.h"
 
 typedef struct cls_struct_1_1byte {
@@ -26,7 +28,8 @@ cls_struct_1_1byte cls_struct_1_1byte_fn(struct cls_struct_1_1byte a1,
 }
 
 static void
-cls_struct_1_1byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_struct_1_1byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
+		      void* userdata __UNUSED__)
 {
 
   struct cls_struct_1_1byte a1, a2;

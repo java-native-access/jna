@@ -5,7 +5,7 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030828	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
 typedef struct cls_struct_8byte {
@@ -27,7 +27,8 @@ cls_struct_8byte cls_struct_8byte_fn(struct cls_struct_8byte a1,
 }
 
 static void
-cls_struct_8byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_struct_8byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
+		    void* userdata __UNUSED__)
 {
 
   struct cls_struct_8byte a1, a2;
@@ -65,7 +66,7 @@ int main (void)
   struct cls_struct_8byte f_dbl = { 4, 5.0 };
   struct cls_struct_8byte res_dbl;
 
-  cls_struct_fields[0] = &ffi_type_uint32;
+  cls_struct_fields[0] = &ffi_type_sint;
   cls_struct_fields[1] = &ffi_type_float;
   cls_struct_fields[2] = NULL;
 

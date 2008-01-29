@@ -189,10 +189,7 @@ ffi_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw)
  * these following couple of functions will handle the translation forth
  * and back automatically. */
 
-void ffi_raw_call (/*@dependent@*/ ffi_cif *cif, 
-		   void (*fn)(), 
-		   /*@out@*/ void *rvalue, 
-		   /*@dependent@*/ ffi_raw *raw)
+void ffi_raw_call (ffi_cif *cif, void (*fn)(), void *rvalue, ffi_raw *raw)
 {
   void **avalue = (void**) alloca (cif->nargs * sizeof (void*));
   ffi_raw_to_ptrarray (cif, raw, avalue);
@@ -201,7 +198,7 @@ void ffi_raw_call (/*@dependent@*/ ffi_cif *cif,
 
 #if FFI_CLOSURES		/* base system provides closures */
 
-static void 
+static void
 ffi_translate_args (ffi_cif *cif, void *rvalue,
 		    void **avalue, void *user_data)
 {
@@ -212,22 +209,20 @@ ffi_translate_args (ffi_cif *cif, void *rvalue,
   (*cl->fun) (cif, rvalue, raw, cl->user_data);
 }
 
-/* Again, here is the generic version of ffi_prep_raw_closure, which
- * will install an intermediate "hub" for translation of arguments from
- * the pointer-array format, to the raw format */
-
 ffi_status
-ffi_prep_raw_closure (ffi_raw_closure* cl,
-		      ffi_cif *cif,
-		      void (*fun)(ffi_cif*,void*,ffi_raw*,void*),
-		      void *user_data)
+ffi_prep_raw_closure_loc (ffi_raw_closure* cl,
+			  ffi_cif *cif,
+			  void (*fun)(ffi_cif*,void*,ffi_raw*,void*),
+			  void *user_data,
+			  void *codeloc)
 {
   ffi_status status;
 
-  status = ffi_prep_closure ((ffi_closure*) cl, 
-			     cif,
-			     &ffi_translate_args,
-			     (void*)cl);
+  status = ffi_prep_closure_loc ((ffi_closure*) cl,
+				 cif,
+				 &ffi_translate_args,
+				 codeloc,
+				 codeloc);
   if (status == FFI_OK)
     {
       cl->fun       = fun;
@@ -239,4 +234,22 @@ ffi_prep_raw_closure (ffi_raw_closure* cl,
 
 #endif /* FFI_CLOSURES */
 #endif /* !FFI_NATIVE_RAW_API */
+
+#if FFI_CLOSURES
+
+/* Again, here is the generic version of ffi_prep_raw_closure, which
+ * will install an intermediate "hub" for translation of arguments from
+ * the pointer-array format, to the raw format */
+
+ffi_status
+ffi_prep_raw_closure (ffi_raw_closure* cl,
+		      ffi_cif *cif,
+		      void (*fun)(ffi_cif*,void*,ffi_raw*,void*),
+		      void *user_data)
+{
+  return ffi_prep_raw_closure_loc (cl, cif, fun, user_data, cl);
+}
+
+#endif /* FFI_CLOSURES */
+
 #endif /* !FFI_NO_RAW_API */

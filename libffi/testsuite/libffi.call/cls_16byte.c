@@ -5,7 +5,7 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20030828	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
 typedef struct cls_struct_16byte {
@@ -29,7 +29,8 @@ cls_struct_16byte cls_struct_16byte_fn(struct cls_struct_16byte b1,
   return result;
 }
 
-static void cls_struct_16byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+static void cls_struct_16byte_gn(ffi_cif* cif __UNUSED__, void* resp,
+				 void** args, void* userdata __UNUSED__)
 {
   struct cls_struct_16byte b1, b2;
 
@@ -66,9 +67,9 @@ int main (void)
   struct cls_struct_16byte j_dbl = { 1, 9.0, 3 };
   struct cls_struct_16byte res_dbl;
 
-  cls_struct_fields[0] = &ffi_type_uint32;
+  cls_struct_fields[0] = &ffi_type_sint;
   cls_struct_fields[1] = &ffi_type_double;
-  cls_struct_fields[2] = &ffi_type_uint32;
+  cls_struct_fields[2] = &ffi_type_sint;
   cls_struct_fields[3] = NULL;
 
   dbl_arg_types[0] = &cls_struct_type;

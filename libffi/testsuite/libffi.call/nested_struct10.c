@@ -6,7 +6,7 @@
    PR:		none.
    Originator:	<andreast@gcc.gnu.org> 20051010	 */
 
-/* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
 typedef struct A {
@@ -102,7 +102,7 @@ int main (void)
 
   cls_struct_fields1[0] = &ffi_type_uchar;
   cls_struct_fields1[1] = &cls_struct_type;
-  cls_struct_fields1[2] = &ffi_type_uint32;
+  cls_struct_fields1[2] = &ffi_type_uint;
   cls_struct_fields1[3] = NULL;
 
   cls_struct_fields2[0] = &ffi_type_uint64;

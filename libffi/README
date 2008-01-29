@@ -212,7 +212,7 @@ Here is a trivial example that calls puts() a few times.
       int rc;
       
       /* Initialize the argument info vectors */    
-      args[0] = &ffi_type_uint;
+      args[0] = &ffi_type_pointer;
       values[0] = &s;
       
       /* Initialize the cif */
@@ -370,15 +370,6 @@ all supposed to be stored in double-precision format, even if they are
 only single-precision, but EGCS stores single-precision arguments as
 single-precision anyway.  This causes one test to fail (the `many
 arguments' test).
-
-
-What's With The Crazy Comments?
-===============================
-
-You might notice a number of cryptic comments in the code, delimited
-by /*@ and @*/. These are annotations read by the program LCLint, a
-tool for statically checking C programs. You can read all about it at
-<http://larch-www.lcs.mit.edu:8001/larch/lclint/index.html>.
 
 
 History
