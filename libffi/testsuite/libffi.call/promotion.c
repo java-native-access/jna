@@ -43,10 +43,10 @@ int main (void)
   ul = 0;
 
   for (sc = (signed char) -127;
-       sc <= (signed char) 120; sc += 1)
+       sc <= (signed char) 120; /*@-type@*/ sc += 1 /*@=type@*/)
     for (ss = -30000; ss <= 30000; ss += 10000)
       for (uc = (unsigned char) 0;
-	   uc <= (unsigned char) 200; uc += 20)
+	   uc <= (unsigned char) 200; /*@-type@*/ uc += 20 /*@=type@*/)
 	for (us = 0; us <= 60000; us += 10000)
 	  {
 	    ul++;

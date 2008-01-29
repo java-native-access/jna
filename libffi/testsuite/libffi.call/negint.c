@@ -11,6 +11,7 @@
 
 static int checking(int a, short b, signed char c)
 {
+  int i;
 
   return (a < 0 && b < 0 && c < 0);
 }

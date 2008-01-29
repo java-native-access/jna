@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 2003, 2004, 2006 Kaz Kojima
+   ffi.c - Copyright (c) 2003, 2004 Kaz Kojima
    
    SuperH SHmedia Foreign Function Interface 
 
@@ -54,7 +54,9 @@ return_type (ffi_type *arg)
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
 
+/*@-exportheader@*/
 void ffi_prep_args(char *stack, extended_cif *ecif)
+/*@=exportheader@*/
 {
   register unsigned int i;
   register unsigned int avn;
@@ -158,7 +160,6 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
   int n, m;
   int greg;
   int freg;
-  int fpair = -1;
 
   greg = (return_type (cif->rtype) == FFI_TYPE_STRUCT ? 1 : 0);
   freg = 0;
@@ -174,13 +175,7 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 	  cif->bytes += sizeof (UINT64) - sizeof (float);
 	  if (freg >= NFREGARG - 1)
 	    continue;
-	  if (fpair < 0)
-	    {
-	      fpair = freg;
-	      freg += 2;
-	    }
-	  else
-	    fpair = -1;
+	  freg++;
 	  cif->flags2 += ((cif->arg_types)[i]->type) << (2 * j++);
 	  break;
 
@@ -189,6 +184,7 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 	    continue;
 	  if ((freg + 1) < NFREGARG)
 	    {
+	      freg = (freg + 1) & ~1;
 	      freg += 2;
 	      cif->flags2 += ((cif->arg_types)[i]->type) << (2 * j++);
 	    }
@@ -236,11 +232,20 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
   return FFI_OK;
 }
 
-extern void ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *,
-			  unsigned, unsigned, long long, unsigned *,
+/*@-declundef@*/
+/*@-exportheader@*/
+extern void ffi_call_SYSV(void (*)(char *, extended_cif *), 
+			  /*@out@*/ extended_cif *, 
+			  unsigned, unsigned, long long,
+			  /*@out@*/ unsigned *, 
 			  void (*fn)());
+/*@=declundef@*/
+/*@=exportheader@*/
 
-void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
+void ffi_call(/*@dependent@*/ ffi_cif *cif, 
+	      void (*fn)(), 
+	      /*@out@*/ void *rvalue, 
+	      /*@dependent@*/ void **avalue)
 {
   extended_cif ecif;
   UINT64 trvalue;
@@ -257,7 +262,9 @@ void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
   else if ((rvalue == NULL) && 
       (cif->rtype->type == FFI_TYPE_STRUCT))
     {
+      /*@-sysunrecog@*/
       ecif.rvalue = alloca(cif->rtype->size);
+      /*@=sysunrecog@*/
     }
   else
     ecif.rvalue = rvalue;
@@ -265,8 +272,10 @@ void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
   switch (cif->abi) 
     {
     case FFI_SYSV:
-      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, cif->flags, cif->flags2,
-		    ecif.rvalue, fn);
+      /*@-usedef@*/
+      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, 
+		    cif->flags, cif->flags2, ecif.rvalue, fn);
+      /*@=usedef@*/
       break;
     default:
       FFI_ASSERT(0);
@@ -341,7 +350,6 @@ ffi_closure_helper_SYSV (ffi_closure *closure, UINT64 *rvalue,
   int i, avn;
   int greg, freg;
   ffi_cif *cif;
-  int fpair = -1;
 
   cif = closure->cif;
   avalue = alloca (cif->nargs * sizeof (void *));
@@ -350,7 +358,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, UINT64 *rvalue,
      returns the data directly to the caller.  */
   if (return_type (cif->rtype) == FFI_TYPE_STRUCT)
     {
-      rvalue = (UINT64 *) *pgr;
+      rvalue = *pgr;
       greg = 1;
     }
   else
@@ -394,24 +402,11 @@ ffi_closure_helper_SYSV (ffi_closure *closure, UINT64 *rvalue,
 	  if ((*p_arg)->type == FFI_TYPE_FLOAT)
 	    {
 	      if (freg < NFREGARG - 1)
-		{
-		  if (fpair >= 0)
-		    {
-		      avalue[i] = (UINT32 *) pfr + fpair;
-		      fpair = -1;
-		    }
-		  else
-		    {
 #ifdef __LITTLE_ENDIAN__
-		      fpair = freg;
-		      avalue[i] = (UINT32 *) pfr + (1 ^ freg);
+		avalue[i] = (UINT32 *) pfr + (1 ^ freg++);
 #else
-		      fpair = 1 ^ freg;
-		      avalue[i] = (UINT32 *) pfr + freg;
+		avalue[i] = (UINT32 *) pfr + freg++;
 #endif
-		      freg += 2;
-		    }
-		}
 	      else
 #ifdef __LITTLE_ENDIAN__
 		avalue[i] = pgr + greg;
@@ -433,6 +428,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, UINT64 *rvalue,
 	    avalue[i] = pgr + greg;
 	  else
 	    {
+	      freg = (freg + 1) & ~1;
 	      avalue[i] = pfr + (freg >> 1);
 	      freg += 2;
 	    }

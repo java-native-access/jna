@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 2002, 2003, 2004, 2005, 2006 Kaz Kojima
+   ffi.c - Copyright (c) 2002, 2003, 2004, 2005 Kaz Kojima
    
    SuperH Foreign Function Interface 
 
@@ -106,7 +106,9 @@ return_type (ffi_type *arg)
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
 
+/*@-exportheader@*/
 void ffi_prep_args(char *stack, extended_cif *ecif)
+/*@=exportheader@*/
 {
   register unsigned int i;
   register int tmp;
@@ -404,10 +406,20 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
   return FFI_OK;
 }
 
-extern void ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *,
-			  unsigned, unsigned, unsigned *, void (*fn)());
+/*@-declundef@*/
+/*@-exportheader@*/
+extern void ffi_call_SYSV(void (*)(char *, extended_cif *), 
+			  /*@out@*/ extended_cif *, 
+			  unsigned, unsigned, 
+			  /*@out@*/ unsigned *, 
+			  void (*fn)());
+/*@=declundef@*/
+/*@=exportheader@*/
 
-void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
+void ffi_call(/*@dependent@*/ ffi_cif *cif, 
+	      void (*fn)(), 
+	      /*@out@*/ void *rvalue, 
+	      /*@dependent@*/ void **avalue)
 {
   extended_cif ecif;
   UINT64 trvalue;
@@ -424,7 +436,9 @@ void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
   else if ((rvalue == NULL) && 
       (cif->rtype->type == FFI_TYPE_STRUCT))
     {
+      /*@-sysunrecog@*/
       ecif.rvalue = alloca(cif->rtype->size);
+      /*@=sysunrecog@*/
     }
   else
     ecif.rvalue = rvalue;
@@ -432,8 +446,10 @@ void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
   switch (cif->abi) 
     {
     case FFI_SYSV:
-      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, cif->flags, ecif.rvalue,
-		    fn);
+      /*@-usedef@*/
+      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, 
+		    cif->flags, ecif.rvalue, fn);
+      /*@=usedef@*/
       break;
     default:
       FFI_ASSERT(0);
@@ -519,6 +535,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
   int freg = 0;
 #endif
   ffi_cif *cif; 
+  double temp; 
 
   cif = closure->cif;
   avalue = alloca(cif->nargs * sizeof(void *));
@@ -527,7 +544,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
      returns the data directly to the caller.  */
   if (cif->rtype->type == FFI_TYPE_STRUCT && STRUCT_VALUE_ADDRESS_WITH_ARG)
     {
-      rvalue = (void *) *pgr++;
+      rvalue = *pgr++;
       ireg = 1;
     }
   else
@@ -594,8 +611,6 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 	{
 	  if (freg + 1 >= NFREGARG)
 	    continue;
-	  if (freg & 1)
-	    pfr++;
 	  freg = (freg + 1) & ~1;
 	  freg += 2;
 	  avalue[i] = pfr;

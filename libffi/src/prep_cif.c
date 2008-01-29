@@ -25,6 +25,7 @@
 #include <ffi_common.h>
 #include <stdlib.h>
 
+
 /* Round up to FFI_SIZEOF_ARG. */
 
 #define STACK_ARG_SIZE(x) ALIGN(x, FFI_SIZEOF_ARG)
@@ -32,11 +33,13 @@
 /* Perform machine independent initialization of aggregate type
    specifications. */
 
-static ffi_status initialize_aggregate(ffi_type *arg)
+static ffi_status initialize_aggregate(/*@out@*/ ffi_type *arg)
 {
-  ffi_type **ptr;
+  ffi_type **ptr; 
 
   FFI_ASSERT(arg != NULL);
+
+  /*@-usedef@*/
 
   FFI_ASSERT(arg->elements != NULL);
   FFI_ASSERT(arg->size == 0);
@@ -48,14 +51,14 @@ static ffi_status initialize_aggregate(ffi_type *arg)
     {
       if (((*ptr)->size == 0) && (initialize_aggregate((*ptr)) != FFI_OK))
 	return FFI_BAD_TYPEDEF;
-
+      
       /* Perform a sanity check on the argument type */
       FFI_ASSERT_VALID_TYPE(*ptr);
 
       arg->size = ALIGN(arg->size, (*ptr)->alignment);
       arg->size += (*ptr)->size;
 
-      arg->alignment = (arg->alignment > (*ptr)->alignment) ?
+      arg->alignment = (arg->alignment > (*ptr)->alignment) ? 
 	arg->alignment : (*ptr)->alignment;
 
       ptr++;
@@ -74,6 +77,8 @@ static ffi_status initialize_aggregate(ffi_type *arg)
     return FFI_BAD_TYPEDEF;
   else
     return FFI_OK;
+
+  /*@=usedef@*/
 }
 
 #ifndef __CRIS__
@@ -84,8 +89,10 @@ static ffi_status initialize_aggregate(ffi_type *arg)
 /* Perform machine independent ffi_cif preparation, then call
    machine dependent routine. */
 
-ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
-			ffi_type *rtype, ffi_type **atypes)
+ffi_status ffi_prep_cif(/*@out@*/ /*@partial@*/ ffi_cif *cif, 
+			ffi_abi abi, unsigned int nargs, 
+			/*@dependent@*/ /*@out@*/ /*@partial@*/ ffi_type *rtype, 
+			/*@dependent@*/ ffi_type **atypes)
 {
   unsigned bytes = 0;
   unsigned int i;
@@ -102,8 +109,10 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
   cif->flags = 0;
 
   /* Initialize the return type if necessary */
+  /*@-usedef@*/
   if ((cif->rtype->size == 0) && (initialize_aggregate(cif->rtype) != FFI_OK))
     return FFI_BAD_TYPEDEF;
+  /*@=usedef@*/
 
   /* Perform a sanity check on the return type */
   FFI_ASSERT_VALID_TYPE(cif->rtype);
@@ -115,10 +124,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
 #ifdef SPARC
       && (cif->abi != FFI_V9 || cif->rtype->size > 32)
 #endif
-#ifdef X86_DARWIN
-      && (cif->rtype->size > 8)
-#endif
-     )
+      )
     bytes = STACK_ARG_SIZE(sizeof(void*));
 #endif
 
@@ -129,7 +135,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
       if (((*ptr)->size == 0) && (initialize_aggregate((*ptr)) != FFI_OK))
 	return FFI_BAD_TYPEDEF;
 
-      /* Perform a sanity check on the argument type, do this
+      /* Perform a sanity check on the argument type, do this 
 	 check after the initialization.  */
       FFI_ASSERT_VALID_TYPE(*ptr);
 
@@ -146,7 +152,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
 	  /* Add any padding if necessary */
 	  if (((*ptr)->alignment - 1) & bytes)
 	    bytes = ALIGN(bytes, (*ptr)->alignment);
-
+	  
 	  bytes += STACK_ARG_SIZE((*ptr)->size);
 	}
 #endif

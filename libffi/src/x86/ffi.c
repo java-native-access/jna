@@ -36,7 +36,9 @@
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
 
+/*@-exportheader@*/
 void ffi_prep_args(char *stack, extended_cif *ecif)
+/*@=exportheader@*/
 {
   register unsigned int i;
   register void **p_argv;
@@ -119,7 +121,7 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
   switch (cif->rtype->type)
     {
     case FFI_TYPE_VOID:
-#ifdef X86
+#ifndef X86_WIN32
     case FFI_TYPE_STRUCT:
 #endif
     case FFI_TYPE_SINT64:
@@ -133,7 +135,7 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       cif->flags = FFI_TYPE_SINT64;
       break;
 
-#ifndef X86
+#ifdef X86_WIN32
     case FFI_TYPE_STRUCT:
       if (cif->rtype->size == 1)
         {
@@ -163,23 +165,35 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       break;
     }
 
-#ifdef X86_DARWIN
-  cif->bytes = (cif->bytes + 15) & ~0xF;
-#endif
-
   return FFI_OK;
 }
 
-extern void ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *,
-			  unsigned, unsigned, unsigned *, void (*fn)());
+/*@-declundef@*/
+/*@-exportheader@*/
+extern void ffi_call_SYSV(void (*)(char *, extended_cif *), 
+			  /*@out@*/ extended_cif *, 
+			  unsigned, unsigned, 
+			  /*@out@*/ unsigned *, 
+			  void (*fn)());
+/*@=declundef@*/
+/*@=exportheader@*/
 
 #ifdef X86_WIN32
-extern void ffi_call_STDCALL(void (*)(char *, extended_cif *), extended_cif *,
-			  unsigned, unsigned, unsigned *, void (*fn)());
-
+/*@-declundef@*/
+/*@-exportheader@*/
+extern void ffi_call_STDCALL(void (*)(char *, extended_cif *),
+			  /*@out@*/ extended_cif *,
+			  unsigned, unsigned,
+			  /*@out@*/ unsigned *,
+			  void (*fn)());
+/*@=declundef@*/
+/*@=exportheader@*/
 #endif /* X86_WIN32 */
 
-void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
+void ffi_call(/*@dependent@*/ ffi_cif *cif, 
+	      void (*fn)(), 
+	      /*@out@*/ void *rvalue, 
+	      /*@dependent@*/ void **avalue)
 {
   extended_cif ecif;
 
@@ -192,7 +206,9 @@ void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
   if ((rvalue == NULL) && 
       (cif->flags == FFI_TYPE_STRUCT))
     {
+      /*@-sysunrecog@*/
       ecif.rvalue = alloca(cif->rtype->size);
+      /*@=sysunrecog@*/
     }
   else
     ecif.rvalue = rvalue;
@@ -201,13 +217,17 @@ void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
   switch (cif->abi) 
     {
     case FFI_SYSV:
-      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, cif->flags, ecif.rvalue,
-		    fn);
+      /*@-usedef@*/
+      ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, 
+		    cif->flags, ecif.rvalue, fn);
+      /*@=usedef@*/
       break;
 #ifdef X86_WIN32
     case FFI_STDCALL:
-      ffi_call_STDCALL(ffi_prep_args, &ecif, cif->bytes, cif->flags,
-		       ecif.rvalue, fn);
+      /*@-usedef@*/
+      ffi_call_STDCALL(ffi_prep_args, &ecif, cif->bytes,
+		    cif->flags, ecif.rvalue, fn);
+      /*@=usedef@*/
       break;
 #endif /* X86_WIN32 */
     default:
@@ -256,9 +276,11 @@ ffi_closure_SYSV_inner (closure, respp, args)
   return cif->flags;
 }
 
-static void
-ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
-			    ffi_cif *cif)
+/*@-exportheader@*/
+static void 
+ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
+			    void **avalue, ffi_cif *cif)
+/*@=exportheader@*/
 {
   register unsigned int i;
   register void **p_argv;
@@ -378,18 +400,27 @@ ffi_prep_args_raw(char *stack, extended_cif *ecif)
  * libffi-1.20, this is not the case.)
  */
 
-extern void
-ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *, unsigned, 
-	      unsigned, unsigned *, void (*fn)());
+extern void 
+ffi_call_SYSV(void (*)(char *, extended_cif *), 
+	      /*@out@*/ extended_cif *, 
+	      unsigned, unsigned, 
+	      /*@out@*/ unsigned *, 
+	      void (*fn)());
 
 #ifdef X86_WIN32
 extern void
-ffi_call_STDCALL(void (*)(char *, extended_cif *), extended_cif *, unsigned,
-		 unsigned, unsigned *, void (*fn)());
+ffi_call_STDCALL(void (*)(char *, extended_cif *),
+	      /*@out@*/ extended_cif *,
+	      unsigned, unsigned,
+	      /*@out@*/ unsigned *,
+	      void (*fn)());
 #endif /* X86_WIN32 */
 
 void
-ffi_raw_call(ffi_cif *cif, void (*fn)(), void *rvalue, ffi_raw *fake_avalue)
+ffi_raw_call(/*@dependent@*/ ffi_cif *cif, 
+	     void (*fn)(), 
+	     /*@out@*/ void *rvalue, 
+	     /*@dependent@*/ ffi_raw *fake_avalue)
 {
   extended_cif ecif;
   void **avalue = (void **)fake_avalue;
@@ -403,7 +434,9 @@ ffi_raw_call(ffi_cif *cif, void (*fn)(), void *rvalue, ffi_raw *fake_avalue)
   if ((rvalue == NULL) && 
       (cif->rtype->type == FFI_TYPE_STRUCT))
     {
+      /*@-sysunrecog@*/
       ecif.rvalue = alloca(cif->rtype->size);
+      /*@=sysunrecog@*/
     }
   else
     ecif.rvalue = rvalue;
@@ -412,13 +445,17 @@ ffi_raw_call(ffi_cif *cif, void (*fn)(), void *rvalue, ffi_raw *fake_avalue)
   switch (cif->abi) 
     {
     case FFI_SYSV:
-      ffi_call_SYSV(ffi_prep_args_raw, &ecif, cif->bytes, cif->flags,
-		    ecif.rvalue, fn);
+      /*@-usedef@*/
+      ffi_call_SYSV(ffi_prep_args_raw, &ecif, cif->bytes, 
+		    cif->flags, ecif.rvalue, fn);
+      /*@=usedef@*/
       break;
 #ifdef X86_WIN32
     case FFI_STDCALL:
-      ffi_call_STDCALL(ffi_prep_args_raw, &ecif, cif->bytes, cif->flags,
-		       ecif.rvalue, fn);
+      /*@-usedef@*/
+      ffi_call_STDCALL(ffi_prep_args_raw, &ecif, cif->bytes,
+		    cif->flags, ecif.rvalue, fn);
+      /*@=usedef@*/
       break;
 #endif /* X86_WIN32 */
     default:

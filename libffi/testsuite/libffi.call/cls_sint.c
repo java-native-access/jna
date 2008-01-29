@@ -7,12 +7,12 @@
 /* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
 #include "ffitest.h"
 
-static void cls_ret_sint_fn(ffi_cif* cif __UNUSED__, void* resp, void** args,
-			    void* userdata __UNUSED__)
+static void cls_ret_sint_fn(ffi_cif* cif,void* resp,void** args,
+			     void* userdata)
 {
   *(ffi_arg*)resp = *(signed int *)args[0];
   printf("%d: %d\n",*(signed int *)args[0],
-	 (int)*(ffi_arg *)(resp));
+	 *(ffi_arg*)resp);
 }
 typedef signed int (*cls_ret_sint)(signed int);
 

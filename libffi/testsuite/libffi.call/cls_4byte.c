@@ -28,8 +28,7 @@ cls_struct_4byte cls_struct_4byte_fn(struct cls_struct_4byte a1,
 }
 
 static void
-cls_struct_4byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
-		    void* userdata __UNUSED__)
+cls_struct_4byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
 {
 
   struct cls_struct_4byte a1, a2;

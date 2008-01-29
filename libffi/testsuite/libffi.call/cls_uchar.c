@@ -7,12 +7,12 @@
 /* { dg-do run { xfail mips64*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
 #include "ffitest.h"
 
-static void cls_ret_uchar_fn(ffi_cif* cif __UNUSED__, void* resp, void** args,
-			     void* userdata __UNUSED__)
+static void cls_ret_uchar_fn(ffi_cif* cif,void* resp,void** args,
+			     void* userdata)
 {
   *(ffi_arg*)resp = *(unsigned char *)args[0];
   printf("%d: %d\n",*(unsigned char *)args[0],
-	 (int)*(ffi_arg *)(resp));
+	 *(ffi_arg*)resp);
 }
 typedef unsigned char (*cls_ret_uchar)(unsigned char);
 

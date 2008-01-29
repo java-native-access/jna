@@ -20,8 +20,7 @@ unsigned char test_func_fn(unsigned char a1, unsigned char a2,
 
 }
 
-static void test_func_gn(ffi_cif *cif __UNUSED__, void *rval, void **avals,
-			 void *data __UNUSED__)
+static void test_func_gn(ffi_cif *cif, void *rval, void **avals, void *data)
 {
   unsigned char a1, a2, a3, a4;
 
@@ -36,9 +35,7 @@ static void test_func_gn(ffi_cif *cif __UNUSED__, void *rval, void **avals,
 
 typedef unsigned char (*test_type)(unsigned char, unsigned char,
 				   unsigned char, unsigned char);
-
-void test_func(ffi_cif *cif __UNUSED__, void *rval __UNUSED__, void **avals,
-	       void *data __UNUSED__)
+void test_func(ffi_cif *cif, void *rval, void **avals, void *data)
 {
   printf("%d %d %d %d\n", *(unsigned char *)avals[0],
 	 *(unsigned char *)avals[1], *(unsigned char *)avals[2],
@@ -85,7 +82,7 @@ int main (void)
 
   ffi_call(&cif, FFI_FN(test_func_fn), &res_call, args_dbl);
   /* { dg-output "1 2 127 125: 255" } */
-  printf("res: %d\n", (unsigned char)res_call);
+  printf("res: %d\n", res_call);
   /* { dg-output "\nres: 255" } */
 
   CHECK(ffi_prep_closure(pcl, &cif, test_func_gn, NULL)  == FFI_OK);

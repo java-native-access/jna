@@ -20,8 +20,7 @@ signed short test_func_fn(signed char a1, signed short a2,
 
 }
 
-static void test_func_gn(ffi_cif *cif __UNUSED__, void *rval, void **avals,
-			 void *data __UNUSED__)
+static void test_func_gn(ffi_cif *cif, void *rval, void **avals, void *data)
 {
   signed char a1, a3;
   signed short a2, a4;
@@ -80,7 +79,7 @@ int main (void)
 
   ffi_call(&cif, FFI_FN(test_func_fn), &res_call, args_dbl);
   /* { dg-output "1 32765 127 -128: 32765" } */
-  printf("res: %d\n", (signed short)res_call);
+  printf("res: %d\n", res_call);
   /* { dg-output "\nres: 32765" } */
 
   CHECK(ffi_prep_closure(pcl, &cif, test_func_gn, NULL)  == FFI_OK);

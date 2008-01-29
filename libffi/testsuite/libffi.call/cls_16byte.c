@@ -29,8 +29,7 @@ cls_struct_16byte cls_struct_16byte_fn(struct cls_struct_16byte b1,
   return result;
 }
 
-static void cls_struct_16byte_gn(ffi_cif* cif __UNUSED__, void* resp,
-				 void** args, void* userdata __UNUSED__)
+static void cls_struct_16byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
 {
   struct cls_struct_16byte b1, b2;
 

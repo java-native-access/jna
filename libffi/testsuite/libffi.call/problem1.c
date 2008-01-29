@@ -27,8 +27,7 @@ my_ffi_struct callee(struct my_ffi_struct a1, struct my_ffi_struct a2)
   return result;
 }
 
-void stub(ffi_cif* cif __UNUSED__, void* resp, void** args,
-	  void* userdata __UNUSED__)
+void stub(ffi_cif* cif, void* resp, void** args, void* userdata)
 {
   struct my_ffi_struct a1;
   struct my_ffi_struct a2;

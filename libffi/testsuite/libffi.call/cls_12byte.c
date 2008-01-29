@@ -28,8 +28,7 @@ cls_struct_12byte cls_struct_12byte_fn(struct cls_struct_12byte b1,
   return result;
 }
 
-static void cls_struct_12byte_gn(ffi_cif* cif __UNUSED__, void* resp,
-				 void** args , void* userdata __UNUSED__)
+static void cls_struct_12byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
 {
   struct cls_struct_12byte b1, b2;
 
