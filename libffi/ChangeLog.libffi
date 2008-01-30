@@ -1,5 +1,9 @@
-2008-01-30  Anthony Green  <green@localhost.localdomain>
+2008-01-30  Anthony Green  <green@redhat.com>
 
+	* Makefile.am, include/Makefile.am: Move headers to
+	libffi_la_SOURCES for new automake.
+	* Makefile.in, include/Makefile.in: Rebuilt.
+	
 	* testsuite/lib/wrapper.exp: Copied from gcc tree to allow for 
 	execution outside of gcc tree.
 	* testsuite/lib/target-libpath.exp: Ditto.
