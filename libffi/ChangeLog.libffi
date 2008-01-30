@@ -1,0 +1,9 @@
+2008-01-30  Anthony Green  <green@localhost.localdomain>
+
+	* testsuite/lib/wrapper.exp: Copied from gcc tree to allow for 
+	execution outside of gcc tree.
+	* testsuite/lib/target-libpath.exp: Ditto.
+
+	* testsuite/lib/libffi-dg.exp: Many changes to allow for execution
+	outside of gcc tree.
+

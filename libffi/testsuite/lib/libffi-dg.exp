@@ -16,7 +16,7 @@
 
 proc load_gcc_lib { filename } {
     global srcdir
-    load_file $srcdir/../../gcc/testsuite/lib/$filename
+    load_file $srcdir/lib/$filename
 }
 
 load_lib dg.exp
@@ -102,8 +102,9 @@ proc libffi-init { args } {
     global tool_root_dir
     global ld_library_path
 
-    set blddirffi [lookfor_file [get_multilibs] libffi]
+    set blddirffi [pwd]/..
     verbose "libffi $blddirffi"
+
     set blddircxx [lookfor_file [get_multilibs] libstdc++-v3]
     verbose "libstdc++ $blddircxx"
 
