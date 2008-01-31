@@ -1,3 +1,9 @@
+2008-01-31  Anthony Green  <green@redhat.com>
+
+	* Makefile.am (EXTRA_DIST): Add missing files.
+	* testsuite/Makefile.am: Ditto.
+	* Makefile.in, testsuite/Makefile.in: Rebuilt.
+
 2008-01-31  Timothy Wall <twall@users.sf.net>
 
 	* testsuite/libffi.call/closure_stdcall.c: Add test for stdcall
