@@ -362,9 +362,14 @@
         <not><os family="mac"/></not>
       </and>
     </condition>
+    <condition property="vm.arch" value="-d64">
+      <os arch="sparcv9"/>
+    </condition>
+    <property name="vm.arch" value=""/>
     <property name="tests.platform" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
       <jvmarg value="-Djna.library.path=${build.native}"/>
+      <jvmarg value="${vm.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
