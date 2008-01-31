@@ -51,7 +51,7 @@ typedef struct _exc_rec {
 } exc_rec;
 
 static EXCEPTION_DISPOSITION __cdecl
-__exc_handler(struct _EXCEPTION_RECORD* exception_record,
+_exc_handler(struct _EXCEPTION_RECORD* exception_record,
               void *establisher_frame,
               struct _CONTEXT *context_record,
               void* dispatcher_context) {
@@ -63,26 +63,26 @@ __exc_handler(struct _EXCEPTION_RECORD* exception_record,
 }
 
 #define PROTECTED_START() \
-  exc_rec __er; \
-  int __error = 0; \
+  exc_rec _er; \
+  int _error = 0; \
   if (PROTECT) { \
-    __er.ex_reg.handler = __exc_handler; \
-    asm volatile ("movl %%fs:0, %0" : "=r" (__er.ex_reg.prev)); \
-    asm volatile ("movl %0, %%fs:0" : : "r" (&__er)); \
-    if ((__error = setjmp(__er.buf)) != 0) { \
-      goto __exc_caught; \
+    _er.ex_reg.handler = _exc_handler; \
+    asm volatile ("movl %%fs:0, %0" : "=r" (_er.ex_reg.prev)); \
+    asm volatile ("movl %0, %%fs:0" : : "r" (&_er)); \
+    if ((_error = setjmp(_er.buf)) != 0) { \
+      goto _exc_caught; \
     } \
   }
 
 // The initial conditional is required to ensure GCC doesn't consider
 // _exc_caught to be unreachable
 #define PROTECTED_END(ONERR) do { \
-  if (!__error) \
-    goto __remove_handler; \
- __exc_caught: \
+  if (!_error) \
+    goto _remove_handler; \
+ _exc_caught: \
   ONERR; \
- __remove_handler: \
-  if (PROTECT) { asm volatile ("movl %0, %%fs:0" : : "r" (__er.ex_reg.prev)); } \
+ _remove_handler: \
+  if (PROTECT) { asm volatile ("movl %0, %%fs:0" : : "r" (_er.ex_reg.prev)); } \
 } while(0)
 
 #else // _WIN32
@@ -90,35 +90,35 @@ __exc_handler(struct _EXCEPTION_RECORD* exception_record,
 // Catch both SIGSEGV and SIGBUS
 #include <signal.h>
 #include <setjmp.h>
-static jmp_buf __context;
-static volatile int __error;
-static void __exc_handler(int sig) {
+static jmp_buf _context;
+static volatile int _error;
+static void _exc_handler(int sig) {
   if (sig == SIGSEGV || sig == SIGBUS) {
-    longjmp(__context, sig);
+    longjmp(_context, sig);
   }
 }
 
 #define PROTECTED_START() \
-  void* __old_segv_handler; \
-  void* __old_bus_handler; \
-  int __error = 0; \
+  void* _old_segv_handler; \
+  void* _old_bus_handler; \
+  int _error = 0; \
   if (PROTECT) { \
-    __old_segv_handler = signal(SIGSEGV, __exc_handler); \
-    __old_bus_handler = signal(SIGBUS, __exc_handler); \
-    if ((__error = setjmp(__context) != 0)) { \
-      goto __exc_caught; \
+    _old_segv_handler = signal(SIGSEGV, _exc_handler); \
+    _old_bus_handler = signal(SIGBUS, _exc_handler); \
+    if ((_error = setjmp(_context) != 0)) { \
+      goto _exc_caught; \
     } \
   }
 
 #define PROTECTED_END(ONERR) do { \
-  if (!__error) \
-    goto __remove_handler; \
- __exc_caught: \
+  if (!_error) \
+    goto _remove_handler; \
+ _exc_caught: \
   ONERR; \
- __remove_handler: \
+ _remove_handler: \
   if (PROTECT) { \
-    signal(SIGSEGV, __old_segv_handler); \
-    signal(SIGBUS, __old_bus_handler); \
+    signal(SIGSEGV, _old_segv_handler); \
+    signal(SIGBUS, _old_bus_handler); \
   } \
 } while(0)
 #endif
