@@ -125,6 +125,7 @@ ifeq ($(ARCH),)
 ARCH=$(shell uname -n)
 endif
 PCFLAGS+=-fPIC
+CDEFINES+=-DHAVE_PROTECTION
 LDFLAGS=-o $@ -G
 ifeq ($(ARCH), sparcv9)
   # alter CC instead of PCFLAGS, since we need to pass it down to libffi 
