@@ -235,6 +235,10 @@ unsigned int FFI_HIDDEN ffi_closure_SYSV_inner (ffi_closure *, void **, void *)
      __attribute__ ((regparm(1)));
 void FFI_HIDDEN ffi_closure_raw_SYSV (ffi_raw_closure *)
      __attribute__ ((regparm(1)));
+#ifdef X86_WIN32
+void FFI_HIDDEN ffi_closure_STDCALL (ffi_closure *)
+     __attribute__ ((regparm(1)));
+#endif
 
 /* This function is jumped to by the trampoline */
 
@@ -317,6 +321,19 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
    *(unsigned int*)  &__tramp[6] = __dis; /* jmp __fun  */ \
  })
 
+#define FFI_INIT_TRAMPOLINE_STDCALL(TRAMP,FUN,CTX,SIZE)  \
+({ unsigned char *__tramp = (unsigned char*)(TRAMP); \
+   unsigned int  __fun = (unsigned int)(FUN); \
+   unsigned int  __ctx = (unsigned int)(CTX); \
+   unsigned int  __dis = __fun - ((unsigned int) __tramp + FFI_TRAMPOLINE_SIZE); \
+   unsigned short __size = (unsigned short)(SIZE); \
+   *(unsigned char*) &__tramp[0] = 0xb8; \
+   *(unsigned int*)  &__tramp[1] = __ctx; /* movl __ctx, %eax */ \
+   *(unsigned char *)  &__tramp[5] = 0xe8; \
+   *(unsigned int*)  &__tramp[6] = __dis; /* call __fun  */ \
+   *(unsigned char *)  &__tramp[10] = 0xc2; \
+   *(unsigned short*)  &__tramp[11] = __size; /* ret __size  */ \
+ })
 
 /* the cif must already be prep'ed */
 
@@ -327,11 +344,24 @@ ffi_prep_closure_loc (ffi_closure* closure,
 		      void *user_data,
 		      void *codeloc)
 {
-  FFI_ASSERT (cif->abi == FFI_SYSV);
-
-  FFI_INIT_TRAMPOLINE (&closure->tramp[0], \
-		       &ffi_closure_SYSV,  \
-		       codeloc);
+  if (cif->abi == FFI_SYSV)
+    {
+      FFI_INIT_TRAMPOLINE (&closure->tramp[0],
+                           &ffi_closure_SYSV,
+                           (void*)closure);
+    }
+#ifdef X86_WIN32
+  else if (cif->abi == FFI_STDCALL)
+    {
+      FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
+                                   &ffi_closure_STDCALL,
+                                   (void*)closure, cif->bytes);
+    }
+#endif
+  else
+    {
+      return FFI_BAD_ABI;
+    }
     
   closure->cif  = cif;
   closure->user_data = user_data;
@@ -353,7 +383,9 @@ ffi_prep_raw_closure_loc (ffi_raw_closure* closure,
 {
   int i;
 
-  FFI_ASSERT (cif->abi == FFI_SYSV);
+  if (cif->abi != FFI_SYSV) {
+    return FFI_BAD_ABI;
+  }
 
   // we currently don't support certain kinds of arguments for raw
   // closures.  This should be implemented by a separate assembly language

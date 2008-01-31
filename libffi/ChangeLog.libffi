@@ -1,3 +1,12 @@
+2008-01-31  Timothy Wall <twall@users.sf.net>
+
+	* testsuite/libffi.call/closure_stdcall.c: Add test for stdcall
+	closures.
+	* src/x86/ffitarget.h: Increase size of trampoline for stdcall
+	closures.
+	* src/x86/win32.S: Add assembly for stdcall closure.
+	* src/x86/ffi.c: Initialize stdcall closure trampoline.
+
 2008-01-30  H.J. Lu <hongjiu.lu@intel.com>
 
 	PR libffi/34612
