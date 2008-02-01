@@ -383,9 +383,9 @@ MAKEOVERRIDES =
 toolexeclib_LTLIBRARIES = libffi.la
 noinst_LTLIBRARIES = libffi_convenience.la
 libffi_la_SOURCES = src/debug.c src/prep_cif.c src/types.c \
-		src/raw_api.c src/java_raw_api.c src/closures.c \
-		include/ffi_common.h include/ffitarget.h
+		src/raw_api.c src/java_raw_api.c src/closures.c
 
+# include/ffi_common.h include/ffitarget.h
 nodist_libffi_la_SOURCES = $(am__append_1) $(am__append_2) \
 	$(am__append_3) $(am__append_4) $(am__append_5) \
 	$(am__append_6) $(am__append_7) $(am__append_8) \

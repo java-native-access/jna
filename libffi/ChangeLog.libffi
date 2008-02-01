@@ -1,5 +1,12 @@
 2008-02-01  Anthony Green  <green@redhat.com>
 
+	* include/Makefile.am: Fix header installs.
+	* Makefile.am: Ditto.
+	* include/Makefile.in: Rebuilt.
+	* Makefile.in: Ditto.
+
+2008-02-01  Anthony Green  <green@redhat.com>
+
 	* src/x86/ffi.c (FFI_INIT_TRAMPOLINE_STDCALL,
 	FFI_INIT_TRAMPOLINE): Revert my broken changes to twall's last
 	patch.
