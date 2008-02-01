@@ -1,3 +1,9 @@
+2008-02-01  Anthony Green  <green@redhat.com>
+
+	* src/x86/ffi.c (FFI_INIT_TRAMPOLINE_STDCALL,
+	FFI_INIT_TRAMPOLINE): Revert my broken changes to twall's last
+	patch.
+
 2008-01-31  Anthony Green  <green@redhat.com>
 
 	* Makefile.am (EXTRA_DIST): Add missing files.
