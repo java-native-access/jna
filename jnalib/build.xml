@@ -161,12 +161,6 @@
           description="Build primary jar">
     <jar jarfile="${build}/${jar}">
       <manifest>
-        <attribute name="Implementation-Title" value="${impl.title}"/>
-        <attribute name="Implementation-Vendor" value="${vendor}"/>
-        <attribute name="Implementation-Version" value="${impl.version}"/>
-        <attribute name="Specification-Title" value="${spec.title}"/>
-        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
-        <attribute name="Specification-Version" value="${spec.version}"/>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
       </manifest>
       <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
@@ -365,7 +359,7 @@
     <condition property="vm.arch" value="-d64">
       <os arch="sparcv9"/>
     </condition>
-    <property name="vm.arch" value=""/>
+    <property name="vm.arch" value="-Dignore"/>
     <property name="tests.platform" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
       <jvmarg value="-Djna.library.path=${build.native}"/>
@@ -457,6 +451,15 @@
   <target name="dist" depends="jar,compile-tests,native,examples,javadoc"
           description="Build examples">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
+      <manifest>
+        <attribute name="Implementation-Title" value="${impl.title}"/>
+        <attribute name="Implementation-Vendor" value="${vendor}"/>
+        <attribute name="Implementation-Version" value="${impl.version}"/>
+        <attribute name="Specification-Title" value="${spec.title}"/>
+        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+        <attribute name="Specification-Version" value="${spec.version}"/>
+        <attribute name="Main-Class" value="com.sun.jna.Native"/>
+      </manifest>
       <zipfileset src="${build}/${jar}"/>
       <zipfileset src="${dist}/win32-x86.jar" 
                   includes="*jnidispatch*"
