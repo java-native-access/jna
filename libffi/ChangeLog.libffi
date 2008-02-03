@@ -1,3 +1,8 @@
+2008-02-03  Timothy Wall  <twall@users.sf.net>
+
+	* src/x86/ffi.c (FFI_INIT_TRAMPOLINE_STDCALL): Calculate jump return
+          offset based on code pointer, not data pointer.
+
 2008-02-01  Anthony Green  <green@redhat.com>
 
 	* include/Makefile.am: Fix header installs.
