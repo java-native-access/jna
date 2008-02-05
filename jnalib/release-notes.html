@@ -1,0 +1,119 @@
+<a name="top"></a>
+<h2>Release 3.0.1</h2>
+<b>Features</b><br>
+<ul>
+<li>Improve transparent window drawing performance on w32
+<li>Use closure allocation from libffi
+</ul>
+<b>Bug Fixes</b><br>
+<ul>
+<li>Ensure nested structure arrays initialized with Structure.toArray use the
+  appropriate native memory.
+<li>Ensure structure size is calculated prior to converting to array
+<li>Avoid creating new windows when setting a window mask
+<li>Fix bug in Pointer.setChar.
+</ul>
+
+<h2>Release 3.0</h2>
+<b>Features</b><br>
+<ul>
+<li>More supported platforms, via GCC's libffi (wmeissner)
+<li>Support struct by value as parameter and return value (duncan)
+<li>Support struct by reference within structures
+<li>Provide access to native peer for java.awt.Component 
+<li>Provide access to native peer on OS X.
+<li>Support MINGW32 builds (fullung)
+<li>Allow per-field Structure read/write by field name
+<li>Avoid writing Structure fields marked 'volatile'
+<li>Read and wrap function pointers in Structure fields when read with a Java
+  proxy to allow easy Java-side invocation (Ken Larson)
+<li>Support array-backed Buffers as arguments (wmeissner)
+<li>Auto-conversion of custom types (wmeissner)
+<li>Allow pointer type-safety
+<li>Optional VM crash protection, via Native.setProtected(boolean)
+<li>Auto-convert WString[]
+<li>Provide library synchronization wrapper similar to Collections.synchronizedX
+<li>Support lookup of OSX framework libraries by name
+<li>Explicit access to shared library global data
+<li>Invocation interception to facilitate translation of C preprocessor macros
+  and inline functions
+<li>Provide utility to determine Web Start native library cache location;
+  auto-include this path if jnidispatch is included as a <nativelib>
+  (robertengels) 
+<li>Provide access to aligned memory
+<li>Versioning information embedded in jna.jar and native library
+</ul>
+<b>Bug Fixes</b><br>
+<li>Avoid attempts to free native library if it failed to load (wmeissner)
+<li>Explicitly check method signatures for varargs instead of heuristically
+  guessing (wmeissner)
+<li>Disallow declaring Pointer-derived fields in Structures (Function, Memory)
+<li>Ensure Object.toString/hashCode/equals methods are intercepted on proxyied
+  interfaces
+<li>Update X11 library for 64-bit use (wmeissner)
+<li>Properly map arrays of char*/wchar_t* under w32
+<li>Allow Pointer[] as a Structure field and Function argument
+<li>Fix some misleading Structure error messages
+<li>Properly preserve/return GetLastError/errno after native calls
+<li>Allocate executable memory on w32 to avoid errors with hardware-enforced
+  data execution protection (DEP)
+<li>Fix VM crash on w32 stdcall callbacks
+<li>Use long offsets and sizes rather than ints (64-bit safe)
+<li>Properly clean up references and release closure memory on JNI_Unload
+<li>Use simpler AWT/JAWT library loading workaround
+<li>Avoid changing array references within a Structure on read
+
+<h2>Release 2.5</h2>
+<b>Features</b><br>
+<ul>
+<li>Unions
+<li>Optimized shaped windows (chris deckers & olivier chafik); instantiation time
+improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
+<li>Provide type mapping in callback arguments/results
+<li>Provide access to ByteBuffer direct address as a Pointer
+<li>Provide customization of native string encoding with jna.encoding system property 
+</ul>
+
+<b>Bug Fixes</b><br>
+<ul>
+<li>Properly handle VMs with reversed Structure member storage
+<li>Avoid making window undecorated when clearing window mask on X11
+<li>Fix structure alignment bug on OSX/PPC when first element is > 4 bytes in size
+<li>Clearing OSX window mask by setting to MASK_NONE now works properly
+<li>Avoid index exceptions if native buffers are not NUL-terminated on string conversions
+<li>Write initialized Structure[] argument memory prior to function calls
+<li>Fix IllegalArgumentException reading WString into a Structure
+<li>Clear memory when allocating a structure block (fixes VM crash)
+<li>Remove versioned JAWT dependency on OSX, allowing use on 10.3/JRE1.4.
+</ul>
+
+<h2>Release 2.4</h2>
+<b>Features</b><br>
+<ul>
+<li>Explicitly support unaligned structures
+<li>Auto-reallocate structure arrays
+<li>Automatic handling of w32 UNICODE/ASCII variants
+<li>Automatic mapping of decorated w32 stdcall function names
+<li>Customizable, automatic type conversion of arguments and results (wmeissner)
+<li>Support char*[] arguments as Java String[] 
+<li>Structure supports Callback members (wmeissner)
+<li>getByteBuffer from Pointer/Memory (wmeissner)
+<li>Allow GC of native libraries
+<li>Facilitate use from non-Java contexts (JRuby et al.) (wmeissner)
+<li>Improve library path searching (wmeissner)
+<li>Handle Structure[] arguments
+<li>Handle native long arguments and return values
+<li>Handle direct and array-based ByteBuffer arguments (wmeissner)
+<li>Change default w32 build to use GCC (it's free, yo)
+</ul>
+
+<b>Bug Fixes</b><br>
+<ul>
+<li>Structure.toArray failed to initialize members
+<li>Disallow explicit free of Structure/Memory
+<li>Ensure native libraries are only loaded once until released
+<li>Properly handle NULL when the return value is a Structure
+<li>Proper conversion to wchar_t on linux
+<li>Copy full length of Java strings to C strings instead of stopping when a NUL
+character is encountered
+</ul>
