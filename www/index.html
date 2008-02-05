@@ -3,11 +3,32 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-01-19">
+<meta name="date" content="2008-02-05">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <body>
+
+
+
+  <div style="display:none">
+    <div style="border: 1px solid black; padding: 1em; float: right; font-size: 1.5em; background-color: rgb(255, 255, 240);" id="downloadBox">
+      <a href="/servlets/ProjectDocumentList" class=dynamic>
+	<img src="folder.gif" style="vertical-align: middle;" border="0">Download
+      </a>
+      <center>
+	<a href="whatsnew.html" style="font-size:0.5em" class=dynamic>(changelog)</a>
+        
+      </center>
+    </div>
+  </div>
+  <script>
+    var box = document.getElementById("projecthome");
+    var div = document.getElementById("downloadBox");
+    box.insertBefore(div,box.firstChild);
+  </script>
+
+
 <table rows=1 cols=3>
 <colgroup span=1 width=0*>
 <colgroup span=1>
@@ -440,6 +461,7 @@ the JNA library (and are pretty nifty utilities in and of themselves).
  <li><a href="http://fmj.sf.net">Freedom for Media in Java (FMJ)</a> (Ken Larson/Dieter Krachtus)
  <li><a href="http://code.google.com/p/gstreamer-java">gstreamer for Java</a> (Wayne Meissner)
  <li><a href="http://glossitope.org">Glossitope (AKA ab5k)</a> (Josh Marinacci)
+ <li><a href="http://www.athenabackup.com">Athena Backup</a> (Doug Patriarche)
  </ul>
  Post to users AT jna DOT dev DOT java DOT net to include your project in this list, or if you'd like to contribute a library mapping you've written.
 <p>
@@ -449,6 +471,7 @@ the JNA library (and are pretty nifty utilities in and of themselves).
  <h3>Development Tasks</h3>
  <p>The library works fairly well now, but there are a number of tasks with which we'd appreciate help:</p>
  <ul>
+   <li>Create a transformer using SWIG or something else that already parses C headers to auto-generate JNA interface definitions.
    <li>Build the <code>jnidispatch</code> library backend on new platforms (it should mostly work out of the box if we can just get access to the appropriate build platform).</li>
    <li>More comprehensive documentation on using JNA, including examples of Java to native conversions of data types, function usage, and proper memory management.</li>
    <li>Tips and recommended usage of JNA: Likely danger areas, failure modes, best practices, multithreading, etc.</li>
