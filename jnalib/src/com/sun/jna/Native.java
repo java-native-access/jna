@@ -35,7 +35,9 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
 import java.util.WeakHashMap;
 
 import com.sun.jna.Structure.ByReference;
@@ -627,16 +629,43 @@ public final class Native {
         public DeleteNativeLibrary(File file) {
             this.file = file;
         }
-        public void run() {
+        private boolean unload(String path) {
+            // Reach into the bowels of ClassLoader to force the native
+            // library to unload
             try {
-                Runtime.getRuntime().exec(new String[] {
-                    System.getProperty("java.home") + "/bin/java",
-                    "-cp", System.getProperty("java.class.path"),
-                    getClass().getName(),
-                    file.getAbsolutePath(),
-                });
+                ClassLoader cl = getClass().getClassLoader();
+                Field f = ClassLoader.class.getDeclaredField("nativeLibraries");
+                f.setAccessible(true);
+                List libs = (List)f.get(cl);
+                for (Iterator i = libs.iterator();i.hasNext();) {
+                    Object lib = i.next();
+                    f = lib.getClass().getDeclaredField("name");
+                    f.setAccessible(true);
+                    String name = (String)f.get(lib);
+                    if (name.equals(path)) {
+                        Method m = lib.getClass().getDeclaredMethod("unload", new Class[0]);
+                        m.setAccessible(true);
+                        m.invoke(lib, new Object[0]);
+                        return true;
+                    }
+                }
             }
-            catch(IOException e) { e.printStackTrace(); }
+            catch(Exception e) {
+            }
+            return false;
+        }
+        public void run() {
+            if (!unload(file.getAbsolutePath()) || !file.delete()) {
+                try {
+                    Runtime.getRuntime().exec(new String[] {
+                        System.getProperty("java.home") + "/bin/java",
+                        "-cp", System.getProperty("java.class.path"),
+                        getClass().getName(),
+                        file.getAbsolutePath(),
+                    });
+                }
+                catch(IOException e) { e.printStackTrace(); }
+            }
         }
         public static void main(String[] args) {
             if (args.length == 1) {
@@ -646,8 +675,11 @@ public final class Native {
                     while (!file.delete() && file.exists()) {
                         try { Thread.sleep(10); }
                         catch(InterruptedException e) { }
-                        if (System.currentTimeMillis() - start > 1000) 
+                        if (System.currentTimeMillis() - start > 5000) {
+                            System.err.println("Could not remove temp file: "
+                                               + file.getAbsolutePath());
                             break;
+                        }
                     }
                 }
             }
