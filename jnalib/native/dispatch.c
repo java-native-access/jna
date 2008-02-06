@@ -205,17 +205,17 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
 {
   int i, nargs;
   void *func;
-  jvalue c_args[MAX_NARGS];
+  jvalue* c_args;
   char array_pt;
   struct _array_elements {
     char type;
     jobject array;
     void *elems;
-  } array_elements[MAX_NARGS];
+  } *array_elements;
   int array_count = 0;
   ffi_cif cif;
-  ffi_type* ffi_types[MAX_NARGS];
-  void* ffi_values[MAX_NARGS];
+  ffi_type** ffi_types;
+  void** ffi_values;
   ffi_abi abi;
   ffi_status status;
   char msg[128];
@@ -227,6 +227,11 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     throwByName(env, EUnsupportedOperation, msg);
     return;
   }
+  c_args = (jvalue*)alloca(nargs * sizeof(jvalue));
+  array_elements = (struct _array_elements*)
+    alloca(nargs * sizeof(struct _array_elements));
+  ffi_types = (ffi_type**)alloca(nargs * sizeof(ffi_type*));
+  ffi_values = (void**)alloca(nargs * sizeof(void*));
   
   // Get the function pointer
   func = getNativeAddress(env, self);
@@ -1308,7 +1313,7 @@ newWideCString(JNIEnv *env, jstring str)
         jint len = (*env)->GetArrayLength(env, chars);
         result = (wchar_t *)malloc(sizeof(wchar_t) * (len + 1));
         if (result == NULL) {
-            throwByName(env, EOutOfMemory, 0);
+            throwByName(env, EOutOfMemory, "Can't allocate wide C string");
             (*env)->DeleteLocalRef(env, chars);
             return NULL;
         }

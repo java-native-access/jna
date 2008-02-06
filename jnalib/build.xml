@@ -37,7 +37,7 @@
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="3"/>
   <property name="jni.minor" value="0"/>
-  <property name="jni.revision" value="1"/>
+  <property name="jni.revision" value="2"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
   <property name="jni.md5" value="892beacd437514d23ed9b1cefeb2ead6"/>
@@ -258,7 +258,7 @@
                    replace="CHECKSUM=${jni.md5} ${comment}"
                    file="native/Makefile" byline="true"/>
     <!-- ensure ARCH is set properly for various platforms -->
-    <!-- use ANT_OPTS=-d64 to build sparcv9 on sparc -->
+    <!-- use ANT_OPTS=-d64 to build sparcv9 on sparc or 64-bit on OSX -->
     <condition property="ARCH" value="${os.arch}">
       <or>
         <os name="SunOS"/>
@@ -357,7 +357,12 @@
       </and>
     </condition>
     <condition property="vm.arch" value="-d64">
-      <os arch="sparcv9"/>
+      <or>
+        <and><os family="mac"/>
+          <or><os arch="x86_64"/><os arch="ppc64"/></or>
+        </and>
+        <os arch="sparcv9"/>
+      </or>
     </condition>
     <property name="vm.arch" value="-Dignore"/>
     <property name="tests.platform" value=""/>

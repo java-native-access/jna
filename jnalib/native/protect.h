@@ -32,7 +32,7 @@
 //
 // The PROTECT_START() macro must immediately follow any variable declarations 
 //
-// The w32 implementation is courtesy of Ranjit Mathew
+// The w32 implementation is based on code by Ranjit Mathew
 // http://gcc.gnu.org/ml/java/2003-03/msg00243.html
 #ifndef PROTECT
 
