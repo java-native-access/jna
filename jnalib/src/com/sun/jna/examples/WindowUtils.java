@@ -877,6 +877,10 @@ public class WindowUtils {
                         });
                     }
                     catch (Exception e) {
+			if (w instanceof RootPaneContainer) {
+			    JRootPane p = ((RootPaneContainer)w).getRootPane();
+			    p.putClientProperty("Window.alpha", new Float(alpha));
+			}
                     }
                 }
             });
