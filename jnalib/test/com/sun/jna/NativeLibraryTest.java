@@ -14,6 +14,9 @@ package com.sun.jna;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 public class NativeLibraryTest extends TestCase {
@@ -108,7 +111,7 @@ public class NativeLibraryTest extends TestCase {
         assertNull("Library not GC'd", ref.get());
     }
     
-    public void testLoadPathVariations() {
+    public void testLoadFrameworkLibrary() {
         if (Platform.isMac()) {
             try {
                 NativeLibrary lib = NativeLibrary.getInstance("CoreServices");
@@ -130,7 +133,23 @@ public class NativeLibraryTest extends TestCase {
         global.setInt(0, MAGIC+1);
         assertEquals("Library global variable not updated", MAGIC+1, global.getInt(0));
     }
-
+    
+    public void testMatchUnversionedToVersioned() throws Exception {
+    	File lib0 = File.createTempFile("lib", ".so.1");
+    	lib0.deleteOnExit();
+    	File lib1 = File.createTempFile("lib", ".so.2.0");
+    	lib1.deleteOnExit();
+    	File lib = File.createTempFile("lib", ".so.2.1");
+    	lib.deleteOnExit();
+    	String name = lib.getName();
+    	name = name.substring(3, name.length()-5);
+    	File dir = lib.getParentFile();
+    	List path = Arrays.asList(new String[] { dir.getAbsolutePath() });
+    	assertEquals("Versioned library not found when unversioned requested",
+    				 lib.getAbsolutePath(),	
+    				 NativeLibrary.matchLibrary(name, path));
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeLibraryTest.class);
     }
