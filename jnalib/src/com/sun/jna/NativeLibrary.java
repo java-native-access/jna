@@ -368,15 +368,20 @@ public class NativeLibrary {
     }
     
     /**
-     * matchLibrary is very Linux specific.  It is here to deal with the case
+     * matchLibrary() is very Linux specific.  It is here to deal with the case
      * where /usr/lib/libc.so does not exist, or it is not a valid symlink to
      * a versioned file (e.g. /lib/libc.so.6).
      */
-    private static String matchLibrary(final String libName, List searchPath) {
-        
+    static String matchLibrary(final String libName, List searchPath) {
+    	File lib = new File(libName); 
+        if (lib.isAbsolute()) {
+        	searchPath = Arrays.asList(new String[] { lib.getParent() });
+        }
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.startsWith("lib" + libName)
+                return (name.startsWith("lib" + libName)
+                		|| (name.startsWith(libName)
+                			&& libName.startsWith("lib")))
                     && isVersionedName(name);
             }
         };
