@@ -161,6 +161,12 @@
           description="Build primary jar">
     <jar jarfile="${build}/${jar}">
       <manifest>
+        <attribute name="Implementation-Title" value="${impl.title}"/>
+        <attribute name="Implementation-Vendor" value="${vendor}"/>
+        <attribute name="Implementation-Version" value="${impl.version}"/>
+        <attribute name="Specification-Title" value="${spec.title}"/>
+        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+        <attribute name="Specification-Version" value="${spec.version}"/>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
       </manifest>
       <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
@@ -274,7 +280,12 @@
     <condition property="make.SDKROOT" value="SDKROOT=${SDKROOT}">
       <isset property="SDKROOT"/>
     </condition>
-    <condition property="make.SDKROOT" value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
+    <condition property="make.SDKROOT"
+	       value="SDKROOT=/Developer/SDKs/MacOSX10.5.sdk">
+      <available file="/Developer/SDKs/MacOSX10.5.sdk"/>
+    </condition>
+    <condition property="make.SDKROOT"
+	       value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
       <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
     </condition>
     <!-- Windows' drive letters and spaces in absolute paths wreak havoc on 
@@ -311,6 +322,7 @@
       <fileset dir="${build.native}" 
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
+    <mkdir dir="${eclipse.classes}/com/sun/jna/${os.prefix}"/>
     <copy todir="${eclipse.classes}/com/sun/jna/${os.prefix}"
           failonerror="false">
       <fileset dir="${build.native}" 
