@@ -643,7 +643,7 @@ public final class Native {
                     f.setAccessible(true);
                     String name = (String)f.get(lib);
                     if (name.equals(path)) {
-                        Method m = lib.getClass().getDeclaredMethod("unload", new Class[0]);
+                        Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
                         m.setAccessible(true);
                         m.invoke(lib, new Object[0]);
                         return true;
