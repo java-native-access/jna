@@ -1,6 +1,6 @@
 2008-02-14  Anthony Green  <green@redhat.com>
 
-	* libffi.pc.in: Usse @PACKAGE_NAME@ and @PACKAGE_VERSION@.
+	* libffi.pc.in: Use @PACKAGE_NAME@ and @PACKAGE_VERSION@.
 	* configure.ac: Reset version to 2.99.1.
 	* configure.in: Rebuilt.
 	* Makefile.am (EXTRA_DIST): Add ChangeLog.libffi.
