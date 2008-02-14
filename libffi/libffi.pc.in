@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@/@PACKAGE_NAME@-@PACKAGE_VERSION@
 includedir=${libdir}/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
 
-Name: libffi
+Name: @PACKAGE_NAME@
 Description: Library supporting Foreign Function Interfaces
-Version: 3.0
+Version: @PACKAGE_VERSION@
 Libs: -lffi
 Cflags: -I${includedir}
