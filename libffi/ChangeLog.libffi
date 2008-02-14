@@ -1,5 +1,9 @@
 2008-02-14  Anthony Green  <green@redhat.com>
 
+	* LICENSE: Update WARRANTY.
+
+2008-02-14  Anthony Green  <green@redhat.com>
+
 	* libffi.pc.in (libdir): Fix libdir definition.
 	* configure.ac: Bump version to 2.99.4.
 	* configure: Rebuilt.
