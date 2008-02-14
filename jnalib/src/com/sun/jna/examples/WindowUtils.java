@@ -989,20 +989,20 @@ public class WindowUtils {
         }
 
         private boolean didCheck;
-        private int[] alphaVisualIDs = {};
+        private long[] alphaVisualIDs = {};
 
         public boolean isWindowAlphaSupported() {
             return getAlphaVisualIDs().length > 0;
         }
 
-        private int getVisualID(GraphicsConfiguration config) {
+        private long getVisualID(GraphicsConfiguration config) {
             // Use reflection to call
             // X11GraphicsConfig.getVisual
             try {
                 Object o = config.getClass()
                     .getMethod("getVisual", (Class[])null)
                     .invoke(config, (Object[])null);
-                return ((Integer)o).intValue();
+                return ((Number)o).longValue();
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -1020,8 +1020,8 @@ public class WindowUtils {
                     GraphicsConfiguration[] configs =
                         devices[i].getConfigurations();
                     for (int j = 0; j < configs.length; j++) {
-                        int visualID = getVisualID(configs[j]);
-                        int[] ids = getAlphaVisualIDs();
+                        long visualID = getVisualID(configs[j]);
+                        long[] ids = getAlphaVisualIDs();
                         for (int k = 0; k < ids.length; k++) {
                             if (visualID == ids[k]) {
                                 return configs[j];
@@ -1037,7 +1037,7 @@ public class WindowUtils {
          * Return the visual ID of the visual which supports an alpha
          * channel.
          */
-        private synchronized int[] getAlphaVisualIDs() {
+        private synchronized long[] getAlphaVisualIDs() {
             if (didCheck) {
                 return alphaVisualIDs;
             }
@@ -1068,12 +1068,12 @@ public class WindowUtils {
                                                                          infos[i].visual);
                         if (format.type == X11.Xrender.PictTypeDirect
                             && format.direct.alphaMask != 0) {
-                            list.add(new Integer(infos[i].visualID));
+                            list.add(infos[i].visualid);
                         }
                     }
-                    alphaVisualIDs = new int[list.size()];
+                    alphaVisualIDs = new long[list.size()];
                     for (int i=0;i < alphaVisualIDs.length;i++) {
-                        alphaVisualIDs[i] = ((Integer)list.get(i)).intValue();
+                        alphaVisualIDs[i] = ((Number)list.get(i)).longValue();
                     }
                     return alphaVisualIDs;
                 }

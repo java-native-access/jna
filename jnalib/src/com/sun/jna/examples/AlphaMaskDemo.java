@@ -192,11 +192,11 @@ public class AlphaMaskDemo implements Runnable {
                         x11.XFreeGC(dpy, gc);
                 }
                 long end = System.currentTimeMillis();
-                System.out.println("gc: " + (gcTime-start) + "ms");
-                System.out.println("blit: " + (blitTime-gcTime) + "ms");
-                System.out.println("write: " + (write-blitTime) + "ms");
-                System.out.println("put image: " + (putImageTime-write) + "ms");
-                System.out.println("total: " + (end-start) + "ms");
+                //System.out.println("gc: " + (gcTime-start) + "ms");
+                //System.out.println("blit: " + (blitTime-gcTime) + "ms");
+                //System.out.println("write: " + (write-blitTime) + "ms");
+                //System.out.println("put image: " + (putImageTime-write) + "ms");
+                //System.out.println("total: " + (end-start) + "ms");
             }
         }
         finally {
