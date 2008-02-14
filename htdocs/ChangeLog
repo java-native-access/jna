@@ -1,7 +1,10 @@
 2008-02-14  Anthony Green  <green@redhat.com>
 
-	* index.html: Fix tarball reference.
+	* index.html (href): Update license reference.
 
+2008-02-14  Anthony Green  <green@redhat.com>
+
+	* index.html: Fix tarball reference.
 
 2008-02-14  Anthony Green  <green@redhat.com>
 
