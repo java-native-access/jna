@@ -81,7 +81,6 @@ noinst_LTLIBRARIES = libffi_convenience.la
 
 libffi_la_SOURCES = src/debug.c src/prep_cif.c src/types.c \
 		src/raw_api.c src/java_raw_api.c src/closures.c
-# include/ffi_common.h include/ffitarget.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libffi.pc

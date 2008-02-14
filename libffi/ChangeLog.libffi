@@ -1,5 +1,11 @@
 2008-02-14  Anthony Green  <green@redhat.com>
 
+	* include/Makefile.am (nodist_includes_HEADERS): Define.  Don't
+	distribute ffitarget.h from the build include dir.
+	* Makefile.in: Rebuilt.
+
+2008-02-14  Anthony Green  <green@redhat.com>
+
 	* include/Makefile.am (includesdir): Install headers under libdir.
 	(pkgconfigdir): Define. Install libffi.pc.
 	* include/Makefile.in: Rebuilt.

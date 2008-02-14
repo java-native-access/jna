@@ -52,9 +52,11 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(includesdir)"
+am__installdirs = "$(DESTDIR)$(includesdir)" \
+	"$(DESTDIR)$(includesdir)"
 includesHEADERS_INSTALL = $(INSTALL_HEADER)
-HEADERS = $(includes_HEADERS)
+nodist_includesHEADERS_INSTALL = $(INSTALL_HEADER)
+HEADERS = $(includes_HEADERS) $(nodist_includes_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -183,7 +185,8 @@ AUTOMAKE_OPTIONS = foreign
 DISTCLEANFILES = ffitarget.h
 EXTRA_DIST = ffi.h.in ffi_common.h
 includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
-includes_HEADERS = ffi.h ffitarget.h
+includes_HEADERS = ffi.h
+nodist_includes_HEADERS = ffitarget.h
 all: all-am
 
 .SUFFIXES:
@@ -237,6 +240,23 @@ install-includesHEADERS: $(includes_HEADERS)
 uninstall-includesHEADERS:
 	@$(NORMAL_UNINSTALL)
 	@list='$(includes_HEADERS)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(includesdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(includesdir)/$$f"; \
+	done
+install-nodist_includesHEADERS: $(nodist_includes_HEADERS)
+	@$(NORMAL_INSTALL)
+	test -z "$(includesdir)" || $(MKDIR_P) "$(DESTDIR)$(includesdir)"
+	@list='$(nodist_includes_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(nodist_includesHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includesdir)/$$f'"; \
+	  $(nodist_includesHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includesdir)/$$f"; \
+	done
+
+uninstall-nodist_includesHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nodist_includes_HEADERS)'; for p in $$list; do \
 	  f=$(am__strip_dir) \
 	  echo " rm -f '$(DESTDIR)$(includesdir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(includesdir)/$$f"; \
@@ -320,7 +340,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(includesdir)"; do \
+	for dir in "$(DESTDIR)$(includesdir)" "$(DESTDIR)$(includesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -366,7 +386,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includesHEADERS
+install-data-am: install-includesHEADERS \
+	install-nodist_includesHEADERS
 
 install-dvi: install-dvi-am
 
@@ -400,7 +421,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-includesHEADERS
+uninstall-am: uninstall-includesHEADERS \
+	uninstall-nodist_includesHEADERS
 
 .MAKE: install-am install-strip
 
@@ -411,11 +433,13 @@ uninstall-am: uninstall-includesHEADERS
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am \
 	install-includesHEADERS install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags uninstall uninstall-am uninstall-includesHEADERS
+	install-man install-nodist_includesHEADERS install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-includesHEADERS \
+	uninstall-nodist_includesHEADERS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
