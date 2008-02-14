@@ -2,7 +2,7 @@
 
 AUTOMAKE_OPTIONS = foreign subdir-objects
 
-SUBDIRS = include testsuite
+SUBDIRS = include testsuite man
 
 EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
 	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \

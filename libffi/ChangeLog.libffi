@@ -1,3 +1,20 @@
+2008-02-14  Anthony Green  <green@redhat.com>
+
+	* README: Update.
+	* libffi.info: New file.
+	* doc/stamp-vti: New file.
+	* configure.ac: Bump version to 2.99.3.
+	* configure: Rebuilt.
+
+2008-02-14  Anthony Green  <green@redhat.com>
+
+	* Makefile.am (SUBDIRS): Add man dir.
+	* Makefile.in: Rebuilt.
+	* configure.ac: Create Makefile.
+	* configure: Rebuilt.
+        * man/ffi_call.3 man/ffi_prep_cif.3 man/ffi_prep_closure.3
+          man/Makefile.am man/Makefile.in: New files.
+
 2008-02-14  Tom Tromey  <tromey@redhat.com>
 
 	* aclocal.m4, Makefile.in, configure, fficonfig.h.in: Rebuilt.

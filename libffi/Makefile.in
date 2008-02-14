@@ -60,7 +60,7 @@ subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
 	$(srcdir)/doc/version.texi $(srcdir)/fficonfig.h.in \
-	$(srcdir)/libffi.pc.in $(top_srcdir)/configure ChangeLog \
+	$(srcdir)/libffi.pc.in $(top_srcdir)/configure ChangeLog TODO \
 	compile config.guess config.sub depcomp install-sh ltcf-c.sh \
 	ltcf-cxx.sh ltcf-gcj.sh ltconfig ltmain.sh mdate-sh missing \
 	mkinstalldirs texinfo.tex
@@ -331,7 +331,7 @@ toolexeclibdir = @toolexeclibdir@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign subdir-objects
-SUBDIRS = include testsuite
+SUBDIRS = include testsuite man
 EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
 	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
 	src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h \

@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.59)
 
-AC_INIT([libffi], [2.99.2], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [2.99.3], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -352,6 +352,6 @@ test -d src/$TARGETDIR || mkdir src/$TARGETDIR
 
 AC_CONFIG_LINKS(include/ffitarget.h:src/$TARGETDIR/ffitarget.h)
 
-AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile libffi.pc)
+AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile libffi.pc)
 
 AC_OUTPUT
