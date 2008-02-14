@@ -198,8 +198,6 @@ public class ShapedWindowDemo {
             private Point offset;
             private void showPopup(MouseEvent e) {
                 final JPopupMenu m = new JPopupMenu();
-                // use a heavyweight popup to avoid having it clipped
-                // by the window mask
                 m.add(new AbstractAction("Hide") {
                     public void actionPerformed(ActionEvent e) {
                         frame.setState(JFrame.ICONIFIED);
