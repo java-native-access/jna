@@ -76,7 +76,7 @@ AM_MAKEFLAGS = \
 
 MAKEOVERRIDES=
 
-toolexeclib_LTLIBRARIES = libffi.la
+lib_LTLIBRARIES = libffi.la
 noinst_LTLIBRARIES = libffi_convenience.la
 
 libffi_la_SOURCES = src/debug.c src/prep_cif.c src/types.c \
@@ -157,7 +157,7 @@ endif
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 
-AM_CFLAGS = -Wall -g -fexceptions -D$(TARGET)
+AM_CFLAGS = -Wall -g -fexceptions
 
 libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version`
 
