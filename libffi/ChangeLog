@@ -1,3 +1,11 @@
+2008-02-14  Tom Tromey  <tromey@redhat.com>
+
+	* aclocal.m4, Makefile.in, configure, fficonfig.h.in: Rebuilt.
+	* mdate-sh, texinfo.tex: New files.
+	* Makefile.am (info_TEXINFOS): New variable.
+	* doc/libffi.texi: New file.
+	* doc/version.texi: Likewise.
+
 2008-01-24  David Edelsohn  <edelsohn@gnu.org>
 
 	* configure: Regenerate.

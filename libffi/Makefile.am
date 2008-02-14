@@ -31,6 +31,8 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
 	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
 	libtool-version ChangeLog.libffi
 
+info_TEXINFOS = doc/libffi.texi
+
 ## ################################################################
 
 ##
