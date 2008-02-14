@@ -402,7 +402,7 @@ nodist_libffi_la_SOURCES = $(am__append_1) $(am__append_2) \
 	$(am__append_21) $(am__append_22)
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
-AM_CFLAGS = -Wall -g -fexceptions
+AM_CFLAGS = -Wall -g -fexceptions -D$(TARGET)
 libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version`
 AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
 AM_CCASFLAGS = $(AM_CPPFLAGS)
