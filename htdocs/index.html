@@ -6,14 +6,11 @@ libffi
 </head>
 <body>
 
-<h1>The libffi Home Page</h1>
+<h1>libffi - a portable foreign function interface library</h1>
 
-<h3>Note: This page is out of date.  libffi is now largely maintained as part of <a href="http://gcc.gnu.org">GCC</a>.  Hopefully this separate library will be brought up to date some time.  Please contact me if you are interested in helping -- Anthony Green - green@redhat.com</h3>
-
-<b>libffi-1.20</b> was released on October 5, 1998. You can ftp it
+<b>libffi-2.99.4</b> was released on February 14, 2008. You can ftp it
 from <a
-href="ftp://sources.redhat.com:/pub/libffi/libffi-1.20.tar.gz">sources.redhat.com:/pub/libffi/libffi-1.20.tar.gz</a>.
-However, newer code is available.  See below for details.
+href="ftp://sources.redhat.com:/pub/libffi/libffi-2.99.4.gz">sources.redhat.com:/pub/libffi/libffi-2.99.4.tar.gz</a>.
 
 <p>
 
@@ -48,7 +45,7 @@ run-time.
 
 <p>
 
-Ffi stands for Foreign Function Interface. A foreign function
+FFI stands for Foreign Function Interface. A foreign function
 interface is the popular name for the interface that allows code
 written in one language to call code written in another language. The
 libffi library really only provides the lowest, machine dependent
@@ -58,26 +55,20 @@ between the two languages.
 
 <h2>Supported Platforms</h2>
 
-Libffi has been ported to:
+Libffi has been ported to many different platforms, although this
+release was only tested on:
 
 <ul>
-<li> SunOS 4.1.3 &amp; Solaris 2.x (Sparc v8)
-<li> Irix 5.3 &amp; 6.2 (System V/o32 &amp; n32)
-<li> Intel x86 - Linux (System V ABI)
-<li> Alpha Linux and OSF/1
-<li> m68k - Linux (System V ABI)
-<li> PowerPC - Linux (System V ABI)
-<li> ARM - Linux (System V ABI)
+<li>     arm oabi linux
+<li>     arm eabi linux
+<li>     hppa64 linux
+<li>     powerpc64 linux
+<li>     sparc solaris (SPARC V9 ABI)
+<li>     x86 cygwin
+<li>     x86 linux
+<li>     x86-64 linux
 </ul>
 
-Libffi has been tested with the <a
-href="http://www.cygnus.com/egcs/">egcs</a> 1.0.2 gcc
-compiler. Chances are that other versions will work.  Libffi has also
-been built and tested with the SGI compiler tools.
-	
-If you port libffi to another platform, please let me know! I assume
-that some will be easy (x86 NetBSD), and others will be more difficult
-(HP, AIX).
 
 <h2>How to get it</h2>
 
@@ -133,26 +124,65 @@ t" value="Sign me up!">
 
 <h2>Authors and Credits</h2>
 
-Libffi was written by <a href="http://people.redhat.com/green/"><b>Anthony Green</b></a>.
+libffi was originally written by <a href="http://spindazzle.org/greenblog"><b>Anthony Green</b></a>
 
-<ul>
-<li> Portions of libffi were derived from <b><a href="http://mariani.ws/~gianni/">Gianni Mariani</a></b>'s free gencall
-library for Silicon Graphics machines.
-<li> The sparc port was derived from code contributed by the fine folks at
-<b><a href="http://www.vdi.com">Visible Decisions Inc</a></b>. Further enhancements were made by <b>Gordon Irlam</b> at Cygnus Solutions (now Red Hat).
-<li>The Alpha port was written by <b>Richard Henderson</b> at Red Hat.
-<li><b>Andreas Schwab</b> ported libffi to m68k Linux and provided a number of
-bug fixes.
-<li><b>Geoffrey Keating</b> ported libffi to the PowerPC.
-<li><b>Raffaele Sena</b> ported libffi to the ARM.
-<li><b>Jesper Skov</b> and <b>Andrew Haley</b> both did more than their fair share of
+<p>
+The developers of the GNU Compiler Collection project have made
+innumerable valuable contributions.  See this ChangeLog files in the source distribution for
+details.
+
+<p>
+Some of the ideas behind libffi were inspired by Gianni Mariani's free
+gencall library for Silicon Graphics machines.
+
+<p>
+The closure mechanism was designed and implemented by Kresten Krab
+Thorup.
+
+<p>
+Major processor architecture ports were contributed by the following
+developers:
+
+<pre>
+alpha		Richard Henderson
+arm		Raffaele Sena
+cris		Simon Posnjak, Hans-Peter Nilsson
+frv		Anthony Green
+ia64		Hans Boehm
+m32r		Kazuhiro Inaoka
+m68k		Andreas Schwab
+mips		Anthony Green
+mips64		David Daney
+pa		Randolph Chung
+powerpc		Geoffrey Keating
+powerpc64	Jakub Jelinek
+s390		Gerhard Tonn, Ulrich Weigand
+sh		Kaz Kojima
+sh64		Kaz Kojima
+sparc		Anthony Green, Gordon Irlam
+x86		Anthony Green
+x86-64		Bo Thorsen
+</pre>
+
+<p>
+Jesper Skov and Andrew Haley both did more than their fair share of
 stepping through the code and tracking down bugs.
-<li>
-Thanks to <b>Tom Tromey</b> for bug fixes and configuration help.
-<li>
-Thanks also to <b>Jim Blandy</b>, who provided some useful feedback on the libffi
+
+<p>
+Thanks also to Tom Tromey for bug fixes, documentation and
+configuration help.
+
+<p>
+Thanks to Jim Blandy, who provided some useful feedback on the libffi
 interface.
-</ul>
+
+<p>
+Andreas Tobler has done a tremendous amount of work on the testsuite.
+
+<p>
+The list above is almost certainly incomplete and inaccurate.  I'm
+happy to make corrections or additions upon request.
+
 <p>
 If you have a problem, or have found a bug, please send a note to
 <a href="mailto:libffi-discuss@sources.redhat.com">libffi-discuss@sources.redhat.com</a> or
