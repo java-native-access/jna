@@ -1,40 +1,35 @@
-This directory contains the libffi package, which is not part of GCC but
-shipped with GCC as convenience.
-
 Status
 ======
 
-libffi-2.00 has not been released yet! This is a development snapshot!
-
-libffi-1.20 was released on October 5, 1998. Check the libffi web
-page for updates: <URL:http://sources.redhat.com/libffi/>.
+libffi-3.00 was released on February xx, 2008. Check the libffi web
+page for updates: <URL:http://sourceware.org/libffi/>.
 
 
 What is libffi?
 ===============
 
 Compilers for high level languages generate code that follow certain
-conventions. These conventions are necessary, in part, for separate
-compilation to work. One such convention is the "calling
-convention". The "calling convention" is essentially a set of
-assumptions made by the compiler about where function arguments will
-be found on entry to a function. A "calling convention" also specifies
-where the return value for a function is found.
+conventions.  These conventions are necessary, in part, for separate
+compilation to work.  One such convention is the "calling convention".
+The "calling convention" is a set of assumptions made by the compiler
+about where function arguments will be found on entry to a function.
+A "calling convention" also specifies where the return value for a
+function is found.
 
 Some programs may not know at the time of compilation what arguments
-are to be passed to a function. For instance, an interpreter may be
+are to be passed to a function.  For instance, an interpreter may be
 told at run-time about the number and types of arguments used to call
-a given function. Libffi can be used in such programs to provide a
+a given function.  Libffi can be used in such programs to provide a
 bridge from the interpreter program to compiled code.
 
 The libffi library provides a portable, high level programming
-interface to various calling conventions. This allows a programmer to
+interface to various calling conventions.  This allows a programmer to
 call any function specified by a call interface description at run
-time.  
+time.
 
-Ffi stands for Foreign Function Interface. A foreign function
+FFI stands for Foreign Function Interface.  A foreign function
 interface is the popular name for the interface that allows code
-written in one language to call code written in another language. The
+written in one language to call code written in another language.  The
 libffi library really only provides the lowest, machine dependent
 layer of a fully featured foreign function interface. A layer must
 exist above libffi that handles type conversions for values passed
@@ -120,7 +115,7 @@ call and that you know the number and types of arguments to pass it,
 as well as the return type of the function.
 
 The first thing you must do is create an ffi_cif object that matches
-the signature of the function you wish to call. The cif in ffi_cif
+the signature of the function you wish to call. The `cif' in ffi_cif
 stands for Call InterFace. To prepare a call interface object, use the
 following function:
 
@@ -374,6 +369,9 @@ arguments' test).
 
 History
 =======
+
+3.00 Feb-XX-08
+        Many changes, mostly thanks to the GCC project.
 
 1.20 Oct-5-98
 	Raffaele Sena produces ARM port.

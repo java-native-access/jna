@@ -22695,7 +22695,7 @@ ac_config_commands="$ac_config_commands src"
 ac_config_links="$ac_config_links include/ffitarget.h:src/$TARGETDIR/ffitarget.h"
 
 
-ac_config_files="$ac_config_files include/Makefile include/ffi.h Makefile testsuite/Makefile"
+ac_config_files="$ac_config_files include/Makefile include/ffi.h Makefile testsuite/Makefile libffi.pc"
 
 
 cat >confcache <<\_ACEOF
@@ -23478,6 +23478,7 @@ do
     "include/ffi.h") CONFIG_FILES="$CONFIG_FILES include/ffi.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "testsuite/Makefile") CONFIG_FILES="$CONFIG_FILES testsuite/Makefile" ;;
+    "libffi.pc") CONFIG_FILES="$CONFIG_FILES libffi.pc" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
