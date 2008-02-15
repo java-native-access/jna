@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.00 was released on February xx, 2008. Check the libffi web
+libffi-2.99.6 was released on February 14, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -45,9 +45,11 @@ release was only tested on:
      arm oabi linux
      arm eabi linux
      hppa64 linux
+     powerpc darwin
      powerpc64 linux
      sparc solaris (SPARC V9 ABI)
      x86 cygwin
+     x86 darwin
      x86 linux
      x86-64 linux
      
