@@ -1,4 +1,4 @@
 @set UPDATED 14 February 2008
 @set UPDATED-MONTH February 2008
-@set EDITION 2.99.7
-@set VERSION 2.99.7
+@set EDITION 2.99.8
+@set VERSION 2.99.8

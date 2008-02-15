@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-2.99.6 was released on February 14, 2008. Check the libffi web
+libffi-2.99.7 was released on February 14, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -151,7 +151,7 @@ arguments' test).
 History
 =======
 
-3.00 Feb-XX-08
+2.99.7 Feb-XX-08
         Many changes, mostly thanks to the GCC project.
 	Cygnus Solutions is now Red Hat.
 

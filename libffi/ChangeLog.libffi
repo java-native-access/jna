@@ -1,3 +1,12 @@
+2008-02-15  Anthony Green  <green@redhat.com>
+
+	* man/ffi_prep_closure.3: Delete.
+	* man/Makefile.am (EXTRA_DIST): Remove ffi_prep_closure.3.
+	(man_MANS): Ditto.
+	* man/Makefile.in: Rebuilt.
+	* configure.ac: Bump version to 2.99.8.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+
 2008-02-14  Anthony Green  <green@redhat.com>
 
 	* configure.ac: Bump version to 2.99.7.
