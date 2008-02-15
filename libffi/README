@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-2.99.7 was released on February 14, 2008. Check the libffi web
+libffi-3.0.0 was released on February 15, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -44,7 +44,8 @@ release was only tested on:
 
      arm oabi linux
      arm eabi linux
-     hppa64 linux
+     hppa linux
+     mips o32 linux (little endian)
      powerpc darwin
      powerpc64 linux
      sparc solaris (SPARC V9 ABI)
@@ -151,7 +152,7 @@ arguments' test).
 History
 =======
 
-2.99.7 Feb-XX-08
+3.0.0 Feb-15-08
         Many changes, mostly thanks to the GCC project.
 	Cygnus Solutions is now Red Hat.
 
@@ -262,16 +263,17 @@ frv		Anthony Green
 ia64		Hans Boehm
 m32r		Kazuhiro Inaoka
 m68k		Andreas Schwab
-mips		Anthony Green
+mips		Anthony Green, Casey Marshall
 mips64		David Daney
-pa		Randolph Chung
-powerpc		Geoffrey Keating
+pa		Randolph Chung, Dave Anglin, Andreas Tobler
+powerpc		Geoffrey Keating, Andreas Tobler, 
+			 David Edelsohn, John Hornkvist
 powerpc64	Jakub Jelinek
 s390		Gerhard Tonn, Ulrich Weigand
 sh		Kaz Kojima
 sh64		Kaz Kojima
 sparc		Anthony Green, Gordon Irlam
-x86		Anthony Green
+x86		Anthony Green, Jon Beniston
 x86-64		Bo Thorsen
 
 Jesper Skov and Andrew Haley both did more than their fair share of
@@ -284,6 +286,8 @@ Thanks to Jim Blandy, who provided some useful feedback on the libffi
 interface.
 
 Andreas Tobler has done a tremendous amount of work on the testsuite.
+
+Alex Oliva solved the executable page problem for SElinux.
 
 The list above is almost certainly incomplete and inaccurate.  I'm
 happy to make corrections or additions upon request.
