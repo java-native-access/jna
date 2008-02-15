@@ -8,9 +8,9 @@ libffi
 
 <h1>libffi - a portable foreign function interface library</h1>
 
-<b>libffi-2.99.9</b> was released on February 15, 2008. You can ftp it
+<b>libffi-3.0.0</b> was released on February 15, 2008. You can ftp it
 from <a
-href="ftp://sourceware.org:/pub/libffi/libffi-2.99.9.tar.gz">sourceware.org:/pub/libffi/libffi-2.99.9.tar.gz</a>.
+href="ftp://sourceware.org:/pub/libffi/libffi-3.0.0.tar.gz">sourceware.org:/pub/libffi/libffi-3.0.0.tar.gz</a>.
 
 <p>
 
@@ -61,7 +61,8 @@ release was only tested on:
 <ul>
 <li>     arm oabi linux
 <li>     arm eabi linux
-<li>     hppa64 linux
+<li>     hppa linux
+<li>     mips o32 linux (little endian)
 <li>     powerpc darwin
 <li>     powerpc64 linux
 <li>     sparc solaris (SPARC V9 ABI)
@@ -156,16 +157,17 @@ frv		Anthony Green
 ia64		Hans Boehm
 m32r		Kazuhiro Inaoka
 m68k		Andreas Schwab
-mips		Anthony Green
+mips		Anthony Green, Casey Marshall
 mips64		David Daney
-pa		Randolph Chung
-powerpc		Geoffrey Keating
+pa		Randolph Chung, Dave Anglin, Andreas Tobler
+powerpc		Geoffrey Keating, Andreas Tobler, 
+			 David Edelsohn, John Hornkvist
 powerpc64	Jakub Jelinek
 s390		Gerhard Tonn, Ulrich Weigand
 sh		Kaz Kojima
 sh64		Kaz Kojima
 sparc		Anthony Green, Gordon Irlam
-x86		Anthony Green
+x86		Anthony Green, Jon Beniston
 x86-64		Bo Thorsen
 </pre>
 
@@ -183,6 +185,9 @@ interface.
 
 <p>
 Andreas Tobler has done a tremendous amount of work on the testsuite.
+
+<p>
+Alex Oliva solved the executable page problem for SElinux.
 
 <p>
 The list above is almost certainly incomplete and inaccurate.  I'm
