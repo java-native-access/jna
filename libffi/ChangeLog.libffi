@@ -1,5 +1,10 @@
 2008-02-14  Anthony Green  <green@redhat.com>
 
+	* configure.ac: Bump version to 2.99.5.
+	* configure: Rebuilt.
+	* Makefile.am (EXTRA_DIST): Add darwin64.S
+	* Makefile.in: Rebuilt.
+	* testsuite/lib/libffi-dg.exp: Remove libstdc++ bits from GCC tree.
 	* LICENSE: Update WARRANTY.
 
 2008-02-14  Anthony Green  <green@redhat.com>
