@@ -1,5 +1,26 @@
 2008-02-14  Anthony Green  <green@redhat.com>
 
+	* configure.ac: Bump version to 2.99.7.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* include/ffi.h.in LICENSE src/debug.c src/closures.c
+          src/ffitest.c src/s390/sysv.S src/s390/ffitarget.h
+          src/types.c src/m68k/ffitarget.h src/raw_api.c src/frv/ffi.c
+          src/frv/ffitarget.h src/sh/ffi.c src/sh/sysv.S
+          src/sh/ffitarget.h src/powerpc/ffitarget.h src/pa/ffi.c
+          src/pa/ffitarget.h src/pa/linux.S src/java_raw_api.c
+          src/cris/ffitarget.h src/x86/ffi.c src/x86/sysv.S
+          src/x86/unix64.S src/x86/win32.S src/x86/ffitarget.h
+          src/x86/ffi64.c src/x86/darwin.S src/ia64/ffi.c
+          src/ia64/ffitarget.h src/ia64/ia64_flags.h src/ia64/unix.S
+          src/sparc/ffi.c src/sparc/v9.S src/sparc/ffitarget.h
+          src/sparc/v8.S src/alpha/ffi.c src/alpha/ffitarget.h
+          src/alpha/osf.S src/sh64/ffi.c src/sh64/sysv.S
+          src/sh64/ffitarget.h src/mips/ffi.c src/mips/ffitarget.h
+          src/mips/n32.S src/mips/o32.S src/arm/ffi.c src/arm/sysv.S
+          src/arm/ffitarget.h src/prep_cif.c: Update license text.
+
+2008-02-14  Anthony Green  <green@redhat.com>
+
 	* README: Update tested platforms.
 	* configure.ac: Bump version to 2.99.6.
 	* configure: Rebuilt.
