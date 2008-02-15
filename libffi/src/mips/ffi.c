@@ -29,6 +29,16 @@
 
 #include <stdlib.h>
 
+#ifdef __GNUC__
+#  if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3))
+#    define USE__BUILTIN___CLEAR_CACHE 1
+#  endif
+#endif
+
+#ifndef USE__BUILTIN___CLEAR_CACHE
+#include <sys/cachectl.h>>
+#endif
+
 #ifdef FFI_DEBUG
 # define FFI_MIPS_STOP_HERE() ffi_stop_here()
 #else
@@ -616,8 +626,11 @@ ffi_prep_closure_loc (ffi_closure *closure,
   closure->fun = fun;
   closure->user_data = user_data;
 
+#ifdef USE__BUILTIN___CLEAR_CACHE
   __builtin___clear_cache(clear_location, clear_location + FFI_TRAMPOLINE_SIZE);
-
+#else
+  cacheflush (tramp, FFI_TRAMPOLINE_SIZE, ICACHE);
+#endif
   return FFI_OK;
 }
 

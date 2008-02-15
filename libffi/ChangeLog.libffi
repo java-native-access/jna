@@ -1,5 +1,17 @@
 2008-02-15  Anthony Green  <green@redhat.com>
 
+	* configure.ac: Bump version to 3.0.0,
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+
+2008-02-15  David Daney  <ddaney@avtrex.com>
+
+	* src/mips/ffi.c (USE__BUILTIN___CLEAR_CACHE):
+	Define (conditionally), and use it to include cachectl.h.
+	(ffi_prep_closure_loc): Fix cache flushing.
+	* src/mips/ffitarget.h (_ABIN32, _ABI64, _ABIO32): Define.
+
+2008-02-15  Anthony Green  <green@redhat.com>
+
         * man/ffi_call.3, man/ffi_prep_cif.3, man/ffi.3:
 	Update dates and remove all references to ffi_prep_closure.
 	* configure.ac: Bump version to 2.99.9.
