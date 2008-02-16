@@ -1,5 +1,9 @@
 2008-02-15  Anthony Green  <green@redhat.com>
 
+	* index.html: 3.0.1
+
+2008-02-15  Anthony Green  <green@redhat.com>
+
 	* index.html: Add x86-64 darwin and sparc results.  Thanks Andreas.
 
 2008-02-15  Anthony Green  <green@redhat.com>
