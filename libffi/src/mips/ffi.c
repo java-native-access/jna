@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
    ffi.c - Copyright (c) 1996, 2007 Red Hat, Inc.
+           Copyright (c) 2008       David Daney
    
    MIPS Foreign Function Interface 
 
@@ -36,7 +37,7 @@
 #endif
 
 #ifndef USE__BUILTIN___CLEAR_CACHE
-#include <sys/cachectl.h>>
+#include <sys/cachectl.h>
 #endif
 
 #ifdef FFI_DEBUG
@@ -629,7 +630,7 @@ ffi_prep_closure_loc (ffi_closure *closure,
 #ifdef USE__BUILTIN___CLEAR_CACHE
   __builtin___clear_cache(clear_location, clear_location + FFI_TRAMPOLINE_SIZE);
 #else
-  cacheflush (tramp, FFI_TRAMPOLINE_SIZE, ICACHE);
+  cacheflush (clear_location, FFI_TRAMPOLINE_SIZE, ICACHE);
 #endif
   return FFI_OK;
 }

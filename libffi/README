@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.0 was released on February 15, 2008. Check the libffi web
+libffi-3.0.1 was released on February 15, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -151,6 +151,9 @@ arguments' test).
 
 History
 =======
+
+3.0.1 Feb-15-08
+        Fix instruction cache flushing bug on MIPS.
 
 3.0.0 Feb-15-08
         Many changes, mostly thanks to the GCC project.

@@ -1,9 +1,21 @@
 2008-02-15  Anthony Green  <green@redhat.com>
 
-	* configure.ac: Bump version to 3.0.0,
+	* configure.ac: Bump version to 3.0.1.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.
+	* README: Update for new release.
+
+2008-02-15  David Daney	 <ddaney@avtrex.com>
+
+	* src/mips/ffi.c: Remove extra '>' from include directive.
+	(ffi_prep_closure_loc): Use clear_location instead of tramp.
+
+2008-02-15  Anthony Green  <green@redhat.com>
+
+	* configure.ac: Bump version to 3.0.0.
 	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
 
-2008-02-15  David Daney  <ddaney@avtrex.com>
+2008-02-15  David Daney	 <ddaney@avtrex.com>
 
 	* src/mips/ffi.c (USE__BUILTIN___CLEAR_CACHE):
 	Define (conditionally), and use it to include cachectl.h.
