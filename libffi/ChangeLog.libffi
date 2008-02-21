@@ -1,3 +1,16 @@
+2008-02-21  Anthony Green  <green@redhat.com>
+
+	* configure.ac: Bump version to 3.0.2.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.
+	* README: Update for new release.
+
+2008-02-21  Björn König <bkoenig@alpha-tierchen.de>
+
+	* src/x86/freebsd.S: New file.
+	* configure.ac: Add x86 FreeBSD support.
+	* Makefile.am: Ditto.
+
 2008-02-15  Anthony Green  <green@redhat.com>
 
 	* configure.ac: Bump version to 3.0.1.

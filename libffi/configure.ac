@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.59)
 
-AC_INIT([libffi], [3.0.1], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.2], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -67,6 +67,9 @@ case "$host" in
 	TARGET=PA_HPUX; TARGETDIR=pa
 	;;
 
+  i386-*-freebsd*)
+	TARGET=X86_FREEBSD; TARGETDIR=x86
+	;;
   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw*)
 	TARGET=X86_WIN32; TARGETDIR=x86
 	;;
@@ -152,6 +155,7 @@ fi
 AM_CONDITIONAL(MIPS, test x$TARGET = xMIPS)
 AM_CONDITIONAL(SPARC, test x$TARGET = xSPARC)
 AM_CONDITIONAL(X86, test x$TARGET = xX86)
+AM_CONDITIONAL(X86_FREEBSD, test x$TARGET = xX86_FREEBSD)
 AM_CONDITIONAL(X86_WIN32, test x$TARGET = xX86_WIN32)
 AM_CONDITIONAL(X86_DARWIN, test x$TARGET = xX86_DARWIN)
 AM_CONDITIONAL(ALPHA, test x$TARGET = xALPHA)
