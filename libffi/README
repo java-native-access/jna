@@ -88,7 +88,7 @@ Configure has many other options. Use "configure --help" to see them all.
 Once configure has finished, type "make". Note that you must be using
 GNU make.  You can ftp GNU make from prep.ai.mit.edu:/pub/gnu.
 
-To ensure that libffi is working as advertised, type "make test".
+To ensure that libffi is working as advertised, type "make check".
 
 To install the library and header files, type "make install".
 

@@ -1,3 +1,7 @@
+2008-02-21  Thomas Heller <theller@ctypes.org>
+
+	* README: Change "make test" to "make check".
+
 2008-02-21  Anthony Green  <green@redhat.com>
 
 	* configure.ac: Bump version to 3.0.2.
