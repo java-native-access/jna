@@ -1,3 +1,8 @@
+2008-02-22  Thomas Heller <theller@ctypes.org>
+
+	* configure.ac: Add x86 OpenBSD support.
+	* configure: Rebuilt.
+
 2008-02-21  Thomas Heller <theller@ctypes.org>
 
 	* README: Change "make test" to "make check".
