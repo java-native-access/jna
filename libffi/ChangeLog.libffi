@@ -1,5 +1,9 @@
 2008-02-22  Anthony Green  <green@redhat.com>
 
+	* README: Clean up list of tested platforms.
+
+2008-02-22  Anthony Green  <green@redhat.com>
+
 	* configure.ac: Bump version to 3.0.3.
 	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
 	* libtool-version: Increment revision.
