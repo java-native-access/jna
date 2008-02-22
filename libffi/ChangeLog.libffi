@@ -1,3 +1,9 @@
+2008-02-22  Bjoern Koenig  <bkoenig@alpha-tierchen.de>
+	    Andreas Tobler  <a.tobler@schweiz.org>
+
+	* configure.ac: Add amd64-*-freebsd* target.
+	* configure: Regenerate.
+
 2008-02-22  Thomas Heller <theller@ctypes.org>
 
 	* configure.ac: Add x86 OpenBSD support.
