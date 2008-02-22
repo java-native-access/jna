@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.2 was released on February 21, 2008. Check the libffi web
+libffi-3.0.3 was released on February 22, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -53,8 +53,10 @@ release was only tested on:
      x86 darwin
      x86 freebsd
      x86 linux
+     x86 openbsd
      x86-64 linux
      x86-64 OS X
+     x86-64 freebsd
      
 Please send additional platform test results to
 libffi-discuss@sourceware.org.
@@ -89,6 +91,7 @@ Once configure has finished, type "make". Note that you must be using
 GNU make.  You can ftp GNU make from prep.ai.mit.edu:/pub/gnu.
 
 To ensure that libffi is working as advertised, type "make check".
+This will require that you have DejaGNU installed.
 
 To install the library and header files, type "make install".
 
@@ -152,6 +155,11 @@ arguments' test).
 
 History
 =======
+
+3.0.3 Feb-22-08
+        Enable x86 OpenBSD thanks to Thomas Heller, and
+	x86-64 FreeBSD thanks to Björn König and Andreas Tobler.
+	Clean up test instruction in README.
 
 3.0.2 Feb-21-08
         Improved x86 FreeBSD support.
