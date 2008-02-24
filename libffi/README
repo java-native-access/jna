@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.3 was released on February 22, 2008. Check the libffi web
+libffi-3.0.4 was released on February 24, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -157,6 +157,9 @@ arguments' test).
 
 History
 =======
+
+3.0.4 Feb-24-08
+        Fix x86 OpenBSD configury.
 
 3.0.3 Feb-22-08
         Enable x86 OpenBSD thanks to Thomas Heller, and
