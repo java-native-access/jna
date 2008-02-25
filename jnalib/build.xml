@@ -219,6 +219,7 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-x86.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparcv9.jar" overwrite="true"/>
@@ -502,6 +503,9 @@
       <zipfileset src="${dist}/freebsd-i386.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-i386"/>
+      <zipfileset src="${dist}/freebsd-amd64.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/freebsd-amd64"/>
     </jar>
     <copy todir="${dist}">
       <fileset dir="${build}">
