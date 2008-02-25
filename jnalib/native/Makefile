@@ -122,7 +122,7 @@ endif
 
 ifeq ($(OS),solaris)
 ifeq ($(ARCH),)
-ARCH=$(shell uname -n)
+ARCH=$(shell uname -p)
 endif
 PCFLAGS+=-fPIC
 CDEFINES+=-DHAVE_PROTECTION
@@ -134,6 +134,12 @@ ifeq ($(ARCH), sparcv9)
   CC += -m64  
   LDFLAGS += -m64 
 endif
+endif
+
+# Enable 64-bit builds if the arch demands it
+ifeq ($(ARCH),amd64)
+  CC += -m64
+  LDFLAGS += -m64
 endif
 
 ifeq ($(OS),darwin)

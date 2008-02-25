@@ -264,11 +264,11 @@
     <replaceregexp match="^CHECKSUM=.*"
                    replace="CHECKSUM=${jni.md5} ${comment}"
                    file="native/Makefile" byline="true"/>
-    <!-- ensure ARCH is set properly for various platforms -->
-    <!-- use ANT_OPTS=-d64 to build sparcv9 on sparc or 64-bit on OSX -->
+    <!-- ensure ARCH is set properly for 64-bit capable platforms -->
+    <!-- use ANT_OPTS=-d64 to build 64-bit if not the platform default -->
     <condition property="ARCH" value="${os.arch}">
       <or>
-        <os name="SunOS"/>
+        <os arch="sparcv9"/>
         <os arch="amd64"/>
       </or>
     </condition>
