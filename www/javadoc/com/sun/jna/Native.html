@@ -46,14 +46,14 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0</font></EM>
+<b>JNA API</><font size=-1> 3.0.1</font></EM>
 </TD>
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../../com/sun/jna/MethodResultContext.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../com/sun/jna/Native.W32Cleanup.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?com/sun/jna/Native.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Native.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -125,7 +125,7 @@ Provides generation of invocation plumbing for a defined native
 <DL>
 <DT><B>Author:</B></DT>
   <DD>Todd Fast, todd.fast@sun.com, twall@users.sf.net</DD>
-<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><CODE>Library</CODE></A></DL>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><CODE>Native.DeleteNativeLibrary</CODE></A></DL>
 <HR>
 
 <P>
@@ -140,7 +140,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;class</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.W32Cleanup.html" title="class in com.sun.jna">Native.W32Cleanup</A></B></CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna">Native.DeleteNativeLibrary</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For internal use only.</TD>
@@ -731,7 +731,7 @@ static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-
 <DL>
 <DD>Find the library interface corresponding to the given class.  Checks
  all ancestor classes for a declaring class which implements 
- <A HREF="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><CODE>Library</CODE></A>.
+ <A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><CODE>Native.DeleteNativeLibrary</CODE></A>.
 <P>
 <DD><DL>
 </DL>
@@ -748,7 +748,7 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.htm
  class.
 <P>
 <DD><DL>
-<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><CODE>Library</CODE></A></DL>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><CODE>Native.DeleteNativeLibrary</CODE></A></DL>
 </DD>
 </DL>
 <HR>
@@ -759,9 +759,10 @@ getTypeMapper</H3>
 public static <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A> <B>getTypeMapper</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Return the preferred <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the given native interface.
+ See <A HREF="../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><CODE>Library.OPTION_TYPE_MAPPER</CODE></A>.
 <P>
 <DD><DL>
-<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><CODE>Library.OPTION_TYPE_MAPPER</CODE></A></DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -771,10 +772,11 @@ getStructureAlignment</H3>
 <PRE>
 public static int <B>getStructureAlignment</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
-<DD>Return the preferred structure alignment for the given native interface.
+<DD>Return the preferred structure alignment for the given native interface. 
+ See <A HREF="../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT"><CODE>Library.OPTION_STRUCTURE_ALIGNMENT</CODE></A>.
 <P>
 <DD><DL>
-<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT"><CODE>Library.OPTION_STRUCTURE_ALIGNMENT</CODE></A></DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -846,7 +848,7 @@ public static <A HREF="../../../com/sun/jna/Library.html" title="interface in co
 <DL>
 <DD>Returns a synchronized (thread-safe) library backed by the specified
  library.  This wrapping will prevent simultaneous invocations of any
- functions mapped to a given <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A>.  Note that the 
+ functions mapped to a given <A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><CODE>Native.DeleteNativeLibrary</CODE></A>.  Note that the 
  native library may still be sensitive to being called from different
  threads.
  <p>
@@ -947,14 +949,14 @@ public static void <B>main</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0</font></EM>
+<b>JNA API</><font size=-1> 3.0.1</font></EM>
 </TD>
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../../com/sun/jna/MethodResultContext.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../com/sun/jna/Native.W32Cleanup.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../index.html?com/sun/jna/Native.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Native.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
