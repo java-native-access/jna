@@ -249,7 +249,7 @@ ffi_closure_SYSV_inner (closure, respp, args)
      void **respp;
      void *args;
 {
-  // our various things...
+  /* our various things...  */
   ffi_cif       *cif;
   void         **arg_area;
 
