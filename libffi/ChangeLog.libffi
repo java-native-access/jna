@@ -1,4 +1,10 @@
 2008-02-26  Anthony Green  <green@redhat.org>
+            Thomas Heller <theller@ctypes.org>
+
+	* include/ffi.h.in: Change void (*)() to void (*)(void).
+
+2008-02-26  Anthony Green  <green@redhat.org>
+            Thomas Heller <theller@ctypes.org>
 
 	* src/alpha/ffi.c: Change void (*)() to void (*)(void).
 	src/alpha/osf.S, src/arm/ffi.c, src/frv/ffi.c, src/ia64/ffi.c,
