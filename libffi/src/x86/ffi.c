@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 1996, 1998, 1999, 2001, 2007  Red Hat, Inc.
+   ffi.c - Copyright (c) 1996, 1998, 1999, 2001, 2007, 2008  Red Hat, Inc.
            Copyright (c) 2002  Ranjit Mathew
            Copyright (c) 2002  Bo Thorsen
            Copyright (c) 2002  Roger Sayle
@@ -180,15 +180,15 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 }
 
 extern void ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *,
-			  unsigned, unsigned, unsigned *, void (*fn)());
+			  unsigned, unsigned, unsigned *, void (*fn)(void));
 
 #ifdef X86_WIN32
 extern void ffi_call_STDCALL(void (*)(char *, extended_cif *), extended_cif *,
-			  unsigned, unsigned, unsigned *, void (*fn)());
+			  unsigned, unsigned, unsigned *, void (*fn)(void));
 
 #endif /* X86_WIN32 */
 
-void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
+void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 {
   extended_cif ecif;
 
@@ -423,16 +423,16 @@ ffi_prep_args_raw(char *stack, extended_cif *ecif)
 
 extern void
 ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *, unsigned, 
-	      unsigned, unsigned *, void (*fn)());
+	      unsigned, unsigned *, void (*fn)(void));
 
 #ifdef X86_WIN32
 extern void
 ffi_call_STDCALL(void (*)(char *, extended_cif *), extended_cif *, unsigned,
-		 unsigned, unsigned *, void (*fn)());
+		 unsigned, unsigned *, void (*fn)(void));
 #endif /* X86_WIN32 */
 
 void
-ffi_raw_call(ffi_cif *cif, void (*fn)(), void *rvalue, ffi_raw *fake_avalue)
+ffi_raw_call(ffi_cif *cif, void (*fn)(void), void *rvalue, ffi_raw *fake_avalue)
 {
   extended_cif ecif;
   void **avalue = (void **)fake_avalue;

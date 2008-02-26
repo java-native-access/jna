@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
    ffi.c - Copyright (c) 2003, 2004 Kaz Kojima
+           Copyright (c) 2008 Anthony Green
    
    SuperH SHmedia Foreign Function Interface 
 
@@ -239,12 +240,12 @@ extern void ffi_call_SYSV(void (*)(char *, extended_cif *),
 			  /*@out@*/ extended_cif *, 
 			  unsigned, unsigned, long long,
 			  /*@out@*/ unsigned *, 
-			  void (*fn)());
+			  void (*fn)(void));
 /*@=declundef@*/
 /*@=exportheader@*/
 
 void ffi_call(/*@dependent@*/ ffi_cif *cif, 
-	      void (*fn)(), 
+	      void (*fn)(void), 
 	      /*@out@*/ void *rvalue, 
 	      /*@dependent@*/ void **avalue)
 {

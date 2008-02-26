@@ -1,4 +1,15 @@
-2008-02-24  Anthony Green  <green@spindazzle.org>
+2008-02-26  Anthony Green  <green@redhat.org>
+
+	* src/alpha/ffi.c: Change void (*)() to void (*)(void).
+	src/alpha/osf.S, src/arm/ffi.c, src/frv/ffi.c, src/ia64/ffi.c,
+	src/ia64/unix.S, src/java_raw_api.c, src/m32r/ffi.c,
+	src/mips/ffi.c, src/pa/ffi.c, src/pa/hpux32.S, src/pa/linux.S,
+	src/powerpc/ffi.c, src/powerpc/ffi_darwin.c, src/raw_api.c,
+	src/s390/ffi.c, src/sh/ffi.c, src/sh64/ffi.c, src/sparc/ffi.c,
+	src/x86/ffi.c, src/x86/unix64.S, src/x86/darwin64.S,
+	src/x86/ffi64.c: Ditto.
+
+2008-02-24  Anthony Green  <green@redhat.org>
 
 	* configure.ac: Accept openbsd*, not just openbsd.
 	Bump version to 3.0.4.

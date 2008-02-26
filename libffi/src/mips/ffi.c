@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 1996, 2007 Red Hat, Inc.
+   ffi.c - Copyright (c) 1996, 2007, 2008  Red Hat, Inc.
            Copyright (c) 2008       David Daney
    
    MIPS Foreign Function Interface 
@@ -494,14 +494,14 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 /* Low level routine for calling O32 functions */
 extern int ffi_call_O32(void (*)(char *, extended_cif *, int, int), 
 			extended_cif *, unsigned, 
-			unsigned, unsigned *, void (*)());
+			unsigned, unsigned *, void (*)(void));
 
 /* Low level routine for calling N32 functions */
 extern int ffi_call_N32(void (*)(char *, extended_cif *, int, int), 
 			extended_cif *, unsigned, 
-			unsigned, unsigned *, void (*)());
+			unsigned, unsigned *, void (*)(void));
 
-void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
+void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 {
   extended_cif ecif;
 
