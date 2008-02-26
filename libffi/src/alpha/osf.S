@@ -359,4 +359,8 @@ $LASFDE3:
 	.byte	16		# uleb128 offset 16*-8
 	.align 3
 $LEFDE3:
+
+#ifdef __linux__
+	.section	.note.GNU-stack,"",@progbits
+#endif
 #endif
