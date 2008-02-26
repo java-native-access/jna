@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-02-05">
+<meta name="date" content="2008-02-26">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -361,20 +361,31 @@ Libc.fclose(fp)
 <a name=faq></a>
 <h3>Frequently Asked Questions (FAQ)</h3>
 <ul>
+<li><a href="#char_buffer">How do I read back a string?</a>
 <li><a href="#w32link">My library mapping causes an UnsatisfiedLinkError</a>
 <li><a href="#crash">My library sometimes causes a VM crash</a>
 <li><a href="#w32crash">My Windows library mapping causes a VM crash on every call</a>
 <li><a href="#ptr_values">How do I get an arbitrary Pointer value?</a>
+<li><a href="#struct_debug">My structure has the wrong contents.  What did I do wrong?</a>
 <li><a href="#j2me">Does JNA work with J2ME/Windows Mobile?</a>
 <li><a href="#performance">How does JNA performance compared to custom JNI?</a>
 </ul>
+<a name=char_buffer></a>
+<h4>How do I read back a function's string result?</h4>
+Suppose you have a function:<br>
+<blockquote><code><pre>
+// Returns the number of characters written to the buffer
+int getString(char* buffer, int bufsize);
+</pre></code></blockquote>
+The native code is expecting a fixed-size buffer, which it will fill in with the requested data.  A Java <code>String</code> is not appropriate here, since <code>String</code>s are immutable.  Nor is a Java <code>StringBuffer</code>, since the native code only fills the buffer and does not change its size.  The appropriate argument type would be either <code>byte[]</code>, <code>Memory</code>, or an NIO <code>Buffer</code>, with the size of the object passed as the second argument.  The method <a href="javadoc/com/sun/jna/Native#toString(byte[])">Native.toString(byte[])</a> may then be used to convert the array of byte into a Java <code>String</code>.
+
 <a name=w32link></a>
 <h4>My library mapping causes an UnsatisfiedLinkError</h4>
 Use a dump utility to examine the names of your exported functions to make sure they match (<a href=http://linux.die.net/man/1/nm>nm</a> on linux, <a href=http://www.dependencywalker.com>depends</a> on Windows).  On Windows, if the functions have a suffix of the form "@NN", you need to pass a StdCallFunctionMapper as an option when initializing your library interface (<a href="#stdcallmapper">see here</a>).  In general, you can use a function mapper (<a href="javadoc/com/sun/jna/FunctionMapper.html">FunctionMapper</a>) to change the name of the looked-up method, or an invocation mapper (<a href="javadoc/com/sun/jna/InvocationMapper.html">InvocationMapper</a>) for more extensive control over the method invocation.
 
 <a name=crash></a>
 <h4>My library sometimes causes a VM crash</h4>
-Double check the signature of the method causing the crash to ensure all arguments are of the appropriate size and type.  Be especially careful with native pointer variations.
+Double check the signature of the method causing the crash to ensure all arguments are of the appropriate size and type.  Be especially careful with native pointer variations.  See also <a href="#struct_debug">information on debugging structure definitions</a>.
 
 <a name=w32crash></a>
 <h4>My Windows library mapping causes a VM crash on every call</h4>
@@ -392,6 +403,10 @@ First, you probably don't actually want an <em>arbitrary</em> value.  Ask yourse
 If you <em>really</em>, <em>really</em>, <em>HAVE</em> to convert an integer
 value into a Pointer, you can do something like this:<br>
 <code>new IntByReference(value).getPointer().getPointer(0)</code>
+
+<a name=struct_debug></a>
+<h4>Debugging Structure Definitions</h4>
+Normally when you invoke <code>toString</code> on a <code>Structure</code>, it will print each defined field with its calculated memory offset.  If when launching the VM, you pass it "-Djna.dump_memory=true", <code>toString</code> will also dump the contents of the corresponding native memory.  This is useful to determine if you've added or omitted a field, or chosen an incorrect size.  Viewing the memory as bytes usually makes it clear where field boundaries should be, assuming the memory has been initialized by native code.
 
 <a name=j2me></a>
 <h4>Does JNA work with J2ME/Windows Mobile?</h4>
@@ -418,7 +433,7 @@ custom JNI.
 <p>
 Java primitive arrays are generally slower to use than memory
 (Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
-be pinned and possibly copied across the native call.
+be pinned and possibly copied across the native call, since the Java array is not necessarily contiguously allocated.
 
 <a href=#top>Top</a>
 <a name=demos></a>
