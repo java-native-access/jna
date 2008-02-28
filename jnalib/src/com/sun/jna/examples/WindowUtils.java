@@ -26,7 +26,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -45,7 +44,6 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
@@ -95,10 +93,6 @@ import com.sun.jna.ptr.PointerByReference;
  * masked windows to implicitly force PopupFactory to use a heavyweight
  * window and avoid clipping.
  * <p>
- * NOTE: {@link #setWindowTransparent} on X11 doesn't composite
- * entirely correctly; depending on what's drawn in the window it mey be
- * more or less noticable. 
- * <p>
  * NOTE: Neither shaped windows nor transparency
  * currently works with Java 1.4 under X11. This is at least partly due
  * to 1.4 using multiple X11 windows for a single given Java window. It
@@ -117,10 +111,11 @@ import com.sun.jna.ptr.PointerByReference;
 // TODO: setWindowMask() should accept a threshold; some cases want a
 // 50% threshold, some might want zero/non-zero
 public class WindowUtils {
-    public static boolean doPaint;
+
     private static final String TRANSPARENT_OLD_BG = "transparent-old-bg";
     private static final String TRANSPARENT_OLD_OPAQUE = "transparent-old-opaque";
     private static final String TRANSPARENT_ALPHA = "transparent-alpha";
+
     /** Use this to clear a window mask. */
     public static final Shape MASK_NONE = null;
 
@@ -161,7 +156,7 @@ public class WindowUtils {
     }
     /**
      * This can be installed over a {@link JLayeredPane} in order to
-     * listen for repaint requests. The {@link #update} method will be
+     * listen for repaint requests. The content's repaint method will be
      * invoked whenever any part of the ancestor window is repainted.
      */
     protected static class RepaintTrigger extends JComponent {
@@ -751,7 +746,7 @@ public class WindowUtils {
             }
             boolean isTransparent = w.getBackground() != null
                 && w.getBackground().getAlpha() == 0;
-            if (!(transparent ^ isTransparent))
+            if (transparent == isTransparent)
                 return;
             whenDisplayable(w, new Runnable() {
                 public void run() {
@@ -1162,46 +1157,59 @@ public class WindowUtils {
             whenDisplayable(w, action);
         }
 
-        private class X11TransparentContent extends JPanel {
-            private boolean transparent;
+        private class X11TransparentContent extends TransparentContent {
             
             public X11TransparentContent(Container oldContent) {
-                super(new BorderLayout());
-                add(oldContent, BorderLayout.CENTER);
-                setTransparent(true);
-                if (oldContent instanceof JPanel) {
-                    ((JComponent)oldContent).setOpaque(false);
+                super(oldContent);
+            }
+            
+            private Memory buffer;
+            private int[] pixels;
+            private int[] pixel = new int[4];
+            // Painting directly to the original Graphics 
+            // fails to properly composite unless the destination
+            // is pure black.  Too bad.
+            protected void paintDirect(BufferedImage buf, Rectangle bounds) {
+                Window window = SwingUtilities.getWindowAncestor(this);
+                X11 x11 = X11.INSTANCE;
+                X11.Display dpy = x11.XOpenDisplay(null);
+                X11.Window win = getDrawable(window);
+                Point offset = new Point();
+                win = getContentWindow(window, dpy, win, offset);
+                X11.GC gc = x11.XCreateGC(dpy, win, new NativeLong(0), null);
+                
+                Raster raster = buf.getData();
+                int w = bounds.width;
+                int h = bounds.height;
+                if (buffer == null || buffer.getSize() != w*h*4) {
+                    buffer = new Memory(w*h*4);
+                    pixels = new int[w*h];
                 }
-            }
-            
-            public void setTransparent(boolean transparent) {
-                this.transparent = transparent;
-                setOpaque(!transparent);
-                repaint();
-            }
-            
-            public void paint(Graphics gr) {
-                if (transparent) {
-                    int w = getWidth();
-                    int h = getHeight();
-                    if (w > 0 && h > 0) {
-                        BufferedImage buf =
-                            new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-                        
-                        Graphics2D g = buf.createGraphics();
-                        g.setComposite(AlphaComposite.Clear);
-                        g.fillRect(0, 0, w, h);
-                        g.setComposite(AlphaComposite.SrcOver);
-                        super.paint(g);
-                        g = (Graphics2D)gr.create();
-                        g.setComposite(AlphaComposite.Src);
-                        g.drawImage(buf, 0, 0, w, h, null);
-                        g.dispose();
+                for (int y=0;y<h;y++) {
+                    for (int x=0;x < w;x++) {
+                        raster.getPixel(x, y, pixel);
+                        int alpha = pixel[3]&0xFF;
+                        int red = pixel[2]&0xFF;
+                        int green = pixel[1]&0xFF;
+                        int blue = pixel[0]&0xFF;
+                        // TODO: use visual RGB masks to position bits
+                        // This layout (ABGR) works empirically
+                        pixels[y*w + x] = (alpha<<24)|(blue<<16)|(green<<8)|red;
                     }
                 }
-                else {
-                    super.paint(gr);
-                }
+                X11.XWindowAttributes xwa = new X11.XWindowAttributes();
+                x11.XGetWindowAttributes(dpy, win, xwa);
+                X11.XImage image =
+                    x11.XCreateImage(dpy, xwa.visual, 32, X11.ZPixmap,
+                                     0, buffer, w, h, 32, w * 4);
+                buffer.write(0, pixels, 0, pixels.length);
+                offset.x += bounds.x;
+                offset.y += bounds.y;
+                x11.XPutImage(dpy, win, gc, image, 0, 0, offset.x, offset.y, w, h);
+                
+                x11.XFree(image.getPointer());
+                x11.XFreeGC(dpy, gc);
+                x11.XCloseDisplay(dpy);
             }
         }
         
@@ -1219,7 +1227,7 @@ public class WindowUtils {
             }
             boolean isTransparent = w.getBackground() != null
                 && w.getBackground().getAlpha() == 0;
-            if (!(transparent ^ isTransparent))
+            if (transparent == isTransparent)
                 return;
             whenDisplayable(w, new Runnable() {
                 public void run() {

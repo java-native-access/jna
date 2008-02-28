@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,30 +12,36 @@
  */
 package com.sun.jna.examples;
 
+import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Shape;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
-
-import javax.swing.*;
-import java.lang.ref.WeakReference;
-import java.awt.*;
-import java.awt.image.*;
 
 import junit.framework.TestCase;
 
@@ -93,6 +99,77 @@ public class WindowUtilsTest extends TestCase {
     private static final int Y = 100;
     private static final int W = 100;
     private static final int H = 100;
+    
+    public void xtestReveal() throws Exception {
+        final int SIZE = 200;
+        System.setProperty("sun.java2d.noddraw", "true");
+        GraphicsConfiguration gconfig =
+            WindowUtils.getAlphaCompatibleGraphicsConfiguration();
+        Window w;
+        Container content;
+        if (true) {
+            JFrame frame = new JFrame(getName(), gconfig);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            content = frame.getContentPane();
+            w = frame;
+        }
+        else {
+            Frame frame = JOptionPane.getRootFrame();
+            JWindow window = new JWindow(frame, gconfig);
+            content = window.getContentPane();
+            w = window;
+        }
+        final Window f = w;
+        WindowUtils.setWindowTransparent(f, true);
+        content.add(new JButton("Quit") {
+            {
+                addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
+            }
+        }, BorderLayout.SOUTH);
+        content.add(new JComponent() {
+            public Dimension getPreferredSize() {
+                return new Dimension(SIZE, SIZE);
+            }
+            protected void paintComponent(Graphics graphics) {
+                Graphics2D g = (Graphics2D)graphics.create();
+                g.setComposite(AlphaComposite.Clear);
+                g.fillRect(0,0,SIZE,SIZE);
+                g.dispose();
+
+                g = (Graphics2D)graphics.create();
+                Color[] colors = {
+                    new Color(0,0,0),
+                    new Color(0,0,0,128),
+                    new Color(128,128,128),
+                    new Color(128,128,128,128),
+                    new Color(255,255,255),
+                    new Color(255,255,255,128),
+                };
+                for (int i=0;i < colors.length;i++) {
+                    g.setColor(colors[i]);
+                    g.fillRect((SIZE * i)/colors.length, 0,
+                               (SIZE + colors.length-1)/colors.length, SIZE);
+                }
+                g.setColor(Color.red);
+                g.drawRect(0, 0, SIZE-1, SIZE-1);
+                g.dispose();
+                SwingUtilities.getWindowAncestor(this).toFront();
+            }
+        });
+        f.pack();
+        f.addMouseListener(handler);
+        f.addMouseMotionListener(handler);
+        f.setLocation(100, 100);
+        f.setVisible(true);
+        while (f.isVisible()) {
+            Thread.sleep(1000);
+            //f.repaint();
+        }
+    }
 
     // Expect failure on windows and x11, since transparent pixels are not 
     // properly captured by java.awt.Robot
@@ -296,6 +373,31 @@ public class WindowUtilsTest extends TestCase {
                 fail("Timed out waiting for forcer to be GC'd");
         }
         assertNull("Forcer not GC'd", ref.get());
+    }
+    
+    public void testWindowDisposeBug() throws Exception {
+        final JFrame w = new JFrame(getName());
+        w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        w.getContentPane().add(new JLabel(getName()));
+
+        WindowUtils.setWindowMask(w, new Area(new Rectangle(600, 20)));
+        w.pack();
+        // small window, no bug.  big window, bug.
+        w.setSize(600, 600);
+        w.setResizable(false);
+        w.setVisible(true);
+        final Shape mask = new Rectangle(0, 0, w.getWidth(), w.getHeight());
+        while (true) {
+            System.gc();
+            Thread.sleep(50);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    WindowUtils.setWindowMask(w, mask);
+                    Window[] owned = w.getOwnedWindows();
+                    System.err.println(owned.length + ": " + Arrays.asList(w.getOwnedWindows()));
+                }
+            });
+        }
     }
     
     public static void main(String[] args) {
