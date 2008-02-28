@@ -221,6 +221,7 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-x86.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparcv9.jar" overwrite="true"/>
     <delete failOnError="false" includeEmptyDirs="true">
@@ -494,6 +495,9 @@
       <zipfileset src="${dist}/sunos-x86.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
+      <zipfileset src="${dist}/sunos-amd64.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/sunos-amd64"/>
       <zipfileset src="${dist}/sunos-sparc.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparc"/>
