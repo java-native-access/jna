@@ -43,6 +43,8 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
+import com.sun.jna.Platform;
+
 import junit.framework.TestCase;
 
 // NOTE: java.awt.Robot can't properly capture transparent pixels
@@ -340,6 +342,9 @@ public class WindowUtilsTest extends TestCase {
     
     public void testDisposeHeavyweightForcer() throws Exception {
 		if (GraphicsEnvironment.isHeadless())
+			return;
+		// Forcer not required on OSX
+		if (Platform.isMac())
 			return;
 
 		Frame root = JOptionPane.getRootFrame();
