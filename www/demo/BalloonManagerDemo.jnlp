@@ -23,6 +23,28 @@
     <property name="jna.library.path" value="/usr/X11R6/lib:/usr/lib32:/usr/lib"/>
     <nativelib href="linux-i386.jar"/>
   </resources>
+  <resources os="Linux" arch="amd64">
+    <property name="jna.library.path" value="/usr/X11R6/lib:/usr/lib"/>
+    <nativelib href="linux-amd64.jar"/>
+  </resources>
+  <resources os="FreeBSD" arch="i386">
+    <nativelib href="freebsd-i386.jar"/>
+  </resources>
+  <resources os="FreeBSD" arch="amd64">
+    <nativelib href="freebsd-amd64.jar"/>
+  </resources>
+  <resources os="SunOS" arch="x86">
+    <nativelib href="sunos-x86.jar"/>
+  </resources>
+  <resources os="SunOS" arch="amd64">
+    <nativelib href="sunos-amd64.jar"/>
+  </resources>
+  <resources os="SunOS" arch="sparc">
+    <nativelib href="sunos-sparc.jar"/>
+  </resources>
+  <resources os="SunOS" arch="sparcv9">
+    <nativelib href="sunos-sparcv9.jar"/>
+  </resources>
   <resources os="Mac">
     <nativelib href="darwin.jar"/>
   </resources>
