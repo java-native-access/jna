@@ -518,10 +518,8 @@ public abstract class Structure {
         Class nativeType = structField.type;
         ToNativeConverter converter = structField.writeConverter;
         if (converter != null) {
-            value = converter.toNative(value, 
-                    new StructureWriteContext(this, structField.field));
-            // Assume any null values are pointers
-            nativeType = value != null ? value.getClass() : Pointer.class;
+            value = converter.toNative(value, new StructureWriteContext(this, structField.field));
+            nativeType = converter.nativeType();
         }
 
         // Java strings get converted to C strings, where a Pointer is used
@@ -649,7 +647,8 @@ public abstract class Structure {
         }
         else {
         	String msg = "Structure field \"" + structField.name
-        	    + "\" was declared as " + nativeType 
+        	    + "\" was declared as " + structField.type
+        	    + (structField.type == nativeType ? "" : " (native type " + nativeType + ")")
         	    + ", which is not supported within a Structure";
             throw new IllegalArgumentException(msg);
         }

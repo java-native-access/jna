@@ -73,7 +73,9 @@ public abstract class IntegerType extends Number implements NativeMapped {
     }
 
     public Object fromNative(Object nativeValue, FromNativeContext context) {
-        long value = ((Number) nativeValue).longValue();
+        // be forgiving of null values read from memory
+        long value = nativeValue == null
+            ? 0 : ((Number) nativeValue).longValue();
         try {
             IntegerType number = (IntegerType) getClass().newInstance();
             number.setValue(value);

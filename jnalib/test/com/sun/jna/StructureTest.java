@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.StructureTest.VariableSizeTest.VariableSizedStructure;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
@@ -727,5 +728,14 @@ public class StructureTest extends TestCase {
         VariableSizedStructure s = new VariableSizedStructure(EXPECTED);
         assertEquals("Wrong string returned from variable sized struct",
                      EXPECTED, lib.returnStringFromVariableSizedStructure(s));
+    }
+    
+    public void testNativeMappedWrite() {
+    	class TestStructure extends Structure {
+    		public ByteByReference ref;
+    	}
+    	TestStructure s = new TestStructure();
+    	s.ref = null;
+    	s.write();
     }
 }

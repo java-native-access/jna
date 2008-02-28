@@ -67,6 +67,6 @@ public class NativeMappedConverter implements TypeConverter {
     }
 
     public Object toNative(Object value, ToNativeContext context) {
-        return ((NativeMapped)value).toNative();
+        return value == null ? null : ((NativeMapped)value).toNative();
     }
 }
