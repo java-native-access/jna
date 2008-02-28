@@ -1317,7 +1317,7 @@ newCStringUTF8(JNIEnv *env, jstring jstr)
     char *result = NULL;
 
     bytes = (*env)->CallObjectMethod(env, jstr, MID_String_getBytes2,
-                                     newJavaString(env, "UTF8", false));
+                                     newJavaString(env, "UTF8", JNI_FALSE));
     if (!(*env)->ExceptionCheck(env)) {
         jint len = (*env)->GetArrayLength(env, bytes);
         result = (char *)malloc(len + 1);
