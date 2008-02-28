@@ -468,7 +468,7 @@
   </target>
 
   <target name="dist" depends="jar,compile-tests,native,examples,javadoc"
-          description="Build examples">
+          description="Build distribution files">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <manifest>
         <attribute name="Implementation-Title" value="${impl.title}"/>
