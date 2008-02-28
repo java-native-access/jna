@@ -48,10 +48,10 @@ public class W32APITypeMapper extends DefaultTypeMapper {
                 public Object fromNative(Object value, FromNativeContext context) {
                     if (value == null)
                         return null;
-                    return ((Pointer)value).getString(0, true);
+                    return value.toString();
                 }
                 public Class nativeType() {
-                    return Pointer.class;
+                    return WString.class;
                 }
             };
             addTypeConverter(String.class, stringConverter);
