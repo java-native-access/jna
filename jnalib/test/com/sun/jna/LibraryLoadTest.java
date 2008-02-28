@@ -93,10 +93,15 @@ public class LibraryLoadTest extends TestCase {
             newLibName = "lib" + newLibName;
         int dot = libName.lastIndexOf(".");
         if (dot != -1) {
-            newLibName += libName.substring(dot, libName.length());
+            if (Platform.isMac()) {
+                newLibName += ".dylib";
+            }
+            else {
+                newLibName += libName.substring(dot, libName.length());
+            }
         }
         File dst = new File(tmp, newLibName);
-        //dst.deleteOnExit();
+        dst.deleteOnExit();
         copy(src, dst);
         NativeLibrary.addSearchPath(UNICODE, tmp);
         NativeLibrary.getInstance(UNICODE);

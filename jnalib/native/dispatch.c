@@ -47,7 +47,11 @@ w32_format_error(char* buf, int len) {
 #include <dlfcn.h>
 #include <errno.h>
 #define LIBNAMETYPE char*
+#ifdef __APPLE__
+#define LIBNAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
+#else
 #define LIBNAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
+#endif
 #define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_LAZY)
 #define LOAD_ERROR(BUF,LEN) (sprintf(BUF, "%s", dlerror()), BUF)
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
@@ -127,6 +131,7 @@ static jclass classStructureByValue;
 
 static jmethodID MID_Class_getComponentType;
 static jmethodID MID_String_getBytes;
+static jmethodID MID_String_getBytes2;
 static jmethodID MID_String_toCharArray;
 static jmethodID MID_String_init_bytes;
 static jmethodID MID_Method_getReturnType;
@@ -174,6 +179,7 @@ static jfieldID FID_Structure_typeInfo;
 
 /* Forward declarations */
 static char* newCString(JNIEnv *env, jstring jstr);
+static char* newCStringUTF8(JNIEnv *env, jstring jstr);
 static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 static jstring newJavaString(JNIEnv *env, const char *str, jboolean wide);
 
@@ -717,6 +723,9 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_MID(env, MID_String_getBytes, classString,
                 "getBytes", "()[B"))
     return "String.getBytes()";
+  if (!LOAD_MID(env, MID_String_getBytes2, classString,
+                "getBytes", "(Ljava/lang/String;)[B"))
+    return "String.getBytes(String)";
   if (!LOAD_MID(env, MID_String_toCharArray, classString,
                 "toCharArray", "()[C"))
     return "String.toCharArray()";
@@ -1283,6 +1292,32 @@ newCString(JNIEnv *env, jstring jstr)
     char *result = NULL;
 
     bytes = (*env)->CallObjectMethod(env, jstr, MID_String_getBytes);
+    if (!(*env)->ExceptionCheck(env)) {
+        jint len = (*env)->GetArrayLength(env, bytes);
+        result = (char *)malloc(len + 1);
+        if (result == NULL) {
+            throwByName(env, EOutOfMemory, "Can't allocate C string");
+            (*env)->DeleteLocalRef(env, bytes);
+            return NULL;
+        }
+        (*env)->GetByteArrayRegion(env, bytes, 0, len, (jbyte *)result);
+        result[len] = 0; /* NUL-terminate */
+    }
+    (*env)->DeleteLocalRef(env, bytes);
+    return result;
+}
+
+/* Translates a Java string to a C string using the String.getBytes("UTF8") 
+ * method, which uses UTF8 encoding.
+ */
+static char *
+newCStringUTF8(JNIEnv *env, jstring jstr)
+{
+    jbyteArray bytes = 0;
+    char *result = NULL;
+
+    bytes = (*env)->CallObjectMethod(env, jstr, MID_String_getBytes2,
+                                     newJavaString(env, "UTF8", false));
     if (!(*env)->ExceptionCheck(env)) {
         jint len = (*env)->GetArrayLength(env, bytes);
         result = (char *)malloc(len + 1);
