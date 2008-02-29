@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-02-26">
+<meta name="date" content="2008-02-29">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -128,14 +128,18 @@ public interface Kernel32 extends StdCallLibrary {
     // Method declarations, constant and structure definitions go here
 }</textarea>
   </li>
-  <li>In your interface, allocate an instance of the native library using the <code>Native.loadLibrary(Class)</code> method, providing the native library interface you defined in step (4).<br>    
+  <li>Within this interface, define an instance of the native library using the <code>Native.loadLibrary(Class)</code> method, providing the native library interface you defined in step (4).<br>    
     <textarea name="textarea" cols="80" rows="2" readonly="readonly">
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class);
+    // Optional: wraps every call to the native library in a
+    // synchronized block, limiting native calls to one at a time
+    Kernel32 SYNC_INSTANCE = (Kernel32)
+        Native.synchronizedLibrary(INSTANCE);
 </textarea><br>
-This instance is for convenient reuse.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.  A <code>Map</code> of options may be provided as the third argument to customize the library behavior; some of these options are explained in more detail below.
+The INSTANCE variable is for convenient reuse of a single instance of the library.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.  A <code>Map</code> of options may be provided as the third argument to customize the library behavior; some of these options are explained in more detail below.
   </li>
-  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the <a href="#mapping">basic mappings</a> below or <a href="javadoc/overview-summary.html#marshalling">the detailed table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).</li>
+  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the <a href="#mapping">basic mappings</a> below or <a href="javadoc/overview-summary.html#marshalling">the detailed table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class within the interface definition that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).</li>
     <textarea name="textarea" cols="80" rows="12" readonly="readonly">
     public static class SYSTEMTIME extends Structure {
         public short wYear;
