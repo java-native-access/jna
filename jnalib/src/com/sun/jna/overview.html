@@ -145,12 +145,14 @@ Java primitive arrays may be used wherever a native primitive array is used.  An
 To map a native multi-dimensional array, use a single-dimensional Java array with a number of elements equivalent to the full native array, e.g.<br>
 <blockquote><code><pre>
 // Original C code
-int array[2][3];
+#define DIM0 2
+#define DIM1 3
+int array[DIM0][DIM1];
 int i,j;
 
-for (i=0;i < 2;i++) {
-  for (j=0;j < 3;j++) {
-    array[i][j] = i*3 + j;
+for (i=0;i < DIM0;i++) {
+  for (j=0;j < DIM1;j++) {
+    array[i][j] = i*DIM1 + j;
   }
 }
 
@@ -158,9 +160,9 @@ for (i=0;i < 2;i++) {
 final int DIM0 = 2;
 final int DIM1 = 3;
 int[] array = new int[6];
-for (int i=0;i < 2;i++) {
-  for (int j=0;j < 3;j++) {
-    array[i*3 + j] = i*3 + j;                   
+for (int i=0;i < DIM0;i++) {
+  for (int j=0;j < DIM1;j++) {
+    array[i*DIM1 + j] = i*DIM1 + j;                   
   }                   
 }
 </pre></code></blockquote>
