@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-02-29">
+<meta name="date" content="2008-03-01">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -40,6 +40,7 @@
 <li><a href="#features">Features</a>
 <li><a href="#demos">Demos</a>
 <li><a href="#community">Community</a>
+<li><a href="#support">Support</a>
 <li><a href="#projects">Projects</a>
 <li><a href="#development">Development</a>&nbsp;&nbsp;&nbsp;
 <li><a href="#building">Building</a>
@@ -108,15 +109,44 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
  <p>Java Native Access (JNA) has a single component, <code>jna.jar</code>; the supporting native library (<code>jnidispatch</code>) is included in the jar file. JNA is capable of extracting and loading the native library on its own, so you don't need additional configuration.  JNA falls back to extraction if the native library is not already installed on the local system somewhere accessible to <code>System.loadLibrary</code> (see <a href="javadoc/com/sun/jna/Native.html#library_loading">information on library loading</a>).  The native library is also available in platform-specific jar files for use with Java Web Start.</p>
 <ol>
   <li>Download <code>jna.jar</code> from the <a href="https://jna.dev.java.net/servlets/ProjectDocumentList?folderID=7408&expandFolder=7408&folderID=0">download page</a>.</li>
-  <li>Identify a native <em>target library</em> that you want to use. This can be any shared library with exported functions.  A good example is the local C library (libc.so on linux or msvcrt.dll on windows).</li>
+  <li>Compile and run this short example, which maps the <code>printf</code> function from the standard C library and calls it.  Be sure to include jna.jar in the classpath:<br>
+<textarea name="textarea" cols="80" rows="24" readonly="readonly">
+package com.sun.jna.examples;
+
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
+
+/** Simple example of native library declaration and usage. */
+public class HelloWorld {
+
+    public interface CLibrary extends Library {
+        CLibrary INSTANCE = (CLibrary)
+            Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"),
+                               CLibrary.class);
+    
+        void printf(String format, Object... args);
+    }
+
+    public static void main(String[] args) {
+        CLibrary.INSTANCE.printf("Hello, World");
+        for (int i=0;i < args.length;i++) {
+            CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
+        }
+    }
+}
+</textarea>
+  <li>Identify a native <em>target library</em> that you want to use. This can be any shared library with exported functions.  Some examples of mappings for common system libraries may be found in the <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/unix?rev=HEAD">unix</a> and <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/win32?rev=HEAD">win32</a> examples subdirectories.</li>
   <li>Make your target library available to your Java program. There are two ways to do this:
     <ul>
       <li>The preferred method is to set the <code>jna.library.path</code> system property to the path to your target library.  This property is similar to <code>java.library.path</code> but only applies to libraries loaded by JNA.</li> 
-      <li>Change the appropriate library access environment variable.  This is PATH on Windows, LD_LIBRARY_PATH on Linux, and DYLD_LIBRARY_PATH on OSX.</li>
+      <li>Change the appropriate library access environment variable before launching the VM.  This is PATH on Windows, LD_LIBRARY_PATH on Linux, and DYLD_LIBRARY_PATH on OSX.</li>
     </ul>
   </li>
-  <li>Declare a Java interface to hold the native library methods by extending the <a href="javadoc/com/sun/jna/Library.html"><code>Library</code></a> interface.  Following is an example of mapping for the Windows kernel32 library.<br>
-    <textarea name="textarea" cols="80" rows="8" readonly="readonly">
+  <li>Declare a Java interface to hold the native library methods by extending the <a href="javadoc/com/sun/jna/Library.html"><code>Library</code></a> interface.  
+
+Following is an example of mapping for the Windows kernel32 library.<br>
+    <textarea name="textarea" cols="80" rows="10" readonly="readonly">
 package com.sun.jna.examples.win32;
 
 import com.sun.jna.*;
@@ -129,7 +159,7 @@ public interface Kernel32 extends StdCallLibrary {
 }</textarea>
   </li>
   <li>Within this interface, define an instance of the native library using the <code>Native.loadLibrary(Class)</code> method, providing the native library interface you defined in step (4).<br>    
-    <textarea name="textarea" cols="80" rows="2" readonly="readonly">
+    <textarea name="textarea" cols="80" rows="6" readonly="readonly">
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class);
     // Optional: wraps every call to the native library in a
@@ -457,7 +487,7 @@ the JNA library (and are pretty nifty utilities in and of themselves).
 <a href=#top>Top</a>
 <a name=community></a>
  <h3>Community</h3>
- <p>Please use the appropriate <a href="https://jna.dev.java.net/servlets/ProjectMailingListList">mailing list</a> to ask for help, suggest ideas, contribute patches, etc.  All contributions are welcome.</p>
+ <p>Please use the appropriate <a href="https://jna.dev.java.net/servlets/ProjectMailingListList">mailing list</a> to ask for help, suggest ideas, contribute patches, etc.  All contributions are welcome.  When asking about how to do a library mapping, be sure to include C API definitions and example usage, as well as whatever Java mapping you've already tried.</p>
  <p>All mailing lists are also available via RSS:
  <ul>
  <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=announce"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Announcements</a>
@@ -466,6 +496,11 @@ the JNA library (and are pretty nifty utilities in and of themselves).
  <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=issues"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Bugs and Enhancements Issue Tracking</a>
  </ul>
 <p>
+
+<a href=#top>Top</a>
+<a name=support></a>
+<h3>Support</h3>
+If you are interested in paid support, feel free to say so on one of the JNA mailing lists.  Most simple questions will be answered on the list, but more complicated work, new features or target platforms can be negotiated with any of the JNA developers (this is how several of JNA's features came into being).  You may even encounter other users with the same need and be able to cost share the new development.
 
 <a href=#top>Top</a>
 <a name=projects></a>
@@ -505,11 +540,11 @@ the JNA library (and are pretty nifty utilities in and of themselves).
 <a href=#top>Top</a>
 <a name=building></a>
 <h3>Building and Multi-platform support</h3>
-JNA has been built and tested on OSX (PPC and x86), linux (x86, amd64),
-FreeBSD (x86), SunOS (x86, sparc, sparcv9) and Windows (x86).  The ant build
-script's test target will build and run the test suite, which has decent
-coverage and is a quick way to determine if your environment is set up
-correctly.<p> 
+JNA has been built and tested on OSX (ppc, x86, x86_64), linux (x86, amd64),
+FreeBSD (x86, amd64), SunOS (x86, amd64, sparc, sparcv9) and Windows (x86).
+The ant build  script's test target will build and run the test suite, which
+has decent coverage and is a quick way to determine if your environment is set
+up correctly.<p> 
 If you want to do a build yourself, you'll need <a
 href="http://ant.apache.org">ANT</a>, <a
 href="http://directory.fsf.org/make.html">GNU make</a> and <a
@@ -521,7 +556,7 @@ library and chokes on the libffi includes).  To rebuild <code>jna.jar</code>, an
 % ant dist test
 </pre></code></blockquote>
 <p>
-If JNA has not yet been built on for your platform, you may need to tweak the build.xml and native/Makefile build configurations so that your platform is recognized. 
+  If JNA has not yet been built on for your platform, you may need to tweak the build.xml and native/Makefile build configurations so that your platform is recognized. 
 <p>
 The project also includes <a href="http://netbeans.org">NetBeans</a> and <a href="http://www.eclipse.org">Eclipse</a> project configurations, if you're so inclined.<p>
 
