@@ -483,21 +483,27 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     
     public void testPointerArrayArgument() {
-        Pointer[] args = { new NativeString(getName()).getPointer(),
-                           new NativeString(getName()+"2").getPointer() };
+        Pointer[] args = { 
+      		new NativeString(getName()).getPointer(),
+            null,
+            new NativeString(getName()+"2").getPointer(),
+        };
         assertEquals("Wrong value returned", args[0], lib.returnPointerArrayElement(args, 0));
-        assertEquals("Wrong value returned", args[1], lib.returnPointerArrayElement(args, 1));
-        assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 2));
+        assertNull("Wrong value returned", lib.returnPointerArrayElement(args, 1));
+        assertEquals("Wrong value returned", args[2], lib.returnPointerArrayElement(args, 2));
+        assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 3));
     }
 
     public void testStructureByReferenceArrayArgument() {
         CheckFieldAlignment.ByReference[] args = { 
             new CheckFieldAlignment.ByReference(),
-            new CheckFieldAlignment.ByReference()
+            null,
+            new CheckFieldAlignment.ByReference(),
         };
         assertEquals("Wrong value returned", args[0], lib.returnPointerArrayElement(args, 0));
-        assertEquals("Wrong value returned", args[1], lib.returnPointerArrayElement(args, 1));
-        assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 2));
+        assertNull("Wrong value returned", lib.returnPointerArrayElement(args, 1));
+        assertEquals("Wrong value returned", args[2], lib.returnPointerArrayElement(args, 2));
+        assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 3));
     }
 
     public void testModifiedCharArrayArgument() {

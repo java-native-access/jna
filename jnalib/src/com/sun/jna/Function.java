@@ -414,7 +414,7 @@ public class Function extends Pointer {
             if (byRef) {
                 Pointer[] pointers = new Pointer[ss.length + 1];
                 for (int i=0;i < ss.length;i++) {
-                    pointers[i] = ss[i].getPointer();
+                	pointers[i] = ss[i] != null ? ss[i].getPointer() : null;
                 }
                 return new PointerArray(pointers);
             }
@@ -579,7 +579,7 @@ public class Function extends Pointer {
         }
         return "native function@0x" + Long.toHexString(peer);
     }
-    
+
     /** Convenience method for 
      * {@link #invoke(Class,Object[]) invoke(Pointer.class, args)}.
      */
