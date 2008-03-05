@@ -1,3 +1,23 @@
+2008-03-04  Anthony Green  <green@redhat.com>
+	    Blake Chaffin
+	    hos@tamanegi.org
+
+	* testsuite/libffi.call/cls_align_longdouble_split2.c
+          testsuite/libffi.call/cls_align_longdouble_split.c
+          testsuite/libffi.call/cls_dbls_struct.c
+          testsuite/libffi.call/cls_double_va.c
+          testsuite/libffi.call/cls_longdouble.c
+          testsuite/libffi.call/cls_longdouble_va.c
+          testsuite/libffi.call/cls_pointer.c
+          testsuite/libffi.call/cls_pointer_stack.c
+          testsuite/libffi.call/err_bad_abi.c
+          testsuite/libffi.call/err_bad_typedef.c
+          testsuite/libffi.call/huge_struct.c
+          testsuite/libffi.call/stret_large2.c
+          testsuite/libffi.call/stret_large.c
+          testsuite/libffi.call/stret_medium2.c
+          testsuite/libffi.call/stret_medium.c: New tests from Apple.
+
 2008-02-26  Jakub Jelinek  <jakub@redhat.com>
             Anthony Green  <green@redhat.com>
 
