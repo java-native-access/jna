@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-03-01">
+<meta name="date" content="2008-03-07">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -71,7 +71,7 @@ JNA provides Java programs easy access to native shared libraries (DLLs on Windo
 </tr>
 </table>
 <hr>
-The <a href="javadoc/overview-summary.html">JavaDoc is available online</a>,
+The <a href="http://jna.dev.java.net/nonav/javadoc/overview-summary.html">JavaDoc is available online</a>,
 which includes detailed descriptions of JNA usage in different situations.<p>
 This library is provided under the <a href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html">LGPL</a>, version 2.1 or later.
 <p>
@@ -468,7 +468,7 @@ custom JNI.
 Java primitive arrays are generally slower to use than memory
 (Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
 be pinned and possibly copied across the native call, since the Java array is not necessarily contiguously allocated.
-
+<p>
 <a href=#top>Top</a>
 <a name=demos></a>
 <h3>Examples</h3>
@@ -566,7 +566,7 @@ The project also includes <a href="http://netbeans.org">NetBeans</a> and <a href
 <a name=history></a>
 <h3>History</h3>
 <p>Fragments of this project date back to a small shared stubs library originally written by Sheng Liang of the Sun JNI team and demoed at JavaOne circa 1999. <p>
-Todd Fast (also of Sun) first published JNA on dev.java.net in the fall of 2006 (that code is still available in the SVN repo under the <a href="https://jna.dev.java.net/svn/jna/tags/CVS%20HEAD">CVS HEAD</a> tag).  From the original project announcement:
+Todd Fast (also of Sun) first published JNA on dev.java.net in the fall of 2006, which allowed calls with primitive type parameters and partial struct support (that code is still available in the SVN repo under the <a href="https://jna.dev.java.net/svn/jna/tags/CVS%20HEAD">CVS HEAD</a> tag).  From the original project announcement:
 <blockquote><pre>
 Headline        Initial JNA code checked in
 Date            Nov 30, 2006
