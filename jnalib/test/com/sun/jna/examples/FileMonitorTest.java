@@ -177,6 +177,7 @@ public class FileMonitorTest extends TestCase {
             assertTrue("No events sent", events.size() != 0);
             assertNotNull("No creation event: " + events, event);
             assertEquals("Wrong target file for event", file, event.getFile());
+            events.clear();
 
             // trigger change in dir 1
             file = File.createTempFile(getName(), ".tmp", subdir1);
@@ -189,6 +190,7 @@ public class FileMonitorTest extends TestCase {
             assertTrue("No events sent", events.size() != 0);
             assertNotNull("No creation event: " + events, event);
             assertEquals("Wrong target file for event", file, event.getFile());
+            events.clear();
         }
         finally {
             delete(subdir1);
