@@ -13,11 +13,8 @@
 package com.sun.jna.examples.win32;
 
 import java.nio.Buffer;
-import com.sun.jna.FromNativeContext;
 import com.sun.jna.Native;
-import com.sun.jna.NativeMapped;
 import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
