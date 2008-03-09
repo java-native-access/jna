@@ -50,6 +50,7 @@ public interface Kernel32 extends W32API {
     int GetCurrentProcessId();
     HANDLE GetCurrentProcess();
     int GetProcessId(HANDLE process);
+    int GetProcessVersion(int processId);
     int GetLastError();
     void SetLastError(int dwErrCode);
 
