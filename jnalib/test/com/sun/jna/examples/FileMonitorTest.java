@@ -21,21 +21,18 @@ import junit.framework.TestCase;
 import com.sun.jna.Platform;
 import com.sun.jna.examples.FileMonitor.FileEvent;
 import com.sun.jna.examples.FileMonitor.FileListener;
-import com.sun.jna.examples.win32.Kernel32;
-import com.sun.jna.ptr.PointerByReference;
 
 public class FileMonitorTest extends TestCase {
 
-    Map events;
-    FileListener listener;
-    FileMonitor monitor;
-    File tmpdir;
+    private Map events;
+    private FileMonitor monitor;
+    private File tmpdir;
     
     protected void setUp() throws Exception {
         if (!Platform.isWindows()) return;
 
         events = new HashMap();
-        listener = new FileListener() {
+        final FileListener listener = new FileListener() {
             public void fileChanged(FileEvent e) {
                 events.put(new Integer(e.getType()), e);
             }
@@ -57,15 +54,7 @@ public class FileMonitorTest extends TestCase {
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.deleteOnExit();
-        FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < 5000 && event == null) {
-            Thread.sleep(10);
-            event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-        }
-        assertTrue("No events sent", events.size() != 0);
-        assertNotNull("No creation event: " + events, event);
-        assertEquals("Wrong target file for event", file, event.getFile());
+        assertFileEventCreated(file);
     }
     
     public void testNotifyOnFileDelete() throws Exception {
@@ -74,13 +63,8 @@ public class FileMonitorTest extends TestCase {
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.delete();
-        FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_DELETED));
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < 5000 && event == null) {
-            Thread.sleep(10);
-            event = (FileEvent)events.get(new Integer(FileMonitor.FILE_DELETED));
-        }
-        assertTrue("No events sent", events.size() != 0);
+
+        final FileEvent event = waitForFileEvent(FileMonitor.FILE_DELETED);
         assertNotNull("No delete event: " + events, event);
         assertEquals("Wrong target file for event", file, event.getFile());
     }
@@ -94,19 +78,13 @@ public class FileMonitorTest extends TestCase {
         newFile.deleteOnExit();
         file.deleteOnExit();
         file.renameTo(newFile);
-        FileEvent e1 = (FileEvent)events.get(new Integer(FileMonitor.FILE_NAME_CHANGED_OLD));
-        FileEvent e2 = (FileEvent)events.get(new Integer(FileMonitor.FILE_NAME_CHANGED_NEW));
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < 5000 && e1 == null && e2 == null) {
-            Thread.sleep(10);
-            e1 = (FileEvent)events.get(new Integer(FileMonitor.FILE_NAME_CHANGED_OLD));
-            e2 = (FileEvent)events.get(new Integer(FileMonitor.FILE_NAME_CHANGED_NEW));
-        }
-        assertTrue("No events sent", events.size() != 0);
-        assertNotNull("No rename event (old): " + events, e1);
-        assertNotNull("No rename event (new): " + events, e2);
-        assertEquals("Wrong target file for event (old)", file, e1.getFile());
-        assertEquals("Wrong target file for event (new)", newFile, e2.getFile());
+
+        final FileEvent eventFilenameOld = waitForFileEvent(FileMonitor.FILE_NAME_CHANGED_OLD);
+        final FileEvent eventFilenameNew = waitForFileEvent(FileMonitor.FILE_NAME_CHANGED_NEW);
+        assertNotNull("No rename event (old): " + events, eventFilenameOld);
+        assertNotNull("No rename event (new): " + events, eventFilenameNew);
+        assertEquals("Wrong target file for event (old)", file, eventFilenameOld.getFile());
+        assertEquals("Wrong target file for event (new)", newFile, eventFilenameNew.getFile());
     }
 
     public void testNotifyOnFileModification() throws Exception {
@@ -115,16 +93,13 @@ public class FileMonitorTest extends TestCase {
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.deleteOnExit();
-        FileOutputStream os = new FileOutputStream(file);
-        os.write(getName().getBytes());
-        os.close();
-        FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_MODIFIED));
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < 5000 && event == null) {
-            Thread.sleep(10);
-            event = (FileEvent)events.get(new Integer(FileMonitor.FILE_MODIFIED));
+        final FileOutputStream os = new FileOutputStream(file);
+        try {
+            os.write(getName().getBytes());
+        } finally {
+            os.close();
         }
-        assertTrue("No events sent", events.size() != 0);
+        final FileEvent event = waitForFileEvent(FileMonitor.FILE_MODIFIED);
         assertNotNull("No file modified event: " + events, event);
         assertEquals("Wrong target file for event (old)", file, event.getFile());
     }
@@ -154,49 +129,46 @@ public class FileMonitorTest extends TestCase {
             monitor.addWatch(subdir2);
 
             // trigger change in dir 1
-            File file = File.createTempFile(getName(), ".tmp", subdir1);
-            FileEvent event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-            long start = System.currentTimeMillis();
-            while (System.currentTimeMillis() - start < 5000 && event == null) {
-                Thread.sleep(10);
-                event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-            }
-            assertTrue("No events sent", events.size() != 0);
-            assertNotNull("No creation event: " + events, event);
-            assertEquals("Wrong target file for event", file, event.getFile());
-            events.clear();
+            assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir1));
 
             // trigger change in dir 2
-            file = File.createTempFile(getName(), ".tmp", subdir2);
-            event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-            start = System.currentTimeMillis();
-            while (System.currentTimeMillis() - start < 5000 && event == null) {
-                Thread.sleep(10);
-                event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-            }
-            assertTrue("No events sent", events.size() != 0);
-            assertNotNull("No creation event: " + events, event);
-            assertEquals("Wrong target file for event", file, event.getFile());
-            events.clear();
+            assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir2));
 
             // trigger change in dir 1
-            file = File.createTempFile(getName(), ".tmp", subdir1);
-            event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-            start = System.currentTimeMillis();
-            while (System.currentTimeMillis() - start < 5000 && event == null) {
-                Thread.sleep(10);
-                event = (FileEvent)events.get(new Integer(FileMonitor.FILE_CREATED));
-            }
-            assertTrue("No events sent", events.size() != 0);
-            assertNotNull("No creation event: " + events, event);
-            assertEquals("Wrong target file for event", file, event.getFile());
-            events.clear();
+            assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir1));
         }
         finally {
             delete(subdir1);
             delete(subdir2);
         }
     }
+
+    private void assertFileEventCreated(final File expectedFile)
+            throws InterruptedException {
+
+        final FileEvent actualEvent = waitForFileEvent(FileMonitor.FILE_CREATED);
+
+        assertNotNull("No creation event: " + events, actualEvent);
+        assertEquals("Wrong target file for event", expectedFile, actualEvent.getFile());
+        events.clear();
+    }
+
+    private FileEvent waitForFileEvent(final int expectedFileEvent)
+            throws InterruptedException {
+
+        final Integer expectedFileEventInteger = new Integer(expectedFileEvent);
+
+        FileEvent actualEvent = (FileEvent)events.get(expectedFileEventInteger);
+        final long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < 5000 && actualEvent == null) {
+            Thread.sleep(10);
+            actualEvent = (FileEvent) events.get(expectedFileEventInteger);
+        }
+
+        assertTrue("No events sent", events.size() != 0);
+        return actualEvent;
+    }
+
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(FileMonitorTest.class);
