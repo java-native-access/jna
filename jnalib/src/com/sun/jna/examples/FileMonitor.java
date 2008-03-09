@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import com.sun.jna.Pointer;
 import com.sun.jna.examples.win32.Kernel32;
 import com.sun.jna.examples.win32.Kernel32.FILE_NOTIFY_INFORMATION;
 import com.sun.jna.examples.win32.Kernel32.OVERLAPPED;
@@ -56,8 +55,8 @@ public abstract class FileMonitor {
     }
     
     public class FileEvent extends EventObject {
-        private File file;
-        private int type;
+        private final File file;
+        private final int type;
         public FileEvent(File file, int type) {
             super(FileMonitor.this);
             this.file = file;
@@ -70,7 +69,7 @@ public abstract class FileMonitor {
         }
     }
     
-    private Map watched = new HashMap();
+    private final Map watched = new HashMap();
     private List listeners = new ArrayList();
     
     protected abstract void watch(File file, int mask, boolean recursive) throws IOException ;
@@ -143,13 +142,13 @@ public abstract class FileMonitor {
         
         private static final int BUFFER_SIZE = 4096;
         private class FileInfo {
-            public File file;
-            public HANDLE handle;
-            public int notifyMask;
-            public boolean recursive;
-            public FILE_NOTIFY_INFORMATION info = new FILE_NOTIFY_INFORMATION(BUFFER_SIZE);
-            public IntByReference infoLength = new IntByReference(); 
-            public OVERLAPPED overlapped = new OVERLAPPED();
+            public final File file;
+            public final HANDLE handle;
+            public final int notifyMask;
+            public final boolean recursive;
+            public final FILE_NOTIFY_INFORMATION info = new FILE_NOTIFY_INFORMATION(BUFFER_SIZE);
+            public final IntByReference infoLength = new IntByReference();
+            public final OVERLAPPED overlapped = new OVERLAPPED();
             public FileInfo(File f, HANDLE h, int mask, boolean recurse) {
                 this.file = f;
                 this.handle = h;
@@ -159,8 +158,8 @@ public abstract class FileMonitor {
         }
         private Thread watcher;
         private HANDLE port;
-        private Map fileMap = new HashMap();
-        private Map handleMap = new HashMap();
+        private final Map fileMap = new HashMap();
+        private final Map handleMap = new HashMap();
         
         private void handleChanges(FileInfo finfo) throws IOException {
             Kernel32 klib = Kernel32.INSTANCE;
