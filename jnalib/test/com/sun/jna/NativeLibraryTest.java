@@ -135,19 +135,34 @@ public class NativeLibraryTest extends TestCase {
     }
     
     public void testMatchUnversionedToVersioned() throws Exception {
-    	File lib0 = File.createTempFile("lib", ".so.1");
+    	File lib0 = File.createTempFile("lib", ".so.0");
     	lib0.deleteOnExit();
-    	File lib1 = File.createTempFile("lib", ".so.2.0");
+    	File lib1 = File.createTempFile("lib", ".so.1.0");
     	lib1.deleteOnExit();
-    	File lib = File.createTempFile("lib", ".so.2.1");
-    	lib.deleteOnExit();
-    	String name = lib.getName();
-    	name = name.substring(3, name.length()-5);
-    	File dir = lib.getParentFile();
+    	File lib1_1 = File.createTempFile("lib", ".so.1.1");
+    	lib1_1.deleteOnExit();
+    	String name = lib1_1.getName();
+    	name = name.substring(3, name.indexOf(".so"));
+    	File dir = lib1_1.getParentFile();
     	List path = Arrays.asList(new String[] { dir.getAbsolutePath() });
     	assertEquals("Versioned library not found when unversioned requested",
-    				 lib.getAbsolutePath(),	
+    				 lib1_1.getAbsolutePath(),	
     				 NativeLibrary.matchLibrary(name, path));
+    }
+    
+    public void testParseVersion() throws Exception {
+    	String[] VERSIONS = {
+    		"1",
+    		"1.2",
+    		"1.2.3",
+    		"1.2.3.4",
+    	};
+    	double[] EXPECTED = {
+    		1, 1.02, 1.0203, 1.020304,
+    	};
+    	for (int i=0;i < VERSIONS.length;i++) {
+    		assertEquals("Badly parsed version", EXPECTED[i], NativeLibrary.parseVersion(VERSIONS[i]), 0.0000001);
+    	}
     }
     
     public static void main(String[] args) {

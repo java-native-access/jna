@@ -378,11 +378,11 @@ public class NativeLibrary {
         	searchPath = Arrays.asList(new String[] { lib.getParent() });
         }
         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return (name.startsWith("lib" + libName)
-                		|| (name.startsWith(libName)
+            public boolean accept(File dir, String filename) {
+                return (filename.startsWith("lib" + libName)
+                		|| (filename.startsWith(libName)
                 			&& libName.startsWith("lib")))
-                    && isVersionedName(name);
+                    && isVersionedName(filename);
             }
         };
         
@@ -397,19 +397,45 @@ public class NativeLibrary {
         //
         // Search through the results and return the highest numbered version
         // i.e. libc.so.6 is preferred over libc.so.5
-        //
-        int version = 0;
+        double bestVersion = 0;
         String bestMatch = null;
         for (Iterator it = matches.iterator(); it.hasNext(); ) {
             String path = ((File) it.next()).getAbsolutePath();
-            String num = path.substring(path.lastIndexOf('.') + 1);
-            try {
-                if (Integer.parseInt(num) >= version) {
-                    bestMatch = path;
-                }
-            } catch (NumberFormatException e) {} // Just skip if not a number
+            String ver = path.substring(path.lastIndexOf(".so.") + 4);
+            double version = parseVersion(ver); 
+            if (version >= bestVersion) {
+                bestVersion = version;
+                bestMatch = path;
+            }
         }
         return bestMatch;
+    }
+    
+    static double parseVersion(String ver) {
+    	double v = 0;
+    	double divisor = 1;
+    	int dot = ver.indexOf(".");
+    	while (ver != null) {
+    		String num;
+    		if (dot != -1) {
+    			num = ver.substring(0, dot);
+    			ver = ver.substring(dot + 1);
+        		dot = ver.indexOf(".");
+    		}
+    		else {
+    			num = ver;
+    			ver = null;
+    		}
+    		try {
+    			v += Integer.parseInt(num) / divisor;
+    		}
+    		catch(NumberFormatException e) {
+    			return 0;
+    		}
+    		divisor *= 100;
+    	}
+
+    	return v;
     }
     
     private static native long open(String name);
