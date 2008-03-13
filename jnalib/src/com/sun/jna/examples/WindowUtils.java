@@ -861,22 +861,26 @@ public class WindowUtils {
         }
 
         public void setWindowAlpha(final Window w, final float alpha) {
+            if (w instanceof RootPaneContainer) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        JRootPane p = ((RootPaneContainer)w).getRootPane();
+                        p.putClientProperty("Window.alpha", new Float(alpha));
+                    }
+                });
+            }
             whenDisplayable(w, new Runnable() {
                 public void run() {
                     Object peer = w.getPeer();
                     try {
                         peer.getClass().getMethod("setAlpha", new Class[]{
-                            float.class
-                        }).invoke(peer, new Object[]{
-                            new Float(alpha)
-                        });
+                                float.class
+                            }).invoke(peer, new Object[]{
+                                    new Float(alpha)
+                                });
                     }
                     catch (Exception e) {
-			if (w instanceof RootPaneContainer) {
-			    JRootPane p = ((RootPaneContainer)w).getRootPane();
-			    p.putClientProperty("Window.alpha", new Float(alpha));
-			}
-                    }
+       	            }
                 }
             });
         }

@@ -372,11 +372,15 @@ public class Function extends Pointer {
             Structure struct = (Structure)arg;
             struct.write();
             if (struct instanceof Structure.ByValue) {
-                return struct;
+            	// Double-check against the method signature
+            	if (invokingMethod != null) {
+            		Class ptype = invokingMethod.getParameterTypes()[index];
+            		if (Structure.ByValue.class.isAssignableFrom(ptype)) {
+            			return struct;
+            		}
+            	}
             }
-            else {
-                return struct.getPointer();
-            }
+            return struct.getPointer();
         }
         // Convert Callback to Pointer
         else if (arg instanceof Callback) {
@@ -565,8 +569,8 @@ public class Function extends Pointer {
      * @param   callingConvention calling convention to be used
      * @param   args
      *          Arguments to pass to the native function
-     * @param   struct Pre-allocated structure to hold the result
-     * @return  The native pointer returned by the target native function
+     * @param   result Pre-allocated structure to hold the result
+     * @return  The passed-in struct argument
      */
     private native Structure invokeStructure(int callingConvention, Object[] args,
                                              Structure result);

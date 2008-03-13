@@ -274,6 +274,12 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Native address of structure should be returned",
                      struct.getPointer(), 
                      lib.testStructurePointerArgument(struct));
+        // ensure that even if the argument is ByValue, it's passed as ptr
+        struct = new TestLibrary.CheckFieldAlignment.ByValue();
+        assertEquals("Structure argument should be passed according to method "
+        			 + "parameter type, not argument type",
+        			 struct.getPointer(),
+        			 lib.testStructurePointerArgument(struct));
     }
 
     public void testStructureByValueArgument() {
