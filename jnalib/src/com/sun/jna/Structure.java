@@ -847,7 +847,7 @@ public abstract class Structure {
         if (alignType == ALIGN_GNUC) {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
-            if (!isFirstElement || !isPPC)
+            if (!isFirstElement || !(Platform.isMac() && isPPC))
                 return Math.min(MAX_GNUC_ALIGNMENT, alignment);
         }
         return alignment;
