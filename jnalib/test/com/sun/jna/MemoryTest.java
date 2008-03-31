@@ -17,14 +17,23 @@ import junit.framework.TestCase;
 
 public class MemoryTest extends TestCase {
     public void testAutoFreeMemory() throws Exception {
-        Memory core = new Memory(10);
+        final boolean[] flag = { false };
+        Memory core = new Memory(10) {
+            protected void finalize() {
+                super.finalize();
+                flag[0] = true;
+            }
+        };
         Pointer shared = core.share(0, 5);
         WeakReference ref = new WeakReference(core);
         
         core = null;
         System.gc();
         long start = System.currentTimeMillis();
-        assertNotNull("Memory prematurely GC'd", ref.get());
+        assertFalse("Memory prematurely GC'd", flag[0]);
+        // This check fails on IBM's J9, on which the weak ref
+        // is cleared but the object not yet GC'd
+        //assertNotNull("Memory prematurely GC'd", ref.get());
         shared = null;
         System.gc();
         while (ref.get() != null) {
