@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved 
- * Parts Copyright (c) 2007 Olivier Chafik 
- * 
+ * Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+ * Parts Copyright (c) 2007 Olivier Chafik
+ *
  * This library is free software; you can
  * redistribute it and/or modify it under the terms of the GNU Lesser
  * General Public License as published by the Free Software Foundation;
@@ -79,7 +79,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
- * Provides additional features on a Java {@link Window}.  
+ * Provides additional features on a Java {@link Window}.
  * <ul>
  * <li>Non-rectangular shape (bitmap mask, no antialiasing)
  * <li>Transparency (constant alpha applied to window contents or
@@ -135,7 +135,7 @@ public class WindowUtils {
      * </pre></code>
      */
     private static class HeavyweightForcer extends Window {
-        private boolean packed;
+        private final boolean packed;
 
         public HeavyweightForcer(Window parent) {
             super(parent);
@@ -185,13 +185,13 @@ public class WindowUtils {
             }
         }
 
-        private Listener listener = createListener();
-        private JComponent content;
+        private final Listener listener = createListener();
+        private final JComponent content;
 
         public RepaintTrigger(JComponent content) {
             this.content = content;
         }
-        
+
         public void addNotify() {
             super.addNotify();
             Window w = SwingUtilities.getWindowAncestor(this);
@@ -255,7 +255,7 @@ public class WindowUtils {
                     if (getWidth() > 0 && getHeight() > 0) {
                         final BufferedImage buf =
                             new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
-                        
+
                         Graphics2D g = buf.createGraphics();
                         g.setComposite(AlphaComposite.Clear);
                         g.fillRect(0, 0, w, h);
@@ -278,10 +278,10 @@ public class WindowUtils {
              */
             protected abstract void paintDirect(BufferedImage buf, Rectangle bounds);
         }
-        
+
         protected Window getWindow(Component c) {
-            return c instanceof Window 
-                ? (Window)c : SwingUtilities.getWindowAncestor(c); 
+            return c instanceof Window
+                ? (Window)c : SwingUtilities.getWindowAncestor(c);
         }
         /**
          * Execute the given action when the given window becomes
@@ -322,17 +322,16 @@ public class WindowUtils {
             if (mask != MASK_NONE) {
                 Rectangle bounds = mask.getBounds();
                 if (bounds.width > 0 && bounds.height > 0) {
-                    BufferedImage clip = 
+                    BufferedImage clip =
                         new BufferedImage(bounds.x + bounds.width,
                                           bounds.y + bounds.height,
-                                          BufferedImage.TYPE_INT_ARGB);
+                                          BufferedImage.TYPE_BYTE_BINARY);
                     Graphics2D g = clip.createGraphics();
-                    g.setComposite(AlphaComposite.Clear);
+                    g.setColor(Color.black);
                     g.fillRect(0, 0, bounds.x + bounds.width, bounds.y + bounds.height);
-                    g.setComposite(AlphaComposite.SrcOver);
                     g.setColor(Color.white);
                     g.fill(mask);
-                    raster = clip.getAlphaRaster();
+                    raster = clip.getRaster();
                 }
             }
             return raster;
@@ -366,7 +365,7 @@ public class WindowUtils {
             });
             return area;
         }
-        
+
         /**
          * Set the overall alpha transparency of the window. An alpha of
          * 1.0 is fully opaque, 0.0 is fully transparent.
@@ -419,7 +418,7 @@ public class WindowUtils {
                 JRootPane root = rpc.getRootPane();
                 JLayeredPane lp = root.getLayeredPane();
                 Container c = root.getContentPane();
-                JComponent content = 
+                JComponent content =
                     (c instanceof JComponent) ? (JComponent)c : null;
                 if (transparent) {
                     lp.putClientProperty(TRANSPARENT_OLD_OPAQUE,
@@ -454,7 +453,7 @@ public class WindowUtils {
         protected void setMask(Component c, Raster raster) {
             throw new UnsupportedOperationException("Window masking is not available");
         }
-        
+
         /**
          * Set the window mask based on the given Raster, which should
          * be treated as a bitmap (zero/nonzero values only). A value of
@@ -474,6 +473,7 @@ public class WindowUtils {
         /**
          * Set the window mask based on an Icon. All non-transparent
          * pixels will be included in the mask.
+         * @deprecated
          */
         public void setWindowMask(Component w, Icon mask) {
             setWindowMask(w, toRaster(w, mask));
@@ -591,7 +591,7 @@ public class WindowUtils {
                     int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
                     byte level = (byte)((int)(255 * alpha) & 0xFF);
                     if (usingUpdateLayeredWindow(w)) {
-                        // If already using UpdateLayeredWindow, continue to 
+                        // If already using UpdateLayeredWindow, continue to
                         // do so
                         BLENDFUNCTION blend = new BLENDFUNCTION();
                         blend.SourceConstantAlpha = level;
@@ -821,7 +821,7 @@ public class WindowUtils {
         public boolean isWindowAlphaSupported() {
             return true;
         }
-        
+
         private OSXTransparentContent installTransparentContent(Window w) {
             OSXTransparentContent content;
             if (w instanceof RootPaneContainer) {
@@ -919,7 +919,7 @@ public class WindowUtils {
                     add(oldContent, BorderLayout.CENTER);
                 }
             }
-            
+
             public void setMask(Shape shape) {
                 this.shape = shape;
                 repaint();
@@ -941,7 +941,7 @@ public class WindowUtils {
                 }
             }
         }
-        
+
         private void setBackgroundTransparent(Window w, boolean transparent) {
             if (transparent) {
                 w.setBackground(new Color(0,0,0,0));
@@ -953,8 +953,8 @@ public class WindowUtils {
         }
     }
     private static class X11WindowUtils extends NativeWindowUtils {
-        private Pixmap createBitmap(final Display dpy, 
-                                    X11.Window win, 
+        private Pixmap createBitmap(final Display dpy,
+                                    X11.Window win,
                                     Raster raster) {
             final X11 x11 = X11.INSTANCE;
             Rectangle bounds = raster.getBounds();
@@ -1052,17 +1052,17 @@ public class WindowUtils {
                 template.screen = screen;
                 template.depth = 32;
                 template.c_class = X11.TrueColor;
-                NativeLong mask = new NativeLong(X11.VisualScreenMask 
+                NativeLong mask = new NativeLong(X11.VisualScreenMask
                                                  | X11.VisualDepthMask
                                                  | X11.VisualClassMask);
                 IntByReference pcount = new IntByReference();
                 info = x11.XGetVisualInfo(dpy, mask, template, pcount);
                 if (info != null) {
                     List list = new ArrayList();
-                    XVisualInfo[] infos = 
+                    XVisualInfo[] infos =
                         (XVisualInfo[])info.toArray(pcount.getValue());
                     for (int i = 0; i < infos.length; i++) {
-                        XRenderPictFormat format = 
+                        XRenderPictFormat format =
                             X11.Xrender.INSTANCE.XRenderFindVisualFormat(dpy,
                                                                          infos[i].visual);
                         if (format.type == X11.Xrender.PictTypeDirect
@@ -1105,7 +1105,7 @@ public class WindowUtils {
                     x11.XGetWindowAttributes(dpy, child, xwa);
                     offset.x = -xwa.x;
                     offset.y = -xwa.y;
-                    win = child; 
+                    win = child;
                     break;
                 }
                 if (p != null) {
@@ -1162,15 +1162,15 @@ public class WindowUtils {
         }
 
         private class X11TransparentContent extends TransparentContent {
-            
+
             public X11TransparentContent(Container oldContent) {
                 super(oldContent);
             }
-            
+
             private Memory buffer;
             private int[] pixels;
-            private int[] pixel = new int[4];
-            // Painting directly to the original Graphics 
+            private final int[] pixel = new int[4];
+            // Painting directly to the original Graphics
             // fails to properly composite unless the destination
             // is pure black.  Too bad.
             protected void paintDirect(BufferedImage buf, Rectangle bounds) {
@@ -1181,7 +1181,7 @@ public class WindowUtils {
                 Point offset = new Point();
                 win = getContentWindow(window, dpy, win, offset);
                 X11.GC gc = x11.XCreateGC(dpy, win, new NativeLong(0), null);
-                
+
                 Raster raster = buf.getData();
                 int w = bounds.width;
                 int h = bounds.height;
@@ -1210,13 +1210,13 @@ public class WindowUtils {
                 offset.x += bounds.x;
                 offset.y += bounds.y;
                 x11.XPutImage(dpy, win, gc, image, 0, 0, offset.x, offset.y, w, h);
-                
+
                 x11.XFree(image.getPointer());
                 x11.XFreeGC(dpy, gc);
                 x11.XCloseDisplay(dpy);
             }
         }
-        
+
         public void setWindowTransparent(final Window w,
                                          final boolean transparent) {
             if (!(w instanceof RootPaneContainer)) {
@@ -1266,9 +1266,9 @@ public class WindowUtils {
                     Pixmap pm = null;
                     try {
                         X11.Window win = getDrawable(w);
-                        if (raster == null 
+                        if (raster == null
                             || ((pm = createBitmap(dpy, win, raster)) == null)) {
-                            ext.XShapeCombineMask(dpy, win, 
+                            ext.XShapeCombineMask(dpy, win,
                                                   X11.Xext.ShapeBounding,
                                                   0, 0, Pixmap.None,
                                                   X11.Xext.ShapeSet);
@@ -1302,7 +1302,7 @@ public class WindowUtils {
     }
 
     /**
-     * Applies the given mask to the given heavyweight component. Does nothing 
+     * Applies the given mask to the given heavyweight component. Does nothing
      * if the operation is not supported.  The mask is treated as a bitmap and
      * ignores transparency.
      */
@@ -1314,6 +1314,7 @@ public class WindowUtils {
      * Applies the given mask to the given window. Does nothing if the
      * operation is not supported.  The mask is treated as a bitmap and
      * ignores transparency.
+     * @deprecated
      */
     public static void setWindowMask(Window w, Icon mask) {
         getInstance().setWindowMask(w, mask);
@@ -1350,5 +1351,5 @@ public class WindowUtils {
      */
     public static void setWindowTransparent(Window w, boolean transparent) {
         getInstance().setWindowTransparent(w, transparent);
-    }    
+    }
 }

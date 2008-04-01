@@ -1,14 +1,15 @@
 /* Copyright (c) 2007 Olivier Chafik, All Rights Reserved
- * 
+ * Copyright (c) 2008 Timothy Wall, All Rights Reserved
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.examples;
 
@@ -20,6 +21,10 @@ import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.SinglePixelPackedSampleModel;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Methods that are useful to decompose a raster in ranges of contiguous unoccupied pixels.
@@ -31,12 +36,12 @@ import java.awt.image.SinglePixelPackedSampleModel;
  * @author Olivier Chafik
  */
 public class RasterRangesUtils {
-    /// Masks used to isolate the current column in a set of 8 binary columns packed in a byte 
+    /// Masks used to isolate the current column in a set of 8 binary columns packed in a byte
     private static final int[] subColMasks = new int[] {
         0x0080, 0x0040, 0x0020, 0x0010,
         0x0008, 0x0004, 0x0002, 0x0001
     };
-        
+
     /**
      * Abstraction of a sink for ranges.
      */
@@ -45,13 +50,13 @@ public class RasterRangesUtils {
          * Output a rectangular range.
          * @param x x coordinate of the top-left corner of the range
          * @param y y coordinate of the top-left corner of the range
-         * @param w witdh of the range
+         * @param w width of the range
          * @param h height of the range
          * @return true if the output succeeded, false otherwise
          */
-        public boolean outputRange(int x, int y, int w, int h);
+        boolean outputRange(int x, int y, int w, int h);
     }
-        
+
     /**
      * Outputs ranges of occupied pixels.
      * In a raster that has an alpha layer, a pixel is occupied if its alpha value is not null.
@@ -64,15 +69,15 @@ public class RasterRangesUtils {
         Rectangle bounds = raster.getBounds();
         SampleModel sampleModel = raster.getSampleModel();
         boolean hasAlpha = sampleModel.getNumBands() == 4;
-                
+
         // Try to use the underlying data array directly for a few common raster formats
         if (raster.getParent() == null && bounds.x == 0 && bounds.y == 0) {
             // No support for subraster (as obtained with Image.getSubimage(...))
-                        
+
             DataBuffer data = raster.getDataBuffer();
             if (data.getNumBanks() == 1) {
                 // There is always a single bank for all BufferedImage types, except maybe TYPE_CUSTOM
-                                
+
                 if (sampleModel instanceof MultiPixelPackedSampleModel) {
                     MultiPixelPackedSampleModel packedSampleModel = (MultiPixelPackedSampleModel)sampleModel;
                     if (packedSampleModel.getPixelBitStride() == 1) {
@@ -93,18 +98,21 @@ public class RasterRangesUtils {
         int[] pixels = raster.getPixels(0, 0, bounds.width, bounds.height, (int[])null);
         return outputOccupiedRanges(pixels, bounds.width, bounds.height, hasAlpha ? 0xff000000 : 0xffffff, out);
     }
-        
+
     /**
      * Output the non-null values of a binary image as ranges of contiguous values.
      * @param binaryBits byte-packed binary bits of an image
      * @param w width of the image (in pixels)
      * @param h height of the image
-     * @param output
+     * @param out
      * @return true if the output succeeded, false otherwise
      */
-    public static boolean outputOccupiedRangesOfBinaryPixels(byte[] binaryBits, int w, int h, RangesOutput output) {
+    public static boolean outputOccupiedRangesOfBinaryPixels(byte[] binaryBits, int w, int h, RangesOutput out) {
+        Set rects = new HashSet();
+        Set prevLine = Collections.EMPTY_SET;
         int scanlineBytes = binaryBits.length / h;
         for (int row = 0; row < h; row++) {
+            Set curLine = new HashSet();
             int rowOffsetBytes = row * scanlineBytes;
             int startCol = -1;
             // Look at each batch of 8 columns in this row
@@ -115,9 +123,7 @@ public class RasterRangesUtils {
                     // all 8 bits are zeroes
                     if (startCol >= 0) {
                         // end of current region
-                        if (!output.outputRange(startCol, row, firstByteCol - startCol, 1)) {
-                            return false;
-                        }
+                        curLine.add(new Rectangle(startCol, row, firstByteCol - startCol, 1));
                         startCol = -1;
                     }
                 } else if (byteColBits == 0xff) {
@@ -138,9 +144,7 @@ public class RasterRangesUtils {
                         } else {
                             if (startCol >= 0) {
                                 // end of current region
-                                if (!output.outputRange(startCol, row, col - startCol, 1)) {
-                                    return false;
-                                }
+                                curLine.add(new Rectangle(startCol, row, col - startCol, 1));
                                 startCol = -1;
                             }
                         }
@@ -149,15 +153,23 @@ public class RasterRangesUtils {
             }
             if (startCol >= 0) {
                 // end of last region
-                if (!output.outputRange(startCol, row, w - startCol, 1)) {
-                    return false;
-                }
-                startCol = -1;
+                curLine.add(new Rectangle(startCol, row, w - startCol, 1));
+            }
+            Set unmerged = mergeRects(prevLine, curLine);
+            rects.addAll(unmerged);
+            prevLine = curLine;
+        }
+        // Add anything left over
+        rects.addAll(prevLine);
+        for (Iterator i=rects.iterator();i.hasNext();) {
+            Rectangle r = (Rectangle)i.next();
+            if (!out.outputRange(r.x, r.y, r.width, r.height)) {
+                return false;
             }
         }
         return true;
     }
-        
+
     /**
      * Output the occupied values of an integer-pixels image as ranges of contiguous values.
      * A pixel is considered occupied if the bitwise AND of its integer value with the provided occupationMask is not null.
@@ -169,11 +181,13 @@ public class RasterRangesUtils {
      * @return true if the output succeeded, false otherwise
      */
     public static boolean outputOccupiedRanges(int[] pixels, int w, int h, int occupationMask, RangesOutput out) {
-                
+        Set rects = new HashSet();
+        Set prevLine = Collections.EMPTY_SET;
         for (int row = 0; row < h; row++) {
+            Set curLine = new HashSet();
             int idxOffset = row * w;
             int startCol = -1;
-                        
+
             for (int col = 0; col < w; col++) {
                 if ((pixels[idxOffset + col] & occupationMask) != 0) {
                     if (startCol < 0) {
@@ -182,21 +196,49 @@ public class RasterRangesUtils {
                 } else {
                     if (startCol >= 0) {
                         // end of current region
-                        if (!out.outputRange(startCol, row, col - startCol, 1)) {
-                            return false;
-                        }
+                        curLine.add(new Rectangle(startCol, row, col-startCol, 1));
                         startCol = -1;
                     }
                 }
             }
             if (startCol >= 0) {
                 // end of last region of current row
-                if (!out.outputRange(startCol, row, w - startCol, 1)) {
-                    return false;
-                }
-                startCol = -1;
+                curLine.add(new Rectangle(startCol, row, w-startCol, 1));
+            }
+            Set unmerged = mergeRects(prevLine, curLine);
+            rects.addAll(unmerged);
+            prevLine = curLine;
+        }
+        // Add anything left over
+        rects.addAll(prevLine);
+        for (Iterator i=rects.iterator();i.hasNext();) {
+            Rectangle r = (Rectangle)i.next();
+            if (!out.outputRange(r.x, r.y, r.width, r.height)) {
+                return false;
             }
         }
         return true;
     }
+
+    private static Set mergeRects(Set prev, Set current) {
+        Set unmerged = new HashSet(prev);
+        for (Iterator i=current.iterator();i.hasNext();) {
+            Rectangle lower = (Rectangle)i.next();
+            for (Iterator i2=prev.iterator();i2.hasNext();) {
+                Rectangle upper = (Rectangle)i2.next();
+                if (upper.x == lower.x && upper.width == lower.width) {
+                    unmerged.remove(upper);
+                    lower.y = upper.y;
+                    lower.height = upper.height + 1;
+                    break;
+                }
+                else if (upper.x > lower.x || upper.x + upper.width > lower.x) {
+                    // FIXME requires "prev" set be ordered
+                    //break;
+                }
+            }
+        }
+        return unmerged;
+    }
+
 }
