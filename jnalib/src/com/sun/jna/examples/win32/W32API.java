@@ -46,7 +46,7 @@ public interface W32API extends StdCallLibrary, W32Errors {
     };
     Map DEFAULT_OPTIONS = Boolean.getBoolean("w32.ascii") ? ASCII_OPTIONS : UNICODE_OPTIONS;
     
-    public static class HANDLE extends PointerType {
+    class HANDLE extends PointerType {
         /** Override to the appropriate object for INVALID_HANDLE_VALUE. */
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             Object o = super.fromNative(nativeValue, context);
@@ -55,13 +55,13 @@ public interface W32API extends StdCallLibrary, W32Errors {
             return o;
         }
     }
-    public static class HDC extends HANDLE { }
-    public static class HICON extends HANDLE { }
-    public static class HBITMAP extends HANDLE { }
-    public static class HRGN extends HANDLE { }
-    public static class HWND extends HANDLE { }
-    public static class HINSTANCE extends HANDLE { }
-    public static class HMODULE extends HINSTANCE { }
+    class HDC extends HANDLE { }
+    class HICON extends HANDLE { }
+    class HBITMAP extends HANDLE { }
+    class HRGN extends HANDLE { }
+    class HWND extends HANDLE { }
+    class HINSTANCE extends HANDLE { }
+    class HMODULE extends HINSTANCE { }
 
     /** Constant value representing an invalid HANDLE. */
     HANDLE INVALID_HANDLE_VALUE = new HANDLE() { 
@@ -78,7 +78,7 @@ public interface W32API extends StdCallLibrary, W32Errors {
         }
     };
     /** LPHANDLE */
-    public static class HANDLEByReference extends ByReference {
+    class HANDLEByReference extends ByReference {
         public HANDLEByReference() {
             this(null);
         }
@@ -101,36 +101,36 @@ public interface W32API extends StdCallLibrary, W32Errors {
         }
     }
     
-    public static class LONG_PTR extends IntegerType { 
+    class LONG_PTR extends IntegerType { 
         public LONG_PTR() { this(0); }
         public LONG_PTR(long value) { super(Pointer.SIZE, value); }
     }
-    public static class SSIZE_T extends LONG_PTR {
+    class SSIZE_T extends LONG_PTR {
         public SSIZE_T() { this(0); }
         public SSIZE_T(long value) { super(value); }
     }
-    public static class ULONG_PTR extends IntegerType { 
+    class ULONG_PTR extends IntegerType { 
         public ULONG_PTR() { this(0); }
         public ULONG_PTR(long value) { super(Pointer.SIZE, value); }
     }
-    public static class SIZE_T extends ULONG_PTR {
+    class SIZE_T extends ULONG_PTR {
         public SIZE_T() { this(0); }
         public SIZE_T(long value) { super(value); }
     }
-    public static class LPARAM extends LONG_PTR { 
+    class LPARAM extends LONG_PTR { 
         public LPARAM() { this(0); }
         public LPARAM(long value) { super(value); }
     } 
-    public static class LRESULT extends LONG_PTR { 
+    class LRESULT extends LONG_PTR { 
         public LRESULT() { this(0); }
         public LRESULT(long value) { super(value); }
     }
-    public static class UINT_PTR extends IntegerType {
+    class UINT_PTR extends IntegerType {
         public UINT_PTR() { super(Pointer.SIZE); }
         public UINT_PTR(long value) { super(Pointer.SIZE, value); }
         public Pointer toPointer() { return Pointer.createConstant(longValue()); }
     }
-    public static class WPARAM extends UINT_PTR {
+    class WPARAM extends UINT_PTR {
         public WPARAM() { this(0); }
         public WPARAM(long value) { super(value); }
     }

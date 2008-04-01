@@ -45,7 +45,7 @@ public interface Shell32 extends W32API {
     int FOF_NOERRORUI = 1024;
     int FOF_NOCOPYSECURITYATTRIBS = 2048;
 
-    public static class SHFILEOPSTRUCT extends Structure {
+    class SHFILEOPSTRUCT extends Structure {
         public HANDLE hwnd;
         public int wFunc;
         public String pFrom;

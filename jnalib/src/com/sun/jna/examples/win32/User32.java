@@ -8,14 +8,11 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.examples.win32;
 
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
-import com.sun.jna.NativeMapped;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.examples.win32.GDI32.RECT;
@@ -24,7 +21,7 @@ import com.sun.jna.ptr.IntByReference;
 
 /** Provides access to the w32 user32 library.
  * Incomplete implementation to support demos.
- *  
+ *
  * @author  Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
@@ -32,7 +29,7 @@ public interface User32 extends W32API {
 
     User32 INSTANCE = (User32)
         Native.loadLibrary("user32", User32.class, DEFAULT_OPTIONS);
-    
+
     HDC GetDC(HWND hWnd);
     int ReleaseDC(HWND hWnd, HDC hDC);
 
@@ -42,8 +39,8 @@ public interface User32 extends W32API {
     int FLASHW_ALL = (FLASHW_CAPTION|FLASHW_TRAY);
     int FLASHW_TIMER = 4;
     int FLASHW_TIMERNOFG = 12;
-    
-    public static class FLASHWINFO extends Structure {
+
+    class FLASHWINFO extends Structure {
         public int cbSize;
         public HANDLE hWnd;
         public int dwFlags;
@@ -72,20 +69,20 @@ public interface User32 extends W32API {
 
     HWND FindWindow(String winClass, String title);
     int GetClassName(HWND hWnd, byte[] lpClassName, int nMaxCount);
-    public static class GUITHREADINFO extends Structure {
+    class GUITHREADINFO extends Structure {
         public int cbSize = size();
         public int flags;
-        HWND hwndActive;
-        HWND hwndFocus;
-        HWND hwndCapture;
-        HWND hwndMenuOwner;
-        HWND hwndMoveSize;
-        HWND hwndCaret;
-        RECT rcCaret;
+        public HWND hwndActive;
+        public HWND hwndFocus;
+        public HWND hwndCapture;
+        public HWND hwndMenuOwner;
+        public HWND hwndMoveSize;
+        public HWND hwndCaret;
+        public RECT rcCaret;
     }
     boolean GetGUIThreadInfo(int idThread, GUITHREADINFO lpgui);
-    
-    public static class WINDOWINFO extends Structure {
+
+    class WINDOWINFO extends Structure {
         public int cbSize = size();
         public RECT rcWindow;
         public RECT rcClient;
@@ -114,12 +111,12 @@ public interface User32 extends W32API {
 
     HICON LoadIcon(HINSTANCE hInstance, String iconName);
 
-    HANDLE LoadImage(HINSTANCE hinst,   // handle to instance 
-                     String name,  // image to load 
-                     int type,        // image type 
-                     int xDesired,     // desired width 
-                     int yDesired,     // desired height 
-                     int load        // load options 
+    HANDLE LoadImage(HINSTANCE hinst,   // handle to instance
+                     String name,  // image to load
+                     int type,        // image type
+                     int xDesired,     // desired width
+                     int yDesired,     // desired height
+                     int load        // load options
     );
 
     boolean DestroyIcon(HICON hicon);
@@ -140,7 +137,7 @@ public interface User32 extends W32API {
     int SetWindowLong(HWND hWnd, int nIndex, int dwNewLong);
     // Do not use this version on win64
     Pointer SetWindowLong(HWND hWnd, int nIndex, Pointer dwNewLong);
-    
+
     LONG_PTR GetWindowLongPtr(HWND hWnd, int nIndex);
     LONG_PTR SetWindowLongPtr(HWND hWnd, int nIndex, LONG_PTR dwNewLongPtr);
     Pointer SetWindowLongPtr(HWND hWnd, int nIndex, Pointer dwNewLongPtr);
@@ -150,7 +147,7 @@ public interface User32 extends W32API {
     int ULW_COLORKEY = 1;
     int ULW_ALPHA = 2;
     int ULW_OPAQUE = 4;
-    boolean SetLayeredWindowAttributes(HWND hwnd, int crKey, 
+    boolean SetLayeredWindowAttributes(HWND hwnd, int crKey,
                                        byte bAlpha, int dwFlags);
     boolean GetLayeredWindowAttributes(HWND hwnd,
                                        IntByReference pcrKey,
@@ -158,26 +155,30 @@ public interface User32 extends W32API {
                                        IntByReference pdwFlags);
 
     /** Defines the x- and y-coordinates of a point. */
-    public static class POINT extends Structure {
+    class POINT extends Structure {
         public int x, y;
+        public POINT() { }
+        public POINT(int x, int y) { this.x = x; this.y = y; }
     }
     /** Specifies the width and height of a rectangle. */
-    public static class SIZE extends Structure {
+    class SIZE extends Structure {
         public int cx, cy;
+        public SIZE() { }
+        public SIZE(int w, int h) { this.cx = w; this.cy = h; }
     }
     int AC_SRC_OVER = 0x00;
     int AC_SRC_ALPHA = 0x01;
     int AC_SRC_NO_PREMULT_ALPHA = 0x01;
     int AC_SRC_NO_ALPHA = 0x02;
-    public static class BLENDFUNCTION extends Structure {
+    class BLENDFUNCTION extends Structure {
         public byte BlendOp = AC_SRC_OVER; // only valid value
         public byte BlendFlags = 0; // only valid value
         public byte SourceConstantAlpha;
         public byte AlphaFormat;
     }
-    boolean UpdateLayeredWindow(HWND hwnd, HDC hdcDst, 
-                                POINT pptDst, SIZE psize, 
-                                HDC hdcSrc, POINT pptSrc, int crKey, 
+    boolean UpdateLayeredWindow(HWND hwnd, HDC hdcDst,
+                                POINT pptDst, SIZE psize,
+                                HDC hdcSrc, POINT pptSrc, int crKey,
                                 BLENDFUNCTION pblend, int dwFlags);
     int SetWindowRgn(HWND hWnd, HRGN hRgn, boolean bRedraw);
     int VK_SHIFT = 16;
@@ -196,28 +197,28 @@ public interface User32 extends W32API {
     int WH_MOUSE = 7;
     int WH_KEYBOARD_LL = 13;
     int WH_MOUSE_LL = 14;
-    public static class HHOOK extends HANDLE { }
-    public static interface HOOKPROC extends StdCallCallback { }
+    class HHOOK extends HANDLE { }
+    interface HOOKPROC extends StdCallCallback { }
     int WM_KEYDOWN = 256;
     int WM_KEYUP = 257;
     int WM_SYSKEYDOWN = 260;
     int WM_SYSKEYUP = 261;
-    public static class KBDLLHOOKSTRUCT extends Structure {
+    class KBDLLHOOKSTRUCT extends Structure {
         public int vkCode;
         public int scanCode;
         public int flags;
         public int time;
         public ULONG_PTR dwExtraInfo;
     }
-    public static interface LowLevelKeyboardProc extends HOOKPROC {
+    interface LowLevelKeyboardProc extends HOOKPROC {
         LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT lParam);
     }
     HHOOK SetWindowsHookEx(int idHook, HOOKPROC lpfn, HINSTANCE hMod, int dwThreadId);
     LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
     LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, Pointer lParam);
     boolean UnhookWindowsHookEx(HHOOK hhk);
-    
-    public static class MSG extends Structure {
+
+    class MSG extends Structure {
         public HWND hWnd;
         public int message;
         public WPARAM wParam;

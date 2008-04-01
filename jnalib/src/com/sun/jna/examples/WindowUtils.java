@@ -37,6 +37,7 @@ import java.awt.event.HierarchyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.util.ArrayList;
@@ -473,7 +474,6 @@ public class WindowUtils {
         /**
          * Set the window mask based on an Icon. All non-transparent
          * pixels will be included in the mask.
-         * @deprecated
          */
         public void setWindowMask(Component w, Icon mask) {
             setWindowMask(w, toRaster(w, mask));
@@ -781,40 +781,95 @@ public class WindowUtils {
             });
         }
 
-        protected void setMask(final Component w, final Raster raster) {
+        public void setWindowMask(final Component w, final Shape mask) {
+            if (mask instanceof Area && ((Area)mask).isPolygonal()) {
+                setMask(w, (Area)mask);
+            }
+            else {
+                super.setWindowMask(w, mask);
+            }
+        }
+
+        // NOTE: Deletes hrgn after setting the window region
+        private void setWindowRegion(final Component w, final HRGN hrgn) {
             whenDisplayable(w, new Runnable() {
                 public void run() {
                     GDI32 gdi = GDI32.INSTANCE;
                     User32 user = User32.INSTANCE;
                     HWND hWnd = getHWnd(w);
-                    final HRGN result = gdi.CreateRectRgn(0, 0, 0, 0);
                     try {
-                        if (raster == null) {
-                            gdi.SetRectRgn(result, 0, 0, w.getWidth(), w.getHeight());
-                        }
-                        else {
-                            final HRGN tempRgn = gdi.CreateRectRgn(0, 0, 0, 0);
-                            try {
-                                RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
-                                    public boolean outputRange(int x, int y, int w, int h) {
-                                        GDI32 gdi = GDI32.INSTANCE;
-                                        gdi.SetRectRgn(tempRgn, x, y, x + w, y + h);
-                                        return gdi.CombineRgn(result, result, tempRgn, GDI32.RGN_OR) != GDI32.ERROR;
-                                    }
-                                });
-                            }
-                            finally {
-                                gdi.DeleteObject(tempRgn);
-                            }
-                        }
-                        user.SetWindowRgn(hWnd, result, true);
+                        user.SetWindowRgn(hWnd, hrgn, true);
+                        setForceHeavyweightPopups(getWindow(w), hrgn != null);
                     }
                     finally {
-                        gdi.DeleteObject(result);
+                        gdi.DeleteObject(hrgn);
                     }
-                    setForceHeavyweightPopups(getWindow(w), raster != null);
                 }
             });
+        }
+
+        // Take advantage of CreatePolyPolygonalRgn on w32
+        private void setMask(final Component w, final Area area) {
+            GDI32 gdi = GDI32.INSTANCE;
+            PathIterator pi = area.getPathIterator(null);
+            int mode = pi.getWindingRule() == PathIterator.WIND_NON_ZERO
+                ? GDI32.WINDING: GDI32.ALTERNATE;
+            float[] coords = new float[6];
+            List points = new ArrayList();
+            int size = 0;
+            List sizes = new ArrayList();
+            while (!pi.isDone()) {
+                int type = pi.currentSegment(coords);
+                if (type == PathIterator.SEG_MOVETO) {
+                    size = 1;
+                    points.add(new POINT((int)coords[0], (int)coords[1]));
+                }
+                else if (type == PathIterator.SEG_LINETO) {
+                    ++size;
+                    points.add(new POINT((int)coords[0], (int)coords[1]));
+                }
+                else if (type == PathIterator.SEG_CLOSE) {
+                    sizes.add(new Integer(size));
+                }
+                else {
+                    throw new RuntimeException("Area is not polygonal: " + area);
+                }
+                pi.next();
+            }
+            POINT[] lppt = (POINT[])new POINT().toArray(points.size());
+            POINT[] pts = (POINT[])points.toArray(new POINT[points.size()]);
+            for (int i=0;i < lppt.length;i++) {
+                lppt[i].x = pts[i].x;
+                lppt[i].y = pts[i].y;
+            }
+            int[] counts = new int[sizes.size()];
+            for (int i=0;i < counts.length;i++) {
+                counts[i] = ((Integer)sizes.get(i)).intValue();
+            }
+            HRGN hrgn = gdi.CreatePolyPolygonRgn(lppt, counts, counts.length, mode);
+            setWindowRegion(w, hrgn);
+        }
+
+        protected void setMask(final Component w, final Raster raster) {
+            GDI32 gdi = GDI32.INSTANCE;
+            final HRGN region = raster != null
+                ? gdi.CreateRectRgn(0, 0, 0, 0) : null;
+            if (region != null) {
+                final HRGN tempRgn = gdi.CreateRectRgn(0, 0, 0, 0);
+                try {
+                    RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
+                        public boolean outputRange(int x, int y, int w, int h) {
+                            GDI32 gdi = GDI32.INSTANCE;
+                            gdi.SetRectRgn(tempRgn, x, y, x + w, y + h);
+                            return gdi.CombineRgn(region, region, tempRgn, GDI32.RGN_OR) != GDI32.ERROR;
+                        }
+                    });
+                }
+                finally {
+                    gdi.DeleteObject(tempRgn);
+                }
+            }
+            setWindowRegion(w, region);
         }
     }
     private static class MacWindowUtils extends NativeWindowUtils {
@@ -1314,7 +1369,6 @@ public class WindowUtils {
      * Applies the given mask to the given window. Does nothing if the
      * operation is not supported.  The mask is treated as a bitmap and
      * ignores transparency.
-     * @deprecated
      */
     public static void setWindowMask(Window w, Icon mask) {
         getInstance().setWindowMask(w, mask);

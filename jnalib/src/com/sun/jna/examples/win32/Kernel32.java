@@ -26,7 +26,7 @@ public interface Kernel32 extends W32API {
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
 
-    public static class SYSTEMTIME extends Structure {
+    class SYSTEMTIME extends Structure {
         public short wYear;
         public short wMonth;
         public short wDayOfWeek;
@@ -100,7 +100,7 @@ public interface Kernel32 extends W32API {
     int FILE_ATTRIBUTE_ENCRYPTED = 0x00004000;
     
     int GENERIC_WRITE = 0x40000000;
-    public static class SECURITY_ATTRIBUTES extends Structure {
+    class SECURITY_ATTRIBUTES extends Structure {
         public int nLength = size();
         public Pointer lpSecurityDescriptor;
         public boolean bInheritHandle;
@@ -159,7 +159,7 @@ public interface Kernel32 extends W32API {
      * into a large block of result memory rather than something that stands
      * alone or is used for input.
      */
-    public static class FILE_NOTIFY_INFORMATION extends Structure {
+    class FILE_NOTIFY_INFORMATION extends Structure {
         public int NextEntryOffset;
         public int Action;
         public int FileNameLength;
@@ -195,7 +195,7 @@ public interface Kernel32 extends W32API {
             return next;
         }
     }
-    public static class OVERLAPPED extends Structure {
+    class OVERLAPPED extends Structure {
         public int Internal;
         public int InternalHigh;
         public int Offset;
@@ -203,7 +203,7 @@ public interface Kernel32 extends W32API {
         public Pointer hEvent;
     }
     // TODO: figure out how OVERLAPPED is used and apply an appropriate mapping
-    public static interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
+    interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
         void callback(int errorCode, int nBytesTransferred, OVERLAPPED overlapped);
     }
     /** NOTE: only exists in unicode form (W suffix).  Define this method 

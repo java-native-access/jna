@@ -76,17 +76,17 @@ public class RasterRangesUtilsTest extends TestCase {
 
         assertEquals("Wrong number of rectangles", EXPECTED.size(), rects.size());
         assertEquals("Wrong rectangles", EXPECTED, rects);
+
         /*
         long start = System.currentTimeMillis();
         for (int i=0;i < 100;i++) {
             RasterRangesUtils.outputOccupiedRanges(createRaster(mask), out);
         }
         System.out.println("raster: " + (System.currentTimeMillis()-start));
-        start = System.currentTimeMillis();
-        for (int i=0;i < 100;i++) {
-            RasterRangesUtils.outputShape(mask, out);
-        }
-        System.out.println("shape: " + (System.currentTimeMillis()-start));
         */
+    }
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(RasterRangesUtilsTest.class);
     }
 }

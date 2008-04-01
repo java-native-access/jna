@@ -22,13 +22,15 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.SinglePixelPackedSampleModel;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
- * Methods that are useful to decompose a raster in ranges of contiguous unoccupied pixels.
- * An occupied pixel has two possible meanings, depending on the raster :
+ * Methods that are useful to decompose a raster into a set of rectangles.
+ * An occupied pixel has two possible meanings, depending on the raster : 
  * <ul>
  * <li>if the raster has an alpha layer, occupied means with alpha not null</li>
  * <li>if the raster doesn't have any alpha layer, occupied means not completely black</li>
@@ -40,6 +42,12 @@ public class RasterRangesUtils {
     private static final int[] subColMasks = new int[] {
         0x0080, 0x0040, 0x0020, 0x0010,
         0x0008, 0x0004, 0x0002, 0x0001
+    };
+
+    private static final Comparator COMPARATOR = new Comparator() {
+        public int compare(Object o1, Object o2) {
+            return ((Rectangle)o1).x - ((Rectangle)o2).x;
+        }
     };
 
     /**
@@ -112,7 +120,7 @@ public class RasterRangesUtils {
         Set prevLine = Collections.EMPTY_SET;
         int scanlineBytes = binaryBits.length / h;
         for (int row = 0; row < h; row++) {
-            Set curLine = new HashSet();
+            Set curLine = new TreeSet(COMPARATOR);
             int rowOffsetBytes = row * scanlineBytes;
             int startCol = -1;
             // Look at each batch of 8 columns in this row
@@ -184,7 +192,7 @@ public class RasterRangesUtils {
         Set rects = new HashSet();
         Set prevLine = Collections.EMPTY_SET;
         for (int row = 0; row < h; row++) {
-            Set curLine = new HashSet();
+            Set curLine = new TreeSet(COMPARATOR);
             int idxOffset = row * w;
             int startCol = -1;
 
@@ -222,19 +230,25 @@ public class RasterRangesUtils {
 
     private static Set mergeRects(Set prev, Set current) {
         Set unmerged = new HashSet(prev);
-        for (Iterator i=current.iterator();i.hasNext();) {
-            Rectangle lower = (Rectangle)i.next();
-            for (Iterator i2=prev.iterator();i2.hasNext();) {
-                Rectangle upper = (Rectangle)i2.next();
-                if (upper.x == lower.x && upper.width == lower.width) {
-                    unmerged.remove(upper);
-                    lower.y = upper.y;
-                    lower.height = upper.height + 1;
-                    break;
+        if (!prev.isEmpty() && !current.isEmpty()) {
+            Rectangle[] pr = (Rectangle[])prev.toArray(new Rectangle[prev.size()]);
+            Rectangle[] cr = (Rectangle[])current.toArray(new Rectangle[current.size()]);
+            int ipr = 0;
+            int icr = 0;
+            while (ipr < pr.length && icr < cr.length) {
+                while (cr[icr].x < pr[ipr].x) {
+                    if (++icr == cr.length) {
+                        return unmerged;
+                    }
                 }
-                else if (upper.x > lower.x || upper.x + upper.width > lower.x) {
-                    // FIXME requires "prev" set be ordered
-                    //break;
+                if (cr[icr].x == pr[ipr].x && cr[icr].width == pr[ipr].width) {
+                    unmerged.remove(pr[ipr]);
+                    cr[icr].y = pr[ipr].y;
+                    cr[icr].height = pr[ipr].height + 1;
+                    ++icr;
+                }
+                else {
+                    ++ipr;
                 }
             }
         }

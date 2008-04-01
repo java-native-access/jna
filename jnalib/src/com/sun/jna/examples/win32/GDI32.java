@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.examples.win32;
 
@@ -17,15 +17,16 @@ import java.awt.Rectangle;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.examples.win32.User32.POINT;
 import com.sun.jna.ptr.PointerByReference;
 
 /** Definition (incomplete) of <code>gdi32.dll</code>. */
 public interface GDI32 extends W32API {
-    
+
     GDI32 INSTANCE = (GDI32)
         Native.loadLibrary("gdi32", GDI32.class, DEFAULT_OPTIONS);
 
-    public static class RECT extends Structure {
+    class RECT extends Structure {
         public int left;
         public int top;
         public int right;
@@ -39,14 +40,14 @@ public interface GDI32 extends W32API {
     }
 
     int RDH_RECTANGLES = 1;
-    public static class RGNDATAHEADER extends Structure {
+    class RGNDATAHEADER extends Structure {
         public int dwSize = size();
         public int iType = RDH_RECTANGLES; // required
         public int nCount;
         public int nRgnSize;
-        public RECT rcBound; 
+        public RECT rcBound;
     }
-    public static class RGNDATA extends Structure {
+    class RGNDATA extends Structure {
         public RGNDATAHEADER rdh;
         public byte[] Buffer;
         public RGNDATA(int bufferSize) {
@@ -54,7 +55,7 @@ public interface GDI32 extends W32API {
             allocateMemory();
         }
     }
-    
+
     public HRGN ExtCreateRegion(Pointer lpXform, int nCount, RGNDATA lpRgnData);
 
     int RGN_AND = 1;
@@ -62,35 +63,38 @@ public interface GDI32 extends W32API {
     int RGN_XOR = 3;
     int RGN_DIFF = 4;
     int RGN_COPY = 5;
-    
+
     int ERROR = 0;
     int NULLREGION = 1;
     int SIMPLEREGION = 2;
     int COMPLEXREGION = 3;
     int CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int fnCombineMode);
-    
+
     HRGN CreateRectRgn(int nLeftRect, int nTopRect,
                        int nRightRect, int nBottomRect);
-    
+
     HRGN CreateRoundRectRgn(int nLeftRect, int nTopRect,
                             int nRightRect, int nBottomRect,
-                            int nWidthEllipse, 
+                            int nWidthEllipse,
                             int nHeightEllipse);
-    
+    int ALTERNATE = 1;
+    int WINDING = 2;
+    HRGN CreatePolyPolygonRgn(POINT[] lppt, int[] lpPolyCounts, int nCount, int fnPolyFillMode);
+
     boolean SetRectRgn(HRGN hrgn, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
-    
+
     int SetPixel(HDC hDC, int x, int y, int crColor);
-    
+
     HDC CreateCompatibleDC(HDC hDC);
     boolean DeleteDC(HDC hDC);
-    
+
     int BI_RGB = 0;
     int BI_RLE8 = 1;
     int BI_RLE4 = 2;
     int BI_BITFIELDS = 3;
     int BI_JPEG = 4;
     int BI_PNG = 5;
-    public static class BITMAPINFOHEADER extends Structure {
+    class BITMAPINFOHEADER extends Structure {
         public int biSize = size();
         public int biWidth;
         public int biHeight;
@@ -103,13 +107,13 @@ public interface GDI32 extends W32API {
         public int biClrUsed;
         public int biClrImportant;
     }
-    public static class RGBQUAD extends Structure {
+    class RGBQUAD extends Structure {
         public byte rgbBlue;
         public byte rgbGreen;
         public byte rgbRed;
         public byte rgbReserved = 0;
     }
-    public static class BITMAPINFO extends Structure {
+    class BITMAPINFO extends Structure {
         public BITMAPINFOHEADER bmiHeader = new BITMAPINFOHEADER();
         //RGBQUAD:
         //byte rgbBlue;
@@ -131,7 +135,7 @@ public interface GDI32 extends W32API {
                              PointerByReference ppvBits, Pointer hSection,
                              int dwOffset);
     HBITMAP CreateCompatibleBitmap(HDC hDC, int width, int height);
-    
+
     HANDLE SelectObject(HDC hDC, HANDLE hGDIObj);
     boolean DeleteObject(HANDLE p);
 }
