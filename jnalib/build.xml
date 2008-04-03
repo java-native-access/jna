@@ -64,7 +64,17 @@
   <target name="-dynamic-properties">
     <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
     <echo>JNA version ${jna.version}, native API version ${jni.version}</echo>
-    <property name="build" value="build"/>
+
+    <condition property="vm.arch" value="-d64" else="">
+      <or>
+        <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
+        <os arch="x86_64"/>
+        <os arch="ppc64"/>
+        <os arch="sparcv9"/>
+        <os arch="amd64"/>
+      </or>
+    </condition>
+    <property name="build" value="build${vm.arch}"/>
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
@@ -369,20 +379,13 @@
         <not><os family="mac"/></not>
       </and>
     </condition>
-    <condition property="vm.arch" value="-d64" else="-d32">
-      <or>
-        <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
-        <os arch="x86_64"/>
-        <os arch="ppc64"/>
-        <os arch="sparcv9"/>
-        <os arch="amd64"/>
-      </or>
+    <condition property="vmopt.arch" value="-d64" else="-Dignore">
+      <equals arg1="${vm.arch}" arg2="-d64" trim="true"/>
     </condition>
-    <property name="vm.arch" value="-Dignore"/>
     <property name="tests.platform" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
       <jvmarg value="-Djna.library.path=${build.native}"/>
-      <jvmarg value="${vm.arch}"/>
+      <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
