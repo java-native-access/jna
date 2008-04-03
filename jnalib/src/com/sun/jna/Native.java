@@ -429,7 +429,7 @@ public final class Native {
     }
 
     private static String getNativeLibraryResourcePath() {
-        String arch = System.getProperty("os.arch");
+        String arch = System.getProperty("os.arch").toLowerCase();
         String osPrefix;
         if (Platform.isWindows()) {
             osPrefix = "win32-" + arch;
@@ -438,6 +438,9 @@ public final class Native {
             osPrefix = "darwin";
         }
         else if (Platform.isLinux()) {
+            if ("x86".equals(arch)) {
+                arch = "i386";
+            }
             osPrefix = "linux-" + arch;
         }
         else if (Platform.isSolaris()) {

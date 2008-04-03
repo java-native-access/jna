@@ -74,6 +74,10 @@
     <condition property="os.prefix" value="win32-${os.arch}">
       <os family="windows"/>
     </condition>
+    <condition property="os.prefix" value="linux-i386">
+      <!-- IBM's J9 reports 'x86' -->
+      <and><os name="Linux"/><os arch="x86"/></and>
+    </condition>
     <condition property="os.prefix" value="linux-${os.arch}">
       <os name="Linux"/>
     </condition>
