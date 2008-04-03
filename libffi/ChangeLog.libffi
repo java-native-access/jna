@@ -1,3 +1,24 @@
+2008-04-03  Anthony Green  <green@redhat.com>
+
+	* libffi.pc.in (Libs): Add -L${libdir}.
+	* configure.ac: Bump version to 3.0.5.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.
+	* README: Update for new release.
+
+2008-04-03  Anthony Green  <green@redhat.com>
+	    Xerces Ranby  <xerxes@zafena.se>
+
+	* include/ffi.h.in: Wrap definition of target architecture to
+	protect from double definitions.
+
+2008-03-22  Moriyoshi Koizumi  <moriyoshi@gmail.com>
+
+	* src/x86/ffi.c (ffi_prep_closure_loc): Fix for bug revealed in
+	closure_loc_fn0.c.
+	* testsuite/libffi.call/closure_loc_fn0.c (closure_loc_test_fn0):
+	New test.
+
 2008-03-04  Anthony Green  <green@redhat.com>
 	    Blake Chaffin
 	    hos@tamanegi.org
