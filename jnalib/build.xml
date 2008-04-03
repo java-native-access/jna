@@ -271,12 +271,7 @@
                    file="native/Makefile" byline="true"/>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64 to build 64-bit if not the platform default -->
-    <condition property="ARCH" value="${os.arch}">
-      <or>
-        <os arch="sparcv9"/>
-        <os arch="amd64"/>
-      </or>
-    </condition>
+    <property name="ARCH" value="${os.arch}"/>
     <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
       <isset property="CC"/>
     </condition>
@@ -374,12 +369,13 @@
         <not><os family="mac"/></not>
       </and>
     </condition>
-    <condition property="vm.arch" value="-d64">
+    <condition property="vm.arch" value="-d64" else="-d32">
       <or>
-        <and><os family="mac"/>
-          <or><os arch="x86_64"/><os arch="ppc64"/></or>
-        </and>
+        <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
+        <os arch="x86_64"/>
+        <os arch="ppc64"/>
         <os arch="sparcv9"/>
+        <os arch="amd64"/>
       </or>
     </condition>
     <property name="vm.arch" value="-Dignore"/>

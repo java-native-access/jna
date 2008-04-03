@@ -10,10 +10,10 @@
 # Supported platforms (built and tested):
 #
 #   Windows 2000/XP/2003/Vista (x86)
-#   OS X (i386/ppc)
-#   Linux (i386, amd64) 
-#   Solaris (i386, sparc, sparcv9)
-#   FreeBSD (i386)
+#   Darwin/OS X (i386/x86_64/ppc)
+#   Linux (i386/amd64) 
+#   Solaris (i386/amd64/sparc/sparcv9)
+#   FreeBSD (i386/amd64)
 #
 
 # Systems which support POSIX signals may be able to support VM crash
@@ -65,7 +65,7 @@ PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses
 CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES) \
        -DVERSION='"$(VERSION)"' -DCHECKSUM='"$(CHECKSUM)"'
 # -static-libgcc avoids gcc library incompatibilities across linux systems
-LDFLAGS=-o $@ -shared -Wl,-soname,$@ -static-libgcc
+LDFLAGS=-o $@ -shared -static-libgcc
 # Avoid bug in X11-based 1.5/1.6 VMs; dynamically load instead of linking
 # See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
 #LIBS=-L"$(LIBDIR)" -ljawt 
@@ -75,7 +75,7 @@ STRIP=strip -x
 ifeq ($(OS),win32)
 # Uncomment this line to use MSVC (doesn't yet work with libffi)
 #CC=cl
-ARCH=$(shell uname -m | sed 's/i[456]86/i386/g')
+ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 CDEFINES=-DHAVE_PROTECTION
 
 ifeq ($(CC),cl)
@@ -107,13 +107,14 @@ EXTRAOBJS=$(RSRC)
 endif
 
 ifeq ($(OS),linux)
-ARCH=$(shell uname -m | sed 's/i[456]86/i386/g')
+ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CDEFINES+=-DHAVE_PROTECTION
+LDFLAGS+=-Wl,-soname,$@ 
 endif
 
 ifeq ($(OS),freebsd)
-ARCH=$(shell uname -m | sed 's/i[456]86/i386/g')
+ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
 LDFLAGS=-o $@ -shared 
@@ -126,20 +127,19 @@ ARCH=$(shell uname -p)
 endif
 PCFLAGS+=-fPIC
 CDEFINES+=-DHAVE_PROTECTION
-LDFLAGS=-o $@ -G
 ifeq ($(ARCH), sparcv9)
   # alter CC instead of PCFLAGS, since we need to pass it down to libffi 
   # configure and some of the other settings in PCFLAGS might make the build 
   # choke
   CC += -m64  
-  LDFLAGS += -m64 
+  LD += -m64 
 endif
 endif
 
 # Enable 64-bit builds if the arch demands it
 ifeq ($(ARCH),amd64)
   CC += -m64
-  LDFLAGS += -m64
+  LD += -m64
 endif
 
 ifeq ($(OS),darwin)
