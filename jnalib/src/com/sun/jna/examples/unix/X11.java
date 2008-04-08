@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.examples.unix;
 
@@ -27,16 +27,16 @@ import com.sun.jna.ptr.PointerByReference;
 
 /** Definition (incomplete) of the X library. */
 public interface X11 extends Library {
-    
-    public static class VisualID extends NativeLong {
-	public VisualID() { }
-	public VisualID(long value) { super(value); }
+
+    class VisualID extends NativeLong {
+        public VisualID() { }
+        public VisualID(long value) { super(value); }
     }
 
-    public static class XID implements NativeMapped {
+    class XID implements NativeMapped {
         public static final XID None = null;
         private Integer id = new Integer(0);
-        public XID() { this(X11.None); }
+        public XID() { this(0); }
         public XID(Integer id) { this.id = id; }
         public XID(int id) { this(new Integer(id)); }
         protected boolean isNone(Object o) {
@@ -57,7 +57,7 @@ public interface X11 extends Library {
             return "0x" + Integer.toHexString(id.intValue());
         }
     }
-    public static class Atom extends XID {
+    class Atom extends XID {
         public static final Atom None = null;
         public Atom() { }
         public Atom(Integer id) { super(id); }
@@ -85,14 +85,14 @@ public interface X11 extends Library {
             }
         }
     }
-    public static class AtomByReference extends ByReference {
+    class AtomByReference extends ByReference {
         public AtomByReference() { super(4); }
         public Atom getValue() {
 	    int value = getPointer().getInt(0);
             return (Atom)new Atom().fromNative(new Integer(value), null);
         }
     }
-    public static class Colormap extends XID {
+    class Colormap extends XID {
         public static final Colormap None = null;
         public Colormap() { }
         public Colormap(Integer id) { super(id); }
@@ -103,7 +103,18 @@ public interface X11 extends Library {
             return new Colormap((Integer)nativeValue);
         }
     }
-    public static class Cursor extends XID {
+    class Font extends XID {
+        public static final Font None = null;
+        public Font() { }
+        public Font(Integer id) { super(id); }
+        public Font(int id) { super(id); }
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
+            return new Font((Integer)nativeValue);
+        }
+    }
+    class Cursor extends XID {
         public static final Cursor None = null;
         public Cursor() { }
         public Cursor(Integer id) { super(id); }
@@ -114,7 +125,7 @@ public interface X11 extends Library {
             return new Cursor((Integer)nativeValue);
         }
     }
-    public static class Drawable extends XID {
+    class Drawable extends XID {
         public static final Drawable None = null;
         public Drawable() { }
         public Drawable(Integer id) { super(id); }
@@ -125,7 +136,7 @@ public interface X11 extends Library {
             return new Drawable((Integer)nativeValue);
         }
     }
-    public static class Window extends Drawable {
+    class Window extends Drawable {
         public static final Window None = null;
         public Window() { }
         public Window(Integer id) { super(id); }
@@ -136,14 +147,14 @@ public interface X11 extends Library {
             return new Window((Integer)nativeValue);
         }
     }
-    public static class WindowByReference extends ByReference {
+    class WindowByReference extends ByReference {
         public WindowByReference() { super(4); }
         public Window getValue() {
             int value = getPointer().getInt(0);
             return value == X11.None ? Window.None : new Window(value);
         }
     }
-    public static class Pixmap extends Drawable {
+    class Pixmap extends Drawable {
         public static final Pixmap None = null;
         public Pixmap() { }
         public Pixmap(Integer id) { super(id); }
@@ -155,9 +166,9 @@ public interface X11 extends Library {
         }
     }
     // TODO: define structure
-    public static class Display extends PointerType { }
+    class Display extends PointerType { }
     // TODO: define structure
-    public static class Visual extends PointerType {
+    class Visual extends PointerType {
         public NativeLong getVisualID() {
 	    if (getPointer() != null)
 		return getPointer().getNativeLong(Native.POINTER_SIZE);
@@ -168,14 +179,14 @@ public interface X11 extends Library {
         }
     }
     // TODO: define structure
-    public static class Screen extends PointerType { }
+    class Screen extends PointerType { }
     // TODO: define structure
-    public static class GC extends PointerType { }
+    class GC extends PointerType { }
     // TODO: define structure
-    public static class XImage extends PointerType { }
-    
+    class XImage extends PointerType { }
+
     /** Definition (incomplete) of the Xext library. */
-    public interface Xext extends Library {
+    interface Xext extends Library {
         Xext INSTANCE = (Xext)Native.loadLibrary("Xext", Xext.class);
         // Shape Kinds
         int ShapeBounding = 0;
@@ -191,21 +202,21 @@ public interface X11 extends Library {
         void XShapeCombineMask(Display display, Window window, int dest_kind,
                                int x_off, int y_off, Pixmap src, int op);
     }
-    
+
     /** Definition (incomplete) of the Xrender library. */
-    public interface Xrender extends Library {
+    interface Xrender extends Library {
         Xrender INSTANCE = (Xrender)Native.loadLibrary("Xrender", Xrender.class);
-        public static class XRenderDirectFormat extends Structure {
+        class XRenderDirectFormat extends Structure {
             public short red, redMask;
             public short green, greenMask;
             public short blue, blueMask;
             public short alpha, alphaMask;
         }
-	public static class PictFormat extends NativeLong {
-	    public PictFormat(long value) { super(value); }
-	    public PictFormat() { }
-	}
-        public static class XRenderPictFormat extends Structure {
+        class PictFormat extends NativeLong {
+            public PictFormat(long value) { super(value); }
+            public PictFormat() { }
+        }
+        class XRenderPictFormat extends Structure {
             public PictFormat id;
             public int type;
             public int depth;
@@ -216,7 +227,7 @@ public interface X11 extends Library {
         int PictTypeDirect = 0x1;
         XRenderPictFormat XRenderFindVisualFormat(Display display, Visual visual);
     }
-    
+
     X11 INSTANCE = (X11)Native.loadLibrary("X11", X11.class);
 
     int Success = 0;
@@ -237,8 +248,8 @@ public interface X11 extends Library {
     int BadName = 15;
     int BadLength = 16;
     int BadImplementation = 17;
-    
-    public static class XWMHints extends Structure {
+
+    class XWMHints extends Structure {
         public NativeLong flags;
         public int input;
         public int initial_state;
@@ -249,14 +260,14 @@ public interface X11 extends Library {
         public int window_group;
     }
 
-    public static class XTextProperty extends Structure {
+    class XTextProperty extends Structure {
         public String value;
         public int encoding;
         public int format;
         public NativeLong nitems;
     }
 
-    public static class XSizeHints extends Structure {
+    class XSizeHints extends Structure {
         public NativeLong flags;
         public int x, y;
         public int width, height;
@@ -272,8 +283,8 @@ public interface X11 extends Library {
         public int base_width, base_height;
         public int win_gravity;
     }
-    
-    public static class XWindowAttributes extends Structure {
+
+    class XWindowAttributes extends Structure {
         public int x, y;
         public int width, height;
         public int border_width;
@@ -296,7 +307,7 @@ public interface X11 extends Library {
         public int override_redirect;
         public Pointer screen;
     }
-    
+
     int CWBackPixmap = (1<<0);
     int CWBackPixel = (1<<1);
     int CWBorderPixmap = (1<<2);
@@ -312,7 +323,7 @@ public interface X11 extends Library {
     int CWDontPropagate = (1<<12);
     int CWColormap = (1<<13);
     int CWCursor = (1<<14);
-    public static class XSetWindowAttributes extends Structure {
+    class XSetWindowAttributes extends Structure {
         public Pixmap background_pixmap;
         public NativeLong background_pixel;
         public Pixmap border_pixmap;
@@ -322,15 +333,15 @@ public interface X11 extends Library {
         public int backing_store;
         public NativeLong backing_planes;
         public NativeLong backing_pixel;
-        public boolean save_under; 
+        public boolean save_under;
         public NativeLong event_mask;
         public NativeLong do_not_propagate_mask;
-        public boolean override_redirect; 
+        public boolean override_redirect;
         public Colormap colormap;
         public Cursor cursor;
-        
+
     }
-    
+
     int XK_0 = 0x30;
     int XK_9 = 0x39;
     int XK_A = 0x41;
@@ -359,14 +370,14 @@ public interface X11 extends Library {
     int VisualColormapSizeMask = 0x80;
     int VisualBitsPerRGBMask = 0x100;
     int VisualAllMask = 0x1FF;
-    
+
     int StaticGray = 0x0;
     int GrayScale = 0x1;
     int StaticColor = 0x2;
     int PseudoColor = 0x3;
     int TrueColor = 0x4;
     int DirectColor = 0x5;
-    public static class XVisualInfo extends Structure {
+    class XVisualInfo extends Structure {
         public Visual visual;
         public VisualID visualid;
         public int screen;
@@ -378,13 +389,27 @@ public interface X11 extends Library {
         public int colormap_size;
         public int bits_per_rgb;
     }
-    public static class XPoint extends Structure {
+    class XPoint extends Structure {
         public short x, y;
+        public XPoint() { }
+        public XPoint(short x, short y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+    class XRectangle extends Structure {
+        public short x, y;
+        public short width, height;
+        public XRectangle() { }
+        public XRectangle(short x, short y, short width, short height) {
+            this.x = x; this.y = y;
+            this.width = width; this.height = height;
+        }
     }
 
     int AllocNone = 0;
     int AllocAll = 1;
-    
+
     Atom XA_PRIMARY = new Atom(1);
     Atom XA_SECONDARY = new Atom(2);
     Atom XA_ARC = new Atom(3);
@@ -393,7 +418,7 @@ public interface X11 extends Library {
     Atom XA_CARDINAL = new Atom(6);
     Atom XA_COLORMAP = new Atom(7);
     Atom XA_CURSOR = new Atom(8);
-    
+
     int PropModeReplace = 0;
     int PropModePrepend = 1;
     int PropModeAppend = 2;
@@ -410,7 +435,7 @@ public interface X11 extends Library {
     int AllTemporary = 0;
     int CurrentTime = 0;
     int NoSymbol = 0;
-    
+
     Display XOpenDisplay(String name);
     int XGetErrorText(Display display, int code, byte[] buffer, int len);
     int XDefaultScreen(Display display);
@@ -420,7 +445,7 @@ public interface X11 extends Library {
     int XDisplayHeight(Display display, int screen);
     Window XDefaultRootWindow(Display display);
     Window XRootWindow(Display display, int screen);
-    int XAllocNamedColor(Display display, int colormap, String color_name, 
+    int XAllocNamedColor(Display display, int colormap, String color_name,
                          Pointer screen_def_return, Pointer exact_def_return);
     XSizeHints XAllocSizeHints();
     void XSetWMProperties(Display display, Window window, String window_name,
@@ -428,10 +453,10 @@ public interface X11 extends Library {
                           XSizeHints normal_hints, Pointer wm_hints,
                           Pointer class_hints);
     int XFree(Pointer data);
-    Window XCreateSimpleWindow(Display display, Window parent, int x, int y, 
+    Window XCreateSimpleWindow(Display display, Window parent, int x, int y,
                                int width, int height, int border_width,
                                int border, int background);
-    Pixmap XCreateBitmapFromData(Display display, Window window, Pointer data, 
+    Pixmap XCreateBitmapFromData(Display display, Window window, Pointer data,
                                  int width, int height);
     int XMapWindow(Display display, Window window);
     int XFlush(Display display);
@@ -442,33 +467,91 @@ public interface X11 extends Library {
     int XClearArea(Display display, Window window, int x, int y, int w, int h, int exposures);
     Pixmap XCreatePixmap(Display display, Drawable drawable, int width, int height, int depth);
     int XFreePixmap(Display display, Pixmap pixmap);
-    GC XCreateGC(Display display, Drawable drawable, NativeLong mask, Pointer values);
+    int GCFunction                  = (1<<0);
+    int GCPlaneMask                 = (1<<1);
+    int GCForeground                = (1<<2);
+    int GCBackground                = (1<<3);
+    int GCLineWidth                 = (1<<4);
+    int GCLineStyle                 = (1<<5);
+    int GCCapStyle                  = (1<<6);
+    int GCJoinStyle                 = (1<<7);
+    int GCFillStyle                 = (1<<8);
+    int GCFillRule                  = (1<<9);
+    int GCTile                      = (1<<10);
+    int GCStipple                   = (1<<11);
+    int GCTileStipXOrigin           = (1<<12);
+    int GCTileStipYOrigin           = (1<<13);
+    int GCFont                      = (1<<14);
+    int GCSubwindowMode             = (1<<15);
+    int GCGraphicsExposures         = (1<<16);
+    int GCClipXOrigin               = (1<<17);
+    int GCClipYOrigin               = (1<<18);
+    int GCClipMask                  = (1<<19);
+    int GCDashOffset                = (1<<20);
+    int GCDashList                  = (1<<21);
+    int GCArcMode                   = (1<<22);
+    class XGCValues extends Structure {
+        public int function;            /* logical operation */
+        public NativeLong plane_mask;/* plane mask */
+        public NativeLong foreground;/* foreground pixel */
+        public NativeLong background;/* background pixel */
+        public int line_width;          /* line width (in pixels) */
+        public int line_style;          /* LineSolid, LineOnOffDash, LineDoubleDash*/
+        public int cap_style;           /* CapNotLast, CapButt, CapRound, CapProjecting */
+        public int join_style;          /* JoinMiter, JoinRound, JoinBevel */
+        public int fill_style;          /* FillSolid, FillTiled, FillStippled FillOpaqueStippled*/
+        public int fill_rule;           /* EvenOddRule, WindingRule */
+        public int arc_mode;            /* ArcChord, ArcPieSlice */
+        public Pixmap tile;             /* tile pixmap for tiling operations */
+        public Pixmap stipple;          /* stipple 1 plane pixmap for stippling */
+        public int ts_x_origin;         /* offset for tile or stipple operations */
+        public int ts_y_origin;
+        public Font font;               /* default text font for text operations */
+        public int subwindow_mode;      /* ClipByChildren, IncludeInferiors */
+        public boolean graphics_exposures; /* boolean, should exposures be generated */
+        public int clip_x_origin;       /* origin for clipping */
+        public int clip_y_origin;
+        public Pixmap clip_mask;        /* bitmap clipping; other calls for rects */
+        public int dash_offset;         /* patterned/dashed line information */
+        public byte dashes;
+    }
+    GC XCreateGC(Display display, Drawable drawable, NativeLong mask, XGCValues values);
+    int EvenOddRule = 0;
+    int WindingRule = 1;
+    int XSetFillRule(Display display, GC gc, int fill_rule);
     int XFreeGC(Display display, GC gc);
     int XDrawPoint(Display display, Drawable drawable, GC gc, int x, int y);
     int CoordModeOrigin = 0;
     int CoordModePrevious = 1;
     int XDrawPoints(Display display, Drawable drawable, GC gc,
                     XPoint[] points, int npoints, int mode);
-    int XFillRectangle(Display display, Drawable drawable, GC gc, 
+    int XFillRectangle(Display display, Drawable drawable, GC gc,
                        int x, int y, int width, int height);
+    int XFillRectangles(Display display, Drawable drawable, GC gc,
+                        XRectangle[] rectangles, int nrectangles);
     int XSetForeground(Display display, GC gc, NativeLong color);
     int XSetBackground(Display display, GC gc, NativeLong color);
-    int XFillArc(Display display, Drawable drawable, GC gc, int x, int y, 
+    int XFillArc(Display display, Drawable drawable, GC gc, int x, int y,
                  int width, int height, int angle1, int angle2);
-    int XQueryTree(Display display, Window window, WindowByReference root, 
+    int Complex = 0;
+    int Nonconvex = 1;
+    int Convex = 2;
+    int XFillPolygon(Display dpy, Drawable drawable, GC gc, XPoint[] points,
+                     int npoints, int shape, int mode);
+    int XQueryTree(Display display, Window window, WindowByReference root,
                    WindowByReference parent, PointerByReference children,
                    IntByReference childCount);
-    boolean XQueryPointer(Display display, Window window, 
+    boolean XQueryPointer(Display display, Window window,
                           WindowByReference root_return,
-                          WindowByReference child_return, 
+                          WindowByReference child_return,
                           IntByReference root_x_return,
-                          IntByReference root_y_return, 
+                          IntByReference root_y_return,
                           IntByReference win_x_return,
                           IntByReference win_y_return,
                           IntByReference mask_return);
     int XGetWindowAttributes(Display display, Window window, XWindowAttributes attributes);
     int XChangeWindowAttributes(Display display, Window window, NativeLong valuemask, XSetWindowAttributes attributes);
-    
+
     int NoEventMask = 0;
     int KeyPressMask = (1<<0);
     int KeyReleaseMask = (1<<1);
@@ -495,7 +578,7 @@ public interface X11 extends Library {
     int PropertyChangeMask = (1<<22);
     int ColormapChangeMask = (1<<23);
     int OwnerGrabButtonMask = (1<<24);
-    
+
     int XSelectInput(Display display, Window window, NativeLong eventMask);
     /** Returns an {@link XWMHints} which must be freed by {@link #XFree}. */
     XWMHints XGetWMHints(Display display, Window window);
@@ -504,27 +587,27 @@ public interface X11 extends Library {
     int XQueryKeymap(Display display, byte[] keys_return);
     int XKeycodeToKeysym(Display display, byte keycode, int index);
     /** Returns an array of {@link XVisualInfo} which must be freed by {@link #XFree}.
-     * Use {@link XVisualInfo#toArray(int) 
-     * toArray(nitems_return.getValue()} to obtain the array. 
+     * Use {@link XVisualInfo#toArray(int)
+     * toArray(nitems_return.getValue()} to obtain the array.
      */
-    XVisualInfo XGetVisualInfo(Display display, NativeLong vinfo_mask, 
+    XVisualInfo XGetVisualInfo(Display display, NativeLong vinfo_mask,
                                XVisualInfo vinfo_template,
                                IntByReference nitems_return);
     Colormap XCreateColormap(Display display, Window w, Visual visual, int alloc);
-    int XGetWindowProperty(Display display, Window w, Atom property, 
+    int XGetWindowProperty(Display display, Window w, Atom property,
                            NativeLong long_offset,
-                           NativeLong long_length, boolean delete, 
+                           NativeLong long_length, boolean delete,
                            Atom reg_type,
-                           AtomByReference actual_type_return, 
+                           AtomByReference actual_type_return,
                            IntByReference actual_format_return,
                            NativeLongByReference nitems_return,
                            NativeLongByReference bytes_after_return,
                            PointerByReference prop_return);
-    int XChangeProperty(Display display, Window w, Atom property, Atom type, 
+    int XChangeProperty(Display display, Window w, Atom property, Atom type,
                         int format, int mode, Pointer data, int nelements);
     int XDeleteProperty(Display display, Window w, Atom property);
     Atom XInternAtom(Display display, String name, boolean only_if_exists);
-    int XCopyArea(Display dpy, Drawable src, Drawable dst, GC gc, 
+    int XCopyArea(Display dpy, Drawable src, Drawable dst, GC gc,
                   int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
     int XYBitmap = 0;
@@ -533,7 +616,7 @@ public interface X11 extends Library {
     XImage XCreateImage(Display dpy, Visual visual, int depth, int format,
                         int offset, Pointer data, int width, int height,
                         int bitmap_pad, int bytes_per_line);
-    int XPutImage(Display dpy, Drawable d, GC gc, XImage image, 
+    int XPutImage(Display dpy, Drawable d, GC gc, XImage image,
                   int src_x, int src_y, int dest_x, int dest_y,
                   int width, int height);
     int XDestroyImage(XImage image);

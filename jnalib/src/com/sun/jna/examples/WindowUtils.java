@@ -872,6 +872,7 @@ public class WindowUtils {
             setWindowRegion(w, region);
         }
     }
+
     private static class MacWindowUtils extends NativeWindowUtils {
         public boolean isWindowAlphaSupported() {
             return true;
@@ -1008,9 +1009,9 @@ public class WindowUtils {
         }
     }
     private static class X11WindowUtils extends NativeWindowUtils {
-        private Pixmap createBitmap(final Display dpy,
-                                    X11.Window win,
-                                    Raster raster) {
+        private static Pixmap createBitmap(final Display dpy,
+                                           X11.Window win,
+                                           Raster raster) {
             final X11 x11 = X11.INSTANCE;
             Rectangle bounds = raster.getBounds();
             int width = bounds.x + bounds.width;
@@ -1022,19 +1023,26 @@ public class WindowUtils {
             }
             x11.XSetForeground(dpy, gc, new NativeLong(0));
             x11.XFillRectangle(dpy, pm, gc, 0, 0, width, height);
-            final int UNMASKED = 1;
-            x11.XSetForeground(dpy, gc, new NativeLong(UNMASKED));
-            X11.XWindowAttributes atts = new X11.XWindowAttributes();
-            int status = x11.XGetWindowAttributes(dpy, win, atts);
-            if (status == 0) {
-                return null;
-            }
+            final List rlist = new ArrayList();
             try {
                 RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
                     public boolean outputRange(int x, int y, int w, int h) {
-                        return x11.XFillRectangle(dpy, pm, gc, x, y, w, h) != 0;
+                        rlist.add(new Rectangle(x, y, w, h));
+                        return true;
                     }
                 });
+                X11.XRectangle[] rects = (X11.XRectangle[])
+                    new X11.XRectangle().toArray(rlist.size());
+                for (int i=0;i < rects.length;i++) {
+                    Rectangle r = (Rectangle)rlist.get(i);
+                    rects[i].x = (short)r.x;
+                    rects[i].y = (short)r.y;
+                    rects[i].width = (short)r.width;
+                    rects[i].height = (short)r.height;
+                }
+                final int UNMASKED = 1;
+                x11.XSetForeground(dpy, gc, new NativeLong(UNMASKED));
+                x11.XFillRectangles(dpy, pm, gc, rects, rects.length);
             }
             finally {
                 x11.XFreeGC(dpy, gc);
@@ -1049,7 +1057,7 @@ public class WindowUtils {
             return getAlphaVisualIDs().length > 0;
         }
 
-        private long getVisualID(GraphicsConfiguration config) {
+        private static long getVisualID(GraphicsConfiguration config) {
             // Use reflection to call
             // X11GraphicsConfig.getVisual
             try {
@@ -1141,8 +1149,8 @@ public class WindowUtils {
             return alphaVisualIDs;
         }
 
-        private X11.Window getContentWindow(Window w, X11.Display dpy,
-                                            X11.Window win, Point offset) {
+        private static X11.Window getContentWindow(Window w, X11.Display dpy,
+                                                   X11.Window win, Point offset) {
             if ((w instanceof Frame && !((Frame)w).isUndecorated())
                 || (w instanceof Dialog && !((Dialog)w).isUndecorated())) {
                 X11 x11 = X11.INSTANCE;
@@ -1170,7 +1178,7 @@ public class WindowUtils {
             return win;
         }
 
-        private X11.Window getDrawable(Component w) {
+        private static X11.Window getDrawable(Component w) {
             int id = (int)Native.getComponentID(w);
             if (id == X11.None)
                 return null;
@@ -1310,29 +1318,26 @@ public class WindowUtils {
             });
         }
 
-        protected void setMask(final Component w, final Raster raster) {
+        private interface PixmapSource {
+            Pixmap getPixmap(Display dpy, X11.Window win);
+        }
+
+        private void setWindowShape(final Window w, final PixmapSource src) {
             Runnable action = new Runnable() {
                 public void run() {
                     X11 x11 = X11.INSTANCE;
-                    Xext ext = Xext.INSTANCE;
                     Display dpy = x11.XOpenDisplay(null);
-                    if (dpy == null)
+                    if (dpy == null) {
                         return;
+                    }
                     Pixmap pm = null;
                     try {
                         X11.Window win = getDrawable(w);
-                        if (raster == null
-                            || ((pm = createBitmap(dpy, win, raster)) == null)) {
-                            ext.XShapeCombineMask(dpy, win,
-                                                  X11.Xext.ShapeBounding,
-                                                  0, 0, Pixmap.None,
-                                                  X11.Xext.ShapeSet);
-                        }
-                        else {
-                            ext.XShapeCombineMask(dpy, win,
-                                                  X11.Xext.ShapeBounding, 0, 0,
-                                                  pm, X11.Xext.ShapeSet);
-                        }
+                        pm = src.getPixmap(dpy, win);
+                        Xext ext = Xext.INSTANCE;
+                        ext.XShapeCombineMask(dpy, win, X11.Xext.ShapeBounding,
+                                              0, 0, pm == null ? Pixmap.None : pm,
+                                              X11.Xext.ShapeSet);
                     }
                     finally {
                         if (pm != null) {
@@ -1340,10 +1345,18 @@ public class WindowUtils {
                         }
                         x11.XCloseDisplay(dpy);
                     }
-                    setForceHeavyweightPopups(getWindow(w), raster != null);
+                    setForceHeavyweightPopups(getWindow(w), pm != null);
                 }
             };
             whenDisplayable(w, action);
+        }
+
+        protected void setMask(final Component w, final Raster raster) {
+            setWindowShape(getWindow(w), new PixmapSource() {
+                public Pixmap getPixmap(Display dpy, X11.Window win) {
+                    return raster != null ? createBitmap(dpy, win, raster) : null;
+                }
+            });
         }
     }
 
