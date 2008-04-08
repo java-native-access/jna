@@ -129,7 +129,7 @@ public class HelloWorld {
     }
 
     public static void main(String[] args) {
-        CLibrary.INSTANCE.printf("Hello, World");
+        CLibrary.INSTANCE.printf("Hello, World\n");
         for (int i=0;i < args.length;i++) {
             CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
         }
@@ -158,7 +158,7 @@ public interface Kernel32 extends StdCallLibrary {
     // Method declarations, constant and structure definitions go here
 }</textarea>
   </li>
-  <li>Within this interface, define an instance of the native library using the <code>Native.loadLibrary(Class)</code> method, providing the native library interface you defined in step (4).<br>    
+  <li>Within this interface, define an instance of the native library using the <code>Native.loadLibrary(Class)</code> method, providing the native library interface you defined in step (5).<br>    
     <textarea name="textarea" cols="80" rows="6" readonly="readonly">
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class);
