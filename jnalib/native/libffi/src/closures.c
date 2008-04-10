@@ -42,6 +42,12 @@
    another executable.  */
 #  define FFI_MMAP_EXEC_WRIT 1
 # endif
+# ifdef X86_WIN32
+/* Windows systems may have Data Execution Protection (DEP) enabled, 
+   which requires the use of VirtualMalloc/VirtualFree to alloc/free
+   executable memory. */
+#  define FFI_MMAP_EXEC_WRIT 1
+# endif
 #endif
 
 #if FFI_MMAP_EXEC_WRIT && !defined FFI_MMAP_EXEC_SELINUX
@@ -92,6 +98,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
+#ifndef X86_WIN32
 #include <mntent.h>
 #include <sys/param.h>
 #include <pthread.h>
@@ -149,6 +156,7 @@ selinux_enabled_check (void)
 #define is_selinux_enabled() 0
 
 #endif
+#endif /* X86_WIN32 */
 
 /* Declare all functions defined in dlmalloc.c as static.  */
 static void *dlmalloc(size_t);
@@ -167,9 +175,11 @@ static int dlmalloc_trim(size_t) MAYBE_UNUSED;
 static size_t dlmalloc_usable_size(void*) MAYBE_UNUSED;
 static void dlmalloc_stats(void) MAYBE_UNUSED;
 
+#ifndef X86_WIN32
 /* Use these for mmap and munmap within dlmalloc.c.  */
 static void *dlmmap(void *, size_t, int, int, int, off_t);
 static int dlmunmap(void *, size_t);
+#endif /* X86_WIN32 */
 
 #define mmap dlmmap
 #define munmap dlmunmap
@@ -178,6 +188,8 @@ static int dlmunmap(void *, size_t);
 
 #undef mmap
 #undef munmap
+
+#ifndef X86_WIN32
 
 /* A mutex used to synchronize access to *exec* variables in this file.  */
 static pthread_mutex_t open_temp_exec_file_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -487,6 +499,8 @@ segment_holding_code (mstate m, char* addr)
   }
 }
 #endif
+
+#endif /* X86_WIN32 */
 
 /* Allocate a chunk of memory with the given size.  Returns a pointer
    to the writable address, and sets *CODE to the executable

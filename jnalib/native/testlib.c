@@ -645,7 +645,6 @@ returnStringVarArgs(const char *fmt, ...) {
 #ifdef _WIN32
 ///////////////////////////////////////////////////////////////////////
 // stdcall tests
-// All stdcall functions need to include undecorated symbols
 ///////////////////////////////////////////////////////////////////////
 EXPORT int32 __stdcall
 returnInt32ArgumentStdCall(int32 arg) {

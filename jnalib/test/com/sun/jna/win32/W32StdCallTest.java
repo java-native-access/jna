@@ -66,17 +66,21 @@ public class W32StdCallTest extends TestCase {
 
     public void testFunctionMapper() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
+        final String NAME = "returnInt32ArgumentStdCall@4";
+        assertEquals("Wrong expected name", NAME,
+                     NativeLibrary.getInstance("testlib").getFunction(NAME).getName());
+
         Method m = TestLibrary.class.getMethod("returnInt32ArgumentStdCall", new Class[] { int.class });
         assertEquals("Function mapper should provide decorated name",
-                     "returnInt32ArgumentStdCall@" + Native.getNativeSize(int.class),
+                     NAME,
                      StdCallLibrary.FUNCTION_MAPPER.getFunctionName(lib, m));
         
         Class type = TestLibrary.TestStructure.ByValue.class;
+        final String NAME2 = "returnStructureByValueArgumentStdCall@" + Native.getNativeSize(type);
         m = TestLibrary.class.getMethod("returnStructureByValueArgumentStdCall",
                                         new Class[] { type });
         assertEquals("Function mapper should provide decorated name for by-value structs",
-                     "returnStructureByValueArgumentStdCall@" + Native.getNativeSize(type),
-                     StdCallLibrary.FUNCTION_MAPPER.getFunctionName(lib, m));
+                     NAME2, StdCallLibrary.FUNCTION_MAPPER.getFunctionName(lib, m));
     }
     
     public void testStdCallReturnInt32Argument() {

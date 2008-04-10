@@ -26,7 +26,7 @@
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="vendor" value="JNA Development Team"/>
   <property name="copyright"
-            value="Copyright &amp;copy; 2007 Timothy Wall. All Rights Reserved."/>
+            value="Copyright &amp;copy; 2007-2008 Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
   <!-- JNA library release version -->            
   <property name="jna.major" value="3"/>
@@ -37,7 +37,7 @@
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="3"/>
   <property name="jni.minor" value="0"/>
-  <property name="jni.revision" value="3"/>
+  <property name="jni.revision" value="4"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
   <property name="jni.md5" value="892beacd437514d23ed9b1cefeb2ead6"/>
@@ -385,6 +385,8 @@
     <property name="tests.platform" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
       <jvmarg value="-Djna.library.path=${build.native}"/>
+      <!-- Avoid VM crashes, if possible -->
+      <jvmarg value="-Djna.protected=true"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="xml"/>
