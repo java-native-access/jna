@@ -61,11 +61,20 @@ public class StdCallFunctionMapper implements FunctionMapper {
             pop += getArgumentNativeStackSize(argTypes[i]);
         }
         String decorated = name + "@" + pop;
+        int conv = StdCallLibrary.STDCALL_CONVENTION;
         try {
-            name = library.getFunction(decorated, StdCallLibrary.STDCALL_CONVENTION).getName();
+            name = library.getFunction(decorated, conv).getName();
+
         }
         catch(UnsatisfiedLinkError e) {
-            // not found; let caller try undecorated version
+            // try with an explicit underscore; some compilers prepend
+            // an extra one
+            try {
+                name = library.getFunction("_" + decorated, conv).getName();
+            }
+            catch(UnsatisfiedLinkError e) {
+                // not found; let caller try undecorated version
+            }
         }
         return name;
     }

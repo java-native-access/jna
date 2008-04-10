@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.FunctionMapper;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
@@ -65,22 +66,31 @@ public class W32StdCallTest extends TestCase {
     }
 
     public void testFunctionMapper() throws Exception {
+        FunctionMapper mapper = StdCallLibrary.FUNCTION_MAPPER;
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
-        final String NAME = "returnInt32ArgumentStdCall@4";
-        assertEquals("Wrong expected name", NAME,
-                     NativeLibrary.getInstance("testlib").getFunction(NAME).getName());
 
-        Method m = TestLibrary.class.getMethod("returnInt32ArgumentStdCall", new Class[] { int.class });
-        assertEquals("Function mapper should provide decorated name",
-                     NAME,
-                     StdCallLibrary.FUNCTION_MAPPER.getFunctionName(lib, m));
-        
-        Class type = TestLibrary.TestStructure.ByValue.class;
-        final String NAME2 = "returnStructureByValueArgumentStdCall@" + Native.getNativeSize(type);
-        m = TestLibrary.class.getMethod("returnStructureByValueArgumentStdCall",
-                                        new Class[] { type });
-        assertEquals("Function mapper should provide decorated name for by-value structs",
-                     NAME2, StdCallLibrary.FUNCTION_MAPPER.getFunctionName(lib, m));
+        Method[] methods = {
+            TestLibrary.class.getMethod("returnInt32ArgumentStdCall",
+                                        new Class[] { int.class }),
+            TestLibrary.class.getMethod("returnStructureByValueArgumentStdCall",
+                                        new Class[] {
+                                            TestLibrary.TestStructure.ByValue.class
+                                        }),
+            TestLibrary.class.getMethod("callInt32StdCallCallback",
+                                        new Class[] {
+                                            TestLibrary.Int32Callback.class,
+                                            int.class, int.class,
+                                        }),
+        };
+
+        for (int i=0;i < methods.length;i++) {
+            String name = mapper.getFunctionName(lib, methods[i]);
+            assertTrue("Function name not decorated for method "
+                       + methods[i].getName()
+                       + ": " + name, name.indexOf("@") != -1);
+            assertEquals("Wrong name in mapped function",
+                         name, lib.getFunction(name, StdCallLibrary.STDCALL_CONVENTION).getName());
+        }
     }
     
     public void testStdCallReturnInt32Argument() {
