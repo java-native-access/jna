@@ -126,7 +126,7 @@ ifeq ($(ARCH),)
 ARCH=$(shell uname -p)
 endif
 PCFLAGS+=-fPIC
-CDEFINES+=-DHAVE_PROTECTION
+CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT
 ifeq ($(ARCH), sparcv9)
   # alter CC instead of PCFLAGS, since we need to pass it down to libffi 
   # configure and some of the other settings in PCFLAGS might make the build 
@@ -161,7 +161,7 @@ ARCHFLAGS+=-arch x86_64 #-arch ppc64
 endif
 endif
 PCFLAGS+=$(ISYSROOT) -x objective-c
-CDEFINES=-DTARGET_RT_MAC_CFM=0
+CDEFINES+=-DTARGET_RT_MAC_CFM=0
 LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -compatibility_version $(shell echo ${VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
   -current_version $(VERSION) \
@@ -207,7 +207,7 @@ $(FFI_LIB):
 	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
 	  echo "Configuring libffi ($(ARCH))"; \
 	  (cd $(FFI_BUILD) \
-	    && CC="$(CC) $(CDEBUG)" $(FFI_SRC)/configure $(FFI_CONFIG)); \
+	    && CC="$(CC)" CFLAGS="$(CDEBUG)" CPPFLAGS="$(CDEFINES)" $(FFI_SRC)/configure $(FFI_CONFIG)); \
 	fi
 	$(MAKE) -C $(FFI_BUILD)
 ifneq ($(SDKROOT),)
@@ -216,7 +216,7 @@ ifneq ($(SDKROOT),)
 	  if [ ! -f $(BUILD)/libffi.$$arch/Makefile ]; then \
 	    echo "Configuring libffi ($$arch)"; \
 	    (cd $(BUILD)/libffi.$$arch \
-	     && CFLAGS="-arch $$arch $(ISYSROOT) $(COPT) $(CDEBUG) $(CDEFINES)" \
+	     && CC="$(CC)" CFLAGS="-arch $$arch $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" \
                 LDFLAGS="-arch $$arch" \
                $(FFI_SRC)/configure $(FFI_CONFIG) --host=$$arch-apple-darwin --disable-dependency-tracking); \
 	  fi; \

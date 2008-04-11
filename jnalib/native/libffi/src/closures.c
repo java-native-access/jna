@@ -41,6 +41,7 @@
    locations in the virtual memory space, one location writable and
    another executable.  */
 #  define FFI_MMAP_EXEC_WRIT 1
+#  define HAVE_MNTENT 1
 # endif
 # ifdef X86_WIN32
 /* Windows systems may have Data Execution Protection (DEP) enabled, 
@@ -99,7 +100,9 @@
 #include <string.h>
 #include <stdio.h>
 #ifndef X86_WIN32
+#ifdef HAVE_MNTENT
 #include <mntent.h>
+#endif /* HAVE_MNTENT */
 #include <sys/param.h>
 #include <pthread.h>
 
@@ -243,6 +246,7 @@ open_temp_exec_file_env (const char *envvar)
   return open_temp_exec_file_dir (value);
 }
 
+#ifdef HAVE_MNTENT
 /* Open a temporary file in an executable and writable mount point
    listed in the mounts file.  Subsequent calls with the same mounts
    keep searching for mount points in the same file.  Providing NULL
@@ -289,6 +293,7 @@ open_temp_exec_file_mnt (const char *mounts)
 	return fd;
     }
 }
+#endif /* HAVE_MNTENT */
 
 /* Instructions to look for a location to hold a temporary file that
    can be mapped in for execution.  */
@@ -303,8 +308,10 @@ static struct
   { open_temp_exec_file_dir, "/var/tmp", 0 },
   { open_temp_exec_file_dir, "/dev/shm", 0 },
   { open_temp_exec_file_env, "HOME", 0 },
+#ifdef HAVE_MNTENT
   { open_temp_exec_file_mnt, "/etc/mtab", 1 },
   { open_temp_exec_file_mnt, "/proc/mounts", 1 },
+#endif /* HAVE_MNTENT */
 };
 
 /* Current index into open_temp_exec_file_opts.  */
