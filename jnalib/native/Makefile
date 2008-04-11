@@ -118,7 +118,7 @@ ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
 LDFLAGS=-o $@ -shared 
-CDEFINES+=-DHAVE_PROTECTION
+CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT
 endif
 
 ifeq ($(OS),solaris)

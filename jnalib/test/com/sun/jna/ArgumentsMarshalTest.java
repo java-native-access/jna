@@ -340,11 +340,11 @@ public class ArgumentsMarshalTest extends TestCase {
     }
 
     public void testRejectNoncontiguousStructureArrayArgument() {
-        TestLibrary.CheckFieldAlignment[] block = 
-            new TestLibrary.CheckFieldAlignment[] {
-            new TestLibrary.CheckFieldAlignment(),
-            new TestLibrary.CheckFieldAlignment(),
-        };
+	TestLibrary.CheckFieldAlignment s1, s2, s3;
+	s3 = new TestLibrary.CheckFieldAlignment();
+	s1 = new TestLibrary.CheckFieldAlignment();
+	s2 = new TestLibrary.CheckFieldAlignment();
+        TestLibrary.CheckFieldAlignment[] block = { s1, s2, s3 };
         try {
             lib.modifyStructureArray(block, block.length);
             fail("Library invocation should fail");
