@@ -161,7 +161,7 @@ ARCHFLAGS+=-arch x86_64 #-arch ppc64
 endif
 endif
 PCFLAGS+=$(ISYSROOT) -x objective-c
-CDEFINES+=-DTARGET_RT_MAC_CFM=0
+CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT
 LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -compatibility_version $(shell echo ${VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
   -current_version $(VERSION) \
