@@ -67,12 +67,11 @@ public class StdCallFunctionMapper implements FunctionMapper {
 
         }
         catch(UnsatisfiedLinkError e) {
-            // try with an explicit underscore; some compilers prepend
-            // an extra one
+            // try with an explicit underscore
             try {
                 name = library.getFunction("_" + decorated, conv).getName();
             }
-            catch(UnsatisfiedLinkError e) {
+            catch(UnsatisfiedLinkError e2) {
                 // not found; let caller try undecorated version
             }
         }
