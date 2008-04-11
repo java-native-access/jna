@@ -17,7 +17,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Properties;
 import junit.framework.TestCase;
 
 public class JNAUnloadTest extends TestCase {
@@ -25,7 +24,9 @@ public class JNAUnloadTest extends TestCase {
     private static class TestLoader extends URLClassLoader {
         public TestLoader() throws MalformedURLException {
             super(new URL[] {
-                new File("build/classes").toURI().toURL(),
+                                  // use "build-d64" for 64-bit jvm's
+                new File("build" + System.getProperty(LibraryLoadTest.DIR_BUILD_SUFFIX, "")
+                        + "/classes").toURI().toURL(),
             }, null);
         }
     }

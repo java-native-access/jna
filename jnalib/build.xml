@@ -362,7 +362,7 @@
   </target>
 
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
-  <!-- to where the test library (testlib) is found -->
+  <!-- to where the test library (testlib) is found. Also need to add -Ddir.build.suffix=-d64 for 64-bit JVMs. -->
   <target name="test" depends="jar,examples,compile-tests"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
@@ -382,11 +382,15 @@
     <condition property="vmopt.arch" value="-d64" else="-Dignore">
       <equals arg1="${vm.arch}" arg2="-d64" trim="true"/>
     </condition>
+    <condition property="dir.build.suffix" value="-d64" else="">
+      <equals arg1="${vm.arch}" arg2="-d64" trim="true"/>
+    </condition>
     <property name="tests.platform" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
       <jvmarg value="-Djna.library.path=${build.native}"/>
       <!-- Avoid VM crashes, if possible -->
       <jvmarg value="-Djna.protected=true"/>
+      <jvmarg value="-Ddir.build.suffix=${dir.build.suffix}"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="xml"/>
