@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -18,7 +18,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.IntegerType;
 import com.sun.jna.StructureTest.VariableSizeTest.VariableSizedStructure;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -28,7 +27,7 @@ import com.sun.jna.ptr.LongByReference;
  * @author twall@users.sf.net
  */
 public class StructureTest extends TestCase {
-    
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(StructureTest.class);
     }
@@ -40,7 +39,7 @@ public class StructureTest extends TestCase {
         Structure s = new TestStructure();
         assertEquals("Wrong size", 4, s.size());
     }
-    
+
     // must be public to populate array
     public static class TestAllocStructure extends Structure {
         public int f0;
@@ -55,17 +54,17 @@ public class StructureTest extends TestCase {
         assertEquals("Memory not cleared on structure init", 0, s.f1);
         assertEquals("Memory not cleared on structure init", 0, s.f2);
         assertEquals("Memory not cleared on structure init", 0, s.f3);
-        
+
         s = (TestAllocStructure)s.toArray(2)[1];
         assertEquals("Memory not cleared on array init", 0, s.f0);
         assertEquals("Memory not cleared on array init", 0, s.f1);
         assertEquals("Memory not cleared on array init", 0, s.f2);
         assertEquals("Memory not cleared on array init", 0, s.f3);
     }
-    
+
     // cross-platform smoke test
     public void testGNUCAlignment() {
-        class TestStructure extends Structure { 
+        class TestStructure extends Structure {
             public byte b;
             public short s;
             public int i;
@@ -79,10 +78,10 @@ public class StructureTest extends TestCase {
         final int SIZE = NativeLong.SIZE == 4 && !isSPARC ? 28 : 32;
         assertEquals("Wrong structure size", SIZE, s.size());
     }
-    
+
     // cross-platform smoke test
     public void testMSVCAlignment() {
-        class TestStructure extends Structure { 
+        class TestStructure extends Structure {
             public byte b;
             public short s;
             public int i;
@@ -94,7 +93,7 @@ public class StructureTest extends TestCase {
         s.setAlignType(Structure.ALIGN_MSVC);
         assertEquals("Wrong structure size", 32, s.size());
     }
-    
+
     public static class FilledStructure extends Structure {
         public FilledStructure() {
             for (int i=0;i < size();i++) {
@@ -162,12 +161,12 @@ public class StructureTest extends TestCase {
     public void testStructureSize5() {
         testStructureSize(5);
     }
-    
+
     public interface AlignmentTest extends Library {
-        int testStructureAlignment(Structure s, int type, 
+        int testStructureAlignment(Structure s, int type,
                                    IntByReference offsetp, LongByReference valuep);
     }
-    
+
     private void testAlignStruct(int index) {
         AlignmentTest lib = (AlignmentTest)Native.loadLibrary("testlib", AlignmentTest.class);
         try {
@@ -176,9 +175,9 @@ public class StructureTest extends TestCase {
             Class cls = Class.forName(getClass().getName() + "$TestStructure" + index);
             Structure s = (Structure)cls.newInstance();
             int result = lib.testStructureAlignment(s, index, offset, value);
-            assertEquals("Wrong native value at field " + result 
-                         + "=0x" + Long.toHexString(value.getValue()) 
-                         + " (actual native field offset=" + offset.getValue() 
+            assertEquals("Wrong native value at field " + result
+                         + "=0x" + Long.toHexString(value.getValue())
+                         + " (actual native field offset=" + offset.getValue()
                          + ") in " + s, -2, result);
         }
         catch(Exception e) {
@@ -203,7 +202,7 @@ public class StructureTest extends TestCase {
     public void testAlignStruct5() {
         testAlignStruct(5);
     }
-    
+
     // must be publicly accessible in order to create array elements
     public static class PublicTestStructure extends Structure {
         public static class ByReference extends PublicTestStructure implements Structure.ByReference { }
@@ -216,12 +215,12 @@ public class StructureTest extends TestCase {
         }
         TestStructure s = new TestStructure();
         assertNotNull("Inner structure should be initialized", s.s1);
-        assertEquals("Wrong aggregate size", 
+        assertEquals("Wrong aggregate size",
                      s.s1.size() + s.s2.size() + 4, s.size());
         s.write();
         s.read();
     }
-    
+
     public void testPrimitiveArrayField() {
         class TestStructure extends Structure {
             public byte[] buffer = new byte[1024];
@@ -232,7 +231,7 @@ public class StructureTest extends TestCase {
         s.write();
         s.read();
     }
-    
+
     public void testStructureArrayField() {
         class TestStructure extends Structure {
             public PublicTestStructure[] inner = new PublicTestStructure[2];
@@ -242,7 +241,7 @@ public class StructureTest extends TestCase {
         TestStructure s = new TestStructure();
         int innerSize = new PublicTestStructure().size();
         assertEquals("Wrong size for structure with nested array of struct",
-                     s.inner.length * innerSize + s.inner2.length * innerSize, 
+                     s.inner.length * innerSize + s.inner2.length * innerSize,
                      s.size());
         s.write();
         assertNotNull("Inner array elements should auto-initialize", s.inner[0]);
@@ -253,20 +252,20 @@ public class StructureTest extends TestCase {
                      0, s.inner[0].x);
         assertEquals("Inner structure array element 1 not properly read",
                      0, s.inner[1].x);
-        
+
         assertEquals("Wrong memory for uninitialized nested array",
                      s.getPointer(), s.inner[0].getPointer());
         assertEquals("Wrong memory for initialized nested array",
-                     s.getPointer().share(innerSize * s.inner.length), 
+                     s.getPointer().share(innerSize * s.inner.length),
                      s.inner2[0].getPointer());
     }
-    
+
     public static class ToArrayTestStructure extends Structure {
         public PublicTestStructure[] inner =
             (PublicTestStructure[])new PublicTestStructure().toArray(2);
     }
     public void testToArrayWithStructureArrayField() {
-        ToArrayTestStructure[] array = 
+        ToArrayTestStructure[] array =
             (ToArrayTestStructure[])new ToArrayTestStructure().toArray(2);
         assertEquals("Wrong address for top-level array element",
                      array[0].getPointer().share(array[0].size()),
@@ -275,7 +274,7 @@ public class StructureTest extends TestCase {
                      array[1].inner[0].getPointer().share(array[1].inner[0].size()),
                      array[1].inner[1].getPointer());
     }
-    
+
     public void testUninitializedNestedArrayFails() {
         class TestStructure extends Structure {
             public Pointer[] buffer;
@@ -339,8 +338,8 @@ public class StructureTest extends TestCase {
         s.read();
         assertTrue("Wrong boolean field value after write/read", s.z);
         assertEquals("Wrong byte field value after write/read", (byte)1, s.b);
-        assertEquals("Wrong char field value after write/read", 
-                     "'a' (0x" + Integer.toHexString('a') + ")", 
+        assertEquals("Wrong char field value after write/read",
+                     "'a' (0x" + Integer.toHexString('a') + ")",
                      "'" + s.c + "' (0x" + Integer.toHexString(s.c) + ")");
         assertEquals("Wrong short field value after write/read", 2, s.s);
         assertEquals("Wrong int field value after write/read", 3, s.i);
@@ -355,7 +354,7 @@ public class StructureTest extends TestCase {
                      3, s.ba[0]);
         assertSame("Array field reference should be unchanged", ref, s.ba);
     }
-    
+
     public void testNativeLongSize() throws Exception {
         class TestStructure extends Structure {
             public NativeLong l;
@@ -363,7 +362,7 @@ public class StructureTest extends TestCase {
         Structure s = new TestStructure();
         assertEquals("Wrong size", NativeLong.SIZE, s.size());
     }
-    
+
     public void testNativeLongRead() throws Exception {
         class TestStructure extends Structure {
             public int i;
@@ -375,7 +374,7 @@ public class StructureTest extends TestCase {
             s.getPointer().setLong(8, MAGIC);
             s.read();
             assertEquals("NativeLong field mismatch", MAGIC, s.l.longValue());
-        } 
+        }
         else {
             final int MAGIC = 0xABEDCF23;
             s.getPointer().setInt(4, MAGIC);
@@ -383,7 +382,7 @@ public class StructureTest extends TestCase {
             assertEquals("NativeLong field mismatch", MAGIC, s.l.intValue());
         }
     }
-    
+
     public void testNativeLongWrite() throws Exception {
         class TestStructure extends Structure {
             public int i;
@@ -396,7 +395,7 @@ public class StructureTest extends TestCase {
             s.write();
             long l = s.getPointer().getLong(8);
             assertEquals("NativeLong field mismatch", MAGIC, l);
-        } 
+        }
         else {
             final int MAGIC = 0xABEDCF23;
             s.l = new NativeLong(MAGIC);
@@ -405,7 +404,7 @@ public class StructureTest extends TestCase {
             assertEquals("NativeLong field mismatch", MAGIC, i);
         }
     }
-    
+
     public void testDisallowFunctionPointerAsField() {
         class BadFieldStructure extends Structure {
             public Function cb;
@@ -426,7 +425,7 @@ public class StructureTest extends TestCase {
         assertEquals("First element should be original", s, array[0]);
         assertEquals("Structure memory should be expanded", 2, s.toArray(2).length);
     }
-    
+
     static class CbStruct extends Structure {
         public Callback cb;
     }
@@ -454,7 +453,7 @@ public class StructureTest extends TestCase {
         CallbackReference ref = (CallbackReference)refs.get(s.cb);
         assertEquals("Wrong trampoline", ref.getTrampoline(), func);
     }
-    
+
     public void testCallCallbackInStructure() {
         final boolean[] flag = {false};
         final CbStruct s = new CbStruct();
@@ -467,22 +466,22 @@ public class StructureTest extends TestCase {
         lib.callCallbackInStruct(s);
         assertTrue("Callback not invoked", flag[0]);
     }
-    
+
     public void testReadFunctionPointerAsCallback() {
         CbStruct2 s = new CbStruct2();
         CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
         lib.setCallbackInStruct(s);
         assertNotNull("Callback field not set", s.cb);
     }
-    
+
     public void testCallProxiedFunctionPointer() {
         CbStruct2 s = new CbStruct2();
         CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
         lib.setCallbackInStruct(s);
-        assertEquals("Proxy to native function pointer failed", 
+        assertEquals("Proxy to native function pointer failed",
                      3, s.cb.callback(1, 2));
     }
-    
+
     public void testUninitializedArrayField() {
         class UninitializedArrayFieldStructure extends Structure {
             public byte[] array;
@@ -495,7 +494,7 @@ public class StructureTest extends TestCase {
         catch(IllegalStateException e) {
         }
     }
-    
+
     public static class ArrayOfStructure extends Structure {
         public Structure[] array;
     }
@@ -510,7 +509,7 @@ public class StructureTest extends TestCase {
             fail("Wrong exception thrown on Structure[] field in Structure: " + e);
         }
     }
-    
+
     public void testPointerArrayField() {
         class ArrayOfPointerStructure extends Structure {
             final static int SIZE = 10;
@@ -525,7 +524,7 @@ public class StructureTest extends TestCase {
         s.read();
         assertEquals("Wrong first element", s.getPointer(), s.array[0]);
     }
-    
+
     public void testBufferField() {
         // NOTE: may support write-only Buffer fields in the future
         class BufferStructure extends Structure {
@@ -538,10 +537,10 @@ public class StructureTest extends TestCase {
     		new BufferStructure(new byte[1024]);
     		fail("Buffer fields should fail immediately");
     	}
-    	catch(IllegalArgumentException e) { 
+    	catch(IllegalArgumentException e) {
     	}
     }
-    
+
     public void testVolatileStructureField() {
         class VolatileStructure extends Structure {
             public volatile int counter;
@@ -565,13 +564,13 @@ public class StructureTest extends TestCase {
         StructureWithPointers s = new StructureWithPointers();
         assertEquals("Wrong size for structure with structure references",
                      Pointer.SIZE * 2, s.size());
-        
+
         assertNull("Initial refs should be null", s.s1);
     }
-    
+
     public void testRegenerateStructureByReferenceField() {
         StructureWithPointers s = new StructureWithPointers();
-        PublicTestStructure.ByReference inner = 
+        PublicTestStructure.ByReference inner =
             new PublicTestStructure.ByReference();
         s.s1 = inner;
         s.write();
@@ -582,22 +581,22 @@ public class StructureTest extends TestCase {
 
     public void testPreserveStructureByReferenceWithUnchangedPointer() {
         StructureWithPointers s = new StructureWithPointers();
-        PublicTestStructure.ByReference inner = 
+        PublicTestStructure.ByReference inner =
             new PublicTestStructure.ByReference();
-        
+
         s.s1 = inner;
         s.write();
         s.read();
-        assertSame("Read should preserve structure object", inner, s.s1); 
-        assertTrue("Read should preserve structure memory", 
+        assertSame("Read should preserve structure object", inner, s.s1);
+        assertTrue("Read should preserve structure memory",
                    inner.getPointer() instanceof Memory);
     }
-    
+
     public void testOverwriteStructureByReferenceField() {
         StructureWithPointers s = new StructureWithPointers();
-        PublicTestStructure.ByReference inner = 
+        PublicTestStructure.ByReference inner =
             new PublicTestStructure.ByReference();
-        PublicTestStructure.ByReference inner2 = 
+        PublicTestStructure.ByReference inner2 =
             new PublicTestStructure.ByReference();
         s.s1 = inner2;
         s.write();
@@ -605,27 +604,27 @@ public class StructureTest extends TestCase {
         s.read();
         assertNotSame("Read should overwrite structure reference", inner, s.s1);
     }
-    
+
     public void testStructureByReferenceArrayField() {
         class TestStructure extends Structure {
             public PublicTestStructure.ByReference[] array = new PublicTestStructure.ByReference[2];
         }
         TestStructure s = new TestStructure();
         assertEquals("Wrong structure size", 2*Pointer.SIZE, s.size());
-        
+
         PublicTestStructure.ByReference ref = new PublicTestStructure.ByReference();
         ref.x = 42;
         Object aref = s.array;
         s.array[0] = ref;
         s.array[1] = new PublicTestStructure.ByReference();
-        
+
         s.write();
         s.read();
-        
+
         assertSame("Array reference should not change", aref, s.array);
-        assertSame("Elements should not be overwritten when unchanged", 
+        assertSame("Elements should not be overwritten when unchanged",
                    ref, s.array[0]);
-        
+
         s.array[0] = null;
         s.read();
         assertNotSame("Null should be overwritten with a new ref", ref, s.array[0]);
@@ -646,7 +645,7 @@ public class StructureTest extends TestCase {
     }
     public void testNestedStructureTypeInfo() {
         class FFIType extends Structure {
-            public FFIType(Pointer p) { 
+            public FFIType(Pointer p) {
                 useMemory(p); read();
             }
             public size_t size;
@@ -665,10 +664,10 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong type information for integer field",
                      Structure.getTypeInfo(new Integer(0)),
                      els.getPointer(Pointer.SIZE));
-        assertNull("Type element list should be null-terminated", 
+        assertNull("Type element list should be null-terminated",
                    els.getPointer(Pointer.SIZE*2));
     }
-    
+
     public void testInnerArrayTypeInfo() {
         class TestStructure extends Structure {
             public int[] inner = new int[5];
@@ -678,13 +677,13 @@ public class StructureTest extends TestCase {
         Pointer p = s.getTypeInfo();
         assertNotNull("Type info should not be null", p);
     }
-    
+
     public void testTypeInfoForNull() {
         assertEquals("Wrong type information for 'null'",
                      Structure.getTypeInfo(new Pointer(0)),
                      Structure.getTypeInfo(null));
     }
-    
+
     public void testToString() {
         class TestStructure extends Structure {
             public int intField;
@@ -693,7 +692,7 @@ public class StructureTest extends TestCase {
         TestStructure s = new TestStructure();
         final String LS = System.getProperty("line.separator");
         System.setProperty("jna.dump_memory", "true");
-        final String EXPECTED = "(?m).*" + s.size() + " bytes.*\\{" + LS 
+        final String EXPECTED = "(?m).*" + s.size() + " bytes.*\\{" + LS
             + "  int intField@0=0" + LS
             + "  .* inner@4=.*\\{" + LS
             + "    int x@0=0" + LS
@@ -705,11 +704,11 @@ public class StructureTest extends TestCase {
             + "\\[00000000\\]" + LS
             + "\\[00000000\\]";
         String actual = s.toString();
-        assertTrue("Improperly formatted toString(): expected " 
-                   + EXPECTED + "\n" + actual, 
+        assertTrue("Improperly formatted toString(): expected "
+                   + EXPECTED + "\n" + actual,
                    actual.matches(EXPECTED));
     }
-    
+
     public interface VariableSizeTest extends Library {
         public static class VariableSizedStructure extends Structure {
             public int length;
@@ -729,7 +728,7 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong string returned from variable sized struct",
                      EXPECTED, lib.returnStringFromVariableSizedStructure(s));
     }
-    
+
     public void testNativeMappedWrite() {
     	class TestStructure extends Structure {
     		public ByteByReference ref;
@@ -737,5 +736,13 @@ public class StructureTest extends TestCase {
     	TestStructure s = new TestStructure();
     	s.ref = null;
     	s.write();
+    }
+
+    public static class TestNativeMappedInStructure extends Structure {
+        public static class ByValue extends TestNativeMappedInStructure implements Structure.ByValue { }
+        public NativeLong field;
+    }
+    public void testNativeMappedInByValue() {
+        new TestNativeMappedInStructure.ByValue();
     }
 }
