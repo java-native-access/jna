@@ -69,6 +69,18 @@ public class FileMonitorTest extends TestCase {
         assertEquals("Wrong target file for event", file, event.getFile());
     }
     
+    public void testNotifyOnFileDeleteViaAddWatchMask() throws Exception {
+        if (!Platform.isWindows()) return;
+
+        monitor.addWatch(tmpdir, FileMonitor.FILE_DELETED);
+        File file = File.createTempFile(getName(), ".tmp", tmpdir);
+        file.delete();
+
+        final FileEvent event = waitForFileEvent(FileMonitor.FILE_DELETED);
+        assertNotNull("No delete event: " + events, event);
+        assertEquals("Wrong target file for event", file, event.getFile());
+    }
+
     public void testNotifyOnFileRename() throws Exception {
         if (!Platform.isWindows()) return;
 

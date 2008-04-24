@@ -219,7 +219,7 @@ public abstract class FileMonitor {
                 result |= Kernel32.FILE_NOTIFY_CHANGE_CREATION;
             }
             if ((mask & FILE_DELETED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_CREATION;
+                result |= Kernel32.FILE_NOTIFY_CHANGE_NAME;
             }
             if ((mask & FILE_MODIFIED) != 0) {
                 result |= Kernel32.FILE_NOTIFY_CHANGE_LAST_WRITE;
