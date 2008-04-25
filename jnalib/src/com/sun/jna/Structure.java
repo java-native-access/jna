@@ -37,6 +37,14 @@ import java.util.WeakHashMap;
  * enclosing interface definition (if any) by using
  * {@link Native#getStructureAlignment} and {@link Native#getTypeMapper}.
  * <p>
+ * Structure fields corresponding to native fields <em>must</em> be public.
+ * The may additionally have the following modifiers:<br>
+ * <ul>
+ * <li><code>volatile</code> JNA will not write the field unless specifically
+ * instructed to do so via {@link #writeField(String)}.
+ * <li><code>final</code> JNA will overwrite the field via {@link #read()},
+ * but otherwise the field is not modifiable from Java.
+ * </ul>
  * NOTE: Strings are used to represent native C strings because usage of
  * <code>char *</code> is generally more common than <code>wchar_t *</code>.
  * <p>
@@ -689,6 +697,9 @@ public abstract class Structure {
             StructField structField = new StructField();
             structField.isVolatile = Modifier.isVolatile(modifiers);
             structField.field = field;
+            if (Modifier.isFinal(modifiers)) {
+                field.setAccessible(true);
+            }
             structField.name = field.getName();
             structField.type = type;
 

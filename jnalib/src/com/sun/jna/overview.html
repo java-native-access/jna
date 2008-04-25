@@ -528,6 +528,37 @@ native memory, call {@link com.sun.jna.Structure#read()} (to update the entire
 structure) or {@link com.sun.jna.Structure#readField(String)
 data.readField("refCount")} (to update just the <code>refCount</code> field). 
 
+<h4>Read-only fields</h4>
+If you want to absolutely prevent Java code from modifying
+a <code>Structure</code>'s contents, you may mark its
+fields <code>final</code>.  Structure reads can still overwrite the values
+based on native memory contents, but no Java code will be able to modify any
+of the fields.
+<blockquote><code><pre>
+class ReadOnly extends com.sun.jna.Structure {
+  // Do not initialize the field here, or the compiler will inline the value!
+  public final int refCount;
+  {
+    // Initialize fields here, to ensure the values are not inlined
+    refCount = -1;
+    read();
+    // refCount might now have a different value
+  }
+}
+...
+ReadOnly ro = new ReadOnly();
+// Will not compile!
+ro.refCount = 0;
+</pre></code></blockquote>
+
+Make certain you attend to the following:
+<ol>
+<li>All final fields should be initialized in the constructor.
+<li>If you call Structure.read() from anywhere but the constructor, keep in
+  mind that the compiler and/or hotspot will be assuming field values will not
+  change across that function call.
+</ol>
+
 <a name="unions"></a>
 <h3>Unions</h3>
 Unions are a special type of Structure.  Each declared field within the union

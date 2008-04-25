@@ -745,4 +745,17 @@ public class StructureTest extends TestCase {
     public void testNativeMappedInByValue() {
         new TestNativeMappedInStructure.ByValue();
     }
+
+    public static class ROStructure extends Structure {
+        public final int field;
+        {
+            field = 0;
+            getPointer().setInt(0, 42);
+            read();
+        }
+    }
+    public void testReadOnlyField() {
+        ROStructure s = new ROStructure();
+        assertEquals("Field value should be writable from native", 42, s.field);
+    }
 }
