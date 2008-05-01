@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-04-08">
+<meta name="date" content="2008-05-01">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -209,12 +209,12 @@ Java primitive types (and their object equivalents) map directly to the native C
 <tr><td>wchar_t</td><td>16/32-bit character</td><td>char</td><td>TCHAR</td>
 <tr><td>int</td><td>32-bit integer</td><td>int</td><td>DWORD</td>
 <tr><td>int</td><td>boolean value</td><td>boolean</td><td>BOOL</td>
-<tr><td>long</td><td>32/64-bit integer</td><td>NativeLong</td><td></td>
+<tr><td>long</td><td>32/64-bit integer</td><td>NativeLong</td><td>LONG</td>
 <tr><td>long long</td><td>64-bit integer</td><td>long</td><td></td>
 <tr><td>float</td><td>32-bit FP</td><td>float</td><td></td>
 <tr><td>double</td><td>64-bit FP</td><td>double</td><td></td>
 <tr><td>char*</td><td>C string</td><td>String</td><td>LPTCSTR</td>
-<tr><td>void*</td><td>pointer</td><td>Pointer</td><td>LPVOID, HANDLE</td>
+<tr><td>void*</td><td>pointer</td><td>Pointer</td><td>LPVOID, HANDLE, LP<i>XXX</i></td>
 </table></blockquote>
 Unsigned types use the same mappings as signed types.  A full list of mappings may be found <a href="javadoc/overview-summary.html#marshalling">here</a>.
 <p>
@@ -396,6 +396,7 @@ Libc.fclose(fp)
 <h3>Frequently Asked Questions (FAQ)</h3>
 <ul>
 <li><a href="#char_buffer">How do I read back a string?</a>
+<li><a href="#native_long">How do I map a native <code>long</code> type?</a>
 <li><a href="#w32link">My library mapping causes an UnsatisfiedLinkError</a>
 <li><a href="#crash">My library sometimes causes a VM crash</a>
 <li><a href="#w32crash">My Windows library mapping causes a VM crash on every call</a>
@@ -412,6 +413,13 @@ Suppose you have a function:<br>
 int getString(char* buffer, int bufsize);
 </pre></code></blockquote>
 The native code is expecting a fixed-size buffer, which it will fill in with the requested data.  A Java <code>String</code> is not appropriate here, since <code>String</code>s are immutable.  Nor is a Java <code>StringBuffer</code>, since the native code only fills the buffer and does not change its size.  The appropriate argument type would be either <code>byte[]</code>, <code>Memory</code>, or an NIO <code>Buffer</code>, with the size of the object passed as the second argument.  The method <a href="javadoc/com/sun/jna/Native#toString(byte[])">Native.toString(byte[])</a> may then be used to convert the array of byte into a Java <code>String</code>.
+
+<a name=native_long></a>
+<h4>How do I map a native <code>long</code> type?</h4>
+Actually, no one ever asks this question, but they <em>really</em> need the answer.  <font color='red'><em>Do not</em> use Java <code>long</code>!</font><p>
+
+On Windows, you can use a Java <code>int</code>, since the native <code>long</code> type is always 32 bits.  On any other platform, the type may be 32 or 64 bits, so you should use the <a href="javadoc/com/sun/jna/NativeLong.html">NativeLong</a> type to ensure the proper size is used.   
+
 
 <a name=w32link></a>
 <h4>My library mapping causes an UnsatisfiedLinkError</h4>
