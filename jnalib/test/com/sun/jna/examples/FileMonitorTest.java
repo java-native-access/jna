@@ -134,8 +134,8 @@ public class FileMonitorTest extends TestCase {
     public void testMultipleWatches() throws Exception {
         if (!Platform.isWindows()) return;
         
-        File subdir1 = createSubdir(tmpdir, "sub1");
-        File subdir2 = createSubdir(tmpdir, "sub2");
+        File subdir1 = createSubdir(tmpdir, "sub1-");
+        File subdir2 = createSubdir(tmpdir, "sub2-");
         try {
             monitor.addWatch(subdir1);
             monitor.addWatch(subdir2);
@@ -155,30 +155,30 @@ public class FileMonitorTest extends TestCase {
         }
     }
 
-	public void testMultipleConsecutiveWatches() throws Exception {
-      if (!Platform.isWindows()) return;
-      
-      File subdir1 = createSubdir(tmpdir, "sub1");
-      File subdir2 = createSubdir(tmpdir, "sub2");
-      try {
-          monitor.addWatch(subdir1);
-          monitor.addWatch(subdir2);
-          // trigger change in dir 1
-          assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir1));
-          monitor.removeWatch(subdir1);
-          // trigger change in dir 2
-          assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir2));
-          monitor.removeWatch(subdir2);
-          monitor.addWatch(subdir1);
-          // trigger change in dir 1
-          assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir1));
-          monitor.removeWatch(subdir1);
-      }
-      finally {
-          delete(subdir1);
-          delete(subdir2);
-      }
-  }
+    public void testMultipleConsecutiveWatches() throws Exception {
+        if (!Platform.isWindows()) return;
+
+        File subdir1 = createSubdir(tmpdir, "sub1-");
+        File subdir2 = createSubdir(tmpdir, "sub2-");
+        try {
+            monitor.addWatch(subdir1);
+            monitor.addWatch(subdir2);
+            // trigger change in dir 1
+            assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir1));
+            monitor.removeWatch(subdir1);
+            // trigger change in dir 2
+            assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir2));
+            monitor.removeWatch(subdir2);
+            monitor.addWatch(subdir1);
+            // trigger change in dir 1
+            assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir1));
+            monitor.removeWatch(subdir1);
+        }
+        finally {
+            delete(subdir1);
+            delete(subdir2);
+        }
+    }
 
     private void assertFileEventCreated(final File expectedFile)
             throws InterruptedException {
