@@ -170,6 +170,8 @@ public class FileMonitorTest extends TestCase {
             assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir2));
             monitor.removeWatch(subdir2);
             monitor.addWatch(subdir1);
+            // assertion below has intermittent failures on slow W2K box w/out sleep
+            Thread.sleep(10);
             // trigger change in dir 1
             assertFileEventCreated(File.createTempFile(getName(), ".tmp", subdir1));
             monitor.removeWatch(subdir1);
