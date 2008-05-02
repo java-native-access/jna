@@ -211,7 +211,10 @@ public abstract class FileMonitor {
             HANDLEByReference rkey = new HANDLEByReference();
             PointerByReference roverlap = new PointerByReference();
             klib.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, Kernel32.INFINITE);
-            return (FileInfo)handleMap.get(rkey.getValue());
+            
+            synchronized (this) { 
+                return (FileInfo)handleMap.get(rkey.getValue());
+            }
         }
         private int convertMask(int mask) {
             int result = 0;
@@ -293,7 +296,18 @@ public abstract class FileMonitor {
                 watcher = new Thread("W32 File Monitor") {
                     public void run() {
                         FileInfo finfo;
-                        while ((finfo = waitForChange()) != null) {
+                        while (true) {
+                           finfo = waitForChange();
+                           if (finfo == null) {
+                              synchronized(W32FileMonitor.this) {
+                                 if (fileMap.isEmpty()) {
+                                    watcher = null;
+                                    break;
+                                 }
+                              }
+                              continue;
+                            }
+                           
                             try {
                                 handleChanges(finfo);
                             }
@@ -308,6 +322,7 @@ public abstract class FileMonitor {
                 watcher.start();
             }
         }
+
         protected synchronized void unwatch(File file) {
             FileInfo finfo = (FileInfo)fileMap.remove(file);
             if (finfo != null) {
