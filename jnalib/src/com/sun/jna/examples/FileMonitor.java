@@ -244,6 +244,9 @@ public abstract class FileMonitor {
             }
             return result;
         }
+
+        private static int watcherThreadID;
+
         protected synchronized void watch(File file, int eventMask, boolean recursive) throws IOException {
             File dir = file;
             if (!dir.isDirectory()) {
@@ -293,7 +296,7 @@ public abstract class FileMonitor {
                                       + "' (" + err + ")");
             }
             if (watcher == null) {
-                watcher = new Thread("W32 File Monitor") {
+                watcher = new Thread("W32 File Monitor-" + (watcherThreadID++)) {
                     public void run() {
                         FileInfo finfo;
                         while (true) {
@@ -332,6 +335,12 @@ public abstract class FileMonitor {
             }
         }
         protected synchronized void dispose() {
+            // unwatch any remaining files in map, allows watcher thread to exit
+            int i = 0;
+            for (Object[] keys = fileMap.keySet().toArray(); !fileMap.isEmpty();) {
+                unwatch((File)keys[i++]);
+            }
+            
             Kernel32 klib = Kernel32.INSTANCE;
             klib.PostQueuedCompletionStatus(port, 0, null, null);
             klib.CloseHandle(port);
