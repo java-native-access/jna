@@ -741,9 +741,18 @@ public final class Native {
 
     /** Prints JNA library details to the console. */
     public static void main(String[] args) {
+        final String DEFAULT_TITLE = "Java Native Access (JNA)";
+        final String UNKNOWN_VERSION = "unknown - package information missing";
         Package pkg = Native.class.getPackage();
-        System.out.println(pkg.getSpecificationTitle());
-        System.out.println("Version: " + Native.class.getPackage().getImplementationVersion());
+        String title = pkg.getSpecificationTitle();
+        if (title == null) title = DEFAULT_TITLE;
+        String version = pkg.getSpecificationVersion();
+        if (version == null) version = UNKNOWN_VERSION;
+        title += " API Version " + version;
+        System.out.println(title);
+        version = pkg.getImplementationVersion();
+        if (version == null) version = UNKNOWN_VERSION;
+        System.out.println("Version: " + version);
         System.out.println(" Native: " + getNativeVersion() + " ("
                            + getAPIChecksum() + ")");
         System.exit(0);

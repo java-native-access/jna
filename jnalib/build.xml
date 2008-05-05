@@ -44,7 +44,7 @@
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
-  <property name="impl.title" value="${spec.title}"/>
+  <property name="impl.title" value="com.sun.jna"/>
   <property name="impl.vendor" value="${spec.vendor}"/>
   <property name="impl.version" value="${jna.version} b${jna.build}"/>
 
@@ -175,13 +175,15 @@
           description="Build primary jar">
     <jar jarfile="${build}/${jar}">
       <manifest>
-        <attribute name="Implementation-Title" value="${impl.title}"/>
-        <attribute name="Implementation-Vendor" value="${vendor}"/>
-        <attribute name="Implementation-Version" value="${impl.version}"/>
-        <attribute name="Specification-Title" value="${spec.title}"/>
-        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
-        <attribute name="Specification-Version" value="${spec.version}"/>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
+        <section name="com/sun/jna/">
+          <attribute name="Implementation-Title" value="${impl.title}"/>
+          <attribute name="Implementation-Vendor" value="${vendor}"/>
+          <attribute name="Implementation-Version" value="${impl.version}"/>
+          <attribute name="Specification-Title" value="${spec.title}"/>
+          <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+          <attribute name="Specification-Version" value="${spec.version}"/>
+        </section>
       </manifest>
       <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
     </jar>
@@ -480,13 +482,15 @@
           description="Build distribution files">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <manifest>
-        <attribute name="Implementation-Title" value="${impl.title}"/>
-        <attribute name="Implementation-Vendor" value="${vendor}"/>
-        <attribute name="Implementation-Version" value="${impl.version}"/>
-        <attribute name="Specification-Title" value="${spec.title}"/>
-        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
-        <attribute name="Specification-Version" value="${spec.version}"/>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
+        <section name="com/sun/jna/">
+          <attribute name="Implementation-Title" value="${impl.title}"/>
+          <attribute name="Implementation-Vendor" value="${vendor}"/>
+          <attribute name="Implementation-Version" value="${impl.version}"/>
+          <attribute name="Specification-Title" value="${spec.title}"/>
+          <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+          <attribute name="Specification-Version" value="${spec.version}"/>
+        </section>
       </manifest>
       <zipfileset src="${build}/${jar}"/>
       <zipfileset src="${dist}/win32-x86.jar" 
