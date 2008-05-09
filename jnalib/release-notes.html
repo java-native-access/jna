@@ -2,6 +2,7 @@
 <h2>Release 3.x.x</h2>
 <b>Features</b><br>
 <ul>
+<li>Allow function invocations returning java.lang.Object (primarly for native VM functions).
 <li>Enable build/run using IBM's J9 VM (leonardo).
 <li>Make StdCallFunctionMapper attempt a leading underscore if the simpler mapping doesn't work.
 <li>Allow Structure.read to overwrite final fields (may not work on some 1.4 VMs). 
@@ -17,6 +18,7 @@
 <li>Fix linkage settings on sunos-amd64 to avoid relocation errors.
 <li>Fix callback allocation code on w32, solaris, freebsd, darwin (libffi was misconfigured).
 <li>Fix bug when NativeMapped fields are used in a Structure.ByValue instance.
+<li>Fix NPE calling Structure.read() before memory is initialized.
 </ul>
 
 <h2>Release 3.0.2</h2>
