@@ -244,6 +244,10 @@ public abstract class Structure {
      * or return value.
      */
     public Pointer getPointer() {
+        if (size == CALCULATE_SIZE) {
+            // force allocation
+            allocateMemory();
+        }
         return memory;
     }
 
@@ -258,6 +262,12 @@ public abstract class Structure {
      * Reads the fields of the struct from native memory
      */
     public void read() {
+        // convenience: allocate memory if it hasn't been already; this
+        // allows structures to do field-based initialization of arrays and not
+        // have to explicitly call allocateMemory in a ctor
+        if (size == CALCULATE_SIZE) {
+            allocateMemory();
+        }
         // Avoid recursive reads
         synchronized(reading) {
             if (reading.contains(this))
@@ -484,8 +494,8 @@ public abstract class Structure {
      */
     public void write() {
         // convenience: allocate memory if it hasn't been already; this
-        // allows structures to inline arrays of primitive types and not have
-        // to explicitly call allocateMemory in the ctor
+        // allows structures to do field-based initialization of arrays and not
+        // have to explicitly call allocateMemory in a ctor
         if (size == CALCULATE_SIZE) {
             allocateMemory();
         }
@@ -1026,7 +1036,8 @@ public abstract class Structure {
      * as the hash code.
      */
     public int hashCode() {
-        return getPointer().hashCode();
+        Pointer p = getPointer();
+        return p != null ? p.hashCode() : 0;
     }
 
     /** Obtain native type information for this structure. */
