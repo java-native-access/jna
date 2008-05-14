@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-05-01">
+<meta name="date" content="2008-05-14">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -459,11 +459,14 @@ Windows Mobile is supported by libffi (mingwce) but JNA has not yet been (public
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
 <p>
-A simple test calling a function like <code>int testfunc(int)</code> a million
-times with JNA might take 40X the time taken by equivalent custom JNI.  This
-magnitude is typical of the difference between systems using
+A simple test calling a function like <code>int testfunc(int)</code> with JNA
+might take an order of magnitude (~10X) greater time than equivalent custom
+JNI (whether it actually does in the context of your application is a
+different question).  
+This magnitude is typical of the difference between systems using
 dynamically-maintained type information and systems where type information is 
-statically compiled.  
+statically compiled.  JNI hard-codes type information in the method
+invocation, where JNA dynamically determines type information at runtime.  
 <p>
 You might expect a speedup of about an order of magnitude moving to custom JNI,
 but the actual difference will vary depending on usage and function
