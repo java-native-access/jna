@@ -218,4 +218,14 @@ public interface Kernel32 extends W32API {
                                   OVERLAPPED overlapped, 
                                   OVERLAPPED_COMPLETION_ROUTINE completionRoutine);
     
+    /** ASCII version.  Use {@link Native#toString(byte[])} to obtain the short
+     * path from the <code>byte</code> array.  
+     * Use only if <code>w32.ascii==true</code>. 
+     */
+    int GetShortPathName(String lpszLongPath, byte[] lpdzShortPath, int cchBuffer);
+    
+    /** Unicode version (the default).  Use {@link Native#toString(char[])} to
+     * obtain the short path from the <code>char</code> array. 
+     */
+    int GetShortPathName(String lpszLongPath, char[] lpdzShortPath, int cchBuffer);
 }

@@ -55,6 +55,16 @@ public interface W32API extends StdCallLibrary, W32Errors {
             return o;
         }
     }
+    
+    class WORD extends IntegerType {
+    	public WORD() { this(0); }
+    	public WORD(long value) { super(2, value); } 
+    }
+    class DWORD extends IntegerType {
+    	public DWORD() { this(0); }
+    	public DWORD(long value) { super(4, value); } 
+    }
+    
     class HDC extends HANDLE { }
     class HICON extends HANDLE { }
     class HBITMAP extends HANDLE { }
