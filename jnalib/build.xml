@@ -534,7 +534,9 @@
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
     </zip>
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml"/>
+      <zipfileset dir="." includes="build.xml,.classpath,.project"/>
+      <zipfileset dir="lib" includes="junit.jar" prefix="lib"/>
+      <zipfileset dir="nbproject" includes="**/*" prefix="nbproject"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" prefix="native"/>
