@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
- * Provides management of native library resources.  One instance of this 
+ * Provides management of native library resources.  One instance of this
  * class corresponds to a single loaded native library.
  * <p>
  * <b>Library Search Paths</b>
@@ -41,10 +41,10 @@ import java.util.StringTokenizer;
 public class NativeLibrary {
 
     private long handle;
-    private String libraryName;
-    private String libraryPath;
+    private final String libraryName;
+    private final String libraryPath;
     private final Map functions = new HashMap();
-    
+
     private static final Map libraries = new HashMap();
     private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
     private static final List librarySearchPath = new LinkedList();
@@ -72,10 +72,10 @@ public class NativeLibrary {
             }
         }
     }
-    
+
     private static NativeLibrary loadLibrary(String libraryName) {
         List searchPath = new LinkedList(librarySearchPath);
-        
+
         //
         // Prepend any custom search paths specifically for this library
         //
@@ -117,7 +117,7 @@ public class NativeLibrary {
         }
         return new NativeLibrary(libraryName, libraryPath, handle);
     }
-    
+
     private String getLibraryName(String libraryName) {
         String simplified = libraryName;
         final String BASE = "---";
@@ -133,16 +133,16 @@ public class NativeLibrary {
         }
         return simplified;
     }
-    
+
     /**
-     * Returns an instance of NativeLibrary for the specified name.  
-     * The library is loaded if not already loaded.  If already loaded, the 
+     * Returns an instance of NativeLibrary for the specified name.
+     * The library is loaded if not already loaded.  If already loaded, the
      * existing instance is returned.<p>
      * More than one name may map to the same NativeLibrary instance; only
      * a single instance will be provided for any given unique file path.
-     * 
+     *
      * @param libraryName The library name to load.
-     *      This can be short form (e.g. "c"), 
+     *      This can be short form (e.g. "c"),
      *      an explicit version (e.g. "libc.so.6"), or
      *      the full path to the library (e.g. "/lib/libc.so.6").
      */
@@ -163,13 +163,13 @@ public class NativeLibrary {
             return library;
         }
     }
-    
+
     /**
      * Add a path to search for the specified library, ahead of any system paths
-     * 
+     *
      * @param libraryName The name of the library to use the path for
      * @param path The path to use when trying to load the library
-     */  
+     */
     public static final void addSearchPath(String libraryName, String path) {
         synchronized (searchPaths) {
             List customPaths = (List) searchPaths.get(libraryName);
@@ -177,7 +177,7 @@ public class NativeLibrary {
                 customPaths = Collections.synchronizedList(new LinkedList());
                 searchPaths.put(libraryName, customPaths);
             }
-            
+
             customPaths.add(path);
         }
     }
@@ -196,7 +196,7 @@ public class NativeLibrary {
     public Function getFunction(String functionName) {
         return getFunction(functionName, Function.C_CONVENTION);
     }
-    
+
     /**
      * Create a new  @{link Function} that is linked with a native
      * function that follows a given calling convention.
@@ -226,19 +226,19 @@ public class NativeLibrary {
     /** Look up the given global variable within this library.
      * @param symbolName
      * @return Pointer representing the global variable address
-     * @throws UnsatisfiedLinkError if the symbol is not found 
+     * @throws UnsatisfiedLinkError if the symbol is not found
      */
     public Pointer getGlobalVariableAddress(String symbolName) {
         try {
             return new Pointer(getSymbolAddress(symbolName));
         }
         catch(UnsatisfiedLinkError e) {
-            throw new UnsatisfiedLinkError("Error looking up '" 
-                                           + symbolName + "': " 
+            throw new UnsatisfiedLinkError("Error looking up '"
+                                           + symbolName + "': "
                                            + e.getMessage());
         }
     }
-    
+
     /**
      * Used by the Function class to locate a symbol
      * @throws UnsatisfiedLinkError if the symbol can't be found
@@ -256,7 +256,7 @@ public class NativeLibrary {
     public String getName() {
         return libraryName;
     }
-    /** Returns the file on disk corresponding to this NativeLibrary instacne. 
+    /** Returns the file on disk corresponding to this NativeLibrary instacne.
      */
     public File getFile() {
         return new File(libraryPath);
@@ -265,7 +265,7 @@ public class NativeLibrary {
     protected void finalize() {
         dispose();
     }
-    
+
     public void dispose() {
         synchronized(libraries) {
             libraries.remove(getName());
@@ -279,7 +279,7 @@ public class NativeLibrary {
             }
         }
     }
-    
+
     private static List initPaths(String key) {
         String value = System.getProperty(key, "");
         if ("".equals(value)) {
@@ -295,22 +295,22 @@ public class NativeLibrary {
         }
         return list;
     }
-    
+
     /** Use standard library search paths to find the library. */
     private static String findLibraryPath(String libName, List searchPath) {
-        
+
         //
         // If a full path to the library was specified, don't search for it
         //
         if (new File(libName).isAbsolute()) {
             return libName;
         }
-        
+
         //
         // Get the system name for the library (e.g. libfoo.so)
         //
         String name = mapLibraryName(libName);
-        
+
         // Search in the JNA paths for it
         for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
             File file = new File(new File((String) it.next()), name);
@@ -318,7 +318,7 @@ public class NativeLibrary {
                 return file.getAbsolutePath();
             }
         }
-        
+
         //
         // Default to returning the mapped library name and letting the system
         // search for it
@@ -326,7 +326,7 @@ public class NativeLibrary {
         return name;
     }
     private static String mapLibraryName(String libName) {
-        
+
         if (Platform.isMac()) {
             if (libName.startsWith("lib")
                 && (libName.endsWith(".dylib") || libName.endsWith(".jnilib"))) {
@@ -334,23 +334,23 @@ public class NativeLibrary {
             }
             String name = System.mapLibraryName(libName);
             // On MacOSX, System.mapLibraryName() returns the .jnilib extension
-            // (the suffix for JNI libraries); ordinarily shared libraries have 
+            // (the suffix for JNI libraries); ordinarily shared libraries have
             // a .dylib suffix
             if (name.endsWith(".jnilib")) {
                 return name.substring(0, name.lastIndexOf(".jnilib")) + ".dylib";
             }
             return name;
-        } 
+        }
         else if (Platform.isLinux()) {
             if (isVersionedName(libName)) {
                 // A specific version was requested - use as is for search
                 return libName;
             }
-        } 
-        
+        }
+
         return System.mapLibraryName(libName);
     }
-    
+
     private static boolean isVersionedName(String name) {
         if (name.startsWith("lib")) {
             int so = name.lastIndexOf(".so.");
@@ -366,14 +366,14 @@ public class NativeLibrary {
         }
         return false;
     }
-    
+
     /**
      * matchLibrary() is very Linux specific.  It is here to deal with the case
      * where /usr/lib/libc.so does not exist, or it is not a valid symlink to
      * a versioned file (e.g. /lib/libc.so.6).
      */
     static String matchLibrary(final String libName, List searchPath) {
-    	File lib = new File(libName); 
+    	File lib = new File(libName);
         if (lib.isAbsolute()) {
         	searchPath = Arrays.asList(new String[] { lib.getParent() });
         }
@@ -385,7 +385,7 @@ public class NativeLibrary {
                     && isVersionedName(filename);
             }
         };
-        
+
         List matches = new LinkedList();
         for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
             File[] files = new File((String) it.next()).listFiles(filter);
@@ -393,7 +393,7 @@ public class NativeLibrary {
                 matches.addAll(Arrays.asList(files));
             }
         }
-        
+
         //
         // Search through the results and return the highest numbered version
         // i.e. libc.so.6 is preferred over libc.so.5
@@ -402,7 +402,7 @@ public class NativeLibrary {
         for (Iterator it = matches.iterator(); it.hasNext(); ) {
             String path = ((File) it.next()).getAbsolutePath();
             String ver = path.substring(path.lastIndexOf(".so.") + 4);
-            double version = parseVersion(ver); 
+            double version = parseVersion(ver);
             if (version >= bestVersion) {
                 bestVersion = version;
                 bestMatch = path;
@@ -410,7 +410,7 @@ public class NativeLibrary {
         }
         return bestMatch;
     }
-    
+
     static double parseVersion(String ver) {
     	double v = 0;
     	double divisor = 1;
@@ -437,12 +437,12 @@ public class NativeLibrary {
 
     	return v;
     }
-    
+
     private static native long open(String name);
     private static native void close(long handle);
     private static native long findSymbol(long handle, String name);
     static {
-        
+
         librarySearchPath.addAll(initPaths("jna.library.path"));
         String webstartPath = Native.getWebStartLibraryPath("jnidispatch");
         if (webstartPath != null) {
@@ -454,13 +454,15 @@ public class NativeLibrary {
             String platformPath = "";
             String sep = "";
             String archPath = "";
-            
+
             //
-            // Search first for an arch specific path, but fall back to the generic
-            // path if it does not exist.  Some older linux amd64 distros did not 
-            // have /usr/lib64, and 32bit distros only have /usr/lib.  
-            // FreeBSD also only has /usr/lib by default, with /usr/lib32 for 32bit compat.
-            // Solaris seems to have both, but defaults to 32bit userland even on 
+            // Search first for an arch specific path if one exists, but always
+            // include the generic paths if they exist.
+            // NOTES (wmeissner):
+            // Some older linux amd64 distros did not have /usr/lib64, and 32bit
+            // distros only have /usr/lib.  FreeBSD also only has /usr/lib by
+            // default, with /usr/lib32 for 32bit compat.
+            // Solaris seems to have both, but defaults to 32bit userland even on
             // 64bit machines, so we have to explicitly search the 64bit one when
             // running a 64bit JVM.
             //
@@ -468,25 +470,18 @@ public class NativeLibrary {
                 // Linux & FreeBSD use /usr/lib32, solaris uses /usr/lib/32
                 archPath = (Platform.isSolaris() ? "/" : "") + Pointer.SIZE * 8;
             }
-                        
-            if (new File("/usr/lib" + archPath).exists()) {
-                platformPath += sep + "/usr/lib" + archPath;
-                sep = File.pathSeparator;
-            }
-            // Use default if arch specific is not found
-            else if (new File("/usr/lib").exists()) {
-                platformPath += sep + "/usr/lib";
-                sep = File.pathSeparator;
-            }
-            
-            if (new File("/lib" + archPath).exists()) {
-                platformPath += sep + "/lib" + archPath;
-                sep = File.pathSeparator;
-            }
-            // Use default if arch specific is not found
-            else if (new File("/lib").exists()) { 
-                platformPath += sep + "/lib";
-                sep = File.pathSeparator;
+            String[] paths = {
+                "/usr/lib" + archPath,
+                "/lib" + archPath,
+                "/usr/lib",
+                "/lib",
+            };
+            for (int i=0;i < paths.length;i++) {
+                File dir = new File(paths[i]);
+                if (dir.exists() && dir.isDirectory()) {
+                    platformPath += sep + paths[i];
+                    sep = File.pathSeparator;
+                }
             }
             if (!"".equals(platformPath)) {
                 System.setProperty("jna.platform.library.path", platformPath);
