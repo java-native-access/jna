@@ -136,20 +136,37 @@ public class NativeLibraryTest extends TestCase {
     
     public void testMatchUnversionedToVersioned() throws Exception {
     	File lib0 = File.createTempFile("lib", ".so.0");
-    	lib0.deleteOnExit();
-    	File lib1 = File.createTempFile("lib", ".so.1.0");
-    	lib1.deleteOnExit();
-    	File lib1_1 = File.createTempFile("lib", ".so.1.1");
-    	lib1_1.deleteOnExit();
-    	String name = lib1_1.getName();
+    	File dir = lib0.getParentFile();
+    	String name = lib0.getName();
     	name = name.substring(3, name.indexOf(".so"));
-    	File dir = lib1_1.getParentFile();
+    	lib0.deleteOnExit();
+    	File lib1 = new File(dir, "lib" + name + ".so.1.0");
+        lib1.createNewFile();
+    	lib1.deleteOnExit();
+    	File lib1_1 = new File(dir, "lib" + name + ".so.1.1");
+        lib1_1.createNewFile();
+    	lib1_1.deleteOnExit();
     	List path = Arrays.asList(new String[] { dir.getAbsolutePath() });
-    	assertEquals("Versioned library not found when unversioned requested",
-    				 lib1_1.getAbsolutePath(),	
-    				 NativeLibrary.matchLibrary(name, path));
+    	assertEquals("Latest versioned library not found when unversioned requested",
+                     lib1_1.getAbsolutePath(),	
+                     NativeLibrary.matchLibrary(name, path));
     }
     
+    public void testAvoidFalseMatch() throws Exception {
+        File lib0 = File.createTempFile("lib", ".so.1");
+    	File dir = lib0.getParentFile();
+        lib0.deleteOnExit();
+    	String name = lib0.getName();
+    	name = name.substring(3, name.indexOf(".so"));
+        File lib1 = new File(dir, "lib" + name + "-client.so.2");
+        lib1.createNewFile();
+        lib1.deleteOnExit();
+    	List path = Arrays.asList(new String[] { dir.getAbsolutePath() });
+    	assertEquals("Library with similar prefix should be ignored",
+                     lib0.getAbsolutePath(),	
+                     NativeLibrary.matchLibrary(name, path));
+    }
+
     public void testParseVersion() throws Exception {
     	String[] VERSIONS = {
     		"1",

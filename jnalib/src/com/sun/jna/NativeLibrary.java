@@ -329,7 +329,8 @@ public class NativeLibrary {
 
         if (Platform.isMac()) {
             if (libName.startsWith("lib")
-                && (libName.endsWith(".dylib") || libName.endsWith(".jnilib"))) {
+                && (libName.endsWith(".dylib")
+                    || libName.endsWith(".jnilib"))) {
                 return libName;
             }
             String name = System.mapLibraryName(libName);
@@ -375,13 +376,13 @@ public class NativeLibrary {
     static String matchLibrary(final String libName, List searchPath) {
     	File lib = new File(libName);
         if (lib.isAbsolute()) {
-        	searchPath = Arrays.asList(new String[] { lib.getParent() });
+            searchPath = Arrays.asList(new String[] { lib.getParent() });
         }
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String filename) {
-                return (filename.startsWith("lib" + libName)
-                		|| (filename.startsWith(libName)
-                			&& libName.startsWith("lib")))
+                return (filename.startsWith("lib" + libName + ".so")
+                        || (filename.startsWith(libName + ".so")
+                            && libName.startsWith("lib")))
                     && isVersionedName(filename);
             }
         };
@@ -397,7 +398,7 @@ public class NativeLibrary {
         //
         // Search through the results and return the highest numbered version
         // i.e. libc.so.6 is preferred over libc.so.5
-        double bestVersion = 0;
+        double bestVersion = -1;
         String bestMatch = null;
         for (Iterator it = matches.iterator(); it.hasNext(); ) {
             String path = ((File) it.next()).getAbsolutePath();
