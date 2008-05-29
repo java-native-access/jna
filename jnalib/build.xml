@@ -143,7 +143,7 @@
       <pathelement path="${build}/${jar}"/>
       <pathelement path="${build}/examples.jar"/>
       <pathelement path="${test.classes}"/>
-      <pathelement path="${ant.home}/lib/clover.jar"/>
+      <pathelement path="lib/clover.jar"/>
       <path refid="test.libs"/>
     </path>
   </target>
@@ -416,18 +416,10 @@
   </target>
 
   <target name="with.clover" description="Enable code coverage for tests">
-    <taskdef resource="clovertasks"/>
+    <taskdef resource="cloverlib.xml" classpath="lib/clover.jar"/>
     <property name="clover" value="true"/>
     <property name="build" value="build.clover"/>
-    <property name="clover.include" value="**/*.java"/>
-    <property name="clover.exclude" value="**/examples/**/*.java"/>
-    <property name="tests.exclude" value="${clover.exclude}"/>
-    <clover-setup initString="${build}/coverage.db">
-      <fileset dir="${src}">
-        <include name="${clover.include}"/>
-        <exclude name="${clover.exclude}"/>
-      </fileset>
-    </clover-setup>
+    <clover-setup/>
   </target>
 
   <target name="clover" depends="with.clover,test"
@@ -436,6 +428,8 @@
     <mkdir dir="${reports.clover}"/>
     <clover-report>
       <current outfile="${reports.clover}" title="clover">
+        <fileset dir="." includes="**/*.java" excludes="**/examples/**/*.java"/>
+        <testresults dir="${results.junit}" includes="TEST-*.xml"/>
         <format type="html"/>
       </current>
     </clover-report>
