@@ -827,6 +827,11 @@ public abstract class Structure {
     // automatically
     protected int getNativeAlignment(Class type, Object value, boolean isFirstElement) {
         int alignment = 1;
+        if (NativeMapped.class.isAssignableFrom(type)) {
+            NativeMappedConverter tc = NativeMappedConverter.getInstance(type); 
+            type = tc.nativeType();
+            value = tc.toNative(value, new ToNativeContext());
+        }
         int size = getNativeSize(type, value);
         if (type.isPrimitive() || Long.class == type || Integer.class == type
             || Short.class == type || Character.class == type

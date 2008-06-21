@@ -758,4 +758,12 @@ public class StructureTest extends TestCase {
         ROStructure s = new ROStructure();
         assertEquals("Field value should be writable from native", 42, s.field);
     }
+    public void testNativeLongArrayField() {
+        final int SIZE = 24;
+        class TestStructure extends Structure {
+            public NativeLong[] longs = new NativeLong[SIZE];
+        }
+        Structure s = new TestStructure();
+        assertEquals("Wrong structure size", Native.LONG_SIZE * SIZE, s.size());
+    }
 }
