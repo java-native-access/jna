@@ -579,7 +579,7 @@ public class StructureTest extends TestCase {
         assertEquals("Inner structure not regenerated on read", inner, s.s1);
     }
 
-    public void testPreserveStructureByReferenceWithUnchangedPointer() {
+    public void testPreserveStructureByReferenceWithUnchangedPointerOnRead() {
         StructureWithPointers s = new StructureWithPointers();
         PublicTestStructure.ByReference inner =
             new PublicTestStructure.ByReference();
@@ -592,7 +592,7 @@ public class StructureTest extends TestCase {
                    inner.getPointer() instanceof Memory);
     }
 
-    public void testOverwriteStructureByReferenceField() {
+    public void testOverwriteStructureByReferenceFieldOnRead() {
         StructureWithPointers s = new StructureWithPointers();
         PublicTestStructure.ByReference inner =
             new PublicTestStructure.ByReference();
@@ -603,6 +603,15 @@ public class StructureTest extends TestCase {
         s.s1 = inner;
         s.read();
         assertNotSame("Read should overwrite structure reference", inner, s.s1);
+    }
+
+    public void testAutoWriteStructureByReferenceField() {
+        StructureWithPointers s = new StructureWithPointers();
+        s.s1 = new StructureTest.PublicTestStructure.ByReference();
+        s.s1.x = -1;
+        s.write();
+        assertEquals("Structure.ByReference not written automatically",
+                     -1, s.s1.getPointer().getInt(0));
     }
 
     public void testStructureByReferenceArrayField() {

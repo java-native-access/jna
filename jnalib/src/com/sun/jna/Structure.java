@@ -258,6 +258,7 @@ public abstract class Structure {
     // Keep track of what is currently being read to avoid redundant reads
     // (avoids problems with circular references).
     private static Set reading = new HashSet();
+    private static Set writing = new HashSet();
     /**
      * Reads the fields of the struct from native memory
      */
@@ -274,11 +275,15 @@ public abstract class Structure {
                 return;
             reading.add(this);
         }
-        for (Iterator i=structFields.values().iterator();i.hasNext();) {
-            readField((StructField)i.next());
+        try {
+            for (Iterator i=structFields.values().iterator();i.hasNext();) {
+                readField((StructField)i.next());
+            }
         }
-        synchronized(reading) {
-            reading.remove(this);
+        finally {
+            synchronized(reading) {
+                reading.remove(this);
+            }
         }
     }
 
@@ -505,11 +510,23 @@ public abstract class Structure {
             getTypeInfo();
         }
 
-        // Write all fields, except those marked 'volatile'
-        for (Iterator i=structFields.values().iterator();i.hasNext();) {
-            StructField sf = (StructField)i.next();
-            if (!sf.isVolatile) {
-                writeField(sf);
+        synchronized(writing) {
+            if (writing.contains(this)) 
+                return;
+            writing.add(this);
+        }
+        try {
+            // Write all fields, except those marked 'volatile'
+            for (Iterator i=structFields.values().iterator();i.hasNext();) {
+                StructField sf = (StructField)i.next();
+                if (!sf.isVolatile) {
+                    writeField(sf);
+                }
+            }
+        }
+        finally {
+            synchronized(writing) {
+                writing.remove(this);
             }
         }
     }
@@ -651,6 +668,9 @@ public abstract class Structure {
             Structure s = (Structure)value;
             if (ByReference.class.isAssignableFrom(nativeType)) {
                 memory.setPointer(offset, s == null ? null : s.getPointer());
+                if (s != null) {
+                    s.write();
+                }
             }
             else {
                 s.useMemory(memory, offset);
