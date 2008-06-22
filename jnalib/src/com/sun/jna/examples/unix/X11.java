@@ -249,24 +249,62 @@ public interface X11 extends Library {
     int BadLength = 16;
     int BadImplementation = 17;
 
+    /*
+      typedef struct {
+	long flags;	// marks which fields in this structure are defined 
+	Bool input;	// does this application rely on the window manager to
+			// get keyboard input? 
+	int initial_state;	// see below 
+	Pixmap icon_pixmap;	// pixmap to be used as icon 
+	Window icon_window; 	// window to be used as icon 
+	int icon_x, icon_y; 	// initial position of icon 
+	Pixmap icon_mask;	// icon mask bitmap 
+        XID window_group;       // id of related window group 
+	// this structure may be extended in the future 
+      } XWMHints;
+    */
     class XWMHints extends Structure {
         public NativeLong flags;
-        public int input;
+        public boolean input;
         public int initial_state;
-        public int icon_pixmap;
-        public int icon_window;
+        public Pixmap icon_pixmap;
+        public Window icon_window;
         public int icon_x, icon_y;
-        public int icon_mask;
-        public int window_group;
+        public Pixmap icon_mask;
+        public XID window_group;
     }
 
+    /*
+      typedef struct {
+        unsigned char *value;	// same as Property routines 
+        Atom encoding;		// prop type 
+        int format;		// prop data format: 8, 16, or 32 
+        unsigned long nitems;	// number of data items in value 
+      } XTextProperty;
+    */
     class XTextProperty extends Structure {
         public String value;
-        public int encoding;
+        public Atom encoding;
         public int format;
         public NativeLong nitems;
     }
 
+    /*
+      typedef struct {
+    	long flags;	// marks which fields in this structure are defined 
+        int x, y;	// obsolete for new window mgrs, but clients 
+	int width, height;	/// should set so old wm's don't mess up 
+	int min_width, min_height;
+	int max_width, max_height;
+    	int width_inc, height_inc;
+	struct {
+	  int x;	// numerator 
+	  int y;	// denominator 
+	} min_aspect, max_aspect;
+	int base_width, base_height;		// added by ICCCM version 1 
+	int win_gravity;			// added by ICCCM version 1 
+      } XSizeHints;
+     */
     class XSizeHints extends Structure {
         public NativeLong flags;
         public int x, y;
@@ -274,38 +312,66 @@ public interface X11 extends Library {
         public int min_width, min_height;
         public int max_width, max_height;
         public int width_inc, height_inc;
-        // TODO: nested struct
-        public int min_aspect_x;
-        public int min_aspect_y;
-        public int max_aspect_x;
-        public int max_aspect_y;
-        public int base_width_y;
+        public static class Aspect extends Structure {
+            public int x; // numerator
+            public int y; // denominator
+        }
+        public Aspect min_aspect, max_aspect;
         public int base_width, base_height;
         public int win_gravity;
     }
 
+    /*
+      typedef struct {
+        int x, y;		// location of window 
+        int width, height;	// width and height of window 
+        int border_width;	// border width of window 
+        int depth;          	// depth of window 
+        Visual *visual;		// the associated visual structure 
+        Window root;        	// root of screen containing window 
+#if defined(__cplusplus) || defined(c_plusplus)
+        int c_class;		// C++ InputOutput, InputOnly
+#else
+        int class;		// InputOutput, InputOnly
+#endif
+        int bit_gravity;	// one of bit gravity values 
+        int win_gravity;	// one of the window gravity values 
+        int backing_store;	// NotUseful, WhenMapped, Always 
+        unsigned long backing_planes;// planes to be preserved if possible 
+        unsigned long backing_pixel;// value to be used when restoring planes 
+        Bool save_under;	// boolean, should bits under be saved? 
+        Colormap colormap;	// color map to be associated with window 
+        Bool map_installed;	// boolean, is color map currently installed
+        int map_state;		// IsUnmapped, IsUnviewable, IsViewable 
+        long all_event_masks;	// set of events all people have interest in
+        long your_event_mask;	// my event mask 
+        long do_not_propagate_mask; // set of events that should not propagate 
+        Bool override_redirect;	// boolean value for override-redirect 
+        Screen *screen;		// back pointer to correct screen 
+      } XWindowAttributes;
+     */
     class XWindowAttributes extends Structure {
         public int x, y;
         public int width, height;
         public int border_width;
         public int depth;
         public Visual visual;
-        public int root;
+        public Window root;
         public int c_class;
         public int bit_gravity;
         public int win_gravity;
         public int backing_store;
         public NativeLong backing_planes;
         public NativeLong backing_pixel;
-        public int save_under;
-        public int colormap;
-        public int map_installed;
+        public boolean save_under;
+        public Colormap colormap;
+        public boolean map_installed;
         public int map_state;
         public NativeLong all_event_masks;
         public NativeLong your_event_mask;
         public NativeLong do_not_propagate_mask;
-        public int override_redirect;
-        public Pointer screen;
+        public boolean override_redirect;
+        public Screen screen;
     }
 
     int CWBackPixmap = (1<<0);
@@ -323,6 +389,25 @@ public interface X11 extends Library {
     int CWDontPropagate = (1<<12);
     int CWColormap = (1<<13);
     int CWCursor = (1<<14);
+    /*
+      typedef struct {
+        Pixmap background_pixmap;	// background or None or ParentRelative 
+        unsigned long background_pixel;	// background pixel 
+        Pixmap border_pixmap;	// border of the window 
+        unsigned long border_pixel;	// border pixel value 
+        int bit_gravity;		// one of bit gravity values 
+        int win_gravity;		// one of the window gravity values 
+        int backing_store;		// NotUseful, WhenMapped, Always 
+        unsigned long backing_planes;// planes to be preseved if possible 
+        unsigned long backing_pixel;// value to use in restoring planes 
+        Bool save_under;		// should bits under be saved? (popups) 
+        long event_mask;		// set of events that should be saved 
+        long do_not_propagate_mask;	// set of events that should not propagate 
+        Bool override_redirect;	// boolean value for override-redirect 
+        Colormap colormap;		// color map to be associated with window 
+        Cursor cursor;		// cursor to be displayed (or None) */
+      } XSetWindowAttributes;
+     */
     class XSetWindowAttributes extends Structure {
         public Pixmap background_pixmap;
         public NativeLong background_pixel;
@@ -339,7 +424,6 @@ public interface X11 extends Library {
         public boolean override_redirect;
         public Colormap colormap;
         public Cursor cursor;
-
     }
 
     int XK_0 = 0x30;
