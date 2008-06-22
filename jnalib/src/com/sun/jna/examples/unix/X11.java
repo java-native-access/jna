@@ -405,7 +405,7 @@ public interface X11 extends Library {
         long do_not_propagate_mask;	// set of events that should not propagate 
         Bool override_redirect;	// boolean value for override-redirect 
         Colormap colormap;		// color map to be associated with window 
-        Cursor cursor;		// cursor to be displayed (or None) */
+        Cursor cursor;		// cursor to be displayed (or None) 
       } XSetWindowAttributes;
      */
     class XSetWindowAttributes extends Structure {
