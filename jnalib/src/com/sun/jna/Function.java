@@ -372,13 +372,28 @@ public class Function extends Pointer {
             Structure struct = (Structure)arg;
             struct.write();
             if (struct instanceof Structure.ByValue) {
-            	// Double-check against the method signature
+            	// Double-check against the method signature, if available
+                Class ptype = struct.getClass();
             	if (invokingMethod != null) {
-            		Class ptype = invokingMethod.getParameterTypes()[index];
-            		if (Structure.ByValue.class.isAssignableFrom(ptype)) {
-            			return struct;
-            		}
-            	}
+                    Class[] ptypes = invokingMethod.getParameterTypes();
+                    if (isVarArgs(invokingMethod)) {
+                        if (index < ptypes.length-1) {
+                            ptype = ptypes[index];
+                        }
+                        else {
+                            Class etype = ptypes[ptypes.length-1].getComponentType();
+                            if (etype != Object.class) {
+                                ptype = etype;
+                            }
+                        }
+                    }
+                    else {
+                        ptype = ptypes[index];
+                    }
+                }
+                if (Structure.ByValue.class.isAssignableFrom(ptype)) {
+                    return struct;
+                }
             }
             return struct.getPointer();
         }
