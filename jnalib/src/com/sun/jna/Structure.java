@@ -192,6 +192,12 @@ public abstract class Structure {
         this.memory = m.share(offset, size());
     }
 
+    protected void ensureAllocated() {
+        if (size == CALCULATE_SIZE) {
+            allocateMemory();
+        }
+    }
+
     /** Attempt to allocate memory if sufficient information is available.
      * Returns whether the operation was successful.
      */
@@ -225,10 +231,7 @@ public abstract class Structure {
     }
 
     public int size() {
-        if (size == CALCULATE_SIZE) {
-            // force allocation
-            allocateMemory();
-        }
+        ensureAllocated();
         return size;
     }
 
@@ -244,10 +247,7 @@ public abstract class Structure {
      * or return value.
      */
     public Pointer getPointer() {
-        if (size == CALCULATE_SIZE) {
-            // force allocation
-            allocateMemory();
-        }
+        ensureAllocated();
         return memory;
     }
 
@@ -266,9 +266,7 @@ public abstract class Structure {
         // convenience: allocate memory if it hasn't been already; this
         // allows structures to do field-based initialization of arrays and not
         // have to explicitly call allocateMemory in a ctor
-        if (size == CALCULATE_SIZE) {
-            allocateMemory();
-        }
+        ensureAllocated();
         // Avoid recursive reads
         synchronized(reading) {
             if (reading.contains(this))
@@ -501,9 +499,7 @@ public abstract class Structure {
         // convenience: allocate memory if it hasn't been already; this
         // allows structures to do field-based initialization of arrays and not
         // have to explicitly call allocateMemory in a ctor
-        if (size == CALCULATE_SIZE) {
-            allocateMemory();
-        }
+        ensureAllocated();
 
         // Update native FFI type information, if needed
         if (this instanceof ByValue) {
@@ -836,6 +832,7 @@ public abstract class Structure {
 
     protected int getStructAlignment() {
         if (size == CALCULATE_SIZE) {
+            // calculate size, but don't allocate memory
             calculateSize(true);
         }
         return structAlignment;

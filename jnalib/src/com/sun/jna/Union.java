@@ -44,6 +44,7 @@ public abstract class Union extends Structure {
      * any declared union field.
      */
     public void setType(Class type) {
+        ensureAllocated();
         for (Iterator i=fields().values().iterator();i.hasNext();) {
             StructField f = (StructField)i.next();
             if (f.type == type) {

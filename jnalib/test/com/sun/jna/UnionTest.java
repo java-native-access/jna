@@ -71,6 +71,18 @@ public class UnionTest extends TestCase {
                      u.getTypeInfo());
     }
     
+    public void testArraysInUnion() {
+        class TestUnion extends Union {
+            public byte[] bytes = new byte[16];
+            public short[] shorts = new short[8];
+            public int[] ints = new int[4];
+        }
+        Union u = new TestUnion();
+        u.setType(byte[].class);
+        u.setType(short[].class);
+        u.setType(int[].class);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(UnionTest.class);
     }
