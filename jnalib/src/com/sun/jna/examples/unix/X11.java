@@ -33,136 +33,126 @@ public interface X11 extends Library {
         public VisualID(long value) { super(value); }
     }
 
-    class XID implements NativeMapped {
+    class XID extends NativeLong {
         public static final XID None = null;
-        private Integer id = new Integer(0);
         public XID() { this(0); }
-        public XID(Integer id) { this.id = id; }
-        public XID(int id) { this(new Integer(id)); }
+        public XID(long id) { super(id); }
         protected boolean isNone(Object o) {
-            return ((Integer)o).intValue() == X11.None;
+            return o == null
+                || (o instanceof Number
+                    && ((Number)o).longValue() == X11.None);
         }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             if (isNone(nativeValue))
                 return None;
-            return new XID((Integer)nativeValue);
-        }
-        public Class nativeType() {
-            return Integer.class;
-        }
-        public Object toNative() {
-            return id;
+            return new XID(((Number)nativeValue).longValue());
         }
         public String toString() {
-            return "0x" + Integer.toHexString(id.intValue());
+            return "0x" + Long.toHexString(longValue());
         }
     }
     class Atom extends XID {
         public static final Atom None = null;
         public Atom() { }
-        public Atom(Integer id) { super(id); }
-        public Atom(int id) { super(id); }
+        public Atom(long id) { super(id); }
         /** Return constants for predefined <code>Atom</code> values. */
         public Object fromNative(Object nativeValue, FromNativeContext context) {
-            int value = ((Integer)nativeValue).intValue();
-            switch(value) {
-            case 0:
-                return None;
-            case 1:
-                return XA_PRIMARY;
-            case 2:
-                return XA_SECONDARY;
-            case 3:
-                return XA_ARC;
-            case 4:
-                return XA_ATOM;
-            case 5:
-                return XA_BITMAP;
-            case 6:
-                return XA_CARDINAL;
-            default:
-                return new Atom((Integer)nativeValue);
+            long value = ((Number)nativeValue).longValue();
+            if (value <= Integer.MAX_VALUE) {
+                switch((int)value) {
+                case 0:
+                    return None;
+                case 1:
+                    return XA_PRIMARY;
+                case 2:
+                    return XA_SECONDARY;
+                case 3:
+                    return XA_ARC;
+                case 4:
+                    return XA_ATOM;
+                case 5:
+                    return XA_BITMAP;
+                case 6:
+                    return XA_CARDINAL;
+                default:
+                }
             }
+            return new Atom(value);
         }
     }
     class AtomByReference extends ByReference {
-        public AtomByReference() { super(4); }
+        public AtomByReference() { super(XID.SIZE); }
         public Atom getValue() {
-	    int value = getPointer().getInt(0);
-            return (Atom)new Atom().fromNative(new Integer(value), null);
+            NativeLong value = getPointer().getNativeLong(0);
+            return (Atom)new Atom().fromNative(value, null);
         }
     }
     class Colormap extends XID {
         public static final Colormap None = null;
         public Colormap() { }
-        public Colormap(Integer id) { super(id); }
-        public Colormap(int id) { super(id); }
+        public Colormap(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             if (isNone(nativeValue))
                 return None;
-            return new Colormap((Integer)nativeValue);
+            return new Colormap(((Number)nativeValue).longValue());
         }
     }
     class Font extends XID {
         public static final Font None = null;
         public Font() { }
-        public Font(Integer id) { super(id); }
-        public Font(int id) { super(id); }
+        public Font(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             if (isNone(nativeValue))
                 return None;
-            return new Font((Integer)nativeValue);
+            return new Font(((Number)nativeValue).longValue());
         }
     }
     class Cursor extends XID {
         public static final Cursor None = null;
         public Cursor() { }
-        public Cursor(Integer id) { super(id); }
-        public Cursor(int id) { super(id); }
+        public Cursor(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             if (isNone(nativeValue))
                 return None;
-            return new Cursor((Integer)nativeValue);
+            return new Cursor(((Number)nativeValue).longValue());
         }
     }
     class Drawable extends XID {
         public static final Drawable None = null;
         public Drawable() { }
-        public Drawable(Integer id) { super(id); }
-        public Drawable(int id) { super(id); }
+        public Drawable(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             if (isNone(nativeValue))
                 return None;
-            return new Drawable((Integer)nativeValue);
+            return new Drawable(((Number)nativeValue).longValue());
         }
     }
     class Window extends Drawable {
         public static final Window None = null;
         public Window() { }
-        public Window(Integer id) { super(id); }
-        public Window(int id) { super(id); }
+        public Window(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             if (isNone(nativeValue))
                 return None;
-            return new Window((Integer)nativeValue);
+            return new Window(((Number)nativeValue).longValue());
         }
     }
     class WindowByReference extends ByReference {
-        public WindowByReference() { super(4); }
+        public WindowByReference() { super(XID.SIZE); }
         public Window getValue() {
-            int value = getPointer().getInt(0);
-            return value == X11.None ? Window.None : new Window(value);
+            NativeLong value = getPointer().getNativeLong(0);
+            return value.longValue() == X11.None
+                ? Window.None : new Window(value.longValue());
         }
     }
     class Pixmap extends Drawable {
         public static final Pixmap None = null;
         public Pixmap() { }
-        public Pixmap(Integer id) { super(id); }
-        public Pixmap(int id) { super(id); }
+        public Pixmap(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             if (isNone(nativeValue))
                 return None;
-            return new Pixmap((Integer)nativeValue);
+            return new Pixmap(((Number)nativeValue).longValue());
         }
     }
     // TODO: define structure
@@ -170,9 +160,9 @@ public interface X11 extends Library {
     // TODO: define structure
     class Visual extends PointerType {
         public NativeLong getVisualID() {
-	    if (getPointer() != null)
-		return getPointer().getNativeLong(Native.POINTER_SIZE);
-	    return new NativeLong(0);
+            if (getPointer() != null)
+                return getPointer().getNativeLong(Native.POINTER_SIZE);
+            return new NativeLong(0);
         }
         public String toString() {
             return "Visual: VisualID=0x" + Long.toHexString(getVisualID().longValue());
@@ -251,16 +241,16 @@ public interface X11 extends Library {
 
     /*
       typedef struct {
-	long flags;	// marks which fields in this structure are defined 
-	Bool input;	// does this application rely on the window manager to
-			// get keyboard input? 
-	int initial_state;	// see below 
-	Pixmap icon_pixmap;	// pixmap to be used as icon 
-	Window icon_window; 	// window to be used as icon 
-	int icon_x, icon_y; 	// initial position of icon 
-	Pixmap icon_mask;	// icon mask bitmap 
+        long flags;     // marks which fields in this structure are defined 
+        Bool input;     // does this application rely on the window manager to
+                        // get keyboard input? 
+        int initial_state;      // see below 
+        Pixmap icon_pixmap;     // pixmap to be used as icon 
+        Window icon_window;     // window to be used as icon 
+        int icon_x, icon_y;     // initial position of icon 
+        Pixmap icon_mask;       // icon mask bitmap 
         XID window_group;       // id of related window group 
-	// this structure may be extended in the future 
+        // this structure may be extended in the future 
       } XWMHints;
     */
     class XWMHints extends Structure {
@@ -276,10 +266,10 @@ public interface X11 extends Library {
 
     /*
       typedef struct {
-        unsigned char *value;	// same as Property routines 
-        Atom encoding;		// prop type 
-        int format;		// prop data format: 8, 16, or 32 
-        unsigned long nitems;	// number of data items in value 
+        unsigned char *value;   // same as Property routines 
+        Atom encoding;          // prop type 
+        int format;             // prop data format: 8, 16, or 32 
+        unsigned long nitems;   // number of data items in value 
       } XTextProperty;
     */
     class XTextProperty extends Structure {
@@ -291,18 +281,18 @@ public interface X11 extends Library {
 
     /*
       typedef struct {
-    	long flags;	// marks which fields in this structure are defined 
-        int x, y;	// obsolete for new window mgrs, but clients 
-	int width, height;	/// should set so old wm's don't mess up 
-	int min_width, min_height;
-	int max_width, max_height;
-    	int width_inc, height_inc;
-	struct {
-	  int x;	// numerator 
-	  int y;	// denominator 
-	} min_aspect, max_aspect;
-	int base_width, base_height;		// added by ICCCM version 1 
-	int win_gravity;			// added by ICCCM version 1 
+        long flags;     // marks which fields in this structure are defined 
+        int x, y;       // obsolete for new window mgrs, but clients 
+        int width, height;      /// should set so old wm's don't mess up 
+        int min_width, min_height;
+        int max_width, max_height;
+        int width_inc, height_inc;
+        struct {
+          int x;        // numerator 
+          int y;        // denominator 
+        } min_aspect, max_aspect;
+        int base_width, base_height;            // added by ICCCM version 1 
+        int win_gravity;                        // added by ICCCM version 1 
       } XSizeHints;
      */
     class XSizeHints extends Structure {
@@ -323,31 +313,31 @@ public interface X11 extends Library {
 
     /*
       typedef struct {
-        int x, y;		// location of window 
-        int width, height;	// width and height of window 
-        int border_width;	// border width of window 
-        int depth;          	// depth of window 
-        Visual *visual;		// the associated visual structure 
-        Window root;        	// root of screen containing window 
+        int x, y;               // location of window 
+        int width, height;      // width and height of window 
+        int border_width;       // border width of window 
+        int depth;              // depth of window 
+        Visual *visual;         // the associated visual structure 
+        Window root;            // root of screen containing window 
 #if defined(__cplusplus) || defined(c_plusplus)
-        int c_class;		// C++ InputOutput, InputOnly
+        int c_class;            // C++ InputOutput, InputOnly
 #else
-        int class;		// InputOutput, InputOnly
+        int class;              // InputOutput, InputOnly
 #endif
-        int bit_gravity;	// one of bit gravity values 
-        int win_gravity;	// one of the window gravity values 
-        int backing_store;	// NotUseful, WhenMapped, Always 
+        int bit_gravity;        // one of bit gravity values 
+        int win_gravity;        // one of the window gravity values 
+        int backing_store;      // NotUseful, WhenMapped, Always 
         unsigned long backing_planes;// planes to be preserved if possible 
         unsigned long backing_pixel;// value to be used when restoring planes 
-        Bool save_under;	// boolean, should bits under be saved? 
-        Colormap colormap;	// color map to be associated with window 
-        Bool map_installed;	// boolean, is color map currently installed
-        int map_state;		// IsUnmapped, IsUnviewable, IsViewable 
-        long all_event_masks;	// set of events all people have interest in
-        long your_event_mask;	// my event mask 
+        Bool save_under;        // boolean, should bits under be saved? 
+        Colormap colormap;      // color map to be associated with window 
+        Bool map_installed;     // boolean, is color map currently installed
+        int map_state;          // IsUnmapped, IsUnviewable, IsViewable 
+        long all_event_masks;   // set of events all people have interest in
+        long your_event_mask;   // my event mask 
         long do_not_propagate_mask; // set of events that should not propagate 
-        Bool override_redirect;	// boolean value for override-redirect 
-        Screen *screen;		// back pointer to correct screen 
+        Bool override_redirect; // boolean value for override-redirect 
+        Screen *screen;         // back pointer to correct screen 
       } XWindowAttributes;
      */
     class XWindowAttributes extends Structure {
@@ -391,21 +381,21 @@ public interface X11 extends Library {
     int CWCursor = (1<<14);
     /*
       typedef struct {
-        Pixmap background_pixmap;	// background or None or ParentRelative 
-        unsigned long background_pixel;	// background pixel 
-        Pixmap border_pixmap;	// border of the window 
-        unsigned long border_pixel;	// border pixel value 
-        int bit_gravity;		// one of bit gravity values 
-        int win_gravity;		// one of the window gravity values 
-        int backing_store;		// NotUseful, WhenMapped, Always 
+        Pixmap background_pixmap;       // background or None or ParentRelative 
+        unsigned long background_pixel; // background pixel 
+        Pixmap border_pixmap;   // border of the window 
+        unsigned long border_pixel;     // border pixel value 
+        int bit_gravity;                // one of bit gravity values 
+        int win_gravity;                // one of the window gravity values 
+        int backing_store;              // NotUseful, WhenMapped, Always 
         unsigned long backing_planes;// planes to be preseved if possible 
         unsigned long backing_pixel;// value to use in restoring planes 
-        Bool save_under;		// should bits under be saved? (popups) 
-        long event_mask;		// set of events that should be saved 
-        long do_not_propagate_mask;	// set of events that should not propagate 
-        Bool override_redirect;	// boolean value for override-redirect 
-        Colormap colormap;		// color map to be associated with window 
-        Cursor cursor;		// cursor to be displayed (or None) 
+        Bool save_under;                // should bits under be saved? (popups) 
+        long event_mask;                // set of events that should be saved 
+        long do_not_propagate_mask;     // set of events that should not propagate 
+        Bool override_redirect; // boolean value for override-redirect 
+        Colormap colormap;              // color map to be associated with window 
+        Cursor cursor;          // cursor to be displayed (or None) 
       } XSetWindowAttributes;
      */
     class XSetWindowAttributes extends Structure {
