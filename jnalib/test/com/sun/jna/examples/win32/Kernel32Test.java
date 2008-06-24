@@ -15,21 +15,29 @@ package com.sun.jna.examples.win32;
 import java.util.Calendar;
 import java.util.TimeZone;
 import junit.framework.TestCase;
+import com.sun.jna.Platform;
 
 public class Kernel32Test extends TestCase {
+    
+    public void testGetDriveType() {
+        if (!Platform.isWindows()) return;
+        
+        Kernel32 kernel = Kernel32.INSTANCE;
+        assertEquals("Wrong drive type.", Kernel32.DRIVE_FIXED, kernel.GetDriveType("c:"));
+    }
     
     public void testStructureOutArgument() {
         Kernel32 kernel = Kernel32.INSTANCE;
         Kernel32.SYSTEMTIME time = new Kernel32.SYSTEMTIME();
         kernel.GetSystemTime(time);
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        assertEquals("Hour not properly set", 
-                     cal.get(Calendar.HOUR_OF_DAY), time.wHour); 
-        assertEquals("Day not properly set", 
-                     cal.get(Calendar.DAY_OF_WEEK)-1, 
-                     time.wDayOfWeek); 
+        assertEquals("Hour not properly set",
+                     cal.get(Calendar.HOUR_OF_DAY), time.wHour);
+        assertEquals("Day not properly set",
+                     cal.get(Calendar.DAY_OF_WEEK)-1,
+                     time.wDayOfWeek);
         assertEquals("Year not properly set", 
-                     cal.get(Calendar.YEAR), time.wYear); 
+                     cal.get(Calendar.YEAR), time.wYear);
     }
     
     public void testGetLastError() {

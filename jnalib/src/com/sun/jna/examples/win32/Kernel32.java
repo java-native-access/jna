@@ -50,6 +50,7 @@ public interface Kernel32 extends W32API {
     int GetProcessVersion(int processId);
     int GetLastError();
     void SetLastError(int dwErrCode);
+    int GetDriveType(String rootPathName);
 
     int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x0100;
     int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
@@ -98,6 +99,14 @@ public interface Kernel32 extends W32API {
     int FILE_ATTRIBUTE_OFFLINE = 0x00001000;
     int FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x00002000;
     int FILE_ATTRIBUTE_ENCRYPTED = 0x00004000;
+
+    int DRIVE_UNKNOWN = 0;
+    int DRIVE_NO_ROOT_DIR = 1;
+    int DRIVE_REMOVABLE = 2;
+    int DRIVE_FIXED = 3;
+    int DRIVE_REMOTE = 4;
+    int DRIVE_CDROM = 5;
+    int DRIVE_RAMDISK = 6;
     
     int GENERIC_WRITE = 0x40000000;
     class SECURITY_ATTRIBUTES extends Structure {
