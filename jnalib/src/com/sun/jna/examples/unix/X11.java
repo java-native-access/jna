@@ -574,6 +574,8 @@ public interface X11 extends Library {
     Display XOpenDisplay(String name);
     int XGetErrorText(Display display, int code, byte[] buffer, int len);
     int XDefaultScreen(Display display);
+	// Screen *DefaultScreenOfDisplay(Display *display);
+    Screen DefaultScreenOfDisplay(Display display);
     Visual XDefaultVisual(Display display, int screen);
     Colormap XDefaultColormap(Display display, int screen);
     int XDisplayWidth(Display display, int screen);
@@ -686,6 +688,14 @@ public interface X11 extends Library {
                           IntByReference mask_return);
     int XGetWindowAttributes(Display display, Window window, XWindowAttributes attributes);
     int XChangeWindowAttributes(Display display, Window window, NativeLong valuemask, XSetWindowAttributes attributes);
+    // Status XGetGeometry(Display *display, Drawable d, Window *root_return, int *x_return, int *y_return, unsigned int *width_return,
+    //                     unsigned int *height_return, unsigned int *border_width_return, unsigned int *depth_return); 
+    int XGetGeometry(Display display, Drawable d, WindowByReference w, IntByReference x, IntByReference y, IntByReference width,
+                     IntByReference heigth, IntByReference border_width, IntByReference depth);
+    // Bool XTranslateCoordinates(Display *display, Window src_w, dest_w, int src_x, int src_y,
+    //                            int *dest_x_return, int *dest_y_return, Window *child_return); 
+    boolean XTranslateCoordinates(Display display, Window src_w, Window dest_w, int src_x, int src_y,
+                                  IntByReference dest_x_return, IntByReference dest_y_return, WindowByReference child_return);
 
     int NoEventMask = 0;
     int KeyPressMask = (1<<0);
@@ -741,7 +751,10 @@ public interface X11 extends Library {
     int XChangeProperty(Display display, Window w, Atom property, Atom type,
                         int format, int mode, Pointer data, int nelements);
     int XDeleteProperty(Display display, Window w, Atom property);
+    // Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists);  
     Atom XInternAtom(Display display, String name, boolean only_if_exists);
+    // char *XGetAtomName(Display *display, Atom atom);
+    String XGetAtomName(Display display, Atom atom);
     int XCopyArea(Display dpy, Drawable src, Drawable dst, GC gc,
                   int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
