@@ -294,65 +294,70 @@ public class StructureTest extends TestCase {
                 // Have to do this due to inline primitive arrays
                 allocateMemory();
             }
-            public boolean z;
-            public byte b;
-            public char c;
-            public short s;
-            public int i;
-            public long j;
-            public float f;
-            public double d;
-            public byte[] ba = new byte[8];
-            public char[] ca = new char[8];
-            public short[] sa = new short[8];
-            public int[] ia = new int[8];
-            public long[] ja = new long[8];
-            public float[] fa = new float[8];
-            public double[] da = new double[8];
+            public boolean z;       // native Bool
+            public byte b;          // native char
+            public char c;          // native wchar_t
+            public short s;         // native short
+            public int i;           // native int
+            public long l;          // native long long
+            public float f;         // native float
+            public double d;        // native double
+            public byte[] ba = new byte[3];
+            public char[] ca = new char[3];
+            public short[] sa = new short[3];
+            public int[] ia = new int[3];
+            public long[] la = new long[3];
+            public float[] fa = new float[3];
+            public double[] da = new double[3];
             public PublicTestStructure nested;
         }
         TestStructure s = new TestStructure();
+		// set content of the structure
         s.z = true;
         s.b = 1;
-        s.s = 2;
-        s.c = 'a';
-        s.i = 3;
-        s.j = 4;
-        s.f = 5;
-        s.d = 6;
+		s.c = 2;
+        s.s = 3;
+        s.i = 4;
+        s.l = 5;
+        s.f = 6.0f;
+        s.d = 7.0;
         s.nested.x = 1;
         s.nested.y = 2;
-        s.ba[0] = 3;
+		for (int i = 0; i < 3; i++) {
+			s.ba[i] = (byte) (8 + i);
+			s.ca[i] = (char) (11 + i);
+			s.sa[i] = (short) (14 + i);
+			s.ia[i] = 17 + i;
+			s.la[i] = 23 + i;
+			s.fa[i] = (float) 26 + i;
+			s.da[i] = (double) 29 + i;
+		}
+		// write content to memory
         s.write();
-        s.z = false;
-        s.b = 0;
-        s.c = 0;
-        s.s = 0;
-        s.i = 0;
-        s.j = 0;
-        s.f = 0;
-        s.d = 0;
-        s.nested.x = s.nested.y = 0;
-        s.ba[0] = 0;
-        byte[] ref = s.ba;
-        s.read();
-        assertTrue("Wrong boolean field value after write/read", s.z);
-        assertEquals("Wrong byte field value after write/read", (byte)1, s.b);
-        assertEquals("Wrong char field value after write/read",
-                     "'a' (0x" + Integer.toHexString('a') + ")",
-                     "'" + s.c + "' (0x" + Integer.toHexString(s.c) + ")");
-        assertEquals("Wrong short field value after write/read", 2, s.s);
-        assertEquals("Wrong int field value after write/read", 3, s.i);
-        assertEquals("Wrong long field value after write/read", 4, s.j);
-        assertEquals("Wrong float field value after write/read", 5.0f, s.f);
-        assertEquals("Wrong double field value after write/read", 6.0d, s.d);
-        assertEquals("Wrong nested struct field value after write/read (x)",
-                     1, s.nested.x);
-        assertEquals("Wrong nested struct field value after write/read (y)",
-                     2, s.nested.y);
-        assertEquals("Wrong nested array element value after write/read",
-                     3, s.ba[0]);
-        assertSame("Array field reference should be unchanged", ref, s.ba);
+		Pointer p = s.getPointer();
+		s = new TestStructure();
+		s.useMemory(p);
+		// read content from memory and compare field values
+		s.read();
+		assertEquals("Wrong boolean field value after write/read", s.z, true);
+		assertEquals("Wrong byte field value after write/read", s.b, 1);
+		assertEquals("Wrong char field value after write/read", s.c, 2);
+		assertEquals("Wrong short field value after write/read", s.s, 3);
+		assertEquals("Wrong int field value after write/read", s.i, 4);
+		assertEquals("Wrong long field value after write/read", s.l, 5);
+		assertEquals("Wrong float field value after write/read", s.f, 6.0f);
+		assertEquals("Wrong double field value after write/read", s.d, 7.0);
+		assertEquals("Wrong nested struct field value after write/read (x)", s.nested.x, 1);
+		assertEquals("Wrong nested struct field value after write/read (y)", s.nested.y, 2);
+		for (int i = 0; i < 3; i++) {
+			assertEquals("Wrong byte array field value after write/read", s.ba[i], (byte) (8 + i));
+			assertEquals("Wrong char array field value after write/read", s.ca[i], (char) (11 + i));
+			assertEquals("Wrong short array field value after write/read", s.sa[i], (short) (14 + i));
+			assertEquals("Wrong int array field value after write/read", s.ia[i], 17 + i);
+			assertEquals("Wrong long array field value after write/read", s.la[i], 23 + i);
+			assertEquals("Wrong float array field value after write/read", s.fa[i], (float) 26 + i);
+			assertEquals("Wrong double array field value after write/read", s.da[i], (double) 29 + i);
+		}
     }
 
     public void testNativeLongSize() throws Exception {
