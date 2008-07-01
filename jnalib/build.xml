@@ -88,6 +88,10 @@
       <!-- IBM's J9 reports 'x86' -->
       <and><os name="Linux"/><os arch="x86"/></and>
     </condition>
+    <condition property="os.prefix" value="linux-amd64">
+      <!-- Debian reports 'x86_64' -->
+      <and><os name="Linux"/><os arch="x86_64"/></and>
+    </condition>
     <condition property="os.prefix" value="linux-${os.arch}">
       <os name="Linux"/>
     </condition>

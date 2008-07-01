@@ -441,6 +441,9 @@ public final class Native {
             if ("x86".equals(arch)) {
                 arch = "i386";
             }
+            else if ("x86_64".equals(arch)) {
+                arch = "amd64";
+            }
             osPrefix = "linux-" + arch;
         }
         else if (Platform.isSolaris()) {
