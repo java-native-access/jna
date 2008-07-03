@@ -294,7 +294,7 @@ public class StructureTest extends TestCase {
                 // Have to do this due to inline primitive arrays
                 allocateMemory();
             }
-            public boolean z;       // native Bool
+            public boolean z;       // native int
             public byte b;          // native char
             public char c;          // native wchar_t
             public short s;         // native short
@@ -776,12 +776,30 @@ public class StructureTest extends TestCase {
         ROStructure s = new ROStructure();
         assertEquals("Field value should be writable from native", 42, s.field);
     }
-    public void testNativeLongArrayField() {
+    public void testNativeMappedArrayField() {
         final int SIZE = 24;
         class TestStructure extends Structure {
             public NativeLong[] longs = new NativeLong[SIZE];
         }
-        Structure s = new TestStructure();
+        TestStructure s = new TestStructure();
         assertEquals("Wrong structure size", Native.LONG_SIZE * SIZE, s.size());
+
+        NativeLong[] aref = s.longs;
+        for (int i=0;i < s.longs.length;i++) {
+            s.longs[i] = new NativeLong(i);
+        }
+        s.write();
+        for (int i=0;i < s.longs.length;i++) {
+            assertEquals("Value not written to memory at index " + i,
+                         i, s.getPointer().getNativeLong(i * NativeLong.SIZE).intValue());
+        }
+        s.read();
+        assertEquals("Array reference should remain unchanged on read",
+                     aref, s.longs);
+
+        for (int i=0;i < s.longs.length;i++) {
+            assertEquals("Wrong value after read at index " + i,
+                         i, s.longs[i].intValue());
+        }
     }
 }

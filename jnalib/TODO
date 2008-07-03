@@ -22,6 +22,10 @@
 
 # TODO
 
+* write structure to contiguous Java array, then write all at once to minimize
+  native calls.  Otherwise, structs with lots of fields take a big performance
+  hit making a native call for each field.
+
 * parser (gluegen? swig? others?) to auto-generate JNA interfaces from headers;
   ideally get the native library build system to output preprocessed headers,
   otherwise CPP crap is a nightmare to get right.
