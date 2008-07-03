@@ -358,6 +358,10 @@ public class StructureTest extends TestCase {
             assertEquals("Wrong float array field value after write/read", s.fa[i], (float) 26 + i);
             assertEquals("Wrong double array field value after write/read", s.da[i], (double) 29 + i);
         }
+        // test constancy of references after read
+        int[] ia = s.ia;
+        s.read();
+        assertTrue("Array field reference should be unchanged", ia == s.ia);
     }
 
     public void testNativeLongSize() throws Exception {
