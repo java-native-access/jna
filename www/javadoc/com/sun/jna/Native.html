@@ -6,15 +6,14 @@
 Native (JNA API)
 </TITLE>
 
+<META NAME="keywords" CONTENT="com.sun.jna.Native class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="Native (JNA API)";
-    }
+    parent.document.title="Native (JNA API)";
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -23,7 +22,6 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
-<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -46,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0.1</font></EM>
+<b>JNA API</><font size="-1"> 3.0.4</font></EM>
 </TD>
 </TR>
 
@@ -89,12 +87,12 @@ com.sun.jna</FONT>
 <BR>
 Class Native</H2>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">java.lang.Object</A>
   <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.Native</B>
 </PRE>
 <HR>
 <DL>
-<DT><PRE>public final class <B>Native</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
+<DT><PRE>public final class <B>Native</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></DL>
 </PRE>
 
 <P>
@@ -111,7 +109,7 @@ Provides generation of invocation plumbing for a defined native
  <h2>Library Loading</h2>
  When JNA classes are loaded, the native shared library (jnidispatch) is
  loaded as well.  An attempt is made to load it from the system library path
- using <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html?is-external=true#loadLibrary(java.lang.String)" title="class or interface in java.lang"><CODE>System.loadLibrary(java.lang.String)</CODE></A>.  If not found, the appropriate library
+ using <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html#loadLibrary(java.lang.String)" title="class or interface in java.lang"><CODE>System.loadLibrary(java.lang.String)</CODE></A>.  If not found, the appropriate library
  will be extracted from the class path into a temporary directory and
  loaded from there.  If your system has additional security constraints
  regarding execution or load of files (SELinux, for example), you should 
@@ -191,8 +189,8 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#findLibraryClass(java.lang.Class)">findLibraryClass</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#findLibraryClass(java.lang.Class)">findLibraryClass</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find the library interface corresponding to the given class.</TD>
@@ -200,7 +198,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getByteBufferPointer(java.nio.ByteBuffer)">getByteBufferPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A>&nbsp;b)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getByteBufferPointer(java.nio.ByteBuffer)">getByteBufferPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html" title="class or interface in java.nio">ByteBuffer</A>&nbsp;b)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>Use <A HREF="../../../com/sun/jna/Native.html#getDirectBufferPointer(java.nio.Buffer)"><CODE>getDirectBufferPointer(java.nio.Buffer)</CODE></A> instead.</I></TD>
@@ -208,7 +206,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>(package private) static&nbsp;byte[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getBytes(java.lang.String)">getBytes</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;s)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getBytes(java.lang.String)">getBytes</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;s)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a byte array corresponding to the given String.</TD>
@@ -216,28 +214,28 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;long</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getComponentID(java.awt.Component)">getComponentID</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getComponentID(java.awt.Component)">getComponentID</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Utility method to get the native window ID for a heavyweight Java 
- <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <code>long</code> value.</TD>
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <code>long</code> value.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getComponentPointer(java.awt.Component)">getComponentPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getComponentPointer(java.awt.Component)">getComponentPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Utility method to get the native window pointer for a heavyweight Java 
- <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.</TD>
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getDirectBufferPointer(java.nio.Buffer)">getDirectBufferPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio">Buffer</A>&nbsp;b)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getDirectBufferPointer(java.nio.Buffer)">getDirectBufferPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio">Buffer</A>&nbsp;b)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert a direct <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert a direct <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -249,8 +247,8 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getLibraryOptions(java.lang.Class)">getLibraryOptions</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getLibraryOptions(java.lang.Class)">getLibraryOptions</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the preferred native library configuration options for the given 
@@ -259,7 +257,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getNativeSize(java.lang.Class)">getNativeSize</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getNativeSize(java.lang.Class)">getNativeSize</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the native size for a given Java class.</TD>
@@ -276,7 +274,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)">getStructureAlignment</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)">getStructureAlignment</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the preferred structure alignment for the given native interface.</TD>
@@ -284,15 +282,15 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)">getTypeMapper</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)">getTypeMapper</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the preferred <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the given native interface.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWebStartLibraryPath(java.lang.String)">getWebStartLibraryPath</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libName)</CODE>
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWebStartLibraryPath(java.lang.String)">getWebStartLibraryPath</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;libName)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If running web start, determine the location of a given native 
@@ -301,20 +299,20 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;long</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWindowID(java.awt.Window)">getWindowID</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt">Window</A>&nbsp;w)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWindowID(java.awt.Window)">getWindowID</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt">Window</A>&nbsp;w)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Utility method to get the native window ID for a Java <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Utility method to get the native window ID for a Java <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt"><CODE>Window</CODE></A>
  as a <code>long</code> value.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWindowPointer(java.awt.Window)">getWindowPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt">Window</A>&nbsp;w)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#getWindowPointer(java.awt.Window)">getWindowPointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt">Window</A>&nbsp;w)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Utility method to get the native window pointer for a Java 
- <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.</TD>
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt"><CODE>Window</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -327,7 +325,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#isSupportedNativeType(java.lang.Class)">isSupportedNativeType</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#isSupportedNativeType(java.lang.Class)">isSupportedNativeType</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicate whether the given class is supported as a native argument
@@ -335,9 +333,9 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class)">loadLibrary</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
-            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</CODE>
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class)">loadLibrary</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;name,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load a library interface from the given shared library, providing
@@ -345,10 +343,10 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)">loadLibrary</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
-            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass,
-            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;libOptions)</CODE>
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)">loadLibrary</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;name,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A>&nbsp;libOptions)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load a library interface from the given shared library, providing
@@ -357,7 +355,7 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#main(java.lang.String[])">main</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;args)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#main(java.lang.String[])">main</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[]&nbsp;args)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prints JNA library details to the console.</TD>
@@ -399,7 +397,7 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#toString(byte[])">toString</A></B>(byte[]&nbsp;buf)</CODE>
 
 <BR>
@@ -407,7 +405,7 @@ Provides generation of invocation plumbing for a defined native
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#toString(char[])">toString</A></B>(char[]&nbsp;buf)</CODE>
 
 <BR>
@@ -425,10 +423,10 @@ Provides generation of invocation plumbing for a defined native
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -556,10 +554,10 @@ public static boolean <B>getPreserveLastError</B>()</PRE>
 <A NAME="getWindowID(java.awt.Window)"><!-- --></A><H3>
 getWindowID</H3>
 <PRE>
-public static long <B>getWindowID</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt">Window</A>&nbsp;w)
-                        throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></PRE>
+public static long <B>getWindowID</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt">Window</A>&nbsp;w)
+                        throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></PRE>
 <DL>
-<DD>Utility method to get the native window ID for a Java <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A>
+<DD>Utility method to get the native window ID for a Java <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt"><CODE>Window</CODE></A>
  as a <code>long</code> value.
  This method is primarily for X11-based systems, which use an opaque
  <code>XID</code> (usually <code>long int</code>) to identify windows.
@@ -567,7 +565,7 @@ public static long <B>getWindowID</B>(<A HREF="http://java.sun.com/j2se/1.4.2/do
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
 </DD>
 </DL>
 <HR>
@@ -575,18 +573,18 @@ public static long <B>getWindowID</B>(<A HREF="http://java.sun.com/j2se/1.4.2/do
 <A NAME="getComponentID(java.awt.Component)"><!-- --></A><H3>
 getComponentID</H3>
 <PRE>
-public static long <B>getComponentID</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c)
-                           throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></PRE>
+public static long <B>getComponentID</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c)
+                           throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></PRE>
 <DL>
 <DD>Utility method to get the native window ID for a heavyweight Java 
- <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <code>long</code> value.
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <code>long</code> value.
  This method is primarily for X11-based systems, which use an opaque
  <code>XID</code> (usually <code>long int</code>) to identify windows.
 <P>
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
 </DD>
 </DL>
 <HR>
@@ -594,18 +592,18 @@ public static long <B>getComponentID</B>(<A HREF="http://java.sun.com/j2se/1.4.2
 <A NAME="getWindowPointer(java.awt.Window)"><!-- --></A><H3>
 getWindowPointer</H3>
 <PRE>
-public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getWindowPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt">Window</A>&nbsp;w)
-                                throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></PRE>
+public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getWindowPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt">Window</A>&nbsp;w)
+                                throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></PRE>
 <DL>
 <DD>Utility method to get the native window pointer for a Java 
- <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.  This method is primarily for 
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html" title="class or interface in java.awt"><CODE>Window</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.  This method is primarily for 
  w32, which uses the <code>HANDLE</code> type (actually 
  <code>void *</code>) to identify windows.
 <P>
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
 </DD>
 </DL>
 <HR>
@@ -613,18 +611,18 @@ public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.su
 <A NAME="getComponentPointer(java.awt.Component)"><!-- --></A><H3>
 getComponentPointer</H3>
 <PRE>
-public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getComponentPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c)
-                                   throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></PRE>
+public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getComponentPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c)
+                                   throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></PRE>
 <DL>
 <DD>Utility method to get the native window pointer for a heavyweight Java 
- <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.  This method is primarily 
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.  This method is primarily 
  for w32, which uses the <code>HANDLE</code> type (actually 
  <code>void *</code>) to identify windows.
 <P>
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html?is-external=true" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/HeadlessException.html" title="class or interface in java.awt">HeadlessException</A></CODE> - if the current VM is running headless</DL>
 </DD>
 </DL>
 <HR>
@@ -632,16 +630,16 @@ public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.su
 <A NAME="getByteBufferPointer(java.nio.ByteBuffer)"><!-- --></A><H3>
 getByteBufferPointer</H3>
 <PRE>
-public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getByteBufferPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A>&nbsp;b)</PRE>
+public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getByteBufferPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html" title="class or interface in java.nio">ByteBuffer</A>&nbsp;b)</PRE>
 <DL>
 <DD><B>Deprecated.</B>&nbsp;<I>Use <A HREF="../../../com/sun/jna/Native.html#getDirectBufferPointer(java.nio.Buffer)"><CODE>getDirectBufferPointer(java.nio.Buffer)</CODE></A> instead.</I>
 <P>
-<DD>Convert a direct <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>Convert a direct <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
 <P>
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the buffer is not direct.</DL>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the buffer is not direct.</DL>
 </DD>
 </DL>
 <HR>
@@ -649,14 +647,14 @@ public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.su
 <A NAME="getDirectBufferPointer(java.nio.Buffer)"><!-- --></A><H3>
 getDirectBufferPointer</H3>
 <PRE>
-public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getDirectBufferPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio">Buffer</A>&nbsp;b)</PRE>
+public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getDirectBufferPointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio">Buffer</A>&nbsp;b)</PRE>
 <DL>
-<DD>Convert a direct <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>Convert a direct <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
 <P>
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the buffer is not direct.</DL>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the buffer is not direct.</DL>
 </DD>
 </DL>
 <HR>
@@ -664,7 +662,7 @@ public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.su
 <A NAME="toString(byte[])"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>(byte[]&nbsp;buf)</PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>toString</B>(byte[]&nbsp;buf)</PRE>
 <DL>
 <DD>Obtain a Java String from the given native byte array.  If there is
  no NUL terminator, the String will comprise the entire array.  If the
@@ -680,7 +678,7 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.
 <A NAME="toString(char[])"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>(char[]&nbsp;buf)</PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>toString</B>(char[]&nbsp;buf)</PRE>
 <DL>
 <DD>Obtain a Java String from the given native wchar_t array.  If there is
  no NUL terminator, the String will comprise the entire array.
@@ -694,8 +692,8 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.
 <A NAME="loadLibrary(java.lang.String, java.lang.Class)"><!-- --></A><H3>
 loadLibrary</H3>
 <PRE>
-public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>loadLibrary</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
-                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A> <B>loadLibrary</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;name,
+                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass)</PRE>
 <DL>
 <DD>Load a library interface from the given shared library, providing
  the explicit interface class.
@@ -709,9 +707,9 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.
 <A NAME="loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><!-- --></A><H3>
 loadLibrary</H3>
 <PRE>
-public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>loadLibrary</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
-                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass,
-                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;libOptions)</PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A> <B>loadLibrary</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;name,
+                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;interfaceClass,
+                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A>&nbsp;libOptions)</PRE>
 <DL>
 <DD>Load a library interface from the given shared library, providing
  the explicit interface class and a map of options for the library.
@@ -727,7 +725,7 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.
 <A NAME="findLibraryClass(java.lang.Class)"><!-- --></A><H3>
 findLibraryClass</H3>
 <PRE>
-static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A> <B>findLibraryClass</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A> <B>findLibraryClass</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Find the library interface corresponding to the given class.  Checks
  all ancestor classes for a declaring class which implements 
@@ -742,7 +740,7 @@ static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-
 <A NAME="getLibraryOptions(java.lang.Class)"><!-- --></A><H3>
 getLibraryOptions</H3>
 <PRE>
-public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A> <B>getLibraryOptions</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A> <B>getLibraryOptions</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
 <DL>
 <DD>Return the preferred native library configuration options for the given 
  class.
@@ -756,7 +754,7 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.htm
 <A NAME="getTypeMapper(java.lang.Class)"><!-- --></A><H3>
 getTypeMapper</H3>
 <PRE>
-public static <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A> <B>getTypeMapper</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+public static <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A> <B>getTypeMapper</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Return the preferred <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the given native interface.
  See <A HREF="../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><CODE>Library.OPTION_TYPE_MAPPER</CODE></A>.
@@ -770,7 +768,7 @@ public static <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in
 <A NAME="getStructureAlignment(java.lang.Class)"><!-- --></A><H3>
 getStructureAlignment</H3>
 <PRE>
-public static int <B>getStructureAlignment</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+public static int <B>getStructureAlignment</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Return the preferred structure alignment for the given native interface. 
  See <A HREF="../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT"><CODE>Library.OPTION_STRUCTURE_ALIGNMENT</CODE></A>.
@@ -784,7 +782,7 @@ public static int <B>getStructureAlignment</B>(<A HREF="http://java.sun.com/j2se
 <A NAME="getBytes(java.lang.String)"><!-- --></A><H3>
 getBytes</H3>
 <PRE>
-static byte[] <B>getBytes</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;s)</PRE>
+static byte[] <B>getBytes</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;s)</PRE>
 <DL>
 <DD>Return a byte array corresponding to the given String.  If the
  system property <code>jna.encoding</code> is set, its value will override
@@ -863,7 +861,7 @@ public static <A HREF="../../../com/sun/jna/Library.html" title="interface in co
 <A NAME="getWebStartLibraryPath(java.lang.String)"><!-- --></A><H3>
 getWebStartLibraryPath</H3>
 <PRE>
-public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getWebStartLibraryPath</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libName)</PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>getWebStartLibraryPath</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;libName)</PRE>
 <DL>
 <DD>If running web start, determine the location of a given native 
  library.  This value may be used to properly set 
@@ -878,7 +876,7 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the library can't be found by the
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the library can't be found by the
  Web Start class loader, which usually means it wasn't included as 
  a <code>&lt;nativelib&gt;</code> resource in the JNLP file.</DL>
 </DD>
@@ -888,7 +886,7 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.
 <A NAME="getNativeSize(java.lang.Class)"><!-- --></A><H3>
 getNativeSize</H3>
 <PRE>
-public static int <B>getNativeSize</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+public static int <B>getNativeSize</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Returns the native size for a given Java class.  Structures are
  assumed to be <code>struct</code> pointers unless they implement
@@ -903,7 +901,7 @@ public static int <B>getNativeSize</B>(<A HREF="http://java.sun.com/j2se/1.4.2/d
 <A NAME="isSupportedNativeType(java.lang.Class)"><!-- --></A><H3>
 isSupportedNativeType</H3>
 <PRE>
-public static boolean <B>isSupportedNativeType</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+public static boolean <B>isSupportedNativeType</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Indicate whether the given class is supported as a native argument
  type.
@@ -917,7 +915,7 @@ public static boolean <B>isSupportedNativeType</B>(<A HREF="http://java.sun.com/
 <A NAME="main(java.lang.String[])"><!-- --></A><H3>
 main</H3>
 <PRE>
-public static void <B>main</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;args)</PRE>
+public static void <B>main</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[]&nbsp;args)</PRE>
 <DL>
 <DD>Prints JNA library details to the console.
 <P>
@@ -949,7 +947,7 @@ public static void <B>main</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0.1</font></EM>
+<b>JNA API</><font size="-1"> 3.0.4</font></EM>
 </TD>
 </TR>
 
@@ -985,6 +983,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2008 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>

@@ -6,15 +6,14 @@
 X11.XID (JNA API)
 </TITLE>
 
+<META NAME="keywords" CONTENT="com.sun.jna.examples.unix.X11.XID class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="X11.XID (JNA API)";
-    }
+    parent.document.title="X11.XID (JNA API)";
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -23,7 +22,6 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
-<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -46,13 +44,13 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0.1</font></EM>
+<b>JNA API</><font size="-1"> 3.0.4</font></EM>
 </TD>
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/sun/jna/examples/unix/X11.Xext.html" title="interface in com.sun.jna.examples.unix"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/examples/unix/X11.XGCValues.html" title="class in com.sun.jna.examples.unix"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../../../com/sun/jna/examples/unix/X11.XImage.html" title="class in com.sun.jna.examples.unix"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/sun/jna/examples/unix/X11.XID.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -89,24 +87,29 @@ com.sun.jna.examples.unix</FONT>
 <BR>
 Class X11.XID</H2>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.examples.unix.X11.XID</B>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Number.html" title="class or interface in java.lang">java.lang.Number</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/sun/jna/IntegerType.html" title="class in com.sun.jna">com.sun.jna.IntegerType</A>
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">com.sun.jna.NativeLong</A>
+              <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.examples.unix.X11.XID</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></DD>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/io/Serializable.html" title="class or interface in java.io">Serializable</A></DD>
 </DL>
 <DL>
-<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../com/sun/jna/examples/unix/X11.Atom.html" title="class in com.sun.jna.examples.unix">X11.Atom</A>, <A HREF="../../../../../com/sun/jna/examples/unix/X11.Colormap.html" title="class in com.sun.jna.examples.unix">X11.Colormap</A>, <A HREF="../../../../../com/sun/jna/examples/unix/X11.Cursor.html" title="class in com.sun.jna.examples.unix">X11.Cursor</A>, <A HREF="../../../../../com/sun/jna/examples/unix/X11.Drawable.html" title="class in com.sun.jna.examples.unix">X11.Drawable</A></DD>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../com/sun/jna/examples/unix/X11.Atom.html" title="class in com.sun.jna.examples.unix">X11.Atom</A>, <A HREF="../../../../../com/sun/jna/examples/unix/X11.Colormap.html" title="class in com.sun.jna.examples.unix">X11.Colormap</A>, <A HREF="../../../../../com/sun/jna/examples/unix/X11.Cursor.html" title="class in com.sun.jna.examples.unix">X11.Cursor</A>, <A HREF="../../../../../com/sun/jna/examples/unix/X11.Drawable.html" title="class in com.sun.jna.examples.unix">X11.Drawable</A>, <A HREF="../../../../../com/sun/jna/examples/unix/X11.Font.html" title="class in com.sun.jna.examples.unix">X11.Font</A></DD>
 </DL>
 <DL>
 <DT><B>Enclosing interface:</B><DD><A HREF="../../../../../com/sun/jna/examples/unix/X11.html" title="interface in com.sun.jna.examples.unix">X11</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public static class <B>X11.XID</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A><DT>implements <A HREF="../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></DL>
+<DT><PRE>public static class <B>X11.XID</B><DT>extends <A HREF="../../../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A></DL>
 </PRE>
 
 <P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../serialized-form.html#com.sun.jna.examples.unix.X11.XID">Serialized Form</A></DL>
 <HR>
 
 <P>
@@ -127,6 +130,15 @@ Class X11.XID</H2>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.NativeLong"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/NativeLong.html#SIZE">SIZE</A></CODE></TD>
+</TR>
+</TABLE>
 &nbsp;
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
@@ -143,13 +155,7 @@ Class X11.XID</H2>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#X11.XID(int)">X11.XID</A></B>(int&nbsp;id)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#X11.XID(java.lang.Integer)">X11.XID</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</A>&nbsp;id)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#X11.XID(long)">X11.XID</A></B>(long&nbsp;id)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -166,8 +172,8 @@ Class X11.XID</H2>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">fromNative</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;nativeValue,
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">fromNative</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;nativeValue,
            <A HREF="../../../../../com/sun/jna/FromNativeContext.html" title="class in com.sun.jna">FromNativeContext</A>&nbsp;context)</CODE>
 
 <BR>
@@ -177,43 +183,45 @@ Class X11.XID</H2>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#isNone(java.lang.Object)">isNone</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#isNone(java.lang.Object)">isNone</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;o)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#nativeType()">nativeType</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicate the native type used by this converter.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#toNative()">toNative</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert this object into a supported native type.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/unix/X11.XID.html#toString()">toString</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.IntegerType"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/IntegerType.html" title="class in com.sun.jna">IntegerType</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/IntegerType.html#doubleValue()">doubleValue</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#floatValue()">floatValue</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#hashCode()">hashCode</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#intValue()">intValue</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#longValue()">longValue</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#nativeType()">nativeType</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#setValue(long)">setValue</A>, <A HREF="../../../../../com/sun/jna/IntegerType.html#toNative()">toNative</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Number"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Number.html" title="class or interface in java.lang">Number</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Number.html#byteValue()" title="class or interface in java.lang">byteValue</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Number.html#shortValue()" title="class or interface in java.lang">shortValue</A></CODE></TD>
+</TR>
+</TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -256,18 +264,10 @@ public <B>X11.XID</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="X11.XID(java.lang.Integer)"><!-- --></A><H3>
+<A NAME="X11.XID(long)"><!-- --></A><H3>
 X11.XID</H3>
 <PRE>
-public <B>X11.XID</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</A>&nbsp;id)</PRE>
-<DL>
-</DL>
-<HR>
-
-<A NAME="X11.XID(int)"><!-- --></A><H3>
-X11.XID</H3>
-<PRE>
-public <B>X11.XID</B>(int&nbsp;id)</PRE>
+public <B>X11.XID</B>(long&nbsp;id)</PRE>
 <DL>
 </DL>
 
@@ -284,11 +284,8 @@ public <B>X11.XID</B>(int&nbsp;id)</PRE>
 <A NAME="isNone(java.lang.Object)"><!-- --></A><H3>
 isNone</H3>
 <PRE>
-protected boolean <B>isNone</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</PRE>
+protected boolean <B>isNone</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;o)</PRE>
 <DL>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -298,7 +295,7 @@ protected boolean <B>isNone</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api
 <A NAME="fromNative(java.lang.Object, com.sun.jna.FromNativeContext)"><!-- --></A><H3>
 fromNative</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>fromNative</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;nativeValue,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A> <B>fromNative</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;nativeValue,
                          <A HREF="../../../../../com/sun/jna/FromNativeContext.html" title="class in com.sun.jna">FromNativeContext</A>&nbsp;context)</PRE>
 <DL>
 <DD><B>Description copied from interface: <CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">NativeMapped</A></CODE></B></DD>
@@ -306,41 +303,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is
  the given context.
 <P>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">fromNative</A></CODE> in interface <CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="nativeType()"><!-- --></A><H3>
-nativeType</H3>
-<PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A> <B>nativeType</B>()</PRE>
-<DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html#nativeType()">NativeMapped</A></CODE></B></DD>
-<DD>Indicate the native type used by this converter.
-<P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html#nativeType()">nativeType</A></CODE> in interface <CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="toNative()"><!-- --></A><H3>
-toNative</H3>
-<PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>toNative</B>()</PRE>
-<DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html#toNative()">NativeMapped</A></CODE></B></DD>
-<DD>Convert this object into a supported native type.
-<P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html#toNative()">toNative</A></CODE> in interface <CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">fromNative</A></CODE> in interface <CODE><A HREF="../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></CODE><DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../com/sun/jna/IntegerType.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">fromNative</A></CODE> in class <CODE><A HREF="../../../../../com/sun/jna/IntegerType.html" title="class in com.sun.jna">IntegerType</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -351,10 +314,10 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is
 <A NAME="toString()"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../../com/sun/jna/IntegerType.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../../../com/sun/jna/IntegerType.html" title="class in com.sun.jna">IntegerType</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -384,13 +347,13 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0.1</font></EM>
+<b>JNA API</><font size="-1"> 3.0.4</font></EM>
 </TD>
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/sun/jna/examples/unix/X11.Xext.html" title="interface in com.sun.jna.examples.unix"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/examples/unix/X11.XGCValues.html" title="class in com.sun.jna.examples.unix"><B>PREV CLASS</B></A>&nbsp;
 &nbsp;<A HREF="../../../../../com/sun/jna/examples/unix/X11.XImage.html" title="class in com.sun.jna.examples.unix"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../../../../index.html?com/sun/jna/examples/unix/X11.XID.html" target="_top"><B>FRAMES</B></A>  &nbsp;
@@ -420,6 +383,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2008 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>

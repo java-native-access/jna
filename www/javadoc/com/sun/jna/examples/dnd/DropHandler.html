@@ -6,15 +6,14 @@
 DropHandler (JNA API)
 </TITLE>
 
+<META NAME="keywords" CONTENT="com.sun.jna.examples.dnd.DropHandler class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="DropHandler (JNA API)";
-    }
+    parent.document.title="DropHandler (JNA API)";
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -23,7 +22,6 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
-<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -46,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0.1</font></EM>
+<b>JNA API</><font size="-1"> 3.0.4</font></EM>
 </TD>
 </TR>
 
@@ -89,15 +87,15 @@ com.sun.jna.examples.dnd</FONT>
 <BR>
 Class DropHandler</H2>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">java.lang.Object</A>
   <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.examples.dnd.DropHandler</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/EventListener.html?is-external=true" title="class or interface in java.util">EventListener</A></DD>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html" title="class or interface in java.awt.dnd">DropTargetListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/EventListener.html" title="class or interface in java.util">EventListener</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public abstract class <B>DropHandler</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A><DT>implements <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetListener</A></DL>
+<DT><PRE>public abstract class <B>DropHandler</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A><DT>implements <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html" title="class or interface in java.awt.dnd">DropTargetListener</A></DL>
 </PRE>
 
 <P>
@@ -132,8 +130,8 @@ Provides simplified drop handling for a component.
  flavors
  <li><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropActionsForFlavors(java.awt.datatransfer.DataFlavor[])"><CODE>getDropActionsForFlavors(DataFlavor[])</CODE></A> reduces the supported 
  actions based on available flavors.  For instance, a text field for file 
- paths might support <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_COPY_OR_MOVE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_COPY_OR_MOVE</CODE></A> on a plain 
- string, but <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_LINK" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_LINK</CODE></A> might be the only action 
+ paths might support <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html#ACTION_COPY_OR_MOVE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_COPY_OR_MOVE</CODE></A> on a plain 
+ string, but <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html#ACTION_LINK" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_LINK</CODE></A> might be the only action 
  supported on a file.
  <li><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropAction(java.awt.dnd.DropTargetEvent, int, int, int)"><CODE>getDropAction(DropTargetEvent, int, int, int)</CODE></A> relax the action
  if it's the default, or restrict it for user requested actions.
@@ -142,8 +140,8 @@ Provides simplified drop handling for a component.
  </ul>
  
  Override <A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#drop(java.awt.dnd.DropTargetDropEvent, int)"><CODE>drop(DropTargetDropEvent, int)</CODE></A> to handle the drop.  
- You should invoke <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html?is-external=true#dropComplete(boolean)" title="class or interface in java.awt.dnd"><CODE>DropTargetDropEvent.dropComplete(boolean)</CODE></A> as soon
- as the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> data is obtained, to avoid making the DnD
+ You should invoke <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html#dropComplete(boolean)" title="class or interface in java.awt.dnd"><CODE>DropTargetDropEvent.dropComplete(boolean)</CODE></A> as soon
+ as the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> data is obtained, to avoid making the DnD
  operation look suspended.
 <P>
 
@@ -165,25 +163,25 @@ Provides simplified drop handling for a component.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#DropHandler(java.awt.Component, int)">DropHandler</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c,
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#DropHandler(java.awt.Component, int)">DropHandler</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c,
             int&nbsp;acceptedActions)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a handler that allows the given set of actions.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#DropHandler(java.awt.Component, int, java.awt.datatransfer.DataFlavor[])">DropHandler</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c,
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#DropHandler(java.awt.Component, int, java.awt.datatransfer.DataFlavor[])">DropHandler</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c,
             int&nbsp;acceptedActions,
-            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors)</CODE>
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enable handling of drops, indicating what actions and flavors are
  acceptable.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#DropHandler(java.awt.Component, int, java.awt.datatransfer.DataFlavor[], com.sun.jna.examples.dnd.DropTargetPainter)">DropHandler</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c,
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#DropHandler(java.awt.Component, int, java.awt.datatransfer.DataFlavor[], com.sun.jna.examples.dnd.DropTargetPainter)">DropHandler</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c,
             int&nbsp;acceptedActions,
-            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors,
             <A HREF="../../../../../com/sun/jna/examples/dnd/DropTargetPainter.html" title="interface in com.sun.jna.examples.dnd">DropTargetPainter</A>&nbsp;painter)</CODE>
 
 <BR>
@@ -203,7 +201,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#acceptOrReject(java.awt.dnd.DropTargetDragEvent)">acceptOrReject</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#acceptOrReject(java.awt.dnd.DropTargetDragEvent)">acceptOrReject</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accept or reject the drag represented by the given event.</TD>
@@ -211,9 +209,9 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#canDrop(java.awt.dnd.DropTargetEvent, int, java.awt.Point)">canDrop</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#canDrop(java.awt.dnd.DropTargetEvent, int, java.awt.Point)">canDrop</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
         int&nbsp;action,
-        <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;location)</CODE>
+        <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html" title="class or interface in java.awt">Point</A>&nbsp;location)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicate whether the given drop action is acceptable at the given
@@ -222,7 +220,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dragEnter(java.awt.dnd.DropTargetDragEvent)">dragEnter</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dragEnter(java.awt.dnd.DropTargetDragEvent)">dragEnter</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -230,7 +228,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dragExit(java.awt.dnd.DropTargetEvent)">dragExit</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dragExit(java.awt.dnd.DropTargetEvent)">dragExit</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -238,7 +236,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dragOver(java.awt.dnd.DropTargetDragEvent)">dragOver</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dragOver(java.awt.dnd.DropTargetDragEvent)">dragOver</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -246,7 +244,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#drop(java.awt.dnd.DropTargetDropEvent)">drop</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#drop(java.awt.dnd.DropTargetDropEvent)">drop</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates the user has initiated a drop.</TD>
@@ -254,7 +252,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected abstract &nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#drop(java.awt.dnd.DropTargetDropEvent, int)">drop</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e,
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#drop(java.awt.dnd.DropTargetDropEvent, int)">drop</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e,
      int&nbsp;action)</CODE>
 
 <BR>
@@ -263,7 +261,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dropActionChanged(java.awt.dnd.DropTargetDragEvent)">dropActionChanged</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#dropActionChanged(java.awt.dnd.DropTargetDragEvent)">dropActionChanged</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -271,7 +269,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropAction(java.awt.dnd.DropTargetEvent)">getDropAction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropAction(java.awt.dnd.DropTargetEvent)">getDropAction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate the effective action.</TD>
@@ -279,7 +277,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropAction(java.awt.dnd.DropTargetEvent, int, int, int)">getDropAction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropAction(java.awt.dnd.DropTargetEvent, int, int, int)">getDropAction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
               int&nbsp;currentAction,
               int&nbsp;sourceActions,
               int&nbsp;acceptedActions)</CODE>
@@ -290,14 +288,14 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropActionsForFlavors(java.awt.datatransfer.DataFlavor[])">getDropActionsForFlavors</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;dataFlavors)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropActionsForFlavors(java.awt.datatransfer.DataFlavor[])">getDropActionsForFlavors</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;dataFlavors)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicate the actions available for the given list of data flavors.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTarget.html?is-external=true" title="class or interface in java.awt.dnd">DropTarget</A></CODE></FONT></TD>
+<CODE>protected &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTarget.html" title="class or interface in java.awt.dnd">DropTarget</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropTarget()">getDropTarget</A></B>()</CODE>
 
 <BR>
@@ -314,7 +312,7 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#isSupported(java.awt.datatransfer.DataFlavor[])">isSupported</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;flavors)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#isSupported(java.awt.datatransfer.DataFlavor[])">isSupported</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;flavors)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return whether any of the flavors in the given list are accepted.</TD>
@@ -331,9 +329,9 @@ Provides simplified drop handling for a component.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#paintDropTarget(java.awt.dnd.DropTargetEvent, int, java.awt.Point)">paintDropTarget</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#paintDropTarget(java.awt.dnd.DropTargetEvent, int, java.awt.Point)">paintDropTarget</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
                 int&nbsp;action,
-                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;location)</CODE>
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html" title="class or interface in java.awt">Point</A>&nbsp;location)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Update the appearance of the target component.</TD>
@@ -351,10 +349,10 @@ Provides simplified drop handling for a component.
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -373,7 +371,7 @@ Provides simplified drop handling for a component.
 <A NAME="DropHandler(java.awt.Component, int)"><!-- --></A><H3>
 DropHandler</H3>
 <PRE>
-public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c,
+public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c,
                    int&nbsp;acceptedActions)</PRE>
 <DL>
 <DD>Create a handler that allows the given set of actions.  If using
@@ -386,9 +384,9 @@ public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/
 <A NAME="DropHandler(java.awt.Component, int, java.awt.datatransfer.DataFlavor[])"><!-- --></A><H3>
 DropHandler</H3>
 <PRE>
-public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c,
+public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c,
                    int&nbsp;acceptedActions,
-                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors)</PRE>
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors)</PRE>
 <DL>
 <DD>Enable handling of drops, indicating what actions and flavors are
  acceptable.
@@ -401,9 +399,9 @@ public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/
 <A NAME="DropHandler(java.awt.Component, int, java.awt.datatransfer.DataFlavor[], com.sun.jna.examples.dnd.DropTargetPainter)"><!-- --></A><H3>
 DropHandler</H3>
 <PRE>
-public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;c,
+public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html" title="class or interface in java.awt">Component</A>&nbsp;c,
                    int&nbsp;acceptedActions,
-                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors,
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;acceptedFlavors,
                    <A HREF="../../../../../com/sun/jna/examples/dnd/DropTargetPainter.html" title="interface in com.sun.jna.examples.dnd">DropTargetPainter</A>&nbsp;painter)</PRE>
 <DL>
 <DD>Enable handling of drops, indicating what actions and flavors are
@@ -426,7 +424,7 @@ public <B>DropHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/
 <A NAME="getDropTarget()"><!-- --></A><H3>
 getDropTarget</H3>
 <PRE>
-protected <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTarget.html?is-external=true" title="class or interface in java.awt.dnd">DropTarget</A> <B>getDropTarget</B>()</PRE>
+protected <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTarget.html" title="class or interface in java.awt.dnd">DropTarget</A> <B>getDropTarget</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -473,11 +471,11 @@ public void <B>setActive</B>(boolean&nbsp;active)</PRE>
 <A NAME="getDropActionsForFlavors(java.awt.datatransfer.DataFlavor[])"><!-- --></A><H3>
 getDropActionsForFlavors</H3>
 <PRE>
-protected int <B>getDropActionsForFlavors</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;dataFlavors)</PRE>
+protected int <B>getDropActionsForFlavors</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;dataFlavors)</PRE>
 <DL>
 <DD>Indicate the actions available for the given list of data flavors.
  Override this method if the acceptable drop actions depend
- on the currently available <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>DataFlavor</CODE></A>.  The default returns
+ on the currently available <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer"><CODE>DataFlavor</CODE></A>.  The default returns
  the accepted actions passed into the constructor.
 <P>
 <DD><DL>
@@ -493,15 +491,15 @@ protected int <B>getDropActionsForFlavors</B>(<A HREF="http://java.sun.com/j2se/
 <A NAME="getDropAction(java.awt.dnd.DropTargetEvent)"><!-- --></A><H3>
 getDropAction</H3>
 <PRE>
-protected int <B>getDropAction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</PRE>
+protected int <B>getDropAction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</PRE>
 <DL>
 <DD>Calculate the effective action.  The default implementation 
- checks whether any <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>DataFlavor</CODE></A>s are supported, and if so,
- will change the current action from <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A> to 
+ checks whether any <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer"><CODE>DataFlavor</CODE></A>s are supported, and if so,
+ will change the current action from <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A> to 
  something in common between the source and destination.  Refuse 
  user-requested actions if they are not supported (rather than silently 
  accepting a non-user-requested action, which is the Java's DnD default 
- behavior).  The drop action is forced to <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A> 
+ behavior).  The drop action is forced to <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A> 
  if there is no supported data flavor.<p>
 <P>
 <DD><DL>
@@ -519,7 +517,7 @@ protected int <B>getDropAction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/
 <A NAME="getDropAction(java.awt.dnd.DropTargetEvent, int, int, int)"><!-- --></A><H3>
 getDropAction</H3>
 <PRE>
-protected int <B>getDropAction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
+protected int <B>getDropAction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
                             int&nbsp;currentAction,
                             int&nbsp;sourceActions,
                             int&nbsp;acceptedActions)</PRE>
@@ -555,7 +553,7 @@ protected boolean <B>modifiersActive</B>(int&nbsp;dropAction)</PRE>
 <A NAME="acceptOrReject(java.awt.dnd.DropTargetDragEvent)"><!-- --></A><H3>
 acceptOrReject</H3>
 <PRE>
-protected int <B>acceptOrReject</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
+protected int <B>acceptOrReject</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
 <DL>
 <DD>Accept or reject the drag represented by the given event.  Returns
  the action determined by <A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#getDropAction(java.awt.dnd.DropTargetEvent)"><CODE>getDropAction(DropTargetEvent)</CODE></A>.
@@ -572,10 +570,10 @@ protected int <B>acceptOrReject</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs
 <A NAME="dragEnter(java.awt.dnd.DropTargetDragEvent)"><!-- --></A><H3>
 dragEnter</H3>
 <PRE>
-public void <B>dragEnter</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
+public void <B>dragEnter</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true#dragEnter(java.awt.dnd.DropTargetDragEvent)" title="class or interface in java.awt.dnd">dragEnter</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html#dragEnter(java.awt.dnd.DropTargetDragEvent)" title="class or interface in java.awt.dnd">dragEnter</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -586,10 +584,10 @@ public void <B>dragEnter</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/ja
 <A NAME="dragOver(java.awt.dnd.DropTargetDragEvent)"><!-- --></A><H3>
 dragOver</H3>
 <PRE>
-public void <B>dragOver</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
+public void <B>dragOver</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true#dragOver(java.awt.dnd.DropTargetDragEvent)" title="class or interface in java.awt.dnd">dragOver</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html#dragOver(java.awt.dnd.DropTargetDragEvent)" title="class or interface in java.awt.dnd">dragOver</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -600,10 +598,10 @@ public void <B>dragOver</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/jav
 <A NAME="dragExit(java.awt.dnd.DropTargetEvent)"><!-- --></A><H3>
 dragExit</H3>
 <PRE>
-public void <B>dragExit</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</PRE>
+public void <B>dragExit</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true#dragExit(java.awt.dnd.DropTargetEvent)" title="class or interface in java.awt.dnd">dragExit</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html#dragExit(java.awt.dnd.DropTargetEvent)" title="class or interface in java.awt.dnd">dragExit</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -614,10 +612,10 @@ public void <B>dragExit</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/jav
 <A NAME="dropActionChanged(java.awt.dnd.DropTargetDragEvent)"><!-- --></A><H3>
 dropActionChanged</H3>
 <PRE>
-public void <B>dropActionChanged</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
+public void <B>dropActionChanged</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd">DropTargetDragEvent</A>&nbsp;e)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true#dropActionChanged(java.awt.dnd.DropTargetDragEvent)" title="class or interface in java.awt.dnd">dropActionChanged</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html#dropActionChanged(java.awt.dnd.DropTargetDragEvent)" title="class or interface in java.awt.dnd">dropActionChanged</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -628,14 +626,14 @@ public void <B>dropActionChanged</B>(<A HREF="http://java.sun.com/j2se/1.4.2/doc
 <A NAME="drop(java.awt.dnd.DropTargetDropEvent)"><!-- --></A><H3>
 drop</H3>
 <PRE>
-public void <B>drop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e)</PRE>
+public void <B>drop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e)</PRE>
 <DL>
 <DD>Indicates the user has initiated a drop.  The default performs all
  standard drop validity checking and handling, then invokes
  <A HREF="../../../../../com/sun/jna/examples/dnd/DropHandler.html#drop(java.awt.dnd.DropTargetDropEvent, int)"><CODE>drop(DropTargetDropEvent,int)</CODE></A> if the drop looks acceptable.
 <P>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true#drop(java.awt.dnd.DropTargetDropEvent)" title="class or interface in java.awt.dnd">drop</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html#drop(java.awt.dnd.DropTargetDropEvent)" title="class or interface in java.awt.dnd">drop</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetListener.html" title="class or interface in java.awt.dnd">DropTargetListener</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -646,7 +644,7 @@ public void <B>drop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/aw
 <A NAME="isSupported(java.awt.datatransfer.DataFlavor[])"><!-- --></A><H3>
 isSupported</H3>
 <PRE>
-protected boolean <B>isSupported</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html?is-external=true" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;flavors)</PRE>
+protected boolean <B>isSupported</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/DataFlavor.html" title="class or interface in java.awt.datatransfer">DataFlavor</A>[]&nbsp;flavors)</PRE>
 <DL>
 <DD>Return whether any of the flavors in the given list are accepted. 
  The list is compared against the accepted list provided in the
@@ -664,13 +662,13 @@ protected boolean <B>isSupported</B>(<A HREF="http://java.sun.com/j2se/1.4.2/doc
 <A NAME="paintDropTarget(java.awt.dnd.DropTargetEvent, int, java.awt.Point)"><!-- --></A><H3>
 paintDropTarget</H3>
 <PRE>
-protected void <B>paintDropTarget</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
+protected void <B>paintDropTarget</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
                                int&nbsp;action,
-                               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;location)</PRE>
+                               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html" title="class or interface in java.awt">Point</A>&nbsp;location)</PRE>
 <DL>
 <DD>Update the appearance of the target component.  Normally the decoration
  should be painted only if the event is an instance of 
- <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true" title="class or interface in java.awt.dnd"><CODE>DropTargetDragEvent</CODE></A> with an action that is not 
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html" title="class or interface in java.awt.dnd"><CODE>DropTargetDragEvent</CODE></A> with an action that is not 
  <A HREF="../../../../../com/sun/jna/examples/dnd/DragHandler.html#NONE"><CODE>DragHandler.NONE</CODE></A>.  Otherwise the decoration should be removed
  or hidden.
  <p>
@@ -690,9 +688,9 @@ protected void <B>paintDropTarget</B>(<A HREF="http://java.sun.com/j2se/1.4.2/do
 <A NAME="canDrop(java.awt.dnd.DropTargetEvent, int, java.awt.Point)"><!-- --></A><H3>
 canDrop</H3>
 <PRE>
-protected boolean <B>canDrop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
+protected boolean <B>canDrop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e,
                           int&nbsp;action,
-                          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;location)</PRE>
+                          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html" title="class or interface in java.awt">Point</A>&nbsp;location)</PRE>
 <DL>
 <DD>Indicate whether the given drop action is acceptable at the given
  location.  This method is the last check performed by 
@@ -712,16 +710,16 @@ protected boolean <B>canDrop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/ap
 <A NAME="drop(java.awt.dnd.DropTargetDropEvent, int)"><!-- --></A><H3>
 drop</H3>
 <PRE>
-protected abstract void <B>drop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e,
+protected abstract void <B>drop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html" title="class or interface in java.awt.dnd">DropTargetDropEvent</A>&nbsp;e,
                              int&nbsp;action)
-                      throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/UnsupportedFlavorException.html?is-external=true" title="class or interface in java.awt.datatransfer">UnsupportedFlavorException</A>,
-                             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></PRE>
+                      throws <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/UnsupportedFlavorException.html" title="class or interface in java.awt.datatransfer">UnsupportedFlavorException</A>,
+                             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/io/IOException.html" title="class or interface in java.io">IOException</A></PRE>
 <DL>
 <DD>Handle an incoming drop with the given action.  The action passed in
- might be different from <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html?is-external=true#getDropAction()" title="class or interface in java.awt.dnd"><CODE>DropTargetDropEvent.getDropAction()</CODE></A>, 
+ might be different from <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html#getDropAction()" title="class or interface in java.awt.dnd"><CODE>DropTargetDropEvent.getDropAction()</CODE></A>, 
  for instance, if there are no modifiers and the default action is not 
- supported.  Calling <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html?is-external=true#dropComplete(boolean)" title="class or interface in java.awt.dnd"><CODE>DropTargetDropEvent.dropComplete(boolean)</CODE></A> is
- recommended as soon as the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> data is obtained; this
+ supported.  Calling <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDropEvent.html#dropComplete(boolean)" title="class or interface in java.awt.dnd"><CODE>DropTargetDropEvent.dropComplete(boolean)</CODE></A> is
+ recommended as soon as the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> data is obtained; this
  allows the drag source to reset the cursor and any drag images which
  may be in effect.
 <P>
@@ -731,8 +729,8 @@ protected abstract void <B>drop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/UnsupportedFlavorException.html?is-external=true" title="class or interface in java.awt.datatransfer">UnsupportedFlavorException</A></CODE>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</A></CODE></DL>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/UnsupportedFlavorException.html" title="class or interface in java.awt.datatransfer">UnsupportedFlavorException</A></CODE>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/io/IOException.html" title="class or interface in java.io">IOException</A></CODE></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -759,7 +757,7 @@ protected abstract void <B>drop</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.0.1</font></EM>
+<b>JNA API</><font size="-1"> 3.0.4</font></EM>
 </TD>
 </TR>
 
@@ -795,6 +793,6 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2008 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>
