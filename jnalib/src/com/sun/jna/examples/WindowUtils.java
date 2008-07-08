@@ -999,12 +999,29 @@ public class WindowUtils {
         }
 
         private void setBackgroundTransparent(Window w, boolean transparent) {
+            JRootPane rp = w instanceof RootPaneContainer
+                ? ((RootPaneContainer)w).getRootPane() : null;
             if (transparent) {
+                if (rp != null) {
+                    rp.putClientProperty("bg.old", w.getBackground());
+                    rp.putClientProperty("draggable.old",
+                                         rp.getClientProperty("apple.awt.draggableWindowBackground"));
+                }
                 w.setBackground(new Color(0,0,0,0));
             }
             else {
-                // FIXME restore background to original color
-                w.setBackground(null);
+                if (rp != null) {
+                    w.setBackground((Color)rp.getClientProperty("bg.old"));
+                }
+                else {
+                    w.setBackground(null);
+                }
+            }
+            if (rp != null) {
+                // disable dragging by content
+                Boolean old = (Boolean)rp.getClientProperty("apple.awt.draggableWindowBackground");
+                rp.putClientProperty("apple.awt.draggableWindowBackground",
+                                     transparent ? Boolean.FALSE : old);
             }
         }
     }
