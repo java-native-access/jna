@@ -56,6 +56,7 @@ import java.util.WeakHashMap;
  * @author twall@users.sf.net
  */
 public abstract class Structure {
+    
     /** Tagging interface to indicate the value of an instance of the
      * <code>Structure</code> type is to be used in function invocations rather
      * than its address.  The default behavior is to treat
@@ -80,7 +81,6 @@ public abstract class Structure {
     static final boolean isPPC;
     static final boolean isSPARC;
 
-
     static {
         // IBM and JRockit store fields in reverse order; check for it
         Field[] fields = MemberOrder.class.getFields();
@@ -102,7 +102,7 @@ public abstract class Structure {
     /** validated for w32/msvc; align on field size */
     public static final int ALIGN_MSVC = 3;
 
-    private static final int MAX_GNUC_ALIGNMENT = isSPARC ? 8 : NativeLong.SIZE;
+    private static final int MAX_GNUC_ALIGNMENT = isSPARC ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
 
     // This field is accessed by native code
@@ -587,6 +587,7 @@ public abstract class Structure {
             }
             else {
                 value = null;
+                nativeStrings.remove(structField.name);
             }
         }
 
@@ -819,12 +820,14 @@ public abstract class Structure {
             Class nativeType = type;
             if (NativeMapped.class.isAssignableFrom(type)) {
                 NativeMappedConverter tc = NativeMappedConverter.getInstance(type);
-                value = tc.defaultValue();
+                if (value == null) {
+                    value = tc.defaultValue();
+                    setField(structField, value);
+                }
                 nativeType = tc.nativeType();
                 structField.writeConverter = tc;
                 structField.readConverter = tc;
                 structField.context = new StructureReadContext(this, field);
-                setField(structField, value);
             }
             else if (typeMapper != null) {
                 ToNativeConverter writeConverter = typeMapper.getToNativeConverter(type);
@@ -927,15 +930,18 @@ public abstract class Structure {
             throw new IllegalArgumentException("Type " + type + " has unknown "
                                                + "native alignment");
         }
-        if (alignType == ALIGN_NONE)
-            return 1;
-        if (alignType == ALIGN_MSVC)
-            return Math.min(8, alignment);
-        if (alignType == ALIGN_GNUC) {
+        if (alignType == ALIGN_NONE) {
+            alignment = 1;
+        }
+        else if (alignType == ALIGN_MSVC) {
+            alignment = Math.min(8, alignment);
+        }
+        else if (alignType == ALIGN_GNUC) {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
-            if (!isFirstElement || !(Platform.isMac() && isPPC))
-                return Math.min(MAX_GNUC_ALIGNMENT, alignment);
+            if (!isFirstElement || !(Platform.isMac() && isPPC)) {
+                alignment = Math.min(MAX_GNUC_ALIGNMENT, alignment);
+            }
         }
         return alignment;
     }

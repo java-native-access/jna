@@ -31,7 +31,7 @@
   <!-- JNA library release version -->            
   <property name="jna.major" value="3"/>
   <property name="jna.minor" value="0"/>
-  <property name="jna.revision" value="4"/>
+  <property name="jna.revision" value="5"/>
   <property name="jna.build" value="${build.number}"/>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->

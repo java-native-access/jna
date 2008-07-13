@@ -58,6 +58,12 @@ public class IntegerTypeTest extends TestCase {
 			}
 		}
 	}
+	
+	public void testInitialValue() {
+	    long VALUE = 20;
+	    NativeLong nl = new NativeLong(VALUE);
+	    assertEquals("Wrong initial value", VALUE, nl.longValue());
+	}
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(IntegerTypeTest.class);

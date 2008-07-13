@@ -802,4 +802,30 @@ public class StructureTest extends TestCase {
                          i, s.longs[i].intValue());
         }
     }
+
+
+    public void testInitializeNativeMappedField() {
+        final long VALUE = 20;
+        final NativeLong INITIAL = new NativeLong(VALUE);
+        class TestStructure extends Structure {
+            // field overwritten, wrong value before write
+            // NL bug, wrong value written
+            { setAlignType(ALIGN_NONE); }
+            public NativeLong nl = INITIAL;
+            public NativeLong uninitialized;
+        }
+        TestStructure ts = new TestStructure();
+        assertEquals("Wrong value in field", VALUE, ts.nl.longValue());
+        assertSame("Initial value overwritten", INITIAL, ts.nl);
+        assertEquals("Wrong field value before write", VALUE, ts.nl.longValue());
+        assertNotNull("Uninitialized field should be initialized", ts.uninitialized);
+        assertEquals("Wrong initialized value", 0, ts.uninitialized.longValue());
+        ts.write();
+        assertEquals("Wrong field value written", VALUE, ts.getPointer().getNativeLong(0).longValue());
+        assertEquals("Wrong field value written (2)", 0, ts.getPointer().getNativeLong(NativeLong.SIZE).longValue());
+        ts.read();
+        assertEquals("Wrong field value", VALUE, ts.nl.longValue());
+        assertEquals("Wrong field value (2)", 0, ts.uninitialized.longValue());
+    }
+
 }
