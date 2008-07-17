@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.5 was released on April 3, 2008. Check the libffi web
+libffi-3.0.6 was released on July 17, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -157,6 +157,11 @@ arguments' test).
 
 History
 =======
+
+3.0.6 Jul-17-08
+        Fix for closures on sh.
+	Mark the sh/sh64 stack as non-executable.
+	(both thanks to Kaz Kojima)
 
 3.0.5 Apr-3-08
         Fix libffi.pc file.

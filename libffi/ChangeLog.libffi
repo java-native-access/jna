@@ -1,3 +1,20 @@
+2008-07-17  Anthony Green  <green@redhat.com>
+
+	* configure.ac: Bump version to 3.0.6.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.  Add documentation.
+	* README: Update for new release.
+
+2008-07-16  Kaz Kojima  <kkojima@gcc.gnu.org>
+
+	* src/sh/ffi.c (ffi_prep_closure_loc): Turn INSN into an unsigned
+	int.
+
+2008-07-16  Kaz Kojima  <kkojima@gcc.gnu.org>
+
+	* src/sh/sysv.S: Add .note.GNU-stack on Linux.
+	* src/sh64/sysv.S: Likewise.
+
 2008-04-03  Anthony Green  <green@redhat.com>
 
 	* libffi.pc.in (Libs): Add -L${libdir}.
