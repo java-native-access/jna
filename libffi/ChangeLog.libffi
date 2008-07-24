@@ -1,3 +1,14 @@
+2008-07-24  Anthony Green  <green@redhat.com>
+
+	* testsuite/libffi.call/cls_dbls_struct.c,
+	testsuite/libffi.call/cls_double_va.c,
+	testsuite/libffi.call/cls_longdouble.c,
+	testsuite/libffi.call/cls_longdouble_va.c,
+	testsuite/libffi.call/cls_pointer.c,
+	testsuite/libffi.call/cls_pointer_stack.c,
+	testsuite/libffi.call/err_bad_abi.c: Clean up failures from
+	compiler warnings.
+
 2008-07-17  Anthony Green  <green@redhat.com>
 
 	* configure.ac: Bump version to 3.0.6.

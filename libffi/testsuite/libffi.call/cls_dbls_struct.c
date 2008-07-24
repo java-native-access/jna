@@ -20,12 +20,13 @@ closure_test_fn(Dbls p)
 }
 
 void
-closure_test_gn(ffi_cif* cif,void* resp,void** args, void* userdata)
+closure_test_gn(ffi_cif* cif __UNUSED__, void* resp __UNUSED__,
+		void** args, void* userdata __UNUSED__)
 {
 	closure_test_fn(*(Dbls*)args[0]);
 }
 
-int main(int argc, char** argv)
+int main(int argc __UNUSED__, char** argv __UNUSED__)
 {
 	ffi_cif cif;
 

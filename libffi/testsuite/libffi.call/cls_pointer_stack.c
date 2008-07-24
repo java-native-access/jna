@@ -34,7 +34,8 @@ void* cls_pointer_fn2(void* a1, void* a2)
 
 	void*	result	= (void*)((long)a1 + (long)a2);
 
-	printf("0x%08x 0x%08x: 0x%08x\n", a1, a2, result);
+	printf("0x%08x 0x%08x: 0x%08x\n", 
+	       (unsigned int) a1, (unsigned int) a2, (unsigned int) result);
 
 	return result;
 }
@@ -63,7 +64,8 @@ void* cls_pointer_fn1(void* a1, void* a2)
 }
 
 static void
-cls_pointer_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_pointer_gn(ffi_cif* cif __UNUSED__, void* resp, 
+	       void** args, void* userdata __UNUSED__)
 {
 	void*	a1	= *(void**)(args[0]);
 	void*	a2	= *(void**)(args[1]);
@@ -123,7 +125,7 @@ int main (void)
 	printf("\n");
 	ffi_call(&cif, FFI_FN(cls_pointer_fn1), &res, args);
 
-	printf("res: 0x%08x\n", res);
+	printf("res: 0x%08x\n", (unsigned int) res);
 	// { dg-output "\n0x01234567 0x89abcdef: 0x8acf1356" }
 	// { dg-output "\n0x8acf1356 0x01234567: 0x8bf258bd" }
 	// { dg-output "\nres: 0x8bf258bd" }
@@ -132,7 +134,7 @@ int main (void)
 
 	res = (ffi_arg)((void*(*)(void*, void*))(pcl))(arg1, arg2);
 
-	printf("res: 0x%08x\n", res);
+	printf("res: 0x%08x\n", (unsigned int) res);
 	// { dg-output "\n0x01234567 0x89abcdef: 0x8acf1356" }
 	// { dg-output "\n0x8acf1356 0x01234567: 0x8bf258bd" }
 	// { dg-output "\nres: 0x8bf258bd" }
