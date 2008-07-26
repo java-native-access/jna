@@ -219,6 +219,9 @@
     <condition property="grep" value="/usr/sfw/bin/ggrep">
       <os name="SunOS"/>
     </condition>
+    <condition property="grep" value="ggrep">
+      <os name="OpenBSD"/>
+    </condition>
     <property name="grep" value="grep"/>
     <apply dir="${build.native}" executable="${grep}" parallel="true"
            failonerror="true" relative="true" output="${md5.file}">
