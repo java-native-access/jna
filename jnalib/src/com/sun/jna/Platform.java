@@ -17,7 +17,8 @@ public final class Platform {
     private static final int WINDOWS = 2;
     private static final int SOLARIS = 3;
     private static final int FREEBSD = 4;
-    private static final int WINDOWSCE = 5;
+    private static final int OPENBSD = 5;
+    private static final int WINDOWSCE = 6;
     private static final int osType;
     
     static {
@@ -39,6 +40,9 @@ public final class Platform {
         }
         else if (osName.startsWith("FreeBSD")) {
             osType = FREEBSD;
+        }
+        else if (osName.startsWith("OpenBSD")) {
+            osType = OPENBSD;
         }
         else {
             osType = UNSPECIFIED;
@@ -62,6 +66,9 @@ public final class Platform {
     }
     public static final boolean isFreeBSD() {
         return osType == FREEBSD;
+    }
+    public static final boolean isOpenBSD() {
+        return osType == OPENBSD;
     }
     public static final boolean isX11() {
         // TODO: check filesystem for /usr/X11 or some other X11-specific test
