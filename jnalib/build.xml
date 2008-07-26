@@ -40,7 +40,7 @@
   <property name="jni.revision" value="4"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="97f4fc432eb00ee6c58640104e7c269a"/>
+  <property name="jni.md5" value="892beacd437514d23ed9b1cefeb2ead6"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
