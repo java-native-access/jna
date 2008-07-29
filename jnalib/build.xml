@@ -544,13 +544,20 @@
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
     </zip>
+    <!-- JNA sources only, for use in Linux build from source -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,.classpath,.project"/>
-      <zipfileset dir="lib" includes="junit.jar" prefix="lib"/>
-      <zipfileset dir="nbproject" includes="**/*" prefix="nbproject"/>
+      <zipfileset dir="." includes="build.xml"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
-      <zipfileset dir="${native}" prefix="native"/>
+      <zipfileset dir="${native}" excludes="libffi,libffi/**/*" prefix="native"/>
+    </zip>
+    <!-- Full sources required to build and test everything -->
+    <zip zipfile="${dist}/src-full.zip">
+      <zipfileset src="${dist}/src.zip"/>
+      <zipfileset dir="lib" includes="junit.jar" prefix="lib"/>
+      <zipfileset dir="." includes=".classpath,.project"/>
+      <zipfileset dir="nbproject" includes="**/*" prefix="nbproject"/>
+      <zipfileset dir="${native}" includes="libffi,libffi/**/*" prefix="native"/>
     </zip>
   </target>
 
