@@ -110,6 +110,12 @@ public class NativeLibrary {
                     catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
             }
+            // Try the same library with a "lib" prefix
+            else if (Platform.isWindows()) {
+                libraryPath = findLibraryPath("lib" + libraryName, searchPath);
+                try { handle = open(libraryPath); }
+                catch(UnsatisfiedLinkError e2) { e = e2; }
+            }
             if (handle == 0) {
                 throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "': "
                                                + e.getMessage());
@@ -404,7 +410,7 @@ public class NativeLibrary {
             String path = ((File) it.next()).getAbsolutePath();
             String ver = path.substring(path.lastIndexOf(".so.") + 4);
             double version = parseVersion(ver);
-            if (version >= bestVersion) {
+            if (version > bestVersion) {
                 bestVersion = version;
                 bestMatch = path;
             }
@@ -477,6 +483,13 @@ public class NativeLibrary {
                 "/usr/lib",
                 "/lib",
             };
+            // Linux 64-bit does not use /lib or /usr/lib
+            if (Platform.isLinux() && Pointer.SIZE == 8) {
+                paths = new String[] {
+                    "/usr/lib" + archPath,
+                    "/lib" + archPath,
+                };
+            }
             for (int i=0;i < paths.length;i++) {
                 File dir = new File(paths[i]);
                 if (dir.exists() && dir.isDirectory()) {
