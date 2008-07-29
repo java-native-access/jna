@@ -39,10 +39,12 @@ JAVAH=$(BUILD)
 INSTALLDIR=../build/$(OS)
 JNIDISPATCH_OBJS=$(BUILD)/dispatch.o $(BUILD)/callback.o $(EXTRAOBJS)
 RSRC=$(BUILD)/rsrc.o
+ifneq ($(DYNAMIC_LIBFFI),true)
 FFI_SRC=$(shell pwd)/libffi
 FFI_BUILD=$(BUILD)/libffi
 FFI_LIB=$(FFI_BUILD)/.libs/libffi_convenience.a
 FFI_CONFIG=--disable-static --with-pic=yes
+endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
 
@@ -52,6 +54,7 @@ LIBSFX=.so
 JNISFX=$(LIBSFX)
 CC=gcc
 LD=gcc
+LIBS=
 # Default to Sun recommendations for JNI compilation
 #COPT=-O2 -fomit-frame-pointer
 COPT=-fno-omit-frame-pointer -fno-strict-aliasing 
@@ -59,14 +62,21 @@ CASM=-S
 ifeq ($(DEBUG),true)
 CDEBUG=-g
 endif
+CFLAGS_EXTRA=
 COUT=-o $@
 CINCLUDES=$(JAVA_INCLUDES) -I"$(JAVAH)" -I$(FFI_BUILD)/include
 CDEFINES=-D_REENTRANT
 PCFLAGS=-W -Wall -Wno-unused -Wno-parentheses
-CFLAGS=$(PCFLAGS) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES) \
+CFLAGS=$(PCFLAGS) $(CFLAGS_EXTRA) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES) \
        -DVERSION='"$(VERSION)"' -DCHECKSUM='"$(CHECKSUM)"'
+LDFLAGS=-o $@ -shared 
+ifeq ($(DYNAMIC_LIBFFI),true)
+CFLAGS += $(shell pkg-config --cflags libffi)
+LIBS += $(shell pkg-config --libs libffi)
+else
 # -static-libgcc avoids gcc library incompatibilities across linux systems
-LDFLAGS=-o $@ -shared -static-libgcc
+LDFLAGS += -static-libgcc
+endif
 # Avoid bug in X11-based 1.5/1.6 VMs; dynamically load instead of linking
 # See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
 #LIBS=-L"$(LIBDIR)" -ljawt 
@@ -211,6 +221,7 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 $(TESTLIB): $(BUILD)/testlib.o 
 	$(LD) $(LDFLAGS) $< $(TESTDEF)
 
+ifneq ($(DYNAMIC_LIBFFI),true)
 $(FFI_LIB):
 	@mkdir -p $(FFI_BUILD)
 	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
@@ -233,6 +244,7 @@ ifneq ($(SDKROOT),)
 	done
 	/usr/bin/libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F} $(BUILD)/libffi.*/.libs/${@F}
 	mv $@.tmp $@
+endif
 endif
 
 clean:

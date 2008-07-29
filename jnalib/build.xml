@@ -17,6 +17,8 @@
   <property name="jar" value="${name}.jar"/>
   <property name="debug" value="true"/>
   <property name="debug.native" value="false"/>
+  <property name="cflags_extra.native" value=""/>
+  <property name="dynlink.native" value="false"/>
   <property name="native" location="native"/>
   <property name="src" location="src"/>
   <property name="dist" location="dist"/>
@@ -336,6 +338,8 @@
       <arg value="JAVA_HOME=${jdk.home}"/>
       <arg value="JAVAH=${build.native}"/>
       <arg value="DEBUG=${debug.native}"/>
+      <arg value="CFLAGS_EXTRA=${cflags_extra.native}"/>
+      <arg value="DYNAMIC_LIBFFI=${dynlink.native}"/>
       <arg value="${make.CC}"/>
       <arg value="${make.BUILD}"/>
       <arg value="${make.SDKROOT}"/>
