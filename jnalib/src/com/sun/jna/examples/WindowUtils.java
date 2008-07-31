@@ -16,6 +16,7 @@ package com.sun.jna.examples;
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -29,6 +30,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.MouseEvent;
+import java.awt.AWTEvent;
 import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -162,8 +167,9 @@ public class WindowUtils {
      */
     protected static class RepaintTrigger extends JComponent {
 
-        protected class Listener extends WindowAdapter implements
-            ComponentListener, HierarchyListener {
+        protected class Listener
+            extends WindowAdapter
+            implements ComponentListener, HierarchyListener, AWTEventListener {
             public void windowOpened(WindowEvent e) {
                 repaint();
             }
@@ -184,6 +190,15 @@ public class WindowUtils {
             public void hierarchyChanged(HierarchyEvent e) {
                 repaint();
             }
+
+            public void eventDispatched(AWTEvent e) {
+                Component src = (Component)e.getSource();
+                MouseEvent me = SwingUtilities.convertMouseEvent(src, (MouseEvent)e, content);
+                Component c = SwingUtilities.getDeepestComponentAt(content, me.getX(), me.getY());
+                if (c != null) {
+                    setCursor(c.getCursor());
+                }
+            };
         }
 
         private final Listener listener = createListener();
@@ -199,9 +214,11 @@ public class WindowUtils {
             setSize(getParent().getSize());
             w.addComponentListener(listener);
             w.addWindowListener(listener);
+            Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK|AWTEvent.MOUSE_MOTION_EVENT_MASK);
         }
 
         public void removeNotify() {
+            Toolkit.getDefaultToolkit().removeAWTEventListener(listener);
             Window w = SwingUtilities.getWindowAncestor(this);
             w.removeComponentListener(listener);
             w.removeWindowListener(listener);
@@ -936,7 +953,7 @@ public class WindowUtils {
                                 });
                     }
                     catch (Exception e) {
-       	            }
+                    }
                 }
             });
         }

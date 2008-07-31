@@ -10,6 +10,7 @@
  */
 package com.sun.jna.examples;
 
+import java.awt.Cursor;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
@@ -51,16 +52,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
-// TODO: put this into a reasonable API; right now this is pretty much
-// just hard-coded blitting of an image into a window
-// Thanks to Rui Lopes for the C# example on which this is based:
-// rui@ruilopes.com
-// http://www.codeproject.com/cs/media/perpxalpha_sharp.asp?df=100&forumid=3270&exp=0&select=773155
 public class AlphaMaskDemo2 implements Runnable {
-    private static final DataFlavor URL_FLAVOR = new DataFlavor("application/x-java-url; class=java.net.URL",
-                                                                "URL");
-    private static final DataFlavor URI_LIST_FLAVOR = new DataFlavor("text/uri-list; class=java.lang.String",
-                                                                     "URI list");
+    private static final DataFlavor URL_FLAVOR =
+        new DataFlavor("application/x-java-url; class=java.net.URL", "URL");
+    private static final DataFlavor URI_LIST_FLAVOR =
+        new DataFlavor("text/uri-list; class=java.lang.String", "URI list");
     private JFrame frame;
     private JWindow alphaWindow;
     private JLabel icon;
@@ -107,6 +103,7 @@ public class AlphaMaskDemo2 implements Runnable {
         frame = new JFrame("Alpha Mask Demo");
         alphaWindow = new JWindow(frame, gconfig);
         icon = new JLabel();
+        icon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         alphaWindow.getContentPane().add(icon);
         JButton quit = new JButton("Quit");
         JLabel label = new JLabel("Drag this window by its image");
@@ -252,6 +249,7 @@ public class AlphaMaskDemo2 implements Runnable {
                          "<html><center>Drop an image with an alpha channel onto this window<br>"
                              + "You may also adjust the overall transparency with the slider</center></html>"),
               BorderLayout.NORTH);
+        p.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         final JSlider slider = new JSlider(0, 255, 255);
         slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
