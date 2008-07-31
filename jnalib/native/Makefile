@@ -71,8 +71,8 @@ CFLAGS=$(PCFLAGS) $(CFLAGS_EXTRA) $(COPT) $(CDEBUG) $(CDEFINES) $(CINCLUDES) \
        -DVERSION='"$(VERSION)"' -DCHECKSUM='"$(CHECKSUM)"'
 LDFLAGS=-o $@ -shared 
 ifeq ($(DYNAMIC_LIBFFI),true)
-CFLAGS += $(shell pkg-config --cflags libffi)
-LIBS += $(shell pkg-config --libs libffi)
+CFLAGS += $(shell pkg-config --cflags libffi 2>/dev/null || echo)
+LIBS += $(shell pkg-config --libs libffi 2>/dev/null || echo -lffi)
 else
 # -static-libgcc avoids gcc library incompatibilities across linux systems
 LDFLAGS += -static-libgcc
