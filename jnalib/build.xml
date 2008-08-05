@@ -67,6 +67,9 @@
     <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
     <echo>JNA version ${jna.version}, native API version ${jni.version}</echo>
 
+    <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
+      <isset property="omit-jnilib"/>
+    </condition>
     <condition property="vm.arch" value="-d64" else="">
       <or>
         <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
@@ -194,7 +197,9 @@
           <attribute name="Specification-Version" value="${spec.version}"/>
         </section>
       </manifest>
-      <fileset dir="${classes}"><patternset refid="jar-compiled"/></fileset>
+      <fileset dir="${classes}" excludes="${jar.omitted}">
+        <patternset refid="jar-compiled"/>
+      </fileset>
     </jar>
   </target>
   <target name="examples" depends="jar,native">
@@ -350,13 +355,13 @@
     </exec>
     <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
     <copy todir="${classes}/com/sun/jna/${os.prefix}">
-      <fileset dir="${build.native}" 
+      <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
     <mkdir dir="${eclipse.classes}/com/sun/jna/${os.prefix}"/>
     <copy todir="${eclipse.classes}/com/sun/jna/${os.prefix}"
           failonerror="false">
-      <fileset dir="${build.native}" 
+      <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
     <!-- For web start, native libraries may be provided in the root of -->
