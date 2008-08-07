@@ -828,4 +828,36 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong field value (2)", 0, ts.uninitialized.longValue());
     }
 
+    public void testStructureFieldOrder() {
+        Structure.REQUIRES_FIELD_ORDER = true;
+        try {
+            class TestStructure extends Structure {
+                public int one = 1;
+                public int three = 3;
+                public int two = 2;
+                {
+                    setFieldOrder(new String[] { "one", "two", "three" });
+                }
+            }
+            class DerivedTestStructure extends TestStructure {
+                public int four = 4;
+                {
+                    setFieldOrder(new String[] { "four" });
+                }
+            }
+
+            DerivedTestStructure s = new DerivedTestStructure();
+            DerivedTestStructure s2 = new DerivedTestStructure();
+            s.write();
+            s2.write();
+            assertEquals("Wrong first field", 1, s.getPointer().getInt(0));
+            assertEquals("Wrong second field", 2, s.getPointer().getInt(4));
+            assertEquals("Wrong third field", 3, s.getPointer().getInt(8));
+            assertEquals("Wrong derived field", 4, s.getPointer().getInt(12));
+        }
+        finally {
+            Structure.REQUIRES_FIELD_ORDER = false;
+        }
+    }
+
 }

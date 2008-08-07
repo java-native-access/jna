@@ -14,10 +14,13 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.Buffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -78,6 +81,8 @@ public abstract class Structure {
     }
 
     private static final boolean REVERSE_FIELDS;
+    private static boolean REQUIRES_FIELD_ORDER;
+
     static final boolean isPPC;
     static final boolean isSPARC;
 
@@ -85,9 +90,7 @@ public abstract class Structure {
         // IBM and JRockit store fields in reverse order; check for it
         Field[] fields = MemberOrder.class.getFields();
         REVERSE_FIELDS = "last".equals(fields[0].getName());
-        if (!"middle".equals(fields[1].getName())) {
-            throw new Error("This VM does not store fields in a predictable order");
-        }
+        REQUIRES_FIELD_ORDER = !"middle".equals(fields[1].getName());
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
@@ -116,6 +119,7 @@ public abstract class Structure {
     private TypeMapper typeMapper;
     // This field is accessed by native code
     private long typeInfo;
+    private List fieldOrder;
 
     protected Structure() {
         this(CALCULATE_SIZE);
@@ -733,6 +737,35 @@ public abstract class Structure {
         return true;
     }
 
+    protected List getFieldOrder() {
+        synchronized(this) {
+            if (fieldOrder == null) {
+                fieldOrder = new ArrayList();
+            }
+            return fieldOrder;
+        }
+    }
+
+    /** Provided for VMs where the field order as returned by {@link
+     * Class#getFields()} is not predictable.
+     */
+    protected void setFieldOrder(String[] fields) {
+        getFieldOrder().addAll(Arrays.asList(fields));
+    }
+
+    /** Sort the structure fields according to the given array of names. */
+    protected void sortFields(Field[] fields, String[] names) {
+        for (int i=0;i < names.length;i++) {
+            for (int f=i;f < fields.length;f++) {
+                if (names[i].equals(fields[f].getName())) {
+                    Field tmp = fields[f];
+                    fields[f] = fields[i];
+                    fields[i] = tmp;
+                    break;
+                }
+            }
+        }
+    }
 
     /** Calculate the amount of native memory required for this structure.
      * May return {@link #CALCULATE_SIZE} if the size can not yet be
@@ -753,6 +786,16 @@ public abstract class Structure {
         structAlignment = 1;
         int calculatedSize = 0;
         Field[] fields = getClass().getFields();
+        // Restrict to valid fields
+        List flist = new ArrayList();
+        for (int i=0;i < fields.length;i++) {
+            int modifiers = fields[i].getModifiers();
+            if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers))
+                continue;
+            flist.add(fields[i]);
+        }
+        fields = (Field[])flist.toArray(new Field[flist.size()]);
+
         if (REVERSE_FIELDS) {
             for (int i=0;i < fields.length/2;i++) {
                 int idx = fields.length-1-i;
@@ -761,11 +804,20 @@ public abstract class Structure {
                 fields[idx] = tmp;
             }
         }
+        else if (REQUIRES_FIELD_ORDER) {
+            List fieldOrder = getFieldOrder();
+            if (fieldOrder.size() < fields.length) {
+                if (force) {
+                    throw new Error("This VM does not store fields in a predictable order; you must use setFieldOrder: " + System.getProperty("java.vendor") + ", " + System.getProperty("java.version"));
+                }
+                return CALCULATE_SIZE;
+            }
+            sortFields(fields, (String[])fieldOrder.toArray(new String[fieldOrder.size()]));
+        }
+
         for (int i=0; i<fields.length; i++) {
             Field field = fields[i];
             int modifiers = field.getModifiers();
-            if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers))
-                continue;
 
             Class type = field.getType();
             StructField structField = new StructField();
