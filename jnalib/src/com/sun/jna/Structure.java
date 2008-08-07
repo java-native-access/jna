@@ -81,7 +81,7 @@ public abstract class Structure {
     }
 
     private static final boolean REVERSE_FIELDS;
-    private static boolean REQUIRES_FIELD_ORDER;
+    static boolean REQUIRES_FIELD_ORDER;
 
     static final boolean isPPC;
     static final boolean isSPARC;
