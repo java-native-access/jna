@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-05-14">
+<meta name="date" content="2008-08-08">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -243,7 +243,7 @@ Arrays of C strings (the <code>char* argv[]</code> to the C <code>main</code>, f
 When a function requires a pointer to a <code>struct</code>, a Java <a href="javadoc/com/sun/jna/Structure.html">Structure</a> should be used.  If the <code>struct</code> is passed or returned by value, you need only make <a href="javadoc/overview-summary.html#byvalue">minor modifications</a> to the parameter or return type class declaration.<p>
 Typically you define a <code>public static</code> class derived from <code>Structure</code> within your library interface definition.   This allows the structure to share any options (like custom type mapping) defined for the library interface.  
 <p>
-If a function requires an array of <code>struct</code>, a Java <code>Structure[]</code> may be used.  When passing in an array of <code>Structure</code>, it is not necessary to initialize the array elements (the function call will allocate, zero memory, and assign the elements for you).  If you <em>do</em> need to initialize the array, you should use the <code>Structure.toArray</code> method to obtain an array of <code>Structure</code> elements contiguous in memory, which you can then initialize as needed.
+If a function requires an array of <code>struct</code> (allocated contiguously in memory), a Java <code>Structure[]</code> may be used.  When passing in an array of <code>Structure</code>, it is not necessary to initialize the array elements (the function call will allocate, zero memory, and assign the elements for you).  If you <em>do</em> need to initialize the array, you should use the <code>Structure.toArray</code> method to obtain an array of <code>Structure</code> elements contiguous in memory, which you can then initialize as needed.
 <p>
 Unions are generally interchangeable with <code>Structure</code>s, but require that you indicate which union field is active with the <code>setType</code> method before it can be properly passed to a function call.
 <p>
@@ -531,8 +531,8 @@ If you are interested in paid support, feel free to say so on one of the JNA mai
  <li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib">Miscellaneous contributed mappings and utilities</a> (including Windows NT Service, Registry, and User Account libraries).
  <li><a href="http://sellmic.com/blog/2007/05/22/javafx-clock-update-now-with-transparency">A JavaFX Clock</a> (Augusto Sellhorn)
  <li><a href="http://ochafik.free.fr/blog/?p=98">Detect User Inactivity</a> (Olivier Chafik)
- <li><a href="http://glossitope.org">Glossitope (AKA ab5k)</a> (Josh Marinacci)
  <li><a href="http://www.athenabackup.com">Athena Backup</a> (Doug Patriarche)
+ <li><a href="https://launchpad.net/libusb4j">USB for Java (Mario Boikov)</a>
  </ul>
  Post to users AT jna DOT dev DOT java DOT net to include your project in this list, or if you'd like to contribute a library mapping you've written.
 <p>
