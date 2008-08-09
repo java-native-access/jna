@@ -594,7 +594,8 @@ public final class Native {
      * <code>jna.library.path</code> so that JNA can load libraries identified
      * by the &lt;nativelib&gt; tag in the JNLP configuration file.  Returns 
      * <code>null</code> if the Web Start native library cache location can not 
-     * be determined.
+     * be determined.  Note that the path returned may be different for any
+     * given library name.
      * <p>
      * Use <code>System.getProperty("javawebstart.version")</code> to detect
      * whether your code is running under Web Start.

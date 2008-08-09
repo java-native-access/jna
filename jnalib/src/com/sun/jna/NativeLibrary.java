@@ -1,5 +1,5 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
- *
+ * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -75,6 +75,13 @@ public class NativeLibrary {
 
     private static NativeLibrary loadLibrary(String libraryName) {
         List searchPath = new LinkedList(librarySearchPath);
+
+        // Append web start path, if available.  Note that this does not
+        // attempt any library name variations
+        String webstartPath = Native.getWebStartLibraryPath(libraryName);
+        if (webstartPath != null) {
+            searchPath.add(webstartPath);
+        }
 
         //
         // Prepend any custom search paths specifically for this library
