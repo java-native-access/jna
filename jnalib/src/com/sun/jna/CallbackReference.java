@@ -347,7 +347,8 @@ class CallbackReference extends WeakReference {
                 return ((Structure)value).getPointer();
             }
             else if (cls == boolean.class || cls == Boolean.class) {
-                return new Integer(Boolean.TRUE.equals(value)?-1:0);
+                return Boolean.TRUE.equals(value) ? 
+                    Function.INTEGER_TRUE : Function.INTEGER_FALSE;
             }
             else if (cls == String.class || cls == WString.class) {
                 // Store in a weak hash map to delay GC until string
