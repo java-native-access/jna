@@ -115,6 +115,8 @@ Java types must be chosen to match native types of the same size.  Following are
 <tr><td colspan=3>In addition to the above types, which are supported at the native layer, the JNA Java library automatically handles the following types.  All but <code>NativeMapped</code> and <code>NativeLong</code> are converted to {@link com.sun.jna.Pointer} before being passed to the native layer.</td></tr>
 <tr><td>{@link java.lang.String}</td><td>char*</td><td>NUL-terminated array (native encoding or <code>jna.encoding</code>)</td>
 <tr><td>{@link com.sun.jna.WString}</td><td>wchar_t*</td><td>NUL-terminated array (unicode)</td>
+<tr><td>{@link java.lang.String String[]}</td><td>char**</td><td>NULL-terminated array of C strings</td>
+<tr><td>{@link com.sun.jna.WString WString[]}</td><td>wchar_t**</td><td>NULL-terminated array of wide C strings</td>
 <tr><td>{@link com.sun.jna.Structure}</td><td>struct*<br>struct</td><td>pointer to struct (argument or return) ({@link com.sun.jna.Structure.ByReference or explicitly})<br>struct by value (member of struct) ({@link com.sun.jna.Structure.ByValue or explicitly})</td>
 <tr><td>{@link com.sun.jna.Union}</td><td>union</td><td>same as <code>Structure</code></td>
 <tr><td>{@link com.sun.jna.Structure Structure[]}</td><td>struct[]</td><td>array of structs, contiguous in memory</td>
@@ -198,6 +200,7 @@ the default platform encoding is used, unless the system property
 <code>jna.encoding</code> is set to a valid encoding.  This property may be
 set to "UTF8", for example, to ensure all native strings use that encoding.
 <p>
+Arrays of <code>String</code> passed to native code (either as a function argument or callback return value) will be converted into a NULL-terminated array of <code>char*</code> (or <code>wchar_t*</code> in the case of an array of <code>WString</code>.
 
 <a name="wide-strings"></a>
 <h3>Wide Strings</h3>
@@ -226,6 +229,9 @@ a single <code>callback</code> method with a signature that matches the
 function pointer required by the native code.  The name of the method
 <em>must</em> be "callback", and the arguments and return value follow the
 same rules as for a direct function invocation.
+<p>
+If the callback returns a <code>String</code> or <code>String[]</code>, the
+returned memory will be valid until the returned object is GC'd.
 <p>
 If your native code initializes function pointers within a struct, JNA will
 automatically generate an <code>Callback</code> instance matching the declared

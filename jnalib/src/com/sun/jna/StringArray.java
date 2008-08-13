@@ -1,3 +1,15 @@
+/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * <p/>
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.  
+ */
 package com.sun.jna;
 
 import java.util.ArrayList;
@@ -43,8 +55,13 @@ public class StringArray extends Memory implements Function.PostCallRead {
     public void read() {
         boolean returnWide = original instanceof WString[];
         for (int si=0;si < original.length;si++) {
-            String s = getPointer(si * Pointer.SIZE).getString(0, wide);
-            original[si] = returnWide ? new WString(s) : (Object)s; 
+            Pointer p = getPointer(si * Pointer.SIZE);
+            Object s = null;
+            if (p != null) {
+                s = p.getString(0, wide);
+                if (returnWide) s = new WString((String)s);
+            }
+            original[si] = s;
         }
     }
 }

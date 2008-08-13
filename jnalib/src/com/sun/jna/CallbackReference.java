@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
     static final Map altCallbackMap = new WeakHashMap();
-    private static final Map nativeStrings = new WeakHashMap();
+    private static final Map allocations = new WeakHashMap();
     
     /** Return a Callback associated with the given function pointer.
      * If the pointer refers to a Java callback trampoline, return the original
@@ -145,6 +145,8 @@ class CallbackReference extends WeakReference {
         }
         else if (cls == String.class 
                  || cls == WString.class
+                 || cls == String[].class
+                 || cls == WString[].class
                  || Callback.class.isAssignableFrom(cls)) {
             return Pointer.class;
         }
@@ -310,6 +312,10 @@ class CallbackReference extends WeakReference {
                 else if (dstType == WString.class) {
                     value = new WString(((Pointer)value).getString(0, true));
                 }
+                else if (dstType == String[].class
+                         || dstType == WString[].class) {
+                    value = ((Pointer)value).getStringArray(0, dstType == WString[].class);
+                }
                 else if (Callback.class.isAssignableFrom(dstType)) {
                     value = getCallback(dstType, (Pointer)value);
                 }
@@ -351,11 +357,18 @@ class CallbackReference extends WeakReference {
                     Function.INTEGER_TRUE : Function.INTEGER_FALSE;
             }
             else if (cls == String.class || cls == WString.class) {
-                // Store in a weak hash map to delay GC until string
-                // itself is GC'd.
                 NativeString ns = new NativeString(value.toString(), cls == WString.class);
-                nativeStrings.put(value, ns);
+                // Delay GC until string itself is GC'd.
+                allocations.put(value, ns);
                 return ns.getPointer();
+            }
+            else if (cls == String[].class || cls == WString.class) {
+                StringArray sa = cls == String[].class
+                    ? new StringArray((String[])value)
+                    : new StringArray((WString[])value);
+                // Delay GC until array itself is GC'd.
+                allocations.put(value, sa);
+                return sa;
             }
             else if (Callback.class.isAssignableFrom(cls)) {
                 return getFunctionPointer((Callback)value);

@@ -13,6 +13,8 @@ package com.sun.jna;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstraction for a native pointer data type.  A Pointer instance 
@@ -603,10 +605,51 @@ v     * @param wide whether to convert from a wide or standard C string
         return buf;
     }
 
+    /** Returns an array of {@link Pointer}.  The array length is
+     * determined by a NULL-valued terminating element.
+     */
+    public Pointer[] getPointerArray(long base) {
+        List array = new ArrayList();
+        int offset = 0;
+        Pointer p = getPointer(base);
+        while (p != null) {
+            array.add(p);
+            offset += Pointer.SIZE;
+            p = getPointer(base + offset);
+        }
+        return (Pointer[])array.toArray(new Pointer[array.size()]);
+    }
+
+    /** Returns an array of {@link Pointer} of the requested size. */
     public Pointer[] getPointerArray(long offset, int arraySize) {
         Pointer[] buf = new Pointer[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
+    }
+
+    /** Returns an array of <code>String</code> based on a native array
+     * of <code>char *</code>.  The array length is determined by a
+     * NULL-valued terminating element. 
+     */
+    public String[] getStringArray(long base) {
+        return getStringArray(base, false);
+    }
+
+    /** Returns an array of <code>String</code> based on a native array
+     * of <code>char*</code> or <code>wchar_t*</code> based on the
+     * <code>wide</code> parameter.  The array length is determined by a
+     * NULL-valued terminating element. 
+     */
+    public String[] getStringArray(long base, boolean wide) {
+        List strings = new ArrayList();
+        int offset = 0;
+        Pointer p = getPointer(base);
+        while (p != null) {
+            strings.add(p.getString(0, wide));
+            offset += SIZE;
+            p = getPointer(base + offset);
+        }
+        return (String[])strings.toArray(new String[strings.size()]);
     }
 
     //////////////////////////////////////////////////////////////////////////

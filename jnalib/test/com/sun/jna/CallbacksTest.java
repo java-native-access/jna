@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -94,6 +94,10 @@ public class CallbacksTest extends TestCase {
         interface CopyArgToByReference extends Callback {
         	int callback(int arg, IntByReference result);
         }
+        interface StringArrayCallback extends Callback {
+            String[] callback(String[] arg);
+        }
+        Pointer callStringArrayCallback(StringArrayCallback c, String[] arg);
         int callCallbackWithByReferenceArgument(CopyArgToByReference cb, int arg, IntByReference result);
         TestStructure.ByValue callCallbackWithStructByValue(TestStructure.TestCallback callback, TestStructure.ByValue cbstruct);
         interface CbCallback extends Callback {
@@ -404,6 +408,24 @@ public class CallbacksTest extends TestCase {
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
         assertEquals("Wrong wide string return", VALUE, value);
+    }
+    
+    public void testCallStringArrayCallback() {
+        final boolean[] called = {false};
+        final String[][] cbargs = { null };
+        TestLibrary.StringArrayCallback cb = new TestLibrary.StringArrayCallback() {
+            public String[] callback(String[] arg) {
+                called[0] = true;
+                cbargs[0] = arg;
+                return arg;
+            }
+        };
+        final String[] VALUE = { "value", null };
+        Pointer value = lib.callStringArrayCallback(cb, VALUE);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong callback argument 1", VALUE[0], cbargs[0][0]);
+        String[] result = value.getStringArray(0);
+        assertEquals("Wrong String return", VALUE[0], result[0]);
     }
     
     public void testCallCallbackWithByReferenceArgument() {
