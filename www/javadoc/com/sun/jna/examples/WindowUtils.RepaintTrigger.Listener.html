@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.4</font></EM>
+<b>JNA API</><font size="-1"> 3.0.5</font></EM>
 </TD>
 </TR>
 
@@ -92,14 +92,14 @@ Class WindowUtils.RepaintTrigger.Listener</H2>
       <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.examples.WindowUtils.RepaintTrigger.Listener</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/ComponentListener.html" title="class or interface in java.awt.event">ComponentListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/HierarchyListener.html" title="class or interface in java.awt.event">HierarchyListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowFocusListener.html" title="class or interface in java.awt.event">WindowFocusListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowListener.html" title="class or interface in java.awt.event">WindowListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowStateListener.html" title="class or interface in java.awt.event">WindowStateListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/EventListener.html" title="class or interface in java.util">EventListener</A></DD>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/AWTEventListener.html" title="class or interface in java.awt.event">AWTEventListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/ComponentListener.html" title="class or interface in java.awt.event">ComponentListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/HierarchyListener.html" title="class or interface in java.awt.event">HierarchyListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowFocusListener.html" title="class or interface in java.awt.event">WindowFocusListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowListener.html" title="class or interface in java.awt.event">WindowListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowStateListener.html" title="class or interface in java.awt.event">WindowStateListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/EventListener.html" title="class or interface in java.util">EventListener</A></DD>
 </DL>
 <DL>
 <DT><B>Enclosing class:</B><DD><A HREF="../../../../com/sun/jna/examples/WindowUtils.RepaintTrigger.html" title="class in com.sun.jna.examples">WindowUtils.RepaintTrigger</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>protected class <B>WindowUtils.RepaintTrigger.Listener</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowAdapter.html" title="class or interface in java.awt.event">WindowAdapter</A><DT>implements <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/ComponentListener.html" title="class or interface in java.awt.event">ComponentListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/HierarchyListener.html" title="class or interface in java.awt.event">HierarchyListener</A></DL>
+<DT><PRE>protected class <B>WindowUtils.RepaintTrigger.Listener</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/WindowAdapter.html" title="class or interface in java.awt.event">WindowAdapter</A><DT>implements <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/ComponentListener.html" title="class or interface in java.awt.event">ComponentListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/HierarchyListener.html" title="class or interface in java.awt.event">HierarchyListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/AWTEventListener.html" title="class or interface in java.awt.event">AWTEventListener</A></DL>
 </PRE>
 
 <P>
@@ -161,6 +161,14 @@ Class WindowUtils.RepaintTrigger.Listener</H2>
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../com/sun/jna/examples/WindowUtils.RepaintTrigger.Listener.html#componentShown(java.awt.event.ComponentEvent)">componentShown</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/ComponentEvent.html" title="class or interface in java.awt.event">ComponentEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/sun/jna/examples/WindowUtils.RepaintTrigger.Listener.html#eventDispatched(java.awt.AWTEvent)">eventDispatched</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/AWTEvent.html" title="class or interface in java.awt">AWTEvent</A>&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -312,6 +320,20 @@ public void <B>hierarchyChanged</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs
 </DL>
 </DD>
 </DL>
+<HR>
+
+<A NAME="eventDispatched(java.awt.AWTEvent)"><!-- --></A><H3>
+eventDispatched</H3>
+<PRE>
+public void <B>eventDispatched</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/AWTEvent.html" title="class or interface in java.awt">AWTEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/AWTEventListener.html#eventDispatched(java.awt.AWTEvent)" title="class or interface in java.awt.event">eventDispatched</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/AWTEventListener.html" title="class or interface in java.awt.event">AWTEventListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -336,7 +358,7 @@ public void <B>hierarchyChanged</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.4</font></EM>
+<b>JNA API</><font size="-1"> 3.0.5</font></EM>
 </TD>
 </TR>
 

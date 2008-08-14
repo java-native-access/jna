@@ -43,7 +43,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.4</font></EM>
+<b>JNA API</><font size="-1"> 3.0.5</font></EM>
 </TD>
 </TR>
 
@@ -995,6 +995,9 @@ Static variable in interface com.sun.jna.examples.unix.<A HREF="./com/sun/jna/ex
 <DT><A HREF="./com/sun/jna/examples/unix/X11.XSetWindowAttributes.html#event_mask"><B>event_mask</B></A> - 
 Variable in class com.sun.jna.examples.unix.<A HREF="./com/sun/jna/examples/unix/X11.XSetWindowAttributes.html" title="class in com.sun.jna.examples.unix">X11.XSetWindowAttributes</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/examples/WindowUtils.RepaintTrigger.Listener.html#eventDispatched(java.awt.AWTEvent)"><B>eventDispatched(AWTEvent)</B></A> - 
+Method in class com.sun.jna.examples.<A HREF="./com/sun/jna/examples/WindowUtils.RepaintTrigger.Listener.html" title="class in com.sun.jna.examples">WindowUtils.RepaintTrigger.Listener</A>
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/examples/unix/X11.html#ExposureMask"><B>ExposureMask</B></A> - 
 Static variable in interface com.sun.jna.examples.unix.<A HREF="./com/sun/jna/examples/unix/X11.html" title="interface in com.sun.jna.examples.unix">X11</A>
 <DD>&nbsp;
@@ -1654,6 +1657,9 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/StructureReadContext.html" ti
 <DT><A HREF="./com/sun/jna/StructureWriteContext.html#getField()"><B>getField()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/StructureWriteContext.html" title="class in com.sun.jna">StructureWriteContext</A>
 <DD>Get the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/Field.html" title="class or interface in java.lang.reflect"><CODE>Field</CODE></A> being written to native memory.
+<DT><A HREF="./com/sun/jna/Structure.html#getFieldOrder()"><B>getFieldOrder()</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/examples/FileMonitor.FileEvent.html#getFile()"><B>getFile()</B></A> - 
 Method in class com.sun.jna.examples.<A HREF="./com/sun/jna/examples/FileMonitor.FileEvent.html" title="class in com.sun.jna.examples">FileMonitor.FileEvent</A>
 <DD>&nbsp;
@@ -1851,9 +1857,12 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/PointerType.html" title="clas
 <DT><A HREF="./com/sun/jna/Structure.html#getPointer()"><B>getPointer()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>Return a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> object to this structure.
+<DT><A HREF="./com/sun/jna/Pointer.html#getPointerArray(long)"><B>getPointerArray(long)</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
+<DD>Returns an array of <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getPointerArray(long, int)"><B>getPointerArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>&nbsp;
+<DD>Returns an array of <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> of the requested size.
 <DT><A HREF="./com/sun/jna/Native.html#getPreserveLastError()"><B>getPreserveLastError()</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Indicates whether the system last error result is preserved
@@ -1899,6 +1908,15 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DT><A HREF="./com/sun/jna/Pointer.html#getString(long)"><B>getString(long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
 <DD>Copy native memory to a Java String.
+<DT><A HREF="./com/sun/jna/Pointer.html#getStringArray(long)"><B>getStringArray(long)</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
+<DD>Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>.
+<DT><A HREF="./com/sun/jna/Pointer.html#getStringArray(long, boolean)"><B>getStringArray(long, boolean)</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
+<DD>Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter.
 <DT><A HREF="./com/sun/jna/Structure.html#getStructAlignment()"><B>getStructAlignment()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>&nbsp;
@@ -2252,6 +2270,12 @@ Constructor for class com.sun.jna.ptr.<A HREF="./com/sun/jna/ptr/IntByReference.
 <DT><A HREF="./com/sun/jna/ptr/IntByReference.html#IntByReference(int)"><B>IntByReference(int)</B></A> - 
 Constructor for class com.sun.jna.ptr.<A HREF="./com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Function.html#INTEGER_FALSE"><B>INTEGER_FALSE</B></A> - 
+Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
+<DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Function.html#INTEGER_TRUE"><B>INTEGER_TRUE</B></A> - 
+Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/IntegerType.html" title="class in com.sun.jna"><B>IntegerType</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Represents a native integer value, which may have a platform-specific size
  (e.g.<DT><A HREF="./com/sun/jna/IntegerType.html#IntegerType(int)"><B>IntegerType(int)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/IntegerType.html" title="class in com.sun.jna">IntegerType</A>
@@ -2334,6 +2358,9 @@ Static method in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/examples/unix/X11.XID.html#isNone(java.lang.Object)"><B>isNone(Object)</B></A> - 
 Method in class com.sun.jna.examples.unix.<A HREF="./com/sun/jna/examples/unix/X11.XID.html" title="class in com.sun.jna.examples.unix">X11.XID</A>
+<DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Platform.html#isOpenBSD()"><B>isOpenBSD()</B></A> - 
+Static method in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Structure.html#isPPC"><B>isPPC</B></A> - 
 Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
@@ -3098,6 +3125,9 @@ Method in class com.sun.jna.examples.<A HREF="./com/sun/jna/examples/WindowUtils
 <DT><A HREF="./com/sun/jna/examples/FileMonitor.html#removeWatch(java.io.File)"><B>removeWatch(File)</B></A> - 
 Method in class com.sun.jna.examples.<A HREF="./com/sun/jna/examples/FileMonitor.html" title="class in com.sun.jna.examples">FileMonitor</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Structure.html#REQUIRES_FIELD_ORDER"><B>REQUIRES_FIELD_ORDER</B></A> - 
+Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/examples/unix/X11.html#ResizeRedirectMask"><B>ResizeRedirectMask</B></A> - 
 Static variable in interface com.sun.jna.examples.unix.<A HREF="./com/sun/jna/examples/unix/X11.html" title="interface in com.sun.jna.examples.unix">X11</A>
 <DD>&nbsp;
@@ -3209,6 +3239,9 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DT><A HREF="./com/sun/jna/examples/WindowUtils.NativeWindowUtils.html#setDoubleBuffered(java.awt.Component, boolean)"><B>setDoubleBuffered(Component, boolean)</B></A> - 
 Method in class com.sun.jna.examples.<A HREF="./com/sun/jna/examples/WindowUtils.NativeWindowUtils.html" title="class in com.sun.jna.examples">WindowUtils.NativeWindowUtils</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])"><B>setFieldOrder(String[])</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
+<DD>Provided for VMs where the field order as returned by <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html#getFields()" title="class or interface in java.lang"><CODE>Class.getFields()</CODE></A> is not predictable.
 <DT><A HREF="./com/sun/jna/Memory.html#setFloat(long, float)"><B>setFloat(long, float)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
 <DD>Indirect the native pointer to <code>malloc</code> space, a la
@@ -3457,6 +3490,9 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class 
 <DT><A HREF="./com/sun/jna/Structure.StructField.html#size"><B>size</B></A> - 
 Variable in class com.sun.jna.<A HREF="./com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Structure.html#sortFields(java.lang.reflect.Field[], java.lang.String[])"><B>sortFields(Field[], String[])</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
+<DD>Sort the structure fields according to the given array of names.
 <DT><A HREF="./com/sun/jna/examples/win32/User32.BLENDFUNCTION.html#SourceConstantAlpha"><B>SourceConstantAlpha</B></A> - 
 Variable in class com.sun.jna.examples.win32.<A HREF="./com/sun/jna/examples/win32/User32.BLENDFUNCTION.html" title="class in com.sun.jna.examples.win32">User32.BLENDFUNCTION</A>
 <DD>&nbsp;
@@ -4797,7 +4833,7 @@ Static variable in interface com.sun.jna.examples.unix.<A HREF="./com/sun/jna/ex
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.4</font></EM>
+<b>JNA API</><font size="-1"> 3.0.5</font></EM>
 </TD>
 </TR>
 
