@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-08-13">
+<meta name="date" content="2008-08-14">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -51,7 +51,7 @@
 <a name=top></a>
 <h2>Java Native Access (JNA) </h2>
 <p>JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.  Access is dynamic at runtime without code generation.</p>
-<p>JNA allows you to call directly into native functions using natural Java method invocation.  The Java call looks just like it does in native code.  Most calls require no special handling or configuration, and boilerplate or generated code is required.</p>
+<p>JNA allows you to call directly into native functions using natural Java method invocation.  The Java call looks just like it does in native code.  Most calls require no special handling or configuration; no boilerplate or generated code is required.</p>
 <p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.</p>
 <p>While some attention is paid to performance, correctness and ease of use take priority.</p>
 </td>
