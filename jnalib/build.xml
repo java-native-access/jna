@@ -67,6 +67,10 @@
     <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
     <echo>JNA version ${jna.version}, native API version ${jni.version}</echo>
 
+    <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
+                   replace="\1${jna.version}\2" 
+                   file="pom.xml"/>
+
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
     </condition>
