@@ -239,8 +239,6 @@ public class ShapedWindowDemo {
         frame.getContentPane().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         frame.getContentPane().add(face);
         frame.setUndecorated(true);
-        frame.pack();
-        frame.setLocation(100, 100);
         try {
             Shape mask = new Area(new Ellipse2D.Float(0, 0, 150, 150));
             WindowUtils.setWindowMask(frame, mask);
@@ -249,8 +247,11 @@ public class ShapedWindowDemo {
             }
             frame.setIconImage(face.getIconImage());
             frame.setResizable(false);
-            frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            frame.pack();
+            frame.setLocation(100, 100);
+            frame.setVisible(true);
         }
         catch(UnsatisfiedLinkError e) {
             e.printStackTrace();
