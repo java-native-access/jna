@@ -559,7 +559,7 @@
     </zip>
     <!-- JNA sources only, for use in Linux build from source -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml"/>
+      <zipfileset dir="." includes="build.xml,LICENSE.txt"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*" prefix="native"/>
