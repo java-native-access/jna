@@ -740,9 +740,14 @@ public class WindowUtils {
                     ByteByReference bref = new ByteByReference();
                     IntByReference iref = new IntByReference();
                     byte level = getAlpha(win);
-                    if (user.GetLayeredWindowAttributes(hWnd, null, bref, iref)
-                        && (iref.getValue() & User32.LWA_ALPHA) != 0) {
-                        level = bref.getValue();
+                    try {
+                        // GetLayeredwindowAttributes supported WinXP and later
+                        if (user.GetLayeredWindowAttributes(hWnd, null, bref, iref)
+                            && (iref.getValue() & User32.LWA_ALPHA) != 0) {
+                            level = bref.getValue();
+                        }
+                    }
+                    catch(UnsatisfiedLinkError e) {
                     }
                     blend.SourceConstantAlpha = level;
                     blend.AlphaFormat = User32.AC_SRC_ALPHA;
