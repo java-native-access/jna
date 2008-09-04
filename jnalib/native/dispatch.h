@@ -23,7 +23,7 @@ extern "C" {
 /* These are the calling conventions an invocation can handle. */
 typedef enum _callconv {
     CALLCONV_C = com_sun_jna_Function_C_CONVENTION,
-#if defined(_WIN32)
+#ifdef _WIN32
     CALLCONV_STDCALL = com_sun_jna_Function_ALT_CONVENTION,
 #endif
 } callconv_t;
@@ -47,13 +47,19 @@ typedef struct _callback {
 typedef long word_t;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
+#if defined(_WIN64)
+#define L2A(X) ((void *)(long long)(X))
+#define A2L(X) ((jlong)(long long)(X))
+#else
 #define L2A(X) ((void *)(unsigned long)(X))
 #define A2L(X) ((jlong)(unsigned long)(X))
+#endif
 #endif
 
 #if defined(_MSC_VER)
 #define L2A(X) ((void *)(X))
 #define A2L(X) ((jlong)(X))
+#define snprintf sprintf_s
 #endif
 
 /* Convenience macros */
@@ -96,6 +102,17 @@ extern callback* create_callback(JNIEnv*, jobject, jobject,
 extern void free_callback(JNIEnv*, callback*);
 extern void extract_value(JNIEnv*, jobject, void*, size_t size);
 extern jobject new_object(JNIEnv*, char, void*);
+extern jboolean is_protected();
+
+/* Native memory fault protection */
+#ifdef HAVE_PROTECTION
+#define PROTECT is_protected()
+#endif
+#include "protect.h"
+#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
+#define PSTART() PROTECTED_START()
+#define PEND() PROTECTED_END(ON_ERROR())
+
 #ifdef __cplusplus
 }
 #endif

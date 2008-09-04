@@ -445,7 +445,6 @@ public class StructureTest extends TestCase {
         public TestCallback cb;
     }
     static interface CbTest extends Library {
-        public void callCallbackInStruct(CbStruct cbstruct);
         public void setCallbackInStruct(CbStruct2 cbstruct);
     }
     public void testCallbackWrite() {
@@ -461,19 +460,6 @@ public class StructureTest extends TestCase {
         assertTrue("Callback not cached", refs.containsKey(s.cb));
         CallbackReference ref = (CallbackReference)refs.get(s.cb);
         assertEquals("Wrong trampoline", ref.getTrampoline(), func);
-    }
-
-    public void testCallCallbackInStructure() {
-        final boolean[] flag = {false};
-        final CbStruct s = new CbStruct();
-        s.cb = new Callback() {
-            public void callback() {
-                flag[0] = true;
-            }
-        };
-        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
-        lib.callCallbackInStruct(s);
-        assertTrue("Callback not invoked", flag[0]);
     }
 
     public void testReadFunctionPointerAsCallback() {
@@ -754,14 +740,6 @@ public class StructureTest extends TestCase {
     	TestStructure s = new TestStructure();
     	s.ref = null;
     	s.write();
-    }
-
-    public static class TestNativeMappedInStructure extends Structure {
-        public static class ByValue extends TestNativeMappedInStructure implements Structure.ByValue { }
-        public NativeLong field;
-    }
-    public void testNativeMappedInByValue() {
-        new TestNativeMappedInStructure.ByValue();
     }
 
     public static class ROStructure extends Structure {

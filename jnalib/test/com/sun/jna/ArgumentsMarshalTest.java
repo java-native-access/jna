@@ -277,9 +277,9 @@ public class ArgumentsMarshalTest extends TestCase {
         // ensure that even if the argument is ByValue, it's passed as ptr
         struct = new TestLibrary.CheckFieldAlignment.ByValue();
         assertEquals("Structure argument should be passed according to method "
-        			 + "parameter type, not argument type",
-        			 struct.getPointer(),
-        			 lib.testStructurePointerArgument(struct));
+                     + "parameter type, not argument type",
+                     struct.getPointer(),
+                     lib.testStructurePointerArgument(struct));
     }
 
     public void testStructureByValueArgument() {
@@ -356,7 +356,7 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testByteArrayArgument() {
         byte[] buf = new byte[1024];
         final byte MAGIC = (byte)0xED;
-        assertEquals("Wrong return value", buf.length, +
+        assertEquals("Wrong return value", buf.length, 
                      lib.fillInt8Buffer(buf, buf.length, MAGIC));
         for (int i=0;i < buf.length;i++) {
             assertEquals("Bad value at index " + i, MAGIC, buf[i]);
@@ -366,7 +366,7 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testShortArrayArgument() {
         short[] buf = new short[1024];
         final short MAGIC = (short)0xABED;
-        assertEquals("Wrong return value", buf.length, +
+        assertEquals("Wrong return value", buf.length, 
                      lib.fillInt16Buffer(buf, buf.length, MAGIC));
         for (int i=0;i < buf.length;i++) {
             assertEquals("Bad value at index " + i, MAGIC, buf[i]);
@@ -376,7 +376,7 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testIntArrayArgument() {
         int[] buf = new int[1024];
         final int MAGIC = 0xABEDCF23;
-        assertEquals("Wrong return value", buf.length, +
+        assertEquals("Wrong return value", buf.length, 
                      lib.fillInt32Buffer(buf, buf.length, MAGIC));
         for (int i=0;i < buf.length;i++) {
             assertEquals("Bad value at index " + i, MAGIC, buf[i]);
@@ -386,7 +386,7 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testLongArrayArgument() {
         long[] buf = new long[1024];
         final long MAGIC = 0x1234567887654321L;
-        assertEquals("Wrong return value", buf.length, +
+        assertEquals("Wrong return value", buf.length, 
                      lib.fillInt64Buffer(buf, buf.length, MAGIC));
         for (int i=0;i < buf.length;i++) {
             assertEquals("Bad value at index " + i, MAGIC, buf[i]);

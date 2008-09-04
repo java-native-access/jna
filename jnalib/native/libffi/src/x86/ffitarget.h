@@ -33,11 +33,20 @@
 #define X86
 #endif
 
+#ifdef X86_WIN64
+#define FFI_SIZEOF_ARG 8
+#endif
+
 /* ---- Generic type definitions ----------------------------------------- */
 
 #ifndef LIBFFI_ASM
+#ifdef X86_WIN64
+typedef unsigned __int64       ffi_arg;
+typedef signed __int64         ffi_sarg;
+#else
 typedef unsigned long          ffi_arg;
 typedef signed long            ffi_sarg;
+#endif
 
 typedef enum ffi_abi {
   FFI_FIRST_ABI = 0,
@@ -48,6 +57,12 @@ typedef enum ffi_abi {
   FFI_STDCALL,
   /* TODO: Add fastcall support for the sake of completeness */
   FFI_DEFAULT_ABI = FFI_SYSV,
+#endif
+
+#ifdef X86_WIN64
+  FFI_SYSV,
+  FFI_WIN64,
+  FFI_DEFAULT_ABI = FFI_WIN64,
 #endif
 
   /* ---- Intel x86 and AMD x86-64 - */
@@ -76,7 +91,11 @@ typedef enum ffi_abi {
 #ifdef X86_WIN32
 #define FFI_TRAMPOLINE_SIZE 13
 #else
+#ifdef X86_WIN64
+#define FFI_TRAMPOLINE_SIZE 29
+#else
 #define FFI_TRAMPOLINE_SIZE 10
+#endif
 #endif
 #define FFI_NATIVE_RAW_API 1	/* x86 has native raw api support */
 #endif

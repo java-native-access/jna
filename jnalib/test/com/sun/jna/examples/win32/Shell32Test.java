@@ -12,12 +12,19 @@
  */
 package com.sun.jna.examples.win32;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import junit.framework.TestCase;
 
 public class Shell32Test extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(Shell32Test.class);
+    }
+
     public void testStructurePacking() {
         Structure s = new Shell32.SHFILEOPSTRUCT();
-        assertEquals("Wrong structure size", 30, s.size());
+        final int SIZE = Pointer.SIZE * 5 + 10; // 5 pointers, 2 ints, 1 short
+        assertEquals("Wrong structure size", SIZE, s.size());
     }
 }

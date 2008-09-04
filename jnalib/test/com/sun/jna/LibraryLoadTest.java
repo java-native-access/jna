@@ -24,6 +24,10 @@ import junit.framework.TestCase;
 
 public class LibraryLoadTest extends TestCase {
     
+    private static final String BUILDDIR =
+        System.getProperty("jna.builddir", "build"
+                           + (Native.POINTER_SIZE == 8 ? "-d64" : ""));
+
     public void testLoadJNALibrary() {
         assertTrue("Point size should never be zero", Pointer.SIZE > 0);
     }
@@ -81,15 +85,10 @@ public class LibraryLoadTest extends TestCase {
         }
     }
 
-    /** System property name (set by Ant) when running with 64-bit JVM. */
-    static final String DIR_BUILD_SUFFIX = "dir.build.suffix";
-
     public void testLoadLibraryWithUnicodeName() throws Exception {
         String tmp = System.getProperty("java.io.tmpdir");
         String libName = System.mapLibraryName("jnidispatch");
-                                    // use "build-d64" for 64-bit jvm's
-        File src = new File("build" + System.getProperty(DIR_BUILD_SUFFIX, "") 
-                + "/native", libName);
+        File src = new File(BUILDDIR + "/native", libName);
         String newLibName = UNICODE;
         if (libName.startsWith("lib"))
             newLibName = "lib" + newLibName;

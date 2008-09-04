@@ -14,6 +14,7 @@ package com.sun.jna.win32;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.examples.win32.W32API;
 import junit.framework.TestCase;
@@ -22,6 +23,10 @@ public class W32APIMapperTest extends TestCase {
 
     final String MAGIC = "magic";
     
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(W32APIMapperTest.class);
+    }
+
     public interface UnicodeLibrary extends Library {
         public static class TestStructure extends Structure {
             public String string;
@@ -89,40 +94,42 @@ public class W32APIMapperTest extends TestCase {
     
     public void testUnicodeStructureSize() {
         UnicodeLibrary.TestStructure s = new UnicodeLibrary.TestStructure();
-        assertEquals("Wrong structure size", 16, s.size());
+        assertEquals("Wrong structure size",
+                     Pointer.SIZE*2+8, s.size());
     }
     
     public void testASCIIStructureSize() {
         ASCIILibrary.TestStructure s = new ASCIILibrary.TestStructure();
-        assertEquals("Wrong structure size", 16, s.size());
+        assertEquals("Wrong structure size",
+                     Pointer.SIZE*2+8, s.size());
     }
 
     public void testUnicodeStructureWriteBoolean() {
         UnicodeLibrary.TestStructure s = new UnicodeLibrary.TestStructure();
         s.bool2 = true;
         s.write();
-        assertEquals("Wrong value written for FALSE", 0, s.getPointer().getInt(8));
-        assertEquals("Wrong value written for TRUE", 1, s.getPointer().getInt(12));
+        assertEquals("Wrong value written for FALSE", 0, s.getPointer().getInt(Pointer.SIZE*2));
+        assertEquals("Wrong value written for TRUE", 1, s.getPointer().getInt(Pointer.SIZE*2+4));
     }        
     public void testASCIIStructureWriteBoolean() {
         ASCIILibrary.TestStructure s = new ASCIILibrary.TestStructure();
         s.bool2 = true;
         s.write();
-        assertEquals("Wrong value written for FALSE", 0, s.getPointer().getInt(8));
-        assertEquals("Wrong value written for TRUE", 1, s.getPointer().getInt(12));
+        assertEquals("Wrong value written for FALSE", 0, s.getPointer().getInt(Pointer.SIZE*2));
+        assertEquals("Wrong value written for TRUE", 1, s.getPointer().getInt(Pointer.SIZE*2+4));
     }        
     public void testUnicodeStructureReadBoolean() {
         UnicodeLibrary.TestStructure s = new UnicodeLibrary.TestStructure();
-        s.getPointer().setInt(8, 1);
-        s.getPointer().setInt(12, 0);
+        s.getPointer().setInt(Pointer.SIZE*2, 1);
+        s.getPointer().setInt(Pointer.SIZE*2+4, 0);
         s.read();
         assertTrue("Wrong value read for TRUE", s.bool);
         assertFalse("Wrong value read for FALSE", s.bool2);
     }    
     public void testASCIIStructureReadBoolean() {
         ASCIILibrary.TestStructure s = new ASCIILibrary.TestStructure();
-        s.getPointer().setInt(8, 1);
-        s.getPointer().setInt(12, 0);
+        s.getPointer().setInt(Pointer.SIZE*2, 1);
+        s.getPointer().setInt(Pointer.SIZE*2+4, 0);
         s.read();
         assertTrue("Wrong value read for TRUE", s.bool);
         assertFalse("Wrong value read for FALSE", s.bool2);
@@ -133,7 +140,7 @@ public class W32APIMapperTest extends TestCase {
         s.string2 = MAGIC;
         s.write();
         assertEquals("Improper null write", null, s.getPointer().getPointer(0));
-        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(4).getString(0, true));
+        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(Pointer.SIZE).getString(0, true));
     }
     public void testASCIIStructureWriteString() {
         ASCIILibrary.TestStructure s = new ASCIILibrary.TestStructure();
@@ -141,7 +148,7 @@ public class W32APIMapperTest extends TestCase {
         s.string2 = MAGIC;
         s.write();
         assertEquals("Improper null write", null, s.getPointer().getPointer(0));
-        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(4).getString(0, false));
+        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(Pointer.SIZE).getString(0, false));
     }
     public void testUnicodeStructureReadString() {
         UnicodeLibrary.TestStructure s = new UnicodeLibrary.TestStructure();

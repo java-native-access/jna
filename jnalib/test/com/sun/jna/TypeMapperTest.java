@@ -173,43 +173,6 @@ public class TypeMapperTest extends TestCase {
         assertFalse("Wrong value read", s.data);
     }
 
-    public static interface CallbackTestLibrary extends Library {
-        interface Int32Callback extends Callback {
-            float callback(float arg, float arg2);
-        }
-        float callInt32Callback(Int32Callback c, float arg, float arg2);
-    }
-
-    public void testCallbackTypeMapping() throws Exception {
-        final DefaultTypeMapper mapper = new DefaultTypeMapper();
-        Map options = new HashMap() {
-            { put(Library.OPTION_TYPE_MAPPER, mapper); }
-        };
-        CallbackTestLibrary lib = (CallbackTestLibrary)
-            Native.loadLibrary("testlib", CallbackTestLibrary.class, options);
-        // Convert java floats into native integers and back
-        TypeConverter converter = new TypeConverter() {
-            public Object fromNative(Object value, FromNativeContext context) {
-                return new Float(((Integer)value).intValue());
-            }
-            public Class nativeType() {
-                return Integer.class;
-            }
-            public Object toNative(Object value, ToNativeContext ctx) {
-                return new Integer(Math.round(((Float)value).floatValue()));
-            }
-        };
-        mapper.addTypeConverter(float.class, converter);
-        CallbackTestLibrary.Int32Callback cb = new CallbackTestLibrary.Int32Callback() {
-            public float callback(float arg, float arg2) {
-                return arg + arg2;
-            }
-        };
-        assertEquals("Wrong result", 0, lib.callInt32Callback(cb, 0, 0), 0);
-        assertEquals("Wrong result", 1, lib.callInt32Callback(cb, 0, 1), 0);
-        assertEquals("Wrong result", 2, lib.callInt32Callback(cb, 1, 1), 0);
-        assertEquals("Wrong result", -2, lib.callInt32Callback(cb, -1, -1), 0);
-    }
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public static @interface FooBoolean {}

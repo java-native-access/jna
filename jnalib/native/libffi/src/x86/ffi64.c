@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 2002, 2007  Bo Thorsen <bo@suse.de>
+   ffi64.c - Copyright (c) 2002, 2007  Bo Thorsen <bo@suse.de>
    
    x86-64 Foreign Function Interface 
 

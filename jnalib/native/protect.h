@@ -41,7 +41,17 @@
 
 #else
 #ifdef _WIN32
+#ifdef __GNUC__
 #include <excpt.h>
+#else
+// copied from mingw header
+typedef EXCEPTION_DISPOSITION (*PEXCEPTION_HANDLER)
+  (struct _EXCEPTION_RECORD*, void*, struct _CONTEXT*, void*);
+typedef struct _EXCEPTION_REGISTRATION {
+  struct _EXCEPTION_REGISTRATION*	prev;
+  PEXCEPTION_HANDLER                    handler;
+} EXCEPTION_REGISTRATION, *PEXCEPTION_REGISTRATION;
+#endif
 #include <setjmp.h>
 
 typedef struct _exc_rec {
@@ -62,13 +72,30 @@ _exc_handler(struct _EXCEPTION_RECORD* exception_record,
   return ExceptionContinueExecution;
 }
 
+#ifdef _MSC_VER
+#define PROTECTED_START() __try {
+#define PROTECTED_END(ONERR) } __except((PROTECT)?EXCEPTION_EXECUTE_HANDLER:EXCEPTION_CONTINUE_SEARCH) { ONERR; }
+#else
+#ifdef _WIN64
+// FIXME: mingw64 is untested
+#define SEH_TRY(ER)                                                   \
+  __asm__ ("pushq %0;pushq %%gs:0;movq %%rsp,%%gs:0;" : : "g" (&(ER)))
+#define SEH_CATCH(ER) \
+  __asm__ ("movq (%%rsp),%%rax;movq %%rax,%%gs:0;addq $16,%%rsp" : : : "%rax")
+#else
+#define SEH_TRY(ER) \
+  __asm__ ("movl %%fs:0, %0" : "=r" ((ER).ex_reg.prev));  \
+  __asm__ ("movl %0, %%fs:0" : : "r" (&(ER)))
+#define SEH_CATCH(ER) \
+  __asm__ ("movl %0, %%fs:0" : : "r" ((ER).ex_reg.prev))
+#endif /* !_WIN64 */
+
 #define PROTECTED_START() \
   exc_rec _er; \
   int _error = 0; \
   if (PROTECT) { \
     _er.ex_reg.handler = _exc_handler; \
-    asm volatile ("movl %%fs:0, %0" : "=r" (_er.ex_reg.prev)); \
-    asm volatile ("movl %0, %%fs:0" : : "r" (&_er)); \
+    SEH_TRY(_er); \
     if ((_error = setjmp(_er.buf)) != 0) { \
       goto _exc_caught; \
     } \
@@ -82,8 +109,10 @@ _exc_handler(struct _EXCEPTION_RECORD* exception_record,
  _exc_caught: \
   ONERR; \
  _remove_handler: \
-  if (PROTECT) { asm volatile ("movl %0, %%fs:0" : : "r" (_er.ex_reg.prev)); } \
+  if (PROTECT) { SEH_CATCH(_er); } \
 } while(0)
+
+#endif /* !_MSC_VER */
 
 #else // _WIN32
 // Most other platforms support signals

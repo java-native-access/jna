@@ -12,6 +12,7 @@
  */
 package com.sun.jna;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
@@ -104,6 +105,12 @@ public class CallbacksTest extends TestCase {
             CbCallback callback(CbCallback arg);
         }
         CbCallback callCallbackWithCallback(CbCallback cb);
+
+        public interface Int32CallbackX extends Callback {
+            public int callback(int arg);
+        }
+        Int32CallbackX returnCallback();
+        Int32CallbackX returnCallbackArgument(Int32CallbackX cb);
     }
 
     TestLibrary lib;
@@ -449,6 +456,7 @@ public class CallbacksTest extends TestCase {
         final TestStructure innerResult = new TestStructure();
         TestStructure.TestCallback cb = new TestStructure.TestCallback() {
             public TestStructure.ByValue callback(TestStructure.ByValue s) {
+                // Copy the argument value for later comparison
                 Pointer old = innerResult.getPointer();
                 innerResult.useMemory(s.getPointer());
                 innerResult.read();
@@ -478,6 +486,81 @@ public class CallbacksTest extends TestCase {
         assertEquals("Callback reference should be reused", cb, cb2);
     }
     
+    public static interface CallbackTestLibrary extends Library {
+        interface Int32Callback extends Callback {
+            float callback(float arg, float arg2);
+        }
+        float callInt32Callback(Int32Callback c, float arg, float arg2);
+    }
+
+    public void testCallbackTypeMapping() throws Exception {
+        final DefaultTypeMapper mapper = new DefaultTypeMapper();
+        Map options = new HashMap() {
+            { put(Library.OPTION_TYPE_MAPPER, mapper); }
+        };
+        CallbackTestLibrary lib = (CallbackTestLibrary)
+            Native.loadLibrary("testlib", CallbackTestLibrary.class, options);
+        // Convert java floats into native integers and back
+        TypeConverter converter = new TypeConverter() {
+            public Object fromNative(Object value, FromNativeContext context) {
+                return new Float(((Integer)value).intValue());
+            }
+            public Class nativeType() {
+                return Integer.class;
+            }
+            public Object toNative(Object value, ToNativeContext ctx) {
+                return new Integer(Math.round(((Float)value).floatValue()));
+            }
+        };
+        mapper.addTypeConverter(float.class, converter);
+        CallbackTestLibrary.Int32Callback cb = new CallbackTestLibrary.Int32Callback() {
+            public float callback(float arg, float arg2) {
+                return arg + arg2;
+            }
+        };
+        assertEquals("Wrong result", 0, lib.callInt32Callback(cb, 0, 0), 0);
+        assertEquals("Wrong result", 1, lib.callInt32Callback(cb, 0, 1), 0);
+        assertEquals("Wrong result", 2, lib.callInt32Callback(cb, 1, 1), 0);
+        assertEquals("Wrong result", -2, lib.callInt32Callback(cb, -1, -1), 0);
+    }
+
+    public void testInvokeCallback() {
+        TestLibrary lib = (TestLibrary)
+            Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary.Int32CallbackX cb = lib.returnCallback();
+        assertNotNull("Callback should not be null", cb);
+        assertEquals("Callback should be callable", 1, cb.callback(1));
+        
+        TestLibrary.Int32CallbackX cb2 = new TestLibrary.Int32CallbackX() {
+            public int callback(int arg) {
+                return 0;
+            }
+        };
+        assertSame("Java callback should be looked up",
+                   cb2, lib.returnCallbackArgument(cb2));
+        assertSame("Existing native function wrapper should be reused",
+                   cb, lib.returnCallbackArgument(cb));
+    }
+    
+    static class CbStruct extends Structure {
+        public Callback cb;
+    }
+    static interface CbTest extends Library {
+        public void callCallbackInStruct(CbStruct cbstruct);
+    }
+    public void testCallCallbackInStructure() {
+        final boolean[] flag = {false};
+        final CbStruct s = new CbStruct();
+        s.cb = new Callback() {
+            public void callback() {
+                flag[0] = true;
+            }
+        };
+        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
+        lib.callCallbackInStruct(s);
+        assertTrue("Callback not invoked", flag[0]);
+    }
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(CallbacksTest.class);
     }

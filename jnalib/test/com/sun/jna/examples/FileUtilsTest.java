@@ -13,6 +13,7 @@
 package com.sun.jna.examples;
 
 import java.io.File;
+import java.io.IOException;
 import junit.framework.TestCase;
 
 public class FileUtilsTest extends TestCase {
@@ -26,7 +27,12 @@ public class FileUtilsTest extends TestCase {
         File file = File.createTempFile(getName(), ".tmp", home);
         try {
             assertTrue("File should exist", file.exists());
-            assertTrue("Move to trash failed", utils.moveToTrash(new File[] { file }));
+            try {
+                utils.moveToTrash(new File[] { file });
+            }
+            catch(IOException e) {
+                fail(e.toString());
+            }
             assertFalse("Failed to move " + file + " to trash", file.exists());
         }
         finally {

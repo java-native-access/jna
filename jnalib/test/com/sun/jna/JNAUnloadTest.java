@@ -21,12 +21,14 @@ import junit.framework.TestCase;
 
 public class JNAUnloadTest extends TestCase {
     
+    private static final String BUILDDIR =
+        System.getProperty("jna.builddir", "build"
+                           + (Native.POINTER_SIZE == 8 ? "-d64" : ""));
+
     private static class TestLoader extends URLClassLoader {
         public TestLoader() throws MalformedURLException {
             super(new URL[] {
-                                  // use "build-d64" for 64-bit jvm's
-                new File("build" + System.getProperty(LibraryLoadTest.DIR_BUILD_SUFFIX, "")
-                        + "/classes").toURI().toURL(),
+                new File(BUILDDIR + "/classes").toURI().toURL(),
             }, null);
         }
     }

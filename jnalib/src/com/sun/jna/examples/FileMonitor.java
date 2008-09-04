@@ -291,7 +291,7 @@ public abstract class FileMonitor {
                                             finfo.overlapped, null)) {
                 int err = klib.GetLastError();
                 throw new IOException("ReadDirectoryChangesW failed on "
-                                      + finfo.file 
+                                      + finfo.file + ", handle " + handle
                                       + ": '" + getSystemError(err)
                                       + "' (" + err + ")");
             }
@@ -356,6 +356,7 @@ public abstract class FileMonitor {
                               null, code, 
                               0, pref, 0, null);
             String s = pref.getValue().getString(0, !Boolean.getBoolean("w32.ascii"));
+            s = s.replace(".\r",".").replace(".\n",".");
             lib.LocalFree(pref.getValue());
             return s;
         }
