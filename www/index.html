@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-08-14">
+<meta name="date" content="2008-09-04">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -552,6 +552,7 @@ If you are interested in paid support, feel free to say so on one of the JNA mai
    <li>Tips and recommended usage of JNA: Likely danger areas, failure modes, best practices, multithreading, etc.</li>
    <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.  This is important not for having an exhaustive library definition but to illustrate all the different ways a native library may need to be mapped.</li>
    <li>Testing on various JDK versions and platforms (linux flavors!).</li>
+   <li>See the TODO file in the project directory for more up-to-date items.</li>
  </ul>
 <p>
 
@@ -560,7 +561,7 @@ If you are interested in paid support, feel free to say so on one of the JNA mai
 <h3>Building and Multi-platform support</h3>
 JNA has been built and tested on OSX (ppc, x86, x86_64), linux (x86, amd64),
 FreeBSD/OpenBSD (x86, amd64), Solaris (x86, amd64, sparc, sparcv9) and Windows
-(x86).  The ant build  script's test target will build and run the test suite,
+(x86, amd64).  The ant build  script's test target will build and run the test suite,
 which has decent coverage and is a quick way to determine if your environment
 is set up correctly.<p>  
 If you want to do a build yourself, you'll need <a
