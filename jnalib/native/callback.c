@@ -163,7 +163,14 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     }
   }
   
+  // Give the callback its own local frame to ensure all local references
+  // are properly disposed
+  if ((*env)->PushLocalFrame(env, 16) < 0) {
+    fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
+    return;
+  }
   callback_invoke(env, (callback *)user_data, cif, resp, cbargs);
+  (*env)->PopLocalFrame(env, NULL);
 
   if (!attached) {
     (*jvm)->DetachCurrentThread(jvm);
