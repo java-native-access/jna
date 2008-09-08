@@ -280,20 +280,17 @@ public final class Native {
      * Returns whether an instance variable was instantiated. 
      * Expects that lock on libraries is already held
      */
-    private static boolean loadInstance(Class cls) {
-        if (libraries.containsKey(cls)) {
-            return true;
-        }
-        if (cls != null) {
+    private static void loadLibraryInstance(Class cls) {
+        if (cls != null && !libraries.containsKey(cls)) {
             try {
                 Field[] fields = cls.getFields();
                 for (int i=0;i < fields.length;i++) {
                     Field field = fields[i];
                     if (field.getType() == cls 
                         && Modifier.isStatic(field.getModifiers())) {
-                        // Ensure the field gets initialized
+                        // Ensure the field gets initialized by reading it
                         libraries.put(cls, new WeakReference(field.get(null)));
-                        return true;
+                        break;
                     }
                 }
             }
@@ -302,25 +299,51 @@ public final class Native {
                                                    + cls + " (" + e + ")");
             }
         }
-        return false;
+    }
+    
+    /** Find the first instance of an interface which implements the Callback
+     * interface or an interface derived from Callback.
+     */
+    static Class findCallbackClass(Class type) {
+        if (!Callback.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException(type.getName() + " is not derived from com.sun.jna.Callback");
+        }
+        if (type.isInterface()) {
+            return type;
+        }
+        Class[] ifaces = type.getInterfaces();
+        for (int i=0;i < ifaces.length;i++) {
+            if (Callback.class.isAssignableFrom(ifaces[i])) {
+                if (ifaces[i].getMethods().length == 1)
+                    return ifaces[i];
+                break;
+            }
+        }
+        if (Callback.class.isAssignableFrom(type.getSuperclass())) {
+            return findCallbackClass(type.getSuperclass());
+        }
+        return type;
     }
     
     /** Find the library interface corresponding to the given class.  Checks
-     * all ancestor classes for a declaring class which implements 
-     * {@link Library}.
+     * all ancestor classes and interfaces for a declaring class which
+     * implements {@link Library}.
      */
-    static Class findLibraryClass(Class cls) {
+    static Class findEnclosingLibraryClass(Class cls) {
         if (cls == null) { 
             return null;
         }
         if (Library.class.isAssignableFrom(cls)) {
             return cls;
         }
-        Class fromDeclaring = findLibraryClass(cls.getDeclaringClass());
+        if (Callback.class.isAssignableFrom(cls)) {
+            cls = findCallbackClass(cls);
+        }
+        Class fromDeclaring = findEnclosingLibraryClass(cls.getDeclaringClass());
         if (fromDeclaring != null) {
             return fromDeclaring;
         }
-        return findLibraryClass(cls.getSuperclass());
+        return findEnclosingLibraryClass(cls.getSuperclass());
     }
     
 
@@ -330,11 +353,12 @@ public final class Native {
      */
     public static Map getLibraryOptions(Class type) {
         synchronized(libraries) {
-            Class interfaceClass = findLibraryClass(type);
-            if (interfaceClass == null) 
-                return null;
-            if (!loadInstance(interfaceClass)
-                || !options.containsKey(interfaceClass)) {
+            Class interfaceClass = findEnclosingLibraryClass(type);
+            if (interfaceClass != null) 
+                loadLibraryInstance(interfaceClass);
+            else
+                interfaceClass = type;
+            if (!options.containsKey(interfaceClass)) {
                 try {
                     Field field = interfaceClass.getField("OPTIONS");
                     options.put(interfaceClass, field.get(null));
@@ -355,11 +379,13 @@ public final class Native {
      */
     public static TypeMapper getTypeMapper(Class cls) {
         synchronized(libraries) {
-            Class interfaceClass = findLibraryClass(cls);
-            if (interfaceClass == null)
-                return null;
-            if (!loadInstance(interfaceClass) 
-                || !typeMappers.containsKey(interfaceClass)) {
+            Class interfaceClass = findEnclosingLibraryClass(cls);
+            if (interfaceClass != null)
+                loadLibraryInstance(interfaceClass);
+            else
+                interfaceClass = cls;
+
+            if (!typeMappers.containsKey(interfaceClass)) {
                 try {
                     Field field = interfaceClass.getField("TYPE_MAPPER");
                     typeMappers.put(interfaceClass, field.get(null));
@@ -386,17 +412,18 @@ public final class Native {
      */
     public static int getStructureAlignment(Class cls) {
         synchronized(libraries) {
-            Class interfaceClass = findLibraryClass(cls);
-            if (interfaceClass == null)
-                return Structure.ALIGN_DEFAULT;
-            if (!loadInstance(interfaceClass) 
-                || !alignments.containsKey(interfaceClass)) {
+            Class interfaceClass = findEnclosingLibraryClass(cls);
+            if (interfaceClass != null) 
+                loadLibraryInstance(interfaceClass);
+            else
+                interfaceClass = cls;
+            if (!alignments.containsKey(interfaceClass)) {
                 try {
                     Field field = interfaceClass.getField("STRUCTURE_ALIGNMENT");
                     alignments.put(interfaceClass, field.get(null));
                 }
                 catch(NoSuchFieldException e) {
-                    Map options = getLibraryOptions(cls);
+                    Map options = getLibraryOptions(interfaceClass);
                     if (options != null
                         && options.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
                         alignments.put(interfaceClass, options.get(Library.OPTION_STRUCTURE_ALIGNMENT));

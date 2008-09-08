@@ -130,8 +130,16 @@ public abstract class Structure {
     }
 
     protected Structure(int size, int alignment) {
+        this(size, alignment, null);
+    }
+
+    protected Structure(TypeMapper mapper) {
+        this(CALCULATE_SIZE, ALIGN_DEFAULT, mapper);
+    }
+
+    protected Structure(int size, int alignment, TypeMapper mapper) {
         setAlignType(alignment);
-        setTypeMapper(null);
+        setTypeMapper(mapper);
         allocateMemory(size);
     }
 
@@ -611,25 +619,25 @@ public abstract class Structure {
             memory.setInt(offset, Boolean.TRUE.equals(value) ? -1 : 0);
         }
         else if (nativeType == byte.class || nativeType == Byte.class) {
-            memory.setByte(offset, ((Byte)value).byteValue());
+            memory.setByte(offset, value == null ? 0 : ((Byte)value).byteValue());
         }
         else if (nativeType == short.class || nativeType == Short.class) {
-            memory.setShort(offset, ((Short)value).shortValue());
+            memory.setShort(offset, value == null ? 0 : ((Short)value).shortValue());
         }
         else if (nativeType == char.class || nativeType == Character.class) {
-            memory.setChar(offset, ((Character)value).charValue());
+            memory.setChar(offset, value == null ? 0 : ((Character)value).charValue());
         }
         else if (nativeType == int.class || nativeType == Integer.class) {
-            memory.setInt(offset, ((Integer)value).intValue());
+            memory.setInt(offset, value == null ? 0 : ((Integer)value).intValue());
         }
         else if (nativeType == long.class || nativeType == Long.class) {
-            memory.setLong(offset, ((Long)value).longValue());
+            memory.setLong(offset, value == null ? 0 : ((Long)value).longValue());
         }
         else if (nativeType == float.class || nativeType == Float.class) {
-            memory.setFloat(offset, ((Float)value).floatValue());
+            memory.setFloat(offset, value == null ? 0f : ((Float)value).floatValue());
         }
         else if (nativeType == double.class || nativeType == Double.class) {
-            memory.setDouble(offset, ((Double)value).doubleValue());
+            memory.setDouble(offset, value == null ? 0.0 : ((Double)value).doubleValue());
         }
         else if (nativeType == Pointer.class) {
             memory.setPointer(offset, (Pointer)value);
@@ -897,8 +905,17 @@ public abstract class Structure {
                     throw new IllegalArgumentException(msg);
                 }
             }
-            structField.size = getNativeSize(nativeType, value);
-            fieldAlignment = getNativeAlignment(nativeType, value, i==0);
+            try {
+                structField.size = getNativeSize(nativeType, value);
+                fieldAlignment = getNativeAlignment(nativeType, value, i==0);
+            }
+            catch(IllegalArgumentException e) {
+                // Might simply not yet have a type mapper set
+                if (!force && typeMapper == null) {
+                    return CALCULATE_SIZE;
+                }
+                throw e;
+            }
 
             // Align fields as appropriate
             structAlignment = Math.max(structAlignment, fieldAlignment);
@@ -954,7 +971,7 @@ public abstract class Structure {
         int size = getNativeSize(type, value);
         if (type.isPrimitive() || Long.class == type || Integer.class == type
             || Short.class == type || Character.class == type
-            || Byte.class == type
+            || Byte.class == type || Boolean.class == type
             || Float.class == type || Double.class == type) {
             alignment = size;
         }
@@ -1013,7 +1030,7 @@ public abstract class Structure {
         // auto-create a java.nio.Buffer w/o knowing its size
         if (Buffer.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException("the type \"" + type.getName()
-                                               + "\" is not supported as a structure field");
+                                               + "\" is not supported as a structure field: ");
         }
         if (Structure.class.isAssignableFrom(type)
             && !Structure.ByReference.class.isAssignableFrom(type)) {
@@ -1026,7 +1043,8 @@ public abstract class Structure {
         }
         catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("The type \"" + type.getName()
-                                               + "\" is not supported as a structure field");
+                                               + "\" is not supported as a structure field: "
+                                               + e.getMessage());
         }
     }
 

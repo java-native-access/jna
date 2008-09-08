@@ -126,11 +126,11 @@ public class NativeTest extends TestCase {
         Class subClass = TestInterface.InnerTestClass.InnerSubclass.class;
         Class callbackClass = TestInterface.InnerTestClass.TestCallback.class;
         assertEquals("Enclosing interface not found for class",
-                     interfaceClass, Native.findLibraryClass(cls));
+                     interfaceClass, Native.findEnclosingLibraryClass(cls));
         assertEquals("Enclosing interface not found for derived class",
-                     interfaceClass, Native.findLibraryClass(subClass));
+                     interfaceClass, Native.findEnclosingLibraryClass(subClass));
         assertEquals("Enclosing interface not found for callback",
-                     interfaceClass, Native.findLibraryClass(callbackClass));
+                     interfaceClass, Native.findEnclosingLibraryClass(callbackClass));
     }
 
     public interface TestInterfaceWithInstance extends Library {

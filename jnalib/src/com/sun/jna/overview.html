@@ -227,8 +227,10 @@ JNA supports supplying Java callbacks to native code.  You must define an
 interface that extends the {@link com.sun.jna.Callback} interface, and define
 a single <code>callback</code> method with a signature that matches the
 function pointer required by the native code.  The name of the method
-<em>must</em> be "callback", and the arguments and return value follow the
-same rules as for a direct function invocation.
+may be something other than "callback" (excluding "toString", "hashCode", and
+"equals") only if there is only a single method in the interface which extends
+Callback or the Class which implements Callback.  The arguments and return
+value follow the same rules as for a direct function invocation.
 <p>
 If the callback returns a <code>String</code> or <code>String[]</code>, the
 returned memory will be valid until the returned object is GC'd.

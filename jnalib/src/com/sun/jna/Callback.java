@@ -12,8 +12,12 @@
  */
 package com.sun.jna;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /** All callback definitions must derive from this interface.  Any 
- * derived interfaces must define a <code>callback</code> method.
+ * derived interfaces must define a single public method (which may not be named
+ * "hashCode", "equals", or "toString"), or one public method named "callback".
  * You are responsible for deregistering your callback (if necessary)
  * in its {@link Object#finalize} method.  If native code attempts to call
  * a callback which has been GC'd, you will likely crash the VM.  If 
@@ -24,5 +28,14 @@ package com.sun.jna;
  * necessarily have an encompassing Java environment to catch it.
  */
 public interface Callback { 
+    /** You must this method name if your callback interface has multiple
+        public methods.  Typically a callback will have only one such
+        method, in which case any method name may be used, with the exception
+        of those in {@link #FORBIDDEN_NAMES}.
+    */
     String METHOD_NAME = "callback";
+    /** These method names may not be used for a callback method. */
+    Collection FORBIDDEN_NAMES = Arrays.asList(new String[] {
+            "hashCode", "equals", "toString",
+        });
 } 

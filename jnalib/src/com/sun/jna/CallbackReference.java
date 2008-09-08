@@ -17,9 +17,12 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 /** Provides a reference to an association between a native callback closure
@@ -33,7 +36,18 @@ class CallbackReference extends WeakReference {
     static final Map callbackMap = new WeakHashMap();
     static final Map altCallbackMap = new WeakHashMap();
     private static final Map allocations = new WeakHashMap();
+    private static final Method PROXY_CALLBACK_METHOD;
     
+    static {
+        try {
+            PROXY_CALLBACK_METHOD = CallbackProxy.class.getMethod("callback", new Class[] { Object[].class });
+        }
+        catch(Exception e) {
+            throw new Error("Error looking up CallbackProxy.callback() method");
+        }
+    }
+
+
     /** Return a Callback associated with the given function pointer.
      * If the pointer refers to a Java callback trampoline, return the original
      * Java Callback.  Otherwise, return a proxy to the native function pointer.
@@ -69,30 +83,17 @@ class CallbackReference extends WeakReference {
         return null;
     }
     
-    private static Class getCallbackClass(Class type) {
-        Class[] ifaces = type.getInterfaces();
-        for (int i=0;i < ifaces.length;i++) {
-            if (Callback.class.isAssignableFrom(ifaces[i])) {
-                type = ifaces[i];
-                break;
-            }
-        }
-        return type;
-    }
-    
     Pointer cbstruct;
     // Keep a reference to avoid premature GC
     CallbackProxy proxy;
     private CallbackReference(Callback callback, int callingConvention) {
         super(callback);
-        Class type = getCallbackClass(callback.getClass());
-        TypeMapper mapper = Native.getTypeMapper(type);
-        Method m = getCallbackMethod(callback);
+        TypeMapper mapper = Native.getTypeMapper(Native.findCallbackClass(callback.getClass()));
         if (callback instanceof CallbackProxy) {
             proxy = (CallbackProxy)callback;
         }
         else {
-            proxy = new DefaultCallbackProxy(m, mapper);
+            proxy = new DefaultCallbackProxy(getCallbackMethod(callback), mapper);
         }
 
         // Generate a list of parameter types that the native code can 
@@ -127,8 +128,7 @@ class CallbackReference extends WeakReference {
             throw new IllegalArgumentException(msg);
         }
 
-        Method proxyMethod = getCallbackMethod(proxy);
-        cbstruct = createNativeCallback(proxy, proxyMethod,  
+        cbstruct = createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
                                         nativeParamTypes, returnType,
                                         callingConvention);
     }
@@ -153,21 +153,42 @@ class CallbackReference extends WeakReference {
         return cls;
     }
     
+    private static Method checkMethod(Method m) {
+        if (m.getParameterTypes().length > Function.MAX_NARGS) {
+            String msg = "Method signature exceeds the maximum "
+                + "parameter count: " + m;
+            throw new IllegalArgumentException(msg);
+        }
+        return m;
+    }
+
     private static Method getCallbackMethod(Callback callback) {
-        Method[] mlist = callback.getClass().getMethods();
-        for (int mi=0;mi < mlist.length;mi++) {
-            Method m = mlist[mi];
-            if (Callback.METHOD_NAME.equals(m.getName())) {
-                if (m.getParameterTypes().length > Function.MAX_NARGS) {
-                    String msg = "Method signature exceeds the maximum "
-                        + "parameter count: " + m;
-                    throw new IllegalArgumentException(msg);
-                }
-                return m;
+        // Look at only public methods defined by the Callback class
+        Class cls = Native.findCallbackClass(callback.getClass());
+        Method[] pubMethods = cls.getDeclaredMethods();
+        Method[] classMethods = cls.getMethods();
+        Set pmethods = new HashSet(Arrays.asList(pubMethods));
+        pmethods.retainAll(Arrays.asList(classMethods));
+
+        // Remove Object methods disallowed as callback method names 
+        for (Iterator i=pmethods.iterator();i.hasNext();) {
+            Method m = (Method)i.next();
+            if (Callback.FORBIDDEN_NAMES.contains(m.getName())) {
+                i.remove();
             }
         }
-        String msg = "Callback must implement method named '"
-            + Callback.METHOD_NAME + "'";
+        Method[] methods = (Method[])pmethods.toArray(new Method[pmethods.size()]);
+        if (methods.length == 1) {
+            return checkMethod(methods[0]);
+        }
+        for (int i=0;i < methods.length;i++) {
+            Method m = methods[i];
+            if (Callback.METHOD_NAME.equals(m.getName())) {
+                return checkMethod(m);
+            }
+        }
+        String msg = "Callback must implement a single public method, "
+            + "or one public method named '" + Callback.METHOD_NAME + "'";
         throw new IllegalArgumentException(msg);
     }
     
@@ -397,7 +418,7 @@ class CallbackReference extends WeakReference {
                     String str = super.getName();
                     if (options.containsKey(Function.OPTION_INVOKING_METHOD)) {
                         Method m = (Method)options.get(Function.OPTION_INVOKING_METHOD);
-                        Class cls = getCallbackClass(m.getDeclaringClass());
+                        Class cls = Native.findCallbackClass(m.getDeclaringClass());
                         str += " (" + cls.getName() + ")";
                     }
                     return str;

@@ -419,7 +419,7 @@ public class StructureTest extends TestCase {
             public Function cb;
         }
         try {
-            BadFieldStructure s = new BadFieldStructure();
+            new BadFieldStructure().size();
             fail("Function fields should not be allowed");
         }
         catch(IllegalArgumentException e) {
@@ -529,8 +529,8 @@ public class StructureTest extends TestCase {
             }
         }
     	try {
-    		new BufferStructure(new byte[1024]);
-    		fail("Buffer fields should fail immediately");
+            new BufferStructure(new byte[1024]).size();
+            fail("Buffer fields should not be allowed");
     	}
     	catch(IllegalArgumentException e) {
     	}
@@ -838,4 +838,37 @@ public class StructureTest extends TestCase {
         }
     }
 
+    public void testCustomTypeMapper() {
+        class TestField { }
+        class TestStructure extends Structure {
+            public TestField field;
+            public TestStructure() {
+                DefaultTypeMapper m = new DefaultTypeMapper();
+                m.addTypeConverter(TestField.class, new TypeConverter() {
+                    public Object fromNative(Object value, FromNativeContext context) {
+                        return new TestField();
+                    }
+                    public Class nativeType() {
+                        return String.class;
+                    }
+                    public Object toNative(Object value, ToNativeContext ctx) {
+                        return value == null ? null : value.toString();
+                    }
+                });
+                setTypeMapper(new DefaultTypeMapper());
+            }
+        }
+        new TestStructure();
+    }
+    
+    public void testWriteWithNullBoxedPrimitives() {
+        class TestStructure extends Structure {
+            public Boolean zfield;
+            public Integer field;
+        }
+        TestStructure s = new TestStructure();
+        s.write();
+        s.read();
+        assertNotNull("Field should not be null after read", s.field);
+    }
 }
