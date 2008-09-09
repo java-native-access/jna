@@ -872,6 +872,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/sparc/$(DEPDIR)/ffi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/ffi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/ffi64.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/sysv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/unix64.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/win32.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/win64.Plo@am__quote@
 
 .S.o:
 	$(CCASCOMPILE) -c $<

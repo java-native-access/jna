@@ -41,8 +41,8 @@
 
 #ifndef LIBFFI_ASM
 #ifdef X86_WIN64
-typedef unsigned __int64       ffi_arg;
-typedef signed __int64         ffi_sarg;
+typedef UINT64                 ffi_arg;
+typedef INT64                  ffi_sarg;
 #else
 typedef unsigned long          ffi_arg;
 typedef signed long            ffi_sarg;
@@ -93,11 +93,14 @@ typedef enum ffi_abi {
 #else
 #ifdef X86_WIN64
 #define FFI_TRAMPOLINE_SIZE 29
+#define FFI_NATIVE_RAW_API 0
 #else
 #define FFI_TRAMPOLINE_SIZE 10
 #endif
 #endif
+#ifndef X86_WIN64
 #define FFI_NATIVE_RAW_API 1	/* x86 has native raw api support */
+#endif
 #endif
 
 #endif
