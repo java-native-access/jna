@@ -608,6 +608,8 @@ public interface X11 extends Library {
     Pixmap XCreateBitmapFromData(Display display, Window window, Pointer data,
                                  int width, int height);
     int XMapWindow(Display display, Window window);
+    int XMapRaised(Display display, Window window);
+    int XMapSubwindows(Display display, Window window);
     int XFlush(Display display);
     int XUnmapWindow(Display display, Window window);
     int XDestroyWindow(Display display, Window window);
@@ -1665,14 +1667,14 @@ public interface X11 extends Library {
     boolean XCheckTypedEvent(Display display, int event_type, XEvent event_return);
     boolean XCheckTypedWindowEvent(Display display, Window w, int event_type, XEvent event_return);
 
-    /** Returns an {@link XWMHints} which must be freed by {@link #XFree}. */
+    /** Returns an {@link com.sun.jna.examples.unix.X11.XWMHints} which must be freed by {@link #XFree}. */
     XWMHints XGetWMHints(Display display, Window window);
     int XGetWMName(Display display, Window window,
                    XTextProperty text_property_return);
     int XQueryKeymap(Display display, byte[] keys_return);
     int XKeycodeToKeysym(Display display, byte keycode, int index);
-    /** Returns an array of {@link XVisualInfo} which must be freed by {@link #XFree}.
-     * Use {@link XVisualInfo#toArray(int)
+    /** Returns an array of {@link com.sun.jna.examples.unix.X11.XVisualInfo} which must be freed by {@link #XFree}.
+     * Use {@link com.sun.jna.examples.unix.X11.XVisualInfo#toArray(int)
      * toArray(nitems_return.getValue()} to obtain the array.
      */
     XVisualInfo XGetVisualInfo(Display display, NativeLong vinfo_mask,
