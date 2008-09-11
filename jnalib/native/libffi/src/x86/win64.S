@@ -178,7 +178,6 @@ END
 # 
 	.balign 16
         .globl _ffi_closure_win64	
-	.type  _ffi_closure_win64,@function
 _ffi_closure_win64:     
 	# copy register arguments onto stack
 	test	$1,%r11
@@ -219,7 +218,7 @@ _ffi_closure_win64:
 	mov	%rax, %rcx	# context is first parameter
 	mov	%rsp, %rdx	# stack is second parameter
 	add	$48, %rdx	# point to start of arguments
-	mov	_ffi_closure_win64_inner, %rax
+	mov	$_ffi_closure_win64_inner, %rax
 	callq	*%rax		# call the real closure function
 	add	$40, %rsp
 	movq	%rax, %xmm0	# If the closure returned a float,
@@ -229,7 +228,6 @@ _ffi_closure_win64:
 
 	.balign 16
         .globl	_ffi_call_win64
-	.type   _ffi_call_win64,@function
 _ffi_call_win64:        
         # copy registers onto stack
 	mov	%r9,32(%rsp)

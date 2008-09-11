@@ -104,13 +104,13 @@ WINDRES=x86_64-pc-mingw32-windres
 
 # Uncomment to enable MINGW64 cross compiler
 # Last build attempt has too many runtime problems (alloca broken) (080831)
-#MINGW = x86_64-pc-mingw32-gcc -m64 -mno-cygwin
+#MINGW = x86_64-pc-mingw32-gcc
 ifneq ($(MINGW),)
-CC = $(MINGW)
-LD = x86_64-pc-mingw32-ld
+CC = $(MINGW) -m64 -mno-cygwin
+LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lkernel32 -lmsvcrt
-FFI_CONFIG += --host=x86_64-pc-mingw32; rm -f include/ffitarget.h; cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
+FFI_CONFIG += --host=x86_64-pc-mingw32
 else
 # MSVC (wrapper scripts)
 CC=$(FFI_SRC)/../cc.sh -m64
