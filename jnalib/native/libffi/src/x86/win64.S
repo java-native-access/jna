@@ -294,7 +294,7 @@ _ffi_call_win64:
  	jmp	.Lret_void
 
 .Lret_int64:
-  	cmpl	$FFI_TYPE_SINT64, (%rbp)
+  	cmpl	$FFI_TYPE_SINT64, CIF_FLAGS(%rbp)
   	jne	.Lret_void
 
  	mov	RVALUE(%rbp), %rcx

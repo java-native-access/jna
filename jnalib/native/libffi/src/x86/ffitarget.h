@@ -35,6 +35,7 @@
 
 #ifdef X86_WIN64
 #define FFI_SIZEOF_ARG 8
+#define USE_BUILTIN_FFS 0 // until mingw-64 gets it
 #endif
 
 /* ---- Generic type definitions ----------------------------------------- */
