@@ -13,7 +13,6 @@
 package com.sun.jna;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
 /** Represents a native union.  When writing to native memory, the field
  * corresponding to the type passed to {@link #setType} will be written
@@ -64,9 +63,17 @@ public abstract class Union extends Structure {
         throw new IllegalArgumentException("No field of type " + type + " in " + this);
     }
     
-    /** Reads an instance of the given class from memory and returns it.
-     * @param type class type to read
-     * @return instance of the given class
+    /** Reads the Structure field of the given type from memory, sets it as
+     * the active type and returns it.  Convenience method for
+     * <pre><code>
+     * Union u;
+     * Class type;
+     * u.setType(type);
+     * u.read();
+     * value = u.<i>field</i>;
+     * </code></pre>
+     * @param type class type of the Structure field to read
+     * @return the Structure field with the given type
      */
     public Object getTypedValue(Class type) {
         ensureAllocated();
@@ -81,47 +88,40 @@ public abstract class Union extends Structure {
         throw new IllegalArgumentException("No field of type " + type + " in " + this);
     }
 
-    /** Indicates which object will be used to write to native memory.
+    /** Set the active type and its value.  Convenience method for
+     * <pre><code>
+     * Union u;
+     * Class type;
+     * u.setType(type);
+     * u.<i>field</i> = value;
+     * </code></pre>
      * @param object instance of a class which is part of the union
      * @return this Union object
      */
     public Object setTypedValue(Object object) {
         ensureAllocated();
-        Class type = object.getClass();
-        LinkedList interfaceQueue = new LinkedList();
-        // iterate through superclasses
-        while (type != Object.class) {
-            if (checkType(object, type, interfaceQueue)) return this;
-            // to to next superclass
-            type = type.getSuperclass();
-        }
-        // breadth first search through interfaces
-        while ((type = (Class) interfaceQueue.pollFirst()) != null) {
-            if (checkType(object, type, interfaceQueue)) return this;
+        StructField f = findField(object.getClass());
+        if (f != null) {
+            activeField = f;
+            setField(f, object);
+            return this;
         }
         throw new IllegalArgumentException("No field of type " + object.getClass() + " in " + this);
     }
 
-    /** Returns true if there is a field in this union with the same type as <code>type</code>.
-     * @param object value to set
+    /** Returns the field in this union with the same type as <code>type</code>,
+     * if any, null otherwise.
      * @param type type to search for
-     * @param interfaceQueue queue which collects all unproccessed interfaces
-     * @return true if there is a field in this union with the same type as <code>type</code>
+     * @return StructField of matching type
      */
-    private boolean checkType(Object object, Class type, LinkedList interfaceQueue) {
+    private StructField findField(Class type) {
         for (Iterator i=fields().values().iterator();i.hasNext();) {
             StructField f = (StructField)i.next();
-            if (f.type == type) {
-                activeField = f;
-                setField(f, object);
-                return true;
+            if (f.type.isAssignableFrom(type)) {
+                return f;
             }
         }
-        Class[] interfaces = type.getInterfaces();
-        for (int i = 0; i < interfaces.length; i++) {
-            interfaceQueue.add(interfaces[i]);
-        }
-        return false;
+        return null;
     }
 
     /** Only the currently selected field will be written. */
