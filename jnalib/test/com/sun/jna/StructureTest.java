@@ -586,6 +586,17 @@ public class StructureTest extends TestCase {
         assertTrue("Read should preserve structure memory",
                    inner.getPointer() instanceof Memory);
     }
+    
+    public void testPreservePointerFields() {
+        class TestStructure extends Structure {
+            public Pointer p = new Memory(256);
+        }
+        TestStructure s = new TestStructure();
+        final Pointer p = s.p;
+        s.write();
+        s.read();
+        assertSame("Should preserve Pointer references if peer unchanged", p, s.p);
+    }
 
     public void testOverwriteStructureByReferenceFieldOnRead() {
         StructureWithPointers s = new StructureWithPointers();

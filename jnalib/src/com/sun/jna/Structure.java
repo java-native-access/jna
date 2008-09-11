@@ -367,9 +367,11 @@ public abstract class Structure {
         if (readConverter != null) {
             nativeType = readConverter.nativeType();
         }
-        // Get the value at the offset according to its type
+        // Get the current value only for types which might need to be preserved
         Object currentValue = (Structure.class.isAssignableFrom(nativeType)
                                || Callback.class.isAssignableFrom(nativeType)
+                               || Buffer.class.isAssignableFrom(nativeType)
+                               || Pointer.class.isAssignableFrom(nativeType)
                                || nativeType.isArray())
             ? getField(structField) : null;
         Object result = readValue(offset, nativeType, currentValue);
@@ -422,7 +424,18 @@ public abstract class Structure {
             result = new Double(memory.getDouble(offset));
         }
         else if (nativeType == Pointer.class) {
-            result = memory.getPointer(offset);
+            Pointer p = memory.getPointer(offset);
+            result = p;
+            if (p == null) {
+                result = null;
+            }
+            else {
+                Pointer oldp = (Pointer)currentValue;
+                if (oldp == null || p.peer != oldp.peer)
+                    result = p;
+                else
+                    result = oldp;
+            }
         }
         else if (nativeType == String.class) {
             Pointer p = memory.getPointer(offset);
