@@ -322,7 +322,7 @@ public abstract class Structure {
         }
     }
 
-    private void setField(StructField structField, Object value) {
+    void setField(StructField structField, Object value) {
         try {
             structField.field.set(this, value);
         }

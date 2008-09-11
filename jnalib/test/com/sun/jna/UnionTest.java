@@ -20,6 +20,16 @@ public class UnionTest extends TestCase {
         public String value;
     }
     
+    public static class IntStructure extends Structure {
+        public int value;
+    }
+
+    public static class SubIntStructure extends IntStructure {}
+
+    public static interface Func1 extends Callback {
+        public void callback();
+    }
+
     public static class SizedUnion extends Union {
         public byte byteField;
         public short shortField;
@@ -31,6 +41,13 @@ public class UnionTest extends TestCase {
         public Pointer pointer;
     }
     
+    public static class StructUnion extends Union {
+        public int intField;
+        public TestStructure testStruct;
+        public IntStructure intStruct;
+        public Func1 func1;
+    }
+
     public void testCalculateSize() {
         Union u = new SizedUnion();
         assertEquals("Union should be size of largest field", 8, u.size());
@@ -60,6 +77,39 @@ public class UnionTest extends TestCase {
         assertNull("Unselected WString should be null", u.wstring);
     }
     
+    public void testWriteTypedUnion() {
+        final int VALUE = 0x12345678;
+        // write an instance of a direct union class to memory
+        StructUnion u = new StructUnion();
+        IntStructure intStruct = new IntStructure();
+        intStruct.value = VALUE;
+        u.setTypedValue(intStruct);
+        u.write();
+        assertEquals("Wrong value written", VALUE, u.getPointer().getInt(0));
+        // write an instance of a sub class of an union class to memory
+        u = new StructUnion();
+        SubIntStructure subIntStructure = new SubIntStructure();
+        subIntStructure.value = VALUE;
+        u.setTypedValue(subIntStructure);
+        u.write();
+        assertEquals("Wrong value written", VALUE, u.getPointer().getInt(0));
+        // write an instance of an interface
+        u = new StructUnion();
+        Func1 func1 = new Func1() {
+            public void callback() {
+                System.out.println("hi");
+            }
+        };
+        u.setTypedValue(func1);
+    }
+
+    public void testReadTypedUnion() {
+        StructUnion u = new StructUnion();
+        final int VALUE = 0x12345678;
+        u.getPointer().setInt(0, VALUE);
+        assertEquals("int structure not read properly", VALUE, ((IntStructure) u.getTypedValue(IntStructure.class)).value);
+    }
+
     public void testReadTypeInfo() {
         SizedUnion u = new SizedUnion();
         assertEquals("Type should be that of longest field if no field active",
