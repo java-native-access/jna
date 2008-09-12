@@ -242,7 +242,9 @@ public class Function extends Pointer {
                     continue;
                 if (inArg instanceof Structure) {
                     if (!(inArg instanceof Structure.ByValue)) {
-                        ((Structure)inArg).read();
+                        if (((Structure)inArg).getAutoRead()) {
+                            ((Structure)inArg).read();
+                        }
                     }
                 }
                 else if (args[i] instanceof PostCallRead) {
@@ -262,7 +264,9 @@ public class Function extends Pointer {
                 else if (Structure[].class.isAssignableFrom(inArg.getClass())) {
                     Structure[] ss = (Structure[])inArg;
                     for (int si=0;si < ss.length;si++) {
-                        ss[si].read();
+                        if (ss[si].getAutoRead()) {
+                            ss[si].read();
+                        }
                     }
                 }
             }
@@ -317,7 +321,9 @@ public class Function extends Pointer {
                 Structure s = 
                     invokeStructure(callingConvention, args, 
                                     Structure.newInstance(returnType));
-                s.read();
+                if (s.getAutoRead()) {
+                    s.read();
+                }
                 result = s;
             }
             else {
@@ -325,7 +331,9 @@ public class Function extends Pointer {
                 if (result != null) {
                     Structure s = Structure.newInstance(returnType);
                     s.useMemory((Pointer)result);
-                    s.read();
+                    if (s.getAutoRead()) {
+                        s.read();
+                    }
                     result = s;
                 }
             }
@@ -373,7 +381,9 @@ public class Function extends Pointer {
         // Convert Structures to native pointers 
         if (arg instanceof Structure) {
             Structure struct = (Structure)arg;
-            struct.write();
+            if (struct.getAutoWrite()) {
+                struct.write();
+            }
             if (struct instanceof Structure.ByValue) {
             	// Double-check against the method signature, if available
                 Class ptype = struct.getClass();
@@ -459,14 +469,18 @@ public class Function extends Pointer {
             else {
                 Pointer base = ss[0].getPointer();
                 int size = ss[0].size();
-                ss[0].write();
+                if (ss[0].getAutoWrite()) {
+                    ss[0].write();
+                }
                 for (int si=1;si < ss.length;si++) {
                     if (ss[si].getPointer().peer != base.peer + size*si) {
                         String msg = "Structure array elements must use"
                             + " contiguous memory (at element index " + si + ")";     
                         throw new IllegalArgumentException(msg);
                     }
-                    ss[si].write();
+                    if (ss[si].getAutoWrite()) {
+                        ss[si].write();
+                    }
                 }
                 return base;
             }

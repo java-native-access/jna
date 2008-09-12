@@ -120,6 +120,8 @@ public abstract class Structure {
     // This field is accessed by native code
     private long typeInfo;
     private List fieldOrder;
+    private boolean autoRead = true;
+    private boolean autoWrite = true;
 
     protected Structure() {
         this(CALCULATE_SIZE);
@@ -297,11 +299,13 @@ public abstract class Structure {
         }
     }
 
-    /** Force a read of the given field from native memory.
+    /** Force a read of the given field from native memory.  The Java field
+     * will be updated from the current contents of native memory.
      * @return the new field value, after updating
      * @throws IllegalArgumentException if no field exists with the given name
      */
     public Object readField(String name) {
+        ensureAllocated();
         StructField f = (StructField)structFields.get(name);
         if (f == null)
             throw new IllegalArgumentException("No such field: " + name);
@@ -333,8 +337,8 @@ public abstract class Structure {
         }
     }
 
-    /** Only keep the original structure if its address is unchanged.  Otherwise
-     * replace it with a new object.
+    /** Only keep the original structure if its native address is unchanged.
+     * Otherwise replace it with a new object.
      * @param type Structure subclass
      * @param s Original Structure object
      * @param address the native <code>struct *</code>
@@ -349,12 +353,16 @@ public abstract class Structure {
                 s = newInstance(type);
                 s.useMemory(address);
             }
-            s.read();
+            if (s.getAutoRead()) {
+                s.read();
+            }
         }
         return s;
     }
 
-    /** Read the given field and return its value. */
+    /** Read the given field and return its value.  The Java field will be
+     * updated from the contents of native memory.
+     */
     // TODO: make overridable method with calculated native type, offset, etc
     Object readField(StructField structField) {
 
@@ -574,11 +582,29 @@ public abstract class Structure {
         }
     }
 
-    /** Write the given field to native memory. */
+    /** Write the given field to native memory.  The current value in the Java
+     * field will be translated into native memory.
+     * @throws IllegalArgumentException if no field exists with the given name
+     */
     public void writeField(String name) {
+        ensureAllocated();
         StructField f = (StructField)structFields.get(name);
         if (f == null)
             throw new IllegalArgumentException("No such field: " + name);
+        writeField(f);
+    }
+
+    /** Write the given field value to the field and native memory.   The
+     * given value will be written both to the Java field and the
+     * corresponding native memory.
+     * @throws IllegalArgumentException if no field exists with the given name
+     */
+    public void writeField(String name, Object value) {
+        ensureAllocated();
+        StructField f = (StructField)structFields.get(name);
+        if (f == null)
+            throw new IllegalArgumentException("No such field: " + name);
+        setField(f, value);
         writeField(f);
     }
 
@@ -1203,6 +1229,47 @@ public abstract class Structure {
         Pointer p = getTypeInfo(this);
         typeInfo = p.peer;
         return p;
+    }
+
+    /** Set whether the structure is automatically synched to native memory
+        before and after a native function call.  Convenience method for
+        <pre><code>
+        boolean auto = ...;
+        setAutoRead(auto);
+        setAutoWrite(auto);
+        </code></pre>
+    */
+    public void setAutoSynch(boolean auto) {
+        setAutoRead(auto);
+        setAutoWrite(auto);
+    }
+
+    /** Set whether the struture is written to native memory prior to
+        a native function call.
+    */
+    public void setAutoRead(boolean auto) {
+        this.autoRead = auto;
+    }
+
+    /** Returns whether the struture is written to native memory prior to
+        a native function call.
+    */
+    public boolean getAutoRead() {
+        return this.autoRead;
+    }
+
+    /** Set whether the structure is read from native memory after a native
+        function call. 
+    */
+    public void setAutoWrite(boolean auto) {
+        this.autoWrite = auto;
+    }
+
+    /** Returns whether the structure is read from native memory after a native
+        function call. 
+    */
+    public boolean getAutoWrite() {
+        return this.autoWrite;
     }
 
     /** Exposed for testing purposes only. */

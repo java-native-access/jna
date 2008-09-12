@@ -63,6 +63,45 @@ public abstract class Union extends Structure {
         throw new IllegalArgumentException("No field of type " + type + " in " + this);
     }
     
+    /** Force a read of the given field from native memory.
+     * @return the new field value, after updating
+     * @throws IllegalArgumentException if no field exists with the given name
+     */
+    public Object readField(String name) {
+        ensureAllocated();
+        StructField f = (StructField)fields().get(name);
+        if (f != null) {
+            setType(f.type);
+        }
+        return super.readField(name);
+    }
+
+    /** Write the given field value to native memory.
+     * The given field will become the active one.
+     * @throws IllegalArgumentException if no field exists with the given name
+     */
+    public void writeField(String name) {
+        ensureAllocated();
+        StructField f = (StructField)fields().get(name);
+        if (f != null) {
+            setType(f.type);
+        }
+        super.writeField(name);
+    }
+
+    /** Write the given field value to the field and native memory.
+     * The given field will become the active one.
+     * @throws IllegalArgumentException if no field exists with the given name
+     */
+    public void writeField(String name, Object value) {
+        ensureAllocated();
+        StructField f = (StructField)fields().get(name);
+        if (f != null) {
+            setType(f.type);
+        }
+        super.writeField(name, value);
+    }
+
     /** Reads the Structure field of the given type from memory, sets it as
      * the active type and returns it.  Convenience method for
      * <pre><code>

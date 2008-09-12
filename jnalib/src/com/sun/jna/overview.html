@@ -48,6 +48,7 @@ additional JNI or native code.
 <li><a href="#invocation-mapping">Invocation Mapping</a>
 <li><a href="#global-data">Library Global Data</a>
 <li><a href="#crash-protection">VM Crash Protection</a>
+<li><a href="#performance">Performance</a>
 </ul>
 
 <p>
@@ -65,13 +66,18 @@ public interface CLibrary extends Library {
 The <code>String</code> passed to the <code>Native.loadLibrary</code> method
 is the undecorated name of the shared library file.  Here are some examples of
 library name mappings.<p>  
-<center>
-<table style="background-color: #EAEAEA;" width="400">
+<style type="text/css">
+table.styled { border-collapse:collapse; background-color:#EAEAEA; }
+td { padding-left: 10px; padding-right: 10px; }
+blockquote { background-color:#EAEAEA; }
+</style>
+<table border=1 borderColor=white class=styled>
 <tr><td><b>OS</b></td><td><b>Library Name</b></td><td><b>String</b></td></tr>
 <tr><td>Windows</td><td>user32.dll</td><td>user32</td></tr>
 <tr><td>Linux</td><td>libX11.so</td><td>X11</td></tr>
 <tr><td>Mac OS X</td><td>libm.dylib</td><td>m</td></tr>
-</table></center>
+<tr><td>Mac OS X Framework</td><td>/System/Library/Frameworks/Carbon.framework/Carbon</td><td>Carbon</td></tr>
+</table>
 <p>
 Any given native library with a unique filesystem path is represented by a single instance of {@link com.sun.jna.NativeLibrary} and obtained via {@link com.sun.jna.NativeLibrary#getInstance(String)}.  The native library will be unloaded when no longer referenced by any Java code.
 <p>
@@ -99,7 +105,7 @@ An instance of the {@link com.sun.jna.Function} class is obtained through the {@
 <h2>Marshalling/Unmarshalling (Java/Native Type Conversions)</h2>
 Java types must be chosen to match native types of the same size.  Following are the types supported by the JNA library.<p>
 <center>
-<table border=1 bordercolor=#CCCCCC style="border-collapse:collapse" width="100%">
+<table border=1 borderColor=white class=styled width="100%">
 <tr><td><b>Java Type</b></td><td><b>C Type</b></td><td><b>Native Representation</b></td></tr>
 <tr><td>boolean</td><td>int</td><td>32-bit integer (customizable)</td>
 <tr><td>byte</td><td>char</td><td>8-bit integer</td>
@@ -134,7 +140,7 @@ Java types must be chosen to match native types of the same size.  Following are
 <li>Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in order to access a subset of the array (changing the effective size and/or offest).
 <li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
 <li>Bitfields must be manully packed into an integer type.  
-<li>All other types must eventually be converted to one of these basic types.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
+<li>All other types must eventually be converted to one of the types in this table.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
 <li>Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
 <li>Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the {@link com.sun.jna.NativeMapped} interface.  
 <li><code>Structure</code> and <code>Union</code> are <em>not</em> converted to <code>Pointer</code> when passed by value.
@@ -227,10 +233,11 @@ JNA supports supplying Java callbacks to native code.  You must define an
 interface that extends the {@link com.sun.jna.Callback} interface, and define
 a single <code>callback</code> method with a signature that matches the
 function pointer required by the native code.  The name of the method
-may be something other than "callback" (excluding "toString", "hashCode", and
-"equals") only if there is only a single method in the interface which extends
-Callback or the Class which implements Callback.  The arguments and return
-value follow the same rules as for a direct function invocation.
+may be something other than "callback" only if there is only a single method
+in the interface which extends Callback or the class which implements
+{@link com.sun.jna.Callback}.  The arguments and return value follow the same rules
+as for a 
+direct function invocation. 
 <p>
 If the callback returns a <code>String</code> or <code>String[]</code>, the
 returned memory will be valid until the returned object is GC'd.
@@ -249,10 +256,10 @@ struct _functions {
 // Equivalent JNA mapping
 public class Functions extends Structure {
   public static interface OpenFunc extends Callback {
-    int callback(String name, int options);
+    int invoke(String name, int options);
   }
   public static interface CloseFunc extends Callback {
-    int callback(int fd);
+    int invoke(int fd);
   }
   public OpenFunc open;
   public CloseFunc close;
@@ -260,8 +267,8 @@ public class Functions extends Structure {
 ...
 Functions funcs = new Functions();
 lib.init(funcs);
-int fd = funcs.open.callback("myfile", 0);
-funcs.close.callback(fd);
+int fd = funcs.open.invoke("myfile", 0);
+funcs.close.invoke(fd);
 </pre></code></blockquote>
 
 Callbacks may also be used as return values.  Native function pointers are wrapped in a proxy implementing the declared Callback type, to facilitate calling from Java.  
@@ -273,7 +280,7 @@ sig_t signal(int signal, sig_t sigfunc);
 // Equivalent JNA mapping
 public interface CLibrary extends Library {
     public interface SignalFunction extends Callback {
-        void callback(int signal);
+        void invoke(int signal);
     }
     SignalFunction signal(int signal, SignalFunction func);
 }
@@ -601,7 +608,25 @@ The method {@link com.sun.jna.NativeLibrary#getGlobalVariableAddress} may be use
 <a href="#toc">Table of Contents</a>
 <a name="crash-protection"></a>
 <h2>VM Crash Protection</h2>
-It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.
+It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.  Not all platforms support this protection; if not, the value of {@link com.sun.jna.Native#isProtected} will remain <code>false</code>.
 
+<p>
+<a href="#toc">Table of Contents</a>
+<a name="performance"></a>
+<h2>Performance</h2>
+<h3>Pointer/Array/Buffer Variants</h3>
+Java primitive arrays are generally slower to use than memory
+(Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
+be pinned and possibly copied across the native call, since the Java array is not necessarily contiguously allocated.
+<h3>Large Structures</h3>
+Structures are normally written to native memory before and read back from
+native memory after a function call.  With very large structures, there can be
+a performance hit using reflection to walk through all the fields.  Structure
+auto-synch can be disabled by calling
+{@link com.sun.jna.Structure#setAutoSynch} with a <code>false</code> parameter.
+It is then up to you to use {@link com.sun.jna.Structure#readField(String)}
+and {@link com.sun.jna.Structure#writeField(String)}/{@link
+com.sun.jna.Structure#writeField(String,Object)} to synch with just the fields
+of interest. 
 </body>
 </html>

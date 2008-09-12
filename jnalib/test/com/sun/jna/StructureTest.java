@@ -882,4 +882,26 @@ public class StructureTest extends TestCase {
         s.read();
         assertNotNull("Field should not be null after read", s.field);
     }
+
+    public interface AutoSynchTest extends Library {
+        public static class TestStructure extends Structure {
+            public int field;
+        }
+        Pointer testStructurePointerArgument(TestStructure s);
+    }
+    public void testDisableAutoSynch() {
+        AutoSynchTest lib = (AutoSynchTest)Native.loadLibrary("testlib", AutoSynchTest.class);
+        AutoSynchTest.TestStructure s = new AutoSynchTest.TestStructure();
+        final int VALUE = 42;
+        s.field = VALUE;
+        s.setAutoWrite(false);
+        lib.testStructurePointerArgument(s);
+        assertEquals("Auto write should be disabled", 0, s.field);
+
+        final int EXPECTED = s.field;
+        s.getPointer().setInt(0, VALUE);
+        s.setAutoRead(false);
+        lib.testStructurePointerArgument(s);
+        assertEquals("Auto read should be disabled", EXPECTED, s.field);
+    }
 }

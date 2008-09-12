@@ -5,6 +5,9 @@
 <li>Allow arbitrary callback method names if only one method is defined in the class which implements Callback (colinwalters).
 <li>Allow specification of callback type mappers by using a TYPE_MAPPER field (colinwalters).
 <li>Allow uninitialized (null-valued) boxed primitives in Structures (colinwalters).
+<li>Add convenience methods to set active Union field and value simultaneously (xylo).
+<li>Augment Union read/writeField to set the active field.
+<li>Allow Structure auto-synch across native calls to be disabled.
 <li>Win64 support.
 </ul>
 <b>Bug Fixes</b><br>
@@ -14,6 +17,7 @@
 <li>Fix UnsatisfiedLinkError using transparent window on Win2K.
 <li>Fix memory leak with callbacks called from native threads with no Java context (johnwallace).  
 <li>Defer structure size calculation if type mapper not yet set, allowing type mapper to be set in derived constructors (colinwalters).
+<li>Ensure structure memory is allocated in Structure.read/writeField.
 </ul>
 <h2>Release 3.0.5</h2>
 <b>Features</b><br>

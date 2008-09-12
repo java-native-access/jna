@@ -22,6 +22,9 @@
 
 # TODO
 
+* pointer.setValue(), to handle NativeMapped types and move read/writeValue
+  methods out of Structure, to be used by Function w/NativeMapped[] parameter
+
 * write structure to contiguous Java array, then write all at once to minimize
   native calls.  Otherwise, structs with lots of fields take a big performance
   hit making a native call for each field.

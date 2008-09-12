@@ -1107,6 +1107,14 @@ public class WindowUtils {
                     rects[i].y = (short)r.y;
                     rects[i].width = (short)r.width;
                     rects[i].height = (short)r.height;
+                    // Optimization: write directly to native memory
+                    Pointer p = rects[i].getPointer();
+                    p.setShort(0, (short)r.x);
+                    p.setShort(2, (short)r.y);
+                    p.setShort(4, (short)r.width);
+                    p.setShort(6, (short)r.height);
+                    rects[i].setAutoSynch(false);
+                    // End optimization
                 }
                 final int UNMASKED = 1;
                 x11.XSetForeground(dpy, gc, new NativeLong(UNMASKED));
