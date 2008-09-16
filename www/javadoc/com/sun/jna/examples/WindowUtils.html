@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.5</font></EM>
+<b>JNA API</><font size="-1"> 3.0.6</font></EM>
 </TD>
 </TR>
 
@@ -122,10 +122,19 @@ Provides additional features on a Java <A HREF="http://java.sun.com/j2se/1.4.2/d
  NOTE: If you use <A HREF="../../../../com/sun/jna/examples/WindowUtils.html#setWindowMask(java.awt.Window, java.awt.Shape)"><CODE>setWindowMask(Window,Shape)</CODE></A> and override <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Container.html#paint(java.awt.Graphics)" title="class or interface in java.awt"><CODE>Container.paint(Graphics)</CODE></A> on OS X, you'll need to explicitly set the clip
  mask on the <code>Graphics</code> object with the window mask; only the
  content pane of the window and below have the window mask automatically
- applied.
+ applied.<p>
+ NOTE: On OSX, the property
+ <code>apple.awt.draggableWindowBackground</code> is set automatically when
+ a window's background color has an alpha component.  That property must be
+ set to its final value <em>before</em> the heavyweight peer for the Window
+ is created.  Once <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html#addNotify()" title="class or interface in java.awt"><CODE>Component.addNotify()</CODE></A> has been called on the
+ component, causing creation of the heavyweight peer, changing this
+ property has no effect.
 <P>
 
 <P>
+<DL>
+<DT><B>See Also:</B><DD><a href="http://developer.apple.com/technotes/tn2007/tn2196.html#APPLE_AWT_DRAGGABLEWINDOWBACKGROUND">Apple Technote 2007</a></DL>
 <HR>
 
 <P>
@@ -405,10 +414,16 @@ public static void <B>setWindowAlpha</B>(<A HREF="http://java.sun.com/j2se/1.4.2
  opaque, 0.0 fully transparent. The alpha level is applied equally
  to all window pixels.<p>
  NOTE: Windows requires that <code>sun.java2d.noddraw=true</code>
- in order for alpha to work.
+ in order for alpha to work.<p>
+ NOTE: On OSX, the property
+ <code>apple.awt.draggableWindowBackground</code> must be set to its
+ final value <em>before</em> the heavyweight peer for the Window is
+ created.  Once <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html#addNotify()" title="class or interface in java.awt"><CODE>Component.addNotify()</CODE></A> has been called on the
+ component, causing creation of the heavyweight peer, changing this
+ property has no effect.
 <P>
 <DD><DL>
-</DL>
+<DT><B>See Also:</B><DD><a href="http://developer.apple.com/technotes/tn2007/tn2196.html#APPLE_AWT_DRAGGABLEWINDOWBACKGROUND">Apple Technote 2007</a></DL>
 </DD>
 </DL>
 <HR>
@@ -422,9 +437,15 @@ public static void <B>setWindowTransparent</B>(<A HREF="http://java.sun.com/j2se
 <DD>Set the window to be transparent. Only explicitly painted pixels
  will be non-transparent. All pixels will be composited with
  whatever is under the window using their alpha values.
+ 
+ On OSX, the property <code>apple.awt.draggableWindowBackground</code>
+ must be set to its final value <em>before</em> the heavyweight peer for
+ the Window is created.  Once <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html#addNotify()" title="class or interface in java.awt"><CODE>Component.addNotify()</CODE></A> has been
+ called on the component, causing creation of the heavyweight peer,
+ changing this property has no effect.
 <P>
 <DD><DL>
-</DL>
+<DT><B>See Also:</B><DD><a href="http://developer.apple.com/technotes/tn2007/tn2196.html#APPLE_AWT_DRAGGABLEWINDOWBACKGROUND">Apple Technote 2007</a></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -451,7 +472,7 @@ public static void <B>setWindowTransparent</B>(<A HREF="http://java.sun.com/j2se
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.5</font></EM>
+<b>JNA API</><font size="-1"> 3.0.6</font></EM>
 </TD>
 </TR>
 

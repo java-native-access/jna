@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.5</font></EM>
+<b>JNA API</><font size="-1"> 3.0.6</font></EM>
 </TD>
 </TR>
 
@@ -190,7 +190,16 @@ Provides generation of invocation plumbing for a defined native
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#findLibraryClass(java.lang.Class)">findLibraryClass</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#findCallbackClass(java.lang.Class)">findCallbackClass</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find the first instance of an interface which implements the Callback
+ interface or an interface derived from Callback.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.html#findEnclosingLibraryClass(java.lang.Class)">findEnclosingLibraryClass</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find the library interface corresponding to the given class.</TD>
@@ -722,14 +731,28 @@ public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.
 </DL>
 <HR>
 
-<A NAME="findLibraryClass(java.lang.Class)"><!-- --></A><H3>
-findLibraryClass</H3>
+<A NAME="findCallbackClass(java.lang.Class)"><!-- --></A><H3>
+findCallbackClass</H3>
 <PRE>
-static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A> <B>findLibraryClass</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A> <B>findCallbackClass</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+<DL>
+<DD>Find the first instance of an interface which implements the Callback
+ interface or an interface derived from Callback.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findEnclosingLibraryClass(java.lang.Class)"><!-- --></A><H3>
+findEnclosingLibraryClass</H3>
+<PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A> <B>findEnclosingLibraryClass</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;cls)</PRE>
 <DL>
 <DD>Find the library interface corresponding to the given class.  Checks
- all ancestor classes for a declaring class which implements 
- <A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><CODE>Native.DeleteNativeLibrary</CODE></A>.
+ all ancestor classes and interfaces for a declaring class which
+ implements <A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><CODE>Native.DeleteNativeLibrary</CODE></A>.
 <P>
 <DD><DL>
 </DL>
@@ -948,7 +971,7 @@ public static void <B>main</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.5</font></EM>
+<b>JNA API</><font size="-1"> 3.0.6</font></EM>
 </TD>
 </TR>
 
