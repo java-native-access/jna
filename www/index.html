@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-09-04">
+<meta name="date" content="2008-09-06">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -212,7 +212,7 @@ Java primitive types (and their object equivalents) map directly to the native C
 <tr><td>int</td><td>32-bit integer</td><td>int</td><td>DWORD</td>
 <tr><td>int</td><td>boolean value</td><td>boolean</td><td>BOOL</td>
 <tr><td>long</td><td>32/64-bit integer</td><td>NativeLong</td><td>LONG</td>
-<tr><td>long long</td><td>64-bit integer</td><td>long</td><td></td>
+<tr><td>long long</td><td>64-bit integer</td><td>long</td><td>__int64</td>
 <tr><td>float</td><td>32-bit FP</td><td>float</td><td></td>
 <tr><td>double</td><td>64-bit FP</td><td>double</td><td></td>
 <tr><td>char*</td><td>C string</td><td>String</td><td>LPTCSTR</td>
@@ -298,7 +298,8 @@ overview</a> for a complete list of built-in type mappings.
 <a name=callbacks></a>
 <h3>Callbacks/Closures (Function Pointers)</h3>
 Callback declarations consist of a simple interface that extends the <a href="javadoc/com/sun/jna/Callback.html">Callback</a>
-interface and implements a <code>callback</code> method.  Callbacks are
+interface and implements a <code>callback</code> method (or defines a single
+method of arbitrary name).  Callbacks are
 implemented by wrapping a Java object method in a little bit of C glue code.
 The simplest usage resembles using anonymous inner classes to register event
 listeners.  Following is an example of callback usage:<br> 
