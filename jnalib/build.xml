@@ -253,6 +253,7 @@
     <echo>Invalidating native code, new checksum is ${md5}</echo>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/darwin.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-x86.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
@@ -553,6 +554,9 @@
       <zipfileset src="${dist}/openbsd-i386.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/openbsd-i386"/>
+      <zipfileset src="${dist}/win32-amd64.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/win32-amd64"/>
     </jar>
     <copy todir="${dist}">
       <fileset dir="${build}">
