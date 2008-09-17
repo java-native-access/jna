@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-09-06">
+<meta name="date" content="2008-09-17">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -235,6 +235,11 @@ void fill_buffer(int buf[], int len); // same thing with array syntax
 void fill_buffer(int[] buf, int len);
 </textarea>
 </blockquote>
+<p>
+NOTE: if the parameter is to be used by the native function outside the
+scope of the function call, you <em>must</em> use <code>Memory</code> or an
+NIO Buffer.  The memory provided by a Java primitive array will only be valid
+for use by the native code for the duration of the function call.
 <p>
 Arrays of C strings (the <code>char* argv[]</code> to the C <code>main</code>,
 for example), may be represented by <code>String[]</code> in Java code.  JNA
