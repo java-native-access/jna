@@ -137,7 +137,12 @@ Java types must be chosen to match native types of the same size.  Following are
 <ul>
 <li>Unsigned values may be passed by assigning the corresponding
   two's-complement representation to the signed type of the same size.  
-<li>Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in order to access a subset of the array (changing the effective size and/or offest).
+<li>Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in
+  order to access a subset of the array (changing the effective size and/or
+  offest).
+<li>Java arrays of primitive type are only valid for use within the scope of a
+  single call.  If the native code keeps a reference to the memory, use {@link
+  Memory} or {@link java.nio.Buffer} instead.
 <li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
 <li>Bitfields must be manully packed into an integer type.  
 <li>All other types must eventually be converted to one of the types in this table.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
