@@ -47,6 +47,7 @@ FFI_CONFIG=--enable-static --disable-shared --with-pic=yes
 endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
+TESTLIB2=$(BUILD)/$(LIBPFX)testlib2$(LIBSFX)
 
 # Reasonable defaults based on GCC
 LIBPFX=lib
@@ -213,7 +214,7 @@ else
 	$(CC) $(CFLAGS) -c $< $(COUT)
 endif
 
-all: $(LIBRARY) $(TESTLIB)
+all: $(LIBRARY) $(TESTLIB) $(TESTLIB2)
 
 install:
 	mkdir $(INSTALLDIR)
@@ -228,6 +229,9 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 
 $(TESTLIB): $(BUILD)/testlib.o 
 	$(LD) $(LDFLAGS) $< $(TESTDEF)
+
+$(TESTLIB2): $(BUILD)/testlib2.o 
+	$(LD) $(LDFLAGS) $< $(TESTDEF) $(TESTLIB)
 
 ifneq ($(DYNAMIC_LIBFFI),true)
 $(FFI_LIB):

@@ -123,6 +123,19 @@ public class LibraryLoadTest extends TestCase {
         }
     }
 
+    public interface TestLib2 extends Library {
+        int dependentReturnFalse();
+    }
+    public void testLoadDependentLibrary() {
+        try {
+            TestLib2 lib = (TestLib2)Native.loadLibrary("testlib2", TestLib2.class);
+            lib.dependentReturnFalse();
+        }
+        catch(UnsatisfiedLinkError e) {
+            fail("Failed to load dependent libraries: " + e);
+        }
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(LibraryLoadTest.class);
     }
