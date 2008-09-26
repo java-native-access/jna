@@ -18,6 +18,9 @@
   <resources os="Windows" arch="x86">
     <nativelib href="win32-x86.jar"/>
   </resources>
+  <resources os="Windows" arch="amd64">
+    <nativelib href="win32-amd64.jar"/>
+  </resources>
   <resources os="Linux" arch="i386">
     <!-- Use 32-bit X11 libs on 64-bit systems (Ubuntu) -->
     <property name="jna.library.path" value="/usr/X11R6/lib:/usr/lib32:/usr/lib"/>
@@ -26,6 +29,9 @@
   <resources os="Linux" arch="amd64">
     <property name="jna.library.path" value="/usr/X11R6/lib:/usr/lib"/>
     <nativelib href="linux-amd64.jar"/>
+  </resources>
+  <resources os="OpenBSD" arch="i386">
+    <nativelib href="openbsd-i386.jar"/>
   </resources>
   <resources os="FreeBSD" arch="i386">
     <nativelib href="freebsd-i386.jar"/>
