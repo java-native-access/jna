@@ -132,7 +132,10 @@ public class LibraryLoadTest extends TestCase {
             lib.dependentReturnFalse();
         }
         catch(UnsatisfiedLinkError e) {
-            fail("Failed to load dependent libraries: " + e);
+            // failure expected on anything but windows
+            if (Platform.isWindows()) {
+                fail("Failed to load dependent libraries: " + e);
+            }
         }
     }
 

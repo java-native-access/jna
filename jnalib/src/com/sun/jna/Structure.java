@@ -433,12 +433,12 @@ public abstract class Structure {
         }
         else if (nativeType == Pointer.class) {
             Pointer p = memory.getPointer(offset);
-            result = p;
             if (p == null) {
                 result = null;
             }
             else {
-                Pointer oldp = (Pointer)currentValue;
+                Pointer oldp = currentValue instanceof Pointer
+                    ? (Pointer)currentValue : null;
                 if (oldp == null || p.peer != oldp.peer)
                     result = p;
                 else

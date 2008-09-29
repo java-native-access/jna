@@ -361,6 +361,7 @@ public final class Native {
             if (!options.containsKey(interfaceClass)) {
                 try {
                     Field field = interfaceClass.getField("OPTIONS");
+                    field.setAccessible(true);
                     options.put(interfaceClass, field.get(null));
                 }
                 catch (NoSuchFieldException e) {
@@ -388,6 +389,7 @@ public final class Native {
             if (!typeMappers.containsKey(interfaceClass)) {
                 try {
                     Field field = interfaceClass.getField("TYPE_MAPPER");
+                    field.setAccessible(true);
                     typeMappers.put(interfaceClass, field.get(null));
                 }
                 catch (NoSuchFieldException e) {
@@ -420,6 +422,7 @@ public final class Native {
             if (!alignments.containsKey(interfaceClass)) {
                 try {
                     Field field = interfaceClass.getField("STRUCTURE_ALIGNMENT");
+                    field.setAccessible(true);
                     alignments.put(interfaceClass, field.get(null));
                 }
                 catch(NoSuchFieldException e) {

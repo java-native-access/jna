@@ -587,9 +587,13 @@ public class StructureTest extends TestCase {
                    inner.getPointer() instanceof Memory);
     }
     
+    public static class TestPointer extends PointerType { }
     public void testPreservePointerFields() {
         class TestStructure extends Structure {
             public Pointer p = new Memory(256);
+            public TestPointer p2 = new TestPointer() {
+                    { setPointer(new Memory(256)); }
+                };
         }
         TestStructure s = new TestStructure();
         final Pointer p = s.p;
