@@ -27,7 +27,7 @@ do
     -o)
       dir="$(dirname $2)"
       base="$(basename $2|sed 's/\.[^.]*//g')"
-      args="$args /out:\"$2\" /pdb:$base.pdb /implib:$base.lib"
+      args="$args /out:\"$2\" /pdb:$dir/$base.pdb /implib:$dir/$base.lib"
       shift 2
     ;;
     -shared)
@@ -35,6 +35,10 @@ do
       shift 1
     ;;
     -static-libgcc)
+      shift 1
+    ;;
+    *.dll)
+      args="$args $(echo $1|sed -e 's/.dll/.lib/g')"
       shift 1
     ;;
     *.o|*.lib|*.a)
