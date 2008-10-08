@@ -230,8 +230,13 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 $(TESTLIB): $(BUILD)/testlib.o 
 	$(LD) $(LDFLAGS) $< 
 
+ifeq ($(ARSFX),.lib)
+TESTDEP=$(TESTLIB:.dll=.lib)
+else
+TESTDEP=$(TESTLIB)
+endif
 $(TESTLIB2): $(BUILD)/testlib2.o 
-	$(LD) $(LDFLAGS) $< $(TESTLIB:.dll=.lib)
+	$(LD) $(LDFLAGS) $< $(TESTDEP)
 
 ifneq ($(DYNAMIC_LIBFFI),true)
 $(FFI_LIB):
