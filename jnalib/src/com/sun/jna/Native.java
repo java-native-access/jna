@@ -84,12 +84,7 @@ public final class Native {
     /** Size of a native <code>wchar_t</code> type, in bytes. */
     public static final int WCHAR_SIZE;
     static {
-        try {
-            System.loadLibrary("jnidispatch");
-        }
-        catch(UnsatisfiedLinkError e) {
-            loadNativeLibrary();
-        }
+        loadNativeLibrary();
         POINTER_SIZE = pointerSize();
         LONG_SIZE = longSize();
         WCHAR_SIZE = wideCharSize();
@@ -490,7 +485,58 @@ public final class Native {
         return "/com/sun/jna/" + osPrefix;
     }
 
+    /**
+     * Loads the JNA stub library.  It will first attempt to load this library
+     * from the directories specified in jna.boot.library.path.  If that fails,
+     * it will fallback to loading from the system library paths. Finally it will
+     * attempt to extract the stub library from from the JNA jar file, and load it.
+     * <p>
+     * The jna.boot.library.path property is mainly to support jna.jar being
+     * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
+     * are ignored.  It might also be useful in other situations.
+     * </p>
+     */
     private static void loadNativeLibrary() {
+        String libName = "jnidispatch";
+        String bootPath = System.getProperty("jna.boot.library.path");
+        if (bootPath != null) {
+            String[] dirs = bootPath.split(File.pathSeparator);
+            for (int i = 0; i < dirs.length; ++i) {
+                String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
+                try {
+                    System.load(path);
+                    return;
+                } catch (UnsatisfiedLinkError ex) {
+                }
+                if (Platform.isMac()) {
+                    String orig, ext;
+                    if (path.endsWith("dylib")) {
+                        orig = "dylib";
+                        ext = "jnilib";
+                    } else {
+                        orig = "jnilib";
+                        ext = "dylib";
+                    }
+                    try {
+                        System.load(path.substring(0, path.lastIndexOf(orig)) + ext);
+                        return;
+                    } catch (UnsatisfiedLinkError ex) {
+                    }
+                }
+            }
+        }
+        try {
+            System.loadLibrary(libName);
+        }
+        catch(UnsatisfiedLinkError e) {
+            loadNativeLibraryFromJar();
+        }
+    }
+
+    /**
+     * Extracts and loads the JNA stub library from jna.jar
+     */
+    private static void loadNativeLibraryFromJar() {
         String libname = System.mapLibraryName("jnidispatch");
         String resourceName = getNativeLibraryResourcePath() + "/" + libname;
         URL url = Native.class.getResource(resourceName);
