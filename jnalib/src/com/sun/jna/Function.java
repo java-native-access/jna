@@ -311,7 +311,9 @@ public class Function extends Pointer {
         }
         else if (returnType==WString.class) {
             String s = invokeString(callingConvention, args, true);
-            result = s != null ? new WString(s) : null;
+            if (s != null) {
+                result = new WString(s);
+            }
         }
         else if (Pointer.class.isAssignableFrom(returnType)) {
             result = invokePointer(callingConvention, args);
@@ -342,6 +344,29 @@ public class Function extends Pointer {
             result = invokePointer(callingConvention, args);
             if (result != null) {
                 result = CallbackReference.getCallback(returnType, (Pointer)result);
+            }
+        }
+        else if (returnType==String[].class) {
+            Pointer p = invokePointer(callingConvention, args);
+            if (p != null) {
+                result = p.getStringArray(0);
+            }
+        }
+        else if (returnType==WString[].class) {
+            Pointer p = invokePointer(callingConvention, args);
+            if (p != null) {
+                String[] arr = p.getStringArray(0, true);
+                WString[] warr = new WString[arr.length];
+                for (int i=0;i < arr.length;i++) {
+                    warr[i] = new WString(arr[i]);
+                }
+                result = warr;
+            }
+        }
+        else if (returnType==Pointer[].class) {
+            Pointer p = invokePointer(callingConvention, args);
+            if (p != null) {
+                result = p.getPointerArray(0);
             }
         }
         else {

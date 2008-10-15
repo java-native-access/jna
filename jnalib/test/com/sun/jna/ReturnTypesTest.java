@@ -67,6 +67,10 @@ public class ReturnTypesTest extends TestCase {
         SimpleStructure returnStaticTestStructure();
         SimpleStructure returnNullTestStructure();
         TestStructure.ByValue returnStructureByValue();
+
+        Pointer[] returnPointerArgument(Pointer[] arg);
+        String[] returnPointerArgument(String[] arg);
+        WString[] returnPointerArgument(WString[] arg);
     }
 
     TestLibrary lib;
@@ -201,6 +205,36 @@ public class ReturnTypesTest extends TestCase {
         assertEquals("Wrong inner structure value", 5, s.inner.value, 0);
     }
     
+    public void testReturnPointerArray() {
+        Pointer value = new Memory(10);
+        Pointer[] input = {
+            value, null,
+        };
+        Pointer[] result = lib.returnPointerArgument(input);
+        assertEquals("Wrong array length", input.length-1, result.length);
+        assertEquals("Wrong array element value", value, result[0]);
+    }
+
+    public void testReturnStringArray() {
+        String value = getName();
+        String[] input = {
+            value, null,
+        };
+        String[] result = lib.returnPointerArgument(input);
+        assertEquals("Wrong array length", input.length-1, result.length);
+        assertEquals("Wrong array element value", value, result[0]);
+    }
+
+    public void testReturnWStringArray() {
+        WString value = new WString(getName());
+        WString[] input = {
+            value, null,
+        };
+        WString[] result = lib.returnPointerArgument(input);
+        assertEquals("Wrong array length", input.length-1, result.length);
+        assertEquals("Wrong array element value", value, result[0]);
+    }
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(ReturnTypesTest.class);
     }

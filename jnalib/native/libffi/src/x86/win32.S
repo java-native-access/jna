@@ -33,8 +33,6 @@
  
 .text
  
-.globl ffi_prep_args
- 
         # This assumes we are using gas.
         .balign 16
 .globl _ffi_call_SYSV
