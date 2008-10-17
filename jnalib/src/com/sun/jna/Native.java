@@ -453,6 +453,24 @@ public final class Native {
         return s.getBytes();
     }
 
+    /** Obtain a NUL-terminated byte buffer equivalent to the given String. */
+    public static byte[] toByteArray(String s) {
+        byte[] bytes = getBytes(s);
+        byte[] buf = new byte[bytes.length+1];
+        System.arraycopy(bytes, 0, buf, 0, bytes.length);
+        return buf;
+    }
+
+    /** Obtain a NUL-terminated wide character buffer equivalent to the given
+        String.
+    */ 
+    public static char[] toCharArray(String s) {
+        char[] chars = s.toCharArray();
+        char[] buf = new char[chars.length+1];
+        System.arraycopy(chars, 0, buf, 0, chars.length);
+        return buf;
+    }
+
     private static String getNativeLibraryResourcePath() {
         String arch = System.getProperty("os.arch").toLowerCase();
         String osPrefix;
