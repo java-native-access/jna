@@ -48,6 +48,7 @@ public class NativeLibrary {
     private static final Map libraries = new HashMap();
     private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
     private static final List librarySearchPath = new LinkedList();
+    private static final List userSearchPath = new LinkedList();
 
     static {
         // Force initialization of native library
@@ -74,7 +75,7 @@ public class NativeLibrary {
     }
 
     private static NativeLibrary loadLibrary(String libraryName) {
-        List searchPath = new LinkedList(librarySearchPath);
+        List searchPath = new LinkedList();
 
         // Append web start path, if available.  Note that this does not
         // attempt any library name variations
@@ -92,10 +93,27 @@ public class NativeLibrary {
                 searchPath.addAll(0, customPaths);
             }
         }
+        
+        searchPath.addAll(userSearchPath);
         String libraryPath = findLibraryPath(libraryName, searchPath);
         long handle = 0;
+        //
+        // Only search user specified paths first.  This will also fall back
+        // to dlopen/LoadLibrary() since findLibraryPath returns the mapped name
+        // if it cannot find the library.
+        //
         try {
             handle = open(libraryPath);
+        }
+        catch(UnsatisfiedLinkError e) {
+            // Add the system paths back for all fallback searching
+            searchPath.addAll(librarySearchPath);
+        }
+        try {
+            if (handle == 0) {
+                libraryPath = findLibraryPath(libraryName, searchPath);
+                handle = open(libraryPath);
+            }
         }
         catch(UnsatisfiedLinkError e) {
             if (Platform.isLinux()) {
@@ -456,8 +474,7 @@ public class NativeLibrary {
     private static native void close(long handle);
     private static native long findSymbol(long handle, String name);
     static {
-
-        librarySearchPath.addAll(initPaths("jna.library.path"));
+        userSearchPath.addAll(initPaths("jna.library.path"));
         String webstartPath = Native.getWebStartLibraryPath("jnidispatch");
         if (webstartPath != null) {
             librarySearchPath.add(webstartPath);
