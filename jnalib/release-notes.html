@@ -1,10 +1,18 @@
 <a name="top"></a>
+<h2>Release 3.0.9</h2>
+<b>Features</b><br>
+<ul>
+</ul>
+<b>Bugs</b>
+<ul>
+<li> Fix issue 93 by only manually searching jna.library.path, then falling back to passing the mapped library name to dlopen/LoadLibrary.  This fixes an issue in JRUBY (http://jira.codehaus.org/browse/JRUBY-3084) where the incorrect libc.so.6 was being loaded.
+</ul>
 <h2>Release 3.0.8</h2>
 <b>Features</b><br>
+<ul>
 <li>Auto-map Pointer[]/String[]/WString[] return values.
 <li>Provide utility functions to convert String to primitive array.
 <li>Add jna.library.boot.path property to define the directory that the native stub library is loaded from
-<ul>
 </ul>
 <b>Bugs</b>
 <ul>
