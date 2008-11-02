@@ -12,18 +12,8 @@
  */
 package com.sun.jna.examples.unix;
 
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
-import com.sun.jna.Structure;
-import com.sun.jna.Union;
-import com.sun.jna.ptr.ByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.NativeLongByReference;
-import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.*;
+import com.sun.jna.ptr.*;
 
 /** Definition (incomplete) of the X library. */
 public interface X11 extends Library {
@@ -172,6 +162,16 @@ public interface X11 extends Library {
             return new Cursor(((Number)nativeValue).longValue());
         }
     }
+    class KeySym extends XID {
+        public static final KeySym None = null;
+        public KeySym() { }
+        public KeySym(long id) { super(id); }
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
+            return new KeySym(((Number)nativeValue).longValue());
+        }
+    }
     class Drawable extends XID {
         public static final Drawable None = null;
         public Drawable() { }
@@ -273,7 +273,7 @@ public interface X11 extends Library {
         XRenderPictFormat XRenderFindVisualFormat(Display display, Visual visual);
     }
 
-    /** Definition (incomplete) of the Xevie library. */
+    /** Definition of the Xevie library. */
     interface Xevie extends Library {
         Xevie INSTANCE = (Xevie)Native.loadLibrary("Xevie", Xevie.class);
         int XEVIE_UNMODIFIED = 0;
@@ -288,6 +288,38 @@ public interface X11 extends Library {
         int XevieSendEvent (Display display, XEvent event, int data_type);
         // Status XevieSelectInput (Display* display, NativeLong event_mask);
         int XevieSelectInput (Display display, NativeLong event_mask);
+    }
+
+    /** Definition of the XTest library. */
+    interface XTest extends Library {
+        XTest INSTANCE = (XTest)Native.loadLibrary("Xtst", XTest.class);///usr/lib/libxcb-xtest.so.0
+        boolean XTestQueryExtension(Display display, IntByReference event_basep, IntByReference error_basep, IntByReference majorp, IntByReference minorp);
+        boolean XTestCompareCursorWithWindow(Display display, Window window, Cursor cursor);
+        boolean XTestCompareCurrentCursorWithWindow(Display display, Window window);
+        // extern int XTestFakeKeyEvent(Display* display, unsigned int keycode, Bool is_press, unsigned long delay);
+        int XTestFakeKeyEvent(Display display, int keycode, boolean is_press, NativeLong delay);
+        int XTestFakeButtonEvent(Display display, int button, boolean is_press, NativeLong delay);
+        int XTestFakeMotionEvent(Display display, int screen, int x, int y, NativeLong delay);
+        int XTestFakeRelativeMotionEvent(Display display, int x, int y, NativeLong delay);
+        int XTestFakeDeviceKeyEvent(Display display, XDeviceByReference dev, int keycode, boolean is_press, IntByReference axes, int n_axes, NativeLong delay);
+        int XTestFakeDeviceButtonEvent(Display display, XDeviceByReference dev, int button, boolean is_press, IntByReference axes, int n_axes, NativeLong delay);
+        int XTestFakeProximityEvent(Display display, XDeviceByReference dev, boolean in_prox, IntByReference axes, int n_axes, NativeLong delay);
+        int XTestFakeDeviceMotionEvent(Display display, XDeviceByReference dev, boolean is_relative, int first_axis, IntByReference axes, int n_axes, NativeLong delay);
+        int XTestGrabControl(Display display, boolean impervious);
+        //void XTestSetGContextOfGC(GC gc, GContext gid);
+        void XTestSetVisualIDOfVisual(Visual visual, VisualID visualid);
+        int XTestDiscard(Display display);
+    }
+
+    class XInputClassInfoByReference extends Structure implements Structure.ByReference {
+        public byte input_class;
+        public byte event_type_base;
+    }
+
+    class XDeviceByReference extends Structure implements Structure.ByReference {
+        public XID device_id;
+        public int num_classes;
+        public XInputClassInfoByReference classes;
     }
 
     X11 INSTANCE = (X11)Native.loadLibrary("X11", X11.class);
@@ -586,7 +618,6 @@ public interface X11 extends Library {
     Display XOpenDisplay(String name);
     int XGetErrorText(Display display, int code, byte[] buffer, int len);
     int XDefaultScreen(Display display);
-	// Screen *DefaultScreenOfDisplay(Display *display);
     Screen DefaultScreenOfDisplay(Display display);
     Visual XDefaultVisual(Display display, int screen);
     Colormap XDefaultColormap(Display display, int screen);
@@ -610,7 +641,16 @@ public interface X11 extends Library {
     int XMapWindow(Display display, Window window);
     int XMapRaised(Display display, Window window);
     int XMapSubwindows(Display display, Window window);
+
+    /** Flushes the output buffer. Most client applications need not use this function because the output buffer is automatically flushed as needed by calls to XPending, XNextEvent, and XWindowEvent. Events generated by the server may be enqueued into the library's event queue. */
     int XFlush(Display display);
+    /** Flushes the output buffer and then waits until all requests have been received and processed by the X server. Any errors generated must be handled by the error handler. For each protocol error received by Xlib, XSync calls the client application's error handling routine (see section 11.8.2). Any events generated by the server are enqueued into the library's event queue.<br/>Finally, if you passed False, XSync does not discard the events in the queue. If you passed True, XSync discards all events in the queue, including those events that were on the queue before XSync was called. Client applications seldom need to call XSync. */
+    int XSync(Display display, boolean discard);
+    /** If mode is QueuedAlready, XEventsQueued returns the number of events already in the event queue (and never performs a system call). If mode is QueuedAfterFlush, XEventsQueued returns the number of events already in the queue if the number is nonzero. If there are no events in the queue, XEventsQueued flushes the output buffer, attempts to read more events out of the application's connection, and returns the number read. If mode is QueuedAfterReading, XEventsQueued returns the number of events already in the queue if the number is nonzero. If there are no events in the queue, XEventsQueued attempts to read more events out of the application's connection without flushing the output buffer and returns the number read.<br/>XEventsQueued always returns immediately without I/O if there are events already in the queue. XEventsQueued with mode QueuedAfterFlush is identical in behavior to XPending. XEventsQueued with mode QueuedAlready is identical to the XQLength function. */
+    int XEventsQueued(Display display, int mode);
+    /** Returns the number of events that have been received from the X server but have not been removed from the event queue. XPending  is identical to XEventsQueued with the mode QueuedAfterFlush specified. */
+    int XPending(Display display);
+
     int XUnmapWindow(Display display, Window window);
     int XDestroyWindow(Display display, Window window);
     int XCloseDisplay(Display display);
@@ -1667,14 +1707,12 @@ public interface X11 extends Library {
     boolean XCheckTypedEvent(Display display, int event_type, XEvent event_return);
     boolean XCheckTypedWindowEvent(Display display, Window w, int event_type, XEvent event_return);
 
-    /** Returns an {@link com.sun.jna.examples.unix.X11.XWMHints} which must be freed by {@link #XFree}. */
+    /** Returns an {@link XWMHints} which must be freed by {@link #XFree}. */
     XWMHints XGetWMHints(Display display, Window window);
     int XGetWMName(Display display, Window window,
                    XTextProperty text_property_return);
-    int XQueryKeymap(Display display, byte[] keys_return);
-    int XKeycodeToKeysym(Display display, byte keycode, int index);
-    /** Returns an array of {@link com.sun.jna.examples.unix.X11.XVisualInfo} which must be freed by {@link #XFree}.
-     * Use {@link com.sun.jna.examples.unix.X11.XVisualInfo#toArray(int)
+    /** Returns an array of {@link XVisualInfo} which must be freed by {@link #XFree}.
+     * Use {@link XVisualInfo#toArray(int)
      * toArray(nitems_return.getValue()} to obtain the array.
      */
     XVisualInfo XGetVisualInfo(Display display, NativeLong vinfo_mask,
@@ -1707,4 +1745,118 @@ public interface X11 extends Library {
                   int src_x, int src_y, int dest_x, int dest_y,
                   int width, int height);
     int XDestroyImage(XImage image);
+
+
+    /*****************************************************************
+     * KeySyms, Keycodes, Keymaps
+     *****************************************************************/
+    
+    String XKeysymToString(KeySym keysym);
+    KeySym XStringToKeysym(String string);
+    byte XKeysymToKeycode(Display display, KeySym keysym);
+    KeySym XKeycodeToKeysym(Display display, byte keycode, int index);
+
+    //int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym *keysyms, int num_codes);
+    /** Defines the symbols for the specified number of KeyCodes starting with first_keycode. The symbols for KeyCodes outside this range remain unchanged. The number of elements in keysyms must be: num_codes * keysyms_per_keycode. The specified first_keycode must be greater than or equal to min_keycode returned by XDisplayKeycodes, or a BadValue error results. In addition, the following expression must be less than or equal to max_keycode as returned by XDisplayKeycodes, or a BadValue error results: first_keycode + num_codes - 1. */
+    int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym[] keysyms, int num_codes);
+    /** Returns the symbols for the specified number of KeyCodes starting with first_keycode. The value specified in first_keycode must be greater than or equal to min_keycode as returned by XDisplayKeycodes, or a BadValue  error results. In addition, the following expression must be less than or equal to max_keycode as returned by XDisplayKeycodes: first_keycode + keycode_count - 1. If this is not the case, a BadValue error results. The number of elements in the KeySyms list is: keycode_count * keysyms_per_keycode_return. KeySym number N, counting from zero, for KeyCode K has the following index in the list, counting from zero: (K - first_code) * keysyms_per_code_return + N. The X server arbitrarily chooses the keysyms_per_keycode_return value to be large enough to report all requested symbols. A special KeySym value of NoSymbol is used to fill in unused elements for individual KeyCodes. To free the storage returned by XGetKeyboardMapping, use XFree. */
+    KeySym XGetKeyboardMapping(Display display, byte first_keycode, int keycode_count, IntByReference keysyms_per_keycode_return);
+    /** Returns the min-keycodes and max-keycodes supported by the specified display. The minimum number of KeyCodes returned is never less than 8, and the maximum number of KeyCodes returned is never greater than 255. Not all KeyCodes in this range are required to have corresponding keys. */
+    int XDisplayKeycodes(Display display, IntByReference min_keycodes_return, IntByReference max_keycodes_return);
+    /** Specifies the KeyCodes of the keys (if any) that are to be used as modifiers. If it succeeds, the X server generates a MappingNotify event, and XSetModifierMapping returns MappingSuccess. X permits at most 8 modifier keys. If more than 8 are specified in the XModifierKeymap  structure, a BadLength error results. */
+    int XSetModifierMapping(Display display, XModifierKeymapRef modmap);
+    /** The XGetModifierMapping  function returns a pointer to a newly created XModifierKeymap structure that contains the keys being used as modifiers. The structure should be freed after use by calling XFreeModifiermap. If only zero values appear in the set for any modifier, that modifier is disabled. */
+    XModifierKeymapRef XGetModifierMapping(Display display);
+    /** Returns a pointer to XModifierKeymap structure for later use. */
+    XModifierKeymapRef XNewModifiermap(int max_keys_per_mod);
+    /** Adds the specified KeyCode to the set that controls the specified modifier and returns the resulting XModifierKeymap  structure (expanded as needed). */
+    XModifierKeymapRef XInsertModifiermapEntry(XModifierKeymapRef modmap, byte keycode_entry, int modifier);
+    /** Deletes the specified KeyCode from the set that controls the specified modifier and returns a pointer to the resulting XModifierKeymap structure. */
+    XModifierKeymapRef XDeleteModifiermapEntry(XModifierKeymapRef modmap, byte keycode_entry, int modifier);
+    /** Frees the specified XModifierKeymap structure. */
+    int XFreeModifiermap(XModifierKeymapRef modmap);
+
+
+    /** Changes the keyboard control state.
+     * @param display display
+     * @param value_mask disjunction of KBKeyClickPercent, KBBellPercent, KBBellPitch, KBBellDuration, KBLed, KBLedMode, KBKey, KBAutoRepeatMode
+     */
+    int XChangeKeyboardControl(Display display, NativeLong value_mask, XKeyboardControlRef values);
+    /** Returns the current control values for the keyboard to the XKeyboardState structure. */
+    int XGetKeyboardControl(Display display, XKeyboardStateRef values_return);
+    /** Turns on auto-repeat for the keyboard on the specified display. */
+    int XAutoRepeatOn(Display display);
+    /** Turns off auto-repeat for the keyboard on the specified display. */
+    int XAutoRepeatOff(Display display);
+    /** Rings the bell on the keyboard on the specified display, if possible. The specified volume is relative to the base volume for the keyboard. If the value for the percent argument is not in the range -100 to 100 inclusive, a BadValue error results. The volume at which the bell rings when the percent argument is nonnegative is: base - [(base * percent) / 100] + percent. The volume at which the bell rings when the percent argument is negative is: base + [(base * percent) / 100]. To change the base volume of the bell, use XChangeKeyboardControl. */
+    int XBell(Display display, int percent);
+    /** Returns a bit vector for the logical state of the keyboard, where each bit set to 1 indicates that the corresponding key is currently pressed down. The vector is represented as 32 bytes. Byte N (from 0) contains the bits for keys 8N to 8N + 7 with the least significant bit in the byte representing key 8N. Note that the logical state of a device (as seen by client applications) may lag the physical state if device event processing is frozen. */
+    int XQueryKeymap(Display display, byte[] keys_return);
+
+    /** The modifiermap member of the XModifierKeymap structure contains 8 sets of max_keypermod KeyCodes, one for each modifier in the order Shift, Lock, Control, Mod1, Mod2, Mod3, Mod4, and Mod5. Only nonzero KeyCodes have meaning in each set, and zero KeyCodes are ignored. In addition, all of the nonzero KeyCodes must be in the range specified by min_keycode and max_keycode in the Display structure, or a BadValue error results. */
+    class XModifierKeymapRef extends Structure implements Structure.ByReference{
+        public int max_keypermod;   /* The server's max # of keys per modifier */
+        public Pointer modifiermap;   /* An 8 by max_keypermod array of modifiers */
+    }
+    
+    class XKeyboardControlRef extends Structure implements Structure.ByReference {
+        /** Volume for key clicks between 0 (off) and 100 (loud) inclusive, if possible. A setting of -1 restores the default. */
+        public int key_click_percent;
+        /** Base volume for the bell between 0 (off) and 100 (loud) inclusive, if possible. A setting of -1 restores the default. */
+        public int bell_percent;
+        /** Pitch (specified in Hz) of the bell, if possible. A setting of -1 restores the default. */
+        public int bell_pitch;
+        /** Duration of the bell specified in milliseconds, if possible. A setting of -1 restores the default. */
+        public int bell_duration;
+        /** State of the LEDs. At most 32 LEDs numbered from one are supported. */
+        public int led;
+        /** LED mode: LedModeOn or LedModeOff. */
+        public int led_mode;
+        /** <code>auto_repeat_mode</code> can change the auto repeat settings of this key. */
+        public int key;
+        /** AutoRepeatModeOff, AutoRepeatModeOn, AutoRepeatModeDefault. */
+        public int auto_repeat_mode;
+
+        public String toString() {
+            return "XKeyboardControlByReference{" +
+                    "key_click_percent=" + key_click_percent +
+                    ", bell_percent=" + bell_percent +
+                    ", bell_pitch=" + bell_pitch +
+                    ", bell_duration=" + bell_duration +
+                    ", led=" + led +
+                    ", led_mode=" + led_mode +
+                    ", key=" + key +
+                    ", auto_repeat_mode=" + auto_repeat_mode +
+                    '}';
+        }
+    }
+
+    class XKeyboardStateRef extends Structure implements Structure.ByReference {
+        /** Volume for key clicks between 0 (off) and 100 (loud) inclusive, if possible. */
+        public int key_click_percent;
+        /** Base volume for the bell between 0 (off) and 100 (loud) inclusive, if possible. */
+        public int bell_percent;
+        /** Pitch (specified in Hz) of the bell, if possible. A setting of -1 restores the default. */
+        public int bell_pitch;
+        /** Duration of the bell specified in milliseconds, if possible. A setting of -1 restores the default. */
+        public int bell_duration;
+        /** State of the LEDs. At most 32 LEDs numbered from one are supported. */
+        public NativeLong led_mask;
+        /** Global auto repeat mode: AutoRepeatModeOff or AutoRepeatModeOn. */
+        public int global_auto_repeat;
+        /** Bit vector. Each bit set to 1 indicates that auto-repeat is enabled for the corresponding key. The vector is represented as 32 bytes. Byte N (from 0) contains the bits for keys 8N to 8N + 7 with the least significant bit in the byte representing key 8N. */
+        public byte auto_repeats[] = new byte[32];
+
+        public String toString() {
+            return "XKeyboardStateByReference{" +
+                    "key_click_percent=" + key_click_percent +
+                    ", bell_percent=" + bell_percent +
+                    ", bell_pitch=" + bell_pitch +
+                    ", bell_duration=" + bell_duration +
+                    ", led_mask=" + led_mask +
+                    ", global_auto_repeat=" + global_auto_repeat +
+                    ", auto_repeats=" + auto_repeats +
+                    '}';
+        }
+    }
 }
