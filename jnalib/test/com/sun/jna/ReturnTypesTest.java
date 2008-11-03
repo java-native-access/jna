@@ -15,6 +15,7 @@ package com.sun.jna;
 import junit.framework.TestCase;
 
 import com.sun.jna.ReturnTypesTest.TestLibrary.TestStructure;
+import com.sun.jna.ReturnTypesTest.TestLibrary.TestSmallStructure;
 import com.sun.jna.ReturnTypesTest.TestLibrary.SimpleStructure;
 
 /** Exercise a range of native methods.
@@ -32,6 +33,14 @@ public class ReturnTypesTest extends TestCase {
             public double value;
         }
         
+        public static class TestSmallStructure extends Structure {
+            public static class ByValue extends TestSmallStructure implements Structure.ByValue { }
+            
+            public byte c1;
+            public byte c2;
+            public short s;
+        }
+
         public static class TestStructure extends Structure {
             public static class ByValue extends TestStructure implements Structure.ByValue { }
             
@@ -66,6 +75,7 @@ public class ReturnTypesTest extends TestCase {
         WString returnWStringMagic();
         SimpleStructure returnStaticTestStructure();
         SimpleStructure returnNullTestStructure();
+        TestSmallStructure.ByValue returnSmallStructureByValue();
         TestStructure.ByValue returnStructureByValue();
 
         Pointer[] returnPointerArgument(Pointer[] arg);
@@ -191,6 +201,14 @@ public class ReturnTypesTest extends TestCase {
     public void testInvokeNullStructure() {
         SimpleStructure s = lib.returnNullTestStructure();
         assertNull("Expect null structure return", s);
+    }
+    
+    public void testReturnSmallStructureByValue() {
+        TestSmallStructure s = lib.returnSmallStructureByValue();
+        assertNotNull("Returned structure must not be null", s);
+        assertEquals("Wrong char field value (1)", 1, s.c1);
+        assertEquals("Wrong char field value (2)", 2, s.c2);
+        assertEquals("Wrong short field value", 3, s.s);
     }
     
     public void testReturnStructureByValue() {

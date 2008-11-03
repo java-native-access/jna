@@ -31,8 +31,6 @@ import java.util.WeakHashMap;
 
 class CallbackReference extends WeakReference {
     
-    private interface NativeFunctionProxy { }
-    
     static final Map callbackMap = new WeakHashMap();
     static final Map altCallbackMap = new WeakHashMap();
     private static final Map allocations = new WeakHashMap();
@@ -74,7 +72,7 @@ class CallbackReference extends WeakReference {
                     ? Function.ALT_CONVENTION : Function.C_CONVENTION;
                 Map options = Native.getLibraryOptions(type);
                 NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, options);
-                Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type, NativeFunctionProxy.class }, h);
+                Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
                 h.options.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(cb));
                 map.put(cb, null);
                 return cb;
@@ -208,10 +206,11 @@ class CallbackReference extends WeakReference {
     }
 
     private static Pointer getNativeFunctionPointer(Callback cb) {
-        if (cb instanceof NativeFunctionProxy) {
-            NativeFunctionHandler handler = 
-                (NativeFunctionHandler)Proxy.getInvocationHandler(cb);
-            return handler.getPointer();
+        if (Proxy.isProxyClass(cb.getClass())) {
+            Object handler = Proxy.getInvocationHandler(cb);
+            if (handler instanceof NativeFunctionHandler) {
+                return ((NativeFunctionHandler)handler).getPointer();
+            }
         }
         return null;
     }

@@ -259,6 +259,21 @@ returnStringFromVariableSizedStructure(VariableSizedStructure* s) {
   return s->buffer;
 }
 
+typedef struct _TestAmallStructureByValue {
+  int8 c1;
+  int8 c2;
+  int16 s;
+} TestSmallStructureByValue;
+
+EXPORT TestSmallStructureByValue
+returnSmallStructureByValue() {
+  TestSmallStructureByValue v;
+  v.c1 = 1;
+  v.c2 = 2;
+  v.s = 3;
+  return v;
+}
+
 typedef struct _TestStructureByValue {
   int8 c;
   int16 s;
