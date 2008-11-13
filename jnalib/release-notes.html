@@ -10,7 +10,7 @@
 <h2>Release 3.0.9</h2>
 <b>Bug Fixes</b>
 <ul>
-<li> Fix issue 93 by only manually searching jna.library.path, then falling back to passing the mapped library name to dlopen/LoadLibrary.  This fixes an issue in JRUBY (http://jira.codehaus.org/browse/JRUBY-3084) where the incorrect libc.so.6 was being loaded.
+<li> Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=93">issue 93</a> by only manually searching jna.library.path, then falling back to passing the mapped library name to dlopen/LoadLibrary.  This fixes an <a href="http://jira.codehaus.org/browse/JRUBY-3084">issue in JRUBY</a> where the incorrect libc.so.6 was being loaded.
 </ul>
 <h2>Release 3.0.8</h2>
 <b>Features</b><br>
@@ -25,8 +25,9 @@
 <li>Improve win32 loading of libraries with dependencies.
 </ul>
 <b>Bug Fixes</b><br>
+<ul>
 <li>Fix bug reading structures with PointerType fields, introduced with Pointer field preservation fix.
-<ul></ul>
+</ul>
 <h2>Release 3.0.6</h2>
 <b>Features</b><br>
 <ul>
