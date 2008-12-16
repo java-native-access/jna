@@ -17,7 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 # As a special exception to the GNU General Public License, if you
 # distribute this file as part of a program that contains a
@@ -266,7 +266,6 @@ exclude_expsyms="_GLOBAL_OFFSET_TABLE_"
 # rely on this symbol name, it's probably fine to never include it in
 # preloaded symbol tables.
 extract_expsyms_cmds=
-file_list_spec=
 
 ## Tools:
 old_AR="$AR"
@@ -626,7 +625,7 @@ old_postuninstall_cmds=
 
 if test -n "$RANLIB"; then
   old_archive_cmds="$old_archive_cmds~\$RANLIB \$oldlib"
-  old_postinstall_cmds="~$old_postinstall_cmds~\$RANLIB \$oldlib"
+  old_postinstall_cmds="\$RANLIB \$oldlib~$old_postinstall_cmds"
 fi
 
 # Source the script associated with the $tagname tag configuration.
@@ -1133,7 +1132,7 @@ freebsd1*)
   ;;
 
 freebsd*)
-  objformat=`test -x /usr/bin/objformat && /usr/bin/objformat || echo elf`
+  objformat=`test -x /usr/bin/objformat && /usr/bin/objformat || echo aout`
   version_type=freebsd-$objformat
   case $version_type in
     freebsd-elf*)
@@ -2165,7 +2164,7 @@ case $ltmain in
     finish_cmds finish_eval global_symbol_pipe global_symbol_to_cdecl \
     hardcode_libdir_flag_spec hardcode_libdir_separator  \
     sys_lib_search_path_spec sys_lib_dlsearch_path_spec \
-    compiler_c_o need_locks exclude_expsyms include_expsyms file_list_spec; do
+    compiler_c_o need_locks exclude_expsyms include_expsyms; do
 
     case $var in
     reload_cmds | old_archive_cmds | old_archive_from_new_cmds | \
@@ -2215,7 +2214,7 @@ case $ltmain in
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 # As a special exception to the GNU General Public License, if you
 # distribute this file as part of a program that contains a
@@ -2558,12 +2557,6 @@ exclude_expsyms=$exclude_expsyms
 # Symbols that must always be exported.
 include_expsyms=$include_expsyms
 
-# Specify filename containing input files.
-file_list_spec=$file_list_spec
-
-# with_gnu_ld value
-with_gnu_ld=$with_gnu_ld
-
 EOF
 
 if test -z "$tagname"; then
@@ -2648,7 +2641,7 @@ EOF
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #  */
 #
 #  #include <stdio.h>		/* for printf() */

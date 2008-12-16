@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
    linux.S - (c) 2003-2004 Randolph Chung <tausq@debian.org>
+	     (c) 2008 Red Hat, Inc.
 
    HPPA Foreign Function Interface
 
@@ -17,7 +18,7 @@
    THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+   IN NO EVENT SHALL RENESAS TECHNOLOGY BE LIABLE FOR ANY CLAIM, DAMAGES OR
    OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
    OTHER DEALINGS IN THE SOFTWARE.
@@ -36,7 +37,7 @@
 			       unsigned bytes,
 			       unsigned flags,
 			       unsigned *rvalue,
-			       void (*fn)());
+			       void (*fn)(void));
 	 */
 
 	.export ffi_call_pa32,code

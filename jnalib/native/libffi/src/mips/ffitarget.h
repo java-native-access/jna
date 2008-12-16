@@ -13,18 +13,32 @@
    The above copyright notice and this permission notice shall be included
    in all copies or substantial portions of the Software.
 
-   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
-   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-   OTHER DEALINGS IN THE SOFTWARE.
+   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
 
    ----------------------------------------------------------------------- */
 
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
+
+#ifdef linux
+#include <asm/sgidefs.h>
+#  ifndef _ABIN32
+#    define _ABIN32 _MIPS_SIM_NABI32
+#  endif
+#  ifndef _ABI64
+#    define _ABI64 _MIPS_SIM_ABI64
+#  endif
+#  ifndef _ABIO32
+#    define _ABIO32 _MIPS_SIM_ABI32
+#  endif
+#endif
 
 #if !defined(_MIPS_SIM)
 -- something is very wrong --
@@ -42,10 +56,13 @@
 
 #ifdef FFI_MIPS_O32
 /* O32 stack frames have 32bit integer args */
-#define FFI_SIZEOF_ARG         4
+#  define FFI_SIZEOF_ARG    4
 #else
 /* N32 and N64 frames have 64bit integer args */
-#define FFI_SIZEOF_ARG         8
+#  define FFI_SIZEOF_ARG    8
+#  if _MIPS_SIM == _ABIN32
+#    define FFI_SIZEOF_JAVA_RAW  4
+#  endif
 #endif
 
 #define FFI_FLAG_BITS 2

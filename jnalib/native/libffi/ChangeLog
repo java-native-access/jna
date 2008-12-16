@@ -1,12 +1,90 @@
-2007-11-26  Timothy Wall  <twall@users.sf.net>
+2008-01-24  David Edelsohn  <edelsohn@gnu.org>
 
-	* testsuite/libffi.call/closure_stdcall.c: Add test for stdcall
-	closures. 
-	* src/x86/ffitarget.h: Increase size of trampoline for stdcall
-	closures. 
-	* src/x86/win32.S: Add assembly for stdcall closure.
-	* src/x86/ffi.c: Initialize stdcall closure trampoline.
-	
+	* configure: Regenerate.
+
+2008-01-06  Andreas Tobler  <a.tobler@schweiz.org>
+
+	* src/x86/ffi.c (ffi_prep_cif_machdep): Fix thinko.
+
+2008-01-05  Andreas Tobler  <a.tobler@schweiz.org>
+
+	PR testsuite/32843
+	* src/x86/ffi.c (ffi_prep_cif_machdep): Add code for
+	signed/unsigned int8/16 for X86_DARWIN.
+	Updated copyright info.
+	Handle one and two byte structs with special cif->flags.
+	* src/x86/ffitarget.h: Add special types for one and two byte structs.
+	Updated copyright info.
+	* src/x86/darwin.S (ffi_call_SYSV): Rewrite to use a jump table like
+	sysv.S
+	Remove code to pop args from the stack after call.
+	Special-case signed/unsigned for int8/16, one and two byte structs.
+	(ffi_closure_raw_SYSV): Handle FFI_TYPE_UINT8,
+	FFI_TYPE_SINT8, FFI_TYPE_UINT16, FFI_TYPE_SINT16, FFI_TYPE_UINT32,
+	FFI_TYPE_SINT32.
+	Updated copyright info.
+
+2007-12-08  David Daney  <ddaney@avtrex.com>
+
+	* src/mips/n32.S (ffi_call_N32):  Replace dadd with ADDU, dsub with 
+	SUBU, add with ADDU and use smaller code sequences.
+
+2007-12-07  David Daney  <ddaney@avtrex.com>
+
+	* src/mips/ffi.c (ffi_prep_cif_machdep): Handle long double return
+	type.
+
+2007-12-06  David Daney  <ddaney@avtrex.com>
+
+	* include/ffi.h.in (FFI_SIZEOF_JAVA_RAW): Define if not	already
+	defined.
+	(ffi_java_raw): New typedef.
+	(ffi_java_raw_call, ffi_java_ptrarray_to_raw,
+	ffi_java_raw_to_ptrarray): Change parameter types from ffi_raw to
+	ffi_java_raw.
+	(ffi_java_raw_closure) : Same.
+	(ffi_prep_java_raw_closure, ffi_prep_java_raw_closure_loc): Change
+	parameter types.
+	* src/java_raw_api.c (ffi_java_raw_size):  Replace FFI_SIZEOF_ARG with
+	FFI_SIZEOF_JAVA_RAW.
+	(ffi_java_raw_to_ptrarray): Change type of raw to ffi_java_raw.
+	Replace FFI_SIZEOF_ARG with FFI_SIZEOF_JAVA_RAW. Use
+	sizeof(ffi_java_raw) for alignment calculations.
+	(ffi_java_ptrarray_to_raw): Same.
+	(ffi_java_rvalue_to_raw): Add special handling for FFI_TYPE_POINTER
+        if FFI_SIZEOF_JAVA_RAW == 4.
+	(ffi_java_raw_to_rvalue): Same.
+	(ffi_java_raw_call): Change type of raw to ffi_java_raw.
+	(ffi_java_translate_args): Same.
+	(ffi_prep_java_raw_closure_loc, ffi_prep_java_raw_closure): Change
+	parameter types.
+	* src/mips/ffitarget.h (FFI_SIZEOF_JAVA_RAW): Define for N32 ABI.
+
+2007-12-06  David Daney  <ddaney@avtrex.com>
+
+	* src/mips/n32.S (ffi_closure_N32): Use 64-bit add instruction on 
+	pointer values.
+
+2007-12-01  Andreas Tobler  <a.tobler@schweiz.org>
+
+	PR libffi/31937
+	* src/powerpc/ffitarget.h: Introduce new ABI FFI_LINUX_SOFT_FLOAT.
+	Add local FFI_TYPE_UINT128 to handle soft-float long-double-128.
+	* src/powerpc/ffi.c: Distinguish between __NO_FPRS__ and not and
+	set the NUM_FPR_ARG_REGISTERS according to.
+	Add support for potential soft-float support under hard-float
+	architecture.
+	(ffi_prep_args_SYSV): Set NUM_FPR_ARG_REGISTERS to 0 in case of
+	FFI_LINUX_SOFT_FLOAT, handle float, doubles and long-doubles according
+	to the FFI_LINUX_SOFT_FLOAT ABI.
+	(ffi_prep_cif_machdep): Likewise.
+	(ffi_closure_helper_SYSV): Likewise.
+	* src/powerpc/ppc_closure.S: Make sure not to store float/double
+	on archs where __NO_FPRS__ is true.
+	Add FFI_TYPE_UINT128 support.
+	* src/powerpc/sysv.S: Add support for soft-float long-double-128.
+	Adjust copyright notice.
+
 2007-11-25  Andreas Tobler  <a.tobler@schweiz.org>
 
 	* src/closures.c: Move defintion of MAYBE_UNUSED from here to ...

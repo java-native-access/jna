@@ -2,10 +2,8 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.59)
 
-AC_INIT([libffi], [2.1], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.6], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
-
-AM_ENABLE_MULTILIB(, ..)
 
 AC_CANONICAL_SYSTEM
 target_alias=${target_alias-$host_alias}
@@ -51,6 +49,10 @@ case "$host" in
 	TARGET=ARM; TARGETDIR=arm
 	;;
 
+  amd64-*-freebsd*)
+	TARGET=X86_64; TARGETDIR=x86
+  	;;
+
   cris-*-*)
 	TARGET=LIBFFI_CRIS; TARGETDIR=cris
 	;;
@@ -69,6 +71,9 @@ case "$host" in
 	TARGET=PA_HPUX; TARGETDIR=pa
 	;;
 
+  i386-*-freebsd* | i386-*-openbsd*)
+	TARGET=X86_FREEBSD; TARGETDIR=x86
+	;;
   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw*)
 	TARGET=X86_WIN32; TARGETDIR=x86
 	;;
@@ -155,6 +160,7 @@ fi
 AM_CONDITIONAL(MIPS, test x$TARGET = xMIPS)
 AM_CONDITIONAL(SPARC, test x$TARGET = xSPARC)
 AM_CONDITIONAL(X86, test x$TARGET = xX86)
+AM_CONDITIONAL(X86_FREEBSD, test x$TARGET = xX86_FREEBSD)
 AM_CONDITIONAL(X86_WIN32, test x$TARGET = xX86_WIN32)
 AM_CONDITIONAL(X86_WIN64, test x$TARGET = xX86_WIN64)
 AM_CONDITIONAL(X86_DARWIN, test x$TARGET = xX86_DARWIN)
@@ -356,6 +362,6 @@ test -d src/$TARGETDIR || mkdir src/$TARGETDIR
 
 AC_CONFIG_LINKS(include/ffitarget.h:src/$TARGETDIR/ffitarget.h)
 
-AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile)
+AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile libffi.pc)
 
 AC_OUTPUT

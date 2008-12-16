@@ -1,3 +1,29 @@
+/* -----------------------------------------------------------------------
+   sysv.h - Copyright (c) 2003 Jakub Jelinek <jakub@redhat.com>
+	    Copyright (c) 2008 Red Hat, Inc.
+
+   PowerPC Assembly glue.
+
+   Permission is hereby granted, free of charge, to any person obtaining
+   a copy of this software and associated documentation files (the
+   ``Software''), to deal in the Software without restriction, including
+   without limitation the rights to use, copy, modify, merge, publish,
+   distribute, sublicense, and/or sell copies of the Software, and to
+   permit persons to whom the Software is furnished to do so, subject to
+   the following conditions:
+
+   The above copyright notice and this permission notice shall be included
+   in all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+   ----------------------------------------------------------------------- */
 #define LIBFFI_ASM
 #include <fficonfig.h>
 #include <ffi.h>
@@ -28,6 +54,7 @@ ENTRY(ffi_closure_SYSV)
 	stw   %r9, 40(%r1)
 	stw   %r10,44(%r1)
 
+#ifndef __NO_FPRS__
 	# next save fpr 1 to fpr 8 (aligned to 8)
 	stfd  %f1, 48(%r1)
 	stfd  %f2, 56(%r1)
@@ -37,6 +64,7 @@ ENTRY(ffi_closure_SYSV)
 	stfd  %f6, 88(%r1)
 	stfd  %f7, 96(%r1)
 	stfd  %f8, 104(%r1)
+#endif
 
 	# set up registers for the routine that actually does the work
 	# get the context pointer from the trampoline
@@ -171,6 +199,12 @@ ENTRY(ffi_closure_SYSV)
 	addi %r1,%r1,144
 	blr
 
+# case FFI_TYPE_UINT128
+	lwz %r3,112+0(%r1)
+	lwz %r4,112+4(%r1)
+	lwz %r5,112+8(%r1)
+	bl .Luint128
+
 # The return types below are only used when the ABI type is FFI_SYSV.
 # case FFI_SYSV_TYPE_SMALL_STRUCT + 1. One byte struct.
 	lbz %r3,112+0(%r1)
@@ -230,6 +264,12 @@ ENTRY(ffi_closure_SYSV)
 	addi %r1,%r1,144
 	blr
 
+.Luint128:
+	lwz %r6,112+12(%r1)
+	mtlr %r0
+	addi %r1,%r1,144
+	blr
+
 END(ffi_closure_SYSV)
 
 	.section	".eh_frame",EH_FRAME_FLAGS,@progbits
@@ -280,4 +320,8 @@ END(ffi_closure_SYSV)
 	.align 2
 .LEFDE1:
 
+#endif
+
+#if defined __ELF__ && defined __linux__
+	.section	.note.GNU-stack,"",@progbits
 #endif

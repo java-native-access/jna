@@ -16,8 +16,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor,
-# Boston, MA 02110-1301, USA.
+# Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
 #
 # As a special exception to the GNU General Public License, if you
 # distribute this file as part of a program that contains a
@@ -551,7 +551,6 @@ multi-do:
 		flags=`echo $$i | sed -e 's/^[^;]*;//' -e 's/@/ -/g'`; \
 		if (cd ../$${dir}/$${lib}; $(MAKE) $(FLAGS_TO_PASS) \
 				CFLAGS="$(CFLAGS) $${flags}" \
-				CCASFLAGS="$(CCASFLAGS) $${flags}" \
 				FCFLAGS="$(FCFLAGS) $${flags}" \
 				FFLAGS="$(FFLAGS) $${flags}" \
 				ADAFLAGS="$(ADAFLAGS) $${flags}" \
@@ -586,8 +585,8 @@ multi-clean:
 	  true; \
 	else \
 	  lib=`${PWD_COMMAND} | sed -e 's,^.*/\([^/][^/]*\)$$,\1,'`; \
-	  for dir in ${Makefile} $(MULTIDIRS); do \
-	    if [ -f ../$${dir}/$${lib}/${Makefile} ]; then \
+	  for dir in Makefile $(MULTIDIRS); do \
+	    if [ -f ../$${dir}/$${lib}/Makefile ]; then \
 	      if (cd ../$${dir}/$${lib}; $(MAKE) $(FLAGS_TO_PASS) $(DO)); \
 	      then true; \
 	      else exit 1; \
@@ -605,7 +604,7 @@ mv Makefile.tem ${Makefile}
 fi # ${ml_toplevel_p} = yes
 
 if [ "${ml_verbose}" = --verbose ]; then
-  echo "Adding multilib support to ${Makefile} in ${ml_realsrcdir}"
+  echo "Adding multilib support to Makefile in ${ml_realsrcdir}"
   if [ "${ml_toplevel_p}" = yes ]; then
     echo "multidirs=${multidirs}"
   fi
@@ -740,7 +739,7 @@ if [ -n "${multidirs}" ] && [ -z "${ml_norecursion}" ]; then
       fi
       (cd ${ml_dir}/${ml_libdir};
        ../${dotdot}${ml_unsubdir}symlink-tree ../${dotdot}${ml_unsubdir}${ml_libdir} "")
-      if [ -f ${ml_dir}/${ml_libdir}/${Makefile} ]; then
+      if [ -f ${ml_dir}/${ml_libdir}/Makefile ]; then
 	if [ x"${MAKE}" = x ]; then
 	  (cd ${ml_dir}/${ml_libdir}; make distclean)
 	else
@@ -895,7 +894,7 @@ if [ -n "${multidirs}" ] && [ -z "${ml_norecursion}" ]; then
 
     if eval ${ml_config_env} ${ml_config_shell} ${ml_recprog} \
 	--with-multisubdir=${ml_dir} --with-multisrctop=${multisrctop} \
-	${ac_configure_args} ${ml_config_env} ${ml_srcdiroption} ; then
+	${ac_configure_args} ${ml_srcdiroption} ; then
       true
     else
       exit 1

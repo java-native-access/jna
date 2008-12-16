@@ -1,5 +1,5 @@
 /* Area:	closure_call (stdcall convention)
-   Purpose:	Check handling when caller expects stdcall callee 
+   Purpose:	Check handling when caller expects stdcall callee
    Limitations:	none.
    PR:		none.
    Originator:	<twalljava@dev.java.net> */
@@ -12,8 +12,8 @@ closure_test_stdcall(ffi_cif* cif __UNUSED__, void* resp, void** args,
 		 void* userdata)
 {
   *(ffi_arg*)resp =
-    (int)*(int *)args[0] + (int)(*(int *)args[1]) 
-    + (int)(*(int *)args[2])  + (int)(*(int *)args[3]) 
+    (int)*(int *)args[0] + (int)(*(int *)args[1])
+    + (int)(*(int *)args[2])  + (int)(*(int *)args[3])
     + (int)(long)userdata;
 
   printf("%d %d %d %d: %d\n",

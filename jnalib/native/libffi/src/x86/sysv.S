@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   sysv.S - Copyright (c) 1996, 1998, 2001, 2002, 2003, 2005  Red Hat, Inc.
+   sysv.S - Copyright (c) 1996, 1998, 2001-2003, 2005, 2008  Red Hat, Inc.
    
    X86 Foreign Function Interface 
 
@@ -14,13 +14,14 @@
    The above copyright notice and this permission notice shall be included
    in all copies or substantial portions of the Software.
 
-   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
-   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-   OTHER DEALINGS IN THE SOFTWARE.
+   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
 
 #ifndef __x86_64__
@@ -210,6 +211,8 @@ ffi_closure_SYSV:
 	je	.Lcls_retldouble
 	cmpl	$FFI_TYPE_SINT64, %eax
 	je	.Lcls_retllong
+	cmpl	$FFI_TYPE_STRUCT, %eax
+	je	.Lcls_retstruct
 .Lcls_epilogue:
 	movl	%ebp, %esp
 	popl	%ebp
@@ -230,6 +233,10 @@ ffi_closure_SYSV:
 	movl	(%ecx), %eax
 	movl	4(%ecx), %edx
 	jmp	.Lcls_epilogue
+.Lcls_retstruct:
+	movl	%ebp, %esp
+	popl	%ebp
+	ret	$4
 .LFE2:
 	.size	ffi_closure_SYSV, .-ffi_closure_SYSV
 
@@ -424,3 +431,7 @@ ffi_closure_raw_SYSV:
 #endif
 
 #endif /* ifndef __x86_64__ */
+
+#if defined __ELF__ && defined __linux__
+	.section	.note.GNU-stack,"",@progbits
+#endif

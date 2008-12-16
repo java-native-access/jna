@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 1996, 2007 Red Hat, Inc.
+   ffi.c - Copyright (c) 1996, 2007, 2008  Red Hat, Inc.
+           Copyright (c) 2008       David Daney
    
    MIPS Foreign Function Interface 
 
@@ -14,19 +15,30 @@
    The above copyright notice and this permission notice shall be included
    in all copies or substantial portions of the Software.
 
-   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
-   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-   OTHER DEALINGS IN THE SOFTWARE.
+   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
 
 #include <ffi.h>
 #include <ffi_common.h>
 
 #include <stdlib.h>
+
+#ifdef __GNUC__
+#  if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3))
+#    define USE__BUILTIN___CLEAR_CACHE 1
+#  endif
+#endif
+
+#ifndef USE__BUILTIN___CLEAR_CACHE
+#include <sys/cachectl.h>
+#endif
 
 #ifdef FFI_DEBUG
 # define FFI_MIPS_STOP_HERE() ffi_stop_here()
@@ -462,7 +474,13 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       case FFI_TYPE_DOUBLE:
 	cif->flags += cif->rtype->type << (FFI_FLAG_BITS * 8);
 	break;
-
+      case FFI_TYPE_LONGDOUBLE:
+	/* Long double is returned as if it were a struct containing
+	   two doubles.  */
+	cif->flags += FFI_TYPE_STRUCT << (FFI_FLAG_BITS * 8);
+	cif->flags += (FFI_TYPE_DOUBLE + (FFI_TYPE_DOUBLE << FFI_FLAG_BITS))
+		      << (4 + (FFI_FLAG_BITS * 8));
+	break;
       default:
 	cif->flags += FFI_TYPE_INT << (FFI_FLAG_BITS * 8);
 	break;
@@ -476,14 +494,14 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 /* Low level routine for calling O32 functions */
 extern int ffi_call_O32(void (*)(char *, extended_cif *, int, int), 
 			extended_cif *, unsigned, 
-			unsigned, unsigned *, void (*)());
+			unsigned, unsigned *, void (*)(void));
 
 /* Low level routine for calling N32 functions */
 extern int ffi_call_N32(void (*)(char *, extended_cif *, int, int), 
 			extended_cif *, unsigned, 
-			unsigned, unsigned *, void (*)());
+			unsigned, unsigned *, void (*)(void));
 
-void ffi_call(ffi_cif *cif, void (*fn)(), void *rvalue, void **avalue)
+void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 {
   extended_cif ecif;
 
@@ -609,8 +627,11 @@ ffi_prep_closure_loc (ffi_closure *closure,
   closure->fun = fun;
   closure->user_data = user_data;
 
+#ifdef USE__BUILTIN___CLEAR_CACHE
   __builtin___clear_cache(clear_location, clear_location + FFI_TRAMPOLINE_SIZE);
-
+#else
+  cacheflush (clear_location, FFI_TRAMPOLINE_SIZE, ICACHE);
+#endif
   return FFI_OK;
 }
 

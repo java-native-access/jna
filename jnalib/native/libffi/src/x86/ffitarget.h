@@ -1,5 +1,7 @@
 /* -----------------------------------------------------------------*-C-*-
    ffitarget.h - Copyright (c) 1996-2003  Red Hat, Inc.
+   Copyright (C) 2008  Free Software Foundation, Inc.
+
    Target configuration macros for x86 and x86-64.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -13,13 +15,14 @@
    The above copyright notice and this permission notice shall be included
    in all copies or substantial portions of the Software.
 
-   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
-   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-   IN NO EVENT SHALL CYGNUS SOLUTIONS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-   OTHER DEALINGS IN THE SOFTWARE.
+   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
 
    ----------------------------------------------------------------------- */
 
@@ -69,6 +72,7 @@ typedef enum ffi_abi {
   FFI_WIN64,
   FFI_DEFAULT_ABI = FFI_WIN64,
 #else
+
   /* ---- Intel x86 and AMD x86-64 - */
 #if !defined(X86_WIN32) && (defined(__i386__) || defined(__x86_64__))
   FFI_SYSV,
@@ -88,6 +92,8 @@ typedef enum ffi_abi {
 /* ---- Definitions for closures ----------------------------------------- */
 
 #define FFI_CLOSURES 1
+#define FFI_TYPE_SMALL_STRUCT_1B (FFI_TYPE_LAST + 1)
+#define FFI_TYPE_SMALL_STRUCT_2B (FFI_TYPE_LAST + 2)
 
 #if defined (X86_64) || (defined (__x86_64__) && defined (X86_DARWIN))
 #define FFI_TRAMPOLINE_SIZE 24
