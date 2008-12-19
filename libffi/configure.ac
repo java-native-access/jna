@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.59)
 
-AC_INIT([libffi], [3.0.7], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.8], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -242,6 +242,21 @@ if test x$TARGET = xSPARC; then
     if test "x$libffi_cv_as_register_pseudo_op" = xyes; then
        AC_DEFINE(HAVE_AS_REGISTER_PSEUDO_OP, 1,
 	       [Define if your assembler supports .register.])
+    fi
+fi
+
+if test x$TARGET = xX86 || test x$TARGET = xX86_64; then
+    AC_CACHE_CHECK([assembler supports pc related relocs],
+	libffi_cv_as_x86_pcrel, [
+	libffi_cv_as_x86_pcrel=yes
+	echo '.text; foo: nop; .data; .long foo-.; .text' > conftest.s
+	if $CC $CFLAGS -c conftest.s 2>&1 | grep -i warning > /dev/null; then
+	    libffi_cv_as_x86_pcrel=no
+	fi
+	])
+    if test "x$libffi_cv_as_x86_pcrel" = xyes; then
+	AC_DEFINE(HAVE_AS_X86_PCREL, 1,
+		  [Define if your assembler supports PC relative relocs.])
     fi
 fi
 

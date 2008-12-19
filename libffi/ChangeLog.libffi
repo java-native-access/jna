@@ -1,3 +1,10 @@
+2008-12-19  Anthony Green  <green@redhat.com>
+
+	* configure.ac: Bump version to 3.0.8.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.
+	* README: Update for new release.
+
 2008-11-11  Anthony Green  <green@redhat.com>
 
 	* configure.ac: Bump version to 3.0.7.

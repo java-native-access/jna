@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.7 was released on November 11, 2008. Check the libffi web
+libffi-3.0.8 was released on December 19, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -57,10 +57,12 @@ release was only tested on:
      x86 freebsd
      x86 linux
      x86 openbsd
+     x86 solaris
      x86-64 darwin
      x86-64 linux
      x86-64 OS X
      x86-64 freebsd
+     x86-64 solaris
      
 Please send additional platform test results to
 libffi-discuss@sourceware.org.
