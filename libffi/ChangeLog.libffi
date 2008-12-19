@@ -1,3 +1,23 @@
+2008-11-11  Anthony Green  <green@redhat.com>
+
+	* configure.ac: Bump version to 3.0.7.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.
+	* README: Update for new release.
+
+2008-08-25  Andreas Tobler  <a.tobler@schweiz.org>
+
+	* src/powerpc/ffitarget.h (ffi_abi): Add FFI_LINUX and
+	FFI_LINUX_SOFT_FLOAT to the POWERPC_FREEBSD enum.
+	Add note about flag bits used for FFI_SYSV_TYPE_SMALL_STRUCT.
+	Adjust copyright notice.
+	* src/powerpc/ffi.c: Add two new flags to indicate if we have one
+	register or two register to use for FFI_SYSV structs.
+	(ffi_prep_cif_machdep): Pass the right register flag introduced above.
+	(ffi_closure_helper_SYSV): Fix the return type for
+	FFI_SYSV_TYPE_SMALL_STRUCT. Comment.
+	Adjust copyright notice.
+
 2008-07-24  Anthony Green  <green@redhat.com>
 
 	* testsuite/libffi.call/cls_dbls_struct.c,
