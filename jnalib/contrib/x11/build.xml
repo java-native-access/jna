@@ -13,7 +13,6 @@
     <path id="classpath">
         <fileset dir="../../dist">
             <include name="jna.jar"/>
-            <!--<include name="examples.jar"/>-->
         </fileset>
     </path>
 
@@ -56,10 +55,6 @@
             <src>
                 <dirset dir="${src}"/>
                 <dirset dir="${jna-src}/com/sun/jna/examples/unix"/>
-<!--                <dirset dir=".">
-                    <include name="${src}"/>
-                    <include name="${jna-src}/com/sun/jna/examples/unix"/>
-                </dirset>-->
             </src>
         </javac>
 
