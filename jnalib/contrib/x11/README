@@ -1,0 +1,66 @@
+Copyright (c) 2008 Stefan Endrullis, All Rights Reserved
+
+Disclaimer:
+===========
+This code is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.  
+
+
+Description:
+============
+
+The intension of this contribution is to provide an object oriented
+interface to X11. It doesn't not cover all available X11 functions, but
+it supports major functions to manage the X11 desktop, windows and keys.
+
+If you want to help to extend this API, you're welcome!
+
+
+Project structure:
+==================
+
+The project has been divided into two parts:
+- jnacontrib.x11.api
+- jnacontrib.c11.demos
+
+The first part contains the API files. The main class is the class X.
+The second part contains some demos showing you how you can use the API.
+
+X.java:
+-------
+Object oriented interface to X11. It mainly contains methods related
+to window management but also some functions for keys.
+Static methods for getting information about Win32 accounts (users
+and groups).
+- list all domain users
+- list all domain groups
+- list all local or domain groups where a user belongs to
+- get account by SID
+- get SID of account
+- get domain controller name
+- get domain name
+
+X11KeySymDef.java
+-----------------
+Class X11KeySymDef is a Java translation of keysymdef.h and contains all
+KeySym definitions of the X server.
+
+XDesktopDemo.java
+-----------------
+Class XDesktopDemo is a small demonstration of the window management
+capabilities of X. It's a GUI which allows you to move windows to other
+desktops, switch to other desktops, hide all windows etc.
+
+XTestDemo.java
+--------------
+This class demonstrates how you can use the "Test extension" of the X
+server, which allows you to simulate key and mouse events. Be careful
+when running the program, because it simulates keystrokes and "types"
+the words "hello world" in the active window.
