@@ -1,66 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jnacontrib.x11" default="default" basedir=".">
+<project name="jnacontrib.x11" default="jar" basedir=".">
     <description>Builds, tests, and runs the project jnacontrib.x11.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
+    <!-- Locations -->
+    <property name="src"                location="src"/>
+    <property name="build"              location="build"/>
+    <property name="jna-src"            location="../../src"/>
+    <property name="jna-dist"           location="../../dist"/>
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+    <property name="buildClasses"       location="${build}/classes"/>
+    <property name="buildJar"           location="${build}/jnacontrib-x11.jar"/>
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
+    <path id="classpath">
+        <fileset dir="../../dist">
+            <include name="jna.jar"/>
+            <!--<include name="examples.jar"/>-->
+        </fileset>
+    </path>
 
-    (Targets beginning with '-' are not intended to be called on their own.)
+    <!-- Run XDesktopDemo. -->
+    <target name="runXDesktopDemo" depends="compile">
+        <java classname="jnacontrib.x11.demos.XDesktopDemo" fork="true">
+            <classpath>
+                <pathelement location="${buildClasses}" />
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+    </target>
 
-    Example of inserting an obfuscator after compilation could look like this:
+    <!-- Run XTestDemo. -->
+    <target name="runXTestDemo" depends="compile">
+        <java classname="jnacontrib.x11.demos.XTestDemo" fork="true">
+            <classpath>
+                <pathelement location="${buildClasses}" />
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+    </target>
 
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
+    <!-- Delete class and jar files. -->
+    <target name="clean">
+        <delete dir="${buildClasses}"/>
+        <delete file="${buildJar}"/>
+        <delete dir="${build}"/>
+    </target>
 
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
+    <!-- Compile all classes. -->
+    <target name="compile">
+        <mkdir dir="${buildClasses}"/>
 
+        <!-- Compile the project. -->
+        <javac srcdir="${src}" destdir="${buildClasses}" target="1.5" source="1.5" encoding="UTF-8" debug="on">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+            <src>
+                <dirset dir="${src}"/>
+                <dirset dir="${jna-src}/com/sun/jna/examples/unix"/>
+<!--                <dirset dir=".">
+                    <include name="${src}"/>
+                    <include name="${jna-src}/com/sun/jna/examples/unix"/>
+                </dirset>-->
+            </src>
+        </javac>
 
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
+        <!-- Copy all non-java files to classes. -->
+        <copy todir="${buildClasses}">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
 
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
-
-    An example of overriding the target for project execution could look like this:
-
-        <target name="run" depends="JnaContrib-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
-
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
-
-    -->
+    <!-- Create jar-file. -->
+    <target name="jar" depends="compile">
+        <jar jarfile="${buildJar}" basedir="${buildClasses}">
+            <manifest>
+                <attribute name="Main-Class" value="jnacontrib.x11.demos.XDesktopDemo"/>
+                <attribute name="Class-Path" value="${jna-dist}/jna.jar"/>
+            </manifest>
+        </jar>
+    </target>
 </project>
