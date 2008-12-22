@@ -14,7 +14,7 @@ closure_test_stdcall(ffi_cif* cif __UNUSED__, void* resp, void** args,
   *(ffi_arg*)resp =
     (int)*(int *)args[0] + (int)(*(int *)args[1])
     + (int)(*(int *)args[2])  + (int)(*(int *)args[3])
-    + (int)(long)userdata;
+    + (int)(intptr_t)userdata;
 
   printf("%d %d %d %d: %d\n",
 	 (int)*(int *)args[0], (int)(*(int *)args[1]),

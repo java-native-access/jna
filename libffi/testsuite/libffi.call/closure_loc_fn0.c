@@ -25,7 +25,7 @@ closure_loc_test_fn0(ffi_cif* cif __UNUSED__, void* resp, void** args,
     (int)(*(double *)args[8]) + (int)*(int *)args[9] +
     (int)(*(int *)args[10]) + (int)(*(float *)args[11]) +
     (int)*(int *)args[12] + (int)(*(int *)args[13]) +
-    (int)(*(int *)args[14]) +  *(int *)args[15] + (int)(long)userdata;
+    (int)(*(int *)args[14]) +  *(int *)args[15] + (intptr_t)userdata;
 
   printf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d: %d\n",
 	 (int)*(unsigned long long *)args[0], (int)(*(int *)args[1]),
@@ -37,7 +37,7 @@ closure_loc_test_fn0(ffi_cif* cif __UNUSED__, void* resp, void** args,
 	 (int)(*(int *)args[10]), (int)(*(float *)args[11]),
 	 (int)*(int *)args[12], (int)(*(int *)args[13]),
 	 (int)(*(int *)args[14]),*(int *)args[15],
-	 (int)(long)userdata, (int)*(ffi_arg *)resp);
+	 (int)(intptr_t)userdata, (int)*(ffi_arg *)resp);
 
 }
 
