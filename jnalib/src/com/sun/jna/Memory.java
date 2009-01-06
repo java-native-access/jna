@@ -63,7 +63,7 @@ public class Memory extends Pointer {
     public Memory(long size) {
         this.size = size;
         if (size <= 0) {
-            throw new IllegalArgumentException("Allocation size must be >= 0");
+            throw new IllegalArgumentException("Allocation size must be greater than zero");
         } 
         peer = malloc(size);
         if (peer == 0) 
