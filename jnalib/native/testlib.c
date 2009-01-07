@@ -19,6 +19,7 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #ifdef _WIN32
 #define EXPORT __declspec(dllexport)
@@ -27,10 +28,8 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#define int64 __int64
 #define LONG(X) X ## I64
 #elif __GNUC__
-#define int64 long long
 #define LONG(X) X ## LL
 #else
 #error 64-bit type not defined for this compiler
@@ -42,9 +41,6 @@ extern "C" {
 #define MAGIC64 LONG(0x123456789ABCDEF0)
 #define MAGICFLOAT -118.625
 #define MAGICDOUBLE ((double)(-118.625))
-#define int8 signed char
-#define int16 short
-#define int32 int
 
 #define MAGICDATA "0123456789"
 
@@ -52,10 +48,10 @@ EXPORT int test_global = MAGIC32;
 
 // TODO: check more fields/alignments
 struct CheckFieldAlignment {
-  int8 int8Field;
-  int16 int16Field;
-  int32 int32Field;
-  int64 int64Field;
+  int8_t int8Field;
+  int16_t int16Field;
+  int32_t int32Field;
+  int64_t int64Field;
   float floatField;
   double doubleField;
 };
@@ -82,8 +78,8 @@ returnBooleanArgument(int arg) {
   return arg;
 }
 
-EXPORT int8  
-returnInt8Argument(int8 arg) {
+EXPORT int8_t  
+returnInt8Argument(int8_t arg) {
   return arg;
 }
 
@@ -92,42 +88,42 @@ returnWideCharArgument(wchar_t arg) {
   return arg;
 }
 
-EXPORT int16  
-returnInt16Argument(int16 arg) {
+EXPORT int16_t  
+returnInt16Argument(int16_t arg) {
   return arg;
 }
 
-EXPORT int32  
+EXPORT int32_t  
 returnInt32Zero() {
-  int32 value = 0;
+  int32_t value = 0;
   return value;
 }
 
-EXPORT int32  
+EXPORT int32_t  
 returnInt32Magic() {
-  int32 value = MAGIC32;
+  int32_t value = MAGIC32;
   return value;
 }
 
-EXPORT int32  
-returnInt32Argument(int32 arg) {
+EXPORT int32_t  
+returnInt32Argument(int32_t arg) {
   return arg;
 }
 
-EXPORT int64  
+EXPORT int64_t  
 returnInt64Zero() {
-  int64 value = 0;
+  int64_t value = 0;
   return value;
 }
 
-EXPORT int64  
+EXPORT int64_t  
 returnInt64Magic() {
-  int64 value = MAGIC64;
+  int64_t value = MAGIC64;
   return value;
 }
 
-EXPORT int64  
-returnInt64Argument(int64 arg) {
+EXPORT int64_t  
+returnInt64Argument(int64_t arg) {
   return arg;
 }
 
@@ -260,9 +256,9 @@ returnStringFromVariableSizedStructure(VariableSizedStructure* s) {
 }
 
 typedef struct _TestAmallStructureByValue {
-  int8 c1;
-  int8 c2;
-  int16 s;
+  int8_t c1;
+  int8_t c2;
+  int16_t s;
 } TestSmallStructureByValue;
 
 EXPORT TestSmallStructureByValue
@@ -275,10 +271,10 @@ returnSmallStructureByValue() {
 }
 
 typedef struct _TestStructureByValue {
-  int8 c;
-  int16 s;
-  int32 i;
-  int64 j;
+  int8_t c;
+  int16_t s;
+  int32_t i;
+  int64_t j;
   TestStructure inner;
 } TestStructureByValue;
 
@@ -294,7 +290,7 @@ returnStructureByValue() {
 }
 
 typedef void (*callback_t)();
-typedef int32 (*int32_callback_t)(int32);
+typedef int32_t (*int32_callback_t)(int32_t);
 typedef callback_t (*cb_callback_t)(callback_t);
 
 EXPORT int32_callback_t
@@ -308,22 +304,22 @@ returnCallbackArgument(int32_callback_t arg) {
 }
 
 EXPORT void 
-incrementInt8ByReference(int8 *arg) {
+incrementInt8ByReference(int8_t *arg) {
   if (arg) ++*arg;
 }
 
 EXPORT void 
-incrementInt16ByReference(int16 *arg) {
+incrementInt16ByReference(int16_t *arg) {
   if (arg) ++*arg;
 }
 
 EXPORT void 
-incrementInt32ByReference(int32 *arg) {
+incrementInt32ByReference(int32_t *arg) {
   if (arg) ++*arg;
 }
 
 EXPORT void 
-incrementInt64ByReference(int64 *arg) {
+incrementInt64ByReference(int64_t *arg) {
   if (arg) ++*arg;
 }
 
@@ -342,8 +338,8 @@ setPointerByReferenceNull(void **arg) {
   if (arg) *arg = NULL;
 }
 
-EXPORT int64 
-checkInt64ArgumentAlignment(int32 i, int64 j, int32 i2, int64 j2) {
+EXPORT int64_t 
+checkInt64ArgumentAlignment(int32 i, int64_t j, int32 i2, int64_t j2) {
   if (i != 0x10101010 || j != LONG(0x1111111111111111)
       || i2 != 0x01010101 || j2 != LONG(0x2222222222222222))
     return -1;
@@ -372,63 +368,63 @@ testStructureByValueArgument(struct CheckFieldAlignment arg) {
     + arg.int64Field + arg.floatField + arg.doubleField;
 }
 
-typedef struct ByValue8 { int8 data; } ByValue9;
-typedef struct ByValue16 { int16 data; } ByValue16;
-typedef struct ByValue32 { int32 data; } ByValue32;
-typedef struct ByValue64 { int64 data; } ByValue64;
-typedef struct ByValue128 { int64 data, data1; } ByValue128;
+typedef struct ByValue8 { int8_t data; } ByValue9;
+typedef struct ByValue16 { int16_t data; } ByValue16;
+typedef struct ByValue32 { int32_t data; } ByValue32;
+typedef struct ByValue64 { int64_t data; } ByValue64;
+typedef struct ByValue128 { int64_t data, data1; } ByValue128;
 
-EXPORT int8
+EXPORT int8_t
 testStructureByValueArgument8(struct ByValue8 arg){
   return arg.data;
 }
 
-EXPORT int16
+EXPORT int16_t
 testStructureByValueArgument16(struct ByValue16 arg){
   return arg.data;
 }
 
-EXPORT int32
+EXPORT int32_t
 testStructureByValueArgument32(struct ByValue32 arg){
   return arg.data;
 }
 
-EXPORT int64
+EXPORT int64_t
 testStructureByValueArgument64(struct ByValue64 arg){
   return arg.data;
 }
 
-EXPORT int64
+EXPORT int64_t
 testStructureByValueArgument128(struct ByValue128 arg){
   return arg.data + arg.data1;
 }
 
 typedef struct {
-  int8 field0;
-  int16 field1;
+  int8_t field0;
+  int16_t field1;
 } Align16BitField8;
 typedef struct {
-  int8 field0;
-  int32 field1;
+  int8_t field0;
+  int32_t field1;
 } Align32BitField8;
 typedef struct {
-  int16 field0;
-  int32 field1;
+  int16_t field0;
+  int32_t field1;
 } Align32BitField16;
 typedef struct {
-  int32 field0;
-  int16 field1;
-  int32 field2;
+  int32_t field0;
+  int16_t field1;
+  int32_t field2;
 } Align32BitField16_2;
 typedef struct {
-  int32 field0;
-  int64 field1;
-  int32 field2;
-  int64 field3;
+  int32_t field0;
+  int64_t field1;
+  int32_t field2;
+  int64_t field3;
 } Align64BitField32;
 typedef struct {
-  int64 field0;
-  int8 field1;
+  int64_t field0;
+  int8_t field1;
 } PadTrailingSmallField;
 static int STRUCT_SIZES[] = {
   sizeof(Align16BitField8),
@@ -438,7 +434,7 @@ static int STRUCT_SIZES[] = {
   sizeof(Align64BitField32),
   sizeof(PadTrailingSmallField),
 };
-EXPORT int32
+EXPORT int32_t
 getStructureSize(unsigned index) {
   if (index >= (int)sizeof(STRUCT_SIZES)/sizeof(STRUCT_SIZES[0]))
     return -1;
@@ -449,9 +445,9 @@ extern void exit(int);
 #define FIELD(T,X,N) (((T*)X)->field ## N)
 #define OFFSET(T,X,N) (int)(((char*)&FIELD(T,X,N))-((char*)&FIELD(T,X,0)))
 #define V8(N) (N+1)
-#define V16(N) ((((int32)V8(N))<<8)|V8(N))
-#define V32(N) ((((int32)V16(N))<<16)|V16(N))
-#define V64(N) ((((int64)V32(N))<<32)|V32(N))
+#define V16(N) ((((int32_t)V8(N))<<8)|V8(N))
+#define V32(N) ((((int32_t)V16(N))<<16)|V16(N))
+#define V64(N) ((((int64_t)V32(N))<<32)|V32(N))
 #define VALUE(T,X,N) \
 ((sizeof(FIELD(T,X,N)) == 1) \
  ? V8(N)  : ((sizeof(FIELD(T,X,N)) == 2) \
@@ -466,8 +462,8 @@ do { if (FIELD(T,X,N) != VALUE(T,X,N)) {*offsetp=OFFSET(T,X,N); *valuep=FIELD(T,
 
 // returns the field index which failed, and the expected field offset
 // returns -2 on success
-EXPORT int32
-testStructureAlignment(void* s, unsigned index, int* offsetp, int64* valuep) {
+EXPORT int32_t
+testStructureAlignment(void* s, unsigned index, int* offsetp, int64_t* valuep) {
   if (index >= sizeof(STRUCT_SIZES)/sizeof(STRUCT_SIZES[0]))
     return -1;
 
@@ -482,7 +478,7 @@ testStructureAlignment(void* s, unsigned index, int* offsetp, int64* valuep) {
   return -2;
 }
 
-EXPORT int32
+EXPORT int32_t
 testStructureArrayInitialization(struct CheckFieldAlignment arg[], int len) {
   int i;
   for (i=0;i < len;i++) {
@@ -515,19 +511,19 @@ callBooleanCallback(int (*func)(int arg, int arg2),
   return (*func)(arg, arg2);
 }
 
-EXPORT int8
-callInt8Callback(int8 (*func)(int8 arg, int8 arg2), int8 arg, int8 arg2) {
+EXPORT int8_t
+callInt8Callback(int8_t (*func)(int8_t arg, int8_t arg2), int8_t arg, int8_t arg2) {
   return (*func)(arg, arg2);
 }
 
-EXPORT int16
-callInt16Callback(int16 (*func)(int16 arg, int16 arg2), int16 arg, int16 arg2) {
+EXPORT int16_t
+callInt16Callback(int16_t (*func)(int16_t arg, int16_t arg2), int16_t arg, int16_t arg2) {
   return (*func)(arg, arg2);
 }
 
-EXPORT int32 
-callInt32Callback(int32 (*func)(int32 arg, int32 arg2),
-                  int32 arg, int32 arg2) {
+EXPORT int32_t 
+callInt32Callback(int32_t (*func)(int32_t arg, int32_t arg2),
+                  int32_t arg, int32_t arg2) {
   return (*func)(arg, arg2);
 }
 
@@ -537,9 +533,9 @@ callNativeLongCallback(long (*func)(long arg, long arg2),
   return (*func)(arg, arg2);
 }
 
-EXPORT int64 
-callInt64Callback(int64 (*func)(int64 arg, int64 arg2),
-                  int64 arg, int64 arg2) {
+EXPORT int64_t 
+callInt64Callback(int64_t (*func)(int64_t arg, int64_t arg2),
+                  int64_t arg, int64_t arg2) {
   return (*func)(arg, arg2);
 }
 
@@ -600,8 +596,8 @@ callCallbackWithCallback(cb_callback_t cb) {
   return (*cb)((callback_t)cb);
 }
 
-static int 
-structCallbackFunction(int arg1, int arg2) {
+static int32_t 
+structCallbackFunction(int32_t arg1, int32_t arg2) {
   return arg1 + arg2;
 }
 
@@ -611,8 +607,8 @@ setCallbackInStruct(struct cbstruct* cb) {
 }
 
 
-EXPORT int32 
-fillInt8Buffer(char *buf, int len, char value) {
+EXPORT int32_t 
+fillInt8Buffer(int8_t *buf, int len, char value) {
   int i;
 
   for (i=0;i < len;i++) {
@@ -621,8 +617,8 @@ fillInt8Buffer(char *buf, int len, char value) {
   return len;
 }
 
-EXPORT int32 
-fillInt16Buffer(short *buf, int len, short value) {
+EXPORT int32_t 
+fillInt16Buffer(int16_t *buf, int len, short value) {
   int i;
   for (i=0;i < len;i++) {
     buf[i] = value;
@@ -630,8 +626,8 @@ fillInt16Buffer(short *buf, int len, short value) {
   return len;
 }
 
-EXPORT int32 
-fillInt32Buffer(int32 *buf, int len, int32 value) {
+EXPORT int32_t 
+fillInt32Buffer(int32_t *buf, int len, int32_t value) {
   int i;
   for (i=0;i < len;i++) {
     buf[i] = value;
@@ -639,8 +635,8 @@ fillInt32Buffer(int32 *buf, int len, int32 value) {
   return len;
 }
 
-EXPORT int32
-fillInt64Buffer(int64 *buf, int len, int64 value) {
+EXPORT int32_t
+fillInt64Buffer(int64_t *buf, int len, int64_t value) {
   int i;
   for (i=0;i < len;i++) {
     buf[i] = value;
@@ -648,19 +644,19 @@ fillInt64Buffer(int64 *buf, int len, int64 value) {
   return len;
 }
 
-EXPORT int32
+EXPORT int32_t
 addInt32VarArgs(const char *fmt, ...) {
   va_list ap;
-  int32 sum = 0;
+  int32_t sum = 0;
   va_start(ap, fmt);
   
   while (*fmt) {
     switch (*fmt++) {
     case 'd':
-      sum += va_arg(ap, int32);
+      sum += va_arg(ap, int32_t);
       break;
     case 'l':
-      sum += (int) va_arg(ap, int64);
+      sum += (int) va_arg(ap, int64_t);
       break;
     case 'c':
       sum += (int) va_arg(ap, int);
@@ -676,7 +672,7 @@ addInt32VarArgs(const char *fmt, ...) {
 EXPORT void
 modifyStructureVarArgs(const char* fmt, ...) {
   struct _ss {
-    int32 magic;
+    int32_t magic;
   } *s;
   va_list ap;
   va_start(ap, fmt);
@@ -708,8 +704,8 @@ returnStringVarArgs(const char *fmt, ...) {
 ///////////////////////////////////////////////////////////////////////
 // stdcall tests
 ///////////////////////////////////////////////////////////////////////
-EXPORT int32 __stdcall
-returnInt32ArgumentStdCall(int32 arg) {
+EXPORT int32_t __stdcall
+returnInt32ArgumentStdCall(int32_t arg) {
   return arg;
 }
 
@@ -718,9 +714,9 @@ returnStructureByValueArgumentStdCall(TestStructureByValue arg) {
   return arg;
 }
 
-EXPORT int32 __stdcall
-callInt32StdCallCallback(int32 (__stdcall *func)(int32 arg, int32 arg2),
-                         int32 arg, int32 arg2) {
+EXPORT int32_t __stdcall
+callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
+                         int32_t arg, int32_t arg2) {
   void* sp1 = NULL;
   void* sp2 = NULL;
   int value = -1;
