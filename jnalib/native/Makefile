@@ -101,7 +101,7 @@ endif
 
 ifeq ($(ARCH),amd64)
 
-WINDRES=x86_64-pc-mingw32-windres
+WINDRES=/usr/local/mingw64-cross/bin/x86_64-pc-mingw32-windres
 
 # Uncomment to enable MINGW64 cross compiler
 # Last build attempt has too many runtime problems (alloca broken) (080831)
