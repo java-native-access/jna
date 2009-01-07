@@ -19,7 +19,15 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+
+#ifdef _MSC_VER
+typedef signed char int8_t;
+typedef short int16_t;
+typedef int int32_t;
+typedef __int64 int64_t;
+#else 
 #include <stdint.h>
+#endif
 
 #ifdef _WIN32
 #define EXPORT __declspec(dllexport)
@@ -339,7 +347,7 @@ setPointerByReferenceNull(void **arg) {
 }
 
 EXPORT int64_t 
-checkInt64ArgumentAlignment(int32 i, int64_t j, int32 i2, int64_t j2) {
+checkInt64ArgumentAlignment(int32_t i, int64_t j, int32_t i2, int64_t j2) {
   if (i != 0x10101010 || j != LONG(0x1111111111111111)
       || i2 != 0x01010101 || j2 != LONG(0x2222222222222222))
     return -1;
