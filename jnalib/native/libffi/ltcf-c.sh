@@ -376,7 +376,7 @@ else
     old_archive_from_new_cmds='true'
     # FIXME: Should let the user specify the lib program.
     old_archive_cmds='lib /OUT:$oldlib$oldobjs$old_deplibs'
-    fix_srcfile_path='`cygpath -w "$srcfile"`'
+    fix_srcfile_path='\`cygpath -w \"\$srcfile\"\`'
     ;;
 
   darwin* | rhapsody*)

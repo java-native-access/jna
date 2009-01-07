@@ -245,8 +245,18 @@ _ffi_call_win64:
 	mov	CIF_BYTES(%rbp),%eax
 	add	$15, %rax
 	and	$-16, %rax
-	callq	___chkstk
-	sub	%rax, %rsp
+	#callq	___chkstk
+	cmpq	$0x1000, %rax
+	jb	Lch_done
+Lch_probe:
+	subq	$0x1000,%rsp
+	orl	$0x0, (%rsp)
+	subq	$0x1000,%rax
+	cmpq	$0x1000,%rax
+	ja	Lch_probe
+Lch_done:
+	subq	%rax, %rsp
+	orl	$0x0, (%rsp)
 	lea	32(%rsp), %rax
 	mov	%rax, STACK(%rbp)
 
@@ -269,6 +279,18 @@ _ffi_call_win64:
 	movd	%xmm0, %rcx
 
 	callq	*FN(%rbp)
+.Lret_struct2b:
+	cmpl	$FFI_TYPE_SMALL_STRUCT_2B, CIF_FLAGS(%rbp)
+	jne .Lret_struct1b
+	mov	RVALUE(%rbp), %rcx
+	mov	%ax, (%rcx)
+	jmp .Lret_void
+.Lret_struct1b:
+	cmpl	$FFI_TYPE_SMALL_STRUCT_1B, CIF_FLAGS(%rbp)
+	jne .Lret_int
+	mov	RVALUE(%rbp), %rcx
+	mov	%al, (%rcx)
+	jmp .Lret_void
 .Lret_int:
  	cmpl	$FFI_TYPE_INT, CIF_FLAGS(%rbp)
  	jne	.Lret_float
@@ -309,3 +331,4 @@ _ffi_call_win64:
 	retq
 .ffi_call_win64_end:
 #endif /* !_MSC_VER */
+

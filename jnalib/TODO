@@ -18,31 +18,22 @@
 * get system process information, basic process control
 * additional file utilities (meta info, free space, etc)
 * enforce window minimum/maximum size (workaround java bug)
-* OSX ObjC access
+* OSX ObjC access (see rococoa)
 
 # TODO
 
+* Callback.PostCallWrite.write() cf PostCallRead; do Structure.write for any
+  arguments as well
+
 * pointer.setValue(), to handle NativeMapped types and move read/writeValue
   methods out of Structure, to be used by Function w/NativeMapped[] parameter
-
-* write structure to contiguous Java array, then write all at once to minimize
-  native calls.  Otherwise, structs with lots of fields take a big performance
-  hit making a native call for each field.
 
 * parser (gluegen? swig? others?) to auto-generate JNA interfaces from headers;
   ideally get the native library build system to output preprocessed headers,
   otherwise CPP crap is a nightmare to get right.
   o write SWIG transformer to auto-generate interfaces from header files
 
-* stdcall/w32 underscore prefix issue 
-
 * should structure offsets be "long"?
-
-* allow return of W/String[] or Pointer[], if array is NULL-terminated?
-
-* Direct buffers should be used where
-  hotspot inlining can improve performance.  
-
 
 * (maybe) move all native functions into Native (limit header files, easier
   management) 
@@ -55,6 +46,8 @@
   (less robust but easier to change).
   o bounds checking is handled by IntegerType (pass in a long, get an
     exception if the value is out of bounds).
+  o when used as struct fields, could allow detection of field order by order
+    of initialization (requires all-or-nothing usage, though)
 
 * packaging: 'types', 'convert/marshal' subpackages?
   note: marshal/unmarshal vs to/fromnative: to/fromnative is more

@@ -1,17 +1,43 @@
-2008-09-01  Timothy Wall  <twall@users.sf.net>
+2008-12-22  Timothy Wall  <twall@users.sf.net>
 
-	* src/closures.c:
-	* src/x86/ffitarget.h:
-	* src/x86/ffi.c:
-	* src/x86/ffi64.c:
-	* src/x86/win64.S:
-	* configure.ac:
-	* Makefile.am:
-	* include/ffi_common.h:
-	* include/ffi.h.in:
-	* src/dlmalloc.c: Add win64 support.
-	* (sync with libffi 3.0.6, delta from 2007-11-25)
+	* src/closures.c, 
+          src/x86/ffitarget.h,
+	  src/x86/ffi.c,
+          src/x86/ffi64.c,
+          src/x86/win64.S,
+          configure, configure.ac,
+          Makefile, Makefile.am,
+          include/ffi_common.h,
+          include/ffi.h.in,
+          src/dlmalloc.c: Add win64 support.
 	
+2008-12-19  Anthony Green  <green@redhat.com>
+
+	* configure.ac: Bump version to 3.0.8.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.
+	* README: Update for new release.
+
+2008-11-11  Anthony Green  <green@redhat.com>
+
+	* configure.ac: Bump version to 3.0.7.
+	* configure, doc/stamp-vti, doc/version.texi: Rebuilt.
+	* libtool-version: Increment revision.
+	* README: Update for new release.
+
+2008-08-25  Andreas Tobler  <a.tobler@schweiz.org>
+
+	* src/powerpc/ffitarget.h (ffi_abi): Add FFI_LINUX and
+	FFI_LINUX_SOFT_FLOAT to the POWERPC_FREEBSD enum.
+	Add note about flag bits used for FFI_SYSV_TYPE_SMALL_STRUCT.
+	Adjust copyright notice.
+	* src/powerpc/ffi.c: Add two new flags to indicate if we have one
+	register or two register to use for FFI_SYSV structs.
+	(ffi_prep_cif_machdep): Pass the right register flag introduced above.
+	(ffi_closure_helper_SYSV): Fix the return type for
+	FFI_SYSV_TYPE_SMALL_STRUCT. Comment.
+	Adjust copyright notice.
+
 2008-07-24  Anthony Green  <green@redhat.com>
 
 	* testsuite/libffi.call/cls_dbls_struct.c,
