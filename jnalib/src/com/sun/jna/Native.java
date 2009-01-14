@@ -33,6 +33,8 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -697,13 +699,24 @@ public final class Native {
      * Web Start class loader, which usually means it wasn't included as 
      * a <code>&lt;nativelib&gt;</code> resource in the JNLP file.
      */
-    public static String getWebStartLibraryPath(String libName) {
+    public static String getWebStartLibraryPath(final String libName) {
         if (System.getProperty("javawebstart.version") == null)
             return null;
         try {
-            ClassLoader cl = Native.class.getClassLoader();
-            Method m = ClassLoader.class.getDeclaredMethod("findLibrary", new Class[] { String.class });
-            m.setAccessible(true);
+
+            final ClassLoader cl = Native.class.getClassLoader();
+            Method m = (Method)AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    try {
+                        Method m = ClassLoader.class.getDeclaredMethod("findLibrary", new Class[] { String.class });
+                        m.setAccessible(true);
+                        return m;
+                    }
+                    catch(Exception e) {
+                        return null;
+                    }
+                }
+            });
             String libpath = (String)m.invoke(cl, new Object[] { libName });
             if (libpath != null) {
                 return new File(libpath).getParent();
