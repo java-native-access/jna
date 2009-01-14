@@ -374,7 +374,7 @@ public class NativeLibrary {
             return name;
         }
         else if (Platform.isLinux()) {
-            if (isVersionedName(libName)) {
+            if (isVersionedName(libName) || libName.endsWith(".so")) {
                 // A specific version was requested - use as is for search
                 return libName;
             }
