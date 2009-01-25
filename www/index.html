@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2008-10-07">
+<meta name="date" content="2009-01-25">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -485,9 +485,7 @@ difference there is by performing targeted optimizations.  The ease of
 programming everything in Java usually outweighs performance gains when using
 custom JNI. 
 <p>
-Java primitive arrays are generally slower to use than memory
-(Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
-be pinned and possibly copied across the native call, since the Java array is not necessarily contiguously allocated.
+See the JavaDoc for specific <a href="javadoc/com/sun/jna/overview-summary.html#performance">performance tips</a>.
 <p>
 <a href=#top>Top</a>
 <a name=demos></a>
@@ -569,9 +567,10 @@ If you want to do a build yourself, you'll need <a
 href="http://ant.apache.org">ANT</a>, <a
 href="http://directory.fsf.org/make.html">GNU make</a> and <a
 href="http://gcc.gnu.org">GCC</a>.  On windows, you will need either <a
-href="http://www.cygwin.com">cygwin GCC</a> or the MINGW32 version (MSVC will
-build most of the JNA native library, but will not build the <code>libffi</code>
-library and chokes on the libffi includes).  To rebuild <code>jna.jar</code>, and run the unit tests, do<br>  
+href="http://www.cygwin.com">cygwin GCC</a> or the MINGW32 version (MSVC is
+used to build the win64 target, so you could probably use it for win32 as
+well, but I doubt it's worth the effort).  To rebuild <code>jna.jar</code>,
+and run the unit tests, do<br>   
 <blockquote><code><pre>
 % ant dist test
 </pre></code></blockquote>
