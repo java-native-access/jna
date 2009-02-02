@@ -139,6 +139,26 @@ public abstract class Structure {
         this(CALCULATE_SIZE, ALIGN_DEFAULT, mapper);
     }
 
+    /** Create a structure cast onto native memory. */
+    protected Structure(Pointer p) {
+        this(p, CALCULATE_SIZE);
+    }
+
+    protected Structure(Pointer p, int size) {
+        this(p, size, ALIGN_DEFAULT);
+    }
+
+    protected Structure(Pointer p, int size, int alignment) {
+        this(p, size, alignment, null);
+    }
+
+    protected Structure(Pointer p, int size, int alignment, TypeMapper mapper) {
+        setAlignType(alignment);
+        setTypeMapper(mapper);
+        useMemory(p);
+        allocateMemory(size);
+    }
+
     protected Structure(int size, int alignment, TypeMapper mapper) {
         setAlignType(alignment);
         setTypeMapper(mapper);
@@ -164,7 +184,9 @@ public abstract class Structure {
         }
         this.typeMapper = mapper;
         this.size = CALCULATE_SIZE;
-        this.memory = null;
+        if (this.memory instanceof AutoAllocated) {
+            this.memory = null;
+        }
     }
 
     /** Change the alignment of this structure.  Re-allocates memory if
@@ -185,7 +207,9 @@ public abstract class Structure {
         }
         this.alignType = alignType;
         this.size = CALCULATE_SIZE;
-        this.memory = null;
+        if (this.memory instanceof AutoAllocated) {
+            this.memory = null;
+        }
     }
 
     /** Set the memory used by this structure.  This method is used to
@@ -221,6 +245,8 @@ public abstract class Structure {
 
     /** Provided for derived classes to indicate a different
      * size than the default.  Returns whether the operation was successful.
+     * Will leave memory untouched if it is non-null and not allocated
+     * by this class.
      */
     protected void allocateMemory(int size) {
         if (size == CALCULATE_SIZE) {
@@ -233,14 +259,13 @@ public abstract class Structure {
         // May need to defer size calculation if derived class not fully
         // initialized
         if (size != CALCULATE_SIZE) {
-            memory = new Memory(size);
-            // Always clear new structure memory
-            memory.clear(size);
-            this.size = size;
-            // Update native FFI type information, if needed
-            if (this instanceof ByValue) {
-                getTypeInfo();
+            if (memory == null 
+                || memory instanceof AutoAllocated) {
+                memory = new AutoAllocated(size);
+                // Always clear new structure memory
+                memory.clear(size);
             }
+            this.size = size;
         }
     }
 
@@ -966,7 +991,12 @@ public abstract class Structure {
         }
 
         if (calculatedSize > 0) {
-            return calculateAlignedSize(calculatedSize);
+            int size = calculateAlignedSize(calculatedSize);
+            // Update native FFI type information, if needed
+            if (this instanceof ByValue) {
+                getTypeInfo();
+            }
+            return size;
         }
 
         throw new IllegalArgumentException("Structure " + getClass()
@@ -1158,15 +1188,13 @@ public abstract class Structure {
      * backing, the memory will be resized to fit the entire array.
      */
     public Structure[] toArray(Structure[] array) {
-        if (size == CALCULATE_SIZE) {
-            allocateMemory();
-        }
-        if (Memory.class.equals(memory.getClass())) {
+        ensureAllocated();
+        if (memory instanceof AutoAllocated) {
             // reallocate if necessary
             Memory m = (Memory)memory;
             int requiredSize = array.length * size();
             if (m.getSize() < requiredSize) {
-                m = new Memory(requiredSize);
+                m = new AutoAllocated(requiredSize);
                 m.clear();
                 useMemory(m);
             }
@@ -1442,6 +1470,12 @@ public abstract class Structure {
                 }
                 throw new IllegalArgumentException("Unsupported structure field type " + cls);
             }
+        }
+    }
+    
+    private class AutoAllocated extends Memory {
+        public AutoAllocated(int size) {
+            super(size);
         }
     }
 }
