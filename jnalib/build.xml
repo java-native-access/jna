@@ -582,6 +582,10 @@
       <zipfileset dir="nbproject" includes="**/*" prefix="nbproject"/>
       <zipfileset dir="${native}" includes="libffi,libffi/**/*" prefix="native"/>
     </zip>
+    <!-- Sources package as required by maven -->
+    <zip zipfile="${dist}/src-mvn.zip">
+      <zipfileset dir="${src}" includes="**/*.jar,**/*.html,**/*.png"/>
+    </zip>
   </target>
 
   <target name="clean" depends="-dynamic-properties">
