@@ -641,14 +641,20 @@ Java_com_sun_jna_NativeLibrary_open(JNIEnv *env, jclass cls, jstring lib){
     void *handle = NULL;
     LIBNAMETYPE libname = NULL;
 
-    if ((libname = LIBNAME2CSTR(env, lib)) != NULL) {
-      handle = (void *)LOAD_LIBRARY(libname);
-      if (!handle) {
-        char buf[1024];
-        throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+    /* dlopen on Unix allows NULL to mean "current process" */
+    if (lib != NULL) {
+      if ((libname = LIBNAME2CSTR(env, lib)) == NULL) {
+        return (jlong)A2L(NULL);
       }
-      free(libname);
     }
+
+    handle = (void *)LOAD_LIBRARY(libname);
+    if (!handle) {
+      char buf[1024];
+      throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+    }
+    if (libname != NULL)
+      free(libname);
     return (jlong)A2L(handle);
 }
 

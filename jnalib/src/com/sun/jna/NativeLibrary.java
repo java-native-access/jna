@@ -45,6 +45,7 @@ public class NativeLibrary {
     private final String libraryPath;
     private final Map functions = new HashMap();
 
+    private static WeakReference currentProcess;
     private static final Map libraries = new HashMap();
     private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
     private static final List librarySearchPath = new LinkedList();
@@ -196,6 +197,27 @@ public class NativeLibrary {
     }
 
     /**
+     * Returns an instance of NativeLibrary which refers to the current process.
+     * This is useful for accessing functions which were already mapped by some
+     * other mechanism, without having to reference or even know the exact
+     * name of the native library.
+     */
+    public static synchronized final NativeLibrary getProcess() {
+        NativeLibrary library = null;
+        if (currentProcess != null) {
+            library = (NativeLibrary) currentProcess.get();
+        }
+
+        if (library == null) {
+           long handle = open(null);
+           library = new NativeLibrary("<process>", null, handle);
+           currentProcess = new WeakReference(library);
+        }
+
+        return library;
+    }
+
+    /**
      * Add a path to search for the specified library, ahead of any system paths
      *
      * @param libraryName The name of the library to use the path for
@@ -287,9 +309,13 @@ public class NativeLibrary {
     public String getName() {
         return libraryName;
     }
-    /** Returns the file on disk corresponding to this NativeLibrary instacne.
+    /** 
+     * Returns the file on disk corresponding to this NativeLibrary instance.
+     * If this NativeLibrary represents the current process, this function will return null. 
      */
     public File getFile() {
+        if (libraryPath == null)
+            return null;
         return new File(libraryPath);
     }
     /** Close the library when it is no longer referenced. */
@@ -300,8 +326,11 @@ public class NativeLibrary {
     public void dispose() {
         synchronized(libraries) {
             libraries.remove(getName());
-            libraries.remove(getFile().getAbsolutePath());
-            libraries.remove(getFile().getName());
+            File path = getFile();
+            if (path != null) {
+                libraries.remove(path.getAbsolutePath());
+                libraries.remove(path.getName());
+            }
         }
         synchronized(this) {
             if (handle != 0) {
