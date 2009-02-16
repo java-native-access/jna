@@ -60,7 +60,8 @@ class NativeString implements CharSequence, Comparable {
         else {
             byte[] data = Native.getBytes(string);
             pointer = new Memory(data.length + 1);
-            pointer.setString(0, string);
+            pointer.write(0, data, 0, data.length);
+            pointer.setByte(data.length, (byte)0);
         }
     }
 
