@@ -99,7 +99,7 @@ public class Memory extends Pointer {
      * @throws IllegalArgumentException if the requested alignment is not
      * a positive power of two.
      */
-    public Pointer align(int byteBoundary) {
+    public Memory align(int byteBoundary) {
         if (byteBoundary <= 0) {
             throw new IllegalArgumentException("Byte boundary must be positive: " + byteBoundary);
         }
@@ -107,16 +107,18 @@ public class Memory extends Pointer {
 
         if ((peer & ~mask) != peer) {
             long newPeer = (peer + ~mask) & mask;
-            return share(newPeer - peer, peer + size - newPeer);
+            long newSize = peer + size - newPeer;
+            if (newSize <= 0) {
+                throw new IllegalArgumentException("Insufficient memory to align to the requested boundary");
+            }
+            return (Memory)share(newPeer - peer, newSize);
         }
         return this;
     }
 
     protected void finalize() {
-        if (peer != 0) {
-            free(peer);
-            peer = 0;
-        }
+        free(peer);
+        peer = 0;
     }
 
     /** Zero the full extent of this memory region. */
@@ -635,12 +637,12 @@ public class Memory extends Pointer {
     /**
      * Call the real native malloc
      */
-    static native long malloc(long size);
+    protected static native long malloc(long size);
 
     /**
      * Call the real native free
      */
-    static native void free(long ptr);
+    protected static native void free(long ptr);
     
     public String toString() {
         return "allocated@0x" + Long.toHexString(peer) + " ("

@@ -52,7 +52,7 @@ public class Pointer {
     
     /** Pointer value of the real native pointer. Use long to be 64-bit safe. 
      */
-    long peer;
+    protected long peer;
 
     /** Derived class must assign peer pointer value. */
     Pointer() { }
