@@ -1653,7 +1653,7 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
 
   // Initialize type fields within Structure.FFIType
-  {
+  else {
 #define CFFITYPE "com/sun/jna/Structure$FFIType$FFITypes"
     jclass cls = (*env)->FindClass(env, CFFITYPE);
     jfieldID fid;
