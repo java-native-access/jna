@@ -5,7 +5,7 @@
 	Originator:		Blake Chaffin	6/18/2007
 */
 
-/* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-* x86_64-*-mingw* x86_64-*-cygwin* } } */
 /* { dg-options -mlong-double-128 { target powerpc64*-*-* } } */
 
 #include "ffitest.h"

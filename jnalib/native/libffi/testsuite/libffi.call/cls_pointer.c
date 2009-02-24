@@ -9,10 +9,12 @@
 
 void* cls_pointer_fn(void* a1, void* a2)
 {
-	void*	result	= (void*)((long)a1 + (long)a2);
+	void*	result	= (void*)((intptr_t)a1 + (intptr_t)a2);
 
 	printf("0x%08x 0x%08x: 0x%08x\n", 
-	       (unsigned int) a1, (unsigned int) a2, (unsigned int) result);
+	       (unsigned int)(uintptr_t) a1,
+               (unsigned int)(uintptr_t) a2,
+               (unsigned int)(uintptr_t) result);
 
 	return result;
 }
