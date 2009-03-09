@@ -18,6 +18,7 @@ package com.sun.jna;
  * passed to its {@link #callback} method.
  */
 public interface CallbackProxy extends Callback {
+
     /** This is the callback method invoked from native code. 
      * It must <em>not</em> throw any exceptions whatsoever.
      */

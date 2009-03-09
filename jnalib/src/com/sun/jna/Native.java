@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import com.sun.jna.Structure.ByReference;
+import com.sun.jna.Callback.UncaughtExceptionHandler;
 
 
 /** Provides generation of invocation plumbing for a defined native
@@ -76,6 +77,14 @@ public final class Native {
     private static Map alignments = new WeakHashMap();
     private static Map options = new WeakHashMap();
     private static Map libraries = new WeakHashMap();
+    private static final UncaughtExceptionHandler DEFAULT_HANDLER = 
+        new UncaughtExceptionHandler() {
+            public void uncaughtException(Callback c, Throwable e) {
+                System.err.println("JNA: Callback " + c + " threw the following exception:");
+                e.printStackTrace();
+            }
+        };
+    private static UncaughtExceptionHandler callbackExceptionHandler = DEFAULT_HANDLER;
     
     /** The size of a native pointer (<code>void*</code>) on the current 
      * platform, in bytes. 
@@ -848,6 +857,19 @@ public final class Native {
         catch(IllegalArgumentException e) {
             return false;
         }
+    }
+
+    /** Set the default handler invoked when a callback throws an uncaught
+     * exception.  If the given handler is <code>null</code>, the default
+     * handler will be reinstated.
+     */
+    public static void setCallbackExceptionHandler(UncaughtExceptionHandler eh) {
+        callbackExceptionHandler = eh == null ? DEFAULT_HANDLER : eh;
+    }
+
+    /** Returns the current handler for callback uncaught exceptions. */
+    public static UncaughtExceptionHandler getCallbackExceptionHandler() {
+        return callbackExceptionHandler;
     }
 
     /** Prints JNA library details to the console. */

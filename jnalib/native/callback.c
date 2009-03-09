@@ -118,6 +118,34 @@ free_callback(JNIEnv* env, callback *cb) {
   free(cb);
 }
 
+static int
+handle_exception(JNIEnv* env, jobject cb, jthrowable throwable) {
+#define HANDLER_TYPE "com/sun/jna/Callback$UncaughtExceptionHandler"
+#define HANDLER_SIG "Lcom/sun/jna/Callback$UncaughtExceptionHandler;"
+  jclass classHandler = (*env)->FindClass(env, HANDLER_TYPE);
+  if (classHandler) {
+    jclass classNative = (*env)->FindClass(env, "com/sun/jna/Native");
+    if (classNative) {
+      jfieldID fid = (*env)->GetStaticFieldID(env, classNative, "callbackExceptionHandler", HANDLER_SIG);
+      if (fid) {
+        jobject handler = (*env)->GetStaticObjectField(env, classNative, fid);
+        if (handler) {
+          jmethodID mid = (*env)->GetMethodID(env, classHandler, "uncaughtException", "(Lcom/sun/jna/Callback;Ljava/lang/Throwable;)V");
+          if (mid) {
+            if (!(*env)->IsSameObject(env, handler, NULL)) {
+              (*env)->CallVoidMethod(env, handler, mid, cb, throwable);
+            }
+            return (*env)->ExceptionCheck(env) == 0;
+          }
+        }
+      }
+    }
+  }
+  (*env)->ExceptionDescribe(env);
+  (*env)->ExceptionClear(env);
+  return 0;
+}
+
 static void
 callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbargs) {
   jobject self;
@@ -140,7 +168,11 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     }
     result = (*env)->CallObjectMethod(env, self, cb->methodID, array);
     if ((*env)->ExceptionCheck(env)) {
-      fprintf(stderr, "JNA: uncaught exception in callback, continuing\n");
+      jthrowable throwable = (*env)->ExceptionOccurred(env);
+      (*env)->ExceptionClear(env);
+      if (!handle_exception(env, self, throwable)) {
+        fprintf(stderr, "JNA: error handling callback exception, continuing\n");
+      }
       memset(resp, 0, cif->rtype->size);
     }
     else {

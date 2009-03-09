@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.Callback.UncaughtExceptionHandler;
 
 import junit.framework.TestCase;
 
@@ -505,6 +506,84 @@ public class CallbacksTest extends TestCase {
         assertEquals("Callback reference should be reused", cb, cb2);
     }
     
+    /* Most Callbacks are wrapped in DefaultCallbackProxy, which catches their
+     * exceptions.
+     */
+    public void testCallbackExceptionHandler() {
+        final RuntimeException ERROR = new RuntimeException(getName());
+        final Throwable CAUGHT[] = { null };
+        final Callback CALLBACK[] = { null };
+        UncaughtExceptionHandler old = Native.getCallbackExceptionHandler();
+        UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
+            public void uncaughtException(Callback cb, Throwable e) {
+                CALLBACK[0] = cb;
+                CAUGHT[0] = e;
+            }
+        };
+        Native.setCallbackExceptionHandler(handler);
+        try {
+            TestLibrary.CbCallback cb = new TestLibrary.CbCallback() {
+                public CbCallback callback(CbCallback arg) {
+                    throw ERROR;
+                }
+            };
+            TestLibrary.CbCallback cb2 = lib.callCallbackWithCallback(cb);
+            assertNotNull("Exception handler not called", CALLBACK[0]);
+            assertEquals("Wrong callback argument to handler", cb, CALLBACK[0]);
+            assertEquals("Wrong exception passed to handler",
+                         ERROR, CAUGHT[0]);
+        }
+        finally {
+            Native.setCallbackExceptionHandler(old);
+        }
+    }
+
+    /* CallbackProxy is called directly from native. */
+    public void testCallbackExceptionHandlerWithCallbackProxy() throws Throwable {
+        final RuntimeException ERROR = new RuntimeException(getName());
+        final Throwable CAUGHT[] = { null };
+        final Callback CALLBACK[] = { null };
+        UncaughtExceptionHandler old = Native.getCallbackExceptionHandler();
+        UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
+            public void uncaughtException(Callback cb, Throwable e) {
+                CALLBACK[0] = cb;
+                CAUGHT[0] = e;
+            }
+        };
+        Native.setCallbackExceptionHandler(handler);
+        try {
+            class TestProxy implements CallbackProxy, TestLibrary.CbCallback {
+                public CbCallback callback(CbCallback arg) {
+                    throw new Error("Should never be called");
+                }
+                public Object callback(Object[] args) {
+                    throw ERROR;
+                }
+                public Class[] getParameterTypes() {
+                    return new Class[] { CbCallback.class };
+                }
+                public Class getReturnType() {
+                    return CbCallback.class;
+                }
+            };
+            TestLibrary.CbCallback cb = new TestProxy();
+            TestLibrary.CbCallback cb2 = lib.callCallbackWithCallback(cb);
+            assertNotNull("Exception handler not called", CALLBACK[0]);
+            assertEquals("Wrong callback argument to handler", cb, CALLBACK[0]);
+            assertEquals("Wrong exception passed to handler",
+                         ERROR, CAUGHT[0]);
+        }
+        finally {
+            Native.setCallbackExceptionHandler(old);
+        }
+    }
+
+    public void testResetCallbackExceptionHandler() {
+        Native.setCallbackExceptionHandler(null);
+        assertNotNull("Should not be able to set callback EH null",
+                      Native.getCallbackExceptionHandler());
+    }
+
     public static interface CallbackTestLibrary extends Library {
         interface Int32Callback extends Callback {
             float callback(float arg, float arg2);

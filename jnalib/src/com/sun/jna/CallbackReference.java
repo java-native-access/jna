@@ -271,7 +271,7 @@ class CallbackReference extends WeakReference {
             }
         }
         
-        private Object callback_inner(Object[] args) {
+        private Object invokeCallback(Object[] args) {
             Class[] paramTypes = callbackMethod.getParameterTypes();
             Object[] callbackArgs = new Object[args.length];
             
@@ -294,13 +294,13 @@ class CallbackReference extends WeakReference {
                     result = convertResult(callbackMethod.invoke(cb, callbackArgs));
                 }
                 catch (IllegalArgumentException e) {
-                    e.printStackTrace();
+                    Native.getCallbackExceptionHandler().uncaughtException(cb, e);
                 }
                 catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Native.getCallbackExceptionHandler().uncaughtException(cb, e);
                 }
                 catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    Native.getCallbackExceptionHandler().uncaughtException(cb, e.getTargetException());
                 }
             }
             return result;
@@ -313,10 +313,10 @@ class CallbackReference extends WeakReference {
          */
         public Object callback(Object[] args) {
             try {
-                return callback_inner(args);
+                return invokeCallback(args);
             }
             catch (Throwable t) {
-                t.printStackTrace();
+                Native.getCallbackExceptionHandler().uncaughtException(getCallback(), t);
                 return null;
             }
         }
