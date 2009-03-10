@@ -6,13 +6,14 @@
   <groupId>net.java.dev.jna</groupId>
   <artifactId>jna</artifactId>
   <packaging>jar</packaging>
-  <version>3.1.0</version>
+  <version>3.x.x</version>
   <name>Java Native Access</name>
     
    <distributionManagement>
     <repository>
-      <id>java.net-m2-repository</id>
-      <url>java-net:/maven2-repository/trunk/www/repository/</url>
+      <uniqueVersion>false</uniqueVersion>
+      <id>java.net-maven2-repository</id>
+      <url>java-net:/maven2-repository/trunk/repository/</url>
     </repository>
   </distributionManagement>
 
