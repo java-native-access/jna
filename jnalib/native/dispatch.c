@@ -34,12 +34,12 @@
 #endif
 #define LIBNAMETYPE wchar_t*
 #define LIBNAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
-/* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:            
- * "Note that the standard search strategy and the alternate search strategy    
- * specified by LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH differ in      
- * just one way: The standard search begins in the calling application's        
- * directory, and the alternate search begins in the directory of the           
- * executable module that LoadLibraryEx is loading."                            
+/* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:
+ * "Note that the standard search strategy and the alternate search strategy  
+ * specified by LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH differ in    
+ * just one way: The standard search begins in the calling application's      
+ * directory, and the alternate search begins in the directory of the         
+ * executable module that LoadLibraryEx is loading."                          
  */
 #define LOAD_LIBRARY(NAME) LoadLibraryExW(NAME, NULL, LOAD_WITH_ALTERED_SEARCH_PATH)
 #define LOAD_ERROR(BUF,LEN) w32_format_error(BUF, LEN)
@@ -62,7 +62,7 @@ w32_format_error(char* buf, int len) {
 #else
 #define LIBNAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
 #endif
-#define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_LAZY)
+#define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
 #define FIND_ENTRY(HANDLE, NAME) dlsym(HANDLE, NAME)

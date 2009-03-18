@@ -7,6 +7,8 @@
 <li>Make Memory class more accessible.
 <li>Provide Structure ctor with Pointer argument (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=102">issue 102</a>).
 <li>Allow implicit library access to current process on linux (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=98">issue 98</a>).
+<li>Open all shared libraries with RTLD_GLOBAL, if applicable.  This was the
+  default behavior on OSX and changes the default behavior on linux.
 </ul>
 <b>Bug Fixes</b>
 <ul>
