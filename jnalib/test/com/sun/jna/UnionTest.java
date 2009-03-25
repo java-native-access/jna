@@ -53,6 +53,18 @@ public class UnionTest extends TestCase {
         assertEquals("Union should be size of largest field", 8, u.size());
     }
 
+    public void testFieldOffsets() {
+        StructUnion u = new StructUnion();
+        u.setType(u.testStruct.getClass());
+        u.write();
+        assertEquals("Wrong struct member base address", 
+                     u.getPointer(), u.testStruct.getPointer());
+        u.setType(u.intStruct.getClass());
+        u.write();
+        assertEquals("Wrong struct member base address (2)", 
+                     u.getPointer(), u.intStruct.getPointer());
+    }
+
     public void testWriteUnion() {
         SizedUnion u = new SizedUnion();
         final int VALUE = 0x12345678; 

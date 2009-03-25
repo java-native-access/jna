@@ -218,7 +218,18 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong aggregate size",
                      s.s1.size() + s.s2.size() + 4, s.size());
         s.write();
+        assertEquals("Wrong memory for structure field 1 after write",
+                     s.getPointer(), s.s1.getPointer());
+        assertEquals("Wrong memory for structure field 2 after write",
+                     s.getPointer().share(s.s1.size()),
+                     s.s2.getPointer());
+
         s.read();
+        assertEquals("Wrong memory for structure field 1 after read",
+                     s.getPointer(), s.s1.getPointer());
+        assertEquals("Wrong memory for structure field 2 after read",
+                     s.getPointer().share(s.s1.size()),
+                     s.s2.getPointer());
     }
 
     public void testPrimitiveArrayField() {
