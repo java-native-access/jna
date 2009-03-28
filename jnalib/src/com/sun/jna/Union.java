@@ -197,12 +197,25 @@ public abstract class Union extends Structure {
             for (Iterator i=fields().values().iterator();i.hasNext();) {
                 StructField f = (StructField)i.next();
                 f.offset = 0;
-                if (f.size > fsize) {
+                if (f.size > fsize
+                    // Prefer aggregate types to simple types, since they
+                    // will have more complex packing rules (some platforms
+                    // have specific methods for packing small structs into
+                    // registers, which may not match the packing of bytes
+                    // for a primitive type).
+                    || (f.size == fsize
+                        && Structure.class.isAssignableFrom(f.type))) {
                     fsize = f.size;
                     biggestField = f;
                 }
             }
             size = calculateAlignedSize(fsize);
+            if (size > 0) {
+                // Update native FFI type information, if needed
+                if (this instanceof ByValue) {
+                    getTypeInfo();
+                }
+            }
         }
         return size;
     }
@@ -211,8 +224,16 @@ public abstract class Union extends Structure {
         return super.getNativeAlignment(type, value, true);
     }
 
-    /** Return type information for the largest field. */
+    /** Return type information for the largest field to ensure all available
+     * bits are used.
+     */
     Pointer getTypeInfo() {
-        return getTypeInfo(getField(biggestField));
+        if (biggestField == null) {
+            // Not calculated yet
+            return null;
+        }
+        Pointer p = getTypeInfo(getField(biggestField));
+        cacheTypeInfo(p);
+        return p;
     }
 }

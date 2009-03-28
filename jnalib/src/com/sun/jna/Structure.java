@@ -1249,10 +1249,14 @@ public abstract class Structure {
         return p != null ? p.hashCode() : 0;
     }
 
+    protected void cacheTypeInfo(Pointer p) {
+        typeInfo = p.peer;
+    }
+
     /** Obtain native type information for this structure. */
     Pointer getTypeInfo() {
         Pointer p = getTypeInfo(this);
-        typeInfo = p.peer;
+        cacheTypeInfo(p);
         return p;
     }
 

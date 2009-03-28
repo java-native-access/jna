@@ -145,6 +145,38 @@ public class UnionTest extends TestCase {
         u.setType(int[].class);
     }
 
+    public interface TestLibrary extends Library {
+        class TestUnion extends Union implements Structure.ByValue {
+            public String f1;
+            public int f2;
+        }
+        interface UnionCallback extends Callback {
+            TestUnion invoke(TestUnion arg);
+        }
+        TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
+    }
+    public void testUnionByValueCallbackArgument() throws Exception{
+        TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
+        arg.setType(String.class);
+        final String VALUE = getName();
+        arg.f1 = VALUE;
+        final boolean[] called = { false };
+        final String[] cbvalue = { null };
+        TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
+                public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
+                    called[0] = true;
+                    v.setType(String.class);
+                    v.read();
+                    cbvalue[0] = v.f1;
+                    return v;
+                }
+            }, arg);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Incorrect callback union argument", VALUE, cbvalue[0]);
+        assertEquals("Union value not propagated", VALUE, result.getTypedValue(String.class));
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(UnionTest.class);
     }

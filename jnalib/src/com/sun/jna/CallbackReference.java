@@ -125,7 +125,6 @@ class CallbackReference extends WeakReference {
                 + " requires custom type conversion";
             throw new IllegalArgumentException(msg);
         }
-
         cbstruct = createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
                                         nativeParamTypes, returnType,
                                         callingConvention);
@@ -341,14 +340,17 @@ class CallbackReference extends WeakReference {
                 }
                 else if (Structure.class.isAssignableFrom(dstType)) {
                     Structure s = Structure.newInstance(dstType);
-                    Pointer old = s.getPointer();
-                    s.useMemory((Pointer)value);
-                    s.read();
-                    // If by value, don't hold onto the pointer
+                    // If passed by value, don't hold onto the pointer, which
+                    // is only valid for the duration of the callback call
                     if (Structure.ByValue.class.isAssignableFrom(dstType)) {
-                        s.useMemory(old);
-                        s.write();
+                        byte[] buf = new byte[s.size()];
+                        ((Pointer)value).read(0, buf, 0, buf.length);
+                        s.getPointer().write(0, buf, 0, buf.length);
                     }
+                    else {
+                        s.useMemory((Pointer)value);
+                    }
+                    s.read();
                     value = s;
                 }
             }

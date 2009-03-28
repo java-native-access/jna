@@ -40,6 +40,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
                 callconv_t calling_convention) {
   callback* cb;
   ffi_abi abi = FFI_DEFAULT_ABI;
+  ffi_type* ffi_rtype;
   ffi_status status;
   jsize argc;
   JavaVM* vm;
@@ -80,9 +81,13 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     throwByName(env, EIllegalArgument, "Unsupported return type");
     goto failure_cleanup;
   }
-  status = ffi_prep_cif(&cb->ffi_cif, abi, argc,
-                        get_ffi_rtype(env, return_type, rtype),
-                        &cb->ffi_args[0]);
+  ffi_rtype = get_ffi_rtype(env, return_type, rtype);
+  if (!ffi_rtype) {
+    throwByName(env, EIllegalArgument, "Error in return type");
+    goto failure_cleanup;
+  }
+  status = ffi_prep_cif(&cb->ffi_cif, abi, argc, ffi_rtype, &cb->ffi_args[0]);
+
   switch(status) {
   case FFI_BAD_ABI:
     snprintf(msg, sizeof(msg),
