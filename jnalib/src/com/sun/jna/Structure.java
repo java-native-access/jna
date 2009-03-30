@@ -491,6 +491,19 @@ public abstract class Structure {
                 result = cb;
             }
         }
+        else if (Buffer.class.isAssignableFrom(nativeType)) {
+            Pointer bp = memory.getPointer(offset);
+            if (bp == null) {
+                result = null;
+            }
+            else {
+                Pointer oldbp = currentValue == null ? null
+                    : Native.getDirectBufferPointer((Buffer)currentValue);
+                if (oldbp == null || !oldbp.equals(bp)) {
+                    throw new IllegalStateException("Can't autogenerate a direct buffers on Structure read");
+                }
+            }
+        }
         else if (nativeType.isArray()) {
             result = currentValue;
             if (result == null) {
@@ -724,6 +737,11 @@ public abstract class Structure {
         }
         else if (Callback.class.isAssignableFrom(nativeType)) {
             memory.setPointer(offset, CallbackReference.getFunctionPointer((Callback)value));
+        }
+        else if (nativeType == Buffer.class) {
+            Pointer p = value == null ? null
+                : Native.getDirectBufferPointer((Buffer)value);
+            memory.setPointer(offset, p);
         }
         else if (nativeType.isArray()) {
             return writeArrayValue(offset, value, nativeType.getComponentType());
@@ -1091,12 +1109,6 @@ public abstract class Structure {
             }
             // Don't process zero-length arrays
             throw new IllegalArgumentException("Arrays of length zero not allowed in structure: " + type);
-        }
-        // May provide this in future; problematic on read, since we can't
-        // auto-create a java.nio.Buffer w/o knowing its size
-        if (Buffer.class.isAssignableFrom(type)) {
-            throw new IllegalArgumentException("the type \"" + type.getName()
-                                               + "\" is not supported as a structure field: ");
         }
         if (Structure.class.isAssignableFrom(type)
             && !Structure.ByReference.class.isAssignableFrom(type)) {

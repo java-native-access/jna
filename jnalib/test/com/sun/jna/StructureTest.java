@@ -531,20 +531,51 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong first element", s.getPointer(), s.array[0]);
     }
 
-    public void testBufferField() {
-        // NOTE: may support write-only Buffer fields in the future
-        class BufferStructure extends Structure {
-            public Buffer buffer;
-            public BufferStructure(byte[] buf) {
-                buffer = ByteBuffer.wrap(buf);
-            }
+    class BufferStructure extends Structure {
+        public Buffer buffer;
+    }
+    public void testBufferFieldWriteNULL() {
+        BufferStructure bs = new BufferStructure();
+        bs.write();
+    }
+    public void testBufferFieldWriteNonNULL() {
+        BufferStructure bs = new BufferStructure();
+        bs.buffer = ByteBuffer.allocateDirect(16);
+        bs.write();
+    }
+    public void testBufferFieldReadUnchanged() {
+        BufferStructure bs = new BufferStructure();
+        bs.buffer = ByteBuffer.allocateDirect(16);
+        bs.write();
+        bs.read();
+    }
+    public void testBufferFieldReadChanged() {
+        BufferStructure bs = new BufferStructure();
+        if (Pointer.SIZE == 4) {
+            bs.getPointer().setInt(0, 0x1);
         }
-    	try {
-            new BufferStructure(new byte[1024]).size();
-            fail("Buffer fields should not be allowed");
-    	}
-    	catch(IllegalArgumentException e) {
-    	}
+        else {
+            bs.getPointer().setLong(0, 0x1);
+        }
+        try {
+            bs.read();
+            fail("Structure read should fail if Buffer pointer was set");
+        }
+        catch(IllegalStateException e) {
+        }
+        bs.buffer = ByteBuffer.allocateDirect(16);
+        try {
+            bs.read();
+            fail("Structure read should fail if Buffer pointer has changed");
+        }
+        catch(IllegalStateException e) {
+        }
+    }
+    public void testBufferFieldReadChangedToNULL() {
+        BufferStructure bs = new BufferStructure();
+        bs.buffer = ByteBuffer.allocateDirect(16);
+        bs.read();
+        assertNull("Structure Buffer field should be set null", bs.buffer);
     }
 
     public void testVolatileStructureField() {
