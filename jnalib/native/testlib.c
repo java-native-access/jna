@@ -376,7 +376,7 @@ testStructureByValueArgument(struct CheckFieldAlignment arg) {
     + arg.int64Field + arg.floatField + arg.doubleField;
 }
 
-typedef struct ByValue8 { int8_t data; } ByValue9;
+typedef struct ByValue8 { int8_t data; } ByValue8;
 typedef struct ByValue16 { int16_t data; } ByValue16;
 typedef struct ByValue32 { int32_t data; } ByValue32;
 typedef struct ByValue64 { int64_t data; } ByValue64;
@@ -405,6 +405,19 @@ testStructureByValueArgument64(struct ByValue64 arg){
 EXPORT int64_t
 testStructureByValueArgument128(struct ByValue128 arg){
   return arg.data + arg.data1;
+}
+
+typedef union _test_union_t {
+  // Use non-primitive fields, doesn't matter what they are
+  char* f1;
+  int32_t f2;
+} test_union_t;
+
+typedef test_union_t (*test_union_cb_t)(test_union_t arg);
+
+EXPORT test_union_t
+testUnionByValueCallbackArgument(test_union_cb_t cb, test_union_t arg) {
+  return (*cb)(arg);
 }
 
 typedef struct {
