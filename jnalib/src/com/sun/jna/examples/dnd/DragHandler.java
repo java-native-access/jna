@@ -162,7 +162,7 @@ public abstract class DragHandler
             try {
                 // getTransferable is available during drag only on 1.5+
                 return (Transferable)
-                    e.getClass().getMethod("getTransferable", null).invoke(e, null);
+                    e.getClass().getMethod("getTransferable", (Class[])null).invoke(e, (Object[])null);
             }
             catch(Exception ex) {
                 // Method not available
