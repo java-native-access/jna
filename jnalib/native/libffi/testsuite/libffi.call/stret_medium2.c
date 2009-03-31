@@ -46,7 +46,7 @@ struct_72byte cls_struct_72byte_fn(
 }
 
 static void
-cls_struct_72byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_struct_72byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args, void* userdata __UNUSED__)
 {
 	struct_72byte	b0, b1, b2, b3;
 

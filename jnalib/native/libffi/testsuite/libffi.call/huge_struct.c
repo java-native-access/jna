@@ -154,7 +154,7 @@ test_large_fn(
 }
 
 static void
-cls_large_fn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_large_fn(ffi_cif* cif __UNUSED__, void* resp, void** args, void* userdata __UNUSED__)
 {
 	uint8_t		ui8_1	= *(uint8_t*)args[0];
 	int8_t		si8_1	= *(int8_t*)args[1];
@@ -216,7 +216,7 @@ cls_large_fn(ffi_cif* cif, void* resp, void** args, void* userdata)
 }
 
 int
-main(int argc, const char** argv)
+main(int argc __UNUSED__, const char** argv __UNUSED__)
 {
 #ifndef USING_MMAP
 	static ffi_closure cl;
