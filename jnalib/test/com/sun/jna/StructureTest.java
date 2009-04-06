@@ -71,7 +71,7 @@ public class StructureTest extends TestCase {
             public int fieldCount() { return fields().size(); }
         }
         try {
-            s = new TestStructure(new Memory(2));
+            TestStructure s = new TestStructure(new Memory(2));
             fail("Expect exception if provided memory is insufficient");
         }
         catch(IllegalArgumentException e) {
