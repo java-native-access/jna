@@ -68,6 +68,7 @@ public class Pointer {
     
     /** Provide a view of this pointer with a different peer base. */
     public Pointer share(long offset, long sz) {
+        if (offset == 0) return this;
         return new Pointer(peer + offset);
     }
 

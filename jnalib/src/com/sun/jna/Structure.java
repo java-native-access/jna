@@ -124,45 +124,31 @@ public abstract class Structure {
     private boolean autoWrite = true;
 
     protected Structure() {
-        this(CALCULATE_SIZE);
-    }
-
-    protected Structure(int size) {
-        this(size, ALIGN_DEFAULT);
-    }
-
-    protected Structure(int size, int alignment) {
-        this(size, alignment, null);
+        this((Pointer)null);
     }
 
     protected Structure(TypeMapper mapper) {
-        this(CALCULATE_SIZE, ALIGN_DEFAULT, mapper);
+        this((Pointer)null, ALIGN_DEFAULT, mapper);
     }
 
-    /** Create a structure cast onto native memory. */
+    /** Create a structure cast onto pre-allocated memory. */
     protected Structure(Pointer p) {
-        this(p, CALCULATE_SIZE);
+        this(p, ALIGN_DEFAULT);
     }
 
-    protected Structure(Pointer p, int size) {
-        this(p, size, ALIGN_DEFAULT);
+    protected Structure(Pointer p, int alignment) {
+        this(p, alignment, null);
     }
 
-    protected Structure(Pointer p, int size, int alignment) {
-        this(p, size, alignment, null);
-    }
-
-    protected Structure(Pointer p, int size, int alignment, TypeMapper mapper) {
+    protected Structure(Pointer p, int alignment, TypeMapper mapper) {
         setAlignType(alignment);
         setTypeMapper(mapper);
-        useMemory(p);
-        allocateMemory(size);
-    }
-
-    protected Structure(int size, int alignment, TypeMapper mapper) {
-        setAlignType(alignment);
-        setTypeMapper(mapper);
-        allocateMemory(size);
+        if (p != null) {
+            useMemory(p);
+        }
+        else {
+            allocateMemory(CALCULATE_SIZE);
+        }
     }
 
     /** Return all fields in this structure (ordered). */
@@ -227,7 +213,14 @@ public abstract class Structure {
      * memory.
      */
     protected void useMemory(Pointer m, int offset) {
-        this.memory = m.share(offset, size());
+        // Invoking size() here is important when this method is invoked
+        // from the ctor, to ensure fields are properly scanned and allocated
+        try {
+            this.memory = m.share(offset, size());
+        }
+        catch(IndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Structure exceeds provided memory bounds");
+        }
     }
 
     protected void ensureAllocated() {
@@ -259,11 +252,11 @@ public abstract class Structure {
         // May need to defer size calculation if derived class not fully
         // initialized
         if (size != CALCULATE_SIZE) {
-            if (memory == null 
-                || memory instanceof AutoAllocated) {
-                memory = new AutoAllocated(size);
+            if (this.memory == null 
+                || this.memory instanceof AutoAllocated) {
+                this.memory = new AutoAllocated(size);
                 // Always clear new structure memory
-                memory.clear(size);
+                this.memory.clear(size);
             }
             this.size = size;
         }

@@ -47,6 +47,37 @@ public class StructureTest extends TestCase {
         public int f2;
         public int f3;
     }
+
+
+    public void testFieldsAllocated() {
+        class TestStructure extends Structure {
+            public TestStructure() { }
+            public TestStructure(Pointer p) { super(p); }
+            public int field;
+            public int fieldCount() { return fields().size(); }
+        }
+        TestStructure s = new TestStructure();
+        assertEquals("Wrong number of fields (default)", 1, s.fieldCount());
+
+        s = new TestStructure(new Memory(4));
+        assertEquals("Wrong number of fields (preallocated)", 1, s.fieldCount());
+    }
+
+    public void testProvidedMemoryTooSmall() {
+        class TestStructure extends Structure {
+            public TestStructure() { }
+            public TestStructure(Pointer p) { super(p); }
+            public int field;
+            public int fieldCount() { return fields().size(); }
+        }
+        try {
+            s = new TestStructure(new Memory(2));
+            fail("Expect exception if provided memory is insufficient");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
     public void testClearOnAllocate() {
         TestAllocStructure s = new TestAllocStructure();
         s.read();
