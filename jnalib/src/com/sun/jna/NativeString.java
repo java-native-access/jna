@@ -22,8 +22,8 @@ import java.nio.CharBuffer;
  */
 class NativeString implements CharSequence, Comparable {
 
-    private String value;
     private Pointer pointer;
+    private boolean wide;
 
     /** Create a native string (NUL-terminated array of <code>char</code>).<p>
      * If the system property <code>jna.encoding</code> is set, its value will
@@ -45,13 +45,13 @@ class NativeString implements CharSequence, Comparable {
      * @param wide whether to store the String as <code>wchar_t</code>
      */
     public NativeString(String string, boolean wide) {
-        this.value = string;
         if (string == null) {
             throw new NullPointerException("String must not be null");
         }
         // Allocate the memory to hold the string.  Note, we have to
         // make this 1 element longer in order to accommodate the terminating 
         // NUL (which is generated in Pointer.setString()).
+        this.wide = wide;
         if (wide) {
             int len = (string.length() + 1 ) * Native.WCHAR_SIZE;
             pointer = new Memory(len);
@@ -66,7 +66,7 @@ class NativeString implements CharSequence, Comparable {
     }
 
     public int hashCode() {
-        return value.hashCode();
+        return toString().hashCode();
     }
 
     public boolean equals(Object other) {
@@ -78,7 +78,7 @@ class NativeString implements CharSequence, Comparable {
     }
 
     public String toString() {
-        return value;
+        return pointer.getString(0, wide);
     }
 
     public Pointer getPointer() {
@@ -86,15 +86,15 @@ class NativeString implements CharSequence, Comparable {
     }
 
     public char charAt(int index) {
-        return value.charAt(index);
+        return toString().charAt(index);
     }
 
     public int length() {
-        return value.length();
+        return toString().length();
     }
 
     public CharSequence subSequence(int start, int end) {
-        return CharBuffer.wrap(value).subSequence(start, end);
+        return CharBuffer.wrap(toString()).subSequence(start, end);
     }
 
     public int compareTo(Object other) {
@@ -102,6 +102,6 @@ class NativeString implements CharSequence, Comparable {
         if (other == null)
             return 1;
 
-        return value.compareTo(other.toString());
+        return toString().compareTo(other.toString());
     }
 }

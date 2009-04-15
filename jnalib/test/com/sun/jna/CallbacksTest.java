@@ -14,6 +14,7 @@ package com.sun.jna;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.ref.WeakReference;
 
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
 import com.sun.jna.ptr.IntByReference;
@@ -420,6 +421,31 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong String return", VALUE, value);
     }
     
+    public void testStringCallbackMemoryReclamation() throws InterruptedException {
+        TestLibrary.StringCallback cb = new TestLibrary.StringCallback() {
+            public String callback(String arg) {
+                return arg;
+            }
+        };
+
+        // A little internal groping
+        Map m = CallbackReference.allocations;
+        String arg = getName() + "1";
+        String value = lib.callStringCallback(cb, arg);
+        WeakReference ref = new WeakReference(value);
+        
+        arg = null;
+        value = null;
+        System.gc();
+        for (int i = 0; i < 100 && ref.get() != null; ++i) {
+            try {
+                Thread.sleep(1); // Give the GC a chance to run
+            } finally {}
+        }
+        assertNull("String reference not GC'd", ref.get());
+        assertEquals("NativeString reference still held", 0, m.values().size());
+    }
+
     public void testCallWideStringCallback() {
         final boolean[] called = {false};
         final WString[] cbargs = { null };

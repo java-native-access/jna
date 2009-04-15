@@ -33,7 +33,7 @@ class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
     static final Map altCallbackMap = new WeakHashMap();
-    private static final Map allocations = new WeakHashMap();
+    static final Map allocations = new WeakHashMap();
     private static final Method PROXY_CALLBACK_METHOD;
     
     static {
