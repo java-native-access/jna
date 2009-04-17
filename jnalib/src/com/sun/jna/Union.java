@@ -32,20 +32,20 @@ public abstract class Union extends Structure {
      */
     protected Union() { }
     /** Create a Union of the given size, using default alignment. */
-    protected Union(int size) {
-        super(size);
+    protected Union(Pointer p) {
+        super(p);
     }
     /** Create a Union of the given size and alignment type. */
-    protected Union(int size, int alignType) {
-        super(size, alignType);
+    protected Union(Pointer p, int alignType) {
+        super(p, alignType);
     }
     /** Create a Union of the given size and alignment type. */
     protected Union(TypeMapper mapper) {
         super(mapper);
     }
     /** Create a Union of the given size and alignment type. */
-    protected Union(int size, int alignType, TypeMapper mapper) {
-        super(size, alignType, mapper);
+    protected Union(Pointer p, int alignType, TypeMapper mapper) {
+        super(p, alignType, mapper);
     }
     /** Indicates which field will be used to write to native memory. 
      * @throws IllegalArgumentException if the type does not correspond to 
