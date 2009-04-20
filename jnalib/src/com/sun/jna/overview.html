@@ -596,9 +596,8 @@ to pass Java objects to the native methods.  By default, JNA disallows using
 any Java object that is not explicitly supported unless it derives from
 {@link com.sun.jna.NativeMapped}, because it is generally unnecessary to use
 such objects and usually signals a programmer error.  To avoid errors flagging
-the use of Java objects, define the system
-property <code>jna.allow_objects</code> with the value "true".  
-
+the use of Java objects, use the library load option {@link
+com.sun.jna.Library#OPTION_ALLOW_OBJECTS} with Boolean.TRUE.
 <p>
 <a href="#toc">Table of Contents</a>
 <a name="invocation-mapping"></a>
