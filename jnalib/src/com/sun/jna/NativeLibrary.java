@@ -66,7 +66,7 @@ public class NativeLibrary {
         if (Platform.isWindows() && "kernel32".equals(this.libraryName.toLowerCase())) {
             synchronized(functions) {
                 Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION) {
-                    Object invoke(Object[] args, Class returnType) {
+                    Object invoke(Object[] args, Class returnType, boolean b) {
                         return new Integer(Native.getLastError());
                     }
                 };
@@ -477,23 +477,23 @@ public class NativeLibrary {
     	double divisor = 1;
     	int dot = ver.indexOf(".");
     	while (ver != null) {
-    		String num;
-    		if (dot != -1) {
-    			num = ver.substring(0, dot);
-    			ver = ver.substring(dot + 1);
-        		dot = ver.indexOf(".");
-    		}
-    		else {
-    			num = ver;
-    			ver = null;
-    		}
-    		try {
-    			v += Integer.parseInt(num) / divisor;
-    		}
-    		catch(NumberFormatException e) {
-    			return 0;
-    		}
-    		divisor *= 100;
+            String num;
+            if (dot != -1) {
+                num = ver.substring(0, dot);
+                ver = ver.substring(dot + 1);
+                dot = ver.indexOf(".");
+            }
+            else {
+                num = ver;
+                ver = null;
+            }
+            try {
+                v += Integer.parseInt(num) / divisor;
+            }
+            catch(NumberFormatException e) {
+                return 0;
+            }
+            divisor *= 100;
     	}
 
     	return v;

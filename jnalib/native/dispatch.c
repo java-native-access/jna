@@ -347,6 +347,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     else if ((array_pt = getArrayComponentType(env, arg)) != 0
              && array_pt != 'L') {
       void *ptr = NULL;
+
       switch(array_pt) {
       case 'Z': ptr = (*env)->GetBooleanArrayElements(env, arg, NULL); break;
       case 'B': ptr = (*env)->GetByteArrayElements(env, arg, NULL); break;
@@ -370,9 +371,10 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
       array_elements[array_count++].elems = ptr;
     }
     else {
-      snprintf(msg, sizeof(msg), "Unsupported type at parameter %d", i);
-      throwByName(env,EIllegalArgument, msg);
-      goto cleanup;
+      // Anything else, pass directly as a pointer
+      c_args[i].l = (void*)arg;
+      ffi_types[i] = &ffi_type_pointer;
+      ffi_values[i] = &c_args[i].l;
     }
   }
   
@@ -510,6 +512,21 @@ Java_com_sun_jna_Function_invokePointer(JNIEnv *env, jobject self,
     jvalue result;
     dispatch(env, self, callconv, arr, &ffi_type_pointer, &result);
     return newJavaPointer(env, result.l);
+}
+
+
+/*
+ * Class:     Function
+ * Method:    invokeObject
+ * Signature: (I[Ljava/lang/Object;)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL 
+Java_com_sun_jna_Function_invokeObject(JNIEnv *env, jobject self, 
+                                       jint callconv, jobjectArray arr)
+{
+    jvalue result;
+    dispatch(env, self, callconv, arr, &ffi_type_pointer, &result);
+    return result.l;
 }
 
 

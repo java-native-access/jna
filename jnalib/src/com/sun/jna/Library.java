@@ -74,6 +74,14 @@ public interface Library {
      * be one of the predefined alignment types in {@link Structure}. 
      */
     String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
+    /** Option key for a boolean flag to allow any Java class instance as a
+        parameter.  If no type mapper is found, the object is passed as a
+        pointer.
+        <em>NOTE:</em> This is for use with raw JNI interactions via the
+        JNIEnv data structure.
+    */
+    String OPTION_ALLOW_OBJECTS = "allow-objects";
+
     static class Handler implements InvocationHandler {
         
         static final Method OBJECT_TOSTRING;

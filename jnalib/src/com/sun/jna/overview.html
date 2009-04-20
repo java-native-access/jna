@@ -590,12 +590,14 @@ memory.  Structure, String, and WString members will <em>not</em> be
 initialized unless they are selected via {@link com.sun.jna.Union#setType}.
 
 <a name="java-objects"></a>
-<h3>Java Object arguments</h3>
-In some cases, it would seem convenient to pass a Java object as an opaque
-pointer for later use by a Java callback method.  Unfortunately, this proves
-problematic in that the native code must become responsible for reference
-tracking.   Until a consistent method or methods of handling these situations
-is formulated, passing Java objects directly is not supported.
+<h3>Arbitrary Java Object arguments/return values</h3>
+In some cases, such as invoking native VM functions directly, it is necessary
+to pass Java objects to the native methods.  By default, JNA disallows using
+any Java object that is not explicitly supported unless it derives from
+{@link com.sun.jna.NativeMapped}, because it is generally unnecessary to use
+such objects and usually signals a programmer error.  To avoid errors flagging
+the use of Java objects, define the system
+property <code>jna.allow_objects</code> with the value "true".  
 
 <p>
 <a href="#toc">Table of Contents</a>

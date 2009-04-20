@@ -12,11 +12,13 @@
  */
 package com.sun.jna;
 
+import java.util.HashMap;
+
 import junit.framework.TestCase;
 
+import com.sun.jna.ReturnTypesTest.TestLibrary.SimpleStructure;
 import com.sun.jna.ReturnTypesTest.TestLibrary.TestStructure;
 import com.sun.jna.ReturnTypesTest.TestLibrary.TestSmallStructure;
-import com.sun.jna.ReturnTypesTest.TestLibrary.SimpleStructure;
 
 /** Exercise a range of native methods.
  *
@@ -58,7 +60,9 @@ public class ReturnTypesTest extends TestCase {
             public double doubleField = 4d;
         }
 
-        Object returnStringArgument(String s);
+        class TestObject { }
+        Object returnObjectArgument(Object s);
+        TestObject returnObjectArgument(TestObject s);
         boolean returnFalse();
         boolean returnTrue();
         int returnInt32Zero();
@@ -92,14 +96,28 @@ public class ReturnTypesTest extends TestCase {
         lib = null;
     }
     
-    public void testReturnJavaObject() throws Exception {
+    public void testReturnObject() throws Exception {
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class, new HashMap() { {
+            put(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE);
+        }});
+        assertNull("null value not returned", lib.returnObjectArgument(null));
+        final Object VALUE = new Object() {
+            public String toString() {
+                return getName();
+            }
+        };
+        assertEquals("Wrong object returned", VALUE, lib.returnObjectArgument(VALUE));
+    }
+    
+    public void testReturnObjectUnsupported() throws Exception {
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
         try {
-            lib.returnStringArgument(getName());
+            lib.returnObjectArgument(new TestLibrary.TestObject());
             fail("Java Object return is not supported, should throw IllegalArgumentException");
         }
         catch(IllegalArgumentException e) {
             assertTrue("Exception should include return object type: " + e,
-                       e.getMessage().indexOf("java.lang.Object") != -1);
+                       e.getMessage().indexOf(TestLibrary.TestObject.class.getName()) != -1);
         }
         catch(Throwable e) {
             fail("Method declared with Java Object return should throw IllegalArgumentException, not " + e);

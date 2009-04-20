@@ -201,6 +201,11 @@ returnStringArgument(char *arg) {
   return arg;
 }
 
+EXPORT void*
+returnObjectArgument(void* arg) {
+  return arg;
+}
+
 EXPORT wchar_t* 
 returnWStringMagic() {
   return MAGICWSTRING;
@@ -757,6 +762,7 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
   }
   return value;
 }
+
 #endif /* _WIN32 && !_WIN64 */
 
 #ifdef __cplusplus
