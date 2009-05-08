@@ -1437,6 +1437,8 @@ public abstract class Structure {
         static Pointer get(Object obj) {
             if (obj == null)
                 return FFITypes.ffi_type_pointer;
+            if (obj instanceof Class)
+                return get(null, (Class)obj);
             return get(obj, obj.getClass());
         }
 

@@ -20,6 +20,11 @@ public class UnionTest extends TestCase {
         public String value;
     }
     
+    public static class BigTestStructure extends Structure {
+        public long field1;
+        public long field2;
+    }
+    
     public static class IntStructure extends Structure {
         public int value;
     }
@@ -36,6 +41,7 @@ public class UnionTest extends TestCase {
         public int intField;
         public long longField;
         public TestStructure structField;
+        public BigTestStructure structField2;
         public String string;
         public WString wstring;
         public Pointer pointer;
@@ -50,7 +56,8 @@ public class UnionTest extends TestCase {
 
     public void testCalculateSize() {
         Union u = new SizedUnion();
-        assertEquals("Union should be size of largest field", 8, u.size());
+        assertEquals("Union should be size of largest field",
+                     new BigTestStructure().size(), u.size());
     }
 
     public void testFieldOffsets() {
@@ -125,11 +132,11 @@ public class UnionTest extends TestCase {
     public void testReadTypeInfo() {
         SizedUnion u = new SizedUnion();
         assertEquals("Type should be that of longest field if no field active",
-                     Structure.getTypeInfo(new Long(0)),
+                     Structure.getTypeInfo(BigTestStructure.class),
                      u.getTypeInfo());
         u.setType(int.class);
         assertEquals("Type should be that of longest field if field active",
-                     Structure.getTypeInfo(new Long(0)),
+                     Structure.getTypeInfo(BigTestStructure.class),
                      u.getTypeInfo());
     }
     
