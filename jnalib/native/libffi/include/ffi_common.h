@@ -18,7 +18,10 @@ extern "C" {
 /* Do not move this. Some versions of AIX are very picky about where
    this is positioned. */
 #ifdef __GNUC__
+/* mingw64 defines this already in malloc.h. */
+#ifndef alloca
 # define alloca __builtin_alloca
+#endif
 # define MAYBE_UNUSED __attribute__((__unused__))
 #else
 # define MAYBE_UNUSED

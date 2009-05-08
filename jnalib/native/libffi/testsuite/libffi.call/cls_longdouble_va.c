@@ -4,7 +4,7 @@
    PR:			none.
    Originator:	Blake Chaffin 6/6/2007	 */
 
-/* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-* x86_64-*-mingw* x86_64-*-cygwin* } } */
+/* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
 #include "ffitest.h"
 
 static void
@@ -20,18 +20,10 @@ cls_longdouble_va_fn(ffi_cif* cif __UNUSED__, void* resp,
 int main (void)
 {
 	ffi_cif cif;
-#ifndef USING_MMAP
-	static ffi_closure cl;
-#endif
-	ffi_closure *pcl;
+        void *code;
+	ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
 	void* args[3];
 	ffi_type* arg_types[3];
-
-#ifdef USING_MMAP
-	pcl = allocate_mmap (sizeof(ffi_closure));
-#else
-	pcl = &cl;
-#endif
 
 	char*		format	= "%L.1f\n";
 	long double	ldArg	= 7;
@@ -53,9 +45,9 @@ int main (void)
 	printf("res: %d\n", (int) res);
 	// { dg-output "\nres: 4" }
 
-	CHECK(ffi_prep_closure(pcl, &cif, cls_longdouble_va_fn, NULL) == FFI_OK);
+	CHECK(ffi_prep_closure_loc(pcl, &cif, cls_longdouble_va_fn, NULL, code) == FFI_OK);
 
-	res	= ((int(*)(char*, long double))(pcl))(format, ldArg);
+	res	= ((int(*)(char*, long double))(code))(format, ldArg);
 	// { dg-output "\n7.0" }
 	printf("res: %d\n", (int) res);
 	// { dg-output "\nres: 4" }

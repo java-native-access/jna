@@ -1,0 +1,3 @@
+To run the testsuite on win64, make your mingw compiler available in the path
+as "gcc".  This could probably be avoided via additional dejagnu configuration,
+but I haven't figured out how.

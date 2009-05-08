@@ -520,17 +520,6 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
    *(unsigned short*)  &__tramp[11] = __size; /* ret __size  */ \
  })
 
-#ifdef X86_WIN64
-static void __enable_execute_stack (void *addr)
-{
-  MEMORY_BASIC_INFORMATION b;
-  if (!VirtualQuery (addr, &b, sizeof(b)))
-    abort ();
-  VirtualProtect (b.BaseAddress, b.RegionSize, PAGE_EXECUTE_READWRITE,
-                  &b.Protect);
-}
-#endif
-
 /* the cif must already be prep'ed */
 
 ffi_status
@@ -550,9 +539,6 @@ ffi_prep_closure_loc (ffi_closure* closure,
                                  &ffi_closure_win64,
                                  codeloc, mask);
       /* make sure we can execute here */
-#ifdef X86_WIN64
-      __enable_execute_stack (&closure->tramp[0]);
-#endif
     }
 #else
   if (cif->abi == FFI_SYSV)
