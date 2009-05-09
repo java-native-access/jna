@@ -43,7 +43,7 @@ cls_struct_4byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
 int main (void)
 {
   ffi_cif cif;
-  void *data;
+  void *code;
   ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
   void* args_dbl[5];
   ffi_type* cls_struct_fields[4];
@@ -79,7 +79,7 @@ int main (void)
   printf("res: %d %d\n", res_dbl.a, res_dbl.b);
   /* { dg-output "\nres: 139 248" } */
 
-  CHECK(ffi_prep_closure_loc(pcl, &cif, cls_struct_4byte_gn, NULL, data) == FFI_OK);
+  CHECK(ffi_prep_closure_loc(pcl, &cif, cls_struct_4byte_gn, NULL, code) == FFI_OK);
 
   res_dbl = ((cls_struct_4byte(*)(cls_struct_4byte, cls_struct_4byte))(code))(g_dbl, f_dbl);
   /* { dg-output "\n127 120 12 128: 139 248" } */

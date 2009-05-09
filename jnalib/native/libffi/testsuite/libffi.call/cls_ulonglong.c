@@ -34,12 +34,12 @@ int main (void)
   CHECK(ffi_prep_closure_loc(pcl, &cif, cls_ret_ulonglong_fn, NULL, code)  == FFI_OK);
   res = (*((cls_ret_ulonglong)code))(214LL);
   /* { dg-output "214: 214" } */
-  printf("res: " PRId64 "\n", res);
+  printf("res: %" PRId64 "\n", res);
   /* { dg-output "\nres: 214" } */
 
   res = (*((cls_ret_ulonglong)code))(9223372035854775808LL);
   /* { dg-output "\n9223372035854775808: 9223372035854775808" } */
-  printf("res: " PRId64 "\n", res);
+  printf("res: %" PRId64 "\n", res);
   /* { dg-output "\nres: 9223372035854775808" } */
 
   exit(0);

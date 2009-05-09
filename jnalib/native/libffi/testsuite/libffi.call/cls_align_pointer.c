@@ -84,7 +84,7 @@ int main (void)
   printf("res: %d %" PRIuPTR " %d\n", res_dbl.a, (uintptr_t)res_dbl.b, res_dbl.c);
   /* { dg-output "\nres: 13 14271 140" } */
 
-  CHECK(ffi_prep_closure_loc(pcl, &cif, cls_struct_align_gn, NULL) == FFI_OK);
+  CHECK(ffi_prep_closure_loc(pcl, &cif, cls_struct_align_gn, NULL, code) == FFI_OK);
 
   res_dbl = ((cls_struct_align(*)(cls_struct_align, cls_struct_align))(code))(g_dbl, f_dbl);
   /* { dg-output "\n12 4951 127 1 9320 13: 13 14271 140" } */

@@ -116,7 +116,7 @@ int main (void)
 	res_dbl = ((struct_72byte(*)(struct_72byte, struct_72byte,
 		struct_72byte, struct_72byte))(code))(e_dbl, f_dbl, g_dbl, h_dbl);
 	/* { dg-output "\n22 15 17 25 6 13 19 18 16" } */
-	printf("res: %g %g %g %g %g %g %g %g " PRId64 "\n", res_dbl.a, res_dbl.b, res_dbl.c,
+	printf("res: %g %g %g %g %g %g %g %g %" PRId64 "\n", res_dbl.a, res_dbl.b, res_dbl.c,
 		res_dbl.d, res_dbl.e, res_dbl.f, res_dbl.g, res_dbl.h, res_dbl.i);
 	/* { dg-output "\nres: 22 15 17 25 6 13 19 18 16" } */
 

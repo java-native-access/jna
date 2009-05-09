@@ -51,7 +51,12 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
 
   argp = stack;
 
-  if (ecif->cif->flags == FFI_TYPE_STRUCT)
+  if (ecif->cif->flags == FFI_TYPE_STRUCT
+#ifdef X86_WIN64
+      && (ecif->cif->rtype->size != 1 && ecif->cif->rtype->size != 2
+          && ecif->cif->rtype->size != 4 && ecif->cif->rtype->size != 8)
+#endif
+      )
     {
       *(void **) argp = ecif->rvalue;
       argp += sizeof(void*);
@@ -71,23 +76,11 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
 
       z = (*p_arg)->size;
 #ifdef X86_WIN64
-      if ((*p_arg)->type == FFI_TYPE_STRUCT)
+      if (z > sizeof(ffi_arg)
+          || ((*p_arg)->type == FFI_TYPE_STRUCT
+              && (z != 1 && z != 2 && z != 4 && z != 8)))
         {
-          if (z == 1 || z == 2 || z == 4 || z == 8)
-            {
-              *(ffi_arg *) argp = *(ffi_arg *)(* p_argv);
-            }
-          else
-            {
-              *(void **)argp = *p_argv;
-            }
-        }
-      else if (z > 8)
-        *(void **)argp = *p_argv;
-      else if (z == 8)
-        *(ffi_arg *) argp = *(ffi_arg *)(* p_argv);
-      else if (z > 8)
-        {
+          z = sizeof(void*);
           *(void **)argp = *p_argv;
         }
       else 
@@ -158,19 +151,6 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
     case FFI_TYPE_VOID:
 #ifdef X86
     case FFI_TYPE_STRUCT:
-#ifdef X86_WIN64
-      if (cif->rtype->size == 1)
-        cif->flags = FFI_TYPE_SMALL_STRUCT_1B;
-      else if (cif->rtype->size == 2)
-        cif->flags = FFI_TYPE_SMALL_STRUCT_2B;
-      else if (cif->rtype->size == 4)
-        cif->flags = FFI_TYPE_INT;
-      else if (cif->rtype->size == 8)
-        cif->flags = FFI_TYPE_SINT64;
-      else
-        cif->flags = (unsigned) cif->rtype->type;
-      break;
-#endif
 #endif
 #if defined(X86) || defined(X86_DARWIN)
     case FFI_TYPE_UINT8:
@@ -198,11 +178,6 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       break;
 
 #ifndef X86
-#ifdef X86_WIN64
-#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
-    case FFI_TYPE_LONGDOUBLE:
-#endif
-#endif
     case FFI_TYPE_STRUCT:
       if (cif->rtype->size == 1)
         {
@@ -422,17 +397,16 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
   argp = stack;
 
 #ifdef X86_WIN64
-  if (cif->rtype->size > sizeof(void *)) {
+  if (cif->rtype->size > sizeof(void *)
+      || (cif->flags == FFI_TYPE_STRUCT
+          && (cif->rtype->size != 1 && cif->rtype->size != 2
+              && cif->rtype->size != 4 && cif->rtype->size != 8))) {
     *rvalue = *(void **) argp;
     argp += sizeof(void *);
- }
+  }
 #else
   if ( cif->flags == FFI_TYPE_STRUCT ) {
-    if (cif->rtype->size == 1 || cif->rtype->size == 2 ||
-      cif->rtype->size == 4 || cif->rtype->size == 8)
-      *rvalue = (void*) argp;
-    else
-      *rvalue = *(void **) argp;
+    *rvalue = *(void **) argp;
     argp += sizeof(void *);
   }
 #endif
@@ -449,7 +423,10 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
       }
 
 #ifdef X86_WIN64
-      if ((*p_arg)->size > sizeof(void *)) 
+      if ((*p_arg)->size > sizeof(ffi_arg)
+          || ((*p_arg)->type == FFI_TYPE_STRUCT
+              && ((*p_arg)->size != 1 && (*p_arg)->size != 2
+                  && (*p_arg)->size != 4 && (*p_arg)->size != 8)))
         {
           z = sizeof(void *);
           *p_argv = *(void **)argp;

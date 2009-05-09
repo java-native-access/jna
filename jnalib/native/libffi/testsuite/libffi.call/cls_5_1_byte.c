@@ -51,7 +51,7 @@ cls_struct_5byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args,
 int main (void)
 {
   ffi_cif cif;
-  void *data;
+  void *code;
   ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
   void* args_dbl[5];
   ffi_type* cls_struct_fields[6];
