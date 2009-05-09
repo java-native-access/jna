@@ -50,7 +50,7 @@ int main (void)
                              (void *) 3 /* userdata */, code) == FFI_OK);
 
   asm volatile (" movl %%esp,%0" : "=g" (sp_pre));
-  res = (*(closure_test_type0)pcl)(0, 1, 2, 3);
+  res = (*(closure_test_type0)code)(0, 1, 2, 3);
   asm volatile (" movl %%esp,%0" : "=g" (sp_post));
   /* { dg-output "0 1 2 3: 9" } */
 

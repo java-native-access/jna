@@ -65,7 +65,7 @@ int main (void)
 
   CHECK(ffi_prep_closure_loc(pcl, &cif, test_func_gn, NULL, code)  == FFI_OK);
 
-  res_closure = (*((test_type)pcl))(2, 125);
+  res_closure = (*((test_type)code))(2, 125);
   /* { dg-output "\n2 125: 127" } */
   printf("res: %d\n", res_closure);
   /* { dg-output "\nres: 127" } */

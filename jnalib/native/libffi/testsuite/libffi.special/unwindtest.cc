@@ -51,7 +51,7 @@ int main (void)
 {
   ffi_cif cif;
   void *code;
-  ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
+  ffi_closure *pcl = (ffi_closure *)ffi_closure_alloc(sizeof(ffi_closure), &code);
   ffi_type * cl_arg_types[17];
 
   {
@@ -101,7 +101,7 @@ int main (void)
                                  (void *) 3 /* userdata */, code)  == FFI_OK);
       try
 	{
-	  (*((closure_test_type1)pcl))
+	  (*((closure_test_type1)code))
 	    (1.1, 2.2, 3.3, 4.4, 127, 5.5, 6.6, 8, 9, 10, 11, 12.0, 13,
 	     19, 21, 1);
 	  /* { dg-output "\n1 2 3 4 127 5 6 8 9 10 11 12 13 19 21 1 3: 255" } */

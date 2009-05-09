@@ -34,7 +34,7 @@ int main (void)
 
   CHECK(ffi_prep_closure_loc(pcl, &cif, cls_ret_double_fn, NULL, code)  == FFI_OK);
 
-  res = (*((cls_ret_double)pcl))(21474.789);
+  res = (*((cls_ret_double)code))(21474.789);
   /* { dg-output "21474.789000: 21474.789000" } */
   printf("res: %.6f\n", res);
   /* { dg-output "\nres: 21474.789000" } */

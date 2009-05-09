@@ -34,7 +34,7 @@ int main (void)
 		     &ffi_type_float, cl_arg_types) == FFI_OK);
 
   CHECK(ffi_prep_closure_loc(pcl, &cif, cls_ret_float_fn, NULL, code)  == FFI_OK);
-  res = ((((cls_ret_float)pcl)(-2122.12)));
+  res = ((((cls_ret_float)code)(-2122.12)));
   /* { dg-output "\\-2122.12: \\-2122.12" } */
   printf("res: %.6f\n", res);
   /* { dg-output "\nres: \-2122.120117" } */

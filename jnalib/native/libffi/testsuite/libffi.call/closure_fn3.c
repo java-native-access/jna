@@ -72,7 +72,7 @@ int main (void)
   CHECK(ffi_prep_closure_loc(pcl, &cif, closure_test_fn3,
                              (void *) 3 /* userdata */, code)  == FFI_OK);
 
-  res = (*((closure_test_type3)pcl))
+  res = (*((closure_test_type3)code))
     (1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9, 10, 11.11, 12.0, 13,
      19.19, 21.21, 1);
   /* { dg-output "1 2 3 4 5 6 7 8 9 10 11 12 13 19 21 1 3: 135" } */
