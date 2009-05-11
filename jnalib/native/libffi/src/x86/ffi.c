@@ -151,7 +151,7 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 #ifdef X86
     case FFI_TYPE_STRUCT:
 #endif
-#if defined(X86) || defined(X86_DARWIN) || defined(X86_WIN64)
+#if defined(X86) || defined(X86_DARWIN)
     case FFI_TYPE_UINT8:
     case FFI_TYPE_UINT16:
     case FFI_TYPE_SINT8:
@@ -205,12 +205,16 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       break;
 #endif
 #ifdef X86_WIN64
+    case FFI_TYPE_UINT8:
+    case FFI_TYPE_UINT16:
+    case FFI_TYPE_SINT8:
+    case FFI_TYPE_SINT16:
     case FFI_TYPE_UINT32:
-      cif->flags = FFI_TYPE_UINT32;
+    case FFI_TYPE_SINT32:
+      cif->flags = cif->rtype->type;
       break;
 
     case FFI_TYPE_INT:
-    case FFI_TYPE_SINT32:
       cif->flags = FFI_TYPE_SINT32;
       break;
 #endif
@@ -264,7 +268,11 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   if ((rvalue == NULL) && 
       (cif->flags == FFI_TYPE_STRUCT
 #ifdef X86_WIN64
+       && cif->rtype->size != 1 && cif->rtype->size != 2
+       && cif->rtype->size != 4 && cif->rtype->size != 8
+#if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
        || cif->flags == FFI_TYPE_LONGDOUBLE
+#endif
 #endif
        ))
     {
@@ -285,8 +293,11 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
         for (i=0; i < cif->nargs;i++) {
           size_t size = cif->arg_types[i]->size;
           if ((cif->arg_types[i]->type == FFI_TYPE_STRUCT
-               || cif->arg_types[i]->type == FFI_TYPE_LONGDOUBLE)
-              && (size != 1 && size != 2 && size != 4 && size != 8))
+               && (size != 1 && size != 2 && size != 4 && size != 8))
+#if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
+              || cif->arg_types[i]->type == FFI_TYPE_LONGDOUBLE
+#endif
+              )
             {
               void *local = alloca(size);
               memcpy(local, avalue[i], size);
