@@ -78,7 +78,11 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
 #ifdef X86_WIN64
       if (z > sizeof(ffi_arg)
           || ((*p_arg)->type == FFI_TYPE_STRUCT
-              && (z != 1 && z != 2 && z != 4 && z != 8)))
+              && (z != 1 && z != 2 && z != 4 && z != 8))
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
+          || ((*p_arg)->type == FFI_TYPE_LONGDOUBLE)
+#endif
+          )
         {
           z = sizeof(ffi_arg);
           *(void **)argp = *p_argv;
@@ -201,6 +205,8 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       else
         {
           cif->flags = FFI_TYPE_STRUCT;
+          // allocate space for return value pointer
+          cif->bytes += ALIGN(sizeof(void*), FFI_SIZEOF_ARG);
         }
       break;
 #endif
@@ -233,9 +239,19 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 #endif
 
 #ifdef X86_WIN64
-  // ensure at least 40 bytes storage, one optional return address
-  // and four registers
-  cif->bytes = cif->bytes < 40 ? 40 : cif->bytes;
+  {
+    unsigned int i;
+    ffi_type **ptr;
+
+    for (ptr = cif->arg_types, i = cif->nargs; i > 0; i--, ptr++)
+      {
+        if (((*ptr)->alignment - 1) & cif->bytes)
+          cif->bytes = ALIGN(cif->bytes, (*ptr)->alignment);
+        cif->bytes += ALIGN((*ptr)->size, FFI_SIZEOF_ARG);
+      }
+  }
+  // ensure space for storing four registers
+  cif->bytes += 4 * sizeof(ffi_arg);
 #endif
 
   return FFI_OK;
@@ -266,15 +282,18 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   /* value address then we need to make one                     */
 
   if ((rvalue == NULL) && 
-      (cif->flags == FFI_TYPE_STRUCT
 #ifdef X86_WIN64
-       && cif->rtype->size != 1 && cif->rtype->size != 2
-       && cif->rtype->size != 4 && cif->rtype->size != 8
+      ((cif->flags == FFI_TYPE_STRUCT
+        && cif->rtype->size != 1 && cif->rtype->size != 2
+        && cif->rtype->size != 4 && cif->rtype->size != 8)
 #if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
        || cif->flags == FFI_TYPE_LONGDOUBLE
 #endif
+       )
+#else
+      cif->flags == FFI_TYPE_STRUCT
 #endif
-       ))
+      )
     {
       ecif.rvalue = alloca((cif->rtype->size + 0xF) & ~0xF);
     }
