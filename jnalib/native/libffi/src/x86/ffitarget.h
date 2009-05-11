@@ -94,6 +94,7 @@ typedef enum ffi_abi {
 #define FFI_CLOSURES 1
 #define FFI_TYPE_SMALL_STRUCT_1B (FFI_TYPE_LAST + 1)
 #define FFI_TYPE_SMALL_STRUCT_2B (FFI_TYPE_LAST + 2)
+#define FFI_TYPE_SMALL_STRUCT_4B (FFI_TYPE_LAST + 3)
 
 #if defined (X86_64) || (defined (__x86_64__) && defined (X86_DARWIN))
 #define FFI_TRAMPOLINE_SIZE 24

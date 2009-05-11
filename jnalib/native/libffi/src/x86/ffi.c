@@ -80,10 +80,14 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
           || ((*p_arg)->type == FFI_TYPE_STRUCT
               && (z != 1 && z != 2 && z != 4 && z != 8)))
         {
-          z = sizeof(void*);
+          z = sizeof(ffi_arg);
           *(void **)argp = *p_argv;
         }
-      else 
+      else if ((*p_arg)->type == FFI_TYPE_FLOAT)
+        {
+          memcpy(argp, *p_argv, z);
+        }
+      else
 #endif
       if (z < sizeof(ffi_arg))
         {
@@ -118,12 +122,6 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
               *(ffi_arg *) argp = *(ffi_arg *)(* p_argv);
               break;
 
-#ifdef X86_WIN64
-            case FFI_TYPE_FLOAT:
-              z = sizeof(float);
-              memcpy(argp, *p_argv, z);
-              break;
-#endif
             default:
               FFI_ASSERT(0);
             }
@@ -153,7 +151,7 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 #ifdef X86
     case FFI_TYPE_STRUCT:
 #endif
-#if defined(X86) || defined(X86_DARWIN)
+#if defined(X86) || defined(X86_DARWIN) || defined(X86_WIN64)
     case FFI_TYPE_UINT8:
     case FFI_TYPE_UINT16:
     case FFI_TYPE_SINT8:
@@ -190,7 +188,11 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
         }
       else if (cif->rtype->size == 4)
         {
+#ifdef X86_WIN64
+          cif->flags = FFI_TYPE_SMALL_STRUCT_4B;
+#else
           cif->flags = FFI_TYPE_INT; /* same as int type */
+#endif
         }
       else if (cif->rtype->size == 8)
         {
@@ -203,8 +205,13 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       break;
 #endif
 #ifdef X86_WIN64
+    case FFI_TYPE_UINT32:
+      cif->flags = FFI_TYPE_UINT32;
+      break;
+
     case FFI_TYPE_INT:
-      cif->flags = FFI_TYPE_INT;
+    case FFI_TYPE_SINT32:
+      cif->flags = FFI_TYPE_SINT32;
       break;
 #endif
 
