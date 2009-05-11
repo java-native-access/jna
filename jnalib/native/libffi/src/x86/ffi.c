@@ -120,6 +120,7 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
 
 #ifdef X86_WIN64
             case FFI_TYPE_FLOAT:
+              z = sizeof(float);
               memcpy(argp, *p_argv, z);
               break;
 #endif

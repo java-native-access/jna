@@ -121,6 +121,22 @@ ffi_call_win64 PROC FRAME
 	movd	rcx, xmm0
 
 	call	QWORD PTR FN[rbp]
+ret_struct2b:
+ 	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_SMALL_STRUCT_2B
+ 	jne	ret_struct1b$
+
+	mov	rcx, QWORD PTR RVALUE[rbp]
+	mov	WORD PTR [rcx], ax
+	jmp	SHORT ret_void$
+
+ret_struct1b:
+ 	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_SMALL_STRUCT_1B
+ 	jne	ret_int$
+
+	mov	rcx, QWORD PTR RVALUE[rbp]
+	mov	BYTE PTR [rcx], al
+	jmp	SHORT ret_void$
+
 ret_int$:
  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_INT
  	jne	ret_float$
@@ -134,7 +150,7 @@ ret_float$:
  	jne	SHORT ret_double$
 
  	mov	rax, QWORD PTR RVALUE[rbp]
- 	movlpd	QWORD PTR [rax], xmm0
+ 	movss	DWORD PTR [rax], xmm0
  	jmp	SHORT ret_void$
 
 ret_double$:
@@ -245,7 +261,7 @@ _ffi_call_win64:
 	mov	CIF_BYTES(%rbp),%eax
 	add	$15, %rax
 	and	$-16, %rax
-	#callq	___chkstk
+	callq	___chkstk
 	cmpq	$0x1000, %rax
 	jb	Lch_done
 Lch_probe:
@@ -291,6 +307,7 @@ Lch_done:
 	mov	RVALUE(%rbp), %rcx
 	mov	%al, (%rcx)
 	jmp .Lret_void
+
 .Lret_int:
  	cmpl	$FFI_TYPE_INT, CIF_FLAGS(%rbp)
  	jne	.Lret_float
@@ -304,7 +321,7 @@ Lch_done:
  	jne	.Lret_double
 
  	mov	RVALUE(%rbp), %rax
- 	movlpd	%xmm0,(%rax)
+ 	movss	%xmm0, (%rax)
  	jmp	.Lret_void
 
 .Lret_double:
