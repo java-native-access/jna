@@ -1583,33 +1583,24 @@ do { jboolean cpy; \
 
 /*
  * Class:     Native
- * Method:    pointerSize
- * Signature: ()I
+ * Method:    sizeof
+ * Signature: (I)I
  */
 JNIEXPORT jint JNICALL 
-Java_com_sun_jna_Native_pointerSize(JNIEnv *env, jclass cls)
+Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass cls, jint type)
 {
-  return sizeof(void *);
-}
-
-/*
- * Class:     Native
- * Method:    longSize
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL 
-Java_com_sun_jna_Native_longSize(JNIEnv *env, jclass cls) {
-  return sizeof(long);
-}
-
-/*
- * Class:     Native
- * Method:    wideCharSize
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL 
-Java_com_sun_jna_Native_wideCharSize(JNIEnv *env, jclass cls) {
-  return sizeof(wchar_t);
+  switch(type) {
+  case com_sun_jna_Native_TYPE_VOIDP: return sizeof(void*);
+  case com_sun_jna_Native_TYPE_LONG: return sizeof(long);
+  case com_sun_jna_Native_TYPE_WCHAR_T: return sizeof(wchar_t);
+  case com_sun_jna_Native_TYPE_SIZE_T: return sizeof(size_t);
+  default:
+    {
+      char msg[1024];
+      snprintf(msg, sizeof(msg), "Invalid sizeof type %d", (int)type);
+      throwByName(env, EIllegalArgument, msg);
+    }
+  }
 }
 
 /** Initialize com.sun.jna classes separately from the library load to

@@ -94,11 +94,20 @@ public final class Native {
     public static final int LONG_SIZE;
     /** Size of a native <code>wchar_t</code> type, in bytes. */
     public static final int WCHAR_SIZE;
+    /** Size of a native <code>size_t</code> type, in bytes. */
+    public static final int SIZE_T_SIZE;
+
+    private static final int TYPE_VOIDP = 0;
+    private static final int TYPE_LONG = 1;
+    private static final int TYPE_WCHAR_T = 2;
+    private static final int TYPE_SIZE_T = 3;
+
     static {
         loadNativeLibrary();
-        POINTER_SIZE = pointerSize();
-        LONG_SIZE = longSize();
-        WCHAR_SIZE = wideCharSize();
+        POINTER_SIZE = sizeof(TYPE_VOIDP);
+        LONG_SIZE = sizeof(TYPE_LONG);
+        WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
+        SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
         // Perform initialization of other JNA classes until *after* 
         // initializing the above final fields
         initIDs();
@@ -624,14 +633,8 @@ public final class Native {
      * Initialize field and method IDs for native methods of this class. 
      * Returns the size of a native pointer.
      **/
-    private static native int pointerSize();
+    private static native int sizeof(int type);
 
-    /** Return the size of a native <code>long</code>. */
-    private static native int longSize();
-
-    /** Return the size of a native <code>wchar_t</code>. */
-    private static native int wideCharSize();
-    
     private static native String getNativeVersion();
     private static native String getAPIChecksum();
 
