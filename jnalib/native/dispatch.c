@@ -1599,6 +1599,7 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass cls, jint type)
       char msg[1024];
       snprintf(msg, sizeof(msg), "Invalid sizeof type %d", (int)type);
       throwByName(env, EIllegalArgument, msg);
+      return -1;
     }
   }
 }
