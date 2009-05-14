@@ -205,11 +205,11 @@ public interface Kernel32 extends W32API {
         }
     }
     class OVERLAPPED extends Structure {
-        public int Internal;
-        public int InternalHigh;
+        public ULONG_PTR Internal;
+        public ULONG_PTR InternalHigh;
         public int Offset;
         public int OffsetHigh;
-        public Pointer hEvent;
+        public HANDLE hEvent;
     }
     // TODO: figure out how OVERLAPPED is used and apply an appropriate mapping
     interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
