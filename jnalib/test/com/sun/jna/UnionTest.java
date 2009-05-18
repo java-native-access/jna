@@ -186,7 +186,6 @@ public class UnionTest extends TestCase {
         final String[] cbvalue = { null };
         TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
                 public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
-                    System.out.println("v.f2: " + v.f2);
                     called[0] = true;
                     v.setType(String.class);
                     v.read();
