@@ -38,6 +38,7 @@
 #include <ffi_common.h>
 
 #include <stdlib.h>
+#include <inttypes.h>
 
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
@@ -71,7 +72,7 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
       size_t z;
 
       /* Align if necessary */
-      if ((sizeof(void*) - 1) & (size_t) argp)
+      if ((sizeof(void*) - 1) & (intptr_t) argp)
         argp = (char *) ALIGN(argp, sizeof(void*));
 
       z = (*p_arg)->size;
@@ -155,11 +156,15 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 #ifdef X86
     case FFI_TYPE_STRUCT:
 #endif
-#if defined(X86) || defined(X86_DARWIN)
+#if defined(X86) || defined(X86_DARWIN) || defined(X86_WIN64)
     case FFI_TYPE_UINT8:
     case FFI_TYPE_UINT16:
     case FFI_TYPE_SINT8:
     case FFI_TYPE_SINT16:
+#endif
+#ifdef X86_WIN64
+    case FFI_TYPE_UINT32:
+    case FFI_TYPE_SINT32:
 #endif
 
     case FFI_TYPE_SINT64:
@@ -212,24 +217,13 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
         }
       break;
 #endif
-#ifdef X86_WIN64
-    case FFI_TYPE_UINT8:
-    case FFI_TYPE_UINT16:
-    case FFI_TYPE_SINT8:
-    case FFI_TYPE_SINT16:
-    case FFI_TYPE_UINT32:
-    case FFI_TYPE_SINT32:
-      cif->flags = cif->rtype->type;
-      break;
-
-    case FFI_TYPE_INT:
-      cif->flags = FFI_TYPE_SINT32;
-      break;
-#endif
 
     default:
 #ifdef X86_WIN64
       cif->flags = FFI_TYPE_SINT64;
+      break;
+    case FFI_TYPE_INT:
+      cif->flags = FFI_TYPE_SINT32;
 #else
       cif->flags = FFI_TYPE_INT;
 #endif
@@ -283,26 +277,21 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   /* If the return value is a struct and we don't have a return */
   /* value address then we need to make one                     */
 
+#ifdef X86_WIN64
   if ((rvalue == NULL) && 
-#ifdef X86_WIN64
-      ((cif->flags == FFI_TYPE_STRUCT
-        && cif->rtype->size != 1 && cif->rtype->size != 2
-        && cif->rtype->size != 4 && cif->rtype->size != 8)
-#if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
-       || cif->flags == FFI_TYPE_LONGDOUBLE
-#endif
-       )
-#else
-      cif->flags == FFI_TYPE_STRUCT
-#endif
-      )
+      (cif->flags == FFI_TYPE_STRUCT
+       && cif->rtype->size != 1 && cif->rtype->size != 2
+       && cif->rtype->size != 4 && cif->rtype->size != 8))
     {
-#ifdef X86_WIN64
       ecif.rvalue = alloca((cif->rtype->size + 0xF) & ~0xF);
-#else
-      ecif.rvalue = alloca(cif->rtype->size);
-#endif
     }
+#else
+  if ((rvalue == NULL) &&
+      cif->flags == FFI_TYPE_STRUCT)
+    {
+      ecif.rvalue = alloca(cif->rtype->size);
+    }
+#endif
   else
     ecif.rvalue = rvalue;
     
@@ -441,7 +430,7 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
   argp = stack;
 
 #ifdef X86_WIN64
-  if (cif->rtype->size > sizeof(void *)
+  if (cif->rtype->size > sizeof(ffi_arg)
       || (cif->flags == FFI_TYPE_STRUCT
           && (cif->rtype->size != 1 && cif->rtype->size != 2
               && cif->rtype->size != 4 && cif->rtype->size != 8))) {
@@ -462,7 +451,7 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
       size_t z;
 
       /* Align if necessary */
-      if ((sizeof(void*) - 1) & (size_t) argp) {
+      if ((sizeof(void *) - 1) & (intptr_t) argp) {
         argp = (char *) ALIGN(argp, sizeof(void*));
       }
 
