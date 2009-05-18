@@ -437,9 +437,10 @@ public class CallbacksTest extends TestCase {
         arg = null;
         value = null;
         System.gc();
-        for (int i = 0; i < 100 && ref.get() != null; ++i) {
+        for (int i = 0; i < 100 && (ref.get() != null || m.values().size() > 0); ++i) {
             try {
-                Thread.sleep(1); // Give the GC a chance to run
+                Thread.sleep(10); // Give the GC a chance to run
+                System.gc();
             } finally {}
         }
         assertNull("String reference not GC'd", ref.get());
