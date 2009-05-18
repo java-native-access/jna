@@ -205,8 +205,10 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       else
         {
           cif->flags = FFI_TYPE_STRUCT;
+#ifdef X86_WIN64
           // allocate space for return value pointer
           cif->bytes += ALIGN(sizeof(void*), FFI_SIZEOF_ARG);
+#endif
         }
       break;
 #endif
@@ -295,7 +297,11 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 #endif
       )
     {
+#ifdef X86_WIN64
       ecif.rvalue = alloca((cif->rtype->size + 0xF) & ~0xF);
+#else
+      ecif.rvalue = alloca(cif->rtype->size);
+#endif
     }
   else
     ecif.rvalue = rvalue;
