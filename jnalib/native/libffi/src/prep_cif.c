@@ -96,9 +96,12 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
 
   FFI_ASSERT(cif != NULL);
 
-  if (abi < FFI_FIRST_ABI || abi > FFI_DEFAULT_ABI) {
+  // FIXME: most targets have a broken definition of FFI_LAST_ABI
+  /*
+  if (abi <= FFI_FIRST_ABI || abi >= FFI_LAST_ABI) {
     return FFI_BAD_ABI;
   }
+  */
 
   cif->abi = abi;
   cif->arg_types = atypes;
