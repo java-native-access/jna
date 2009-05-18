@@ -26,7 +26,7 @@ import java.util.Iterator;
  */
 public abstract class Union extends Structure {
     private StructField activeField;
-    private StructField biggestField;
+    StructField biggestField;
     /** Create a Union whose size and alignment will be calculated 
      * automatically.
      */
@@ -224,7 +224,8 @@ public abstract class Union extends Structure {
         return super.getNativeAlignment(type, value, true);
     }
 
-    /** Return type information for the largest field to ensure all available
+    /** Avoid calculating type information until we know our biggest field.
+     * Return type information for the largest field to ensure all available
      * bits are used.
      */
     Pointer getTypeInfo() {
@@ -232,8 +233,6 @@ public abstract class Union extends Structure {
             // Not calculated yet
             return null;
         }
-        Pointer p = getTypeInfo(getField(biggestField));
-        cacheTypeInfo(p);
-        return p;
+        return super.getTypeInfo();
     }
 }

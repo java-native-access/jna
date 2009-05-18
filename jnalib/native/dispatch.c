@@ -541,12 +541,12 @@ Java_com_sun_jna_Function_invokeStructure(JNIEnv *env, jobject self,
                                           jobject result)
 {
   void* memory = getStructureAddress(env, result);
-  ffi_type* type = getStructureType(env, result);
-  if (!type) {
+  ffi_type* rtype = getStructureType(env, result);
+  if (!rtype) {
     throwByName(env, EIllegalState, "Return structure type info not initialized");
   }
   else {
-    dispatch(env, self, callconv, arr, type, memory);
+    dispatch(env, self, callconv, arr, rtype, memory);
   }
   return result;
 }

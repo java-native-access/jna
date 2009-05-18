@@ -1410,11 +1410,20 @@ public abstract class Structure {
         public Pointer elements;
 
         private FFIType(Structure ref) {
-            Pointer[] els = new Pointer[ref.fields().size() + 1];
-            int idx = 0;
-            for (Iterator i=ref.fields().values().iterator();i.hasNext();) {
-                StructField sf = (StructField)i.next();
-                els[idx++] = get(ref.getField(sf), sf.type);
+            Pointer[] els;
+            if (ref instanceof Union) {
+                StructField sf = ((Union)ref).biggestField;
+                els = new Pointer[] {
+                    get(ref.getField(sf), sf.type), null,
+                };
+            }
+            else {
+                els = new Pointer[ref.fields().size() + 1];
+                int idx = 0;
+                for (Iterator i=ref.fields().values().iterator();i.hasNext();) {
+                    StructField sf = (StructField)i.next();
+                    els[idx++] = get(ref.getField(sf), sf.type);
+                }
             }
             init(els);
         }
@@ -1461,9 +1470,6 @@ public abstract class Structure {
                     if (ByReference.class.isAssignableFrom(cls)) {
                         typeInfoMap.put(cls, FFITypes.ffi_type_pointer);
                         return FFITypes.ffi_type_pointer;
-                    }
-                    if (Union.class.isAssignableFrom(cls)) {
-                        return ((Union)obj).getTypeInfo();
                     }
                     FFIType type = new FFIType((Structure)obj);
                     typeInfoMap.put(cls, type);

@@ -131,13 +131,27 @@ public class UnionTest extends TestCase {
 
     public void testReadTypeInfo() {
         SizedUnion u = new SizedUnion();
-        assertEquals("Type should be that of longest field if no field active",
-                     Structure.getTypeInfo(BigTestStructure.class),
-                     u.getTypeInfo());
+        if (Native.POINTER_SIZE == 4) {
+            assertEquals("Type size should be that of longest field if no field active",
+                         Structure.getTypeInfo(BigTestStructure.class).getInt(0),
+                         u.getTypeInfo().getInt(0));
+        }
+        else {
+            assertEquals("Type size should be that of longest field if no field active",
+                         Structure.getTypeInfo(BigTestStructure.class).getLong(0),
+                         u.getTypeInfo().getLong(0));
+        }
         u.setType(int.class);
-        assertEquals("Type should be that of longest field if field active",
-                     Structure.getTypeInfo(BigTestStructure.class),
-                     u.getTypeInfo());
+        if (Native.POINTER_SIZE == 4) {
+            assertEquals("Type size should be that of longest field if field active",
+                         Structure.getTypeInfo(BigTestStructure.class).getInt(0),
+                         u.getTypeInfo().getInt(0));
+        }
+        else {
+            assertEquals("Type size should be that of longest field if field active",
+                         Structure.getTypeInfo(BigTestStructure.class).getLong(0),
+                         u.getTypeInfo().getLong(0));
+        }
     }
     
     public void testArraysInUnion() {
@@ -172,6 +186,7 @@ public class UnionTest extends TestCase {
         final String[] cbvalue = { null };
         TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
                 public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
+                    System.out.println("v.f2: " + v.f2);
                     called[0] = true;
                     v.setType(String.class);
                     v.read();
