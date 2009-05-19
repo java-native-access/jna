@@ -125,7 +125,10 @@
       <available file="${java.home}/../include"/>
     </condition>
     <fail unless="jdk.home" message="JAVA_HOME/java.home must be a JDK, not JRE"/>
-
+    <condition property="libjsig"
+               value="${java.home}/lib/${os.arch}/libjsig.so" else="">
+      <available file="${java.home}/lib/${os.arch}/libjsig.so"/>
+    </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/native"/>
     <property name="md5.file" location="${build.native}/sig"/>
@@ -426,6 +429,8 @@
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
+      <!-- avoid VM conflicts with JNA protected mode -->
+      <env key="LD_PRELOAD" file="${libjsig}"/>
       <jvmarg value="-Djna.library.path=${build.native}"/>
       <!-- Avoid VM crashes, if possible -->
       <jvmarg value="-Djna.protected=true"/>
