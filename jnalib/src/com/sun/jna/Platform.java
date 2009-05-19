@@ -82,4 +82,17 @@ public final class Platform {
             return false;
         return true;
     }
+    public static final boolean is64Bit() {
+        String model = System.getProperty("sun.arch.data.model");
+        if (model != null)
+            return "64".equals(model);
+        String arch = System.getProperty("os.arch").toLowerCase();
+        if ("x86_64".equals(arch)
+            || "ppc64".equals(arch)
+            || "sparcv9".equals(arch)
+            || "amd64".equals(arch)) {
+            return true;
+        }
+        return Native.POINTER_SIZE == 8;
+    }
 }

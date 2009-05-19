@@ -92,7 +92,7 @@ public class Function extends Pointer {
     // until the function is
     private NativeLibrary library;
     private final String functionName;
-    private final int callingConvention;
+    final int callingConvention;
 
     /** For internal JNA use. */
     static final String OPTION_INVOKING_METHOD = "invoking-method";

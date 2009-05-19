@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007, 2008, 2009 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,6 @@ package com.sun.jna;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
@@ -35,16 +33,16 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 
-import com.sun.jna.Structure.ByReference;
 import com.sun.jna.Callback.UncaughtExceptionHandler;
-
+import com.sun.jna.Structure.FFIType;
 
 /** Provides generation of invocation plumbing for a defined native
  * library interface.  Also provides various utilities for native operations.
@@ -751,7 +749,7 @@ public final class Native {
      * Instead, spawn a cleanup task to remove the file *after* the VM exits.
      */
     public static class DeleteNativeLibrary extends Thread {
-        private File file;
+        private final File file;
         public DeleteNativeLibrary(File file) {
             this.file = file;
         }
@@ -874,7 +872,87 @@ public final class Native {
     public static UncaughtExceptionHandler getCallbackExceptionHandler() {
         return callbackExceptionHandler;
     }
+    
+    /** When called from a class static initializer, maps all native methods
+     * found within that class to native libraries via the JNA raw calling
+     * interface.
+     * @param libName library name to which functions should be bound
+     */
+    public static void register(String libName) {
+        register(NativeLibrary.getInstance(libName));
+    }
 
+    private static Map registeredClasses = new HashMap();
+    private static Object unloader = new Object() {
+        protected void finalize() {
+            for (Iterator i=registeredClasses.entrySet().iterator();i.hasNext();) {
+                Map.Entry e = (Map.Entry)i.next();
+                unregister((Class)e.getKey(), (long[])e.getValue());
+            }
+        }
+    };
+
+    /** Unregister the native methods for the given class. */
+    private static native void unregister(Class cls, long[] handles);
+
+    /** When called from a class static initializer, maps all native methods
+     * found within that class to native libraries via the JNA raw calling
+     * interface.
+     * @param lib library to which functions should be bound
+     */
+    // TODO: Pointer, NativeLong                                            
+    // TODO: structure by value                                             
+    // TODO: byref, primitive arrays                                        
+    // TODO: stdcall name mapping                                           
+    // TODO: derive library, etc. from annotations (per-class or per-method)
+    // TODO: get function name from annotation
+    // TODO: read parameter type mapping from annotations (long/native long)
+    public static void register(NativeLibrary lib) {
+        Class[] context = new SecurityManager() {
+            public Class[] getClassContext() {
+                return super.getClassContext();
+            }
+        }.getClassContext();
+        if (context.length < 4) {
+            throw new IllegalStateException("This method must be called from the static initializer of a class");
+        }
+        Class cls = context[3];
+        Method[] methods = cls.getDeclaredMethods();
+        List mlist = new ArrayList();
+        for (int i=0;i < methods.length;i++) {
+            if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
+                mlist.add(methods[i]);
+            }
+        }
+        long[] handles = new long[mlist.size()];
+        for (int i=0;i < handles.length;i++) {
+            Method method = (Method)mlist.get(i);
+            String sig = "(";
+            Class rtype = method.getReturnType();
+            Class[] ptypes = method.getParameterTypes();
+            for (int t=0;t < ptypes.length;t++) {
+                sig += FFIType.getSignature(ptypes[t]);
+            }
+            sig += ")" + Structure.FFIType.getSignature(rtype);
+            
+            String name = method.getName();
+            FunctionMapper mapper = (FunctionMapper)lib.getOptions().get(Library.OPTION_FUNCTION_MAPPER);
+            if (mapper != null) {
+                name = mapper.getFunctionName(lib, method);
+            }
+            Function f = lib.getFunction(name);
+            // TODO: registered methods should be disposed when
+            // the containing class or NativeLibrary is GC'd
+            handles[i] = registerMethod(cls, method.getName(),
+                                        sig, f, f.callingConvention);
+        }
+        registeredClasses.put(cls, handles);
+    }
+
+    private static native long registerMethod(Class cls,
+                                              String name, String signature,
+                                              Pointer fptr, int callingConvention);
+    
     /** Prints JNA library details to the console. */
     public static void main(String[] args) {
         final String DEFAULT_TITLE = "Java Native Access (JNA)";

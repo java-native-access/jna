@@ -1350,7 +1350,7 @@ public abstract class Structure {
      * structure for use by libffi.  The lifecycle of this structure is easier
      * to manage on the Java side than in native code.
      */
-    private static class FFIType extends Structure {
+    static class FFIType extends Structure {
         public static class size_t extends IntegerType {
             public size_t() { this(0); }
             public size_t(long value) { super(Native.POINTER_SIZE, value); }
@@ -1487,6 +1487,19 @@ public abstract class Structure {
                 }
                 throw new IllegalArgumentException("Unsupported structure field type " + cls);
             }
+        }
+        static String getSignature(Object o) {
+            Pointer p = get(o);
+            if (p == FFITypes.ffi_type_void) return "V";
+            if (p == FFITypes.ffi_type_float) return "F";
+            if (p == FFITypes.ffi_type_double) return "D";
+            if (p == FFITypes.ffi_type_sint8) return "B";
+            if (p == FFITypes.ffi_type_sint16) return "S";
+            if (p == FFITypes.ffi_type_uint16) return "C";
+            if (p == FFITypes.ffi_type_sint32) return "I";
+            if (p == FFITypes.ffi_type_sint64) return "J";
+            if (p == FFITypes.ffi_type_pointer) return "Lcom/sun/jna/Pointer;";
+            throw new IllegalArgumentException("Unsupported type " + o);
         }
     }
     

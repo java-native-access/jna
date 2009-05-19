@@ -13,8 +13,6 @@ package com.sun.jna;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -81,6 +79,8 @@ public interface Library {
         JNIEnv data structure.
     */
     String OPTION_ALLOW_OBJECTS = "allow-objects";
+    /** Calling convention for the library. */
+    String OPTION_CALLING_CONVENTION = "calling-convention";
 
     static class Handler implements InvocationHandler {
         
@@ -118,9 +118,9 @@ public interface Library {
         // Library invocation options
         private final Map options;
         private FunctionMapper functionMapper;
-        private InvocationMapper invocationMapper;
+        private final InvocationMapper invocationMapper;
         private final Map functions = new WeakHashMap();
-        private int callingConvention;
+        private final int callingConvention;
         public Handler(String libname, Class interfaceClass, Map options) {
 
             if (libname == null || "".equals(libname.trim())) {

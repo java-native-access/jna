@@ -2102,9 +2102,8 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
     return getStructureType(env, s);
   }
   case '*':
-    return &ffi_type_pointer;
   default:
-    return NULL;
+    return &ffi_type_pointer;
   }
 }
 
@@ -2125,6 +2124,135 @@ get_ffi_rtype(JNIEnv* env, jclass cls, char jtype) {
   default:
     return get_ffi_type(env, cls, jtype);
   }
+}
+
+typedef struct _method_data {
+  ffi_cif cif;
+  ffi_cif closure_cif;
+  void*   fptr;
+  ffi_type** arg_types;
+} method_data;
+
+// VM vectors to this callback, which calls native code
+static void
+method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
+  JNIEnv* env = (JNIEnv*)*(void **)argp[0];
+  method_data *data = (method_data*)cdata;
+  // ignore first two arguments, which are pointers
+  void** args = argp + 2;
+  unsigned i;
+
+  // TODO: conversions here otherwise done in JNA interface code
+  // TODO: Pointer, structure by value, primitive arrays
+  for (i=0;i < data->cif.nargs;i++) {
+    if (data->cif.arg_types[i] == &ffi_type_pointer) {
+      if (*(void **)args[i]) {
+        *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
+      }
+    }
+  }
+
+  ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
+
+  if (data->cif.rtype == &ffi_type_pointer) {
+    *(void **)resp = newJavaPointer(env, *(void **)resp);
+  }
+}
+
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass ncls, jclass cls, jlongArray handles) {
+  jlong* data = (*env)->GetLongArrayElements(env, handles, NULL);
+  int count = (*env)->GetArrayLength(env, handles);
+  while (count-- > 0) {
+    method_data* md = (method_data*)L2A(data[count]);
+    free(md->arg_types);
+    free(md);
+  }
+  (*env)->ReleaseLongArrayElements(env, handles, data, 0);
+  (*env)->UnregisterNatives(env, cls);
+}
+
+JNIEXPORT jlong JNICALL
+Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
+                                       jclass cls, jstring name,
+                                       jstring signature,
+                                       jobject function, jint cc)
+{
+  int argc = 0;
+  char* cname = newCStringUTF8(env, name);
+  char* sig = newCStringUTF8(env, signature);
+  void *code;
+  void *closure;
+  method_data* data = malloc(sizeof(method_data));
+  ffi_cif* closure_cif = &data->closure_cif;
+  int status;
+  int i;
+  int abi = FFI_DEFAULT_ABI; 
+  char* tmp;
+  ffi_type* rtype;
+  ffi_type** arg_types = alloca(sizeof(ffi_type*)*MAX_NARGS);
+#if defined(_WIN32) && !defined(_WIN64)
+  if (cc == CALLCONV_STDCALL) abi = FFI_STDCALL;
+#endif
+
+  // Parse the signature for types
+  for (tmp=sig;*tmp;tmp++) {
+    if (*tmp == '(' || *tmp == '[') continue;
+    else if (*tmp == ')') {
+      rtype = get_ffi_rtype(env, NULL, *(tmp+1));
+      break;
+    }
+    else if (*tmp == 'L') {
+      arg_types[argc++] = &ffi_type_pointer;
+      while (*tmp != ';') ++tmp;
+    }
+    else {
+      arg_types[argc++] = get_ffi_type(env, NULL, *tmp);
+    }
+  }
+
+  data->arg_types = malloc(sizeof(ffi_type*)*(argc+2));
+  data->arg_types[0] = &ffi_type_pointer;
+  data->arg_types[1] = &ffi_type_pointer;
+  for (i=0;i < argc;i++) {
+    data->arg_types[i+2] = arg_types[i];
+  }
+  data->fptr = getNativeAddress(env, function);
+
+  status = ffi_prep_cif(closure_cif, abi, argc+2, rtype, data->arg_types);  
+  if (status != FFI_OK) {
+    throwByName(env, EError, "Native method mapping failed");
+    goto cleanup;
+  }
+
+  status = ffi_prep_cif(&data->cif, abi, argc, rtype, &data->arg_types[2]);
+  if (status != FFI_OK) {
+    throwByName(env, EError, "Native method setup failed");
+    goto cleanup;
+  }
+
+  closure = ffi_closure_alloc(sizeof(ffi_closure), &code);
+  status = ffi_prep_closure_loc(closure, closure_cif, method_handler, data, code);
+  if (status != FFI_OK) {
+    throwByName(env, EError, "Native method linkage failed");
+    goto cleanup;
+  }
+
+  {
+    JNINativeMethod m  = { cname, sig, code };
+    (*env)->RegisterNatives(env, cls, &m, 1);
+  }
+
+ cleanup:
+  if (status != FFI_OK) {
+    free(data->arg_types);
+    free(data);
+    data = NULL;
+  }
+  free(cname);
+  free(sig);
+
+  return A2L(data);
 }
 
 #ifdef __cplusplus

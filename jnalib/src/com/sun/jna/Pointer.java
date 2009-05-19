@@ -666,7 +666,7 @@ v     * @param wide whether to convert from a wide or standard C string
         _setMemory(peer + offset, length, value);
     }
     
-    private static native void _setMemory(long addr, long length, byte value);
+    static native void _setMemory(long addr, long length, byte value);
     
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
@@ -850,7 +850,7 @@ v     * @param wide whether to convert from a wide or standard C string
     /** Pointer which disallows all read/write access. */
     private static class Opaque extends Pointer {
         private Opaque(long peer) { super(peer); }
-        private String MSG = "This pointer is opaque: " + this;
+        private final String MSG = "This pointer is opaque: " + this;
         public long indexOf(long offset, byte value) {
             throw new UnsupportedOperationException(MSG);
         }

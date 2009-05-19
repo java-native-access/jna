@@ -22,18 +22,30 @@
 
 # TODO
 
+* make native dll extraction from jar public
+
 * Callback.PostCallWrite.write() cf PostCallRead; do Structure.write for any
   arguments as well
 
 * pointer.setValue(), to handle NativeMapped types and move read/writeValue
   methods out of Structure, to be used by Function w/NativeMapped[] parameter
 
+* GetPrimitiveArrayCritical: use this if flagged (by annotation? method name?)
+
+* MethodArgument/ReturnMapper: per method mapping of arguments/return type.
+  Can use annotations as shorthand to initialize a map, but basically set up a
+  per-NativeLibrary (or per-Function?) map of methods to mappers.
+
+  Requires separate compilation of annotation handling.
+
 * parser (gluegen? swig? others?) to auto-generate JNA interfaces from headers;
   ideally get the native library build system to output preprocessed headers,
   otherwise CPP crap is a nightmare to get right.
   o write SWIG transformer to auto-generate interfaces from header files
+  o see JNAerator
 
-* should structure offsets be "long"?
+* should structure offsets be 64-bit? technically yes, but in practice I don't
+  think a structure that big actually works.
 
 * (maybe) move all native functions into Native (limit header files, easier
   management) 

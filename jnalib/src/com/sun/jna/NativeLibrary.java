@@ -1,4 +1,5 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
+ * Copyright (c) 2007, 2008, 2009 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,6 +45,8 @@ public class NativeLibrary {
     private final String libraryName;
     private final String libraryPath;
     private final Map functions = new HashMap();
+    private final int callingConvention;
+    private final Map options;
 
     private static WeakReference currentProcess;
     private static final Map libraries = new HashMap();
@@ -57,10 +60,16 @@ public class NativeLibrary {
             throw new Error("Native library not initialized");
     }
 
-    private NativeLibrary(String libraryName, String libraryPath, long handle) {
+    private NativeLibrary(String libraryName, String libraryPath, long handle, Map options) {
         this.libraryName = getLibraryName(libraryName);
         this.libraryPath = libraryPath;
         this.handle = handle;
+        Object option = options.get(Library.OPTION_CALLING_CONVENTION);
+        int callingConvention = option instanceof Integer
+            ? ((Integer)option).intValue() : Function.C_CONVENTION;
+        this.callingConvention = callingConvention;
+        this.options = options;
+
         // Special workaround for w32 kernel32.GetLastError
         // Short-circuit the function to use built-in GetLastError access
         if (Platform.isWindows() && "kernel32".equals(this.libraryName.toLowerCase())) {
@@ -75,7 +84,7 @@ public class NativeLibrary {
         }
     }
 
-    private static NativeLibrary loadLibrary(String libraryName) {
+    private static NativeLibrary loadLibrary(String libraryName, Map options) {
         List searchPath = new LinkedList();
 
         // Append web start path, if available.  Note that this does not
@@ -147,7 +156,7 @@ public class NativeLibrary {
                                                + e.getMessage());
             }
         }
-        return new NativeLibrary(libraryName, libraryPath, handle);
+        return new NativeLibrary(libraryName, libraryPath, handle, options);
     }
 
     private String getLibraryName(String libraryName) {
@@ -179,6 +188,23 @@ public class NativeLibrary {
      *      the full path to the library (e.g. "/lib/libc.so.6").
      */
     public static final NativeLibrary getInstance(String libraryName) {
+        return getInstance(libraryName, Collections.EMPTY_MAP);
+    }
+    
+    /**
+     * Returns an instance of NativeLibrary for the specified name.
+     * The library is loaded if not already loaded.  If already loaded, the
+     * existing instance is returned.<p>
+     * More than one name may map to the same NativeLibrary instance; only
+     * a single instance will be provided for any given unique file path.
+     *
+     * @param libraryName The library name to load.
+     *      This can be short form (e.g. "c"),
+     *      an explicit version (e.g. "libc.so.6"), or
+     *      the full path to the library (e.g. "/lib/libc.so.6").
+     * @param callingConvention the calling convention for the given library.
+     */
+    public static final NativeLibrary getInstance(String libraryName, Map options) {
         if (libraryName == null)
             throw new NullPointerException("Library name may not be null");
 
@@ -186,7 +212,7 @@ public class NativeLibrary {
             WeakReference ref = (WeakReference)libraries.get(libraryName);
             NativeLibrary library = ref != null ? (NativeLibrary)ref.get() : null;
             if (library == null) {
-                library = loadLibrary(libraryName);
+                library = loadLibrary(libraryName, options);
                 ref = new WeakReference(library);
                 libraries.put(library.getName(), ref);
                 libraries.put(library.getFile().getAbsolutePath(), ref);
@@ -210,7 +236,7 @@ public class NativeLibrary {
 
         if (library == null) {
            long handle = open(null);
-           library = new NativeLibrary("<process>", null, handle);
+           library = new NativeLibrary("<process>", null, handle, Collections.EMPTY_MAP);
            currentProcess = new WeakReference(library);
         }
 
@@ -247,7 +273,7 @@ public class NativeLibrary {
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName) {
-        return getFunction(functionName, Function.C_CONVENTION);
+        return getFunction(functionName, callingConvention);
     }
 
     /**
@@ -274,6 +300,11 @@ public class NativeLibrary {
             }
             return function;
         }
+    }
+
+    /** Returns this native library instance's options. */
+    public Map getOptions() {
+        return options;
     }
 
     /** Look up the given global variable within this library.
