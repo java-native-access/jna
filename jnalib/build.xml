@@ -42,7 +42,7 @@
   <property name="jni.revision" value="0"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="9a30bf4421858756a083fb6195467ad9"/>
+  <property name="jni.md5" value=""/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
@@ -244,7 +244,10 @@
     <fixcrlf srcdir="${build.native}" includes="sig" eol="unix"/>
     <checksum property="md5" file="${md5.file}" />
     <condition property="jni.valid" value="true">
-      <equals arg1="${jni.md5}" arg2="${md5}" trim="true"/>
+      <or>
+        <equals arg1="${jni.md5}" arg2="${md5}" trim="true"/>
+        <equals arg1="${jni.md5}" arg2=""/>
+      </or>
     </condition>
   </target>
 
