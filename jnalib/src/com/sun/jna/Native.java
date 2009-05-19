@@ -125,7 +125,13 @@ public final class Native {
      * system property <code>jna.protected</code> has a value of "true"
      * when the JNA library is first loaded.<p>
      * If not supported by the underlying platform, this setting will
-     * have no effect.
+     * have no effect.<p>
+     * NOTE: When protected mode is enabled, you should make use of the jsig
+     * library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>).
+     * In short, set the environment vaiable <code>LD_PRELOAD</code> to the
+     * path to <code>libjsig.so</code> in your JRE lib directory
+     * (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your
+     * Java application.
      */
     public static synchronized native void setProtected(boolean enable);
     
