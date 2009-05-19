@@ -202,7 +202,8 @@ public class NativeLibrary {
      *      This can be short form (e.g. "c"),
      *      an explicit version (e.g. "libc.so.6"), or
      *      the full path to the library (e.g. "/lib/libc.so.6").
-     * @param callingConvention the calling convention for the given library.
+     * @param options native library options for the given library (see {@link
+     * Library}).
      */
     public static final NativeLibrary getInstance(String libraryName, Map options) {
         if (libraryName == null)

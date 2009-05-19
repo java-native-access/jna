@@ -276,7 +276,7 @@ public class Function extends Pointer {
         return result;
     }
 
-    /** @see NativeLibrary#NativeLibrary(String,String,long) implementation */
+    /** @see NativeLibrary#NativeLibrary(String,String,long,Map) implementation */
     Object invoke(Object[] args, Class returnType, boolean allowObjects) {
         Object result = null;
         if (returnType == null || returnType==void.class || returnType==Void.class) {
