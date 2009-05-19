@@ -51,7 +51,7 @@ public class RawTest extends TestCase {
         public static native double cos(double x);
         
         static {
-            Native.register("m");
+            Native.register(Platform.isWindows()?"msvcrt":"m");
         }
     }
 
@@ -113,9 +113,10 @@ public class RawTest extends TestCase {
     public static void checkPerformance() {
         System.out.println("Checking performance of different access methods");
 
+        String mname = Platform.isWindows()?"msvcrt":"m";
         MathInterface mlib = (MathInterface)
-            Native.loadLibrary("m", MathInterface.class);
-        Function f = NativeLibrary.getInstance("m").getFunction("cos");
+            Native.loadLibrary(mname, MathInterface.class);
+        Function f = NativeLibrary.getInstance(mname).getFunction("cos");
         final int COUNT = 1000000;
         Object[] args = { new Double(0) };
         long start = System.currentTimeMillis();
@@ -154,8 +155,9 @@ public class RawTest extends TestCase {
         System.out.println("cos (pure java): " + delta + "ms");
 
         // memset
+        String cname = Platform.isWindows()?"msvcrt":"c";
         CInterface clib = (CInterface)
-            Native.loadLibrary("c", CInterface.class);
+            Native.loadLibrary(cname, CInterface.class);
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
             clib.memset(null, 0, 0);
@@ -163,7 +165,7 @@ public class RawTest extends TestCase {
         delta = System.currentTimeMillis() - start;
         System.out.println("memset (JNA interface): " + delta + "ms");
 
-        f = NativeLibrary.getInstance("c").getFunction("memset");
+        f = NativeLibrary.getInstance(cname).getFunction("memset");
         args = new Object[] { null, new Integer(0), new Integer(0)};
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
@@ -172,7 +174,7 @@ public class RawTest extends TestCase {
         delta = System.currentTimeMillis() - start;
         System.out.println("memset (JNA Function): " + delta + "ms");
 
-        f = NativeLibrary.getInstance("c").getFunction("memset");
+        f = NativeLibrary.getInstance(cname).getFunction("memset");
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
             CLibrary.memset(null, 0, 0);
