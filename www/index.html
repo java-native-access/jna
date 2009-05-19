@@ -131,6 +131,8 @@ public class HelloWorld {
         }
     }
 
+    // This is the standard, stable way of mapping, which supports extensive
+    // customization and mapping of Java to native types.
     public interface CLibrary extends Library {
         CLibrary INSTANCE = (CLibrary)
             Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"),
@@ -154,9 +156,8 @@ public class HelloWorld {
       <li>Change the appropriate library access environment variable before launching the VM.  This is PATH on Windows, LD_LIBRARY_PATH on Linux, and DYLD_LIBRARY_PATH on OSX.</li>
     </ul>
   </li>
-  <li>Declare a Java interface to hold the native library methods by extending the <a href="javadoc/com/sun/jna/Library.html"><code>Library</code></a> interface.  
-  <li>Alternatively, declare a class to hold your native methods, declare any number of static methods with the "native" qualifier, and invoke <code>Native.register(String)</code> in the class static initializer with your library's name.
-
+  <li>Declare a class to hold your native methods, declare any number of static methods with the "native" qualifier, and invoke <code>Native.register(String)</code> in the class static initializer with your library's name.
+  <li>Alternatively, declare a Java interface to hold the native library methods by extending the <a href="javadoc/com/sun/jna/Library.html"><code>Library</code></a> interface.<p>
 Following is an example of mapping for the Windows kernel32 library.<br>
     <textarea name="textarea" cols="80" rows="10" readonly="readonly">
 package com.sun.jna.examples.win32;
