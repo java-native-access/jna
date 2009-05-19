@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-03-26">
+<meta name="date" content="2009-05-19">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -82,7 +82,7 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
 <a name=features></a>
 <h3>Features</h3>
 <ul>
-<li>Automatic mapping from Java interface method to native function, with simple mappings for all primitive data types
+<li>Automatic mapping from Java interface or static method to native function, with simple mappings for all primitive data types
 <li>Runs on <a href="#building">most platforms which support Java</a>
 <li>Automatic conversion between C and Java strings, with customizable encoding/decoding
 <li><a href="javadoc/com/sun/jna/Structure.html">Structure</a> and <a href="javadoc/com/sun/jna/Union.html">Union</a> arguments/return values, by reference and by value
@@ -118,8 +118,18 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
-/** Simple example of native library declaration and usage. */
+/** Simple example of both methods of native library declaration and usage. */
 public class HelloWorld {
+
+    // WARNING: this type of mapping is currently experimental!
+    public static class MathLibrary {
+
+        public static native double cos(double x);
+        
+        static {
+            Native.register("m");
+        }
+    }
 
     public interface CLibrary extends Library {
         CLibrary INSTANCE = (CLibrary)
@@ -145,6 +155,7 @@ public class HelloWorld {
     </ul>
   </li>
   <li>Declare a Java interface to hold the native library methods by extending the <a href="javadoc/com/sun/jna/Library.html"><code>Library</code></a> interface.  
+  <li>Alternatively, declare a class to hold your native methods, declare any number of static methods with the "native" qualifier, and invoke <code>Native.register(String)</code> in the class static initializer with your library's name.
 
 Following is an example of mapping for the Windows kernel32 library.<br>
     <textarea name="textarea" cols="80" rows="10" readonly="readonly">
@@ -168,7 +179,7 @@ public interface Kernel32 extends StdCallLibrary {
     Kernel32 SYNC_INSTANCE = (Kernel32)
         Native.synchronizedLibrary(INSTANCE);
 </textarea><br>
-The INSTANCE variable is for convenient reuse of a single instance of the library.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.  A <code>Map</code> of options may be provided as the third argument to <code>loadLibrary</code> to customize the library behavior; some of these options are explained in more detail below.
+The INSTANCE variable is for convenient reuse of a single instance of the library.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.  A <code>Map</code> of options may be provided as the third argument to <code>loadLibrary</code> to customize the library behavior; some of these options are explained in more detail below.  The SYNC_INSTANCE is also optional; use it if you need to ensure that your native library has only one call to it at a time.
   </li>
   <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the <a href="#mapping">basic mappings</a> below or <a href="javadoc/overview-summary.html#marshalling">the detailed table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class within the interface definition that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).</li>
     <textarea name="textarea" cols="80" rows="12" readonly="readonly">
@@ -468,10 +479,11 @@ Windows Mobile is supported by libffi (mingwce) but JNA has not yet been (public
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
 <p>
-A simple test calling a function like <code>int testfunc(int)</code> with JNA
-might take an order of magnitude (~10X) greater time than equivalent custom
-JNI (whether it actually does in the context of your application is a
-different question).  
+The calling overhead for a single native call using JNA can be an order of
+magnitude (~10X) greater time than equivalent custom JNI (whether it actually
+does in the context of your application is a different question).   In raw
+terms, the calling overhead is on the order of hundreds of milliseconds
+instead of tens of milliseconds. 
 This magnitude is typical of the difference between systems using
 dynamically-maintained type information and systems where type information is 
 statically compiled.  JNI hard-codes type information in the method
@@ -482,8 +494,8 @@ but the actual difference will vary depending on usage and function
 signatures.  As with any optimization process, you should determine
 first <em>where</em> you need a speed increase, and then see how much
 difference there is by performing targeted optimizations.  The ease of
-programming everything in Java usually outweighs performance gains when using
-custom JNI. 
+programming everything in Java usually outweighs small performance gains when
+using custom JNI. 
 <p>
 See the JavaDoc for specific <a href="javadoc/com/sun/jna/overview-summary.html#performance">performance tips</a>.
 <p>
