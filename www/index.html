@@ -473,9 +473,7 @@ Normally when you invoke <code>toString</code> on a <code>Structure</code>, it w
 
 <a name=j2me></a>
 <h4>Does JNA work with J2ME/Windows Mobile?</h4>
-JNA requires Java 1.4 (or greater) and uses (but does not depend on) NIO buffers.  A stub NIO buffer implementation may be provided and things should otherwise Just Work.<p> 
-Windows Mobile is supported by libffi (mingwce) but JNA has not yet been (publicly) built for that target.  Nothing technically should prevent it, though.
-<p>
+There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implementation</a> available, but it has not yet been integrated into the standard build.<p>
 
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
