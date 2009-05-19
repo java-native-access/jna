@@ -93,7 +93,8 @@ public class RawTest extends TestCase {
 
         for (int i=0;i < 100 && ref.get() != null;i++) {
             try {
-                Thread.sleep(1); // Give the GC a chance to run
+                Thread.sleep(10); // Give the GC a chance to run
+		System.gc();
             } finally {}
         }
         // TODO: need a real check for freed native memory
