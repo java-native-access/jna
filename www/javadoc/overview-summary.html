@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.6</font></EM>
+<b>JNA API</><font size="-1"> 3.1.0</font></EM>
 </TD>
 </TR>
 
@@ -281,7 +281,11 @@ Java types must be chosen to match native types of the same size.  Following are
 <ul>
 <li>Unsigned values may be passed by assigning the corresponding
   two's-complement representation to the signed type of the same size.  
-<li>Java arrays of primitive type may be wrapped by <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio"><CODE>Buffer</CODE></A> in order to access a subset of the array (changing the effective size and/or offest).
+<li>Java arrays of primitive type may be wrapped by <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio"><CODE>Buffer</CODE></A> in
+  order to access a subset of the array (changing the effective size and/or
+  offest).
+<li>Java arrays of primitive type are only valid for use within the scope of a
+  single call.  If the native code keeps a reference to the memory, use <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html" title="class or interface in java.nio"><CODE>Buffer</CODE></A> instead.
 <li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
 <li>Bitfields must be manully packed into an integer type.  
 <li>All other types must eventually be converted to one of the types in this table.  Methods with arguments or return values of types other than these must either use types deriving from <A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A> or supply type conversion information for the unsupported types.  
@@ -726,13 +730,13 @@ memory.  Structure, String, and WString members will <em>not</em> be
 initialized unless they are selected via <A HREF="com/sun/jna/Union.html#setType(java.lang.Class)"><CODE>Union.setType(java.lang.Class)</CODE></A>.
 
 <a name="java-objects"></a>
-<h3>Java Object arguments</h3>
-In some cases, it would seem convenient to pass a Java object as an opaque
-pointer for later use by a Java callback method.  Unfortunately, this proves
-problematic in that the native code must become responsible for reference
-tracking.   Until a consistent method or methods of handling these situations
-is formulated, passing Java objects directly is not supported.
-
+<h3>Arbitrary Java Object arguments/return values</h3>
+In some cases, such as invoking native VM functions directly, it is necessary
+to pass Java objects to the native methods.  By default, JNA disallows using
+any Java object that is not explicitly supported unless it derives from
+<A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A>, because it is generally unnecessary to use
+such objects and usually signals a programmer error.  To avoid errors flagging
+the use of Java objects, use the library load option <A HREF="com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS"><CODE>Library.OPTION_ALLOW_OBJECTS</CODE></A> with Boolean.TRUE.
 <p>
 <a href="#toc">Table of Contents</a>
 <a name="invocation-mapping"></a>
@@ -794,7 +798,7 @@ of interest.
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.6</font></EM>
+<b>JNA API</><font size="-1"> 3.1.0</font></EM>
 </TD>
 </TR>
 

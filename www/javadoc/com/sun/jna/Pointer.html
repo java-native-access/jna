@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.6</font></EM>
+<b>JNA API</><font size="-1"> 3.1.0</font></EM>
 </TD>
 </TR>
 
@@ -134,7 +134,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) &nbsp;long</CODE></FONT></TD>
+<CODE>protected &nbsp;long</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#peer">peer</A></B></CODE>
 
 <BR>
@@ -179,6 +179,16 @@ An abstraction for a native pointer data type.  A Pointer instance
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#_setMemory(long, long, byte)">_setMemory</A></B>(long&nbsp;addr,
+           long&nbsp;length,
+           byte&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -798,7 +808,7 @@ public static final <A HREF="../../../com/sun/jna/Pointer.html" title="class in 
 <A NAME="peer"><!-- --></A><H3>
 peer</H3>
 <PRE>
-long <B>peer</B></PRE>
+protected long <B>peer</B></PRE>
 <DL>
 <DD>Pointer value of the real native pointer. Use long to be 64-bit safe.
 <P>
@@ -1583,6 +1593,19 @@ public void <B>setMemory</B>(long&nbsp;offset,
 </DL>
 <HR>
 
+<A NAME="_setMemory(long, long, byte)"><!-- --></A><H3>
+_setMemory</H3>
+<PRE>
+static void <B>_setMemory</B>(long&nbsp;addr,
+                       long&nbsp;length,
+                       byte&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="setByte(long, byte)"><!-- --></A><H3>
 setByte</H3>
 <PRE>
@@ -1814,7 +1837,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.6</font></EM>
+<b>JNA API</><font size="-1"> 3.1.0</font></EM>
 </TD>
 </TR>
 

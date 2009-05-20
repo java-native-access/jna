@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.6</font></EM>
+<b>JNA API</><font size="-1"> 3.1.0</font></EM>
 </TD>
 </TR>
 
@@ -71,9 +71,9 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_com.sun.jna.Structure">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_top"></A>
@@ -130,7 +130,7 @@ Represents a native union.  When writing to native memory, the field
 <TH ALIGN="left"><B>Nested classes/interfaces inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>, <A HREF="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna">Structure.ByValue</A>, <A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A></CODE></TD>
+<TD><CODE><A HREF="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>, <A HREF="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna">Structure.ByValue</A>, <A HREF="../../../com/sun/jna/Structure.FFIType.html" title="class in com.sun.jna">Structure.FFIType</A>, <A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -141,6 +141,14 @@ Represents a native union.  When writing to native memory, the field
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#biggestField">biggestField</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
@@ -173,7 +181,7 @@ Represents a native union.  When writing to native memory, the field
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected </CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(int)">Union</A></B>(int&nbsp;size)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(com.sun.jna.Pointer)">Union</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a Union of the given size, using default alignment.</TD>
@@ -181,7 +189,7 @@ Represents a native union.  When writing to native memory, the field
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected </CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(int, int)">Union</A></B>(int&nbsp;size,
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(com.sun.jna.Pointer, int)">Union</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
       int&nbsp;alignType)</CODE>
 
 <BR>
@@ -190,7 +198,7 @@ Represents a native union.  When writing to native memory, the field
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected </CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(int, int, com.sun.jna.TypeMapper)">Union</A></B>(int&nbsp;size,
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(com.sun.jna.Pointer, int, com.sun.jna.TypeMapper)">Union</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
       int&nbsp;alignType,
       <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A>&nbsp;mapper)</CODE>
 
@@ -249,7 +257,7 @@ Represents a native union.  When writing to native memory, the field
 <TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#getTypeInfo()">getTypeInfo</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return type information for the largest field.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Avoid calculating type information until we know our biggest field.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -316,7 +324,7 @@ Represents a native union.  When writing to native memory, the field
 <TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../com/sun/jna/Structure.html#allocateMemory()">allocateMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#allocateMemory(int)">allocateMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#calculateAlignedSize(int)">calculateAlignedSize</A>, <A HREF="../../../com/sun/jna/Structure.html#clear()">clear</A>, <A HREF="../../../com/sun/jna/Structure.html#ensureAllocated()">ensureAllocated</A>, <A HREF="../../../com/sun/jna/Structure.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../com/sun/jna/Structure.html#fields()">fields</A>, <A HREF="../../../com/sun/jna/Structure.html#getAutoRead()">getAutoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#getAutoWrite()">getAutoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#getField(com.sun.jna.Structure.StructField)">getField</A>, <A HREF="../../../com/sun/jna/Structure.html#getFieldOrder()">getFieldOrder</A>, <A HREF="../../../com/sun/jna/Structure.html#getPointer()">getPointer</A>, <A HREF="../../../com/sun/jna/Structure.html#getStructAlignment()">getStructAlignment</A>, <A HREF="../../../com/sun/jna/Structure.html#getTypeInfo(java.lang.Object)">getTypeInfo</A>, <A HREF="../../../com/sun/jna/Structure.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Structure.html#newInstance(java.lang.Class)">newInstance</A>, <A HREF="../../../com/sun/jna/Structure.html#read()">read</A>, <A HREF="../../../com/sun/jna/Structure.html#setAlignType(int)">setAlignType</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoRead(boolean)">setAutoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoSynch(boolean)">setAutoSynch</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoWrite(boolean)">setAutoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#setField(com.sun.jna.Structure.StructField, java.lang.Object)">setField</A>, <A HREF="../../../com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])">setFieldOrder</A>, <A HREF="../../../com/sun/jna/Structure.html#setTypeMapper(com.sun.jna.TypeMapper)">setTypeMapper</A>, <A HREF="../../../com/sun/jna/Structure.html#size()">size</A>, <A HREF="../../../com/sun/jna/Structure.html#sortFields(java.lang.reflect.Field[], java.lang.String[])">sortFields</A>, <A HREF="../../../com/sun/jna/Structure.html#toArray(int)">toArray</A>, <A HREF="../../../com/sun/jna/Structure.html#toArray(com.sun.jna.Structure[])">toArray</A>, <A HREF="../../../com/sun/jna/Structure.html#toString()">toString</A>, <A HREF="../../../com/sun/jna/Structure.html#updateStructureByReference(java.lang.Class, com.sun.jna.Structure, com.sun.jna.Pointer)">updateStructureByReference</A>, <A HREF="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer)">useMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer, int)">useMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#write()">write</A></CODE></TD>
+<TD><CODE><A HREF="../../../com/sun/jna/Structure.html#allocateMemory()">allocateMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#allocateMemory(int)">allocateMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#cacheTypeInfo(com.sun.jna.Pointer)">cacheTypeInfo</A>, <A HREF="../../../com/sun/jna/Structure.html#calculateAlignedSize(int)">calculateAlignedSize</A>, <A HREF="../../../com/sun/jna/Structure.html#clear()">clear</A>, <A HREF="../../../com/sun/jna/Structure.html#ensureAllocated()">ensureAllocated</A>, <A HREF="../../../com/sun/jna/Structure.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../com/sun/jna/Structure.html#fields()">fields</A>, <A HREF="../../../com/sun/jna/Structure.html#getAutoRead()">getAutoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#getAutoWrite()">getAutoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#getField(com.sun.jna.Structure.StructField)">getField</A>, <A HREF="../../../com/sun/jna/Structure.html#getFieldOrder()">getFieldOrder</A>, <A HREF="../../../com/sun/jna/Structure.html#getPointer()">getPointer</A>, <A HREF="../../../com/sun/jna/Structure.html#getStructAlignment()">getStructAlignment</A>, <A HREF="../../../com/sun/jna/Structure.html#getTypeInfo(java.lang.Object)">getTypeInfo</A>, <A HREF="../../../com/sun/jna/Structure.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Structure.html#newInstance(java.lang.Class)">newInstance</A>, <A HREF="../../../com/sun/jna/Structure.html#read()">read</A>, <A HREF="../../../com/sun/jna/Structure.html#setAlignType(int)">setAlignType</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoRead(boolean)">setAutoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoSynch(boolean)">setAutoSynch</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoWrite(boolean)">setAutoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#setField(com.sun.jna.Structure.StructField, java.lang.Object)">setField</A>, <A HREF="../../../com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])">setFieldOrder</A>, <A HREF="../../../com/sun/jna/Structure.html#setTypeMapper(com.sun.jna.TypeMapper)">setTypeMapper</A>, <A HREF="../../../com/sun/jna/Structure.html#size()">size</A>, <A HREF="../../../com/sun/jna/Structure.html#sortFields(java.lang.reflect.Field[], java.lang.String[])">sortFields</A>, <A HREF="../../../com/sun/jna/Structure.html#toArray(int)">toArray</A>, <A HREF="../../../com/sun/jna/Structure.html#toArray(com.sun.jna.Structure[])">toArray</A>, <A HREF="../../../com/sun/jna/Structure.html#toString()">toString</A>, <A HREF="../../../com/sun/jna/Structure.html#updateStructureByReference(java.lang.Class, com.sun.jna.Structure, com.sun.jna.Pointer)">updateStructureByReference</A>, <A HREF="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer)">useMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer, int)">useMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#write()">write</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -330,6 +338,25 @@ Represents a native union.  When writing to native memory, the field
 </TABLE>
 &nbsp;
 <P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="biggestField"><!-- --></A><H3>
+biggestField</H3>
+<PRE>
+<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A> <B>biggestField</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -352,20 +379,20 @@ protected <B>Union</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="Union(int)"><!-- --></A><H3>
+<A NAME="Union(com.sun.jna.Pointer)"><!-- --></A><H3>
 Union</H3>
 <PRE>
-protected <B>Union</B>(int&nbsp;size)</PRE>
+protected <B>Union</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</PRE>
 <DL>
 <DD>Create a Union of the given size, using default alignment.
 <P>
 </DL>
 <HR>
 
-<A NAME="Union(int, int)"><!-- --></A><H3>
+<A NAME="Union(com.sun.jna.Pointer, int)"><!-- --></A><H3>
 Union</H3>
 <PRE>
-protected <B>Union</B>(int&nbsp;size,
+protected <B>Union</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
                 int&nbsp;alignType)</PRE>
 <DL>
 <DD>Create a Union of the given size and alignment type.
@@ -383,10 +410,10 @@ protected <B>Union</B>(<A HREF="../../../com/sun/jna/TypeMapper.html" title="int
 </DL>
 <HR>
 
-<A NAME="Union(int, int, com.sun.jna.TypeMapper)"><!-- --></A><H3>
+<A NAME="Union(com.sun.jna.Pointer, int, com.sun.jna.TypeMapper)"><!-- --></A><H3>
 Union</H3>
 <PRE>
-protected <B>Union</B>(int&nbsp;size,
+protected <B>Union</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
                 int&nbsp;alignType,
                 <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A>&nbsp;mapper)</PRE>
 <DL>
@@ -594,7 +621,9 @@ getTypeInfo</H3>
 <PRE>
 <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getTypeInfo</B>()</PRE>
 <DL>
-<DD>Return type information for the largest field.
+<DD>Avoid calculating type information until we know our biggest field.
+ Return type information for the largest field to ensure all available
+ bits are used.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#getTypeInfo()">getTypeInfo</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
@@ -627,7 +656,7 @@ getTypeInfo</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.0.6</font></EM>
+<b>JNA API</><font size="-1"> 3.1.0</font></EM>
 </TD>
 </TR>
 
@@ -654,9 +683,9 @@ getTypeInfo</H3>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_com.sun.jna.Structure">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_bottom"></A>
