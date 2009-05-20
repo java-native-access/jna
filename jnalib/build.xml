@@ -84,7 +84,10 @@
       </or>
     </condition>
     <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
-      <os arch="sparcv9"/>
+      <and>
+        <os name="SunOS"/>
+        <equals arg1="${vm.arch}" arg2="-d64"/>
+      </and>
     </condition>
     <property name="build" value="build${vm.arch}"/>
     <property name="classes" location="${build}/classes"/>
@@ -93,19 +96,18 @@
     <property name="reports" value="${build}/reports"/>
 
     <!-- Add other supported platforms here -->
+    <condition property="jre.arch" value="i386">
+      <equals arg1="x86" arg2="${os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="amd64">
+      <equals arg1="x86_64" arg2="${os.arch}"/>
+    </condition>
+    <property name="jre.arch" value="${os.arch}"/>
+    <condition property="os.prefix" value="linux-${jre.arch}">
+      <os name="Linux"/>
+    </condition>
     <condition property="os.prefix" value="win32-${os.arch}">
       <os family="windows"/>
-    </condition>
-    <condition property="os.prefix" value="linux-i386">
-      <!-- IBM's J9 reports 'x86' -->
-      <and><os name="Linux"/><os arch="x86"/></and>
-    </condition>
-    <condition property="os.prefix" value="linux-amd64">
-      <!-- Debian reports 'x86_64' -->
-      <and><os name="Linux"/><os arch="x86_64"/></and>
-    </condition>
-    <condition property="os.prefix" value="linux-${os.arch}">
-      <os name="Linux"/>
     </condition>
     <!-- Darwin builds are universal, no arch required -->
     <condition property="os.prefix" value="darwin">
@@ -129,8 +131,8 @@
     </condition>
     <fail unless="jdk.home" message="JAVA_HOME/java.home must be a JDK, not JRE"/>
     <condition property="libjsig"
-               value="${java.home}/lib/${os.arch}/libjsig.so" else="">
-      <available file="${java.home}/lib/${os.arch}/libjsig.so"/>
+               value="${java.home}/lib/${jre.arch}/libjsig.so" else="">
+      <available file="${java.home}/lib/${jre.arch}/libjsig.so"/>
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/native"/>
