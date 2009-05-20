@@ -38,7 +38,6 @@
 #include <ffi_common.h>
 
 #include <stdlib.h>
-#include <inttypes.h>
 
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
@@ -72,7 +71,7 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
       size_t z;
 
       /* Align if necessary */
-      if ((sizeof(void*) - 1) & (intptr_t) argp)
+      if ((sizeof(void*) - 1) & (size_t) argp)
         argp = (char *) ALIGN(argp, sizeof(void*));
 
       z = (*p_arg)->size;
@@ -451,7 +450,7 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
       size_t z;
 
       /* Align if necessary */
-      if ((sizeof(void *) - 1) & (intptr_t) argp) {
+      if ((sizeof(void *) - 1) & (size_t) argp) {
         argp = (char *) ALIGN(argp, sizeof(void*));
       }
 
