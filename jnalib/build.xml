@@ -83,6 +83,9 @@
         <os arch="amd64"/>
       </or>
     </condition>
+    <condition property="ld.preload" value="LD_PRELOAD" else="LD_PRELOAD_64">
+      <equals arg1="${vm.arch}" arg2=""/>
+    </condition>
     <property name="build" value="build${vm.arch}"/>
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
@@ -430,7 +433,7 @@
     <property name="tests.exclude" value=""/>
     <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
       <!-- avoid VM conflicts with JNA protected mode -->
-      <env key="LD_PRELOAD" file="${libjsig}"/>
+      <env key="${ld.preload}" file="${libjsig}"/>
       <jvmarg value="-Djna.library.path=${build.native}"/>
       <!-- Avoid VM crashes, if possible -->
       <jvmarg value="-Djna.protected=true"/>
