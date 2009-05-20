@@ -83,8 +83,8 @@
         <os arch="amd64"/>
       </or>
     </condition>
-    <condition property="ld.preload" value="LD_PRELOAD" else="LD_PRELOAD_64">
-      <equals arg1="${vm.arch}" arg2=""/>
+    <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
+      <os arch="sparcv9"/>
     </condition>
     <property name="build" value="build${vm.arch}"/>
     <property name="classes" location="${build}/classes"/>
