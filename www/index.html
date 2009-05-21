@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-05-19">
+<meta name="date" content="2009-05-21">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -67,6 +67,7 @@
 <li><a href="#callbacks">Callbacks/Closures</a>
 <li><a href="#dynamic">JRuby/Jython&nbsp;Usage</a>
 <li><a href="#faq">Frequently&nbsp;Asked&nbsp;Questions&nbsp;(FAQ)</a>
+<li><a href="#direct">Direct method mapping</a>
 </ul>
 </td>
 </tr>
@@ -82,7 +83,7 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
 <a name=features></a>
 <h3>Features</h3>
 <ul>
-<li>Automatic mapping from Java interface or static method to native function, with simple mappings for all primitive data types
+<li>Automatic mapping from Java to native functions, with simple mappings for all primitive data types
 <li>Runs on <a href="#building">most platforms which support Java</a>
 <li>Automatic conversion between C and Java strings, with customizable encoding/decoding
 <li><a href="javadoc/com/sun/jna/Structure.html">Structure</a> and <a href="javadoc/com/sun/jna/Union.html">Union</a> arguments/return values, by reference and by value
@@ -118,18 +119,8 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
-/** Simple example of both methods of native library declaration and usage. */
+/** Simple example of JNA interface mapping and usage. */
 public class HelloWorld {
-
-    // WARNING: this type of mapping is currently experimental!
-    public static class MathLibrary {
-
-        public static native double cos(double x);
-        
-        static {
-            Native.register("m");
-        }
-    }
 
     // This is the standard, stable way of mapping, which supports extensive
     // customization and mapping of Java to native types.
@@ -478,18 +469,24 @@ There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implem
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
 <p>
-The calling overhead for a single native call using JNA can be an order of
-magnitude (~10X) greater time than equivalent custom JNI (whether it actually
-does in the context of your application is a different question).   In raw
-terms, the calling overhead is on the order of hundreds of milliseconds
-instead of tens of milliseconds. 
+The calling overhead for a single native call using JNA interface mapping can
+be an order of magnitude (~10X) greater time than equivalent custom JNI
+(whether it actually does in the context of your application is a different
+question).   In raw terms, the calling overhead is on the order of hundreds of
+microseconds instead of tens of microseconds. 
 This magnitude is typical of the difference between systems using
 dynamically-maintained type information and systems where type information is 
 statically compiled.  JNI hard-codes type information in the method
-invocation, where JNA dynamically determines type information at runtime.  
+invocation, where JNA interface mapping dynamically determines type
+information at runtime.   
 <p>
-You might expect a speedup of about an order of magnitude moving to custom JNI,
-but the actual difference will vary depending on usage and function
+If you can forego custom type mapping and are willing to manually massage
+certain types of arguments into the appropriate native format, the JNA direct
+mapping can provide performance approaching that of custom JNI.  
+<p>
+You might expect a speedup of about an order of magnitude moving to JNA direct
+mapping, and a factor of two or three moving from there to custom JNI. 
+The actual difference will vary depending on usage and function
 signatures.  As with any optimization process, you should determine
 first <em>where</em> you need a speed increase, and then see how much
 difference there is by performing targeted optimizations.  The ease of
@@ -498,6 +495,41 @@ using custom JNI.
 <p>
 See the JavaDoc for specific <a href="javadoc/com/sun/jna/overview-summary.html#performance">performance tips</a>.
 <p>
+<a href=#top>Top</a>
+<a name=direct></a>
+If you don't need any special type mappings to convert your function's
+arguments into native types, or are willing to do the conversion yourself, JNA
+supports a direct mapping method which can improve performance substantially,
+approaching that of custom JNI.  Method signatures are the same as they would
+be in a JNA interface mapping, but they can be any static or object methods.
+You only need register them within the static initializer of the defining
+class, as in the example below.  The <code>Native.register()</code> method
+takes the name of your native library, the same
+as <code>Native.loadLibrary()</code> would. 
+
+<textarea name="textarea" cols="80" rows="24" readonly="readonly">
+import com.sun.jna.*;
+
+/** Simple example of JNA direct mapping and usage. */
+public class HelloWorld {
+
+    // Example of direct mapping for improved performance.
+    // Fewer automatic type conversions are supported with this method
+    static {
+        Native.register(Platform.isWindows() ? "msvcrt" : "m");
+    }
+
+    public static native double cos(double);
+    public static native double sin(double);
+
+    public static void main(String[] args) {
+        System.out.println("cos(0)=" + cos(0));
+        System.out.println("sin(0)=" + sin(0));
+    }
+}
+</textarea>
+<p>
+
 <a href=#top>Top</a>
 <a name=demos></a>
 <h3>Examples</h3>
