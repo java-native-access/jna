@@ -26,7 +26,10 @@
   <script>
     var box = document.getElementById("projecthome");
     var div = document.getElementById("downloadBox");
-    box.insertBefore(div,box.firstChild);
+    if (div.box.firstChild.id == 'ownermessage')
+      box.insertAfter(div,box.firstChild);
+    else
+      box.insertBefore(div,box.firstChild);
   </script>
 
 
