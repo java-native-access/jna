@@ -497,6 +497,7 @@ See the JavaDoc for specific <a href="javadoc/com/sun/jna/overview-summary.html#
 <p>
 <a href=#top>Top</a>
 <a name=direct></a>
+<h3>JNA Direct Mapping</h3>
 If you don't need any special type mappings to convert your function's
 arguments into native types, or are willing to do the conversion yourself, JNA
 supports a direct mapping method which can improve performance substantially,
@@ -507,14 +508,14 @@ class, as in the example below.  The <code>Native.register()</code> method
 takes the name of your native library, the same
 as <code>Native.loadLibrary()</code> would. 
 
-<textarea name="textarea" cols="80" rows="24" readonly="readonly">
+<textarea name="textarea" cols="80" rows="20" readonly="readonly">
 import com.sun.jna.*;
 
-/** Simple example of JNA direct mapping and usage. */
+/** Simple example of JNA direct mapping. 
+ * Fewer automatic type conversions are supported with this method
+ */
 public class HelloWorld {
 
-    // Example of direct mapping for improved performance.
-    // Fewer automatic type conversions are supported with this method
     static {
         Native.register(Platform.isWindows() ? "msvcrt" : "m");
     }
