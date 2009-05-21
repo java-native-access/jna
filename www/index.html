@@ -24,12 +24,12 @@
     </div>
   </div>
   <script>
-    var box = document.getElementById("projecthome");
-    var div = document.getElementById("downloadBox");
-    if (box.firstChild.id == 'ownermessage')
-      box.insertAfter(div,box.firstChild);
+    var div = document.getElementById("projecthome");
+    var box = document.getElementById("downloadBox");
+    if (div.firstChild.id == 'ownermessage')
+      div.insertBefore(box,div.firstChild.nextSibling);
     else
-      box.insertBefore(div,box.firstChild);
+      div.insertBefore(box,div.firstChild);
   </script>
 
 
