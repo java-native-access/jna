@@ -275,6 +275,7 @@ public interface X11 extends Library {
 
     /** Definition of the Xevie library. */
     interface Xevie extends Library {
+        /** Instance of Xevie. Note: This extension has been removed from xorg/xserver on Oct 22, 2008 because it is broken and maintainerless. */
         Xevie INSTANCE = (Xevie)Native.loadLibrary("Xevie", Xevie.class);
         int XEVIE_UNMODIFIED = 0;
         int XEVIE_MODIFIED   = 1;
