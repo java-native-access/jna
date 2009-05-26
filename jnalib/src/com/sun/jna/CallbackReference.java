@@ -154,7 +154,7 @@ class CallbackReference extends WeakReference {
         if (m.getParameterTypes().length > Function.MAX_NARGS) {
             String msg = "Method signature exceeds the maximum "
                 + "parameter count: " + m;
-            throw new IllegalArgumentException(msg);
+            throw new UnsupportedOperationException(msg);
         }
         return m;
     }

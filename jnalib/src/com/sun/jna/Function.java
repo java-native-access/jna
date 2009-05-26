@@ -374,9 +374,9 @@ public class Function extends Pointer {
             result = invokeObject(callingConvention, args);
             if (result != null
                 && !returnType.isAssignableFrom(result.getClass())) {
-                throw new IllegalArgumentException("Return type " + returnType
-                                                   + " does not match result "
-                                                   + result.getClass());
+                throw new ClassCastException("Return type " + returnType
+                                             + " does not match result "
+                                             + result.getClass());
             }
         }
         else {
