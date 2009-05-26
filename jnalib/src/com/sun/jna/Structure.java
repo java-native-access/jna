@@ -1397,6 +1397,8 @@ public abstract class Structure {
             typeInfoMap.put(Character.class, ctype);
             typeInfoMap.put(byte.class, FFITypes.ffi_type_sint8);
             typeInfoMap.put(Byte.class, FFITypes.ffi_type_sint8);
+            typeInfoMap.put(boolean.class, FFITypes.ffi_type_sint32);
+            typeInfoMap.put(Boolean.class, FFITypes.ffi_type_sint32);
             typeInfoMap.put(Pointer.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(String.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(WString.class, FFITypes.ffi_type_pointer);
@@ -1487,19 +1489,6 @@ public abstract class Structure {
                 }
                 throw new IllegalArgumentException("Unsupported structure field type " + cls);
             }
-        }
-        static String getSignature(Object o) {
-            Pointer p = get(o);
-            if (p == FFITypes.ffi_type_void) return "V";
-            if (p == FFITypes.ffi_type_float) return "F";
-            if (p == FFITypes.ffi_type_double) return "D";
-            if (p == FFITypes.ffi_type_sint8) return "B";
-            if (p == FFITypes.ffi_type_sint16) return "S";
-            if (p == FFITypes.ffi_type_uint16) return "C";
-            if (p == FFITypes.ffi_type_sint32) return "I";
-            if (p == FFITypes.ffi_type_sint64) return "J";
-            if (p == FFITypes.ffi_type_pointer) return "Lcom/sun/jna/Pointer;";
-            throw new IllegalArgumentException("Unsupported type " + o);
         }
     }
     

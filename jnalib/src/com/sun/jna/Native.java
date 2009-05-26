@@ -128,7 +128,7 @@ public final class Native {
      * have no effect.<p>
      * NOTE: When protected mode is enabled, you should make use of the jsig
      * library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>).
-     * In short, set the environment vaiable <code>LD_PRELOAD</code> to the
+     * In short, set the environment variable <code>LD_PRELOAD</code> to the
      * path to <code>libjsig.so</code> in your JRE lib directory
      * (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your
      * Java application.
@@ -885,21 +885,158 @@ public final class Native {
      * @param libName library name to which functions should be bound
      */
     public static void register(String libName) {
-        register(NativeLibrary.getInstance(libName));
+        register(getNativeClass(getCallingClass()),
+                 NativeLibrary.getInstance(libName));
+    }
+
+    /** When called from a class static initializer, maps all native methods
+     * found within that class to native libraries via the JNA raw calling
+     * interface.
+     * @param lib native library to which functions should be bound
+     */
+    public static void register(NativeLibrary lib) {
+        register(getNativeClass(getCallingClass()), lib);
+    }
+
+    static Class getNativeClass(Class cls) {
+        Method[] methods = cls.getDeclaredMethods();
+        for (int i=0;i < methods.length;i++) {
+            if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
+                return cls;
+            }
+        }
+        int idx = cls.getName().lastIndexOf("$");
+        if (idx != -1) {
+            String name = cls.getName().substring(0, idx);
+            try {
+                return getNativeClass(Class.forName(name, true, cls.getClassLoader()));
+            }
+            catch(ClassNotFoundException e) {
+            }
+        }
+        throw new IllegalArgumentException("Can't determine class with native methods from the current context (" + cls + ")");
+    }
+
+    static Class getCallingClass() {
+        Class[] context = new SecurityManager() {
+            public Class[] getClassContext() {
+                return super.getClassContext();
+            }
+        }.getClassContext();
+        if (context.length < 4) {
+            throw new IllegalStateException("This method must be called from the static initializer of a class");
+        }
+        return context[3];
     }
 
     private static Map registeredClasses = new HashMap();
+    private static Map registeredLibraries = new HashMap();
     private static Object unloader = new Object() {
         protected void finalize() {
-            for (Iterator i=registeredClasses.entrySet().iterator();i.hasNext();) {
-                Map.Entry e = (Map.Entry)i.next();
-                unregister((Class)e.getKey(), (long[])e.getValue());
+            synchronized(registeredClasses) {
+                for (Iterator i=registeredClasses.entrySet().iterator();i.hasNext();) {
+                    Map.Entry e = (Map.Entry)i.next();
+                    unregister((Class)e.getKey(), (long[])e.getValue());
+                    i.remove();
+                }
             }
         }
     };
 
+    /** Remove all native mappings for the calling class.
+        Should only be called if the class is no longer referenced and about
+        to be garbage collected.
+     */
+    public static void unregister() {
+        unregister(getNativeClass(getCallingClass()));
+    }
+
+    /** Remove all native mappings for the given class.
+        Should only be called if the class is no longer referenced and about
+        to be garbage collected.
+     */
+    public static void unregister(Class cls) {
+        synchronized(registeredClasses) {
+            if (registeredClasses.containsKey(cls)) {
+                unregister(cls, (long[])registeredClasses.get(cls));
+                registeredClasses.remove(cls);
+                registeredLibraries.remove(cls);
+            }
+        }
+    }
+
     /** Unregister the native methods for the given class. */
     private static native void unregister(Class cls, long[] handles);
+
+    private static String getSignature(Class cls) {
+        if (cls.isArray()) {
+            return "[" + getSignature(cls.getComponentType());
+        }
+        if (cls.isPrimitive()) {
+            if (cls == void.class) return "V";
+            if (cls == boolean.class) return "Z";
+            if (cls == byte.class) return "B";
+            if (cls == short.class) return "S";
+            if (cls == char.class) return "C";
+            if (cls == int.class) return "I";
+            if (cls == long.class) return "J";
+            if (cls == float.class) return "F";
+            if (cls == double.class) return "D";
+        }
+        return "L" + cls.getName().replace(".", "/") + ";";
+    }
+
+    private static final int CVT_UNSUPPORTED = -1;
+    private static final int CVT_DEFAULT = 0;
+    private static final int CVT_POINTER = 1;
+    private static final int CVT_STRING = 2;
+    private static final int CVT_STRUCTURE = 3;
+    private static final int CVT_STRUCTURE_BYVAL = 4;
+    private static final int CVT_BUFFER = 5;
+    private static final int CVT_ARRAY_BYTE = 6;
+    private static final int CVT_ARRAY_SHORT = 7;
+    private static final int CVT_ARRAY_CHAR = 8;
+    private static final int CVT_ARRAY_INT = 9;
+    private static final int CVT_ARRAY_LONG = 10;
+    private static final int CVT_ARRAY_FLOAT = 11;
+    private static final int CVT_ARRAY_DOUBLE = 12;
+    private static final int CVT_ARRAY_BOOLEAN = 13;
+    private static final int CVT_BOOLEAN = 14;
+
+    private static int getConversion(Class type) {
+        if (Pointer.class.isAssignableFrom(type)) {
+            return CVT_POINTER;
+        }
+        if (String.class == type) {
+            return CVT_STRING;
+        }
+        if (Buffer.class.isAssignableFrom(type)) {
+            return CVT_BUFFER;
+        }
+        if (Structure.class.isAssignableFrom(type)) {
+            if (Structure.ByValue.class.isAssignableFrom(type)) {
+                return CVT_STRUCTURE_BYVAL;
+            }
+            return CVT_STRUCTURE;
+        }
+        if (type.isArray()) {
+            switch(type.getName().charAt(1)) {
+            case 'Z': return CVT_ARRAY_BOOLEAN;
+            case 'B': return CVT_ARRAY_BYTE;
+            case 'S': return CVT_ARRAY_SHORT;
+            case 'C': return CVT_ARRAY_CHAR;
+            case 'I': return CVT_ARRAY_INT;
+            case 'J': return CVT_ARRAY_LONG;
+            case 'F': return CVT_ARRAY_FLOAT;
+            case 'D': return CVT_ARRAY_DOUBLE;
+            default: break;
+            }
+        }
+        if (type.isPrimitive()) {
+            return type == boolean.class ? CVT_BOOLEAN : CVT_DEFAULT;
+        }
+        return -1;
+    }
 
     /** When called from a class static initializer, maps all native methods
      * found within that class to native libraries via the JNA raw calling
@@ -913,16 +1050,7 @@ public final class Native {
     // TODO: derive library, etc. from annotations (per-class or per-method)
     // TODO: get function name from annotation
     // TODO: read parameter type mapping from annotations (long/native long)
-    public static void register(NativeLibrary lib) {
-        Class[] context = new SecurityManager() {
-            public Class[] getClassContext() {
-                return super.getClassContext();
-            }
-        }.getClassContext();
-        if (context.length < 4) {
-            throw new IllegalStateException("This method must be called from the static initializer of a class");
-        }
-        Class cls = context[3];
+    public static void register(Class cls, NativeLibrary lib) {
         Method[] methods = cls.getDeclaredMethods();
         List mlist = new ArrayList();
         for (int i=0;i < methods.length;i++) {
@@ -936,10 +1064,31 @@ public final class Native {
             String sig = "(";
             Class rtype = method.getReturnType();
             Class[] ptypes = method.getParameterTypes();
-            for (int t=0;t < ptypes.length;t++) {
-                sig += FFIType.getSignature(ptypes[t]);
+            long[] atypes = new long[ptypes.length];
+            int[] cvt = new int[ptypes.length];
+            int rcvt = getConversion(rtype);
+            if (rcvt == CVT_UNSUPPORTED) {
+                throw new IllegalArgumentException(rtype + " is not a supported return type (in method " + method.getName() + " in " + cls + ")");
             }
-            sig += ")" + Structure.FFIType.getSignature(rtype);
+            for (int t=0;t < ptypes.length;t++) {
+                Class type = ptypes[t];
+                sig += getSignature(type);
+                cvt[t] = getConversion(type);
+                if (cvt[t] == CVT_UNSUPPORTED) {
+                    throw new IllegalArgumentException(type + " is not a supported argument type (in method " + method.getName() + " in " + cls + ")");
+                }
+                // All conversions other than struct by value and primitives
+                // result in a pointer
+                if (cvt[t] == CVT_STRUCTURE_BYVAL
+                    || cvt[t] == CVT_DEFAULT) {
+                    atypes[t] = FFIType.get(type).peer;
+                }
+                else {
+                    atypes[t] = FFIType.get(Pointer.class).peer;
+                }
+            }
+            sig += ")";
+            sig += getSignature(rtype);
             
             String name = method.getName();
             FunctionMapper mapper = (FunctionMapper)lib.getOptions().get(Library.OPTION_FUNCTION_MAPPER);
@@ -947,18 +1096,37 @@ public final class Native {
                 name = mapper.getFunctionName(lib, method);
             }
             Function f = lib.getFunction(name);
-            // TODO: registered methods should be disposed when
-            // the containing class or NativeLibrary is GC'd
-            handles[i] = registerMethod(cls, method.getName(),
-                                        sig, f, f.callingConvention);
+            try {
+                handles[i] = registerMethod(cls, method.getName(),
+                                            sig, cvt, atypes, rcvt,
+                                            FFIType.get(rtype).peer, rtype, 
+                                            f.peer, f.callingConvention);
+            }
+            catch(NoSuchMethodError e) {
+                throw new UnsatisfiedLinkError("No method " + method.getName() + " with signature " + sig + " in " + cls);
+            }
         }
-        registeredClasses.put(cls, handles);
+        synchronized(registeredClasses) {
+            registeredClasses.put(cls, handles);
+            registeredLibraries.put(cls, lib);
+        }
     }
 
     private static native long registerMethod(Class cls,
-                                              String name, String signature,
-                                              Pointer fptr, int callingConvention);
+                                              String name,
+                                              String signature,
+                                              int[] conversions,
+                                              long[] arg_types,
+                                              int rconversion,
+                                              long rtype,
+                                              Class rclass,
+                                              long fptr,
+                                              int callingConvention);
     
+    static native long ffi_prep_cif(int abi, int nargs, long ffi_return_type, long ffi_types);
+    static native void ffi_call(long cif, long fptr, long resp, long args);
+    static native long ffi_prep_closure();
+
     /** Prints JNA library details to the console. */
     public static void main(String[] args) {
         final String DEFAULT_TITLE = "Java Native Access (JNA)";

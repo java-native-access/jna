@@ -90,7 +90,6 @@ typedef long word_t;
 #define EError "java/lang/Error"
 
 extern void throwByName(JNIEnv *env, const char *name, const char *msg);
-extern jobject newJavaPointer(JNIEnv *, void *);
 extern char get_jtype(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
 extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
