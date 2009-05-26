@@ -11,7 +11,8 @@
 package com.sun.jna;
 
 import java.nio.ByteBuffer;
-
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a 
@@ -36,7 +37,16 @@ import java.nio.ByteBuffer;
  */
 public class Memory extends Pointer {
 
+    private static Map buffers = new WeakHashMap();
+
     protected long size; // Size of the malloc'ed space
+
+    /** Force cleanup of memory that has associated NIO Buffers which have
+        been GC'd.
+    */
+    public static void purge() {
+        buffers.size();
+    }
 
     /** Provide a view into the original memory. */
     private class SharedMemory extends Memory {
@@ -487,7 +497,11 @@ public class Memory extends Pointer {
      */
     public ByteBuffer getByteBuffer(long offset, long length) {
         boundsCheck(offset, length);
-        return super.getByteBuffer(offset, length);
+        ByteBuffer b = super.getByteBuffer(offset, length);
+        // Ensure this Memory object will not be GC'd (and its memory freed)
+        // if the Buffer is still extant.
+        buffers.put(b, this);
+        return b;
     }
 
     /**

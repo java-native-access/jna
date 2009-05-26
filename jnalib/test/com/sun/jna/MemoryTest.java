@@ -13,6 +13,8 @@
 package com.sun.jna;
 
 import java.lang.ref.WeakReference;
+import java.nio.Buffer;
+
 import junit.framework.TestCase;
 
 public class MemoryTest extends TestCase {
@@ -80,6 +82,33 @@ public class MemoryTest extends TestCase {
             fail("Negative alignments not allowed");
         }
         catch(IllegalArgumentException e) { }
+    }
+
+    public void testAvoidGCWithExtantBuffer() throws Exception {
+        Memory m = new Memory(1024);
+        Buffer b = m.getByteBuffer(0, m.getSize());
+        WeakReference ref = new WeakReference(m);
+        WeakReference bref = new WeakReference(b);
+        m = null;
+        System.gc();
+        Memory.purge();
+        for (int i=0;i < 100 && ref.get() != null;i++) {
+            Thread.sleep(1);
+            System.gc();
+            Memory.purge();
+        }
+        assertNotNull("Memory GC'd while NIO Buffer still extant", ref.get());
+
+        b = null;
+        System.gc();
+        Memory.purge();
+        for (int i=0;i < 100 && (bref.get() != null || ref.get() != null);i++) {
+            Thread.sleep(1);
+            System.gc();
+            Memory.purge();
+        }
+        assertNull("Buffer not GC'd\n", bref.get());
+        assertNull("Memory not GC'd after buffer GC'd\n", ref.get());
     }
 
     public static void main(String[] args) {
