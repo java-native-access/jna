@@ -2188,6 +2188,7 @@ typedef struct _method_data {
   ffi_cif closure_cif;
   void*   fptr;
   ffi_type** arg_types;
+  ffi_type** closure_arg_types;
   int*    flags;
   int     rflag;
   jclass  rclass;
@@ -2224,7 +2225,6 @@ method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
   void* oldresp = resp;
 
   // TODO: conversions here otherwise done in JNA interface code
-  // TODO: String, structure (by ref/value), primitive arrays
   if (data->flags) {
     objects = alloca(data->cif.nargs * sizeof(void*));
     array_types = alloca(data->cif.nargs * sizeof(char));
@@ -2362,6 +2362,7 @@ Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass ncls, jclass cls, jlongAr
     method_data* md = (method_data*)L2A(data[count]);
     if (md->rclass) (*env)->DeleteWeakGlobalRef(env, md->rclass);
     free(md->arg_types);
+    free(md->closure_arg_types);
     free(md->flags);
     free(md);
   }
@@ -2399,14 +2400,22 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
   if (cc == CALLCONV_STDCALL) abi = FFI_STDCALL;
 #endif
 
-  data->arg_types = malloc(sizeof(ffi_type*)*(argc+2));
-  data->arg_types[0] = &ffi_type_pointer;
-  data->arg_types[1] = &ffi_type_pointer;
+  data->arg_types = malloc(sizeof(ffi_type*) * argc);
+  data->closure_arg_types = malloc(sizeof(ffi_type*) * (argc + 2));
+  data->closure_arg_types[0] = &ffi_type_pointer;
+  data->closure_arg_types[1] = &ffi_type_pointer;
   data->flags = cvts ? malloc(sizeof(jint)*argc) : NULL;
   data->rflag = rconversion;
   for (i=0;i < argc;i++) {
-    data->arg_types[i+2] = (ffi_type*)L2A(types[i]);
-    if (cvts) data->flags[i] = cvts[i];
+    data->closure_arg_types[i+2] = data->arg_types[i] =
+      (ffi_type*)L2A(types[i]);
+    if (cvts) {
+      data->flags[i] = cvts[i];
+      // By value struct arguments are passed to the closure as a Java object
+      if (cvts[i] == CVT_STRUCTURE_BYVAL) {
+	data->closure_arg_types[i+2] = &ffi_type_pointer;
+      }
+    }
   }
   if (types) (*env)->ReleaseLongArrayElements(env, atypes, types, 0);
   if (cvts) (*env)->ReleaseIntArrayElements(env, conversions, cvts, 0);
@@ -2424,13 +2433,13 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
   else {
     data->rclass = NULL;
   }
-  status = ffi_prep_cif(closure_cif, abi, argc+2, closure_rtype, data->arg_types);  
+  status = ffi_prep_cif(closure_cif, abi, argc+2, closure_rtype, data->closure_arg_types);  
   if (status != FFI_OK) {
     throwByName(env, EError, "Native method mapping failed");
     goto cleanup;
   }
 
-  status = ffi_prep_cif(&data->cif, abi, argc, rtype, &data->arg_types[2]);
+  status = ffi_prep_cif(&data->cif, abi, argc, rtype, data->arg_types);
   if (status != FFI_OK) {
     throwByName(env, EError, "Native method setup failed");
     goto cleanup;
