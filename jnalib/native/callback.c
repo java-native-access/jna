@@ -59,7 +59,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   cb->methodID = (*env)->FromReflectedMethod(env, method);
   cb->vm = vm;
   cb->ffi_args = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
-  cb->param_jtypes = (char*)malloc(sizeof(char*) * argc);
+  cb->param_jtypes = (char*)malloc(sizeof(char) * argc);
  
   for (i=0;i < argc;i++) {
     jclass cls = (*env)->GetObjectArrayElement(env, param_types, i);
