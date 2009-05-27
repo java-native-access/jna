@@ -1569,7 +1569,9 @@ getStructureType(JNIEnv *env, jobject obj) {
 
 static void *
 getNativeAddress(JNIEnv *env, jobject obj) {
-  return L2A((*env)->GetLongField(env, obj, FID_Pointer_peer));
+  if (obj != NULL)
+    return L2A((*env)->GetLongField(env, obj, FID_Pointer_peer));
+  return NULL;
 }
 
 static char
@@ -2229,13 +2231,13 @@ method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
     objects = alloca(data->cif.nargs * sizeof(void*));
     array_types = alloca(data->cif.nargs * sizeof(char));
     for (i=0;i < data->cif.nargs;i++) {
-      if (*(void **)args[i]) {
+      if (data->flags[i] != CVT_DEFAULT) {
         switch(data->flags[i]) {
         case CVT_POINTER:
           *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
           break;
         case CVT_STRUCTURE:
-          if (*(void **)args[i]) {
+          if (*(void **)args[i] != NULL) {
             objects[i] = *(void **)args[i];
             (*env)->CallVoidMethod(env, *(void **)args[i], MID_Structure_write);
             *(void **)args[i] = getStructureAddress(env, *(void **)args[i]);
@@ -2247,31 +2249,33 @@ method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
           args[i] = getStructureAddress(env, objects[i]);
           break;
         case CVT_STRING:
-          {
+          if (*(void **)args[i] != NULL) {
             const char* tmp = newCStringEncoding(env, (jstring)*(void **)args[i], jna_encoding);
             *(void **)args[i] = strcpy(alloca(strlen(tmp)+1), tmp);
             free((void *)tmp);
           }
           break;
-        case CVT_BUFFER: {
-          void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
-          if (ptr != NULL) {
-            objects[i] = NULL;
-          }
-          else {
-            ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &array_types[i], NULL);
-            if (ptr == NULL) {
-              throwByName(env, EIllegalArgument,
-                          "Buffer argumenst must be direct or have a primitive backing array");
-              goto cleanup;
-            }
-          }
-          *(void **)args[i] = ptr;
+        case CVT_BUFFER:
+	  if (*(void **)args[i] != NULL) {
+	    void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
+	    if (ptr != NULL) {
+	      objects[i] = NULL;
+	    }
+	    else {
+	      ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &array_types[i], NULL);
+	      if (ptr == NULL) {
+		throwByName(env, EIllegalArgument,
+			    "Buffer argumenst must be direct or have a primitive backing array");
+		goto cleanup;
+	      }
+	    }
+	    *(void **)args[i] = ptr;
+	  }
           break;
-        }
-#define ARRAY(Type,TC)                                 \
- objects[i] = *(void **)args[i]; array_types[i] = (TC); \
- *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL)
+#define ARRAY(Type,TC) \
+ do { if (*(void **)args[i] != NULL) { \
+   objects[i] = *(void **)args[i]; array_types[i] = (TC); \
+   *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } } while(0)
         case CVT_ARRAY_BYTE: ARRAY(Byte, 'B'); break;
         case CVT_ARRAY_SHORT: ARRAY(Short, 'S'); break;
         case CVT_ARRAY_CHAR: ARRAY(Char, 'C'); break;
