@@ -120,7 +120,6 @@ public interface Library {
         private FunctionMapper functionMapper;
         private final InvocationMapper invocationMapper;
         private final Map functions = new WeakHashMap();
-        private final int callingConvention;
         public Handler(String libname, Class interfaceClass, Map options) {
 
             if (libname == null || "".equals(libname.trim())) {
@@ -128,12 +127,17 @@ public interface Library {
                                                    + libname + "\"");
             }
 
-            this.nativeLibrary = NativeLibrary.getInstance(libname);
             this.interfaceClass = interfaceClass;
-            this.options = options;
-            this.callingConvention = 
+            options = new HashMap(options);
+            int callingConvention = 
                 AltCallingConvention.class.isAssignableFrom(interfaceClass)
                 ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+            if (options.get(OPTION_CALLING_CONVENTION) == null) {
+                options.put(OPTION_CALLING_CONVENTION,
+                            new Integer(callingConvention));
+            }
+            this.options = options;
+            this.nativeLibrary = NativeLibrary.getInstance(libname, options);
             functionMapper = (FunctionMapper)options.get(OPTION_FUNCTION_MAPPER);
             if (functionMapper == null) {
                 // backward compatibility; passed-in map is itself the name map
@@ -196,7 +200,7 @@ public interface Library {
                             // Just in case the function mapper screwed up
                             methodName = method.getName();
                         }
-                        f.function = nativeLibrary.getFunction(methodName, callingConvention);
+                        f.function = nativeLibrary.getFunction(methodName);
                         f.options = new HashMap(this.options);
                         f.options.put(Function.OPTION_INVOKING_METHOD, method);
                     }

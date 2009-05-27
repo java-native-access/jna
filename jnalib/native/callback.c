@@ -58,6 +58,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
   cb->vm = vm;
+  cb->ffi_args = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
+  cb->param_jtypes = (char*)malloc(sizeof(char*) * argc);
  
   for (i=0;i < argc;i++) {
     jclass cls = (*env)->GetObjectArrayElement(env, param_types, i);
@@ -120,6 +122,8 @@ void
 free_callback(JNIEnv* env, callback *cb) {
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   ffi_closure_free(cb->ffi_closure);
+  free(cb->ffi_args);
+  free(cb->param_jtypes);
   free(cb);
 }
 

@@ -142,7 +142,8 @@ public final class Native {
     public static synchronized native boolean isProtected();
 
     /** Set whether the system last error result is captured after every
-     * native invocation.  Defaults to <code>true</code>.
+     * native invocation.  Defaults to <code>true</code> (<code>false</code>
+     * for direct-mapped calls).
      */
     public static synchronized native void setPreserveLastError(boolean enable);
     
@@ -1078,7 +1079,7 @@ public final class Native {
                     throw new IllegalArgumentException(type + " is not a supported argument type (in method " + method.getName() + " in " + cls + ")");
                 }
                 // All conversions other than struct by value and primitives
-                // result in a pointer
+                // result in a pointer passed to the native function
                 if (cvt[t] == CVT_STRUCTURE_BYVAL
                     || cvt[t] == CVT_DEFAULT) {
                     atypes[t] = FFIType.get(type).peer;

@@ -59,8 +59,16 @@ When you've determined which shared library holds the methods to which you
 need access, create an interface class corresponding to that library.  For
 example, a mapping for the C library itself would look like this:<br>
 <blockquote><code><pre>
+// Mapped as an interface
 public interface CLibrary extends Library {
     CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+}
+
+// Direct-mapped class
+public class CLibrary {
+    static {
+        Native.register("c");
+    }
 }
 </pre></code></blockquote>
 The <code>String</code> passed to the <code>Native.loadLibrary</code> method
@@ -94,6 +102,13 @@ public interface CLibrary extends Library {
     int atol(String s);
 }
 </pre></code></blockquote>
+Alternatively, you can map directly to a declared native method:<br>
+<blockquote><code><pre>
+public class CLibrary {
+    public static native int atol(String s);
+}
+</pre></code></blockquote>
+
 If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry ({@link com.sun.jna.Library#OPTION_FUNCTION_MAPPER}/{@link com.sun.jna.FunctionMapper}) in the options {@link java.util.Map} passed to {@link com.sun.jna.Native#loadLibrary(String,Class,java.util.Map) Native.loadLibrary()} which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
 An instance of the {@link com.sun.jna.Function} class is obtained through the {@link com.sun.jna.NativeLibrary} instance corresponding to the containing native library.  This {@link com.sun.jna.Function} instance handles argument marshalling and delegation to the native function. 
 
@@ -614,12 +629,16 @@ The method {@link com.sun.jna.NativeLibrary#getGlobalVariableAddress} may be use
 <a href="#toc">Table of Contents</a>
 <a name="crash-protection"></a>
 <h2>VM Crash Protection</h2>
-It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.  Not all platforms support this protection; if not, the value of {@link com.sun.jna.Native#isProtected} will remain <code>false</code>.
+It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.  Not all platforms support this protection; if not, the value of {@link com.sun.jna.Native#isProtected} will remain <code>false</code>.<p>
+NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
+ 
 
 <p>
 <a href="#toc">Table of Contents</a>
 <a name="performance"></a>
 <h2>Performance</h2>
+<h3>Use direct mapping of methods</h3>
+While more limited in its support of automatic type conversion, using <a href="#direct-mapping">direct mapping</a> of methods makes native calls more efficiently than does interface mapping.
 <h3>Pointer/Array/Buffer Variants</h3>
 Java primitive arrays are generally slower to use than memory
 (Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
