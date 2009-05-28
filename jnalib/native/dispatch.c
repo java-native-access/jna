@@ -190,13 +190,6 @@ static jfieldID FID_Structure_typeInfo;
 /* Value of System property jna.encoding. */
 static const char* jna_encoding = NULL;
 
-#ifndef _WIN32
-#include <signal.h>
-/* jsig library, if available. */
-static void* jsig_handle = NULL;
-static sig_t (*signal_fp)(int, sig_t) = NULL;
-#endif
-
 /* Forward declarations */
 static const char* newCString(JNIEnv *env, jstring jstr);
 static const char* newCStringUTF8(JNIEnv *env, jstring jstr);
@@ -857,14 +850,6 @@ jnidispatch_init(JNIEnv* env) {
 
   // Cache jna.encoding value
   jna_encoding = get_system_property(env, "jna.encoding", JNI_FALSE);
-
-  // Attempt to load jsig library
-#ifdef USE_SIGNALS
-#define JSIG_NAME "libjsig.so"
-  if ((jsig_handle = LOAD_LIBRARY(JSIG_NAME)) != NULL) {
-    signal_fp = (void *)FIND_ENTRY(jsig_handle, "signal");
-  }
-#endif
 
   return NULL;
 }
@@ -2144,12 +2129,6 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
     free((void*)jna_encoding);
   }
 
-  if (jsig_handle != NULL) {
-    FREE_LIBRARY(jsig_handle);
-    jsig_handle = NULL;
-    signal_fp = NULL;
-  }
-
   if (!attached) {
     (*vm)->DetachCurrentThread(vm);
   }
@@ -2205,14 +2184,6 @@ get_ffi_rtype(JNIEnv* env, jclass cls, char jtype) {
     return get_ffi_type(env, cls, jtype);
   }
 }
-
-#ifdef USE_SIGNALS
-/** Attempt to use the libjsig version of "signal" if available. */
-sig_t
-_signal(int sig, sig_t func) {
-  return signal_fp ? signal_fp(sig, func) : signal(sig, func);
-}
-#endif
 
 typedef struct _method_data {
   ffi_cif cif;
