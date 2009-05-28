@@ -54,6 +54,8 @@ public class LibraryLoadTest extends TestCase {
     }
 
     public void testLoadAWTAfterJNA() {
+        if (GraphicsEnvironment.isHeadless()) return;
+
         if (Pointer.SIZE > 0) {
             Toolkit.getDefaultToolkit();
         }
