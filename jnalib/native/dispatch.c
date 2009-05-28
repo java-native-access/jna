@@ -136,6 +136,7 @@ static jclass classPointer;
 static jclass classNative;
 static jclass classStructure;
 static jclass classStructureByValue;
+static jclass classCallbackReference;
 
 static jmethodID MID_Class_getComponentType;
 static jmethodID MID_String_getBytes;
@@ -173,6 +174,8 @@ static jmethodID MID_Structure_getTypeInfo;
 static jmethodID MID_Structure_newInstance;
 static jmethodID MID_Structure_read;
 static jmethodID MID_Structure_write;
+static jmethodID MID_CallbackReference_getCallback;
+static jmethodID MID_CallbackReference_getFunctionPointer;
 
 static jfieldID FID_Boolean_value;
 static jfieldID FID_Byte_value;
@@ -1510,6 +1513,18 @@ newJavaStructure(JNIEnv *env, void *data, jclass type)
   return NULL;
 }
 
+static jobject
+newJavaCallback(JNIEnv* env, void* fptr, jclass type)
+{
+  if (fptr != NULL) {
+    jobject ptr = newJavaPointer(env, fptr);
+    return (*env)->CallStaticObjectMethod(env, classCallbackReference,
+                                          MID_CallbackReference_getCallback,
+                                          type, ptr);
+  }
+  return NULL;
+}
+
 char
 get_jtype(JNIEnv* env, jclass cls) {
 
@@ -1552,6 +1567,15 @@ static void *
 getStructureAddress(JNIEnv *env, jobject obj) {
   if (obj != NULL) {
     jobject ptr = (*env)->GetObjectField(env, obj, FID_Structure_memory);
+    return getNativeAddress(env, ptr);
+  }
+  return NULL;
+}
+
+static void *
+getCallbackAddress(JNIEnv *env, jobject obj) {
+  if (obj != NULL) {
+    jobject ptr = (*env)->CallStaticObjectMethod(env, classCallbackReference, MID_CallbackReference_getFunctionPointer, obj);
     return getNativeAddress(env, ptr);
   }
   return NULL;
@@ -1703,13 +1727,13 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain static newInstance method for class com.sun.jna.Structure");
   }
-  else if (!(MID_Structure_read
-             = (*env)->GetMethodID(env, classStructure, "read", "()V"))) {
+  else if (!LOAD_MID(env, MID_Structure_read, classStructure,
+                     "read", "()V")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain read method for class com.sun.jna.Structure");
   }
-  else if (!(MID_Structure_write
-             = (*env)->GetMethodID(env, classStructure, "write", "()V"))) {
+  else if (!LOAD_MID(env, MID_Structure_write, classStructure,
+                     "write", "()V")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain write method for class com.sun.jna.Structure");
   }
@@ -1724,6 +1748,22 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   else if (!LOAD_CREF(env, StructureByValue, "com/sun/jna/Structure$ByValue")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain class com.sun.jna.Structure.ByValue");
+  }
+  else if (!LOAD_CREF(env, CallbackReference, "com/sun/jna/CallbackReference")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain class com.sun.jna.CallbackReference");
+  }
+  else if (!(MID_CallbackReference_getCallback
+             = (*env)->GetStaticMethodID(env, classCallbackReference,
+                                         "getCallback", "(Ljava/lang/Class;Lcom/sun/jna/Pointer;)Lcom/sun/jna/Callback;"))) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain static method getCallback from class com.sun.jna.CallbackReference");
+  }
+  else if (!(MID_CallbackReference_getFunctionPointer
+             = (*env)->GetStaticMethodID(env, classCallbackReference,
+                                         "getFunctionPointer", "(Lcom/sun/jna/Callback;)Lcom/sun/jna/Pointer;"))) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain static method getFunctionPointer from class com.sun.jna.CallbackReference");
   }
 
   // Initialize type fields within Structure.FFIType
@@ -2097,6 +2137,7 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
     &classDouble, &classPrimitiveDouble,
     &classPointer, &classNative,
     &classStructure, &classStructureByValue,
+    &classCallbackReference,
   };
   unsigned i;
   JNIEnv* env;
@@ -2212,6 +2253,7 @@ enum {
   CVT_ARRAY_DOUBLE = com_sun_jna_Native_CVT_ARRAY_DOUBLE,
   CVT_ARRAY_BOOLEAN = com_sun_jna_Native_CVT_ARRAY_BOOLEAN,
   CVT_BOOLEAN = com_sun_jna_Native_CVT_BOOLEAN,
+  CVT_CALLBACK = com_sun_jna_Native_CVT_CALLBACK,
 };
 
 // VM vectors to this callback, which calls native code
@@ -2232,16 +2274,16 @@ method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
     array_types = alloca(data->cif.nargs * sizeof(char));
     for (i=0;i < data->cif.nargs;i++) {
       if (data->flags[i] != CVT_DEFAULT) {
+        if (data->arg_types[i]->type == FFI_TYPE_POINTER
+            && *(void **)args[i] == NULL) continue;
         switch(data->flags[i]) {
         case CVT_POINTER:
           *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
           break;
         case CVT_STRUCTURE:
-          if (*(void **)args[i] != NULL) {
-            objects[i] = *(void **)args[i];
-            (*env)->CallVoidMethod(env, *(void **)args[i], MID_Structure_write);
-            *(void **)args[i] = getStructureAddress(env, *(void **)args[i]);
-          }
+          objects[i] = *(void **)args[i];
+          (*env)->CallVoidMethod(env, *(void **)args[i], MID_Structure_write);
+          *(void **)args[i] = getStructureAddress(env, *(void **)args[i]);
           break;
         case CVT_STRUCTURE_BYVAL:
           objects[i] = *(void **)args[i];
@@ -2249,33 +2291,36 @@ method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
           args[i] = getStructureAddress(env, objects[i]);
           break;
         case CVT_STRING:
-          if (*(void **)args[i] != NULL) {
+          {
             const char* tmp = newCStringEncoding(env, (jstring)*(void **)args[i], jna_encoding);
             *(void **)args[i] = strcpy(alloca(strlen(tmp)+1), tmp);
             free((void *)tmp);
           }
           break;
+        case CVT_CALLBACK:
+          *(void **)args[i] = getCallbackAddress(env, *(void **)args[i]);
+          break;
         case CVT_BUFFER:
-	  if (*(void **)args[i] != NULL) {
-	    void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
-	    if (ptr != NULL) {
-	      objects[i] = NULL;
-	    }
-	    else {
-	      ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &array_types[i], NULL);
-	      if (ptr == NULL) {
-		throwByName(env, EIllegalArgument,
-			    "Buffer argumenst must be direct or have a primitive backing array");
-		goto cleanup;
-	      }
-	    }
-	    *(void **)args[i] = ptr;
-	  }
+          {
+            void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
+            if (ptr != NULL) {
+              objects[i] = NULL;
+            }
+            else {
+              ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &array_types[i], NULL);
+              if (ptr == NULL) {
+                throwByName(env, EIllegalArgument,
+                            "Buffer argumenst must be direct or have a primitive backing array");
+                goto cleanup;
+              }
+            }
+            *(void **)args[i] = ptr;
+          }
           break;
 #define ARRAY(Type,TC) \
- do { if (*(void **)args[i] != NULL) { \
+ do { \
    objects[i] = *(void **)args[i]; array_types[i] = (TC); \
-   *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } } while(0)
+   *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } while(0)
         case CVT_ARRAY_BYTE: ARRAY(Byte, 'B'); break;
         case CVT_ARRAY_SHORT: ARRAY(Short, 'S'); break;
         case CVT_ARRAY_CHAR: ARRAY(Char, 'C'); break;
@@ -2318,6 +2363,9 @@ method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
     break;
   case CVT_STRUCTURE_BYVAL:
     *(void **)oldresp = newJavaStructure(env, resp, data->rclass);
+    break;
+  case CVT_CALLBACK:
+    *(void **)resp = newJavaCallback(env, *(void **)resp, data->rclass);
     break;
   default:
     break;
@@ -2362,8 +2410,10 @@ JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass ncls, jclass cls, jlongArray handles) {
   jlong* data = (*env)->GetLongArrayElements(env, handles, NULL);
   int count = (*env)->GetArrayLength(env, handles);
+
   while (count-- > 0) {
     method_data* md = (method_data*)L2A(data[count]);
+
     if (md->rclass) (*env)->DeleteWeakGlobalRef(env, md->rclass);
     free(md->arg_types);
     free(md->closure_arg_types);
@@ -2411,8 +2461,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
   data->flags = cvts ? malloc(sizeof(jint)*argc) : NULL;
   data->rflag = rconversion;
   for (i=0;i < argc;i++) {
-    data->closure_arg_types[i+2] = data->arg_types[i] =
-      (ffi_type*)L2A(types[i]);
+    data->closure_arg_types[i+2] = data->arg_types[i] = (ffi_type*)L2A(types[i]);
     if (cvts) {
       data->flags[i] = cvts[i];
       // By value struct arguments are passed to the closure as a Java object
@@ -2433,6 +2482,9 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
     if (rconversion == CVT_STRUCTURE) {
       rtype = &ffi_type_pointer;
     }
+  }
+  else if (rconversion == CVT_CALLBACK) {
+    data->rclass = (*env)->NewWeakGlobalRef(env, rclass);
   }
   else {
     data->rclass = NULL;

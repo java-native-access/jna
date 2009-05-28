@@ -126,8 +126,10 @@ public final class Native {
      * when the JNA library is first loaded.<p>
      * If not supported by the underlying platform, this setting will
      * have no effect.<p>
-     * NOTE: When protected mode is enabled, you should make use of the jsig
-     * library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>).
+     * NOTE: On platforms which support signals (non-Windows), JNA uses
+     * signals to trap errors.  This may interfere with the JVM's own use of
+     * signals.  When protected mode is enabled, you should make use of the
+     * jsig library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>).
      * In short, set the environment variable <code>LD_PRELOAD</code> to the
      * path to <code>libjsig.so</code> in your JRE lib directory
      * (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your
@@ -1003,6 +1005,7 @@ public final class Native {
     private static final int CVT_ARRAY_DOUBLE = 12;
     private static final int CVT_ARRAY_BOOLEAN = 13;
     private static final int CVT_BOOLEAN = 14;
+    private static final int CVT_CALLBACK = 15;
 
     private static int getConversion(Class type) {
         if (Pointer.class.isAssignableFrom(type)) {
@@ -1035,6 +1038,9 @@ public final class Native {
         }
         if (type.isPrimitive()) {
             return type == boolean.class ? CVT_BOOLEAN : CVT_DEFAULT;
+        }
+        if (Callback.class.isAssignableFrom(type)) {
+            return CVT_CALLBACK;
         }
         return -1;
     }

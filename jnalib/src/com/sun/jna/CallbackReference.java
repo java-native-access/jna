@@ -51,34 +51,34 @@ class CallbackReference extends WeakReference {
      * Java Callback.  Otherwise, return a proxy to the native function pointer.
      */
     public static Callback getCallback(Class type, Pointer p) {
-        if (p != null) {
-            if (!type.isInterface())
-                throw new IllegalArgumentException("Callback type must be an interface");
-            Map map = AltCallingConvention.class.isAssignableFrom(type)
-                ? altCallbackMap : callbackMap;
-            synchronized(map) {
-                for (Iterator i=map.keySet().iterator();i.hasNext();) {
-                    Callback cb = (Callback)i.next();
-                    if (type.isAssignableFrom(cb.getClass())) {
-                        CallbackReference cbref = (CallbackReference)map.get(cb);
-                        Pointer cbp = cbref != null
-                            ? cbref.getTrampoline() : getNativeFunctionPointer(cb);
-                        if (p.equals(cbp)) {
-                            return cb;
-                        }
+        if (p == null) 
+            return null;
+
+        if (!type.isInterface())
+            throw new IllegalArgumentException("Callback type must be an interface");
+        Map map = AltCallingConvention.class.isAssignableFrom(type)
+            ? altCallbackMap : callbackMap;
+        synchronized(map) {
+            for (Iterator i=map.keySet().iterator();i.hasNext();) {
+                Callback cb = (Callback)i.next();
+                if (type.isAssignableFrom(cb.getClass())) {
+                    CallbackReference cbref = (CallbackReference)map.get(cb);
+                    Pointer cbp = cbref != null
+                        ? cbref.getTrampoline() : getNativeFunctionPointer(cb);
+                    if (p.equals(cbp)) {
+                        return cb;
                     }
                 }
-                int ctype = AltCallingConvention.class.isAssignableFrom(type)
-                    ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-                Map options = Native.getLibraryOptions(type);
-                NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, options);
-                Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
-                h.options.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(cb));
-                map.put(cb, null);
-                return cb;
             }
+            int ctype = AltCallingConvention.class.isAssignableFrom(type)
+                ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+            Map options = Native.getLibraryOptions(type);
+            NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, options);
+            Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
+            h.options.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(cb));
+            map.put(cb, null);
+            return cb;
         }
-        return null;
     }
     
     Pointer cbstruct;

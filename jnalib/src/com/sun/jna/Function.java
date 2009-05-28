@@ -93,6 +93,7 @@ public class Function extends Pointer {
     private NativeLibrary library;
     private final String functionName;
     final int callingConvention;
+    final Map options;
 
     /** For internal JNA use. */
     static final String OPTION_INVOKING_METHOD = "invoking-method";
@@ -121,6 +122,7 @@ public class Function extends Pointer {
         this.library = library;
         this.functionName = functionName;
         this.callingConvention = callingConvention;
+        this.options = library.options;
         try {
             this.peer = library.getSymbolAddress(functionName);
         }
@@ -153,6 +155,7 @@ public class Function extends Pointer {
         this.functionName = functionAddress.toString();
         this.callingConvention = callingConvention;
         this.peer = functionAddress.peer;
+        this.options = Collections.EMPTY_MAP;
     }
     
     private void checkCallingConvention(int convention)
@@ -180,7 +183,7 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs) {
-        return invoke(returnType, inArgs, Collections.EMPTY_MAP);
+        return invoke(returnType, inArgs, this.options);
     }    
     
     /** Invoke the native function with the given arguments, returning the
@@ -733,6 +736,7 @@ public class Function extends Pointer {
         if (o instanceof Function) {
             Function other = (Function)o;
             return other.callingConvention == this.callingConvention
+                && other.options.equals(this.options)
                 && other.peer == this.peer;
         }
         return false;

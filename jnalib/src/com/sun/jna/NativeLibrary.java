@@ -45,8 +45,8 @@ public class NativeLibrary {
     private final String libraryName;
     private final String libraryPath;
     private final Map functions = new HashMap();
-    private final int callingConvention;
-    private final Map options;
+    final int callingConvention;
+    final Map options;
 
     private static WeakReference currentProcess;
     private static final Map libraries = new HashMap();

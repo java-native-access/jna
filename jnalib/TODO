@@ -22,6 +22,11 @@
 
 # TODO
 
+* optimize interface mapping to use method_handler or inner code
+
+* throw LastErrorException if last error not zero and method declares
+  the exception.  Otherwise, ignore the last error.
+
 * make native dll extraction from jar public
 
 * Callback.PostCallWrite.write() cf PostCallRead; do Structure.write for any
@@ -38,28 +43,7 @@
 
   Requires separate compilation of annotation handling.
 
-* parser (gluegen? swig? others?) to auto-generate JNA interfaces from headers;
-  ideally get the native library build system to output preprocessed headers,
-  otherwise CPP crap is a nightmare to get right.
-  o write SWIG transformer to auto-generate interfaces from header files
-  o see JNAerator
-
-* should structure offsets be 64-bit? technically yes, but in practice I don't
-  think a structure that big actually works.
-
-* (maybe) move all native functions into Native (limit header files, easier
-  management) 
-
-* Does it make sense to define Int16/UInt16, Int32/UInt32, etc?  Probably not
-  the signed versions, but maybe the unsigned ones, to facilitate generating
-  unsigned values (maybe just provide utilities to pack an unsigned int into a
-  signed int).  What about size_t, off_t, et al.?  Would either need a
-  bunch of native lookup functions (more accurate) or java-side conditionals
-  (less robust but easier to change).
-  o bounds checking is handled by IntegerType (pass in a long, get an
-    exception if the value is out of bounds).
-  o when used as struct fields, could allow detection of field order by order
-    of initialization (requires all-or-nothing usage, though)
+* ditch type conversion context.  
 
 * packaging: 'types', 'convert/marshal' subpackages?
   note: marshal/unmarshal vs to/fromnative: to/fromnative is more
@@ -68,12 +52,6 @@
   substantially, but we probably don't want to move things like Structure and
   Pointer into a types subpackage (which would leave just a few top-level
   classes).  Javadoc is cluttered by example classes anyway.
-
-* Make a separate jar file for all OS-specific headers
-  Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
-  aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
-  (how useful would it really be, or is this just sorting legos?)
-  o same for windowutils, fileutils, etc.
 
 * support annotations of parameters and return values w/o breaking
   1.4 compatibility (retroweaver?), e.g.
@@ -89,14 +67,6 @@
   this only really applies to NativeLong/IntegerType types that want to use a
   primitive value instead of creating an object instance.
 
-* Allow Buffer in Structures (and callbacks) (auto-wrap in direct byte buffer)?
-  o this gets tricky when reading structs from native memory; we don't know if
-  the value is already mapped to a buffer (cf CallbackReference)
-
-* standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
-* StringBuffer/StringBuilder as mutable char*/wchar_t* argument
-  NOTE: byte[]/char[] is probably better; it's trivial to convert to String
-  and native code can't change the size anyway
 * flag string(/wstring)-returning methods which need to free their result
    to avoid leaking memory whan auto-creating strings from the result
    (since normally we don't take explicit ownership of any returned pointers)
@@ -113,9 +83,6 @@
   "pointer-requiring-free" (which is just Memory).  For now, leave it up to
   the user to manage the pointer, since they have to define the free method
   anyway.  use could always put a finalizer on a PointerType-derived type.
-* provide library load/unload hooks (Runnables in options?). Examples:
-  o GetLastError (no longer needed)
-  o WSAInit?
 * if method has "GetLastErrorException/ErrnoException" in its signature, use
   result codes + GetLastError/errno/errstr to auto-generate 
   runtime exceptions? (cf P/Invoke; also useful for X11 return types)
@@ -127,21 +94,22 @@
     if nonzero ?
   o otherwise, need an ExceptionOnZero, ExceptionOnNonZero runtime, from which
   derive GetLastError/ErrnoExceptionOnZero/NZ
-* determine X11 display name from current java program (if any); null is ok
-  since it uses getenv(DISPLAY), which is what java would do
-  note: DISPLAY may be available in GraphicsDevice->getIDstring
 * universal GCC build w/cross-compile (needs cross compilers...)
 * return Pointer.SIZE/LONG_SIZE/WCHAR_SIZE in bits (for consistency with 1.5)
   Long.SIZE, Integer.SIZE, et al.
 * interface "lvalue", which can provide a pointer to itself (reference() or
   addressOf())?
-* verify get/set methods vs read/write for performance (Pointer)?
 * bitfields for structs (how?)
-
-
 
 
 # DONE
+* verify get/set methods vs read/write for performance (Pointer)?
+  (see RawTest for performance comparisons)
+* Allow Buffer in Structures (and callbacks) (auto-wrap in direct byte buffer)?
+  o this gets tricky when reading structs from native memory; we don't know if
+  the value is already mapped to a buffer (cf CallbackReference)
+* standard types for various platforms: posix/types.h, w32 (DWORD, HANDLE)
+
 * embed version in DLL ('depends'-done)/so (symlink?)
 * use libffi closure allocation/deallocation
 
@@ -261,5 +229,35 @@ transient callbacks, and require callback+dispose for most callbacks?
 void setWindowMask(Window w, Shape clip);
 // needs:
 int findNativeWindow(Window w);
+
+#MAYBE NOT
+* should structure offsets be 64-bit? technically yes, but in practice I don't
+  think a structure that big actually works.
+* (maybe) move all native functions into Native (limit header files, easier
+  management) 
+* Does it make sense to define Int16/UInt16, Int32/UInt32, etc?  Probably not
+  the signed versions, but maybe the unsigned ones, to facilitate generating
+  unsigned values (maybe just provide utilities to pack an unsigned int into a
+  signed int).  What about size_t, off_t, et al.?  Would either need a
+  bunch of native lookup functions (more accurate) or java-side conditionals
+  (less robust but easier to change).
+  o bounds checking is handled by IntegerType (pass in a long, get an
+    exception if the value is out of bounds).
+  o when used as struct fields, could allow detection of field order by order
+    of initialization (requires all-or-nothing usage, though)
+* Make a separate jar file for all OS-specific headers
+  Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
+  aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
+  (how useful would it really be, or is this just sorting legos?)
+  o same for windowutils, fileutils, etc. (not useful)
+* StringBuffer/StringBuilder as mutable char*/wchar_t* argument
+  NOTE: byte[]/char[] is probably better; it's trivial to convert to String
+  and native code can't change the size anyway
+* provide library load/unload hooks (Runnables in options?). Examples:
+  o GetLastError (no longer needed)
+  o WSAInit?
+* determine X11 display name from current java program (if any); null is ok
+  since it uses getenv(DISPLAY), which is what java would do
+  note: DISPLAY may be available in GraphicsDevice->getIDstring
 
 
