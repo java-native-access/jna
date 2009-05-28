@@ -105,7 +105,15 @@ extern jboolean is_protected();
 
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION
+#ifndef _WIN32
+#define USE_SIGNALS 1
+#endif
 #define PROTECT is_protected()
+#endif
+#ifdef USE_SIGNALS
+#include <signal.h>
+extern sig_t _signal(int, sig_t);
+#define SIGNAL _signal
 #endif
 #include "protect.h"
 #define ON_ERROR() throwByName(env, EError, "Invalid memory access")

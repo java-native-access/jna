@@ -119,6 +119,11 @@ _exc_handler(struct _EXCEPTION_RECORD* exception_record,
 // Catch both SIGSEGV and SIGBUS
 #include <signal.h>
 #include <setjmp.h>
+
+#ifndef SIGNAL
+#define SIGNAL signal
+#endif
+
 static jmp_buf _context;
 static volatile int _error;
 static void _exc_handler(int sig) {
@@ -132,8 +137,8 @@ static void _exc_handler(int sig) {
   void* _old_bus_handler; \
   int _error = 0; \
   if (PROTECT) { \
-    _old_segv_handler = signal(SIGSEGV, _exc_handler); \
-    _old_bus_handler = signal(SIGBUS, _exc_handler); \
+    _old_segv_handler = SIGNAL(SIGSEGV, _exc_handler); \
+    _old_bus_handler = SIGNAL(SIGBUS, _exc_handler); \
     if ((_error = setjmp(_context) != 0)) { \
       goto _exc_caught; \
     } \
@@ -146,8 +151,8 @@ static void _exc_handler(int sig) {
   ONERR; \
  _remove_handler: \
   if (PROTECT) { \
-    signal(SIGSEGV, _old_segv_handler); \
-    signal(SIGBUS, _old_bus_handler); \
+    SIGNAL(SIGSEGV, _old_segv_handler); \
+    SIGNAL(SIGBUS, _old_bus_handler); \
   } \
 } while(0)
 #endif
