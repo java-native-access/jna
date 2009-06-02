@@ -1,9 +1,9 @@
 <html>
 <head>
 <meta name="author" content="Timothy Wall">
-<meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java">
+<meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-05-21">
+<meta name="date" content="2009-06-02">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -160,7 +160,7 @@ package com.sun.jna.examples.win32;
 import com.sun.jna.*;
 
 // kernel32.dll uses the __stdcall calling convention (check the function
-// declaration for "WINAPI"), so extend StdCallLibrary
+// declaration for "WINAPI" or "PASCAL"), so extend StdCallLibrary
 // Most C libraries will just extend com.sun.jna.Library,
 public interface Kernel32 extends StdCallLibrary { 
     // Method declarations, constant and structure definitions go here
@@ -569,6 +569,7 @@ If you are interested in paid support, feel free to say so on one of the JNA mai
 <a name=projects></a>
  <h3>Projects Using JNA</h3>
  <ul>
+ <li><a href="http://callino.cc/jiaxcapplet/">IAXClient Applet</a> (Wolfgang Pichler), providing VOIP for Java.
  <li><a href="http://jruby.codehaus.org">JRuby</a> (Charles Nutter)
  <li><a href="http://rococoa.dev.java.net">Rococoa</a> Java bindings to the
  Mac OS X Cocoa framework (Duncan McGregor)
@@ -661,8 +662,8 @@ Wayne Meissner has contributed enormously ("a metric buttload of hard work") in 
 _uacct = "UA-1166339-4";
 urchinTracker();
 </script>
-<div name="meta-info" style="visibility:hidden;">
-java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java
+<div name="meta-info" style="visibility:hidden;display:none;">
+java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java,replace jni
 </div>
 </body>
 </html>
