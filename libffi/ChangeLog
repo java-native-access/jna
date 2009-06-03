@@ -1,3 +1,21 @@
+2009-05-22  Dave Korn  <dave.korn.cygwin@gmail.com>
+
+       * src/x86/win32.S (_ffi_closure_STDCALL):  New function.
+       (.eh_frame):  Add FDE for it.
+
+2009-05-22  Dave Korn  <dave.korn.cygwin@gmail.com>
+
+       * configure.ac:  Also check if assembler supports pc-relative
+       relocs on X86_WIN32 targets.
+       * configure:  Regenerate.
+       * src/x86/win32.S (ffi_prep_args):  Declare extern, not global.
+       (_ffi_call_SYSV):  Add missing function type symbol .def and
+       add EH markup labels.
+       (_ffi_call_STDCALL):  Likewise.
+       (_ffi_closure_SYSV):  Likewise.
+       (_ffi_closure_raw_SYSV):  Likewise.
+       (.eh_frame):  Add hand-crafted EH data.
+
 2008-12-18  Rainer Orth  <ro@TechFak.Uni-Bielefeld.DE>
 
 	PR libffi/26048
@@ -11,6 +29,68 @@
 	* src/x86/unix64.S (.Lstore_table): Move to .text section.
 	(.Lload_table): Likewise.
 	(.eh_frame): Only use SYMBOL-. iff HAVE_AS_X86_PCREL.
+
+2008-11-21  Eric Botcazou  <ebotcazou@adacore.com>
+
+       * src/sparc/ffi.c (ffi_prep_cif_machdep): Add support for
+       signed/unsigned int8/16 return values.
+       * src/sparc/v8.S (ffi_call_v8): Likewise.
+       (ffi_closure_v8): Likewise.
+
+2008-08-25  Andreas Tobler  <a.tobler@schweiz.org>
+
+       * src/powerpc/ffitarget.h (ffi_abi): Add FFI_LINUX and
+       FFI_LINUX_SOFT_FLOAT to the POWERPC_FREEBSD enum.
+       Add note about flag bits used for FFI_SYSV_TYPE_SMALL_STRUCT.
+       Adjust copyright notice.
+       * src/powerpc/ffi.c: Add two new flags to indicate if we have one
+       register or two register to use for FFI_SYSV structs.
+       (ffi_prep_cif_machdep): Pass the right register flag introduced above.
+       (ffi_closure_helper_SYSV): Fix the return type for
+       FFI_SYSV_TYPE_SMALL_STRUCT. Comment.
+       Adjust copyright notice.
+
+2008-07-16  Kaz Kojima  <kkojima@gcc.gnu.org>
+
+       * src/sh/ffi.c (ffi_prep_closure_loc): Turn INSN into an unsigned
+       int.
+
+2008-03-26  Kaz Kojima  <kkojima@gcc.gnu.org>
+
+       * src/sh/sysv.S: Add .note.GNU-stack on Linux.
+       * src/sh64/sysv.S: Likewise.
+
+2008-03-26  Daniel Jacobowitz  <dan@debian.org>
+
+       * src/arm/sysv.S: Fix ARM comment marker.
+
+2008-03-26  Jakub Jelinek  <jakub@redhat.com>
+
+       * src/alpha/osf.S: Add .note.GNU-stack on Linux.
+       * src/s390/sysv.S: Likewise.
+       * src/powerpc/ppc_closure.S: Likewise.
+       * src/powerpc/sysv.S: Likewise.
+       * src/x86/unix64.S: Likewise.
+       * src/x86/sysv.S: Likewise.
+       * src/sparc/v8.S: Likewise.
+       * src/sparc/v9.S: Likewise.
+       * src/m68k/sysv.S: Likewise.
+       * src/arm/sysv.S: Likewise.
+
+2008-02-12  Bjoern Koenig  <bkoenig@alpha-tierchen.de>
+           Andreas Tobler  <a.tobler@schweiz.org>
+
+       * configure.ac: Add amd64-*-freebsd* target.
+       * configure: Regenerate.
+
+2008-01-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+       PR libffi/34612
+       * src/x86/sysv.S (ffi_closure_SYSV): Pop 4 byte from stack when
+       returning struct.
+
+	* testsuite/libffi.call/call.exp: Add "-O2 -fomit-frame-pointer"
+       tests.
 
 2008-01-24  David Edelsohn  <edelsohn@gnu.org>
 
