@@ -473,6 +473,11 @@ There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implem
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
 <p>
+If you can forego some custom type mapping and are willing to manually massage
+certain types of arguments into the appropriate native format,
+the <a href='#direct'>JNA direct mapping</a> can provide performance near that
+of custom JNI.   
+<p>
 The calling overhead for a single native call using JNA interface mapping can
 be an order of magnitude (~10X) greater time than equivalent custom JNI
 (whether it actually does in the context of your application is a different
@@ -483,10 +488,6 @@ dynamically-maintained type information and systems where type information is
 statically compiled.  JNI hard-codes type information in the method
 invocation, where JNA interface mapping dynamically determines type
 information at runtime.   
-<p>
-If you can forego custom type mapping and are willing to manually massage
-certain types of arguments into the appropriate native format, the JNA direct
-mapping can provide performance approaching that of custom JNI.  
 <p>
 You might expect a speedup of about an order of magnitude moving to JNA direct
 mapping, and a factor of two or three moving from there to custom JNI. 
