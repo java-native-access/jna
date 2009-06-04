@@ -1,5 +1,10 @@
 2009-06-04  Andrew Haley  <aph@redhat.com>
 
+	* src/mips/o32.S,
+	src/mips/n32.S: Fix licence formatting.
+
+2009-06-04  Andrew Haley  <aph@redhat.com>
+
 	* src/x86/darwin.S: Fix licence formatting.
 	src/x86/win32.S: Likewise.
 	src/sh64/sysv.S: Likewise.
