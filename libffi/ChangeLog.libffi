@@ -1,5 +1,10 @@
 2009-06-04  Andrew Haley  <aph@redhat.com>
 
+	* src/sh64/ffi.c: Remove lint directives.  Was missing from merge
+	of Andreas Tobler's patch from 2006-04-22.
+	
+2009-06-04  Andrew Haley  <aph@redhat.com>
+
 	* src/sh/ffi.c: Apply missing hunk from Alexandre Oliva's patch of
 	2007-03-07.
 
