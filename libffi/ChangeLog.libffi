@@ -1,3 +1,8 @@
+2009-06-04  Andrew Haley  <aph@redhat.com>
+
+	* src/sh/ffi.c: Apply missing hunk from Alexandre Oliva's patch of
+	2007-03-07.
+
 2008-12-26  Timothy Wall  <twall@users.sf.net>
 
 	* testsuite/libffi.call/cls_longdouble.c,
