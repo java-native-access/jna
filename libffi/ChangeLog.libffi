@@ -1,5 +1,9 @@
 2009-06-04  Andrew Haley  <aph@redhat.com>
 
+	* src/powerpc/ffitarget.h: Fix misapplied merge from gcc.
+
+2009-06-04  Andrew Haley  <aph@redhat.com>
+
 	* src/mips/o32.S,
 	src/mips/n32.S: Fix licence formatting.
 
