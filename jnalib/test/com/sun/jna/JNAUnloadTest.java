@@ -23,7 +23,7 @@ public class JNAUnloadTest extends TestCase {
     
     private static final String BUILDDIR =
         System.getProperty("jna.builddir", "build"
-                           + (Native.POINTER_SIZE == 8 ? "-d64" : ""));
+                           + (Platform.is64Bit() ? "-d64" : ""));
 
     private static class TestLoader extends URLClassLoader {
         public TestLoader() throws MalformedURLException {
@@ -32,8 +32,6 @@ public class JNAUnloadTest extends TestCase {
             }, null);
         }
     }
-
-    // TODO: test auto-dispose of callback memory
 
     public void testUnload() throws Exception {
         ClassLoader loader = new TestLoader();

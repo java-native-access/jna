@@ -71,6 +71,7 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
+    private static String nativeLibraryPath = null;
     private static Map typeMappers = new WeakHashMap();
     private static Map alignments = new WeakHashMap();
     private static Map options = new WeakHashMap();
@@ -114,6 +115,46 @@ public final class Native {
         }
     }
     
+    /** Ensure our unpacked native library gets cleaned up if this class gets
+        garbage-collected.
+    */
+    private static final Object finalizer = new Object() {
+        protected void finalize() {
+            unloadNativeLibrary(nativeLibraryPath);
+        }
+    };
+
+    private static boolean unloadNativeLibrary(String path) {
+        if (path == null || !new File(path).exists()) return true;
+        // Reach into the bowels of ClassLoader to force the native
+        // library to unload
+        try {
+            ClassLoader cl = Native.class.getClassLoader();
+            Field f = ClassLoader.class.getDeclaredField("nativeLibraries");
+            f.setAccessible(true);
+            List libs = (List)f.get(cl);
+            for (Iterator i = libs.iterator();i.hasNext();) {
+                Object lib = i.next();
+                f = lib.getClass().getDeclaredField("name");
+                f.setAccessible(true);
+                String name = (String)f.get(lib);
+                if (name.equals(path)) {
+                    Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
+                    m.setAccessible(true);
+                    m.invoke(lib, new Object[0]);
+                    File file = new File(path);
+                    if (file.exists()) {
+                        return file.delete();
+                    }
+                    return true;
+                }
+            }
+        }
+        catch(Exception e) {
+        }
+        return false;
+    }
+
     private Native() { }
     
     private static native void initIDs();
@@ -762,33 +803,8 @@ public final class Native {
         public DeleteNativeLibrary(File file) {
             this.file = file;
         }
-        private boolean unload(String path) {
-            // Reach into the bowels of ClassLoader to force the native
-            // library to unload
-            try {
-                ClassLoader cl = getClass().getClassLoader();
-                Field f = ClassLoader.class.getDeclaredField("nativeLibraries");
-                f.setAccessible(true);
-                List libs = (List)f.get(cl);
-                for (Iterator i = libs.iterator();i.hasNext();) {
-                    Object lib = i.next();
-                    f = lib.getClass().getDeclaredField("name");
-                    f.setAccessible(true);
-                    String name = (String)f.get(lib);
-                    if (name.equals(path)) {
-                        Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
-                        m.setAccessible(true);
-                        m.invoke(lib, new Object[0]);
-                        return true;
-                    }
-                }
-            }
-            catch(Exception e) {
-            }
-            return false;
-        }
         public void run() {
-            if (!unload(file.getAbsolutePath()) || !file.delete()) {
+            if (!unloadNativeLibrary(file.getAbsolutePath())) {
                 try {
                     Runtime.getRuntime().exec(new String[] {
                         System.getProperty("java.home") + "/bin/java",
