@@ -675,8 +675,10 @@ public final class Native {
                 // problems with Web Start.
                 lib = File.createTempFile("jna", Platform.isWindows()?".dll":null);
                 lib.deleteOnExit();
+                ClassLoader cl = Native.class.getClassLoader();
                 if (Platform.deleteNativeLibraryAfterVMExit()
-                    && Native.class.getClassLoader().equals(ClassLoader.getSystemClassLoader())) {
+                    && (cl == null
+                        || cl.equals(ClassLoader.getSystemClassLoader()))) {
                     Runtime.getRuntime().addShutdownHook(new DeleteNativeLibrary(lib));
                 }
                 fos = new FileOutputStream(lib);
