@@ -71,7 +71,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static String nativeLibraryPath = null;
+    private static String nativeLibraryPath;
+    private static boolean unpacked;
     private static Map typeMappers = new WeakHashMap();
     private static Map alignments = new WeakHashMap();
     private static Map options = new WeakHashMap();
@@ -120,12 +121,17 @@ public final class Native {
     */
     private static final Object finalizer = new Object() {
         protected void finalize() {
-            unloadNativeLibrary(nativeLibraryPath);
+            unloadNativeLibrary();
         }
     };
 
-    private static boolean unloadNativeLibrary(String path) {
-        if (path == null || !new File(path).exists()) return true;
+    private static boolean unloadNativeLibrary() {
+        String path = nativeLibraryPath;
+        if (path == null) return true;
+        File flib = new File(path);
+        if (unpacked) {
+            flib.delete();
+        }
         // Reach into the bowels of ClassLoader to force the native
         // library to unload
         try {
@@ -138,13 +144,20 @@ public final class Native {
                 f = lib.getClass().getDeclaredField("name");
                 f.setAccessible(true);
                 String name = (String)f.get(lib);
-                if (name.equals(path)) {
+                if (name.equals(path) || name.indexOf(path) != -1) {
                     Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
                     m.setAccessible(true);
                     m.invoke(lib, new Object[0]);
-                    File file = new File(path);
-                    if (file.exists()) {
-                        return file.delete();
+                    nativeLibraryPath = null;
+                    if (unpacked) {
+                        if (flib.exists()) {
+                            if (flib.delete()) {
+                                System.out.println("library deleted");
+                                unpacked = false;
+                                return true;
+                            }
+                            return false;
+                        }
                     }
                     return true;
                 }
@@ -591,6 +604,7 @@ public final class Native {
                 String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
                 try {
                     System.load(path);
+                    nativeLibraryPath = path;
                     return;
                 } catch (UnsatisfiedLinkError ex) {
                 }
@@ -604,7 +618,9 @@ public final class Native {
                         ext = "dylib";
                     }
                     try {
-                        System.load(path.substring(0, path.lastIndexOf(orig)) + ext);
+                        path = path.substring(0, path.lastIndexOf(orig)) + ext;
+                        System.load(path);
+                        nativeLibraryPath = path;
                         return;
                     } catch (UnsatisfiedLinkError ex) {
                     }
@@ -613,6 +629,7 @@ public final class Native {
         }
         try {
             System.loadLibrary(libName);
+            nativeLibraryPath = libName;
         }
         catch(UnsatisfiedLinkError e) {
             loadNativeLibraryFromJar();
@@ -673,8 +690,10 @@ public final class Native {
                     try { fos.close(); } catch(IOException e) { }
                 }
             }
+            unpacked = true;
         }
         System.load(lib.getAbsolutePath());
+        nativeLibraryPath = lib.getAbsolutePath();
     }
 
     /**
@@ -804,7 +823,8 @@ public final class Native {
             this.file = file;
         }
         public void run() {
-            if (!unloadNativeLibrary(file.getAbsolutePath())) {
+            System.out.println("unload on shutdown");
+            if (!unloadNativeLibrary()) {
                 try {
                     Runtime.getRuntime().exec(new String[] {
                         System.getProperty("java.home") + "/bin/java",
