@@ -57,8 +57,8 @@ public class JNAUnloadTest extends TestCase {
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
         File f = new File(path);
-        for (int i=0;i < 100 && f.exists();i++) {
-            Thread.sleep(1);
+        for (int i=0;i < 1000 && f.exists();i++) {
+            Thread.sleep(10);
         }
         assertFalse("Temporary native library not deleted: " + path,
                     f.exists());
