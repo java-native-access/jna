@@ -391,7 +391,7 @@
     </jar>
   </target>
 
-  <target name="compile-tests" depends="compile,native"
+  <target name="compile-tests" depends="compile,native,jar"
           description="Compile all test code">
     <javac classpathref="compile-test.path"
            source="${test.compatibility}"

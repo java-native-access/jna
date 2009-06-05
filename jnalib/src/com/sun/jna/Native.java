@@ -125,6 +125,10 @@ public final class Native {
         }
     };
 
+    /** Force the native library to be unloaded.  This enables reloading
+        of JNA with a different class loader at a later point, and on 
+        Windows allows the temporary, unpacked dll to be removed from the FS.
+     */
     private static boolean unloadNativeLibrary() {
         String path = nativeLibraryPath;
         if (path == null) return true;
@@ -152,7 +156,6 @@ public final class Native {
                     if (unpacked) {
                         if (flib.exists()) {
                             if (flib.delete()) {
-                                System.out.println("library deleted");
                                 unpacked = false;
                                 return true;
                             }
@@ -668,10 +671,12 @@ public final class Native {
             FileOutputStream fos = null;
             try {
                 // Suffix is required on windows, or library fails to load
-                // Let Java pick the suffix
-                lib = File.createTempFile("jna", null);
+                // Let Java pick the suffix, except on windows, to avoid
+                // problems with Web Start.
+                lib = File.createTempFile("jna", Platform.isWindows()?".dll":null);
                 lib.deleteOnExit();
-                if (Platform.deleteNativeLibraryAfterVMExit()) {
+                if (Platform.deleteNativeLibraryAfterVMExit()
+                    && Native.class.getClassLoader().equals(ClassLoader.getSystemClassLoader())) {
                     Runtime.getRuntime().addShutdownHook(new DeleteNativeLibrary(lib));
                 }
                 fos = new FileOutputStream(lib);
@@ -823,7 +828,6 @@ public final class Native {
             this.file = file;
         }
         public void run() {
-            System.out.println("unload on shutdown");
             if (!unloadNativeLibrary()) {
                 try {
                     Runtime.getRuntime().exec(new String[] {

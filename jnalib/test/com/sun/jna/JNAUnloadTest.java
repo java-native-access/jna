@@ -42,7 +42,6 @@ public class JNAUnloadTest extends TestCase {
         Field field = cls.getDeclaredField("nativeLibraryPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
-        field = null;
         assertTrue("Native library not unpacked from jar: " + path,
                    path.startsWith(System.getProperty("java.io.tmpdir")));
 
@@ -50,14 +49,16 @@ public class JNAUnloadTest extends TestCase {
         WeakReference clref = new WeakReference(loader);
         loader = null;
         cls = null;
+        field = null;
         System.gc();
+        for (int i=0;i < 100 && (ref.get() != null || clref.get() != null);i++) {
+            Thread.sleep(1);
+        }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
         File f = new File(path);
         for (int i=0;i < 100 && f.exists();i++) {
             Thread.sleep(1);
-            if ("".equals(System.getProperty("jna.native.library.path")))
-                break;
         }
         assertFalse("Temporary native library not deleted: " + path,
                     f.exists());
@@ -84,21 +85,16 @@ public class JNAUnloadTest extends TestCase {
         Field field = cls.getDeclaredField("nativeLibraryPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
-        field = null;
         assertNotNull("Native library not found", path);
 
         WeakReference ref = new WeakReference(cls);
         WeakReference clref = new WeakReference(loader);
         loader = null;
         cls = null;
+        field = null;
         System.gc();
         for (int i=0;i < 100 && (ref.get() != null || clref.get() != null);i++) {
             Thread.sleep(1);
-        }
-        for (int i=0;i < 100;i++) {
-            Thread.sleep(1);
-            if ("".equals(System.getProperty("jna.native.library.path")))
-                break;
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
