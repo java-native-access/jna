@@ -121,20 +121,25 @@ public final class Native {
     */
     private static final Object finalizer = new Object() {
         protected void finalize() {
-            unloadNativeLibrary();
+            deleteNativeLibrary();
         }
     };
 
-    /** Force the native library to be unloaded.  This enables reloading
-        of JNA with a different class loader at a later point, and on 
-        Windows allows the temporary, unpacked dll to be removed from the FS.
+    /** Remove any unpacked native library.  Forcing the class loader to
+        unload it first is required on Windows, since the temporary native
+        library can't be deleted until the native library is unloaded.  Any
+        deferred execution we might install at this point would prevent the
+        Native class and its class loader from being GC'd, so we instead force
+        the native library unload just a little bit prematurely.
      */
-    private static boolean unloadNativeLibrary() {
+    private static boolean deleteNativeLibrary() {
         String path = nativeLibraryPath;
-        if (path == null) return true;
+        if (path == null || !unpacked) return true;
         File flib = new File(path);
-        if (unpacked) {
-            flib.delete();
+        if (flib.delete()) {
+            nativeLibraryPath = null;
+            unpacked = false;
+            return true;
         }
         // Reach into the bowels of ClassLoader to force the native
         // library to unload
@@ -152,13 +157,10 @@ public final class Native {
                     Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
                     m.setAccessible(true);
                     m.invoke(lib, new Object[0]);
-                    System.out.println("library unloaded (unpacked=" + unpacked + ")");
                     nativeLibraryPath = null;
                     if (unpacked) {
                         if (flib.exists()) {
-                            System.out.println("attempt file delete: " + flib);
                             if (flib.delete()) {
-                                System.out.println("file deleted");
                                 unpacked = false;
                                 return true;
                             }
@@ -170,6 +172,7 @@ public final class Native {
             }
         }
         catch(Exception e) {
+            throw new RuntimeException("Native library delete failed: " + e.getMessage());
         }
         return false;
     }
@@ -820,20 +823,15 @@ public final class Native {
     }
 
     /** For internal use only. */
-    /* Windows won't allow file deletion while
-     * it is in use, and the VM doesn't provide for explicit unloading of 
-     * native libraries (and the implicit method requires GC of a custom class
-     * loader which loaded the class with native bits, which would require
-     * all native bits to be encapsulated in a private class).
-     * Instead, spawn a cleanup task to remove the file *after* the VM exits.
-     */
     public static class DeleteNativeLibrary extends Thread {
         private final File file;
         public DeleteNativeLibrary(File file) {
             this.file = file;
         }
         public void run() {
-            if (!unloadNativeLibrary()) {
+            // If we can't force an unload/delete, spawn a new process
+            // to do so
+            if (!deleteNativeLibrary()) {
                 try {
                     Runtime.getRuntime().exec(new String[] {
                         System.getProperty("java.home") + "/bin/java",
