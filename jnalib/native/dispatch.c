@@ -2445,7 +2445,6 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
   int status;
   int i;
   int abi = FFI_DEFAULT_ABI; 
-  char* tmp;
   ffi_type* rtype = (ffi_type*)L2A(return_type);
   ffi_type* closure_rtype = rtype;
   jlong* types = atypes ? (*env)->GetLongArrayElements(env, atypes, NULL) : NULL;
@@ -2539,7 +2538,7 @@ Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass cls, jint abi, jint n
   ffi_status s = ffi_prep_cif(L2A(cif), abi, nargs, L2A(ffi_return_type), L2A(ffi_types));
   if (s != FFI_OK) {
     char msg[1024];
-    sprintf(msg, "ffi_prep_cif failed with %d", s);
+    snprintf(msg, sizeof(msg), "ffi_prep_cif failed with %d", s);
     throwByName(env, EError, msg);
     return 0;
   }

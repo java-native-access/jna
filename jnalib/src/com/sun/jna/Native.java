@@ -152,10 +152,13 @@ public final class Native {
                     Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
                     m.setAccessible(true);
                     m.invoke(lib, new Object[0]);
+                    System.out.println("library unloaded (unpacked=" + unpacked + ")");
                     nativeLibraryPath = null;
                     if (unpacked) {
                         if (flib.exists()) {
+                            System.out.println("attempt file delete: " + flib);
                             if (flib.delete()) {
+                                System.out.println("file deleted");
                                 unpacked = false;
                                 return true;
                             }
