@@ -107,7 +107,8 @@ public class LibraryLoadTest extends TestCase {
         dst.deleteOnExit();
         copy(src, dst);
         NativeLibrary.addSearchPath(UNICODE, tmp);
-        NativeLibrary.getInstance(UNICODE);
+        NativeLibrary nl = NativeLibrary.getInstance(UNICODE);
+        nl.dispose();
     }
     
     public void testHandleObjectMethods() {
