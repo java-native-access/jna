@@ -64,8 +64,11 @@
   <target name="compile-single" depends="compile"/>
 
   <target name="-dynamic-properties">
-    <echo>Java version: ${java.version}, compatibility: ${compatibility}</echo>
-    <echo>JNA version ${jna.version}, native API version ${jni.version}</echo>
+    <echo>Java version ${java.version}, compatibility: ${compatibility}</echo>
+    <echo>JNA version ${jna.version}, native ${jni.version}</echo>
+    <echo>${java.vm.name} (${java.vm.vendor}, ${java.vm.version})</echo>
+    <echo>${java.home}</echo>
+    <echo>${java.library.path}</echo>
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2" 
