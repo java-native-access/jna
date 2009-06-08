@@ -66,7 +66,7 @@ int main(int argc __UNUSED__, char** argv __UNUSED__)
 	CHECK(ffi_prep_closure(pcl, &cif, closure_test_gn, NULL) == FFI_OK);
 
 	((void*(*)(Dbls))(pcl))(arg);
-	/* { dg-output "1.0 2.0\n" } */
+	/* { dg-output "1.0 2.0\n" { xfail x86_64-*-linux-* } } */
 
 	closure_test_fn(arg);
 	/* { dg-output "1.0 2.0\n" } */

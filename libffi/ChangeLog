@@ -1,3 +1,15 @@
+2009-06-08  Andrew Haley  <aph@redhat.com>
+
+	* testsuite/libffi.call/err_bad_abi.c: Add xfails.
+	* testsuite/libffi.call/cls_longdouble_va.c: Add xfails.
+	* testsuite/libffi.call/cls_dbls_struct.c: Add xfail x86_64-*-linux-*.
+	* testsuite/libffi.call/err_bad_typedef.c: Add xfails.
+
+	* testsuite/libffi.call/stret_medium2.c: Add __UNUSED__ to args.
+	* testsuite/libffi.call/stret_medium.c: Likewise.
+	* testsuite/libffi.call/stret_large2.c: Likewise.
+	* testsuite/libffi.call/stret_large.c:  Likewise.
+
 2009-06-05  Andrew Haley  <aph@redhat.com>
 
 	* src/x86/win32.S (_ffi_closure_STDCALL): Import from gcc.

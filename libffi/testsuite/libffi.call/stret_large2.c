@@ -6,7 +6,7 @@
    PR:			none.
    Originator:	Blake Chaffin	6/21/2007	*/
 
-/* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-*  } } */
 #include "ffitest.h"
 
 // 13 FPRs: 104 bytes
@@ -62,7 +62,7 @@ struct_116byte cls_struct_116byte_fn(
 }
 
 static void
-cls_struct_116byte_gn(ffi_cif* cif, void* resp, void** args, void* userdata)
+cls_struct_116byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args, void* userdata __UNUSED__)
 {
 	struct_116byte	b0, b1, b2, b3;
 
