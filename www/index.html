@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-06-02">
+<meta name="date" content="2009-06-10">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -411,6 +411,7 @@ Libc.fclose(fp)
 <a name=faq></a>
 <h3>Frequently Asked Questions (FAQ)</h3>
 <ul>
+<li><a href="#structure_use">Should I use Structure.ByReference, Structure.ByValue, or Structure[]?</a>
 <li><a href="#char_buffer">How do I read back a string?</a>
 <li><a href="#native_long">How do I map a native <code>long</code> type?</a>
 <li><a href="#w32link">My library mapping causes an UnsatisfiedLinkError</a>
@@ -421,6 +422,55 @@ Libc.fclose(fp)
 <li><a href="#j2me">Does JNA work with J2ME/Windows Mobile?</a>
 <li><a href="#performance">How does JNA performance compared to custom JNI?</a>
 </ul>
+<a name=structure_use></a>
+<h4>When should I use Structure.ByReference? Structure.ByValue? Structure[]?</h4>
+Find your corresponding native declaration below:
+<blockquote><pre><code>
+typedef struct _simplestruct {
+  int myfield;
+} simplestruct;
+
+typedef struct _outerstruct {
+  simplestruct nested; // use Structure
+} outerstruct;
+
+typedef struct _outerstruct2 {
+  simplestruct *byref; // use Structure.ByReference
+} outerstruct2;
+
+typedef struct _outerstruct3 {
+  simplestruct array[4]; // use Structure[]
+} outerstruct3;
+
+typedef struct _outerstruct4 {
+  simplestruct* ptr_array[4]; // use Structure.ByReference[]
+} outerstruct4;
+
+// Field is a pointer to an array of struct
+typedef struct _outerstruct5 {
+  simplestruct* ptr_to_array; // use Structure.ByRefeerence, and use
+                              // Structure.toArray() to allocate array
+} outerstruct5;
+
+// struct pointers as return value or argument
+// use Structure
+outerstruct *myfunc(); 
+void myfunc(outerstruct* data);
+
+// struct (by value) as return value or argument
+// use Structure.ByValue
+simplestruct myfunc();
+void myfunc(simplestruct);
+</code></pre></blockquote>
+
+If you need a ByValue or ByReference class, define them within your main Structure definition like this:
+<blockquote><pre><code>
+public class MyStructure extends Structure {
+  public class ByValue extends MyStructure implements Structure.ByValue { }
+  public class ByReference extends MyStructure implements Structure.ByReference { }
+}
+</code></pre></blockquote>
+
 <a name=char_buffer></a>
 <h4>How do I read back a function's string result?</h4>
 Suppose you have a function:<br>
