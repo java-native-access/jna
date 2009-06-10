@@ -477,6 +477,33 @@ public class StructureTest extends TestCase {
         assertEquals("Structure memory should be expanded", 2, s.toArray(2).length);
     }
 
+    public void testByReferenceArraySync() {
+        PublicTestStructure.ByReference s = new PublicTestStructure.ByReference();
+        PublicTestStructure.ByReference[] array =
+            (PublicTestStructure.ByReference[])s.toArray(2);
+        class TestStructure extends Structure {
+            public PublicTestStructure.ByReference ref;
+        }
+        TestStructure ts = new TestStructure();
+        ts.ref = s;
+        final int VALUE = 42;
+        array[0].x = VALUE;
+        array[1].x = VALUE;
+        ts.write();
+
+        assertEquals("Array element not written: " + array[0],
+                     VALUE, array[0].getPointer().getInt(0));
+        assertEquals("Array element not written: " + array[1],
+                     VALUE, array[1].getPointer().getInt(0));
+
+        array[0].getPointer().setInt(4, VALUE);
+        array[1].getPointer().setInt(4, VALUE);
+        ts.read();
+
+        assertEquals("Array element not read: " + array[0], VALUE, array[0].y);
+        assertEquals("Array element not read: " + array[1], VALUE, array[1].y);
+    }
+
     static class CbStruct extends Structure {
         public Callback cb;
     }

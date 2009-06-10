@@ -122,6 +122,7 @@ public abstract class Structure {
     private List fieldOrder;
     private boolean autoRead = true;
     private boolean autoWrite = true;
+    private Structure[] array;
 
     protected Structure() {
         this((Pointer)null);
@@ -373,6 +374,11 @@ public abstract class Structure {
             }
             if (s.getAutoRead()) {
                 s.read();
+                if (s.array != null) {
+                    for (int i=1;i < s.array.length;i++) {
+                        s.array[i].read();
+                    }
+                }
             }
         }
         return s;
@@ -719,8 +725,13 @@ public abstract class Structure {
             Structure s = (Structure)value;
             if (ByReference.class.isAssignableFrom(nativeType)) {
                 memory.setPointer(offset, s == null ? null : s.getPointer());
-                if (s != null) {
+                if (s != null && s.getAutoWrite()) {
                     s.write();
+                    if (s.array != null) {
+                        for (int i=1;i < s.array.length;i++) {
+                            s.array[i].write();
+                        }
+                    }
                 }
             }
             else {
@@ -784,6 +795,7 @@ public abstract class Structure {
                 Pointer[] buf = new Pointer[sbuf.length];
                 for (int i=0;i < sbuf.length;i++) {
                     buf[i] = sbuf[i] == null ? null : sbuf[i].getPointer();
+                    sbuf[i].write();
                 }
                 memory.write(offset, buf, 0, buf.length);
             }
@@ -1211,6 +1223,11 @@ public abstract class Structure {
             array[i].useMemory(memory.share(i*size, size));
             array[i].read();
         }
+
+        if (this instanceof ByReference) {
+            this.array = array;
+        }
+
         return array;
     }
 

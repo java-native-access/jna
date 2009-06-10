@@ -26,7 +26,7 @@ public class LibraryLoadTest extends TestCase {
     
     private static final String BUILDDIR =
         System.getProperty("jna.builddir", "build"
-                           + (Native.POINTER_SIZE == 8 ? "-d64" : ""));
+                           + (Platform.is64Bit() ? "-d64" : ""));
 
     public void testLoadJNALibrary() {
         assertTrue("Point size should never be zero", Pointer.SIZE > 0);
