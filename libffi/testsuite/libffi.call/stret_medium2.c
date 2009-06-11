@@ -39,7 +39,7 @@ struct_72byte cls_struct_72byte_fn(
 	result.h = b0.h + b1.h + b2.h + b3.h;
 	result.i = b0.i + b1.i + b2.i + b3.i;
 
-	printf("%g %g %g %g %g %g %g %g %lld\n", result.a, result.b, result.c,
+	printf("%g %g %g %g %g %g %g %g %" PRId64 "\n", result.a, result.b, result.c,
 		result.d, result.e, result.f, result.g, result.h, result.i);
 
 	return result;
@@ -61,20 +61,12 @@ cls_struct_72byte_gn(ffi_cif* cif __UNUSED__, void* resp, void** args, void* use
 int main (void)
 {
 	ffi_cif cif;
-#ifndef USING_MMAP
-	static ffi_closure cl;
-#endif
-	ffi_closure *pcl;
+        void *code;
+	ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
 	void* args_dbl[5];
 	ffi_type* cls_struct_fields[10];
 	ffi_type cls_struct_type;
 	ffi_type* dbl_arg_types[5];
-
-#ifdef USING_MMAP
-	pcl = allocate_mmap (sizeof(ffi_closure));
-#else
-	pcl = &cl;
-#endif
 
 	cls_struct_type.size = 0;
 	cls_struct_type.alignment = 0;
@@ -115,16 +107,16 @@ int main (void)
 
 	ffi_call(&cif, FFI_FN(cls_struct_72byte_fn), &res_dbl, args_dbl);
 	/* { dg-output "22 15 17 25 6 13 19 18 16" } */
-	printf("res: %g %g %g %g %g %g %g %g %lld\n", res_dbl.a, res_dbl.b, res_dbl.c,
+	printf("res: %g %g %g %g %g %g %g %g %" PRId64 "\n", res_dbl.a, res_dbl.b, res_dbl.c,
 		res_dbl.d, res_dbl.e, res_dbl.f, res_dbl.g, res_dbl.h, res_dbl.i);
 	/* { dg-output "\nres: 22 15 17 25 6 13 19 18 16" } */
 
-	CHECK(ffi_prep_closure(pcl, &cif, cls_struct_72byte_gn, NULL) == FFI_OK);
+	CHECK(ffi_prep_closure_loc(pcl, &cif, cls_struct_72byte_gn, NULL, code) == FFI_OK);
 
 	res_dbl = ((struct_72byte(*)(struct_72byte, struct_72byte,
-		struct_72byte, struct_72byte))(pcl))(e_dbl, f_dbl, g_dbl, h_dbl);
+		struct_72byte, struct_72byte))(code))(e_dbl, f_dbl, g_dbl, h_dbl);
 	/* { dg-output "\n22 15 17 25 6 13 19 18 16" } */
-	printf("res: %g %g %g %g %g %g %g %g %lld\n", res_dbl.a, res_dbl.b, res_dbl.c,
+	printf("res: %g %g %g %g %g %g %g %g %" PRId64 "\n", res_dbl.a, res_dbl.b, res_dbl.c,
 		res_dbl.d, res_dbl.e, res_dbl.f, res_dbl.g, res_dbl.h, res_dbl.i);
 	/* { dg-output "\nres: 22 15 17 25 6 13 19 18 16" } */
 
