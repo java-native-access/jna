@@ -6,6 +6,7 @@
 
 /* { dg-do run } */
 #include "ffitestcxx.h"
+#include <stdint.h>
 
 void
 closure_test_fn(ffi_cif* cif __UNUSED__, void* resp __UNUSED__,
