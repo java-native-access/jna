@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-06-10">
+<meta name="date" content="2009-06-15">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -329,11 +329,16 @@ public interface CLibrary extends Library {
 }
 ...
 CLibrary lib = CLibrary.INSTANCE;
-lib.atexit(new FUNCTION() {
+// WARNING: you must keep a reference to the callback object
+// until you deregister the callback; if the callback object
+// is garbage-collected, the native callback invocation will
+// probably crash.
+CLibrary.FUNCTION fn = new CLibrary.FUNCTION() {
     public void callback() {
         System.out.println("exit was called");  
     }
-});
+};
+lib.atexit(fn);
 </textarea>
 </blockquote>
 
@@ -448,7 +453,7 @@ typedef struct _outerstruct4 {
 
 // Field is a pointer to an array of struct
 typedef struct _outerstruct5 {
-  simplestruct* ptr_to_array; // use Structure.ByRefeerence, and use
+  simplestruct* ptr_to_array; // use Structure.ByReference, and use
                               // Structure.toArray() to allocate array
 } outerstruct5;
 
