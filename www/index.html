@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-06-15">
+<meta name="date" content="2009-06-16">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -317,28 +317,32 @@ listeners.  Following is an example of callback usage:<br>
 <blockquote>
     <textarea name="textarea4" cols="80" rows="10" readonly="readonly">
 // Original C declarations
-typedef void (*FUNCTION)();
-int atexit(FUNCTION);
+typedef void (*sig_t)(int);
+sig_t signal(sig_t);
 
 // Equivalent JNA mappings
 public interface CLibrary extends Library {
-    interface FUNCTION extends Callback {
-        void callback();        
+    int SIGUSR1 = 30;
+    interface sig_t extends Callback {
+        void invoke(int signal);        
     }
-    int atexit(FUNCTION fn);
+    sig_t signal(int sig, sig_t fn);
+    int raise(int sig);
 }
 ...
-CLibrary lib = CLibrary.INSTANCE;
+CLibrary lib = (CLibrary)Native.loadLibrary("c", CLibrary.class);
 // WARNING: you must keep a reference to the callback object
 // until you deregister the callback; if the callback object
 // is garbage-collected, the native callback invocation will
 // probably crash.
-CLibrary.FUNCTION fn = new CLibrary.FUNCTION() {
-    public void callback() {
-        System.out.println("exit was called");  
+CLibrary.sig_t fn = new CLibrary.sig_t() {
+    public void invoke(int sig) {
+        System.out.println("signal " + sig + " was raised");
     }
 };
-lib.atexit(fn);
+CLibrary.sig_t old_handler = lib.signal(CLibrary.SIGUSR1, fn);
+lib.raise(CLibrary.SIGUSR1);
+...
 </textarea>
 </blockquote>
 
