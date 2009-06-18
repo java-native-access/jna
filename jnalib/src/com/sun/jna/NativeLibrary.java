@@ -61,6 +61,10 @@ public class NativeLibrary {
             throw new Error("Native library not initialized");
     }
 
+    private static String functionKey(String name, int flags) {
+        return name + "|" + flags;
+    }
+
     private NativeLibrary(String libraryName, String libraryPath, long handle, Map options) {
         this.libraryName = getLibraryName(libraryName);
         this.libraryPath = libraryPath;
@@ -80,7 +84,7 @@ public class NativeLibrary {
                         return new Integer(Native.getLastError());
                     }
                 };
-                functions.put("GetLastError", f);
+                functions.put(functionKey("GetLastError", callFlags), f);
             }
         }
     }
@@ -315,7 +319,7 @@ public class NativeLibrary {
         if (functionName == null)
             throw new NullPointerException("Function name may not be null");
         synchronized (functions) {
-            String key = functionName + "|" + callFlags;
+            String key = functionKey(functionName, callFlags);
             Function function = (Function) functions.get(key);
             if (function == null) {
                 function = new Function(this, functionName, callFlags);
