@@ -2185,6 +2185,8 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
   if (!attached) {
     (*vm)->DetachCurrentThread(vm);
   }
+
+  fprintf(stderr, "libdispatch unloaded\n");
 }
 
 ffi_type*
@@ -2247,6 +2249,7 @@ typedef struct _method_data {
   int*    flags;
   int     rflag;
   jclass  rclass;
+  jboolean throw_last_error;
 } method_data;
 
 enum {
@@ -2356,8 +2359,19 @@ method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
 
   {
     PSTART();
+    if (data->throw_last_error) {
+      SET_LAST_ERROR(0);
+    }
     ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
-    if (preserve_last_error_direct) {
+    if (data->throw_last_error) {
+      int error = GET_LAST_ERROR();
+      if (error) {
+        char msg[64];
+        snprintf(msg, sizeof(msg), "%d", error);
+        throwByName(env, ELastError, msg);
+      }
+    }
+    else if (preserve_last_error_direct) {
       update_last_error(env, GET_LAST_ERROR());
     }
     PEND();
@@ -2445,9 +2459,10 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
                                        jint rconversion,
                                        jlong return_type,
                                        jclass rclass,
-                                       jlong function, jint cc)
+                                       jlong function, jint flags)
 {
   int argc = atypes ? (*env)->GetArrayLength(env, atypes) : 0;
+  int cc = flags & MASK_CC;
   const char* cname = newCStringUTF8(env, name);
   const char* sig = newCStringUTF8(env, signature);
   void *code;
@@ -2465,6 +2480,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
   if (cc == CALLCONV_STDCALL) abi = FFI_STDCALL;
 #endif
 
+  data->throw_last_error = (flags & THROW_LAST_ERROR) != 0;
   data->arg_types = malloc(sizeof(ffi_type*) * argc);
   data->closure_arg_types = malloc(sizeof(ffi_type*) * (argc + 2));
   data->closure_arg_types[0] = &ffi_type_pointer;

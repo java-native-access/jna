@@ -737,7 +737,7 @@ public final class Native {
      * the original value is per-thread depends on the underlying OS.  The 
      * result is undefined if {@link #getPreserveLastError} is 
      * <code>false</code>.<p>
-     * @deprecated The preferred method of obtaining the last error result is
+     * The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
      * instead. 
      */
@@ -1155,12 +1155,12 @@ public final class Native {
             if (mapper != null) {
                 name = mapper.getFunctionName(lib, method);
             }
-            Function f = lib.getFunction(name);
+            Function f = lib.getFunction(name, method);
             try {
                 handles[i] = registerMethod(cls, method.getName(),
                                             sig, cvt, atypes, rcvt,
                                             FFIType.get(rtype).peer, rtype, 
-                                            f.peer, f.callingConvention);
+                                            f.peer, f.callFlags);
             }
             catch(NoSuchMethodError e) {
                 throw new UnsatisfiedLinkError("No method " + method.getName() + " with signature " + sig + " in " + cls);
@@ -1181,7 +1181,7 @@ public final class Native {
                                               long rtype,
                                               Class rclass,
                                               long fptr,
-                                              int callingConvention);
+                                              int callFlags);
     
     static native long ffi_prep_cif(int abi, int nargs, long ffi_return_type, long ffi_types);
     static native void ffi_call(long cif, long fptr, long resp, long args);

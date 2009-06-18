@@ -25,6 +25,14 @@ public class LastErrorTest extends TestCase {
         void throwLastError(int code) throws LastErrorException;
     }
 
+    public static class DirectTestLibrary implements TestLibrary {
+        public native void noThrowLastError(int code);
+        public native void throwLastError(int code) throws LastErrorException;
+        static {
+            Native.register("testlib");
+        }
+    }
+
     public void testThrowLastError() {
         Map options = new HashMap();
         options.put(Library.OPTION_FUNCTION_MAPPER, new FunctionMapper() {
@@ -37,6 +45,21 @@ public class LastErrorTest extends TestCase {
             }
         });
         TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class, options);
+
+        final int ERROR = -1;
+        lib.noThrowLastError(ERROR);
+        assertEquals("Last error not preserved", ERROR, Native.getLastError());
+        try {
+            lib.throwLastError(ERROR);
+            fail("Method should throw LastErrorException");
+        }
+        catch(LastErrorException e) {
+            assertEquals("Exception should contain error code", ERROR, e.errorCode);
+        }
+    }
+
+    public void testThrowLastErrorDirect() {
+        TestLibrary lib = new DirectTestLibrary();
 
         final int ERROR = -1;
         lib.noThrowLastError(ERROR);

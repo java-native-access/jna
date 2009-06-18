@@ -200,13 +200,7 @@ public interface Library {
                             // Just in case the function mapper screwed up
                             methodName = method.getName();
                         }
-                        f.function = nativeLibrary.getFunction(methodName);
-                        Class[] etypes = method.getExceptionTypes();
-                        for (int i=0;i < etypes.length;i++) {
-                            if (LastErrorException.class.isAssignableFrom(etypes[i])) {
-                                f.function.callFlags |= Function.THROW_LAST_ERROR;
-                            }
-                        }
+                        f.function = nativeLibrary.getFunction(methodName, method);
                         f.options = new HashMap(this.options);
                         f.options.put(Function.OPTION_INVOKING_METHOD, method);
                     }
