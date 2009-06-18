@@ -14,6 +14,7 @@ package com.sun.jna;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -591,6 +592,7 @@ public class StructureTest extends TestCase {
 
     class BufferStructure extends Structure {
         public Buffer buffer;
+        public DoubleBuffer dbuffer;
     }
     public void testBufferFieldWriteNULL() {
         BufferStructure bs = new BufferStructure();
@@ -599,11 +601,13 @@ public class StructureTest extends TestCase {
     public void testBufferFieldWriteNonNULL() {
         BufferStructure bs = new BufferStructure();
         bs.buffer = ByteBuffer.allocateDirect(16);
+        bs.dbuffer = ((ByteBuffer)bs.buffer).asDoubleBuffer();
         bs.write();
     }
     public void testBufferFieldReadUnchanged() {
         BufferStructure bs = new BufferStructure();
         bs.buffer = ByteBuffer.allocateDirect(16);
+        bs.dbuffer = ((ByteBuffer)bs.buffer).asDoubleBuffer();
         bs.write();
         bs.read();
     }
@@ -632,8 +636,10 @@ public class StructureTest extends TestCase {
     public void testBufferFieldReadChangedToNULL() {
         BufferStructure bs = new BufferStructure();
         bs.buffer = ByteBuffer.allocateDirect(16);
+        bs.dbuffer = ((ByteBuffer)bs.buffer).asDoubleBuffer();
         bs.read();
         assertNull("Structure Buffer field should be set null", bs.buffer);
+        assertNull("Structure DoubleBuffer field should be set null", bs.dbuffer);
     }
 
     public void testVolatileStructureField() {

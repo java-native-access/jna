@@ -742,7 +742,7 @@ public abstract class Structure {
         else if (Callback.class.isAssignableFrom(nativeType)) {
             memory.setPointer(offset, CallbackReference.getFunctionPointer((Callback)value));
         }
-        else if (nativeType == Buffer.class) {
+        else if (Buffer.class.isAssignableFrom(nativeType)) {
             Pointer p = value == null ? null
                 : Native.getDirectBufferPointer((Buffer)value);
             memory.setPointer(offset, p);
