@@ -2185,8 +2185,6 @@ JNI_OnUnload(JavaVM *vm, void *reserved) {
   if (!attached) {
     (*vm)->DetachCurrentThread(vm);
   }
-
-  fprintf(stderr, "libdispatch unloaded\n");
 }
 
 ffi_type*
