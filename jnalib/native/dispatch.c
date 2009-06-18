@@ -433,7 +433,7 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
     }
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
     if (flags & THROW_LAST_ERROR) {
-      snprintf(msg, sizeof(msg), "%d", GET_LAST_ERROR());
+      snprintf(msg, sizeof(msg), "%d", (int)GET_LAST_ERROR());
       throwByName(env, ELastError, msg);
     }
     else if (preserve_last_error) {

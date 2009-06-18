@@ -67,8 +67,8 @@
     <echo>Java version ${java.version}, compatibility: ${compatibility}</echo>
     <echo>JNA version ${jna.version}, native ${jni.version}</echo>
     <echo>${java.vm.name} (${java.vm.vendor}, ${java.vm.version})</echo>
-    <echo>${java.home}</echo>
-    <echo>${java.library.path}</echo>
+    <echo>java.home=${java.home}</echo>
+    <echo>java.library.path=${java.library.path}</echo>
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2" 
