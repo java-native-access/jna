@@ -79,7 +79,7 @@ public interface Library {
         JNIEnv data structure.
     */
     String OPTION_ALLOW_OBJECTS = "allow-objects";
-    /** Calling convention for the library. */
+    /** Calling convention for the entire library. */
     String OPTION_CALLING_CONVENTION = "calling-convention";
 
     static class Handler implements InvocationHandler {
@@ -201,6 +201,12 @@ public interface Library {
                             methodName = method.getName();
                         }
                         f.function = nativeLibrary.getFunction(methodName);
+                        Class[] etypes = method.getExceptionTypes();
+                        for (int i=0;i < etypes.length;i++) {
+                            if (LastErrorException.class.isAssignableFrom(etypes[i])) {
+                                f.function.callFlags |= Function.THROW_LAST_ERROR;
+                            }
+                        }
                         f.options = new HashMap(this.options);
                         f.options.put(Function.OPTION_INVOKING_METHOD, method);
                     }

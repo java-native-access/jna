@@ -45,6 +45,10 @@ public class Function extends Pointer {
     /** First alternate convention (currently used only for w32 stdcall). */
     public static final int ALT_CONVENTION = 1;
 
+    private static final int MASK_CC = 0x3;
+    /** Whether to throw an exception if last error is non-zero after call. */
+    public static final int THROW_LAST_ERROR = (1<<2);
+
     static final Integer INTEGER_TRUE = new Integer(-1);
     static final Integer INTEGER_FALSE = new Integer(0);
 
@@ -79,20 +83,20 @@ public class Function extends Pointer {
      *                  Library in which to find the function
      * @param   functionName
      *                  Name of the native function to be linked with
-     * @param   callConvention
+     * @param   callFlags
      *                  Call convention used by the native function
      * @throws {@link UnsatisfiedLinkError} if the library is not found or
      * the given function name is not found within the library.
      */
-    public static Function getFunction(String libraryName, String functionName, int callConvention) {
-        return NativeLibrary.getInstance(libraryName).getFunction(functionName, callConvention);
+    public static Function getFunction(String libraryName, String functionName, int callFlags) {
+        return NativeLibrary.getInstance(libraryName).getFunction(functionName, callFlags);
     }
     
     // Keep a reference to the NativeLibrary so it does not get garbage collected
     // until the function is
     private NativeLibrary library;
     private final String functionName;
-    final int callingConvention;
+    int callFlags;
     final Map options;
 
     /** For internal JNA use. */
@@ -110,18 +114,18 @@ public class Function extends Pointer {
      *                 {@link NativeLibrary} in which to find the function
      * @param  functionName
      *                 Name of the native function to be linked with
-     * @param  callingConvention
+     * @param  callFlags
      *                 Calling convention used by the native function
      * @throws {@link UnsatisfiedLinkError} if the given function name is
      * not found within the library.
      */
-    Function(NativeLibrary library, String functionName, int callingConvention) {
-        checkCallingConvention(callingConvention);
+    Function(NativeLibrary library, String functionName, int callFlags) {
+        checkCallingConvention(callFlags & MASK_CC);
         if (functionName == null)
             throw new NullPointerException("Function name must not be null");
         this.library = library;
         this.functionName = functionName;
-        this.callingConvention = callingConvention;
+        this.callFlags = callFlags;
         this.options = library.options;
         try {
             this.peer = library.getSymbolAddress(functionName);
@@ -143,17 +147,17 @@ public class Function extends Pointer {
      *
      * @param  functionAddress
      *                 Address of the native function 
-     * @param  callingConvention
+     * @param  callFlags
      *                 Calling convention used by the native function
      */
-    Function(Pointer functionAddress, int callingConvention) {
-        checkCallingConvention(callingConvention);
+    Function(Pointer functionAddress, int callFlags) {
+        checkCallingConvention(callFlags & MASK_CC);
         if (functionAddress == null
             || functionAddress.peer == 0) {
             throw new NullPointerException("Function address may not be null");
         }
         this.functionName = functionAddress.toString();
-        this.callingConvention = callingConvention;
+        this.callFlags = callFlags;
         this.peer = functionAddress.peer;
         this.options = Collections.EMPTY_MAP;
     }
@@ -176,7 +180,7 @@ public class Function extends Pointer {
 
 
     public int getCallingConvention() {
-        return callingConvention;
+        return callFlags & MASK_CC;
     }
 
     /** Invoke the native function with the given arguments, returning the
@@ -283,49 +287,49 @@ public class Function extends Pointer {
     Object invoke(Object[] args, Class returnType, boolean allowObjects) {
         Object result = null;
         if (returnType == null || returnType==void.class || returnType==Void.class) {
-            invokeVoid(callingConvention, args);
+            invokeVoid(callFlags, args);
             result = null;
         }
         else if (returnType==boolean.class || returnType==Boolean.class) {
-            result = valueOf(invokeInt(callingConvention, args) != 0);
+            result = valueOf(invokeInt(callFlags, args) != 0);
         }
         else if (returnType==byte.class || returnType==Byte.class) {
-            result = new Byte((byte)invokeInt(callingConvention, args));
+            result = new Byte((byte)invokeInt(callFlags, args));
         }
         else if (returnType==short.class || returnType==Short.class) {
-            result = new Short((short)invokeInt(callingConvention, args));
+            result = new Short((short)invokeInt(callFlags, args));
         }
         else if (returnType==char.class || returnType==Character.class) {
-            result = new Character((char)invokeInt(callingConvention, args));
+            result = new Character((char)invokeInt(callFlags, args));
         }
         else if (returnType==int.class || returnType==Integer.class) {
-            result = new Integer(invokeInt(callingConvention, args));
+            result = new Integer(invokeInt(callFlags, args));
         }
         else if (returnType==long.class || returnType==Long.class) {
-            result = new Long(invokeLong(callingConvention, args));
+            result = new Long(invokeLong(callFlags, args));
         }
         else if (returnType==float.class || returnType==Float.class) {
-            result = new Float(invokeFloat(callingConvention, args));
+            result = new Float(invokeFloat(callFlags, args));
         }
         else if (returnType==double.class || returnType==Double.class) {
-            result = new Double(invokeDouble(callingConvention, args));
+            result = new Double(invokeDouble(callFlags, args));
         }
         else if (returnType==String.class) {
-            result = invokeString(callingConvention, args, false);
+            result = invokeString(callFlags, args, false);
         }
         else if (returnType==WString.class) {
-            String s = invokeString(callingConvention, args, true);
+            String s = invokeString(callFlags, args, true);
             if (s != null) {
                 result = new WString(s);
             }
         }
         else if (Pointer.class.isAssignableFrom(returnType)) {
-            result = invokePointer(callingConvention, args);
+            result = invokePointer(callFlags, args);
         }
         else if (Structure.class.isAssignableFrom(returnType)) {
             if (Structure.ByValue.class.isAssignableFrom(returnType)) {
                 Structure s = 
-                    invokeStructure(callingConvention, args, 
+                    invokeStructure(callFlags, args, 
                                     Structure.newInstance(returnType));
                 if (s.getAutoRead()) {
                     s.read();
@@ -333,7 +337,7 @@ public class Function extends Pointer {
                 result = s;
             }
             else {
-                result = invokePointer(callingConvention, args);
+                result = invokePointer(callFlags, args);
                 if (result != null) {
                     Structure s = Structure.newInstance(returnType);
                     s.useMemory((Pointer)result);
@@ -345,19 +349,19 @@ public class Function extends Pointer {
             }
         }
         else if (Callback.class.isAssignableFrom(returnType)) {
-            result = invokePointer(callingConvention, args);
+            result = invokePointer(callFlags, args);
             if (result != null) {
                 result = CallbackReference.getCallback(returnType, (Pointer)result);
             }
         }
         else if (returnType==String[].class) {
-            Pointer p = invokePointer(callingConvention, args);
+            Pointer p = invokePointer(callFlags, args);
             if (p != null) {
                 result = p.getStringArray(0);
             }
         }
         else if (returnType==WString[].class) {
-            Pointer p = invokePointer(callingConvention, args);
+            Pointer p = invokePointer(callFlags, args);
             if (p != null) {
                 String[] arr = p.getStringArray(0, true);
                 WString[] warr = new WString[arr.length];
@@ -368,13 +372,13 @@ public class Function extends Pointer {
             }
         }
         else if (returnType==Pointer[].class) {
-            Pointer p = invokePointer(callingConvention, args);
+            Pointer p = invokePointer(callFlags, args);
             if (p != null) {
                 result = p.getPointerArray(0);
             }
         }
         else if (allowObjects) {
-            result = invokeObject(callingConvention, args);
+            result = invokeObject(callFlags, args);
             if (result != null
                 && !returnType.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Return type " + returnType
@@ -550,22 +554,22 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The value returned by the target native function
      */
-    private  native int invokeInt(int callingConvention, Object[] args);
+    private  native int invokeInt(int callFlags, Object[] args);
 
     /**
      * Call the native function being represented by this object
      *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The value returned by the target native function
      */
-    private native long invokeLong(int callingConvention, Object[] args);
+    private native long invokeLong(int callFlags, Object[] args);
 
     /**
      * Call the native function being represented by this object
@@ -581,44 +585,44 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      */
-    private native void invokeVoid(int callingConvention, Object[] args);
+    private native void invokeVoid(int callFlags, Object[] args);
 
     /**
      * Call the native function being represented by this object
      *
-     * @param   callingConvention calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     * @return	The value returned by the target native function
-     */
-    private native float invokeFloat(int callingConvention, Object[] args);
-
-    /**
-     * Call the native function being represented by this object
-     *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The value returned by the target native function
      */
-    private native double invokeDouble(int callingConvention, Object[] args);
+    private native float invokeFloat(int callFlags, Object[] args);
 
     /**
      * Call the native function being represented by this object
      *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
+     * @param	args
+     *			Arguments to pass to the native function
+     * @return	The value returned by the target native function
+     */
+    private native double invokeDouble(int callFlags, Object[] args);
+
+    /**
+     * Call the native function being represented by this object
+     *
+     * @param   callFlags calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @param   wide whether the native string uses <code>wchar_t</code>;
      * if false, <code>char</code> is assumed
      * @return	The value returned by the target native function, as a String
      */
-    private String invokeString(int callingConvention, Object[] args, boolean wide) {
-        Pointer ptr = invokePointer(callingConvention, args);
+    private String invokeString(int callFlags, Object[] args, boolean wide) {
+        Pointer ptr = invokePointer(callFlags, args);
         String s = null;
         if (ptr != null) {
             if (wide)
@@ -632,36 +636,36 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
      * @param	args
      *			Arguments to pass to the native function
      * @return	The native pointer returned by the target native function
      */
-    private native Pointer invokePointer(int callingConvention, Object[] args);
+    private native Pointer invokePointer(int callFlags, Object[] args);
     
     /**
      * Call the native function being represented by this object, returning
      * a struct by value.
      *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
      * @param   args
      *          Arguments to pass to the native function
      * @param   result Pre-allocated structure to hold the result
      * @return  The passed-in struct argument
      */
-    private native Structure invokeStructure(int callingConvention, Object[] args,
+    private native Structure invokeStructure(int callFlags, Object[] args,
                                              Structure result);
 
     /**
      * Call the native function being represented by this object, returning
      * a Java <code>Object</code>.
      *
-     * @param   callingConvention calling convention to be used
+     * @param   callFlags calling convention to be used
      * @param   args
      *          Arguments to pass to the native function
      * @return  The returned Java <code>Object</code>
      */
-    private native Object invokeObject(int callingConvention, Object[] args);
+    private native Object invokeObject(int callFlags, Object[] args);
 
     /** Provide a human-readable representation of this object. */
     public String toString() {
@@ -735,7 +739,7 @@ public class Function extends Pointer {
     public boolean equals(Object o) {
         if (o instanceof Function) {
             Function other = (Function)o;
-            return other.callingConvention == this.callingConvention
+            return other.callFlags == this.callFlags
                 && other.options.equals(this.options)
                 && other.peer == this.peer;
         }

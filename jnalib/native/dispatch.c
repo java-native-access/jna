@@ -109,6 +109,9 @@ static jboolean preserve_last_error_direct;
   PSTART(); memset(D,C,L); PEND(); \
 } while(0)
 
+#define MASK_CC          com_sun_jna_Function_MASK_CC
+#define THROW_LAST_ERROR com_sun_jna_Function_THROW_LAST_ERROR
+
 /* Cached class, field and method IDs */
 static jclass classObject;
 static jclass classClass;
@@ -225,7 +228,7 @@ println(JNIEnv* env, const char* msg) {
 
 /* invoke the real native function */
 static void
-dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr, 
+dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr, 
          ffi_type *ffi_return_type, void *resP)
 {
   int i, nargs;
@@ -244,6 +247,7 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
   ffi_abi abi;
   ffi_status status;
   char msg[128];
+  callconv_t callconv = flags & MASK_CC;
   
   nargs = (*env)->GetArrayLength(env, arr);
 
@@ -424,8 +428,15 @@ dispatch(JNIEnv *env, jobject self, jint callconv, jobjectArray arr,
     break;
   case FFI_OK: {
     PSTART();
+    if (flags & THROW_LAST_ERROR) {
+      SET_LAST_ERROR(0);
+    }
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
-    if (preserve_last_error) {
+    if (flags & THROW_LAST_ERROR) {
+      snprintf(msg, sizeof(msg), "%d", GET_LAST_ERROR());
+      throwByName(env, ELastError, msg);
+    }
+    else if (preserve_last_error) {
       update_last_error(env, GET_LAST_ERROR());
     }
     PEND();
@@ -1341,13 +1352,14 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Memory_free
 void 
 throwByName(JNIEnv *env, const char *name, const char *msg)
 {
-    jclass cls = (*env)->FindClass(env, name);
-
-    if (cls != 0) /* Otherwise an exception has already been thrown */
-        (*env)->ThrowNew(env, cls, msg);
-
+  jclass cls = (*env)->FindClass(env, name);
+  
+  if (cls != NULL) { /* Otherwise an exception has already been thrown */
+    (*env)->ThrowNew(env, cls, msg);
+    
     /* It's a good practice to clean up the local references. */
     (*env)->DeleteLocalRef(env, cls);
+  }
 }
 
 /* Translates a Java string to a C string using the String.getBytes 

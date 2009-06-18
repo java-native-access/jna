@@ -183,8 +183,9 @@ public final class Native {
 
     /** Set whether native memory accesses are protected from invalid
      * accesses.  This should only be set true when testing or debugging,
-     * and should not be considered reliable or robust for multithreaded
-     * applications.  Protected mode will be automatically set if the
+     * and should not be considered reliable or robust for applications
+     * where JNA native calls are occurring on multiple threads.
+     * Protected mode will be automatically set if the
      * system property <code>jna.protected</code> has a value of "true"
      * when the JNA library is first loaded.<p>
      * If not supported by the underlying platform, this setting will
@@ -208,12 +209,18 @@ public final class Native {
 
     /** Set whether the system last error result is captured after every
      * native invocation.  Defaults to <code>true</code> (<code>false</code>
-     * for direct-mapped calls).
+     * for direct-mapped calls).<p>
+     * @deprecated The preferred method of obtaining the last error result is
+     * to declare your mapped method to throw {@link LastErrorException}
+     * instead. 
      */
     public static synchronized native void setPreserveLastError(boolean enable);
     
     /** Indicates whether the system last error result is preserved
-     * after every invocation.  
+     * after every invocation.<p>
+     * @deprecated The preferred method of obtaining the last error result is
+     * to declare your mapped method to throw {@link LastErrorException}
+     * instead. 
      */
     public static synchronized native boolean getPreserveLastError();
     
@@ -728,8 +735,11 @@ public final class Native {
      * <code>GetLastError()</code> on Windows, and <code>errno</code> on
      * most other platforms.  The value is preserved per-thread, but whether 
      * the original value is per-thread depends on the underlying OS.  The 
-     * result is undefined If {@link #getPreserveLastError} is 
-     * <code>false</code>.
+     * result is undefined if {@link #getPreserveLastError} is 
+     * <code>false</code>.<p>
+     * @deprecated The preferred method of obtaining the last error result is
+     * to declare your mapped method to throw {@link LastErrorException}
+     * instead. 
      */
     public static int getLastError() {
         return ((Integer)lastError.get()).intValue();

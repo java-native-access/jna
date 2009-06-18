@@ -44,6 +44,7 @@ additional JNI or native code.
   <li><a href="#structures">Structures</a>
   <li><a href="#unions">Unions</a>
   <li><a href="#java-objects">Java Objects</a>
+  <li><a href="#last-error">Last Error</a>
   </ul>
 <li><a href="#invocation-mapping">Invocation Mapping</a>
 <li><a href="#global-data">Library Global Data</a>
@@ -603,6 +604,11 @@ the desired field's class to the {@link com.sun.jna.Union#setType}
 method.  On read, all non-pointer-based fields will be initialized from native
 memory.  Structure, String, and WString members will <em>not</em> be
 initialized unless they are selected via {@link com.sun.jna.Union#setType}.
+
+<a name="last-error"></a>
+<h3>Obtaining "last" error</h3>
+If a function sets the system error property
+(<code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> or <code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>), the error code will be thrown as a {@link com.sun.jna.LastErrorException} if you declare the exception in your JNA mapping.  Alternatively, you can use {@link com.sun.jna.Native#getLastError()} to retrieve it, providing that {@link com.sun.jna.Native#setPreserveLastError(boolean)} has been called with a <code>true</code> value.  Throwing an exception is preferred since it has better performance.
 
 <a name="java-objects"></a>
 <h3>Arbitrary Java Object arguments/return values</h3>

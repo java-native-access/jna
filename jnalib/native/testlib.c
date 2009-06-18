@@ -19,6 +19,7 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <errno.h>
 
 #ifdef _MSC_VER
 typedef signed char int8_t;
@@ -65,6 +66,15 @@ struct CheckFieldAlignment {
 };
 
 static int _callCount;
+
+EXPORT void
+setLastError(int err) {
+#ifdef _WIN32  
+  SetLastError(err);
+#else
+  errno = err;
+#endif
+}
 
 EXPORT int
 callCount() {

@@ -87,7 +87,9 @@ typedef long word_t;
 #define EUnsatisfiedLink "java/lang/UnsatisfiedLinkError"
 #define EIllegalState "java/lang/IllegalStateException"
 #define EUnsupportedOperation "java/lang/UnsupportedOperationException"
+#define ERuntime "java/lang/RuntimeException"
 #define EError "java/lang/Error"
+#define ELastError "com/sun/jna/LastErrorException"
 
 extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern char get_jtype(JNIEnv*, jclass);

@@ -45,7 +45,7 @@ public class NativeLibrary {
     private final String libraryName;
     private final String libraryPath;
     private final Map functions = new HashMap();
-    final int callingConvention;
+    final int callFlags;
     final Map options;
 
     private static WeakReference currentProcess;
@@ -67,7 +67,7 @@ public class NativeLibrary {
         Object option = options.get(Library.OPTION_CALLING_CONVENTION);
         int callingConvention = option instanceof Integer
             ? ((Integer)option).intValue() : Function.C_CONVENTION;
-        this.callingConvention = callingConvention;
+        this.callFlags = callingConvention;
         this.options = options;
 
         // Special workaround for w32 kernel32.GetLastError
@@ -274,7 +274,7 @@ public class NativeLibrary {
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName) {
-        return getFunction(functionName, callingConvention);
+        return getFunction(functionName, callFlags);
     }
 
     /**
@@ -286,17 +286,17 @@ public class NativeLibrary {
      *
      * @param	functionName
      *			Name of the native function to be linked with
-     * @param	callingConvention
+     * @param	callFlags
      *			Calling convention used by the native function
      * @throws   UnsatisfiedLinkError if the function is not found
      */
-    public Function getFunction(String functionName, int callingConvention) {
+    public Function getFunction(String functionName, int callFlags) {
         if (functionName == null)
             throw new NullPointerException("Function name may not be null");
         synchronized (functions) {
             Function function = (Function) functions.get(functionName);
             if (function == null) {
-                function = new Function(this, functionName, callingConvention);
+                function = new Function(this, functionName, callFlags);
                 functions.put(functionName, function);
             }
             return function;
