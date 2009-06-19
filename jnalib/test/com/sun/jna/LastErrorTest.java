@@ -20,6 +20,18 @@ import junit.framework.TestCase;
 
 public class LastErrorTest extends TestCase {
     
+    private static final Map OPTIONS = new HashMap() {{
+        put(Library.OPTION_FUNCTION_MAPPER, new FunctionMapper() {
+            public String getFunctionName(NativeLibrary library, Method m) {
+                if (m.getName().equals("noThrowLastError")
+                    || m.getName().equals("throwLastError")) {
+                    return "setLastError";
+                }
+                return m.getName();
+            }
+        });
+    }};
+
     public interface TestLibrary extends Library {
         void noThrowLastError(int code);
         void throwLastError(int code) throws LastErrorException;
@@ -29,22 +41,13 @@ public class LastErrorTest extends TestCase {
         public native void noThrowLastError(int code);
         public native void throwLastError(int code) throws LastErrorException;
         static {
-            Native.register("testlib");
+            Native.register(NativeLibrary.getInstance("testlib", OPTIONS));
         }
     }
 
     public void testThrowLastError() {
         Map options = new HashMap();
-        options.put(Library.OPTION_FUNCTION_MAPPER, new FunctionMapper() {
-            public String getFunctionName(NativeLibrary library, Method m) {
-                if (m.getName().equals("noThrowLastError")
-                    || m.getName().equals("throwLastError")) {
-                    return "setLastError";
-                }
-                return m.getName();
-            }
-        });
-        TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class, options);
+        TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class, OPTIONS);
 
         final int ERROR = -1;
         lib.noThrowLastError(ERROR);
