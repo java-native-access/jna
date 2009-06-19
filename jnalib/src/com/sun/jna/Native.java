@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -870,6 +871,35 @@ public final class Native {
                 }
             }
             System.exit(0);
+        }
+    }
+
+    /** Returns the native size of the given class, in bytes. 
+     * For use with arrays.
+     */
+    public static int getNativeSize(Class type, Object value) {
+        if (type.isArray()) {
+            int len = Array.getLength(value);
+            if (len > 0) {
+                Object o = Array.get(value, 0);
+                return len * getNativeSize(type.getComponentType(), o);
+            }
+            // Don't process zero-length arrays
+            throw new IllegalArgumentException("Arrays of length zero not allowed in structure: " + type);
+        }
+        if (Structure.class.isAssignableFrom(type)
+            && !Structure.ByReference.class.isAssignableFrom(type)) {
+            if (value == null)
+                value = Structure.newInstance(type);
+            return ((Structure)value).size();
+        }
+        try {
+            return Native.getNativeSize(type);
+        }
+        catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("The type \"" + type.getName()
+                                               + "\" is not supported as a structure field: "
+                                               + e.getMessage());
         }
     }
 

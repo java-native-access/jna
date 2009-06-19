@@ -49,6 +49,7 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
         public String returnStringArrayElement(String[] args, int which) {throw new UnsupportedOperationException();}
         public WString returnWideStringArrayElement(WString[] args, int which) {throw new UnsupportedOperationException();}
         public Pointer returnPointerArrayElement(Pointer[] args, int which) {throw new UnsupportedOperationException();}
+        public TestPointerType returnPointerArrayElement(TestPointerType[] args, int which) {throw new UnsupportedOperationException();}
         public CheckFieldAlignment returnPointerArrayElement(CheckFieldAlignment.ByReference[] args, int which) {throw new UnsupportedOperationException();}
         public int returnRotatedArgumentCount(String[] args) {throw new UnsupportedOperationException();}
 
@@ -100,6 +101,7 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
     public void testRejectNoncontiguousStructureArrayArgument() { }
     public void testWideStringArrayArgument() { }
     public void testPointerArrayArgument() { }
+    public void testNativeMappedArrayArgument() { }
     public void testStructureByReferenceArrayArgument() { }
     public void testModifiedCharArrayArgument() { }
     public void testNativeMappedArgument() { }

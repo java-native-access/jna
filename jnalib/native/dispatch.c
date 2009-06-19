@@ -1740,12 +1740,12 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
                 "Can't obtain static newInstance method for class com.sun.jna.Structure");
   }
   else if (!LOAD_MID(env, MID_Structure_read, classStructure,
-                     "read", "()V")) {
+                     "autoRead", "()V")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain read method for class com.sun.jna.Structure");
   }
   else if (!LOAD_MID(env, MID_Structure_write, classStructure,
-                     "write", "()V")) {
+                     "autoWrite", "()V")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain write method for class com.sun.jna.Structure");
   }

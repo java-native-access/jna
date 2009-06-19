@@ -61,6 +61,12 @@ public class ArgumentsMarshalTest extends TestCase {
         String returnStringArrayElement(String[] args, int which);
         WString returnWideStringArrayElement(WString[] args, int which);
         Pointer returnPointerArrayElement(Pointer[] args, int which);
+
+        public static class TestPointerType extends PointerType {
+            public TestPointerType() { }
+            public TestPointerType(Pointer p) { super(p); }
+        }
+        TestPointerType returnPointerArrayElement(TestPointerType[] args, int which);
         CheckFieldAlignment returnPointerArrayElement(CheckFieldAlignment.ByReference[] args, int which);
         int returnRotatedArgumentCount(String[] args);
 
@@ -490,7 +496,7 @@ public class ArgumentsMarshalTest extends TestCase {
     
     public void testPointerArrayArgument() {
         Pointer[] args = { 
-      		new NativeString(getName()).getPointer(),
+            new NativeString(getName()).getPointer(),
             null,
             new NativeString(getName()+"2").getPointer(),
         };
@@ -499,6 +505,17 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Wrong value returned", args[2], lib.returnPointerArrayElement(args, 2));
         assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 3));
     }
+
+    public void testNativeMappedArrayArgument() {
+        TestLibrary.TestPointerType[] args = {
+            new TestLibrary.TestPointerType(new NativeString(getName()).getPointer()),
+            null,
+            new TestLibrary.TestPointerType(new NativeString(getName()+"2").getPointer()),
+        };
+        assertEquals("Wrong value returned", args[0], lib.returnPointerArrayElement(args, 0));
+        assertNull("Wrong value returned", lib.returnPointerArrayElement(args, 1));
+        assertEquals("Wrong value returned", args[2], lib.returnPointerArrayElement(args, 2));
+    };
 
     public void testStructureByReferenceArrayArgument() {
         CheckFieldAlignment.ByReference[] args = { 

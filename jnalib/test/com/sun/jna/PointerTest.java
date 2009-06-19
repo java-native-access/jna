@@ -229,6 +229,30 @@ public class PointerTest extends TestCase {
                      p, Native.getDirectBufferPointer(b.asDoubleBuffer()));
     }
 
+    public static class TestPointerType extends PointerType {
+        public TestPointerType() { }
+        public TestPointerType(Pointer p) { super(p); }
+    }
+
+    public void testSetNativeMapped() {
+        Pointer p = new Memory(Pointer.SIZE);
+        TestPointerType tp = new TestPointerType(p);
+
+        p.setValue(0, tp, tp.getClass());
+
+        assertEquals("Wrong value written", p, p.getPointer(0));
+    }
+
+    public void testGetNativeMapped() {
+        Pointer p = new Memory(Pointer.SIZE);
+        p.setPointer(0, null);
+        Object o = p.getValue(0, TestPointerType.class, null);
+        assertNull("Wrong empty value: " + o, o);
+        p.setPointer(0, p);
+        TestPointerType tp = new TestPointerType(p);
+        assertEquals("Wrong value", tp, p.getValue(0, TestPointerType.class, null));
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(PointerTest.class);
     }

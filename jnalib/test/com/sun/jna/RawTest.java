@@ -151,7 +151,7 @@ public class RawTest extends TestCase {
         MathInterface mlib = (MathInterface)
             Native.loadLibrary(mname, MathInterface.class);
         Function f = NativeLibrary.getInstance(mname).getFunction("cos");
-        final int COUNT = 1000000;
+        final int COUNT = 100000;
 
         ///////////////////////////////////////////
         // cos

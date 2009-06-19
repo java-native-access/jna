@@ -250,9 +250,7 @@ public class Function extends Pointer {
                     continue;
                 if (inArg instanceof Structure) {
                     if (!(inArg instanceof Structure.ByValue)) {
-                        if (((Structure)inArg).getAutoRead()) {
-                            ((Structure)inArg).read();
-                        }
+                        ((Structure)inArg).autoRead();
                     }
                 }
                 else if (args[i] instanceof PostCallRead) {
@@ -272,9 +270,7 @@ public class Function extends Pointer {
                 else if (Structure[].class.isAssignableFrom(inArg.getClass())) {
                     Structure[] ss = (Structure[])inArg;
                     for (int si=0;si < ss.length;si++) {
-                        if (ss[si].getAutoRead()) {
-                            ss[si].read();
-                        }
+                        ss[si].autoRead();
                     }
                 }
             }
@@ -331,9 +327,7 @@ public class Function extends Pointer {
                 Structure s = 
                     invokeStructure(callFlags, args, 
                                     Structure.newInstance(returnType));
-                if (s.getAutoRead()) {
-                    s.read();
-                }
+                s.autoRead();
                 result = s;
             }
             else {
@@ -341,9 +335,7 @@ public class Function extends Pointer {
                 if (result != null) {
                     Structure s = Structure.newInstance(returnType);
                     s.useMemory((Pointer)result);
-                    if (s.getAutoRead()) {
-                        s.read();
-                    }
+                    s.autoRead();
                     result = s;
                 }
             }
@@ -425,9 +417,7 @@ public class Function extends Pointer {
         // Convert Structures to native pointers 
         if (arg instanceof Structure) {
             Structure struct = (Structure)arg;
-            if (struct.getAutoWrite()) {
-                struct.write();
-            }
+            struct.autoWrite();
             if (struct instanceof Structure.ByValue) {
             	// Double-check against the method signature, if available
                 Class ptype = struct.getClass();
@@ -483,6 +473,9 @@ public class Function extends Pointer {
         else if (Pointer[].class == argClass) {
             return new PointerArray((Pointer[])arg);
         }
+        else if (NativeMapped[].class.isAssignableFrom(argClass)) {
+            return new NativeMappedArray((NativeMapped[])arg);
+        }
         else if (Structure[].class.isAssignableFrom(argClass)) {
             Structure[] ss = (Structure[])arg;
             Class type = argClass.getComponentType();
@@ -490,7 +483,7 @@ public class Function extends Pointer {
             if (byRef) {
                 Pointer[] pointers = new Pointer[ss.length + 1];
                 for (int i=0;i < ss.length;i++) {
-                	pointers[i] = ss[i] != null ? ss[i].getPointer() : null;
+                    pointers[i] = ss[i] != null ? ss[i].getPointer() : null;
                 }
                 return new PointerArray(pointers);
             }
@@ -498,39 +491,25 @@ public class Function extends Pointer {
                 throw new IllegalArgumentException("Structure array must have non-zero length");
             }
             else if (ss[0] == null) {
-                // Initialize uninitialized arrays of Structure to point
-                // to a single block of memory
-                Structure struct = Structure.newInstance(type);
-                int size = struct.size();
-                Memory m = new Memory(size * ss.length);
-                struct.useMemory(m);
-                Structure[] tmp = struct.toArray(ss.length);
-                for (int si=0;si < ss.length;si++) {
-                    ss[si] = tmp[si];
-                }
+                Structure.newInstance(type).toArray(ss);
                 return ss[0].getPointer();
             }
             else {
                 Pointer base = ss[0].getPointer();
                 int size = ss[0].size();
-                if (ss[0].getAutoWrite()) {
-                    ss[0].write();
-                }
+                ss[0].autoWrite();
                 for (int si=1;si < ss.length;si++) {
                     if (ss[si].getPointer().peer != base.peer + size*si) {
                         String msg = "Structure array elements must use"
                             + " contiguous memory (at element index " + si + ")";     
                         throw new IllegalArgumentException(msg);
                     }
-                    if (ss[si].getAutoWrite()) {
-                        ss[si].write();
-                    }
+                    ss[si].autoWrite();
                 }
                 return base;
             }
         }
         else if (argClass.isArray()){
-            // TODO: handle array of NativeMapped
             throw new IllegalArgumentException("Unsupported array argument type: " 
                                                + argClass.getComponentType());
         }
@@ -792,6 +771,21 @@ public class Function extends Pointer {
         return false;
     }
     
+    private static class NativeMappedArray extends Memory implements PostCallRead {
+        private final NativeMapped[] original;
+        private final long elSize;
+        public NativeMappedArray(NativeMapped[] arg) {
+            super(Native.getNativeSize(arg.getClass(), arg));
+            this.original = arg;
+            Class nativeType = arg.getClass().getComponentType();
+            this.elSize = Native.getNativeSize(nativeType);
+            setValue(0, original, original.getClass());
+        }
+        public void read() {
+            getValue(0, original.getClass(), original);
+        }
+    }
+
     private static class PointerArray extends Memory implements PostCallRead {
         private final Pointer[] original;
         public PointerArray(Pointer[] arg) {
