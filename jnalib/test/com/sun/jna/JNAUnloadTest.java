@@ -12,12 +12,13 @@
  */
 package com.sun.jna;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import junit.framework.TestCase;
 
 public class JNAUnloadTest extends TestCase {
