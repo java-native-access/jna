@@ -12,15 +12,15 @@
  */
 package com.sun.jna;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.ref.WeakReference;
-
-import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.Callback.UncaughtExceptionHandler;
 
 import junit.framework.TestCase;
+
+import com.sun.jna.Callback.UncaughtExceptionHandler;
+import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
+import com.sun.jna.ptr.IntByReference;
 
 /** Exercise callback-related functionality.
  *
@@ -151,7 +151,7 @@ public class CallbacksTest extends TestCase {
         System.gc();
         for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
             try {
-                Thread.sleep(1); // Give the GC a chance to run
+                Thread.sleep(10); // Give the GC a chance to run
             } finally {}
         }
         assertNull("Callback not GC'd", ref.get());
@@ -160,8 +160,11 @@ public class CallbacksTest extends TestCase {
         ref = null;
         System.gc();
         for (int i = 0; i < 100 && cbstruct.peer != 0; ++i) {
+            // Flush weak hash map
+            refs.size();
             try {
-                Thread.sleep(1); // Give the GC a chance to run
+                Thread.sleep(10); // Give the GC a chance to run
+                System.gc();
             } finally {}
         }
         assertEquals("Callback trampoline not freed", 0, cbstruct.peer);
