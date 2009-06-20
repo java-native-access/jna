@@ -91,6 +91,8 @@ public class LibraryLoadTest extends TestCase {
         String tmp = System.getProperty("java.io.tmpdir");
         String libName = System.mapLibraryName("jnidispatch");
         File src = new File(BUILDDIR + "/native", libName);
+        assertTrue("Expected JNA native library at " + src + " is missing", src.exists());
+
         String newLibName = UNICODE;
         if (libName.startsWith("lib"))
             newLibName = "lib" + newLibName;

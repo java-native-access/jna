@@ -35,8 +35,11 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    // Fails on VMs other than Sun's
+    // Fails under clover
     public void testUnloadFromJar() throws Exception {
+        File jar = new File(BUILDDIR + "/jna.jar");
+        assertTrue("Expected JNA jar file at " + jar + " is missing", jar.exists());
+
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
@@ -90,7 +93,7 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    // Fails on VMs other than Sun's
+    // Fails under clover
     public void testUnload() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
