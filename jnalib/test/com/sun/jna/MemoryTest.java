@@ -34,9 +34,10 @@ public class MemoryTest extends TestCase {
         System.gc();
         long start = System.currentTimeMillis();
         assertFalse("Memory prematurely GC'd", flag[0]);
-        // This check fails on IBM's J9, on which the weak ref
-        // is cleared but the object not yet GC'd
-        //assertNotNull("Memory prematurely GC'd", ref.get());
+        assertNotNull("Base memory GC'd while shared memory extant", ref.get());
+        // Avoid having IBM J9 prematurely nullify "shared"
+        shared.setInt(0, 0);
+
         shared = null;
         System.gc();
         while (ref.get() != null) {
