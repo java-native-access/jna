@@ -173,7 +173,6 @@ public final class Native {
             }
         }
         catch(Exception e) {
-            throw new RuntimeException("Native library delete failed: " + e.getMessage());
         }
         return false;
     }

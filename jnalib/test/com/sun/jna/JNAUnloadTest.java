@@ -35,6 +35,7 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
+    // Fails on VMs other than Sun's
     public void testUnloadFromJar() throws Exception {
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
@@ -53,19 +54,30 @@ public class JNAUnloadTest extends TestCase {
         field = null;
         System.gc();
         for (int i=0;i < 100 && (ref.get() != null || clref.get() != null);i++) {
-            Thread.sleep(1);
+            Thread.sleep(10);
+            System.gc();
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
         File f = new File(path);
-        for (int i=0;i < 1000 && f.exists();i++) {
+        for (int i=0;i < 100 && f.exists();i++) {
             Thread.sleep(10);
+            System.gc();
         }
-        assertFalse("Temporary native library not deleted: " + path,
-                    f.exists());
+        // NOTE: Temporary file removal on Windows only works on a Sun VM
+        try {
+            if (Platform.isWindows()) {
+                ClassLoader.class.getDeclaredField("nativeLibraries");
+            }
+            assertFalse("Temporary native library not deleted: " + path,
+                        f.exists());
+        }
+        catch(Exception e) {
+            // Skip on non-supported VMs
+        }
 
         try {
-            loader = new TestLoader(false);
+            loader = new TestLoader(true);
             cls = Class.forName("com.sun.jna.Native", true, loader);
         }
         catch(Throwable t) {
@@ -78,6 +90,7 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
+    // Fails on VMs other than Sun's
     public void testUnload() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
@@ -95,17 +108,31 @@ public class JNAUnloadTest extends TestCase {
         field = null;
         System.gc();
         for (int i=0;i < 100 && (ref.get() != null || clref.get() != null);i++) {
-            Thread.sleep(1);
+            Thread.sleep(10);
+            System.gc();
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
 
-        try {
-            loader = new TestLoader(false);
-            cls = Class.forName("com.sun.jna.Native", true, loader);
+        Throwable throwable = null;
+        // NOTE: IBM J9 needs some extra time to unload the native library,
+        // so try a few times before failing
+        for (int i=0;i < 100;i++) {
+            System.gc();
+            Thread.sleep(10);
+            try {
+                loader = new TestLoader(false);
+                cls = Class.forName("com.sun.jna.Native", true, loader);
+                break;
+            }
+            catch(Throwable t) {
+                loader = null;
+                throwable = t;
+            }
         }
-        catch(Throwable t) {
-            fail("Native library not unloaded: " + t.getMessage());
+        try {
+            if (loader == null)
+                fail("Native library not unloaded: " + throwable.getMessage());
         }
         finally {
             loader = null;
