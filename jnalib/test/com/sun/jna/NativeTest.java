@@ -194,7 +194,17 @@ public class NativeTest extends TestCase {
                      Native.getStructureAlignment(TestInterfaceWithAlignment.class));
     }
 
-    // TODO extract (alignment|typemapper) 
+    public void testCharArrayToString() {
+        char[] buf = { 'a', 'b', 'c', '\0', 'd', 'e' };
+        assertEquals("Wrong String generated", "abc", Native.toString(buf));
+    }
+
+    public void testByteArrayToString() {
+        byte[] buf = { 'a', 'b', 'c', '\0', 'd', 'e' };
+        assertEquals("Wrong String generated", "abc", Native.toString(buf));
+    }
+
+    // TODO test extraction of (alignment|typemapper) 
     // from (variable|options)
 
     public static void main(String[] args) {

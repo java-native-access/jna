@@ -46,6 +46,19 @@ public class CallbacksTest extends TestCase {
         public SmallTestStructure inner;
     }
     public static interface TestLibrary extends Library {
+        interface NoMethodCallback extends Callback {
+        }
+        interface CustomMethodCallback extends Callback {
+            void invoke();
+        }
+        interface TooManyMethodsCallback extends Callback {
+            void invoke();
+            void invoke2();
+        }
+        interface MultipleMethodsCallback extends Callback {
+            void invoke();
+            void callback();
+        }
         interface VoidCallback extends Callback {
             void callback();
         }
@@ -132,6 +145,66 @@ public class CallbacksTest extends TestCase {
         lib = null;
     }
 
+    public void testLookupNullCallback() {
+        assertNull("NULL pointer should result in null callback",
+                   CallbackReference.getCallback(null, null));
+        try {
+            CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(0));
+            fail("Null pointer lookup should fail");
+        }
+        catch(NullPointerException e) {
+        }
+    }
+
+    public void testLookupNonCallbackClass() {
+        try {
+            CallbackReference.getCallback(String.class, new Pointer(0));
+            fail("Request for non-Callback class should fail");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    public void testNoMethodCallback() {
+        try {
+            CallbackReference.getCallback(TestLibrary.NoMethodCallback.class, new Pointer(1));
+            fail("Callback with no callback method should fail");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    public void testCustomMethodCallback() {
+        CallbackReference.getCallback(TestLibrary.CustomMethodCallback.class, new Pointer(1));
+    }
+
+    public void testTooManyMethodsCallback() {
+        try {
+            CallbackReference.getCallback(TestLibrary.TooManyMethodsCallback.class, new Pointer(1));
+            fail("Callback lookup with too many methods should fail");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    public void testMultipleMethodsCallback() {
+        CallbackReference.getCallback(TestLibrary.MultipleMethodsCallback.class, new Pointer(1));
+    }
+
+    public void testNativeFunctionPointerStringValue() {
+        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
+        Class cls = CallbackReference.findCallbackClass(cb.getClass());
+        assertTrue("toString should include Java Callback type: " + cb + " ("
+                   + cls + ")", cb.toString().indexOf(cls.getName()) != -1);
+    }
+
+    public void testLookupSameCallback() {
+        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
+        Callback cb2 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
+        
+        assertEquals("Callback lookups for same pointer should return same Callback object", cb, cb2);
+    }
+
     public void testGCCallback() throws Exception {
         final boolean[] called = { false };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
@@ -178,7 +251,7 @@ public class CallbacksTest extends TestCase {
         };
         assertEquals("Wrong callback interface",
                      TestLibrary.Int32Callback.class,
-                     Native.findCallbackClass(cb.getClass()));
+                     CallbackReference.findCallbackClass(cb.getClass()));
     }
 
     public void testCallInt32Callback() {

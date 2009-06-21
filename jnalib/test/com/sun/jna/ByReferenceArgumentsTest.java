@@ -18,6 +18,7 @@ import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.ptr.ShortByReference;
 
@@ -32,6 +33,7 @@ public class ByReferenceArgumentsTest extends TestCase {
         void incrementInt8ByReference(ByteByReference b);
         void incrementInt16ByReference(ShortByReference s);
         void incrementInt32ByReference(IntByReference i);
+        void incrementNativeLongByReference(NativeLongByReference l);
         void incrementInt64ByReference(LongByReference l);
         void complementFloatByReference(FloatByReference f);
         void complementDoubleByReference(DoubleByReference d);
@@ -61,6 +63,12 @@ public class ByReferenceArgumentsTest extends TestCase {
         IntByReference iref = new IntByReference();
         lib.incrementInt32ByReference(iref);
         assertEquals("Int argument not modified", 1, iref.getValue());
+    }
+    public void testNativeLongByReference() {
+        NativeLongByReference iref = new NativeLongByReference();
+        lib.incrementNativeLongByReference(iref);
+        assertEquals("Native long argument not modified",
+                     new NativeLong(1), iref.getValue());
     }
     public void testLongByReference() {
         LongByReference lref = new LongByReference();

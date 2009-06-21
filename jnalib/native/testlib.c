@@ -347,6 +347,11 @@ incrementInt32ByReference(int32_t *arg) {
 }
 
 EXPORT void 
+incrementNativeLongByReference(long *arg) {
+  if (arg) ++*arg;
+}
+
+EXPORT void 
 incrementInt64ByReference(int64_t *arg) {
   if (arg) ++*arg;
 }

@@ -227,6 +227,9 @@ public class PointerTest extends TestCase {
                      p, Native.getDirectBufferPointer(b.asFloatBuffer()));
         assertEquals("DoubleBuffer Pointer does not match", 
                      p, Native.getDirectBufferPointer(b.asDoubleBuffer()));
+
+        assertEquals("Wrong direct buffer address",
+                     p, Native.getDirectBufferPointer(b));
     }
 
     public static class TestPointerType extends PointerType {

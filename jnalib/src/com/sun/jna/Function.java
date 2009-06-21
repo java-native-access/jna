@@ -773,12 +773,10 @@ public class Function extends Pointer {
     
     private static class NativeMappedArray extends Memory implements PostCallRead {
         private final NativeMapped[] original;
-        private final long elSize;
         public NativeMappedArray(NativeMapped[] arg) {
             super(Native.getNativeSize(arg.getClass(), arg));
             this.original = arg;
             Class nativeType = arg.getClass().getComponentType();
-            this.elSize = Native.getNativeSize(nativeType);
             setValue(0, original, original.getClass());
         }
         public void read() {

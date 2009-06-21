@@ -535,6 +535,7 @@ public class StructureTest extends TestCase {
     public void testReadFunctionPointerAsCallback() {
         CbStruct2 s = new CbStruct2();
         CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
+        assertNull("Function pointer field should be null", s.cb);
         lib.setCallbackInStruct(s);
         assertNotNull("Callback field not set", s.cb);
     }
@@ -543,7 +544,7 @@ public class StructureTest extends TestCase {
         CbStruct2 s = new CbStruct2();
         CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
         lib.setCallbackInStruct(s);
-        assertEquals("Proxy to native function pointer failed",
+        assertEquals("Proxy to native function pointer failed: " + s.cb,
                      3, s.cb.callback(1, 2));
     }
 

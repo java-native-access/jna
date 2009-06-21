@@ -72,10 +72,14 @@ class CallbackReference extends WeakReference {
             }
             int ctype = AltCallingConvention.class.isAssignableFrom(type)
                 ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+            Map foptions = new HashMap();
             Map options = Native.getLibraryOptions(type);
-            NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, options);
+            if (options != null) {
+                foptions.putAll(options);
+            }
+            foptions.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(type));
+            NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, foptions);
             Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
-            h.options.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(cb));
             map.put(cb, null);
             return cb;
         }
@@ -86,7 +90,7 @@ class CallbackReference extends WeakReference {
     CallbackProxy proxy;
     private CallbackReference(Callback callback, int callingConvention) {
         super(callback);
-        TypeMapper mapper = Native.getTypeMapper(Native.findCallbackClass(callback.getClass()));
+        TypeMapper mapper = Native.getTypeMapper(callback.getClass());
         if (callback instanceof CallbackProxy) {
             proxy = (CallbackProxy)callback;
         }
@@ -159,9 +163,42 @@ class CallbackReference extends WeakReference {
         return m;
     }
 
+    /** Find the first instance of an interface which implements the Callback
+     * interface or an interface derived from Callback, which defines an
+     * appropriate callback method.
+     */
+    static Class findCallbackClass(Class type) {
+        if (!Callback.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException(type.getName() + " is not derived from com.sun.jna.Callback");
+        }
+        if (type.isInterface()) {
+            return type;
+        }
+        Class[] ifaces = type.getInterfaces();
+        for (int i=0;i < ifaces.length;i++) {
+            if (Callback.class.isAssignableFrom(ifaces[i])) {
+                try { 
+                    // Make sure it's got a recognizable callback method
+                    getCallbackMethod(ifaces[i]);
+                    return ifaces[i];
+                }
+                catch(IllegalArgumentException e) {
+                    break;
+                }
+            }
+        }
+        if (Callback.class.isAssignableFrom(type.getSuperclass())) {
+            return findCallbackClass(type.getSuperclass());
+        }
+        return type;
+    }
+    
     private static Method getCallbackMethod(Callback callback) {
+        return getCallbackMethod(findCallbackClass(callback.getClass()));
+    }
+
+    private static Method getCallbackMethod(Class cls) {
         // Look at only public methods defined by the Callback class
-        Class cls = Native.findCallbackClass(callback.getClass());
         Method[] pubMethods = cls.getDeclaredMethods();
         Method[] classMethods = cls.getMethods();
         Set pmethods = new HashSet(Arrays.asList(pubMethods));
@@ -413,28 +450,20 @@ class CallbackReference extends WeakReference {
         private Function function;
         private Map options;
         
-        public NativeFunctionHandler(Pointer address, int callingConvention, Map libOptions) {
-            this.function = new Function(address, callingConvention) {
-                public String getName() {
-                    String str = super.getName();
-                    if (options.containsKey(Function.OPTION_INVOKING_METHOD)) {
-                        Method m = (Method)options.get(Function.OPTION_INVOKING_METHOD);
-                        Class cls = Native.findCallbackClass(m.getDeclaringClass());
-                        str += " (" + cls.getName() + ")";
-                    }
-                    return str;
-                }
-            };
-            this.options = new HashMap();
-            if (libOptions != null) {
-                options.putAll(libOptions);
-            }
+        public NativeFunctionHandler(Pointer address, int callingConvention, Map options) {
+            this.function = new Function(address, callingConvention);
+            this.options = options;
         }
         
         /** Chain invocation to the native function. */
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (Library.Handler.OBJECT_TOSTRING.equals(method)) {
-                return "Proxy interface to " + function;
+                String str = "Proxy interface to " + function;
+                Method m = (Method)options.get(Function.OPTION_INVOKING_METHOD);
+                Class cls = findCallbackClass(m.getDeclaringClass());
+                str += " (" + cls.getName() + ")";
+
+                return str;
             }
             else if (Library.Handler.OBJECT_HASHCODE.equals(method)) {
                 return new Integer(hashCode());

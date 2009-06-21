@@ -286,14 +286,6 @@ public final class Native {
 
     /** Convert a direct {@link Buffer} into a {@link Pointer}. 
      * @throws IllegalArgumentException if the buffer is not direct.
-     * @deprecated Use {@link #getDirectBufferPointer} instead. 
-     */
-    public static Pointer getByteBufferPointer(ByteBuffer b) {
-        return getDirectBufferPointer(b);
-    }
-    
-    /** Convert a direct {@link Buffer} into a {@link Pointer}. 
-     * @throws IllegalArgumentException if the buffer is not direct.
      */
     public static native Pointer getDirectBufferPointer(Buffer b);
     
@@ -393,30 +385,6 @@ public final class Native {
         }
     }
     
-    /** Find the first instance of an interface which implements the Callback
-     * interface or an interface derived from Callback.
-     */
-    static Class findCallbackClass(Class type) {
-        if (!Callback.class.isAssignableFrom(type)) {
-            throw new IllegalArgumentException(type.getName() + " is not derived from com.sun.jna.Callback");
-        }
-        if (type.isInterface()) {
-            return type;
-        }
-        Class[] ifaces = type.getInterfaces();
-        for (int i=0;i < ifaces.length;i++) {
-            if (Callback.class.isAssignableFrom(ifaces[i])) {
-                if (ifaces[i].getMethods().length == 1)
-                    return ifaces[i];
-                break;
-            }
-        }
-        if (Callback.class.isAssignableFrom(type.getSuperclass())) {
-            return findCallbackClass(type.getSuperclass());
-        }
-        return type;
-    }
-    
     /** Find the library interface corresponding to the given class.  Checks
      * all ancestor classes and interfaces for a declaring class which
      * implements {@link Library}.
@@ -429,7 +397,7 @@ public final class Native {
             return cls;
         }
         if (Callback.class.isAssignableFrom(cls)) {
-            cls = findCallbackClass(cls);
+            cls = CallbackReference.findCallbackClass(cls);
         }
         Class fromDeclaring = findEnclosingLibraryClass(cls.getDeclaringClass());
         if (fromDeclaring != null) {
