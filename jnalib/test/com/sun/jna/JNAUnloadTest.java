@@ -72,8 +72,10 @@ public class JNAUnloadTest extends TestCase {
             if (Platform.isWindows()) {
                 ClassLoader.class.getDeclaredField("nativeLibraries");
             }
-            assertFalse("Temporary native library not deleted: " + path,
-                        f.exists());
+            if (f.exists() && !f.delete()) {
+                assertFalse("Temporary native library still locked: " + path,
+                            f.exists());
+            }
         }
         catch(Exception e) {
             // Skip on non-supported VMs
