@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-06-16">
+<meta name="date" content="2009-06-22">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -570,7 +570,7 @@ be in a JNA interface mapping, but they can be any static or object methods.
 You only need register them within the static initializer of the defining
 class, as in the example below.  The <code>Native.register()</code> method
 takes the name of your native library, the same
-as <code>Native.loadLibrary()</code> would. 
+as <code>Native.loadLibrary()</code> would.<p>
 
 <textarea name="textarea" cols="80" rows="20" readonly="readonly">
 import com.sun.jna.*;
@@ -594,6 +594,13 @@ public class HelloWorld {
 }
 </textarea>
 <p>
+As of version 3.1.0, direct mapping only supports Pointer and primitive type
+arguments (SVN head supports a few more types).  Once the full mappings are
+available, though, you can easily convert from interface mapping to direct
+mapping by creating a direct mapping class which implements your library
+interface, with all methods defined as native methods.  Then your library
+instance variable can be assigned an instance of this new class instead of the
+object returned by Native.loadLibrary().<p>
 
 <a href=#top>Top</a>
 <a name=demos></a>
