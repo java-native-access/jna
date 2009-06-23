@@ -793,7 +793,7 @@ public final class Native {
             }
             String msg = 
                 "Library '" + libName + "' was not found by class loader " + cl;
-            throw new IllegalArgumentException(msg);
+            throw new UnsatisfiedLinkError(msg);
         }
         catch (Exception e) {
             return null;
