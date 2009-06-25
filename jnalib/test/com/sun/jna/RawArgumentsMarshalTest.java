@@ -13,15 +13,9 @@
 package com.sun.jna;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
-import java.util.Arrays;
-
-import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
-
-import junit.framework.TestCase;
 
 /** Exercise a range of native methods.
  *
@@ -91,6 +85,11 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
         lib = new RawTestLibrary();
     }
     
+    // These tests crash on w32 IBM J9 unless -Xint is used
+    // (jvmwi3260-20080415_18762)
+    //public void testWideCharArgument() { }
+    //public void testWStringArgumentReturn() { }
+
     // Override tests not yet supported
     public void testStringArrayArgument() { }
     public void testWriteStructureArrayArgumentMemory() { }
