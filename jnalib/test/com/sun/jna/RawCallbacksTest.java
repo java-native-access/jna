@@ -26,15 +26,15 @@ public class RawCallbacksTest extends CallbacksTest {
         public native byte callInt8Callback(ByteCallback c, byte arg, byte arg2);
         public native short callInt16Callback(ShortCallback c, short arg, short arg2);
         public native int callInt32Callback(Int32Callback c, int arg, int arg2);
-        public NativeLong callNativeLongCallback(NativeLongCallback c, NativeLong arg, NativeLong arg2) { throw new UnsupportedOperationException(); }
+        public native NativeLong callNativeLongCallback(NativeLongCallback c, NativeLong arg, NativeLong arg2);
         public native long callInt64Callback(Int64Callback c, long arg, long arg2);
         public native float callFloatCallback(FloatCallback c, float arg, float arg2);
         public native double callDoubleCallback(DoubleCallback c, double arg, double arg2);
         public native SmallTestStructure callStructureCallback(StructureCallback c, SmallTestStructure arg);
         public native String callStringCallback(StringCallback c, String arg);
-        public WString callWideStringCallback(WideStringCallback c, WString arg) { throw new UnsupportedOperationException(); }
+        public native WString callWideStringCallback(WideStringCallback c, WString arg);
         public Pointer callStringArrayCallback(StringArrayCallback c, String[] arg) { throw new UnsupportedOperationException(); }
-        public int callCallbackWithByReferenceArgument(CopyArgToByReference cb, int arg, IntByReference result) { throw new UnsupportedOperationException(); }
+        public native int callCallbackWithByReferenceArgument(CopyArgToByReference cb, int arg, IntByReference result);
         public native TestStructure.ByValue callCallbackWithStructByValue(TestStructure.TestCallback callback, TestStructure.ByValue cbstruct);
         public native CbCallback callCallbackWithCallback(CbCallback cb);
         public native Int32CallbackX returnCallback();
@@ -51,10 +51,8 @@ public class RawCallbacksTest extends CallbacksTest {
     }
     
     // Currently unsupported tests
-    public void testCallNativeLongCallback() { }
-    public void testCallWideStringCallback() { }
     public void testCallStringArrayCallback() { }
-    public void testCallCallbackWithByReferenceArgument() { }
+    public void testCallbackExceptionHandlerWithCallbackProxy() { }
 
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(RawCallbacksTest.class);

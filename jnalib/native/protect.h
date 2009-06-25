@@ -120,6 +120,8 @@ _exc_handler(struct _EXCEPTION_RECORD* exception_record,
 #include <signal.h>
 #include <setjmp.h>
 static jmp_buf _context;
+static void* _old_segv_handler = NULL;
+static void* _old_bus_handler = NULL;
 static volatile int _error;
 static void _exc_handler(int sig) {
   if (sig == SIGSEGV || sig == SIGBUS) {
@@ -128,9 +130,6 @@ static void _exc_handler(int sig) {
 }
 
 #define PROTECTED_START() \
-  void* _old_segv_handler; \
-  void* _old_bus_handler; \
-  int _error = 0; \
   if (PROTECT) { \
     _old_segv_handler = signal(SIGSEGV, _exc_handler); \
     _old_bus_handler = signal(SIGBUS, _exc_handler); \

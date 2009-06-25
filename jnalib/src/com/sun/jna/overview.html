@@ -656,7 +656,7 @@ a performance hit using reflection to walk through all the fields.  Structure
 auto-synch can be disabled by calling
 {@link com.sun.jna.Structure#setAutoSynch} with a <code>false</code> parameter.
 It is then up to you to use {@link com.sun.jna.Structure#readField(String)}
-and {@link com.sun.jna.Structure#writeField(String)}/{@link
+and {@link com.sun.jna.Structure#writeField(String)} or {@link
 com.sun.jna.Structure#writeField(String,Object)} to synch with just the fields
 of interest. 
 </body>

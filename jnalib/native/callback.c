@@ -37,9 +37,10 @@ static jclass classObject;
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention) {
+                callconv_t calling_convention, jboolean direct) {
   callback* cb;
   ffi_abi abi = FFI_DEFAULT_ABI;
+  ffi_abi java_abi = FFI_DEFAULT_ABI;
   ffi_type* ffi_rtype;
   ffi_status status;
   jsize argc;
@@ -47,28 +48,83 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   char rtype;
   char msg[64];
   int i;
+  int cvt = 0;
 
   if ((*env)->GetJavaVM(env, &vm) != JNI_OK) {
     throwByName(env, EUnsatisfiedLink, "Can't get Java VM");
     return NULL;
   }
   argc = (*env)->GetArrayLength(env, param_types);
+
   cb = (callback *)malloc(sizeof(callback));
-  cb->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
+  cb->closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
   cb->vm = vm;
-  cb->ffi_args = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
-  cb->param_jtypes = (char*)malloc(sizeof(char) * argc);
+  cb->arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
+  cb->java_arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * (argc + 3));
+  cb->arg_jtypes = (char*)malloc(sizeof(char) * argc);
+  cb->flags = (int *)malloc(sizeof(int) * argc);
+  cb->rflag = CVT_DEFAULT;
+  cb->arg_classes = (jobject*)malloc(sizeof(jobject) * argc);
  
+  cb->direct = direct;
+  cb->java_arg_types[0] = cb->java_arg_types[1] = cb->java_arg_types[2] = &ffi_type_pointer;
+
   for (i=0;i < argc;i++) {
+    int jtype;
     jclass cls = (*env)->GetObjectArrayElement(env, param_types, i);
-    cb->param_jtypes[i] = get_jtype(env, cls);
-    cb->ffi_args[i] = get_ffi_type(env, cls, cb->param_jtypes[i]);
-    if (!cb->param_jtypes[i]) {
-      snprintf(msg, sizeof(msg), "Unsupported type at parameter %d", i);
+    if ((cb->flags[i] = get_conversion_flag(env, cls)) != CVT_DEFAULT) {
+      cb->arg_classes[i] = (*env)->NewWeakGlobalRef(env, cls);
+      cvt = 1;
+    }
+
+    cb->arg_jtypes[i] = jtype = get_jtype(env, cls);
+    if (jtype == -1) {
+      snprintf(msg, sizeof(msg), "Unsupported argument at index %d", i);
       throwByName(env, EIllegalArgument, msg);
       goto failure_cleanup;
+    }
+
+    cb->java_arg_types[i+3] = cb->arg_types[i] = get_ffi_type(env, cls, cb->arg_jtypes[i]);
+    if (cb->flags[i] == CVT_NATIVE_MAPPED
+        || cb->flags[i] == CVT_POINTER_TYPE
+        || cb->flags[i] == CVT_INTEGER_TYPE) {
+      jclass ncls;
+      ncls = getNativeType(env, cls);
+      cb->arg_jtypes[i] = jtype = get_jtype(env, ncls);
+      if (jtype == -1) {
+        snprintf(msg, sizeof(msg), "Unsupported NativeMapped argument native type at argument %d", i);
+        throwByName(env, EIllegalArgument, msg);
+        goto failure_cleanup;
+      }
+      cb->java_arg_types[i+3] = &ffi_type_pointer;
+      cb->arg_types[i] = get_ffi_type(env, ncls, cb->arg_jtypes[i]);
+    }
+
+    if (cb->arg_types[i]->type == FFI_TYPE_FLOAT) {
+      // Java method is varargs, so promote floats to double
+      cb->java_arg_types[i+3] = &ffi_type_double;
+      cb->flags[i] = CVT_FLOAT;
+      cvt = 1;
+    }
+    else if (cb->java_arg_types[i+3]->type == FFI_TYPE_STRUCT) {
+      // All callback structure arguments are passed as a jobject
+      cb->java_arg_types[i+3] = &ffi_type_pointer;
+    }
+  }
+  if (!direct || !cvt) {
+    free(cb->flags);
+    cb->flags = NULL;
+    free(cb->arg_classes);
+    cb->arg_classes = NULL;
+  }
+  if (direct) {
+    cb->rflag = get_conversion_flag(env, return_type);
+    if (cb->rflag == CVT_NATIVE_MAPPED
+        || cb->rflag == CVT_INTEGER_TYPE
+        || cb->rflag == CVT_POINTER_TYPE) {
+      return_type = getNativeType(env, return_type);
     }
   }
 
@@ -76,6 +132,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }
+  java_abi = FFI_STDCALL;
 #endif // _WIN32
 
   rtype = get_jtype(env, return_type);
@@ -88,29 +145,33 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     throwByName(env, EIllegalArgument, "Error in return type");
     goto failure_cleanup;
   }
-  status = ffi_prep_cif(&cb->ffi_cif, abi, argc, ffi_rtype, &cb->ffi_args[0]);
-
-  switch(status) {
-  case FFI_BAD_ABI:
-    snprintf(msg, sizeof(msg),
-             "Invalid calling convention: %d", (int)calling_convention);
-    throwByName(env, EIllegalArgument, msg);
-    break;
-  case FFI_BAD_TYPEDEF:
-    snprintf(msg, sizeof(msg),
-             "Invalid structure definition (native typedef error)");
-    throwByName(env, EIllegalArgument, msg);
-    break;
-  case FFI_OK: 
-    ffi_prep_closure_loc(cb->ffi_closure, &cb->ffi_cif, callback_dispatch, cb,
-                         cb->x_closure);
-
-    return cb;
-  default:
-    snprintf(msg, sizeof(msg),
-             "Native callback setup failure: error code %d", status);
-    throwByName(env, EIllegalArgument, msg);
-    break;
+  status = ffi_prep_cif(&cb->cif, abi, argc, ffi_rtype, cb->arg_types);
+  if (!ffi_error(env, "callback setup", status)) {
+    switch(rtype) {
+    case 'V': cb->fptr = (*env)->CallVoidMethod; break;
+    case 'Z': cb->fptr = (*env)->CallBooleanMethod; break;
+    case 'B': cb->fptr = (*env)->CallByteMethod; break;
+    case 'S': cb->fptr = (*env)->CallShortMethod; break;
+    case 'C': cb->fptr = (*env)->CallCharMethod; break;
+    case 'I': cb->fptr = (*env)->CallIntMethod; break;
+    case 'J': cb->fptr = (*env)->CallLongMethod; break;
+    case 'F': cb->fptr = (*env)->CallFloatMethod; break;
+    case 'D': cb->fptr = (*env)->CallDoubleMethod; break;
+    default: cb->fptr = (*env)->CallObjectMethod; break;
+    }
+    if (cb->rflag == CVT_STRUCTURE_BYVAL
+        || cb->rflag == CVT_NATIVE_MAPPED
+        || cb->rflag == CVT_POINTER_TYPE
+        || cb->rflag == CVT_INTEGER_TYPE) {
+      // Java method returns a jobject, not a struct
+      ffi_rtype = &ffi_type_pointer;
+    }
+    status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, ffi_rtype, cb->java_arg_types);
+    if (!ffi_error(env, "callback setup (2)", status)) {
+      ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
+                           cb->x_closure);
+      return cb;
+    }
   }
 
  failure_cleanup:
@@ -121,9 +182,19 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 void 
 free_callback(JNIEnv* env, callback *cb) {
   (*env)->DeleteWeakGlobalRef(env, cb->object);
-  ffi_closure_free(cb->ffi_closure);
-  free(cb->ffi_args);
-  free(cb->param_jtypes);
+  ffi_closure_free(cb->closure);
+  free(cb->arg_types);
+  if (cb->arg_classes) {
+    unsigned i;
+    for (i=0;i < cb->cif.nargs;i++) {
+      (*env)->DeleteWeakGlobalRef(env, cb->arg_classes[i]);
+    }
+    free(cb->arg_classes);
+  }
+  free(cb->java_arg_types);
+  if (cb->flags)
+    free(cb->flags);
+  free(cb->arg_jtypes);
   free(cb);
 }
 
@@ -158,12 +229,124 @@ handle_exception(JNIEnv* env, jobject cb, jthrowable throwable) {
 static void
 callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbargs) {
   jobject self;
+  void *oldresp = resp;
 
   self = (*env)->NewLocalRef(env, cb->object);
   // Avoid calling back to a GC'd object
   if ((*env)->IsSameObject(env, self, NULL)) {
     fprintf(stderr, "JNA: callback object has been garbage collected\n");
-    memset(resp, 0, cif->rtype->size); 
+    if (cif->rtype->type != FFI_TYPE_VOID)
+      memset(resp, 0, cif->rtype->size); 
+  }
+  else if (cb->direct) {
+    unsigned int i;
+    void **args = alloca((cif->nargs + 3) * sizeof(void *));
+    args[0] = &env;
+    args[1] = &self;
+    args[2] = &cb->methodID;
+    memcpy(&args[3], cbargs, cif->nargs * sizeof(void *));
+
+    if (cb->flags) {
+      for (i=0;i < cif->nargs;i++) {
+        switch(cb->flags[i]) {
+        case CVT_INTEGER_TYPE:
+        case CVT_POINTER_TYPE:
+        case CVT_NATIVE_MAPPED:
+          *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], args[i+3], JNI_FALSE);
+          break;
+        case CVT_POINTER:
+          *((void **)args[i+3]) = newJavaPointer(env, *(void **)args[i+3]);
+          break;
+        case CVT_STRING:
+          *((void **)args[i+3]) = newJavaString(env, *(void **)args[i+3], JNI_FALSE);
+          break;
+        case CVT_WSTRING:
+          *((void **)args[i+3]) = newJavaWString(env, *(void **)args[i+3]);
+          break;
+        case CVT_STRUCTURE:
+          *((void **)args[i+3]) = newJavaStructure(env, *(void **)args[i+3], cb->arg_classes[i], JNI_FALSE);
+          break;
+        case CVT_STRUCTURE_BYVAL:
+          { 
+            void *ptr = args[i+3];
+            args[i+3] = alloca(sizeof(void *));
+            *((void **)args[i+3]) = newJavaStructure(env, ptr, cb->arg_classes[i], JNI_TRUE);
+          }
+          break;
+        case CVT_CALLBACK:
+          *((void **)args[i+3]) = newJavaCallback(env, *(void **)args[i+3], cb->arg_classes[i]);
+          break;
+        case CVT_FLOAT:
+          {
+            void *ptr = alloca(sizeof(double));
+            *(double *)ptr = *(float*)args[i+3];
+            args[i+3] = ptr;
+          }
+          break;
+        }
+      }
+    }
+
+    if (cb->rflag == CVT_STRUCTURE_BYVAL) {
+      resp = alloca(sizeof(jobject));
+    }
+    else if (cb->cif.rtype->size > cif->rtype->size) {
+      resp = alloca(cb->cif.rtype->size);
+    }
+    ffi_call(&cb->java_cif, FFI_FN(cb->fptr), resp, args);
+    if ((*env)->ExceptionCheck(env)) {
+      jthrowable throwable = (*env)->ExceptionOccurred(env);
+      (*env)->ExceptionClear(env);
+      if (!handle_exception(env, self, throwable)) {
+        fprintf(stderr, "JNA: error handling callback exception, continuing\n");
+      }
+      if (cif->rtype->type != FFI_TYPE_VOID)
+        memset(oldresp, 0, cif->rtype->size);
+    }
+    else switch(cb->rflag) {
+    case CVT_INTEGER_TYPE:
+      if (cb->cif.rtype->size > sizeof(ffi_arg)) {
+        *(jlong *)oldresp = getIntegerTypeValue(env, *(void **)resp);
+      }
+      else {
+        *(ffi_arg *)oldresp = (ffi_arg)getIntegerTypeValue(env, *(void **)resp);
+      }
+      break;
+    case CVT_POINTER_TYPE:
+      *(void **)resp = getPointerTypeAddress(env, *(void **)resp);
+      break;
+    case CVT_NATIVE_MAPPED:
+      toNative(env, *(void **)resp, oldresp, cb->cif.rtype->size, JNI_TRUE);
+      break;
+    case CVT_POINTER:
+      *(void **)resp = getNativeAddress(env, *(void **)resp);
+      break;
+    case CVT_STRING: 
+      *(void **)resp = getNativeString(env, *(void **)resp, JNI_FALSE);
+      break;
+    case CVT_WSTRING: 
+      *(void **)resp = getNativeString(env, *(void **)resp, JNI_TRUE);
+      break;
+    case CVT_STRUCTURE:
+      writeStructure(env, *(void **)resp);
+      *(void **)resp = getStructureAddress(env, *(void **)resp);
+      break;
+    case CVT_STRUCTURE_BYVAL:
+      writeStructure(env, *(void **)resp);
+      memcpy(oldresp, getStructureAddress(env, *(void **)resp), cb->cif.rtype->size);
+      break;
+    case CVT_CALLBACK: 
+      *(void **)resp = getCallbackAddress(env, *(void **)resp);
+      break;
+    default: break;
+    }
+    if (cb->flags) {
+      for (i=0;i < cif->nargs;i++) {
+        if (cb->flags[i] == CVT_STRUCTURE) {
+          writeStructure(env, *(void **)args[i+3]);
+        }
+      }
+    }
   }
   else {
     jobject result;
@@ -172,7 +355,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     unsigned int i;
 
     for (i=0;i < cif->nargs;i++) {
-      jobject arg = new_object(env, cb->param_jtypes[i], cbargs[i]);
+      jobject arg = new_object(env, cb->arg_jtypes[i], cbargs[i], JNI_FALSE);
       (*env)->SetObjectArrayElement(env, array, i, arg);
     }
     result = (*env)->CallObjectMethod(env, self, cb->methodID, array);
@@ -182,10 +365,11 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
       if (!handle_exception(env, self, throwable)) {
         fprintf(stderr, "JNA: error handling callback exception, continuing\n");
       }
-      memset(resp, 0, cif->rtype->size);
+      if (cif->rtype->type != FFI_TYPE_VOID)
+        memset(resp, 0, cif->rtype->size);
     }
     else {
-      extract_value(env, result, resp, cif->rtype->size);
+      extract_value(env, result, resp, cif->rtype->size, JNI_TRUE);
     }
   }
 }
@@ -208,11 +392,12 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   // are properly disposed
   if ((*env)->PushLocalFrame(env, 16) < 0) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
-    return;
   }
-  callback_invoke(env, (callback *)user_data, cif, resp, cbargs);
-  (*env)->PopLocalFrame(env, NULL);
-
+  else {
+    callback_invoke(env, (callback *)user_data, cif, resp, cbargs);
+    (*env)->PopLocalFrame(env, NULL);
+  }
+  
   if (!attached) {
     (*jvm)->DetachCurrentThread(jvm);
   }

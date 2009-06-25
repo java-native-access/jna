@@ -27,9 +27,7 @@ public class TypeMapperTest extends TestCase {
         int returnInt32Argument(String s);
         int returnInt32Argument(Number n);
     }
-    public TypeMapperTest(String testName) {
-        super(testName);
-    }
+
     public void testBooleanToIntArgumentConversion() {
         final int MAGIC = 0xABEDCF23;
         Map options = new HashMap();

@@ -75,7 +75,7 @@ public class Pointer {
     }
 
     /** Zero memory for the given number of bytes. */
-    void clear(long size) {
+    public void clear(long size) {
         setMemory(0, size, (byte)0);
     }
 

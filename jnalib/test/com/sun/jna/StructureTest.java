@@ -1015,4 +1015,15 @@ public class StructureTest extends TestCase {
         lib.testStructurePointerArgument(s);
         assertEquals("Auto read should be disabled", EXPECTED, s.field);
     }
+    public void testStructureEquals() {
+        class TestStructure extends Structure {
+            public byte first;
+            public int second;
+        }
+        TestStructure s1 = new TestStructure();
+        TestStructure s2 = new TestStructure();
+        s2.getPointer().setInt(0, -1);
+        s2.write();
+        assertEquals("Structure equals should ignore padding", s1, s2);
+    }
 }

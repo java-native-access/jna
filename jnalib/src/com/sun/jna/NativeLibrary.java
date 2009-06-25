@@ -211,18 +211,24 @@ public class NativeLibrary {
      * Library}).
      */
     public static final NativeLibrary getInstance(String libraryName, Map options) {
+        options = new HashMap(options);
+        if (options.get(Library.OPTION_CALLING_CONVENTION) == null) {
+            options.put(Library.OPTION_CALLING_CONVENTION, new Integer(Function.C_CONVENTION));
+        }
+
         if (libraryName == null)
             throw new NullPointerException("Library name may not be null");
 
         synchronized (libraries) {
-            WeakReference ref = (WeakReference)libraries.get(libraryName);
+            WeakReference ref = (WeakReference)libraries.get(libraryName + options);
             NativeLibrary library = ref != null ? (NativeLibrary)ref.get() : null;
+
             if (library == null) {
                 library = loadLibrary(libraryName, options);
                 ref = new WeakReference(library);
-                libraries.put(library.getName(), ref);
-                libraries.put(library.getFile().getAbsolutePath(), ref);
-                libraries.put(library.getFile().getName(), ref);
+                libraries.put(library.getName() + options, ref);
+                libraries.put(library.getFile().getAbsolutePath() + options, ref);
+                libraries.put(library.getFile().getName() + options, ref);
             }
             return library;
         }
@@ -383,11 +389,11 @@ public class NativeLibrary {
 
     public void dispose() {
         synchronized(libraries) {
-            libraries.remove(getName());
+            libraries.remove(getName() + options);
             File path = getFile();
             if (path != null) {
-                libraries.remove(path.getAbsolutePath());
-                libraries.remove(path.getName());
+                libraries.remove(path.getAbsolutePath() + options);
+                libraries.remove(path.getName() + options);
             }
         }
         synchronized(this) {

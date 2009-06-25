@@ -15,6 +15,10 @@
 
 #include "ffi.h"
 #include "com_sun_jna_Function.h"
+#include "com_sun_jna_Native.h"
+#ifdef sun
+#  include <alloca.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,20 +35,49 @@ typedef enum _callconv {
 /* Maximum number of allowed arguments in libffi. */
 #define MAX_NARGS com_sun_jna_Function_MAX_NARGS
 
+enum {
+  CVT_DEFAULT = com_sun_jna_Native_CVT_DEFAULT,
+  CVT_POINTER = com_sun_jna_Native_CVT_POINTER,
+  CVT_STRING = com_sun_jna_Native_CVT_STRING,
+  CVT_STRUCTURE = com_sun_jna_Native_CVT_STRUCTURE,
+  CVT_STRUCTURE_BYVAL = com_sun_jna_Native_CVT_STRUCTURE_BYVAL,
+  CVT_BUFFER = com_sun_jna_Native_CVT_BUFFER,
+  CVT_ARRAY_BYTE = com_sun_jna_Native_CVT_ARRAY_BYTE,
+  CVT_ARRAY_SHORT = com_sun_jna_Native_CVT_ARRAY_SHORT,
+  CVT_ARRAY_CHAR = com_sun_jna_Native_CVT_ARRAY_CHAR,
+  CVT_ARRAY_INT = com_sun_jna_Native_CVT_ARRAY_INT,
+  CVT_ARRAY_LONG = com_sun_jna_Native_CVT_ARRAY_LONG,
+  CVT_ARRAY_FLOAT = com_sun_jna_Native_CVT_ARRAY_FLOAT,
+  CVT_ARRAY_DOUBLE = com_sun_jna_Native_CVT_ARRAY_DOUBLE,
+  CVT_ARRAY_BOOLEAN = com_sun_jna_Native_CVT_ARRAY_BOOLEAN,
+  CVT_BOOLEAN = com_sun_jna_Native_CVT_BOOLEAN,
+  CVT_CALLBACK = com_sun_jna_Native_CVT_CALLBACK,
+  CVT_FLOAT = com_sun_jna_Native_CVT_FLOAT,
+  CVT_NATIVE_MAPPED = com_sun_jna_Native_CVT_NATIVE_MAPPED,
+  CVT_WSTRING = com_sun_jna_Native_CVT_WSTRING,
+  CVT_INTEGER_TYPE = com_sun_jna_Native_CVT_INTEGER_TYPE,
+  CVT_POINTER_TYPE = com_sun_jna_Native_CVT_POINTER_TYPE,
+  CVT_TYPE_MAPPER = com_sun_jna_Native_CVT_TYPE_MAPPER,
+};
+
 typedef struct _callback {
   // Location of this field must agree with CallbackReference.getTrampoline()
   void* x_closure;
-  ffi_closure* ffi_closure;
-  ffi_cif ffi_cif;
-  ffi_type** ffi_args;
+  ffi_closure* closure;
+  ffi_cif cif;
+  ffi_cif java_cif;
+  ffi_type** arg_types;
+  ffi_type** java_arg_types;
+  jobject* arg_classes;
+  int* flags;
+  int rflag;
   JavaVM* vm;
   jobject object;
   jmethodID methodID;
-  char* param_jtypes;
+  char* arg_jtypes;
+  jboolean direct;
+  void* fptr;
 } callback;
-
-// Size of a register
-typedef long word_t;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
 #if defined(_WIN64)
@@ -92,18 +125,36 @@ typedef long word_t;
 #define ELastError "com/sun/jna/LastErrorException"
 
 extern void throwByName(JNIEnv *env, const char *name, const char *msg);
-extern char get_jtype(JNIEnv*, jclass);
+extern int get_jtype(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
 extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
 extern const char* jnidispatch_callback_init(JNIEnv*);
 extern void jnidispatch_callback_dispose(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass, 
-                                 callconv_t);
+                                 callconv_t, jboolean);
 extern void free_callback(JNIEnv*, callback*);
-extern void extract_value(JNIEnv*, jobject, void*, size_t size);
-extern jobject new_object(JNIEnv*, char, void*);
+extern void extract_value(JNIEnv*, jobject, void*, size_t, jboolean);
+extern jobject new_object(JNIEnv*, char, void*, jboolean);
 extern jboolean is_protected();
+extern int get_conversion_flag(JNIEnv*, jclass);
+extern jboolean ffi_error(JNIEnv*,const char*,ffi_status);
+
+extern jobject newJavaPointer(JNIEnv*, void*);
+extern jstring newJavaString(JNIEnv*, const char*, jboolean);
+extern jobject newJavaWString(JNIEnv*, const wchar_t*);
+extern jobject newJavaStructure(JNIEnv*, void*, jclass, jboolean);
+extern jobject newJavaCallback(JNIEnv*, void*, jclass);
+extern void* getNativeString(JNIEnv*, jstring, jboolean);
+extern void* getNativeAddress(JNIEnv*, jobject);
+extern void* getStructureAddress(JNIEnv*, jobject);
+extern void* getCallbackAddress(JNIEnv*, jobject);
+extern jlong getIntegerTypeValue(JNIEnv*, jobject);
+extern void* getPointerTypeAddress(JNIEnv*, jobject);
+extern void writeStructure(JNIEnv*, jobject);
+extern jclass getNativeType(JNIEnv*, jclass);
+extern void toNative(JNIEnv*, jobject, void*, size_t, jboolean);
+extern jclass fromNative(JNIEnv*, jclass, ffi_type*, void*, jboolean);
 
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION

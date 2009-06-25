@@ -841,7 +841,22 @@ public abstract class Structure {
                     value = ((Structure)value).toString(indent + 1);
                 }
             }
-            contents += "=" + String.valueOf(value).trim();
+            contents += "=";
+            if (value instanceof Long) {
+                contents += Long.toHexString(((Long)value).longValue());
+            }
+            else if (value instanceof Integer) {
+                contents += Integer.toHexString(((Integer)value).intValue());
+            }
+            else if (value instanceof Short) {
+                contents += Integer.toHexString(((Short)value).shortValue());
+            }
+            else if (value instanceof Byte) {
+                contents += Integer.toHexString(((Byte)value).byteValue());
+            }
+            else {
+                contents += String.valueOf(value).trim();
+            }
             contents += LS;
             if (!i.hasNext())
                 contents += prefix + "}";
@@ -914,11 +929,17 @@ public abstract class Structure {
             if (o.getClass().isAssignableFrom(getClass())
                 || getClass().isAssignableFrom(o.getClass())) {
                 Structure s = (Structure)o;
-                Pointer p1 = getPointer();
-                Pointer p2 = s.getPointer();
-                for (int i=0;i < size();i++) {
-                    if (p1.getByte(i) != p2.getByte(i)) {
-                        return false;
+                for (Iterator i=fields().keySet().iterator();i.hasNext();) {
+                    String name = (String)i.next();
+                    Object f1 = readField(name);
+                    Object f2 = s.readField(name);
+                    if (f1 != null) {
+                        if (!f1.equals(f2))
+                            return false;
+                    }
+                    else if (f2 != null) {
+                        if (!f2.equals(f1))
+                            return false;
                     }
                 }
                 return true;
@@ -1078,8 +1099,8 @@ public abstract class Structure {
             typeInfoMap.put(Character.class, ctype);
             typeInfoMap.put(byte.class, FFITypes.ffi_type_sint8);
             typeInfoMap.put(Byte.class, FFITypes.ffi_type_sint8);
-            typeInfoMap.put(boolean.class, FFITypes.ffi_type_sint32);
-            typeInfoMap.put(Boolean.class, FFITypes.ffi_type_sint32);
+            typeInfoMap.put(boolean.class, FFITypes.ffi_type_uint32);
+            typeInfoMap.put(Boolean.class, FFITypes.ffi_type_uint32);
             typeInfoMap.put(Pointer.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(String.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(WString.class, FFITypes.ffi_type_pointer);
@@ -1168,7 +1189,7 @@ public abstract class Structure {
                     typeInfoMap.put(obj, type);
                     return type.getPointer();
                 }
-                throw new IllegalArgumentException("Unsupported structure field type " + cls);
+                throw new IllegalArgumentException("Unsupported type " + cls);
             }
         }
     }

@@ -15,6 +15,7 @@ package com.sun.jna;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import junit.framework.TestCase;
 
@@ -215,9 +216,12 @@ public class CallbacksTest extends TestCase {
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
         
-        Map refs = CallbackReference.callbackMap;
+        Map refs = new WeakHashMap(CallbackReference.callbackMap);
+        refs.putAll(CallbackReference.directCallbackMap);
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = (CallbackReference)refs.get(cb);
+        refs = ref.proxy != null ? CallbackReference.callbackMap
+            : CallbackReference.directCallbackMap;
         Pointer cbstruct = ref.cbstruct;
         
         cb = null;
@@ -232,7 +236,7 @@ public class CallbacksTest extends TestCase {
         
         ref = null;
         System.gc();
-        for (int i = 0; i < 100 && cbstruct.peer != 0; ++i) {
+        for (int i = 0; i < 100 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
             // Flush weak hash map
             refs.size();
             try {
@@ -294,15 +298,20 @@ public class CallbacksTest extends TestCase {
     
     public void testCallFloatCallback() {
         final boolean[] called = { false };
+        final float[] args = { 0, 0 };
         TestLibrary.FloatCallback cb = new TestLibrary.FloatCallback() {
             public float callback(float arg, float arg2) {
                 called[0] = true;
+                args[0] = arg;
+                args[1] = arg2;
                 return arg + arg2;
             }
         };
         final float EXPECTED = FLOAT_MAGIC*3;
         float value = lib.callFloatCallback(cb, FLOAT_MAGIC, FLOAT_MAGIC*2);
         assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong first argument", FLOAT_MAGIC, args[0], 0);
+        assertEquals("Wrong second argument", FLOAT_MAGIC*2, args[1], 0);
         assertEquals("Wrong callback value", EXPECTED, value, 0);
         
         value = lib.callFloatCallback(cb, -1f, -2f);
@@ -311,15 +320,20 @@ public class CallbacksTest extends TestCase {
     
     public void testCallDoubleCallback() {
         final boolean[] called = { false };
+        final double[] args = { 0, 0 };
         TestLibrary.DoubleCallback cb = new TestLibrary.DoubleCallback() {
             public double callback(double arg, double arg2) {
                 called[0] = true;
+                args[0] = arg;
+                args[1] = arg2;
                 return arg + arg2;
             }
         };
         final double EXPECTED = DOUBLE_MAGIC*3;
         double value = lib.callDoubleCallback(cb, DOUBLE_MAGIC, DOUBLE_MAGIC*2);
         assertTrue("Callback not called", called[0]);
+        assertEquals("Wrong first argument", DOUBLE_MAGIC, args[0], 0);
+        assertEquals("Wrong second argument", DOUBLE_MAGIC*2, args[1], 0);
         assertEquals("Wrong callback value", EXPECTED, value, 0); 
         
         value = lib.callDoubleCallback(cb, -1d, -2d);
@@ -339,7 +353,7 @@ public class CallbacksTest extends TestCase {
         };
         SmallTestStructure value = lib.callStructureCallback(cb, s);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument", s, cbarg[0]);
+        assertEquals("Wrong argument passed to callback", s, cbarg[0]);
         assertEquals("Wrong structure return", s, value);
     }
     

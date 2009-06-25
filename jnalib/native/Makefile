@@ -42,7 +42,7 @@ ifneq ($(DYNAMIC_LIBFFI),true)
 FFI_SRC=$(shell pwd)/libffi
 FFI_BUILD=$(BUILD)/libffi
 FFI_LIB=$(FFI_BUILD)/.libs/libffi$(ARSFX)
-FFI_ENV=CC="$(CC)" CFLAGS="$(CDEBUG)" CPPFLAGS="$(CDEFINES)"
+FFI_ENV=CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)"
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes
 endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
@@ -58,8 +58,7 @@ CC=gcc
 LD=gcc
 LIBS=
 # Default to Sun recommendations for JNI compilation
-#COPT=-O2 -fomit-frame-pointer
-COPT=-fno-omit-frame-pointer -fno-strict-aliasing 
+COPT=-O2 -fno-omit-frame-pointer -fno-strict-aliasing 
 CASM=-S
 ifeq ($(DEBUG),true)
 CDEBUG=-g

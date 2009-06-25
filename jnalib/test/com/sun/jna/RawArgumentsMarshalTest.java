@@ -38,13 +38,11 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native short returnInt16Argument(short arg);
         public native int returnInt32Argument(int i);
         public native long returnInt64Argument(long l);
-        public NativeLong returnLongArgument(NativeLong l) {
-            throw new UnsupportedOperationException();
-        }
+        public native NativeLong returnLongArgument(NativeLong l);
         public native float returnFloatArgument(float f);
         public native double returnDoubleArgument(double d);
         public native String returnStringArgument(String s);
-        public WString returnWStringArgument(WString s) {throw new UnsupportedOperationException();}
+        public native WString returnWStringArgument(WString s);
         public native Pointer returnPointerArgument(Pointer p);
         public String returnStringArrayElement(String[] args, int which) {throw new UnsupportedOperationException();}
         public WString returnWideStringArrayElement(WString[] args, int which) {throw new UnsupportedOperationException();}
@@ -94,7 +92,6 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
     }
     
     // Override tests not yet supported
-    public void testNativeLongArgument() { }
     public void testStringArrayArgument() { }
     public void testWriteStructureArrayArgumentMemory() { }
     public void testUninitializedStructureArrayArgument() { }
@@ -104,7 +101,6 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
     public void testNativeMappedArrayArgument() { }
     public void testStructureByReferenceArrayArgument() { }
     public void testModifiedCharArrayArgument() { }
-    public void testNativeMappedArgument() { }
 
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(RawArgumentsMarshalTest.class);

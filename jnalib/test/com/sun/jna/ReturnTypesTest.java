@@ -203,12 +203,13 @@ public class ReturnTypesTest extends TestCase {
 
     static final String MAGIC = "magic";
     public void testInvokeString() {
-        assertEquals("Expect string magic", MAGIC, lib.returnStringMagic());
+        assertEquals("Expect String magic", MAGIC, lib.returnStringMagic());
     }
     
     public void testInvokeWString() {
         WString s = lib.returnWStringMagic();
-        assertEquals("Expect wstring magic", new WString(MAGIC), s);
+        assertEquals("Wrong length", MAGIC.length(), s.toString().length());
+        assertEquals("Expect WString magic", new WString(MAGIC), s);
     }
     
     public void testInvokeStructure() {

@@ -72,7 +72,7 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static String nativeLibraryPath;
+    private static String nativeLibraryPath = null;
     private static boolean unpacked;
     private static Map typeMappers = new WeakHashMap();
     private static Map alignments = new WeakHashMap();
@@ -793,7 +793,7 @@ public final class Native {
             }
             String msg = 
                 "Library '" + libName + "' was not found by class loader " + cl;
-            throw new UnsatisfiedLinkError(msg);
+            throw new IllegalArgumentException(msg);
         }
         catch (Exception e) {
             return null;
@@ -1056,13 +1056,38 @@ public final class Native {
     private static final int CVT_ARRAY_BOOLEAN = 13;
     private static final int CVT_BOOLEAN = 14;
     private static final int CVT_CALLBACK = 15;
+    private static final int CVT_FLOAT = 16;
+    private static final int CVT_NATIVE_MAPPED = 17;
+    private static final int CVT_WSTRING = 18;
+    private static final int CVT_INTEGER_TYPE = 19;
+    private static final int CVT_POINTER_TYPE = 20;
+    private static final int CVT_TYPE_MAPPER = 21;
 
-    private static int getConversion(Class type) {
+    private static int getConversion(Class type, TypeMapper mapper) {
+        if (type == Boolean.class) type = boolean.class;
+        else if (type == Byte.class) type = byte.class;
+        else if (type == Short.class) type = short.class;
+        else if (type == Character.class) type = char.class;
+        else if (type == Integer.class) type = int.class;
+        else if (type == Long.class) type = long.class;
+        else if (type == Float.class) type = float.class;
+        else if (type == Double.class) type = double.class;
+        else if (type == Void.class) type = void.class;
+            
+        if (mapper != null
+            && (mapper.getFromNativeConverter(type) != null
+                || mapper.getToNativeConverter(type) != null)) {
+            return CVT_TYPE_MAPPER;
+        }
+
         if (Pointer.class.isAssignableFrom(type)) {
             return CVT_POINTER;
         }
         if (String.class == type) {
             return CVT_STRING;
+        }
+        if (WString.class.isAssignableFrom(type)) {
+            return CVT_WSTRING;
         }
         if (Buffer.class.isAssignableFrom(type)) {
             return CVT_BUFFER;
@@ -1092,7 +1117,16 @@ public final class Native {
         if (Callback.class.isAssignableFrom(type)) {
             return CVT_CALLBACK;
         }
-        return -1;
+        if (IntegerType.class.isAssignableFrom(type)) {
+            return CVT_INTEGER_TYPE;
+        }
+        if (PointerType.class.isAssignableFrom(type)) {
+            return CVT_POINTER_TYPE;
+        }
+        if (NativeMapped.class.isAssignableFrom(type)) {
+            return CVT_NATIVE_MAPPED;
+        }
+        return CVT_UNSUPPORTED;
     }
 
     /** When called from a class static initializer, maps all native methods
@@ -1100,16 +1134,15 @@ public final class Native {
      * interface.
      * @param lib library to which functions should be bound
      */
-    // TODO: Pointer, NativeLong                                            
-    // TODO: structure by value                                             
-    // TODO: byref, primitive arrays                                        
-    // TODO: stdcall name mapping                                           
-    // TODO: derive library, etc. from annotations (per-class or per-method)
-    // TODO: get function name from annotation
-    // TODO: read parameter type mapping from annotations (long/native long)
+    // TODO: derive options from annotations (per-class or per-method)
+    // options: read parameter type mapping (long/native long),
+    // method name, library name, call conv
     public static void register(Class cls, NativeLibrary lib) {
         Method[] methods = cls.getDeclaredMethods();
         List mlist = new ArrayList();
+        TypeMapper mapper = (TypeMapper)
+            lib.getOptions().get(Library.OPTION_TYPE_MAPPER);
+
         for (int i=0;i < methods.length;i++) {
             if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
                 mlist.add(methods[i]);
@@ -1119,45 +1152,107 @@ public final class Native {
         for (int i=0;i < handles.length;i++) {
             Method method = (Method)mlist.get(i);
             String sig = "(";
-            Class rtype = method.getReturnType();
+            Class rclass = method.getReturnType();
+            long rtype, closure_rtype;
             Class[] ptypes = method.getParameterTypes();
             long[] atypes = new long[ptypes.length];
+            long[] closure_atypes = new long[ptypes.length];
             int[] cvt = new int[ptypes.length];
-            int rcvt = getConversion(rtype);
-            if (rcvt == CVT_UNSUPPORTED) {
-                throw new IllegalArgumentException(rtype + " is not a supported return type (in method " + method.getName() + " in " + cls + ")");
+            ToNativeConverter[] toNative = new ToNativeConverter[ptypes.length];
+            FromNativeConverter fromNative = null;
+            int rcvt = getConversion(rclass, mapper);
+            boolean throwLastError = false;
+            switch (rcvt) {
+            case CVT_UNSUPPORTED:
+                throw new IllegalArgumentException(rclass + " is not a supported return type (in method " + method.getName() + " in " + cls + ")");
+            case CVT_TYPE_MAPPER:
+                fromNative = mapper.getFromNativeConverter(rclass);
+                closure_rtype = FFIType.get(Pointer.class).peer;
+                rtype = FFIType.get(fromNative.nativeType()).peer;
+                break;
+            case CVT_NATIVE_MAPPED:
+            case CVT_INTEGER_TYPE:
+            case CVT_POINTER_TYPE:
+                closure_rtype = FFIType.get(Pointer.class).peer;
+                rtype = FFIType.get(NativeMappedConverter.getInstance(rclass).nativeType()).peer;
+                break;
+            case CVT_STRUCTURE:
+                closure_rtype = rtype = FFIType.get(Pointer.class).peer;
+                break;
+            case CVT_STRUCTURE_BYVAL:
+                closure_rtype = FFIType.get(Pointer.class).peer;
+                rtype = FFIType.get(rclass).peer;
+                break;
+            default:
+                closure_rtype = rtype = FFIType.get(rclass).peer;
+                break;
             }
             for (int t=0;t < ptypes.length;t++) {
                 Class type = ptypes[t];
                 sig += getSignature(type);
-                cvt[t] = getConversion(type);
+                cvt[t] = getConversion(type, mapper);
                 if (cvt[t] == CVT_UNSUPPORTED) {
                     throw new IllegalArgumentException(type + " is not a supported argument type (in method " + method.getName() + " in " + cls + ")");
                 }
-                // All conversions other than struct by value and primitives
-                // result in a pointer passed to the native function
-                if (cvt[t] == CVT_STRUCTURE_BYVAL
-                    || cvt[t] == CVT_DEFAULT) {
-                    atypes[t] = FFIType.get(type).peer;
+                if (cvt[t] == CVT_NATIVE_MAPPED
+                    || cvt[t] == CVT_INTEGER_TYPE) {
+                    type = NativeMappedConverter.getInstance(type).nativeType();
                 }
-                else {
-                    atypes[t] = FFIType.get(Pointer.class).peer;
+                else if (cvt[t] == CVT_TYPE_MAPPER) {
+                    toNative[t] = mapper.getToNativeConverter(type);
+                }
+                // Determine the type that will be passed to the native
+                // function, as well as the type to be passed
+                // from Java initially
+                switch(cvt[t]) {
+                case CVT_STRUCTURE_BYVAL:
+                case CVT_INTEGER_TYPE:
+                case CVT_POINTER_TYPE:
+                case CVT_NATIVE_MAPPED:
+                    atypes[t] = FFIType.get(type).peer;
+                    closure_atypes[t] = FFIType.get(Pointer.class).peer;
+                    break;
+                case CVT_TYPE_MAPPER:
+                    if (type.isPrimitive())
+                        closure_atypes[t] = FFIType.get(type).peer;
+                    else
+                        closure_atypes[t] = FFIType.get(Pointer.class).peer;
+                    atypes[t] = FFIType.get(toNative[t].nativeType()).peer;
+                    break;
+                case CVT_DEFAULT:
+                    closure_atypes[t] = atypes[t] = FFIType.get(type).peer;
+                    break;
+                default:
+                    closure_atypes[t] = atypes[t] = FFIType.get(Pointer.class).peer;
+                    break;
                 }
             }
             sig += ")";
-            sig += getSignature(rtype);
+            sig += getSignature(rclass);
             
+            Class[] etypes = method.getExceptionTypes();
+            for (int e=0;e < etypes.length;e++) {
+                if (LastErrorException.class.isAssignableFrom(etypes[e])) {
+                    throwLastError = true;
+                    break;
+                }
+            }
+
             String name = method.getName();
-            FunctionMapper mapper = (FunctionMapper)lib.getOptions().get(Library.OPTION_FUNCTION_MAPPER);
-            if (mapper != null) {
-                name = mapper.getFunctionName(lib, method);
+            FunctionMapper fmapper = (FunctionMapper)lib.getOptions().get(Library.OPTION_FUNCTION_MAPPER);
+            if (fmapper != null) {
+                name = fmapper.getFunctionName(lib, method);
             }
             Function f = lib.getFunction(name, method);
             try {
                 handles[i] = registerMethod(cls, method.getName(),
-                                            sig, cvt, atypes, rcvt,
-                                            FFIType.get(rtype).peer, rtype, 
-                                            f.peer, f.callFlags);
+                                            sig, cvt,
+                                            closure_atypes, atypes, rcvt,
+                                            closure_rtype, rtype, 
+                                            rclass,
+                                            f.peer, f.getCallingConvention(),
+                                            throwLastError,
+                                            toNative, fromNative);
             }
             catch(NoSuchMethodError e) {
                 throw new UnsatisfiedLinkError("No method " + method.getName() + " with signature " + sig + " in " + cls);
@@ -1173,16 +1268,47 @@ public final class Native {
                                               String name,
                                               String signature,
                                               int[] conversions,
+                                              long[] closure_arg_types,
                                               long[] arg_types,
                                               int rconversion,
+                                              long closure_rtype,
                                               long rtype,
                                               Class rclass,
                                               long fptr,
-                                              int callFlags);
+                                              int callingConvention,
+                                              boolean throwLastError,
+                                              ToNativeConverter[] toNative,
+                                              FromNativeConverter fromNative);
     
-    static native long ffi_prep_cif(int abi, int nargs, long ffi_return_type, long ffi_types);
-    static native void ffi_call(long cif, long fptr, long resp, long args);
-    static native long ffi_prep_closure();
+
+    // Called from native code
+    private static NativeMapped fromNative(Class cls, Object value) {
+        return (NativeMapped)NativeMappedConverter.getInstance(cls).fromNative(value, null);
+    }
+    // Called from native code
+    private static Class nativeType(Class cls) {
+        return NativeMappedConverter.getInstance(cls).nativeType();
+    }
+    // Called from native code
+    private static Object toNative(ToNativeConverter cvt, Object o) {
+        return cvt.toNative(o, new ToNativeContext());
+    }
+    // Called from native code
+    private static Object fromNative(FromNativeConverter cvt, Object o, Class cls) {
+        return cvt.fromNative(o, new FromNativeContext(cls));
+    }
+
+    public static native long ffi_prep_cif(int abi, int nargs, long ffi_return_type, long ffi_types);
+    public static native void ffi_call(long cif, long fptr, long resp, long args);
+    public static native long ffi_prep_closure(long cif, ffi_callback cb);
+    public static native void ffi_free_closure(long closure);
+    
+    /** Returns the size (calculated by libffi) of the given type. */
+    static native int initialize_ffi_type(long type_info);
+
+    public interface ffi_callback {
+        void invoke(long cif, long resp, long argp);
+    }
 
     /** Prints JNA library details to the console. */
     public static void main(String[] args) {

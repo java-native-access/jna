@@ -22,7 +22,8 @@ package com.sun.jna;
 public abstract class IntegerType extends Number implements NativeMapped {
 
     private int size;
-    private Number value;
+    private long value;
+    private Number number;
 
     /** Create a zero-valued IntegerType. */
     public IntegerType(int size) {
@@ -38,21 +39,22 @@ public abstract class IntegerType extends Number implements NativeMapped {
     /** Change the value for this data. */
     public void setValue(long value) {
         long truncated = value;
+        this.value = value;
         switch (size) {
         case 1:
             truncated = (byte) value;
-            this.value = new Byte((byte) value);
+            this.number = new Byte((byte) value);
             break;
         case 2:
             truncated = (short) value;
-            this.value = new Short((short) value);
+            this.number = new Short((short) value);
             break;
         case 4:
             truncated = (int) value;
-            this.value = new Integer((int) value);
+            this.number = new Integer((int) value);
             break;
         case 8:
-            this.value = new Long(value);
+            this.number = new Long(value);
             break;
         default:
             throw new IllegalArgumentException("Unsupported size: " + size);
@@ -69,7 +71,7 @@ public abstract class IntegerType extends Number implements NativeMapped {
     }
 
     public Object toNative() {
-        return value;
+        return number;
     }
 
     public Object fromNative(Object nativeValue, FromNativeContext context) {
@@ -92,35 +94,35 @@ public abstract class IntegerType extends Number implements NativeMapped {
     }
 
     public Class nativeType() {
-        return value.getClass();
+        return number.getClass();
     }
 
     public int intValue() {
-        return value.intValue();
+        return number.intValue();
     }
 
     public long longValue() {
-        return value.longValue();
+        return number.longValue();
     }
 
     public float floatValue() {
-        return value.floatValue();
+        return number.floatValue();
     }
 
     public double doubleValue() {
-        return value.doubleValue();
+        return number.doubleValue();
     }
 
     public boolean equals(Object rhs) {
         return rhs instanceof IntegerType
-            && value.equals(((IntegerType) rhs).value);
+            && number.equals(((IntegerType)rhs).number);
     }
 
     public String toString() {
-        return value.toString();
+        return number.toString();
     }
 
     public int hashCode() {
-        return value.hashCode();
+        return number.hashCode();
     }
 }

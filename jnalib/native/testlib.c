@@ -573,6 +573,28 @@ callInt32Callback(int32_t (*func)(int32_t arg, int32_t arg2),
   return (*func)(arg, arg2);
 }
 
+EXPORT int32_t 
+callInt32CallbackRepeatedly(int32_t (*func)(int32_t arg, int32_t arg2),
+                            int32_t arg, int32_t arg2, int32_t count) {
+  int i;
+  int sum = 0;
+  for (i=0;i < count;i++) {
+    sum += (*func)(arg, arg2);
+  }
+  return sum;
+}
+
+EXPORT long 
+callLongCallbackRepeatedly(long (*func)(long arg, long arg2),
+                           long arg, long arg2, int32_t count) {
+  int i;
+  long sum = 0;
+  for (i=0;i < count;i++) {
+    sum += (*func)(arg, arg2);
+  }
+  return sum;
+}
+
 EXPORT long 
 callNativeLongCallback(long (*func)(long arg, long arg2),
                        long arg, long arg2) {

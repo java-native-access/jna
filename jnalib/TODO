@@ -22,12 +22,22 @@
 
 # TODO
 
-* optimize interface mapping to use method_handler or inner code
+* make direct calls call back *once* to Java where conversion is required,
+  and process all arguments from there (instead of potentially swapping back
+  and forth multipel times).  This also makes it easer to perform conversions
+  (no native changes required).  
 
-* throw LastErrorException if last error not zero and method declares
-  the exception.  Otherwise, ignore the last error.
+* direct/raw non-primitive array arguments (String[], Pointer[], NativeMapped[])
 
-* make native dll extraction from jar public
+* ppc64 direct/raw failures (multiple)
+
+* direct calls on ppc to varargs (callbacks) with FP args fail; avoid them for
+  now 
+
+* combine direct and interface mapping calling code where possible
+
+* make native dll extraction from jar public, to use with user dlls packaged
+  in a jar
 
 * Callback.PostCallWrite.write() cf PostCallRead; do Structure.write for any
   arguments as well
