@@ -15,6 +15,7 @@
   <!-- (all build-related props should go in -dynamic-properties) -->
   <property name="name" value="jna"/>
   <property name="jar" value="${name}.jar"/>
+  <property name="testjar" value="${name}-test.jar"/>
   <property name="debug" value="true"/>
   <property name="debug.native" value="false"/>
   <property name="cflags_extra.native" value=""/>
@@ -403,6 +404,21 @@
            deprecation="on" debug="${debug}">
       <src path="${test.src}"/>
     </javac>
+    <jar jarfile="${build}/${testjar}">
+      <fileset dir="${test.classes}">
+        <patternset refid="jar-compiled"/>
+      </fileset>
+    </jar>
+    <mkdir dir="${build}/jws"/>
+    <copy todir="${build}/jws" file="${build}/${jar}"/>
+    <copy todir="${build}/jws" file="${build}/${testjar}"/>
+    <copy todir="${build}/jws" file="lib/junit.jar"/>
+    <jar jarfile="${build}/jws/jnidispatch.jar">
+      <fileset dir="${build.native}" includes="*jnidispatch.*"/>
+    </jar>
+    <signjar alias="jna" keystore="jna.keystore" storepass="jnadev"> 
+      <fileset dir="${build}/jws" includes="*.jar"/>
+    </signjar>
   </target>
 
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
