@@ -1317,8 +1317,8 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Pointer__1setString
     (JNIEnv *env, jclass cls, jlong addr, jstring value, jboolean wide)
 {
     int len = (*env)->GetStringLength(env, value);
-    const void* str;
-    int size = len + 1;
+    const void* volatile str;
+    volatile int size = len + 1;
 
     if (wide) {
       size *= sizeof(wchar_t);
@@ -2555,13 +2555,13 @@ typedef struct _method_data {
 
 // VM vectors to this callback, which calls native code
 static void
-method_handler(ffi_cif* cif, void* resp, void** argp, void *cdata) {
+method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   JNIEnv* env = (JNIEnv*)*(void **)argp[0];
   method_data *data = (method_data*)cdata;
   // ignore first two arguments, which are pointers
   void** args = argp + 2;
-  void** objects = NULL;
-  char* array_types = NULL;
+  void** volatile objects = NULL;
+  char* volatile array_types = NULL;
   unsigned i;
   void* oldresp = resp;
 
