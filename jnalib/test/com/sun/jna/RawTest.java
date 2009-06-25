@@ -82,8 +82,14 @@ public class RawTest extends TestCase {
         public static native int strlen(Pointer p);
         public static native int strlen(byte[] b);
         public static native int strlen(Buffer b);
-        public static native float strtof(String s, PointerByReference pref) throws LastErrorException;
         
+        static {
+            Native.register(Platform.isWindows()?"msvcrt":"c");
+        }
+    }
+
+    static class LastErrorLibrary {
+        public static native float strtof(String s, PointerByReference pref) throws LastErrorException;
         static {
             Native.register(Platform.isWindows()?"msvcrt":"c");
         }
@@ -172,16 +178,21 @@ public class RawTest extends TestCase {
     }
 
     public void testThrowLastError() throws LastErrorException {
-        CLibrary lib = new CLibrary();
-        float VALUE = 1.1f;
-        assertEquals("Wrong value returned", VALUE, lib.strtof("1.1", null));
-        try {
-            String HUGE_VALF = "1e10000";
-            lib.strtof(HUGE_VALF, null);
-            fail("Method declared with LastErrorException should throw on error");
+        if (Platform.isWindows()) {
+            fail("Test not implemented");
         }
-        catch(LastErrorException e) {
-            assertTrue("LastError code should be non-zero", e.errorCode != 0);
+        else {
+            LastErrorLibrary lib = new LastErrorLibrary();
+            float VALUE = 1.1f;
+            assertEquals("Wrong value returned", VALUE, lib.strtof("1.1", null));
+            try {
+                String HUGE_VALF = "1e10000";
+                lib.strtof(HUGE_VALF, null);
+                fail("Method declared with LastErrorException should throw on error");
+            }
+            catch(LastErrorException e) {
+                assertTrue("LastError code should be non-zero", e.errorCode != 0);
+            }
         }
     }
 

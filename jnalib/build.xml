@@ -81,6 +81,7 @@
     <condition property="vm.arch" value="-d64" else="">
       <or>
         <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
+        <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
         <os arch="x86_64"/>
         <os arch="ppc64"/>
         <os arch="sparcv9"/>

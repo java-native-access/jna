@@ -27,11 +27,6 @@
 #endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#ifdef _MSC_VER
-#define alloca _alloca
-#else
-#include <malloc.h>
-#endif
 #define LIBNAMETYPE wchar_t*
 #define LIBNAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
 /* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:
@@ -272,7 +267,7 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
     jobject array;
     void *elems;
   } *array_elements;
-  int array_count = 0;
+  volatile int array_count = 0;
   ffi_cif cif;
   ffi_type** ffi_types;
   void** ffi_values;
@@ -984,8 +979,8 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Pointer__1indexOf__JB
     (JNIEnv *env, jclass cls, jlong addr, jbyte value)
 {
   jbyte *peer = (jbyte *)L2A(addr);
-  jlong i = 0;
-  jlong result = -1L;
+  volatile jlong i = 0;
+  volatile jlong result = -1L;
   PSTART();
   while (i >= 0 && result == -1L) {
     if (peer[i] == value) 
@@ -1488,7 +1483,7 @@ newJavaWString(JNIEnv *env, const wchar_t* ptr) {
 jstring
 newJavaString(JNIEnv *env, const char *ptr, jboolean wide) 
 {
-    jstring result = 0;
+    volatile jstring result = 0;
     PSTART();
 
     if (ptr) {

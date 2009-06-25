@@ -77,11 +77,7 @@ _exc_handler(struct _EXCEPTION_RECORD* exception_record,
 #define PROTECTED_END(ONERR) } __except((PROTECT)?EXCEPTION_EXECUTE_HANDLER:EXCEPTION_CONTINUE_SEARCH) { ONERR; }
 #else
 #ifdef _WIN64
-// FIXME: mingw64 is untested
-#define SEH_TRY(ER)                                                   \
-  __asm__ ("pushq %0;pushq %%gs:0;movq %%rsp,%%gs:0;" : : "g" (&(ER)))
-#define SEH_CATCH(ER) \
-  __asm__ ("movq (%%rsp),%%rax;movq %%rax,%%gs:0;addq $16,%%rsp" : : : "%rax")
+#error "GCC does not implement SEh"
 #else
 #define SEH_TRY(ER) \
   __asm__ ("movl %%fs:0, %0" : "=r" ((ER).ex_reg.prev));  \
@@ -115,6 +111,7 @@ _exc_handler(struct _EXCEPTION_RECORD* exception_record,
 #endif /* !_MSC_VER */
 
 #else // _WIN32
+
 // Most other platforms support signals
 // Catch both SIGSEGV and SIGBUS
 #include <signal.h>

@@ -19,6 +19,13 @@
 #ifdef sun
 #  include <alloca.h>
 #endif
+#ifdef _WIN32
+#ifdef _MSC_VER
+#define alloca _alloca
+#else
+#include <malloc.h>
+#endif /* _MSC_VER */
+#endif /* _WIN32 */
 
 #ifdef __cplusplus
 extern "C" {

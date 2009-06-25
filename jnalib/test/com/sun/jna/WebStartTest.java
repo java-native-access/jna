@@ -62,9 +62,9 @@ public class WebStartTest extends TestCase {
         // but will cause unsigned jars to fail (irrespective of policy)
         + "  <security><all-permissions/></security>\n"
         + "  <resources>\n"
-        + "    <j2se version='1.3+' href='http://java.sun.com/products/autodl/j2se'/>\n"
-        + "    <jar href='jna.jar'/>\n"
+        + "    <j2se version='1.4+'/>\n"
         + "    <jar href='jna-test.jar'/>\n"
+        + "    <jar href='jna.jar'/>\n"
         + "    <jar href='junit.jar'/>\n"
         + "    <nativelib href='jnidispatch.jar'/>\n"
         + "  </resources>\n"
@@ -221,11 +221,14 @@ public class WebStartTest extends TestCase {
     
     private File findDeploymentProperties() {
         String path = System.getProperty("user.home");
-        File deployment = new File(path + "/Application Data/Sun/Java/Deployment");
-        if (!deployment.exists()) {
+        File deployment;
+        if (Platform.isWindows()) {
+            deployment = new File(path + "/Application Data/Sun/Java/Deployment");
+        }
+        else if (Platform.isMac()) {
             deployment = new File(path + "/Library/Caches/Java");
         }
-        if (!deployment.exists()) {
+        else {
             deployment = new File(path + "/.java/deployment");
         }
         if (!deployment.exists()) {
@@ -239,6 +242,9 @@ public class WebStartTest extends TestCase {
     private static final String CERTS_KEY =
         "deployment.user.security.trusted.certs";
     public void runBare() throws Throwable {
+        // FIXME not yet cleanly running on windows, not tested on linux
+        if (!Platform.isMac()) return;
+
         if (runningWebStart()) {
             super.runBare();
         }
@@ -254,7 +260,7 @@ public class WebStartTest extends TestCase {
             saved.load(new FileInputStream(dpfile));
             Properties props = new Properties();
             props.putAll(saved);
-            props.setProperty(CERTS_KEY, "jna.keystore");
+            props.setProperty(CERTS_KEY, new File("jna.keystore").getAbsolutePath());
             props.setProperty(POLICY_KEY, policy.getAbsolutePath());
             props.store(new FileOutputStream(dpfile), "deployment.properties (for testing)");
             try {
