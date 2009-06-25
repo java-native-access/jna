@@ -88,13 +88,6 @@ public class RawTest extends TestCase {
         }
     }
 
-    static class LastErrorLibrary {
-        public static native float strtof(String s, PointerByReference pref) throws LastErrorException;
-        static {
-            Native.register(Platform.isWindows()?"msvcrt":"c");
-        }
-    }
-
     static interface CInterface extends Library {
         Pointer memset(Pointer p, int v, int len);
         int strlen(String s);
@@ -175,25 +168,6 @@ public class RawTest extends TestCase {
         }
         assertEquals("Wrong native class found",
                      UnregisterLibrary.class, new UnregisterLibrary().getNativeClass());
-    }
-
-    public void testThrowLastError() throws LastErrorException {
-        if (Platform.isWindows()) {
-            fail("Test not implemented");
-        }
-        else {
-            LastErrorLibrary lib = new LastErrorLibrary();
-            float VALUE = 1.1f;
-            assertEquals("Wrong value returned", VALUE, lib.strtof("1.1", null));
-            try {
-                String HUGE_VALF = "1e10000";
-                lib.strtof(HUGE_VALF, null);
-                fail("Method declared with LastErrorException should throw on error");
-            }
-            catch(LastErrorException e) {
-                assertTrue("LastError code should be non-zero", e.errorCode != 0);
-            }
-        }
     }
 
     // Requires java.library.path include testlib
