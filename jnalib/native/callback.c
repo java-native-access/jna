@@ -49,6 +49,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   char msg[64];
   int i;
   int cvt = 0;
+  const char* throw_type = NULL;
+  const char* throw_msg = NULL;
 
   if ((*env)->GetJavaVM(env, &vm) != JNI_OK) {
     throwByName(env, EUnsatisfiedLink, "Can't get Java VM");
@@ -82,7 +84,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     cb->arg_jtypes[i] = jtype = get_jtype(env, cls);
     if (jtype == -1) {
       snprintf(msg, sizeof(msg), "Unsupported argument at index %d", i);
-      throwByName(env, EIllegalArgument, msg);
+      throw_type = EIllegalArgument;
+      throw_msg = msg;
       goto failure_cleanup;
     }
 
@@ -95,7 +98,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       cb->arg_jtypes[i] = jtype = get_jtype(env, ncls);
       if (jtype == -1) {
         snprintf(msg, sizeof(msg), "Unsupported NativeMapped argument native type at argument %d", i);
-        throwByName(env, EIllegalArgument, msg);
+        throw_type = EIllegalArgument;
+        throw_msg = msg;
         goto failure_cleanup;
       }
       cb->java_arg_types[i+3] = &ffi_type_pointer;
@@ -137,12 +141,14 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 
   rtype = get_jtype(env, return_type);
   if (!rtype) {
-    throwByName(env, EIllegalArgument, "Unsupported return type");
+    throw_type = EIllegalArgument;
+    throw_msg = "Unsupported return type";
     goto failure_cleanup;
   }
   ffi_rtype = get_ffi_rtype(env, return_type, rtype);
   if (!ffi_rtype) {
-    throwByName(env, EIllegalArgument, "Error in return type");
+    throw_type = EIllegalArgument;
+    throw_msg = "Error in return type";
     goto failure_cleanup;
   }
   status = ffi_prep_cif(&cb->cif, abi, argc, ffi_rtype, cb->arg_types);
@@ -176,6 +182,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 
  failure_cleanup:
   free_callback(env, cb);
+  if (throw_type) {
+    throwByName(env, throw_type, msg);
+  }
 
   return NULL;
 }
@@ -215,7 +224,9 @@ handle_exception(JNIEnv* env, jobject cb, jthrowable throwable) {
             if (!(*env)->IsSameObject(env, handler, NULL)) {
               (*env)->CallVoidMethod(env, handler, mid, cb, throwable);
             }
-            return (*env)->ExceptionCheck(env) == 0;
+            if ((*env)->ExceptionCheck(env) == 0) {
+              return 1;
+            }
           }
         }
       }

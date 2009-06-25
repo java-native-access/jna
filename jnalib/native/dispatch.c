@@ -275,6 +275,7 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
   ffi_status status;
   char msg[128];
   callconv_t callconv = flags & MASK_CC;
+  int throw_error = 0;
   
   nargs = (*env)->GetArrayLength(env, arr);
 
@@ -449,8 +450,7 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
     }
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
     if (flags & THROW_LAST_ERROR) {
-      snprintf(msg, sizeof(msg), "%d", (int)GET_LAST_ERROR());
-      throwByName(env, ELastError, msg);
+      throw_error = GET_LAST_ERROR();
     }
     else if (preserve_last_error) {
       update_last_error(env, GET_LAST_ERROR());
@@ -494,6 +494,12 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
       (*env)->ReleaseDoubleArrayElements(env, array_elements[i].array,
                                          array_elements[i].elems, 0);
       break;
+    }
+
+    // Must raise the exception *after* all other JNI calls
+    if (throw_error) {
+      snprintf(msg, sizeof(msg), "%d", throw_error);
+      throwByName(env, ELastError, msg);
     }
   }
 }
@@ -1391,8 +1397,8 @@ newCString(JNIEnv *env, jstring jstr)
         jint len = (*env)->GetArrayLength(env, bytes);
         result = (char *)malloc(len + 1);
         if (result == NULL) {
-            throwByName(env, EOutOfMemory, "Can't allocate C string");
             (*env)->DeleteLocalRef(env, bytes);
+            throwByName(env, EOutOfMemory, "Can't allocate C string");
             return NULL;
         }
         (*env)->GetByteArrayRegion(env, bytes, 0, len, (jbyte *)result);
@@ -1425,8 +1431,8 @@ newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding)
         jint len = (*env)->GetArrayLength(env, bytes);
         result = (char *)malloc(len + 1);
         if (result == NULL) {
-            throwByName(env, EOutOfMemory, "Can't allocate C string");
             (*env)->DeleteLocalRef(env, bytes);
+            throwByName(env, EOutOfMemory, "Can't allocate C string");
             return NULL;
         }
         (*env)->GetByteArrayRegion(env, bytes, 0, len, (jbyte *)result);
@@ -1451,8 +1457,8 @@ newWideCString(JNIEnv *env, jstring str)
         jint len = (*env)->GetArrayLength(env, chars);
         result = (wchar_t *)malloc(sizeof(wchar_t) * (len + 1));
         if (result == NULL) {
-            throwByName(env, EOutOfMemory, "Can't allocate wide C string");
             (*env)->DeleteLocalRef(env, chars);
+            throwByName(env, EOutOfMemory, "Can't allocate wide C string");
             return NULL;
         }
         // TODO: ensure proper encoding conversion from jchar to native wchar_t
@@ -2142,8 +2148,8 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass classp, jobject w) 
   else {
     lock = ds->Lock(ds);
     if ((lock & JAWT_LOCK_ERROR) != 0) {
-      throwByName(env, EError, "Can't get drawing surface lock");
       awt.FreeDrawingSurface(ds);
+      throwByName(env, EError, "Can't get drawing surface lock");
       return 0;
     }
     dsi = ds->GetDrawingSurfaceInfo(ds);
@@ -2564,6 +2570,9 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   char* volatile array_types = NULL;
   unsigned i;
   void* oldresp = resp;
+  const char* throw_type = NULL;
+  const char* throw_msg = NULL;
+  int throw_error = 0;
 
   if (data->flags) {
     objects = alloca(data->cif.nargs * sizeof(void*));
@@ -2641,8 +2650,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
             else {
               ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &array_types[i], NULL);
               if (ptr == NULL) {
-                throwByName(env, EIllegalArgument,
-                            "Buffer argumenst must be direct or have a primitive backing array");
+                throw_type = EIllegalArgument;
+                throw_msg = "Buffer arguments must be direct or have a primitive backing array";
                 goto cleanup;
               }
             }
@@ -2684,12 +2693,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     }
     ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
     if (data->throw_last_error) {
-      int error = GET_LAST_ERROR();
-      if (error) {
-        char msg[64];
-        snprintf(msg, sizeof(msg), "%d", error);
-        throwByName(env, ELastError, msg);
-      }
+      throw_error = GET_LAST_ERROR();
     }
     PEND();
   }
@@ -2762,6 +2766,15 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         break;
       }
     }
+  }
+
+  if (throw_msg) {
+    throwByName(env, throw_type, throw_msg);
+  }
+  else if (throw_error) {
+    char msg[64];
+    snprintf(msg, sizeof(msg), "%d", throw_error);
+    throwByName(env, ELastError, msg);
   }
 }
 
