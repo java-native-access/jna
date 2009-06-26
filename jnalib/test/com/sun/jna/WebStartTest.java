@@ -167,8 +167,8 @@ public class WebStartTest extends TestCase {
             out.start();
         }
         catch(SocketTimeoutException e) {
-            //p.destroy();
-            //throw new Error("JWS Timed out");
+            p.destroy();
+            throw new Error("JWS Timed out");
         }
         p.waitFor();
         
@@ -223,6 +223,7 @@ public class WebStartTest extends TestCase {
         String path = System.getProperty("user.home");
         File deployment;
         if (Platform.isWindows()) {
+            // FIXME "Sun" might be "IBM" or other vendor
             deployment = new File(path + "/Application Data/Sun/Java/Deployment");
         }
         else if (Platform.isMac()) {
@@ -242,8 +243,8 @@ public class WebStartTest extends TestCase {
     private static final String CERTS_KEY =
         "deployment.user.security.trusted.certs";
     public void runBare() throws Throwable {
-        // FIXME not yet cleanly running on windows, not tested on linux
-        if (!Platform.isMac()) return;
+        // FIXME only tested on mac and windows
+        if (!Platform.isMac() && !Platform.isWindows()) return;
 
         if (runningWebStart()) {
             super.runBare();
@@ -262,12 +263,16 @@ public class WebStartTest extends TestCase {
             props.putAll(saved);
             props.setProperty(CERTS_KEY, new File("jna.keystore").getAbsolutePath());
             props.setProperty(POLICY_KEY, policy.getAbsolutePath());
-            props.store(new FileOutputStream(dpfile), "deployment.properties (for testing)");
+            os = new FileOutputStream(dpfile);
+            props.store(os, "deployment.properties (for testing)");
+            os.close();
             try {
                 runTestUnderWebStart();
             }
             finally {
-                saved.store(new FileOutputStream(dpfile), "deployment.properties");
+                os = new FileOutputStream(dpfile);
+                saved.store(os, "deployment.properties");
+                os.close();
             }
         }
     }
@@ -284,24 +289,21 @@ public class WebStartTest extends TestCase {
                 Enumeration e = result.failures();
                 Throwable t = ((TestFailure)e.nextElement()).thrownException();
                 t.printStackTrace(new PrintStream(os));
-                s.close();
-                System.exit(1);
             }
             else if (result.errorCount() != 0) {
                 Enumeration e = result.errors();
                 Throwable t = ((TestFailure)e.nextElement()).thrownException();
                 t.printStackTrace(new PrintStream(os));
-                s.close();
-                System.exit(2);
             }
+            // NOTE: System.exit with non-zero status causes an error dialog
+            // on w32 sun "1.6.0_14" (build 1.6.0_14-b08)
             s.close();
-            Thread.sleep(5000);
             System.exit(0);
         }
         catch(Throwable e) {
             // Can't communicate back to launching process
             showMessage("ERROR: " + e.getMessage());
-            System.exit(-1);
+            System.exit(0);
         }
     }
 
