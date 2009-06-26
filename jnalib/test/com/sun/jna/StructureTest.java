@@ -758,6 +758,26 @@ public class StructureTest extends TestCase {
         assertEquals("New ref should be equivalent", ref, s.array[0]);
     }
 
+    public void testAutoReadWriteStructureByReferenceArrayField() {
+        class TestStructure extends Structure {
+            public PublicTestStructure.ByReference field;
+        }
+        TestStructure s = new TestStructure();
+        s.field = new PublicTestStructure.ByReference();
+        PublicTestStructure.ByReference[] array = 
+            (PublicTestStructure.ByReference[])s.field.toArray(2);
+        final int VALUE = -1;
+        array[1].x = VALUE;
+        s.write();
+        assertEquals("ByReference array member not auto-written",
+                     VALUE, array[1].getPointer().getInt(0));
+
+        array[1].getPointer().setInt(0, VALUE*2);
+        s.read();
+        assertEquals("ByReference array member not auto-read",
+                     VALUE*2, array[1].x);
+    }
+
     static class NestedTypeInfoStructure extends Structure {
         public static class Inner extends Structure {
             public int dummy;

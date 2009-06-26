@@ -852,7 +852,7 @@ public final class Native {
                 return len * getNativeSize(type.getComponentType(), o);
             }
             // Don't process zero-length arrays
-            throw new IllegalArgumentException("Arrays of length zero not allowed in structure: " + type);
+            throw new IllegalArgumentException("Arrays of length zero not allowed: " + type);
         }
         if (Structure.class.isAssignableFrom(type)
             && !Structure.ByReference.class.isAssignableFrom(type)) {
@@ -861,11 +861,11 @@ public final class Native {
             return ((Structure)value).size();
         }
         try {
-            return Native.getNativeSize(type);
+            return getNativeSize(type);
         }
         catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("The type \"" + type.getName()
-                                               + "\" is not supported as a structure field: "
+                                               + "\" is not supported: "
                                                + e.getMessage());
         }
     }
