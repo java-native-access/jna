@@ -275,7 +275,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
   ffi_status status;
   char msg[128];
   callconv_t callconv = flags & MASK_CC;
-  int throw_error = 0;
+  const char* throw_type = NULL;
+  const char* throw_msg = NULL;
   
   nargs = (*env)->GetArrayLength(env, arr);
 
@@ -330,7 +331,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
       }
       else {
         snprintf(msg, sizeof(msg), "Unsupported wchar_t size (%d)", (int)sizeof(wchar_t));
-        throwByName(env, EUnsupportedOperation, msg);
+        throw_type = EUnsupportedOperation;
+        throw_msg = msg;
         goto cleanup;
       }
     }
@@ -366,7 +368,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
       if (!ffi_types[i]) {
         snprintf(msg, sizeof(msg),
                  "Structure type info not initialized at argument %d", i);
-        throwByName(env, EIllegalState, msg);
+        throw_type = EIllegalState;
+        throw_msg = msg;
         goto cleanup;
       }
     }
@@ -380,8 +383,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
                          &array_elements[array_count].type,
                          &array_elements[array_count].elems);
         if (c_args[i].l == NULL) {
-          throwByName(env, EIllegalArgument,
-                      "Buffer arguments must be direct or have a primitive backing array");
+          throw_type = EIllegalArgument;
+          throw_msg = "Buffer arguments must be direct or have a primitive backing array";
           goto cleanup;
         }
         ++array_count;
@@ -402,8 +405,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
       case 'D': ptr = (*env)->GetDoubleArrayElements(env, arg, NULL); break;
       }
       if (!ptr) {
-        throwByName(env, EOutOfMemory,
-                    "Could not obtain memory for primitive buffer");
+        throw_type = EOutOfMemory;
+        throw_msg = "Could not obtain memory for primitive buffer";
         goto cleanup;
       }
       c_args[i].l = ptr;
@@ -438,7 +441,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
   default:
     snprintf(msg, sizeof(msg), 
             "Unrecognized calling convention: %d", (int)callconv);
-    throwByName(env, EIllegalArgument, msg);
+    throw_type = EIllegalArgument;
+    throw_msg = msg;
     goto cleanup;
   }
 
@@ -450,7 +454,12 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
     }
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
     if (flags & THROW_LAST_ERROR) {
-      throw_error = GET_LAST_ERROR();
+      int error = GET_LAST_ERROR();
+      if (error) {
+        snprintf(msg, sizeof(msg), "%d", error);
+        throw_type = ELastError;
+        throw_msg = msg;
+      }
     }
     else if (preserve_last_error) {
       update_last_error(env, GET_LAST_ERROR());
@@ -459,6 +468,7 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
   }
   
  cleanup:
+
   // Release array elements
   for (i=0;i < array_count;i++) {
     switch (array_elements[i].type) {
@@ -495,12 +505,11 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
                                          array_elements[i].elems, 0);
       break;
     }
+  }
 
-    // Must raise the exception *after* all other JNI calls
-    if (throw_error) {
-      snprintf(msg, sizeof(msg), "%d", throw_error);
-      throwByName(env, ELastError, msg);
-    }
+  // Must raise any exception *after* all other JNI operations
+  if (throw_type) {
+    throwByName(env, throw_type, throw_msg);
   }
 }
 
@@ -2572,7 +2581,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   void* oldresp = resp;
   const char* throw_type = NULL;
   const char* throw_msg = NULL;
-  int throw_error = 0;
+  char msg[64];
 
   if (data->flags) {
     objects = alloca(data->cif.nargs * sizeof(void*));
@@ -2693,7 +2702,12 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     }
     ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
     if (data->throw_last_error) {
-      throw_error = GET_LAST_ERROR();
+      int error = GET_LAST_ERROR();
+      if (error) {
+        snprintf(msg, sizeof(msg), "%d", error);
+        throw_type = ELastError;
+        throw_msg = msg;
+      }
     }
     PEND();
   }
@@ -2768,13 +2782,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     }
   }
 
-  if (throw_msg) {
+  if (throw_type) {
     throwByName(env, throw_type, throw_msg);
-  }
-  else if (throw_error) {
-    char msg[64];
-    snprintf(msg, sizeof(msg), "%d", throw_error);
-    throwByName(env, ELastError, msg);
   }
 }
 
