@@ -464,7 +464,7 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
     else if (preserve_last_error) {
       update_last_error(env, GET_LAST_ERROR());
     }
-    PEND();
+    PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access";} while(0));
   }
   
  cleanup:
@@ -1549,7 +1549,7 @@ jobject
 newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory) 
 {
   if (data != NULL) {
-    jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
+    volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
     ffi_type* rtype = getStructureType(env, obj);
     if (new_memory) {
       MEMCPY(getStructureAddress(env, obj), data, rtype->size);
@@ -2709,7 +2709,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         throw_msg = msg;
       }
     }
-    PEND();
+    PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
 
   switch(data->rflag) {
