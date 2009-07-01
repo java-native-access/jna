@@ -275,8 +275,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
   ffi_status status;
   char msg[128];
   callconv_t callconv = flags & MASK_CC;
-  const char* throw_type = NULL;
-  const char* throw_msg = NULL;
+  const char* volatile throw_type = NULL;
+  const char* volatile throw_msg = NULL;
   
   nargs = (*env)->GetArrayLength(env, arr);
 
@@ -2579,8 +2579,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   char* volatile array_types = NULL;
   unsigned i;
   void* oldresp = resp;
-  const char* throw_type = NULL;
-  const char* throw_msg = NULL;
+  const char* volatile throw_type = NULL;
+  const char* volatile throw_msg = NULL;
   char msg[64];
 
   if (data->flags) {
