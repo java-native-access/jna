@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-06-22">
+<meta name="date" content="2009-07-01">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -541,7 +541,8 @@ The calling overhead for a single native call using JNA interface mapping can
 be an order of magnitude (~10X) greater time than equivalent custom JNI
 (whether it actually does in the context of your application is a different
 question).   In raw terms, the calling overhead is on the order of hundreds of
-microseconds instead of tens of microseconds. 
+microseconds instead of tens of microseconds.  Note that that's the <em>call
+overhead</em>, <b>not</b> the <em>total call time</em>.   
 This magnitude is typical of the difference between systems using
 dynamically-maintained type information and systems where type information is 
 statically compiled.  JNI hard-codes type information in the method
@@ -557,7 +558,13 @@ difference there is by performing targeted optimizations.  The ease of
 programming everything in Java usually outweighs small performance gains when
 using custom JNI. 
 <p>
-See the JavaDoc for specific <a href="javadoc/com/sun/jna/overview-summary.html#performance">performance tips</a>.
+See the main method of <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/test/com/sun/jna/RawTest.java?view=markup">this JUnit test</a> 
+for an example of how you might measure performance for the different mapping
+options in <em>your</em> situation.
+<p>
+See the JavaDoc for
+<a href="javadoc/com/sun/jna/overview-summary.html#performance">performance
+tips</a> related to different types of type mapping.
 <p>
 <a href=#top>Top</a>
 <a name=direct></a>
@@ -595,12 +602,12 @@ public class HelloWorld {
 </textarea>
 <p>
 As of version 3.1.0, direct mapping only supports Pointer and primitive type
-arguments (SVN head supports a few more types).  Once the full mappings are
-available, though, you can easily convert from interface mapping to direct
-mapping by creating a direct mapping class which implements your library
-interface, with all methods defined as native methods.  Then your library
-instance variable can be assigned an instance of this new class instead of the
-object returned by Native.loadLibrary().<p>
+arguments (SVN head supports everything except <code>TypeMapper</code>s).
+Once the full mappings are available, though, you can easily convert from
+interface mapping to direct mapping by creating a direct mapping class which
+implements your library interface, with all methods defined as native methods.
+Then your library instance variable can be assigned an instance of this new
+class instead of the object returned by <code>Native.loadLibrary()</code>.<p>
 
 <a href=#top>Top</a>
 <a name=demos></a>
@@ -678,9 +685,11 @@ If you are interested in paid support, feel free to say so on one of the JNA mai
 <h3>Building and Multi-platform support</h3>
 JNA has been built and tested on OSX (ppc, x86, x86_64), linux (x86, amd64),
 FreeBSD/OpenBSD (x86, amd64), Solaris (x86, amd64, sparc, sparcv9) and Windows
-(x86, amd64).  The ant build  script's test target will build and run the test suite,
-which has decent coverage and is a quick way to determine if your environment
-is set up correctly.<p>  
+(x86, amd64).  It has also been built for windows/mobile and Linux/ppc64,
+although those platforms are not included in the distribution.  The ant build
+script's test target will build and run the test suite, which has decent
+coverage and is a quick way to determine if your environment is set up
+correctly.<p>   
 If you want to do a build yourself, you'll need <a
 href="http://ant.apache.org">ANT</a>, <a
 href="http://directory.fsf.org/make.html">GNU make</a> and <a
