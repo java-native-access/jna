@@ -68,7 +68,10 @@ public interface User32 extends W32API {
     int LR_SHARED           =0x8000;
 
     HWND FindWindow(String winClass, String title);
+    /** ASCII version. */
     int GetClassName(HWND hWnd, byte[] lpClassName, int nMaxCount);
+    /** Unicode version. */
+    int GetClassName(HWND hWnd, char[] lpClassName, int nMaxCount);
     class GUITHREADINFO extends Structure {
         public int cbSize = size();
         public int flags;
@@ -96,15 +99,22 @@ public interface User32 extends W32API {
     }
     boolean GetWindowInfo(HWND hWnd, WINDOWINFO pwi);
     boolean GetWindowRect(HWND hWnd, RECT rect);
+    /** ASCII version. */
     int GetWindowText(HWND hWnd, byte[] lpString, int nMaxCount);
+    /** Unicode version. */
+    int GetWindowText(HWND hWnd, char[] lpString, int nMaxCount);
     int GetWindowTextLength(HWND hWnd);
+    /** ASCII version. */
     int GetWindowModuleFileName(HWND hWnd, byte[] lpszFileName, int cchFileNameMax);
+    /** Unicode version. */
+    int GetWindowModuleFileName(HWND hWnd, char[] lpszFileName, int cchFileNameMax);
     int GetWindowThreadProcessId(HWND hWnd, IntByReference lpdwProcessId);
     interface WNDENUMPROC extends StdCallCallback {
         /** Return whether to continue enumeration. */
         boolean callback(HWND hWnd, Pointer data);
     }
     boolean EnumWindows(WNDENUMPROC lpEnumFunc, Pointer data);
+    boolean EnumChildWindows(HWND hWnd, WNDENUMPROC lpEnumFunc, Pointer data);
     boolean EnumThreadWindows(int dwThreadId, WNDENUMPROC lpEnumFunc, Pointer data);
 
     boolean FlashWindowEx(FLASHWINFO info);
