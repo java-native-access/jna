@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -66,7 +67,24 @@ public class RawReturnTypesTest extends ReturnTypesTest {
         lib = new RawTestLibrary();
     }
     
+    public static class RawObjectTestLibrary extends RawTestLibrary {
+        public RawObjectTestLibrary(Map options) {
+            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
+        }
+    }
+
+    public static class RawNativeMappedLibrary implements NativeMappedLibrary {
+        public native Custom returnInt32Argument(int arg);
+        static {
+            Native.register("testlib");
+        }
+    }
+    protected NativeMappedLibrary loadNativeMappedLibrary() {
+        return new RawNativeMappedLibrary();
+    }
+
     // Override not-yet-supported tests
+    public void testReturnObject() { }
     public void testReturnPointerArray() { }
     public void testReturnStringArray() { }
     public void testReturnWStringArray() { }

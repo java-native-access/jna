@@ -12,6 +12,8 @@
  */
 package com.sun.jna;
 
+import java.util.Map;
+
 import com.sun.jna.ptr.IntByReference;
 
 /** Exercise callback-related functionality.
@@ -41,6 +43,9 @@ public class RawCallbacksTest extends CallbacksTest {
         public native Int32CallbackX returnCallbackArgument(Int32CallbackX cb);
         public native void callVoidCallback(VoidCallback c);
 
+        public native int callInt32Callback(CustomCallback cb, int arg1, int arg2);
+        public native void callCallbackInStruct(CbStruct s);
+
         static {
             Native.register("testlib");
         }
@@ -50,6 +55,16 @@ public class RawCallbacksTest extends CallbacksTest {
         lib = new RawTestLibrary();
     }
     
+    public static class RawCallbackTestLibrary implements CallbackTestLibrary {
+        public RawCallbackTestLibrary(Map options) {
+            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
+        }
+        public native float callInt32Callback(Int32Callback c, float arg, float arg2);
+    }
+    protected CallbackTestLibrary loadCallbackTestLibrary(Map options) {
+        return new RawCallbackTestLibrary(options);
+    }
+
     // Currently unsupported tests
     public void testCallStringArrayCallback() { }
     public void testCallbackExceptionHandlerWithCallbackProxy() { }

@@ -95,6 +95,40 @@ public class ArgumentsMarshalTest extends TestCase {
 
         // Nonexistent functions 
         boolean returnBooleanArgument(Object arg);
+
+        // Structure
+        class MinTestStructure extends Structure {
+            public int field;
+        }
+        Pointer testStructurePointerArgument(MinTestStructure s);
+
+        class VariableSizedStructure extends Structure {
+            public int length;
+            public byte[] buffer;
+            public VariableSizedStructure(String arg) {
+                length = arg.length() + 1;
+                buffer = new byte[length];
+                System.arraycopy(arg.getBytes(), 0, buffer, 0, arg.length());
+            }
+        }
+        String returnStringFromVariableSizedStructure(VariableSizedStructure s);
+        class CbStruct extends Structure {
+            public static interface TestCallback extends Callback {
+                int callback(int arg1, int arg2);
+            }
+            public TestCallback cb;
+        }
+        void setCallbackInStruct(CbStruct cbstruct);
+
+        // Union (by value)
+        class TestUnion extends Union implements Structure.ByValue {
+            public String f1;
+            public int f2;
+        }
+        interface UnionCallback extends Callback {
+            TestUnion invoke(TestUnion arg);
+        }
+        TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
     }
 
     TestLibrary lib;
@@ -234,9 +268,12 @@ public class ArgumentsMarshalTest extends TestCase {
             return new Integer(value);
         }
     }
-    public void testNativeMappedArgument() {
-        NativeMappedLibrary lib = (NativeMappedLibrary)
+    protected NativeMappedLibrary loadNativeMappedLibrary() {
+        return (NativeMappedLibrary)
             Native.loadLibrary("testlib", NativeMappedLibrary.class);
+    }
+    public void testNativeMappedArgument() {
+        NativeMappedLibrary lib = loadNativeMappedLibrary();
         final int MAGIC = 0x12345678;
         Custom arg = new Custom(MAGIC);
         assertEquals("Argument not mapped", MAGIC, lib.returnInt32Argument(arg));
@@ -537,6 +574,64 @@ public class ArgumentsMarshalTest extends TestCase {
                      Arrays.asList(args));
     }
     
+    public void testReadFunctionPointerAsCallback() {
+        TestLibrary.CbStruct s = new TestLibrary.CbStruct();
+        assertNull("Function pointer field should be null", s.cb);
+        lib.setCallbackInStruct(s);
+        assertNotNull("Callback field not set", s.cb);
+    }
+
+    public void testCallProxiedFunctionPointer() {
+        TestLibrary.CbStruct s = new TestLibrary.CbStruct();
+        lib.setCallbackInStruct(s);
+        assertEquals("Proxy to native function pointer failed: " + s.cb,
+                     3, s.cb.callback(1, 2));
+    }
+
+    public void testVariableSizedStructureArgument() {
+        String EXPECTED = getName();
+        TestLibrary.VariableSizedStructure s =
+            new TestLibrary.VariableSizedStructure(EXPECTED);
+        assertEquals("Wrong string returned from variable sized struct",
+                     EXPECTED, lib.returnStringFromVariableSizedStructure(s));
+    }
+
+    public void testDisableAutoSynch() {
+        TestLibrary.MinTestStructure s = new TestLibrary.MinTestStructure();
+        final int VALUE = 42;
+        s.field = VALUE;
+        s.setAutoWrite(false);
+        lib.testStructurePointerArgument(s);
+        assertEquals("Auto write should be disabled", 0, s.field);
+
+        final int EXPECTED = s.field;
+        s.getPointer().setInt(0, VALUE);
+        s.setAutoRead(false);
+        lib.testStructurePointerArgument(s);
+        assertEquals("Auto read should be disabled", EXPECTED, s.field);
+    }
+
+    public void testUnionByValueCallbackArgument() throws Exception{
+        TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
+        arg.setType(String.class);
+        final String VALUE = getName();
+        arg.f1 = VALUE;
+        final boolean[] called = { false };
+        final String[] cbvalue = { null };
+        TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
+                public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
+                    called[0] = true;
+                    v.setType(String.class);
+                    v.read();
+                    cbvalue[0] = v.f1;
+                    return v;
+                }
+            }, arg);
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Incorrect callback union argument", VALUE, cbvalue[0]);
+        assertEquals("Union value not propagated", VALUE, result.getTypedValue(String.class));
+    }
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(ArgumentsMarshalTest.class);
     }

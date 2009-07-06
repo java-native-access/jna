@@ -75,6 +75,11 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
         // dummy to avoid causing Native.register to fail
         public boolean returnBooleanArgument(Object arg) {throw new IllegalArgumentException();}
 
+        public native Pointer testStructurePointerArgument(MinTestStructure s);
+        public native String returnStringFromVariableSizedStructure(VariableSizedStructure s);
+        public native void setCallbackInStruct(CbStruct s);
+        public native TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
+
         static {
             Native.register("testlib");
         }
@@ -85,10 +90,34 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
         lib = new RawTestLibrary();
     }
     
-    // These tests crash on w32 IBM J9 unless -Xint is used
+    public static class RawNativeMappedLibrary implements NativeMappedLibrary {
+        public native int returnInt32Argument(Custom arg);
+        static {
+            Native.register("testlib");
+        }
+    }
+    protected NativeMappedLibrary loadNativeMappedLibrary() {
+        return new RawNativeMappedLibrary();
+    }
+
+    // This test crashes on w32 IBM J9 unless -Xint is used
     // (jvmwi3260-20080415_18762)
-    //public void testWideCharArgument() { }
-    //public void testWStringArgumentReturn() { }
+    public void testWideCharArgument() {
+        if (Platform.isWindows()
+            && "IBM".equals(System.getProperty("java.vm.vendor"))) {
+            fail("XFAIL, crash avoided");
+        }
+        super.testWideCharArgument();
+    }
+    // This test crashes on w32 IBM J9 unless -Xint is used
+    // (jvmwi3260-20080415_18762)
+    public void testWStringArgumentReturn() {
+        if (Platform.isWindows()
+            && "IBM".equals(System.getProperty("java.vm.vendor"))) {
+            fail("XFAIL, crash avoided");
+        }
+        super.testWStringArgumentReturn();
+    }
 
     // Override tests not yet supported
     public void testStringArrayArgument() { }

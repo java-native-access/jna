@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -97,9 +98,10 @@ public class ReturnTypesTest extends TestCase {
     }
     
     public void testReturnObject() throws Exception {
-        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class, new HashMap() { {
+        Map options = new HashMap() { {
             put(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE);
-        }});
+        }};
+        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class, options);
         assertNull("null value not returned", lib.returnObjectArgument(null));
         final Object VALUE = new Object() {
             public String toString() {
@@ -110,7 +112,6 @@ public class ReturnTypesTest extends TestCase {
     }
     
     public void testReturnObjectUnsupported() throws Exception {
-        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
         try {
             lib.returnObjectArgument(new TestLibrary.TestObject());
             fail("Java Object return is not supported, should throw IllegalArgumentException");
@@ -181,9 +182,13 @@ public class ReturnTypesTest extends TestCase {
             return o instanceof Custom && ((Custom)o).value == value;
         }
     }
-    public void testInvokeNativeMapped() {
-        NativeMappedLibrary lib = (NativeMappedLibrary)
+    protected NativeMappedLibrary loadNativeMappedLibrary() {
+        return (NativeMappedLibrary)
             Native.loadLibrary("testlib", NativeMappedLibrary.class);
+    }
+
+    public void testInvokeNativeMapped() {
+        NativeMappedLibrary lib = loadNativeMappedLibrary();
         final int MAGIC = 0x12345678;
         final Custom EXPECTED = new Custom(MAGIC);
         assertEquals("Argument not mapped", EXPECTED, lib.returnInt32Argument(MAGIC));
