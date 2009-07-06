@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
 
-public class RawTypeMapperTest extends TestCase {
+public class DirectTypeMapperTest extends TestCase {
 
-    public static class RawTestLibraryBoolean {
+    public static class DirectTestLibraryBoolean {
         final static int MAGIC = 0xABEDCF23;
         public native int returnInt32Argument(boolean b);
         static {
@@ -41,7 +41,7 @@ public class RawTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
-    public static class RawTestLibraryString {
+    public static class DirectTestLibraryString {
         public native int returnInt32Argument(String s);
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
@@ -58,7 +58,7 @@ public class RawTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
-    public static class RawTestLibraryCharSequence {
+    public static class DirectTestLibraryCharSequence {
         public native int returnInt32Argument(String n);
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
@@ -76,7 +76,7 @@ public class RawTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
-    public static class RawTestLibraryNumber {
+    public static class DirectTestLibraryNumber {
         public native int returnInt32Argument(Number n);
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
@@ -96,31 +96,31 @@ public class RawTypeMapperTest extends TestCase {
     }
 
     public void testBooleanToIntArgumentConversion() {
-        RawTestLibraryBoolean lib = new RawTestLibraryBoolean();
+        DirectTestLibraryBoolean lib = new DirectTestLibraryBoolean();
         assertEquals("Failed to convert Boolean argument to Int",
                      lib.MAGIC,
                      lib.returnInt32Argument(true));
     }
     public void testStringToIntArgumentConversion() {
         final int MAGIC = 0x7BEDCF23;
-        RawTestLibraryString lib = new RawTestLibraryString();
+        DirectTestLibraryString lib = new DirectTestLibraryString();
         assertEquals("Failed to convert String argument to Int", MAGIC,
                      lib.returnInt32Argument(Integer.toHexString(MAGIC)));
     }
     public void testCharSequenceToIntArgumentConversion() {
         final int MAGIC = 0x7BEDCF23;
-        RawTestLibraryCharSequence lib = new RawTestLibraryCharSequence();
+        DirectTestLibraryCharSequence lib = new DirectTestLibraryCharSequence();
         assertEquals("Failed to convert String argument to Int", MAGIC,
                      lib.returnInt32Argument(Integer.toHexString(MAGIC)));
     }
     public void testNumberToIntArgumentConversion() {
         
         final int MAGIC = 0x7BEDCF23;
-        RawTestLibraryNumber lib = new RawTestLibraryNumber();
+        DirectTestLibraryNumber lib = new DirectTestLibraryNumber();
         assertEquals("Failed to convert Double argument to Int", MAGIC,
                      lib.returnInt32Argument(new Double(MAGIC)));
     }
-    public static class RawBooleanTestLibrary {
+    public static class DirectBooleanTestLibrary {
         public native boolean returnInt32Argument(boolean b);
         static {
             final int MAGIC = 0xABEDCF23;
@@ -148,7 +148,7 @@ public class RawTypeMapperTest extends TestCase {
         }
     }
     public void testIntegerToBooleanResultConversion() throws Exception {
-        RawBooleanTestLibrary lib = new RawBooleanTestLibrary();
+        DirectBooleanTestLibrary lib = new DirectBooleanTestLibrary();
         // argument "true" converts to zero; result zero converts to "true"
         assertTrue("Failed to convert integer return to boolean TRUE", 
                    lib.returnInt32Argument(true));
@@ -158,6 +158,6 @@ public class RawTypeMapperTest extends TestCase {
     }
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(RawTypeMapperTest.class);
+        junit.textui.TestRunner.run(DirectTypeMapperTest.class);
     }
 }

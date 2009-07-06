@@ -24,7 +24,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class RawTest extends TestCase {
+public class DirectTest extends TestCase {
 
     private static final String BUILDDIR = 
         System.getProperty("jna.builddir",
@@ -46,7 +46,7 @@ public class RawTest extends TestCase {
     }
 
     public static void main(java.lang.String[] argList) {
-        junit.textui.TestRunner.run(RawTest.class);
+        junit.textui.TestRunner.run(DirectTest.class);
         checkPerformance();
     }
 
@@ -123,7 +123,7 @@ public class RawTest extends TestCase {
 
     public void testRegisterMethods() throws Exception {
         // Use a dedicated class loader to ensure the class can be gc'd
-        String name = "com.sun.jna.RawTest$MathLibrary";
+        String name = "com.sun.jna.DirectTest$MathLibrary";
         ClassLoader loader = new TestLoader();
         Class cls = Class.forName(name, true, loader);
         assertNotNull("Failed loading class", cls);

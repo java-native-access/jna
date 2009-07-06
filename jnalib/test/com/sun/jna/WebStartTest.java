@@ -39,6 +39,10 @@ import junit.framework.TestCase;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
 
+/**
+ * Run tests under web start
+ * Works under OSX, windows, and linux.
+ */
 public class WebStartTest extends TestCase {
     
     // Provide a policy file for unsigned jars
@@ -256,9 +260,6 @@ public class WebStartTest extends TestCase {
     private static final String CERTS_KEY =
         "deployment.user.security.trusted.certs";
     public void runBare() throws Throwable {
-        // FIXME only tested on mac and windows
-        if (!Platform.isMac() && !Platform.isWindows()) return;
-
         if (runningWebStart()) {
             super.runBare();
         }

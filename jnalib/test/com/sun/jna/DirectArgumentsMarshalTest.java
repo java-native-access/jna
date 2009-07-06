@@ -21,9 +21,9 @@ import java.nio.ShortBuffer;
  *
  * @author twall@users.sf.net
  */
-public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
+public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
 
-    public static class RawTestLibrary implements TestLibrary {
+    public static class DirectTestLibrary implements TestLibrary {
         /** Dummy.  Automatically fail when passed an object. */
         public String returnStringArgument(Object arg) {throw new IllegalArgumentException(arg.getClass().getName()); }
         public native boolean returnBooleanArgument(boolean arg);
@@ -87,17 +87,17 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
 
     /* Override original. */
     protected void setUp() {
-        lib = new RawTestLibrary();
+        lib = new DirectTestLibrary();
     }
     
-    public static class RawNativeMappedLibrary implements NativeMappedLibrary {
+    public static class DirectNativeMappedLibrary implements NativeMappedLibrary {
         public native int returnInt32Argument(Custom arg);
         static {
             Native.register("testlib");
         }
     }
     protected NativeMappedLibrary loadNativeMappedLibrary() {
-        return new RawNativeMappedLibrary();
+        return new DirectNativeMappedLibrary();
     }
 
     // This test crashes on w32 IBM J9 unless -Xint is used
@@ -131,7 +131,7 @@ public class RawArgumentsMarshalTest extends ArgumentsMarshalTest {
     public void testModifiedCharArrayArgument() { }
 
     public static void main(java.lang.String[] argList) {
-        junit.textui.TestRunner.run(RawArgumentsMarshalTest.class);
+        junit.textui.TestRunner.run(DirectArgumentsMarshalTest.class);
     }
     
 }

@@ -25,9 +25,9 @@ import com.sun.jna.ptr.ShortByReference;
  *
  * @author twall@users.sf.net
  */
-public class RawByReferenceArgumentsTest extends ByReferenceArgumentsTest {
+public class DirectByReferenceArgumentsTest extends ByReferenceArgumentsTest {
 
-    public static class RawTestLibrary implements TestLibrary {
+    public static class DirectTestLibrary implements TestLibrary {
 
         public native void incrementInt8ByReference(ByteByReference b);
         public native void incrementInt16ByReference(ShortByReference s);
@@ -44,11 +44,11 @@ public class RawByReferenceArgumentsTest extends ByReferenceArgumentsTest {
     }
 
     protected void setUp() {
-        lib = new RawTestLibrary();
+        lib = new DirectTestLibrary();
     }
     
     public static void main(java.lang.String[] argList) {
-        junit.textui.TestRunner.run(RawByReferenceArgumentsTest.class);
+        junit.textui.TestRunner.run(DirectByReferenceArgumentsTest.class);
     }
     
 }

@@ -20,9 +20,9 @@ import com.sun.jna.ptr.IntByReference;
  *
  * @author twall@users.sf.net
  */
-public class RawCallbacksTest extends CallbacksTest {
+public class DirectCallbacksTest extends CallbacksTest {
 
-    public static class RawTestLibrary implements TestLibrary {
+    public static class DirectTestLibrary implements TestLibrary {
         public native void callVoidCallback(VoidCallbackCustom c);
         public native boolean callBooleanCallback(BooleanCallback c, boolean arg, boolean arg2);
         public native byte callInt8Callback(ByteCallback c, byte arg, byte arg2);
@@ -52,7 +52,7 @@ public class RawCallbacksTest extends CallbacksTest {
     }
 
     protected void setUp() {
-        lib = new RawTestLibrary();
+        lib = new DirectTestLibrary();
     }
     
     public static class DirectCallbackTestLibrary implements CallbackTestLibrary {
@@ -72,6 +72,6 @@ public class RawCallbacksTest extends CallbacksTest {
     public void testCallbackExceptionHandlerWithCallbackProxy() { }
 
     public static void main(java.lang.String[] argList) {
-        junit.textui.TestRunner.run(RawCallbacksTest.class);
+        junit.textui.TestRunner.run(DirectCallbacksTest.class);
     }
 }

@@ -25,9 +25,9 @@ import com.sun.jna.ReturnTypesTest.TestLibrary.TestSmallStructure;
  *
  * @author twall@users.sf.net
  */
-public class RawReturnTypesTest extends ReturnTypesTest {
+public class DirectReturnTypesTest extends ReturnTypesTest {
 
-    public static class RawTestLibrary implements TestLibrary {
+    public static class DirectTestLibrary implements TestLibrary {
         
         public Object returnObjectArgument(Object s) {
             throw new IllegalArgumentException(s.getClass().getName());
@@ -64,23 +64,23 @@ public class RawReturnTypesTest extends ReturnTypesTest {
     }
 
     protected void setUp() {
-        lib = new RawTestLibrary();
+        lib = new DirectTestLibrary();
     }
     
-    public static class RawObjectTestLibrary extends RawTestLibrary {
-        public RawObjectTestLibrary(Map options) {
+    public static class DirectObjectTestLibrary extends DirectTestLibrary {
+        public DirectObjectTestLibrary(Map options) {
             Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
         }
     }
 
-    public static class RawNativeMappedLibrary implements NativeMappedLibrary {
+    public static class DirectNativeMappedLibrary implements NativeMappedLibrary {
         public native Custom returnInt32Argument(int arg);
         static {
             Native.register("testlib");
         }
     }
     protected NativeMappedLibrary loadNativeMappedLibrary() {
-        return new RawNativeMappedLibrary();
+        return new DirectNativeMappedLibrary();
     }
 
     // Override not-yet-supported tests
@@ -90,6 +90,6 @@ public class RawReturnTypesTest extends ReturnTypesTest {
     public void testReturnWStringArray() { }
 
     public static void main(java.lang.String[] argList) {
-        junit.textui.TestRunner.run(RawReturnTypesTest.class);
+        junit.textui.TestRunner.run(DirectReturnTypesTest.class);
     }
 }
