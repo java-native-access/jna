@@ -513,20 +513,40 @@ public final class Native {
      * the default platform encoding (if supported).
      */
     static byte[] getBytes(String s) {
-        String encoding = System.getProperty("jna.encoding");
+        try {
+            return getBytes(s, System.getProperty("jna.encoding"));
+        }
+        catch (UnsupportedEncodingException e) {
+            return s.getBytes();
+        }
+    }
+
+    /** Return a byte array corresponding to the given String, using the given
+        encoding.
+    */
+    static byte[] getBytes(String s, String encoding) throws UnsupportedEncodingException {
         if (encoding != null) {
-            try {
-                return s.getBytes(encoding);
-            }
-            catch (UnsupportedEncodingException e) {
-            }
+            return s.getBytes(encoding);
         }
         return s.getBytes();
     }
 
-    /** Obtain a NUL-terminated byte buffer equivalent to the given String. */
+    /** Obtain a NUL-terminated byte buffer equivalent to the given String,
+        using <code>jna.encoding</code> or the default platform encoding if
+        that property is not set.
+    */
     public static byte[] toByteArray(String s) {
         byte[] bytes = getBytes(s);
+        byte[] buf = new byte[bytes.length+1];
+        System.arraycopy(bytes, 0, buf, 0, bytes.length);
+        return buf;
+    }
+
+    /** Obtain a NUL-terminated byte buffer equivalent to the given String,
+        using the given encoding.
+     */
+    public static byte[] toByteArray(String s, String encoding) throws UnsupportedEncodingException {
+        byte[] bytes = getBytes(s, encoding);
         byte[] buf = new byte[bytes.length+1];
         System.arraycopy(bytes, 0, buf, 0, bytes.length);
         return buf;
