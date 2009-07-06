@@ -790,6 +790,18 @@ public class CallbacksTest extends TestCase {
                     }
                 };
                 addTypeConverter(double.class, converter);
+                converter = new TypeConverter() {
+                    public Object fromNative(Object value, FromNativeContext context) {
+                        return new Float(((Long)value).intValue());
+                    }
+                    public Class nativeType() {
+                        return Long.class;
+                    }
+                    public Object toNative(Object value, ToNativeContext ctx) {
+                        return new Long(((Float)value).longValue());
+                    }
+                };
+                addTypeConverter(float.class, converter);
             }
         };
         final Map _OPTIONS = new HashMap() {
@@ -797,10 +809,14 @@ public class CallbacksTest extends TestCase {
                 put(Library.OPTION_TYPE_MAPPER, _MAPPER);
             }
         };
-        interface Int32Callback extends Callback {
+        interface DoubleCallback extends Callback {
             double callback(double arg, double arg2);
         }
-        double callInt32Callback(Int32Callback c, double arg, double arg2);
+        double callInt32Callback(DoubleCallback c, double arg, double arg2);
+        interface FloatCallback extends Callback {
+            float callback(float arg, float arg2);
+        }
+        float callInt64Callback(FloatCallback c, float arg, float arg2);
     }
 
     protected CallbackTestLibrary loadCallbackTestLibrary() {
@@ -818,7 +834,7 @@ public class CallbacksTest extends TestCase {
 
         final double[] ARGS = new double[2];
 
-        CallbackTestLibrary.Int32Callback cb = new CallbackTestLibrary.Int32Callback() {
+        CallbackTestLibrary.DoubleCallback cb = new CallbackTestLibrary.DoubleCallback() {
             public double callback(double arg, double arg2) {
                 ARGS[0] = arg;
                 ARGS[1] = arg2;
@@ -826,11 +842,34 @@ public class CallbacksTest extends TestCase {
             }
         };
         assertEquals("Wrong type mapper for callback class", lib._MAPPER,
-                     Native.getTypeMapper(CallbackTestLibrary.Int32Callback.class));
+                     Native.getTypeMapper(CallbackTestLibrary.DoubleCallback.class));
         assertEquals("Wrong type mapper for callback object", lib._MAPPER,
                      Native.getTypeMapper(cb.getClass()));
 
         double result = lib.callInt32Callback(cb, -1, -1);
+        assertEquals("Wrong callback argument 1", -1, ARGS[0], 0);
+        assertEquals("Wrong callback argument 2", -1, ARGS[1], 0);
+        assertEquals("Incorrect result of callback invocation", -2, result, 0);
+    }
+
+    public void testCallbackUsesTypeMapperWithDifferentReturnTypeSize() throws Exception {
+        CallbackTestLibrary lib = loadCallbackTestLibrary();
+
+        final float[] ARGS = new float[2];
+
+        CallbackTestLibrary.FloatCallback cb = new CallbackTestLibrary.FloatCallback() {
+            public float callback(float arg, float arg2) {
+                ARGS[0] = arg;
+                ARGS[1] = arg2;
+                return arg + arg2;
+            }
+        };
+        assertEquals("Wrong type mapper for callback class", lib._MAPPER,
+                     Native.getTypeMapper(CallbackTestLibrary.FloatCallback.class));
+        assertEquals("Wrong type mapper for callback object", lib._MAPPER,
+                     Native.getTypeMapper(cb.getClass()));
+
+        float result = lib.callInt64Callback(cb, -1, -1);
         assertEquals("Wrong callback argument 1", -1, ARGS[0], 0);
         assertEquals("Wrong callback argument 2", -1, ARGS[1], 0);
         assertEquals("Incorrect result of callback invocation", -2, result, 0);
