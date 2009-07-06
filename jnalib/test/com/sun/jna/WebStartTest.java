@@ -67,8 +67,8 @@ public class WebStartTest extends TestCase {
         + "  <security><all-permissions/></security>\n"
         + "  <resources>\n"
         + "    <j2se version='1.4+'/>\n"
-        + "    <jar href='jna.jar'/>\n"
         + "    <jar href='jna-test.jar'/>\n"
+        + "    <jar href='jna.jar'/>\n"
         + "    <jar href='junit.jar'/>{CLOVER}\n"
         + "    <nativelib href='jnidispatch.jar'/>\n"
         + "  </resources>\n"
@@ -150,8 +150,8 @@ public class WebStartTest extends TestCase {
             "-wait", 
             jnlp.toURI().toURL().toString(),
         };
-        Process p = Runtime.getRuntime().exec(cmd);
-        StringBuffer output = new StringBuffer();
+        final Process p = Runtime.getRuntime().exec(cmd);
+        final StringBuffer output = new StringBuffer();
         class SocketHandler extends Thread {
             private InputStream is;
             private StringBuffer sb;
@@ -173,21 +173,31 @@ public class WebStartTest extends TestCase {
                         }
                     }
                     catch(IOException e) {
+                        showMessage("read error: " + e.toString());
                     }
                 }
                 try { is.close(); } catch(IOException e) { }
             }
         }
 
+        Thread out = null;
         try {
-            Thread out = new SocketHandler(s.accept(), output);
+            out = new SocketHandler(s.accept(), output);
             out.start();
         }
         catch(SocketTimeoutException e) {
-            p.destroy();
-            throw new Error("JWS Timed out");
+            try { 
+                p.exitValue();
+            }
+            catch(IllegalThreadStateException e2) {
+                p.destroy();
+                throw new Error("JWS Timed out");
+            }
         }
         p.waitFor();
+        if (out != null) {
+            out.join();
+        }
         
         int code = p.exitValue();
         String error = output.toString();
