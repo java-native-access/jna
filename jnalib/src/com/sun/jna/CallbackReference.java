@@ -304,6 +304,7 @@ class CallbackReference extends WeakReference {
         return getFunctionPointer(cb, false);
     }
 
+    /** Native code calls this with direct=true. */
     private static Pointer getFunctionPointer(Callback cb, boolean direct) {
         Pointer fp = null;
         if (cb == null) {

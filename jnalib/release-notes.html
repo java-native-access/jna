@@ -5,7 +5,8 @@
 <li>Handle String, Structure, Callback, Buffer, and primitive arrays in direct
   mappings.  Handle NativeMapped and TypeMapper, with optimized paths for
   IntegerType and PointerType.
-<li>Optionally throw errno/GetLastError as an exception.
+<li>Optionally throw errno/GetLastError as an exception.  This is preferred to
+  (and more efficient than) calling Native.getLastError().
 <li>Unload/delete native library unpacked from jna.jar if Native class is garbage collected.  Only install shutdown hook if using the system class loader. 
 <li>Auto-write contiguous Structure arrays when first element is written.
 <li>Add option to throw GetLastError/errno as an exception.

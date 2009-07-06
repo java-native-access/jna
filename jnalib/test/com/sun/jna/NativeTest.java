@@ -257,8 +257,40 @@ public class NativeTest extends TestCase {
 
     }
 
-    // TODO test extraction of (alignment|typemapper) 
-    // from (variable|options)
+    public static class DirectMapping {
+        public static class DirectStructure extends Structure {
+            public int field;
+        }
+        public static interface DirectCallback extends Callback {
+            void invoke();
+        }
+        public DirectMapping(Map options) {
+            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
+        }
+    }
+
+    public void testGetTypeMapperForDirectMapping() {
+        final TypeMapper mapper = new DefaultTypeMapper();
+        Map options = new HashMap();
+        options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        DirectMapping lib = new DirectMapping(options);
+        assertEquals("Wrong type mapper for direct mapping",
+                     mapper, Native.getTypeMapper(DirectMapping.class));
+        assertEquals("Wrong type mapper for direct mapping nested structure",
+                     mapper, Native.getTypeMapper(DirectMapping.DirectStructure.class));
+        assertEquals("Wrong type mapper for direct mapping nested callback",
+                     mapper, Native.getTypeMapper(DirectMapping.DirectCallback.class));
+    }
+
+    private static class TestCallback implements Callback {
+        public static final TypeMapper TYPE_MAPPER = new DefaultTypeMapper();
+        public void callback() { }
+    }
+    public void testGetTypeMapperFromCallbackInterface() throws Exception {
+        assertEquals("Wrong type mapper for callback class",
+                     TestCallback.TYPE_MAPPER,
+                     Native.getTypeMapper(TestCallback.class));
+    }
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeTest.class);

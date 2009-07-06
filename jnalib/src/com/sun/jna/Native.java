@@ -355,15 +355,7 @@ public final class Native {
         Library proxy = (Library)
             Proxy.newProxyInstance(loader, new Class[] {interfaceClass},
                                    handler);
-        synchronized(libraries) {
-            if (!libOptions.isEmpty()) 
-                options.put(interfaceClass, libOptions);
-            if (libOptions.containsKey(Library.OPTION_TYPE_MAPPER))
-                typeMappers.put(interfaceClass, libOptions.get(Library.OPTION_TYPE_MAPPER));
-            if (libOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
-                alignments.put(interfaceClass, libOptions.get(Library.OPTION_STRUCTURE_ALIGNMENT));
-            libraries.put(interfaceClass, new WeakReference(proxy));
-        }
+        cacheOptions(interfaceClass, libOptions, proxy);
         return proxy;
     }
 
@@ -401,13 +393,19 @@ public final class Native {
         if (cls == null) { 
             return null;
         }
+        synchronized(libraries) {
+            if (options.containsKey(cls)) {
+                return cls;
+            }
+        }
         if (Library.class.isAssignableFrom(cls)) {
             return cls;
         }
         if (Callback.class.isAssignableFrom(cls)) {
             cls = CallbackReference.findCallbackClass(cls);
         }
-        Class fromDeclaring = findEnclosingLibraryClass(cls.getDeclaringClass());
+        Class declaring = cls.getDeclaringClass();
+        Class fromDeclaring = findEnclosingLibraryClass(declaring);
         if (fromDeclaring != null) {
             return fromDeclaring;
         }
@@ -1285,6 +1283,38 @@ public final class Native {
         synchronized(registeredClasses) {
             registeredClasses.put(cls, handles);
             registeredLibraries.put(cls, lib);
+        }
+        cacheOptions(cls, lib.getOptions(), null);
+    }
+
+    /** Take note of options used for a given library mapping, to facilitate
+        looking them up later.
+    */
+    private static void cacheOptions(Class cls, Map libOptions, Object proxy) {
+        synchronized(libraries) {
+            if (!libOptions.isEmpty()) 
+                options.put(cls, libOptions);
+            if (libOptions.containsKey(Library.OPTION_TYPE_MAPPER))
+                typeMappers.put(cls, libOptions.get(Library.OPTION_TYPE_MAPPER));
+            if (libOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
+                alignments.put(cls, libOptions.get(Library.OPTION_STRUCTURE_ALIGNMENT));
+            if (proxy != null) {
+                libraries.put(cls, new WeakReference(proxy));
+            }
+
+            // If it's a direct mapping, AND implements a Library interface,
+            // cache the library interface as well, so that any nested
+            // classes get the appropriate associated options
+            if (!cls.isInterface()
+                && Library.class.isAssignableFrom(cls)) {
+                Class ifaces[] = cls.getInterfaces();
+                for (int i=0;i < ifaces.length;i++) {
+                    if (Library.class.isAssignableFrom(ifaces[i])) {
+                        cacheOptions(ifaces[i], libOptions, proxy);
+                        break;
+                    }
+                }
+            }
         }
     }
 

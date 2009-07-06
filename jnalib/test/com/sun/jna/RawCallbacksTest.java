@@ -55,14 +55,15 @@ public class RawCallbacksTest extends CallbacksTest {
         lib = new RawTestLibrary();
     }
     
-    public static class RawCallbackTestLibrary implements CallbackTestLibrary {
-        public RawCallbackTestLibrary(Map options) {
-            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
-        }
+    public static class DirectCallbackTestLibrary implements CallbackTestLibrary {
         public native float callInt32Callback(Int32Callback c, float arg, float arg2);
+        static {
+            Native.register(NativeLibrary.getInstance("testlib", _OPTIONS));
+        }
     }
-    protected CallbackTestLibrary loadCallbackTestLibrary(Map options) {
-        return new RawCallbackTestLibrary(options);
+
+    protected CallbackTestLibrary loadCallbackTestLibrary() {
+        return new DirectCallbackTestLibrary();
     }
 
     // Currently unsupported tests
