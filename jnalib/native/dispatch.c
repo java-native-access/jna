@@ -2658,7 +2658,11 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   if (data->rflag == CVT_NATIVE_MAPPED) {
     resp = alloca(sizeof(jobject));
   }
-  if (data->rflag == CVT_STRUCTURE_BYVAL) {
+  else if (data->rflag == CVT_TYPE_MAPPER) {
+    // Ensure enough space for the inner call result
+    resp = alloca(data->cif.rtype->size);
+  }
+  else if (data->rflag == CVT_STRUCTURE_BYVAL) {
     // In the case of returned structure by value, the inner and
     // outer calls have different return types; we pass the structure memory
     // to the inner call but return a Java object to the outer call.

@@ -56,7 +56,7 @@ public class RawCallbacksTest extends CallbacksTest {
     }
     
     public static class DirectCallbackTestLibrary implements CallbackTestLibrary {
-        public native float callInt32Callback(Int32Callback c, float arg, float arg2);
+        public native double callInt32Callback(Int32Callback c, double arg, double arg2);
         static {
             Native.register(NativeLibrary.getInstance("testlib", _OPTIONS));
         }

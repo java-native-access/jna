@@ -1189,7 +1189,7 @@ public final class Native {
                 throw new IllegalArgumentException(rclass + " is not a supported return type (in method " + method.getName() + " in " + cls + ")");
             case CVT_TYPE_MAPPER:
                 fromNative = mapper.getFromNativeConverter(rclass);
-                closure_rtype = FFIType.get(Pointer.class).peer;
+                closure_rtype = FFIType.get(rclass).peer;
                 rtype = FFIType.get(fromNative.nativeType()).peer;
                 break;
             case CVT_NATIVE_MAPPED:
