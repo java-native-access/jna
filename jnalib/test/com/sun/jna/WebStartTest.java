@@ -63,9 +63,9 @@ public class WebStartTest extends TestCase {
         + "  <security><all-permissions/></security>\n"
         + "  <resources>\n"
         + "    <j2se version='1.4+'/>\n"
-        + "    <jar href='jna-test.jar'/>\n"
         + "    <jar href='jna.jar'/>\n"
-        + "    <jar href='junit.jar'/>\n"
+        + "    <jar href='jna-test.jar'/>\n"
+        + "    <jar href='junit.jar'/>{CLOVER}\n"
         + "    <nativelib href='jnidispatch.jar'/>\n"
         + "  </resources>\n"
         + "  <offline-allowed/>\n"
@@ -94,6 +94,15 @@ public class WebStartTest extends TestCase {
         assertNotNull("Web Start library path not found", path);
     }
 
+    public void testJNLPFindLibraryFailure() {
+        try {
+            Native.getWebStartLibraryPath("xyzzy");
+            fail("Missing native libraries should throw UnsatisfiedLinkError");
+        }
+        catch(UnsatisfiedLinkError e) {
+        }
+    }
+
     private void runTestUnderWebStart(String testClass, String testMethod) throws Exception {
         String BUILDDIR = System.getProperty("jna.builddir",
                                              "build"
@@ -113,6 +122,10 @@ public class WebStartTest extends TestCase {
         contents = contents.replace("{CODEBASE}", codebase);
         contents = contents.replace("{JNLP_FILE}", jnlp.toURI().toURL().toString());
         contents = contents.replace("{PORT}", String.valueOf(port));
+        boolean clover =
+            System.getProperty("java.class.path").indexOf("clover") != -1;
+        contents = contents.replace("{CLOVER}",
+                                    clover ? "<jar href='clover.jar'/>" : "");
 
         OutputStream os = new FileOutputStream(jnlp);
         os.write(contents.getBytes());

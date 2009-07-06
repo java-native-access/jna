@@ -11,14 +11,15 @@ package com.sun.jna;
 
 /** Provide simplified platform information. */
 public final class Platform {
-    private static final int UNSPECIFIED = -1;
-    private static final int MAC = 0;
-    private static final int LINUX = 1;
-    private static final int WINDOWS = 2;
-    private static final int SOLARIS = 3;
-    private static final int FREEBSD = 4;
-    private static final int OPENBSD = 5;
-    private static final int WINDOWSCE = 6;
+    public static final int UNSPECIFIED = -1;
+    public static final int MAC = 0;
+    public static final int LINUX = 1;
+    public static final int WINDOWS = 2;
+    public static final int SOLARIS = 3;
+    public static final int FREEBSD = 4;
+    public static final int OPENBSD = 5;
+    public static final int WINDOWSCE = 6;
+
     private static final int osType;
     
     static {
@@ -49,6 +50,9 @@ public final class Platform {
         }
     }
     private Platform() { }
+    public static final int getOSType() {
+        return osType;
+    }
     public static final boolean isMac() {
         return osType == MAC;
     }

@@ -204,6 +204,59 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong String generated", "abc", Native.toString(buf));
     }
 
+    public void testToByteArray() {
+        final String VALUE = getName();
+        byte[] buf = Native.toByteArray(VALUE);
+        assertEquals("Wrong byte array length", VALUE.length()+1, buf.length);
+        assertEquals("Missing NUL terminator", (byte)0, buf[buf.length-1]);
+        assertEquals("Wrong byte array contents", VALUE, new String(buf, 0, buf.length-1));
+    }
+
+    public void testToCharArray() {
+        final String VALUE = getName();
+        char[] buf = Native.toCharArray(VALUE);
+        assertEquals("Wrong char array length", VALUE.length()+1, buf.length);
+        assertEquals("Missing NUL terminator", (char)0, buf[buf.length-1]);
+        assertEquals("Wrong char array contents: " + new String(buf), VALUE, new String(buf, 0, buf.length-1));
+    }
+
+    public void testOSPrefix() {
+        assertEquals("Wrong resource path", "/com/sun/jna/win32-x86",
+                     Native.getNativeLibraryResourcePath(Platform.WINDOWS,
+                                                         "x86", "Windows"));
+        assertEquals("Wrong resource path Windows/i386", "/com/sun/jna/win32-x86",
+                     Native.getNativeLibraryResourcePath(Platform.WINDOWS,
+                                                         "i386", "Windows"));
+        assertEquals("Wrong resource path Mac/x86", "/com/sun/jna/darwin",
+                     Native.getNativeLibraryResourcePath(Platform.MAC,
+                                                         "x86", "Darwin"));
+        assertEquals("Wrong resource path Mac/x86_64", "/com/sun/jna/darwin",
+                     Native.getNativeLibraryResourcePath(Platform.MAC,
+                                                         "x86_64", "Mac"));
+        assertEquals("Wrong resource path Solaris/sparc", "/com/sun/jna/sunos-sparc",
+                     Native.getNativeLibraryResourcePath(Platform.SOLARIS,
+                                                         "sparc", "Solaris"));
+        assertEquals("Wrong resource path SunOS/sparcv9", "/com/sun/jna/sunos-sparcv9",
+                     Native.getNativeLibraryResourcePath(Platform.SOLARIS,
+                                                         "sparcv9", "SunOS"));
+        assertEquals("Wrong resource path Linux/i386", "/com/sun/jna/linux-i386",
+                     Native.getNativeLibraryResourcePath(Platform.LINUX,
+                                                         "i386", "Linux/Gnu"));
+        assertEquals("Wrong resource path Linux/x86", "/com/sun/jna/linux-i386",
+                     Native.getNativeLibraryResourcePath(Platform.LINUX,
+                                                         "x86", "Linux"));
+        assertEquals("Wrong resource path OpenBSD/x86", "/com/sun/jna/openbsd-i386",
+                     Native.getNativeLibraryResourcePath(Platform.OPENBSD,
+                                                         "x86", "OpenBSD"));
+        assertEquals("Wrong resource path FreeBSD/x86", "/com/sun/jna/freebsd-i386",
+                     Native.getNativeLibraryResourcePath(Platform.FREEBSD,
+                                                         "x86", "FreeBSD"));
+        assertEquals("Wrong resource path other/other", "/com/sun/jna/name-ppc",
+                     Native.getNativeLibraryResourcePath(Platform.UNSPECIFIED,
+                                                         "PowerPC", "Name Of System"));
+
+    }
+
     // TODO test extraction of (alignment|typemapper) 
     // from (variable|options)
 

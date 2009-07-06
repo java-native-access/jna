@@ -2,7 +2,9 @@
 <h2>Release 3.x.x</h2>
 <b>Features</b><br>
 <ul>
-<li>Handle String, Structure, Callback, Buffer, and primitive arrays in direct mappings.
+<li>Handle String, Structure, Callback, Buffer, and primitive arrays in direct
+  mappings.  Handle NativeMapped and TypeMapper, with optimized paths for
+  IntegerType and PointerType.
 <li>Optionally throw errno/GetLastError as an exception.
 <li>Unload/delete native library unpacked from jna.jar if Native class is garbage collected.  Only install shutdown hook if using the system class loader. 
 <li>Auto-write contiguous Structure arrays when first element is written.

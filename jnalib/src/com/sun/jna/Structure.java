@@ -689,7 +689,8 @@ public abstract class Structure {
                 if (!force && typeMapper == null) {
                     return CALCULATE_SIZE;
                 }
-                throw e;
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "', " + structField.type + ": " + e.getMessage();
+                throw new IllegalArgumentException(msg);
             }
 
             // Align fields as appropriate

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.StructureTest.VariableSizeTest.VariableSizedStructure;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -469,6 +468,35 @@ public class StructureTest extends TestCase {
         }
     }
 
+    public static class BadFieldStructure extends Structure {
+        public Object badField;
+    }
+    public void testUnsupportedField() {
+        class BadNestedStructure extends Structure {
+            public BadFieldStructure badStruct = new BadFieldStructure();
+        }
+        try {
+            new BadFieldStructure().size();
+            fail("Should throw IllegalArgumentException on bad field");
+        }
+        catch(IllegalArgumentException e) {
+            assertTrue("Exception should include field name",
+                       e.getMessage().indexOf("badField") != -1);
+        }
+        try {
+            new BadNestedStructure().size();
+            fail("Should throw IllegalArgumentException on bad field");
+        }
+        catch(IllegalArgumentException e) {
+            assertTrue("Exception should include enclosing type: " + e,
+                       e.getMessage().indexOf(BadNestedStructure.class.getName()) != -1);
+            assertTrue("Exception should include nested field name: " + e,
+                       e.getMessage().indexOf("badStruct") != -1);
+            assertTrue("Exception should include field name: " + e,
+                       e.getMessage().indexOf("badField") != -1);
+        }
+    }
+
     public void testToArray() {
         PublicTestStructure s = new PublicTestStructure();
         PublicTestStructure[] array = (PublicTestStructure[])s.toArray(1);
@@ -508,15 +536,6 @@ public class StructureTest extends TestCase {
     static class CbStruct extends Structure {
         public Callback cb;
     }
-    static class CbStruct2 extends Structure {
-        public static interface TestCallback extends Callback {
-            int callback(int arg1, int arg2);
-        }
-        public TestCallback cb;
-    }
-    static interface CbTest extends Library {
-        public void setCallbackInStruct(CbStruct2 cbstruct);
-    }
     public void testCallbackWrite() {
         final CbStruct s = new CbStruct();
         s.cb = new Callback() {
@@ -530,22 +549,6 @@ public class StructureTest extends TestCase {
         assertTrue("Callback not cached", refs.containsKey(s.cb));
         CallbackReference ref = (CallbackReference)refs.get(s.cb);
         assertEquals("Wrong trampoline", ref.getTrampoline(), func);
-    }
-
-    public void testReadFunctionPointerAsCallback() {
-        CbStruct2 s = new CbStruct2();
-        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
-        assertNull("Function pointer field should be null", s.cb);
-        lib.setCallbackInStruct(s);
-        assertNotNull("Callback field not set", s.cb);
-    }
-
-    public void testCallProxiedFunctionPointer() {
-        CbStruct2 s = new CbStruct2();
-        CbTest lib = (CbTest)Native.loadLibrary("testlib", CbTest.class);
-        lib.setCallbackInStruct(s);
-        assertEquals("Proxy to native function pointer failed: " + s.cb,
-                     3, s.cb.callback(1, 2));
     }
 
     public void testUninitializedArrayField() {
@@ -855,26 +858,6 @@ public class StructureTest extends TestCase {
                    actual.matches(EXPECTED));
     }
 
-    public interface VariableSizeTest extends Library {
-        public static class VariableSizedStructure extends Structure {
-            public int length;
-            public byte[] buffer;
-            public VariableSizedStructure(String arg) {
-                length = arg.length() + 1;
-                buffer = new byte[length];
-                System.arraycopy(arg.getBytes(), 0, buffer, 0, arg.length());
-            }
-        }
-        String returnStringFromVariableSizedStructure(VariableSizedStructure s);
-    }
-    public void testVariableSizedStructureArgument() {
-        VariableSizeTest lib = (VariableSizeTest)Native.loadLibrary("testlib", VariableSizeTest.class);
-        String EXPECTED = getName();
-        VariableSizedStructure s = new VariableSizedStructure(EXPECTED);
-        assertEquals("Wrong string returned from variable sized struct",
-                     EXPECTED, lib.returnStringFromVariableSizedStructure(s));
-    }
-
     public void testNativeMappedWrite() {
     	class TestStructure extends Structure {
     		public ByteByReference ref;
@@ -1014,27 +997,6 @@ public class StructureTest extends TestCase {
         assertNotNull("Field should not be null after read", s.field);
     }
 
-    public interface AutoSynchTest extends Library {
-        public static class TestStructure extends Structure {
-            public int field;
-        }
-        Pointer testStructurePointerArgument(TestStructure s);
-    }
-    public void testDisableAutoSynch() {
-        AutoSynchTest lib = (AutoSynchTest)Native.loadLibrary("testlib", AutoSynchTest.class);
-        AutoSynchTest.TestStructure s = new AutoSynchTest.TestStructure();
-        final int VALUE = 42;
-        s.field = VALUE;
-        s.setAutoWrite(false);
-        lib.testStructurePointerArgument(s);
-        assertEquals("Auto write should be disabled", 0, s.field);
-
-        final int EXPECTED = s.field;
-        s.getPointer().setInt(0, VALUE);
-        s.setAutoRead(false);
-        lib.testStructurePointerArgument(s);
-        assertEquals("Auto read should be disabled", EXPECTED, s.field);
-    }
     public void testStructureEquals() {
         class TestStructure extends Structure {
             public byte first;

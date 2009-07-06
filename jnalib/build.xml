@@ -99,6 +99,7 @@
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
     <property name="reports" value="${build}/reports"/>
+    <property name="extra-signjars" value=""/>
 
     <!-- Add other supported platforms here -->
     <condition property="jre.arch" value="i386">
@@ -414,11 +415,12 @@
     <copy todir="${build}/jws" file="${build}/${jar}"/>
     <copy todir="${build}/jws" file="${build}/${testjar}"/>
     <copy todir="${build}/jws" file="lib/junit.jar"/>
+    <copy todir="${build}/jws" file="lib/clover.jar"/>
     <jar jarfile="${build}/jws/jnidispatch.jar">
       <fileset dir="${build.native}" includes="*jnidispatch.*"/>
     </jar>
-    <signjar alias="jna" keystore="jna.keystore" storepass="jnadev"> 
-      <fileset dir="${build}/jws" includes="*.jar"/>
+    <signjar alias="jna" keystore="jna.keystore" storepass="jnadev" lazy="true"> 
+      <fileset dir="${build}/jws" includes="jna.jar,jna-test.jar,junit.jar,jnidispatch.jar${extra-signjars}"/>
     </signjar>
   </target>
 
@@ -486,6 +488,7 @@
     <taskdef resource="cloverlib.xml" classpath="lib/clover.jar"/>
     <property name="clover" value="true"/>
     <property name="build" value="build.clover"/>
+    <property name="extra-signjars" value=",clover.jar"/>
     <clover-setup/>
   </target>
 

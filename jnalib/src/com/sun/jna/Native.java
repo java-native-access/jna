@@ -274,7 +274,7 @@ public final class Native {
     
     /** Utility method to get the native window pointer for a heavyweight Java 
      * {@link Component} as a {@link Pointer} value.  This method is primarily 
-     * for w32, which uses the <code>HANDLE</code> type (actually 
+     * for w32, which uses the <code>HWND</code> type (actually 
      * <code>void *</code>) to identify windows. 
      * @throws HeadlessException if the current VM is running headless 
      */
@@ -295,7 +295,15 @@ public final class Native {
      * override the platform default encoding (if supported).
      */
     public static String toString(byte[] buf) {
-        String encoding = System.getProperty("jna.encoding");
+        return toString(buf, System.getProperty("jna.encoding"));
+    }
+
+    /** Obtain a Java String from the given native byte array, using the given
+     * encoding.  If there is no NUL terminator, the String will comprise the
+     * entire array.  If the <code>encoding</code> parameter is null, 
+     * the platform default encoding will be used.
+     */
+    public static String toString(byte[] buf, String encoding) {
         String s = null;
         if (encoding != null) {
             try {
@@ -536,16 +544,19 @@ public final class Native {
         return buf;
     }
 
-    private static String getNativeLibraryResourcePath() {
-        String arch = System.getProperty("os.arch").toLowerCase();
+    static String getNativeLibraryResourcePath(int osType, String arch, String name) {
         String osPrefix;
-        if (Platform.isWindows()) {
+        arch = arch.toLowerCase();
+        switch(osType) {
+        case Platform.WINDOWS:
+            if ("i386".equals(arch))
+                arch = "x86";
             osPrefix = "win32-" + arch;
-        }
-        else if (Platform.isMac()) {
+            break;
+        case Platform.MAC:
             osPrefix = "darwin";
-        }
-        else if (Platform.isLinux()) {
+            break;
+        case Platform.LINUX:
             if ("x86".equals(arch)) {
                 arch = "i386";
             }
@@ -553,17 +564,27 @@ public final class Native {
                 arch = "amd64";
             }
             osPrefix = "linux-" + arch;
-        }
-        else if (Platform.isSolaris()) {
+            break;
+        case Platform.SOLARIS:
             osPrefix = "sunos-" + arch;
-        }
-        else {
-            osPrefix = System.getProperty("os.name").toLowerCase();
+            break;
+        default:
+            osPrefix = name.toLowerCase();
+            if ("x86".equals(arch)) {
+                arch = "i386";
+            }
+            if ("x86_64".equals(arch)) {
+                arch = "amd64";
+            }
+            if ("powerpc".equals(arch)) {
+                arch = "ppc";
+            }
             int space = osPrefix.indexOf(" ");
             if (space != -1) {
                 osPrefix = osPrefix.substring(0, space);
             }
             osPrefix += "-" + arch;
+            break;
         }
         return "/com/sun/jna/" + osPrefix;
     }
@@ -625,7 +646,9 @@ public final class Native {
      */
     private static void loadNativeLibraryFromJar() {
         String libname = System.mapLibraryName("jnidispatch");
-        String resourceName = getNativeLibraryResourcePath() + "/" + libname;
+        String arch = System.getProperty("os.arch");
+        String name = System.getProperty("os.name");
+        String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
         URL url = Native.class.getResource(resourceName);
                 
         // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual .dylib extension
@@ -765,9 +788,10 @@ public final class Native {
      * <p>
      * Use <code>System.getProperty("javawebstart.version")</code> to detect
      * whether your code is running under Web Start.
-     * @throws IllegalArgumentException if the library can't be found by the
+     * @throws UnsatisfiedLinkError if the library can't be found by the
      * Web Start class loader, which usually means it wasn't included as 
      * a <code>&lt;nativelib&gt;</code> resource in the JNLP file.
+     * @return null if unable to query the web start loader.
      */
     public static String getWebStartLibraryPath(final String libName) {
         if (System.getProperty("javawebstart.version") == null)
@@ -793,7 +817,7 @@ public final class Native {
             }
             String msg = 
                 "Library '" + libName + "' was not found by class loader " + cl;
-            throw new IllegalArgumentException(msg);
+            throw new UnsatisfiedLinkError(msg);
         }
         catch (Exception e) {
             return null;

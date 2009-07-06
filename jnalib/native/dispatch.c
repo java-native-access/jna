@@ -211,11 +211,12 @@ static char* newCStringUTF8(JNIEnv *env, jstring jstr);
 static char* newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding);
 static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 
-static void* getBufferArray(JNIEnv* env, jobject buf,
-                            jobject* arrayp, char* typep, void** elemp);
+static void* getBufferArray(JNIEnv*, jobject, jobject*, void **, void **);
 static char getArrayComponentType(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
 static void update_last_error(JNIEnv*, int);
+
+typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
 
 /** Invokes System.err.println (for debugging only). */
 static void
@@ -263,9 +264,9 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
   jvalue* c_args;
   char array_pt;
   struct _array_elements {
-    char type;
     jobject array;
     void *elems;
+    release_t release;
   } *array_elements;
   volatile int array_count = 0;
   ffi_cif cif;
@@ -380,8 +381,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
       if (c_args[i].l == NULL) {
         c_args[i].l =
           getBufferArray(env, arg, &array_elements[array_count].array,
-                         &array_elements[array_count].type,
-                         &array_elements[array_count].elems);
+                         &array_elements[array_count].elems,
+                         (void**)&array_elements[array_count].release);
         if (c_args[i].l == NULL) {
           throw_type = EIllegalArgument;
           throw_msg = "Buffer arguments must be direct or have a primitive backing array";
@@ -393,16 +394,18 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
     else if ((array_pt = getArrayComponentType(env, arg)) != 0
              && array_pt != 'L') {
       void *ptr = NULL;
+      release_t release = NULL;
 
+#define GET_ELEMS(TYPE) do {ptr=(*env)->Get##TYPE##ArrayElements(env,arg,NULL); release=(void*)(*env)->Release##TYPE##ArrayElements; }while(0)
       switch(array_pt) {
-      case 'Z': ptr = (*env)->GetBooleanArrayElements(env, arg, NULL); break;
-      case 'B': ptr = (*env)->GetByteArrayElements(env, arg, NULL); break;
-      case 'C': ptr = (*env)->GetCharArrayElements(env, arg, NULL); break;
-      case 'S': ptr = (*env)->GetShortArrayElements(env, arg, NULL); break;
-      case 'I': ptr = (*env)->GetIntArrayElements(env, arg, NULL); break;
-      case 'J': ptr = (*env)->GetLongArrayElements(env, arg, NULL); break;
-      case 'F': ptr = (*env)->GetFloatArrayElements(env, arg, NULL); break;
-      case 'D': ptr = (*env)->GetDoubleArrayElements(env, arg, NULL); break;
+      case 'Z': GET_ELEMS(Boolean); break;
+      case 'B': GET_ELEMS(Byte); break;
+      case 'C': GET_ELEMS(Char); break;
+      case 'S': GET_ELEMS(Short); break;
+      case 'I': GET_ELEMS(Int); break;
+      case 'J': GET_ELEMS(Long); break;
+      case 'F': GET_ELEMS(Float); break;
+      case 'D': GET_ELEMS(Double); break;
       }
       if (!ptr) {
         throw_type = EOutOfMemory;
@@ -412,9 +415,9 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
       c_args[i].l = ptr;
       ffi_types[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
-      array_elements[array_count].type = array_pt;
       array_elements[array_count].array = arg;
-      array_elements[array_count++].elems = ptr;
+      array_elements[array_count].elems = ptr;
+      array_elements[array_count++].release = release;
     }
     else {
       // Anything else, pass directly as a pointer
@@ -471,40 +474,8 @@ dispatch(JNIEnv *env, jobject self, jint flags, jobjectArray arr,
 
   // Release array elements
   for (i=0;i < array_count;i++) {
-    switch (array_elements[i].type) {
-    case 'Z':
-      (*env)->ReleaseBooleanArrayElements(env, array_elements[i].array,
-                                          array_elements[i].elems, 0);
-      break;
-    case 'B':
-      (*env)->ReleaseByteArrayElements(env, array_elements[i].array,
-                                       array_elements[i].elems, 0);
-      break;
-    case 'S':
-      (*env)->ReleaseShortArrayElements(env, array_elements[i].array,
-                                        array_elements[i].elems, 0);
-      break;
-    case 'C':
-      (*env)->ReleaseCharArrayElements(env, array_elements[i].array,
-                                       array_elements[i].elems, 0);
-      break;
-    case 'I':
-      (*env)->ReleaseIntArrayElements(env, array_elements[i].array,
-                                      array_elements[i].elems, 0);
-      break;
-    case 'J':
-      (*env)->ReleaseLongArrayElements(env, array_elements[i].array,
-                                       array_elements[i].elems, 0);
-      break;
-    case 'F':
-      (*env)->ReleaseFloatArrayElements(env, array_elements[i].array,
-                                        array_elements[i].elems, 0);
-      break;
-    case 'D':
-      (*env)->ReleaseDoubleArrayElements(env, array_elements[i].array,
-                                         array_elements[i].elems, 0);
-      break;
-    }
+    array_elements[i].release(env, array_elements[i].array,
+                              array_elements[i].elems, 0);
   }
 
   // Must raise any exception *after* all other JNI operations
@@ -1804,12 +1775,13 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
 
 static void*
 getBufferArray(JNIEnv* env, jobject buf,
-               jobject* arrayp, char* typep, void** elemp) {
+               jobject* arrayp, void **elemp,
+               void **releasep) {
   void *ptr = NULL;
   int offset = 0;
   jobject array = NULL;
 
-#define GET_ARRAY(TYPE, ELEM_SIZE, JTYPE) \
+#define GET_ARRAY(TYPE, ELEM_SIZE) \
 do { \
   array = (*env)->CallObjectMethod(env, buf, MID_##TYPE##Buffer_array); \
   if (array != NULL) { \
@@ -1817,34 +1789,35 @@ do { \
        (*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset) \
        * ELEM_SIZE; \
     ptr = (*env)->Get##TYPE##ArrayElements(env, array, NULL); \
-    if (typep) *typep = (JTYPE);                              \
+    if (releasep) *releasep = (void*)(*env)->Release##TYPE##ArrayElements; \
   } \
+  else if (releasep) *releasep = NULL; \
 } while(0)
 
   if ((*env)->IsInstanceOf(env, buf, classByteBuffer)) {
-    GET_ARRAY(Byte, 1, 'B');
+    GET_ARRAY(Byte, 1);
   }
   else if((*env)->IsInstanceOf(env, buf, classCharBuffer)) {
-    GET_ARRAY(Char, 2, 'C');
+    GET_ARRAY(Char, 2);
   }
   else if((*env)->IsInstanceOf(env, buf, classShortBuffer)) {
-    GET_ARRAY(Short, 2, 'S');
+    GET_ARRAY(Short, 2);
   }
   else if((*env)->IsInstanceOf(env, buf, classIntBuffer)) {
-    GET_ARRAY(Int, 4, 'I');
+    GET_ARRAY(Int, 4);
   }
   else if((*env)->IsInstanceOf(env, buf, classLongBuffer)) {
-    GET_ARRAY(Long, 8, 'J');
+    GET_ARRAY(Long, 8);
   }
   else if((*env)->IsInstanceOf(env, buf, classFloatBuffer)) {
-    GET_ARRAY(Float, 4, 'F');
+    GET_ARRAY(Float, 4);
   }
   else if((*env)->IsInstanceOf(env, buf, classDoubleBuffer)) {
-    GET_ARRAY(Double, 8, 'D');
+    GET_ARRAY(Double, 8);
   }
   if (ptr != NULL) {
-    if (arrayp) *arrayp = array;
     if (elemp) *elemp = ptr;
+    if (arrayp) *arrayp = array;
     ptr = (char *)ptr + offset;
   }
 
@@ -2559,24 +2532,18 @@ typedef struct _method_data {
   jboolean throw_last_error;
 } method_data;
 
-// set cb/call types, cvt flags
-// call: adjust arg pointers
-// java: string, callback, buffer(direct, array), mapped types
-// cvt: pointer, primitive arrays
-// ffi_call
-// convert result (pointer) or java conversion
-// cleanup arrays
-
-
 // VM vectors to this callback, which calls native code
 static void
 method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   JNIEnv* env = (JNIEnv*)*(void **)argp[0];
   method_data *data = (method_data*)cdata;
+
   // ignore first two arguments, which are pointers
   void** args = argp + 2;
   void** volatile objects = NULL;
+  release_t* volatile release = NULL;
   char* volatile array_types = NULL;
+  void** volatile elems = NULL;
   unsigned i;
   void* oldresp = resp;
   const char* volatile throw_type = NULL;
@@ -2585,7 +2552,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
 
   if (data->flags) {
     objects = alloca(data->cif.nargs * sizeof(void*));
-    array_types = alloca(data->cif.nargs * sizeof(char));
+    release = alloca(data->cif.nargs * sizeof(release_t));
+    elems = alloca(data->cif.nargs * sizeof(void*));
     for (i=0;i < data->cif.nargs;i++) {
       if (data->flags[i] != CVT_DEFAULT) {
         if (data->arg_types[i]->type == FFI_TYPE_POINTER
@@ -2655,9 +2623,10 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
             void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
             if (ptr != NULL) {
               objects[i] = NULL;
+              release[i] = NULL;
             }
             else {
-              ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &array_types[i], NULL);
+              ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &elems[i], (void**)&release[i]);
               if (ptr == NULL) {
                 throw_type = EIllegalArgument;
                 throw_msg = "Buffer arguments must be direct or have a primitive backing array";
@@ -2667,17 +2636,18 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
             *(void **)args[i] = ptr;
           }
           break;
-#define ARRAY(Type,TC) \
+#define ARRAY(Type) \
  do { \
-   objects[i] = *(void **)args[i]; array_types[i] = (TC); \
-   *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } while(0)
-        case CVT_ARRAY_BYTE: ARRAY(Byte, 'B'); break;
-        case CVT_ARRAY_SHORT: ARRAY(Short, 'S'); break;
-        case CVT_ARRAY_CHAR: ARRAY(Char, 'C'); break;
-        case CVT_ARRAY_INT: ARRAY(Int, 'I'); break;
-        case CVT_ARRAY_LONG: ARRAY(Long, 'J'); break;
-        case CVT_ARRAY_FLOAT: ARRAY(Float, 'F'); break;
-        case CVT_ARRAY_DOUBLE: ARRAY(Double, 'D'); break;
+   objects[i] = *(void **)args[i];                                      \
+   release[i] = (void *)(*env)->Release##Type##ArrayElements;           \
+   elems[i] = *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } while(0)
+        case CVT_ARRAY_BYTE: ARRAY(Byte); break;
+        case CVT_ARRAY_SHORT: ARRAY(Short); break;
+        case CVT_ARRAY_CHAR: ARRAY(Char); break;
+        case CVT_ARRAY_INT: ARRAY(Int); break;
+        case CVT_ARRAY_LONG: ARRAY(Long); break;
+        case CVT_ARRAY_FLOAT: ARRAY(Float); break;
+        case CVT_ARRAY_DOUBLE: ARRAY(Double); break;
         default:
           break;
         }
@@ -2765,18 +2735,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       case CVT_ARRAY_LONG:
       case CVT_ARRAY_FLOAT:
       case CVT_ARRAY_DOUBLE:
-        if (!*(void **)args) break;
-        switch(array_types[i]) {
-#define RELEASE(Type) (*env)->Release##Type##ArrayElements(env, objects[i], *(void **)args[i], 0)
-        case 'Z': RELEASE(Boolean); break;
-        case 'B': RELEASE(Byte); break;
-        case 'S': RELEASE(Short); break;
-        case 'C': RELEASE(Char); break;
-        case 'I': RELEASE(Int); break;
-        case 'J': RELEASE(Long); break;
-        case 'F': RELEASE(Float); break;
-        case 'D': RELEASE(Double); break;
-        }
+        if (*(void **)args[i] && release[i])
+          release[i](env, objects[i], elems[i], 0);
         break;
       }
     }
