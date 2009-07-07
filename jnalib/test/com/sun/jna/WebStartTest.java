@@ -144,8 +144,13 @@ public class WebStartTest extends TestCase {
             }
         }
         String PS = System.getProperty("path.separator");
+        String path = System.getProperty("java.home") + "/bin/javaws";
+        if (Platform.isWindows()) path += ".exe";
+        File javaws = new File(path);
+        // NOTE: OSX puts javaws somewhere else entirely
+        if (!javaws.exists()) path = "javaws";
         String[] cmd = {
-            "javaws",
+            path,
             "-Xnosplash",
             "-wait", 
             jnlp.toURI().toURL().toString(),
@@ -250,8 +255,12 @@ public class WebStartTest extends TestCase {
         String path = System.getProperty("user.home");
         File deployment;
         if (Platform.isWindows()) {
-            // FIXME "Sun" might be "IBM" or other vendor
-            deployment = new File(path + "/Application Data/Sun/Java/Deployment");
+            // NOTE: works for Sun and IBM, may not work for others
+            String vendor = System.getProperty("java.vm.vendor");
+            if (vendor.indexOf(" ") != -1) {
+                vendor = vendor.substring(0, vendor.indexOf(" "));
+            }
+            deployment = new File(path + "/Application Data/" + vendor + "/Java/Deployment");
         }
         else if (Platform.isMac()) {
             deployment = new File(path + "/Library/Caches/Java");
@@ -260,7 +269,7 @@ public class WebStartTest extends TestCase {
             deployment = new File(path + "/.java/deployment");
         }
         if (!deployment.exists()) {
-            throw new Error("Deployment directory does not exist; save Java Control Panel settings to initialize it");
+            throw new Error("The user deployment directory " + deployment + " does not exist; save Java Control Panel or Web Start settings to initialize it");
         }
         return new File(deployment, "deployment.properties");
     }
