@@ -241,11 +241,12 @@ public class WebStartTest extends TestCase {
                     runTestUnderWebStart(getClass().getName(), getName());
                 }
                 catch(AssertionFailedError e) {
-                    fail("Wrong error type: " + e);
+                    fail("Test produced a failure instead of an error: " + e);
                 }
                 catch(Error e) {
                     if (e.getMessage().indexOf(ERROR) != -1)
                         return;
+                    throw e;
                 }
                 fail("Failed to detect test error");
             }
