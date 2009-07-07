@@ -85,12 +85,14 @@ public class WebStartTest extends TestCase {
                       System.getProperty("javawebstart.version"));
     }
 
+    private static final String FAILURE = "This test is supposed to fail";
     public void testDetectFailure() {
-        fail("This test is supposed to fail");
+        fail(FAILURE);
     }
 
+    private static final String ERROR = "This test is supposed to error";
     public void testDetectError() {
-        throw new Error("This test is supposed to error");
+        throw new Error(ERROR);
     }
 
     public void testJNLPFindLibrary() {
@@ -226,7 +228,8 @@ public class WebStartTest extends TestCase {
                     runTestUnderWebStart(getClass().getName(), getName());
                 }
                 catch(AssertionFailedError e) {
-                    return;
+                    if (e.getMessage().indexOf(FAILURE) != -1)
+                        return;
                 }
                 fail("Failed to detect test failure");
             }
@@ -238,7 +241,8 @@ public class WebStartTest extends TestCase {
                     fail("Wrong error type: " + e);
                 }
                 catch(Error e) {
-                    return;
+                    if (e.getMessage().indexOf(ERROR) != -1)
+                        return;
                 }
                 fail("Failed to detect test error");
             }
