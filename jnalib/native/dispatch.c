@@ -27,6 +27,7 @@
 #endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <psapi.h>
 #define LIBNAMETYPE wchar_t*
 #define LIBNAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
 /* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:
@@ -36,9 +37,9 @@
  * directory, and the alternate search begins in the directory of the         
  * executable module that LoadLibraryEx is loading."                          
  */
-#define LOAD_LIBRARY(NAME) LoadLibraryExW(NAME, NULL, LOAD_WITH_ALTERED_SEARCH_PATH)
+#define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_WITH_ALTERED_SEARCH_PATH) : GetModuleHandleW(NULL))
 #define LOAD_ERROR(BUF,LEN) w32_format_error(BUF, LEN)
-#define FREE_LIBRARY(HANDLE) FreeLibrary(HANDLE)
+#define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
 #define FIND_ENTRY(HANDLE, NAME) GetProcAddress(HANDLE, NAME)
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
@@ -693,7 +694,10 @@ Java_com_sun_jna_NativeLibrary_open(JNIEnv *env, jclass cls, jstring lib){
 JNIEXPORT void JNICALL
 Java_com_sun_jna_NativeLibrary_close(JNIEnv *env, jclass cls, jlong handle)
 {
-    FREE_LIBRARY(L2A(handle));
+  if (FREE_LIBRARY(L2A(handle))) {
+    char buf[1024];
+    throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
+  }
 }
 
 /*
@@ -710,14 +714,35 @@ Java_com_sun_jna_NativeLibrary_findSymbol(JNIEnv *env, jclass cls,
     const char *funname = NULL;
 
     if ((funname = newCString(env, fun)) != NULL) {
-	func = (void *)FIND_ENTRY(handle, funname);
-        if (!func) {
-          char buf[1024];
-          throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+#ifdef _WIN32
+      if (handle == GetModuleHandleW(NULL)) {
+        HANDLE cur_proc = GetCurrentProcess ();
+        HMODULE *modules;
+        DWORD needed, i;
+        if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
+        fail:
+          throwByName(env, EError, "Unexpected error enumerating modules");
+          free((void *)funname);
+          return 0;
         }
-	free((void *)funname);
+        modules = (HMODULE*) alloca (needed);
+        if (!EnumProcessModules (cur_proc, modules, needed, &needed)) {
+          goto fail;
+        }
+        for (i = 0; i < needed / sizeof (HMODULE); i++)
+          if ((func = (void *) GetProcAddress (modules[i], funname)))
+            break;
+      }
+      else
+#endif
+        func = (void *)FIND_ENTRY(handle, funname);
+      if (!func) {
+        char buf[1024];
+        throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+      }
+      free((void *)funname);
     }
-    return (jlong)A2L(func);
+    return A2L(func);
 }
 
 static const void*

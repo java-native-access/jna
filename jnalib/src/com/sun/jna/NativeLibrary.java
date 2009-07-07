@@ -221,8 +221,6 @@ public class NativeLibrary {
 
             if (library == null) {
                 if (libraryName == null) {
-                    if (Platform.isWindows())
-                        throw new UnsatisfiedLinkError("getProcess() is not implemented on Windows");
                     library = new NativeLibrary("<process>", null, open(null), options);
                 }
                 else {

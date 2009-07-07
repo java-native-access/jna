@@ -183,15 +183,9 @@ public class NativeLibraryTest extends TestCase {
     }
     
     public void testGetProcess() {
-        try {
-            NativeLibrary process = NativeLibrary.getProcess();
-            // Access a common C library function
-            process.getFunction("printf");
-        }
-        catch(UnsatisfiedLinkError e) {
-            // Not implemented on windows yet
-            if (!Platform.isWindows()) throw e;
-        }
+        NativeLibrary process = NativeLibrary.getProcess();
+        // Access a common C library function
+        process.getFunction("printf");
     }
 
     public static void main(String[] args) {

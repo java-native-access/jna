@@ -87,6 +87,7 @@ STRIP=strip -x
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 CDEFINES=-DHAVE_PROTECTION
+LIBS=-lpsapi
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
 STRIP=@echo
@@ -103,13 +104,13 @@ ifeq ($(ARCH),amd64)
 WINDRES=/usr/local/mingw64-cross/bin/x86_64-pc-mingw32-windres
 
 # Uncomment to enable MINGW64 cross compiler
-# Last build attempt has too many runtime problems (alloca broken) (080831)
+# Should build properly as of 090601, but lacks SEH, so MSVC build is preferred
 #MINGW = x86_64-pc-mingw32-gcc
 ifneq ($(MINGW),)
 CC = $(MINGW) -m64 -mno-cygwin
 LD = $(CC)
 LDFLAGS=-o $@ -shared
-LIBS= -lmingwex -lkernel32 -lmsvcrt
+LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt 
 FFI_CONFIG += --host=x86_64-pc-mingw32
 else
 # MSVC (wrapper scripts)
