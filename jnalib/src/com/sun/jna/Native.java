@@ -333,6 +333,9 @@ public final class Native {
     
     /** Load a library interface from the given shared library, providing
      * the explicit interface class.
+     * If <code>name</code> is null, attempts to map onto the current process.
+     * @param name
+     * @param interfaceClass
      */
     public static Object loadLibrary(String name, Class interfaceClass) {
         return loadLibrary(name, interfaceClass, Collections.EMPTY_MAP);
@@ -341,7 +344,8 @@ public final class Native {
     /** Load a library interface from the given shared library, providing
      * the explicit interface class and a map of options for the library.
      * If no library options are detected the map is interpreted as a map
-     * of Java method names to native function names.
+     * of Java method names to native function names.<p>
+     * If <code>name</code> is null, attempts to map onto the current process.
      * @param name
      * @param interfaceClass
      * @param libOptions Map of library options

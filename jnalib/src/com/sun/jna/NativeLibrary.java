@@ -49,7 +49,6 @@ public class NativeLibrary {
     final int callFlags;
     final Map options;
 
-    private static WeakReference currentProcess;
     private static final Map libraries = new HashMap();
     private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
     private static final List librarySearchPath = new LinkedList();
@@ -114,8 +113,8 @@ public class NativeLibrary {
         long handle = 0;
         //
         // Only search user specified paths first.  This will also fall back
-        // to dlopen/LoadLibrary() since findLibraryPath returns the mapped name
-        // if it cannot find the library.
+        // to dlopen/LoadLibrary() since findLibraryPath returns the mapped
+        // name if it cannot find the library.
         //
         try {
             handle = open(libraryPath);
@@ -216,19 +215,26 @@ public class NativeLibrary {
             options.put(Library.OPTION_CALLING_CONVENTION, new Integer(Function.C_CONVENTION));
         }
 
-        if (libraryName == null)
-            throw new NullPointerException("Library name may not be null");
-
         synchronized (libraries) {
             WeakReference ref = (WeakReference)libraries.get(libraryName + options);
             NativeLibrary library = ref != null ? (NativeLibrary)ref.get() : null;
 
             if (library == null) {
-                library = loadLibrary(libraryName, options);
+                if (libraryName == null) {
+                    if (Platform.isWindows())
+                        throw new UnsatisfiedLinkError("getProcess() is not implemented on Windows");
+                    library = new NativeLibrary("<process>", null, open(null), options);
+                }
+                else {
+                    library = loadLibrary(libraryName, options);
+                }
                 ref = new WeakReference(library);
                 libraries.put(library.getName() + options, ref);
-                libraries.put(library.getFile().getAbsolutePath() + options, ref);
-                libraries.put(library.getFile().getName() + options, ref);
+                File file = library.getFile();
+                if (file != null) {
+                    libraries.put(file.getAbsolutePath() + options, ref);
+                    libraries.put(file.getName() + options, ref);
+                }
             }
             return library;
         }
@@ -241,18 +247,17 @@ public class NativeLibrary {
      * name of the native library.
      */
     public static synchronized final NativeLibrary getProcess() {
-        NativeLibrary library = null;
-        if (currentProcess != null) {
-            library = (NativeLibrary) currentProcess.get();
-        }
+        return getInstance(null);
+    }
 
-        if (library == null) {
-           long handle = open(null);
-           library = new NativeLibrary("<process>", null, handle, Collections.EMPTY_MAP);
-           currentProcess = new WeakReference(library);
-        }
-
-        return library;
+    /**
+     * Returns an instance of NativeLibrary which refers to the current process.
+     * This is useful for accessing functions which were already mapped by some
+     * other mechanism, without having to reference or even know the exact
+     * name of the native library.
+     */
+    public static synchronized final NativeLibrary getProcess(Map options) {
+        return getInstance(null, options);
     }
 
     /**
@@ -390,10 +395,10 @@ public class NativeLibrary {
     public void dispose() {
         synchronized(libraries) {
             libraries.remove(getName() + options);
-            File path = getFile();
-            if (path != null) {
-                libraries.remove(path.getAbsolutePath() + options);
-                libraries.remove(path.getName() + options);
+            File file = getFile();
+            if (file != null) {
+                libraries.remove(file.getAbsolutePath() + options);
+                libraries.remove(file.getName() + options);
             }
         }
         synchronized(this) {

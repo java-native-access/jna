@@ -671,7 +671,7 @@ Java_com_sun_jna_NativeLibrary_open(JNIEnv *env, jclass cls, jstring lib){
     /* dlopen on Unix allows NULL to mean "current process" */
     if (lib != NULL) {
       if ((libname = LIBNAME2CSTR(env, lib)) == NULL) {
-        return (jlong)A2L(NULL);
+        return A2L(NULL);
       }
     }
 
@@ -682,7 +682,7 @@ Java_com_sun_jna_NativeLibrary_open(JNIEnv *env, jclass cls, jstring lib){
     }
     if (libname != NULL)
       free((void *)libname);
-    return (jlong)A2L(handle);
+    return A2L(handle);
 }
 
 /*

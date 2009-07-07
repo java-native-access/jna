@@ -122,7 +122,7 @@ public interface Library {
         private final Map functions = new WeakHashMap();
         public Handler(String libname, Class interfaceClass, Map options) {
 
-            if (libname == null || "".equals(libname.trim())) {
+            if ("".equals(libname.trim())) {
                 throw new IllegalArgumentException("Invalid library name \""
                                                    + libname + "\"");
             }
