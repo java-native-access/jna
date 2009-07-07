@@ -117,12 +117,10 @@ public class WebStartTest extends TestCase {
         String codebase = new File(BUILDDIR, "jws").toURI().toURL().toString();
 
         ServerSocket s = new ServerSocket(0);
-        s.setSoTimeout(10000);
+        s.setSoTimeout(20000);
         int port = s.getLocalPort();
 
-        //File jnlp = new File(getName() + ".jnlp");
         File jnlp = File.createTempFile(getName(), ".jnlp");
-        jnlp.deleteOnExit();
         String contents = JNLP.replace("{CLASS}", testClass);
         contents = contents.replace("{METHOD}", testMethod);
         contents = contents.replace("{CODEBASE}", codebase);
@@ -133,87 +131,92 @@ public class WebStartTest extends TestCase {
         contents = contents.replace("{CLOVER}",
                                     clover ? "<jar href='clover.jar'/>" : "");
 
-        OutputStream os = new FileOutputStream(jnlp);
-        os.write(contents.getBytes());
-        os.close();
-        File keystore = new File("jna.keystore");
-        String JAVA_HOME = System.getProperty("java.home");
-        String LIB = new File(JAVA_HOME, "/lib").getAbsolutePath();
-        if (!new File(LIB, "javaws.jar").exists()) {
-            LIB = new File("/System/Library/Frameworks/JavaVM.framework/Resources/Deploy.bundle/Contents/Home/lib").getAbsolutePath();
-            if (!new File(LIB, "javaws.jar").exists()) {
-                throw new IOException("javaws.jar not found");
-            }
-        }
-        String PS = System.getProperty("path.separator");
-        String path = System.getProperty("java.home") + "/bin/javaws";
-        if (Platform.isWindows()) path += ".exe";
-        File javaws = new File(path);
-        // NOTE: OSX puts javaws somewhere else entirely
-        if (!javaws.exists()) path = "javaws";
-        String[] cmd = {
-            path,
-            "-Xnosplash",
-            "-wait", 
-            jnlp.toURI().toURL().toString(),
-        };
-        final Process p = Runtime.getRuntime().exec(cmd);
-        final StringBuffer output = new StringBuffer();
-        class SocketHandler extends Thread {
-            private InputStream is;
-            private StringBuffer sb;
-            public SocketHandler(Socket s, StringBuffer b) throws IOException {
-                this.is = s.getInputStream();
-                this.sb = b;
-            }
-            public void run() {
-                byte[] buf = new byte[256];
-                while (true) {
-                    try {
-                        int count = is.read(buf, 0, buf.length);
-                        if (count == -1) break;
-                        if (count == 0) {
-                            try { sleep(1); } catch(InterruptedException e) { }
-                        }
-                        else {
-                            sb.append(new String(buf, 0, count));
-                        }
-                    }
-                    catch(IOException e) {
-                        showMessage("read error: " + e.toString());
-                    }
-                }
-                try { is.close(); } catch(IOException e) { }
-            }
-        }
-
-        Thread out = null;
         try {
-            out = new SocketHandler(s.accept(), output);
-            out.start();
-        }
-        catch(SocketTimeoutException e) {
-            try { 
-                p.exitValue();
+            OutputStream os = new FileOutputStream(jnlp);
+            os.write(contents.getBytes());
+            os.close();
+            File keystore = new File("jna.keystore");
+            String JAVA_HOME = System.getProperty("java.home");
+            String LIB = new File(JAVA_HOME, "/lib").getAbsolutePath();
+            if (!new File(LIB, "javaws.jar").exists()) {
+                LIB = new File("/System/Library/Frameworks/JavaVM.framework/Resources/Deploy.bundle/Contents/Home/lib").getAbsolutePath();
+                if (!new File(LIB, "javaws.jar").exists()) {
+                    throw new IOException("javaws.jar not found");
+                }
             }
-            catch(IllegalThreadStateException e2) {
-                p.destroy();
-                throw new Error("JWS Timed out");
+            String PS = System.getProperty("path.separator");
+            String path = System.getProperty("java.home") + "/bin/javaws";
+            if (Platform.isWindows()) path += ".exe";
+            File javaws = new File(path);
+            // NOTE: OSX puts javaws somewhere else entirely
+            if (!javaws.exists()) path = "javaws";
+            String[] cmd = {
+                path,
+                "-Xnosplash",
+                "-wait", 
+                jnlp.toURI().toURL().toString(),
+            };
+            final Process p = Runtime.getRuntime().exec(cmd);
+            final StringBuffer output = new StringBuffer();
+            class SocketHandler extends Thread {
+                private InputStream is;
+                private StringBuffer sb;
+                public SocketHandler(Socket s, StringBuffer b) throws IOException {
+                    this.is = s.getInputStream();
+                    this.sb = b;
+                }
+                public void run() {
+                    byte[] buf = new byte[256];
+                    while (true) {
+                        try {
+                            int count = is.read(buf, 0, buf.length);
+                            if (count == -1) break;
+                            if (count == 0) {
+                                try { sleep(1); } catch(InterruptedException e) { }
+                            }
+                            else {
+                                sb.append(new String(buf, 0, count));
+                            }
+                        }
+                        catch(IOException e) {
+                            showMessage("read error: " + e.toString());
+                        }
+                    }
+                    try { is.close(); } catch(IOException e) { }
+                }
+            }
+            
+            Thread out = null;
+            try {
+                out = new SocketHandler(s.accept(), output);
+                out.start();
+            }
+            catch(SocketTimeoutException e) {
+                try { 
+                    p.exitValue();
+                }
+                catch(IllegalThreadStateException e2) {
+                    p.destroy();
+                    throw new Error("JWS Timed out");
+                }
+            }
+            p.waitFor();
+            if (out != null) {
+                out.join();
+            }
+            
+            int code = p.exitValue();
+            String error = output.toString();
+            if (code != 0 || !"".equals(error)) {
+                if (code == 1
+                    || error.indexOf("AssertionFailedError") != -1) {
+                    fail("JWS FAIL: " + error);
+                }
+                throw new Error("JWS ERROR: " + error);
             }
         }
-        p.waitFor();
-        if (out != null) {
-            out.join();
-        }
-        
-        int code = p.exitValue();
-        String error = output.toString();
-        if (code != 0 || !"".equals(error)) {
-            if (code == 1
-                || error.indexOf("AssertionFailedError") != -1) {
-                fail("JWS FAIL: " + error);
-            }
-            throw new Error("JWS ERROR: " + error);
+        finally {
+            jnlp.delete();
         }
     }
 
@@ -287,9 +290,7 @@ public class WebStartTest extends TestCase {
             super.runBare();
         }
         else if (!GraphicsEnvironment.isHeadless()) {
-            //File policy = new File(getName() + ".policy");
             File policy = File.createTempFile(getName(), ".policy");
-            policy.deleteOnExit();
             OutputStream os = new FileOutputStream(policy);
             os.write(POLICY.getBytes());
             os.close();
@@ -307,6 +308,7 @@ public class WebStartTest extends TestCase {
                 runTestUnderWebStart();
             }
             finally {
+                policy.delete();
                 os = new FileOutputStream(dpfile);
                 saved.store(os, "deployment.properties");
                 os.close();
