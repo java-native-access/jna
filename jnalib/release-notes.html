@@ -15,6 +15,8 @@
 </ul>
 <b>Bug Fixes</b><br>
 <ul>
+<li>Restrict recursive structure reads/writes by thread instead of globally.
+  This avoids potentially missed reads/writes with concurrent access (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=120">Issue 120)</a>.
 <li>Ensure Memory is not GC'd and freed if direct NIO buffers mapped to it are extant.
 <li>Allow types derived from java.nio.Buffer as Structure fields.
 </ul>

@@ -288,10 +288,17 @@ public abstract class Structure {
     // Data synchronization methods
     //////////////////////////////////////////////////////////////////////////
 
-    // Keep track of what is currently being read to avoid redundant reads
-    // (avoids problems with circular references).
-    private static Set reading = new HashSet();
-    private static Set writing = new HashSet();
+    // Keep track of what is currently being read/written to avoid redundant
+    // reads (avoids problems with circular references).
+    private static final ThreadLocal busy = new ThreadLocal() {
+        protected synchronized Object initialValue() {
+            return new HashSet();
+        }
+    };
+    private Set busy() {
+        return (Set)busy.get();
+    }
+
     /**
      * Reads the fields of the struct from native memory
      */
@@ -301,20 +308,17 @@ public abstract class Structure {
         // have to explicitly call allocateMemory in a ctor
         ensureAllocated();
         // Avoid recursive reads
-        synchronized(reading) {
-            if (reading.contains(this))
-                return;
-            reading.add(this);
+        if (busy().contains(this)) {
+            return;
         }
+        busy().add(this);
         try {
             for (Iterator i=structFields.values().iterator();i.hasNext();) {
                 readField((StructField)i.next());
             }
         }
         finally {
-            synchronized(reading) {
-                reading.remove(this);
-            }
+            busy().remove(this);
         }
     }
 
@@ -425,11 +429,10 @@ public abstract class Structure {
             getTypeInfo();
         }
 
-        synchronized(writing) {
-            if (writing.contains(this)) 
-                return;
-            writing.add(this);
+        if (busy().contains(this)) {
+            return;
         }
+        busy().add(this);
         try {
             // Write all fields, except those marked 'volatile'
             for (Iterator i=structFields.values().iterator();i.hasNext();) {
@@ -440,9 +443,7 @@ public abstract class Structure {
             }
         }
         finally {
-            synchronized(writing) {
-                writing.remove(this);
-            }
+            busy().remove(this);
         }
     }
 

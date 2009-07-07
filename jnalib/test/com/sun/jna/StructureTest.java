@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2009 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1007,5 +1007,15 @@ public class StructureTest extends TestCase {
         s2.getPointer().setInt(0, -1);
         s2.write();
         assertEquals("Structure equals should ignore padding", s1, s2);
+    }
+
+    public void testRecursiveReadWrite() {
+        class TestStructureByRef extends Structure implements Structure.ByReference{
+            public TestStructureByRef s;
+        }
+        TestStructureByRef s = new TestStructureByRef();
+        s.s = s;
+        s.write();
+        s.read();
     }
 }
