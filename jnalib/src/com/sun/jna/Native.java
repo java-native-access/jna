@@ -65,7 +65,6 @@ import com.sun.jna.Structure.FFIType;
  * probably install the native library in an accessible location and configure 
  * your system accordingly, rather than relying on JNA to extract the library 
  * from its own jar file.
- * <p>
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
@@ -331,7 +330,24 @@ public final class Native {
         return s;
     }
     
-    /** Load a library interface from the given shared library, providing
+    /** Map a library interface to the current process, providing
+     * the explicit interface class.
+     * @param interfaceClass
+     */
+    public static Object loadLibrary(Class interfaceClass) {
+        return loadLibrary(null, interfaceClass);
+    }
+
+    /** Map a library interface to the current process, providing
+     * the explicit interface class.
+     * @param interfaceClass
+     * @param options Map of library options
+     */
+    public static Object loadLibrary(Class interfaceClass, Map options) {
+        return loadLibrary(null, interfaceClass, options);
+    }
+
+    /** Map a library interface to the given shared library, providing
      * the explicit interface class.
      * If <code>name</code> is null, attempts to map onto the current process.
      * @param name
@@ -348,18 +364,18 @@ public final class Native {
      * If <code>name</code> is null, attempts to map onto the current process.
      * @param name
      * @param interfaceClass
-     * @param libOptions Map of library options
+     * @param options Map of library options
      */
     public static Object loadLibrary(String name, 
                                      Class interfaceClass,
-                                     Map libOptions) {
+                                     Map options) {
         Library.Handler handler = 
-            new Library.Handler(name, interfaceClass, libOptions);
+            new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
         Library proxy = (Library)
             Proxy.newProxyInstance(loader, new Class[] {interfaceClass},
                                    handler);
-        cacheOptions(interfaceClass, libOptions, proxy);
+        cacheOptions(interfaceClass, options, proxy);
         return proxy;
     }
 

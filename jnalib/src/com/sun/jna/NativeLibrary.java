@@ -30,7 +30,8 @@ import java.util.StringTokenizer;
 
 /**
  * Provides management of native library resources.  One instance of this
- * class corresponds to a single loaded native library.
+ * class corresponds to a single loaded native library.  May also be used
+ * to map to the current process (see {@link NativeLibrary#getProcess()}).
  * <p>
  * <b>Library Search Paths</b>
  * A search for a given library will scan the following locations:
@@ -239,27 +240,28 @@ public class NativeLibrary {
     }
 
     /**
-     * Returns an instance of NativeLibrary which refers to the current process.
-     * This is useful for accessing functions which were already mapped by some
-     * other mechanism, without having to reference or even know the exact
-     * name of the native library.
+     * Returns an instance of NativeLibrary which refers to the current
+     * process.  This is useful for accessing functions which were already
+     * mapped by some other mechanism, without having to reference or even
+     * know the exact name of the native library.
      */
     public static synchronized final NativeLibrary getProcess() {
         return getInstance(null);
     }
 
     /**
-     * Returns an instance of NativeLibrary which refers to the current process.
-     * This is useful for accessing functions which were already mapped by some
-     * other mechanism, without having to reference or even know the exact
-     * name of the native library.
+     * Returns an instance of NativeLibrary which refers to the current
+     * process.  This is useful for accessing functions which were already
+     * mapped by some other mechanism, without having to reference or even
+     * know the exact name of the native library.
      */
     public static synchronized final NativeLibrary getProcess(Map options) {
         return getInstance(null, options);
     }
 
     /**
-     * Add a path to search for the specified library, ahead of any system paths
+     * Add a path to search for the specified library, ahead of any system
+     * paths.
      *
      * @param libraryName The name of the library to use the path for
      * @param path The path to use when trying to load the library
