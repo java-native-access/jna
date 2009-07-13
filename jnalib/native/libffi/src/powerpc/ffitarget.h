@@ -95,12 +95,12 @@ typedef enum ffi_abi {
 /* For additional types like the below, take care about the order in
    ppc_closures.S. They must follow after the FFI_TYPE_LAST.  */
 
+/* Needed for soft-float long-double-128 support.  */
+#define FFI_TYPE_UINT128 (FFI_TYPE_LAST + 1)
+
 /* Needed for FFI_SYSV small structure returns.
    We use two flag bits, (FLAG_SYSV_SMST_R3, FLAG_SYSV_SMST_R4) which are
    defined in ffi.c, to determine the exact return type and its size.  */
-#define FFI_TYPE_UINT128 (FFI_TYPE_LAST + 1)
-
-/* Needed for FFI_SYSV small structure returns.  */
 #define FFI_SYSV_TYPE_SMALL_STRUCT (FFI_TYPE_LAST + 2)
 
 #if defined(POWERPC64) || defined(POWERPC_AIX)

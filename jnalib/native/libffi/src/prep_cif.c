@@ -39,11 +39,9 @@ static ffi_status initialize_aggregate(ffi_type *arg)
 
   FFI_ASSERT(arg != NULL);
 
+  FFI_ASSERT(arg->elements != NULL);
   FFI_ASSERT(arg->size == 0);
-
-  if (arg->elements == NULL || arg->alignment != 0) {
-    return FFI_BAD_TYPEDEF;
-  }
+  FFI_ASSERT(arg->alignment == 0);
 
   ptr = &(arg->elements[0]);
 
@@ -95,13 +93,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
   ffi_type **ptr;
 
   FFI_ASSERT(cif != NULL);
-
-  // FIXME: most targets have a broken definition of FFI_LAST_ABI
-  /*
-  if (abi <= FFI_FIRST_ABI || abi >= FFI_LAST_ABI) {
-    return FFI_BAD_ABI;
-  }
-  */
+  FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
 
   cif->abi = abi;
   cif->arg_types = atypes;

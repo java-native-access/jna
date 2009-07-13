@@ -277,16 +277,16 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   /* value address then we need to make one                     */
 
 #ifdef X86_WIN64
-  if ((rvalue == NULL) && 
-      (cif->flags == FFI_TYPE_STRUCT
-       && cif->rtype->size != 1 && cif->rtype->size != 2
-       && cif->rtype->size != 4 && cif->rtype->size != 8))
+  if (rvalue == NULL
+      && cif->flags == FFI_TYPE_STRUCT
+      && cif->rtype->size != 1 && cif->rtype->size != 2
+      && cif->rtype->size != 4 && cif->rtype->size != 8)
     {
       ecif.rvalue = alloca((cif->rtype->size + 0xF) & ~0xF);
     }
 #else
-  if ((rvalue == NULL) &&
-      cif->flags == FFI_TYPE_STRUCT)
+  if (rvalue == NULL
+      && cif->flags == FFI_TYPE_STRUCT)
     {
       ecif.rvalue = alloca(cif->rtype->size);
     }
@@ -450,7 +450,7 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
       size_t z;
 
       /* Align if necessary */
-      if ((sizeof(void *) - 1) & (size_t) argp) {
+      if ((sizeof(void*) - 1) & (size_t) argp) {
         argp = (char *) ALIGN(argp, sizeof(void*));
       }
 

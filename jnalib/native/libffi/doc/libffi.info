@@ -1,4 +1,4 @@
-This is doc/libffi.info, produced by makeinfo version 4.13 from
+This is doc/libffi.info, produced by makeinfo version 4.12 from
 ./doc/libffi.texi.
 
 This manual is for Libffi, a portable foreign-function interface
@@ -510,8 +510,8 @@ Index
 * ffi_type_ushort:                       Primitive Types.      (line 53)
 * ffi_type_void:                         Primitive Types.      (line 10)
 * Foreign Function Interface:            Introduction.         (line 31)
-* void <1>:                              The Basics.           (line 43)
-* void:                                  The Closure API.      (line 27)
+* void <1>:                              The Closure API.      (line 20)
+* void:                                  The Basics.           (line 43)
 
 
 
