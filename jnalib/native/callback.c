@@ -154,6 +154,16 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   }
   status = ffi_prep_cif(&cb->cif, abi, argc, ffi_rtype, cb->arg_types);
   if (!ffi_error(env, "callback setup", status)) {
+    ffi_type* java_ffi_rtype = ffi_rtype;
+
+    if (cb->rflag == CVT_STRUCTURE_BYVAL
+        || cb->rflag == CVT_NATIVE_MAPPED
+        || cb->rflag == CVT_POINTER_TYPE
+        || cb->rflag == CVT_INTEGER_TYPE) {
+      // Java method returns a jobject, not a struct
+      java_ffi_rtype = &ffi_type_pointer;
+      rtype = '*';
+    }
     switch(rtype) {
     case 'V': cb->fptr = (*env)->CallVoidMethod; break;
     case 'Z': cb->fptr = (*env)->CallBooleanMethod; break;
@@ -166,14 +176,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     case 'D': cb->fptr = (*env)->CallDoubleMethod; break;
     default: cb->fptr = (*env)->CallObjectMethod; break;
     }
-    if (cb->rflag == CVT_STRUCTURE_BYVAL
-        || cb->rflag == CVT_NATIVE_MAPPED
-        || cb->rflag == CVT_POINTER_TYPE
-        || cb->rflag == CVT_INTEGER_TYPE) {
-      // Java method returns a jobject, not a struct
-      ffi_rtype = &ffi_type_pointer;
-    }
-    status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, ffi_rtype, cb->java_arg_types);
+    status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, java_ffi_rtype, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
       ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
                            cb->x_closure);
