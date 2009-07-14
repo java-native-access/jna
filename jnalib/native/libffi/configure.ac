@@ -53,10 +53,6 @@ case "$host" in
 	TARGET=X86_64; TARGETDIR=x86
   	;;
 
-  amd64-*-freebsd*)
-	TARGET=X86_64; TARGETDIR=x86
-	;;
-
   cris-*-*)
 	TARGET=LIBFFI_CRIS; TARGETDIR=cris
 	;;
@@ -147,11 +143,9 @@ case "$host" in
   x86_64-*-darwin*)
 	TARGET=X86_DARWIN; TARGETDIR=x86
 	;;
-
   x86_64-*-cygwin* | x86_64-*-mingw*)
 	TARGET=X86_WIN64; TARGETDIR=x86
 	;;
-
   x86_64-*-*)
 	TARGET=X86_64; TARGETDIR=x86
 	;;
@@ -253,7 +247,7 @@ if test x$TARGET = xSPARC; then
     fi
 fi
 
-if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64; then
+if test x$TARGET = xX86 || test x$TARGET = xX86_64; then
     AC_CACHE_CHECK([assembler supports pc related relocs],
 	libffi_cv_as_x86_pcrel, [
 	libffi_cv_as_x86_pcrel=yes
