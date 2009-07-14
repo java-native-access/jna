@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -156,7 +156,7 @@ An abstraction for a native function pointer.  An instance of
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>(package private) &nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#callingConvention">callingConvention</A></B></CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#callFlags">callFlags</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -193,6 +193,22 @@ An abstraction for a native function pointer.  An instance of
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For internal JNA use.</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#options">options</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#THROW_LAST_ERROR">THROW_LAST_ERROR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to throw an exception if last error is non-zero after call.</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Pointer"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -215,7 +231,7 @@ An abstraction for a native function pointer.  An instance of
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#Function(com.sun.jna.NativeLibrary, java.lang.String, int)">Function</A></B>(<A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>&nbsp;library,
          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;functionName,
-         int&nbsp;callingConvention)</CODE>
+         int&nbsp;callFlags)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new <code>Function</code> that is linked with a native 
@@ -223,7 +239,7 @@ An abstraction for a native function pointer.  An instance of
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#Function(com.sun.jna.Pointer, int)">Function</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;functionAddress,
-         int&nbsp;callingConvention)</CODE>
+         int&nbsp;callFlags)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new <code>Function</code> that is linked with a native 
@@ -280,7 +296,7 @@ An abstraction for a native function pointer.  An instance of
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#getFunction(java.lang.String, java.lang.String, int)">getFunction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;libraryName,
             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;functionName,
-            int&nbsp;callConvention)</CODE>
+            int&nbsp;callFlags)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Obtain a <code>Function</code> representing a native 
@@ -438,7 +454,7 @@ An abstraction for a native function pointer.  An instance of
 <TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#_setMemory(long, long, byte)">_setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByte(long)">getByte</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteBuffer(long, long)">getByteBuffer</A>, <A HREF="../../../com/sun/jna/Pointer.html#getChar(long)">getChar</A>, <A HREF="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDouble(long)">getDouble</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloat(long)">getFloat</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getInt(long)">getInt</A>, <A HREF="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLong(long)">getLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointer(long)">getPointer</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShort(long)">getShort</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long, boolean)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, byte[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, char[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, double[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, float[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, int[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, long[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, short[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#setByte(long, byte)">setByte</A>, <A HREF="../../../com/sun/jna/Pointer.html#setChar(long, char)">setChar</A>, <A HREF="../../../com/sun/jna/Pointer.html#setDouble(long, double)">setDouble</A>, <A HREF="../../../com/sun/jna/Pointer.html#setFloat(long, float)">setFloat</A>, <A HREF="../../../com/sun/jna/Pointer.html#setInt(long, int)">setInt</A>, <A HREF="../../../com/sun/jna/Pointer.html#setLong(long, long)">setLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setPointer(long, com.sun.jna.Pointer)">setPointer</A>, <A HREF="../../../com/sun/jna/Pointer.html#setShort(long, short)">setShort</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#share(long)">share</A>, <A HREF="../../../com/sun/jna/Pointer.html#share(long, long)">share</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, byte[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, char[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, double[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, float[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, int[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, long[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, short[], int, int)">write</A></CODE></TD>
+<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#_setMemory(long, long, byte)">_setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByte(long)">getByte</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteBuffer(long, long)">getByteBuffer</A>, <A HREF="../../../com/sun/jna/Pointer.html#getChar(long)">getChar</A>, <A HREF="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDouble(long)">getDouble</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloat(long)">getFloat</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getInt(long)">getInt</A>, <A HREF="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLong(long)">getLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointer(long)">getPointer</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShort(long)">getShort</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long, boolean)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, byte[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, char[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, double[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, float[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, int[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, long[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, short[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#setByte(long, byte)">setByte</A>, <A HREF="../../../com/sun/jna/Pointer.html#setChar(long, char)">setChar</A>, <A HREF="../../../com/sun/jna/Pointer.html#setDouble(long, double)">setDouble</A>, <A HREF="../../../com/sun/jna/Pointer.html#setFloat(long, float)">setFloat</A>, <A HREF="../../../com/sun/jna/Pointer.html#setInt(long, int)">setInt</A>, <A HREF="../../../com/sun/jna/Pointer.html#setLong(long, long)">setLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setPointer(long, com.sun.jna.Pointer)">setPointer</A>, <A HREF="../../../com/sun/jna/Pointer.html#setShort(long, short)">setShort</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#share(long)">share</A>, <A HREF="../../../com/sun/jna/Pointer.html#share(long, long)">share</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, byte[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, char[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, double[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, float[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, int[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, long[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, short[], int, int)">write</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -499,6 +515,18 @@ public static final int <B>ALT_CONVENTION</B></PRE>
 </DL>
 <HR>
 
+<A NAME="THROW_LAST_ERROR"><!-- --></A><H3>
+THROW_LAST_ERROR</H3>
+<PRE>
+public static final int <B>THROW_LAST_ERROR</B></PRE>
+<DL>
+<DD>Whether to throw an exception if last error is non-zero after call.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Function.THROW_LAST_ERROR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
 <A NAME="INTEGER_TRUE"><!-- --></A><H3>
 INTEGER_TRUE</H3>
 <PRE>
@@ -519,10 +547,20 @@ static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.
 </DL>
 <HR>
 
-<A NAME="callingConvention"><!-- --></A><H3>
-callingConvention</H3>
+<A NAME="callFlags"><!-- --></A><H3>
+callFlags</H3>
 <PRE>
-final int <B>callingConvention</B></PRE>
+int <B>callFlags</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="options"><!-- --></A><H3>
+options</H3>
+<PRE>
+final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A> <B>options</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -555,7 +593,7 @@ Function</H3>
 <PRE>
 <B>Function</B>(<A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>&nbsp;library,
          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;functionName,
-         int&nbsp;callingConvention)</PRE>
+         int&nbsp;callFlags)</PRE>
 <DL>
 <DD>Create a new <code>Function</code> that is linked with a native 
  function that follows the given calling convention.
@@ -565,7 +603,7 @@ Function</H3>
  convention.
 <P>
 <DL>
-<DT><B>Parameters:</B><DD><CODE>library</CODE> - <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callingConvention</CODE> - Calling convention used by the native function
+<DT><B>Parameters:</B><DD><CODE>library</CODE> - <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callFlags</CODE> - Calling convention used by the native function
 <DT><B>Throws:</B>
 <DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the given function name is
  not found within the library.</DL>
@@ -576,7 +614,7 @@ Function</H3>
 Function</H3>
 <PRE>
 <B>Function</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;functionAddress,
-         int&nbsp;callingConvention)</PRE>
+         int&nbsp;callFlags)</PRE>
 <DL>
 <DD>Create a new <code>Function</code> that is linked with a native 
  function that follows the given calling convention.
@@ -586,7 +624,7 @@ Function</H3>
  convention.
 <P>
 <DL>
-<DT><B>Parameters:</B><DD><CODE>functionAddress</CODE> - Address of the native function<DD><CODE>callingConvention</CODE> - Calling convention used by the native function</DL>
+<DT><B>Parameters:</B><DD><CODE>functionAddress</CODE> - Address of the native function<DD><CODE>callFlags</CODE> - Calling convention used by the native function</DL>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -626,7 +664,7 @@ getFunction</H3>
 <PRE>
 public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A> <B>getFunction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;libraryName,
                                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;functionName,
-                                   int&nbsp;callConvention)</PRE>
+                                   int&nbsp;callFlags)</PRE>
 <DL>
 <DD>Obtain a <code>Function</code> representing a native 
  function that follows a given calling convention.
@@ -636,7 +674,7 @@ public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.s
  convention.
 <P>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callConvention</CODE> - Call convention used by the native function
+<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callFlags</CODE> - Call convention used by the native function
 <DT><B>Throws:</B>
 <DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the library is not found or
  the given function name is not found within the library.</DL>
@@ -936,7 +974,7 @@ static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Boolean.html" 
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -972,6 +1010,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007-2008 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2009 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>

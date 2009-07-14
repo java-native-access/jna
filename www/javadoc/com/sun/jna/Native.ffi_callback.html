@@ -3,17 +3,17 @@
 <HTML>
 <HEAD>
 <TITLE>
-AltCallingConvention (JNA API)
+Native.ffi_callback (JNA API)
 </TITLE>
 
-<META NAME="keywords" CONTENT="com.sun.jna.AltCallingConvention interface">
+<META NAME="keywords" CONTENT="com.sun.jna.Native.ffi_callback interface">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="AltCallingConvention (JNA API)";
+    parent.document.title="Native.ffi_callback (JNA API)";
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -50,11 +50,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../index.html?com/sun/jna/AltCallingConvention.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="AltCallingConvention.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../index.html?com/sun/jna/Native.ffi_callback.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Native.ffi_callback.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -71,9 +71,9 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_top"></A>
@@ -85,30 +85,63 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
 <FONT SIZE="-1">
 com.sun.jna</FONT>
 <BR>
-Interface AltCallingConvention</H2>
+Interface Native.ffi_callback</H2>
 <DL>
-<DT><B>All Known Subinterfaces:</B> <DD><A HREF="../../../com/sun/jna/examples/win32/GDI32.html" title="interface in com.sun.jna.examples.win32">GDI32</A>, <A HREF="../../../com/sun/jna/examples/win32/Kernel32.html" title="interface in com.sun.jna.examples.win32">Kernel32</A>, <A HREF="../../../com/sun/jna/examples/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.examples.win32">Kernel32.OVERLAPPED_COMPLETION_ROUTINE</A>, <A HREF="../../../com/sun/jna/examples/win32/Shell32.html" title="interface in com.sun.jna.examples.win32">Shell32</A>, <A HREF="../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A>, <A HREF="../../../com/sun/jna/examples/win32/User32.html" title="interface in com.sun.jna.examples.win32">User32</A>, <A HREF="../../../com/sun/jna/examples/win32/User32.HOOKPROC.html" title="interface in com.sun.jna.examples.win32">User32.HOOKPROC</A>, <A HREF="../../../com/sun/jna/examples/win32/User32.LowLevelKeyboardProc.html" title="interface in com.sun.jna.examples.win32">User32.LowLevelKeyboardProc</A>, <A HREF="../../../com/sun/jna/examples/win32/User32.WNDENUMPROC.html" title="interface in com.sun.jna.examples.win32">User32.WNDENUMPROC</A>, <A HREF="../../../com/sun/jna/examples/win32/W32API.html" title="interface in com.sun.jna.examples.win32">W32API</A></DD>
+<DT><B>Enclosing class:</B><DD><A HREF="../../../com/sun/jna/Native.html" title="class in com.sun.jna">Native</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public interface <B>AltCallingConvention</B></DL>
+<DT><PRE>public static interface <B>Native.ffi_callback</B></DL>
 </PRE>
 
 <P>
-Tagging interface to indicate the library or callback uses an alternate
- calling convention.
-<P>
-
-<P>
-<DL>
-<DT><B>Author:</B></DT>
-  <DD>twall</DD>
-</DL>
 <HR>
 
 <P>
 
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Native.ffi_callback.html#invoke(long, long, long)">invoke</A></B>(long&nbsp;cif,
+       long&nbsp;resp,
+       long&nbsp;argp)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
 <P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="invoke(long, long, long)"><!-- --></A><H3>
+invoke</H3>
+<PRE>
+void <B>invoke</B>(long&nbsp;cif,
+            long&nbsp;resp,
+            long&nbsp;argp)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -139,11 +172,11 @@ Tagging interface to indicate the library or callback uses an alternate
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../index.html?com/sun/jna/AltCallingConvention.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="AltCallingConvention.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../index.html?com/sun/jna/Native.ffi_callback.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Native.ffi_callback.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -160,9 +193,9 @@ Tagging interface to indicate the library or callback uses an alternate
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_bottom"></A>

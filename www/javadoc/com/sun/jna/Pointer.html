@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -192,7 +192,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) &nbsp;void</CODE></FONT></TD>
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A></B>(long&nbsp;size)</CODE>
 
 <BR>
@@ -412,6 +412,16 @@ An abstraction for a native pointer data type.  A Pointer instance
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array of <code>String</code> based on a native array
  of <code>char*</code> or <code>wchar_t*</code> based on the
  <code>wide</code> parameter.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A></B>(long&nbsp;offset,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -637,6 +647,16 @@ An abstraction for a native pointer data type.  A Pointer instance
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy string <code>value</code> to the location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A></B>(long&nbsp;offset,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;value,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -896,7 +916,7 @@ public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">
 <A NAME="clear(long)"><!-- --></A><H3>
 clear</H3>
 <PRE>
-void <B>clear</B>(long&nbsp;size)</PRE>
+public void <B>clear</B>(long&nbsp;size)</PRE>
 <DL>
 <DD>Zero memory for the given number of bytes.
 <P>
@@ -1233,6 +1253,19 @@ public void <B>write</B>(long&nbsp;bOff,
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>Pointer</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
                copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValue(long, java.lang.Class, java.lang.Object)"><!-- --></A><H3>
+getValue</H3>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A> <B>getValue</B>(long&nbsp;offset,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -1578,6 +1611,19 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 </DL>
 <HR>
 
+<A NAME="setValue(long, java.lang.Object, java.lang.Class)"><!-- --></A><H3>
+setValue</H3>
+<PRE>
+void <B>setValue</B>(long&nbsp;offset,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;value,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="setMemory(long, long, byte)"><!-- --></A><H3>
 setMemory</H3>
 <PRE>
@@ -1837,7 +1883,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -1873,6 +1919,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007-2008 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2009 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>

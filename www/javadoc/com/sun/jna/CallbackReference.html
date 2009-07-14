@@ -44,7 +44,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -125,14 +125,6 @@ Provides a reference to an association between a native callback closure
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/CallbackReference.html#altCallbackMap">altCallbackMap</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/CallbackReference.html#callbackMap">callbackMap</A></B></CODE>
 
 <BR>
@@ -142,6 +134,22 @@ Provides a reference to an association between a native callback closure
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>(package private) &nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/CallbackReference.html#cbstruct">cbstruct</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/CallbackReference.html#directCallbackMap">directCallbackMap</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect">Method</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/CallbackReference.html#method">method</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -171,6 +179,16 @@ Provides a reference to an association between a native callback closure
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Free native resources associated with this callback.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/CallbackReference.html#findCallbackClass(java.lang.Class)">findCallbackClass</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find the first instance of an interface which implements the Callback
+ interface or an interface derived from Callback, which defines an
+ appropriate callback method.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -240,10 +258,10 @@ static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html
 </DL>
 <HR>
 
-<A NAME="altCallbackMap"><!-- --></A><H3>
-altCallbackMap</H3>
+<A NAME="directCallbackMap"><!-- --></A><H3>
+directCallbackMap</H3>
 <PRE>
-static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A> <B>altCallbackMap</B></PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html" title="class or interface in java.util">Map</A> <B>directCallbackMap</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -278,6 +296,16 @@ proxy</H3>
 <DL>
 </DL>
 </DL>
+<HR>
+
+<A NAME="method"><!-- --></A><H3>
+method</H3>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect">Method</A> <B>method</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -298,6 +326,21 @@ public static <A HREF="../../../com/sun/jna/Callback.html" title="interface in c
 <DD>Return a Callback associated with the given function pointer.
  If the pointer refers to a Java callback trampoline, return the original
  Java Callback.  Otherwise, return a proxy to the native function pointer.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findCallbackClass(java.lang.Class)"><!-- --></A><H3>
+findCallbackClass</H3>
+<PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A> <B>findCallbackClass</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+<DL>
+<DD>Find the first instance of an interface which implements the Callback
+ interface or an interface derived from Callback, which defines an
+ appropriate callback method.
 <P>
 <DD><DL>
 </DL>
@@ -370,7 +413,7 @@ public static <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.su
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -406,6 +449,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007-2008 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2009 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>

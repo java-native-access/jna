@@ -43,7 +43,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -89,9 +89,18 @@ function windowTitle()
 <B>Deprecated Methods</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><A HREF="com/sun/jna/Native.html#getByteBufferPointer(java.nio.ByteBuffer)">com.sun.jna.Native.getByteBufferPointer(ByteBuffer)</A>
+<TD><A HREF="com/sun/jna/Native.html#getPreserveLastError()">com.sun.jna.Native.getPreserveLastError()</A>
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Use <A HREF="com/sun/jna/Native.html#getDirectBufferPointer(java.nio.Buffer)"><CODE>Native.getDirectBufferPointer(java.nio.Buffer)</CODE></A> instead.</I>&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>The preferred method of obtaining the last error result is
+ to declare your mapped method to throw <A HREF="com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><CODE>LastErrorException</CODE></A>
+ instead.</I>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><A HREF="com/sun/jna/Native.html#setPreserveLastError(boolean)">com.sun.jna.Native.setPreserveLastError(boolean)</A>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>The preferred method of obtaining the last error result is
+ to declare your mapped method to throw <A HREF="com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><CODE>LastErrorException</CODE></A>
+ instead.</I>&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -119,7 +128,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.1.0</font></EM>
+<b>JNA API</><font size="-1"> 3.2.0</font></EM>
 </TD>
 </TR>
 
@@ -149,6 +158,6 @@ function windowTitle()
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007-2008 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2009 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>
