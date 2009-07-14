@@ -86,7 +86,7 @@ STRIP=strip -x
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-CDEFINES=-DHAVE_PROTECTION
+CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1
 LIBS=-lpsapi
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
@@ -116,6 +116,8 @@ else
 # MSVC (wrapper scripts)
 CC=$(FFI_SRC)/../cc.sh -m64
 LD=$(FFI_SRC)/../ld.sh -m64
+COPT=
+LIBS=psapi.lib
 ARSFX=.lib
 FFI_CONFIG += --host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
 FFI_ENV += LD="$(LD)" CPP=cpp

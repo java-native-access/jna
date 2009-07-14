@@ -136,20 +136,7 @@ public class WebStartTest extends TestCase {
             os.write(contents.getBytes());
             os.close();
             File keystore = new File("jna.keystore");
-            String JAVA_HOME = System.getProperty("java.home");
-            String LIB = new File(JAVA_HOME, "/lib").getAbsolutePath();
-            if (!new File(LIB, "javaws.jar").exists()) {
-                LIB = new File("/System/Library/Frameworks/JavaVM.framework/Resources/Deploy.bundle/Contents/Home/lib").getAbsolutePath();
-                if (!new File(LIB, "javaws.jar").exists()) {
-                    throw new IOException("javaws.jar not found");
-                }
-            }
-            String PS = System.getProperty("path.separator");
-            String path = System.getProperty("java.home") + "/bin/javaws";
-            if (Platform.isWindows()) path += ".exe";
-            File javaws = new File(path);
-            // NOTE: OSX puts javaws somewhere else entirely
-            if (!javaws.exists()) path = "javaws";
+            String path = findJWS();
             String[] cmd = {
                 path,
                 "-Xnosplash",
@@ -259,16 +246,80 @@ public class WebStartTest extends TestCase {
         }
     }
     
+    public interface FolderInfo extends com.sun.jna.win32.StdCallLibrary {
+        int MAX_PATH = 260;
+        int SHGFP_TYPE_CURRENT = 0;
+        int SHGFP_TYPE_DEFAULT = 1;
+        int CSIDL_APPDATA = 26;
+        int CSIDL_WINDOWS = 36;
+        int SHGetFolderPathW(Pointer owner, int folder, Pointer token,
+                             int flags, char[] path);
+    }
+
+    private String findJWS() throws IOException {
+        String JAVA_HOME = System.getProperty("java.home");
+        String LIB = new File(JAVA_HOME, "/lib").getAbsolutePath();
+        if (!new File(LIB, "javaws.jar").exists()) {
+            LIB = new File("/System/Library/Frameworks/JavaVM.framework/Resources/Deploy.bundle/Contents/Home/lib").getAbsolutePath();
+            if (!new File(LIB, "javaws.jar").exists()) {
+                if (!Platform.isWindows())
+                    throw new IOException("javaws.jar not found");
+            }
+        }
+        String PS = System.getProperty("path.separator");
+        String path = System.getProperty("java.home") + "/bin/javaws";
+        File javaws = new File(path);
+        // NOTE: OSX puts javaws somewhere else entirely
+        // NOTE: win64 only includes javaws in the system path
+        if (!javaws.exists()) {
+            if (Platform.isWindows()) {
+                FolderInfo info = (FolderInfo)
+                    Native.loadLibrary("shell32", FolderInfo.class);
+                char[] buf = new char[FolderInfo.MAX_PATH];
+                int flags = 0;
+                int result = info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
+                path = Native.toString(buf);
+                if (Platform.is64Bit()) {
+                    javaws = new File(path, "SysWOW64/javaws.exe");
+                }
+                else {
+                    javaws = new File(path, "system32/javaws.exe");
+                }
+                path = javaws.getAbsolutePath();
+            }
+            else {
+                path = javaws.getName();
+            }
+        }
+        return path;
+    }
+
     private File findDeploymentProperties() {
         String path = System.getProperty("user.home");
         File deployment;
         if (Platform.isWindows()) {
+            FolderInfo info = (FolderInfo)
+                Native.loadLibrary("shell32", FolderInfo.class);
+            char[] buf = new char[FolderInfo.MAX_PATH];
+            int flags = 0;
+            int result = info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
+                                               null, 0, buf);
+            path = Native.toString(buf);
+
             // NOTE: works for Sun and IBM, may not work for others
             String vendor = System.getProperty("java.vm.vendor");
             if (vendor.indexOf(" ") != -1) {
                 vendor = vendor.substring(0, vendor.indexOf(" "));
             }
-            deployment = new File(path + "/Application Data/" + vendor + "/Java/Deployment");
+            deployment = new File(path + "/" + vendor + "/Java/Deployment");
+            if (!deployment.exists()
+                && deployment.getAbsolutePath().indexOf("Roaming") != -1) {
+                deployment = new File(deployment.getAbsolutePath().replace("Roaming", "LocalLow"));
+                if (!deployment.exists()) {
+                    deployment = new File(deployment.getAbsolutePath().replace("LocalLow", "Local"));
+                }
+            }
+
         }
         else if (Platform.isMac()) {
             deployment = new File(path + "/Library/Caches/Java");
@@ -289,6 +340,9 @@ public class WebStartTest extends TestCase {
     public void runBare() throws Throwable {
         if (runningWebStart()) {
             super.runBare();
+        }
+        else if (Platform.isWindows() && Platform.is64Bit()) {
+            throw new Error("Web start launch not supported");
         }
         else if (!GraphicsEnvironment.isHeadless()) {
             File policy = File.createTempFile(getName(), ".policy");

@@ -41,7 +41,7 @@ do
       shift 1
     ;;
     -O*)
-      args="$args /O1"
+      args="$args $i"
       shift 1
     ;;
     -g)

@@ -45,7 +45,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   ffi_status status;
   jsize argc;
   JavaVM* vm;
-  char rtype;
+  int rtype;
   char msg[64];
   int i;
   int cvt = 0;
@@ -81,27 +81,28 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       cvt = 1;
     }
 
-    cb->arg_jtypes[i] = jtype = get_jtype(env, cls);
+    jtype = get_jtype(env, cls);
     if (jtype == -1) {
       snprintf(msg, sizeof(msg), "Unsupported argument at index %d", i);
       throw_type = EIllegalArgument;
       throw_msg = msg;
       goto failure_cleanup;
     }
-
+    cb->arg_jtypes[i] = (char)jtype;
     cb->java_arg_types[i+3] = cb->arg_types[i] = get_ffi_type(env, cls, cb->arg_jtypes[i]);
     if (cb->flags[i] == CVT_NATIVE_MAPPED
         || cb->flags[i] == CVT_POINTER_TYPE
         || cb->flags[i] == CVT_INTEGER_TYPE) {
       jclass ncls;
       ncls = getNativeType(env, cls);
-      cb->arg_jtypes[i] = jtype = get_jtype(env, ncls);
+      jtype = get_jtype(env, ncls);
       if (jtype == -1) {
         snprintf(msg, sizeof(msg), "Unsupported NativeMapped argument native type at argument %d", i);
         throw_type = EIllegalArgument;
         throw_msg = msg;
         goto failure_cleanup;
       }
+      cb->arg_jtypes[i] = (char)jtype;
       cb->java_arg_types[i+3] = &ffi_type_pointer;
       cb->arg_types[i] = get_ffi_type(env, ncls, cb->arg_jtypes[i]);
     }
@@ -140,12 +141,12 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 #endif // _WIN32
 
   rtype = get_jtype(env, return_type);
-  if (!rtype) {
+  if (rtype == -1) {
     throw_type = EIllegalArgument;
     throw_msg = "Unsupported return type";
     goto failure_cleanup;
   }
-  ffi_rtype = get_ffi_rtype(env, return_type, rtype);
+  ffi_rtype = get_ffi_rtype(env, return_type, (char)rtype);
   if (!ffi_rtype) {
     throw_type = EIllegalArgument;
     throw_msg = "Error in return type";
@@ -252,7 +253,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   else if (cb->direct) {
     unsigned int i;
     void **args = alloca((cif->nargs + 3) * sizeof(void *));
-    args[0] = &env;
+    args[0] = (void *)&env;
     args[1] = &self;
     args[2] = &cb->methodID;
     memcpy(&args[3], cbargs, cif->nargs * sizeof(void *));

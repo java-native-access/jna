@@ -22,6 +22,9 @@
  */
 
 #if defined(_WIN32)
+#ifdef _MSC_VER
+#pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
+#endif
 #ifndef UNICODE
 #define UNICODE
 #endif
@@ -1376,9 +1379,11 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Memory_free
 void 
 throwByName(JNIEnv *env, const char *name, const char *msg)
 {
+  jclass cls;
+
   (*env)->ExceptionClear(env);
   
-  jclass cls = (*env)->FindClass(env, name);
+  cls = (*env)->FindClass(env, name);
   
   if (cls != NULL) { /* Otherwise an exception has already been thrown */
     (*env)->ThrowNew(env, cls, msg);
@@ -1749,8 +1754,8 @@ toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject 
 
 static void
 fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* type, jclass javaClass, void* result) {
-  char jtype = get_jtype_from_ffi_type(type);
-  jobject value = new_object(env, jtype, resp, JNI_TRUE);
+  int jtype = get_jtype_from_ffi_type(type);
+  jobject value = new_object(env, (char)jtype, resp, JNI_TRUE);
   jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
                                                MID_Native_fromNativeTypeMapped,
                                                from_native, value, javaClass);
@@ -1763,7 +1768,7 @@ fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* typ
 jobject
 fromNative(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote) {
   int jtype = get_jtype_from_ffi_type(type);
-  jobject value = new_object(env, jtype, resp, promote);
+  jobject value = new_object(env, (char)jtype, resp, promote);
   return (*env)->CallStaticObjectMethod(env, classNative,
                                         MID_Native_fromNative,
                                         javaClass, value);
@@ -1792,7 +1797,7 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
   jclass cls = (*env)->GetObjectClass(env, obj);
   jclass type = (*env)->CallObjectMethod(env, cls, MID_Class_getComponentType);
   if (type != NULL) {
-    return get_jtype(env, type);
+    return (char)get_jtype(env, type);
   }
   return 0;
 }
@@ -2567,7 +2572,6 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   void** args = argp + 2;
   void** volatile objects = NULL;
   release_t* volatile release = NULL;
-  char* volatile array_types = NULL;
   void** volatile elems = NULL;
   unsigned i;
   void* oldresp = resp;
@@ -2604,9 +2608,10 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         case CVT_TYPE_MAPPER:
           {
             void* valuep = args[i];
-            char jtype = get_jtype_from_ffi_type(data->closure_cif.arg_types[i+2]);
+            int jtype = get_jtype_from_ffi_type(data->closure_cif.arg_types[i+2]);
             jobject obj = jtype == '*'
-              ? *(void **)valuep : new_object(env, jtype, valuep, JNI_FALSE);
+              ? *(void **)valuep
+              : new_object(env, (char)jtype, valuep, JNI_FALSE);
             if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
               args[i] = alloca(data->cif.arg_types[i]->size);
             }
@@ -2827,7 +2832,6 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
   int status;
   int i;
   int abi = FFI_DEFAULT_ABI; 
-  char *tmp, msg[256];
   ffi_type* rtype = (ffi_type*)L2A(return_type);
   ffi_type* closure_rtype = (ffi_type*)L2A(closure_return_type);
   jlong* types = atypes ? (*env)->GetLongArrayElements(env, atypes, NULL) : NULL;
@@ -2886,7 +2890,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass ncls,
   }
 
   {
-    JNINativeMethod m  = { (char*)cname, (char*)sig, code };
+    JNINativeMethod m = { (char*)cname, (char*)sig, code };
     (*env)->RegisterNatives(env, cls, &m, 1);
   }
 
@@ -2997,12 +3001,11 @@ JNIEXPORT jint JNICALL
 Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass cls, jlong type_info) {
   ffi_type* type = L2A(type_info);
   ffi_cif cif;
-  ffi_type* atypes[] = { };
-  ffi_status status = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 0, type, atypes);
+  ffi_status status = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 0, type, NULL);
   if (ffi_error(env, "ffi_prep_cif", status)) {
     return 0;
   }
-  return type->size;
+  return (jint)type->size;
 }
 
 #ifdef __cplusplus

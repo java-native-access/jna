@@ -22,6 +22,11 @@
 #ifdef _WIN32
 #ifdef _MSC_VER
 #define alloca _alloca
+#pragma warning( disable : 4152 ) /* function/data conversion */
+#pragma warning( disable : 4054 ) /* cast function pointer to data pointer */
+#pragma warning( disable : 4055 ) /* cast data pointer to function pointer */
+#pragma warning( disable : 4204 ) /* structure initializer */
+#pragma warning( disable : 4710 ) /* swprintf not inlined */
 #else
 #include <malloc.h>
 #endif /* _MSC_VER */
