@@ -115,17 +115,22 @@ public class Memory extends Pointer {
         if (byteBoundary <= 0) {
             throw new IllegalArgumentException("Byte boundary must be positive: " + byteBoundary);
         }
-        long mask = ~((long)byteBoundary - 1);
-
-        if ((peer & ~mask) != peer) {
-            long newPeer = (peer + ~mask) & mask;
-            long newSize = peer + size - newPeer;
-            if (newSize <= 0) {
-                throw new IllegalArgumentException("Insufficient memory to align to the requested boundary");
+        for (int i=0;i < 32;i++) {
+            if (byteBoundary == (1<<i)) {
+                long mask = ~((long)byteBoundary - 1);
+                
+                if ((peer & mask) != peer) {
+                    long newPeer = (peer + ~mask) & mask;
+                    long newSize = peer + size - newPeer;
+                    if (newSize <= 0) {
+                        throw new IllegalArgumentException("Insufficient memory to align to the requested boundary");
+                    }
+                    return (Memory)share(newPeer - peer, newSize);
+                }
+                return this;
             }
-            return (Memory)share(newPeer - peer, newSize);
         }
-        return this;
+        throw new IllegalArgumentException("Byte boundary must be a power of two");
     }
 
     protected void finalize() {

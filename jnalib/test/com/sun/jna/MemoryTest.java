@@ -68,22 +68,40 @@ public class MemoryTest extends TestCase {
     }
 
     public void testAlignment() {
-        final int SIZE = 128;
+        final int SIZE = 1<<16;
         Memory base = new Memory(SIZE);
-        for (int align=1;align < 8;align *= 2) {
+        for (int align=1;align < SIZE;align *= 2) {
             Memory unaligned = base;
             long mask = ~((long)align - 1);
             if ((base.peer & mask) == base.peer)
                 unaligned = (Memory)base.share(1, SIZE-1);
             Pointer aligned = unaligned.align(align);
-            assertEquals("Memory not aligned",
+            assertEquals("Memory not aligned (" + align + ")",
                          aligned.peer & mask, aligned.peer);
         }
+    }
+
+    public void testNegativeAlignment() {
+        final int SIZE = 128;
+        Memory base = new Memory(SIZE);
         try {
             base.align(-1);
             fail("Negative alignments not allowed");
         }
         catch(IllegalArgumentException e) { }
+    }
+
+    public void testInvalidAlignment() {
+        final int SIZE = 128;
+        Memory base = new Memory(SIZE);
+        int[] alignments = { 0, 3, 5, 9, 13 };
+        for (int i=0;i < alignments.length;i++) {
+            try {
+                base.align(alignments[i]);
+                fail("Power-of-two alignments required");
+            }
+            catch(IllegalArgumentException e) { }
+        }
     }
 
     public void testAvoidGCWithExtantBuffer() throws Exception {

@@ -1,4 +1,12 @@
 <a name="top"></a>
+<h2>Release x.x.x</h2>
+<b>Features</b><br>
+<ul>
+</ul>
+<b>Bug Fixes</b><br>
+<ul>
+<li>Fix memory alignment checking (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=121">Issue 121</a>).
+</ul>
 <h2>Release 3.2.0</h2>
 <b>Features</b><br>
 <ul>
@@ -17,7 +25,7 @@
 <b>Bug Fixes</b><br>
 <ul>
 <li>Restrict recursive structure reads/writes by thread instead of globally.
-  This avoids potentially missed reads/writes with concurrent access (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=120">Issue 120)</a>.
+  This avoids potentially missed reads/writes with concurrent access (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=120">Issue 120</a>).
 <li>Ensure Memory is not GC'd and freed if direct NIO buffers mapped to it are extant.
 <li>Allow types derived from java.nio.Buffer as Structure fields.
 </ul>
@@ -26,7 +34,7 @@
 <ul>
 <li>Add raw JNI mapping of static Java methods.  Performance is about 10X that of traditional JNA interface mapping, although with less type conversion functionality. 
 <li>Add library option to allow passing/return of Java Objects.
-<li>Allow handling of uncaught callback exceptions (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=63">Issue 63)</a>.
+<li>Allow handling of uncaught callback exceptions (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=63">Issue 63</a>).
 <li>Object oriented interface to X server (see contrib/x11)
 <li>Make Memory class more accessible.
 <li>Provide Structure ctor with Pointer argument (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=102">issue 102</a>).
