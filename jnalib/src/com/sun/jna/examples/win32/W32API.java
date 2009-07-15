@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.IntegerType;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.ptr.ByReference;
@@ -72,6 +73,7 @@ public interface W32API extends StdCallLibrary, W32Errors {
     class HWND extends HANDLE { }
     class HINSTANCE extends HANDLE { }
     class HMODULE extends HINSTANCE { }
+    class HRESULT extends NativeLong { }
 
     /** Constant value representing an invalid HANDLE. */
     HANDLE INVALID_HANDLE_VALUE = new HANDLE() { 
