@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-07-15">
+<meta name="date" content="2009-07-16">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -98,7 +98,7 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
 <li>Nested structures and arrays
 <li>Wide (<code>wchar_t</code>-based) strings
 <li><a href="javadoc/com/sun/jna/NativeLong.html">Native <code>long</code></a> support (32- or 64-bit as appropriate)
-<li><a href="#demos">Full-blown demo applications</a>
+<li><a href="#demos">Demo applications</a>
 <li>Supported on 1.4 or later JVMs (earlier VMs may work with stubbed NIO support)
 <li>Customizable marshalling/unmarshalling (argument and return value conversions)
 <li>Customizable mapping from Java method to native function name, and customizable invocation to simulate C preprocessor function macros
@@ -106,6 +106,7 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
 <li>Varargs support
 <li><a href="javadoc/com/sun/jna/PointerType.html">Type-safety for native pointers</a>
 <li><a href="javadoc/com/sun/jna/Native.html#setProtected(boolean)">VM crash protection</a> (optional)
+<li>Optimized <a href='#direct'>direct mapping</a> for high-performance applications.
 </ul>
 <p>
 
@@ -545,10 +546,9 @@ There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implem
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
 <p>
-If you can forego some custom type mapping and are willing to manually massage
-certain types of arguments into the appropriate native format,
-the <a href='#direct'>JNA direct mapping</a> can provide performance near that
-of custom JNI.   
+<a href='#direct'>JNA direct mapping</a> can provide performance near that
+of custom JNI.   Nearly all the type mapping features of interface mapping are
+available, although automatic type conversion will likely incur some overhead.
 <p>
 The calling overhead for a single native call using JNA interface mapping can
 be an order of magnitude (~10X) greater time than equivalent custom JNI
