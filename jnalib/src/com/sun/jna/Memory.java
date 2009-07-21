@@ -120,7 +120,7 @@ public class Memory extends Pointer {
                 long mask = ~((long)byteBoundary - 1);
                 
                 if ((peer & mask) != peer) {
-                    long newPeer = (peer + ~mask) & mask;
+                    long newPeer = (peer + byteBoundary - 1) & mask;
                     long newSize = peer + size - newPeer;
                     if (newSize <= 0) {
                         throw new IllegalArgumentException("Insufficient memory to align to the requested boundary");

@@ -1377,7 +1377,9 @@ public final class Native {
 
     // Called from native code
     private static NativeMapped fromNative(Class cls, Object value) {
-        return (NativeMapped)NativeMappedConverter.getInstance(cls).fromNative(value, null);
+        // NOTE: technically should be either CallbackParameterContext or
+        // FunctionResultContext 
+        return (NativeMapped)NativeMappedConverter.getInstance(cls).fromNative(value, new FromNativeContext(cls));
     }
     // Called from native code
     private static Class nativeType(Class cls) {
@@ -1385,10 +1387,13 @@ public final class Native {
     }
     // Called from native code
     private static Object toNative(ToNativeConverter cvt, Object o) {
+        // NOTE: technically should be either CallbackResultContext or
+        // FunctionParameterContext
         return cvt.toNative(o, new ToNativeContext());
     }
     // Called from native code
     private static Object fromNative(FromNativeConverter cvt, Object o, Class cls) {
+        // NOTE: technically should be FunctionResultContext 
         return cvt.fromNative(o, new FromNativeContext(cls));
     }
 

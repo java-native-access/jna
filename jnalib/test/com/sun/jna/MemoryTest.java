@@ -78,6 +78,9 @@ public class MemoryTest extends TestCase {
             Pointer aligned = unaligned.align(align);
             assertEquals("Memory not aligned (" + align + ")",
                          aligned.peer & mask, aligned.peer);
+
+            assertSame("Alignment request on aligned memory should no-op",
+                       aligned, ((Memory)aligned).align(align));
         }
     }
 
