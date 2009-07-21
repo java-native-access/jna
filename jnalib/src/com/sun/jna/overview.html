@@ -132,30 +132,33 @@ An instance of the {@link com.sun.jna.Function} class is obtained through the {@
 Java types must be chosen to match native types of the same size.  Following are the types supported by the JNA library.<p>
 <center>
 <table border=1 borderColor=white class=styled width="100%">
-<tr><td><b>Java Type</b></td><td><b>C Type</b></td><td><b>Native Representation</b></td></tr>
-<tr><td>boolean</td><td>int</td><td>32-bit integer (customizable)</td>
-<tr><td>byte</td><td>char</td><td>8-bit integer</td>
-<tr><td>char</td><td>wchar_t</td><td>platform-dependent</td>
-<tr><td>short</td><td>short</td><td>16-bit integer</td>
-<tr><td>int</td><td>int</td><td>32-bit integer</td>
-<tr><td>long</td><td>long long, __int64</td><td>64-bit integer</td>
-<tr><td>float</td><td>float</td><td>32-bit floating point</td>
-<tr><td>double</td><td>double</td><td>64-bit floating point</td>
-<tr><td>{@link java.nio.Buffer}<br>
-{@link com.sun.jna.Pointer}<td>pointer</td><td>platform-dependent (32- or 64-bit pointer to memory)</td>
-<tr><td>&lt;T&gt;[] (array of primitive type)</td><td>pointer<br>array</td><td>32- or 64-bit pointer to memory (argument/return)<br>contiguous memory (struct member)</td>
-<tr><td colspan=3>In addition to the above types, which are supported at the native layer, the JNA Java library automatically handles the following types.  All but <code>NativeMapped</code> and <code>NativeLong</code> are converted to {@link com.sun.jna.Pointer} before being passed to the native layer.</td></tr>
-<tr><td>{@link java.lang.String}</td><td>char*</td><td>NUL-terminated array (native encoding or <code>jna.encoding</code>)</td>
-<tr><td>{@link com.sun.jna.WString}</td><td>wchar_t*</td><td>NUL-terminated array (unicode)</td>
-<tr><td>{@link java.lang.String String[]}</td><td>char**</td><td>NULL-terminated array of C strings</td>
-<tr><td>{@link com.sun.jna.WString WString[]}</td><td>wchar_t**</td><td>NULL-terminated array of wide C strings</td>
-<tr><td>{@link com.sun.jna.Structure}</td><td>struct*<br>struct</td><td>pointer to struct (argument or return) ({@link com.sun.jna.Structure.ByReference or explicitly})<br>struct by value (member of struct) ({@link com.sun.jna.Structure.ByValue or explicitly})</td>
-<tr><td>{@link com.sun.jna.Union}</td><td>union</td><td>same as <code>Structure</code></td>
-<tr><td>{@link com.sun.jna.Structure Structure[]}</td><td>struct[]</td><td>array of structs, contiguous in memory</td>
-<tr><td>{@link com.sun.jna.Callback}</td><td>&lt;T&gt; (*fp)()</td><td>function pointer (Java or native)</td>
-<tr><td>{@link com.sun.jna.NativeMapped}</td><td>varies</td><td>depends on definition</td>
-<tr><td>{@link com.sun.jna.NativeLong}</td><td>long</td><td>platform-dependent (32- or 64-bit integer)</td>
-<tr><td>{@link com.sun.jna.PointerType}</td><td>pointer</td><td>same as <code>Pointer</code></td>
+<tr><td><b>C Type</b></td><td><b>Native Representation</b></td><td><b>Java Type</b></td></tr>
+<tr><td>char</td><td>8-bit integer</td><td>byte</td></tr>
+<tr><td>wchar_t</td><td>platform-dependent</td><td>char</td></tr>
+<tr><td>short</td><td>16-bit integer</td><td>short</td></tr>
+<tr><td>int</td><td>32-bit integer</td><td>int</td></tr>
+<tr><td>int</td><td>boolean flag</td><td>boolean</td></tr>
+<tr><td>enum</td><td>enumeration type</td><td>int (usually)</td></tr>
+<tr><td>long long, __int64</td><td>64-bit integer</td><td>long</td></tr>
+<tr><td>float</td><td>32-bit floating point</td><td>float</td></tr>
+<tr><td>double</td><td>64-bit floating point</td><td>double</td></tr>
+<tr><td>pointer (e.g. void*)</td><td>platform-dependent (32- or 64-bit pointer to memory)</td><td>{@link java.nio.Buffer}<br>
+{@link com.sun.jna.Pointer}</td></tr>
+<tr><td>pointer (e.g. void*),<br>array</td><td>32- or 64-bit pointer to memory (argument/return)<br>contiguous memory (struct member)</td><td>&lt;P&gt;[] (array of primitive type)</td></tr>
+<tr><td colspan='3'  style='padding:20px 5px'>In addition to the above types, which are supported at the native layer, the JNA Java library automatically handles the following types.  All but <code>NativeMapped</code> and <code>NativeLong</code> are converted to {@link com.sun.jna.Pointer} before being passed to the native layer.</td></tr>
+<tr><td>long</td><td>platform-dependent (32- or 64-bit integer)</td><td>{@link com.sun.jna.NativeLong}</td></tr>
+<tr><td>const char*</td><td>NUL-terminated array (native encoding or <code>jna.encoding</code>)</td><td>{@link java.lang.String}</td></tr>
+<tr><td>const wchar_t*</td><td>NUL-terminated array (unicode)</td><td>{@link com.sun.jna.WString}</td></tr>
+<tr><td>char**</td><td>NULL-terminated array of C strings</td><td>{@link java.lang.String String[]}</td></tr>
+<tr><td>wchar_t**</td><td>NULL-terminated array of wide C strings</td><td>{@link com.sun.jna.WString WString[]}</td></tr>
+<tr><td>void**</td><td>NULL-terminated array of pointers</td><td>{@link com.sun.jna.Pointer Pointer[]}</td></tr>
+<tr><td>struct*<br>struct</td><td>pointer to struct (argument or return) ({@link com.sun.jna.Structure.ByReference or explicitly})<br>struct by value (member of struct) ({@link com.sun.jna.Structure.ByValue or explicitly})</td><td>{@link com.sun.jna.Structure}</td></tr>
+<tr><td>union</td><td>same as <code>Structure</code></td><td>{@link com.sun.jna.Union}</td></tr>
+<tr><td>struct[]</td><td>array of structs, contiguous in memory</td><td>{@link com.sun.jna.Structure Structure[]}</td></tr>
+<tr><td>void (*FP)()</td><td>function pointer (Java or native)</td><td>{@link com.sun.jna.Callback}</td></tr>
+<tr><td>pointer (&lt;T&gt; *)</td><td>same as <code>Pointer</code></td><td>{@link com.sun.jna.PointerType}</td></tr>
+<tr><td>other</td><td>integer type</td><td>{@link com.sun.jna.IntegerType}</td></tr>
+<tr><td>other</td><td>custom mapping, depends on definition</td><td>{@link com.sun.jna.NativeMapped}</td></tr>
 </table>
 </center>
 <p>
@@ -170,8 +173,8 @@ Java types must be chosen to match native types of the same size.  Following are
   single call.  If the native code keeps a reference to the memory, use {@link
   com.sun.jna.Memory} or {@link java.nio.Buffer} instead.
 <li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
-<li>Bitfields must be manully packed into an integer type.  
-<li>All other types must eventually be converted to one of the types in this table.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
+<li>Bitfields must be manually packed into an integer type.  
+<li>All other types must eventually be converted to one of the types in the this table.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
 <li>Type mapping behavior may be customized by providing a {@link com.sun.jna.TypeMapper} for the {@link com.sun.jna.Library#OPTION_TYPE_MAPPER} option when initializing a library interface.  See {@link com.sun.jna.win32.W32APITypeMapper} for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
 <li>Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the {@link com.sun.jna.NativeMapped} interface.  
 <li><code>Structure</code> and <code>Union</code> are <em>not</em> converted to <code>Pointer</code> when passed by value.
@@ -654,9 +657,16 @@ NOTE: When protected mode is enabled, you should make use of the jsig library, i
 <a name="performance"></a>
 <h2>Performance</h2>
 <h3>Use direct mapping of methods</h3>
-While more limited in its support of automatic type conversion, using <a href="#direct-mapping">direct mapping</a> of methods makes native calls more efficiently than does interface mapping.
+Using <a href="#direct-mapping">direct mapping</a> of methods makes native
+calls more efficiently than does interface mapping.  Direct mapping does not
+support varargs calls or arrays of Pointer, String, or WString as an argument
+or return value.
+<h3>Avoid type mapping</h3>
+Type mapping incurs additional overhead on each function call.  You can avoid
+this by ensuring that your arguments and/or return types are already primitive
+types.
 <h3>Pointer/Array/Buffer Variants</h3>
-Java primitive arrays are generally slower to use than memory
+Java primitive arrays are generally slower to use than direct memory
 (Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
 be pinned and possibly copied across the native call, since the Java array is not necessarily contiguously allocated.
 <h3>Large Structures</h3>

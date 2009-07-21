@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-07-16">
+<meta name="date" content="2009-07-21">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -238,7 +238,9 @@ Java primitive types (and their object equivalents) map directly to the native C
 <tr><td>char*</td><td>C string</td><td>String</td><td>LPTCSTR</td>
 <tr><td>void*</td><td>pointer</td><td>Pointer</td><td>LPVOID, HANDLE, LP<i>XXX</i></td>
 </table></blockquote>
-Unsigned types use the same mappings as signed types.  A full list of mappings may be found <a href="javadoc/overview-summary.html#marshalling">here</a>.
+Unsigned types use the same mappings as signed types.  C enums are usually
+interchangeable with "int".  A more comprehensive list of mappings may be
+found <a href="javadoc/overview-summary.html#marshalling">here</a>.   
 <p>
 
 <a href=#top>Top</a>
