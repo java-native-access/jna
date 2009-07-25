@@ -15,7 +15,8 @@ package com.sun.jna.examples.win32;
 import java.util.Calendar;
 import java.util.TimeZone;
 import junit.framework.TestCase;
-import com.sun.jna.Platform;
+import com.sun.jna.*;
+import com.sun.jna.examples.win32.*;
 
 public class Kernel32Test extends TestCase {
     
@@ -58,6 +59,11 @@ public class Kernel32Test extends TestCase {
         }
     }
     
+    public void testConvertHWND_BROADCAST() {
+        W32API.HWND hwnd = W32API.HWND_BROADCAST;
+        NativeMappedConverter.getInstance(hwnd.getClass()).toNative(hwnd, null);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Kernel32Test.class);
     }

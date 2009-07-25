@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.IntegerType;
+import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
@@ -48,12 +49,20 @@ public interface W32API extends StdCallLibrary, W32Errors {
     Map DEFAULT_OPTIONS = Boolean.getBoolean("w32.ascii") ? ASCII_OPTIONS : UNICODE_OPTIONS;
     
     class HANDLE extends PointerType {
+        private boolean immutable;
+        public HANDLE() { }
+        public HANDLE(Pointer p) { setPointer(p); immutable = true; }
         /** Override to the appropriate object for INVALID_HANDLE_VALUE. */
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             Object o = super.fromNative(nativeValue, context);
             if (INVALID_HANDLE_VALUE.equals(o))
                 return INVALID_HANDLE_VALUE;
             return o;
+        }
+        public void setPointer(Pointer p) {
+            if (immutable)
+                throw new UnsupportedOperationException("immutable reference");
+            super.setPointer(p);
         }
     }
     
@@ -65,30 +74,29 @@ public interface W32API extends StdCallLibrary, W32Errors {
     	public DWORD() { this(0); }
     	public DWORD(long value) { super(4, value); } 
     }
+    class LONG extends IntegerType {
+    	public LONG() { this(0); }
+    	public LONG(long value) { super(Native.LONG_SIZE, value); } 
+    }
     
     class HDC extends HANDLE { }
     class HICON extends HANDLE { }
     class HBITMAP extends HANDLE { }
     class HRGN extends HANDLE { }
-    class HWND extends HANDLE { }
+    class HWND extends HANDLE {
+        public HWND() { }
+        public HWND(Pointer p) { super(p); }
+    }
     class HINSTANCE extends HANDLE { }
     class HMODULE extends HINSTANCE { }
     class HRESULT extends NativeLong { }
 
     /** Constant value representing an invalid HANDLE. */
-    HANDLE INVALID_HANDLE_VALUE = new HANDLE() { 
-        { super.setPointer(Pointer.createConstant(-1)); }
-        public void setPointer(Pointer p) { 
-            throw new UnsupportedOperationException("Immutable reference");
-        }
-    };
+    HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.createConstant(-1));
+
     /** Special HWND value. */
-    HWND HWND_BROADCAST = new HWND() { 
-        { super.setPointer(Pointer.createConstant(0xFFFF)); }
-        public void setPointer(Pointer p) { 
-            throw new UnsupportedOperationException("Immutable reference");
-        }
-    };
+    HWND HWND_BROADCAST = new HWND(Pointer.createConstant(0xFFFF));
+
     /** LPHANDLE */
     class HANDLEByReference extends ByReference {
         public HANDLEByReference() {
