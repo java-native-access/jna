@@ -14,8 +14,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.Buffer;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -291,11 +293,31 @@ public abstract class Structure {
     // Keep track of what is currently being read/written to avoid redundant
     // reads (avoids problems with circular references).
     private static final ThreadLocal busy = new ThreadLocal() {
+        /** Avoid using a hash-based implementation since the hash code
+            will change if structure field values change.
+        */
+        class StructureSet extends AbstractCollection implements Set {
+            private Collection list = new ArrayList();
+            public int size() { return list.size(); }
+            public boolean contains(Object o) {
+                for (Iterator i=iterator();i.hasNext();) {
+                    if (o == i.next())
+                        return true;
+                }
+                return false;
+            }
+            public boolean add(Object o) {
+                if (!contains(o))
+                    return list.add(o);
+                return true;
+            }
+            public Iterator iterator() { return list.iterator(); }
+        }
         protected synchronized Object initialValue() {
-            return new HashSet();
+            return new StructureSet();
         }
     };
-    private Set busy() {
+    Set busy() {
         return (Set)busy.get();
     }
 
@@ -927,25 +949,34 @@ public abstract class Structure {
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if (o instanceof Structure && ((Structure)o).size() == size()) {
-            if (o.getClass().isAssignableFrom(getClass())
-                || getClass().isAssignableFrom(o.getClass())) {
-                Structure s = (Structure)o;
-                for (Iterator i=fields().keySet().iterator();i.hasNext();) {
-                    String name = (String)i.next();
-                    Object f1 = readField(name);
-                    Object f2 = s.readField(name);
-                    if (f1 != null) {
-                        if (!f1.equals(f2))
-                            return false;
-                    }
-                    else if (f2 != null) {
-                        if (!f2.equals(f1))
-                            return false;
-                    }
-                }
-                return true;
+        if (o == null)
+            return false;
+        if (o.getClass() != getClass()) {
+            // Only allow one class derived from the other and implementing
+            // ByReference or ByValue, or both implementing
+            // ByReference/ByValue on the same base class
+            if (!((o.getClass().isAssignableFrom(getClass())
+                   && (ByReference.class.isAssignableFrom(getClass())
+                       || ByValue.class.isAssignableFrom(getClass())))
+                  || (getClass().isAssignableFrom(o.getClass())
+                      && (ByReference.class.isAssignableFrom(o.getClass())
+                          || ByValue.class.isAssignableFrom(o.getClass())))
+                  || ((ByReference.class.isAssignableFrom(o.getClass())
+                       || ByValue.class.isAssignableFrom(o.getClass()))
+                      && (ByReference.class.isAssignableFrom(getClass())
+                          || ByValue.class.isAssignableFrom(getClass()))
+                      && (o.getClass().getSuperclass()
+                          == getClass().getSuperclass())))) {
+                return false;
             }
+        }
+        Structure s = (Structure)o;
+        if (s.size() == size()) {
+            clear(); write();
+            byte[] buf = getPointer().getByteArray(0, size());
+            s.clear(); s.write();
+            byte[] sbuf = s.getPointer().getByteArray(0, s.size());
+            return Arrays.equals(buf, sbuf);
         }
         return false;
     }
@@ -954,8 +985,8 @@ public abstract class Structure {
      * as the hash code.
      */
     public int hashCode() {
-        Pointer p = getPointer();
-        return p != null ? p.hashCode() : 0;
+        clear(); write();
+        return Arrays.hashCode(getPointer().getByteArray(0, size()));
     }
 
     protected void cacheTypeInfo(Pointer p) {

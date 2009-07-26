@@ -1,12 +1,18 @@
 <a name="top"></a>
-<h2>Release x.x.x</h2>
+<h2>Release 3.2.1</h2>
 <b>Features</b><br>
 <ul>
-<li>Add HRESULT mapping to W32API (marc strapetz).
+<li>Add HRESULT, LONG mapping to W32API (marc strapetz).
 </ul>
 <b>Bug Fixes</b><br>
 <ul>
+<li>Fix definition of HWND_BROADCAST in W32API.
 <li>Fix memory alignment checking (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=121">Issue 121</a>).
+<li>Fix
+  Structure <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#equals(java.lang.Object)">equals/hashCode</a>
+  implementation, based on current Java fields rather than strictly native
+  memory contents.  Avoid using equals/hashCode when avoiding recursive
+  reads/writes. 
 </ul>
 <h2>Release 3.2.0</h2>
 <b>Features</b><br>

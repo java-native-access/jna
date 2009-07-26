@@ -87,6 +87,7 @@ public abstract class PointerType implements NativeMapped {
      * equal by default.
      */
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o instanceof PointerType) {
             Pointer p = ((PointerType)o).getPointer();
             if (pointer == null)

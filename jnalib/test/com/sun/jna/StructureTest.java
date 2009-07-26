@@ -998,15 +998,81 @@ public class StructureTest extends TestCase {
     }
 
     public void testStructureEquals() {
+        class OtherStructure extends Structure {
+            public int first;
+            public int[] second = new int[4];
+            public Pointer[] third = new Pointer[4];
+        }
+        class TestStructure extends Structure {
+            public int first;
+            public int[] second = new int[4];
+            public Pointer[] third = new Pointer[4];
+        }
+        OtherStructure s0 = new OtherStructure();
+        TestStructure s1 = new TestStructure();
+        TestStructure s2 = new TestStructure();
+        TestStructure s3 = new TestStructure();
+        int VALUE = 99;
+        s1.first = s2.first = s3.first = VALUE;
+
+        assertFalse("Structures of different classes with same fields are not equal", s1.equals(s0));
+        assertFalse("Structures of different classes with same fields are not equal (reflexive)", s0.equals(s1));
+
+        assertFalse("Compare to null failed", s1.equals(null));
+        assertTrue("Equals is not reflexive", s1.equals(s1));
+        assertTrue("Equals failed on identical structures", s1.equals(s2));
+        assertTrue("Equals is not symmetric", s2.equals(s1));
+        assertTrue("Equals is not transitive", s1.equals(s2) && s2.equals(s3) && s1.equals(s3));
+
+        
+    }
+
+    public void testStructureEqualsByValueByReference() {
+        class TestStructure extends Structure {
+            public int first;
+            public int[] second = new int[4];
+            public Pointer[] third = new Pointer[4];
+        }
+        class ByReference extends TestStructure implements Structure.ByReference { }
+        class ByValue extends TestStructure implements Structure.ByValue { }
+        TestStructure s1 = new TestStructure();
+        TestStructure s2 = new ByReference();
+        TestStructure s3 = new ByValue();
+        int VALUE = 99;
+        s1.first = s2.first = s3.first = VALUE;
+
+        assertTrue("Equals failed on identical ByReference", s1.equals(s2));
+        assertTrue("Equals is not symmetric (ByReference)", s2.equals(s1));
+        assertTrue("Equals failed on identical ByValue", s1.equals(s3));
+        assertTrue("Equals is not symmetric (ByValue)", s3.equals(s1));
+        assertTrue("Equals is not transitive (ByReference/ByValue)", s1.equals(s2) && s2.equals(s3) && s1.equals(s3));
+
+        
+    }
+
+    public void testStructureHashCodeMatchesEqualsTrue() {
+        class TestStructure extends Structure {
+            public int first;
+        }
+        TestStructure s1 = new TestStructure();
+        TestStructure s2 = new TestStructure();
+        s1.first = s2.first = 0x12345678;
+        assertEquals("hashCode should match when structures equal",
+                     s1.hashCode(), s2.hashCode());
+    }
+
+    public void testStructureEqualsIgnoresPadding() {
         class TestStructure extends Structure {
             public byte first;
             public int second;
         }
         TestStructure s1 = new TestStructure();
         TestStructure s2 = new TestStructure();
+
+        // Make padding bits non-zero
         s2.getPointer().setInt(0, -1);
         s2.write();
-        assertEquals("Structure equals should ignore padding", s1, s2);
+        assertTrue("Structure equals should ignore padding", s1.equals(s2));
     }
 
     public void testRecursiveReadWrite() {
@@ -1017,5 +1083,8 @@ public class StructureTest extends TestCase {
         s.s = s;
         s.write();
         s.read();
+
+        assertEquals("Temporary storage should be cleared",
+                     0, s.busy().size());
     }
 }

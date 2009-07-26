@@ -89,9 +89,9 @@ public class Pointer {
      *			equal. Returns false otherwise.
      */
     public boolean equals(Object o) {
-        if (o == null)
-            return peer == 0;
-        return (o instanceof Pointer) && ((Pointer)o).peer == peer;
+        if (o == this) return true;
+        if (o == null) return false;
+        return o instanceof Pointer && ((Pointer)o).peer == peer;
     }
 
     /**

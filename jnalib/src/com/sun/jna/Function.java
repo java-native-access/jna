@@ -716,7 +716,9 @@ public class Function extends Pointer {
      * and calling convention.
      */
     public boolean equals(Object o) {
-        if (o instanceof Function) {
+        if (o == this) return true;
+        if (o == null) return false;
+        if (o.getClass() == getClass()) {
             Function other = (Function)o;
             return other.callFlags == this.callFlags
                 && other.options.equals(this.options)
