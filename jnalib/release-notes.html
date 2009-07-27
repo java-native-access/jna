@@ -6,6 +6,9 @@
 </ul>
 <b>Bug Fixes</b><br>
 <ul>
+<li>Fix NPE when mapping an interface to the current process.
+<li>Automatically load proper C library version from current process on Linux
+  (avoids crashing bug on Ubuntu with libc-i686 packages active).
 <li>Avoid scanning structure contents in Structure.toString if contents aren't
  actually used.
 </ul>

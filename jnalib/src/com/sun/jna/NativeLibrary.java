@@ -137,7 +137,9 @@ public class NativeLibrary {
                 //
                 libraryPath = matchLibrary(libraryName, searchPath);
                 if (libraryPath != null) {
-                    try { handle = open(libraryPath); }
+                    try {
+                        handle = open(libraryPath);
+                    }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
             }
@@ -146,7 +148,9 @@ public class NativeLibrary {
                 libraryPath = "/System/Library/Frameworks/" + libraryName
                     + ".framework/" + libraryName;
                 if (new File(libraryPath).exists()) {
-                    try { handle = open(libraryPath); }
+                    try { 
+                        handle = open(libraryPath);
+                    }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
             }
@@ -216,6 +220,11 @@ public class NativeLibrary {
             options.put(Library.OPTION_CALLING_CONVENTION, new Integer(Function.C_CONVENTION));
         }
 
+        // Use current process to load libraries we know are already
+        // loaded by the VM to ensure we get the correct version
+        if (Platform.isLinux() && "c".equals(libraryName)) {
+            libraryName = null;
+        }
         synchronized (libraries) {
             WeakReference ref = (WeakReference)libraries.get(libraryName + options);
             NativeLibrary library = ref != null ? (NativeLibrary)ref.get() : null;

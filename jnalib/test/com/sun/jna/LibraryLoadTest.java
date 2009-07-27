@@ -51,6 +51,9 @@ public class LibraryLoadTest extends TestCase {
         int wcslen(WString wstr);
         int strlen(String str);
         int atol(String str);
+
+        Pointer getpwuid(int uid);
+        int geteuid();
     }
 
     public void testLoadAWTAfterJNA() {
@@ -144,6 +147,16 @@ public class LibraryLoadTest extends TestCase {
         }
     }
 
+    // Ubuntu bug when arch-specific libc is active
+    // Only fails on *some* functions
+    public void testLoadProperCLibraryVersion() {
+        if (Platform.isWindows()) return;
+
+        CLibrary lib = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+        assertNotNull("Couldn't get current user",
+                      lib.getpwuid(lib.geteuid()));
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(LibraryLoadTest.class);
     }
