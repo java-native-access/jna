@@ -713,6 +713,24 @@ fillInt64Buffer(int64_t *buf, int len, int64_t value) {
 }
 
 EXPORT int32_t
+fillFloatBuffer(float *buf, int len, float value) {
+  int i;
+  for (i=0;i < len;i++) {
+    buf[i] = value;
+  }
+  return len;
+}
+
+EXPORT int32_t
+fillDoubleBuffer(double *buf, int len, double value) {
+  int i;
+  for (i=0;i < len;i++) {
+    buf[i] = value;
+  }
+  return len;
+}
+
+EXPORT int32_t
 addInt32VarArgs(const char *fmt, ...) {
   va_list ap;
   int32_t sum = 0;

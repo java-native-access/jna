@@ -14,6 +14,8 @@ package com.sun.jna;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
@@ -81,17 +83,23 @@ public class ArgumentsMarshalTest extends TestCase {
         int fillInt16Buffer(short[] buf, int len, short value);
         int fillInt32Buffer(int[] buf, int len, int value);
         int fillInt64Buffer(long[] buf, int len, long value);
+        int fillFloatBuffer(float[] buf, int len, float value);
+        int fillDoubleBuffer(double[] buf, int len, double value);
 
         // ByteBuffer alternative definitions
         int fillInt8Buffer(ByteBuffer buf, int len, byte value);
         int fillInt16Buffer(ByteBuffer buf, int len, short value);
         int fillInt32Buffer(ByteBuffer buf, int len, int value);
         int fillInt64Buffer(ByteBuffer buf, int len, long value);
+        int fillFloatBuffer(ByteBuffer[] buf, int len, float value);
+        int fillDoubleBuffer(ByteBuffer[] buf, int len, double value);
         
-        // {Short,Int,Long}Buffer alternative definitions        
+        // {Short|Int|Long|,Float|Double}Buffer alternative definitions
         int fillInt16Buffer(ShortBuffer buf, int len, short value);
         int fillInt32Buffer(IntBuffer buf, int len, int value);
         int fillInt64Buffer(LongBuffer buf, int len, long value);
+        int fillFloatBuffer(FloatBuffer buf, int len, float value);
+        int fillDoubleBuffer(DoubleBuffer buf, int len, double value);
 
         // Nonexistent functions 
         boolean returnBooleanArgument(Object arg);
@@ -133,6 +141,7 @@ public class ArgumentsMarshalTest extends TestCase {
 
     TestLibrary lib;
     protected void setUp() {
+        System.out.println(getName());
         lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
     
@@ -505,6 +514,67 @@ public class ArgumentsMarshalTest extends TestCase {
         lib.fillInt64Buffer(longBuf, 1024, MAGIC);
         for (int i=0;i < longBuf.capacity();i++) {
             assertEquals("Bad value at index " + i, MAGIC, longBuf.get(i));
+        }
+    }
+    
+    public void testWrappedByteArrayArgument() {
+        byte[] array = new byte[1024];
+        ByteBuffer buf = ByteBuffer.wrap(array, 512, 512).slice();
+        final byte MAGIC = (byte)0xAB;
+        lib.fillInt8Buffer(buf, 512, MAGIC);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Bad value at index " + i,
+                         i < 512 ? 0 : MAGIC, array[i]);
+        }
+    }
+    public void testWrappedShortArrayArgument() {
+        short[] array = new short[1024];
+        ShortBuffer buf = ShortBuffer.wrap(array, 512, 512).slice();
+        final short MAGIC = (short)0xABED;
+        lib.fillInt16Buffer(buf, 512, MAGIC);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Bad value at index " + i,
+                         i < 512 ? 0 : MAGIC, array[i]);
+        }
+    }
+    public void testWrappedIntArrayArgument() {
+        int[] array = new int[1024];
+        IntBuffer buf  = IntBuffer.wrap(array, 512, 512).slice();
+        final int MAGIC = 0xABEDCF23;
+        lib.fillInt32Buffer(buf, 512, MAGIC);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Bad value at index " + i,
+                         i < 512 ? 0 : MAGIC, array[i]);
+        }
+    }
+    public void testWrappedLongArrayArguent() {
+        long[] array = new long[1024];
+        LongBuffer buf  = LongBuffer.wrap(array, 512, 512).slice();
+        final long MAGIC = 0x1234567887654321L;
+        lib.fillInt64Buffer(buf, 512, MAGIC);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Bad value at index " + i,
+                         i < 512 ? 0 : MAGIC, array[i]);
+        }
+    }
+    public void testWrappedFloatArrayArguent() {
+        float[] array = new float[1024];
+        FloatBuffer buf  = FloatBuffer.wrap(array, 512, 512).slice();
+        final float MAGIC = -118.625f;
+        lib.fillFloatBuffer(buf, 512, MAGIC);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Bad value at index " + i,
+                         i < 512 ? 0 : MAGIC, array[i]);
+        }
+    }
+    public void testWrappedDoubleArrayArguent() {
+        double[] array = new double[1024];
+        DoubleBuffer buf  = DoubleBuffer.wrap(array, 512, 512).slice();
+        final double MAGIC = -118.625;
+        lib.fillDoubleBuffer(buf, 512, MAGIC);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Bad value at index " + i,
+                         i < 512 ? 0 : MAGIC, array[i]);
         }
     }
     

@@ -1805,7 +1805,7 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
 
 static void*
 getBufferArray(JNIEnv* env, jobject buf,
-               jobject* arrayp, void **elemp,
+               jobject* arrayp, void **basep,
                void **releasep) {
   void *ptr = NULL;
   int offset = 0;
@@ -1846,7 +1846,7 @@ do { \
     GET_ARRAY(Double, 8);
   }
   if (ptr != NULL) {
-    if (elemp) *elemp = ptr;
+    if (basep) *basep = ptr;
     if (arrayp) *arrayp = array;
     ptr = (char *)ptr + offset;
   }
