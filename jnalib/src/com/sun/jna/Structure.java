@@ -297,21 +297,57 @@ public abstract class Structure {
             will change if structure field values change.
         */
         class StructureSet extends AbstractCollection implements Set {
-            private Collection list = new ArrayList();
-            public int size() { return list.size(); }
+            private Structure[] elements;
+            private int count;
+            private void ensureCapacity(int size) {
+                if (elements == null) {
+                    elements = new Structure[size*3/2];
+                }
+                else if (elements.length < size) {
+                    Structure[] e = new Structure[size*3/2];
+                    System.arraycopy(elements, 0, e, 0, elements.length);
+                    elements = e;
+                }
+            }
+            public int size() { return count; }
             public boolean contains(Object o) {
-                for (Iterator i=iterator();i.hasNext();) {
-                    if (o == i.next())
-                        return true;
+                return indexOf(o) != -1;
+            }
+            public boolean add(Object o) {
+                if (!contains(o)) {
+                    ensureCapacity(count+1);
+                    elements[count++] = (Structure)o;
+                }
+                return true;
+            }
+            private int indexOf(Object o) {
+                Structure s1 = (Structure)o;
+                for (int i=0;i < count;i++) {
+                    Structure s2 = (Structure)elements[i];
+                    if (s1 == s2
+                        || (s1.baseClass() == s2.baseClass()
+                            && s1.size() == s2.size()
+                            && s1.getPointer().equals(s2.getPointer()))) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            public boolean remove(Object o) {
+                int idx = indexOf(o);
+                if (idx != -1) {
+                    if (--count > 0) {
+                        elements[idx] = elements[count];
+                        elements[count] = null;
+                    }
+                    return true;
                 }
                 return false;
             }
-            public boolean add(Object o) {
-                if (!contains(o))
-                    return list.add(o);
-                return true;
+            public Iterator iterator() {
+                // never actually used
+                return null;
             }
-            public Iterator iterator() { return list.iterator(); }
         }
         protected synchronized Object initialValue() {
             return new StructureSet();
@@ -820,7 +856,7 @@ public abstract class Structure {
     }
 
     public String toString() {
-        return toString(0);
+        return toString(0, true);
     }
 
     private String format(Class type) {
@@ -829,7 +865,7 @@ public abstract class Structure {
         return s.substring(dot + 1);
     }
 
-    private String toString(int indent) {
+    private String toString(int indent, boolean showContents) {
         String LS = System.getProperty("line.separator");
         String name = format(getClass()) + "(" + getPointer() + ")";
         if (!(getPointer() instanceof Memory)) {
@@ -839,9 +875,11 @@ public abstract class Structure {
         for (int idx=0;idx < indent;idx++) {
             prefix += "  ";
         }
-        String contents = "";
-        // Write all fields
-        for (Iterator i=structFields.values().iterator();i.hasNext();) {
+        String contents = LS;
+        if (!showContents) {
+            contents = "...}";
+        }
+        else for (Iterator i=structFields.values().iterator();i.hasNext();) {
             StructField sf = (StructField)i.next();
             Object value = getField(sf);
             String type = format(sf.type);
@@ -854,16 +892,7 @@ public abstract class Structure {
             contents += "  " + type + " "
                 + sf.name + index + "@" + Integer.toHexString(sf.offset);
             if (value instanceof Structure) {
-                if (value instanceof Structure.ByReference) {
-                    String v = value.toString();
-                    if (v.indexOf(LS) != -1) {
-                        v = v.substring(0, v.indexOf(LS));
-                    }
-                    value = v + "...}";
-                }
-                else {
-                    value = ((Structure)value).toString(indent + 1);
-                }
+                value = ((Structure)value).toString(indent + 1, !(value instanceof Structure.ByReference));
             }
             contents += "=";
             if (value instanceof Long) {
@@ -899,7 +928,7 @@ public abstract class Structure {
             }
             contents += "]";
         }
-        return name + " {" + LS + contents;
+        return name + " {" + contents;
     }
 
     /** Returns a view of this structure's memory as an array of structures.
@@ -943,6 +972,15 @@ public abstract class Structure {
         return toArray((Structure[])Array.newInstance(getClass(), size));
     }
 
+    private Class baseClass() {
+        if ((this instanceof Structure.ByReference
+             || this instanceof Structure.ByValue)
+            && Structure.class.isAssignableFrom(getClass().getSuperclass())) {
+            return getClass().getSuperclass();
+        }
+        return getClass();
+    }
+
     /** This structure is only equal to another based on the same native
      * memory address and data type.
      */
@@ -951,24 +989,9 @@ public abstract class Structure {
             return true;
         if (o == null)
             return false;
-        if (o.getClass() != getClass()) {
-            // Only allow one class derived from the other and implementing
-            // ByReference or ByValue, or both implementing
-            // ByReference/ByValue on the same base class
-            if (!((o.getClass().isAssignableFrom(getClass())
-                   && (ByReference.class.isAssignableFrom(getClass())
-                       || ByValue.class.isAssignableFrom(getClass())))
-                  || (getClass().isAssignableFrom(o.getClass())
-                      && (ByReference.class.isAssignableFrom(o.getClass())
-                          || ByValue.class.isAssignableFrom(o.getClass())))
-                  || ((ByReference.class.isAssignableFrom(o.getClass())
-                       || ByValue.class.isAssignableFrom(o.getClass()))
-                      && (ByReference.class.isAssignableFrom(getClass())
-                          || ByValue.class.isAssignableFrom(getClass()))
-                      && (o.getClass().getSuperclass()
-                          == getClass().getSuperclass())))) {
-                return false;
-            }
+        if (o.getClass() != getClass()
+            && ((Structure)o).baseClass() != baseClass()) {
+            return false;
         }
         Structure s = (Structure)o;
         if (s.size() == size()) {

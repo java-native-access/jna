@@ -730,7 +730,7 @@ public class StructureTest extends TestCase {
         s.s1 = new StructureTest.PublicTestStructure.ByReference();
         s.s1.x = -1;
         s.write();
-        assertEquals("Structure.ByReference not written automatically",
+        assertEquals("Structure.ByReference field not written automatically",
                      -1, s.s1.getPointer().getInt(0));
     }
 
@@ -1075,16 +1075,31 @@ public class StructureTest extends TestCase {
         assertTrue("Structure equals should ignore padding", s1.equals(s2));
     }
 
-    public void testRecursiveReadWrite() {
+    public void testRecursiveReadWriteDetection() {
         class TestStructureByRef extends Structure implements Structure.ByReference{
+            public TestStructureByRef(Pointer p) { super(p); }
+            public TestStructureByRef() { }
+            public int unique;
             public TestStructureByRef s;
         }
         TestStructureByRef s = new TestStructureByRef();
-        s.s = s;
-        s.write();
-        s.read();
+        s.s = new TestStructureByRef();
+        s.unique = 1;
+        s.s.s = s;
+        s.s.unique = 2;
 
-        assertEquals("Temporary storage should be cleared",
-                     0, s.busy().size());
+        s.write();
+        assertEquals("Structure field contents not written",
+                     1, s.getPointer().getInt(0));
+        assertEquals("ByReference structure field contents not written",
+                     2, s.s.getPointer().getInt(0));
+
+        s.s.unique = 0;
+        s.read();
+        assertEquals("ByReference structure field contents not read",
+                     2, s.s.unique);
+
+        assertTrue("Temporary storage should be cleared",
+                   s.busy().isEmpty());
     }
 }
