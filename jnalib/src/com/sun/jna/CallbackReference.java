@@ -393,6 +393,14 @@ class CallbackReference extends WeakReference {
                     Native.getCallbackExceptionHandler().uncaughtException(cb, e.getTargetException());
                 }
             }
+            // Synch any structure arguments back to native memory
+            for (int i=0;i < callbackArgs.length;i++) {
+                if (callbackArgs[i] instanceof Structure
+                    && !(callbackArgs[i] instanceof Structure.ByValue)) {
+                    ((Structure)callbackArgs[i]).autoWrite();
+                }
+            }
+
             return result;
         }
         /** Called from native code.  All arguments are in an array of 

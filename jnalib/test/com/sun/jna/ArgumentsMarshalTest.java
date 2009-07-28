@@ -361,7 +361,6 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testWriteStructureArrayArgumentMemory() {
         final int LENGTH = 10;
         TestLibrary.CheckFieldAlignment block = new TestLibrary.CheckFieldAlignment();
-        block.useMemory(new Memory(block.size() * LENGTH));
         TestLibrary.CheckFieldAlignment[] array = 
             (TestLibrary.CheckFieldAlignment[])block.toArray(LENGTH);
         for (int i=0;i < array.length;i++) {
