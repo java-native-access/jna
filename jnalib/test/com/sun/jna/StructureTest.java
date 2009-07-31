@@ -860,11 +860,34 @@ public class StructureTest extends TestCase {
 
     public void testNativeMappedWrite() {
     	class TestStructure extends Structure {
-    		public ByteByReference ref;
+            public ByteByReference ref;
     	}
     	TestStructure s = new TestStructure();
+        ByteByReference ref = s.ref = new ByteByReference();
+        s.write();
+        assertEquals("Value not properly written", ref.getPointer(), s.getPointer().getPointer(0));
+
     	s.ref = null;
     	s.write();
+        assertNull("Non-null value was written: " + s.getPointer().getPointer(0), s.getPointer().getPointer(0));
+    }
+
+    public void testNativeMappedRead() {
+    	class TestStructure extends Structure {
+            public ByteByReference ref;
+    	}
+    	TestStructure s = new TestStructure();
+        s.read();
+        assertNull("Should read null for initial field value", s.ref);
+
+        ByteByReference ref = new ByteByReference();
+        s.getPointer().setPointer(0, ref.getPointer());
+        s.read();
+        assertEquals("Field incorrectly read", ref, s.ref);
+
+        s.getPointer().setPointer(0, null);
+        s.read();
+        assertNull("Null field incorrectly read", s.ref);
     }
 
     public static class ROStructure extends Structure {

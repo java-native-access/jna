@@ -66,6 +66,12 @@ public class NativeMappedConverter implements TypeConverter {
     }
 
     public Object toNative(Object value, ToNativeContext context) {
-        return value == null ? defaultValue().toNative() : ((NativeMapped)value).toNative();
+        if (value == null) {
+            if (Pointer.class.isAssignableFrom(nativeType)) {
+                return null;
+            }
+            value = defaultValue();
+        }
+        return ((NativeMapped)value).toNative();
     }
 }

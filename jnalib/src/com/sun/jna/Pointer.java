@@ -377,6 +377,7 @@ public class Pointer {
     //////////////////////////////////////////////////////////////////////////
 
     Object getValue(long offset, Class type, Object currentValue) {
+
         Object result = null;
         if (Structure.class.isAssignableFrom(type)) {
             Structure s = (Structure)currentValue;
@@ -457,17 +458,19 @@ public class Pointer {
                 Pointer oldbp = currentValue == null ? null
                     : Native.getDirectBufferPointer((Buffer)currentValue);
                 if (oldbp == null || !oldbp.equals(bp)) {
-                    throw new IllegalStateException("Can't autogenerate a direct buffers on memory read");
+                    throw new IllegalStateException("Can't autogenerate a direct buffer on memory read");
                 }
             }
         }
         else if (NativeMapped.class.isAssignableFrom(type)) {
+            System.out.println("read value of " + type);
             NativeMapped nm = (NativeMapped)currentValue;
             if (nm != null) {
                 Object value = getValue(offset, nm.nativeType(), null);
-                nm.fromNative(value, new FromNativeContext(type));
+                result = nm.fromNative(value, new FromNativeContext(type));
             }
             else {
+            System.out.println("read value of " + type + " value=" + currentValue);
                 NativeMappedConverter tc = NativeMappedConverter.getInstance(type);
                 Object value = getValue(offset, tc.nativeType(), null);
                 result = tc.fromNative(value, new FromNativeContext(type));
@@ -834,6 +837,7 @@ v     * @param wide whether to convert from a wide or standard C string
     //////////////////////////////////////////////////////////////////////////
 
     void setValue(long offset, Object value, Class type) {
+
         // Set the value at the offset according to its type
         if (type == boolean.class || type == Boolean.class) {
             setInt(offset, Boolean.TRUE.equals(value) ? -1 : 0);
