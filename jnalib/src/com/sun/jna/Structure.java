@@ -220,6 +220,7 @@ public abstract class Structure {
         // from the ctor, to ensure fields are properly scanned and allocated
         try {
             this.memory = m.share(offset, size());
+            this.array = null;
         }
         catch(IndexOutOfBoundsException e) {
             throw new IllegalArgumentException("Structure exceeds provided memory bounds");
@@ -956,7 +957,8 @@ public abstract class Structure {
             array[i].read();
         }
 
-        if (this instanceof ByReference) {
+        if (!(this instanceof ByValue)) {
+            // keep track for later auto-read/writes
             this.array = array;
         }
 
@@ -1256,6 +1258,30 @@ public abstract class Structure {
         }
     }
 
+    private static void structureArrayCheck(Structure[] ss) {
+        Pointer base = ss[0].getPointer();
+        int size = ss[0].size();
+        for (int si=1;si < ss.length;si++) {
+            if (ss[si].getPointer().peer != base.peer + size*si) {
+                String msg = "Structure array elements must use"
+                    + " contiguous memory (bad backing address at Structure array index " + si + ")";     
+                throw new IllegalArgumentException(msg);
+            }
+        }
+    }
+
+    public static void autoRead(Structure[] ss) {
+        structureArrayCheck(ss);
+        if (ss[0].array == ss) {
+            ss[0].autoRead();
+        }
+        else {
+            for (int si=0;si < ss.length;si++) {
+                ss[si].autoRead();
+            }
+        }
+    }
+
     public void autoRead() {
         if (getAutoRead()) {
             read();
@@ -1263,6 +1289,18 @@ public abstract class Structure {
                 for (int i=1;i < array.length;i++) {
                     array[i].autoRead();
                 }
+            }
+        }
+    }
+
+    public static void autoWrite(Structure[] ss) {
+        structureArrayCheck(ss);
+        if (ss[0].array == ss) {
+            ss[0].autoWrite();
+        }
+        else {
+            for (int si=0;si < ss.length;si++) {
+                ss[si].autoWrite();
             }
         }
     }

@@ -268,10 +268,7 @@ public class Function extends Pointer {
                     }
                 }
                 else if (Structure[].class.isAssignableFrom(inArg.getClass())) {
-                    Structure[] ss = (Structure[])inArg;
-                    for (int si=0;si < ss.length;si++) {
-                        ss[si].autoRead();
-                    }
+                    Structure.autoRead((Structure[])inArg);
                 }
             }
         }
@@ -495,18 +492,8 @@ public class Function extends Pointer {
                 return ss[0].getPointer();
             }
             else {
-                Pointer base = ss[0].getPointer();
-                int size = ss[0].size();
-                ss[0].autoWrite();
-                for (int si=1;si < ss.length;si++) {
-                    if (ss[si].getPointer().peer != base.peer + size*si) {
-                        String msg = "Structure array elements must use"
-                            + " contiguous memory (at element index " + si + ")";     
-                        throw new IllegalArgumentException(msg);
-                    }
-                    ss[si].autoWrite();
-                }
-                return base;
+                Structure.autoWrite(ss);
+                return ss[0].getPointer();
             }
         }
         else if (argClass.isArray()){

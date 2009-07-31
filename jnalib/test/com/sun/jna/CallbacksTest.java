@@ -369,8 +369,30 @@ public class CallbacksTest extends TestCase {
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong argument passed to callback", s.getPointer(), cbarg[0]);
         assertEquals("Structure argument not synched on callback return",
-                     MAGIC, value.value);
+                     MAGIC, s.value);
         assertEquals("Wrong structure return", s.getPointer(), value.getPointer());
+        assertEquals("Structure return not synched",
+                     MAGIC, value.value);
+    }
+    
+    public void testCallStructureArrayCallback() {
+        final SmallTestStructure s = new SmallTestStructure();
+        final SmallTestStructure[] array = (SmallTestStructure[])s.toArray(2);
+        final double MAGIC = 118.625;
+        TestLibrary.StructureCallback cb = new TestLibrary.StructureCallback() {
+            public SmallTestStructure callback(SmallTestStructure arg) {
+                SmallTestStructure[] array =
+                    (SmallTestStructure[])arg.toArray(2);
+                array[0].value = MAGIC;
+                array[1].value = MAGIC*2;
+                return arg;
+            }
+        };
+        SmallTestStructure value = lib.callStructureCallback(cb, s);
+        assertEquals("Structure array element 0 not synched on callback return",
+                     MAGIC, array[0].value);
+        assertEquals("Structure array element 1 not synched on callback return",
+                     MAGIC*2, array[1].value);
     }
     
     public void testCallBooleanCallback() {
