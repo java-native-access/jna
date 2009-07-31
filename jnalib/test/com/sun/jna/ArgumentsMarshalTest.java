@@ -91,8 +91,8 @@ public class ArgumentsMarshalTest extends TestCase {
         int fillInt16Buffer(ByteBuffer buf, int len, short value);
         int fillInt32Buffer(ByteBuffer buf, int len, int value);
         int fillInt64Buffer(ByteBuffer buf, int len, long value);
-        int fillFloatBuffer(ByteBuffer[] buf, int len, float value);
-        int fillDoubleBuffer(ByteBuffer[] buf, int len, double value);
+        int fillFloatBuffer(ByteBuffer buf, int len, float value);
+        int fillDoubleBuffer(ByteBuffer buf, int len, double value);
         
         // {Short|Int|Long|,Float|Double}Buffer alternative definitions
         int fillInt16Buffer(ShortBuffer buf, int len, short value);

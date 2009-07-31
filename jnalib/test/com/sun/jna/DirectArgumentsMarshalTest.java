@@ -13,6 +13,8 @@
 package com.sun.jna;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
@@ -60,17 +62,23 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native int fillInt16Buffer(short[] buf, int len, short value);
         public native int fillInt32Buffer(int[] buf, int len, int value);
         public native int fillInt64Buffer(long[] buf, int len, long value);
+        public native int fillFloatBuffer(float[] buf, int len, float value);
+        public native int fillDoubleBuffer(double[] buf, int len, double value);
 
         // ByteBuffer alternative definitions
         public native int fillInt8Buffer(ByteBuffer buf, int len, byte value);
         public native int fillInt16Buffer(ByteBuffer buf, int len, short value);
         public native int fillInt32Buffer(ByteBuffer buf, int len, int value);
         public native int fillInt64Buffer(ByteBuffer buf, int len, long value);
+        public native int fillFloatBuffer(ByteBuffer buf, int len, float value);
+        public native int fillDoubleBuffer(ByteBuffer buf, int len, double value);
         
-        // {Short,Int,Long}Buffer alternative definitions        
+        // {Short|Int|Long|Float|Double}Buffer alternative definitions        
         public native int fillInt16Buffer(ShortBuffer buf, int len, short value);
         public native int fillInt32Buffer(IntBuffer buf, int len, int value);
         public native int fillInt64Buffer(LongBuffer buf, int len, long value);
+        public native int fillFloatBuffer(FloatBuffer buf, int len, float value);
+        public native int fillDoubleBuffer(DoubleBuffer buf, int len, double value);
 
         // dummy to avoid causing Native.register to fail
         public boolean returnBooleanArgument(Object arg) {throw new IllegalArgumentException();}
