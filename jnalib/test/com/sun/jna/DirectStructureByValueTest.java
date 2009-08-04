@@ -31,7 +31,6 @@ public class DirectStructureByValueTest extends StructureByValueTest {
         public native int testStructureByValueArgument32(ByValue32 arg);
         public native long testStructureByValueArgument64(ByValue64 arg);
         public native long testStructureByValueArgument128(ByValue128 arg);
-        public native int testStructureByValueArgumentMultiple(Pointer p1, ByValue32 arg, Pointer p2);
         static {
             Native.register("testlib");
         }

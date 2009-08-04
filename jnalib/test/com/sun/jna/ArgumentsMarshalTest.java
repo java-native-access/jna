@@ -331,6 +331,10 @@ public class ArgumentsMarshalTest extends TestCase {
                      + "parameter type, not argument type",
                      struct.getPointer(),
                      lib.testStructurePointerArgument(struct));
+
+        struct = null;
+        assertNull("Null argument should be returned",
+                   lib.testStructurePointerArgument(struct));
     }
 
     public void testStructureByValueArgument() {

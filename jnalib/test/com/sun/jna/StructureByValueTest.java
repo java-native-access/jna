@@ -39,7 +39,6 @@ public class StructureByValueTest extends TestCase {
         int testStructureByValueArgument32(ByValue32 arg);
         long testStructureByValueArgument64(ByValue64 arg);
         long testStructureByValueArgument128(ByValue128 arg);
-        int testStructureByValueArgumentMultiple(Pointer p1, ByValue32 arg, Pointer p2);
     }
 
     TestLibrary lib;
@@ -104,12 +103,5 @@ public class StructureByValueTest extends TestCase {
         data.data1 = DATA;
         assertEquals("Failed to pass 128-bit struct by value",
                      2*DATA, lib.testStructureByValueArgument128(data));
-    }
-    public void testStructureArgByValueMultiple() {
-        ByValue32 data = new ByValue32();
-        final int DATA = (int)MAGIC;
-        data.data = (int)DATA;
-        assertEquals("Failed to pass 32-bit struct by value",
-                     DATA, lib.testStructureByValueArgumentMultiple(null, data, null));
     }
 }

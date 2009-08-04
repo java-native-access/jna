@@ -2581,106 +2581,110 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
 
   if (data->flags) {
     objects = alloca(data->cif.nargs * sizeof(void*));
+    memset(objects, 0, data->cif.nargs * sizeof(void*));
     release = alloca(data->cif.nargs * sizeof(release_t));
     elems = alloca(data->cif.nargs * sizeof(void*));
     for (i=0;i < data->cif.nargs;i++) {
-      if (data->flags[i] != CVT_DEFAULT) {
-        if (data->arg_types[i]->type == FFI_TYPE_POINTER
-            && *(void **)args[i] == NULL) continue;
-        switch(data->flags[i]) {
-        case CVT_INTEGER_TYPE:
-          {
-            jlong value = getIntegerTypeValue(env, *(void **)args[i]);
-            if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
-              args[i] = alloca(data->cif.arg_types[i]->size);
-            }
-            if (data->cif.arg_types[i]->size > sizeof(ffi_arg)) {
-              *(jlong *)args[i] = value;
-            }
-            else {
-              *(ffi_arg *)args[i] = (ffi_arg)value;
+      if (data->flags[i] == CVT_DEFAULT) {
+        continue;
+      }
+      if (data->arg_types[i]->type == FFI_TYPE_POINTER
+          && *(void **)args[i] == NULL) {
+        continue;
+      }
+      switch(data->flags[i]) {
+      case CVT_INTEGER_TYPE:
+        {
+          jlong value = getIntegerTypeValue(env, *(void **)args[i]);
+          if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
+            args[i] = alloca(data->cif.arg_types[i]->size);
+          }
+          if (data->cif.arg_types[i]->size > sizeof(ffi_arg)) {
+            *(jlong *)args[i] = value;
+          }
+          else {
+            *(ffi_arg *)args[i] = (ffi_arg)value;
+          }
+        }
+        break;
+      case CVT_POINTER_TYPE:
+        *(void **)args[i] = getPointerTypeAddress(env, *(void **)args[i]);
+        break;
+      case CVT_TYPE_MAPPER:
+        {
+          void* valuep = args[i];
+          int jtype = get_jtype_from_ffi_type(data->closure_cif.arg_types[i+2]);
+          jobject obj = jtype == '*'
+            ? *(void **)valuep
+            : new_object(env, (char)jtype, valuep, JNI_FALSE);
+          if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
+            args[i] = alloca(data->cif.arg_types[i]->size);
+          }
+          toNativeTypeMapped(env, obj, args[i],
+                             data->cif.arg_types[i]->size,
+                             data->to_native[i]);
+        }
+        break;
+      case CVT_NATIVE_MAPPED:
+        toNative(env, *(void **)args[i], args[i], data->cif.arg_types[i]->size, JNI_FALSE);
+        break;
+      case CVT_POINTER:
+        *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
+        break;
+      case CVT_STRUCTURE:
+        objects[i] = *(void **)args[i];
+        writeStructure(env, *(void **)args[i]);
+        *(void **)args[i] = getStructureAddress(env, *(void **)args[i]);
+        break;
+      case CVT_STRUCTURE_BYVAL:
+        objects[i] = *(void **)args[i];
+        writeStructure(env, objects[i]);
+        args[i] = getStructureAddress(env, objects[i]);
+        break;
+      case CVT_STRING:
+        *(void **)args[i] = newCStringEncoding(env, (jstring)*(void **)args[i], jna_encoding);
+        break;
+      case CVT_WSTRING:
+        {
+          jstring s = (*env)->CallObjectMethod(env, *(void **)args[i], MID_Object_toString);
+          *(void **)args[i] = newWideCString(env, s);
+        }
+        break;
+      case CVT_CALLBACK:
+        *(void **)args[i] = getCallbackAddress(env, *(void **)args[i]);
+        break;
+      case CVT_BUFFER:
+        {
+          void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
+          if (ptr != NULL) {
+            objects[i] = NULL;
+            release[i] = NULL;
+          }
+          else {
+            ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &elems[i], (void**)&release[i]);
+            if (ptr == NULL) {
+              throw_type = EIllegalArgument;
+              throw_msg = "Buffer arguments must be direct or have a primitive backing array";
+              goto cleanup;
             }
           }
-          break;
-        case CVT_POINTER_TYPE:
-          *(void **)args[i] = getPointerTypeAddress(env, *(void **)args[i]);
-          break;
-        case CVT_TYPE_MAPPER:
-          {
-            void* valuep = args[i];
-            int jtype = get_jtype_from_ffi_type(data->closure_cif.arg_types[i+2]);
-            jobject obj = jtype == '*'
-              ? *(void **)valuep
-              : new_object(env, (char)jtype, valuep, JNI_FALSE);
-            if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
-              args[i] = alloca(data->cif.arg_types[i]->size);
-            }
-            toNativeTypeMapped(env, obj, args[i],
-                               data->cif.arg_types[i]->size,
-                               data->to_native[i]);
-          }
-          break;
-        case CVT_NATIVE_MAPPED:
-          toNative(env, *(void **)args[i], args[i], data->cif.arg_types[i]->size, JNI_FALSE);
-          break;
-        case CVT_POINTER:
-          *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
-          break;
-        case CVT_STRUCTURE:
-          objects[i] = *(void **)args[i];
-          writeStructure(env, *(void **)args[i]);
-          *(void **)args[i] = getStructureAddress(env, *(void **)args[i]);
-          break;
-        case CVT_STRUCTURE_BYVAL:
-          objects[i] = *(void **)args[i];
-          writeStructure(env, objects[i]);
-          args[i] = getStructureAddress(env, objects[i]);
-          break;
-        case CVT_STRING:
-          *(void **)args[i] = newCStringEncoding(env, (jstring)*(void **)args[i], jna_encoding);
-          break;
-        case CVT_WSTRING:
-          {
-            jstring s = (*env)->CallObjectMethod(env, *(void **)args[i], MID_Object_toString);
-            *(void **)args[i] = newWideCString(env, s);
-          }
-          break;
-        case CVT_CALLBACK:
-          *(void **)args[i] = getCallbackAddress(env, *(void **)args[i]);
-          break;
-        case CVT_BUFFER:
-          {
-            void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
-            if (ptr != NULL) {
-              objects[i] = NULL;
-              release[i] = NULL;
-            }
-            else {
-              ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &elems[i], (void**)&release[i]);
-              if (ptr == NULL) {
-                throw_type = EIllegalArgument;
-                throw_msg = "Buffer arguments must be direct or have a primitive backing array";
-                goto cleanup;
-              }
-            }
-            *(void **)args[i] = ptr;
-          }
-          break;
-#define ARRAY(Type) \
+          *(void **)args[i] = ptr;
+        }
+        break;
+#define ARRAY(Type)                             \
  do { \
    objects[i] = *(void **)args[i];                                      \
    release[i] = (void *)(*env)->Release##Type##ArrayElements;           \
    elems[i] = *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } while(0)
-        case CVT_ARRAY_BYTE: ARRAY(Byte); break;
-        case CVT_ARRAY_SHORT: ARRAY(Short); break;
-        case CVT_ARRAY_CHAR: ARRAY(Char); break;
-        case CVT_ARRAY_INT: ARRAY(Int); break;
-        case CVT_ARRAY_LONG: ARRAY(Long); break;
-        case CVT_ARRAY_FLOAT: ARRAY(Float); break;
-        case CVT_ARRAY_DOUBLE: ARRAY(Double); break;
-        default:
-          break;
-        }
+      case CVT_ARRAY_BYTE: ARRAY(Byte); break;
+      case CVT_ARRAY_SHORT: ARRAY(Short); break;
+      case CVT_ARRAY_CHAR: ARRAY(Char); break;
+      case CVT_ARRAY_INT: ARRAY(Int); break;
+      case CVT_ARRAY_LONG: ARRAY(Long); break;
+      case CVT_ARRAY_FLOAT: ARRAY(Float); break;
+      case CVT_ARRAY_DOUBLE: ARRAY(Double); break;
+      default:
+        break;
       }
     }
   }
