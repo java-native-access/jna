@@ -432,6 +432,11 @@ testStructureByValueArgument128(struct ByValue128 arg){
   return arg.data + arg.data1;
 }
 
+EXPORT int32_t
+testStructureByValueArgumentMultiple(void* p1, struct ByValue32 arg, void* p2){
+  return arg.data;
+}
+
 typedef union _test_union_t {
   // Use non-primitive fields, doesn't matter what they are
   char* f1;
