@@ -2583,6 +2583,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     objects = alloca(data->cif.nargs * sizeof(void*));
     memset(objects, 0, data->cif.nargs * sizeof(void*));
     release = alloca(data->cif.nargs * sizeof(release_t));
+    memset(release, 0, data->cif.nargs * sizeof(release_t));
     elems = alloca(data->cif.nargs * sizeof(void*));
     for (i=0;i < data->cif.nargs;i++) {
       if (data->flags[i] == CVT_DEFAULT) {
