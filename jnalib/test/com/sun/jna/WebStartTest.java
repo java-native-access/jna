@@ -416,14 +416,16 @@ public class WebStartTest extends TestCase {
         f.setLocation(100, 100);
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        if (timeout) {
+        if (timeout != 0) {
             try { Thread.sleep(timeout); } catch(Exception e) { }
         }
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length == 4 && "javawebstart".equals(args[3])) {
+            if (args.length == 4
+                && "javawebstart".equals(args[3])
+                && !runningWebStart()) {
                 System.setProperty("javawebstart.version", "fake");
             }
             if (runningWebStart()) {
