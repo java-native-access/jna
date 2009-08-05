@@ -14,6 +14,7 @@ package com.sun.jna;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -31,7 +32,9 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Iterator;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -66,7 +69,10 @@ public class WebStartTest extends TestCase {
         // but will cause unsigned jars to fail (irrespective of policy)
         + "  <security><all-permissions/></security>\n"
         + "  <resources>\n"
-        + "    <j2se version='1.4+'/>\n"
+        // Explicitly supply javawebstart.version, which is missing in NetX
+        // Boo, java-vm-args doesn't work in NetX
+        // and neither does javaws -J<arg>
+        + "    <j2se version='1.4+' java-vm-args='-Djavawebstart.version=0.0'/>\n"
         + "    <jar href='jna-test.jar'/>\n"
         + "    <jar href='jna.jar'/>\n"
         + "    <jar href='junit.jar'/>{CLOVER}\n"
@@ -77,6 +83,8 @@ public class WebStartTest extends TestCase {
         + "    <argument>{CLASS}</argument>\n"
         + "    <argument>{METHOD}</argument>\n"
         + "    <argument>{PORT}</argument>\n"
+        // NetX doesn't set javawebstart.version, so explicitly flag it
+        + "    <argument>javawebstart</argument>\n"
         + "  </application-desc>\n"
         + "</jnlp>";
 
@@ -139,7 +147,7 @@ public class WebStartTest extends TestCase {
             String path = findJWS();
             String[] cmd = {
                 path,
-                "-Xnosplash",
+                "-Xnosplash", 
                 "-wait", 
                 jnlp.toURI().toURL().toString(),
             };
@@ -258,42 +266,38 @@ public class WebStartTest extends TestCase {
 
     private String findJWS() throws IOException {
         String JAVA_HOME = System.getProperty("java.home");
+        String BIN = new File(JAVA_HOME, "/bin").getAbsolutePath();
         String LIB = new File(JAVA_HOME, "/lib").getAbsolutePath();
-        if (!new File(LIB, "javaws.jar").exists()) {
-            LIB = new File("/System/Library/Frameworks/JavaVM.framework/Resources/Deploy.bundle/Contents/Home/lib").getAbsolutePath();
-            if (!new File(LIB, "javaws.jar").exists()) {
-                if (!Platform.isWindows())
-                    throw new IOException("javaws.jar not found");
-            }
-        }
-        String PS = System.getProperty("path.separator");
-        String path = System.getProperty("java.home") + "/bin/javaws";
-        File javaws = new File(path);
-        // NOTE: OSX puts javaws somewhere else entirely
-        // NOTE: win64 only includes javaws in the system path
+        File javaws = new File(BIN, "javaws" + (Platform.isWindows()?".exe":""));
         if (!javaws.exists()) {
+            // NOTE: OSX puts javaws somewhere else entirely
+            if (Platform.isMac()) {
+                javaws = new File(JAVA_HOME, "../Commands/javaws");
+            }
+            // NOTE: win64 only includes javaws in the system path
             if (Platform.isWindows()) {
                 FolderInfo info = (FolderInfo)
                     Native.loadLibrary("shell32", FolderInfo.class);
                 char[] buf = new char[FolderInfo.MAX_PATH];
                 int flags = 0;
                 int result = info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
-                path = Native.toString(buf);
+                String path = Native.toString(buf);
                 if (Platform.is64Bit()) {
                     javaws = new File(path, "SysWOW64/javaws.exe");
                 }
                 else {
                     javaws = new File(path, "system32/javaws.exe");
                 }
-                path = javaws.getAbsolutePath();
             }
-            else {
-                path = javaws.getName();
+            if (!javaws.exists()) {
+                throw new IOException("javaws executable not found");
             }
         }
-        return path;
+        return javaws.getAbsolutePath();
     }
 
+    // TODO: find some way of querying the current VM for the deployment
+    // properties path 
     private File findDeploymentProperties() {
         String path = System.getProperty("user.home");
         File deployment;
@@ -402,27 +406,42 @@ public class WebStartTest extends TestCase {
     }
 
     private static void showMessage(String msg) {
+        showMessage(msg, 60000);
+    }
+
+    private static void showMessage(String msg, int timeout) {
         JFrame f = new JFrame("Web Start Test Failure");
-        f.getContentPane().add(new JLabel(msg));
+        f.getContentPane().add(new JScrollPane(new JLabel(msg)));
         f.pack();
         f.setLocation(100, 100);
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        try { Thread.sleep(60000); } catch(Exception e) { }
+        if (timeout) {
+            try { Thread.sleep(timeout); } catch(Exception e) { }
+        }
     }
 
     public static void main(String[] args) {
-        if (runningWebStart()) {
-            String testClass = args.length > 0
-                ? args[0] : WebStartTest.class.getName();
-            String testMethod = args.length > 1
-                ? args[1] : "testLaunchedUnderWebStart";
-            int port = args.length > 2
-                ? Integer.parseInt(args[2]) : 8080;
-            runTestCaseTest(testClass, testMethod, port);
+        try {
+            if (args.length == 4 && "javawebstart".equals(args[3])) {
+                System.setProperty("javawebstart.version", "fake");
+            }
+            if (runningWebStart()) {
+                
+                String testClass = args.length > 0
+                    ? args[0] : WebStartTest.class.getName();
+                String testMethod = args.length > 1
+                    ? args[1] : "testLaunchedUnderWebStart";
+                int port = args.length > 2
+                    ? Integer.parseInt(args[2]) : 8080;
+                runTestCaseTest(testClass, testMethod, port);
+            }
+            else {
+                junit.textui.TestRunner.run(WebStartTest.class);
+            }
         }
-        else {
-            junit.textui.TestRunner.run(WebStartTest.class);
+        catch(Throwable t) {
+            showMessage("ERROR: " + t.getMessage());
         }
     }
 }
