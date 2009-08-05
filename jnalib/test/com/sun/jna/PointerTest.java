@@ -19,6 +19,7 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -254,6 +255,27 @@ public class PointerTest extends TestCase {
         p.setPointer(0, p);
         TestPointerType tp = new TestPointerType(p);
         assertEquals("Wrong value", tp, p.getValue(0, TestPointerType.class, null));
+    }
+
+    public void testGetStringArray() {
+        Pointer p = new Memory(Pointer.SIZE*3);
+        String VALUE1 = getName();
+        String VALUE2 = getName() + "2";
+
+        p.setPointer(0, new NativeString(VALUE1).getPointer());
+        p.setPointer(Pointer.SIZE, new NativeString(VALUE2).getPointer());
+        p.setPointer(Pointer.SIZE*2, null);
+
+        assertEquals("Wrong null-terminated String array",
+                     Arrays.asList(new String[] { VALUE1, VALUE2 }),
+                     Arrays.asList(p.getStringArray(0)));
+
+        assertEquals("Wrong length-specified String array (1)",
+                     Arrays.asList(new String[] { VALUE1 }),
+                     Arrays.asList(p.getStringArray(0, 1)));
+        assertEquals("Wrong length-specified String array (2)",
+                     Arrays.asList(new String[] { VALUE1, VALUE2 }),
+                     Arrays.asList(p.getStringArray(0, 2)));
     }
 
     public static void main(String[] args) {
