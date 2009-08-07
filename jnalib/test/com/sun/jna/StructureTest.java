@@ -893,14 +893,35 @@ public class StructureTest extends TestCase {
     public static class ROStructure extends Structure {
         public final int field;
         {
+            // Initialize in ctor to avoid compiler replacing
+            // field references with a constant everywhere
             field = 0;
-            getPointer().setInt(0, 42);
-            read();
         }
+    }
+    private ROStructure avoidConstantFieldOptimization(ROStructure s) {
+        return s;
     }
     public void testReadOnlyField() {
         ROStructure s = new ROStructure();
-        assertEquals("Field value should be writable from native", 42, s.field);
+        s.getPointer().setInt(0, 42);
+        s.read();
+        s = avoidConstantFieldOptimization(s);
+        assertEquals("Field value should be set from native", 42, s.field);
+
+        s.getPointer().setInt(0, 0);
+        s.read();
+        s = avoidConstantFieldOptimization(s);
+        assertEquals("Field value not synched after native change", 0, s.field);
+
+        s.getPointer().setInt(0, 42);
+        // current Java field value of zero should not be written to native mem
+        s.write();
+        assertEquals("Field should not be written", 42, s.getPointer().getInt(0));
+
+        s.read();
+        s = avoidConstantFieldOptimization(s);
+        assertEquals("Field value not synched after native change (2)", 42, s.field);
+
     }
     public void testNativeMappedArrayField() {
         final int SIZE = 24;

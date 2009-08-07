@@ -48,7 +48,9 @@ import java.util.WeakHashMap;
  * <li><code>volatile</code> JNA will not write the field unless specifically
  * instructed to do so via {@link #writeField(String)}.
  * <li><code>final</code> JNA will overwrite the field via {@link #read()},
- * but otherwise the field is not modifiable from Java.
+ * but otherwise the field is not modifiable from Java.  Take care when using
+ * this option, since the compiler will usually assume <em>all</em> accesses
+ * to the field (for a given Structure instance) have the same value.
  * </ul>
  * NOTE: Strings are used to represent native C strings because usage of
  * <code>char *</code> is generally more common than <code>wchar_t *</code>.
@@ -533,6 +535,10 @@ public abstract class Structure {
     }
 
     void writeField(StructField structField) {
+
+        if (structField.isReadOnly) 
+            return;
+
         // Get the offset of the field
         int offset = structField.offset;
 
@@ -665,10 +671,11 @@ public abstract class Structure {
             Class type = field.getType();
             StructField structField = new StructField();
             structField.isVolatile = Modifier.isVolatile(modifiers);
-            structField.field = field;
+            structField.isReadOnly = Modifier.isFinal(modifiers);
             if (Modifier.isFinal(modifiers)) {
                 field.setAccessible(true);
             }
+            structField.field = field;
             structField.name = field.getName();
             structField.type = type;
 
@@ -1102,6 +1109,7 @@ public abstract class Structure {
         public int size = -1;
         public int offset = -1;
         public boolean isVolatile;
+        public boolean isReadOnly;
         public FromNativeConverter readConverter;
         public ToNativeConverter writeConverter;
         public FromNativeContext context;

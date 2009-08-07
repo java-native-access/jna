@@ -18,9 +18,10 @@
 * get system process information, basic process control
 * additional file utilities (meta info, free space, etc)
 * enforce window minimum/maximum size (workaround java bug)
-* OSX ObjC access (see rococoa)
 
 # TODO
+
+* check Structure "final" fields; should never write back to native memory
 
 * make direct calls call back *once* to Java where conversion is required,
   and process all arguments from there (instead of potentially swapping back
@@ -39,11 +40,7 @@
 * make native dll extraction from jar public, to use with user dlls packaged
   in a jar
 
-* Callback.PostCallWrite.write() cf PostCallRead; do Structure.write for any
-  arguments as well
-
-* pointer.setValue(), to handle NativeMapped types and move read/writeValue
-  methods out of Structure, to be used by Function w/NativeMapped[] parameter
+* Callback.PostCallWrite.write() cf PostCallRead
 
 * GetPrimitiveArrayCritical: use this if flagged (by annotation? method name?)
 
@@ -53,7 +50,7 @@
 
   Requires separate compilation of annotation handling.
 
-* ditch type conversion context.  
+* ditch type conversion context (?)  
 
 * packaging: 'types', 'convert/marshal' subpackages?
   note: marshal/unmarshal vs to/fromnative: to/fromnative is more
@@ -93,6 +90,20 @@
   "pointer-requiring-free" (which is just Memory).  For now, leave it up to
   the user to manage the pointer, since they have to define the free method
   anyway.  use could always put a finalizer on a PointerType-derived type.
+* universal GCC build w/cross-compile (needs cross compilers...)
+* return Pointer.SIZE/LONG_SIZE/WCHAR_SIZE in bits (for consistency with 1.5)
+  Long.SIZE, Integer.SIZE, et al.
+* interface "lvalue", which can provide a pointer to itself (reference() or
+  addressOf())?
+* bitfields for structs (how?)
+
+
+# DONE
+* OSX ObjC access (see rococoa)
+* do Structure.write for any callback args
+* pointer.setValue(), to handle NativeMapped types and move read/writeValue
+  methods out of Structure, to be used by Function w/NativeMapped[] parameter
+
 * if method has "GetLastErrorException/ErrnoException" in its signature, use
   result codes + GetLastError/errno/errstr to auto-generate 
   runtime exceptions? (cf P/Invoke; also useful for X11 return types)
@@ -104,15 +115,6 @@
     if nonzero ?
   o otherwise, need an ExceptionOnZero, ExceptionOnNonZero runtime, from which
   derive GetLastError/ErrnoExceptionOnZero/NZ
-* universal GCC build w/cross-compile (needs cross compilers...)
-* return Pointer.SIZE/LONG_SIZE/WCHAR_SIZE in bits (for consistency with 1.5)
-  Long.SIZE, Integer.SIZE, et al.
-* interface "lvalue", which can provide a pointer to itself (reference() or
-  addressOf())?
-* bitfields for structs (how?)
-
-
-# DONE
 * verify get/set methods vs read/write for performance (Pointer)?
   (see RawTest for performance comparisons)
 * Allow Buffer in Structures (and callbacks) (auto-wrap in direct byte buffer)?
