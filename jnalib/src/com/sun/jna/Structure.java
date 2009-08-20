@@ -941,8 +941,9 @@ public abstract class Structure {
 
     /** Returns a view of this structure's memory as an array of structures.
      * Note that this <code>Structure</code> must have a public, no-arg
-     * constructor.  If the structure is currently using a {@link Memory}
-     * backing, the memory will be resized to fit the entire array.
+     * constructor.  If the structure is currently using auto-allocated
+     * {@link Memory} backing, the memory will be resized to fit the entire
+     * array. 
      */
     public Structure[] toArray(Structure[] array) {
         ensureAllocated();
@@ -974,8 +975,9 @@ public abstract class Structure {
 
     /** Returns a view of this structure's memory as an array of structures.
      * Note that this <code>Structure</code> must have a public, no-arg
-     * constructor.  If the structure is currently using a {@link Memory}
-     * backing, the memory will be resized to fit the entire array.
+     * constructor.  If the structure is currently using auto-allocated
+     * {@link Memory} backing, the memory will be resized to fit the entire
+     * array. 
      */
     public Structure[] toArray(int size) {
         return toArray((Structure[])Array.newInstance(getClass(), size));
@@ -990,8 +992,8 @@ public abstract class Structure {
         return getClass();
     }
 
-    /** This structure is only equal to another based on the same native
-     * memory address and data type.
+    /** This structure is equal to another based on the same data type
+     * and visible data fields.
      */
     public boolean equals(Object o) {
         if (o == this)
@@ -1125,8 +1127,8 @@ public abstract class Structure {
         }
         private static Map typeInfoMap = new WeakHashMap();
         // Native.initIDs initializes these fields to their appropriate
-        // pointer values.  These are in a separate class so that they may
-        // be initialized prior to loading the FFIType class
+        // pointer values.  These are in a separate class from FFIType so that
+        // they may be initialized prior to loading the FFIType class
         private static class FFITypes {
             private static Pointer ffi_type_void;
             private static Pointer ffi_type_float;
