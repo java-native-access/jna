@@ -34,7 +34,7 @@
   <!-- JNA library release version -->            
   <property name="jna.major" value="3"/>
   <property name="jna.minor" value="2"/>
-  <property name="jna.revision" value="2"/>
+  <property name="jna.revision" value="3"/>
   <property name="jna.build" value="${build.number}"/>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->
@@ -627,6 +627,7 @@
       <fileset dir="${build}"/>
     </delete>
     <delete quiet="true" includeEmptyDirs="true">
+      <fileset dir=".clover"/>
       <fileset dir="${javadoc}"/>
       <fileset dir="." includes="*~,**/*~"/>
     </delete>

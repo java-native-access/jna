@@ -293,6 +293,14 @@ public abstract class Structure {
     // Data synchronization methods
     //////////////////////////////////////////////////////////////////////////
 
+    // Keep track of ByReference reads to avoid creating multiple structures
+    // mapped to the same address
+    private static final ThreadLocal reads = new ThreadLocal() {
+        protected synchronized Object initialValue() {
+            return new HashMap();
+        }
+    };
+
     // Keep track of what is currently being read/written to avoid redundant
     // reads (avoids problems with circular references).
     private static final ThreadLocal busy = new ThreadLocal() {
@@ -328,7 +336,7 @@ public abstract class Structure {
                 for (int i=0;i < count;i++) {
                     Structure s2 = (Structure)elements[i];
                     if (s1 == s2
-                        || (s1.baseClass() == s2.baseClass()
+                        || (s1.getClass() == s2.getClass()
                             && s1.size() == s2.size()
                             && s1.getPointer().equals(s2.getPointer()))) {
                         return i;
@@ -356,8 +364,11 @@ public abstract class Structure {
             return new StructureSet();
         }
     };
-    Set busy() {
+    static Set busy() {
         return (Set)busy.get();
+    }
+    static Map reading() {
+        return (Map)reads.get();
     }
 
     /**
@@ -368,11 +379,14 @@ public abstract class Structure {
         // allows structures to do field-based initialization of arrays and not
         // have to explicitly call allocateMemory in a ctor
         ensureAllocated();
-        // Avoid recursive reads
+        // Avoid redundant reads
         if (busy().contains(this)) {
             return;
         }
         busy().add(this);
+        if (this instanceof Structure.ByReference) {
+            reading().put(getPointer(), this);
+        }
         try {
             for (Iterator i=structFields.values().iterator();i.hasNext();) {
                 readField((StructField)i.next());
@@ -380,6 +394,9 @@ public abstract class Structure {
         }
         finally {
             busy().remove(this);
+            if (reading().get(getPointer()) == this) {
+                reading().remove(getPointer());
+            }
         }
     }
 
@@ -434,8 +451,14 @@ public abstract class Structure {
         }
         else {
             if (s == null || !address.equals(s.getPointer())) {
-                s = newInstance(type);
-                s.useMemory(address);
+                Structure s1 = (Structure)reading().get(address);
+                if (s1 != null && type.equals(s1.getClass())) {
+                    s = s1;
+                }
+                else {
+                    s = newInstance(type);
+                    s.useMemory(address);
+                }
             }
             s.autoRead();
         }
@@ -490,6 +513,7 @@ public abstract class Structure {
             getTypeInfo();
         }
 
+        // Avoid redundant writes
         if (busy().contains(this)) {
             return;
         }

@@ -1119,7 +1119,7 @@ public class StructureTest extends TestCase {
         assertTrue("Structure equals should ignore padding", s1.equals(s2));
     }
 
-    public void testRecursiveReadWriteDetection() {
+    public void testRecursiveWrite() {
         class TestStructureByRef extends Structure implements Structure.ByReference{
             public TestStructureByRef(Pointer p) { super(p); }
             public TestStructureByRef() { }
@@ -1139,11 +1139,39 @@ public class StructureTest extends TestCase {
                      2, s.s.getPointer().getInt(0));
 
         s.s.unique = 0;
+        Structure value = s.s;
         s.read();
+        assertEquals("ByReference structure field not preserved", value, s.s);
+
         assertEquals("ByReference structure field contents not read",
                      2, s.s.unique);
 
         assertTrue("Temporary storage should be cleared",
                    s.busy().isEmpty());
+    }
+
+    public static class CyclicTestStructure extends Structure {
+        public static class ByReference extends CyclicTestStructure implements Structure.ByReference {}
+        public CyclicTestStructure(Pointer p) { super(p); }
+        public CyclicTestStructure() { }
+        public CyclicTestStructure.ByReference next;
+    }
+    public void testCyclicRead() {
+        CyclicTestStructure s = new CyclicTestStructure();
+        s.next = new CyclicTestStructure.ByReference();
+
+        Structure value = s.next;
+        s.next.next = s.next;
+        s.write();
+        s.read();
+        assertEquals("ByReference structure field not preserved", value, s.next);
+
+        value = s.next;
+        s.next.next = null;
+        s.read();
+        assertSame("ByReference structure field should reuse existing value",
+                   value, s.next);
+        assertSame("Nested ByReference structure field should reuse existing value",
+                   value, s.next.next);
     }
 }
