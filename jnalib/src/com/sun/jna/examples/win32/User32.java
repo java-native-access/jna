@@ -23,7 +23,7 @@ import com.sun.jna.ptr.IntByReference;
  * Incomplete implementation to support demos.
  *
  * @author  Todd Fast, todd.fast@sun.com
- * @author twall@users.sf.net
+ * @author twalljava@dev.java.net
  */
 public interface User32 extends W32API {
 
