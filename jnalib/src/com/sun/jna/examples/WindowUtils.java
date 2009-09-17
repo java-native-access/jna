@@ -32,6 +32,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
+import java.awt.event.ContainerEvent;
 import java.awt.event.MouseEvent;
 import java.awt.AWTEvent;
 import java.awt.Window;
@@ -200,11 +201,20 @@ public class WindowUtils {
             }
 
             public void eventDispatched(AWTEvent e) {
-                Component src = (Component)e.getSource();
-                MouseEvent me = SwingUtilities.convertMouseEvent(src, (MouseEvent)e, content);
-                Component c = SwingUtilities.getDeepestComponentAt(content, me.getX(), me.getY());
-                if (c != null) {
-                    setCursor(c.getCursor());
+                Window w = SwingUtilities.getWindowAncestor(RepaintTrigger.this);
+                Window ew = SwingUtilities.getWindowAncestor((Component)e.getSource());
+                if (ew != w) return;
+                if (e instanceof MouseEvent) {
+                    Component src = (Component)e.getSource();
+                    MouseEvent me = SwingUtilities.convertMouseEvent(src, (MouseEvent)e, content);
+                    Component c = SwingUtilities.getDeepestComponentAt(content, me.getX(), me.getY());
+                    if (c != null) {
+                        setCursor(c.getCursor());
+                    }
+                }
+                else if (e.getID() == ContainerEvent.COMPONENT_ADDED) {
+                    Component child = ((ContainerEvent)e).getChild();
+                    WindowUtils.setDoubleBuffered(child, false);
                 }
             };
         }
@@ -222,7 +232,7 @@ public class WindowUtils {
             setSize(getParent().getSize());
             w.addComponentListener(listener);
             w.addWindowListener(listener);
-            Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK|AWTEvent.MOUSE_MOTION_EVENT_MASK);
+            Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK|AWTEvent.MOUSE_MOTION_EVENT_MASK|AWTEvent.CONTAINER_EVENT_MASK);
         }
 
         public void removeNotify() {
@@ -254,6 +264,21 @@ public class WindowUtils {
             return new Listener();
         }
     };
+
+    private static void setDoubleBuffered(Component root, boolean buffered) {
+        if (root instanceof JComponent) {
+            ((JComponent)root).setDoubleBuffered(buffered);
+        }
+        if (root instanceof JRootPane && buffered) {
+            ((JRootPane)root).setDoubleBuffered(true);
+        }
+        else if (root instanceof Container) {
+            Component[] kids = ((Container)root).getComponents();
+            for (int i=0;i < kids.length;i++) {
+                setDoubleBuffered(kids[i], buffered);
+            }
+        }
+    }
 
     /** Window utilities with differing native implementations. */
     public static abstract class NativeWindowUtils {
@@ -420,21 +445,6 @@ public class WindowUtils {
          */
         public void setWindowTransparent(Window w, boolean transparent) {
             // do nothing
-        }
-
-        protected void setDoubleBuffered(Component root, boolean buffered) {
-            if (root instanceof JComponent) {
-                ((JComponent)root).setDoubleBuffered(buffered);
-            }
-            if (root instanceof JRootPane && buffered) {
-                ((JRootPane)root).setDoubleBuffered(true);
-            }
-            else if (root instanceof Container) {
-                Component[] kids = ((Container)root).getComponents();
-                for (int i=0;i < kids.length;i++) {
-                    setDoubleBuffered(kids[i], buffered);
-                }
-            }
         }
 
         protected void setLayersTransparent(Window w, boolean transparent) {
