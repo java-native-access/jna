@@ -201,20 +201,13 @@ public class WindowUtils {
             }
 
             public void eventDispatched(AWTEvent e) {
-                Window w = SwingUtilities.getWindowAncestor(RepaintTrigger.this);
-                Window ew = SwingUtilities.getWindowAncestor((Component)e.getSource());
-                if (ew != w) return;
-                if (e instanceof MouseEvent) {
-                    Component src = (Component)e.getSource();
+                Component src = (Component)e.getSource();
+                if (SwingUtilities.isDescendingFrom(src, content)) {
                     MouseEvent me = SwingUtilities.convertMouseEvent(src, (MouseEvent)e, content);
                     Component c = SwingUtilities.getDeepestComponentAt(content, me.getX(), me.getY());
                     if (c != null) {
                         setCursor(c.getCursor());
                     }
-                }
-                else if (e.getID() == ContainerEvent.COMPONENT_ADDED) {
-                    Component child = ((ContainerEvent)e).getChild();
-                    WindowUtils.setDoubleBuffered(child, false);
                 }
             };
         }
@@ -232,7 +225,7 @@ public class WindowUtils {
             setSize(getParent().getSize());
             w.addComponentListener(listener);
             w.addWindowListener(listener);
-            Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK|AWTEvent.MOUSE_MOTION_EVENT_MASK|AWTEvent.CONTAINER_EVENT_MASK);
+            Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK|AWTEvent.MOUSE_MOTION_EVENT_MASK);
         }
 
         public void removeNotify() {
@@ -265,24 +258,10 @@ public class WindowUtils {
         }
     };
 
-    private static void setDoubleBuffered(Component root, boolean buffered) {
-        if (root instanceof JComponent) {
-            ((JComponent)root).setDoubleBuffered(buffered);
-        }
-        if (root instanceof JRootPane && buffered) {
-            ((JRootPane)root).setDoubleBuffered(true);
-        }
-        else if (root instanceof Container) {
-            Component[] kids = ((Container)root).getComponents();
-            for (int i=0;i < kids.length;i++) {
-                setDoubleBuffered(kids[i], buffered);
-            }
-        }
-    }
-
     /** Window utilities with differing native implementations. */
     public static abstract class NativeWindowUtils {
-        protected abstract class TransparentContent extends JPanel {
+        protected abstract class TransparentContent
+            extends JPanel implements AWTEventListener {
             private boolean transparent;
             public TransparentContent(Container oldContent) {
                 super(new BorderLayout());
@@ -292,11 +271,26 @@ public class WindowUtils {
                     ((JComponent)oldContent).setOpaque(false);
                 }
             }
+            public void addNotify() {
+                super.addNotify();
+                Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.CONTAINER_EVENT_MASK);
+            }
+            public void removeNotify() {
+                Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+                super.removeNotify();
+            }
             public void setTransparent(boolean transparent) {
                 this.transparent = transparent;
                 setOpaque(!transparent);
                 setDoubleBuffered(!transparent);
                 repaint();
+            }
+            public void eventDispatched(AWTEvent e) {
+                if (e.getID() == ContainerEvent.COMPONENT_ADDED
+                    && SwingUtilities.isDescendingFrom((Component)e.getSource(), this)) {
+                    Component child = ((ContainerEvent)e).getChild();
+                    NativeWindowUtils.this.setDoubleBuffered(child, false);
+                }
             }
             public void paint(Graphics gr) {
                 if (transparent) {
@@ -445,6 +439,21 @@ public class WindowUtils {
          */
         public void setWindowTransparent(Window w, boolean transparent) {
             // do nothing
+        }
+
+        protected void setDoubleBuffered(Component root, boolean buffered) {
+            if (root instanceof JComponent) {
+                ((JComponent)root).setDoubleBuffered(buffered);
+            }
+            if (root instanceof JRootPane && buffered) {
+                ((JRootPane)root).setDoubleBuffered(true);
+            }
+            else if (root instanceof Container) {
+                Component[] kids = ((Container)root).getComponents();
+                for (int i=0;i < kids.length;i++) {
+                    setDoubleBuffered(kids[i], buffered);
+                }
+            }
         }
 
         protected void setLayersTransparent(Window w, boolean transparent) {
