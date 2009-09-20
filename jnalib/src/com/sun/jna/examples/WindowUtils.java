@@ -260,10 +260,10 @@ public class WindowUtils {
 
     /** Window utilities with differing native implementations. */
     public static abstract class NativeWindowUtils {
-        protected abstract class TransparentContent
+        protected abstract class TransparentContentPane
             extends JPanel implements AWTEventListener {
             private boolean transparent;
-            public TransparentContent(Container oldContent) {
+            public TransparentContentPane(Container oldContent) {
                 super(new BorderLayout());
                 add(oldContent, BorderLayout.CENTER);
                 setTransparent(true);
@@ -457,6 +457,7 @@ public class WindowUtils {
         }
 
         protected void setLayersTransparent(Window w, boolean transparent) {
+
             Color bg = transparent ? new Color(0, 0, 0, 0) : null;
             if (w instanceof RootPaneContainer) {
                 RootPaneContainer rpc = (RootPaneContainer)w;
@@ -664,12 +665,12 @@ public class WindowUtils {
          * window on any change.  It also does not paint window decorations
          * when the window is transparent.
          */
-        private class W32TransparentContent extends TransparentContent {
+        private class W32TransparentContentPane extends TransparentContentPane {
             private HDC memDC;
             private HBITMAP hBitmap;
             private Pointer pbits;
             private Dimension bitmapSize;
-            public W32TransparentContent(Container content) {
+            public W32TransparentContentPane(Container content) {
                 super(content);
             }
             private void disposeBackingStore() {
@@ -805,12 +806,12 @@ public class WindowUtils {
                     JRootPane root = ((RootPaneContainer)w).getRootPane();
                     JLayeredPane lp = root.getLayeredPane();
                     Container content = root.getContentPane();
-                    if (content instanceof W32TransparentContent) {
-                        ((W32TransparentContent)content).setTransparent(transparent);
+                    if (content instanceof W32TransparentContentPane) {
+                        ((W32TransparentContentPane)content).setTransparent(transparent);
                     }
                     else if (transparent) {
-                        W32TransparentContent w32content =
-                            new W32TransparentContent(content);
+                        W32TransparentContentPane w32content =
+                            new W32TransparentContentPane(content);
                         root.setContentPane(w32content);
                         lp.add(new RepaintTrigger(w32content),
                                JLayeredPane.DRAG_LAYER);
@@ -927,28 +928,28 @@ public class WindowUtils {
             return true;
         }
 
-        private OSXTransparentContent installTransparentContent(Window w) {
-            OSXTransparentContent content;
+        private OSXMaskingContentPane installMaskingPane(Window w) {
+            OSXMaskingContentPane content;
             if (w instanceof RootPaneContainer) {
                 // TODO: replace layered pane instead?
                 final RootPaneContainer rpc = (RootPaneContainer)w;
                 Container oldContent = rpc.getContentPane();
-                if (oldContent instanceof OSXTransparentContent) {
-                    content = (OSXTransparentContent)oldContent;
+                if (oldContent instanceof OSXMaskingContentPane) {
+                    content = (OSXMaskingContentPane)oldContent;
                 }
                 else {
-                    content = new OSXTransparentContent(oldContent);
+                    content = new OSXMaskingContentPane(oldContent);
                     // TODO: listen for content pane changes
                     rpc.setContentPane(content);
                 }
             }
             else {
                 Component oldContent = w.getComponentCount() > 0 ? w.getComponent(0) : null;
-                if (oldContent instanceof OSXTransparentContent) {
-                    content = (OSXTransparentContent)oldContent;
+                if (oldContent instanceof OSXMaskingContentPane) {
+                    content = (OSXMaskingContentPane)oldContent;
                 }
                 else {
-                    content = new OSXTransparentContent(oldContent);
+                    content = new OSXMaskingContentPane(oldContent);
                     w.add(content);
                 }
             }
@@ -967,9 +968,8 @@ public class WindowUtils {
             boolean isTransparent = w.getBackground() != null
                 && w.getBackground().getAlpha() == 0;
             if (transparent != isTransparent) {
-                installTransparentContent(w);
+                installMaskingPane(w);
                 setBackgroundTransparent(w, transparent, "setWindowTransparent");
-                setLayersTransparent(w, transparent);
             }
         }
 
@@ -1031,7 +1031,7 @@ public class WindowUtils {
         public void setWindowMask(Component c, final Shape shape) {
             if (c instanceof Window) {
                 Window w = (Window)c;
-                OSXTransparentContent content = installTransparentContent(w);
+                OSXMaskingContentPane content = installMaskingPane(w);
                 content.setMask(shape);
                 setBackgroundTransparent(w, shape != MASK_NONE, "setWindowMask");
             }
@@ -1043,10 +1043,10 @@ public class WindowUtils {
         /** Mask out unwanted pixels and ensure background gets cleared.
          * @author Olivier Chafik
          */
-        private static class OSXTransparentContent extends JPanel {
+        private static class OSXMaskingContentPane extends JPanel {
             private Shape shape;
 
-            public OSXTransparentContent(Component oldContent) {
+            public OSXMaskingContentPane(Component oldContent) {
                 super(new BorderLayout());
                 if (oldContent != null) {
                     add(oldContent, BorderLayout.CENTER);
@@ -1319,9 +1319,9 @@ public class WindowUtils {
             whenDisplayable(w, action);
         }
 
-        private class X11TransparentContent extends TransparentContent {
+        private class X11TransparentContentPane extends TransparentContentPane {
 
-            public X11TransparentContent(Container oldContent) {
+            public X11TransparentContentPane(Container oldContent) {
                 super(oldContent);
             }
 
@@ -1396,12 +1396,12 @@ public class WindowUtils {
                     JRootPane root = ((RootPaneContainer)w).getRootPane();
                     JLayeredPane lp = root.getLayeredPane();
                     Container content = root.getContentPane();
-                    if (content instanceof X11TransparentContent) {
-                        ((X11TransparentContent)content).setTransparent(transparent);
+                    if (content instanceof X11TransparentContentPane) {
+                        ((X11TransparentContentPane)content).setTransparent(transparent);
                     }
                     else if (transparent) {
-                        X11TransparentContent x11content =
-                            new X11TransparentContent(content);
+                        X11TransparentContentPane x11content =
+                            new X11TransparentContentPane(content);
                         root.setContentPane(x11content);
                         lp.add(new RepaintTrigger(x11content),
                                JLayeredPane.DRAG_LAYER);
