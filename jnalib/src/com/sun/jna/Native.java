@@ -853,9 +853,7 @@ public final class Native {
             if (libpath != null) {
                 return new File(libpath).getParent();
             }
-            String msg = 
-                "Library '" + libName + "' was not found by class loader " + cl;
-            throw new UnsatisfiedLinkError(msg);
+            return null;
         }
         catch (Exception e) {
             return null;

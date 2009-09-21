@@ -103,14 +103,25 @@ public class WebStartTest extends TestCase {
         throw new Error(ERROR);
     }
 
-    public void testJNLPFindLibrary() {
-        String path = Native.getWebStartLibraryPath("jnidispatch");
-        assertNotNull("Web Start library path not found", path);
+    public interface Dummy extends Library {
+        void dummy();
+    }
+    public void testJNLPFindCustomLibrary() {
+        assertNotNull("Custom library path not found by JNLP class loader",
+                      Native.getWebStartLibraryPath("jnidispatch"));
+        Native.loadLibrary("jnidispatch", Dummy.class);
+    }
+
+    public void testJNLPFindProcessLibrary() {
+        String libname = Platform.isWindows()?"msvcrt":"c";
+        assertNull("Process library path not expected to be found by JNLP class loader",
+                   Native.getWebStartLibraryPath(libname));
+        Native.loadLibrary(libname, Dummy.class);
     }
 
     public void testJNLPFindLibraryFailure() {
         try {
-            Native.getWebStartLibraryPath("xyzzy");
+            Native.loadLibrary("xyzzy", Dummy.class);
             fail("Missing native libraries should throw UnsatisfiedLinkError");
         }
         catch(UnsatisfiedLinkError e) {

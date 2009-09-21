@@ -451,9 +451,20 @@ public class NativeLibrary {
 
         // Search in the JNA paths for it
         for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
-            File file = new File(new File((String) it.next()), name);
+            String path = (String)it.next();
+            File file = new File(path, name);
             if (file.exists()) {
                 return file.getAbsolutePath();
+            }
+            if (Platform.isMac()) {
+                // Native libraries delivered via JNLP class loader
+                // may require a .jnilib extension to be found
+                if (name.endsWith(".dylib")) {
+                    file = new File(path, name.substring(0, name.lastIndexOf(".dylib")) + ".jnilib");
+                    if (file.exists()) {
+                        return file.getAbsolutePath();
+                    }
+                }
             }
         }
 
