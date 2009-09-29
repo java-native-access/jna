@@ -1,0 +1,16 @@
+.libs
+.deps
+*.o
+*.lo
+.dirstamp
+*.la
+Makefile
+config.log
+config.status
+*~
+fficonfig.h
+include/ffi.h
+include/ffitarget.h
+libffi.pc
+libtool
+stamp-h1
