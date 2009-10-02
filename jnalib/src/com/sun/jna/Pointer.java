@@ -237,7 +237,12 @@ public class Pointer {
      */
     public void read(long offset, Pointer[] buf, int index, int length) {
         for (int i=0;i < length;i++) {
-            buf[i + index] = getPointer(offset + i*Pointer.SIZE);
+            Pointer p = getPointer(offset + i*Pointer.SIZE);
+            Pointer oldp = buf[i+index];
+            // Avoid replacing the original pointer if it hasn't changed
+            if (oldp == null || p == null || p.peer != oldp.peer) {
+                buf[i+index] = p;
+            }
         }
     }
 

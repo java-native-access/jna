@@ -21,7 +21,8 @@
 
 # TODO
 
-* check Structure "final" fields; should never write back to native memory
+* fix setFieldOrder to *always* apply if used
+* cache structure information
 
 * make direct calls call back *once* to Java where conversion is required,
   and process all arguments from there (instead of potentially swapping back
@@ -99,6 +100,7 @@
 
 
 # DONE
+* check Structure "final" fields; should never write back to native memory
 * OSX ObjC access (see rococoa)
 * do Structure.write for any callback args
 * pointer.setValue(), to handle NativeMapped types and move read/writeValue

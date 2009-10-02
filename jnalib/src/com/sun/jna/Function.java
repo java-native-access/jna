@@ -784,9 +784,7 @@ public class Function extends Pointer {
             setPointer(Pointer.SIZE*arg.length, null);
         }
         public void read() {
-            for (int i=0;i < original.length;i++) {
-                original[i] = getPointer(i * Pointer.SIZE);
-            }
+            read(0, original, 0, original.length);
         }
     }
     

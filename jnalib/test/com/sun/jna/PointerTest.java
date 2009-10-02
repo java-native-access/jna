@@ -278,6 +278,29 @@ public class PointerTest extends TestCase {
                      Arrays.asList(p.getStringArray(0, 2)));
     }
 
+    public void testReadPointerArray() {
+        Pointer mem = new Memory(Pointer.SIZE * 2);
+        Pointer[] p = new Pointer[2];
+        String VALUE1 = getName();
+
+        p[0] = new NativeString(VALUE1).getPointer();
+        p[1] = new Memory(1024);
+        Pointer[] orig = new Pointer[p.length];
+        System.arraycopy(p, 0, orig, 0, p.length);
+
+        mem.write(0, p, 0, p.length);
+        mem.read(0, p, 0, p.length);
+
+        assertSame("Pointer object not preserved[0]", orig[0], p[0]);
+        assertSame("Pointer object not preserved[1]", orig[1], p[1]);
+
+        mem.setPointer(0, null);
+        mem.setPointer(Pointer.SIZE, new Memory(1024));
+        mem.read(0, p, 0, p.length);
+        assertNull("Pointer element not updated[0]", p[0]);
+        assertNotSame("Pointer element not updated[1]", orig[1], p[1]);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(PointerTest.class);
     }

@@ -609,10 +609,18 @@ public class ArgumentsMarshalTest extends TestCase {
             null,
             new NativeString(getName()+"2").getPointer(),
         };
+        Pointer[] originals = new Pointer[args.length];
+        System.arraycopy(args, 0, originals, 0, args.length);
+
         assertEquals("Wrong value returned", args[0], lib.returnPointerArrayElement(args, 0));
         assertNull("Wrong value returned", lib.returnPointerArrayElement(args, 1));
         assertEquals("Wrong value returned", args[2], lib.returnPointerArrayElement(args, 2));
         assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 3));
+
+        assertSame("Argument pointers should remain unmodified [0]",
+                   originals[0], args[0]);
+        assertSame("Argument pointers should remain unmodified [2]",
+                   originals[2], args[2]);
     }
 
     public void testNativeMappedArrayArgument() {
