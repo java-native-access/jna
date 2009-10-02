@@ -483,11 +483,15 @@ public class WindowUtils {
                 }
                 else {
                     lp.setOpaque(Boolean.TRUE.equals(lp.getClientProperty(TRANSPARENT_OLD_OPAQUE)));
+                    lp.putClientProperty(TRANSPARENT_OLD_OPAQUE, null);
                     root.setOpaque(Boolean.TRUE.equals(root.getClientProperty(TRANSPARENT_OLD_OPAQUE)));
+                    root.putClientProperty(TRANSPARENT_OLD_OPAQUE, null);
                     if (content != null) {
                         content.setOpaque(Boolean.TRUE.equals(content.getClientProperty(TRANSPARENT_OLD_OPAQUE)));
+                        content.putClientProperty(TRANSPARENT_OLD_OPAQUE, null);
                     }
                     bg = (Color)root.getClientProperty(TRANSPARENT_OLD_BG);
+                    root.putClientProperty(TRANSPARENT_OLD_BG, null);
                 }
             }
             w.setBackground(bg);
@@ -1080,13 +1084,14 @@ public class WindowUtils {
                 ? ((RootPaneContainer)w).getRootPane() : null;
             if (transparent) {
                 if (rp != null) {
-                    rp.putClientProperty("bg.old", w.getBackground());
+                    rp.putClientProperty(TRANSPARENT_OLD_BG, w.getBackground());
                 }
                 w.setBackground(new Color(0,0,0,0));
             }
             else {
                 if (rp != null) {
-                    w.setBackground((Color)rp.getClientProperty("bg.old"));
+                    w.setBackground((Color)rp.getClientProperty(TRANSPARENT_OLD_BG));
+                    rp.putClientProperty(TRANSPARENT_OLD_BG, null);
                 }
                 else {
                     w.setBackground(null);
