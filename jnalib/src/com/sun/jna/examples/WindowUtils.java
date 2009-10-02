@@ -972,7 +972,6 @@ public class WindowUtils {
             boolean isTransparent = w.getBackground() != null
                 && w.getBackground().getAlpha() == 0;
             if (transparent != isTransparent) {
-                installMaskingPane(w);
                 setBackgroundTransparent(w, transparent, "setWindowTransparent");
             }
         }
@@ -1090,7 +1089,13 @@ public class WindowUtils {
             }
             else {
                 if (rp != null) {
-                    w.setBackground((Color)rp.getClientProperty(TRANSPARENT_OLD_BG));
+                    Color bg = (Color)rp.getClientProperty(TRANSPARENT_OLD_BG);
+                    // If the old bg is a CColorPaintUIResource, the window's
+                    // transparent state will not change
+                    if (bg instanceof apple.laf.CColorPaintUIResource) {
+                        bg = new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), bg.getAlpha());
+                    }
+                    w.setBackground(bg);
                     rp.putClientProperty(TRANSPARENT_OLD_BG, null);
                 }
                 else {
