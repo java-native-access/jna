@@ -1090,9 +1090,10 @@ public class WindowUtils {
             else {
                 if (rp != null) {
                     Color bg = (Color)rp.getClientProperty(TRANSPARENT_OLD_BG);
-                    // If the old bg is a CColorPaintUIResource, the window's
+                    // If the old bg is a
+                    // apple.laf.CColorPaintUIResource, the window's
                     // transparent state will not change
-                    if (bg instanceof apple.laf.CColorPaintUIResource) {
+                    if (bg != null) {
                         bg = new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), bg.getAlpha());
                     }
                     w.setBackground(bg);
