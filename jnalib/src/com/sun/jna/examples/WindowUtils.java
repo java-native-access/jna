@@ -201,15 +201,18 @@ public class WindowUtils {
             }
 
             public void eventDispatched(AWTEvent e) {
-                Component src = (Component)e.getSource();
-                if (SwingUtilities.isDescendingFrom(src, content)) {
-                    MouseEvent me = SwingUtilities.convertMouseEvent(src, (MouseEvent)e, content);
-                    Component c = SwingUtilities.getDeepestComponentAt(content, me.getX(), me.getY());
-                    if (c != null) {
-                        setCursor(c.getCursor());
+                if (e instanceof MouseEvent) {
+                    Component src = ((MouseEvent)e).getComponent();
+                    if (src != null
+                        && SwingUtilities.isDescendingFrom(src, content)) {
+                        MouseEvent me = SwingUtilities.convertMouseEvent(src, (MouseEvent)e, content);
+                        Component c = SwingUtilities.getDeepestComponentAt(content, me.getX(), me.getY());
+                        if (c != null) {
+                            setCursor(c.getCursor());
+                        }
                     }
                 }
-            };
+            }
         }
 
         private final Listener listener = createListener();
@@ -287,7 +290,7 @@ public class WindowUtils {
             }
             public void eventDispatched(AWTEvent e) {
                 if (e.getID() == ContainerEvent.COMPONENT_ADDED
-                    && SwingUtilities.isDescendingFrom((Component)e.getSource(), this)) {
+                    && SwingUtilities.isDescendingFrom(((ContainerEvent)e).getChild(), this)) {
                     Component child = ((ContainerEvent)e).getChild();
                     NativeWindowUtils.this.setDoubleBuffered(child, false);
                 }
