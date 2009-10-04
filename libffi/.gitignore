@@ -14,3 +14,5 @@ include/ffitarget.h
 libffi.pc
 libtool
 stamp-h1
+libffi*gz
+autom4te.cache

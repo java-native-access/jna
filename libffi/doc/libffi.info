@@ -1,7 +1,7 @@
-This is doc/libffi.info, produced by makeinfo version 4.12 from
+This is doc/libffi.info, produced by makeinfo version 4.8 from
 ./doc/libffi.texi.
 
-This manual is for Libffi, a portable foreign-function interface
+   This manual is for Libffi, a portable foreign-function interface
 library.
 
    Copyright (C) 2008 Red Hat, Inc.
@@ -111,10 +111,10 @@ To prepare a call interface object, use the function `ffi_prep_cif'.
      This initializes CIF according to the given parameters.
 
      ABI is the ABI to use; normally `FFI_DEFAULT_ABI' is what you
-     want.  *note Multiple ABIs:: for more information.
+     want.  *Note Multiple ABIs:: for more information.
 
      NARGS is the number of arguments that this function accepts.
-     `libffi' does not yet handle varargs functions; see *note Missing
+     `libffi' does not yet handle varargs functions; see *Note Missing
      Features:: for more information.
 
      RTYPE is a pointer to an `ffi_type' structure that describes the
@@ -516,18 +516,18 @@ Index
 
 
 Tag Table:
-Node: Top670
-Node: Introduction1406
-Node: Using libffi3042
-Node: The Basics3477
-Node: Simple Example6084
-Node: Types7111
-Node: Primitive Types7394
-Node: Structures9214
-Node: Type Example10074
-Node: Multiple ABIs11297
-Node: The Closure API11668
-Node: Missing Features14588
-Node: Index15081
+Node: Top672
+Node: Introduction1408
+Node: Using libffi3044
+Node: The Basics3479
+Node: Simple Example6086
+Node: Types7113
+Node: Primitive Types7396
+Node: Structures9216
+Node: Type Example10076
+Node: Multiple ABIs11299
+Node: The Closure API11670
+Node: Missing Features14590
+Node: Index15083
 
 End Tag Table
