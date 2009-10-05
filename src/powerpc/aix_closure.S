@@ -84,6 +84,7 @@
 #define L(x) x
 	.file "aix_closure.S"
 	.toc
+	.extern .ffi_closure_helper_DARWIN
 LC..60:
 	.tc L..60[TC],L..60
 	.csect .text[PR]
@@ -96,7 +97,11 @@ LC..60:
 .csect ffi_closure_ASM[DS]
 
 ffi_closure_ASM:
+#if defined(_ARCH_PPC64)
+	.llong .ffi_closure_ASM, TOC[tc0], 0
+#else	
 	.long .ffi_closure_ASM, TOC[tc0], 0
+#endif	
 	.csect .text[PR]
 .ffi_closure_ASM:
 

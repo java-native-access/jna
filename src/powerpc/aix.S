@@ -96,8 +96,12 @@
 	.globl .ffi_call_AIX
 .csect ffi_call_AIX[DS]
 ffi_call_AIX:
+#if defined(_ARCH_PPC64)
+	.llong .ffi_call_AIX, TOC[tc0], 0
+#else
 	.long .ffi_call_AIX, TOC[tc0], 0
-	.csect .text[PR]
+#endif	
+		.csect .text[PR]
 .ffi_call_AIX:
 	mr      r12,r8 // We only need r12 until the call, so it doesn't have to be saved...
 	/* Save the old stack pointer as AP.  */
@@ -216,7 +220,11 @@ L(float_return_value):
 	.globl .ffi_call_DARWIN
 .csect ffi_call_DARWIN[DS]
 ffi_call_DARWIN:
+#if defined(_ARCH_PPC64)
+	.llong .ffi_call_DARWIN, TOC[tc0], 0
+#else
 	.long .ffi_call_DARWIN, TOC[tc0], 0
+#endif
 	.csect .text[PR]
 .ffi_call_DARWIN:
 	blr
