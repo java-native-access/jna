@@ -1,11 +1,9 @@
 dnl Process this with autoconf to create configure
 
-AC_PREREQ(2.64)
+AC_PREREQ(2.59)
 
-AC_INIT([libffi], [3.0.8], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.9rc1], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
-
-AM_ENABLE_MULTILIB(, ..)
 
 AC_CANONICAL_SYSTEM
 target_alias=${target_alias-$host_alias}
@@ -22,7 +20,7 @@ AM_INIT_AUTOMAKE
 m4_rename([_AC_ARG_VAR_PRECIOUS],[real_PRECIOUS])
 m4_define([_AC_ARG_VAR_PRECIOUS],[])
 AC_PROG_CC
-m4_rename_force([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
+m4_rename([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
 
 AC_SUBST(CFLAGS)
 
@@ -50,6 +48,10 @@ case "$host" in
   arm*-*-*)
 	TARGET=ARM; TARGETDIR=arm
 	;;
+
+  amd64-*-freebsd*)
+	TARGET=X86_64; TARGETDIR=x86
+  	;;
 
   amd64-*-freebsd*)
 	TARGET=X86_64; TARGETDIR=x86
@@ -106,10 +108,6 @@ case "$host" in
 	;;
   mips*-*-linux*)
 	TARGET=MIPS; TARGETDIR=mips
-	;;
-
-  moxie-*-*)
-        TARGET=MOXIE; TARGETDIR=moxie
 	;;
 
   powerpc*-*-linux* | powerpc-*-sysv*)
@@ -385,6 +383,6 @@ test -d src/$TARGETDIR || mkdir src/$TARGETDIR
 
 AC_CONFIG_LINKS(include/ffitarget.h:src/$TARGETDIR/ffitarget.h)
 
-AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile)
+AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile libffi.pc)
 
 AC_OUTPUT
