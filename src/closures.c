@@ -209,6 +209,7 @@ static int dlmunmap(void *, size_t);
 
 #if !(defined(X86_WIN32) || defined(X86_WIN64)) || defined (__CYGWIN__)
 
+#if FFI_MMAP_EXEC_SELINUX
 /* A mutex used to synchronize access to *exec* variables in this file.  */
 static pthread_mutex_t open_temp_exec_file_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -477,6 +478,27 @@ dlmmap (void *start, size_t length, int prot,
 
   return dlmmap_locked (start, length, prot, flags, offset);
 }
+
+#else
+
+static void *
+dlmmap (void *start, size_t length, int prot,
+	int flags, int fd, off_t offset)
+{
+  
+  assert (start == NULL && length % malloc_getpagesize == 0
+	  && prot == (PROT_READ | PROT_WRITE)
+	  && flags == (MAP_PRIVATE | MAP_ANONYMOUS)
+	  && fd == -1 && offset == 0);
+  
+#if FFI_CLOSURE_TEST
+  printf ("mapping in %zi\n", length);
+#endif
+  
+  return mmap (start, length, prot | PROT_EXEC, flags, fd, offset);
+}
+
+#endif
 
 /* Release memory at the given address, as well as the corresponding
    executable page if it's separate.  */

@@ -22797,6 +22797,16 @@ _ACEOF
     fi
 fi
 
+case "$target" in
+    i?86-apple-darwin10*)
+
+cat >>confdefs.h <<\_ACEOF
+#define FFI_MMAP_EXEC_WRIT 1
+_ACEOF
+
+    ;;
+esac
+
 { $as_echo "$as_me:$LINENO: checking whether .eh_frame section should be read-only" >&5
 $as_echo_n "checking whether .eh_frame section should be read-only... " >&6; }
 if test "${libffi_cv_ro_eh_frame+set}" = set; then
