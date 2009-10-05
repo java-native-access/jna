@@ -5,10 +5,10 @@
 	Originator:		Blake Chaffin	6/18/2007
 */
 
-/* { dg-excess-errors "" { target x86_64-*-mingw* x86_64-*-cygwin* i*86-*-linux-* x86_64-*-linux-* } } */
+/* { dg-excess-errors "" { target avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* i*86-*-linux-* x86_64-*-linux-* } } */
 /* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
 /* { dg-options -mlong-double-128 { target powerpc64*-*-* } } */
-/* { dg-output "" { xfail x86_64-*-mingw* x86_64-*-cygwin* i*86-*-linux-* x86_64-*-linux-* } } */
+/* { dg-output "" { xfail avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* i*86-*-linux-* x86_64-*-linux-* } } */
 
 #include <stdint.h>
 
