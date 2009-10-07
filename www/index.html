@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-09-29">
+<meta name="date" content="2009-10-07">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -446,6 +446,7 @@ Libc.fclose(fp)
 <li><a href="#struct_debug">My structure has the wrong contents.  What did I do wrong?</a>
 <li><a href="#j2me">Does JNA work with J2ME/Windows Mobile?</a>
 <li><a href="#performance">How does JNA performance compared to custom JNI?</a>
+<li><a href="#osx">I get an UnsatisfiedLinkError trying to include my custom library via Java Web Start</a>
 </ul>
 <a name=structure_use></a>
 <h4>When should I use Structure.ByReference? Structure.ByValue? Structure[]?</h4>
@@ -544,6 +545,13 @@ Normally when you invoke <code>toString</code> on a <code>Structure</code>, it w
 <a name=j2me></a>
 <h4>Does JNA work with J2ME/Windows Mobile?</h4>
 There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implementation</a> available, but it has not yet been integrated into the standard build.<p>
+
+<a name=osx></a>
+<h4>I get an UnsatisfiedLinkError on OSX when I provide my native library via Java Web Start</h4>
+<p>
+Libraries loaded via the JNLP class loader on OSX must be named with a .jnilib
+suffix.  The class loader won't find resources included with
+the <code>&lt;nativelib&gt;</code> tag if they have a .dylib suffix.
 
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
