@@ -446,7 +446,7 @@ Libc.fclose(fp)
 <li><a href="#struct_debug">My structure has the wrong contents.  What did I do wrong?</a>
 <li><a href="#j2me">Does JNA work with J2ME/Windows Mobile?</a>
 <li><a href="#performance">How does JNA performance compared to custom JNI?</a>
-<li><a href="#osx">I get an UnsatisfiedLinkError trying to include my custom library via Java Web Start</a>
+<li><a href="#osx">I get an UnsatisfiedLinkError on OSX trying to include my custom library via Java Web Start</a>
 </ul>
 <a name=structure_use></a>
 <h4>When should I use Structure.ByReference? Structure.ByValue? Structure[]?</h4>
@@ -548,10 +548,9 @@ There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implem
 
 <a name=osx></a>
 <h4>I get an UnsatisfiedLinkError on OSX when I provide my native library via Java Web Start</h4>
-<p>
 Libraries loaded via the JNLP class loader on OSX must be named with a .jnilib
 suffix.  The class loader won't find resources included with
-the <code>&lt;nativelib&gt;</code> tag if they have a .dylib suffix.
+the <code>&lt;nativelib&gt;</code> tag if they have a .dylib suffix.<p>
 
 <a name=performance></a>
 <h4>How does JNA performance compare to custom JNI?</h4>
