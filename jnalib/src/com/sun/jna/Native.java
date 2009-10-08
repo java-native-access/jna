@@ -71,6 +71,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
+    private static final String VERSION = "3.2.3";
+
     private static String nativeLibraryPath = null;
     private static boolean unpacked;
     private static Map typeMappers = new WeakHashMap();
@@ -1410,16 +1412,17 @@ public final class Native {
     /** Prints JNA library details to the console. */
     public static void main(String[] args) {
         final String DEFAULT_TITLE = "Java Native Access (JNA)";
-        final String UNKNOWN_VERSION = "unknown - package information missing";
+        final String DEFAULT_VERSION = VERSION;
+        final String DEFAULT_BUILD = VERSION + " (package information missing)";
         Package pkg = Native.class.getPackage();
         String title = pkg.getSpecificationTitle();
         if (title == null) title = DEFAULT_TITLE;
         String version = pkg.getSpecificationVersion();
-        if (version == null) version = UNKNOWN_VERSION;
+        if (version == null) version = DEFAULT_VERSION;
         title += " API Version " + version;
         System.out.println(title);
         version = pkg.getImplementationVersion();
-        if (version == null) version = UNKNOWN_VERSION;
+        if (version == null) version = DEFAULT_BUILD;
         System.out.println("Version: " + version);
         System.out.println(" Native: " + getNativeVersion() + " ("
                            + getAPIChecksum() + ")");

@@ -49,7 +49,7 @@
   <property name="spec.version" value="${jna.major}"/>
   <property name="impl.title" value="com.sun.jna"/>
   <property name="impl.vendor" value="${spec.vendor}"/>
-  <property name="impl.version" value="${jna.version} b${jna.build}"/>
+  <property name="impl.version" value="${jna.version} (b${jna.build})"/>
 
   <property name="compatibility" value="1.4"/>
   <property name="test.compatibility" value="1.5"/>
@@ -74,6 +74,9 @@
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2" 
                    file="pom.xml"/>
+    <replaceregexp match='VERSION = ".*";'
+                   replace='VERSION = "${jna.version}";'
+                   file="src/com/sun/jna/Native.java"/>
 
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
