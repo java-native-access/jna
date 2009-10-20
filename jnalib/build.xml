@@ -604,7 +604,7 @@
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
     </zip>
-    <!-- JNA sources only, for use in Linux build from source -->
+    <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
       <zipfileset dir="." includes="build.xml,LICENSE.txt"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
@@ -614,7 +614,7 @@
     <!-- Full sources required to build and test everything -->
     <zip zipfile="${dist}/src-full.zip">
       <zipfileset src="${dist}/src.zip"/>
-      <zipfileset dir="lib" includes="junit.jar" prefix="lib"/>
+      <zipfileset dir="lib" includes="junit.jar,clover.jar" prefix="lib"/>
       <zipfileset dir="." includes=".classpath,.project"/>
       <zipfileset dir="nbproject" includes="**/*" prefix="nbproject"/>
       <zipfileset dir="${native}" includes="libffi,libffi/**/*" prefix="native"/>
