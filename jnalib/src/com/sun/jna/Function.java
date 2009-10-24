@@ -19,10 +19,22 @@ import java.util.Map;
  * An abstraction for a native function pointer.  An instance of 
  * <code>Function</code> represents a pointer to some native function.  
  * {@link #invoke(Class,Object[],Map)} is the primary means to call
- * the function. 
+ * the function. <p/>
+ * <a name=callflags></a>
+ * Function call behavior may be modified by passing one of the following call
+ * flags: 
+ * <ul>
+ * <li>{@link Function#C_CONVENTION} Use C calling convention (default)
+ * <li>{@link Function#ALT_CONVENTION} Use alternate calling convention (e.g. stdcall)
+ * <li>{@link Function#THROW_LAST_ERROR} Throw a {@link LastErrorException} if
+ * the native function sets the system error to a non-zero value (errno or
+ * GetLastError).  Setting this flag will cause the system error to be cleared
+ * prior to native function invocation.
+ * </ul>
  *
  * @author Sheng Liang, originator
  * @author Todd Fast, suitability modifications
+ * @author Timothy Wall
  * @see Pointer
  */
 public class Function extends Pointer {
@@ -73,18 +85,18 @@ public class Function extends Pointer {
     
     /**
      * Obtain a <code>Function</code> representing a native 
-     * function that follows a given calling convention.
+     * function.
      * 
      * <p>The allocated instance represents a pointer to the named native 
-     * function from the named library, called with the named calling 
-     * convention.
+     * function from the named library.
      *
      * @param   libraryName
      *                  Library in which to find the function
      * @param   functionName
      *                  Name of the native function to be linked with
      * @param   callFlags
-     *                  Call convention used by the native function
+     *                  Function <a href="#callflags">call flags</a>
+     *                  
      * @throws {@link UnsatisfiedLinkError} if the library is not found or
      * the given function name is not found within the library.
      */
@@ -92,8 +104,41 @@ public class Function extends Pointer {
         return NativeLibrary.getInstance(libraryName).getFunction(functionName, callFlags);
     }
     
-    // Keep a reference to the NativeLibrary so it does not get garbage collected
-    // until the function is
+    /**
+     * Obtain a <code>Function</code> representing a native 
+     * function pointer.  In general, this function should be used by dynamic
+     * languages; Java code should allow JNA to bind to a specific Callback
+     * interface instead by defining a return type or Structure field type.
+     * 
+     * <p>The allocated instance represents a pointer to the native 
+     * function pointer.
+     *
+     * @param   p       Native function pointer
+     */
+    public static Function getFunction(Pointer p) {
+        return getFunction(p, 0);
+    }
+
+    /**
+     * Obtain a <code>Function</code> representing a native 
+     * function pointer.  In general, this function should be used by dynamic
+     * languages; Java code should allow JNA to bind to a specific Callback
+     * interface instead by defining a return type or Structure field type. 
+     * 
+     * <p>The allocated instance represents a pointer to the native 
+     * function pointer.
+     *
+     * @param   p
+     *                  Native function pointer
+     * @param   callFlags
+     *                  Function <a href="#callflags">call flags</a>
+     */
+    public static Function getFunction(Pointer p, int callFlags) {
+        return new Function(p, callFlags);
+    }
+
+    // Keep a reference to the NativeLibrary so it does not get garbage
+    // collected until the function is
     private NativeLibrary library;
     private final String functionName;
     int callFlags;
@@ -115,7 +160,7 @@ public class Function extends Pointer {
      * @param  functionName
      *                 Name of the native function to be linked with
      * @param  callFlags
-     *                 Calling convention used by the native function
+     *                 Function <a href="#callflags">call flags</a>
      * @throws {@link UnsatisfiedLinkError} if the given function name is
      * not found within the library.
      */
@@ -148,7 +193,7 @@ public class Function extends Pointer {
      * @param  functionAddress
      *                 Address of the native function 
      * @param  callFlags
-     *                 Calling convention used by the native function
+     *                 Function <a href="#callflags">call flags</a>
      */
     Function(Pointer functionAddress, int callFlags) {
         checkCallingConvention(callFlags & MASK_CC);
