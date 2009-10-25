@@ -130,7 +130,7 @@ public class WebStartTest extends TestCase {
         String codebase = new File(BUILDDIR, "jws").toURI().toURL().toString();
 
         ServerSocket s = new ServerSocket(0);
-        s.setSoTimeout(20000);
+        s.setSoTimeout(40000);
         int port = s.getLocalPort();
 
         File jnlp = File.createTempFile(getName(), ".jnlp");
