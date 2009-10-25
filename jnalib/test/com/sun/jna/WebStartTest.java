@@ -25,19 +25,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Iterator;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
@@ -154,7 +148,6 @@ public class WebStartTest extends TestCase {
             OutputStream os = new FileOutputStream(jnlp);
             os.write(contents.getBytes());
             os.close();
-            File keystore = new File("jna.keystore");
             String path = findJWS();
             String[] cmd = {
                 path,
@@ -278,7 +271,6 @@ public class WebStartTest extends TestCase {
     private String findJWS() throws IOException {
         String JAVA_HOME = System.getProperty("java.home");
         String BIN = new File(JAVA_HOME, "/bin").getAbsolutePath();
-        String LIB = new File(JAVA_HOME, "/lib").getAbsolutePath();
         File javaws = new File(BIN, "javaws" + (Platform.isWindows()?".exe":""));
         if (!javaws.exists()) {
             // NOTE: OSX puts javaws somewhere else entirely
@@ -290,8 +282,8 @@ public class WebStartTest extends TestCase {
                 FolderInfo info = (FolderInfo)
                     Native.loadLibrary("shell32", FolderInfo.class);
                 char[] buf = new char[FolderInfo.MAX_PATH];
-                int flags = 0;
-                int result = info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
+                //int result =
+                        info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
                 String path = Native.toString(buf);
                 if (Platform.is64Bit()) {
                     javaws = new File(path, "SysWOW64/javaws.exe");
@@ -316,8 +308,8 @@ public class WebStartTest extends TestCase {
             FolderInfo info = (FolderInfo)
                 Native.loadLibrary("shell32", FolderInfo.class);
             char[] buf = new char[FolderInfo.MAX_PATH];
-            int flags = 0;
-            int result = info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
+            //int result =
+                    info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
                                                null, 0, buf);
             path = Native.toString(buf);
 
