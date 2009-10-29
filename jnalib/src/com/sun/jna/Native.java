@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.net.URLDecoder;
+import java.net.URISyntaxException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
@@ -682,7 +682,8 @@ public final class Native {
     }
 
     /**
-     * Extracts and loads the JNA stub library from jna.jar
+     * Attempts to load the native library resource from the filesystem,
+     * extracting the JNA stub library from jna.jar if not already available.
      */
     private static void loadNativeLibraryFromJar() {
         String libname = System.mapLibraryName("jnidispatch");
@@ -691,8 +692,10 @@ public final class Native {
         String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
         URL url = Native.class.getResource(resourceName);
                 
-        // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual .dylib extension
-        if (url == null && Platform.isMac() && resourceName.endsWith(".dylib")) {
+        // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual
+        // .dylib extension 
+        if (url == null && Platform.isMac()
+            && resourceName.endsWith(".dylib")) {
             resourceName = resourceName.substring(0, resourceName.lastIndexOf(".dylib")) + ".jnilib";
             url = Native.class.getResource(resourceName);
         }
@@ -703,8 +706,15 @@ public final class Native {
     
         File lib = null;
         if (url.getProtocol().toLowerCase().equals("file")) {
-            // NOTE: use older API for 1.3 compatibility
-            lib = new File(URLDecoder.decode(url.getPath()));
+            try {
+                lib = new File(url.toURI());
+            }
+            catch(URISyntaxException e) {
+                lib = new File(url.getPath());
+            }
+            if (!lib.exists()) {
+                throw new Error("File URL " + url + " could not be properly decoded");
+            }
         }
         else {
             InputStream is = Native.class.getResourceAsStream(resourceName);
