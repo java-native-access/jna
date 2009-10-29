@@ -275,6 +275,7 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-amd64.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ia64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/openbsd-i386.jar" overwrite="true"/>
@@ -570,6 +571,9 @@
       <zipfileset src="${dist}/linux-amd64.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-amd64"/>
+      <zipfileset src="${dist}/linux-ia64.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-ia64"/>
       <zipfileset src="${dist}/sunos-x86.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
