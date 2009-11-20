@@ -59,8 +59,10 @@ public class Pointer {
     /** Derived class must assign peer pointer value. */
     Pointer() { }
     
-    /** Create from native pointer. */
-    Pointer(long peer) {
+    /** Create from native pointer.  Don't use this unless you know what
+     * you're doing.
+     */
+    public Pointer(long peer) {
         this.peer = peer;
     }
 
