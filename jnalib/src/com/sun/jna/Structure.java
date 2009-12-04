@@ -18,6 +18,7 @@ import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -79,22 +80,36 @@ public abstract class Structure {
     public interface ByReference { }
 
     private static class MemberOrder {
+        private static final String[] FIELDS = {
+            "first", "second", "middle", "penultimate", "last",
+        };
         public int first;
+        public int second;
         public int middle;
+        public int penultimate;
         public int last;
     }
 
     private static final boolean REVERSE_FIELDS;
-    static boolean REQUIRES_FIELD_ORDER;
+    private static final boolean REQUIRES_FIELD_ORDER;
 
     static final boolean isPPC;
     static final boolean isSPARC;
 
     static {
-        // IBM and JRockit store fields in reverse order; check for it
+        // Check for predictable field order; IBM and JRockit store fields in
+        // reverse order; Excelsior JET requires explicit order
         Field[] fields = MemberOrder.class.getFields();
-        REVERSE_FIELDS = "last".equals(fields[0].getName());
-        REQUIRES_FIELD_ORDER = !"middle".equals(fields[1].getName());
+        List names = new ArrayList();
+        for(int i=0;i < fields.length;i++) {
+            names.add(fields[i].getName());
+        }
+        List expected = Arrays.asList(MemberOrder.FIELDS);
+        List reversed = new ArrayList(expected);
+        Collections.reverse(reversed);
+
+        REVERSE_FIELDS = names.equals(reversed);
+        REQUIRES_FIELD_ORDER = !(names.equals(expected) || REVERSE_FIELDS);
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
@@ -610,6 +625,12 @@ public abstract class Structure {
         }
     }
 
+    private boolean hasFieldOrder() {
+        synchronized(this) {
+            return fieldOrder != null;
+        }
+    }
+
     protected List getFieldOrder() {
         synchronized(this) {
             if (fieldOrder == null) {
@@ -624,20 +645,58 @@ public abstract class Structure {
      */
     protected void setFieldOrder(String[] fields) {
         getFieldOrder().addAll(Arrays.asList(fields));
+        // Force recalculation of size/field layout
+        this.size = CALCULATE_SIZE;
+        if (this.memory instanceof AutoAllocated) {
+            this.memory = null;
+        }
     }
 
     /** Sort the structure fields according to the given array of names. */
-    protected void sortFields(Field[] fields, String[] names) {
-        for (int i=0;i < names.length;i++) {
-            for (int f=i;f < fields.length;f++) {
-                if (names[i].equals(fields[f].getName())) {
-                    Field tmp = fields[f];
-                    fields[f] = fields[i];
-                    fields[i] = tmp;
+    protected void sortFields(List fields, List names) {
+        for (int i=0;i < names.size();i++) {
+            String name = (String)names.get(i);
+            for (int f=0;f < fields.size();f++) {
+                Field field = (Field)fields.get(f);
+                if (name.equals(field.getName())) {
+                    Collections.swap(fields, i, f);
                     break;
                 }
             }
         }
+    }
+
+    protected List getFields(boolean force) {
+        // Restrict to valid fields
+        List flist = new ArrayList();
+        for (Class cls = getClass();
+             !cls.equals(Structure.class);
+             cls = cls.getSuperclass()) {
+            List classFields = new ArrayList();
+            Field[] fields = cls.getDeclaredFields();
+            for (int i=0;i < fields.length;i++) {
+                int modifiers = fields[i].getModifiers();
+                if (Modifier.isStatic(modifiers)
+                    || !Modifier.isPublic(modifiers))
+                    continue;
+                classFields.add(fields[i]);
+            }
+            if (REVERSE_FIELDS) {
+                Collections.reverse(classFields);
+            }
+            flist.addAll(0, classFields);
+        }
+        if (REQUIRES_FIELD_ORDER || hasFieldOrder()) {
+            List fieldOrder = getFieldOrder();
+            if (fieldOrder.size() < flist.size()) {
+                if (force) {
+                    throw new Error("This VM does not store fields in a predictable order; you must use Structure.setFieldOrder to explicitly indicate the field order: " + System.getProperty("java.vendor") + ", " + System.getProperty("java.version"));
+                }
+                return null;
+            }
+            sortFields(flist, fieldOrder);
+        }
+        return flist;
     }
 
     /** Calculate the amount of native memory required for this structure.
@@ -658,38 +717,14 @@ public abstract class Structure {
 
         structAlignment = 1;
         int calculatedSize = 0;
-        Field[] fields = getClass().getFields();
-        // Restrict to valid fields
-        List flist = new ArrayList();
-        for (int i=0;i < fields.length;i++) {
-            int modifiers = fields[i].getModifiers();
-            if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers))
-                continue;
-            flist.add(fields[i]);
-        }
-        fields = (Field[])flist.toArray(new Field[flist.size()]);
-
-        if (REVERSE_FIELDS) {
-            for (int i=0;i < fields.length/2;i++) {
-                int idx = fields.length-1-i;
-                Field tmp = fields[i];
-                fields[i] = fields[idx];
-                fields[idx] = tmp;
-            }
-        }
-        else if (REQUIRES_FIELD_ORDER) {
-            List fieldOrder = getFieldOrder();
-            if (fieldOrder.size() < fields.length) {
-                if (force) {
-                    throw new Error("This VM does not store fields in a predictable order; you must use setFieldOrder: " + System.getProperty("java.vendor") + ", " + System.getProperty("java.version"));
-                }
-                return CALCULATE_SIZE;
-            }
-            sortFields(fields, (String[])fieldOrder.toArray(new String[fieldOrder.size()]));
+        List fields = getFields(force);
+        if (fields == null) {
+            return CALCULATE_SIZE;
         }
 
-        for (int i=0; i<fields.length; i++) {
-            Field field = fields[i];
+        boolean firstField = true;
+        for (Iterator i=fields.iterator();i.hasNext();firstField=false) {
+            Field field = (Field)i.next();
             int modifiers = field.getModifiers();
 
             Class type = field.getType();
@@ -773,7 +808,7 @@ public abstract class Structure {
             }
             try {
                 structField.size = Native.getNativeSize(nativeType, value);
-                fieldAlignment = getNativeAlignment(nativeType, value, i==0);
+                fieldAlignment = getNativeAlignment(nativeType, value, firstField);
             }
             catch(IllegalArgumentException e) {
                 // Might simply not yet have a type mapper set

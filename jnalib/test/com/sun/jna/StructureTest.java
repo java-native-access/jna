@@ -15,6 +15,8 @@ package com.sun.jna;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -975,36 +977,66 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong field value (2)", 0, ts.uninitialized.longValue());
     }
 
-    public void testStructureFieldOrder() {
-        Structure.REQUIRES_FIELD_ORDER = true;
-        try {
-            class TestStructure extends Structure {
-                public int one = 1;
-                public int three = 3;
-                public int two = 2;
-                {
-                    setFieldOrder(new String[] { "one", "two", "three" });
-                }
-            }
-            class DerivedTestStructure extends TestStructure {
-                public int four = 4;
-                {
-                    setFieldOrder(new String[] { "four" });
-                }
-            }
+    public void testInheritedStructureFieldOrder() {
+        class TestStructure extends Structure {
+            public int first = 1;
+        }
+        class TestStructureSub extends TestStructure {
+            public int second = 2;
+        }
+        TestStructureSub s = new TestStructureSub();
+        assertEquals("Wrong size", 8, s.size());
+        s.write();
+        assertEquals("Wrong first field: " + s,
+                     s.first, s.getPointer().getInt(0));
+        assertEquals("Wrong second field: " + s,
+                     s.second, s.getPointer().getInt(4));
+    }
 
-            DerivedTestStructure s = new DerivedTestStructure();
-            DerivedTestStructure s2 = new DerivedTestStructure();
-            s.write();
-            s2.write();
-            assertEquals("Wrong first field", 1, s.getPointer().getInt(0));
-            assertEquals("Wrong second field", 2, s.getPointer().getInt(4));
-            assertEquals("Wrong third field", 3, s.getPointer().getInt(8));
-            assertEquals("Wrong derived field", 4, s.getPointer().getInt(12));
+    public void testExplicitStructureFieldOrder() {
+        final String[] ORDER = new String[] { "one", "two", "three" };
+        final String[] ORDER2 = new String[] { "one", "two", "three", "four" };
+        class TestStructure extends Structure {
+            public int one = 1;
+            public int three = 3;
+            public int two = 2;
+            {
+                setFieldOrder(ORDER);
+            }
+            public List getFieldOrder() {
+                return super.getFieldOrder();
+            }
         }
-        finally {
-            Structure.REQUIRES_FIELD_ORDER = false;
+        class DerivedTestStructure extends TestStructure {
+            public int four = 4;
+            {
+                setFieldOrder(new String[] { "four" });
+            }
         }
+        
+        TestStructure s = new TestStructure();
+        assertEquals("Wrong field order",
+                     Arrays.asList(ORDER), s.getFieldOrder());
+        s.write();
+        assertEquals("Wrong first field: " + s,
+                     s.one, s.getPointer().getInt(0));
+        assertEquals("Wrong second field: " + s,
+                     s.two, s.getPointer().getInt(4));
+        assertEquals("Wrong third field: " + s,
+                     s.three, s.getPointer().getInt(8));
+
+        DerivedTestStructure s2 = new DerivedTestStructure();
+        assertEquals("Wrong field order",
+                     Arrays.asList(ORDER2), s2.getFieldOrder());
+        s2.write();
+        assertEquals("Wrong first field: " + s2,
+                     s2.one, s2.getPointer().getInt(0));
+        assertEquals("Wrong second field: " + s2,
+                     s2.two, s2.getPointer().getInt(4));
+        assertEquals("Wrong third field: " + s2,
+                     s2.three, s2.getPointer().getInt(8));
+        assertEquals("Wrong derived field: " + s2,
+                     s2.four, s2.getPointer().getInt(12));
     }
 
     public void testCustomTypeMapper() {

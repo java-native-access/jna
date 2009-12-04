@@ -34,7 +34,7 @@
   <!-- JNA library release version -->            
   <property name="jna.major" value="3"/>
   <property name="jna.minor" value="2"/>
-  <property name="jna.revision" value="4"/>
+  <property name="jna.revision" value="5"/>
   <property name="jna.build" value="${build.number}"/>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->
@@ -209,12 +209,23 @@
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
         <section name="com/sun/jna/">
+          <attribute name="Manifest-Version" value="1.0"/>
           <attribute name="Implementation-Title" value="${impl.title}"/>
           <attribute name="Implementation-Vendor" value="${vendor}"/>
           <attribute name="Implementation-Version" value="${impl.version}"/>
           <attribute name="Specification-Title" value="${spec.title}"/>
           <attribute name="Specification-Vendor" value="${spec.vendor}"/>
           <attribute name="Specification-Version" value="${spec.version}"/>
+          <!-- OSGi Bundle attributes -->
+          <attribute name="Bundle-ManifestVersion" value="2"/>
+          <attribute name="Bundle-Name" value="jna"/>
+          <attribute name="Bundle-Description" value="JNA Library"/>
+          <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
+          <attribute name="Bundle-Version" value="${spec.version}"/>
+          <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
+          <attribute name="Bundle-Vendor" value="${vendor}"/>
+          <attribute name="Bundle-ActivationPolicy" value="lazy"/>
+          <attribute name="Export-Package" value="com.sun.jna*"/>
         </section>
       </manifest>
       <fileset dir="${classes}" excludes="${jar.omitted}">
@@ -225,8 +236,16 @@
   <target name="examples" depends="jar,native">
     <jar jarfile="${build}/examples.jar">
       <manifest>
+        <attribute name="Manifest-Version" value="1.0"/>
         <attribute name="Class-Path" value="jna.jar"/>
         <attribute name="Main-Class" value="com.sun.jna.examples.ShapedWindowDemo"/>
+        <!-- OSGi Bundle attributes -->
+        <attribute name="Bundle-ManifestVersion" value="2"/>
+        <attribute name="Bundle-Name" value="jna-examples"/>
+        <attribute name="Bundle-Description" value="JNA Examples and Utilities"/>
+        <attribute name="Bundle-SymbolicName" value="com.sun.jna.examples"/>
+        <attribute name="Export-Package" value="com.sun.jna.examples*"/>
+        <attribute name="Import-Package" value="com.sun.jna*"/>
       </manifest>
       <fileset dir="${src}" includes="**/examples/**/*.png"/>
       <fileset dir="${classes}" includes="**/examples/*,**/examples/**/*"/>
