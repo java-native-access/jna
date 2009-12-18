@@ -1206,4 +1206,19 @@ public class StructureTest extends TestCase {
         assertSame("Nested ByReference structure field should reuse existing value",
                    value, s.next.next);
     }
+
+    public void testAvoidMemoryAllocationInPointerCTOR() {
+        class TestStructure extends Structure {
+            public int field;
+            public TestStructure(Pointer p) {
+                super(p);
+            }
+            protected Memory autoAllocate(int size) {
+                fail("Memory should not be auto-allocated");
+                return null;
+            }
+        }
+        Memory p = new Memory(4);
+        Structure s = new TestStructure(p);
+    }
 }

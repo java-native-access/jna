@@ -124,6 +124,13 @@ public abstract class Structure {
     /** validated for w32/msvc; align on field size */
     public static final int ALIGN_MSVC = 3;
 
+    /** Align to a 2-byte boundary. */
+    //public static final int ALIGN_2 = 4; 
+    /** Align to a 4-byte boundary. */
+    //public static final int ALIGN_4 = 5;
+    /** Align to an 8-byte boundary. */
+    //public static final int ALIGN_8 = 6;
+
     private static final int MAX_GNUC_ALIGNMENT = isSPARC ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
 
@@ -218,6 +225,10 @@ public abstract class Structure {
         }
     }
 
+    protected Memory autoAllocate(int size) {
+        return new AutoAllocated(size);
+    }
+
     /** Set the memory used by this structure.  This method is used to
      * indicate the given structure is nested within another or otherwise
      * overlaid on some other memory block and thus does not own its own
@@ -236,6 +247,9 @@ public abstract class Structure {
         // Invoking size() here is important when this method is invoked
         // from the ctor, to ensure fields are properly scanned and allocated
         try {
+            // Set the structure's memory field temporarily to avoid
+            // auto-allocating memory in the call to size()
+            this.memory = m;
             this.memory = m.share(offset, size());
             this.array = null;
         }
@@ -275,9 +289,7 @@ public abstract class Structure {
         if (size != CALCULATE_SIZE) {
             if (this.memory == null 
                 || this.memory instanceof AutoAllocated) {
-                this.memory = new AutoAllocated(size);
-                // Always clear new structure memory
-                this.memory.clear(size);
+                this.memory = autoAllocate(size);
             }
             this.size = size;
         }
@@ -1006,14 +1018,12 @@ public abstract class Structure {
      */
     public Structure[] toArray(Structure[] array) {
         ensureAllocated();
-        if (memory instanceof AutoAllocated) {
+        if (this.memory instanceof AutoAllocated) {
             // reallocate if necessary
-            Memory m = (Memory)memory;
+            Memory m = (Memory)this.memory;
             int requiredSize = array.length * size();
             if (m.getSize() < requiredSize) {
-                m = new AutoAllocated(requiredSize);
-                m.clear();
-                useMemory(m);
+                useMemory(autoAllocate(requiredSize));
             }
         }
         array[0] = this;
@@ -1324,6 +1334,8 @@ public abstract class Structure {
     private class AutoAllocated extends Memory {
         public AutoAllocated(int size) {
             super(size);
+            // Always clear new structure memory
+            clear();
         }
     }
 
