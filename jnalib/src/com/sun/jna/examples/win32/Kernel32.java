@@ -13,6 +13,7 @@
 package com.sun.jna.examples.win32;
 
 import java.nio.Buffer;
+import java.util.Date;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
