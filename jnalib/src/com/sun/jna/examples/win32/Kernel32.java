@@ -298,7 +298,6 @@ public interface Kernel32 extends W32API {
         return toDate().getTime();
       }
 
-      @Override
       public String toString() {
         return super.toString() + ": " + toDate().toString(); //$NON-NLS-1$
       }
