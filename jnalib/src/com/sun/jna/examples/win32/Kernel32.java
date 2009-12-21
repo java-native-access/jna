@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.examples.win32;
 
@@ -22,7 +22,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 /** Definition (incomplete) of <code>kernel32.dll</code>. */
 public interface Kernel32 extends W32API {
-    
+
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
 
@@ -55,25 +55,25 @@ public interface Kernel32 extends W32API {
     int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x0100;
     int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
     int FORMAT_MESSAGE_IGNORE_INSERTS = 0x200;
-    int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId, 
-                      int dwLanguageId, PointerByReference lpBuffer, 
+    int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId,
+                      int dwLanguageId, PointerByReference lpBuffer,
                       int nSize, Pointer va_list);
-    int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId, 
-                      int dwLanguageId, Buffer lpBuffer, 
+    int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId,
+                      int dwLanguageId, Buffer lpBuffer,
                       int nSize, Pointer va_list);
 
     int FILE_LIST_DIRECTORY = 0x00000001;
-    
+
     int FILE_SHARE_READ = 1;
     int FILE_SHARE_WRITE = 2;
     int FILE_SHARE_DELETE = 4;
-    
+
     int CREATE_NEW =         1;
     int CREATE_ALWAYS =      2;
     int OPEN_EXISTING =      3;
     int OPEN_ALWAYS =        4;
     int TRUNCATE_EXISTING =  5;
-    
+
     int FILE_FLAG_WRITE_THROUGH =        0x80000000;
     int FILE_FLAG_OVERLAPPED =           0x40000000;
     int FILE_FLAG_NO_BUFFERING =         0x20000000;
@@ -107,7 +107,7 @@ public interface Kernel32 extends W32API {
     int DRIVE_REMOTE = 4;
     int DRIVE_CDROM = 5;
     int DRIVE_RAMDISK = 6;
-    
+
     int GENERIC_WRITE = 0x40000000;
     class SECURITY_ATTRIBUTES extends Structure {
         public int nLength = size();
@@ -120,23 +120,23 @@ public interface Kernel32 extends W32API {
                       HANDLE hTemplateFile);
     boolean CreateDirectory();
 
-    HANDLE CreateIoCompletionPort(HANDLE FileHandle, 
+    HANDLE CreateIoCompletionPort(HANDLE FileHandle,
                                   HANDLE ExistingCompletionPort,
-                                  Pointer CompletionKey, 
+                                  Pointer CompletionKey,
                                   int NumberOfConcurrentThreads);
     int INFINITE = 0xFFFFFFFF;
-    boolean GetQueuedCompletionStatus(HANDLE CompletionPort, 
+    boolean GetQueuedCompletionStatus(HANDLE CompletionPort,
                                       IntByReference lpNumberOfBytes,
                                       ByReference lpCompletionKey,
-                                      PointerByReference lpOverlapped, 
+                                      PointerByReference lpOverlapped,
                                       int dwMilliseconds);
-    
-    boolean PostQueuedCompletionStatus(HANDLE CompletionPort, 
+
+    boolean PostQueuedCompletionStatus(HANDLE CompletionPort,
                                        int dwNumberOfBytesTransferred,
-                                       Pointer dwCompletionKey, 
+                                       Pointer dwCompletionKey,
                                        OVERLAPPED lpOverlapped);
     int WaitForSingleObject(HANDLE hHandle, int dwMilliseconds);
-    boolean DuplicateHandle(HANDLE hSourceProcessHandle, 
+    boolean DuplicateHandle(HANDLE hSourceProcessHandle,
                             HANDLE hSourceHandle,
                             HANDLE hTargetProcessHandle,
                             HANDLEByReference lpTargetHandle,
@@ -144,13 +144,13 @@ public interface Kernel32 extends W32API {
                             boolean bInheritHandle,
                             int dwOptions);
     boolean CloseHandle(HANDLE hObject);
-    
+
     int FILE_ACTION_ADDED = 1;
     int FILE_ACTION_REMOVED = 2;
     int FILE_ACTION_MODIFIED = 3;
     int FILE_ACTION_RENAMED_OLD_NAME = 4;
     int FILE_ACTION_RENAMED_NEW_NAME = 5;
-    
+
     int FILE_NOTIFY_CHANGE_FILE_NAME = 1;
     int FILE_NOTIFY_CHANGE_DIR_NAME = 2;
     int FILE_NOTIFY_CHANGE_NAME = 3;
@@ -174,12 +174,12 @@ public interface Kernel32 extends W32API {
         public int FileNameLength;
         // filename is not nul-terminated, so we can't use a String/WString
         public char[] FileName = new char[1];
-        
-        private FILE_NOTIFY_INFORMATION() { } 
+
+        private FILE_NOTIFY_INFORMATION() { }
         public FILE_NOTIFY_INFORMATION(int size) {
             if (size < size())
                 throw new IllegalArgumentException("Size must greater than "
-                                                   + size() + ", requested " 
+                                                   + size() + ", requested "
                                                    + size);
             allocateMemory(size);
         }
@@ -215,26 +215,133 @@ public interface Kernel32 extends W32API {
     interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
         void callback(int errorCode, int nBytesTransferred, OVERLAPPED overlapped);
     }
-    /** NOTE: only exists in unicode form (W suffix).  Define this method 
-     * explicitly with the W suffix to avoid inadvertent calls in ASCII mode. 
+    /** NOTE: only exists in unicode form (W suffix).  Define this method
+     * explicitly with the W suffix to avoid inadvertent calls in ASCII mode.
      */
-    boolean ReadDirectoryChangesW(HANDLE directory, 
-                                  FILE_NOTIFY_INFORMATION info, 
+    boolean ReadDirectoryChangesW(HANDLE directory,
+                                  FILE_NOTIFY_INFORMATION info,
                                   int length,
-                                  boolean watchSubtree, 
+                                  boolean watchSubtree,
                                   int notifyFilter,
                                   IntByReference bytesReturned,
-                                  OVERLAPPED overlapped, 
+                                  OVERLAPPED overlapped,
                                   OVERLAPPED_COMPLETION_ROUTINE completionRoutine);
-    
+
     /** ASCII version.  Use {@link Native#toString(byte[])} to obtain the short
-     * path from the <code>byte</code> array.  
-     * Use only if <code>w32.ascii==true</code>. 
+     * path from the <code>byte</code> array.
+     * Use only if <code>w32.ascii==true</code>.
      */
     int GetShortPathName(String lpszLongPath, byte[] lpdzShortPath, int cchBuffer);
-    
+
     /** Unicode version (the default).  Use {@link Native#toString(char[])} to
-     * obtain the short path from the <code>char</code> array. 
+     * obtain the short path from the <code>char</code> array.
      */
     int GetShortPathName(String lpszLongPath, char[] lpdzShortPath, int cchBuffer);
+
+    /**
+     *
+     * Conversion code in this class Copyright 2002-2004 Apache Software Foundation.
+     * @author Rainer Klute (klute@rainer-klute.de) for the Apache Software Foundation (org.apache.poi.hpsf)
+     */
+    static class FILETIME extends Structure {
+      public int dwLowDateTime;
+      public int dwHighDateTime;
+
+      /**
+       * <p>The difference between the Windows epoch (1601-01-01
+       * 00:00:00) and the Unix epoch (1970-01-01 00:00:00) in
+       * milliseconds: 11644473600000L. (Use your favorite spreadsheet
+       * program to verify the correctness of this value. By the way,
+       * did you notice that you can tell from the epochs which
+       * operating system is the modern one? :-))</p>
+       */
+      private static final long EPOCH_DIFF = 11644473600000L;
+
+      /**
+       * <p>Converts a Windows FILETIME into a {@link Date}. The Windows
+       * FILETIME structure holds a date and time associated with a
+       * file. The structure identifies a 64-bit integer specifying the
+       * number of 100-nanosecond intervals which have passed since
+       * January 1, 1601. This 64-bit value is split into the two double
+       * words stored in the structure.</p>
+       *
+       * @param high The higher double word of the FILETIME structure.
+       * @param low The lower double word of the FILETIME structure.
+       * @return The Windows FILETIME as a {@link Date}.
+       */
+      public static Date filetimeToDate(final int high, final int low) {
+        final long filetime = (long) high << 32 | low & 0xffffffffL;
+        final long ms_since_16010101 = filetime / (1000 * 10);
+        final long ms_since_19700101 = ms_since_16010101 - EPOCH_DIFF;
+        return new Date(ms_since_19700101);
+      }
+
+      /**
+       * <p>Converts a {@link Date} into a filetime.</p>
+       *
+       * @param date The date to be converted
+       * @return The filetime
+       *
+       * @see #filetimeToDate
+       */
+      public static long dateToFileTime(final Date date) {
+        final long ms_since_19700101 = date.getTime();
+        final long ms_since_16010101 = ms_since_19700101 + EPOCH_DIFF;
+        return ms_since_16010101 * 1000 * 10;
+      }
+
+      public Date toDate() {
+        return filetimeToDate(dwHighDateTime, dwLowDateTime);
+      }
+
+      public long toLong() {
+        return toDate().getTime();
+      }
+
+      @Override
+      public String toString() {
+        return super.toString() + ": " + toDate().toString(); //$NON-NLS-1$
+      }
+    }
+
+    int LMEM_ZEROINIT = 0x0040;
+    int LMEM_FIXED = 0x0000;
+    int LPTR = LMEM_FIXED | LMEM_ZEROINIT;
+
+    Pointer LocalAlloc(int type, int cbInput);
+
+    boolean WriteFile(HANDLE hFile, byte[] lpBuffer, int nNumberOfBytesToWrite,
+                      IntByReference lpNumberOfBytesWritten,
+                      OVERLAPPED lpOverlapped);
+
+    HANDLE CreateEvent(SECURITY_ATTRIBUTES lpEventAttributes,
+                       boolean bManualReset, boolean bInitialState,
+                       String lpName);
+
+    boolean SetEvent(HANDLE hEvent);
+
+    boolean PulseEvent(HANDLE hEvent);
+
+    int PAGE_READONLY = 0x02;
+    int PAGE_READWRITE = 0x04;
+    int PAGE_WRITECOPY = 0x08;
+    int PAGE_EXECUTE = 0x10;
+    int PAGE_EXECUTE_READ = 0x20;
+    int PAGE_EXECUTE_READWRITE = 0x40;
+
+    HANDLE CreateFileMapping(HANDLE hFile, SECURITY_ATTRIBUTES lpAttributes,
+                             int flProtect, int dwMaximumSizeHigh,
+                             int dwMaximumSizeLow, String lpName);
+
+    int SECTION_QUERY = 0x0001;
+    int SECTION_MAP_WRITE = 0x0002;
+    int SECTION_MAP_READ = 0x0004;
+    int SECTION_MAP_EXECUTE = 0x0008;
+    int SECTION_EXTEND_SIZE = 0x0010;
+
+    Pointer MapViewOfFile(HANDLE hFileMappingObject, int dwDesiredAccess,
+                          int dwFileOffsetHigh, int dwFileOffsetLow,
+                          int dwNumberOfBytesToMap);
+
+    boolean UnmapViewOfFile(Pointer lpBaseAddress);
 }
