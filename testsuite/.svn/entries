@@ -1,15 +1,15 @@
 10
 
 dir
-152280
-svn://gcc.gnu.org/svn/gcc/trunk/libffi/testsuite
-svn://gcc.gnu.org/svn/gcc
+155449
+svn+ssh://green@gcc.gnu.org/svn/gcc/trunk/libffi/testsuite
+svn+ssh://green@gcc.gnu.org/svn/gcc
 
 
 
-2009-08-22T13:22:20.806489Z
-151014
-rwild
+2009-12-15T23:55:56.203674Z
+155277
+danglin
 
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2009-09-10T17:50:58.000000Z
-a850c31dce6bb3dab9a9c6eeed45b473
-2009-08-22T13:22:20.806489Z
-151014
+2009-12-20T06:01:58.004568Z
+df80bf4b915a2a2ea84b85d1004cd2b6
+2009-12-05T17:18:53.298892Z
+155012
 rwild
 
 
@@ -58,7 +58,7 @@ rwild
 
 
 
-12288
+12268
 
 config
 dir
@@ -75,7 +75,7 @@ file
 
 
 
-2009-04-24T17:46:16.000000Z
+2009-12-20T06:01:58.004568Z
 04e06926cecf1198af45894dc46ffd39
 2003-09-04T14:49:22.000000Z
 71069

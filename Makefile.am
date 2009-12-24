@@ -80,6 +80,8 @@ AM_MAKEFLAGS = \
 
 MAKEOVERRIDES=
 
+ACLOCAL_AMFLAGS=$(ACLOCAL_AMFLAGS) -I m4
+
 lib_LTLIBRARIES = libffi.la
 noinst_LTLIBRARIES = libffi_convenience.la
 

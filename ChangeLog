@@ -1,3 +1,134 @@
+2009-12-21  Andreas Tobler  <a.tobler@schweiz.org>
+
+	* configure.ac: Make i?86 build on FreeBSD and OpenBSD.
+	* configure: Regenerate.
+
+2009-12-15  John David Anglin  <dave.anglin@nrc-cnrc.gc.ca>
+
+	* testsuite/libffi.call/ffitest.h: Define PRIuPTR on PA HP-UX.
+
+2009-12-13  John David Anglin  <dave.anglin@nrc-cnrc.gc.ca>
+
+	* src/pa/ffi.c (ffi_closure_inner_pa32): Handle FFI_TYPE_LONGDOUBLE
+	type on HP-UX.
+
+2009-12-11  Eric Botcazou  <ebotcazou@adacore.com>
+
+	* src/sparc/ffi.c (ffi_closure_sparc_inner_v9): Properly align 'long
+	double' arguments.
+
+2009-12-11  Eric Botcazou  <ebotcazou@adacore.com>
+
+	* testsuite/libffi.call/ffitest.h: Define PRIuPTR on Solaris < 10.
+
+2009-12-10  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	PR libffi/40700
+	* src/closures.c [X86_64 && __sun__ && __svr4__]
+	(FFI_MMAP_EXEC_WRIT): Define.
+
+2009-12-08  David Daney  <ddaney@caviumnetworks.com>
+
+	* testsuite/libffi.call/stret_medium.c: Remove xfail for mips*-*-*
+	* testsuite/libffi.call/cls_align_longdouble_split2.c: Same.
+	* testsuite/libffi.call/stret_large.c: Same.
+	* testsuite/libffi.call/cls_align_longdouble_split.c: Same.
+	* testsuite/libffi.call/stret_large2.c: Same.
+	* testsuite/libffi.call/stret_medium2.c: Same.
+
+2009-12-07  David Edelsohn  <edelsohn@gnu.org>
+
+	* src/powerpc/aix_closure.S (libffi_closure_ASM): Fix tablejump
+	typo.
+
+2009-12-05  David Edelsohn  <edelsohn@gnu.org>
+
+	* src/powerpc/aix.S: Update AIX32 code to be consistent with AIX64
+	code.
+	* src/powerpc/aix_closure.S: Same.
+
+2009-12-05  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* Makefile.in: Regenerate.
+	* configure: Regenerate.
+	* include/Makefile.in: Regenerate.
+	* man/Makefile.in: Regenerate.
+	* testsuite/Makefile.in: Regenerate.
+
+2009-12-04  David Edelsohn  <edelsohn@gnu.org>
+
+	* src/powerpc/aix_closure.S: Reorganize 64-bit code to match
+        linux64_closure.S.
+
+2009-12-04  Uros Bizjak  <ubizjak@gmail.com>
+
+	PR libffi/41908
+	* src/x86/ffi64.c (classify_argument): Update from
+	gcc/config/i386/i386.c.
+	(ffi_closure_unix64_inner): Do not use the address of two consecutive
+	SSE registers directly.
+	* testsuite/libffi.call/cls_dbls_struct.c (main): Remove xfail
+	for x86_64 linux targets.
+
+2009-12-04  David Edelsohn  <edelsohn@gnu.org>
+
+	* src/powerpc/ffi_darwin.c (ffi_closure_helper_DARWIN): Increment
+	pfr for long double split between fpr13 and stack.
+
+2009-12-03  David Edelsohn  <edelsohn@gnu.org>
+
+	* src/powerpc/ffi_darwin.c (ffi_prep_args): Increment next_arg and
+	fparg_count twice for long double.
+
+2009-12-03  David Edelsohn  <edelsohn@gnu.org>
+
+	PR libffi/42243
+	* src/powerpc/ffi_darwin.c (ffi_prep_args): Remove extra parentheses.
+
+2009-12-03  Uros Bizjak  <ubizjak@gmail.com>
+
+	* testsuite/libffi.call/cls_longdouble_va.c (main): Fix format string.
+	Remove xfails for x86 linux targets.
+
+2009-12-02  David Edelsohn  <edelsohn@gnu.org>
+
+	* src/powerpc/ffi_darwin.c (ffi_prep_args): Fix typo in INT64
+	case.
+
+2009-12-01  David Edelsohn  <edelsohn@gnu.org>
+
+	* src/powerpc/aix.S (ffi_call_AIX): Convert to more standard
+	register usage.  Call ffi_prep_args directly.  Add long double
+	return value support.
+	* src/powerpc/ffi_darwin.c (ffi_prep_args): Double arg increment
+	applies to FFI_TYPE_DOUBLE.  Correct fpr_base increment typo.
+	Separate FFI_TYPE_SINT32 and FFI_TYPE_UINT32 cases.
+	(ffi_prep_cif_machdep): Only 16 byte stack alignment in 64 bit
+	mode.
+	(ffi_closure_helper_DARWIN): Remove nf and ng counters.  Move temp
+	into case.
+	* src/powerpc/aix_closure.S: Maintain 16 byte stack alignment.
+	Allocate result area between params and FPRs.
+
+2009-11-30  David Edelsohn  <edelsohn@gnu.org>
+
+	PR target/35484
+	* src/powerpc/ffitarget.h (POWERPC64): Define for PPC64 Linux and
+	AIX64.
+	* src/powerpc/aix.S: Implement AIX64 version.
+	* src/powerpc/aix_closure.S: Implement AIX64 version.
+	(ffi_closure_ASM): Use extsb, lha and displament addresses.
+	* src/powerpc/ffi_darwin.c (ffi_prep_args): Implement AIX64
+	support.
+	(ffi_prep_cif_machdep): Same.
+	(ffi_call): Same.
+	(ffi_closure_helper_DARWIN): Same.
+
+2009-11-02  Andreas Tobler  <a.tobler@schweiz.org>
+
+	PR libffi/41908
+	* testsuite/libffi.call/testclosure.c: New test.
+
 2009-09-28  Kai Tietz  <kai.tietz@onevision.com>
 
 	* src/x86/win64.S (_ffi_call_win64 stack): Remove for gnu

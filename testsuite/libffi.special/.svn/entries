@@ -1,9 +1,9 @@
 10
 
 dir
-152280
-svn://gcc.gnu.org/svn/gcc/trunk/libffi/testsuite/libffi.special
-svn://gcc.gnu.org/svn/gcc
+155449
+svn+ssh://green@gcc.gnu.org/svn/gcc/trunk/libffi/testsuite/libffi.special
+svn+ssh://green@gcc.gnu.org/svn/gcc
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2009-04-24T17:46:17.000000Z
+2009-12-20T06:01:58.001555Z
 185d0795017fbbe253a13db8e34085f9
 2007-08-10T15:38:23.042961Z
 127337
@@ -66,7 +66,7 @@ file
 
 
 
-2009-06-20T15:53:37.000000Z
+2009-12-20T06:01:58.002569Z
 c5774898ee6afc81a2f2f50ef5a63b69
 2009-06-12T15:57:58.721771Z
 148433
@@ -100,7 +100,7 @@ file
 
 
 
-2009-04-24T17:46:17.000000Z
+2009-12-20T06:01:58.002569Z
 92f1548985e720c30797e9e403807475
 2009-04-09T15:00:19.611803Z
 145841
@@ -134,7 +134,7 @@ file
 
 
 
-2009-06-20T15:53:37.000000Z
+2009-12-20T06:01:58.002569Z
 bf9da8a285fef56aae7657c0982b9b8b
 2009-06-16T10:15:31.432585Z
 148521

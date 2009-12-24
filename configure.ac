@@ -1,8 +1,8 @@
 dnl Process this with autoconf to create configure
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.9rc1], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.9rc4], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -27,6 +27,7 @@ AC_SUBST(CFLAGS)
 AM_PROG_AS
 AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
+AC_CONFIG_MACRO_DIR([m4])
 
 AM_MAINTAINER_MODE
 
@@ -49,16 +50,16 @@ case "$host" in
 	TARGET=ARM; TARGETDIR=arm
 	;;
 
-  avr32-*-*)
-	TARGET=AVR32; TARGETDIR=avr32
-	;;
-
   amd64-*-freebsd*)
 	TARGET=X86_64; TARGETDIR=x86
   	;;
 
   amd64-*-freebsd*)
 	TARGET=X86_64; TARGETDIR=x86
+	;;
+
+  avr32*-*-*)
+	TARGET=AVR32; TARGETDIR=avr32
 	;;
 
   cris-*-*)

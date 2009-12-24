@@ -54,6 +54,20 @@
 #define PRIuLL "llu"
 #endif
 
+/* PA HP-UX kludge.  */
+#if defined(__hppa__) && defined(__hpux__) && !defined(PRIuPTR)
+#define PRIuPTR "lu"
+#endif
+
+/* Solaris < 10 kludge.  */
+#if defined(__sun__) && defined(__svr4__) && !defined(PRIuPTR)
+#if defined(__arch64__) || defined (__x86_64__)
+#define PRIuPTR "lu"
+#else
+#define PRIuPTR "u"
+#endif
+#endif
+
 #ifdef USING_MMAP
 static inline void *
 allocate_mmap (size_t size)

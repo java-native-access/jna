@@ -26,7 +26,7 @@ int main (void)
 	void* args[3];
 	ffi_type* arg_types[3];
 
-	char*		format	= "%L.1f\n";
+	char*		format	= "%.1Lf\n";
 	long double	ldArg	= 7;
 	ffi_arg		res		= 0;
 
@@ -42,9 +42,9 @@ int main (void)
 	args[2] = NULL;
 
 	ffi_call(&cif, FFI_FN(printf), &res, args);
-	// { dg-output "7.0" { xfail i*86-*-linux-* x86_64-*-linux-* } }
+	// { dg-output "7.0" }
 	printf("res: %d\n", (int) res);
-	// { dg-output "\nres: 4" { xfail i*86-*-linux-* x86_64-*-linux-* } }
+	// { dg-output "\nres: 4" }
 
 	CHECK(ffi_prep_closure_loc(pcl, &cif, cls_longdouble_va_fn, NULL, code) == FFI_OK);
 
