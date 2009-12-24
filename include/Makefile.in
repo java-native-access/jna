@@ -37,7 +37,7 @@ host_triplet = @host@
 target_triplet = @target@
 subdir = include
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/ffi.h.in $(toollibffi_HEADERS)
+	$(srcdir)/ffi.h.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -70,8 +70,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(toollibffidir)"
-HEADERS = $(toollibffi_HEADERS)
+am__installdirs = "$(DESTDIR)$(includesdir)"
+HEADERS = $(nodist_includes_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -203,11 +203,8 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 DISTCLEANFILES = ffitarget.h
 EXTRA_DIST = ffi.h.in ffi_common.h
-
-# Where generated headers like ffitarget.h get installed.
-gcc_version := $(shell cat $(top_srcdir)/../gcc/BASE-VER)
-toollibffidir := $(libdir)/gcc/$(target_alias)/$(gcc_version)/include
-toollibffi_HEADERS = ffi.h ffitarget.h
+includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
+nodist_includes_HEADERS = ffi.h ffitarget.h
 all: all-am
 
 .SUFFIXES:
@@ -249,26 +246,26 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-toollibffiHEADERS: $(toollibffi_HEADERS)
+install-nodist_includesHEADERS: $(nodist_includes_HEADERS)
 	@$(NORMAL_INSTALL)
-	test -z "$(toollibffidir)" || $(MKDIR_P) "$(DESTDIR)$(toollibffidir)"
-	@list='$(toollibffi_HEADERS)'; test -n "$(toollibffidir)" || list=; \
+	test -z "$(includesdir)" || $(MKDIR_P) "$(DESTDIR)$(includesdir)"
+	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(toollibffidir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(toollibffidir)" || exit $$?; \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includesdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includesdir)" || exit $$?; \
 	done
 
-uninstall-toollibffiHEADERS:
+uninstall-nodist_includesHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(toollibffi_HEADERS)'; test -n "$(toollibffidir)" || list=; \
+	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(toollibffidir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(toollibffidir)" && rm -f $$files
+	echo " ( cd '$(DESTDIR)$(includesdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(includesdir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -356,7 +353,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(toollibffidir)"; do \
+	for dir in "$(DESTDIR)$(includesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -405,7 +402,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-toollibffiHEADERS
+install-data-am: install-nodist_includesHEADERS
 
 install-dvi: install-dvi-am
 
@@ -449,7 +446,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-toollibffiHEADERS
+uninstall-am: uninstall-nodist_includesHEADERS
 
 .MAKE: install-am install-strip
 
@@ -459,13 +456,12 @@ uninstall-am: uninstall-toollibffiHEADERS
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip \
-	install-toollibffiHEADERS installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags uninstall uninstall-am \
-	uninstall-toollibffiHEADERS
+	install-info-am install-man install-nodist_includesHEADERS \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-nodist_includesHEADERS
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

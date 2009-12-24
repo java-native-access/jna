@@ -1,7 +1,7 @@
 10
 
 dir
-155449
+155452
 svn+ssh://green@gcc.gnu.org/svn/gcc/trunk/libffi/src
 svn+ssh://green@gcc.gnu.org/svn/gcc
 
@@ -26,10 +26,10 @@ danglin
 
 138bc75d-0d04-0410-961f-82ee72b054a4
 
-arm
+powerpc
 dir
 
-powerpc
+arm
 dir
 
 closures.c
@@ -72,6 +72,15 @@ dir
 sh64
 dir
 
+m68k
+dir
+
+alpha
+dir
+
+x86
+dir
+
 types.c
 file
 
@@ -106,25 +115,19 @@ aph
 
 2904
 
-x86
-dir
-
-alpha
-dir
-
-m68k
-dir
-
 frv
 dir
 
 s390
 dir
 
+pa
+dir
+
 cris
 dir
 
-pa
+ia64
 dir
 
 raw_api.c
@@ -160,9 +163,6 @@ aph
 
 
 6067
-
-ia64
-dir
 
 java_raw_api.c
 file

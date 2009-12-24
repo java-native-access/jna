@@ -1,7 +1,7 @@
-Index: plibffi/src/avr32/ffi.c
+Index: alibffi/src/avr32/ffi.c
 ===================================================================
 --- /dev/null
-+++ plibffi/src/avr32/ffi.c
++++ alibffi/src/avr32/ffi.c
 @@ -0,0 +1,421 @@
 +/* -----------------------------------------------------------------------
 +   ffi.c - Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
@@ -424,10 +424,10 @@ Index: plibffi/src/avr32/ffi.c
 +    return FFI_OK;
 +}
 +
-Index: plibffi/src/avr32/ffitarget.h
+Index: alibffi/src/avr32/ffitarget.h
 ===================================================================
 --- /dev/null
-+++ plibffi/src/avr32/ffitarget.h
++++ alibffi/src/avr32/ffitarget.h
 @@ -0,0 +1,50 @@
 +/* -----------------------------------------------------------------*-C-*-
 +   ffitarget.h - Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
@@ -479,10 +479,10 @@ Index: plibffi/src/avr32/ffitarget.h
 +#define FFI_NATIVE_RAW_API 0
 +
 +#endif
-Index: plibffi/src/avr32/sysv.S
+Index: alibffi/src/avr32/sysv.S
 ===================================================================
 --- /dev/null
-+++ plibffi/src/avr32/sysv.S
++++ alibffi/src/avr32/sysv.S
 @@ -0,0 +1,208 @@
 +/* -----------------------------------------------------------------------
 +   sysv.S - Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
@@ -692,10 +692,10 @@ Index: plibffi/src/avr32/sysv.S
 +#if defined __ELF__ && defined __linux__
 +    .section    .note.GNU-stack,"",@progbits
 +#endif
-Index: plibffi/Makefile.am
+Index: alibffi/Makefile.am
 ===================================================================
---- plibffi.orig/Makefile.am
-+++ plibffi/Makefile.am
+--- alibffi.orig/Makefile.am
++++ alibffi/Makefile.am
 @@ -7,6 +7,7 @@ SUBDIRS = include testsuite man
  EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
  	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
@@ -714,10 +714,10 @@ Index: plibffi/Makefile.am
  if LIBFFI_CRIS
  nodist_libffi_la_SOURCES += src/cris/sysv.S src/cris/ffi.c
  endif
-Index: plibffi/configure
+Index: alibffi/configure
 ===================================================================
---- plibffi.orig/configure
-+++ plibffi/configure
+--- alibffi.orig/configure
++++ alibffi/configure
 @@ -813,6 +813,8 @@ FRV_FALSE
  FRV_TRUE
  LIBFFI_CRIS_FALSE
@@ -884,10 +884,10 @@ Index: plibffi/configure
  if test -z "${LIBFFI_CRIS_TRUE}" && test -z "${LIBFFI_CRIS_FALSE}"; then
    { { $as_echo "$as_me:$LINENO: error: conditional \"LIBFFI_CRIS\" was never defined.
  Usually this means the macro was only invoked conditionally." >&5
-Index: plibffi/configure.ac
+Index: alibffi/configure.ac
 ===================================================================
---- plibffi.orig/configure.ac
-+++ plibffi/configure.ac
+--- alibffi.orig/configure.ac
++++ alibffi/configure.ac
 @@ -58,6 +58,10 @@ case "$host" in
  	TARGET=X86_64; TARGETDIR=x86
  	;;
@@ -907,10 +907,10 @@ Index: plibffi/configure.ac
  AM_CONDITIONAL(LIBFFI_CRIS, test x$TARGET = xLIBFFI_CRIS)
  AM_CONDITIONAL(FRV, test x$TARGET = xFRV)
  AM_CONDITIONAL(S390, test x$TARGET = xS390)
-Index: plibffi/ChangeLog.libffi
+Index: alibffi/ChangeLog.libffi
 ===================================================================
---- plibffi.orig/ChangeLog.libffi
-+++ plibffi/ChangeLog.libffi
+--- alibffi.orig/ChangeLog.libffi
++++ alibffi/ChangeLog.libffi
 @@ -1,3 +1,14 @@
 +2009-10-05  Bradley Smith  <brad@brad-smith.co.uk>
 +

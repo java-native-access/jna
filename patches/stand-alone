@@ -1,7 +1,7 @@
-Index: plibffi/ChangeLog.libffi
+Index: alibffi/ChangeLog.libffi
 ===================================================================
 --- /dev/null
-+++ plibffi/ChangeLog.libffi
++++ alibffi/ChangeLog.libffi
 @@ -0,0 +1,580 @@
 +2009-10-27  Samuli Suominen  <ssuominen@gentoo.org>
 +
@@ -583,10 +583,10 @@ Index: plibffi/ChangeLog.libffi
 +	* testsuite/lib/libffi-dg.exp: Many changes to allow for execution
 +	outside of gcc tree.
 +
-Index: plibffi/LICENSE
+Index: alibffi/LICENSE
 ===================================================================
---- plibffi.orig/LICENSE
-+++ plibffi/LICENSE
+--- alibffi.orig/LICENSE
++++ alibffi/LICENSE
 @@ -1,4 +1,5 @@
 -libffi - Copyright (c) 1996-2003  Red Hat, Inc.
 +libffi - Copyright (c) 1996-2009  Anthony Green, Red Hat, Inc and others.  
@@ -611,10 +611,10 @@ Index: plibffi/LICENSE
 +CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 +TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 +SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-Index: plibffi/Makefile.am
+Index: alibffi/Makefile.am
 ===================================================================
---- plibffi.orig/Makefile.am
-+++ plibffi/Makefile.am
+--- alibffi.orig/Makefile.am
++++ alibffi/Makefile.am
 @@ -1,7 +1,6 @@
  ## Process this with automake to create Makefile.in
  
@@ -683,10 +683,10 @@ Index: plibffi/Makefile.am
 +install-html:
 +install-pdf:
 +
-Index: plibffi/Makefile.in
+Index: alibffi/Makefile.in
 ===================================================================
---- plibffi.orig/Makefile.in
-+++ plibffi/Makefile.in
+--- alibffi.orig/Makefile.in
++++ alibffi/Makefile.in
 @@ -15,6 +15,7 @@
  
  @SET_MAKE@
@@ -695,27 +695,9 @@ Index: plibffi/Makefile.in
  VPATH = @srcdir@
  pkgdatadir = $(datadir)/@PACKAGE@
  pkgincludedir = $(includedir)/@PACKAGE@
-@@ -51,38 +52,32 @@ target_triplet = @target@
- @POWERPC_DARWIN_TRUE@am__append_14 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
- @POWERPC_FREEBSD_TRUE@am__append_15 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
- @ARM_TRUE@am__append_16 = src/arm/sysv.S src/arm/ffi.c
--@LIBFFI_CRIS_TRUE@am__append_17 = src/cris/sysv.S src/cris/ffi.c
--@FRV_TRUE@am__append_18 = src/frv/eabi.S src/frv/ffi.c
--@S390_TRUE@am__append_19 = src/s390/sysv.S src/s390/ffi.c
--@X86_64_TRUE@am__append_20 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
--@SH_TRUE@am__append_21 = src/sh/sysv.S src/sh/ffi.c
--@SH64_TRUE@am__append_22 = src/sh64/sysv.S src/sh64/ffi.c
--@PA_LINUX_TRUE@am__append_23 = src/pa/linux.S src/pa/ffi.c
--@PA_HPUX_TRUE@am__append_24 = src/pa/hpux32.S src/pa/ffi.c
-+@AVR32_TRUE@am__append_17 = src/avr32/sysv.S src/avr32/ffi.c
-+@LIBFFI_CRIS_TRUE@am__append_18 = src/cris/sysv.S src/cris/ffi.c
-+@FRV_TRUE@am__append_19 = src/frv/eabi.S src/frv/ffi.c
-+@S390_TRUE@am__append_20 = src/s390/sysv.S src/s390/ffi.c
-+@X86_64_TRUE@am__append_21 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
-+@SH_TRUE@am__append_22 = src/sh/sysv.S src/sh/ffi.c
-+@SH64_TRUE@am__append_23 = src/sh64/sysv.S src/sh64/ffi.c
-+@PA_LINUX_TRUE@am__append_24 = src/pa/linux.S src/pa/ffi.c
-+@PA_HPUX_TRUE@am__append_25 = src/pa/hpux32.S src/pa/ffi.c
+@@ -60,29 +61,22 @@ target_triplet = @target@
+ @PA_LINUX_TRUE@am__append_23 = src/pa/linux.S src/pa/ffi.c
+ @PA_HPUX_TRUE@am__append_24 = src/pa/hpux32.S src/pa/ffi.c
  subdir = .
 -DIST_COMMON = README $(am__configure_deps) $(srcdir)/../compile \
 -	$(srcdir)/../config.guess $(srcdir)/../config.sub \
@@ -752,7 +734,7 @@ Index: plibffi/Makefile.in
  CONFIG_CLEAN_VPATH_FILES =
  am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
  am__vpath_adj = case $$p in \
-@@ -105,8 +100,9 @@ am__nobase_list = $(am__nobase_strip_set
+@@ -105,8 +99,9 @@ am__nobase_list = $(am__nobase_strip_set
  am__base_list = \
    sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
    sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
@@ -764,61 +746,7 @@ Index: plibffi/Makefile.in
  libffi_la_LIBADD =
  am__dirstamp = $(am__leading_dot)dirstamp
  am_libffi_la_OBJECTS = src/debug.lo src/prep_cif.lo src/types.lo \
-@@ -139,15 +135,16 @@ am_libffi_la_OBJECTS = src/debug.lo src/
- @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
- @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
- @ARM_TRUE@am__objects_16 = src/arm/sysv.lo src/arm/ffi.lo
--@LIBFFI_CRIS_TRUE@am__objects_17 = src/cris/sysv.lo src/cris/ffi.lo
--@FRV_TRUE@am__objects_18 = src/frv/eabi.lo src/frv/ffi.lo
--@S390_TRUE@am__objects_19 = src/s390/sysv.lo src/s390/ffi.lo
--@X86_64_TRUE@am__objects_20 = src/x86/ffi64.lo src/x86/unix64.lo \
-+@AVR32_TRUE@am__objects_17 = src/avr32/sysv.lo src/avr32/ffi.lo
-+@LIBFFI_CRIS_TRUE@am__objects_18 = src/cris/sysv.lo src/cris/ffi.lo
-+@FRV_TRUE@am__objects_19 = src/frv/eabi.lo src/frv/ffi.lo
-+@S390_TRUE@am__objects_20 = src/s390/sysv.lo src/s390/ffi.lo
-+@X86_64_TRUE@am__objects_21 = src/x86/ffi64.lo src/x86/unix64.lo \
- @X86_64_TRUE@	src/x86/ffi.lo src/x86/sysv.lo
--@SH_TRUE@am__objects_21 = src/sh/sysv.lo src/sh/ffi.lo
--@SH64_TRUE@am__objects_22 = src/sh64/sysv.lo src/sh64/ffi.lo
--@PA_LINUX_TRUE@am__objects_23 = src/pa/linux.lo src/pa/ffi.lo
--@PA_HPUX_TRUE@am__objects_24 = src/pa/hpux32.lo src/pa/ffi.lo
-+@SH_TRUE@am__objects_22 = src/sh/sysv.lo src/sh/ffi.lo
-+@SH64_TRUE@am__objects_23 = src/sh64/sysv.lo src/sh64/ffi.lo
-+@PA_LINUX_TRUE@am__objects_24 = src/pa/linux.lo src/pa/ffi.lo
-+@PA_HPUX_TRUE@am__objects_25 = src/pa/hpux32.lo src/pa/ffi.lo
- nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
- 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
- 	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-@@ -156,29 +153,30 @@ nodist_libffi_la_OBJECTS = $(am__objects
- 	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
- 	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
- 	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
--	$(am__objects_24)
-+	$(am__objects_24) $(am__objects_25)
- libffi_la_OBJECTS = $(am_libffi_la_OBJECTS) \
- 	$(nodist_libffi_la_OBJECTS)
- libffi_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
- 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
- 	$(libffi_la_LDFLAGS) $(LDFLAGS) -o $@
- libffi_convenience_la_LIBADD =
--am__objects_25 = src/debug.lo src/prep_cif.lo src/types.lo \
-+am__objects_26 = src/debug.lo src/prep_cif.lo src/types.lo \
- 	src/raw_api.lo src/java_raw_api.lo src/closures.lo
--am_libffi_convenience_la_OBJECTS = $(am__objects_25)
--am__objects_26 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
-+am_libffi_convenience_la_OBJECTS = $(am__objects_26)
-+am__objects_27 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
- 	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
- 	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
- 	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
- 	$(am__objects_13) $(am__objects_14) $(am__objects_15) \
- 	$(am__objects_16) $(am__objects_17) $(am__objects_18) \
- 	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
--	$(am__objects_22) $(am__objects_23) $(am__objects_24)
--nodist_libffi_convenience_la_OBJECTS = $(am__objects_26)
-+	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
-+	$(am__objects_25)
-+nodist_libffi_convenience_la_OBJECTS = $(am__objects_27)
+@@ -178,7 +173,7 @@ nodist_libffi_convenience_la_OBJECTS = $
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
@@ -827,7 +755,7 @@ Index: plibffi/Makefile.in
  am__depfiles_maybe = depfiles
  am__mv = mv -f
  CPPASCOMPILE = $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-@@ -199,12 +197,18 @@ SOURCES = $(libffi_la_SOURCES) $(nodist_
+@@ -199,12 +194,18 @@ SOURCES = $(libffi_la_SOURCES) $(nodist_
  	$(libffi_convenience_la_SOURCES) \
  	$(nodist_libffi_convenience_la_SOURCES)
  DIST_SOURCES = $(libffi_la_SOURCES) $(libffi_convenience_la_SOURCES)
@@ -852,7 +780,7 @@ Index: plibffi/Makefile.in
  RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
  	html-recursive info-recursive install-data-recursive \
  	install-dvi-recursive install-exec-recursive \
-@@ -212,6 +216,7 @@ RECURSIVE_TARGETS = all-recursive check-
+@@ -212,6 +213,7 @@ RECURSIVE_TARGETS = all-recursive check-
  	install-pdf-recursive install-ps-recursive install-recursive \
  	installcheck-recursive installdirs-recursive pdf-recursive \
  	ps-recursive uninstall-recursive
@@ -860,7 +788,7 @@ Index: plibffi/Makefile.in
  RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
    distclean-recursive maintainer-clean-recursive
  AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
-@@ -313,7 +318,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+@@ -313,7 +315,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
  PACKAGE_NAME = @PACKAGE_NAME@
  PACKAGE_STRING = @PACKAGE_STRING@
  PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -868,7 +796,7 @@ Index: plibffi/Makefile.in
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
  RANLIB = @RANLIB@
-@@ -360,9 +364,9 @@ libdir = @libdir@
+@@ -360,9 +361,9 @@ libdir = @libdir@
  libexecdir = @libexecdir@
  localedir = @localedir@
  localstatedir = @localstatedir@
@@ -879,7 +807,7 @@ Index: plibffi/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-@@ -383,11 +387,11 @@ top_build_prefix = @top_build_prefix@
+@@ -383,7 +384,6 @@ top_build_prefix = @top_build_prefix@
  top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
  AUTOMAKE_OPTIONS = foreign subdir-objects
@@ -887,12 +815,7 @@ Index: plibffi/Makefile.in
  SUBDIRS = include testsuite man
  EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
  	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
- 	src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h \
-+	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
- 	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
- 	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
- 	src/ia64/unix.S \
-@@ -406,11 +410,14 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -406,11 +406,14 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
  	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
  	src/sparc/ffi.c src/x86/darwin64.S \
@@ -909,7 +832,7 @@ Index: plibffi/Makefile.in
  
  # Work around what appears to be a GNU make bug handling MAKEFLAGS
  # values defined in terms of make variables, as is the case for CC and
-@@ -450,11 +457,14 @@ AM_MAKEFLAGS = \
+@@ -450,11 +453,14 @@ AM_MAKEFLAGS = \
  	"DESTDIR=$(DESTDIR)"
  
  MAKEOVERRIDES = 
@@ -925,12 +848,7 @@ Index: plibffi/Makefile.in
  nodist_libffi_la_SOURCES = $(am__append_1) $(am__append_2) \
  	$(am__append_3) $(am__append_4) $(am__append_5) \
  	$(am__append_6) $(am__append_7) $(am__append_8) \
-@@ -463,19 +473,18 @@ nodist_libffi_la_SOURCES = $(am__append_
- 	$(am__append_15) $(am__append_16) $(am__append_17) \
- 	$(am__append_18) $(am__append_19) $(am__append_20) \
- 	$(am__append_21) $(am__append_22) $(am__append_23) \
--	$(am__append_24)
-+	$(am__append_24) $(am__append_25)
+@@ -467,15 +473,14 @@ nodist_libffi_la_SOURCES = $(am__append_
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
  AM_CFLAGS = -Wall -g -fexceptions
@@ -948,7 +866,7 @@ Index: plibffi/Makefile.in
  am--refresh:
  	@:
  $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
-@@ -527,41 +536,43 @@ $(srcdir)/fficonfig.h.in: @MAINTAINER_MO
+@@ -527,41 +532,43 @@ $(srcdir)/fficonfig.h.in: @MAINTAINER_MO
  
  distclean-hdr:
  	-rm -f fficonfig.h stamp-h1
@@ -1013,24 +931,7 @@ Index: plibffi/Makefile.in
  	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
  	  test "$$dir" != "$$p" || dir=.; \
  	  echo "rm -f \"$${dir}/so_locations\""; \
-@@ -701,6 +712,16 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
- 	src/arm/$(DEPDIR)/$(am__dirstamp)
- src/arm/ffi.lo: src/arm/$(am__dirstamp) \
- 	src/arm/$(DEPDIR)/$(am__dirstamp)
-+src/avr32/$(am__dirstamp):
-+	@$(MKDIR_P) src/avr32
-+	@: > src/avr32/$(am__dirstamp)
-+src/avr32/$(DEPDIR)/$(am__dirstamp):
-+	@$(MKDIR_P) src/avr32/$(DEPDIR)
-+	@: > src/avr32/$(DEPDIR)/$(am__dirstamp)
-+src/avr32/sysv.lo: src/avr32/$(am__dirstamp) \
-+	src/avr32/$(DEPDIR)/$(am__dirstamp)
-+src/avr32/ffi.lo: src/avr32/$(am__dirstamp) \
-+	src/avr32/$(DEPDIR)/$(am__dirstamp)
- src/cris/$(am__dirstamp):
- 	@$(MKDIR_P) src/cris
- 	@: > src/cris/$(am__dirstamp)
-@@ -764,7 +785,7 @@ src/pa/ffi.lo: src/pa/$(am__dirstamp) sr
+@@ -764,7 +771,7 @@ src/pa/ffi.lo: src/pa/$(am__dirstamp) sr
  src/pa/hpux32.lo: src/pa/$(am__dirstamp) \
  	src/pa/$(DEPDIR)/$(am__dirstamp)
  libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES) 
@@ -1039,35 +940,7 @@ Index: plibffi/Makefile.in
  libffi_convenience.la: $(libffi_convenience_la_OBJECTS) $(libffi_convenience_la_DEPENDENCIES) 
  	$(LINK)  $(libffi_convenience_la_OBJECTS) $(libffi_convenience_la_LIBADD) $(LIBS)
  
-@@ -778,6 +799,10 @@ mostlyclean-compile:
- 	-rm -f src/arm/ffi.lo
- 	-rm -f src/arm/sysv.$(OBJEXT)
- 	-rm -f src/arm/sysv.lo
-+	-rm -f src/avr32/ffi.$(OBJEXT)
-+	-rm -f src/avr32/ffi.lo
-+	-rm -f src/avr32/sysv.$(OBJEXT)
-+	-rm -f src/avr32/sysv.lo
- 	-rm -f src/closures.$(OBJEXT)
- 	-rm -f src/closures.lo
- 	-rm -f src/cris/ffi.$(OBJEXT)
-@@ -892,6 +917,8 @@ distclean-compile:
- @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@
-+@AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/ffi.Plo@am__quote@
-+@AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/sysv.Plo@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/ffi.Plo@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/sysv.Plo@am__quote@
- @AMDEP_TRUE@@am__include@ @am__quote@src/frv/$(DEPDIR)/eabi.Plo@am__quote@
-@@ -993,6 +1020,7 @@ clean-libtool:
- 	-rm -rf src/.libs src/_libs
- 	-rm -rf src/alpha/.libs src/alpha/_libs
- 	-rm -rf src/arm/.libs src/arm/_libs
-+	-rm -rf src/avr32/.libs src/avr32/_libs
- 	-rm -rf src/cris/.libs src/cris/_libs
- 	-rm -rf src/frv/.libs src/frv/_libs
- 	-rm -rf src/ia64/.libs src/ia64/_libs
-@@ -1009,23 +1037,191 @@ clean-libtool:
+@@ -1009,23 +1016,191 @@ clean-libtool:
  
  distclean-libtool:
  	-rm -f libtool config.lt
@@ -1275,7 +1148,7 @@ Index: plibffi/Makefile.in
  
  # This directory's subdirectories are mostly independent; you can cd
  # into them and run `make' without going through this Makefile.
-@@ -1222,6 +1418,9 @@ distdir: $(DISTFILES)
+@@ -1222,6 +1397,9 @@ distdir: $(DISTFILES)
  	      || exit 1; \
  	  fi; \
  	done
@@ -1285,7 +1158,7 @@ Index: plibffi/Makefile.in
  	-test -n "$(am__skip_mode_fix)" \
  	|| find "$(distdir)" -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
  	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
-@@ -1338,10 +1537,10 @@ distcleancheck: distclean
+@@ -1338,10 +1516,10 @@ distcleancheck: distclean
  	       exit 1; } >&2
  check-am: all-am
  check: check-recursive
@@ -1298,7 +1171,7 @@ Index: plibffi/Makefile.in
  	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
  	done
  install: install-recursive
-@@ -1365,12 +1564,15 @@ clean-generic:
+@@ -1365,6 +1543,7 @@ clean-generic:
  distclean-generic:
  	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
  	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
@@ -1306,15 +1179,7 @@ Index: plibffi/Makefile.in
  	-rm -f src/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/$(am__dirstamp)
  	-rm -f src/alpha/$(DEPDIR)/$(am__dirstamp)
- 	-rm -f src/alpha/$(am__dirstamp)
- 	-rm -f src/arm/$(DEPDIR)/$(am__dirstamp)
- 	-rm -f src/arm/$(am__dirstamp)
-+	-rm -f src/avr32/$(DEPDIR)/$(am__dirstamp)
-+	-rm -f src/avr32/$(am__dirstamp)
- 	-rm -f src/cris/$(DEPDIR)/$(am__dirstamp)
- 	-rm -f src/cris/$(am__dirstamp)
- 	-rm -f src/frv/$(DEPDIR)/$(am__dirstamp)
-@@ -1401,114 +1603,186 @@ distclean-generic:
+@@ -1401,12 +1580,12 @@ distclean-generic:
  maintainer-clean-generic:
  	@echo "This command is intended for maintainers to use"
  	@echo "it deletes files that may require special tools to rebuild."
@@ -1329,11 +1194,9 @@ Index: plibffi/Makefile.in
 -distclean: distclean-multi distclean-recursive
 +distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
--	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
-+	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
+ 	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
  	-rm -f Makefile
- distclean-am: clean-am distclean-compile distclean-generic \
- 	distclean-hdr distclean-libtool distclean-tags
+@@ -1415,100 +1594,172 @@ distclean-am: clean-am distclean-compile
  
  dvi: dvi-recursive
  
@@ -1470,8 +1333,7 @@ Index: plibffi/Makefile.in
 +maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
--	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
-+	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
+ 	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
  	-rm -f Makefile
 -maintainer-clean-am: distclean-am maintainer-clean-generic
 +maintainer-clean-am: distclean-am maintainer-clean-aminfo \
@@ -1563,10 +1425,10 @@ Index: plibffi/Makefile.in
  
  # Tell versions [3.59,3.63) of GNU make to not export all variables.
  # Otherwise a system limit (for SysV at least) may be exceeded.
-Index: plibffi/aclocal.m4
+Index: alibffi/aclocal.m4
 ===================================================================
---- plibffi.orig/aclocal.m4
-+++ plibffi/aclocal.m4
+--- alibffi.orig/aclocal.m4
++++ alibffi/aclocal.m4
 @@ -13,12 +13,7961 @@
  
  m4_ifndef([AC_AUTOCONF_VERSION],
@@ -9573,10 +9435,10 @@ Index: plibffi/aclocal.m4
 -m4_include([../ltversion.m4])
 -m4_include([../lt~obsolete.m4])
  m4_include([acinclude.m4])
-Index: plibffi/compile
+Index: alibffi/compile
 ===================================================================
 --- /dev/null
-+++ plibffi/compile
++++ alibffi/compile
 @@ -0,0 +1,142 @@
 +#! /bin/sh
 +# Wrapper for compilers which do not understand `-c -o'.
@@ -9720,10 +9582,10 @@ Index: plibffi/compile
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: plibffi/config.guess
+Index: alibffi/config.guess
 ===================================================================
 --- /dev/null
-+++ plibffi/config.guess
++++ alibffi/config.guess
 @@ -0,0 +1,1411 @@
 +#! /bin/sh
 +# Attempt to guess a canonical system name.
@@ -11136,10 +10998,10 @@ Index: plibffi/config.guess
 +# time-stamp-format: "%:y-%02m-%02d"
 +# time-stamp-end: "'"
 +# End:
-Index: plibffi/config.sub
+Index: alibffi/config.sub
 ===================================================================
 --- /dev/null
-+++ plibffi/config.sub
++++ alibffi/config.sub
 @@ -0,0 +1,1500 @@
 +#! /bin/sh
 +# Configuration validation subroutine script.
@@ -12641,15 +12503,15 @@ Index: plibffi/config.sub
 +# time-stamp-format: "%:y-%02m-%02d"
 +# time-stamp-end: "'"
 +# End:
-Index: plibffi/configure
+Index: alibffi/configure
 ===================================================================
---- plibffi.orig/configure
-+++ plibffi/configure
+--- alibffi.orig/configure
++++ alibffi/configure
 @@ -1,22 +1,20 @@
  #! /bin/sh
  # Guess values for system-dependent variables and create Makefiles.
 -# Generated by GNU Autoconf 2.64 for libffi 3.0.8.
-+# Generated by GNU Autoconf 2.63 for libffi 3.0.9rc4.
++# Generated by GNU Autoconf 2.63 for libffi 3.0.9rc5.
  #
  # Report bugs to <http://gcc.gnu.org/bugs.html>.
  #
@@ -13605,8 +13467,8 @@ Index: plibffi/configure
  PACKAGE_TARNAME='libffi'
 -PACKAGE_VERSION='3.0.8'
 -PACKAGE_STRING='libffi 3.0.8'
-+PACKAGE_VERSION='3.0.9rc4'
-+PACKAGE_STRING='libffi 3.0.9rc4'
++PACKAGE_VERSION='3.0.9rc5'
++PACKAGE_STRING='libffi 3.0.9rc5'
  PACKAGE_BUGREPORT='http://gcc.gnu.org/bugs.html'
 -PACKAGE_URL=''
  
@@ -13771,7 +13633,7 @@ Index: plibffi/configure
    # This message is too long to be a string in the A/UX 3.1 sh.
    cat <<_ACEOF
 -\`configure' configures libffi 3.0.8 to adapt to many kinds of systems.
-+\`configure' configures libffi 3.0.9rc4 to adapt to many kinds of systems.
++\`configure' configures libffi 3.0.9rc5 to adapt to many kinds of systems.
  
  Usage: $0 [OPTION]... [VAR=VALUE]...
  
@@ -13780,7 +13642,7 @@ Index: plibffi/configure
  if test -n "$ac_init_help"; then
    case $ac_init_help in
 -     short | recursive ) echo "Configuration of libffi 3.0.8:";;
-+     short | recursive ) echo "Configuration of libffi 3.0.9rc4:";;
++     short | recursive ) echo "Configuration of libffi 3.0.9rc5:";;
     esac
    cat <<\_ACEOF
  
@@ -13798,7 +13660,7 @@ Index: plibffi/configure
    cat <<\_ACEOF
 -libffi configure 3.0.8
 -generated by GNU Autoconf 2.64
-+libffi configure 3.0.9rc4
++libffi configure 3.0.9rc5
 +generated by GNU Autoconf 2.63
  
 -Copyright (C) 2009 Free Software Foundation, Inc.
@@ -13898,7 +13760,7 @@ Index: plibffi/configure
 -  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
 -  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
 -  return $ac_retval
-+It was created by libffi $as_me 3.0.9rc4, which was
++It was created by libffi $as_me 3.0.9rc5, which was
 +generated by GNU Autoconf 2.63.  Invocation command line was
  
 -} # ac_fn_c_try_link
@@ -15171,7 +15033,7 @@ Index: plibffi/configure
  # Define the identity of the package.
   PACKAGE='libffi'
 - VERSION='3.0.8'
-+ VERSION='3.0.9rc4'
++ VERSION='3.0.9rc5'
  
  
  cat >>confdefs.h <<_ACEOF
@@ -24571,7 +24433,7 @@ Index: plibffi/configure
  ac_log="
 -This file was extended by libffi $as_me 3.0.8, which was
 -generated by GNU Autoconf 2.64.  Invocation command line was
-+This file was extended by libffi $as_me 3.0.9rc4, which was
++This file was extended by libffi $as_me 3.0.9rc5, which was
 +generated by GNU Autoconf 2.63.  Invocation command line was
  
    CONFIG_FILES    = $CONFIG_FILES
@@ -24603,7 +24465,7 @@ Index: plibffi/configure
  ac_cs_version="\\
 -libffi config.status 3.0.8
 -configured by $0, generated by GNU Autoconf 2.64,
-+libffi config.status 3.0.9rc4
++libffi config.status 3.0.9rc5
 +configured by $0, generated by GNU Autoconf 2.63,
    with options \\"`$as_echo "$ac_configure_args" | sed 's/^ //; s/[\\""\`\$]/\\\\&/g'`\\"
  
@@ -25552,10 +25414,10 @@ Index: plibffi/configure
  $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
  fi
  
-Index: plibffi/configure.ac
+Index: alibffi/configure.ac
 ===================================================================
---- plibffi.orig/configure.ac
-+++ plibffi/configure.ac
+--- alibffi.orig/configure.ac
++++ alibffi/configure.ac
 @@ -1,12 +1,10 @@
  dnl Process this with autoconf to create configure
  
@@ -25563,7 +25425,7 @@ Index: plibffi/configure.ac
 +AC_PREREQ(2.63)
  
 -AC_INIT([libffi], [3.0.8], [http://gcc.gnu.org/bugs.html])
-+AC_INIT([libffi], [3.0.9rc4], [http://gcc.gnu.org/bugs.html])
++AC_INIT([libffi], [3.0.9rc5], [http://gcc.gnu.org/bugs.html])
  AC_CONFIG_HEADERS([fficonfig.h])
  
 -AM_ENABLE_MULTILIB(, ..)
@@ -25606,10 +25468,10 @@ Index: plibffi/configure.ac
 +AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile libffi.pc)
  
  AC_OUTPUT
-Index: plibffi/depcomp
+Index: alibffi/depcomp
 ===================================================================
 --- /dev/null
-+++ plibffi/depcomp
++++ alibffi/depcomp
 @@ -0,0 +1,584 @@
 +#! /bin/sh
 +# depcomp - compile a program generating dependencies as side-effects
@@ -26195,13 +26057,16 @@ Index: plibffi/depcomp
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: plibffi/include/Makefile.in
+Index: alibffi/include/Makefile.in
 ===================================================================
---- plibffi.orig/include/Makefile.in
-+++ plibffi/include/Makefile.in
-@@ -39,17 +39,11 @@ subdir = include
+--- alibffi.orig/include/Makefile.in
++++ alibffi/include/Makefile.in
+@@ -37,19 +37,13 @@ host_triplet = @host@
+ target_triplet = @target@
+ subdir = include
  DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
- 	$(srcdir)/ffi.h.in $(toollibffi_HEADERS)
+-	$(srcdir)/ffi.h.in $(toollibffi_HEADERS)
++	$(srcdir)/ffi.h.in
  ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 -am__aclocal_m4_deps = $(top_srcdir)/../config/depstand.m4 \
 -	$(top_srcdir)/../config/lead-dot.m4 \
@@ -26219,6 +26084,17 @@ Index: plibffi/include/Makefile.in
  CONFIG_HEADER = $(top_builddir)/fficonfig.h
  CONFIG_CLEAN_FILES = ffi.h ffitarget.h
  CONFIG_CLEAN_VPATH_FILES =
+@@ -76,8 +70,8 @@ am__nobase_list = $(am__nobase_strip_set
+ am__base_list = \
+   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+-am__installdirs = "$(DESTDIR)$(toollibffidir)"
+-HEADERS = $(toollibffi_HEADERS)
++am__installdirs = "$(DESTDIR)$(includesdir)"
++HEADERS = $(nodist_includes_HEADERS)
+ ETAGS = etags
+ CTAGS = ctags
+ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 @@ -138,7 +132,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
  PACKAGE_NAME = @PACKAGE_NAME@
  PACKAGE_STRING = @PACKAGE_STRING@
@@ -26238,10 +26114,107 @@ Index: plibffi/include/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-Index: plibffi/install-sh
+@@ -210,11 +203,8 @@ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = foreign
+ DISTCLEANFILES = ffitarget.h
+ EXTRA_DIST = ffi.h.in ffi_common.h
+-
+-# Where generated headers like ffitarget.h get installed.
+-gcc_version := $(shell cat $(top_srcdir)/../gcc/BASE-VER)
+-toollibffidir := $(libdir)/gcc/$(target_alias)/$(gcc_version)/include
+-toollibffi_HEADERS = ffi.h ffitarget.h
++includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
++nodist_includes_HEADERS = ffi.h ffitarget.h
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -256,26 +246,26 @@ mostlyclean-libtool:
+ 
+ clean-libtool:
+ 	-rm -rf .libs _libs
+-install-toollibffiHEADERS: $(toollibffi_HEADERS)
++install-nodist_includesHEADERS: $(nodist_includes_HEADERS)
+ 	@$(NORMAL_INSTALL)
+-	test -z "$(toollibffidir)" || $(MKDIR_P) "$(DESTDIR)$(toollibffidir)"
+-	@list='$(toollibffi_HEADERS)'; test -n "$(toollibffidir)" || list=; \
++	test -z "$(includesdir)" || $(MKDIR_P) "$(DESTDIR)$(includesdir)"
++	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
+ 	for p in $$list; do \
+ 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+ 	  echo "$$d$$p"; \
+ 	done | $(am__base_list) | \
+ 	while read files; do \
+-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(toollibffidir)'"; \
+-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(toollibffidir)" || exit $$?; \
++	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includesdir)'"; \
++	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includesdir)" || exit $$?; \
+ 	done
+ 
+-uninstall-toollibffiHEADERS:
++uninstall-nodist_includesHEADERS:
+ 	@$(NORMAL_UNINSTALL)
+-	@list='$(toollibffi_HEADERS)'; test -n "$(toollibffidir)" || list=; \
++	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
+ 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+ 	test -n "$$files" || exit 0; \
+-	echo " ( cd '$(DESTDIR)$(toollibffidir)' && rm -f" $$files ")"; \
+-	cd "$(DESTDIR)$(toollibffidir)" && rm -f $$files
++	echo " ( cd '$(DESTDIR)$(includesdir)' && rm -f" $$files ")"; \
++	cd "$(DESTDIR)$(includesdir)" && rm -f $$files
+ 
+ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+ 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
+@@ -363,7 +353,7 @@ check-am: all-am
+ check: check-am
+ all-am: Makefile $(HEADERS)
+ installdirs:
+-	for dir in "$(DESTDIR)$(toollibffidir)"; do \
++	for dir in "$(DESTDIR)$(includesdir)"; do \
+ 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+ 	done
+ install: install-am
+@@ -412,7 +402,7 @@ info: info-am
+ 
+ info-am:
+ 
+-install-data-am: install-toollibffiHEADERS
++install-data-am: install-nodist_includesHEADERS
+ 
+ install-dvi: install-dvi-am
+ 
+@@ -456,7 +446,7 @@ ps: ps-am
+ 
+ ps-am:
+ 
+-uninstall-am: uninstall-toollibffiHEADERS
++uninstall-am: uninstall-nodist_includesHEADERS
+ 
+ .MAKE: install-am install-strip
+ 
+@@ -466,13 +456,12 @@ uninstall-am: uninstall-toollibffiHEADER
+ 	html-am info info-am install install-am install-data \
+ 	install-data-am install-dvi install-dvi-am install-exec \
+ 	install-exec-am install-html install-html-am install-info \
+-	install-info-am install-man install-pdf install-pdf-am \
+-	install-ps install-ps-am install-strip \
+-	install-toollibffiHEADERS installcheck installcheck-am \
+-	installdirs maintainer-clean maintainer-clean-generic \
+-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+-	ps ps-am tags uninstall uninstall-am \
+-	uninstall-toollibffiHEADERS
++	install-info-am install-man install-nodist_includesHEADERS \
++	install-pdf install-pdf-am install-ps install-ps-am \
++	install-strip installcheck installcheck-am installdirs \
++	maintainer-clean maintainer-clean-generic mostlyclean \
++	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
++	tags uninstall uninstall-am uninstall-nodist_includesHEADERS
+ 
+ 
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+Index: alibffi/install-sh
 ===================================================================
 --- /dev/null
-+++ plibffi/install-sh
++++ alibffi/install-sh
 @@ -0,0 +1,323 @@
 +#!/bin/sh
 +# install - install a program, script, or datafile
@@ -26566,10 +26539,10 @@ Index: plibffi/install-sh
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: plibffi/libffi.pc.in
+Index: alibffi/libffi.pc.in
 ===================================================================
 --- /dev/null
-+++ plibffi/libffi.pc.in
++++ alibffi/libffi.pc.in
 @@ -0,0 +1,10 @@
 +prefix=@prefix@
 +exec_prefix=@exec_prefix@
@@ -26581,10 +26554,10 @@ Index: plibffi/libffi.pc.in
 +Version: @PACKAGE_VERSION@
 +Libs: -L${libdir} -lffi
 +Cflags: -I${includedir}
-Index: plibffi/libtool-version
+Index: alibffi/libtool-version
 ===================================================================
---- plibffi.orig/libtool-version
-+++ plibffi/libtool-version
+--- alibffi.orig/libtool-version
++++ alibffi/libtool-version
 @@ -2,5 +2,28 @@
  # the libtool manual to understand the meaning of the fields.  This is
  # a separate file so that version updates don't involve re-running
@@ -26615,10 +26588,10 @@ Index: plibffi/libtool-version
  # CURRENT:REVISION:AGE
 -4:1:0
 +5:10:0
-Index: plibffi/ltmain.sh
+Index: alibffi/ltmain.sh
 ===================================================================
 --- /dev/null
-+++ plibffi/ltmain.sh
++++ alibffi/ltmain.sh
 @@ -0,0 +1,8406 @@
 +# Generated from ltmain.m4sh.
 +
@@ -35026,10 +34999,10 @@ Index: plibffi/ltmain.sh
 +# End:
 +# vi:sw=2
 +
-Index: plibffi/man/Makefile.in
+Index: alibffi/man/Makefile.in
 ===================================================================
---- plibffi.orig/man/Makefile.in
-+++ plibffi/man/Makefile.in
+--- alibffi.orig/man/Makefile.in
++++ alibffi/man/Makefile.in
 @@ -37,17 +37,11 @@ target_triplet = @target@
  subdir = man
  DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -35069,10 +35042,10 @@ Index: plibffi/man/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-Index: plibffi/mdate-sh
+Index: alibffi/mdate-sh
 ===================================================================
 --- /dev/null
-+++ plibffi/mdate-sh
++++ alibffi/mdate-sh
 @@ -0,0 +1,201 @@
 +#!/bin/sh
 +# Get modification time of a file or directory and pretty-print it.
@@ -35275,10 +35248,10 @@ Index: plibffi/mdate-sh
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: plibffi/missing
+Index: alibffi/missing
 ===================================================================
 --- /dev/null
-+++ plibffi/missing
++++ alibffi/missing
 @@ -0,0 +1,360 @@
 +#! /bin/sh
 +# Common stub for a few missing GNU programs while installing.
@@ -35640,10 +35613,10 @@ Index: plibffi/missing
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: plibffi/testsuite/Makefile.in
+Index: alibffi/testsuite/Makefile.in
 ===================================================================
---- plibffi.orig/testsuite/Makefile.in
-+++ plibffi/testsuite/Makefile.in
+--- alibffi.orig/testsuite/Makefile.in
++++ alibffi/testsuite/Makefile.in
 @@ -37,17 +37,11 @@ target_triplet = @target@
  subdir = testsuite
  DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -35683,10 +35656,10 @@ Index: plibffi/testsuite/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-Index: plibffi/texinfo.tex
+Index: alibffi/texinfo.tex
 ===================================================================
 --- /dev/null
-+++ plibffi/texinfo.tex
++++ alibffi/texinfo.tex
 @@ -0,0 +1,7210 @@
 +% texinfo.tex -- TeX macros to handle Texinfo files.
 +%
@@ -42898,10 +42871,10 @@ Index: plibffi/texinfo.tex
 +@ignore
 +   arch-tag: e1b36e32-c96e-4135-a41a-0b2efa2ea115
 +@end ignore
-Index: plibffi/testsuite/lib/libffi-dg.exp
+Index: alibffi/testsuite/lib/libffi-dg.exp
 ===================================================================
---- plibffi.orig/testsuite/lib/libffi-dg.exp
-+++ plibffi/testsuite/lib/libffi-dg.exp
+--- alibffi.orig/testsuite/lib/libffi-dg.exp
++++ alibffi/testsuite/lib/libffi-dg.exp
 @@ -1,8 +1,8 @@
 -#   Copyright (C) 2003, 2005, 2009 Free Software Foundation, Inc.
 +#   Copyright (C) 2003, 2005, 2008 Free Software Foundation, Inc.
@@ -42966,10 +42939,10 @@ Index: plibffi/testsuite/lib/libffi-dg.exp
      }
  
      set_ld_library_path_env_vars
-Index: plibffi/testsuite/lib/target-libpath.exp
+Index: alibffi/testsuite/lib/target-libpath.exp
 ===================================================================
 --- /dev/null
-+++ plibffi/testsuite/lib/target-libpath.exp
++++ alibffi/testsuite/lib/target-libpath.exp
 @@ -0,0 +1,263 @@
 +# Copyright (C) 2004, 2005, 2007 Free Software Foundation, Inc.
 +
@@ -43234,10 +43207,10 @@ Index: plibffi/testsuite/lib/target-libpath.exp
 +    return $shlib_ext
 +}
 +
-Index: plibffi/testsuite/lib/wrapper.exp
+Index: alibffi/testsuite/lib/wrapper.exp
 ===================================================================
 --- /dev/null
-+++ plibffi/testsuite/lib/wrapper.exp
++++ alibffi/testsuite/lib/wrapper.exp
 @@ -0,0 +1,45 @@
 +#   Copyright (C) 2004, 2007 Free Software Foundation, Inc.
 +
@@ -43284,3 +43257,18 @@ Index: plibffi/testsuite/lib/wrapper.exp
 +	}
 +    }
 +}
+Index: alibffi/include/Makefile.am
+===================================================================
+--- alibffi.orig/include/Makefile.am
++++ alibffi/include/Makefile.am
+@@ -5,8 +5,5 @@ AUTOMAKE_OPTIONS=foreign
+ DISTCLEANFILES=ffitarget.h
+ EXTRA_DIST=ffi.h.in ffi_common.h
+ 
+-# Where generated headers like ffitarget.h get installed.
+-gcc_version   := $(shell cat $(top_srcdir)/../gcc/BASE-VER)
+-toollibffidir := $(libdir)/gcc/$(target_alias)/$(gcc_version)/include
+-
+-toollibffi_HEADERS = ffi.h ffitarget.h
++includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
++nodist_includes_HEADERS = ffi.h ffitarget.h
