@@ -1,7 +1,7 @@
-Index: alibffi/ChangeLog.libffi
+Index: libffi/ChangeLog.libffi
 ===================================================================
 --- /dev/null
-+++ alibffi/ChangeLog.libffi
++++ libffi/ChangeLog.libffi
 @@ -0,0 +1,580 @@
 +2009-10-27  Samuli Suominen  <ssuominen@gentoo.org>
 +
@@ -583,10 +583,10 @@ Index: alibffi/ChangeLog.libffi
 +	* testsuite/lib/libffi-dg.exp: Many changes to allow for execution
 +	outside of gcc tree.
 +
-Index: alibffi/LICENSE
+Index: libffi/LICENSE
 ===================================================================
---- alibffi.orig/LICENSE
-+++ alibffi/LICENSE
+--- libffi.orig/LICENSE
++++ libffi/LICENSE
 @@ -1,4 +1,5 @@
 -libffi - Copyright (c) 1996-2003  Red Hat, Inc.
 +libffi - Copyright (c) 1996-2009  Anthony Green, Red Hat, Inc and others.  
@@ -611,10 +611,10 @@ Index: alibffi/LICENSE
 +CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 +TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 +SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-Index: alibffi/Makefile.am
+Index: libffi/Makefile.am
 ===================================================================
---- alibffi.orig/Makefile.am
-+++ alibffi/Makefile.am
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
 @@ -1,7 +1,6 @@
  ## Process this with automake to create Makefile.in
  
@@ -623,7 +623,7 @@ Index: alibffi/Makefile.am
  
  SUBDIRS = include testsuite man
  
-@@ -26,10 +25,14 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -26,10 +25,15 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
  	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
  	src/sparc/ffi.c src/x86/darwin64.S \
@@ -634,13 +634,14 @@ Index: alibffi/Makefile.am
  	src/pa/ffitarget.h src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S \
 -	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c
 +	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
-+	libtool-version ChangeLog.libffi
++	libtool-version ChangeLog.libffi m4/libtool.m4 \
++	m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4
 +
 +info_TEXINFOS = doc/libffi.texi
  
  ## ################################################################
  
-@@ -76,12 +79,17 @@ AM_MAKEFLAGS = \
+@@ -76,12 +80,17 @@ AM_MAKEFLAGS = \
  
  MAKEOVERRIDES=
  
@@ -659,7 +660,7 @@ Index: alibffi/Makefile.am
  nodist_libffi_la_SOURCES =
  
  if MIPS
-@@ -162,17 +170,13 @@ nodist_libffi_convenience_la_SOURCES = $
+@@ -162,17 +171,13 @@ nodist_libffi_convenience_la_SOURCES = $
  
  AM_CFLAGS = -Wall -g -fexceptions
  
@@ -683,10 +684,10 @@ Index: alibffi/Makefile.am
 +install-html:
 +install-pdf:
 +
-Index: alibffi/Makefile.in
+Index: libffi/Makefile.in
 ===================================================================
---- alibffi.orig/Makefile.in
-+++ alibffi/Makefile.in
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
 @@ -15,6 +15,7 @@
  
  @SET_MAKE@
@@ -815,7 +816,7 @@ Index: alibffi/Makefile.in
  SUBDIRS = include testsuite man
  EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
  	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
-@@ -406,11 +406,14 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -406,11 +406,15 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
  	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
  	src/sparc/ffi.c src/x86/darwin64.S \
@@ -826,13 +827,14 @@ Index: alibffi/Makefile.in
  	src/pa/ffitarget.h src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S \
 -	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c
 +	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
-+	libtool-version ChangeLog.libffi
++	libtool-version ChangeLog.libffi m4/libtool.m4 \
++	m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4
  
 +info_TEXINFOS = doc/libffi.texi
  
  # Work around what appears to be a GNU make bug handling MAKEFLAGS
  # values defined in terms of make variables, as is the case for CC and
-@@ -450,11 +453,14 @@ AM_MAKEFLAGS = \
+@@ -450,11 +454,14 @@ AM_MAKEFLAGS = \
  	"DESTDIR=$(DESTDIR)"
  
  MAKEOVERRIDES = 
@@ -848,7 +850,7 @@ Index: alibffi/Makefile.in
  nodist_libffi_la_SOURCES = $(am__append_1) $(am__append_2) \
  	$(am__append_3) $(am__append_4) $(am__append_5) \
  	$(am__append_6) $(am__append_7) $(am__append_8) \
-@@ -467,15 +473,14 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -467,15 +474,14 @@ nodist_libffi_la_SOURCES = $(am__append_
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
  AM_CFLAGS = -Wall -g -fexceptions
@@ -866,7 +868,7 @@ Index: alibffi/Makefile.in
  am--refresh:
  	@:
  $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
-@@ -527,41 +532,43 @@ $(srcdir)/fficonfig.h.in: @MAINTAINER_MO
+@@ -527,41 +533,43 @@ $(srcdir)/fficonfig.h.in: @MAINTAINER_MO
  
  distclean-hdr:
  	-rm -f fficonfig.h stamp-h1
@@ -931,7 +933,7 @@ Index: alibffi/Makefile.in
  	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
  	  test "$$dir" != "$$p" || dir=.; \
  	  echo "rm -f \"$${dir}/so_locations\""; \
-@@ -764,7 +771,7 @@ src/pa/ffi.lo: src/pa/$(am__dirstamp) sr
+@@ -764,7 +772,7 @@ src/pa/ffi.lo: src/pa/$(am__dirstamp) sr
  src/pa/hpux32.lo: src/pa/$(am__dirstamp) \
  	src/pa/$(DEPDIR)/$(am__dirstamp)
  libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES) 
@@ -940,7 +942,7 @@ Index: alibffi/Makefile.in
  libffi_convenience.la: $(libffi_convenience_la_OBJECTS) $(libffi_convenience_la_DEPENDENCIES) 
  	$(LINK)  $(libffi_convenience_la_OBJECTS) $(libffi_convenience_la_LIBADD) $(LIBS)
  
-@@ -1009,23 +1016,191 @@ clean-libtool:
+@@ -1009,23 +1017,191 @@ clean-libtool:
  
  distclean-libtool:
  	-rm -f libtool config.lt
@@ -1148,7 +1150,7 @@ Index: alibffi/Makefile.in
  
  # This directory's subdirectories are mostly independent; you can cd
  # into them and run `make' without going through this Makefile.
-@@ -1222,6 +1397,9 @@ distdir: $(DISTFILES)
+@@ -1222,6 +1398,9 @@ distdir: $(DISTFILES)
  	      || exit 1; \
  	  fi; \
  	done
@@ -1158,7 +1160,7 @@ Index: alibffi/Makefile.in
  	-test -n "$(am__skip_mode_fix)" \
  	|| find "$(distdir)" -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
  	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
-@@ -1338,10 +1516,10 @@ distcleancheck: distclean
+@@ -1338,10 +1517,10 @@ distcleancheck: distclean
  	       exit 1; } >&2
  check-am: all-am
  check: check-recursive
@@ -1171,7 +1173,7 @@ Index: alibffi/Makefile.in
  	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
  	done
  install: install-recursive
-@@ -1365,6 +1543,7 @@ clean-generic:
+@@ -1365,6 +1544,7 @@ clean-generic:
  distclean-generic:
  	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
  	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
@@ -1179,7 +1181,7 @@ Index: alibffi/Makefile.in
  	-rm -f src/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/$(am__dirstamp)
  	-rm -f src/alpha/$(DEPDIR)/$(am__dirstamp)
-@@ -1401,12 +1580,12 @@ distclean-generic:
+@@ -1401,12 +1581,12 @@ distclean-generic:
  maintainer-clean-generic:
  	@echo "This command is intended for maintainers to use"
  	@echo "it deletes files that may require special tools to rebuild."
@@ -1196,7 +1198,7 @@ Index: alibffi/Makefile.in
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
  	-rm -f Makefile
-@@ -1415,100 +1594,172 @@ distclean-am: clean-am distclean-compile
+@@ -1415,100 +1595,172 @@ distclean-am: clean-am distclean-compile
  
  dvi: dvi-recursive
  
@@ -1425,10 +1427,10 @@ Index: alibffi/Makefile.in
  
  # Tell versions [3.59,3.63) of GNU make to not export all variables.
  # Otherwise a system limit (for SysV at least) may be exceeded.
-Index: alibffi/aclocal.m4
+Index: libffi/aclocal.m4
 ===================================================================
---- alibffi.orig/aclocal.m4
-+++ alibffi/aclocal.m4
+--- libffi.orig/aclocal.m4
++++ libffi/aclocal.m4
 @@ -13,12 +13,7961 @@
  
  m4_ifndef([AC_AUTOCONF_VERSION],
@@ -9435,10 +9437,10 @@ Index: alibffi/aclocal.m4
 -m4_include([../ltversion.m4])
 -m4_include([../lt~obsolete.m4])
  m4_include([acinclude.m4])
-Index: alibffi/compile
+Index: libffi/compile
 ===================================================================
 --- /dev/null
-+++ alibffi/compile
++++ libffi/compile
 @@ -0,0 +1,142 @@
 +#! /bin/sh
 +# Wrapper for compilers which do not understand `-c -o'.
@@ -9582,10 +9584,10 @@ Index: alibffi/compile
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: alibffi/config.guess
+Index: libffi/config.guess
 ===================================================================
 --- /dev/null
-+++ alibffi/config.guess
++++ libffi/config.guess
 @@ -0,0 +1,1411 @@
 +#! /bin/sh
 +# Attempt to guess a canonical system name.
@@ -10998,10 +11000,10 @@ Index: alibffi/config.guess
 +# time-stamp-format: "%:y-%02m-%02d"
 +# time-stamp-end: "'"
 +# End:
-Index: alibffi/config.sub
+Index: libffi/config.sub
 ===================================================================
 --- /dev/null
-+++ alibffi/config.sub
++++ libffi/config.sub
 @@ -0,0 +1,1500 @@
 +#! /bin/sh
 +# Configuration validation subroutine script.
@@ -12503,15 +12505,15 @@ Index: alibffi/config.sub
 +# time-stamp-format: "%:y-%02m-%02d"
 +# time-stamp-end: "'"
 +# End:
-Index: alibffi/configure
+Index: libffi/configure
 ===================================================================
---- alibffi.orig/configure
-+++ alibffi/configure
+--- libffi.orig/configure
++++ libffi/configure
 @@ -1,22 +1,20 @@
  #! /bin/sh
  # Guess values for system-dependent variables and create Makefiles.
 -# Generated by GNU Autoconf 2.64 for libffi 3.0.8.
-+# Generated by GNU Autoconf 2.63 for libffi 3.0.9rc5.
++# Generated by GNU Autoconf 2.63 for libffi 3.0.9rc6.
  #
  # Report bugs to <http://gcc.gnu.org/bugs.html>.
  #
@@ -13467,8 +13469,8 @@ Index: alibffi/configure
  PACKAGE_TARNAME='libffi'
 -PACKAGE_VERSION='3.0.8'
 -PACKAGE_STRING='libffi 3.0.8'
-+PACKAGE_VERSION='3.0.9rc5'
-+PACKAGE_STRING='libffi 3.0.9rc5'
++PACKAGE_VERSION='3.0.9rc6'
++PACKAGE_STRING='libffi 3.0.9rc6'
  PACKAGE_BUGREPORT='http://gcc.gnu.org/bugs.html'
 -PACKAGE_URL=''
  
@@ -13633,7 +13635,7 @@ Index: alibffi/configure
    # This message is too long to be a string in the A/UX 3.1 sh.
    cat <<_ACEOF
 -\`configure' configures libffi 3.0.8 to adapt to many kinds of systems.
-+\`configure' configures libffi 3.0.9rc5 to adapt to many kinds of systems.
++\`configure' configures libffi 3.0.9rc6 to adapt to many kinds of systems.
  
  Usage: $0 [OPTION]... [VAR=VALUE]...
  
@@ -13642,7 +13644,7 @@ Index: alibffi/configure
  if test -n "$ac_init_help"; then
    case $ac_init_help in
 -     short | recursive ) echo "Configuration of libffi 3.0.8:";;
-+     short | recursive ) echo "Configuration of libffi 3.0.9rc5:";;
++     short | recursive ) echo "Configuration of libffi 3.0.9rc6:";;
     esac
    cat <<\_ACEOF
  
@@ -13660,7 +13662,7 @@ Index: alibffi/configure
    cat <<\_ACEOF
 -libffi configure 3.0.8
 -generated by GNU Autoconf 2.64
-+libffi configure 3.0.9rc5
++libffi configure 3.0.9rc6
 +generated by GNU Autoconf 2.63
  
 -Copyright (C) 2009 Free Software Foundation, Inc.
@@ -13760,7 +13762,7 @@ Index: alibffi/configure
 -  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
 -  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
 -  return $ac_retval
-+It was created by libffi $as_me 3.0.9rc5, which was
++It was created by libffi $as_me 3.0.9rc6, which was
 +generated by GNU Autoconf 2.63.  Invocation command line was
  
 -} # ac_fn_c_try_link
@@ -15033,7 +15035,7 @@ Index: alibffi/configure
  # Define the identity of the package.
   PACKAGE='libffi'
 - VERSION='3.0.8'
-+ VERSION='3.0.9rc5'
++ VERSION='3.0.9rc6'
  
  
  cat >>confdefs.h <<_ACEOF
@@ -24433,7 +24435,7 @@ Index: alibffi/configure
  ac_log="
 -This file was extended by libffi $as_me 3.0.8, which was
 -generated by GNU Autoconf 2.64.  Invocation command line was
-+This file was extended by libffi $as_me 3.0.9rc5, which was
++This file was extended by libffi $as_me 3.0.9rc6, which was
 +generated by GNU Autoconf 2.63.  Invocation command line was
  
    CONFIG_FILES    = $CONFIG_FILES
@@ -24465,7 +24467,7 @@ Index: alibffi/configure
  ac_cs_version="\\
 -libffi config.status 3.0.8
 -configured by $0, generated by GNU Autoconf 2.64,
-+libffi config.status 3.0.9rc5
++libffi config.status 3.0.9rc6
 +configured by $0, generated by GNU Autoconf 2.63,
    with options \\"`$as_echo "$ac_configure_args" | sed 's/^ //; s/[\\""\`\$]/\\\\&/g'`\\"
  
@@ -25414,10 +25416,10 @@ Index: alibffi/configure
  $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
  fi
  
-Index: alibffi/configure.ac
+Index: libffi/configure.ac
 ===================================================================
---- alibffi.orig/configure.ac
-+++ alibffi/configure.ac
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
 @@ -1,12 +1,10 @@
  dnl Process this with autoconf to create configure
  
@@ -25425,7 +25427,7 @@ Index: alibffi/configure.ac
 +AC_PREREQ(2.63)
  
 -AC_INIT([libffi], [3.0.8], [http://gcc.gnu.org/bugs.html])
-+AC_INIT([libffi], [3.0.9rc5], [http://gcc.gnu.org/bugs.html])
++AC_INIT([libffi], [3.0.9rc6], [http://gcc.gnu.org/bugs.html])
  AC_CONFIG_HEADERS([fficonfig.h])
  
 -AM_ENABLE_MULTILIB(, ..)
@@ -25468,10 +25470,10 @@ Index: alibffi/configure.ac
 +AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile libffi.pc)
  
  AC_OUTPUT
-Index: alibffi/depcomp
+Index: libffi/depcomp
 ===================================================================
 --- /dev/null
-+++ alibffi/depcomp
++++ libffi/depcomp
 @@ -0,0 +1,584 @@
 +#! /bin/sh
 +# depcomp - compile a program generating dependencies as side-effects
@@ -26057,10 +26059,10 @@ Index: alibffi/depcomp
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: alibffi/include/Makefile.in
+Index: libffi/include/Makefile.in
 ===================================================================
---- alibffi.orig/include/Makefile.in
-+++ alibffi/include/Makefile.in
+--- libffi.orig/include/Makefile.in
++++ libffi/include/Makefile.in
 @@ -37,19 +37,13 @@ host_triplet = @host@
  target_triplet = @target@
  subdir = include
@@ -26211,10 +26213,10 @@ Index: alibffi/include/Makefile.in
  
  
  # Tell versions [3.59,3.63) of GNU make to not export all variables.
-Index: alibffi/install-sh
+Index: libffi/install-sh
 ===================================================================
 --- /dev/null
-+++ alibffi/install-sh
++++ libffi/install-sh
 @@ -0,0 +1,323 @@
 +#!/bin/sh
 +# install - install a program, script, or datafile
@@ -26539,10 +26541,10 @@ Index: alibffi/install-sh
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: alibffi/libffi.pc.in
+Index: libffi/libffi.pc.in
 ===================================================================
 --- /dev/null
-+++ alibffi/libffi.pc.in
++++ libffi/libffi.pc.in
 @@ -0,0 +1,10 @@
 +prefix=@prefix@
 +exec_prefix=@exec_prefix@
@@ -26554,10 +26556,10 @@ Index: alibffi/libffi.pc.in
 +Version: @PACKAGE_VERSION@
 +Libs: -L${libdir} -lffi
 +Cflags: -I${includedir}
-Index: alibffi/libtool-version
+Index: libffi/libtool-version
 ===================================================================
---- alibffi.orig/libtool-version
-+++ alibffi/libtool-version
+--- libffi.orig/libtool-version
++++ libffi/libtool-version
 @@ -2,5 +2,28 @@
  # the libtool manual to understand the meaning of the fields.  This is
  # a separate file so that version updates don't involve re-running
@@ -26588,10 +26590,10 @@ Index: alibffi/libtool-version
  # CURRENT:REVISION:AGE
 -4:1:0
 +5:10:0
-Index: alibffi/ltmain.sh
+Index: libffi/ltmain.sh
 ===================================================================
 --- /dev/null
-+++ alibffi/ltmain.sh
++++ libffi/ltmain.sh
 @@ -0,0 +1,8406 @@
 +# Generated from ltmain.m4sh.
 +
@@ -34999,10 +35001,10 @@ Index: alibffi/ltmain.sh
 +# End:
 +# vi:sw=2
 +
-Index: alibffi/man/Makefile.in
+Index: libffi/man/Makefile.in
 ===================================================================
---- alibffi.orig/man/Makefile.in
-+++ alibffi/man/Makefile.in
+--- libffi.orig/man/Makefile.in
++++ libffi/man/Makefile.in
 @@ -37,17 +37,11 @@ target_triplet = @target@
  subdir = man
  DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -35042,10 +35044,10 @@ Index: alibffi/man/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-Index: alibffi/mdate-sh
+Index: libffi/mdate-sh
 ===================================================================
 --- /dev/null
-+++ alibffi/mdate-sh
++++ libffi/mdate-sh
 @@ -0,0 +1,201 @@
 +#!/bin/sh
 +# Get modification time of a file or directory and pretty-print it.
@@ -35248,10 +35250,10 @@ Index: alibffi/mdate-sh
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: alibffi/missing
+Index: libffi/missing
 ===================================================================
 --- /dev/null
-+++ alibffi/missing
++++ libffi/missing
 @@ -0,0 +1,360 @@
 +#! /bin/sh
 +# Common stub for a few missing GNU programs while installing.
@@ -35613,10 +35615,10 @@ Index: alibffi/missing
 +# time-stamp-format: "%:y-%02m-%02d.%02H"
 +# time-stamp-end: "$"
 +# End:
-Index: alibffi/testsuite/Makefile.in
+Index: libffi/testsuite/Makefile.in
 ===================================================================
---- alibffi.orig/testsuite/Makefile.in
-+++ alibffi/testsuite/Makefile.in
+--- libffi.orig/testsuite/Makefile.in
++++ libffi/testsuite/Makefile.in
 @@ -37,17 +37,11 @@ target_triplet = @target@
  subdir = testsuite
  DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -35656,10 +35658,10 @@ Index: alibffi/testsuite/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-Index: alibffi/texinfo.tex
+Index: libffi/texinfo.tex
 ===================================================================
 --- /dev/null
-+++ alibffi/texinfo.tex
++++ libffi/texinfo.tex
 @@ -0,0 +1,7210 @@
 +% texinfo.tex -- TeX macros to handle Texinfo files.
 +%
@@ -42871,10 +42873,10 @@ Index: alibffi/texinfo.tex
 +@ignore
 +   arch-tag: e1b36e32-c96e-4135-a41a-0b2efa2ea115
 +@end ignore
-Index: alibffi/testsuite/lib/libffi-dg.exp
+Index: libffi/testsuite/lib/libffi-dg.exp
 ===================================================================
---- alibffi.orig/testsuite/lib/libffi-dg.exp
-+++ alibffi/testsuite/lib/libffi-dg.exp
+--- libffi.orig/testsuite/lib/libffi-dg.exp
++++ libffi/testsuite/lib/libffi-dg.exp
 @@ -1,8 +1,8 @@
 -#   Copyright (C) 2003, 2005, 2009 Free Software Foundation, Inc.
 +#   Copyright (C) 2003, 2005, 2008 Free Software Foundation, Inc.
@@ -42939,10 +42941,10 @@ Index: alibffi/testsuite/lib/libffi-dg.exp
      }
  
      set_ld_library_path_env_vars
-Index: alibffi/testsuite/lib/target-libpath.exp
+Index: libffi/testsuite/lib/target-libpath.exp
 ===================================================================
 --- /dev/null
-+++ alibffi/testsuite/lib/target-libpath.exp
++++ libffi/testsuite/lib/target-libpath.exp
 @@ -0,0 +1,263 @@
 +# Copyright (C) 2004, 2005, 2007 Free Software Foundation, Inc.
 +
@@ -43207,10 +43209,10 @@ Index: alibffi/testsuite/lib/target-libpath.exp
 +    return $shlib_ext
 +}
 +
-Index: alibffi/testsuite/lib/wrapper.exp
+Index: libffi/testsuite/lib/wrapper.exp
 ===================================================================
 --- /dev/null
-+++ alibffi/testsuite/lib/wrapper.exp
++++ libffi/testsuite/lib/wrapper.exp
 @@ -0,0 +1,45 @@
 +#   Copyright (C) 2004, 2007 Free Software Foundation, Inc.
 +
@@ -43257,10 +43259,10 @@ Index: alibffi/testsuite/lib/wrapper.exp
 +	}
 +    }
 +}
-Index: alibffi/include/Makefile.am
+Index: libffi/include/Makefile.am
 ===================================================================
---- alibffi.orig/include/Makefile.am
-+++ alibffi/include/Makefile.am
+--- libffi.orig/include/Makefile.am
++++ libffi/include/Makefile.am
 @@ -5,8 +5,5 @@ AUTOMAKE_OPTIONS=foreign
  DISTCLEANFILES=ffitarget.h
  EXTRA_DIST=ffi.h.in ffi_common.h
