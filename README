@@ -1,10 +1,7 @@
-This directory contains the libffi package, which is not part of GCC but
-shipped with GCC as convenience.
-
 Status
 ======
 
-libffi-3.0.8 was released on December 19, 2008. Check the libffi web
+libffi-3.0.9 was released on December XX, 2009. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -166,6 +163,11 @@ arguments' test).
 History
 =======
 
+3.0.9 Dec-XX-09
+        Many improvements for virtually all platforms.
+
+3.0.8 Dec-19-08
+
 3.0.7 Nov-11-08
         Fix for ppc FreeBSD.
 	(thanks to Andreas Tobler)
@@ -285,7 +287,10 @@ History
 Authors & Credits
 =================
 
-libffi was originally written by Anthony Green <green@redhat.com>.
+libffi was originally written by Anthony Green.
+
+Andrew Haley is responsible for much of the ongoing maintenance work
+in libffi.
 
 The developers of the GNU Compiler Collection project have made
 innumerable valuable contributions.  See the ChangeLog file for
