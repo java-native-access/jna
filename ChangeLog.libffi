@@ -1,3 +1,10 @@
+2009-12-25  Carlo Bramini  <carlo.bramix@libero.it>
+
+	* configure.ac (AM_LTLDFLAGS): Define for windows hosts.
+	* Makefile.am (libffi_la_LDFLAGS): Add AM_LTLDFLAGS.
+	* configure: Rebuilt.
+	* Makefile.in: Rebuilt.
+
 2009-12-24  Anthony Green  <green@redhat.com>
 
 	* testsuite/libffi.call/huge_struct.c: Fix printf format, and
@@ -224,20 +231,20 @@
 2008-12-22  Timothy Wall  <twall@users.sf.net>
 
 	* testsuite/libffi.call/closure_fn0.c,
-        testsuite/libffi.call/closure_fn1.c,    
-        testsuite/libffi.call/closure_fn2.c,    
-        testsuite/libffi.call/closure_fn3.c,    
-        testsuite/libffi.call/closure_fn4.c,    
-        testsuite/libffi.call/closure_fn5.c,    
-        testsuite/libffi.call/closure_fn6.c,    
-        testsuite/libffi.call/closure_loc_fn0.c,    
-        testsuite/libffi.call/closure_stdcall.c,    
-        testsuite/libffi.call/cls_align_pointer.c,    
-        testsuite/libffi.call/cls_pointer.c,    
+        testsuite/libffi.call/closure_fn1.c,
+        testsuite/libffi.call/closure_fn2.c,
+        testsuite/libffi.call/closure_fn3.c,
+        testsuite/libffi.call/closure_fn4.c,
+        testsuite/libffi.call/closure_fn5.c,
+        testsuite/libffi.call/closure_fn6.c,
+        testsuite/libffi.call/closure_loc_fn0.c,
+        testsuite/libffi.call/closure_stdcall.c,
+        testsuite/libffi.call/cls_align_pointer.c,
+        testsuite/libffi.call/cls_pointer.c,
         testsuite/libffi.call/cls_pointer_stack.c: use portable cast from
         pointer to integer (intptr_t).
         * testsuite/libffi.call/cls_longdouble.c: disable for win64.
-	
+
 2008-12-19  Anthony Green  <green@redhat.com>
 
 	* configure.ac: Bump version to 3.0.8.

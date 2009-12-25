@@ -85,6 +85,8 @@ case "$host" in
 	;;
   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw*)
 	TARGET=X86_WIN32; TARGETDIR=x86
+	# All mingw/cygwin/win32 builds require this for sharedlib
+	AM_LTLDFLAGS="-no-undefined"
 	;;
   i?86-*-darwin*)
 	TARGET=X86_DARWIN; TARGETDIR=x86
@@ -163,6 +165,7 @@ case "$host" in
 esac
 
 AC_SUBST(AM_RUNTESTFLAGS)
+AC_SUBST(AM_LTLDFLAGS)
 
 if test $TARGETDIR = unknown; then
   AC_MSG_ERROR(["libffi has not been ported to $host."])

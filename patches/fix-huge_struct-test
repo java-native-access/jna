@@ -15,12 +15,16 @@ Index: libffi/testsuite/libffi.call/huge_struct.c
 ===================================================================
 --- libffi.orig/testsuite/libffi.call/huge_struct.c
 +++ libffi/testsuite/libffi.call/huge_struct.c
-@@ -8,7 +8,7 @@
- /* { dg-excess-errors "" { target avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* i*86-*-linux-* x86_64-*-linux-* } } */
+@@ -5,10 +5,10 @@
+ 	Originator:		Blake Chaffin	6/18/2007
+ */
+ 
+-/* { dg-excess-errors "" { target avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* i*86-*-linux-* x86_64-*-linux-* } } */
++/* { dg-excess-errors "" { target avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* } } */
  /* { dg-do run { xfail mips*-*-* arm*-*-* strongarm*-*-* xscale*-*-* } } */
  /* { dg-options -mlong-double-128 { target powerpc64*-*-* } } */
 -/* { dg-output "" { xfail avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* i*86-*-linux-* x86_64-*-linux-* } } */
-+/* { dg-output "" { xfail avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* x86_64-*-linux-* } } */
++/* { dg-output "" { xfail avr32-*-* x86_64-*-mingw* x86_64-*-cygwin* } } */
  
  #include <stdint.h>
  
@@ -47,7 +51,18 @@ Index: libffi/testsuite/libffi.call/huge_struct.c
  		ui8_1, si8_1, ui16_1, si16_1, ui32_1, si32_1, ui64_1, si64_1, f_1, d_1, ld_1, p_1,
  		ui8_2, si8_2, ui16_2, si16_2, ui32_2, si32_2, ui64_2, si64_2, f_2, d_2, ld_2, p_2,
  		ui8_3, si8_3, ui16_3, si16_3, ui32_3, si32_3, ui64_3, si64_3, f_3, d_3, ld_3, p_3,
-@@ -296,10 +296,10 @@ main(int argc __UNUSED__, const char** a
+@@ -229,7 +229,9 @@ main(int argc __UNUSED__, const char** a
+ 
+ 	ffi_type	ret_struct_type;
+ 	ffi_type*	st_fields[51];
+-	BigStruct	retVal	= {0};
++	BigStruct	retVal;
++
++	memset (&retVal, 0, sizeof(retVal));
+ 
+ 	ret_struct_type.size = 0;
+ 	ret_struct_type.alignment = 0;
+@@ -296,10 +298,10 @@ main(int argc __UNUSED__, const char** a
  
  	ffi_call(&cif, FFI_FN(test_large_fn), &retVal, argValues);
  	// { dg-output "1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2: 2 3 4 5 6 7 8 9 10 11 12 0x12345679 3 4 5 6 7 8 9 10 11 12 13 0x1234567a 4 5 6 7 8 9 10 11 12 13 14 0x1234567b 5 6 7 8 9 10 11 12 13 14 15 0x1234567c 6 7" }
@@ -62,7 +77,7 @@ Index: libffi/testsuite/libffi.call/huge_struct.c
  		retVal.a, retVal.b, retVal.c, retVal.d, retVal.e, retVal.f,
  		retVal.g, retVal.h, retVal.i, retVal.j, retVal.k, retVal.l,
  		retVal.m, retVal.n, retVal.o, retVal.p, retVal.q, retVal.r,
-@@ -324,10 +324,10 @@ main(int argc __UNUSED__, const char** a
+@@ -324,10 +326,10 @@ main(int argc __UNUSED__, const char** a
  		ui8, si8, ui16, si16, ui32, si32, ui64, si64, f, d, ld, p,
  		ui8, si8);
  	// { dg-output "\n1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2 3 4 5 6 7 8 9 10 11 0x12345678 1 2: 2 3 4 5 6 7 8 9 10 11 12 0x12345679 3 4 5 6 7 8 9 10 11 12 13 0x1234567a 4 5 6 7 8 9 10 11 12 13 14 0x1234567b 5 6 7 8 9 10 11 12 13 14 15 0x1234567c 6 7" }

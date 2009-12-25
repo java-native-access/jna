@@ -175,7 +175,7 @@ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 
 AM_CFLAGS = -Wall -g -fexceptions
 
-libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version`
+libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(AM_LTLDFLAGS)
 
 AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
 AM_CCASFLAGS = $(AM_CPPFLAGS)
