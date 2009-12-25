@@ -9,6 +9,12 @@
 
 	* testsuite/libffi.call/huge_struct.c: Fix printf format, and
 	don't xfail x86 Linux.
+	* testsuite/libffi.call/huge_struct.c: Don't xfail mips.
+	* testsuite/libffi.call/cls_pointer.c: Ditto.
+	* testsuite/libffi.call/cls_pointer_stack.c: Ditto.
+	* testsuite/libffi.call/cls_longdouble_va.c: Ditto.
+	* testsuite/libffi.call/cls_longdouble.c: Ditto.
+	* testsuite/libffi.call/cls_double_va.c: Ditto.
 
 2009-10-11  Matthias Klose  <doko@ubuntu.com>
 
