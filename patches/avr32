@@ -1,7 +1,7 @@
-Index: alibffi/src/avr32/ffi.c
+Index: libffi/src/avr32/ffi.c
 ===================================================================
 --- /dev/null
-+++ alibffi/src/avr32/ffi.c
++++ libffi/src/avr32/ffi.c
 @@ -0,0 +1,421 @@
 +/* -----------------------------------------------------------------------
 +   ffi.c - Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
@@ -424,10 +424,10 @@ Index: alibffi/src/avr32/ffi.c
 +    return FFI_OK;
 +}
 +
-Index: alibffi/src/avr32/ffitarget.h
+Index: libffi/src/avr32/ffitarget.h
 ===================================================================
 --- /dev/null
-+++ alibffi/src/avr32/ffitarget.h
++++ libffi/src/avr32/ffitarget.h
 @@ -0,0 +1,50 @@
 +/* -----------------------------------------------------------------*-C-*-
 +   ffitarget.h - Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
@@ -479,10 +479,10 @@ Index: alibffi/src/avr32/ffitarget.h
 +#define FFI_NATIVE_RAW_API 0
 +
 +#endif
-Index: alibffi/src/avr32/sysv.S
+Index: libffi/src/avr32/sysv.S
 ===================================================================
 --- /dev/null
-+++ alibffi/src/avr32/sysv.S
++++ libffi/src/avr32/sysv.S
 @@ -0,0 +1,208 @@
 +/* -----------------------------------------------------------------------
 +   sysv.S - Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
@@ -692,10 +692,10 @@ Index: alibffi/src/avr32/sysv.S
 +#if defined __ELF__ && defined __linux__
 +    .section    .note.GNU-stack,"",@progbits
 +#endif
-Index: alibffi/Makefile.am
+Index: libffi/Makefile.am
 ===================================================================
---- alibffi.orig/Makefile.am
-+++ alibffi/Makefile.am
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
 @@ -7,6 +7,7 @@ SUBDIRS = include testsuite man
  EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
  	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
@@ -704,7 +704,7 @@ Index: alibffi/Makefile.am
  	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
  	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
  	src/ia64/unix.S \
-@@ -140,6 +141,9 @@ endif
+@@ -141,6 +142,9 @@ endif
  if ARM
  nodist_libffi_la_SOURCES += src/arm/sysv.S src/arm/ffi.c
  endif
@@ -714,10 +714,10 @@ Index: alibffi/Makefile.am
  if LIBFFI_CRIS
  nodist_libffi_la_SOURCES += src/cris/sysv.S src/cris/ffi.c
  endif
-Index: alibffi/configure
+Index: libffi/configure
 ===================================================================
---- alibffi.orig/configure
-+++ alibffi/configure
+--- libffi.orig/configure
++++ libffi/configure
 @@ -813,6 +813,8 @@ FRV_FALSE
  FRV_TRUE
  LIBFFI_CRIS_FALSE
@@ -884,10 +884,10 @@ Index: alibffi/configure
  if test -z "${LIBFFI_CRIS_TRUE}" && test -z "${LIBFFI_CRIS_FALSE}"; then
    { { $as_echo "$as_me:$LINENO: error: conditional \"LIBFFI_CRIS\" was never defined.
  Usually this means the macro was only invoked conditionally." >&5
-Index: alibffi/configure.ac
+Index: libffi/configure.ac
 ===================================================================
---- alibffi.orig/configure.ac
-+++ alibffi/configure.ac
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
 @@ -58,6 +58,10 @@ case "$host" in
  	TARGET=X86_64; TARGETDIR=x86
  	;;
@@ -907,10 +907,10 @@ Index: alibffi/configure.ac
  AM_CONDITIONAL(LIBFFI_CRIS, test x$TARGET = xLIBFFI_CRIS)
  AM_CONDITIONAL(FRV, test x$TARGET = xFRV)
  AM_CONDITIONAL(S390, test x$TARGET = xS390)
-Index: alibffi/ChangeLog.libffi
+Index: libffi/ChangeLog.libffi
 ===================================================================
---- alibffi.orig/ChangeLog.libffi
-+++ alibffi/ChangeLog.libffi
+--- libffi.orig/ChangeLog.libffi
++++ libffi/ChangeLog.libffi
 @@ -1,3 +1,14 @@
 +2009-10-05  Bradley Smith  <brad@brad-smith.co.uk>
 +

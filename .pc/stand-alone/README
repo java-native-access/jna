@@ -1,7 +1,10 @@
+This directory contains the libffi package, which is not part of GCC but
+shipped with GCC as convenience.
+
 Status
 ======
 
-libffi-3.0.9 was released on December XX, 2009. Check the libffi web
+libffi-3.0.8 was released on December 19, 2008. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -162,16 +165,6 @@ arguments' test).
 
 History
 =======
-
-See the ChangeLog files for details.
-
-3.0.9 Dec-xx-09
-        Add AVR32 and win64 ports.  Add ARM softfp support.
-	Many fixes for AIX, Solaris, HP-UX, *BSD.
-	Fix x86-64 closure bug.
-
-3.0.8 Dec-19-08
-        Add *BSD, BeOS, and PA-Linux support.
 
 3.0.7 Nov-11-08
         Fix for ppc FreeBSD.

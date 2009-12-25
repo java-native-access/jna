@@ -1,8 +1,3 @@
-2009-12-24  Anthony Green  <green@redhat.com>
-
-	* testsuite/libffi.call/huge_struct.c: Fix printf format, and
-	don't xfail x86 Linux.
-
 2009-10-11  Matthias Klose  <doko@ubuntu.com>
 
 	* man/ffi_call.3: Fix #include in examples.
