@@ -17,12 +17,6 @@
 	testsuite/libffi.call/huge_struct.c: Mark expected failures on
 	AVR32.
 
-2009-10-27  Samuli Suominen  <ssuominen@gentoo.org>
-
-	* configure.ac: Undefine _AC_ARG_VAR_PRECIOUS for autoconf 2.64.
-	* configure: Rebuilt.
-	* fficonfig.h.in: Rebuilt.
-
 2009-06-16  Andrew Haley  <aph@redhat.com>
 
 	* testsuite/libffi.call/cls_align_sint64.c,

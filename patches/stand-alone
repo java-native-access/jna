@@ -2,13 +2,7 @@ Index: libffi/ChangeLog.libffi
 ===================================================================
 --- /dev/null
 +++ libffi/ChangeLog.libffi
-@@ -0,0 +1,580 @@
-+2009-10-27  Samuli Suominen  <ssuominen@gentoo.org>
-+
-+	* configure.ac: Undefine _AC_ARG_VAR_PRECIOUS for autoconf 2.64.
-+	* configure: Rebuilt.
-+	* fficonfig.h.in: Rebuilt.
-+
+@@ -0,0 +1,574 @@
 +2009-06-16  Andrew Haley  <aph@redhat.com>
 +
 +	* testsuite/libffi.call/cls_align_sint64.c,
@@ -696,9 +690,27 @@ Index: libffi/Makefile.in
  VPATH = @srcdir@
  pkgdatadir = $(datadir)/@PACKAGE@
  pkgincludedir = $(includedir)/@PACKAGE@
-@@ -60,29 +61,22 @@ target_triplet = @target@
- @PA_LINUX_TRUE@am__append_23 = src/pa/linux.S src/pa/ffi.c
- @PA_HPUX_TRUE@am__append_24 = src/pa/hpux32.S src/pa/ffi.c
+@@ -51,38 +52,32 @@ target_triplet = @target@
+ @POWERPC_DARWIN_TRUE@am__append_14 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
+ @POWERPC_FREEBSD_TRUE@am__append_15 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
+ @ARM_TRUE@am__append_16 = src/arm/sysv.S src/arm/ffi.c
+-@LIBFFI_CRIS_TRUE@am__append_17 = src/cris/sysv.S src/cris/ffi.c
+-@FRV_TRUE@am__append_18 = src/frv/eabi.S src/frv/ffi.c
+-@S390_TRUE@am__append_19 = src/s390/sysv.S src/s390/ffi.c
+-@X86_64_TRUE@am__append_20 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
+-@SH_TRUE@am__append_21 = src/sh/sysv.S src/sh/ffi.c
+-@SH64_TRUE@am__append_22 = src/sh64/sysv.S src/sh64/ffi.c
+-@PA_LINUX_TRUE@am__append_23 = src/pa/linux.S src/pa/ffi.c
+-@PA_HPUX_TRUE@am__append_24 = src/pa/hpux32.S src/pa/ffi.c
++@AVR32_TRUE@am__append_17 = src/avr32/sysv.S src/avr32/ffi.c
++@LIBFFI_CRIS_TRUE@am__append_18 = src/cris/sysv.S src/cris/ffi.c
++@FRV_TRUE@am__append_19 = src/frv/eabi.S src/frv/ffi.c
++@S390_TRUE@am__append_20 = src/s390/sysv.S src/s390/ffi.c
++@X86_64_TRUE@am__append_21 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
++@SH_TRUE@am__append_22 = src/sh/sysv.S src/sh/ffi.c
++@SH64_TRUE@am__append_23 = src/sh64/sysv.S src/sh64/ffi.c
++@PA_LINUX_TRUE@am__append_24 = src/pa/linux.S src/pa/ffi.c
++@PA_HPUX_TRUE@am__append_25 = src/pa/hpux32.S src/pa/ffi.c
  subdir = .
 -DIST_COMMON = README $(am__configure_deps) $(srcdir)/../compile \
 -	$(srcdir)/../config.guess $(srcdir)/../config.sub \
@@ -735,7 +747,7 @@ Index: libffi/Makefile.in
  CONFIG_CLEAN_VPATH_FILES =
  am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
  am__vpath_adj = case $$p in \
-@@ -105,8 +99,9 @@ am__nobase_list = $(am__nobase_strip_set
+@@ -105,8 +100,9 @@ am__nobase_list = $(am__nobase_strip_set
  am__base_list = \
    sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
    sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
@@ -747,7 +759,61 @@ Index: libffi/Makefile.in
  libffi_la_LIBADD =
  am__dirstamp = $(am__leading_dot)dirstamp
  am_libffi_la_OBJECTS = src/debug.lo src/prep_cif.lo src/types.lo \
-@@ -178,7 +173,7 @@ nodist_libffi_convenience_la_OBJECTS = $
+@@ -139,15 +135,16 @@ am_libffi_la_OBJECTS = src/debug.lo src/
+ @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
+ @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
+ @ARM_TRUE@am__objects_16 = src/arm/sysv.lo src/arm/ffi.lo
+-@LIBFFI_CRIS_TRUE@am__objects_17 = src/cris/sysv.lo src/cris/ffi.lo
+-@FRV_TRUE@am__objects_18 = src/frv/eabi.lo src/frv/ffi.lo
+-@S390_TRUE@am__objects_19 = src/s390/sysv.lo src/s390/ffi.lo
+-@X86_64_TRUE@am__objects_20 = src/x86/ffi64.lo src/x86/unix64.lo \
++@AVR32_TRUE@am__objects_17 = src/avr32/sysv.lo src/avr32/ffi.lo
++@LIBFFI_CRIS_TRUE@am__objects_18 = src/cris/sysv.lo src/cris/ffi.lo
++@FRV_TRUE@am__objects_19 = src/frv/eabi.lo src/frv/ffi.lo
++@S390_TRUE@am__objects_20 = src/s390/sysv.lo src/s390/ffi.lo
++@X86_64_TRUE@am__objects_21 = src/x86/ffi64.lo src/x86/unix64.lo \
+ @X86_64_TRUE@	src/x86/ffi.lo src/x86/sysv.lo
+-@SH_TRUE@am__objects_21 = src/sh/sysv.lo src/sh/ffi.lo
+-@SH64_TRUE@am__objects_22 = src/sh64/sysv.lo src/sh64/ffi.lo
+-@PA_LINUX_TRUE@am__objects_23 = src/pa/linux.lo src/pa/ffi.lo
+-@PA_HPUX_TRUE@am__objects_24 = src/pa/hpux32.lo src/pa/ffi.lo
++@SH_TRUE@am__objects_22 = src/sh/sysv.lo src/sh/ffi.lo
++@SH64_TRUE@am__objects_23 = src/sh64/sysv.lo src/sh64/ffi.lo
++@PA_LINUX_TRUE@am__objects_24 = src/pa/linux.lo src/pa/ffi.lo
++@PA_HPUX_TRUE@am__objects_25 = src/pa/hpux32.lo src/pa/ffi.lo
+ nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
+ 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
+ 	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
+@@ -156,29 +153,30 @@ nodist_libffi_la_OBJECTS = $(am__objects
+ 	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
+ 	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
+ 	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
+-	$(am__objects_24)
++	$(am__objects_24) $(am__objects_25)
+ libffi_la_OBJECTS = $(am_libffi_la_OBJECTS) \
+ 	$(nodist_libffi_la_OBJECTS)
+ libffi_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+ 	$(libffi_la_LDFLAGS) $(LDFLAGS) -o $@
+ libffi_convenience_la_LIBADD =
+-am__objects_25 = src/debug.lo src/prep_cif.lo src/types.lo \
++am__objects_26 = src/debug.lo src/prep_cif.lo src/types.lo \
+ 	src/raw_api.lo src/java_raw_api.lo src/closures.lo
+-am_libffi_convenience_la_OBJECTS = $(am__objects_25)
+-am__objects_26 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
++am_libffi_convenience_la_OBJECTS = $(am__objects_26)
++am__objects_27 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+ 	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
+ 	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
+ 	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
+ 	$(am__objects_13) $(am__objects_14) $(am__objects_15) \
+ 	$(am__objects_16) $(am__objects_17) $(am__objects_18) \
+ 	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
+-	$(am__objects_22) $(am__objects_23) $(am__objects_24)
+-nodist_libffi_convenience_la_OBJECTS = $(am__objects_26)
++	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
++	$(am__objects_25)
++nodist_libffi_convenience_la_OBJECTS = $(am__objects_27)
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
@@ -756,7 +822,7 @@ Index: libffi/Makefile.in
  am__depfiles_maybe = depfiles
  am__mv = mv -f
  CPPASCOMPILE = $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-@@ -199,12 +194,18 @@ SOURCES = $(libffi_la_SOURCES) $(nodist_
+@@ -199,12 +197,18 @@ SOURCES = $(libffi_la_SOURCES) $(nodist_
  	$(libffi_convenience_la_SOURCES) \
  	$(nodist_libffi_convenience_la_SOURCES)
  DIST_SOURCES = $(libffi_la_SOURCES) $(libffi_convenience_la_SOURCES)
@@ -781,7 +847,7 @@ Index: libffi/Makefile.in
  RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
  	html-recursive info-recursive install-data-recursive \
  	install-dvi-recursive install-exec-recursive \
-@@ -212,6 +213,7 @@ RECURSIVE_TARGETS = all-recursive check-
+@@ -212,6 +216,7 @@ RECURSIVE_TARGETS = all-recursive check-
  	install-pdf-recursive install-ps-recursive install-recursive \
  	installcheck-recursive installdirs-recursive pdf-recursive \
  	ps-recursive uninstall-recursive
@@ -789,7 +855,15 @@ Index: libffi/Makefile.in
  RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
    distclean-recursive maintainer-clean-recursive
  AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
-@@ -313,7 +315,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+@@ -259,6 +264,7 @@ distcleancheck_listfiles = find . -type 
+ ACLOCAL = @ACLOCAL@
+ ALLOCA = @ALLOCA@
+ AMTAR = @AMTAR@
++AM_LTLDFLAGS = @AM_LTLDFLAGS@
+ AM_RUNTESTFLAGS = @AM_RUNTESTFLAGS@
+ AR = @AR@
+ AUTOCONF = @AUTOCONF@
+@@ -313,7 +319,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
  PACKAGE_NAME = @PACKAGE_NAME@
  PACKAGE_STRING = @PACKAGE_STRING@
  PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -797,7 +871,7 @@ Index: libffi/Makefile.in
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
  RANLIB = @RANLIB@
-@@ -360,9 +361,9 @@ libdir = @libdir@
+@@ -360,9 +365,9 @@ libdir = @libdir@
  libexecdir = @libexecdir@
  localedir = @localedir@
  localstatedir = @localstatedir@
@@ -808,7 +882,7 @@ Index: libffi/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-@@ -383,7 +384,6 @@ top_build_prefix = @top_build_prefix@
+@@ -383,11 +388,11 @@ top_build_prefix = @top_build_prefix@
  top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
  AUTOMAKE_OPTIONS = foreign subdir-objects
@@ -816,7 +890,12 @@ Index: libffi/Makefile.in
  SUBDIRS = include testsuite man
  EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
  	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
-@@ -406,11 +406,15 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h \
++	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
+ 	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
+ 	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
+ 	src/ia64/unix.S \
+@@ -406,11 +411,15 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
  	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
  	src/sparc/ffi.c src/x86/darwin64.S \
@@ -834,7 +913,7 @@ Index: libffi/Makefile.in
  
  # Work around what appears to be a GNU make bug handling MAKEFLAGS
  # values defined in terms of make variables, as is the case for CC and
-@@ -450,11 +454,14 @@ AM_MAKEFLAGS = \
+@@ -450,11 +459,14 @@ AM_MAKEFLAGS = \
  	"DESTDIR=$(DESTDIR)"
  
  MAKEOVERRIDES = 
@@ -850,13 +929,18 @@ Index: libffi/Makefile.in
  nodist_libffi_la_SOURCES = $(am__append_1) $(am__append_2) \
  	$(am__append_3) $(am__append_4) $(am__append_5) \
  	$(am__append_6) $(am__append_7) $(am__append_8) \
-@@ -467,15 +474,14 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -463,19 +475,18 @@ nodist_libffi_la_SOURCES = $(am__append_
+ 	$(am__append_15) $(am__append_16) $(am__append_17) \
+ 	$(am__append_18) $(am__append_19) $(am__append_20) \
+ 	$(am__append_21) $(am__append_22) $(am__append_23) \
+-	$(am__append_24)
++	$(am__append_24) $(am__append_25)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
  AM_CFLAGS = -Wall -g -fexceptions
 -LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/../libtool-ldflags $(LDFLAGS))
 -libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS)
-+libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version`
++libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)
  all: fficonfig.h
@@ -868,7 +952,7 @@ Index: libffi/Makefile.in
  am--refresh:
  	@:
  $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
-@@ -527,41 +533,43 @@ $(srcdir)/fficonfig.h.in: @MAINTAINER_MO
+@@ -527,41 +538,43 @@ $(srcdir)/fficonfig.h.in: @MAINTAINER_MO
  
  distclean-hdr:
  	-rm -f fficonfig.h stamp-h1
@@ -933,7 +1017,24 @@ Index: libffi/Makefile.in
  	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
  	  test "$$dir" != "$$p" || dir=.; \
  	  echo "rm -f \"$${dir}/so_locations\""; \
-@@ -764,7 +772,7 @@ src/pa/ffi.lo: src/pa/$(am__dirstamp) sr
+@@ -701,6 +714,16 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
+ 	src/arm/$(DEPDIR)/$(am__dirstamp)
+ src/arm/ffi.lo: src/arm/$(am__dirstamp) \
+ 	src/arm/$(DEPDIR)/$(am__dirstamp)
++src/avr32/$(am__dirstamp):
++	@$(MKDIR_P) src/avr32
++	@: > src/avr32/$(am__dirstamp)
++src/avr32/$(DEPDIR)/$(am__dirstamp):
++	@$(MKDIR_P) src/avr32/$(DEPDIR)
++	@: > src/avr32/$(DEPDIR)/$(am__dirstamp)
++src/avr32/sysv.lo: src/avr32/$(am__dirstamp) \
++	src/avr32/$(DEPDIR)/$(am__dirstamp)
++src/avr32/ffi.lo: src/avr32/$(am__dirstamp) \
++	src/avr32/$(DEPDIR)/$(am__dirstamp)
+ src/cris/$(am__dirstamp):
+ 	@$(MKDIR_P) src/cris
+ 	@: > src/cris/$(am__dirstamp)
+@@ -764,7 +787,7 @@ src/pa/ffi.lo: src/pa/$(am__dirstamp) sr
  src/pa/hpux32.lo: src/pa/$(am__dirstamp) \
  	src/pa/$(DEPDIR)/$(am__dirstamp)
  libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES) 
@@ -942,7 +1043,35 @@ Index: libffi/Makefile.in
  libffi_convenience.la: $(libffi_convenience_la_OBJECTS) $(libffi_convenience_la_DEPENDENCIES) 
  	$(LINK)  $(libffi_convenience_la_OBJECTS) $(libffi_convenience_la_LIBADD) $(LIBS)
  
-@@ -1009,23 +1017,191 @@ clean-libtool:
+@@ -778,6 +801,10 @@ mostlyclean-compile:
+ 	-rm -f src/arm/ffi.lo
+ 	-rm -f src/arm/sysv.$(OBJEXT)
+ 	-rm -f src/arm/sysv.lo
++	-rm -f src/avr32/ffi.$(OBJEXT)
++	-rm -f src/avr32/ffi.lo
++	-rm -f src/avr32/sysv.$(OBJEXT)
++	-rm -f src/avr32/sysv.lo
+ 	-rm -f src/closures.$(OBJEXT)
+ 	-rm -f src/closures.lo
+ 	-rm -f src/cris/ffi.$(OBJEXT)
+@@ -892,6 +919,8 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/ffi.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/sysv.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/ffi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/sysv.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/frv/$(DEPDIR)/eabi.Plo@am__quote@
+@@ -993,6 +1022,7 @@ clean-libtool:
+ 	-rm -rf src/.libs src/_libs
+ 	-rm -rf src/alpha/.libs src/alpha/_libs
+ 	-rm -rf src/arm/.libs src/arm/_libs
++	-rm -rf src/avr32/.libs src/avr32/_libs
+ 	-rm -rf src/cris/.libs src/cris/_libs
+ 	-rm -rf src/frv/.libs src/frv/_libs
+ 	-rm -rf src/ia64/.libs src/ia64/_libs
+@@ -1009,23 +1039,191 @@ clean-libtool:
  
  distclean-libtool:
  	-rm -f libtool config.lt
@@ -1150,7 +1279,7 @@ Index: libffi/Makefile.in
  
  # This directory's subdirectories are mostly independent; you can cd
  # into them and run `make' without going through this Makefile.
-@@ -1222,6 +1398,9 @@ distdir: $(DISTFILES)
+@@ -1222,6 +1420,9 @@ distdir: $(DISTFILES)
  	      || exit 1; \
  	  fi; \
  	done
@@ -1160,7 +1289,7 @@ Index: libffi/Makefile.in
  	-test -n "$(am__skip_mode_fix)" \
  	|| find "$(distdir)" -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
  	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
-@@ -1338,10 +1517,10 @@ distcleancheck: distclean
+@@ -1338,10 +1539,10 @@ distcleancheck: distclean
  	       exit 1; } >&2
  check-am: all-am
  check: check-recursive
@@ -1173,7 +1302,7 @@ Index: libffi/Makefile.in
  	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
  	done
  install: install-recursive
-@@ -1365,6 +1544,7 @@ clean-generic:
+@@ -1365,12 +1566,15 @@ clean-generic:
  distclean-generic:
  	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
  	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
@@ -1181,7 +1310,15 @@ Index: libffi/Makefile.in
  	-rm -f src/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/$(am__dirstamp)
  	-rm -f src/alpha/$(DEPDIR)/$(am__dirstamp)
-@@ -1401,12 +1581,12 @@ distclean-generic:
+ 	-rm -f src/alpha/$(am__dirstamp)
+ 	-rm -f src/arm/$(DEPDIR)/$(am__dirstamp)
+ 	-rm -f src/arm/$(am__dirstamp)
++	-rm -f src/avr32/$(DEPDIR)/$(am__dirstamp)
++	-rm -f src/avr32/$(am__dirstamp)
+ 	-rm -f src/cris/$(DEPDIR)/$(am__dirstamp)
+ 	-rm -f src/cris/$(am__dirstamp)
+ 	-rm -f src/frv/$(DEPDIR)/$(am__dirstamp)
+@@ -1401,114 +1605,186 @@ distclean-generic:
  maintainer-clean-generic:
  	@echo "This command is intended for maintainers to use"
  	@echo "it deletes files that may require special tools to rebuild."
@@ -1196,9 +1333,11 @@ Index: libffi/Makefile.in
 -distclean: distclean-multi distclean-recursive
 +distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
- 	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
+-	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
++	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
  	-rm -f Makefile
-@@ -1415,100 +1595,172 @@ distclean-am: clean-am distclean-compile
+ distclean-am: clean-am distclean-compile distclean-generic \
+ 	distclean-hdr distclean-libtool distclean-tags
  
  dvi: dvi-recursive
  
@@ -1335,7 +1474,8 @@ Index: libffi/Makefile.in
 +maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
- 	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
+-	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
++	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
  	-rm -f Makefile
 -maintainer-clean-am: distclean-am maintainer-clean-generic
 +maintainer-clean-am: distclean-am maintainer-clean-aminfo \
@@ -26086,7 +26226,7 @@ Index: libffi/include/Makefile.in
  CONFIG_HEADER = $(top_builddir)/fficonfig.h
  CONFIG_CLEAN_FILES = ffi.h ffitarget.h
  CONFIG_CLEAN_VPATH_FILES =
-@@ -76,8 +70,8 @@ am__nobase_list = $(am__nobase_strip_set
+@@ -76,14 +70,15 @@ am__nobase_list = $(am__nobase_strip_set
  am__base_list = \
    sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
    sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
@@ -26097,7 +26237,14 @@ Index: libffi/include/Makefile.in
  ETAGS = etags
  CTAGS = ctags
  DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-@@ -138,7 +132,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+ ACLOCAL = @ACLOCAL@
+ ALLOCA = @ALLOCA@
+ AMTAR = @AMTAR@
++AM_LTLDFLAGS = @AM_LTLDFLAGS@
+ AM_RUNTESTFLAGS = @AM_RUNTESTFLAGS@
+ AR = @AR@
+ AUTOCONF = @AUTOCONF@
+@@ -138,7 +133,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
  PACKAGE_NAME = @PACKAGE_NAME@
  PACKAGE_STRING = @PACKAGE_STRING@
  PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -26105,7 +26252,7 @@ Index: libffi/include/Makefile.in
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
  RANLIB = @RANLIB@
-@@ -185,9 +178,9 @@ libdir = @libdir@
+@@ -185,9 +179,9 @@ libdir = @libdir@
  libexecdir = @libexecdir@
  localedir = @localedir@
  localstatedir = @localstatedir@
@@ -26116,7 +26263,7 @@ Index: libffi/include/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-@@ -210,11 +203,8 @@ top_srcdir = @top_srcdir@
+@@ -210,11 +204,8 @@ top_srcdir = @top_srcdir@
  AUTOMAKE_OPTIONS = foreign
  DISTCLEANFILES = ffitarget.h
  EXTRA_DIST = ffi.h.in ffi_common.h
@@ -26130,7 +26277,7 @@ Index: libffi/include/Makefile.in
  all: all-am
  
  .SUFFIXES:
-@@ -256,26 +246,26 @@ mostlyclean-libtool:
+@@ -256,26 +247,26 @@ mostlyclean-libtool:
  
  clean-libtool:
  	-rm -rf .libs _libs
@@ -26166,7 +26313,7 @@ Index: libffi/include/Makefile.in
  
  ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
  	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
-@@ -363,7 +353,7 @@ check-am: all-am
+@@ -363,7 +354,7 @@ check-am: all-am
  check: check-am
  all-am: Makefile $(HEADERS)
  installdirs:
@@ -26175,7 +26322,7 @@ Index: libffi/include/Makefile.in
  	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
  	done
  install: install-am
-@@ -412,7 +402,7 @@ info: info-am
+@@ -412,7 +403,7 @@ info: info-am
  
  info-am:
  
@@ -26184,7 +26331,7 @@ Index: libffi/include/Makefile.in
  
  install-dvi: install-dvi-am
  
-@@ -456,7 +446,7 @@ ps: ps-am
+@@ -456,7 +447,7 @@ ps: ps-am
  
  ps-am:
  
@@ -26193,7 +26340,7 @@ Index: libffi/include/Makefile.in
  
  .MAKE: install-am install-strip
  
-@@ -466,13 +456,12 @@ uninstall-am: uninstall-toollibffiHEADER
+@@ -466,13 +457,12 @@ uninstall-am: uninstall-toollibffiHEADER
  	html-am info info-am install install-am install-data \
  	install-data-am install-dvi install-dvi-am install-exec \
  	install-exec-am install-html install-html-am install-info \
@@ -35025,7 +35172,15 @@ Index: libffi/man/Makefile.in
  CONFIG_HEADER = $(top_builddir)/fficonfig.h
  CONFIG_CLEAN_FILES =
  CONFIG_CLEAN_VPATH_FILES =
-@@ -136,7 +130,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+@@ -82,6 +76,7 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCE
+ ACLOCAL = @ACLOCAL@
+ ALLOCA = @ALLOCA@
+ AMTAR = @AMTAR@
++AM_LTLDFLAGS = @AM_LTLDFLAGS@
+ AM_RUNTESTFLAGS = @AM_RUNTESTFLAGS@
+ AR = @AR@
+ AUTOCONF = @AUTOCONF@
+@@ -136,7 +131,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
  PACKAGE_NAME = @PACKAGE_NAME@
  PACKAGE_STRING = @PACKAGE_STRING@
  PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -35033,7 +35188,7 @@ Index: libffi/man/Makefile.in
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
  RANLIB = @RANLIB@
-@@ -183,9 +176,9 @@ libdir = @libdir@
+@@ -183,9 +177,9 @@ libdir = @libdir@
  libexecdir = @libexecdir@
  localedir = @localedir@
  localstatedir = @localstatedir@
@@ -35639,7 +35794,15 @@ Index: libffi/testsuite/Makefile.in
  CONFIG_HEADER = $(top_builddir)/fficonfig.h
  CONFIG_CLEAN_FILES =
  CONFIG_CLEAN_VPATH_FILES =
-@@ -113,7 +107,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+@@ -59,6 +53,7 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCE
+ ACLOCAL = @ACLOCAL@
+ ALLOCA = @ALLOCA@
+ AMTAR = @AMTAR@
++AM_LTLDFLAGS = @AM_LTLDFLAGS@
+ AM_RUNTESTFLAGS = 
+ AR = @AR@
+ AUTOCONF = @AUTOCONF@
+@@ -113,7 +108,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
  PACKAGE_NAME = @PACKAGE_NAME@
  PACKAGE_STRING = @PACKAGE_STRING@
  PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -35647,7 +35810,7 @@ Index: libffi/testsuite/Makefile.in
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
  RANLIB = @RANLIB@
-@@ -160,9 +153,9 @@ libdir = @libdir@
+@@ -160,9 +154,9 @@ libdir = @libdir@
  libexecdir = @libexecdir@
  localedir = @localedir@
  localstatedir = @localstatedir@
@@ -35658,7 +35821,7 @@ Index: libffi/testsuite/Makefile.in
  oldincludedir = @oldincludedir@
  pdfdir = @pdfdir@
  prefix = @prefix@
-@@ -194,6 +187,70 @@ RUNTEST = `if [ -f $(top_srcdir)/../deja
+@@ -194,6 +188,70 @@ RUNTEST = `if [ -f $(top_srcdir)/../deja
  	    else echo runtest; fi`
  
  CLEANFILES = *.exe core* *.log *.sum
