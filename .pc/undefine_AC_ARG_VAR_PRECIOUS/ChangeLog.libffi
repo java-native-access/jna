@@ -1,9 +1,3 @@
-2009-12-25  Samuli Suominen  <ssuominen@gentoo.org>
-
-	* configure.ac: Undefine _AC_ARG_VAR_PRECIOUS for autoconf 2.64.
-	* configure: Rebuilt.
-	* fficonfig.h.in: Rebuilt.
-
 2009-12-25  Carlo Bramini  <carlo.bramix@libero.it>
 
 	* configure.ac (AM_LTLDFLAGS): Define for windows hosts.

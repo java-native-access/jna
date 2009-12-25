@@ -1,0 +1,41 @@
+Index: libffi/ChangeLog.libffi
+===================================================================
+--- libffi.orig/ChangeLog.libffi
++++ libffi/ChangeLog.libffi
+@@ -1,3 +1,10 @@
++2009-12-25  Carlo Bramini  <carlo.bramix@libero.it>
++
++	* configure.ac (AM_LTLDFLAGS): Define for windows hosts.
++	* Makefile.am (libffi_la_LDFLAGS): Add AM_LTLDFLAGS.
++	* configure: Rebuilt.
++	* Makefile.in: Rebuilt.
++
+ 2009-12-24  Anthony Green  <green@redhat.com>
+ 
+ 	* testsuite/libffi.call/huge_struct.c: Fix printf format, and
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -175,7 +175,7 @@ nodist_libffi_convenience_la_SOURCES = $
+ 
+ AM_CFLAGS = -Wall -g -fexceptions
+ 
+-libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version`
++libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(AM_LTLDFLAGS)
+ 
+ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+ AM_CCASFLAGS = $(AM_CPPFLAGS)
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -85,6 +85,8 @@ case "$host" in
+ 	;;
+   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw*)
+ 	TARGET=X86_WIN32; TARGETDIR=x86
++	# All mingw/cygwin/win32 builds require this for sharedlib
++	AM_LTLDFLAGS="-no-undefined"
+ 	;;
+   i?86-*-darwin*)
+ 	TARGET=X86_DARWIN; TARGETDIR=x86
