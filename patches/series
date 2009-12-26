@@ -1,8 +1,5 @@
 stand-alone
-avr32
 snow-leopard
-sgi-mips
-fix-docs
 fix-huge_struct-test
 windows
 undefine_AC_ARG_VAR_PRECIOUS

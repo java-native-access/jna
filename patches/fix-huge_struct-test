@@ -14,10 +14,10 @@ Index: libffi/ChangeLog.libffi
 +	* testsuite/libffi.call/cls_longdouble.c: Ditto.
 +	* testsuite/libffi.call/cls_double_va.c: Ditto.
 +
- 2009-10-11  Matthias Klose  <doko@ubuntu.com>
+ 2009-12-25  Andreas Tobler  <a.tobler@schweiz.org>
  
- 	* man/ffi_call.3: Fix #include in examples.
-@@ -219,20 +230,20 @@
+ 	* fficonfig.h.in: Rebuilt again.
+@@ -187,20 +198,20 @@
  2008-12-22  Timothy Wall  <twall@users.sf.net>
  
  	* testsuite/libffi.call/closure_fn0.c,

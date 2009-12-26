@@ -70,9 +70,9 @@ Index: libffi/ChangeLog.libffi
 +	* fficonfig.h.in: Rebuilt.
 +	* src/closures.c (dlmmap): Define version for snow leopard.
 +
- 2009-10-05  Bradley Smith  <brad@brad-smith.co.uk>
+ 2009-06-16  Andrew Haley  <aph@redhat.com>
  
- 	* configure.ac, Makefile.am, src/avr32/ffi.c,
+ 	* testsuite/libffi.call/cls_align_sint64.c,
 Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
@@ -96,15 +96,23 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -14498,7 +14498,7 @@ _ACEOF
+@@ -14497,6 +14497,16 @@ _ACEOF
+     fi
  fi
  
- case "$target" in
--    i?86-apple-darwin10*)
++case "$target" in
 +    *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
- 
- cat >>confdefs.h <<\_ACEOF
- #define FFI_MMAP_EXEC_WRIT 1
++
++cat >>confdefs.h <<\_ACEOF
++#define FFI_MMAP_EXEC_WRIT 1
++_ACEOF
++
++    ;;
++esac
++
+ { $as_echo "$as_me:$LINENO: checking whether .eh_frame section should be read-only" >&5
+ $as_echo_n "checking whether .eh_frame section should be read-only... " >&6; }
+ if test "${libffi_cv_ro_eh_frame+set}" = set; then
 Index: libffi/fficonfig.h.in
 ===================================================================
 --- libffi.orig/fficonfig.h.in
@@ -118,14 +126,4 @@ Index: libffi/fficonfig.h.in
 +
  /* Define this is you do not want support for the raw API. */
  #undef FFI_NO_RAW_API
- 
-@@ -122,9 +125,6 @@
- /* Define to the one symbol short name of this package. */
- #undef PACKAGE_TARNAME
- 
--/* Define to the home page for this package. */
--#undef PACKAGE_URL
--
- /* Define to the version of this package. */
- #undef PACKAGE_VERSION
  

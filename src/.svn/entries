@@ -1,15 +1,15 @@
 10
 
 dir
-155452
+155472
 svn+ssh://green@gcc.gnu.org/svn/gcc/trunk/libffi/src
 svn+ssh://green@gcc.gnu.org/svn/gcc
 
 
 
-2009-12-14T02:42:18.232982Z
-155205
-danglin
+2009-12-26T04:59:25.888276Z
+155470
+green
 
 
 
@@ -116,6 +116,9 @@ aph
 2904
 
 frv
+dir
+
+avr32
 dir
 
 s390
