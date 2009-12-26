@@ -7,3 +7,5 @@ powerpc-fixes
 fix-huge_struct-on-solaris
 xpass
 amd64-openbsd
+hpux
+avr32-test
