@@ -1,3 +1,9 @@
+2009-12-26  Andreas Tobler  <a.tobler@schweiz.org>
+
+	* testsuite/libffi.call/huge_struct.c (test_large_fn): Replace
+	format code %p with %#x because %p does not add a leading 0x on
+	Solaris.  Also case relevant arguments to unsigned int.
+
 2009-12-26  Andreas Schwab  <schwab@linux-m68k.org>
 
 	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Advance intarg_count

@@ -1,14 +1,3 @@
-2009-10-05  Bradley Smith  <brad@brad-smith.co.uk>
-
-	* configure.ac, Makefile.am, src/avr32/ffi.c,
-	src/avr32/ffitarget.h,
-	src/avr32/sysv.S: Add AVR32 port.
-	* testsuite/libffi.call/cls_dbls_struct.c,
-	testsuite/libffi.call/cls_double_va.c,
-	testsuite/libffi.call/cls_longdouble_va.c,
-	testsuite/libffi.call/huge_struct.c: Mark expected failures on
-	AVR32.
-
 2009-06-16  Andrew Haley  <aph@redhat.com>
 
 	* testsuite/libffi.call/cls_align_sint64.c,

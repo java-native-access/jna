@@ -1,5 +1,5 @@
-This is doc/libffi.info, produced by makeinfo version 4.12 from
-./doc/libffi.texi.
+This is ../libffi/doc/libffi.info, produced by makeinfo version 4.13
+from ../libffi/doc/libffi.texi.
 
 This manual is for Libffi, a portable foreign-function interface
 library.
@@ -13,7 +13,7 @@ library.
      included in the section entitled "GNU General Public License".
 
 
-INFO-DIR-SECTION
+INFO-DIR-SECTION Development
 START-INFO-DIR-ENTRY
 * libffi: (libffi).             Portable foreign-function interface library.
 END-INFO-DIR-ENTRY
@@ -516,18 +516,18 @@ Index
 
 
 Tag Table:
-Node: Top670
-Node: Introduction1406
-Node: Using libffi3042
-Node: The Basics3477
-Node: Simple Example6084
-Node: Types7111
-Node: Primitive Types7394
-Node: Structures9214
-Node: Type Example10074
-Node: Multiple ABIs11297
-Node: The Closure API11668
-Node: Missing Features14588
-Node: Index15081
+Node: Top700
+Node: Introduction1436
+Node: Using libffi3072
+Node: The Basics3507
+Node: Simple Example6114
+Node: Types7141
+Node: Primitive Types7424
+Node: Structures9244
+Node: Type Example10104
+Node: Multiple ABIs11327
+Node: The Closure API11698
+Node: Missing Features14618
+Node: Index15111
 
 End Tag Table

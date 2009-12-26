@@ -1,3 +1,34 @@
+2009-12-26  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Advance intarg_count
+	when a float argument is passed in memory.
+	(ffi_closure_helper_SYSV): Mark general registers as used up when
+	a 64bit or soft-float long double argument is passed in memory.
+
+2009-12-25  Samuli Suominen  <ssuominen@gentoo.org>
+
+	* configure.ac: Undefine _AC_ARG_VAR_PRECIOUS for autoconf 2.64.
+	* configure: Rebuilt.
+	* fficonfig.h.in: Rebuilt.
+
+2009-12-25  Carlo Bramini  <carlo.bramix@libero.it>
+
+	* configure.ac (AM_LTLDFLAGS): Define for windows hosts.
+	* Makefile.am (libffi_la_LDFLAGS): Add AM_LTLDFLAGS.
+	* configure: Rebuilt.
+	* Makefile.in: Rebuilt.
+
+2009-12-24  Anthony Green  <green@redhat.com>
+
+	* testsuite/libffi.call/huge_struct.c: Fix printf format, and
+	don't xfail x86 Linux.
+	* testsuite/libffi.call/huge_struct.c: Don't xfail mips.
+	* testsuite/libffi.call/cls_pointer.c: Ditto.
+	* testsuite/libffi.call/cls_pointer_stack.c: Ditto.
+	* testsuite/libffi.call/cls_longdouble_va.c: Ditto.
+	* testsuite/libffi.call/cls_longdouble.c: Ditto.
+	* testsuite/libffi.call/cls_double_va.c: Ditto.
+
 2009-12-25  Andreas Tobler  <a.tobler@schweiz.org>
 
 	* fficonfig.h.in: Rebuilt again.
@@ -11,17 +42,6 @@
 	* configure: Rebuilt.
 	* fficonfig.h.in: Rebuilt.
 	* src/closures.c (dlmmap): Define version for snow leopard.
-
-2009-10-05  Bradley Smith  <brad@brad-smith.co.uk>
-
-	* configure.ac, Makefile.am, src/avr32/ffi.c,
-	src/avr32/ffitarget.h,
-	src/avr32/sysv.S: Add AVR32 port.
-	* testsuite/libffi.call/cls_dbls_struct.c,
-	testsuite/libffi.call/cls_double_va.c,
-	testsuite/libffi.call/cls_longdouble_va.c,
-	testsuite/libffi.call/huge_struct.c: Mark expected failures on
-	AVR32.
 
 2009-06-16  Andrew Haley  <aph@redhat.com>
 
@@ -198,20 +218,20 @@
 2008-12-22  Timothy Wall  <twall@users.sf.net>
 
 	* testsuite/libffi.call/closure_fn0.c,
-        testsuite/libffi.call/closure_fn1.c,    
-        testsuite/libffi.call/closure_fn2.c,    
-        testsuite/libffi.call/closure_fn3.c,    
-        testsuite/libffi.call/closure_fn4.c,    
-        testsuite/libffi.call/closure_fn5.c,    
-        testsuite/libffi.call/closure_fn6.c,    
-        testsuite/libffi.call/closure_loc_fn0.c,    
-        testsuite/libffi.call/closure_stdcall.c,    
-        testsuite/libffi.call/cls_align_pointer.c,    
-        testsuite/libffi.call/cls_pointer.c,    
+        testsuite/libffi.call/closure_fn1.c,
+        testsuite/libffi.call/closure_fn2.c,
+        testsuite/libffi.call/closure_fn3.c,
+        testsuite/libffi.call/closure_fn4.c,
+        testsuite/libffi.call/closure_fn5.c,
+        testsuite/libffi.call/closure_fn6.c,
+        testsuite/libffi.call/closure_loc_fn0.c,
+        testsuite/libffi.call/closure_stdcall.c,
+        testsuite/libffi.call/cls_align_pointer.c,
+        testsuite/libffi.call/cls_pointer.c,
         testsuite/libffi.call/cls_pointer_stack.c: use portable cast from
         pointer to integer (intptr_t).
         * testsuite/libffi.call/cls_longdouble.c: disable for win64.
-	
+
 2008-12-19  Anthony Green  <green@redhat.com>
 
 	* configure.ac: Bump version to 3.0.8.
