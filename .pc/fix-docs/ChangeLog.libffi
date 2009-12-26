@@ -14,6 +14,12 @@
 	* src/mips/n32.S: Put '#ifdef linux' around '.abicalls' and '.eh_frame'
 	since they are Linux/GNU Assembler specific.
 
+2009-12-25  Andreas Tobler  <a.tobler@schweiz.org>
+
+	* fficonfig.h.in: Rebuilt again.
+	* src/closures.c: Remove the FFI_MMAP_EXEC_WRIT definition for
+	Solaris/x86.
+
 2009-10-27  Abdulaziz Ghuloum <aghuloum@gmail.com>
 
 	* configure.ac (FFI_MMAP_EXEC_WRIT): Define for snow

@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.9rc6], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.9rc7], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -163,7 +163,6 @@ case "$host" in
 esac
 
 AC_SUBST(AM_RUNTESTFLAGS)
-AC_SUBST(AM_LTLDFLAGS)
 
 if test $TARGETDIR = unknown; then
   AC_MSG_ERROR(["libffi has not been ported to $host."])

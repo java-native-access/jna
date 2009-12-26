@@ -1,7 +1,7 @@
-Index: plibffi/ChangeLog.libffi
+Index: libffi/ChangeLog.libffi
 ===================================================================
---- plibffi.orig/ChangeLog.libffi
-+++ plibffi/ChangeLog.libffi
+--- libffi.orig/ChangeLog.libffi
++++ libffi/ChangeLog.libffi
 @@ -1,3 +1,19 @@
 +2009-10-23  Frank Everdij <f.p.x.everdij@tudelft.nl>
 +
@@ -19,13 +19,13 @@ Index: plibffi/ChangeLog.libffi
 +	* src/mips/n32.S: Put '#ifdef linux' around '.abicalls' and '.eh_frame'
 +	since they are Linux/GNU Assembler specific.
 +
- 2009-10-27  Abdulaziz Ghuloum <aghuloum@gmail.com>
+ 2009-12-25  Andreas Tobler  <a.tobler@schweiz.org>
  
- 	* configure.ac (FFI_MMAP_EXEC_WRIT): Define for snow
-Index: plibffi/include/ffi.h.in
+ 	* fficonfig.h.in: Rebuilt again.
+Index: libffi/include/ffi.h.in
 ===================================================================
---- plibffi.orig/include/ffi.h.in
-+++ plibffi/include/ffi.h.in
+--- libffi.orig/include/ffi.h.in
++++ libffi/include/ffi.h.in
 @@ -256,7 +256,11 @@ typedef struct {
    ffi_cif   *cif;
    void     (*fun)(ffi_cif*,void*,void**,void*);
@@ -38,10 +38,10 @@ Index: plibffi/include/ffi.h.in
  
  void *ffi_closure_alloc (size_t size, void **code);
  void ffi_closure_free (void *);
-Index: plibffi/include/ffi_common.h
+Index: libffi/include/ffi_common.h
 ===================================================================
---- plibffi.orig/include/ffi_common.h
-+++ plibffi/include/ffi_common.h
+--- libffi.orig/include/ffi_common.h
++++ libffi/include/ffi_common.h
 @@ -84,15 +84,21 @@ typedef struct
  } extended_cif;
  
@@ -65,10 +65,10 @@ Index: plibffi/include/ffi_common.h
  #else
  typedef unsigned int UINT8  __attribute__((__mode__(__QI__)));
  typedef signed int   SINT8  __attribute__((__mode__(__QI__)));
-Index: plibffi/src/mips/ffi.c
+Index: libffi/src/mips/ffi.c
 ===================================================================
---- plibffi.orig/src/mips/ffi.c
-+++ plibffi/src/mips/ffi.c
+--- libffi.orig/src/mips/ffi.c
++++ libffi/src/mips/ffi.c
 @@ -625,7 +625,7 @@ void ffi_call(ffi_cif *cif, void (*fn)(v
  	  {
  	    rvalue_copy = alloca (8);
@@ -110,10 +110,10 @@ Index: plibffi/src/mips/ffi.c
            if (arg_types[i]->type == FFI_TYPE_FLOAT && argn < 8)
              avaluep[i] = ((char *) argp) + sizeof (float);
            else
-Index: plibffi/src/mips/ffitarget.h
+Index: libffi/src/mips/ffitarget.h
 ===================================================================
---- plibffi.orig/src/mips/ffitarget.h
-+++ plibffi/src/mips/ffitarget.h
+--- libffi.orig/src/mips/ffitarget.h
++++ libffi/src/mips/ffitarget.h
 @@ -28,7 +28,10 @@
  #define LIBFFI_TARGET_H
  
@@ -164,10 +164,10 @@ Index: plibffi/src/mips/ffitarget.h
  
  typedef enum ffi_abi {
    FFI_FIRST_ABI = 0,
-Index: plibffi/src/mips/n32.S
+Index: libffi/src/mips/n32.S
 ===================================================================
---- plibffi.orig/src/mips/n32.S
-+++ plibffi/src/mips/n32.S
+--- libffi.orig/src/mips/n32.S
++++ libffi/src/mips/n32.S
 @@ -40,7 +40,9 @@
  
  #define SIZEOF_FRAME	( 8 * FFI_SIZEOF_ARG )
