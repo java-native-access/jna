@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.9rc8], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.9rc9], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -51,13 +51,9 @@ case "$host" in
 	TARGET=ARM; TARGETDIR=arm
 	;;
 
-  amd64-*-freebsd*)
+  amd64-*-freebsd* | amd64-*-openbsd*)
 	TARGET=X86_64; TARGETDIR=x86
   	;;
-
-  amd64-*-freebsd*)
-	TARGET=X86_64; TARGETDIR=x86
-	;;
 
   avr32*-*-*)
 	TARGET=AVR32; TARGETDIR=avr32

@@ -6,3 +6,4 @@ undefine_AC_ARG_VAR_PRECIOUS
 powerpc-fixes
 fix-huge_struct-on-solaris
 xpass
+amd64-openbsd
