@@ -1,4 +1,4 @@
 @set UPDATED 26 December 2009
 @set UPDATED-MONTH December 2009
-@set EDITION 3.0.9rc9
-@set VERSION 3.0.9rc9
+@set EDITION 3.0.9rc11
+@set VERSION 3.0.9rc11

@@ -9,3 +9,5 @@ xpass
 amd64-openbsd
 hpux
 avr32-test
+xfail-updates
+mips64

@@ -176,3 +176,24 @@ Index: libffi/configure
  if test $TARGETDIR = unknown; then
    { { $as_echo "$as_me:$LINENO: error: \"libffi has not been ported to $host.\"" >&5
  $as_echo "$as_me: error: \"libffi has not been ported to $host.\"" >&2;}
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -264,6 +264,7 @@ distcleancheck_listfiles = find . -type 
+ ACLOCAL = @ACLOCAL@
+ ALLOCA = @ALLOCA@
+ AMTAR = @AMTAR@
++AM_LTLDFLAGS = @AM_LTLDFLAGS@
+ AM_RUNTESTFLAGS = @AM_RUNTESTFLAGS@
+ AR = @AR@
+ AUTOCONF = @AUTOCONF@
+@@ -478,7 +479,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+ libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+ AM_CFLAGS = -Wall -g -fexceptions
+-libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version`
++libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(AM_LTLDFLAGS)
+ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+ AM_CCASFLAGS = $(AM_CPPFLAGS)
+ all: fficonfig.h

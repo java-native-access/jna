@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.9rc10], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.9rc11], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -111,6 +111,8 @@ case "$host" in
 	TARGET=MIPS; TARGETDIR=mips
 	;;
   mips*-*-linux*)
+	# Support 128-bit long double for NewABI.
+	HAVE_LONG_DOUBLE='defined(__mips64)'
 	TARGET=MIPS; TARGETDIR=mips
 	;;
 

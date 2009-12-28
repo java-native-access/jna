@@ -4,7 +4,8 @@
    PR:			none.
    Originator:	Blake Chaffin 6/6/2007	 */
 
-/* { dg-do run { xfail avr32*-*-* strongarm*-*-* xscale*-*-* } } */
+/* { dg-do run { xfail strongarm*-*-* xscale*-*-* } } */
+/* { dg-output "" { xfail avr32*-*-* } } */
 #include "ffitest.h"
 
 static void

@@ -1,13 +1,3 @@
-2009-12-27  Matthias Klose  <doko@ubuntu.com>
-
-	* configure.ac (HAVE_LONG_DOUBLE): Define for mips when
-	appropriate.
-	* configure: Rebuilt.
-
-2009-12-27  Anthony Green  <green@redhat.com>
-
-	* testsuite/libffi.call/cls_longdouble.c: Don't xfail for ARM.
-
 2009-12-26  Anthony Green  <green@redhat.com>
 
 	* testsuite/libffi.call/huge_struct.c: Don't xfail for avr32*-*-*.
