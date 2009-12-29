@@ -1,17 +1,3 @@
-2009-12-25  Andreas Tobler  <a.tobler@schweiz.org>
-
-	* fficonfig.h.in: Rebuilt again.
-	* src/closures.c: Remove the FFI_MMAP_EXEC_WRIT definition for
-	Solaris/x86.
-
-2009-10-27  Abdulaziz Ghuloum <aghuloum@gmail.com>
-
-	* configure.ac (FFI_MMAP_EXEC_WRIT): Define for snow
-	leopard (i?86-apple-darwin10*).
-	* configure: Rebuilt.
-	* fficonfig.h.in: Rebuilt.
-	* src/closures.c (dlmmap): Define version for snow leopard.
-
 2009-06-16  Andrew Haley  <aph@redhat.com>
 
 	* testsuite/libffi.call/cls_align_sint64.c,

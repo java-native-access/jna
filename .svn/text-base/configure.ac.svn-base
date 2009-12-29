@@ -55,6 +55,10 @@ case "$host" in
 	TARGET=X86_64; TARGETDIR=x86
 	;;
 
+  avr32*-*-*)
+	TARGET=AVR32; TARGETDIR=avr32
+	;;
+
   cris-*-*)
 	TARGET=LIBFFI_CRIS; TARGETDIR=cris
 	;;
@@ -73,7 +77,7 @@ case "$host" in
 	TARGET=PA_HPUX; TARGETDIR=pa
 	;;
 
-  i386-*-freebsd* | i386-*-openbsd*)
+  i?86-*-freebsd* | i?86-*-openbsd*)
 	TARGET=X86_FREEBSD; TARGETDIR=x86
 	;;
   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw*)
@@ -177,6 +181,7 @@ AM_CONDITIONAL(POWERPC_AIX, test x$TARGET = xPOWERPC_AIX)
 AM_CONDITIONAL(POWERPC_DARWIN, test x$TARGET = xPOWERPC_DARWIN)
 AM_CONDITIONAL(POWERPC_FREEBSD, test x$TARGET = xPOWERPC_FREEBSD)
 AM_CONDITIONAL(ARM, test x$TARGET = xARM)
+AM_CONDITIONAL(AVR32, test x$TARGET = xAVR32)
 AM_CONDITIONAL(LIBFFI_CRIS, test x$TARGET = xLIBFFI_CRIS)
 AM_CONDITIONAL(FRV, test x$TARGET = xFRV)
 AM_CONDITIONAL(S390, test x$TARGET = xS390)
@@ -265,6 +270,14 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
 		  [Define if your assembler supports PC relative relocs.])
     fi
 fi
+
+case "$target" in
+     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
+       AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
+                 [Cannot use malloc on this target, so, we revert to
+                   alternative means])
+     ;;
+esac
 
 AC_CACHE_CHECK([whether .eh_frame section should be read-only],
     libffi_cv_ro_eh_frame, [

@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.9rc11], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.9rc12], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -278,12 +278,12 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
 fi
 
 case "$target" in
-    *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
-	AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
-		  [Cannot use malloc on this target, so, we revert to
-		   alternative means])
-    ;;
-esac 
+     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
+       AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
+                 [Cannot use malloc on this target, so, we revert to
+                   alternative means])
+     ;;
+esac
 
 AC_CACHE_CHECK([whether .eh_frame section should be read-only],
     libffi_cv_ro_eh_frame, [
