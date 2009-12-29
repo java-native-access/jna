@@ -1,56 +1,3 @@
-Index: libffi/src/closures.c
-===================================================================
---- libffi.orig/src/closures.c
-+++ libffi/src/closures.c
-@@ -50,11 +50,6 @@
-    executable memory. */
- #  define FFI_MMAP_EXEC_WRIT 1
- # endif
--# if defined(X86_64) && defined(__sun__) && defined(__svr4__)
--/* The data segment on 64-bit Solaris/x86 isn't executable, so use mmap
--   instead.  */
--#  define FFI_MMAP_EXEC_WRIT 1
--# endif
- #endif
- 
- #if FFI_MMAP_EXEC_WRIT && !defined FFI_MMAP_EXEC_SELINUX
-@@ -214,6 +209,8 @@ static int dlmunmap(void *, size_t);
- 
- #if !(defined(X86_WIN32) || defined(X86_WIN64)) || defined (__CYGWIN__)
- 
-+#if FFI_MMAP_EXEC_SELINUX
-+
- /* A mutex used to synchronize access to *exec* variables in this file.  */
- static pthread_mutex_t open_temp_exec_file_mutex = PTHREAD_MUTEX_INITIALIZER;
- 
-@@ -483,6 +480,27 @@ dlmmap (void *start, size_t length, int 
-   return dlmmap_locked (start, length, prot, flags, offset);
- }
- 
-+#else
-+
-+static void *
-+dlmmap (void *start, size_t length, int prot,
-+	int flags, int fd, off_t offset)
-+{
-+  
-+  assert (start == NULL && length % malloc_getpagesize == 0
-+	  && prot == (PROT_READ | PROT_WRITE)
-+	  && flags == (MAP_PRIVATE | MAP_ANONYMOUS)
-+	  && fd == -1 && offset == 0);
-+  
-+#if FFI_CLOSURE_TEST
-+  printf ("mapping in %zi\n", length);
-+#endif
-+  
-+  return mmap (start, length, prot | PROT_EXEC, flags, fd, offset);
-+}
-+
-+#endif
-+
- /* Release memory at the given address, as well as the corresponding
-    executable page if it's separate.  */
- static int
 Index: libffi/ChangeLog.libffi
 ===================================================================
 --- libffi.orig/ChangeLog.libffi
@@ -77,9 +24,9 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -274,6 +274,14 @@ if test x$TARGET = xX86 || test x$TARGET
-     fi
- fi
+@@ -282,6 +282,14 @@ case "$target" in
+      ;;
+ esac
  
 +case "$target" in
 +    *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
@@ -96,9 +43,9 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -14497,6 +14497,16 @@ _ACEOF
-     fi
- fi
+@@ -14507,6 +14507,16 @@ _ACEOF
+      ;;
+ esac
  
 +case "$target" in
 +    *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
@@ -113,17 +60,3 @@ Index: libffi/configure
  { $as_echo "$as_me:$LINENO: checking whether .eh_frame section should be read-only" >&5
  $as_echo_n "checking whether .eh_frame section should be read-only... " >&6; }
  if test "${libffi_cv_ro_eh_frame+set}" = set; then
-Index: libffi/fficonfig.h.in
-===================================================================
---- libffi.orig/fficonfig.h.in
-+++ libffi/fficonfig.h.in
-@@ -17,6 +17,9 @@
- /* Define this if you want extra debugging. */
- #undef FFI_DEBUG
- 
-+/* Cannot use malloc on this target, so, we revert to alternative means */
-+#undef FFI_MMAP_EXEC_WRIT
-+
- /* Define this is you do not want support for the raw API. */
- #undef FFI_NO_RAW_API
- 

@@ -14,10 +14,10 @@ Index: libffi/ChangeLog.libffi
 +	* testsuite/libffi.call/cls_longdouble.c: Ditto.
 +	* testsuite/libffi.call/cls_double_va.c: Ditto.
 +
- 2009-12-25  Andreas Tobler  <a.tobler@schweiz.org>
+ 2009-06-16  Andrew Haley  <aph@redhat.com>
  
- 	* fficonfig.h.in: Rebuilt again.
-@@ -187,20 +198,20 @@
+ 	* testsuite/libffi.call/cls_align_sint64.c,
+@@ -173,20 +184,20 @@
  2008-12-22  Timothy Wall  <twall@users.sf.net>
  
  	* testsuite/libffi.call/closure_fn0.c,

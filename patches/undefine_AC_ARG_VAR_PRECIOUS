@@ -9,9 +9,9 @@ Index: libffi/ChangeLog.libffi
 +	* configure: Rebuilt.
 +	* fficonfig.h.in: Rebuilt.
 +
- 2009-12-25  Carlo Bramini  <carlo.bramix@libero.it>
+ 2009-12-29  Kay Tietz  <ktietz70@googlemail.com>
  
- 	* configure.ac (AM_LTLDFLAGS): Define for windows hosts.
+ 	* testsuite/libffi.call/ffitest.h,
 Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure

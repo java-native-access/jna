@@ -1,21 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <fcntl.h>
 #include <ffi.h>
 #include "fficonfig.h"
 
-#if defined HAVE_STDINT_H
-#include <stdint.h>
-#endif
-
-#if defined HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif
-
 #define MAX_ARGS 256
 
-#define CHECK(x) !(x) ? abort() : 0
 
 /* Define __UNUSED__ that also other compilers than gcc can run the tests.  */
 #undef __UNUSED__
@@ -24,6 +14,8 @@
 #else
 #define __UNUSED__
 #endif
+
+#define CHECK(x) (!(x) ? abort() : (void)0)
 
 /* Prefer MAP_ANON(YMOUS) to /dev/zero, since we don't need to keep a
    file open.  */
@@ -51,27 +43,14 @@
 
 #endif
 
+
 /* MinGW kludge.  */
-#ifdef _WIN64
-#define PRIdLL "I64d"
-#define PRIuLL "I64u"
+#ifdef WIN64
+#define PRIdLL "PRId64"
+#define PRIuLL "PRIu64"
 #else
 #define PRIdLL "lld"
 #define PRIuLL "llu"
-#endif
-
-/* PA HP-UX kludge.  */
-#if defined(__hppa__) && defined(__hpux__) && !defined(PRIuPTR)
-#define PRIuPTR "lu"
-#endif
-
-/* Solaris < 10 kludge.  */
-#if defined(__sun__) && defined(__svr4__) && !defined(PRIuPTR)
-#if defined(__arch64__) || defined (__x86_64__)
-#define PRIuPTR "lu"
-#else
-#define PRIuPTR "u"
-#endif
 #endif
 
 #ifdef USING_MMAP
@@ -105,7 +84,7 @@ allocate_mmap (size_t size)
 	       MAP_PRIVATE, dev_zero_fd, 0);
 #endif
 
-  if (page == (void *) MAP_FAILED)
+  if (page == MAP_FAILED)
     {
       perror ("virtual memory exhausted");
       exit (1);

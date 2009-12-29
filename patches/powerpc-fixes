@@ -10,15 +10,7 @@ Index: libffi/src/powerpc/ffi.c
  
     PowerPC Foreign Function Interface
  
-@@ -185,6 +186,7 @@ ffi_prep_args_SYSV (extended_cif *ecif, 
- 	    {
- 	      *next_arg.f = (float) double_tmp;
- 	      next_arg.u += 1;
-+	      intarg_count++;
- 	    }
- 	  else
- 	    *fpr_base.d++ = double_tmp;
-@@ -1149,6 +1151,7 @@ ffi_closure_helper_SYSV (ffi_closure *cl
+@@ -1204,6 +1205,7 @@ ffi_closure_helper_SYSV (ffi_closure *cl
  		pst++;
  	      avalue[i] = pst;
  	      pst += 2;
@@ -26,14 +18,6 @@ Index: libffi/src/powerpc/ffi.c
  	    }
  	  break;
  
-@@ -1222,6 +1225,7 @@ ffi_closure_helper_SYSV (ffi_closure *cl
- 		{
- 		  avalue[i] = pst;
- 		  pst += 4;
-+		  ng = 8;
- 		}
- 	      break;
- 	    }
 Index: libffi/ChangeLog.libffi
 ===================================================================
 --- libffi.orig/ChangeLog.libffi

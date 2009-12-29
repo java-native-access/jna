@@ -1205,6 +1205,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 		pst++;
 	      avalue[i] = pst;
 	      pst += 2;
+	      ng = 8;
 	    }
 	  break;
 
