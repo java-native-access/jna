@@ -5,13 +5,6 @@
 	format code %p with %#lx because %p does not add a leading 0x on
 	Solaris.  Also change relevant arguments to unsigned long.
 
-2009-12-26  Andreas Schwab  <schwab@linux-m68k.org>
-
-	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Advance intarg_count
-	when a float argument is passed in memory.
-	(ffi_closure_helper_SYSV): Mark general registers as used up when
-	a 64bit or soft-float long double argument is passed in memory.
-
 2009-12-25  Samuli Suominen  <ssuominen@gentoo.org>
 
 	* configure.ac: Undefine _AC_ARG_VAR_PRECIOUS for autoconf 2.64.

@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.9 was released on December XX, 2009. Check the libffi web
+libffi-3.0.9 was released on December 31, 2009. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -81,7 +81,7 @@ tested:
 | X86-64       | Linux            |
 | X86-64       | OpenBSD          |
 |--------------+------------------|
-     
+
 Please send additional platform test results to
 libffi-discuss@sourceware.org and feel free to update the wiki page
 above.
@@ -123,10 +123,10 @@ History
 
 See the ChangeLog files for details.
 
-3.0.9 Dec-xx-09
+3.0.9 Dec-31-09
         Add AVR32 and win64 ports.  Add ARM softfp support.
 	Many fixes for AIX, Solaris, HP-UX, *BSD.
-	Fix x86-64 closure bug.
+	Several PowerPC and x86-64 bug fixes.
 	Build DLL for windows.
 
 3.0.8 Dec-19-08

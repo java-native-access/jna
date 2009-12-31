@@ -2,7 +2,6 @@
    ffi.c - Copyright (c) 1998 Geoffrey Keating
    Copyright (C) 2007, 2008 Free Software Foundation, Inc
    Copyright (C) 2008 Red Hat, Inc
-   Copyright (C) 2009 Andreas Schwab
 
    PowerPC Foreign Function Interface
 
@@ -1205,7 +1204,6 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 		pst++;
 	      avalue[i] = pst;
 	      pst += 2;
-	      ng = 8;
 	    }
 	  break;
 

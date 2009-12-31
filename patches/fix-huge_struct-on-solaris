@@ -10,9 +10,9 @@ Index: libffi/ChangeLog.libffi
 +	format code %p with %#lx because %p does not add a leading 0x on
 +	Solaris.  Also change relevant arguments to unsigned long.
 +
- 2009-12-26  Andreas Schwab  <schwab@linux-m68k.org>
+ 2009-12-25  Samuli Suominen  <ssuominen@gentoo.org>
  
- 	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Advance intarg_count
+ 	* configure.ac: Undefine _AC_ARG_VAR_PRECIOUS for autoconf 2.64.
 Index: libffi/testsuite/libffi.call/huge_struct.c
 ===================================================================
 --- libffi.orig/testsuite/libffi.call/huge_struct.c
