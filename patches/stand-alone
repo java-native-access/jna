@@ -43650,13 +43650,26 @@ Index: libffi/README
 ===================================================================
 --- libffi.orig/README
 +++ libffi/README
-@@ -1,6 +1,3 @@
+@@ -1,10 +1,7 @@
 -This directory contains the libffi package, which is not part of GCC but
 -shipped with GCC as convenience.
 -
  Status
  ======
  
+-libffi-3.0.9 was released on December 31, 2009. Check the libffi web
++libffi-3.0.10 was released on XXXXXXXXXX, 2010. Check the libffi web
+ page for updates: <URL:http://sourceware.org/libffi/>.
+ 
+ 
+@@ -83,6 +80,7 @@ tested:
+ | X86-64       | FreeBSD          |
+ | X86-64       | Linux            |
+ | X86-64       | OpenBSD          |
++| X86-64       | Windows/MingW    |
+ |--------------+------------------|
+ 
+ Please send additional platform test results to
 Index: libffi/testsuite/Makefile.am
 ===================================================================
 --- libffi.orig/testsuite/Makefile.am
