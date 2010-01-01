@@ -1,7 +1,7 @@
 10
 
 dir
-155499
+155537
 svn+ssh://green@gcc.gnu.org/svn/gcc/trunk/libffi/src
 svn+ssh://green@gcc.gnu.org/svn/gcc
 
@@ -26,10 +26,10 @@ dje
 
 138bc75d-0d04-0410-961f-82ee72b054a4
 
-arm
+powerpc
 dir
 
-powerpc
+arm
 dir
 
 closures.c
@@ -72,6 +72,15 @@ dir
 sh64
 dir
 
+m68k
+dir
+
+alpha
+dir
+
+x86
+dir
+
 types.c
 file
 
@@ -106,28 +115,19 @@ aph
 
 2904
 
-x86
-dir
-
-alpha
-dir
-
-m68k
+frv
 dir
 
 avr32
 dir
 
-frv
-dir
-
 s390
 dir
 
-cris
+pa
 dir
 
-pa
+cris
 dir
 
 ia64

@@ -1,11 +1,1 @@
 stand-alone
-fix-huge_struct-test
-windows
-undefine_AC_ARG_VAR_PRECIOUS
-fix-huge_struct-on-solaris
-xpass
-amd64-openbsd
-hpux
-avr32-test
-xfail-updates
-mips64
