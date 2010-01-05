@@ -467,6 +467,7 @@ public class Pointer {
                 if (oldbp == null || !oldbp.equals(bp)) {
                     throw new IllegalStateException("Can't autogenerate a direct buffer on memory read");
                 }
+                result = currentValue;
             }
         }
         else if (NativeMapped.class.isAssignableFrom(type)) {

@@ -59,7 +59,8 @@
 
   <target name="default" depends="test" description="Build and Test."/>
 
-  <import file="nbproject/profiler-build-impl.xml"/>
+  <!-- uncomment for netbeans profiling -->
+  <!--<import file="nbproject/profiler-build-impl.xml"/>-->
   <target name="init" depends="-setup"/>
   <target name="compile-test-single" depends="compile-tests"/>
   <target name="compile-single" depends="compile"/>

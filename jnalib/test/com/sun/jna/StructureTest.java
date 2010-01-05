@@ -612,10 +612,12 @@ public class StructureTest extends TestCase {
     }
     public void testBufferFieldReadUnchanged() {
         BufferStructure bs = new BufferStructure();
-        bs.buffer = ByteBuffer.allocateDirect(16);
+        Buffer b = ByteBuffer.allocateDirect(16);
+        bs.buffer = b;
         bs.dbuffer = ((ByteBuffer)bs.buffer).asDoubleBuffer();
         bs.write();
         bs.read();
+        assertEquals("Buffer field should be unchanged", b, bs.buffer);
     }
     public void testBufferFieldReadChanged() {
         BufferStructure bs = new BufferStructure();
