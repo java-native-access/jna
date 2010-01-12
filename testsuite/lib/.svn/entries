@@ -1,15 +1,15 @@
 10
 
 dir
-155537
+155837
 svn+ssh://green@gcc.gnu.org/svn/gcc/trunk/libffi/testsuite/lib
 svn+ssh://green@gcc.gnu.org/svn/gcc
 
 
 
-2009-07-11T06:10:49.813211Z
-149508
-rsandifo
+2010-01-01T12:32:24.799527Z
+155549
+green
 
 
 
@@ -28,7 +28,7 @@ rsandifo
 
 libffi-dg.exp
 file
-155549
+
 
 
 
