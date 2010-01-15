@@ -1,8 +1,3 @@
-2010-01-15  Oliver Kiddle  <okiddle@yahoo.co.uk>
-
-	* src/x86/ffitarget.h (ffi_abi): Check for __i386 and __amd64 for
-	Sun Studio compiler compatibility. 
-
 2010-01-12  Conrad Irwin <conrad.irwin@gmail.com>
 
 	* doc/libffi.texi: Add closure example.
