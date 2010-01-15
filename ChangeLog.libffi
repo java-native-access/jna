@@ -1,4 +1,10 @@
+2010-01-15  Anthony Green  <green@redhat.com>
+
+	* README: Add notes on building with Microsoft Visual C++.
+
 2010-01-15  Daniel Witte  <dwitte@mozilla.com>
+
+	* msvcc.sh: New file.
 
 	* src/x86/win32.S: Port assembly routines to MSVC and #ifdef.
 	* src/x86/ffi.c: Tweak function declaration and remove excess
