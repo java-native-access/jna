@@ -41,7 +41,7 @@ public interface Secur32 extends W32API {
 	 * @param nameFormat The format of the name. 
 	 * @param lpNameBuffer A pointer to a buffer that receives the name in the specified format. 
 	 * @param len On input, the size of the buffer, on output the number of characters copied into the buffer, not including the terminating null character.
-	 * @return
+	 * @return True if the function succeeds. False otherwise.
 	 */
 	public boolean GetUserNameExW(int nameFormat, char[] lpNameBuffer, IntByReference len);
 }

@@ -63,7 +63,7 @@ public interface Advapi32 extends W32API {
 	 * @param peUse
 	 *            SID_NAME_USE enumerated type that indicates the type of the
 	 *            account when the function returns.
-	 * @return
+	 * @return True if the function was successful, False otherwise.
 	 */
 	public boolean LookupAccountNameW(char[] lpSystemName,
 			char[] lpAccountName, byte[] Sid, IntByReference cbSid,
@@ -80,7 +80,7 @@ public interface Advapi32 extends W32API {
 	 *            Pointer to a variable that receives a pointer to a
 	 *            null-terminated SID string. To free the returned buffer, call
 	 *            the LocalFree function.
-	 * @return
+	 * @return True if the function was successful, False otherwise.
 	 */
 	public boolean ConvertSidToStringSidW(byte[] Sid,
 			PointerByReference StringSid);	
@@ -89,7 +89,7 @@ public interface Advapi32 extends W32API {
 	 * Convert a string-format security identifier (SID) into a valid, functional SID.
 	 * @param StringSid The string-format SID to convert.
 	 * @param Sid Receives a pointer to the converted SID.
-	 * @return
+	 * @return True if the function was successful, False otherwise.
 	 */
 	public boolean ConvertStringSidToSidW(char[] StringSid,
 			PointerByReference Sid);
@@ -97,7 +97,7 @@ public interface Advapi32 extends W32API {
 	/**
 	 * Returns the length, in bytes, of a valid security identifier (SID).
 	 * @param sid A pointer to the SID structure whose length is returned.
-	 * @return
+	 * @return Length of the SID.
 	 */
 	public int GetLengthSid(PointerByReference sid);
 }

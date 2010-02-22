@@ -14,7 +14,7 @@ public abstract class Advapi32Util {
 
 	/**
 	 * Retrieves the name of the user associated with the current thread.
-	 * @return 
+	 * @return A user name.
 	 */
 	public static String GetUserName() {
 		char[] buffer = new char[128];
@@ -48,7 +48,7 @@ public abstract class Advapi32Util {
 	 * on which the account was found.
 	 * @param systemName Specifies the name of the system.
 	 * @param accountName Specifies the account name.
-	 * @return
+	 * @return A SID.
 	 * @throws Exception
 	 */
 	public static byte[] LookupAccountName(String systemName, String accountName) throws Exception {
@@ -84,7 +84,7 @@ public abstract class Advapi32Util {
 	/**
 	 * Convert a security identifier (SID) to a string format suitable for display, storage, or transmission.
 	 * @param sid
-	 * @return
+	 * @return A SID.
 	 */
 	public static String ConvertSidToStringSid(byte[] sid) {
 		PointerByReference stringSid = new PointerByReference();

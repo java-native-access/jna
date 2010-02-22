@@ -36,7 +36,8 @@ public interface Netapi32 extends W32API {
 	 * @param lpServer Specifies the DNS or NetBIOS name of the computer on which to call the function.
 	 * @param lpNameBuffer Receives the NetBIOS name of the domain or workgroup to which the computer is joined.
 	 * @param BufferType Join status of the specified computer.
-	 * @return
+	 * @return If the function succeeds, the return value is NERR_Success.
+	 *         If the function fails, the return value is a system error code. 
 	 */
 	public int NetGetJoinInformation(char[] lpServer, PointerByReference lpNameBuffer, 
 			IntByReference BufferType);	
@@ -44,7 +45,8 @@ public interface Netapi32 extends W32API {
 	/**
 	 * Frees the memory that the NetApiBufferAllocate function allocates.
 	 * @param buffer
-	 * @return
+	 * @return If the function succeeds, the return value is NERR_Success.
+	 *         If the function fails, the return value is a system error code. 
 	 */
 	public int NetApiBufferFree(Pointer buffer);
 }

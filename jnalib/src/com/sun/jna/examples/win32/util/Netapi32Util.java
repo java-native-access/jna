@@ -13,7 +13,7 @@ public abstract class Netapi32Util {
 	/**
 	 * Get information about a computer.
 	 * @param computerName
-	 * @return
+	 * @return Domain or workgroup name.
 	 */
 	public static String GetDomainName(String computerName) {
 		char[] lpServer = (computerName == null) ? null : Native.toCharArray(computerName);

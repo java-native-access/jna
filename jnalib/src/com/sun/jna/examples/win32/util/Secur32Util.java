@@ -15,7 +15,7 @@ public abstract class Secur32Util {
 	/**
 	 * Retrieves the name of the user or other security principal associated with the calling thread. 
 	 * You can specify the format of the returned name.
-	 * @return 
+	 * @return A user name in the given format.
 	 */
 	public static String GetUserNameEx(int format) {
 		char[] buffer = new char[128];

@@ -26,9 +26,9 @@ public class Secur32Test extends TestCase {
     
     public void testGetUserNameEx() {
     	IntByReference len = new IntByReference();
-    	assertFalse(Secur32.INSTANCE.GetUserNameExW(
-    			Secur32.EXTENDED_NAME_FORMAT.NameSamCompatible, null, len));
-    	assertEquals(W32Errors.ERROR_MORE_DATA, Kernel32.INSTANCE.GetLastError());
+    	Secur32.INSTANCE.GetUserNameExW(
+    			Secur32.EXTENDED_NAME_FORMAT.NameSamCompatible, null, len);
+    	assertTrue(len.getValue() > 0);
     	char[] buffer = new char[len.getValue() + 1];
     	assertTrue(Secur32.INSTANCE.GetUserNameExW(
     			Secur32.EXTENDED_NAME_FORMAT.NameSamCompatible, buffer, len));
