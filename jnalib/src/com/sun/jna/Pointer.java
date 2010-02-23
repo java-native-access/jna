@@ -47,9 +47,17 @@ public class Pointer {
     /** Convenience constant, same as <code>null</code>. */
     public static final Pointer NULL = null;
     
-    /** Convenience constant, equivalent to <code>(void*)-1</code>. */
+    /** Convenience constant, equivalent to <code>(void*)CONSTANT</code>. */
     public static final Pointer createConstant(long peer) {
         return new Opaque(peer);
+    }
+    
+    /** Convenience constant, equivalent to <code>(void*)CONSTANT</code>.
+        This version will avoid setting any of the high bits on 64-bit
+        systems.
+     */
+    public static final Pointer createConstant(int peer) {
+        return new Opaque((long)peer & 0xFFFFFFFF);
     }
     
     /** Pointer value of the real native pointer. Use long to be 64-bit safe. 
