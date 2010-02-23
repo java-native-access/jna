@@ -96,4 +96,8 @@ public abstract class PointerType implements NativeMapped {
         }
         return false;
     }
+
+    public String toString() {
+        return pointer == null ? "NULL" : pointer.toString();
+    }
 }

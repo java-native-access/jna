@@ -301,6 +301,14 @@ public class PointerTest extends TestCase {
         assertNotSame("Pointer element not updated[1]", orig[1], p[1]);
     }
 
+    public void testCreateConstantPointer() {
+        Pointer p = Pointer.createConstant(0xFFFFFFFF);
+        assertEquals("Wrong peer value", p.peer, 0xFFFFFFFF);
+
+        p = Pointer.createConstant(-1);
+        assertEquals("Wrong peer value", p.peer, -1);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(PointerTest.class);
     }
