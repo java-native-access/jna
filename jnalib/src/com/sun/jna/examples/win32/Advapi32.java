@@ -74,9 +74,9 @@ public interface Advapi32 extends W32API {
 	 * Convert a security identifier (SID) to a string format suitable for display, 
 	 * storage, or transmission.
 	 * 
-	 * @param sid
+	 * @param Sid
 	 *            The SID structure to be converted.
-	 * @param stringSid
+	 * @param StringSid
 	 *            Pointer to a variable that receives a pointer to a
 	 *            null-terminated SID string. To free the returned buffer, call
 	 *            the LocalFree function.

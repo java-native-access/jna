@@ -1,4 +1,4 @@
-package com.sun.jna.examples.win32.util;
+package w32util;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;

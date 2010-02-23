@@ -35,7 +35,7 @@ public class Netapi32Test extends TestCase {
     	assertTrue(lpNameBuffer.getValue().getString(0).length() > 0);
     	assertTrue(bufferType.getValue() > 0);
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
-    			lpNameBuffer.getPointer()));
+    			lpNameBuffer.getValue()));
     }
     
 }

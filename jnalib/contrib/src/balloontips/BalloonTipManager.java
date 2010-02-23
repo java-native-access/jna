@@ -1,4 +1,4 @@
-//package bms.ui.widgets;
+package balloontips;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -61,7 +61,6 @@ public class BalloonTipManager {
   /*
    * The BalloonTip class defines the look of the BalloonTip object.
    */
-  @SuppressWarnings("serial")
   private static final class BalloonTip extends JWindow {
     private static final Integer HMARGIN = 10;
     private static final Integer VMARGIN = 6;

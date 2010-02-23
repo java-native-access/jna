@@ -10,24 +10,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.examples.win32.util;
+package w32util;
 
-import com.sun.jna.examples.win32.Netapi32.*;
-import com.sun.jna.examples.win32.Secur32.*;
-
-import junit.framework.TestCase;
-
-public class Secur32UtilTest extends TestCase {
+public class Netapi32UtilTest extends TestCase {
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(Secur32UtilTest.class);
+        junit.textui.TestRunner.run(Netapi32UtilTest.class);
     }
     
-	public void testGetUsernameEx() {
-		String usernameSamCompatible = Secur32Util.GetUserNameEx(
-				EXTENDED_NAME_FORMAT.NameSamCompatible); 
-		System.out.println(usernameSamCompatible);
-		assertTrue(usernameSamCompatible.length() > 0);
-		assertTrue(usernameSamCompatible.indexOf('\\') > 0);
-	}	
+	public void testGetDomain() {
+		String computerName = System.getenv("COMPUTERNAME");
+		System.out.println(computerName);
+		String domain = Netapi32Util.GetDomainName(computerName);
+		System.out.println(domain);
+		assertTrue(domain.length() > 0);
+	}
 }

@@ -1,4 +1,4 @@
-//package bms.ui.widgets;
+package balloontips;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -10,11 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.examples.win32.util;
-
-import com.sun.jna.examples.win32.Secur32.*;
-
-import junit.framework.TestCase;
+package w32util;
 
 public class Advapi32UtilTest extends TestCase {
 

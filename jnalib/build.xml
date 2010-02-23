@@ -22,6 +22,7 @@
   <property name="dynlink.native" value="false"/>
   <property name="native" location="native"/>
   <property name="src" location="src"/>
+  <property name="contrib" location="contrib"/>
   <property name="dist" location="dist"/>
   <property name="test.src" location="test"/>
   <property name="doc" location="doc"/>
@@ -52,6 +53,7 @@
   <property name="impl.version" value="${jna.version} (b${jna.build})"/>
 
   <property name="compatibility" value="1.4"/>
+  <property name="contrib.compatibility" value="1.5"/>
   <property name="test.compatibility" value="1.5"/>
 
   <!-- Miscellaneous -->
@@ -102,6 +104,7 @@
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
+  	<property name="contrib.classes" location="${build}/contrib-classes"/>
     <property name="reports" value="${build}/reports"/>
 
     <!-- Add other supported platforms here -->
@@ -151,12 +154,27 @@
     <mkdir dir="${build.native}"/>
     <mkdir dir="${classes}"/>
     <mkdir dir="${test.classes}"/>
+  	<mkdir dir="${contrib.classes}"/>
     <mkdir dir="${reports}"/>
     <mkdir dir="${doc}"/>
 
   </target>
 
   <target name="-setup" depends="-dynamic-properties">
+  	
+    <path id="compile-contrib.path">
+      <pathelement path="${contrib}/src"/>
+      <path id="contrib.libs">
+        <pathelement path="${contrib.classes}"/>
+        <pathelement path="${classes}"/>
+      </path>
+      <path id="compile.path">
+        <path id="contrib.src.path">
+          <pathelement location="${contrib}/src"/>
+        </path>
+      </path>                           
+    </path>                           
+  	
     <path id="compile-test.path">
       <pathelement path="${test.src}"/>
       <path id="test.libs">
@@ -175,6 +193,7 @@
     <path id="test.runpath">
       <pathelement path="${build}/${jar}"/>
       <pathelement path="${build}/examples.jar"/>
+      <pathelement path="${build}/w32util.jar"/>
       <pathelement path="${test.classes}"/>
       <pathelement path="lib/clover.jar"/>
       <path refid="test.libs"/>
@@ -253,7 +272,23 @@
       <fileset dir="${classes}" includes="jnidispatch.dll"/>
     </jar>
   </target>
-
+  <target name="w32util" depends="jar,native">
+    <jar jarfile="${build}/w32util.jar">
+      <manifest>
+        <attribute name="Manifest-Version" value="1.0"/>
+        <attribute name="Class-Path" value="jna.jar"/>
+        <!-- OSGi Bundle attributes -->
+        <attribute name="Bundle-ManifestVersion" value="2"/>
+        <attribute name="Bundle-Name" value="jna-w32util"/>
+        <attribute name="Bundle-Description" value="JNA Win32 Utilities"/>
+        <attribute name="Bundle-SymbolicName" value="w32util"/>
+        <attribute name="Export-Package" value="w32util*"/>
+        <attribute name="Import-Package" value="com.sun.jna*"/>
+      </manifest>
+      <fileset dir="${contrib.classes}" includes="**/w32util/*,**/w32util/**/*"/>
+      <fileset dir="${classes}" includes="jnidispatch.dll"/>
+    </jar>
+  </target>
   <target name="javah" depends="compile">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
       <class name="com.sun.jna.Function"/>
@@ -447,9 +482,23 @@
     </signjar>
   </target>
 
+  <target name="compile-contrib" depends="compile,native,jar"
+          description="Compile all contrib code">
+  	<mkdir dir="${contrib.classes}"/>
+  	<javac classpathref="compile-contrib.path" source="${contrib.compatibility}"
+           target="${contrib.compatibility}" destdir="${contrib.classes}" 
+           deprecation="on" debug="${debug}">
+      <src path="${contrib}/src"/>
+    </javac>
+  	<!-- w32util -->
+    <jar jarfile="${build}/w32util.jar">
+      <fileset dir="${contrib.classes}/w32util" />
+    </jar>  	
+  </target>
+	
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="jar,examples,compile-tests"
+  <target name="test" depends="jar,examples,compile-contrib,compile-tests"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>
@@ -492,6 +541,10 @@
         <fileset dir="${test.src}">
           <include name="com/sun/jna/*Test.java"/>
           <include name="com/sun/jna/examples/*Test.java"/>
+          <include name="${tests.platform}"/>
+          <exclude name="${tests.exclude}"/>
+        </fileset>
+        <fileset dir="${contrib}/test">
           <include name="${tests.platform}"/>
           <exclude name="${tests.exclude}"/>
         </fileset>
@@ -564,7 +617,7 @@
     </javadoc>
   </target>
 
-  <target name="dist" depends="jar,compile-tests,native,examples,javadoc"
+  <target name="dist" depends="jar,compile-contrib,compile-tests,native,examples,javadoc"
           description="Build distribution files">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <manifest>
@@ -623,6 +676,7 @@
       <fileset dir="${build}">
         <include name="${native.jar}"/>
         <include name="examples.jar"/>
+      	<include name="w32util.jar"/>
       </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
