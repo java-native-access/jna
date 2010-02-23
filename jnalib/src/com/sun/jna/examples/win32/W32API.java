@@ -92,7 +92,7 @@ public interface W32API extends StdCallLibrary {
     class HRESULT extends NativeLong { }
 
     /** Constant value representing an invalid HANDLE. */
-    HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.createConstant(Pointer.SIZE==8?-1:0xFFFFFFFF));
+    HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.createConstant(Pointer.SIZE==8?-1:0xFFFFFFFFL));
 
     /** Special HWND value. */
     HWND HWND_BROADCAST = new HWND(Pointer.createConstant(0xFFFF));

@@ -66,6 +66,15 @@ public class W32APIMapperTest extends TestCase {
         ascii = null;
     }
 
+    public void testInvalidHandleValue() {
+        String expected = "opaque@0xffffffff";
+        if (Pointer.SIZE == 8) {
+            expected += "ffffffff";
+        }
+        assertEquals("Wrong value", expected,
+                     W32API.INVALID_HANDLE_VALUE.toString());
+    }
+
     public void testBooleanArgumentConversion() {
         assertTrue("Wrong boolean TRUE argument conversion (unicode)",
                    unicode.returnInt32Argument(true));
