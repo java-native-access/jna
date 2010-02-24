@@ -14,7 +14,8 @@ package com.sun.jna.examples.win32;
 
 /**
  * Error code definitions for the Win32 API functions.
- * Ported from Microsoft Windows SDK 6.1
+ * Ported from Windows SDK 6.0A
+ * @author dblock[at]dblock.org
  */
 public abstract class W32Errors {
 

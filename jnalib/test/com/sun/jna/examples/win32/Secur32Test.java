@@ -26,11 +26,11 @@ public class Secur32Test extends TestCase {
     
     public void testGetUserNameEx() {
     	IntByReference len = new IntByReference();
-    	Secur32.INSTANCE.GetUserNameExW(
+    	Secur32.INSTANCE.GetUserNameEx(
     			Secur32.EXTENDED_NAME_FORMAT.NameSamCompatible, null, len);
     	assertTrue(len.getValue() > 0);
     	char[] buffer = new char[len.getValue() + 1];
-    	assertTrue(Secur32.INSTANCE.GetUserNameExW(
+    	assertTrue(Secur32.INSTANCE.GetUserNameEx(
     			Secur32.EXTENDED_NAME_FORMAT.NameSamCompatible, buffer, len));
     	String username = Native.toString(buffer);
     	assertTrue(username.length() > 0);

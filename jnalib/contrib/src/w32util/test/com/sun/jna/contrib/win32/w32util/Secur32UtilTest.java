@@ -10,12 +10,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package w32util;
-
-import com.sun.jna.examples.win32.Netapi32.*;
-import com.sun.jna.examples.win32.Secur32.*;
+package com.sun.jna.contrib.win32.w32util;
 
 import junit.framework.TestCase;
+
+import com.sun.jna.examples.win32.Secur32.EXTENDED_NAME_FORMAT;
 
 public class Secur32UtilTest extends TestCase {
 
@@ -24,10 +23,9 @@ public class Secur32UtilTest extends TestCase {
     }
     
 	public void testGetUsernameEx() {
-		String usernameSamCompatible = Secur32Util.GetUserNameEx(
+		String usernameSamCompatible = Secur32Util.getUserNameEx(
 				EXTENDED_NAME_FORMAT.NameSamCompatible); 
-		System.out.println(usernameSamCompatible);
-		assertTrue(usernameSamCompatible.length() > 0);
+		assertTrue(usernameSamCompatible.length() > 1);
 		assertTrue(usernameSamCompatible.indexOf('\\') > 0);
 	}	
 }

@@ -1,4 +1,4 @@
-package w32util;
+package com.sun.jna.contrib.win32.w32util;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
@@ -8,19 +8,22 @@ import com.sun.jna.examples.win32.W32Errors;
 import com.sun.jna.ptr.IntByReference;
 
 /**
- * Advapi32 API.
+ * Secur32 Utility API.
+ * @author dblock[at]dblock.org
  */
 public abstract class Secur32Util {
 
 	/**
-	 * Retrieves the name of the user or other security principal associated with the calling thread. 
-	 * You can specify the format of the returned name.
-	 * @return A user name in the given format.
+	 * Retrieves the name of the user or other security principal associated 
+	 * with the calling thread.
+	 * 
+	 * @param format User name format.
+	 * @return User name in a given format.
 	 */
-	public static String GetUserNameEx(int format) {
+	public static String getUserNameEx(int format) {
 		char[] buffer = new char[128];
 		IntByReference len = new IntByReference(buffer.length);
-		boolean result = Secur32.INSTANCE.GetUserNameExW(format, buffer, len); 
+		boolean result = Secur32.INSTANCE.GetUserNameEx(format, buffer, len); 
 		
 		if (! result) {
 			
@@ -34,7 +37,7 @@ public abstract class Secur32Util {
 				throw new LastErrorException(Native.getLastError());
 			}
 			
-			result = Secur32.INSTANCE.GetUserNameExW(format, buffer, len);
+			result = Secur32.INSTANCE.GetUserNameEx(format, buffer, len);
 		}
 		
 		if (! result) {

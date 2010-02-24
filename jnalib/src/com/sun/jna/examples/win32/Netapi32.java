@@ -17,36 +17,70 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+/**
+ * Netapi32.dll Interface.
+ * @author dblock[at]dblock.org
+ */
 public interface Netapi32 extends W32API {
-	Netapi32 INSTANCE = (Netapi32) Native.loadLibrary("Netapi32", Netapi32.class);
+	Netapi32 INSTANCE = (Netapi32) Native.loadLibrary("Netapi32",
+			Netapi32.class, UNICODE_OPTIONS);
 
-	public abstract class NETSETUP_JOIN_STATUS {
-		public static final int NetSetupUnknownStatus = 0;
-		public static final int NetSetupUnjoined = 1;
-		public static final int NetSetupWorkgroupName = 2;
-		public static final int NetSetupDomainName = 3;		
-	};
-
-    public static final int NERR_Success = 0;
-    public static final int NERR_BufTooSmall = 2123;
-    public static final int NERR_InvalidComputer = 2351;
-	
 	/**
 	 * Retrieves join status information for the specified computer.
-	 * @param lpServer Specifies the DNS or NetBIOS name of the computer on which to call the function.
-	 * @param lpNameBuffer Receives the NetBIOS name of the domain or workgroup to which the computer is joined.
-	 * @param BufferType Join status of the specified computer.
-	 * @return If the function succeeds, the return value is NERR_Success.
-	 *         If the function fails, the return value is a system error code. 
+	 * 
+	 * @param lpServer
+	 *            Specifies the DNS or NetBIOS name of the computer on which to
+	 *            call the function.
+	 * @param lpNameBuffer
+	 *            Receives the NetBIOS name of the domain or workgroup to which
+	 *            the computer is joined.
+	 * @param BufferType
+	 *            Join status of the specified computer.
+	 * @return If the function succeeds, the return value is NERR_Success. If
+	 *         the function fails, the return value is a system error code.
 	 */
-	public int NetGetJoinInformation(char[] lpServer, PointerByReference lpNameBuffer, 
-			IntByReference BufferType);	
-	
+	public int NetGetJoinInformation(String lpServer,
+			PointerByReference lpNameBuffer, IntByReference BufferType);
+
 	/**
 	 * Frees the memory that the NetApiBufferAllocate function allocates.
+	 * 
 	 * @param buffer
-	 * @return If the function succeeds, the return value is NERR_Success.
-	 *         If the function fails, the return value is a system error code. 
+	 * @return If the function succeeds, the return value is NERR_Success. If
+	 *         the function fails, the return value is a system error code.
 	 */
 	public int NetApiBufferFree(Pointer buffer);
+
+	/**
+	 * Returns information about each local group account on the specified
+	 * server.
+	 * 
+	 * @param serverName
+	 *            Specifies the DNS or NetBIOS name of the remote server on
+	 *            which the function is to execute. If this parameter is NULL,
+	 *            the local computer is used.
+	 * @param level
+	 *            Specifies the information level of the data.
+	 * @param bufptr
+	 *            Pointer to the address of the buffer that receives the
+	 *            information structure.
+	 * @param prefmaxlen
+	 *            Specifies the preferred maximum length of returned data, in
+	 *            bytes.
+	 * @param entriesread
+	 *            Pointer to a value that receives the count of elements
+	 *            actually enumerated.
+	 * @param totalentries
+	 *            Pointer to a value that receives the approximate total number
+	 *            of entries that could have been enumerated from the current
+	 *            resume position.
+	 * @param resume_handle
+	 *            Pointer to a value that contains a resume handle that is used
+	 *            to continue an existing local group search.
+	 * @return If the function succeeds, the return value is NERR_Success.
+	 */
+	public int NetLocalGroupEnum(String serverName, int level,
+			PointerByReference bufptr, int prefmaxlen,
+			IntByReference entriesread, IntByReference totalentries,
+			IntByReference resume_handle);
 }

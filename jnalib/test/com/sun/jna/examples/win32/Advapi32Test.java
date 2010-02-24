@@ -39,33 +39,65 @@ public class Advapi32Test extends TestCase {
 		IntByReference pSid = new IntByReference(0);
 		IntByReference pDomain = new IntByReference(0);
 		PointerByReference peUse = new PointerByReference();
-		char[] lpAccountName = Native.toCharArray("Administrator");
-		assertFalse(Advapi32.INSTANCE.LookupAccountNameW(
-				null, lpAccountName, null, pSid, null, pDomain, peUse));
+		String accountName = "Administrator";
+		assertFalse(Advapi32.INSTANCE.LookupAccountName(
+				null, accountName, null, pSid, null, pDomain, peUse));
 		assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
 		assertTrue(pSid.getValue() > 0);
 		byte[] sid = new byte[pSid.getValue()];
 		char[] referencedDomainName = new char[pDomain.getValue() + 1]; 
-		assertTrue(Advapi32.INSTANCE.LookupAccountNameW(
-				null, lpAccountName, sid, pSid, referencedDomainName, pDomain, peUse));
+		assertTrue(Advapi32.INSTANCE.LookupAccountName(
+				null, accountName, sid, pSid, referencedDomainName, pDomain, peUse));
 		assertEquals(1, peUse.getPointer().getInt(0)); // SidTypeUser
 		assertTrue(Native.toString(referencedDomainName).length() > 0);
     }
     
-    public void testConvertSidToStringSid() {
+    public void testLookupAccountSid() {
+    	// get SID bytes
     	String sidString = "S-1-1-0"; // Everyone
     	PointerByReference sid = new PointerByReference();
-    	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSidW(
-    			Native.toCharArray(sidString), sid));
+    	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
+    	int sidLength = Advapi32.INSTANCE.GetLengthSid(sid);
+    	assertTrue(sidLength > 0);
+    	byte[] sidBytes = sid.getValue().getByteArray(0, sidLength);
+    	assertEquals(null, Kernel32.INSTANCE.LocalFree(sid.getValue()));
+    	// lookup account
+    	IntByReference cchName = new IntByReference();
+    	IntByReference cchReferencedDomainName = new IntByReference();
+    	PointerByReference peUse = new PointerByReference();
+    	assertFalse(Advapi32.INSTANCE.LookupAccountSid(null, sidBytes, 
+    			null, cchName, null, cchReferencedDomainName, peUse));
+		assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
+    	assertTrue(cchName.getValue() > 0);
+    	assertTrue(cchReferencedDomainName.getValue() > 0);
+		char[] referencedDomainName = new char[cchReferencedDomainName.getValue()];
+		char[] name = new char[cchName.getValue()];
+    	assertTrue(Advapi32.INSTANCE.LookupAccountSid(null, sidBytes, 
+    			name, cchName, referencedDomainName, cchReferencedDomainName, peUse));
+		assertEquals(5, peUse.getPointer().getInt(0)); // SidTypeWellKnownGroup
+		String nameString = Native.toString(name);
+		String referencedDomainNameString = Native.toString(referencedDomainName);
+		assertTrue(nameString.length() > 0);
+		assertEquals("Everyone", nameString);
+		assertTrue(referencedDomainNameString.length() == 0);
+    }
+    
+    public void testConvertSid() {
+    	String sidString = "S-1-1-0"; // Everyone
+    	PointerByReference sid = new PointerByReference();
+    	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(
+    			sidString, sid));
     	int sidLength = Advapi32.INSTANCE.GetLengthSid(sid);
     	assertTrue(sidLength > 0);
     	byte[] sidBytes = sid.getValue().getByteArray(0, sidLength);
     	PointerByReference convertedSidStringPtr = new PointerByReference();
-    	assertTrue(Advapi32.INSTANCE.ConvertSidToStringSidW(
+    	assertTrue(Advapi32.INSTANCE.ConvertSidToStringSid(
     			sidBytes, convertedSidStringPtr));
     	String convertedSidString = convertedSidStringPtr.getValue().getString(0, true);
     	assertEquals(convertedSidString, sidString);
     	assertEquals(null, Kernel32.INSTANCE.LocalFree(
     			convertedSidStringPtr.getValue()));
+    	assertEquals(null, Kernel32.INSTANCE.LocalFree(
+    			sid.getValue()));
     }
 }

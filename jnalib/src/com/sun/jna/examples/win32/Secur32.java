@@ -15,8 +15,13 @@ package com.sun.jna.examples.win32;
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
 
+/**
+ * Secur32.dll Interface.
+ * @author dblock[at]dblock.org
+ */
 public interface Secur32 extends W32API {
-	Secur32 INSTANCE = (Secur32) Native.loadLibrary("Secur32", Secur32.class);
+	Secur32 INSTANCE = (Secur32) Native.loadLibrary(
+			"Secur32", Secur32.class, UNICODE_OPTIONS);
 	
 	/**
 	 * Specifies a format for a directory service object name.
@@ -43,5 +48,5 @@ public interface Secur32 extends W32API {
 	 * @param len On input, the size of the buffer, on output the number of characters copied into the buffer, not including the terminating null character.
 	 * @return True if the function succeeds. False otherwise.
 	 */
-	public boolean GetUserNameExW(int nameFormat, char[] lpNameBuffer, IntByReference len);
+	public boolean GetUserNameEx(int nameFormat, char[] lpNameBuffer, IntByReference len);
 }

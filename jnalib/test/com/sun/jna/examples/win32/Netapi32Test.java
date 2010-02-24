@@ -38,4 +38,20 @@ public class Netapi32Test extends TestCase {
     			lpNameBuffer.getValue()));
     }
     
+    public void testNetGetLocalGroups() {
+    	for(int i = 0; i < 2; i++) {
+			PointerByReference bufptr = new PointerByReference();
+			IntByReference entriesRead = new IntByReference();
+			IntByReference totalEntries = new IntByReference();		
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetLocalGroupEnum(null, i, bufptr, 
+	    			LMCons.MAX_PREFERRED_LENGTH, 
+	    			entriesRead, 
+	    			totalEntries, 
+	    			null));
+	    	assertTrue(entriesRead.getValue() > 0);
+	    	assertEquals(totalEntries.getValue(), entriesRead.getValue());
+	    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
+	    			bufptr.getValue()));
+    	}
+    }
 }

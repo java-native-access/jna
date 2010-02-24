@@ -10,7 +10,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package w32util;
+package com.sun.jna.contrib.win32.w32util;
+
+import junit.framework.TestCase;
 
 public class Netapi32UtilTest extends TestCase {
 
@@ -20,9 +22,18 @@ public class Netapi32UtilTest extends TestCase {
     
 	public void testGetDomain() {
 		String computerName = System.getenv("COMPUTERNAME");
-		System.out.println(computerName);
-		String domain = Netapi32Util.GetDomainName(computerName);
-		System.out.println(domain);
+		String domain = Netapi32Util.getDomainName(computerName);
 		assertTrue(domain.length() > 0);
+	}
+	
+	public void testGetLocalGroups() {
+		String[] localGroups = Netapi32Util.getLocalGroups();
+		int totalLength = 0;
+		for(String localGroup : localGroups) {
+			totalLength += localGroup.length();
+		}
+		assertTrue(totalLength / localGroups.length > 1);
+		assertNotNull(localGroups);
+		assertTrue(localGroups.length > 0);
 	}
 }
