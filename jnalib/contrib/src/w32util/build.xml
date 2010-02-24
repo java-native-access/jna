@@ -63,4 +63,11 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <condition property="tests.platform" value="win32">
+      <os family="windows"/>
+    </condition>
+    <target name="test" description="Run unit tests." if="tests.platform">
+    	<antcall target="test-win32" />
+	</target>
+	<target name="test-win32" depends="init,compile-test,-pre-test-run,-do-test-run,test-report,-post-test-run,-test-browse" />
 </project>
