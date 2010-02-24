@@ -625,8 +625,8 @@
         <include name="${native.jar}"/>
         <include name="examples.jar"/>
       </fileset>
-	  <fileset dir="${contrib}">
-		<include name="w32util/dist/w32util.jar" />
+	  <fileset dir="${contrib}/w32util/dist">
+		<include name="w32util.jar" />
 	  </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
