@@ -594,22 +594,17 @@
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-amd64"/>
     </jar>
-  	<ant antfile="build.xml" dir="${contrib}/w32util" />
   	<ant antfile="build.xml" dir="${contrib}/platformutil" />
     <copy todir="${dist}">
       <fileset dir="${build}">
         <include name="${native.jar}"/>
       </fileset>
-	  <fileset dir="${contrib}/w32util/dist">
-		<include name="w32util.jar" />
-	  </fileset>
   	  <fileset dir="${contrib}/platformutil/dist">
   		<include name="platformutil.jar" />
   	  </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
-      <zipfileset dir="${contrib}/w32util/dist/javadoc" prefix="w32util/javadoc"/>
       <zipfileset dir="${contrib}/platformutil/dist/javadoc" prefix="pltformutil/javadoc"/>
     </zip>
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
@@ -618,7 +613,6 @@
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*" prefix="native"/>
-      <zipfileset dir="${contrib}/w32util" includes="**/*.java" prefix="contrib/w32util"/>
       <zipfileset dir="${contrib}/platformutil" includes="**/*.java" prefix="contrib/pltformutil"/>
     </zip>
     <!-- Full sources required to build and test everything -->

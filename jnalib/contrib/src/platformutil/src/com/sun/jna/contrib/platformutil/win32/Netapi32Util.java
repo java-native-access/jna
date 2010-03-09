@@ -1,4 +1,4 @@
-package com.sun.jna.contrib.win32.w32util;
+package com.sun.jna.contrib.platformutil.win32;
 
 import java.util.ArrayList;
 

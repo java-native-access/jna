@@ -10,22 +10,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.contrib.win32.w32util;
+package com.sun.jna.contrib.platformutil.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
-
-public class Secur32UtilTest extends TestCase {
-
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Secur32UtilTest.class);
+public class Kernel32UtilTest extends TestCase {
+	
+    public static void main(String[] args) throws Exception {
+        junit.textui.TestRunner.run(Advapi32UtilTest.class);
+        System.out.println("GetComputerName: " + Kernel32Util.getComputerName());
     }
-    
-	public void testGetUsernameEx() {
-		String usernameSamCompatible = Secur32Util.getUserNameEx(
-				EXTENDED_NAME_FORMAT.NameSamCompatible); 
-		assertTrue(usernameSamCompatible.length() > 1);
-		assertTrue(usernameSamCompatible.indexOf('\\') > 0);
-	}	
+	
+	public void testGetComputerName() {
+		assertTrue(Kernel32Util.getComputerName().length() > 0);
+	}
 }
