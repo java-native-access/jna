@@ -468,7 +468,7 @@
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
         <fileset dir="${test.src}">
-          <include name="com/sun/jna/**/*Test.java"/>
+          <include name="com/sun/jna/*Test.java"/>
           <include name="${tests.platform}"/>
           <exclude name="${tests.exclude}"/>
         </fileset>
