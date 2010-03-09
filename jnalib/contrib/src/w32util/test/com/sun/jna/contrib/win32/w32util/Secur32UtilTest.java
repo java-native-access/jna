@@ -14,7 +14,7 @@ package com.sun.jna.contrib.win32.w32util;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.examples.win32.Secur32.EXTENDED_NAME_FORMAT;
+import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 
 public class Secur32UtilTest extends TestCase {
 

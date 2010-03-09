@@ -12,8 +12,7 @@
  */
 package com.sun.jna.contrib.win32.w32util;
 
-import com.sun.jna.examples.win32.LMJoin;
-import com.sun.jna.examples.win32.Netapi32;
+import com.sun.jna.platform.win32.LMJoin;
 
 import junit.framework.TestCase;
 

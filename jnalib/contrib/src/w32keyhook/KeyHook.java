@@ -1,15 +1,12 @@
-package w32keyhook;
-
-import com.sun.jna.*;
-import com.sun.jna.win32.*;
-import com.sun.jna.examples.win32.*;
-import com.sun.jna.examples.win32.User32.MSG;
-import com.sun.jna.examples.win32.User32.LowLevelKeyboardProc;
-import com.sun.jna.examples.win32.User32.KBDLLHOOKSTRUCT;
-import com.sun.jna.examples.win32.W32API.LRESULT;
-import com.sun.jna.examples.win32.W32API.WPARAM;
-import com.sun.jna.examples.win32.W32API.HMODULE;
-import com.sun.jna.examples.win32.User32.HHOOK;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.User32.HHOOK;
+import com.sun.jna.platform.win32.User32.KBDLLHOOKSTRUCT;
+import com.sun.jna.platform.win32.User32.LowLevelKeyboardProc;
+import com.sun.jna.platform.win32.User32.MSG;
+import com.sun.jna.platform.win32.W32API.HMODULE;
+import com.sun.jna.platform.win32.W32API.LRESULT;
+import com.sun.jna.platform.win32.W32API.WPARAM;
 
 /** Sample implementation of a low-level keyboard hook on W32. */
 public class KeyHook {

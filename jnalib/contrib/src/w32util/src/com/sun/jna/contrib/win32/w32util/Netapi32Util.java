@@ -3,14 +3,16 @@ package com.sun.jna.contrib.win32.w32util;
 import java.util.ArrayList;
 
 import com.sun.jna.LastErrorException;
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.WString;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.LMAccess;
+import com.sun.jna.platform.win32.LMCons;
+import com.sun.jna.platform.win32.LMErr;
+import com.sun.jna.platform.win32.Netapi32;
+import com.sun.jna.platform.win32.W32Errors;
+import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_INFO_0;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.examples.win32.*;
-import com.sun.jna.examples.win32.LMAccess.LOCALGROUP_INFO_0;
-import com.sun.jna.examples.win32.Netapi32.*;
 
 /**
  * Netapi32 Utility API.

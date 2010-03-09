@@ -175,7 +175,6 @@
 
     <path id="test.runpath">
       <pathelement path="${build}/${jar}"/>
-      <pathelement path="${build}/examples.jar"/>
       <pathelement path="${test.classes}"/>
       <pathelement path="lib/clover.jar"/>
       <path refid="test.libs"/>
@@ -199,8 +198,6 @@
         <patternset id="jar-compiled">
           <include name="com/sun/jna/*"/>
           <include name="com/sun/jna/**/*"/>
-          <exclude name="com/sun/jna/examples/*"/>
-          <exclude name="com/sun/jna/examples/**/*"/>
         </patternset>
       </srcfiles>
     </uptodate>
@@ -233,25 +230,6 @@
       <fileset dir="${classes}" excludes="${jar.omitted}">
         <patternset refid="jar-compiled"/>
       </fileset>
-    </jar>
-  </target>
-  <target name="examples" depends="jar,native">
-    <jar jarfile="${build}/examples.jar">
-      <manifest>
-        <attribute name="Manifest-Version" value="1.0"/>
-        <attribute name="Class-Path" value="jna.jar"/>
-        <attribute name="Main-Class" value="com.sun.jna.examples.ShapedWindowDemo"/>
-        <!-- OSGi Bundle attributes -->
-        <attribute name="Bundle-ManifestVersion" value="2"/>
-        <attribute name="Bundle-Name" value="jna-examples"/>
-        <attribute name="Bundle-Description" value="JNA Examples and Utilities"/>
-        <attribute name="Bundle-SymbolicName" value="com.sun.jna.examples"/>
-        <attribute name="Export-Package" value="com.sun.jna.examples*"/>
-        <attribute name="Import-Package" value="com.sun.jna*"/>
-      </manifest>
-      <fileset dir="${src}" includes="**/examples/**/*.png"/>
-      <fileset dir="${classes}" includes="**/examples/*,**/examples/**/*"/>
-      <fileset dir="${classes}" includes="jnidispatch.dll"/>
     </jar>
   </target>
   <target name="javah" depends="compile">
@@ -449,7 +427,7 @@
 	
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="jar,examples,compile-tests"
+  <target name="test" depends="jar,compile-tests"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>
@@ -490,8 +468,7 @@
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
         <fileset dir="${test.src}">
-          <include name="com/sun/jna/*Test.java"/>
-          <include name="com/sun/jna/examples/*Test.java"/>
+          <include name="com/sun/jna/**/*Test.java"/>
           <include name="${tests.platform}"/>
           <exclude name="${tests.exclude}"/>
         </fileset>
@@ -520,7 +497,7 @@
     <mkdir dir="${reports.clover}"/>
     <clover-report>
       <current outfile="${reports.clover}" title="clover">
-        <fileset dir="." includes="**/*.java" excludes="**/examples/**/*.java"/>
+        <fileset dir="." includes="**/*.java" />
         <testresults dir="${results.junit}" includes="TEST-*.xml"/>
         <format type="html"/>
       </current>
@@ -540,7 +517,7 @@
              sourcepathref="src.path"
              classpathref="compile.path"
              maxmemory="256m"
-             packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.examples,com.sun.jna.examples.win32,com.sun.jna.exmaples.unix"
+             packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.platform,com.sun.jna.platform.win32,com.sun.jna.exmaples.unix"
              overview="${src}/com/sun/jna/overview.html"
              destdir="${javadoc}">
       <!-- stylesheetfile="${stylesheet}" -->
@@ -556,15 +533,13 @@
       </packageset>
 
       <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.win32"/>
-      <group title="Examples" packages="com.sun.jna.examples,com.sun.jna.examples.dnd"/>
-      <group title="Unix Examples" packages="com.sun.jna.examples.unix"/>
-      <group title="Windows Examples" packages="com.sun.jna.examples.win32"/>
-
+      <group title="Platform Specific" packages="com.sun.jna.platform"/>
+    	
       <arg value="-notimestamp"/>
     </javadoc>
   </target>
 
-  <target name="dist" depends="jar,compile-tests,native,examples,javadoc"
+  <target name="dist" depends="jar,compile-tests,native,javadoc"
           description="Build distribution files">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <manifest>
@@ -620,18 +595,22 @@
                   prefix="com/sun/jna/win32-amd64"/>
     </jar>
   	<ant antfile="build.xml" dir="${contrib}/w32util" />
+  	<ant antfile="build.xml" dir="${contrib}/platformutil" />
     <copy todir="${dist}">
       <fileset dir="${build}">
         <include name="${native.jar}"/>
-        <include name="examples.jar"/>
       </fileset>
 	  <fileset dir="${contrib}/w32util/dist">
 		<include name="w32util.jar" />
 	  </fileset>
+  	  <fileset dir="${contrib}/platformutil/dist">
+  		<include name="platformutil.jar" />
+  	  </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
       <zipfileset dir="${contrib}/w32util/dist/javadoc" prefix="w32util/javadoc"/>
+      <zipfileset dir="${contrib}/platformutil/dist/javadoc" prefix="pltformutil/javadoc"/>
     </zip>
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
@@ -640,6 +619,7 @@
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*" prefix="native"/>
       <zipfileset dir="${contrib}/w32util" includes="**/*.java" prefix="contrib/w32util"/>
+      <zipfileset dir="${contrib}/platformutil" includes="**/*.java" prefix="contrib/pltformutil"/>
     </zip>
     <!-- Full sources required to build and test everything -->
     <zip zipfile="${dist}/src-full.zip">

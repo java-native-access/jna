@@ -14,9 +14,8 @@ package com.sun.jna.contrib.win32.w32util;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
-import com.sun.jna.examples.win32.Kernel32;
-import com.sun.jna.examples.win32.W32Errors;
-import com.sun.jna.examples.win32.WinBase;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.ptr.IntByReference;
 
 /**

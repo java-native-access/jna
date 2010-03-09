@@ -13,7 +13,6 @@
 package jnacontrib.x11.demos;
 
 import jnacontrib.x11.api.X;
-import com.sun.jna.examples.unix.X11;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.NativeLong;
 
