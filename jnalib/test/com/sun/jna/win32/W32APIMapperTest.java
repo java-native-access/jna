@@ -12,13 +12,12 @@
  */
 package com.sun.jna.win32;
 
+import junit.framework.TestCase;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.W32API;
-
-import junit.framework.TestCase;
 
 public class W32APIMapperTest extends TestCase {
 
@@ -56,10 +55,10 @@ public class W32APIMapperTest extends TestCase {
     protected void setUp() {
         unicode = (UnicodeLibrary)
             Native.loadLibrary("testlib", UnicodeLibrary.class, 
-                               W32API.UNICODE_OPTIONS);
+            		W32APIOptions.UNICODE_OPTIONS);
         ascii = (ASCIILibrary)
             Native.loadLibrary("testlib", ASCIILibrary.class, 
-                               W32API.ASCII_OPTIONS);
+            		W32APIOptions.ASCII_OPTIONS);
     }
     
     protected void tearDown() {
@@ -73,7 +72,7 @@ public class W32APIMapperTest extends TestCase {
             expected += "ffffffff";
         }
         assertEquals("Wrong value", expected,
-                     W32API.INVALID_HANDLE_VALUE.toString());
+        		Pointer.createConstant(Pointer.SIZE == 8 ? -1 : 0xFFFFFFFFL).toString());
     }
 
     public void testBooleanArgumentConversion() {

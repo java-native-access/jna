@@ -50,7 +50,7 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.event.MouseInputAdapter;
 
-import com.sun.jna.contrib.platformutil.WindowUtils;
+import com.sun.jna.platform.WindowUtils;
 
 /** Example which uses the {@link WindowUtils} class.  Demonstrates the 
  * definition of a cross-platform library with several platform-specific

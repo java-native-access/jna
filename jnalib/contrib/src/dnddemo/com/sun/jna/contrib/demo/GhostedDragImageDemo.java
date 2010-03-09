@@ -32,8 +32,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 
-import com.sun.jna.contrib.platformutil.dnd.DragHandler;
-import com.sun.jna.contrib.platformutil.dnd.DropHandler;
+import com.sun.jna.platform.dnd.DragHandler;
+import com.sun.jna.platform.dnd.DropHandler;
+
 
 /** Demonstrate ghosted drag images.  Unfortunately, Swing drag support hides
  * the hooks we need to move the drag image around, so we don't use it and

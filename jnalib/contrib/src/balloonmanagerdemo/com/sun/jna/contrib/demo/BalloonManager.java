@@ -31,12 +31,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.RoundRectangle2D;
+
 import javax.swing.Box;
 import javax.swing.JWindow;
 import javax.swing.Popup;
 import javax.swing.SwingUtilities;
 
-import com.sun.jna.contrib.platformutil.WindowUtils;
+import com.sun.jna.platform.WindowUtils;
 
 /**
  * Provides a popup balloon containing an arbitrary component.  This provides

@@ -58,7 +58,7 @@ import javax.swing.event.MouseInputAdapter;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
-import com.sun.jna.contrib.platformutil.WindowUtils;
+import com.sun.jna.platform.WindowUtils;
 import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.unix.X11.Display;
 import com.sun.jna.platform.unix.X11.GC;

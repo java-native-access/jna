@@ -30,7 +30,7 @@ import javax.swing.Popup;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import com.sun.jna.contrib.platformutil.WindowUtils;
+import com.sun.jna.platform.WindowUtils;
 
 /**
  * The BalloonTipManager class handles creation and disposal of balloon style 

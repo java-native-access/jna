@@ -24,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
+
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,7 +36,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import com.sun.jna.contrib.platformutil.WindowUtils;
+import com.sun.jna.platform.WindowUtils;
 
 /** Demonstration of BalloonManager. */
 public class BalloonManagerDemo {

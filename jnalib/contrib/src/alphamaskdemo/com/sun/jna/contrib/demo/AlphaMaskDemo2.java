@@ -10,8 +10,8 @@
  */
 package com.sun.jna.contrib.demo;
 
-import java.awt.Cursor;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -52,7 +52,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
-import com.sun.jna.contrib.platformutil.WindowUtils;
+import com.sun.jna.platform.WindowUtils;
 
 public class AlphaMaskDemo2 implements Runnable {
     private static final DataFlavor URL_FLAVOR =
