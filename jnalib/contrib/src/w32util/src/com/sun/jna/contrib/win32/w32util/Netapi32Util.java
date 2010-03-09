@@ -17,6 +17,71 @@ import com.sun.jna.examples.win32.Netapi32.*;
  * @author dblock[at]dblock.org
  */
 public abstract class Netapi32Util {
+
+	/**
+	 * Returns the name of the primary domain controller (PDC) on the current computer.
+	 * @return The name of the primary domain controller.
+	 */
+	public static String getDCName() {
+		return getDCName(null, null);
+	}
+	
+	/**
+	 * Returns the name of the primary domain controller (PDC).
+	 * @param serverName 
+	 * 	Specifies the DNS or NetBIOS name of the remote server on which the function is 
+	 * 	to execute.
+	 * @param domainName
+	 * 	Specifies the name of the domain.
+	 * @return
+	 */
+	public static String getDCName(String serverName, String domainName) {
+		PointerByReference bufptr = new PointerByReference();
+		try {		
+	    	int rc = Netapi32.INSTANCE.NetGetDCName(domainName, serverName, bufptr);
+	    	if (LMErr.NERR_Success != rc) {
+	    		throw new LastErrorException(rc);
+	    	}
+	    	return bufptr.getValue().getString(0);
+		} finally {
+			if (W32Errors.ERROR_SUCCESS != Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue())) {
+				throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+			}			
+		}
+	}
+
+	/**
+	 * Return the domain/workgroup join status for a computer. 
+	 * @return Join status.
+	 */
+	public static int getJoinStatus() {
+		return getJoinStatus(null);
+	}
+	
+	/**
+	 * Return the domain/workgroup join status for a computer. 
+	 * @param computerName Computer name.
+	 * @return Join status.
+	 */
+	public static int getJoinStatus(String computerName) {
+		PointerByReference lpNameBuffer = new PointerByReference();
+		IntByReference bufferType = new IntByReference();
+		
+		try {
+			int rc = Netapi32.INSTANCE.NetGetJoinInformation(computerName, lpNameBuffer, bufferType);
+			if (LMErr.NERR_Success != rc) {
+				throw new LastErrorException(rc);			
+			}
+			return bufferType.getValue();
+		} finally {
+			if (lpNameBuffer.getPointer() != null) {
+				int rc = Netapi32.INSTANCE.NetApiBufferFree(lpNameBuffer.getValue());
+				if (LMErr.NERR_Success != rc) {
+					throw new LastErrorException(rc);			
+				}
+			}
+		}		
+	}
 	
 	/**
 	 * Get information about a computer.
@@ -27,7 +92,7 @@ public abstract class Netapi32Util {
 		PointerByReference lpNameBuffer = new PointerByReference();
 		IntByReference bufferType = new IntByReference();
 		
-		try {			
+		try {
 			int rc = Netapi32.INSTANCE.NetGetJoinInformation(computerName, lpNameBuffer, bufferType);
 			if (LMErr.NERR_Success != rc) {
 				throw new LastErrorException(rc);			

@@ -17,8 +17,14 @@ import java.util.TimeZone;
 import junit.framework.TestCase;
 import com.sun.jna.*;
 import com.sun.jna.examples.win32.*;
+import com.sun.jna.examples.win32.W32API.HANDLE;
+import com.sun.jna.ptr.IntByReference;
 
 public class Kernel32Test extends TestCase {
+    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(Kernel32Test.class);
+    }
     
     public void testGetDriveType() {
         if (!Platform.isWindows()) return;
@@ -63,8 +69,49 @@ public class Kernel32Test extends TestCase {
         W32API.HWND hwnd = W32API.HWND_BROADCAST;
         NativeMappedConverter.getInstance(hwnd.getClass()).toNative(hwnd, null);
     }
-
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Kernel32Test.class);
+    
+    public void testGetComputerName() {
+    	IntByReference lpnSize = new IntByReference(0);
+    	assertFalse(Kernel32.INSTANCE.GetComputerName(null, lpnSize));
+    	assertEquals(W32Errors.ERROR_BUFFER_OVERFLOW, Kernel32.INSTANCE.GetLastError());
+    	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH() + 1];
+    	lpnSize.setValue(buffer.length);
+    	assertTrue(Kernel32.INSTANCE.GetComputerName(buffer, lpnSize));
     }
+
+    public void testWaitForSingleObject() {
+		HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+		
+		// handle runs into timeout since it is not triggered
+		// WAIT_TIMEOUT = 0x00000102 
+		assertEquals(W32Errors.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
+				handle, 1000));
+		
+		Kernel32.INSTANCE.CloseHandle(handle);
+	}
+    
+    public void testWaitForMultipleObjects(){    	
+    	HANDLE[] handles = new HANDLE[2];
+    	
+		handles[0] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+		handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+		
+		// handle runs into timeout since it is not triggered
+		// WAIT_TIMEOUT = 0x00000102
+		assertEquals(W32Errors.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForMultipleObjects(
+				handles.length, handles, false, 1000));
+		
+		Kernel32.INSTANCE.CloseHandle(handles[0]);
+		Kernel32.INSTANCE.CloseHandle(handles[1]);
+		
+		// invalid Handle
+		handles[0] = W32API.INVALID_HANDLE_VALUE;
+		handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+		
+		// returns WAIT_FAILED since handle is invalid
+		assertEquals(WinBase.WAIT_FAILED, Kernel32.INSTANCE.WaitForMultipleObjects(
+				handles.length, handles, false, 5000));
+
+		Kernel32.INSTANCE.CloseHandle(handles[1]);
+    }   
 }

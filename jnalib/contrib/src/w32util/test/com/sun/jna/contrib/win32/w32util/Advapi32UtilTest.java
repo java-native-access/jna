@@ -31,10 +31,10 @@ public class Advapi32UtilTest extends TestCase {
 	}
 	
 	public void testGetAccountNameAndSid() throws Exception {
-		String accountName = "Administrator";
+		String accountName = Kernel32Util.getComputerName() + "\\Administrator";
 		byte[] sidBytes = Advapi32Util.getAccountSid(accountName);
 		assertTrue(sidBytes.length > 0);
-		assertEquals(accountName, Advapi32Util.getAccountName(sidBytes));
+		assertEquals(accountName.toLowerCase(), Advapi32Util.getAccountName(sidBytes).toLowerCase());
 	}
 	
 	public void testGetAccountNameFromSid() throws Exception {

@@ -24,21 +24,52 @@ import com.sun.jna.ptr.PointerByReference;
 /** Definition (incomplete) of <code>kernel32.dll</code>. */
 public interface Kernel32 extends W32API {
 
-    Kernel32 INSTANCE = (Kernel32)
-        Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
+    Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, DEFAULT_OPTIONS);
 
-    class SYSTEMTIME extends Structure {
+	/**
+	 * Specifies a date and time, using individual members for the month, 
+	 * day, year, weekday, hour, minute, second, and millisecond. The time 
+	 * is either in coordinated universal time (UTC) or local time, depending 
+	 * on the function that is being called.
+	 * http://msdn.microsoft.com/en-us/library/ms724950(VS.85).aspx
+	 */
+    public class SYSTEMTIME extends Structure {
+    	// The year. The valid values for this member are 1601 through 30827.
         public short wYear;
+        // The month. The valid values for this member are 1 through 12.
         public short wMonth;
+        // The day of the week. The valid values for this member are 0 through 6.
         public short wDayOfWeek;
+        // The day of the month. The valid values for this member are 1 through 31.
         public short wDay;
+        // The hour. The valid values for this member are 0 through 23.
         public short wHour;
+        // The minute. The valid values for this member are 0 through 59.
         public short wMinute;
+        // The second. The valid values for this member are 0 through 59.
         public short wSecond;
+        // The millisecond. The valid values for this member are 0 through 999.
         public short wMilliseconds;
     }
-
+    
+    /**
+     * Frees the specified local memory object and invalidates its handle.
+     * @param hLocal A handle to the local memory object.
+     * @return 
+     * 	If the function succeeds, the return value is NULL.
+     * 	If the function fails, the return value is equal to a handle to the local memory object.
+     *  To get extended error information, call GetLastError.
+     */
     Pointer LocalFree(Pointer hLocal);
+    
+    /**
+     * Frees the specified global memory object and invalidates its handle.
+     * @param hGlobal A handle to the global memory object. 
+     * @return 
+     * 	If the function succeeds, the return value is NULL
+     * 	If the function fails, the return value is equal to a handle to the global memory object.
+     *  To get extended error information, call GetLastError.
+     */
     Pointer GlobalFree(Pointer hGlobal);
 
     HMODULE GetModuleHandle(String name);
@@ -136,7 +167,58 @@ public interface Kernel32 extends W32API {
                                        int dwNumberOfBytesTransferred,
                                        Pointer dwCompletionKey,
                                        OVERLAPPED lpOverlapped);
+    
+    /**
+     * Waits until the specified object is in the signaled state or the time-out interval elapses.
+	 * To enter an alertable wait state, use the WaitForSingleObjectEx function. 
+	 * To wait for multiple objects, use the WaitForMultipleObjects.
+	 * 
+	 * 
+	 * @param hHandle 
+	 * 			A handle to the object. For a list of the object types whose handles can be specified, see the following Remarks section.
+	 *     		If this handle is closed while the wait is still pending, the function's behavior is undefined.
+	 *			The handle must have the SYNCHRONIZE access right. For more information, see Standard Access Rights.
+     * @param dwMilliseconds
+     * 			The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the object is signaled or the interval elapses. 
+     * 			If dwMilliseconds is zero, the function does not enter a wait state if the object is not signaled; it always returns immediately. 
+     * 			If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+     * 	
+     * @return	If the function succeeds, the return value indicates the event that caused the function to return. It can be one of the four following values:
+     * 			WAIT_ABANDONED 0x00000080L
+     * 			WAIT_OBJECT_0 0x00000000L
+     * 			WAIT_TIMEOUT 0x00000102L
+     * 			WAIT_FAILED (DWORD)0xFFFFFFFF
+     */    
     int WaitForSingleObject(HANDLE hHandle, int dwMilliseconds);
+    
+    /**
+     * Waits until one or all of the specified objects are in the signaled state or the time-out interval elapses.
+     * To enter an alertable wait state, use the WaitForMultipleObjectsEx function.
+     * 
+     * @param nCount 
+     * 			The number of object handles in the array pointed to by lpHandles. The maximum number of object handles is MAXIMUM_WAIT_OBJECTS.
+     * @param hHandle
+     * 			An array of object handles. For a list of the object types whose handles can be specified, see the following Remarks section. The array can contain handles to objects of different types. 
+     * 			It may not contain multiple copies of the same handle.
+     * 			If one of these handles is closed while the wait is still pending, the function's behavior is undefined.
+     * 			The handles must have the SYNCHRONIZE access right. For more information, see Standard Access Rights.
+     * @param bWaitAll
+     * 			If this parameter is TRUE, the function returns when the state of all objects in the lpHandles array is signaled. 
+     * 			If FALSE, the function returns when the state of any one of the objects is set to signaled. 
+     * 			In the latter case, the return value indicates the object whose state caused the function to return.
+     * @param dwMilliseconds
+     * 			The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the specified objects are signaled or the interval elapses. 
+     * 			If dwMilliseconds is zero, the function does not enter a wait state if the specified objects are not signaled; it always returns immediately. 
+     * 			If dwMilliseconds is INFINITE, the function will return only when the specified objects are signaled.
+     * @return	If the function succeeds, the return value indicates the event that caused the function to return. 
+     * 			It can be one of the following values. (Note that WAIT_OBJECT_0 is defined as 0 and WAIT_ABANDONED_0 is defined as 0x00000080L.)
+     * 			WAIT_OBJECT_0 to (WAIT_OBJECT_0 + nCount– 1) 
+     * 			WAIT_ABANDONED_0 to (WAIT_ABANDONED_0 + nCount– 1)
+     * 			WAIT_TIMEOUT 0x00000102L, 
+     * 			WAIT_FAILED (DWORD)0xFFFFFFFF
+     */
+    int WaitForMultipleObjects(int nCount, HANDLE[] hHandle, boolean bWaitAll, int dwMilliseconds);
+    
     boolean DuplicateHandle(HANDLE hSourceProcessHandle,
                             HANDLE hSourceHandle,
                             HANDLE hTargetProcessHandle,
@@ -344,4 +426,24 @@ public interface Kernel32 extends W32API {
                           int dwNumberOfBytesToMap);
 
     boolean UnmapViewOfFile(Pointer lpBaseAddress);
+    
+    /**
+     * Retrieves only the NetBIOS name of the local computer.
+     * 
+     * @param buffer 
+     * 	A pointer to a buffer that receives the computer name or the cluster virtual server
+     *  name. The buffer size should be large enough to contain MAX_COMPUTERNAME_LENGTH + 1
+     *  characters.
+     * @param lpnSize
+     * 	On input, specifies the size of the buffer, in TCHARs. On output, the number of TCHARs 
+     * 	copied to the destination buffer, not including the terminating null character. If 
+     *  the buffer is too small, the function fails and GetLastError returns 
+     *  ERROR_BUFFER_OVERFLOW. The lpnSize parameter specifies the size of the buffer required,
+     *  including the terminating null character.
+     * @return
+     * 	If the function succeeds, the return value is a nonzero value.
+     *  If the function fails, the return value is zero. To get extended error information, 
+     *  call GetLastError.
+     */
+    public boolean GetComputerName(char[] buffer, IntByReference lpnSize);
 }

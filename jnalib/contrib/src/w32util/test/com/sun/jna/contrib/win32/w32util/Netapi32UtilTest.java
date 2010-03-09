@@ -12,6 +12,9 @@
  */
 package com.sun.jna.contrib.win32.w32util;
 
+import com.sun.jna.examples.win32.LMJoin;
+import com.sun.jna.examples.win32.Netapi32;
+
 import junit.framework.TestCase;
 
 public class Netapi32UtilTest extends TestCase {
@@ -35,5 +38,19 @@ public class Netapi32UtilTest extends TestCase {
 		assertTrue(totalLength / localGroups.length > 1);
 		assertNotNull(localGroups);
 		assertTrue(localGroups.length > 0);
+	}
+	
+	public void testGetJoinStatus() {
+		int joinStatus = Netapi32Util.getJoinStatus();
+		assertTrue(joinStatus == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName
+				|| joinStatus == LMJoin.NETSETUP_JOIN_STATUS.NetSetupUnjoined
+				|| joinStatus == LMJoin.NETSETUP_JOIN_STATUS.NetSetupWorkgroupName);
+	}
+	
+	public void testGetDCName() {
+		if (Netapi32Util.getJoinStatus() == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName) {
+			String domainController = Netapi32Util.getDCName();
+			assertTrue(domainController.length() > 0);
+		}
 	}
 }

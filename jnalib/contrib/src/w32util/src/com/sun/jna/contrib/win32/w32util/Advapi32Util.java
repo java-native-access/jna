@@ -131,9 +131,12 @@ public abstract class Advapi32Util {
     	}
 		
     	// type of SID: peUse.getPointer().getInt(0)
-		// domain: Native.toString(referencedDomainName)
     	
-		return Native.toString(name);		
+		if (cchReferencedDomainName.getValue() > 0) {
+			return Native.toString(referencedDomainName) + "\\" + Native.toString(name);
+		} else {
+			return Native.toString(name);
+		}
 	}
 	
 	/**

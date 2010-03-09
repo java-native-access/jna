@@ -54,4 +54,18 @@ public class Netapi32Test extends TestCase {
 	    			bufptr.getValue()));
     	}
     }
+    
+    public void testNetGetDCName() {
+    	PointerByReference lpNameBuffer = new PointerByReference();
+    	IntByReference BufferType = new IntByReference();
+    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetGetJoinInformation(null, lpNameBuffer, BufferType));    	
+    	if (BufferType.getValue() == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName) {
+	    	PointerByReference bufptr = new PointerByReference();
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetGetDCName(null, null, bufptr));
+	    	String dc = bufptr.getValue().getString(0);
+	    	assertTrue(dc.length() > 0);
+	    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
+    	}
+    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(lpNameBuffer.getValue()));
+    }
 }
