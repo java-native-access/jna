@@ -232,7 +232,8 @@
       </fileset>
     </jar>
   	<subant target="jar">
- 		<fileset dir="${contrib}" includes="*/build.xml"/>
+ 		<fileset dir="${contrib}" includes="platform/build.xml" />
+ 		<fileset dir="${contrib}" includes="*/build.xml" />
   	</subant>
   </target>
   <target name="javah" depends="compile">
@@ -603,7 +604,7 @@
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-amd64"/>
     </jar>
-    <copy todir="${dist}">
+    <copy todir="${dist}" flatten="true">
       <fileset dir="${build}">
         <include name="${native.jar}"/>
       </fileset>

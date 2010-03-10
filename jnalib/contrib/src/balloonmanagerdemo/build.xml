@@ -11,8 +11,10 @@
     <property name="main-class"		value="com.sun.jna.contrib.demo.BalloonManagerDemo" />
 
     <path id="classpath">
-        <fileset dir="../../../dist">
+        <fileset dir="../../../build">
             <include name="jna.jar"/>
+        </fileset>
+        <fileset dir="../platform/dist">
             <include name="platform.jar"/>
         </fileset>
     </path>
