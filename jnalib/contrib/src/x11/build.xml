@@ -8,7 +8,7 @@
     <property name="jna-dist"           location="../../dist"/>
 
     <property name="buildClasses"       location="${build}/classes"/>
-    <property name="buildJar"           location="${build}/jnacontrib-x11.jar"/>
+    <property name="buildJar"           location="${build}/demo-x11.jar"/>
 
     <path id="classpath">
         <fileset dir="../../../build">

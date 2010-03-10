@@ -604,15 +604,17 @@
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-amd64"/>
     </jar>
-    <copy todir="${dist}" flatten="true">
+    <copy todir="${dist}">
       <fileset dir="${build}">
         <include name="${native.jar}"/>
       </fileset>
   	  <fileset dir="${contrib}/platform/dist">
   		<include name="platform.jar" />
   	  </fileset>
+    </copy>
+    <copy todir="${dist}/jnacontrib" flatten="true">
 	  <fileset dir="${contrib}">
-		<include name="**/build/jnacontrib-*.jar" />
+		<include name="**/build/demo-*.jar" />
 	  </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">

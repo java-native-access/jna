@@ -7,7 +7,7 @@
     <property name="jna-dist"           location="../../../dist"/>
 
     <property name="buildClasses"       location="${build}/classes"/>
-    <property name="buildJar"           location="${build}/jnacontrib-dnddemo.jar"/>
+    <property name="buildJar"           location="${build}/demo-dnd.jar"/>
     <property name="main-class"		value="com.sun.jna.contrib.demo.GhostedDragImageDemo" />
 
     <path id="classpath">

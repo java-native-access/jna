@@ -76,10 +76,31 @@ public interface Kernel32 extends W32API {
 
     HMODULE GetModuleHandle(String name);
     void GetSystemTime(SYSTEMTIME result);
+    
+    /**
+     * The GetCurrentThreadId function retrieves the thread identifier of the calling thread.
+     * @return The return value is the thread identifier of the calling thread.
+     */
     int GetCurrentThreadId();
+    
+    /**
+     * The GetCurrentThread function retrieves a pseudo handle for the current thread.
+     * @return The return value is a pseudo handle for the current thread.
+     */
     HANDLE GetCurrentThread();
+    
+    /**
+     * This function returns the process identifier of the calling process. 
+     * @return The return value is the process identifier of the calling process.
+     */
     int GetCurrentProcessId();
+    
+    /**
+     * This function returns a pseudohandle for the current process. 
+     * @return The return value is a pseudohandle to the current process. 
+     */
     HANDLE GetCurrentProcess();
+    
     int GetProcessId(HANDLE process);
     int GetProcessVersion(int processId);
     int GetLastError();
@@ -448,4 +469,36 @@ public interface Kernel32 extends W32API {
      *  call GetLastError.
      */
     public boolean GetComputerName(char[] buffer, IntByReference lpnSize);
+    
+    /**
+     * The OpenThread function opens an existing thread object.
+     * @param dwDesiredAccess
+     *  Access to the thread object. This access right is checked against any security 
+     *  descriptor for the thread.
+     * @param bInheritHandle
+     *  If this parameter is TRUE, the new process inherits the handle. If the parameter 
+     *  is FALSE, the handle is not inherited. 
+     * @param dwThreadId
+     *  Identifier of the thread to be opened. 
+     * @return
+     *  If the function succeeds, the return value is an open handle to the specified process.
+     *  If the function fails, the return value is NULL. To get extended error information, 
+     *  call GetLastError.
+     */
+    HANDLE OpenThread(int dwDesiredAccess, boolean bInheritHandle, int dwThreadId);
+    
+    /**
+     * This function returns a handle to an existing process object.
+     * @param fdwAccess
+     *  Not supported; set to zero. 
+     * @param fInherit
+     *  Not supported; set to FALSE. 
+     * @param IDProcess
+     *  Specifies the process identifier of the process to open. 
+     * @return
+     *  An open handle to the specified process indicates success. 
+     *  NULL indicates failure. 
+     *  To get extended error information, call GetLastError. 
+     */
+    HANDLE OpenProcess(int fdwAccess, boolean fInherit, int IDProcess);    
 }

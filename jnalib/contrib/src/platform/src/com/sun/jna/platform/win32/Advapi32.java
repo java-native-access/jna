@@ -180,4 +180,29 @@ public interface Advapi32 extends W32API {
 			int logonType,
 			int logonProvider,
 			HANDLEByReference phToken);	
+	
+	/**
+	 * The OpenThreadToken function opens the access token associated with a thread.
+	 * @param ThreadHandle
+	 *  Handle to the thread whose access token is opened. 
+	 * @param DesiredAccess
+	 *  Specifies an access mask that specifies the requested types of access to the access token. 
+	 *  These requested access types are reconciled against the token's discretionary access 
+	 *  control list (DACL) to determine which accesses are granted or denied. 
+	 * @param OpenAsSelf
+	 *  Indicates whether the access check is to be made against the security context of the 
+	 *  thread calling the OpenThreadToken function or against the security context of the 
+	 *  process for the calling thread. 
+	 * @param TokenHandle
+	 *  Pointer to a variable that receives the handle to the newly opened access token.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, 
+	 *  call GetLastError. 
+	 */
+	public boolean OpenThreadToken(
+			HANDLE ThreadHandle,
+			int DesiredAccess,
+			boolean OpenAsSelf,
+			HANDLEByReference TokenHandle);
 }

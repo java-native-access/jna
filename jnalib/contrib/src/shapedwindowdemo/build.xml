@@ -7,7 +7,7 @@
     <property name="jna-dist"           location="../../../dist"/>
 
     <property name="buildClasses"       location="${build}/classes"/>
-    <property name="buildJar"           location="${build}/jnacontrib-shapedwindowdemo.jar"/>
+    <property name="buildJar"           location="${build}/demo-shapedwindow.jar"/>
     <property name="main-class"		value="com.sun.jna.contrib.demo.ShapedWindowDemo" />
 
     <path id="classpath">

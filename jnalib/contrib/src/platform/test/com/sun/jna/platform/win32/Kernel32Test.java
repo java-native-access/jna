@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
+import com.sun.jna.platform.win32.W32API.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 
 public class Kernel32Test extends TestCase {
@@ -114,4 +115,46 @@ public class Kernel32Test extends TestCase {
 
 		Kernel32.INSTANCE.CloseHandle(handles[1]);
     }   
+    
+    public void testGetCurrentThreadId() {
+    	assertTrue(Kernel32.INSTANCE.GetCurrentThreadId() > 0);
+    }
+    
+    public void testGetCurrentThread() {
+    	HANDLE h = Kernel32.INSTANCE.GetCurrentThread();
+    	assertNotNull(h);
+    	assertFalse(h.equals(0));
+    	// CloseHandle does not need to be called for a thread handle
+    	assertFalse(Kernel32.INSTANCE.CloseHandle(h));
+    	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    }
+
+    public void testOpenThread() {
+    	HANDLE h = Kernel32.INSTANCE.OpenThread(WinNT.THREAD_ALL_ACCESS, false, 
+    			Kernel32.INSTANCE.GetCurrentThreadId());
+    	assertNotNull(h);
+    	assertFalse(h.equals(0));
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(h));
+    }
+    
+    public void testGetCurrentProcessId() {
+    	assertTrue(Kernel32.INSTANCE.GetCurrentProcessId() > 0);
+    }
+    
+    public void testGetCurrentProcess() {
+    	HANDLE h = Kernel32.INSTANCE.GetCurrentProcess();
+    	assertNotNull(h);
+    	assertFalse(h.equals(0));
+    	// CloseHandle does not need to be called for a process handle
+    	assertFalse(Kernel32.INSTANCE.CloseHandle(h));
+    	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    }    
+    
+    public void testOpenProcess() {
+    	HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, 
+    			Kernel32.INSTANCE.GetCurrentProcessId());
+    	assertNull(h);
+    	// opening your own process fails with access denied
+    	assertEquals(W32Errors.ERROR_ACCESS_DENIED, Kernel32.INSTANCE.GetLastError());
+    }
 }
