@@ -231,6 +231,9 @@
         <patternset refid="jar-compiled"/>
       </fileset>
     </jar>
+  	<subant target="jar">
+ 		<fileset dir="${contrib}" includes="*/build.xml"/>
+  	</subant>
   </target>
   <target name="javah" depends="compile">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
@@ -474,6 +477,9 @@
         </fileset>
       </batchtest>
     </junit>
+  	<subant target="test">
+ 		<fileset dir="${contrib}" includes="platform/build.xml"/>
+  	</subant>
     <junitreport todir="${results.junit}">
       <fileset dir="${results.junit}">
         <include name="TEST-*.xml"/>
@@ -537,6 +543,9 @@
     	
       <arg value="-notimestamp"/>
     </javadoc>
+  	<subant target="javadoc">
+ 		<fileset dir="${contrib}" includes="platform/build.xml"/>
+  	</subant>	
   </target>
 
   <target name="dist" depends="jar,compile-tests,native,javadoc"
@@ -594,7 +603,6 @@
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-amd64"/>
     </jar>
-  	<ant antfile="build.xml" dir="${contrib}/platform" />
     <copy todir="${dist}">
       <fileset dir="${build}">
         <include name="${native.jar}"/>
@@ -602,6 +610,9 @@
   	  <fileset dir="${contrib}/platform/dist">
   		<include name="platform.jar" />
   	  </fileset>
+	  <fileset dir="${contrib}">
+		<include name="**/build/jnacontrib-*.jar" />
+	  </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
@@ -638,6 +649,9 @@
       <fileset dir="${javadoc}"/>
       <fileset dir="." includes="*~,**/*~"/>
     </delete>
+  	<subant target="clean">
+ 		<fileset dir="${contrib}" includes="*/build.xml"/>
+  	</subant>
   </target>
 
 </project>

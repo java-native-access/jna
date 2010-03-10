@@ -29,7 +29,8 @@ public abstract class Netapi32Util {
 	 * 	to execute.
 	 * @param domainName
 	 * 	Specifies the name of the domain.
-	 * @return
+	 * @return 
+	 *  Name of the primary domain controller.
 	 */
 	public static String getDCName(String serverName, String domainName) {
 		PointerByReference bufptr = new PointerByReference();

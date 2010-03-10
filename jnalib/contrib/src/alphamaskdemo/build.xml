@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jnacontrib.x11" default="jar" basedir=".">
-    <description>Builds, tests, and runs the project jnacontrib.x11.</description>
+<project name="jnacontrib.alphamaskdemo" default="jar" basedir=".">
+    <description>Builds, tests, and runs the project jnacontrib.alphamaskdemo.</description>
     <!-- Locations -->
-    <property name="src"                location="src"/>
+    <property name="src"                location="."/>
     <property name="build"              location="build"/>
-    <property name="jna-src"            location="../../src"/>
-    <property name="jna-dist"           location="../../dist"/>
+    <property name="jna-dist"           location="../../../dist"/>
 
     <property name="buildClasses"       location="${build}/classes"/>
-    <property name="buildJar"           location="${build}/jnacontrib-x11.jar"/>
+    <property name="buildJar"           location="${build}/jnacontrib-alphamaskdemo.jar"/>
+	
+	<property name="main-class"			value="com.sun.jna.contrib.demo.AlphaMaskDemo" />
 
     <path id="classpath">
         <fileset dir="../../../dist">
@@ -17,19 +18,9 @@
         </fileset>
     </path>
 
-    <!-- Run XDesktopDemo. -->
-    <target name="runXDesktopDemo" depends="compile">
-        <java classname="jnacontrib.x11.demos.XDesktopDemo" fork="true">
-            <classpath>
-                <pathelement location="${buildClasses}" />
-                <path refid="classpath"/>
-            </classpath>
-        </java>
-    </target>
-
-    <!-- Run XTestDemo. -->
-    <target name="runXTestDemo" depends="compile">
-        <java classname="jnacontrib.x11.demos.XTestDemo" fork="true">
+    <!-- Run Demo. -->
+    <target name="run" depends="compile">
+        <java classname="${main-class}" fork="true">
             <classpath>
                 <pathelement location="${buildClasses}" />
                 <path refid="classpath"/>
@@ -60,7 +51,7 @@
 
         <!-- Copy all non-java files to classes. -->
         <copy todir="${buildClasses}">
-            <fileset dir="src">
+            <fileset dir="${src}">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -70,7 +61,7 @@
     <target name="jar" depends="compile">
         <jar jarfile="${buildJar}" basedir="${buildClasses}">
             <manifest>
-                <attribute name="Main-Class" value="jnacontrib.x11.demos.XDesktopDemo"/>
+                <attribute name="Main-Class" value="${main-class}"/>
                 <attribute name="Class-Path" value="${jna-dist}/jna.jar"/>
             </manifest>
         </jar>

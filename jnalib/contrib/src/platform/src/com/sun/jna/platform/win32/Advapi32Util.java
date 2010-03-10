@@ -46,9 +46,8 @@ public abstract class Advapi32Util {
 	 * Retrieves a security identifier (SID) for the account on the current system.
 	 * @param accountName Specifies the account name.
 	 * @return A SID.
-	 * @throws Exception
 	 */
-	public static byte[] getAccountSid(String accountName) throws Exception {
+	public static byte[] getAccountSid(String accountName) {
 		return getAccountSid(null, accountName);
 	}
 			
@@ -57,15 +56,14 @@ public abstract class Advapi32Util {
 	 * @param systemName Name of the system.
 	 * @param accountName Account name.
 	 * @return A SID.
-	 * @throws Exception
 	 */
-	public static byte[] getAccountSid(String systemName, String accountName) throws Exception {
+	public static byte[] getAccountSid(String systemName, String accountName) {
 		IntByReference pSid = new IntByReference(0);
 		IntByReference pDomain = new IntByReference(0);
 		PointerByReference peUse = new PointerByReference();
 		
 		if (Advapi32.INSTANCE.LookupAccountName(systemName, accountName, null, pSid, null, pDomain, peUse)) {
-			throw new Exception("LookupAccountNameW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
+			throw new RuntimeException("LookupAccountNameW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
 		}
 		
 		int rc = Kernel32.INSTANCE.GetLastError();
@@ -91,9 +89,8 @@ public abstract class Advapi32Util {
 	 * 
 	 * @param sid SID.
 	 * @return Account name.
-	 * @throws Exception
 	 */
-	public static String getAccountName(byte[] sid) throws Exception {
+	public static String getAccountName(byte[] sid) {
 		return getAccountName(null, sid);
 	}
 	
@@ -103,16 +100,15 @@ public abstract class Advapi32Util {
 	 * @param systemName Name of the system.
 	 * @param sid SID.
 	 * @return Account name.
-	 * @throws Exception
 	 */
-	public static String getAccountName(String systemName, byte[] sid) throws Exception {
+	public static String getAccountName(String systemName, byte[] sid) {
     	IntByReference cchName = new IntByReference();
     	IntByReference cchReferencedDomainName = new IntByReference();
     	PointerByReference peUse = new PointerByReference();
 
     	if (Advapi32.INSTANCE.LookupAccountSid(null, sid, 
     			null, cchName, null, cchReferencedDomainName, peUse)) {
-			throw new Exception("LookupAccountSidW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
+			throw new RuntimeException("LookupAccountSidW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
     	}
     	
     	int rc = Kernel32.INSTANCE.GetLastError();
@@ -175,9 +171,8 @@ public abstract class Advapi32Util {
 	 * 
 	 * @param accountName Account name.
 	 * @return SID.
-	 * @throws Exception
 	 */
-	public static String getAccountSidString(String accountName) throws Exception {
+	public static String getAccountSidString(String accountName) {
 		return convertSidToStringSid(getAccountSid(null, accountName));
 	}
 	
@@ -187,9 +182,8 @@ public abstract class Advapi32Util {
 	 * @param systemName System name.
 	 * @param accountName Account name.
 	 * @return SID.
-	 * @throws Exception
 	 */
-	public static String getAccountSidString(String systemName, String accountName) throws Exception {
+	public static String getAccountSidString(String systemName, String accountName) {
 		return convertSidToStringSid(getAccountSid(systemName, accountName));
 	}
 
@@ -198,9 +192,8 @@ public abstract class Advapi32Util {
 	 * 
 	 * @param sidString SID.
 	 * @return Account name.
-	 * @throws Exception
 	 */
-	public static String getAccountName(String sidString) throws Exception {
+	public static String getAccountName(String sidString) {
 		return getAccountName(null, sidString); 
 	}
 	
@@ -210,9 +203,8 @@ public abstract class Advapi32Util {
 	 * @param systemName System name.
 	 * @param sidString SID.
 	 * @return Account name.
-	 * @throws Exception
 	 */
-	public static String getAccountName(String systemName, String sidString) throws Exception {
+	public static String getAccountName(String systemName, String sidString) {
 		return getAccountName(systemName, convertStringSidToSid(sidString)); 
 	}
 }

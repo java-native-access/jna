@@ -143,4 +143,41 @@ public interface Advapi32 extends W32API {
 	 * @return Length of the SID.
 	 */
 	public int GetLengthSid(PointerByReference sid);
+	
+	/**
+	 * The LogonUser function attempts to log a user on to the local computer. The local computer is
+	 * the computer from which LogonUser was called. You cannot use LogonUser to log on to a remote
+	 * computer. You specify the user with a user name and domain, and authenticate the user with a 
+	 * plaintext password. If the function succeeds, you receive a handle to a token that represents 
+	 * the logged-on user. You can then use this token handle to impersonate the specified user or, 
+	 * in most cases, to create a process that runs in the context of the specified user.
+	 * @param lpszUsername
+	 *  A pointer to a null-terminated string that specifies the name of the user. This is the name of 
+	 *  the user account to log on to. If you use the user principal name (UPN) format, 
+	 *  user@DNS_domain_name, the lpszDomain parameter must be NULL. 
+	 * @param lpszDomain
+	 *  A pointer to a null-terminated string that specifies the name of the domain or server whose 
+	 *  account database contains the lpszUsername account. If this parameter is NULL, the user name 
+	 *  must be specified in UPN format. If this parameter is ".", the function validates the account 
+	 *  using only the local account database. 
+	 * @param lpszPassword
+	 *  A pointer to a null-terminated string that specifies the plaintext password for the user 
+	 *  account specified by lpszUsername. 
+	 * @param logonType
+	 *  The type of logon operation to perform.
+	 * @param logonProvider
+	 *  Specifies the logon provider.
+	 * @param phToken
+	 *  A pointer to a handle variable that receives a handle to a token that represents the specified user. 
+	 * @return
+	 *  If the function succeeds, the function returns nonzero.
+	 *  If the function fails, it returns zero. To get extended error information, call GetLastError.
+	 */
+	public boolean LogonUser(
+			String lpszUsername,
+			String lpszDomain,
+			String lpszPassword,
+			int logonType,
+			int logonProvider,
+			HANDLEByReference phToken);	
 }

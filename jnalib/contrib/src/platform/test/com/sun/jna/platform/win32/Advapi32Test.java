@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import junit.framework.TestCase;
 
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -98,5 +99,12 @@ public class Advapi32Test extends TestCase {
     			convertedSidStringPtr.getValue()));
     	assertEquals(null, Kernel32.INSTANCE.LocalFree(
     			sid.getValue()));
+    }
+    
+    public void testLogonUser() {
+    	HANDLEByReference phToken = new HANDLEByReference();
+    	assertFalse(Advapi32.INSTANCE.LogonUser("AccountDoesntExist", ".", "passwordIsInvalid", 
+    			WinBase.LOGON32_LOGON_NETWORK, WinBase.LOGON32_PROVIDER_DEFAULT, phToken));
+    	assertEquals(W32Errors.ERROR_LOGON_TYPE_NOT_GRANTED, Kernel32.INSTANCE.GetLastError());
     }
 }

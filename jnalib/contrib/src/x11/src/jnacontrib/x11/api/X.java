@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.awt.Rectangle;
 
+import com.sun.jna.platform.unix.X11;
+
 /**
  * Object oriented X window system.
  * <p/>
