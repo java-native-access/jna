@@ -242,13 +242,53 @@ public interface Kernel32 extends W32API {
      */
     int WaitForMultipleObjects(int nCount, HANDLE[] hHandle, boolean bWaitAll, int dwMilliseconds);
     
-    boolean DuplicateHandle(HANDLE hSourceProcessHandle,
-                            HANDLE hSourceHandle,
-                            HANDLE hTargetProcessHandle,
-                            HANDLEByReference lpTargetHandle,
-                            int dwDesiredAccess,
-                            boolean bInheritHandle,
-                            int dwOptions);
+    /**
+     * The DuplicateHandle function duplicates an object handle. 
+     * 
+     * @param hSourceProcessHandle
+     *  Handle to the process with the handle to duplicate. 
+     *  The handle must have the PROCESS_DUP_HANDLE access right.
+     * @param hSourceHandle
+     *  Handle to duplicate. This is an open object handle that is valid in the 
+     *  context of the source process.
+     * @param hTargetProcessHandle
+     *  Handle to the process that is to receive the duplicated handle. 
+     *  The handle must have the PROCESS_DUP_HANDLE access right. 
+     * @param lpTargetHandle
+     *  Pointer to a variable that receives the duplicate handle. This handle value is valid in 
+     *  the context of the target process. If hSourceHandle is a pseudo handle returned by 
+     *  GetCurrentProcess or GetCurrentThread, DuplicateHandle converts it to a real handle to 
+     *  a process or thread, respectively.
+     * @param dwDesiredAccess
+     *  Access requested for the new handle. 
+     * @param bInheritHandle
+     *  Indicates whether the handle is inheritable.
+     * @param dwOptions
+     *  Optional actions.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero. To get extended error information, 
+     *  call GetLastError.
+     */
+    boolean DuplicateHandle(
+    		HANDLE hSourceProcessHandle,
+            HANDLE hSourceHandle,
+            HANDLE hTargetProcessHandle,
+            HANDLEByReference lpTargetHandle,
+            int dwDesiredAccess,
+            boolean bInheritHandle,
+            int dwOptions);
+    
+    /**
+     * The CloseHandle function closes an open object handle.
+     * 
+     * @param hObject
+     *  Handle to an open object. This parameter can be a pseudo handle or INVALID_HANDLE_VALUE.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero. To get extended error information, 
+     *  call GetLastError.
+     */
     boolean CloseHandle(HANDLE hObject);
 
     int FILE_ACTION_ADDED = 1;

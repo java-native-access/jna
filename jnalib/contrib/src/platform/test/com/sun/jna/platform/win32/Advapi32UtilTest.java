@@ -14,14 +14,16 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.platform.win32.WinNT.PSID;
+
 public class Advapi32UtilTest extends TestCase {
 
     public static void main(String[] args) throws Exception {
         junit.textui.TestRunner.run(Advapi32UtilTest.class);
         System.out.println("GetUserName: " + Advapi32Util.getUserName());
-        System.out.println("ConvertSidToStringSid: " + Advapi32Util.convertSidToStringSid(Advapi32Util.getAccountSid(Advapi32Util.getUserName())));
+        System.out.println("ConvertSidToStringSid: " + Advapi32Util.convertSidToStringSid(new PSID(Advapi32Util.getAccountSid(Advapi32Util.getUserName()))));
         System.out.println("AccountSidString: " + Advapi32Util.getAccountSidString(Advapi32Util.getUserName()));
-        System.out.println("AccountNameBySid: " + Advapi32Util.getAccountName(Advapi32Util.getAccountSid(Advapi32Util.getUserName())));
+        System.out.println("AccountNameBySid: " + Advapi32Util.getAccountName(new PSID(Advapi32Util.getAccountSid(Advapi32Util.getUserName()))));
         System.out.println("AccountNameBySidString: " + Advapi32Util.getAccountName(Advapi32Util.getAccountSidString(Advapi32Util.getUserName())));
     }
     
@@ -34,7 +36,8 @@ public class Advapi32UtilTest extends TestCase {
 		String accountName = Kernel32Util.getComputerName() + "\\Administrator";
 		byte[] sidBytes = Advapi32Util.getAccountSid(accountName);
 		assertTrue(sidBytes.length > 0);
-		assertEquals(accountName.toLowerCase(), Advapi32Util.getAccountName(sidBytes).toLowerCase());
+		String accountNameFromSid = Advapi32Util.getAccountName(new PSID(sidBytes));
+		assertEquals(accountName.toLowerCase(), accountNameFromSid.toLowerCase());
 	}
 	
 	public void testGetAccountNameFromSid() throws Exception {
@@ -49,7 +52,7 @@ public class Advapi32UtilTest extends TestCase {
     	String sidString = "S-1-1-0"; // Everyone
     	byte[] sidBytes = Advapi32Util.convertStringSidToSid(sidString);
     	assertTrue(sidBytes.length > 0);
-    	String convertedSidString = Advapi32Util.convertSidToStringSid(sidBytes);
+    	String convertedSidString = Advapi32Util.convertSidToStringSid(new PSID(sidBytes));
     	assertEquals(convertedSidString, sidString);
 	}
 }

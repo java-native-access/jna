@@ -13,6 +13,10 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
@@ -30,12 +34,13 @@ public interface Advapi32 extends W32API {
 	 * http://msdn.microsoft.com/en-us/library/ms724432(VS.85).aspx
 	 * 
 	 * @param buffer
-	 *            Buffer to receive the user's logon name.
+	 *  Buffer to receive the user's logon name.
 	 * @param len
-	 *            On input, the size of the buffer, on output the number of
-	 *            characters copied into the buffer, including the terminating
-	 *            null character.
-	 * @return True if succeeded.
+	 *  On input, the size of the buffer, on output the number of
+	 *  characters copied into the buffer, including the terminating
+	 *  null character.
+	 * @return 
+	 *  True if succeeded.
 	 */
 	public boolean GetUserNameW(char[] buffer, IntByReference len);
 
@@ -46,32 +51,32 @@ public interface Advapi32 extends W32API {
 	 * http://msdn.microsoft.com/en-us/library/aa379159(VS.85).aspx
 	 * 
 	 * @param lpSystemName
-	 *            Specifies the name of the system.
+	 *  Specifies the name of the system.
 	 * @param lpAccountName
-	 *            Specifies the account name.
+	 *  Specifies the account name.
 	 * @param Sid
-	 *            Receives the SID structure that corresponds to the account
-	 *            name pointed to by the lpAccountName parameter.
+	 *  Receives the SID structure that corresponds to the account
+	 *  name pointed to by the lpAccountName parameter.
 	 * @param cbSid
-	 *            On input, this value specifies the size, in bytes, of the Sid
-	 *            buffer. If the function fails because the buffer is too small
-	 *            or if cbSid is zero, this variable receives the required
-	 *            buffer size.
+	 *  On input, this value specifies the size, in bytes, of the Sid
+	 *  buffer. If the function fails because the buffer is too small
+	 *  or if cbSid is zero, this variable receives the required
+	 *  buffer size.
 	 * @param ReferencedDomainName
-	 *            Receives the name of the domain where the account name is
-	 *            found.
+	 *  Receives the name of the domain where the account name is found.
 	 * @param cchReferencedDomainName
-	 *            On input, this value specifies the size, in TCHARs, of the
-	 *            ReferencedDomainName buffer. If the function fails because the
-	 *            buffer is too small, this variable receives the required
-	 *            buffer size, including the terminating null character.
+	 *  On input, this value specifies the size, in TCHARs, of the
+	 *  ReferencedDomainName buffer. If the function fails because the
+	 *  buffer is too small, this variable receives the required
+	 *  buffer size, including the terminating null character.
 	 * @param peUse
-	 *            SID_NAME_USE enumerated type that indicates the type of the
-	 *            account when the function returns.
-	 * @return True if the function was successful, False otherwise.
+	 *  SID_NAME_USE enumerated type that indicates the type of the
+	 *  account when the function returns.
+	 * @return 
+	 *  True if the function was successful, False otherwise.
 	 */
 	public boolean LookupAccountName(String lpSystemName,
-			String lpAccountName, byte[] Sid, IntByReference cbSid,
+			String lpAccountName, PSID Sid, IntByReference cbSid,
 			char[] ReferencedDomainName,
 			IntByReference cchReferencedDomainName, PointerByReference peUse);
 
@@ -104,7 +109,7 @@ public interface Advapi32 extends W32API {
 	 *  If the function fails, it returns zero. To get extended error information, call 
 	 *  GetLastError.
 	 */
-	public boolean LookupAccountSid(String lpSystemName, byte[] Sid,
+	public boolean LookupAccountSid(String lpSystemName, PSID Sid,
 			char[] lpName, IntByReference cchName,  char[] ReferencedDomainName,
 	        IntByReference cchReferencedDomainName, PointerByReference peUse);
 	
@@ -121,9 +126,9 @@ public interface Advapi32 extends W32API {
 	 *            the LocalFree function.
 	 * @return True if the function was successful, False otherwise.
 	 */
-	public boolean ConvertSidToStringSid(byte[] Sid,
+	public boolean ConvertSidToStringSid(PSID Sid,
 			PointerByReference StringSid);	
-
+	
 	/**
 	 * Convert a string-format security identifier (SID) into a valid, functional SID.
 	 * http://msdn.microsoft.com/en-us/library/aa376402(VS.85).aspx
@@ -133,7 +138,7 @@ public interface Advapi32 extends W32API {
 	 * @return True if the function was successful, False otherwise.
 	 */
 	public boolean ConvertStringSidToSid(String StringSid,
-			PointerByReference Sid);
+			PSIDByReference Sid);
 	
 	/**
 	 * Returns the length, in bytes, of a valid security identifier (SID).
@@ -142,7 +147,20 @@ public interface Advapi32 extends W32API {
 	 * @param sid A pointer to the SID structure whose length is returned.
 	 * @return Length of the SID.
 	 */
-	public int GetLengthSid(PointerByReference sid);
+	public int GetLengthSid(PSID pSid);
+	
+	/**
+	 * The IsValidSid function validates a security identifier (SID) by verifying that 
+	 * the revision number is within a known range, and that the number of subauthorities 
+	 * is less than the maximum.
+	 * @param pSid 
+	 *  Pointer to the SID structure to validate. This parameter cannot be NULL.
+	 * @return
+	 *  If the SID structure is valid, the return value is nonzero.
+	 *  If the SID structure is not valid, the return value is zero. There is no extended 
+	 *  error information for this function; do not call GetLastError.
+	 */
+	public boolean IsValidSid(PSID pSid);
 	
 	/**
 	 * The LogonUser function attempts to log a user on to the local computer. The local computer is
@@ -205,4 +223,81 @@ public interface Advapi32 extends W32API {
 			int DesiredAccess,
 			boolean OpenAsSelf,
 			HANDLEByReference TokenHandle);
+	
+	/**
+	 * The OpenProcessToken function opens the access token associated with a process.
+	 * @param ProcessHandle
+	 *  Handle to the process whose access token is opened. The process must have the 
+	 *  PROCESS_QUERY_INFORMATION access permission. 
+	 * @param DesiredAccess
+	 *  Specifies an access mask that specifies the requested types of access to the access 
+	 *  token. These requested access types are compared with the discretionary access 
+	 *  control list (DACL) of the token to determine which accesses are granted or denied. 
+	 * @param TokenHandle
+	 *  Pointer to a handle that identifies the newly opened access token when the function returns. 
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, 
+	 *  call GetLastError.
+	 */
+	public boolean OpenProcessToken(
+			HANDLE ProcessHandle,
+			int DesiredAccess,
+			HANDLEByReference TokenHandle);
+
+	/**
+	 * The DuplicateToken function creates a new access token that duplicates 
+	 * one already in existence.
+	 * 
+	 * @param ExistingTokenHandle
+	 *  Handle to an access token opened with TOKEN_DUPLICATE access. 
+	 * @param ImpersonationLevel
+	 *  Specifies a SECURITY_IMPERSONATION_LEVEL enumerated type that supplies 
+	 *  the impersonation level of the new token. 
+	 * @param DuplicateTokenHandle
+	 *  Pointer to a variable that receives a handle to the duplicate token. 
+	 *  This handle has TOKEN_IMPERSONATE and TOKEN_QUERY access to the new token. 
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, 
+	 *  call GetLastError.
+	 */
+	public boolean DuplicateToken(
+			HANDLE ExistingTokenHandle,
+			int ImpersonationLevel, 
+			HANDLEByReference DuplicateTokenHandle);
+	
+	
+	/**
+	 * Retrieves a specified type of information about an access token. 
+	 * The calling process must have appropriate access rights to obtain the information.
+
+	 * @param tokenHandle
+	 *  Handle to an access token from which information is retrieved. If TokenInformationClass
+	 *  specifies TokenSource, the handle must have TOKEN_QUERY_SOURCE access. For all other 
+	 *  TokenInformationClass values, the handle must have TOKEN_QUERY access. 
+	 * @param tokenInformationClass
+	 *  Specifies a value from the TOKEN_INFORMATION_CLASS enumerated type to identify the type of 
+	 *  information the function retrieves. 
+	 * @param tokenInformation
+	 *  Pointer to a buffer the function fills with the requested information. The structure put 
+	 *  into this buffer depends upon the type of information specified by the TokenInformationClass 
+	 *  parameter.
+	 * @param tokenInformationLengt
+	 *  Specifies the size, in bytes, of the buffer pointed to by the TokenInformation parameter. 
+	 *  If TokenInformation is NULL, this parameter must be zero. 
+	 * @param returnLength
+	 *  Pointer to a variable that receives the number of bytes needed for the buffer pointed to by 
+	 *  the TokenInformation parameter. If this value is larger than the value specified in the 
+	 *  TokenInformationLength parameter, the function fails and stores no data in the buffer.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean GetTokenInformation(
+			HANDLE tokenHandle,
+			int tokenInformationClass,
+			Structure tokenInformation,
+			int tokenInformationLength,
+			IntByReference returnLength);
 }

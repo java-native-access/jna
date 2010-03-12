@@ -1,5 +1,10 @@
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.ptr.ByReference;
+
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
  * by NT, but exposed through the Win32 API.
@@ -116,4 +121,197 @@ public abstract class WinNT {
 	public static final int THREAD_SET_LIMITED_INFORMATION = 0x0400;
 	public static final int THREAD_QUERY_LIMITED_INFORMATION = 0x0800;
 	public static final int THREAD_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x3FF;
+	
+	/**
+	 * The SECURITY_IMPERSONATION_LEVEL enumeration type contains values that specify security 
+	 * impersonation levels. Security impersonation levels govern the degree to which a server 
+	 * process can act on behalf of a client process.
+	 */
+	public abstract class SECURITY_IMPERSONATION_LEVEL {
+		/**
+		 * The server process cannot obtain identification information about the client,
+		 * and it cannot impersonate the client. It is defined with no value given, and 
+		 * thus, by ANSI C rules, defaults to a value of zero. 
+		 */
+		public static final int SecurityAnonymous = 0;
+		/**
+		 * The server process can obtain information about the client, such as security 
+		 * identifiers and privileges, but it cannot impersonate the client. This is useful
+		 * for servers that export their own objects, for example, database products that 
+		 * export tables and views. Using the retrieved client-security information, the 
+		 * server can make access-validation decisions without being able to use other 
+		 * services that are using the client's security context. 
+		 */
+		public static final int SecurityIdentification = 1;
+		/**
+		 * The server process can impersonate the client's security context on its local system. 
+		 * The server cannot impersonate the client on remote systems. 
+		 */
+		public static final int SecurityImpersonation = 2;
+		/**
+		 * The server process can impersonate the client's security context on remote systems. 
+		 */
+		public static final int SecurityDelegation = 3;
+	}
+	
+	/**
+	 * The TOKEN_INFORMATION_CLASS enumeration type contains values that specify the type of 
+	 * information being assigned to or retrieved from an access token. 
+	 */
+	public abstract class TOKEN_INFORMATION_CLASS {
+		public static final int TokenUser = 1;
+	    public static final int  TokenGroups = 2; 
+	    public static final int  TokenPrivileges = 3; 
+	    public static final int  TokenOwner = 4;
+	    public static final int  TokenPrimaryGroup = 5; 
+	    public static final int  TokenDefaultDacl = 6;
+	    public static final int  TokenSource = 7;
+	    public static final int  TokenType = 8;
+	    public static final int  TokenImpersonationLevel = 9; 
+	    public static final int  TokenStatistics = 10;
+	    public static final int  TokenRestrictedSids = 11; 
+	    public static final int  TokenSessionId = 12;
+	    public static final int  TokenGroupsAndPrivileges = 13; 
+	    public static final int  TokenSessionReference = 14;
+	    public static final int  TokenSandBoxInert = 15;
+	    public static final int  TokenAuditPolicy = 16;
+	    public static final int  TokenOrigin = 17;
+	    public static final int  TokenElevationType = 18;
+	    public static final int  TokenLinkedToken = 19; 
+	    public static final int  TokenElevation = 20;
+	    public static final int  TokenHasRestrictions = 21;
+	    public static final int  TokenAccessInformation = 22;
+	    public static final int  TokenVirtualizationAllowed = 23; 
+	    public static final int  TokenVirtualizationEnabled = 24; 
+	    public static final int  TokenIntegrityLevel = 25;
+	    public static final int  TokenUIAccess = 26;
+	    public static final int  TokenMandatoryPolicy = 27; 
+	    public static final int  TokenLogonSid = 28;
+	}
+	
+	/**
+	 * The SID_AND_ATTRIBUTES structure represents a security identifier (SID) and its 
+	 * attributes. SIDs are used to uniquely identify users or groups.
+	 */
+	public static class SID_AND_ATTRIBUTES extends Structure {
+		public SID_AND_ATTRIBUTES() {
+			super();
+		}
+		
+		public SID_AND_ATTRIBUTES(Pointer memory) {
+			useMemory(memory);
+			read();
+		}
+		
+		/**
+		 * Pointer to a SID structure. 
+		 */
+		public PSID.ByReference Sid;
+		
+		/**
+		 * Specifies attributes of the SID. This value contains up to 32 one-bit flags.
+		 * Its meaning depends on the definition and use of the SID. 
+		 */
+		public int Attributes;
+	}
+	
+	/**
+	 * The TOKEN_OWNER structure contains the default owner 
+	 * security identifier (SID) that will be applied to newly created objects.
+	 */
+	public static class TOKEN_OWNER extends Structure {
+		public TOKEN_OWNER() {
+			super();
+		}
+
+		public TOKEN_OWNER(Pointer memory) {
+			super(memory);
+			read();
+		}
+
+		/**
+		 * Pointer to a SID structure representing a user who will become the owner of any 
+		 * objects created by a process using this access token. The SID must be one of the 
+		 * user or group SIDs already in the token. 
+		 */
+		public PSID.ByReference Owner; // PSID
+	}
+
+	public static class PSID extends Structure {
+		
+    	public static class ByReference extends PSID implements Structure.ByReference {
+    		
+    	}
+		
+		public PSID() {
+			super();
+		}
+		
+		public PSID(byte[] data) {
+			super();
+			Memory memory = new Memory(data.length);
+			memory.write(0, data, 0, data.length);
+			setPointer(memory);
+		}
+		
+		public PSID(Pointer memory) {
+			super(memory);
+			read();
+		}
+
+        public void setPointer(Pointer p) {
+            useMemory(p);
+            read();
+        }
+		
+        public byte[] getBytes() {
+        	int len = Advapi32.INSTANCE.GetLengthSid(this);
+        	return getPointer().getByteArray(0, len);
+        }
+        
+        public Pointer sid;                
+	}
+	
+    public static class PSIDByReference extends ByReference {
+        public PSIDByReference() {
+            this(null);
+        }
+        public PSIDByReference(PSID h) {
+            super(Pointer.SIZE);
+            setValue(h);
+        }
+        public void setValue(PSID h) {
+            getPointer().setPointer(0, h != null ? h.getPointer() : null);
+        }
+        public PSID getValue() {
+            Pointer p = getPointer().getPointer(0);
+            if (p == null)
+                return null;
+            PSID h = new PSID();
+            h.setPointer(p);
+            return h;
+        }
+    }
+	
+	
+	/**
+	 * The TOKEN_USER structure identifies the user associated with an access token.
+	 */
+	public static class TOKEN_USER extends Structure {
+		public TOKEN_USER() {
+			super();
+		}
+		
+		public TOKEN_USER(Pointer memory) {
+			super(memory);
+			read();
+		}
+
+		/**
+		 * Specifies a SID_AND_ATTRIBUTES structure representing the user associated with 
+		 * the access token. There are currently no attributes defined for user security 
+		 * identifiers (SIDs). 
+		 */
+		public SID_AND_ATTRIBUTES User;
+	}
 }

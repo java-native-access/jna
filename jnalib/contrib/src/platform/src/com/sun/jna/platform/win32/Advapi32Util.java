@@ -1,7 +1,10 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.LastErrorException;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -71,17 +74,18 @@ public abstract class Advapi32Util {
 			throw new LastErrorException(rc);
 		}
 
-		byte[] sid = new byte[pSid.getValue()];
+		Memory sidMemory = new Memory(pSid.getValue());
+		PSID result = new PSID(sidMemory);
 		char[] referencedDomainName = new char[pDomain.getValue() + 1]; 
 
-		if (! Advapi32.INSTANCE.LookupAccountName(systemName, accountName, sid, pSid, referencedDomainName, pDomain, peUse)) {
+		if (! Advapi32.INSTANCE.LookupAccountName(systemName, accountName, result, pSid, referencedDomainName, pDomain, peUse)) {
 			throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
 		}
 		
 		// type of SID: peUse.getPointer().getInt(0)
 		// domain: Native.toString(referencedDomainName)
 		
-		return sid;
+		return result.getBytes();
 	}
 
 	/**
@@ -90,7 +94,7 @@ public abstract class Advapi32Util {
 	 * @param sid SID.
 	 * @return Account name.
 	 */
-	public static String getAccountName(byte[] sid) {
+	public static String getAccountName(PSID sid) {
 		return getAccountName(null, sid);
 	}
 	
@@ -101,7 +105,7 @@ public abstract class Advapi32Util {
 	 * @param sid SID.
 	 * @return Account name.
 	 */
-	public static String getAccountName(String systemName, byte[] sid) {
+	public static String getAccountName(String systemName, PSID sid) {
     	IntByReference cchName = new IntByReference();
     	IntByReference cchReferencedDomainName = new IntByReference();
     	PointerByReference peUse = new PointerByReference();
@@ -139,7 +143,7 @@ public abstract class Advapi32Util {
 	 * @param sid SID bytes.
 	 * @return String SID.
 	 */
-	public static String convertSidToStringSid(byte[] sid) {
+	public static String convertSidToStringSid(PSID sid) {
 		PointerByReference stringSid = new PointerByReference();
 		if (! Advapi32.INSTANCE.ConvertSidToStringSid(sid, stringSid)) {
 			throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
@@ -156,15 +160,12 @@ public abstract class Advapi32Util {
 	 * @return SID bytes.
 	 */
 	public static byte[] convertStringSidToSid(String sid) {
-		PointerByReference sidBytes = new PointerByReference();
-		if (! Advapi32.INSTANCE.ConvertStringSidToSid(sid, sidBytes)) {
+		PSIDByReference pSID = new PSIDByReference();
+		if (! Advapi32.INSTANCE.ConvertStringSidToSid(sid, pSID)) {
 			throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
 		}
-    	int sidLength = Advapi32.INSTANCE.GetLengthSid(sidBytes);
-    	byte[] result = sidBytes.getValue().getByteArray(0, sidLength);
-		Kernel32.INSTANCE.LocalFree(sidBytes.getValue()); 
-		return result;
-	}	
+		return pSID.getValue().getBytes();
+	}
 
 	/**
 	 * Get the string representation of a SID for a given account on the local system.
@@ -173,7 +174,7 @@ public abstract class Advapi32Util {
 	 * @return SID.
 	 */
 	public static String getAccountSidString(String accountName) {
-		return convertSidToStringSid(getAccountSid(null, accountName));
+		return convertSidToStringSid(new PSID(getAccountSid(null, accountName)));
 	}
 	
 	/**
@@ -184,7 +185,7 @@ public abstract class Advapi32Util {
 	 * @return SID.
 	 */
 	public static String getAccountSidString(String systemName, String accountName) {
-		return convertSidToStringSid(getAccountSid(systemName, accountName));
+		return convertSidToStringSid(new PSID(getAccountSid(systemName, accountName)));
 	}
 
 	/**
@@ -205,6 +206,6 @@ public abstract class Advapi32Util {
 	 * @return Account name.
 	 */
 	public static String getAccountName(String systemName, String sidString) {
-		return getAccountName(systemName, convertStringSidToSid(sidString)); 
+		return getAccountName(systemName, new PSID(convertStringSidToSid(sidString))); 
 	}
 }
