@@ -20,6 +20,8 @@ import com.sun.jna.platform.win32.W32API.HANDLE;
 import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -53,7 +55,7 @@ public class Advapi32Test extends TestCase {
 		char[] referencedDomainName = new char[pDomain.getValue() + 1]; 
 		assertTrue(Advapi32.INSTANCE.LookupAccountName(
 				null, accountName, pSidMemory, pSid, referencedDomainName, pDomain, peUse));
-		assertEquals(1, peUse.getPointer().getInt(0)); // SidTypeUser
+		assertEquals(SID_NAME_USE.SidTypeUser, peUse.getPointer().getInt(0));
 		assertTrue(Native.toString(referencedDomainName).length() > 0);
     }
     
@@ -211,4 +213,27 @@ public class Advapi32Test extends TestCase {
     	// System.out.println(Advapi32Util.convertSidToStringSid(user.User.Sid));
         assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
     }    
+    
+    public void testGetTokenGroupsInformation() {
+    	HANDLEByReference phToken = new HANDLEByReference();
+    	HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
+        assertTrue(Advapi32.INSTANCE.OpenProcessToken(processHandle, 
+        		WinNT.TOKEN_DUPLICATE | WinNT.TOKEN_QUERY, phToken));
+        IntByReference tokenInformationLength = new IntByReference();
+        assertFalse(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0, tokenInformationLength));
+        assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
+        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
+		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationBuffer);
+        assertTrue(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups, 
+        		tokenInformationLength.getValue(), tokenInformationLength));
+        assertTrue(tokenInformationLength.getValue() > 0);
+        assertTrue(groups.GroupCount > 0);
+    	for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
+    		assertTrue(Advapi32.INSTANCE.IsValidSid(sidAndAttribute.Sid));
+    		// System.out.println(Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid));
+    	}
+        assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
+    }
 }

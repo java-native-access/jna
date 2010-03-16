@@ -12,12 +12,20 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.platform.win32.Netapi32Util.LocalGroup;
+
 import junit.framework.TestCase;
 
 public class Netapi32UtilTest extends TestCase {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Netapi32UtilTest.class);
+        System.out.println("Domain: " + Netapi32Util.getDomainName("localhost"));
+		LocalGroup[] localGroups = Netapi32Util.getLocalGroups();
+        System.out.println("Local groups: " + localGroups.length);
+		for(LocalGroup localGroup : localGroups) {
+			System.out.println(localGroup.name + " (" + localGroup.comment + ")");
+		}
     }
     
 	public void testGetDomain() {
@@ -27,13 +35,11 @@ public class Netapi32UtilTest extends TestCase {
 	}
 	
 	public void testGetLocalGroups() {
-		String[] localGroups = Netapi32Util.getLocalGroups();
-		int totalLength = 0;
-		for(String localGroup : localGroups) {
-			totalLength += localGroup.length();
-		}
-		assertTrue(totalLength / localGroups.length > 1);
+		LocalGroup[] localGroups = Netapi32Util.getLocalGroups();
 		assertNotNull(localGroups);
+		for(LocalGroup localGroup : localGroups) {
+			assertTrue(localGroup.name.length() > 0);
+		}
 		assertTrue(localGroups.length > 0);
 	}
 	

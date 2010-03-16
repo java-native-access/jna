@@ -1,10 +1,15 @@
 package com.sun.jna.platform.win32;
 
+import java.util.ArrayList;
+
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.W32API.HANDLE;
+import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -14,6 +19,54 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public abstract class Advapi32Util {
 
+	/**
+	 * A group.
+	 */
+	public static class Group {
+		/**
+		 * Group name. When unavailable, always equals to sidString.
+		 */
+		public String name;
+		/**
+		 * String representation of the group SID.
+		 */
+		public String sidString;
+		/**
+		 * Binary representation of the group SID.
+		 */
+		public byte[] sid;
+	}
+
+	/**
+	 * An account.
+	 */
+	public static class Account {
+		/**
+		 * Account name.
+		 */
+		public String name;
+		/**
+		 * Account domain.
+		 */
+		public String domain;
+		/**
+		 * Account SID.
+		 */
+		public byte[] sid;
+		/**
+		 * String representation of the account SID.
+		 */
+		public String sidString;
+		/**
+		 * Account type, one of SID_NAME_USE.
+		 */
+		public int accountType;
+		/**
+		 * Fully qualified account name.
+		 */
+		public String fqn;
+	}
+	
 	/**
 	 * Retrieves the name of the user associated with the current thread.
 	 * @return A user name.
@@ -48,24 +101,24 @@ public abstract class Advapi32Util {
 	/**
 	 * Retrieves a security identifier (SID) for the account on the current system.
 	 * @param accountName Specifies the account name.
-	 * @return A SID.
+	 * @return A structure containing the account SID;
 	 */
-	public static byte[] getAccountSid(String accountName) {
-		return getAccountSid(null, accountName);
+	public static Account getAccountByName(String accountName) {
+		return getAccountByName(null, accountName);
 	}
 			
 	/**
-	 * Retrieves a security identifier (SID) for the account.
+	 * Retrieves a security identifier (SID) for a given account.
 	 * @param systemName Name of the system.
 	 * @param accountName Account name.
-	 * @return A SID.
+	 * @return A structure containing the account SID.
 	 */
-	public static byte[] getAccountSid(String systemName, String accountName) {
+	public static Account getAccountByName(String systemName, String accountName) {
 		IntByReference pSid = new IntByReference(0);
-		IntByReference pDomain = new IntByReference(0);
+		IntByReference cchDomainName = new IntByReference(0);
 		PointerByReference peUse = new PointerByReference();
 		
-		if (Advapi32.INSTANCE.LookupAccountName(systemName, accountName, null, pSid, null, pDomain, peUse)) {
+		if (Advapi32.INSTANCE.LookupAccountName(systemName, accountName, null, pSid, null, cchDomainName, peUse)) {
 			throw new RuntimeException("LookupAccountNameW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
 		}
 		
@@ -76,42 +129,63 @@ public abstract class Advapi32Util {
 
 		Memory sidMemory = new Memory(pSid.getValue());
 		PSID result = new PSID(sidMemory);
-		char[] referencedDomainName = new char[pDomain.getValue() + 1]; 
+		char[] referencedDomainName = new char[cchDomainName.getValue() + 1]; 
 
-		if (! Advapi32.INSTANCE.LookupAccountName(systemName, accountName, result, pSid, referencedDomainName, pDomain, peUse)) {
+		if (! Advapi32.INSTANCE.LookupAccountName(systemName, accountName, result, pSid, referencedDomainName, cchDomainName, peUse)) {
 			throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
 		}
 		
-		// type of SID: peUse.getPointer().getInt(0)
-		// domain: Native.toString(referencedDomainName)
+		Account account = new Account();
+		account.accountType = peUse.getPointer().getInt(0);
+		account.name = accountName;
+
+        String[] accountNamePartsBs = accountName.split("\\\\", 2);
+        String[] accountNamePartsAt = accountName.split("@", 2);
+
+        if (accountNamePartsBs.length == 2) {
+        	account.name = accountNamePartsBs[1];
+        } else if (accountNamePartsAt.length == 2) {
+        	account.name = accountNamePartsAt[0];
+        } else {
+            account.name = accountName;
+        }
 		
-		return result.getBytes();
+		if (cchDomainName.getValue() > 0) {
+			account.domain = Native.toString(referencedDomainName);
+			account.fqn = account.domain + "\\" + account.name;
+		} else {
+			account.fqn = account.name;
+		}
+		
+		account.sid = result.getBytes();
+		account.sidString = convertSidToStringSid(new PSID(account.sid));
+		return account;
 	}
 
 	/**
-	 * Get the account name by SID on the local system.
+	 * Get the account by SID on the local system.
 	 * 
 	 * @param sid SID.
-	 * @return Account name.
+	 * @return Account.
 	 */
-	public static String getAccountName(PSID sid) {
-		return getAccountName(null, sid);
+	public static Account getAccountBySid(PSID sid) {
+		return getAccountBySid(null, sid);
 	}
 	
 	/**
-	 * Get the account name by SID.
+	 * Get the account by SID.
 	 * 
 	 * @param systemName Name of the system.
 	 * @param sid SID.
-	 * @return Account name.
+	 * @return Account.
 	 */
-	public static String getAccountName(String systemName, PSID sid) {
+	public static Account getAccountBySid(String systemName, PSID sid) {
     	IntByReference cchName = new IntByReference();
-    	IntByReference cchReferencedDomainName = new IntByReference();
+    	IntByReference cchDomainName = new IntByReference();
     	PointerByReference peUse = new PointerByReference();
 
     	if (Advapi32.INSTANCE.LookupAccountSid(null, sid, 
-    			null, cchName, null, cchReferencedDomainName, peUse)) {
+    			null, cchName, null, cchDomainName, peUse)) {
 			throw new RuntimeException("LookupAccountSidW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
     	}
     	
@@ -120,21 +194,28 @@ public abstract class Advapi32Util {
 			throw new LastErrorException(rc);
 		}    	
 		
-		char[] referencedDomainName = new char[cchReferencedDomainName.getValue()];
+		char[] domainName = new char[cchDomainName.getValue()];
 		char[] name = new char[cchName.getValue()];
     	
 		if (! Advapi32.INSTANCE.LookupAccountSid(null, sid, 
-    			name, cchName, referencedDomainName, cchReferencedDomainName, peUse)) {
+    			name, cchName, domainName, cchDomainName, peUse)) {
     		throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
     	}
 		
-    	// type of SID: peUse.getPointer().getInt(0)
-    	
-		if (cchReferencedDomainName.getValue() > 0) {
-			return Native.toString(referencedDomainName) + "\\" + Native.toString(name);
+		Account account = new Account();
+		account.accountType = peUse.getPointer().getInt(0);
+		account.name = Native.toString(name);
+		
+		if (cchDomainName.getValue() > 0) {
+			account.domain = Native.toString(domainName);
+			account.fqn = account.domain + "\\" + account.name;
 		} else {
-			return Native.toString(name);
+			account.fqn = account.name;
 		}
+		
+		account.sid = sid.getBytes();
+		account.sidString = convertSidToStringSid(sid);
+		return account;
 	}
 	
 	/**
@@ -166,36 +247,15 @@ public abstract class Advapi32Util {
 		}
 		return pSID.getValue().getBytes();
 	}
-
-	/**
-	 * Get the string representation of a SID for a given account on the local system.
-	 * 
-	 * @param accountName Account name.
-	 * @return SID.
-	 */
-	public static String getAccountSidString(String accountName) {
-		return convertSidToStringSid(new PSID(getAccountSid(null, accountName)));
-	}
 	
-	/**
-	 * Get the string representation of a SID for a given account.
-	 * 
-	 * @param systemName System name.
-	 * @param accountName Account name.
-	 * @return SID.
-	 */
-	public static String getAccountSidString(String systemName, String accountName) {
-		return convertSidToStringSid(new PSID(getAccountSid(systemName, accountName)));
-	}
-
 	/**
 	 * Get an account name from a string SID on the local machine.
 	 * 
 	 * @param sidString SID.
-	 * @return Account name.
+	 * @return Account.
 	 */
-	public static String getAccountName(String sidString) {
-		return getAccountName(null, sidString); 
+	public static Account getAccountBySid(String sidString) {
+		return getAccountBySid(null, sidString); 
 	}
 	
 	/**
@@ -203,9 +263,67 @@ public abstract class Advapi32Util {
 	 * 
 	 * @param systemName System name.
 	 * @param sidString SID.
-	 * @return Account name.
+	 * @return Account.
 	 */
-	public static String getAccountName(String systemName, String sidString) {
-		return getAccountName(systemName, new PSID(convertStringSidToSid(sidString))); 
+	public static Account getAccountBySid(String systemName, String sidString) {
+		return getAccountBySid(systemName, new PSID(convertStringSidToSid(sidString))); 
+	}
+		
+	/**
+	 * Return the group memberships of the currently logged on user.
+	 * @return An array of groups.
+	 */
+	public static Group[] getCurrentUserGroups() {		
+    	HANDLEByReference phToken = new HANDLEByReference();    	
+    	try {
+    		// open thread or process token
+        	HANDLE threadHandle = Kernel32.INSTANCE.GetCurrentThread();
+        	if (! Advapi32.INSTANCE.OpenThreadToken(threadHandle, 
+        			WinNT.TOKEN_DUPLICATE | WinNT.TOKEN_QUERY, true, phToken)) {
+            	if (W32Errors.ERROR_NO_TOKEN != Kernel32.INSTANCE.GetLastError()) {
+            		throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+            	}        	
+            	HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
+            	if (! Advapi32.INSTANCE.OpenProcessToken(processHandle, 
+            			WinNT.TOKEN_DUPLICATE | WinNT.TOKEN_QUERY, phToken)) {
+            		throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+            	}
+        	}
+        	// get token group information size
+            IntByReference tokenInformationLength = new IntByReference();
+            if (Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
+            		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0, tokenInformationLength)
+            		|| Kernel32.INSTANCE.GetLastError() != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+            }
+            // get token group information
+            Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
+    		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationBuffer);
+            if (! Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(),
+            		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups, 
+            		tokenInformationLength.getValue(), tokenInformationLength)) {
+            	throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+            }
+            ArrayList<Group> userGroups = new ArrayList<Group>(); 
+            // make array of names
+        	for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
+        		Group group = new Group();
+        		group.sid = sidAndAttribute.Sid.getBytes();
+        		group.sidString = Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid);
+        		try {
+        			group.name = Advapi32Util.getAccountBySid(sidAndAttribute.Sid).name;
+        		} catch(Exception e) {
+        			group.name = group.sidString;
+        		}
+        		userGroups.add(group);
+        	}
+            return userGroups.toArray(new Group[0]);        	
+    	} finally {
+    		if (phToken.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+    			if (! Kernel32.INSTANCE.CloseHandle(phToken.getValue())) {
+    				throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+    			}
+    		}
+    	}		
 	}
 }

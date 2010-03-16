@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
@@ -100,4 +101,5 @@ public interface Netapi32 extends W32API {
 	 */
 	public int NetGetDCName(String serverName, String domainName, 
 			PointerByReference bufptr);
+	
 }

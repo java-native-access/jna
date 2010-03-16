@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_INFO_0;
+import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_INFO_1;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -14,6 +15,20 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public abstract class Netapi32Util {
 
+	/**
+	 * A local group.
+	 */
+	public static class LocalGroup {
+		/**
+		 * Group name.
+		 */
+		public String name;
+		/**
+		 * Group comment.
+		 */
+		public String comment;
+	}
+	
 	/**
 	 * Returns the name of the primary domain controller (PDC) on the current computer.
 	 * @return The name of the primary domain controller.
@@ -110,7 +125,7 @@ public abstract class Netapi32Util {
 	 * Get the names of local groups on the current computer.
 	 * @return An array of local group names.
 	 */
-	public static String[] getLocalGroups() {
+	public static LocalGroup[] getLocalGroups() {
 		return getLocalGroups(null);
 	}
 		
@@ -119,23 +134,26 @@ public abstract class Netapi32Util {
 	 * @param serverName Name of the computer.
 	 * @return An array of local group names.
 	 */
-	public static String[] getLocalGroups(String serverName) {
+	public static LocalGroup[] getLocalGroups(String serverName) {
 		PointerByReference bufptr = new PointerByReference();
 		IntByReference entriesRead = new IntByReference();
 		IntByReference totalEntries = new IntByReference();		
 		try {
-			int rc = Netapi32.INSTANCE.NetLocalGroupEnum(serverName, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesRead, totalEntries, null);
+			int rc = Netapi32.INSTANCE.NetLocalGroupEnum(serverName, 1, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesRead, totalEntries, null);
 			if (LMErr.NERR_Success != rc || bufptr.getValue() == Pointer.NULL) {
 				throw new LastErrorException(rc);
 			}
-			LMAccess.LOCALGROUP_INFO_0 group = new LMAccess.LOCALGROUP_INFO_0(bufptr.getValue());
-			LMAccess.LOCALGROUP_INFO_0[] groups = (LOCALGROUP_INFO_0[]) group.toArray(entriesRead.getValue());
+			LMAccess.LOCALGROUP_INFO_1 group = new LMAccess.LOCALGROUP_INFO_1(bufptr.getValue());
+			LMAccess.LOCALGROUP_INFO_1[] groups = (LOCALGROUP_INFO_1[]) group.toArray(entriesRead.getValue());
 			
-			ArrayList<String> result = new ArrayList<String>(); 
-			for(LOCALGROUP_INFO_0 lgpi : groups) {
-				result.add(lgpi.lgrui0_name.toString());
+			ArrayList<LocalGroup> result = new ArrayList<LocalGroup>(); 
+			for(LOCALGROUP_INFO_1 lgpi : groups) {
+				LocalGroup lgp = new LocalGroup();
+				lgp.name = lgpi.lgrui1_name.toString();			
+				lgp.comment = lgpi.lgrui1_comment.toString();;
+				result.add(lgp);
 			}
-			return result.toArray(new String[0]);
+			return result.toArray(new LocalGroup[0]);
 		} finally {			
 			if (bufptr.getValue() != Pointer.NULL) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue());

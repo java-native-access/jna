@@ -314,4 +314,79 @@ public abstract class WinNT {
 		 */
 		public SID_AND_ATTRIBUTES User;
 	}
+	
+	/**
+	 * The TOKEN_GROUPS structure contains information about the group security identifiers 
+	 * (SIDs) in an access token.
+	 */
+	public static class TOKEN_GROUPS extends Structure {
+		public TOKEN_GROUPS() {
+			super();
+		}
+		
+		public TOKEN_GROUPS(Pointer memory) {
+			super(memory);
+			read();
+		}
+
+		/**
+		 * Specifies the number of groups in the access token. 
+		 */
+		public int GroupCount;
+		public SID_AND_ATTRIBUTES Group0;
+		
+		/**
+		 * Specifies an array of SID_AND_ATTRIBUTES structures that contain a set of SIDs 
+		 * and corresponding attributes. 
+		 */
+		public SID_AND_ATTRIBUTES[] getGroups() {
+			return (SID_AND_ATTRIBUTES[]) Group0.toArray(GroupCount);
+		}
+	}
+
+	/**
+	 * The SID_NAME_USE enumeration type contains values that specify the type of a security identifier (SID).
+	 */
+	public abstract class SID_NAME_USE { 
+		/**
+		 * Indicates a user SID. 
+		 */
+	    public static final int SidTypeUser = 1;
+	    /**
+	     * Indicates a group SID. 
+	     */
+	    public static final int SidTypeGroup = 2;
+	    /**
+	     * Indicates a domain SID. 
+	     */
+	    public static final int SidTypeDomain = 3;
+	    /**
+	     * Indicates an alias SID. 
+	     */
+	    public static final int SidTypeAlias = 4;
+	    /**
+	     * Indicates a SID for a well-known group. 
+	     */
+	    public static final int SidTypeWellKnownGroup = 5;
+	    /**
+	     * Indicates a SID for a deleted account. 
+	     */
+	    public static final int SidTypeDeletedAccount = 6;
+	    /**
+	     * Indicates an invalid SID. 
+	     */
+	    public static final int SidTypeInvalid = 7;
+	    /**
+	     * Indicates an unknown SID type. 
+	     */
+	    public static final int SidTypeUnknown = 8;
+	    /**
+	     * Indicates a SID for a computer. 
+	     */
+	    public static final int SidTypeComputer = 9;
+	    /**
+	     * ?
+	     */
+	    public static final int SidTypeLabel = 10;
+	}	
 }
