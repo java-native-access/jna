@@ -41,7 +41,11 @@ public class FileMonitorTest extends TestCase {
         };
         monitor = FileMonitor.getInstance();
         monitor.addFileListener(listener);
-        tmpdir = new File(System.getProperty("java.io.tmpdir"));
+        String tmpLocation = System.getProperty("java.io.tmpdir");
+        if (tmpLocation == null || tmpLocation.length() == 0) {
+        	tmpLocation = System.getenv("TMP");
+        }
+        tmpdir = new File(tmpLocation);
     }
     
     protected void tearDown() {

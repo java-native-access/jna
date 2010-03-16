@@ -12,8 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.platform.win32.Netapi32Util.LocalGroup;
-
 import junit.framework.TestCase;
 
 public class Netapi32UtilTest extends TestCase {
@@ -21,10 +19,35 @@ public class Netapi32UtilTest extends TestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Netapi32UtilTest.class);
         System.out.println("Domain: " + Netapi32Util.getDomainName("localhost"));
-		LocalGroup[] localGroups = Netapi32Util.getLocalGroups();
+		// server local groups
+		Netapi32Util.LocalGroup[] localGroups = Netapi32Util.getLocalGroups();
         System.out.println("Local groups: " + localGroups.length);
-		for(LocalGroup localGroup : localGroups) {
-			System.out.println(localGroup.name + " (" + localGroup.comment + ")");
+		for(Netapi32Util.LocalGroup localGroup : localGroups) {
+			System.out.println(" " + localGroup.name + " (" + localGroup.comment + ")");
+		}
+		// global groups
+		Netapi32Util.Group[] groups = Netapi32Util.getGlobalGroups();
+        System.out.println("Global groups: " + groups.length);
+		for(Netapi32Util.Group group : groups) {
+			System.out.println(" " + group.name);
+		}
+		// server users
+		Netapi32Util.User[] users = Netapi32Util.getUsers();
+        System.out.println("Users: " + users.length);
+		for(Netapi32Util.User user : users) {
+			System.out.println(" " + user.name);
+		}
+		// user local groups
+		Netapi32Util.Group[] userLocalGroups = Netapi32Util.getCurrentUserLocalGroups();
+        System.out.println("Local user groups: " + userLocalGroups.length);
+		for(Netapi32Util.Group localGroup : userLocalGroups) {
+			System.out.println(" " + localGroup.name);
+		}
+		// user domain groups
+		Netapi32Util.Group[] userGroups = Netapi32Util.getCurrentUserGroups();
+        System.out.println("Domain user groups: " + userGroups.length);
+		for(Netapi32Util.Group group : userGroups) {
+			System.out.println(" " + group.name);
 		}
     }
     
@@ -35,12 +58,48 @@ public class Netapi32UtilTest extends TestCase {
 	}
 	
 	public void testGetLocalGroups() {
-		LocalGroup[] localGroups = Netapi32Util.getLocalGroups();
+		Netapi32Util.LocalGroup[] localGroups = Netapi32Util.getLocalGroups();
 		assertNotNull(localGroups);
-		for(LocalGroup localGroup : localGroups) {
+		for(Netapi32Util.LocalGroup localGroup : localGroups) {
 			assertTrue(localGroup.name.length() > 0);
 		}
 		assertTrue(localGroups.length > 0);
+	}
+
+	public void testGetUsers() {
+		Netapi32Util.User[] users = Netapi32Util.getUsers();
+		assertNotNull(users);
+		for(Netapi32Util.User user : users) {
+			assertTrue(user.name.length() > 0);
+		}
+		assertTrue(users.length > 0);
+	}
+	
+	public void testGetGlobalGroups() {
+		Netapi32Util.Group[] groups = Netapi32Util.getGlobalGroups();
+		assertNotNull(groups);
+		for(Netapi32Util.Group group : groups) {
+			assertTrue(group.name.length() > 0);
+		}
+		assertTrue(groups.length > 0);
+	}
+	
+	public void testGetCurrentUserLocalGroups() {
+		Netapi32Util.Group[] localGroups = Netapi32Util.getCurrentUserLocalGroups();
+		assertNotNull(localGroups);
+		for(Netapi32Util.Group localGroup : localGroups) {
+			assertTrue(localGroup.name.length() > 0);
+		}
+		assertTrue(localGroups.length > 0);
+	}
+
+	public void testGetCurrentUserGroups() {
+		Netapi32Util.Group[] groups = Netapi32Util.getCurrentUserGroups();
+		assertNotNull(groups);
+		for(Netapi32Util.Group group : groups) {
+			assertTrue(group.name.length() > 0);
+		}
+		assertTrue(groups.length > 0);
 	}
 	
 	public void testGetJoinStatus() {
