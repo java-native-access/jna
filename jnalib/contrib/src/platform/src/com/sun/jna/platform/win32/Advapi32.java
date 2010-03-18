@@ -299,4 +299,27 @@ public interface Advapi32 extends W32API {
 			Structure tokenInformation,
 			int tokenInformationLength,
 			IntByReference returnLength);
+	
+	/**
+	 * The ImpersonateLoggedOnUser function lets the calling thread impersonate the 
+	 * security context of a logged-on user. The user is represented by a token 
+	 * handle.
+	 * @param hToken
+	 *  Handle to a primary or impersonation access token that represents a logged-on 
+	 *  user. This can be a token handle returned by a call to LogonUser, 
+	 *  CreateRestrictedToken, DuplicateToken, DuplicateTokenEx, OpenProcessToken, 
+	 *  or OpenThreadToken functions. If hToken is a primary token, it must have 
+	 *  TOKEN_QUERY and TOKEN_DUPLICATE access. If hToken is an impersonation token, 
+	 *  it must have TOKEN_QUERY and TOKEN_IMPERSONATE access. 
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 */
+	public boolean ImpersonateLoggedOnUser(
+			HANDLE hToken); 
+	
+	/**
+	 * The RevertToSelf function terminates the impersonation of a client application.
+	 * @return If the function succeeds, the return value is nonzero. 
+	 */
+	public boolean RevertToSelf();
 }

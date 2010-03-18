@@ -14,7 +14,10 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
+import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
+import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 
@@ -89,4 +92,62 @@ public class Advapi32UtilTest extends TestCase {
 			assertTrue(group.sid.length > 0);
 		}
 	}
+	
+	public void testGetUserGroups() {
+    	USER_INFO_1 userInfo = new USER_INFO_1();
+    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
+    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+		try {
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
+	    			null, 1, userInfo, null));
+			HANDLEByReference phUser = new HANDLEByReference();
+			try {
+				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
+						null, userInfo.usri1_password.toString(), WinBase.LOGON32_LOGON_NETWORK, 
+						WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
+				Advapi32Util.Group[] groups = Advapi32Util.getTokenGroups(phUser.getValue());
+				assertTrue(groups.length > 0);
+				for(Advapi32Util.Group group : groups) {
+					assertTrue(group.name.length() > 0);
+					assertTrue(group.sidString.length() > 0);
+					assertTrue(group.sid.length > 0);
+				}
+			} finally {
+				if (phUser.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+					Kernel32.INSTANCE.CloseHandle(phUser.getValue());
+				}				
+			}
+		} finally {
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
+	    			null, userInfo.usri1_name.toString()));			
+		}
+	}
+	
+	public void testGetUserAccount() {
+    	USER_INFO_1 userInfo = new USER_INFO_1();
+    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
+    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+		try {
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
+	    			null, 1, userInfo, null));
+			HANDLEByReference phUser = new HANDLEByReference();
+			try {
+				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
+						null, userInfo.usri1_password.toString(), WinBase.LOGON32_LOGON_NETWORK, 
+						WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
+				Advapi32Util.Account account = Advapi32Util.getTokenAccount(phUser.getValue());
+				assertTrue(account.name.length() > 0);
+				assertEquals(userInfo.usri1_name.toString(), account.name);
+			} finally {
+				if (phUser.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+					Kernel32.INSTANCE.CloseHandle(phUser.getValue());
+				}
+			}
+		} finally {
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
+	    			null, userInfo.usri1_name.toString()));			
+		}
+	}	
 }

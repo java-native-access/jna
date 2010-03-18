@@ -268,7 +268,71 @@ public abstract class Advapi32Util {
 	public static Account getAccountBySid(String systemName, String sidString) {
 		return getAccountBySid(systemName, new PSID(convertStringSidToSid(sidString))); 
 	}
-		
+	
+	/**
+	 * This function returns the groups associated with a security token,
+	 * such as a user token.
+	 * 
+	 * @param hToken Token.
+	 * @return Token groups.
+	 */
+	public static Group[] getTokenGroups(HANDLE hToken) {
+    	// get token group information size
+        IntByReference tokenInformationLength = new IntByReference();
+        if (Advapi32.INSTANCE.GetTokenInformation(hToken, 
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0, tokenInformationLength)
+        		|| Kernel32.INSTANCE.GetLastError() != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+        	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
+        // get token group information
+        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
+		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationBuffer);
+        if (! Advapi32.INSTANCE.GetTokenInformation(hToken,
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups, 
+        		tokenInformationLength.getValue(), tokenInformationLength)) {
+        	throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+        }
+        ArrayList<Group> userGroups = new ArrayList<Group>(); 
+        // make array of names
+    	for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
+    		Group group = new Group();
+    		group.sid = sidAndAttribute.Sid.getBytes();
+    		group.sidString = Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid);
+    		try {
+    			group.name = Advapi32Util.getAccountBySid(sidAndAttribute.Sid).name;
+    		} catch(Exception e) {
+    			group.name = group.sidString;
+    		}
+    		userGroups.add(group);
+    	}
+        return userGroups.toArray(new Group[0]);
+	}
+
+	/**
+	 * This function returns the information about the user who owns a security token,
+	 * 
+	 * @param hToken Token.
+	 * @return Token user.
+	 */
+	public static Account getTokenAccount(HANDLE hToken) {
+    	// get token group information size
+        IntByReference tokenInformationLength = new IntByReference();
+        if (Advapi32.INSTANCE.GetTokenInformation(hToken, 
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenUser, null, 0, tokenInformationLength)
+        		|| Kernel32.INSTANCE.GetLastError() != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+        	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
+        // get token user information
+        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
+		WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(tokenInformationBuffer);
+        if (! Advapi32.INSTANCE.GetTokenInformation(hToken,
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenUser, user, 
+        		tokenInformationLength.getValue(), tokenInformationLength)) {
+        	throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+        }        
+        return getAccountBySid(user.User.Sid);
+	}
+	
 	/**
 	 * Return the group memberships of the currently logged on user.
 	 * @return An array of groups.
@@ -289,35 +353,7 @@ public abstract class Advapi32Util {
             		throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
             	}
         	}
-        	// get token group information size
-            IntByReference tokenInformationLength = new IntByReference();
-            if (Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
-            		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0, tokenInformationLength)
-            		|| Kernel32.INSTANCE.GetLastError() != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-            	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
-            }
-            // get token group information
-            Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
-    		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationBuffer);
-            if (! Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(),
-            		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups, 
-            		tokenInformationLength.getValue(), tokenInformationLength)) {
-            	throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
-            }
-            ArrayList<Group> userGroups = new ArrayList<Group>(); 
-            // make array of names
-        	for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
-        		Group group = new Group();
-        		group.sid = sidAndAttribute.Sid.getBytes();
-        		group.sidString = Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid);
-        		try {
-        			group.name = Advapi32Util.getAccountBySid(sidAndAttribute.Sid).name;
-        		} catch(Exception e) {
-        			group.name = group.sidString;
-        		}
-        		userGroups.add(group);
-        	}
-            return userGroups.toArray(new Group[0]);        	
+        	return getTokenGroups(phToken.getValue());
     	} finally {
     		if (phToken.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
     			if (! Kernel32.INSTANCE.CloseHandle(phToken.getValue())) {

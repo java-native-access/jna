@@ -16,6 +16,8 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.WString;
+import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.W32API.HANDLE;
 import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -235,5 +237,31 @@ public class Advapi32Test extends TestCase {
     		// System.out.println(Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid));
     	}
         assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
+    }
+    
+    public void testImpersonateLoggedOnUser() {
+    	USER_INFO_1 userInfo = new USER_INFO_1();
+    	userInfo.usri1_name = new WString("JNAAdvapi32TestImp");
+    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+		try {
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
+	    			null, 1, userInfo, null));
+			HANDLEByReference phUser = new HANDLEByReference();
+			try {
+				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
+						null, userInfo.usri1_password.toString(), WinBase.LOGON32_LOGON_NETWORK, 
+						WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
+				assertTrue(Advapi32.INSTANCE.ImpersonateLoggedOnUser(phUser.getValue()));
+				assertTrue(Advapi32.INSTANCE.RevertToSelf());
+			} finally {
+				if (phUser.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+					Kernel32.INSTANCE.CloseHandle(phUser.getValue());
+				}				
+			}
+		} finally {
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
+	    			null, userInfo.usri1_name.toString()));			
+		}    	
     }
 }
