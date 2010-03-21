@@ -16,8 +16,6 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
-import com.sun.jna.WString;
-import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.W32API.HANDLE;
 import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -264,6 +262,6 @@ public class Advapi32Test extends TestCase {
 	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
 	    			null, userInfo.usri1_name.toString()));			
 		}
-		*/
     }
+	*/
 }
