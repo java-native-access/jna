@@ -239,6 +239,7 @@ public class Advapi32Test extends TestCase {
         assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
     }
     
+    /*
     public void testImpersonateLoggedOnUser() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
     	userInfo.usri1_name = new WString("JNAAdvapi32TestImp");
@@ -262,6 +263,7 @@ public class Advapi32Test extends TestCase {
 		} finally {
 	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
 	    			null, userInfo.usri1_name.toString()));			
-		}    	
+		}
+		*/
     }
 }

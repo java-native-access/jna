@@ -143,7 +143,7 @@ public interface Advapi32 extends W32API {
 	 * Returns the length, in bytes, of a valid security identifier (SID).
 	 * http://msdn.microsoft.com/en-us/library/aa446642(VS.85).aspx
 	 * 
-	 * @param sid A pointer to the SID structure whose length is returned.
+	 * @param pSid A pointer to the SID structure whose length is returned.
 	 * @return Length of the SID.
 	 */
 	public int GetLengthSid(PSID pSid);
@@ -282,7 +282,7 @@ public interface Advapi32 extends W32API {
 	 *  Pointer to a buffer the function fills with the requested information. The structure put 
 	 *  into this buffer depends upon the type of information specified by the TokenInformationClass 
 	 *  parameter.
-	 * @param tokenInformationLengt
+	 * @param tokenInformationLength
 	 *  Specifies the size, in bytes, of the buffer pointed to by the TokenInformation parameter. 
 	 *  If TokenInformation is NULL, this parameter must be zero. 
 	 * @param returnLength
