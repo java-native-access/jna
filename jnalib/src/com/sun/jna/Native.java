@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.net.URI;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.nio.Buffer;
@@ -707,7 +708,7 @@ public final class Native {
         File lib = null;
         if (url.getProtocol().toLowerCase().equals("file")) {
             try {
-                lib = new File(url.toURI());
+                lib = new File(new URI(url.toString()));
             }
             catch(URISyntaxException e) {
                 lib = new File(url.getPath());
