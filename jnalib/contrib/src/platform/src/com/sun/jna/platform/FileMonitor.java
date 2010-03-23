@@ -23,10 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.Kernel32.FILE_NOTIFY_INFORMATION;
-import com.sun.jna.platform.win32.Kernel32.OVERLAPPED;
+import com.sun.jna.platform.win32.WinBase;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.W32API.HANDLE;
 import com.sun.jna.platform.win32.W32API.HANDLEByReference;
+import com.sun.jna.platform.win32.WinBase.OVERLAPPED;
+import com.sun.jna.platform.win32.WinNT.FILE_NOTIFY_INFORMATION;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -171,15 +173,15 @@ public abstract class FileMonitor {
                 FileEvent event = null;
                 File file = new File(finfo.file, fni.getFilename());
                 switch(fni.Action) {
-                case Kernel32.FILE_ACTION_MODIFIED:
+                case WinNT.FILE_ACTION_MODIFIED:
                     event = new FileEvent(file, FILE_MODIFIED); break;
-                case Kernel32.FILE_ACTION_ADDED:
+                case WinNT.FILE_ACTION_ADDED:
                     event = new FileEvent(file, FILE_CREATED); break;
-                case Kernel32.FILE_ACTION_REMOVED:
+                case WinNT.FILE_ACTION_REMOVED:
                     event = new FileEvent(file, FILE_DELETED); break;
-                case Kernel32.FILE_ACTION_RENAMED_OLD_NAME:
+                case WinNT.FILE_ACTION_RENAMED_OLD_NAME:
                     event = new FileEvent(file, FILE_NAME_CHANGED_OLD); break;
-                case Kernel32.FILE_ACTION_RENAMED_NEW_NAME:
+                case WinNT.FILE_ACTION_RENAMED_NEW_NAME:
                     event = new FileEvent(file, FILE_NAME_CHANGED_NEW); break;
                 default:
                     // TODO: other actions...
@@ -211,7 +213,7 @@ public abstract class FileMonitor {
             IntByReference rcount = new IntByReference();
             HANDLEByReference rkey = new HANDLEByReference();
             PointerByReference roverlap = new PointerByReference();
-            klib.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, Kernel32.INFINITE);
+            klib.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, WinBase.INFINITE);
             
             synchronized (this) { 
                 return (FileInfo)handleMap.get(rkey.getValue());
@@ -220,28 +222,28 @@ public abstract class FileMonitor {
         private int convertMask(int mask) {
             int result = 0;
             if ((mask & FILE_CREATED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_CREATION;
+                result |= WinNT.FILE_NOTIFY_CHANGE_CREATION;
             }
             if ((mask & FILE_DELETED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_NAME;
+                result |= WinNT.FILE_NOTIFY_CHANGE_NAME;
             }
             if ((mask & FILE_MODIFIED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_LAST_WRITE;
+                result |= WinNT.FILE_NOTIFY_CHANGE_LAST_WRITE;
             }
             if ((mask & FILE_RENAMED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_NAME;
+                result |= WinNT.FILE_NOTIFY_CHANGE_NAME;
             }
             if ((mask & FILE_SIZE_CHANGED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_SIZE;
+                result |= WinNT.FILE_NOTIFY_CHANGE_SIZE;
             }
             if ((mask & FILE_ACCESSED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_LAST_ACCESS;
+                result |= WinNT.FILE_NOTIFY_CHANGE_LAST_ACCESS;
             }
             if ((mask & FILE_ATTRIBUTES_CHANGED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_ATTRIBUTES;
+                result |= WinNT.FILE_NOTIFY_CHANGE_ATTRIBUTES;
             }
             if ((mask & FILE_SECURITY_CHANGED) != 0) {
-                result |= Kernel32.FILE_NOTIFY_CHANGE_SECURITY;
+                result |= WinNT.FILE_NOTIFY_CHANGE_SECURITY;
             }
             return result;
         }
@@ -262,14 +264,14 @@ public abstract class FileMonitor {
                 throw new FileNotFoundException("No ancestor found for " + file);
             }
             Kernel32 klib = Kernel32.INSTANCE;
-            int mask = Kernel32.FILE_SHARE_READ
-                | Kernel32.FILE_SHARE_WRITE | Kernel32.FILE_SHARE_DELETE;
-            int flags = Kernel32.FILE_FLAG_BACKUP_SEMANTICS
-                | Kernel32.FILE_FLAG_OVERLAPPED;
+            int mask = WinNT.FILE_SHARE_READ
+                | WinNT.FILE_SHARE_WRITE | WinNT.FILE_SHARE_DELETE;
+            int flags = WinNT.FILE_FLAG_BACKUP_SEMANTICS
+                | WinNT.FILE_FLAG_OVERLAPPED;
             HANDLE handle = klib.CreateFile(file.getAbsolutePath(), 
-                                            Kernel32.FILE_LIST_DIRECTORY,
-                                            mask, null, Kernel32.OPEN_EXISTING,
-                                            flags, null);
+            		WinNT.FILE_LIST_DIRECTORY,
+            		mask, null, WinNT.OPEN_EXISTING,
+                    flags, null);
             if (Kernel32.INVALID_HANDLE_VALUE.equals(handle)) {
                 throw new IOException("Unable to open " + file + " (" 
                                       + klib.GetLastError() + ")");
@@ -351,9 +353,9 @@ public abstract class FileMonitor {
         private String getSystemError(int code) {
             Kernel32 lib = Kernel32.INSTANCE;
             PointerByReference pref = new PointerByReference();
-            lib.FormatMessage(Kernel32.FORMAT_MESSAGE_ALLOCATE_BUFFER
-                              |Kernel32.FORMAT_MESSAGE_FROM_SYSTEM
-                              |Kernel32.FORMAT_MESSAGE_IGNORE_INSERTS, 
+            lib.FormatMessage(WinBase.FORMAT_MESSAGE_ALLOCATE_BUFFER
+                              | WinBase.FORMAT_MESSAGE_FROM_SYSTEM
+                              | WinBase.FORMAT_MESSAGE_IGNORE_INSERTS, 
                               null, code, 
                               0, pref, 0, null);
             String s = pref.getValue().getString(0, !Boolean.getBoolean("w32.ascii"));

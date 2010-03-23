@@ -18,10 +18,12 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.W32API.HANDLE;
 import com.sun.jna.platform.win32.W32API.HANDLEByReference;
+import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
+import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -264,4 +266,184 @@ public class Advapi32Test extends TestCase {
 		}
     }
 	*/
+    
+    public void testRegOpenKeyEx() {
+    	HKEYByReference phKey = new HKEYByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+    			WinReg.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft", 0, WinNT.KEY_READ, phKey));
+    	assertTrue(W32API.INVALID_HANDLE_VALUE != phKey.getValue());
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	
+    }
+    
+    public void testRegQueryValueEx() {
+    	HKEYByReference phKey = new HKEYByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+    			WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 0, WinNT.KEY_READ, phKey));
+    	IntByReference lpcbData = new IntByReference();
+    	IntByReference lpType = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryValueEx(
+    			phKey.getValue(), "User Agent", 0, lpType, (char[]) null, lpcbData));
+    	assertEquals(WinNT.REG_SZ, lpType.getValue());
+    	assertTrue(lpcbData.getValue() > 0);
+    	char[] buffer = new char[lpcbData.getValue()];
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryValueEx(
+    			phKey.getValue(), "User Agent", 0, lpType, buffer, lpcbData)); 
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	
+    }
+    
+    public void testRegDeleteValue() {
+    	assertEquals(W32Errors.ERROR_FILE_NOT_FOUND, Advapi32.INSTANCE.RegDeleteValue(
+    			WinReg.HKEY_CURRENT_USER, "JNAAdvapi32TestDoesntExist"));
+    }
+    
+    public void testRegSetValueEx_REG_SZ() {
+    	HKEYByReference phKey = new HKEYByReference();
+    	// create parent key
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+    			WinReg.HKEY_CURRENT_USER, "Software", 0, WinNT.KEY_WRITE | WinNT.KEY_READ, phKey));
+    	HKEYByReference phkTest = new HKEYByReference();
+    	IntByReference lpdwDisposition = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCreateKeyEx(
+    			phKey.getValue(), "JNAAdvapi32Test", 0, null, 0, WinNT.KEY_ALL_ACCESS, 
+    			null, phkTest, lpdwDisposition));
+    	// write a REG_SZ value
+    	char[] lpData = Native.toCharArray("Test");
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegSetValueEx(
+    			phkTest.getValue(), "REG_SZ", 0, WinNT.REG_SZ, lpData, lpData.length * 2));
+    	// re-read the REG_SZ value
+    	IntByReference lpType = new IntByReference();
+    	IntByReference lpcbData = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryValueEx(
+    			phkTest.getValue(), "REG_SZ", 0, lpType, (char[]) null, lpcbData));
+    	assertEquals(WinNT.REG_SZ, lpType.getValue());
+    	assertTrue(lpcbData.getValue() > 0);
+    	char[] buffer = new char[lpcbData.getValue()];
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryValueEx(
+    			phkTest.getValue(), "REG_SZ", 0, lpType, buffer, lpcbData)); 
+    	assertEquals("Test", Native.toString(buffer));
+    	// delete the test key
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(
+    			phkTest.getValue()));    	    	    	
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegDeleteKey(
+    			phKey.getValue(), "JNAAdvapi32Test"));
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	    	    	
+    }
+    
+    public void testRegSetValueEx_DWORD() {
+    	HKEYByReference phKey = new HKEYByReference();
+    	// create parent key
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+    			WinReg.HKEY_CURRENT_USER, "Software", 0, WinNT.KEY_WRITE | WinNT.KEY_READ, phKey));
+    	HKEYByReference phkTest = new HKEYByReference();
+    	IntByReference lpdwDisposition = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCreateKeyEx(
+    			phKey.getValue(), "JNAAdvapi32Test", 0, null, 0, WinNT.KEY_ALL_ACCESS, 
+    			null, phkTest, lpdwDisposition));
+    	// write a REG_DWORD value
+    	int value = 42145;
+        byte[] data = new byte[4];
+        data[0] = (byte)(value & 0xff);
+        data[1] = (byte)((value >> 8) & 0xff);
+        data[2] = (byte)((value >> 16) & 0xff);
+        data[3] = (byte)((value >> 24) & 0xff);
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegSetValueEx(
+    			phkTest.getValue(), "DWORD", 0, WinNT.REG_DWORD, data, 4));    	
+    	// re-read the REG_DWORD value
+    	IntByReference lpType = new IntByReference();
+    	IntByReference lpcbData = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryValueEx(
+    			phkTest.getValue(), "DWORD", 0, lpType, (char[]) null, lpcbData));
+    	assertEquals(WinNT.REG_DWORD, lpType.getValue());
+    	assertEquals(4, lpcbData.getValue());
+    	IntByReference valueRead = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryValueEx(
+    			phkTest.getValue(), "DWORD", 0, lpType, valueRead, lpcbData));
+    	assertEquals(value, valueRead.getValue());
+    	// delete the test key
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(
+    			phkTest.getValue()));    	    	    	
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegDeleteKey(
+    			phKey.getValue(), "JNAAdvapi32Test"));
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	    	    	
+    }
+    
+    public void testRegCreateKeyEx() {
+    	HKEYByReference phKey = new HKEYByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+    			WinReg.HKEY_CURRENT_USER, "Software", 0, WinNT.KEY_WRITE | WinNT.KEY_READ, phKey));
+    	HKEYByReference phkResult = new HKEYByReference();
+    	IntByReference lpdwDisposition = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCreateKeyEx(
+    			phKey.getValue(), "JNAAdvapi32Test", 0, null, 0, WinNT.KEY_ALL_ACCESS, 
+    			null, phkResult, lpdwDisposition));
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phkResult.getValue()));    	    	    	
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegDeleteKey(
+    			phKey.getValue(), "JNAAdvapi32Test"));
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	    	
+    }
+    
+    public void testRegDeleteKey() {
+    	assertEquals(W32Errors.ERROR_FILE_NOT_FOUND, Advapi32.INSTANCE.RegDeleteKey(
+    			WinReg.HKEY_CURRENT_USER, "JNAAdvapi32TestDoesntExist"));
+    }
+    
+    public void testRegEnumKeyEx() {
+    	HKEYByReference phKey = new HKEYByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+    			WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 
+    			0, WinNT.KEY_READ, phKey));
+    	IntByReference lpcSubKeys = new IntByReference();
+    	IntByReference lpcMaxSubKeyLen = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryInfoKey(
+    			phKey.getValue(), null, null, null, lpcSubKeys, lpcMaxSubKeyLen, null, null, 
+    			null, null, null, null));
+    	char[] name = new char[lpcMaxSubKeyLen.getValue() + 1];
+    	for (int i = 0; i < lpcSubKeys.getValue(); i++) {
+    		IntByReference lpcchValueName = new IntByReference(lpcMaxSubKeyLen.getValue() + 1);
+        	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegEnumKeyEx(
+        			phKey.getValue(), i, name, lpcchValueName, null, null, null, null));
+        	assertEquals(Native.toString(name).length(), lpcchValueName.getValue());
+    	}
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	    	
+    }
+    
+    public void testRegEnumValue() {
+    	HKEYByReference phKey = new HKEYByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+    			WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", 
+    			0, WinNT.KEY_READ, phKey));
+    	IntByReference lpcValues = new IntByReference();
+    	IntByReference lpcMaxValueNameLen = new IntByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryInfoKey(
+    			phKey.getValue(), null, null, null, null, null, null, lpcValues, 
+    			lpcMaxValueNameLen, null, null, null));
+    	char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
+    	for (int i = 0; i < lpcValues.getValue(); i++) {
+    		IntByReference lpcchValueName = new IntByReference(lpcMaxValueNameLen.getValue() + 1);
+    		IntByReference lpType = new IntByReference(); 
+        	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegEnumValue(
+        			phKey.getValue(), i, name, lpcchValueName, null, 
+        			lpType, null, null));
+        	assertEquals(Native.toString(name).length(), lpcchValueName.getValue());
+    	}
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	
+    }
+    
+    public void testRegQueryInfoKey() {
+    	IntByReference lpcClass = new IntByReference();
+    	IntByReference lpcSubKeys = new IntByReference();
+    	IntByReference lpcMaxSubKeyLen = new IntByReference();
+    	IntByReference lpcValues = new IntByReference();
+    	IntByReference lpcMaxClassLen = new IntByReference();
+    	IntByReference lpcMaxValueNameLen = new IntByReference();
+    	IntByReference lpcMaxValueLen = new IntByReference();
+    	IntByReference lpcbSecurityDescriptor = new IntByReference();
+    	FILETIME lpftLastWriteTime = new FILETIME();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegQueryInfoKey(
+    			WinReg.HKEY_LOCAL_MACHINE, null, lpcClass, null, 
+    			lpcSubKeys, lpcMaxSubKeyLen, lpcMaxClassLen, lpcValues, 
+    			lpcMaxValueNameLen, lpcMaxValueLen, lpcbSecurityDescriptor, 
+    			lpftLastWriteTime));
+    	assertTrue(lpcSubKeys.getValue() > 0);
+    }
 }

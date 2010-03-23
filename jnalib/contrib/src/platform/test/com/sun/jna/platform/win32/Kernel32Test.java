@@ -31,12 +31,12 @@ public class Kernel32Test extends TestCase {
         if (!Platform.isWindows()) return;
         
         Kernel32 kernel = Kernel32.INSTANCE;
-        assertEquals("Wrong drive type.", Kernel32.DRIVE_FIXED, kernel.GetDriveType("c:"));
+        assertEquals("Wrong drive type.", WinBase.DRIVE_FIXED, kernel.GetDriveType("c:"));
     }
     
     public void testStructureOutArgument() {
         Kernel32 kernel = Kernel32.INSTANCE;
-        Kernel32.SYSTEMTIME time = new Kernel32.SYSTEMTIME();
+        WinBase.SYSTEMTIME time = new WinBase.SYSTEMTIME();
         kernel.GetSystemTime(time);
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         assertEquals("Hour not properly set",

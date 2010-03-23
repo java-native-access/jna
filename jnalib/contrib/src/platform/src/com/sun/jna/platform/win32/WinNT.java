@@ -389,4 +389,319 @@ public abstract class WinNT {
 	     */
 	    public static final int SidTypeLabel = 10;
 	}	
+	
+    public static final int FILE_LIST_DIRECTORY = 0x00000001;
+
+    public static final int CREATE_NEW =         1;
+    public static final int CREATE_ALWAYS =      2;
+    public static final int OPEN_EXISTING =      3;
+    public static final int OPEN_ALWAYS =        4;
+    public static final int TRUNCATE_EXISTING =  5;
+
+    public static final int FILE_FLAG_WRITE_THROUGH =        0x80000000;
+    public static final int FILE_FLAG_OVERLAPPED =           0x40000000;
+    public static final int FILE_FLAG_NO_BUFFERING =         0x20000000;
+    public static final int FILE_FLAG_RANDOM_ACCESS =        0x10000000;
+    public static final int FILE_FLAG_SEQUENTIAL_SCAN =      0x08000000;
+    public static final int FILE_FLAG_DELETE_ON_CLOSE =      0x04000000;
+    public static final int FILE_FLAG_BACKUP_SEMANTICS =     0x02000000;
+    public static final int FILE_FLAG_POSIX_SEMANTICS =      0x01000000;
+    public static final int FILE_FLAG_OPEN_REPARSE_POINT =   0x00200000;
+    public static final int FILE_FLAG_OPEN_NO_RECALL =       0x00100000;
+
+    public static final int GENERIC_WRITE = 0x40000000;
+    
+    public class SECURITY_ATTRIBUTES extends Structure {
+        public final int nLength = size();
+        public Pointer lpSecurityDescriptor;
+        public boolean bInheritHandle;
+    }	
+    
+    public static final int PAGE_READONLY = 0x02;
+    public static final int PAGE_READWRITE = 0x04;
+    public static final int PAGE_WRITECOPY = 0x08;
+    public static final int PAGE_EXECUTE = 0x10;
+    public static final int PAGE_EXECUTE_READ = 0x20;
+    public static final int PAGE_EXECUTE_READWRITE = 0x40;    
+    
+    public static final int SECTION_QUERY = 0x0001;
+    public static final int SECTION_MAP_WRITE = 0x0002;
+    public static final int SECTION_MAP_READ = 0x0004;
+    public static final int SECTION_MAP_EXECUTE = 0x0008;
+    public static final int SECTION_EXTEND_SIZE = 0x0010;    
+    
+	public static final int FILE_SHARE_READ  = 0x00000001;
+	public static final int FILE_SHARE_WRITE = 0x00000002; 
+	public static final int FILE_SHARE_DELETE = 0x00000004; 
+	public static final int FILE_ATTRIBUTE_READONLY = 0x00000001; 
+	public static final int FILE_ATTRIBUTE_HIDDEN = 0x00000002; 
+	public static final int FILE_ATTRIBUTE_SYSTEM = 0x00000004; 
+	public static final int FILE_ATTRIBUTE_DIRECTORY = 0x00000010; 
+	public static final int FILE_ATTRIBUTE_ARCHIVE = 0x00000020; 
+	public static final int FILE_ATTRIBUTE_DEVICE = 0x00000040; 
+	public static final int FILE_ATTRIBUTE_NORMAL = 0x00000080; 
+	public static final int FILE_ATTRIBUTE_TEMPORARY = 0x00000100; 
+	public static final int FILE_ATTRIBUTE_SPARSE_FILE = 0x00000200; 
+	public static final int FILE_ATTRIBUTE_REPARSE_POINT = 0x00000400; 
+	public static final int FILE_ATTRIBUTE_COMPRESSED = 0x00000800; 
+	public static final int FILE_ATTRIBUTE_OFFLINE = 0x00001000; 
+	public static final int FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x00002000; 
+	public static final int FILE_ATTRIBUTE_ENCRYPTED = 0x00004000;
+	public static final int FILE_ATTRIBUTE_VIRTUAL = 0x00010000;
+	public static final int FILE_NOTIFY_CHANGE_FILE_NAME = 0x00000001; 
+	public static final int FILE_NOTIFY_CHANGE_DIR_NAME = 0x00000002; 
+	public static final int FILE_NOTIFY_CHANGE_NAME = 0x00000003;
+	public static final int FILE_NOTIFY_CHANGE_ATTRIBUTES = 0x00000004; 
+	public static final int FILE_NOTIFY_CHANGE_SIZE = 0x00000008; 
+	public static final int FILE_NOTIFY_CHANGE_LAST_WRITE = 0x00000010; 
+	public static final int FILE_NOTIFY_CHANGE_LAST_ACCESS = 0x00000020; 
+	public static final int FILE_NOTIFY_CHANGE_CREATION = 0x00000040; 
+	public static final int FILE_NOTIFY_CHANGE_SECURITY = 0x00000100; 
+	public static final int FILE_ACTION_ADDED  = 0x00000001; 
+	public static final int FILE_ACTION_REMOVED  = 0x00000002; 
+	public static final int FILE_ACTION_MODIFIED = 0x00000003; 
+	public static final int FILE_ACTION_RENAMED_OLD_NAME = 0x00000004; 
+	public static final int FILE_ACTION_RENAMED_NEW_NAME = 0x00000005;
+	public static final int FILE_CASE_SENSITIVE_SEARCH = 0x00000001; 
+	public static final int FILE_CASE_PRESERVED_NAMES = 0x00000002;
+	public static final int FILE_UNICODE_ON_DISK = 0x00000004;
+	public static final int FILE_PERSISTENT_ACLS = 0x00000008;
+	public static final int FILE_FILE_COMPRESSION = 0x00000010; 
+	public static final int FILE_VOLUME_QUOTAS = 0x00000020;
+	public static final int FILE_SUPPORTS_SPARSE_FILES = 0x00000040; 
+	public static final int FILE_SUPPORTS_REPARSE_POINTS = 0x00000080; 
+	public static final int FILE_SUPPORTS_REMOTE_STORAGE = 0x00000100; 
+	public static final int FILE_VOLUME_IS_COMPRESSED = 0x00008000; 
+	public static final int FILE_SUPPORTS_OBJECT_IDS = 0x00010000; 
+	public static final int FILE_SUPPORTS_ENCRYPTION = 0x00020000; 
+	public static final int FILE_NAMED_STREAMS = 0x00040000; 
+	public static final int FILE_READ_ONLY_VOLUME = 0x00080000; 
+	public static final int FILE_SEQUENTIAL_WRITE_ONCE = 0x00100000; 
+	public static final int FILE_SUPPORTS_TRANSACTIONS = 0x00200000; 
+	
+
+    /** 
+     * The FILE_NOTIFY_INFORMATION structure describes the changes found by the 
+     * ReadDirectoryChangesW function.
+     * 
+     * This structure is non-trivial since it is a pattern stamped into a large 
+     * block of result memory rather than something that stands alone or is used 
+     * for input.
+     */
+	public static class FILE_NOTIFY_INFORMATION extends Structure {
+		public int NextEntryOffset;
+	    public int Action;
+	    public int FileNameLength;
+	    // filename is not nul-terminated, so we can't use a String/WString
+	    public char[] FileName = new char[1];
+	    
+	    private FILE_NOTIFY_INFORMATION() { 
+	    	
+	    }
+	    
+	    public FILE_NOTIFY_INFORMATION(int size) {
+	    	if (size < size()) {
+	           throw new IllegalArgumentException("Size must greater than "	
+	        		   + size() + ", requested " + size);
+	    	}
+	    	allocateMemory(size);
+	    }
+	   
+	    /** WARNING: this filename may be either the short or long form of the filename. */
+	    public String getFilename() {
+	    	return new String(FileName, 0, FileNameLength/2);
+	    }
+	    
+	    public void read() {
+	    	// avoid reading filename until we know how long it is
+	    	FileName = new char[0];
+	    	super.read();
+	    	FileName = getPointer().getCharArray(12, FileNameLength/2);
+	    }
+	    
+	    public FILE_NOTIFY_INFORMATION next() {
+	    	if (NextEntryOffset == 0)
+	    		return null;
+	    	FILE_NOTIFY_INFORMATION next = new FILE_NOTIFY_INFORMATION();
+	    	next.useMemory(getPointer(), NextEntryOffset);
+	    	next.read();
+	    	return next;
+	    }
+	}	
+	
+	/**
+	 * Registry options.
+	 */
+	
+	public static int KEY_QUERY_VALUE = 0x0001;
+	public static int KEY_SET_VALUE = 0x0002;
+	public static int KEY_CREATE_SUB_KEY = 0x0004;
+	public static int KEY_ENUMERATE_SUB_KEYS = 0x0008;
+	public static int KEY_NOTIFY = 0x0010;
+	public static int KEY_CREATE_LINK = 0x0020;
+	public static int KEY_WOW64_32KEY = 0x0200;
+	public static int KEY_WOW64_64KEY = 0x0100;
+	public static int KEY_WOW64_RES = 0x0300;
+
+	public static int KEY_READ = STANDARD_RIGHTS_READ |
+	  KEY_QUERY_VALUE |
+	  KEY_ENUMERATE_SUB_KEYS |
+	  KEY_NOTIFY
+	  & (~SYNCHRONIZE);
+
+	public static int KEY_WRITE = STANDARD_RIGHTS_WRITE |
+	  KEY_SET_VALUE |
+	  KEY_CREATE_SUB_KEY
+	  & (~SYNCHRONIZE);	
+
+	public static int KEY_EXECUTE = KEY_READ
+	  & (~SYNCHRONIZE);
+
+	public static int KEY_ALL_ACCESS = STANDARD_RIGHTS_ALL |
+	  KEY_QUERY_VALUE |
+	  KEY_SET_VALUE |
+	  KEY_CREATE_SUB_KEY |
+	  KEY_ENUMERATE_SUB_KEYS |
+	  KEY_NOTIFY |
+	  KEY_CREATE_LINK
+	  & (~SYNCHRONIZE);
+
+	//
+	// Open/Create Options
+	//
+
+	/**
+	 * Parameter is reserved.
+	 */
+	public static int REG_OPTION_RESERVED = 0x00000000;
+	/**
+	 * Key is preserved when system is rebooted.
+	 */
+	public static int REG_OPTION_NON_VOLATILE = 0x00000000; 
+	/**
+	 * Key is not preserved when system is rebooted.
+	 */
+	public static int REG_OPTION_VOLATILE = 0x00000001;
+	/**
+	 * Created key is a symbolic link.
+	 */
+	public static int REG_OPTION_CREATE_LINK = 0x00000002;
+	/**
+	 * Open for backup or restore special access rules privilege required.
+	 */
+	public static int REG_OPTION_BACKUP_RESTORE = 0x00000004;
+	/**
+	 * Open symbolic link.
+	 */
+	public static int REG_OPTION_OPEN_LINK = 0x00000008;
+
+	public static int REG_LEGAL_OPTION 
+	 = REG_OPTION_RESERVED |
+	 REG_OPTION_NON_VOLATILE |
+	 REG_OPTION_VOLATILE |
+	 REG_OPTION_CREATE_LINK |
+	 REG_OPTION_BACKUP_RESTORE |
+	 REG_OPTION_OPEN_LINK;
+
+	//
+	// Key creation/open disposition
+	//
+
+	/**
+	 * New Registry Key created.
+	 */
+	public static int REG_CREATED_NEW_KEY = 0x00000001;
+	/**
+	 * Existing Key opened.
+	 */
+	public static int REG_OPENED_EXISTING_KEY = 0x00000002;
+
+	public static int REG_STANDARD_FORMAT = 1;
+	public static int REG_LATEST_FORMAT = 2;
+	public static int REG_NO_COMPRESSION = 4;
+
+	//
+	// Key restore & hive load flags
+	//
+
+	/**
+	 * Restore whole hive volatile.
+	 */
+	public static int REG_WHOLE_HIVE_VOLATILE = 0x00000001;
+	/**
+	 * Unwind changes to last flush.
+	 */
+	public static int REG_REFRESH_HIVE = 0x00000002;
+	/**
+	 * Never lazy flush this hive.
+	 */
+	public static int REG_NO_LAZY_FLUSH = 0x00000004;
+	/**
+	 * Force the restore process even when we have open handles on subkeys.
+	 */
+	public static int REG_FORCE_RESTORE = 0x00000008;
+	/**
+	 * Loads the hive visible to the calling process.
+	 */
+	public static int REG_APP_HIVE = 0x00000010;
+	/**
+	 * Hive cannot be mounted by any other process while in use.
+	 */
+	public static int REG_PROCESS_PRIVATE = 0x00000020;
+	/**
+	 * Starts Hive Journal.
+	 */
+	public static int REG_START_JOURNAL = 0x00000040;
+	/**
+	 * Grow hive file in exact 4k increments.
+	 */
+	public static int REG_HIVE_EXACT_FILE_GROWTH = 0x00000080;
+	/**
+	 * No RM is started for this hive = no transactions.
+	 */
+	public static int REG_HIVE_NO_RM = 0x00000100;
+	/**
+	 * Legacy single logging is used for this hive.
+	 */
+	public static int REG_HIVE_SINGLE_LOG = 0x00000200;
+
+	//
+	// Unload Flags
+	//
+	public static int REG_FORCE_UNLOAD = 1;
+
+	//
+	// Notify filter values
+	//
+	
+	public static int REG_NOTIFY_CHANGE_NAME = 0x00000001;
+	public static int REG_NOTIFY_CHANGE_ATTRIBUTES = 0x00000002;
+	public static int REG_NOTIFY_CHANGE_LAST_SET = 0x00000004;
+	public static int REG_NOTIFY_CHANGE_SECURITY = 0x00000008;
+
+	public static int REG_LEGAL_CHANGE_FILTER = REG_NOTIFY_CHANGE_NAME |
+	 REG_NOTIFY_CHANGE_ATTRIBUTES |
+	 REG_NOTIFY_CHANGE_LAST_SET |
+	 REG_NOTIFY_CHANGE_SECURITY;
+
+	//
+	//
+	// Predefined Value Types.
+	//
+
+	public static int REG_NONE = 0 ; // No value type
+	public static int REG_SZ = 1 ; // Unicode nul terminated string
+	public static int REG_EXPAND_SZ = 2 ; // Unicode nul terminated string
+	  // = with environment variable references;
+	public static int REG_BINARY = 3 ; // Free form binary
+	public static int REG_DWORD = 4 ; // 32-bit number
+	public static int REG_DWORD_LITTLE_ENDIAN = 4 ; // 32-bit number = same as REG_DWORD;
+	public static int REG_DWORD_BIG_ENDIAN = 5 ; // 32-bit number
+	public static int REG_LINK = 6 ; // Symbolic Link = unicode;
+	public static int REG_MULTI_SZ = 7 ; // Multiple Unicode strings
+	public static int REG_RESOURCE_LIST = 8 ; // Resource list in the resource map
+	public static int REG_FULL_RESOURCE_DESCRIPTOR = 9 ; // Resource list in the hardware description
+	public static int REG_RESOURCE_REQUIREMENTS_LIST = 10 ;
+	public static int REG_QWORD = 11 ; // 64-bit number
+	public static int REG_QWORD_LITTLE_ENDIAN = 11 ; // 64-bit number = same as REG_QWORD;
 }

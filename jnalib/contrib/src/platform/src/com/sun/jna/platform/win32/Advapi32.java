@@ -16,6 +16,9 @@ import com.sun.jna.Native;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SECURITY_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinReg.HKEY;
+import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
@@ -322,4 +325,299 @@ public interface Advapi32 extends W32API {
 	 * @return If the function succeeds, the return value is nonzero. 
 	 */
 	public boolean RevertToSelf();
+	
+	
+	/**
+	 * The RegOpenKeyEx function opens the specified registry key. 
+	 * Note that key names are not case sensitive.
+	 * @param hKey
+	 *  Handle to an open key.
+	 * @param lpSubKey
+	 *  Pointer to a null-terminated string containing the name of the subkey to open. 
+	 * @param ulOptions
+	 *  Reserved; must be zero. 
+	 * @param samDesired
+	 *  Access mask that specifies the desired access rights to the key. The function 
+	 *  fails if the security descriptor of the key does not permit the requested access
+	 *  for the calling process.
+	 * @param phkResult
+	 *  Pointer to a variable that receives a handle to the opened key. If the key is 
+	 *  not one of the predefined registry keys, call the RegCloseKey function after 
+	 *  you have finished using the handle. 
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS.
+	 *  If the function fails, the return value is a nonzero error code defined in Winerror.h.
+	 */
+	public int RegOpenKeyEx(HKEY hKey, String lpSubKey, int ulOptions, int samDesired, 
+			HKEYByReference phkResult);
+	  
+	/**
+	 * The RegQueryValueEx function retrieves the type and data for a specified value name 
+	 * associated with an open registry key.
+	 * @param hKey
+	 *  Handle to an open key. The key must have been opened with the 
+	 *  KEY_QUERY_VALUE access right. 
+	 * @param lpValueName
+	 *  Pointer to a null-terminated string containing the name of the value to query. 
+	 *  If lpValueName is NULL or an empty string, "", the function retrieves the type 
+	 *  and data for the key's unnamed or default value, if any.
+	 * @param lpReserved
+	 *  Reserved; must be NULL. 
+	 * @param lpType
+	 *  Pointer to a variable that receives a code indicating the type of data stored 
+	 *  in the specified value.
+	 * @param lpData
+	 *  Pointer to a buffer that receives the value's data. This parameter can be NULL
+	 *  if the data is not required. If the data is a string, the function checks for 
+	 *  a terminating null character. If one is not found, the string is stored with a 
+	 *  null terminator if the buffer is large enough to accommodate the extra 
+	 *  character. Otherwise, the string is stored as is.
+	 * @param lpcbData
+	 *  Pointer to a variable that specifies the size of the buffer pointed to by the
+	 *  lpData parameter, in bytes. When the function returns, this variable contains 
+	 *  the size of the data copied to lpData. The lpcbData parameter can be NULL only 
+	 *  if lpData is NULL. If the data has the REG_SZ, REG_MULTI_SZ or REG_EXPAND_SZ 
+	 *  type, this size includes any terminating null character or characters. 
+	 *  If the buffer specified by lpData parameter is not large enough to hold the 
+	 *  data, the function returns ERROR_MORE_DATA and stores the required buffer size
+	 *  in the variable pointed to by lpcbData. In this case, the contents of the lpData
+	 *  buffer are undefined. If lpData is NULL, and lpcbData is non-NULL, the function
+	 *  returns ERROR_SUCCESS and stores the size of the data, in bytes, in the variable
+	 *  pointed to by lpcbData. This enables an application to determine the best way 
+	 *  to allocate a buffer for the value's data.
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS.
+	 *  If the function fails, the return value is a nonzero error code defined in Winerror.h.
+	 */
+	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
+			IntByReference lpType, char[] lpData, IntByReference lpcbData);
+	
+	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
+			IntByReference lpType, byte[] lpData, IntByReference lpcbData);
+
+	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
+			IntByReference lpType, IntByReference lpData, IntByReference lpcbData);
+	
+	/**
+	 * The RegCloseKey function releases a handle to the specified registry key.
+	 * @param hKey
+	 *  Handle to the open key to be closed. The handle must have been opened by the 
+	 *  RegCreateKeyEx, RegOpenKeyEx, or RegConnectRegistry function. 
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 *  fails, the return value is a nonzero error code defined in Winerror.h.
+	 */
+	public int RegCloseKey(HKEY hKey);
+
+	/**
+	 * The RegDeleteValue function removes a named value from the specified registry 
+	 * key. Note that value names are not case sensitive.
+	 * @param hKey
+	 *  Handle to an open key. The key must have been opened with the KEY_SET_VALUE 
+	 *  access right. 
+	 * @param lpValueName
+	 *  Pointer to a null-terminated string that names the value to remove. If this
+	 *  parameter is NULL or an empty string, the value set by the RegSetValue function
+	 *  is removed. 
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 *  fails, the return value is a nonzero error code defined in Winerror.h. 
+	 */
+	public int RegDeleteValue(HKEY hKey, String lpValueName);
+	
+	/**
+	 * The RegSetValueEx function sets the data and type of a specified value under a
+	 * registry key.
+	 * @param hKey
+	 *  Handle to an open key. The key must have been opened with the KEY_SET_VALUE 
+	 *  access right.
+	 * @param lpValueName
+	 *  Pointer to a string containing the name of the value to set. If a value with
+	 *  this name is not already present in the key, the function adds it to the key. 
+	 *  If lpValueName is NULL or an empty string, "", the function sets the type and
+	 *  data for the key's unnamed or default value.
+	 * @param Reserved
+	 *  Reserved; must be zero. 
+	 * @param dwType
+	 *  Type of data pointed to by the lpData parameter. 
+	 * @param lpData
+	 *  Pointer to a buffer containing the data to be stored with the specified value name. 
+	 * @param cbData
+	 *  Size of the information pointed to by the lpData parameter, in bytes. If the data 
+	 *  is of type REG_SZ, REG_EXPAND_SZ, or REG_MULTI_SZ, cbData must include the size of 
+	 *  the terminating null character or characters. 
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 *  fails, the return value is a nonzero error code defined in Winerror.h. 
+	 */
+	public int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved, int dwType, 
+			char[] lpData, int cbData);
+	
+	public int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved, int dwType, 
+			byte[] lpData, int cbData);
+	
+	/**
+	 * 
+	 * @param hKey
+	 * @param lpSubKey
+	 * @param Reserved
+	 * @param lpClass
+	 * @param dwOptions
+	 * @param samDesired
+	 * @param lpSecurityAttributes
+	 * @param phkResult
+	 * @param lpdwDisposition
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 *  fails, the return value is a nonzero error code defined in Winerror.h. 
+	 */
+	public int RegCreateKeyEx(HKEY hKey, String lpSubKey, int Reserved, String lpClass, 
+			int dwOptions, int samDesired, SECURITY_ATTRIBUTES lpSecurityAttributes,
+			HKEYByReference phkResult, IntByReference lpdwDisposition);
+	
+	/**
+	 * 
+	 * @param hKey
+	 * @param name
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 *  fails, the return value is a nonzero error code defined in Winerror.h. 
+	 */
+	public int RegDeleteKey(HKEY hKey, String name);
+	  
+	/**
+	 * The RegEnumKeyEx function enumerates subkeys of the specified open registry key.
+	 * The function retrieves information about one subkey each time it is called.
+	 * @param hKey
+	 *  Handle to an open key. The key must have been opened with the 
+	 *  KEY_ENUMERATE_SUB_KEYS access right. 
+	 * @param dwIndex
+	 *  Index of the subkey to retrieve. This parameter should be zero for the first 
+	 *  call to the RegEnumKeyEx function and then incremented for subsequent calls. 
+	 *  Because subkeys are not ordered, any new subkey will have an arbitrary index.
+	 *  This means that the function may return subkeys in any order.
+	 * @param lpName
+	 *  Pointer to a buffer that receives the name of the subkey, including the 
+	 *  terminating null character. The function copies only the name of the subkey,
+	 *  not the full key hierarchy, to the buffer. 
+	 * @param lpcName
+	 *  Pointer to a variable that specifies the size of the buffer specified by the 
+	 *  lpName parameter, in TCHARs. This size should include the terminating null 
+	 *  character. When the function returns, the variable pointed to by lpcName 
+	 *  contains the number of characters stored in the buffer. The count returned 
+	 *  does not include the terminating null character.
+	 * @param reserved
+	 *  Reserved; must be NULL.
+	 * @param lpClass
+	 *  Pointer to a buffer that receives the null-terminated class string of the 
+	 *  enumerated subkey. This parameter can be NULL. 
+	 * @param lpcClass
+	 *  Pointer to a variable that specifies the size of the buffer specified by the
+	 *  lpClass parameter, in TCHARs. The size should include the terminating null 
+	 *  character. When the function returns, lpcClass contains the number of 
+	 *  characters stored in the buffer. The count returned does not include the
+	 *  terminating null character. This parameter can be NULL only if lpClass is NULL. 
+	 * @param lpftLastWriteTime
+	 *  Pointer to a variable that receives the time at which the enumerated subkey 
+	 *  was last written.
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 *  fails, the return value is a nonzero error code defined in Winerror.h. 
+	 */
+	public int RegEnumKeyEx(HKEY hKey, int dwIndex, char[] lpName, IntByReference lpcName,
+			IntByReference reserved, char[] lpClass, IntByReference lpcClass, 
+			WinBase.FILETIME lpftLastWriteTime);
+	
+	/**
+	 * The RegEnumValue function enumerates the values for the specified open registry 
+	 * key. The function copies one indexed value name and data block for the key each 
+	 * time it is called.
+	 * @param hKey
+	 *  Handle to an open key. The key must have been opened with the KEY_QUERY_VALUE 
+	 *  access right. 
+	 * @param dwIndex
+	 *  Index of the value to be retrieved. This parameter should be zero for the first
+	 *  call to the RegEnumValue function and then be incremented for subsequent calls. 
+	 *  Because values are not ordered, any new value will have an arbitrary index. 
+	 *  This means that the function may return values in any order.
+	 * @param lpValueName
+	 *  Pointer to a buffer that receives the name of the value, including the 
+	 *  terminating null character. 
+	 * @param lpcchValueName
+	 *  Pointer to a variable that specifies the size of the buffer pointed to by the
+	 *  lpValueName parameter, in TCHARs. This size should include the terminating null 
+	 *  character. When the function returns, the variable pointed to by lpcValueName 
+	 *  contains the number of characters stored in the buffer. The count returned 
+	 *  does not include the terminating null character. 
+	 * @param reserved
+	 *  Reserved; must be NULL. 
+	 * @param lpType
+	 *  Pointer to a variable that receives a code indicating the type of data stored 
+	 *  in the specified value. 
+	 * @param lpData
+	 *  Pointer to a buffer that receives the data for the value entry. This parameter 
+	 *  can be NULL if the data is not required. 
+	 * @param lpcbData
+	 *  Pointer to a variable that specifies the size of the buffer pointed to by the 
+	 *  lpData parameter, in bytes. 
+	 * @return
+	 *  If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 *  fails, the return value is a nonzero error code defined in Winerror.h. 
+	 */
+	public int RegEnumValue(HKEY hKey, int dwIndex, char[] lpValueName, 
+			IntByReference lpcchValueName, IntByReference reserved, 
+			IntByReference lpType, byte[] lpData, IntByReference lpcbData);	
+	
+	/**
+	 * The RegQueryInfoKey function retrieves information about the specified 
+	 * registry key.
+	 * @param hKey
+	 *  A handle to an open key. The key must have been opened with the 
+	 *  KEY_QUERY_VALUE access right. 
+	 * @param lpClass
+	 *  A pointer to a buffer that receives the null-terminated class 
+	 *  string of the key. This parameter can be ignored. This parameter can be NULL. 
+	 * @param lpcClass
+	 *  A pointer to a variable that specifies the size of the buffer pointed to by
+	 *  the lpClass parameter, in characters.
+	 * @param lpReserved
+	 *  Reserved; must be NULL. 
+	 * @param lpcSubKeys
+	 *  A pointer to a variable that receives the number of subkeys that are contained by the specified key. 
+	 *  This parameter can be NULL. 
+	 * @param lpcMaxSubKeyLen
+	 *  A pointer to a variable that receives the size of the key's subkey with the 
+	 *  longest name, in characters, not including the terminating null character. 
+	 *  This parameter can be NULL. 
+	 * @param lpcMaxClassLen
+	 *  A pointer to a variable that receives the size of the longest string that 
+	 *  specifies a subkey class, in characters. The count returned does not include
+	 *  the terminating null character. This parameter can be NULL. 
+	 * @param lpcValues
+	 *  A pointer to a variable that receives the number of values that are associated 
+	 *  with the key. This parameter can be NULL. 
+	 * @param lpcMaxValueNameLen
+	 *  A pointer to a variable that receives the size of the key's longest value name,
+	 *  in characters. The size does not include the terminating null character. This 
+	 *  parameter can be NULL. 
+	 * @param lpcMaxValueLen
+	 *  A pointer to a variable that receives the size of the longest data component
+	 *  among the key's values, in bytes. This parameter can be NULL. 
+	 * @param lpcbSecurityDescriptor
+	 *  A pointer to a variable that receives the size of the key's security descriptor,
+	 *  in bytes. This parameter can be NULL. 
+	 * @param lpftLastWriteTime
+	 *  A pointer to a FILETIME structure that receives the last write time. 
+	 *  This parameter can be NULL. 
+	 * @return
+	 * If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+	 * fails, the return value is a nonzero error code defined in Winerror.h.
+	 */	
+	public int RegQueryInfoKey(HKEY hKey, char[] lpClass, 
+			IntByReference lpcClass, IntByReference lpReserved,
+			IntByReference lpcSubKeys, IntByReference lpcMaxSubKeyLen,
+			IntByReference lpcMaxClassLen, IntByReference lpcValues,
+			IntByReference lpcMaxValueNameLen, IntByReference lpcMaxValueLen,
+			IntByReference lpcbSecurityDescriptor, 
+			WinBase.FILETIME lpftLastWriteTime);
 }
