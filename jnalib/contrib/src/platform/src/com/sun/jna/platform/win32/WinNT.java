@@ -533,38 +533,38 @@ public abstract class WinNT {
 	 * Registry options.
 	 */
 	
-	public static int KEY_QUERY_VALUE = 0x0001;
-	public static int KEY_SET_VALUE = 0x0002;
-	public static int KEY_CREATE_SUB_KEY = 0x0004;
-	public static int KEY_ENUMERATE_SUB_KEYS = 0x0008;
-	public static int KEY_NOTIFY = 0x0010;
-	public static int KEY_CREATE_LINK = 0x0020;
-	public static int KEY_WOW64_32KEY = 0x0200;
-	public static int KEY_WOW64_64KEY = 0x0100;
-	public static int KEY_WOW64_RES = 0x0300;
+	public static final int KEY_QUERY_VALUE = 0x0001;
+	public static final int KEY_SET_VALUE = 0x0002;
+	public static final int KEY_CREATE_SUB_KEY = 0x0004;
+	public static final int KEY_ENUMERATE_SUB_KEYS = 0x0008;
+	public static final int KEY_NOTIFY = 0x0010;
+	public static final int KEY_CREATE_LINK = 0x0020;
+	public static final int KEY_WOW64_32KEY = 0x0200;
+	public static final int KEY_WOW64_64KEY = 0x0100;
+	public static final int KEY_WOW64_RES = 0x0300;
 
-	public static int KEY_READ = STANDARD_RIGHTS_READ |
-	  KEY_QUERY_VALUE |
-	  KEY_ENUMERATE_SUB_KEYS |
-	  KEY_NOTIFY
-	  & (~SYNCHRONIZE);
+	public static final int KEY_READ = STANDARD_RIGHTS_READ |
+		KEY_QUERY_VALUE |
+		KEY_ENUMERATE_SUB_KEYS |
+		KEY_NOTIFY
+		& (~SYNCHRONIZE);
 
-	public static int KEY_WRITE = STANDARD_RIGHTS_WRITE |
-	  KEY_SET_VALUE |
-	  KEY_CREATE_SUB_KEY
-	  & (~SYNCHRONIZE);	
+	public static final int KEY_WRITE = STANDARD_RIGHTS_WRITE |
+	  	KEY_SET_VALUE |
+	  	KEY_CREATE_SUB_KEY
+	  	& (~SYNCHRONIZE);	
 
-	public static int KEY_EXECUTE = KEY_READ
-	  & (~SYNCHRONIZE);
+	public static final int KEY_EXECUTE = KEY_READ
+	  	& (~SYNCHRONIZE);
 
-	public static int KEY_ALL_ACCESS = STANDARD_RIGHTS_ALL |
-	  KEY_QUERY_VALUE |
-	  KEY_SET_VALUE |
-	  KEY_CREATE_SUB_KEY |
-	  KEY_ENUMERATE_SUB_KEYS |
-	  KEY_NOTIFY |
-	  KEY_CREATE_LINK
-	  & (~SYNCHRONIZE);
+	public static final int KEY_ALL_ACCESS = STANDARD_RIGHTS_ALL |
+	  	KEY_QUERY_VALUE |
+	  	KEY_SET_VALUE |
+	  	KEY_CREATE_SUB_KEY |
+	  	KEY_ENUMERATE_SUB_KEYS |
+	  	KEY_NOTIFY |
+	  	KEY_CREATE_LINK
+	  	& (~SYNCHRONIZE);
 
 	//
 	// Open/Create Options
@@ -573,35 +573,34 @@ public abstract class WinNT {
 	/**
 	 * Parameter is reserved.
 	 */
-	public static int REG_OPTION_RESERVED = 0x00000000;
+	public static final int REG_OPTION_RESERVED = 0x00000000;
 	/**
 	 * Key is preserved when system is rebooted.
 	 */
-	public static int REG_OPTION_NON_VOLATILE = 0x00000000; 
+	public static final int REG_OPTION_NON_VOLATILE = 0x00000000; 
 	/**
 	 * Key is not preserved when system is rebooted.
 	 */
-	public static int REG_OPTION_VOLATILE = 0x00000001;
+	public static final int REG_OPTION_VOLATILE = 0x00000001;
 	/**
 	 * Created key is a symbolic link.
 	 */
-	public static int REG_OPTION_CREATE_LINK = 0x00000002;
+	public static final int REG_OPTION_CREATE_LINK = 0x00000002;
 	/**
 	 * Open for backup or restore special access rules privilege required.
 	 */
-	public static int REG_OPTION_BACKUP_RESTORE = 0x00000004;
+	public static final int REG_OPTION_BACKUP_RESTORE = 0x00000004;
 	/**
 	 * Open symbolic link.
 	 */
-	public static int REG_OPTION_OPEN_LINK = 0x00000008;
+	public static final int REG_OPTION_OPEN_LINK = 0x00000008;
 
-	public static int REG_LEGAL_OPTION 
-	 = REG_OPTION_RESERVED |
-	 REG_OPTION_NON_VOLATILE |
-	 REG_OPTION_VOLATILE |
-	 REG_OPTION_CREATE_LINK |
-	 REG_OPTION_BACKUP_RESTORE |
-	 REG_OPTION_OPEN_LINK;
+	public static final int REG_LEGAL_OPTION = REG_OPTION_RESERVED |
+	 	REG_OPTION_NON_VOLATILE |
+	 	REG_OPTION_VOLATILE |
+	 	REG_OPTION_CREATE_LINK |
+	 	REG_OPTION_BACKUP_RESTORE |
+	 	REG_OPTION_OPEN_LINK;
 
 	//
 	// Key creation/open disposition
@@ -610,15 +609,15 @@ public abstract class WinNT {
 	/**
 	 * New Registry Key created.
 	 */
-	public static int REG_CREATED_NEW_KEY = 0x00000001;
+	public static final int REG_CREATED_NEW_KEY = 0x00000001;
 	/**
 	 * Existing Key opened.
 	 */
-	public static int REG_OPENED_EXISTING_KEY = 0x00000002;
+	public static final int REG_OPENED_EXISTING_KEY = 0x00000002;
 
-	public static int REG_STANDARD_FORMAT = 1;
-	public static int REG_LATEST_FORMAT = 2;
-	public static int REG_NO_COMPRESSION = 4;
+	public static final int REG_STANDARD_FORMAT = 1;
+	public static final int REG_LATEST_FORMAT = 2;
+	public static final int REG_NO_COMPRESSION = 4;
 
 	//
 	// Key restore & hive load flags
@@ -627,81 +626,122 @@ public abstract class WinNT {
 	/**
 	 * Restore whole hive volatile.
 	 */
-	public static int REG_WHOLE_HIVE_VOLATILE = 0x00000001;
+	public static final int REG_WHOLE_HIVE_VOLATILE = 0x00000001;
 	/**
 	 * Unwind changes to last flush.
 	 */
-	public static int REG_REFRESH_HIVE = 0x00000002;
+	public static final int REG_REFRESH_HIVE = 0x00000002;
 	/**
 	 * Never lazy flush this hive.
 	 */
-	public static int REG_NO_LAZY_FLUSH = 0x00000004;
+	public static final int REG_NO_LAZY_FLUSH = 0x00000004;
 	/**
 	 * Force the restore process even when we have open handles on subkeys.
 	 */
-	public static int REG_FORCE_RESTORE = 0x00000008;
+	public static final int REG_FORCE_RESTORE = 0x00000008;
 	/**
 	 * Loads the hive visible to the calling process.
 	 */
-	public static int REG_APP_HIVE = 0x00000010;
+	public static final int REG_APP_HIVE = 0x00000010;
 	/**
 	 * Hive cannot be mounted by any other process while in use.
 	 */
-	public static int REG_PROCESS_PRIVATE = 0x00000020;
+	public static final int REG_PROCESS_PRIVATE = 0x00000020;
 	/**
 	 * Starts Hive Journal.
 	 */
-	public static int REG_START_JOURNAL = 0x00000040;
+	public static final int REG_START_JOURNAL = 0x00000040;
 	/**
 	 * Grow hive file in exact 4k increments.
 	 */
-	public static int REG_HIVE_EXACT_FILE_GROWTH = 0x00000080;
+	public static final int REG_HIVE_EXACT_FILE_GROWTH = 0x00000080;
 	/**
 	 * No RM is started for this hive = no transactions.
 	 */
-	public static int REG_HIVE_NO_RM = 0x00000100;
+	public static final int REG_HIVE_NO_RM = 0x00000100;
 	/**
 	 * Legacy single logging is used for this hive.
 	 */
-	public static int REG_HIVE_SINGLE_LOG = 0x00000200;
+	public static final int REG_HIVE_SINGLE_LOG = 0x00000200;
 
 	//
 	// Unload Flags
 	//
-	public static int REG_FORCE_UNLOAD = 1;
+	
+	public static final int REG_FORCE_UNLOAD = 1;
 
 	//
 	// Notify filter values
 	//
 	
-	public static int REG_NOTIFY_CHANGE_NAME = 0x00000001;
-	public static int REG_NOTIFY_CHANGE_ATTRIBUTES = 0x00000002;
-	public static int REG_NOTIFY_CHANGE_LAST_SET = 0x00000004;
-	public static int REG_NOTIFY_CHANGE_SECURITY = 0x00000008;
+	public static final int REG_NOTIFY_CHANGE_NAME = 0x00000001;
+	public static final int REG_NOTIFY_CHANGE_ATTRIBUTES = 0x00000002;
+	public static final int REG_NOTIFY_CHANGE_LAST_SET = 0x00000004;
+	public static final int REG_NOTIFY_CHANGE_SECURITY = 0x00000008;
 
-	public static int REG_LEGAL_CHANGE_FILTER = REG_NOTIFY_CHANGE_NAME |
-	 REG_NOTIFY_CHANGE_ATTRIBUTES |
-	 REG_NOTIFY_CHANGE_LAST_SET |
-	 REG_NOTIFY_CHANGE_SECURITY;
+	public static final int REG_LEGAL_CHANGE_FILTER = REG_NOTIFY_CHANGE_NAME |
+		REG_NOTIFY_CHANGE_ATTRIBUTES |
+		REG_NOTIFY_CHANGE_LAST_SET |
+		REG_NOTIFY_CHANGE_SECURITY;
 
-	//
 	//
 	// Predefined Value Types.
 	//
 
-	public static int REG_NONE = 0 ; // No value type
-	public static int REG_SZ = 1 ; // Unicode nul terminated string
-	public static int REG_EXPAND_SZ = 2 ; // Unicode nul terminated string
-	  // = with environment variable references;
-	public static int REG_BINARY = 3 ; // Free form binary
-	public static int REG_DWORD = 4 ; // 32-bit number
-	public static int REG_DWORD_LITTLE_ENDIAN = 4 ; // 32-bit number = same as REG_DWORD;
-	public static int REG_DWORD_BIG_ENDIAN = 5 ; // 32-bit number
-	public static int REG_LINK = 6 ; // Symbolic Link = unicode;
-	public static int REG_MULTI_SZ = 7 ; // Multiple Unicode strings
-	public static int REG_RESOURCE_LIST = 8 ; // Resource list in the resource map
-	public static int REG_FULL_RESOURCE_DESCRIPTOR = 9 ; // Resource list in the hardware description
-	public static int REG_RESOURCE_REQUIREMENTS_LIST = 10 ;
-	public static int REG_QWORD = 11 ; // 64-bit number
-	public static int REG_QWORD_LITTLE_ENDIAN = 11 ; // 64-bit number = same as REG_QWORD;
+	/**
+	 * No value type.
+	 */
+	public static final int REG_NONE = 0 ;
+	/**
+	 * Unicode null-terminated string.
+	 */
+	public static final int REG_SZ = 1;
+	/**
+	 * Unicode null-terminated string with environment variable references.
+	 */
+	public static final int REG_EXPAND_SZ = 2;
+	/**
+	 * Free-formed binary.
+	 */
+	public static final int REG_BINARY = 3;
+	/**
+	 * 32-bit number.
+	 */
+	public static final int REG_DWORD = 4;
+	/**
+	 * 32-bit number, same as REG_DWORD.
+	 */
+	public static final int REG_DWORD_LITTLE_ENDIAN = 4;
+	/**
+	 * 32-bit number.
+	 */
+	public static final int REG_DWORD_BIG_ENDIAN = 5;
+	/**
+	 * Symbolic link (unicode).
+	 */
+	public static final int REG_LINK = 6;
+	/**
+	 * Multiple unicode strings.
+	 */
+	public static final int REG_MULTI_SZ = 7;
+	/**
+	 * Resource list in the resource map.
+	 */
+	public static final int REG_RESOURCE_LIST = 8;
+	/**
+	 * Resource list in the hardware description.
+	 */
+	public static final int REG_FULL_RESOURCE_DESCRIPTOR = 9;
+	/**
+	 * 
+	 */
+	public static final int REG_RESOURCE_REQUIREMENTS_LIST = 10 ;
+	/**
+	 * 64-bit number.
+	 */
+	public static final int REG_QWORD = 11 ;
+	/**
+	 * 64-bit number, same as REG_QWORD.
+	 */
+	public static final int REG_QWORD_LITTLE_ENDIAN = 11;
 }

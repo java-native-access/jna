@@ -1,6 +1,8 @@
 package com.sun.jna.platform.win32;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Memory;
@@ -534,6 +536,10 @@ public abstract class Advapi32Util {
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new LastErrorException(rc);
 		}
+		rc = Advapi32.INSTANCE.RegCloseKey(phkResult.getValue());
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new LastErrorException(rc);
+		}		
 	}
 
 	/**
@@ -730,4 +736,134 @@ public abstract class Advapi32Util {
 			}
 		}
 	}
+	
+	/**
+	 * Get names of the registry key's sub-keys.
+	 * @param hKey
+	 *  Registry key.
+	 * @return
+	 *  Array of registry key names.
+	 */
+	public static String[] registryGetKeys(HKEY hKey) {
+    	IntByReference lpcSubKeys = new IntByReference();
+    	IntByReference lpcMaxSubKeyLen = new IntByReference();
+    	int rc = Advapi32.INSTANCE.RegQueryInfoKey(hKey, null, null, null, 
+    			lpcSubKeys, lpcMaxSubKeyLen, null, null, null, null, null, null);
+    	if (rc != W32Errors.ERROR_SUCCESS) {
+    		throw new LastErrorException(rc);
+    	}
+    	ArrayList<String> keys = new ArrayList<String>(lpcSubKeys.getValue());
+    	char[] name = new char[lpcMaxSubKeyLen.getValue() + 1];
+    	for (int i = 0; i < lpcSubKeys.getValue(); i++) {
+    		IntByReference lpcchValueName = new IntByReference(lpcMaxSubKeyLen.getValue() + 1);
+        	rc = Advapi32.INSTANCE.RegEnumKeyEx(hKey, i, name, lpcchValueName, 
+        			null, null, null, null);
+        	if (rc != W32Errors.ERROR_SUCCESS) {
+        		throw new LastErrorException(rc);
+        	}
+        	keys.add(Native.toString(name));
+    	}
+    	return keys.toArray(new String[0]);
+	}
+
+	/**
+	 * Get names of the registry key's sub-keys.
+	 * @param root
+	 *  Root key.
+	 * @param keyPath
+	 *  Path to a registry key.
+	 * @return
+	 *  Array of registry key names.
+	 */
+	public static String[] registryGetKeys(HKEY root, String keyPath) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new LastErrorException(rc);
+		}
+		try {
+			return registryGetKeys(phkKey.getValue());
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new LastErrorException(rc);
+			}
+		}
+	}
+
+	/**
+	 * Get a table of registry values.
+	 * @param hKey
+	 *  Registry key.
+	 * @return
+	 *  Table of values.
+	 */
+	public static TreeMap<String, Object> registryGetValues(HKEY hKey) {
+    	IntByReference lpcValues = new IntByReference();
+    	IntByReference lpcMaxValueNameLen = new IntByReference();
+    	IntByReference lpcMaxValueLen = new IntByReference();
+    	int rc = Advapi32.INSTANCE.RegQueryInfoKey(hKey, null, null, null, null, 
+    			null, null, lpcValues, lpcMaxValueNameLen, lpcMaxValueLen, null, null);
+    	if (rc != W32Errors.ERROR_SUCCESS) {
+    		throw new LastErrorException(rc);
+    	}
+		TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
+    	char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
+    	byte[] data = new byte[lpcMaxValueLen.getValue()];
+    	for (int i = 0; i < lpcValues.getValue(); i++) {
+    		IntByReference lpcchValueName = new IntByReference(lpcMaxValueNameLen.getValue() + 1);
+    		IntByReference lpcbData = new IntByReference(lpcMaxValueLen.getValue());
+    		IntByReference lpType = new IntByReference();
+        	rc = Advapi32.INSTANCE.RegEnumValue(hKey, i, name, lpcchValueName, null, 
+        			lpType, data, lpcbData);
+        	if (rc != W32Errors.ERROR_SUCCESS) {
+        		throw new LastErrorException(rc);
+        	}
+        	switch(lpType.getValue()) {
+        	case WinNT.REG_DWORD:
+            	keyValues.put(Native.toString(name), 
+            			((int)(data[0] & 0xff)) + 
+            			(((int)(data[1] & 0xff)) << 8) + 
+            			(((int)(data[2] & 0xff)) << 16) + 
+            			(((int)(data[3] & 0xff)) << 24));
+        		break;
+        	case WinNT.REG_SZ:
+            	try {
+					keyValues.put(Native.toString(name),
+							new String(data, 0, data.length - 2, "UTF-16LE"));
+				} catch (UnsupportedEncodingException e) {
+					throw new RuntimeException(e.getMessage());
+				}
+        		break;
+        	default:
+        		throw new RuntimeException("Unsupported type: " + lpType.getValue());
+        	}
+    	}
+    	return keyValues;
+	}
+	
+	/**
+	 * Get a table of registry values.
+	 * @param root
+	 *  Registry root.
+	 * @param keyPath
+	 *  Regitry key path.
+	 * @return
+	 *  Table of values.
+	 */
+	public static TreeMap<String, Object> registryGetValues(HKEY root, String keyPath) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {			throw new LastErrorException(rc);
+		}
+		try {
+			return registryGetValues(phkKey.getValue());
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new LastErrorException(rc);
+			}
+		}		
+	}
+
 }

@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.TreeMap;
+
 import junit.framework.TestCase;
 
 import com.sun.jna.WString;
@@ -201,5 +203,29 @@ public class Advapi32UtilTest extends TestCase {
 				"Software\\JNA", "StringValue"));
 		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringValue"));
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");		
+	}
+
+	public void testRegistryGetKeys() {
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
+		String[] subKeys = Advapi32Util.registryGetKeys(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
+		assertEquals(2, subKeys.length);
+		assertEquals(subKeys[0], "Key1");
+		assertEquals(subKeys[1], "Key2");
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");				
+	}
+	
+	public void testRegistryGetValues() {
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+		Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "FourtyTwo", 42);
+		Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "42", "FourtyTwo");
+		TreeMap<String, Object> values = Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
+		assertEquals(2, values.keySet().size());
+		assertEquals("FourtyTwo", values.get("42"));
+		assertEquals(42, values.get("FourtyTwo"));
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");						
 	}
 }
