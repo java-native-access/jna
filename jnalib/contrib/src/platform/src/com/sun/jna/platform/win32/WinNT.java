@@ -744,4 +744,13 @@ public abstract class WinNT {
 	 * 64-bit number, same as REG_QWORD.
 	 */
 	public static final int REG_QWORD_LITTLE_ENDIAN = 11;
+
+	/**
+	 * A 64-bit value that is guaranteed to be unique on the operating system 
+	 * that generated it until the system is restarted. 
+	 */
+	public static class LUID extends Structure {
+		int LowPart;
+		int HighPart;
+	}
 }
