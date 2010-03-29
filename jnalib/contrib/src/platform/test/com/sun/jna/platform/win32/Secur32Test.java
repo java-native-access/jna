@@ -18,7 +18,9 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
+import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecBufferDesc;
+import com.sun.jna.platform.win32.Sspi.SecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.TimeStamp;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
@@ -87,7 +89,7 @@ public class Secur32Test extends TestCase {
     			phCredential));
     }
     
-    public void testAcceptSecurityToken() {
+    public void testAcceptSecurityContext() {
     	// client ----------- acquire outbound credential handle
     	CredHandle phClientCredential = new CredHandle();
     	TimeStamp ptsClientExpiry = new TimeStamp();
@@ -151,5 +153,20 @@ public class Secur32Test extends TestCase {
     			phClientContext));
     	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeCredentialsHandle(
     			phClientCredential));
+    }
+    
+    public void testEnumerateSecurityPackages() {
+    	IntByReference pcPackages = new IntByReference();
+    	PSecPkgInfo.ByReference pPackageInfo = new PSecPkgInfo.ByReference();
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.EnumerateSecurityPackages(
+    			pcPackages, pPackageInfo));
+    	SecPkgInfo.ByReference[] packagesInfo = pPackageInfo.toArray(
+    			pcPackages.getValue());    	
+    	for(SecPkgInfo.ByReference packageInfo : packagesInfo) {
+    		assertTrue(packageInfo.Name.length() > 0);
+    		assertTrue(packageInfo.Comment.length() >= 0);
+    	}
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeContextBuffer(
+    			pPackageInfo.getPointer()));
     }
 }

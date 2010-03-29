@@ -17,6 +17,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
+import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecBufferDesc;
 import com.sun.jna.platform.win32.Sspi.TimeStamp;
 import com.sun.jna.platform.win32.WinNT.LUID;
@@ -91,6 +92,8 @@ public interface Secur32 extends W32API {
 	 *  credentials expire. The value returned in this TimeStamp structure depends on 
 	 *  the security package. The security package must return this value in local time.
 	 * @return
+	 *  If the function succeeds, the function returns one of the SEC_I_ success codes.
+	 *  If the function fails, the function returns one of the SEC_E_ error codes.
 	 */
 	public int AcquireCredentialsHandle(String pszPrincipal, String pszPackage,
 			NativeLong fCredentialUse, LUID pvLogonID,
@@ -186,6 +189,8 @@ public interface Secur32 extends W32API {
 	 *  A pointer to the credential handle obtained by using the AcquireCredentialsHandle
 	 *  function. 
 	 * @return
+	 *  If the function succeeds, the return value is SEC_E_OK.
+	 *  If the function fails, the return value is SEC_E_INVALID_HANDLE;
 	 */
 	public int FreeCredentialsHandle(CredHandle phCredential);
 	
@@ -235,4 +240,32 @@ public interface Secur32 extends W32API {
 			SecBufferDesc pInput, NativeLong fContextReq, NativeLong TargetDataRep,
 			CtxtHandle phNewContext, SecBufferDesc pOutput, NativeLongByReference pfContextAttr,
 			TimeStamp ptsTimeStamp);
+
+	/**
+	 * The EnumerateSecurityPackages function returns an array of SecPkgInfo structures that 
+	 * describe the security packages available to the client.
+	 * @param pcPackages
+	 *  A pointer to a ULONG variable that receives the number of packages returned.
+	 * @param ppPackageInfo
+	 *  A pointer to a variable that receives a pointer to an array of SecPkgInfo structures. 
+	 *  Each structure contains information from the security support provider (SSP) that 
+	 *  describes a security package that is available within that SSP. 
+	 * @return
+	 *  If the function succeeds, the function returns SEC_E_OK.
+	 *  If the function fails, it returns a nonzero error code.
+	 */
+	public int EnumerateSecurityPackages(IntByReference pcPackages, 
+			PSecPkgInfo.ByReference ppPackageInfo);
+	
+	/**
+	 * The FreeContextBuffer function enables callers of security package functions to free a memory 
+	 * buffer that was allocated by the security package as a result of calls to InitializeSecurityContext 
+	 * and AcceptSecurityContext.
+	 * @param buffer
+	 *  A pointer to memory allocated by the security package.
+	 * @return
+	 *  If the function succeeds, the function returns SEC_E_OK.
+	 *  If the function fails, it returns a nonzero error code.
+	 */
+	public int FreeContextBuffer(Pointer buffer);
 }

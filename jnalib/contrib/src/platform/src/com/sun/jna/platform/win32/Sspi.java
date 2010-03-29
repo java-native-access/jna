@@ -16,6 +16,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 
 /**
  * Ported from Sspi.h.
@@ -74,7 +75,7 @@ public abstract class Sspi {
     /**
      * The server can use the context to authenticate to other servers as the client. 
      * The ISC_REQ_MUTUAL_AUTH flag must be set for this flag to work. Valid for Kerberos. 
-     * Ignore this flag for static finalrained delegation.
+     * Ignore this flag for constrained delegation.
      */
     public static final int ISC_REQ_DELEGATE = 0x00000001;
 
@@ -312,5 +313,82 @@ public abstract class Sspi {
 	 */
 	public static class TimeStamp extends SECURITY_INTEGER {
 		
+	}
+	
+	/**
+	 * A pointer to an array of SecPkgInfo structures.
+	 */
+	public static class PSecPkgInfo extends Structure {
+
+		public static class ByReference extends PSecPkgInfo implements Structure.ByReference {
+
+		}
+		
+		/**
+		 * The first entry in an array of SecPkgInfo structures.
+		 */
+		public SecPkgInfo.ByReference pPkgInfo;
+		
+		public PSecPkgInfo() {
+			
+		}
+		
+		/**
+		 * An array of SecPkgInfo structures.
+		 */
+		public SecPkgInfo.ByReference[] toArray(int size) {
+			return (SecPkgInfo.ByReference[]) pPkgInfo.toArray(size);
+		}
+	}
+	
+	/**
+	 * The SecPkgInfo structure provides general information about a security package, 
+	 * such as its name and capabilities.
+	 */
+	public static class SecPkgInfo extends Structure {
+
+		/**
+		 * A reference pointer to a SecPkgInfo structure.
+		 */
+		public static class ByReference extends SecPkgInfo implements Structure.ByReference { 
+			
+		}
+    	
+		/**
+		 * Set of bit flags that describes the capabilities of the security package.
+		 */
+		public NativeLong fCapabilities;  
+		/**
+		 * Specifies the version of the package protocol. Must be 1. 
+		 */
+		public short wVersion;
+		/**
+		 * Specifies a DCE RPC identifier, if appropriate. If the package does not implement one of 
+		 * the DCE registered security systems, the reserved value SECPKG_ID_NONE is used. 
+		 */
+		public short wRPCID;
+		/**
+		 * Specifies the maximum size, in bytes, of the token. 
+		 */
+		public NativeLong cbMaxToken;
+		/**
+		 * Pointer to a null-terminated string that contains the name of the security package.
+		 */
+		public WString Name;
+		/**
+		 * Pointer to a null-terminated string. This can be any additional string passed 
+		 * back by the package. 
+		 */
+		public WString Comment;
+		
+		/**
+		 * Create a new package info.
+		 */
+		public SecPkgInfo() {
+			fCapabilities = new NativeLong(0);
+			wVersion = 1;
+			wRPCID = 0;
+			cbMaxToken = new NativeLong(0);
+		}
 	}
 }
