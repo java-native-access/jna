@@ -17,6 +17,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
+import com.sun.jna.platform.win32.Sspi.PSecHandle;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecBufferDesc;
 import com.sun.jna.platform.win32.Sspi.TimeStamp;
@@ -268,4 +269,19 @@ public interface Secur32 extends W32API {
 	 *  If the function fails, it returns a nonzero error code.
 	 */
 	public int FreeContextBuffer(Pointer buffer);
+	
+	/**
+	 * The QuerySecurityContextToken function obtains the access token for a client security context
+	 * and uses it directly.
+	 * @param phContext
+	 *  Handle of the context to query. 
+	 * @param phToken
+	 *  Returned handle to the access token. 
+	 * @return
+	 *  If the function succeeds, the function returns SEC_E_OK.
+	 *  If the function fails, it returns a nonzero error code. One possible error code return is 
+	 *  SEC_E_INVALID_HANDLE.
+	 */
+	public int QuerySecurityContextToken(PSecHandle phContext, 
+			HANDLEByReference phToken);
 }

@@ -136,6 +136,10 @@ public abstract class Sspi {
 	public static class SecHandle extends Structure {		
 		public Pointer dwLower;
 		public Pointer dwUpper;
+
+		public static class ByReference extends SecHandle implements Structure.ByReference {
+
+		}
 		
 		/**
 		 * An empty SecHandle.
@@ -155,6 +159,30 @@ public abstract class Sspi {
 		}
 	}
 
+	/**
+	 * A pointer to a SecHandle
+	 */
+	public static class PSecHandle extends Structure {
+
+		public static class ByReference extends PSecHandle implements Structure.ByReference {
+
+		}
+		
+		/**
+		 * The first entry in an array of SecPkgInfo structures.
+		 */
+		public SecHandle.ByReference secHandle;
+		
+		public PSecHandle() {
+			
+		}
+
+		public PSecHandle(SecHandle h) {
+			useMemory(h.getPointer());
+			read();
+		}
+	}
+	
     /**
 	 * Credentials handle.
 	 */
@@ -193,6 +221,10 @@ public abstract class Sspi {
     		 */
 			public ByReference(int type, int size) {
 				super(type, size);
+			}
+
+			public ByReference(int type, byte[] token) {
+				super(type, token);
 			}
 			
 		    /**
@@ -243,12 +275,27 @@ public abstract class Sspi {
 	    }
 	    
 	    /**
+	     * Create a SecBuffer of a given type with initial data.
+		 * @param type
+		 *  Buffer type, one of SECBUFFER_EMTPY, etc.
+	     * @param token
+	     *  Existing token.
+	     */
+	    public SecBuffer(int type, byte[] token) {
+	    	cbBuffer = new NativeLong(token.length);	    	
+	    	pvBuffer = new Memory(token.length);
+	    	pvBuffer.write(0, token, 0, token.length);
+	    	BufferType = new NativeLong(type);
+	    	allocateMemory();
+	    }
+	    
+	    /**
 	     * Get buffer bytes.
 	     * @return
 	     *  Raw buffer bytes.
 	     */
 	    public byte[] getBytes() {
-	    	return getPointer().getByteArray(0, super.size());
+	    	return pvBuffer.getByteArray(0, cbBuffer.intValue());
 	    }
 	}
 
@@ -279,6 +326,21 @@ public abstract class Sspi {
 	    }
 	    
 	    /**
+	     * Create a new SecBufferDesc with initial data.
+	     * @param type
+	     *  Token type.
+	     * @param token
+	     *  Initial token data.
+	     */
+	    public SecBufferDesc(int type, byte[] token) {
+	    	ulVersion = new NativeLong(SECBUFFER_VERSION);
+	    	cBuffers = new NativeLong(1);
+	    	SecBuffer.ByReference secBuffer = new SecBuffer.ByReference(type, token);
+	    	pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
+	    	allocateMemory();	    	
+	    }
+	    
+	    /**
 	     * Create a new SecBufferDesc with one SecBuffer of a given type and size.
 	     * @param type
 	     * @param tokenSize
@@ -290,6 +352,16 @@ public abstract class Sspi {
 	    	pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
 	    	allocateMemory();
 	    }	    	
+	    
+	    public byte[] getBytes() {
+	    	if (pBuffers == null || cBuffers == null) {
+	    		throw new RuntimeException("pBuffers | cBuffers");
+	    	}
+	    	if (cBuffers.intValue() == 1) {
+	    		return pBuffers[0].getBytes();
+	    	}	    	
+	    	throw new RuntimeException("cBuffers > 1");
+	    }
 	}
 	
 	/**

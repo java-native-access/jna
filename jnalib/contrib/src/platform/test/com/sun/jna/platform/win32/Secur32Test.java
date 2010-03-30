@@ -18,10 +18,12 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
+import com.sun.jna.platform.win32.Sspi.PSecHandle;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecBufferDesc;
 import com.sun.jna.platform.win32.Sspi.SecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.TimeStamp;
+import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
 
@@ -107,42 +109,45 @@ public class Secur32Test extends TestCase {
     			null, phServerCredential, ptsServerExpiry));
     	// server ----------- security context
 		CtxtHandle phServerContext = new CtxtHandle();
-    	SecBufferDesc pbServerToken = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
+    	SecBufferDesc pbServerToken = null;
     	NativeLongByReference pfServerContextAttr = new NativeLongByReference();
-    	while(true) {    		
+    	int clientRc = W32Errors.SEC_I_CONTINUE_NEEDED;
+    	int serverRc = W32Errors.SEC_I_CONTINUE_NEEDED;
+    	do {
         	// client ----------- initialize security context, produce a client token
     		// client token returned is always new
         	SecBufferDesc pbClientToken = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
         	// server token is empty the first time
-    		int clientRc = Secur32.INSTANCE.InitializeSecurityContext(
+        	SecBufferDesc pbServerTokenCopy = pbServerToken == null 
+        		? null : new SecBufferDesc(Sspi.SECBUFFER_TOKEN, pbServerToken.getBytes());
+        	clientRc = Secur32.INSTANCE.InitializeSecurityContext(
     				phClientCredential, 
     				phClientContext.isNull() ? null : phClientContext, 
         			Advapi32Util.getUserName(), 
         			new NativeLong(Sspi.ISC_REQ_CONNECTION), 
         			new NativeLong(0), 
         			new NativeLong(Sspi.SECURITY_NATIVE_DREP), 
-        			pbServerToken, 
+        			pbServerTokenCopy, 
         			new NativeLong(0), 
         			phClientContext, 
         			pbClientToken, 
         			pfClientContextAttr, 
         			null);    		
-    		if (clientRc == W32Errors.SEC_E_OK)
-    			break;    		
-    		assertTrue(clientRc == W32Errors.SEC_I_CONTINUE_NEEDED);    		
+    		assertTrue(clientRc == W32Errors.SEC_I_CONTINUE_NEEDED || clientRc == W32Errors.SEC_E_OK);    		
         	// server ----------- accept security context, produce a server token
-    		int serverRc = Secur32.INSTANCE.AcceptSecurityContext(phServerCredential, 
+    		pbServerToken = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
+    		SecBufferDesc pbClientTokenByValue = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, pbClientToken.getBytes());
+    		serverRc = Secur32.INSTANCE.AcceptSecurityContext(phServerCredential, 
     				phServerContext.isNull() ? null : phServerContext, 
-    				pbClientToken, 
+    				pbClientTokenByValue,
     				new NativeLong(Sspi.ISC_REQ_CONNECTION), 
     				new NativeLong(Sspi.SECURITY_NATIVE_DREP), 
     				phServerContext,
     				pbServerToken, 
     				pfServerContextAttr, 
     				ptsServerExpiry);    		
-    		assertTrue(serverRc == W32Errors.SEC_I_CONTINUE_NEEDED 
-    				|| serverRc == W32Errors.SEC_E_OK);    		
-    	}
+    		assertTrue(serverRc == W32Errors.SEC_I_CONTINUE_NEEDED || serverRc == W32Errors.SEC_E_OK);    		
+    	} while(serverRc != W32Errors.SEC_E_OK || clientRc != W32Errors.SEC_E_OK);
     	// release server context
     	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.DeleteSecurityContext(
     			phServerContext));
@@ -168,5 +173,77 @@ public class Secur32Test extends TestCase {
     	}
     	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeContextBuffer(
     			pPackageInfo.getPointer()));
+    }
+    
+    public void testQuerySecurityContextToken() {
+    	// client ----------- acquire outbound credential handle
+    	CredHandle phClientCredential = new CredHandle();
+    	TimeStamp ptsClientExpiry = new TimeStamp();
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.AcquireCredentialsHandle(
+    			null, "Negotiate", new NativeLong(Sspi.SECPKG_CRED_OUTBOUND), null, null, null, 
+    			null, phClientCredential, ptsClientExpiry));
+    	// client ----------- security context
+    	CtxtHandle phClientContext = new CtxtHandle();
+    	NativeLongByReference pfClientContextAttr = new NativeLongByReference();
+		// server ----------- acquire inbound credential handle
+    	CredHandle phServerCredential = new CredHandle();
+    	TimeStamp ptsServerExpiry = new TimeStamp();
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.AcquireCredentialsHandle(
+    			null, "Negotiate", new NativeLong(Sspi.SECPKG_CRED_INBOUND), null, null, null, 
+    			null, phServerCredential, ptsServerExpiry));
+    	// server ----------- security context
+		CtxtHandle phServerContext = new CtxtHandle();
+    	SecBufferDesc pbServerToken = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
+    	NativeLongByReference pfServerContextAttr = new NativeLongByReference();
+    	int clientRc = W32Errors.SEC_I_CONTINUE_NEEDED;
+    	int serverRc = W32Errors.SEC_I_CONTINUE_NEEDED;
+    	do {
+        	// client ----------- initialize security context, produce a client token
+    		// client token returned is always new
+        	SecBufferDesc pbClientToken = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
+        	// server token is empty the first time
+    		clientRc = Secur32.INSTANCE.InitializeSecurityContext(
+    				phClientCredential, 
+    				phClientContext.isNull() ? null : phClientContext, 
+        			Advapi32Util.getUserName(), 
+        			new NativeLong(Sspi.ISC_REQ_CONNECTION), 
+        			new NativeLong(0), 
+        			new NativeLong(Sspi.SECURITY_NATIVE_DREP), 
+        			pbServerToken, 
+        			new NativeLong(0), 
+        			phClientContext, 
+        			pbClientToken, 
+        			pfClientContextAttr, 
+        			null);    		
+    		assertTrue(clientRc == W32Errors.SEC_I_CONTINUE_NEEDED || clientRc == W32Errors.SEC_E_OK);    		
+        	// server ----------- accept security context, produce a server token
+    		serverRc = Secur32.INSTANCE.AcceptSecurityContext(phServerCredential, 
+    				phServerContext.isNull() ? null : phServerContext, 
+    				pbClientToken, 
+    				new NativeLong(Sspi.ISC_REQ_CONNECTION), 
+    				new NativeLong(Sspi.SECURITY_NATIVE_DREP), 
+    				phServerContext,
+    				pbServerToken, 
+    				pfServerContextAttr, 
+    				ptsServerExpiry);    		
+    		assertTrue(serverRc == W32Errors.SEC_I_CONTINUE_NEEDED || serverRc == W32Errors.SEC_E_OK);    		
+    	} while(serverRc != W32Errors.SEC_E_OK || clientRc != W32Errors.SEC_E_OK);    	
+    	// query security context token
+    	HANDLEByReference phContextToken = new HANDLEByReference();
+    	PSecHandle pphServerContext = new PSecHandle(phServerContext);
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.QuerySecurityContextToken(
+    			pphServerContext, phContextToken));
+    	// release security context token
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(phContextToken.getValue()));
+    	// release server context
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.DeleteSecurityContext(
+    			phServerContext));
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeCredentialsHandle(
+    			phServerCredential));
+    	// release client context
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.DeleteSecurityContext(
+    			phClientContext));
+    	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeCredentialsHandle(
+    			phClientCredential));    	
     }
 }
