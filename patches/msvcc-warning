@@ -1,0 +1,50 @@
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -113,9 +113,13 @@ It's also possible to build libffi on Wi
+ Microsoft's Visual C++ compiler.  In this case, use the msvcc.sh
+ wrapper script during configuration like so:
+ 
+-path/to/configure --enable-shared --enable-static \
+-	CC=path/to/msvcc.sh LD=link \
+-	CPP=\"cl -nologo -EP\"
++path/to/configure CC=path/to/msvcc.sh LD=link CPP=\"cl -nologo -EP\"
++
++For 64-bit Windows builds, use CC="path/to/msvcc.sh -m64".
++You may also need to specify --build appropriately. When building with MSVC
++under a MingW environment, you may need to remove the line in configure
++that sets 'fix_srcfile_path' to a 'cygpath' command. ('cygpath' is not
++present in MingW, and is not required when using MingW-style paths.)
+ 
+ Configure has many other options. Use "configure --help" to see them all.
+ 
+Index: libffi/msvcc.sh
+===================================================================
+--- libffi.orig/msvcc.sh
++++ libffi/msvcc.sh
+@@ -42,10 +42,7 @@
+ # format and translated into something sensible for cl or ml.
+ #
+ 
+-# Disable specific warnings, and enable warnings-as-errors so we catch any
+-# mistranslated args.
+-nowarn="-wd4127 -wd4820 -wd4706 -wd4100 -wd4255 -wd4668 -wd4053 -wd4324"
+-args="-nologo -W3 -WX $nowarn"
++args="-nologo -W3"
+ md=-MD
+ cl="cl"
+ ml="ml"
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,8 @@
++2010-03-30  Dan Witte  <dwitte@mozilla.com>
++
++	* msvcc.sh: Disable build warnings.
++	* README (tested): Clarify windows build procedure.
++
+ 2010-03-14  Matthias Klose  <doko@ubuntu.com>
+ 
+ 	* src/x86/ffi64.c: Fix typo in comment.
