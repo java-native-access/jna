@@ -67,7 +67,19 @@ public interface W32API extends StdCallLibrary {
     }
     class HINSTANCE extends HANDLE { }
     class HMODULE extends HINSTANCE { }
-    class HRESULT extends NativeLong { }
+    
+    /**
+     * The HRESULT data type is a 32-bit value is used to describe an error or warning.
+     */
+    class HRESULT extends NativeLong {
+    	public HRESULT() {
+    		
+    	}
+    	
+    	public HRESULT(int value) {
+    		super(value);
+    	}
+    }
 
     /** Constant value representing an invalid HANDLE. */
     HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.createConstant(Pointer.SIZE==8?-1:0xFFFFFFFFL));

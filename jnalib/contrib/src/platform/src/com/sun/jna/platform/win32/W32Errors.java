@@ -11,6 +11,9 @@
  * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
+
+import com.sun.jna.platform.win32.W32API.HRESULT;
+
 /**
  * Error code definitions for the Win32 API functions.
  * Ported from Windows SDK 6.0A
@@ -24315,8 +24318,8 @@ public abstract class W32Errors {
 	//
 	// Success codes
 	//
-	public static final int S_OK = 0;
-	public static final int S_FALSE = 1;
+	public static final HRESULT S_OK = new HRESULT(0);
+	public static final HRESULT S_FALSE = new HRESULT(1);
 
 	// ******************
 	// FACILITY_ITF
