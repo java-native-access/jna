@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
+import com.sun.jna.platform.win32.W32API.DWORD;
 import com.sun.jna.platform.win32.W32API.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 
@@ -156,5 +157,10 @@ public class Kernel32Test extends TestCase {
     	assertNull(h);
     	// opening your own process fails with access denied
     	assertEquals(W32Errors.ERROR_ACCESS_DENIED, Kernel32.INSTANCE.GetLastError());
+    }
+    
+    public void testGetTempPath() {
+    	char[] buffer = new char[WinDef.MAX_PATH]; 
+    	assertTrue(Kernel32.INSTANCE.GetTempPath(new DWORD(WinDef.MAX_PATH), buffer).intValue() > 0);    	
     }
 }

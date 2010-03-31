@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.W32API.DWORD;
 import com.sun.jna.platform.win32.W32API.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -26,7 +27,8 @@ public abstract class Kernel32Util {
 	
 	/**
 	 * Get current computer NetBIOS name.
-	 * @return Netbios name.
+	 * @return 
+	 *  Netbios name.
 	 */
 	public static String getComputerName() {
     	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH() + 1];
@@ -37,6 +39,13 @@ public abstract class Kernel32Util {
     	return Native.toString(buffer);
 	}
 	
+	/**
+	 * Format a message from an HRESULT.
+	 * @param code
+	 *  HRESULT
+	 * @return
+	 *  Formatted message.
+	 */
 	public static String formatMessageFromHR(HRESULT code) {
 		PointerByReference buffer = new PointerByReference();        
         if (0 == Kernel32.INSTANCE.FormatMessage(
@@ -57,7 +66,28 @@ public abstract class Kernel32Util {
     	return s;		
 	}
 	
+	/**
+	 * Format a system message from an error code.
+	 * @param code
+	 *  Error code, typically a result of GetLastError.
+	 * @return
+	 *  Formatted message.
+	 */
 	public static String formatMessageFromLastErrorCode(int code) {
 		return formatMessageFromHR(W32Errors.HRESULT_FROM_WIN32(code));
+	}
+	
+	/**
+	 * Return the path desigated for temporary files.
+	 * @return
+	 *  Path.
+	 */
+	public static String getTempPath() {
+		DWORD nBufferLength = new DWORD(WinDef.MAX_PATH);
+    	char[] buffer = new char[nBufferLength.intValue()]; 
+    	if (Kernel32.INSTANCE.GetTempPath(nBufferLength, buffer).intValue() == 0) {
+    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    	}
+    	return Native.toString(buffer);
 	}
 }

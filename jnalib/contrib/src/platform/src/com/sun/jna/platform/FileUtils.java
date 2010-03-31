@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.jna.platform.win32.Shell32;
-import com.sun.jna.platform.win32.Shell32.SHFILEOPSTRUCT;
+import com.sun.jna.platform.win32.ShellAPI;
 
 /** Miscellaneous file utils not provided for by Java. */
 public abstract class FileUtils {
@@ -59,14 +59,14 @@ public abstract class FileUtils {
 
         public void moveToTrash(File[] files) throws IOException {
             Shell32 shell = Shell32.INSTANCE;
-            SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
-            fileop.wFunc = Shell32.FO_DELETE;
+            ShellAPI.SHFILEOPSTRUCT fileop = new ShellAPI.SHFILEOPSTRUCT();
+            fileop.wFunc = ShellAPI.FO_DELETE;
             String[] paths = new String[files.length];
             for (int i=0;i < paths.length;i++) {
                 paths[i] = files[i].getAbsolutePath();
             }
             fileop.pFrom = fileop.encodePaths(paths);
-            fileop.fFlags = Shell32.FOF_ALLOWUNDO|Shell32.FOF_NOCONFIRMATION|Shell32.FOF_SILENT;
+            fileop.fFlags = ShellAPI.FOF_ALLOWUNDO|ShellAPI.FOF_NOCONFIRMATION|ShellAPI.FOF_SILENT;
             int ret = shell.SHFileOperation(fileop);
             if (ret != 0) {
                 throw new IOException("Move to trash failed: " + ret);

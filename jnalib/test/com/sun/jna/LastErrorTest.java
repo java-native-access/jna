@@ -57,7 +57,7 @@ public class LastErrorTest extends TestCase {
             fail("Method should throw LastErrorException");
         }
         catch(LastErrorException e) {
-            assertEquals("Exception should contain error code", ERROR, e.errorCode);
+            assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
         }
     }
 
@@ -72,7 +72,7 @@ public class LastErrorTest extends TestCase {
             fail("Method should throw LastErrorException");
         }
         catch(LastErrorException e) {
-            assertEquals("Exception should contain error code", ERROR, e.errorCode);
+            assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
         }
     }
 

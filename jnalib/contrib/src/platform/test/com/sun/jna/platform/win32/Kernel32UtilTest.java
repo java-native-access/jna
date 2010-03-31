@@ -18,7 +18,8 @@ public class Kernel32UtilTest extends TestCase {
 	
     public static void main(String[] args) throws Exception {
         junit.textui.TestRunner.run(Advapi32UtilTest.class);
-        System.out.println("GetComputerName: " + Kernel32Util.getComputerName());
+        System.out.println("Computer name: " + Kernel32Util.getComputerName());
+        System.out.println("    Temp path: " + Kernel32Util.getTempPath());
     }
 	
 	public void testGetComputerName() {
@@ -33,5 +34,9 @@ public class Kernel32UtilTest extends TestCase {
 	public void testFormatMessageFromHR() {
 		assertEquals("The operation completed successfully.",
 				Kernel32Util.formatMessageFromHR(W32Errors.S_OK));
+	}
+	
+	public void testGetTempPath() {
+		assertTrue(Kernel32Util.getTempPath().length() > 0);
 	}
 }

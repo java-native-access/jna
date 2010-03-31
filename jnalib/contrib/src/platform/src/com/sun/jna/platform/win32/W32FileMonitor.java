@@ -1,0 +1,241 @@
+/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ */
+package com.sun.jna.platform.win32;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.sun.jna.platform.FileMonitor;
+import com.sun.jna.platform.win32.W32API.HANDLE;
+import com.sun.jna.platform.win32.W32API.HANDLEByReference;
+import com.sun.jna.platform.win32.WinBase.OVERLAPPED;
+import com.sun.jna.platform.win32.WinNT.FILE_NOTIFY_INFORMATION;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+
+public class W32FileMonitor extends FileMonitor {
+    
+    private static final int BUFFER_SIZE = 4096;
+    
+    private class FileInfo {
+        public final File file;
+        public final HANDLE handle;
+        public final int notifyMask;
+        public final boolean recursive;
+        public final FILE_NOTIFY_INFORMATION info = new FILE_NOTIFY_INFORMATION(BUFFER_SIZE);
+        public final IntByReference infoLength = new IntByReference();
+        public final OVERLAPPED overlapped = new OVERLAPPED();
+        public FileInfo(File f, HANDLE h, int mask, boolean recurse) {
+            this.file = f;
+            this.handle = h;
+            this.notifyMask = mask;
+            this.recursive = recurse;
+        }
+    }
+    private Thread watcher;
+    private HANDLE port;
+    private final Map fileMap = new HashMap();
+    private final Map handleMap = new HashMap();
+    
+    private void handleChanges(FileInfo finfo) throws IOException {
+        Kernel32 klib = Kernel32.INSTANCE;
+        FILE_NOTIFY_INFORMATION fni = finfo.info;
+        // Need an explicit read, since data was filled in asynchronously
+        fni.read();
+        do {
+            FileEvent event = null;
+            File file = new File(finfo.file, fni.getFilename());
+            switch(fni.Action) {
+            case WinNT.FILE_ACTION_MODIFIED:
+                event = new FileEvent(file, FILE_MODIFIED); break;
+            case WinNT.FILE_ACTION_ADDED:
+                event = new FileEvent(file, FILE_CREATED); break;
+            case WinNT.FILE_ACTION_REMOVED:
+                event = new FileEvent(file, FILE_DELETED); break;
+            case WinNT.FILE_ACTION_RENAMED_OLD_NAME:
+                event = new FileEvent(file, FILE_NAME_CHANGED_OLD); break;
+            case WinNT.FILE_ACTION_RENAMED_NEW_NAME:
+                event = new FileEvent(file, FILE_NAME_CHANGED_NEW); break;
+            default:
+                // TODO: other actions...
+                System.err.println("Unrecognized file action '" + fni.Action + "'");
+            }
+            if (event != null)
+                notify(event);
+            fni = fni.next();
+        } while (fni != null);
+        // Trigger the next read
+        if (!finfo.file.exists()) {
+            unwatch(finfo.file);
+            return;
+        }
+        
+        if (!klib.ReadDirectoryChangesW(finfo.handle, finfo.info,
+                                        finfo.info.size(), finfo.recursive,
+                                        finfo.notifyMask, finfo.infoLength, 
+                                        finfo.overlapped, null)) {
+            int err = klib.GetLastError();
+            throw new IOException("ReadDirectoryChangesW failed on "
+                                  + finfo.file + ": '" 
+                                  + Kernel32Util.formatMessageFromLastErrorCode(err)
+                                  + "' (" + err + ")");
+        }
+    }
+    private FileInfo waitForChange() {
+        Kernel32 klib = Kernel32.INSTANCE;
+        IntByReference rcount = new IntByReference();
+        HANDLEByReference rkey = new HANDLEByReference();
+        PointerByReference roverlap = new PointerByReference();
+        klib.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, WinBase.INFINITE);
+        
+        synchronized (this) { 
+            return (FileInfo)handleMap.get(rkey.getValue());
+        }
+    }
+    private int convertMask(int mask) {
+        int result = 0;
+        if ((mask & FILE_CREATED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_CREATION;
+        }
+        if ((mask & FILE_DELETED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_NAME;
+        }
+        if ((mask & FILE_MODIFIED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_LAST_WRITE;
+        }
+        if ((mask & FILE_RENAMED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_NAME;
+        }
+        if ((mask & FILE_SIZE_CHANGED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_SIZE;
+        }
+        if ((mask & FILE_ACCESSED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_LAST_ACCESS;
+        }
+        if ((mask & FILE_ATTRIBUTES_CHANGED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_ATTRIBUTES;
+        }
+        if ((mask & FILE_SECURITY_CHANGED) != 0) {
+            result |= WinNT.FILE_NOTIFY_CHANGE_SECURITY;
+        }
+        return result;
+    }
+
+    private static int watcherThreadID;
+
+    protected synchronized void watch(File file, int eventMask, boolean recursive) throws IOException {
+        File dir = file;
+        if (!dir.isDirectory()) {
+            recursive = false;
+            dir = file.getParentFile();
+        }
+        while (dir != null && !dir.exists()) {
+            recursive = true;
+            dir = dir.getParentFile();
+        }
+        if (dir == null) {
+            throw new FileNotFoundException("No ancestor found for " + file);
+        }
+        Kernel32 klib = Kernel32.INSTANCE;
+        int mask = WinNT.FILE_SHARE_READ
+            | WinNT.FILE_SHARE_WRITE | WinNT.FILE_SHARE_DELETE;
+        int flags = WinNT.FILE_FLAG_BACKUP_SEMANTICS
+            | WinNT.FILE_FLAG_OVERLAPPED;
+        HANDLE handle = klib.CreateFile(file.getAbsolutePath(), 
+        		WinNT.FILE_LIST_DIRECTORY,
+        		mask, null, WinNT.OPEN_EXISTING,
+                flags, null);
+        if (Kernel32.INVALID_HANDLE_VALUE.equals(handle)) {
+            throw new IOException("Unable to open " + file + " (" 
+                                  + klib.GetLastError() + ")");
+        }
+        int notifyMask = convertMask(eventMask);
+        FileInfo finfo = new FileInfo(file, handle, notifyMask, recursive);
+        fileMap.put(file, finfo);
+        handleMap.put(handle, finfo);
+        // Existing port is returned
+        port = klib.CreateIoCompletionPort(handle, port, handle.getPointer(), 0);
+        if (Kernel32.INVALID_HANDLE_VALUE.equals(port)) {
+            throw new IOException("Unable to create/use I/O Completion port "
+                    + "for " + file + " ("
+                    + klib.GetLastError() + ")");
+        }
+        // TODO: use FileIOCompletionRoutine callback method instead of a 
+        // dedicated thread
+        if (!klib.ReadDirectoryChangesW(handle, finfo.info, finfo.info.size(), 
+                                        recursive, notifyMask, finfo.infoLength, 
+                                        finfo.overlapped, null)) {
+            int err = klib.GetLastError();
+            throw new IOException("ReadDirectoryChangesW failed on "
+                                  + finfo.file + ", handle " + handle
+                                  + ": '" + Kernel32Util.formatMessageFromLastErrorCode(err)
+                                  + "' (" + err + ")");
+        }
+        if (watcher == null) {
+            watcher = new Thread("W32 File Monitor-" + (watcherThreadID++)) {
+                public void run() {
+                    FileInfo finfo;
+                    while (true) {
+                       finfo = waitForChange();
+                       if (finfo == null) {
+                          synchronized(W32FileMonitor.this) {
+                             if (fileMap.isEmpty()) {
+                                watcher = null;
+                                break;
+                             }
+                          }
+                          continue;
+                        }
+                       
+                        try {
+                            handleChanges(finfo);
+                        }
+                        catch(IOException e) {
+                            // TODO: how is this best handled?
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            watcher.setDaemon(true);
+            watcher.start();
+        }
+    }
+
+    protected synchronized void unwatch(File file) {
+        FileInfo finfo = (FileInfo)fileMap.remove(file);
+        if (finfo != null) {
+            handleMap.remove(finfo.handle);
+            Kernel32 klib = Kernel32.INSTANCE;
+            // bug: the watcher may still be processing this file
+            klib.CloseHandle(finfo.handle);
+        }
+    }
+    
+    public synchronized void dispose() {
+        // unwatch any remaining files in map, allows watcher thread to exit
+        int i = 0;
+        for (Object[] keys = fileMap.keySet().toArray(); !fileMap.isEmpty();) {
+            unwatch((File)keys[i++]);
+        }
+        
+        Kernel32 klib = Kernel32.INSTANCE;
+        klib.PostQueuedCompletionStatus(port, 0, null, null);
+        klib.CloseHandle(port);
+        port = null;
+        watcher = null;
+    }
+}

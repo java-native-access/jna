@@ -491,4 +491,24 @@ public interface Kernel32 extends W32API {
      *  To get extended error information, call GetLastError. 
      */
     HANDLE OpenProcess(int fdwAccess, boolean fInherit, int IDProcess);    
+
+    /**
+     * The GetTempPath function retrieves the path of the directory designated 
+     * for temporary files.
+     * @param nBufferLength
+     *  Size of the string buffer identified by lpBuffer, in TCHARs.
+     * @param buffer
+     *  Pointer to a string buffer that receives the null-terminated string specifying the 
+     *  temporary file path. The returned string ends with a backslash, for example, 
+     *  C:\TEMP\. 
+     * @return
+     *  If the function succeeds, the return value is the length, in TCHARs, of the string 
+     *  copied to lpBuffer, not including the terminating null character. If the return value 
+     *  is greater than nBufferLength, the return value is the length, in TCHARs, of the 
+     *  buffer required to hold the path.
+     *  
+     *  If the function fails, the return value is zero. To get extended error information, 
+     *  call GetLastError.
+     */
+    DWORD GetTempPath(DWORD nBufferLength, char[] buffer);
 }

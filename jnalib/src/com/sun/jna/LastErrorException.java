@@ -12,33 +12,30 @@
  */
 package com.sun.jna;
 
-/** Exception representing a non-zero error code returned in either
-    <code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> or <code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>.
+/** 
+ * Exception representing a non-zero error code returned in either
+ * <code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> 
+ * or <code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>.
 */
 public class LastErrorException extends RuntimeException {
+    
+	private int errorCode;
+    
     private static String formatMessage(int code) {
         return Platform.isWindows()
-            ?"GetLastError() returned " + code
-            :"errno was " + code;
+            ? "GetLastError() returned " + code
+            : "errno was " + code;
     }
-    private static String parseMessage(String m) {
-        try {
-            return formatMessage(Integer.parseInt(m));
-        }
-        catch(NumberFormatException e) {
-            return m;
-        }
+
+    /**
+     * Returns the error code of the error.
+     * @return
+     *  Error code.
+     */
+    public int getErrorCode() {
+    	return errorCode;
     }
-    public int errorCode;
-    public LastErrorException(String msg) {
-        super(parseMessage(msg));
-        try {
-            this.errorCode = Integer.parseInt(msg);
-        }
-        catch(NumberFormatException e) {
-            this.errorCode = -1;
-        }
-    }
+    
     public LastErrorException(int code) {
         super(formatMessage(code));
         this.errorCode = code;

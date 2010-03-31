@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.platform;
+package com.sun.jna.platform.win32;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,18 +21,21 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import com.sun.jna.Platform;
+import com.sun.jna.platform.FileMonitor;
 import com.sun.jna.platform.FileMonitor.FileEvent;
 import com.sun.jna.platform.FileMonitor.FileListener;
 
-public class FileMonitorTest extends TestCase {
+public class W32FileMonitorTest extends TestCase {
 
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(W32FileMonitorTest.class);
+    }
+	
     private Map events;
     private FileMonitor monitor;
     private File tmpdir;
     
     protected void setUp() throws Exception {
-        if (!Platform.isWindows()) return;
-
         events = new HashMap();
         final FileListener listener = new FileListener() {
             public void fileChanged(FileEvent e) {
@@ -41,11 +44,7 @@ public class FileMonitorTest extends TestCase {
         };
         monitor = FileMonitor.getInstance();
         monitor.addFileListener(listener);
-        String tmpLocation = System.getProperty("java.io.tmpdir");
-        if (tmpLocation == null || tmpLocation.length() == 0) {
-        	tmpLocation = System.getenv("TMP");
-        }
-        tmpdir = new File(tmpLocation);
+        tmpdir = new File(Kernel32Util.getTempPath());
     }
     
     protected void tearDown() {
@@ -55,8 +54,6 @@ public class FileMonitorTest extends TestCase {
     }
     
     public void testNotifyOnFileCreation() throws Exception {
-        if (!Platform.isWindows()) return;
-
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.deleteOnExit();
@@ -64,8 +61,6 @@ public class FileMonitorTest extends TestCase {
     }
     
     public void testNotifyOnFileDelete() throws Exception {
-        if (!Platform.isWindows()) return;
-
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.delete();
@@ -88,8 +83,6 @@ public class FileMonitorTest extends TestCase {
     }
 
     public void testNotifyOnFileRename() throws Exception {
-        if (!Platform.isWindows()) return;
-
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         File newFile = new File(file.getParentFile(), "newfile");
@@ -138,8 +131,6 @@ public class FileMonitorTest extends TestCase {
         return f;
     }
     public void testMultipleWatches() throws Exception {
-        if (!Platform.isWindows()) return;
-        
         File subdir1 = createSubdir(tmpdir, "sub1-");
         File subdir2 = createSubdir(tmpdir, "sub2-");
         try {
@@ -162,8 +153,6 @@ public class FileMonitorTest extends TestCase {
     }
 
     public void testMultipleConsecutiveWatches() throws Exception {
-        if (!Platform.isWindows()) return;
-
         File subdir1 = createSubdir(tmpdir, "sub1-");
         File subdir2 = createSubdir(tmpdir, "sub2-");
         try {
@@ -212,10 +201,5 @@ public class FileMonitorTest extends TestCase {
 
         assertTrue("No events sent", events.size() != 0);
         return actualEvent;
-    }
-
-
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(FileMonitorTest.class);
     }
 }
