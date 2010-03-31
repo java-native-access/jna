@@ -14,24 +14,27 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-public class Kernel32UtilTest extends TestCase {
-	
-    public static void main(String[] args) throws Exception {
-        junit.textui.TestRunner.run(Advapi32UtilTest.class);
-        System.out.println("GetComputerName: " + Kernel32Util.getComputerName());
+public class Win32ExceptionTest extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(Win32ExceptionTest.class);
     }
-	
-	public void testGetComputerName() {
-		assertTrue(Kernel32Util.getComputerName().length() > 0);
-	}
-	
+
 	public void testFormatMessageFromLastErrorCode() {
-	    assertEquals("The remote server has been paused or is in the process of being started.",
-	    		Kernel32Util.formatMessageFromLastErrorCode(W32Errors.ERROR_SHARING_PAUSED));	
+		try {
+			throw new Win32Exception(W32Errors.ERROR_SHARING_PAUSED);
+		} catch (Win32Exception e) {
+		    assertEquals("The remote server has been paused or is in the process of being started.",
+		    		e.getMessage());			
+		}
 	}
 
 	public void testFormatMessageFromHR() {
-		assertEquals("The operation completed successfully.",
-				Kernel32Util.formatMessageFromHR(W32Errors.S_OK));
+		try {
+			throw new Win32Exception(W32Errors.S_OK);
+		} catch (Win32Exception e) {
+			assertEquals("The operation completed successfully.", 
+					e.getMessage());
+		}
 	}
 }

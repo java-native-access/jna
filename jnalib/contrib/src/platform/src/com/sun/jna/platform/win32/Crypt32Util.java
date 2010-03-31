@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.LastErrorException;
 import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
@@ -70,7 +69,7 @@ public abstract class Crypt32Util {
     	try {
 	    	if (! Crypt32.INSTANCE.CryptProtectData(pDataIn, description, 
 	    			pEntropy, null, prompt, flags, pDataProtected)) {
-	    		throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+	    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 	    	}
 	    	return pDataProtected.getData();
     	} finally {
@@ -126,7 +125,7 @@ public abstract class Crypt32Util {
     	try {
 	    	if (! Crypt32.INSTANCE.CryptUnprotectData(pDataIn, pDescription, 
 	    			pEntropy, null, prompt, flags, pDataUnprotected)) {
-	    		throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+	    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 	    	}
 	    	return pDataUnprotected.getData();
     	} finally {

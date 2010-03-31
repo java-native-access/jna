@@ -2,7 +2,6 @@ package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
 
-import com.sun.jna.LastErrorException;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.LMAccess.GROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_INFO_1;
@@ -72,12 +71,12 @@ public abstract class Netapi32Util {
 		try {		
 	    	int rc = Netapi32.INSTANCE.NetGetDCName(domainName, serverName, bufptr);
 	    	if (LMErr.NERR_Success != rc) {
-	    		throw new LastErrorException(rc);
+	    		throw new Win32Exception(rc);
 	    	}
 	    	return bufptr.getValue().getString(0);
 		} finally {
 			if (W32Errors.ERROR_SUCCESS != Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue())) {
-				throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 			}			
 		}
 	}
@@ -102,14 +101,14 @@ public abstract class Netapi32Util {
 		try {
 			int rc = Netapi32.INSTANCE.NetGetJoinInformation(computerName, lpNameBuffer, bufferType);
 			if (LMErr.NERR_Success != rc) {
-				throw new LastErrorException(rc);			
+				throw new Win32Exception(rc);			
 			}
 			return bufferType.getValue();
 		} finally {
 			if (lpNameBuffer.getPointer() != null) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(lpNameBuffer.getValue());
 				if (LMErr.NERR_Success != rc) {
-					throw new LastErrorException(rc);			
+					throw new Win32Exception(rc);			
 				}
 			}
 		}		
@@ -127,7 +126,7 @@ public abstract class Netapi32Util {
 		try {
 			int rc = Netapi32.INSTANCE.NetGetJoinInformation(computerName, lpNameBuffer, bufferType);
 			if (LMErr.NERR_Success != rc) {
-				throw new LastErrorException(rc);			
+				throw new Win32Exception(rc);			
 			}		
 			// type of domain: bufferType.getValue()
 			return lpNameBuffer.getValue().getString(0, true);
@@ -135,7 +134,7 @@ public abstract class Netapi32Util {
 			if (lpNameBuffer.getPointer() != null) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(lpNameBuffer.getValue());
 				if (LMErr.NERR_Success != rc) {
-					throw new LastErrorException(rc);			
+					throw new Win32Exception(rc);			
 				}
 			}
 		}
@@ -161,7 +160,7 @@ public abstract class Netapi32Util {
 		try {
 			int rc = Netapi32.INSTANCE.NetLocalGroupEnum(serverName, 1, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesRead, totalEntries, null);
 			if (LMErr.NERR_Success != rc || bufptr.getValue() == Pointer.NULL) {
-				throw new LastErrorException(rc);
+				throw new Win32Exception(rc);
 			}
 			LMAccess.LOCALGROUP_INFO_1 group = new LMAccess.LOCALGROUP_INFO_1(bufptr.getValue());
 			LMAccess.LOCALGROUP_INFO_1[] groups = (LOCALGROUP_INFO_1[]) group.toArray(entriesRead.getValue());
@@ -178,7 +177,7 @@ public abstract class Netapi32Util {
 			if (bufptr.getValue() != Pointer.NULL) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue());
 				if (LMErr.NERR_Success != rc) {
-					throw new LastErrorException(rc);
+					throw new Win32Exception(rc);
 				}
 			}
 		}
@@ -206,7 +205,7 @@ public abstract class Netapi32Util {
 					LMCons.MAX_PREFERRED_LENGTH, entriesRead, 
 					totalEntries, null);
 			if (LMErr.NERR_Success != rc || bufptr.getValue() == Pointer.NULL) {
-				throw new LastErrorException(rc);
+				throw new Win32Exception(rc);
 			}
 			LMAccess.GROUP_INFO_1 group = new LMAccess.GROUP_INFO_1(bufptr.getValue());
 			LMAccess.GROUP_INFO_1[] groups = (LMAccess.GROUP_INFO_1[]) group.toArray(entriesRead.getValue());
@@ -223,7 +222,7 @@ public abstract class Netapi32Util {
 			if (bufptr.getValue() != Pointer.NULL) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue());
 				if (LMErr.NERR_Success != rc) {
-					throw new LastErrorException(rc);
+					throw new Win32Exception(rc);
 				}
 			}
 		}
@@ -251,7 +250,7 @@ public abstract class Netapi32Util {
 					LMCons.MAX_PREFERRED_LENGTH, entriesRead, 
 					totalEntries, null);
 			if (LMErr.NERR_Success != rc || bufptr.getValue() == Pointer.NULL) {
-				throw new LastErrorException(rc);
+				throw new Win32Exception(rc);
 			}
 			LMAccess.USER_INFO_1 user = new LMAccess.USER_INFO_1(bufptr.getValue());
 			LMAccess.USER_INFO_1[] users = (LMAccess.USER_INFO_1[]) user.toArray(entriesRead.getValue());
@@ -267,7 +266,7 @@ public abstract class Netapi32Util {
 			if (bufptr.getValue() != Pointer.NULL) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue());
 				if (LMErr.NERR_Success != rc) {
-					throw new LastErrorException(rc);
+					throw new Win32Exception(rc);
 				}
 			}
 		}
@@ -304,7 +303,7 @@ public abstract class Netapi32Util {
 	    	int rc = Netapi32.INSTANCE.NetUserGetLocalGroups(serverName, userName, 
 	    			0, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries);
 	    	if (rc != LMErr.NERR_Success) {
-	    		throw new LastErrorException(rc);
+	    		throw new Win32Exception(rc);
 	    	}
 	    	LOCALGROUP_USERS_INFO_0 lgroup = new LOCALGROUP_USERS_INFO_0(bufptr.getValue());    	
 	    	LOCALGROUP_USERS_INFO_0[] lgroups = (LOCALGROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
@@ -319,7 +318,7 @@ public abstract class Netapi32Util {
     		if (bufptr.getValue() != Pointer.NULL) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue());
 				if (LMErr.NERR_Success != rc) {
-					throw new LastErrorException(rc);
+					throw new Win32Exception(rc);
 				}
 			}
     	}
@@ -356,7 +355,7 @@ public abstract class Netapi32Util {
 	    	int rc = Netapi32.INSTANCE.NetUserGetGroups(serverName, userName, 
 	    			0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries);
 	    	if (rc != LMErr.NERR_Success) {
-	    		throw new LastErrorException(rc);
+	    		throw new Win32Exception(rc);
 	    	}
 	    	GROUP_USERS_INFO_0 lgroup = new GROUP_USERS_INFO_0(bufptr.getValue());    	
 	    	GROUP_USERS_INFO_0[] lgroups = (GROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
@@ -371,7 +370,7 @@ public abstract class Netapi32Util {
     		if (bufptr.getValue() != Pointer.NULL) {
 				int rc = Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue());
 				if (LMErr.NERR_Success != rc) {
-					throw new LastErrorException(rc);
+					throw new Win32Exception(rc);
 				}
 			}
     	}

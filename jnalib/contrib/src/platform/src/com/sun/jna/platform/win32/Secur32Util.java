@@ -2,7 +2,6 @@ package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
 
-import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecPkgInfo;
@@ -49,14 +48,14 @@ public abstract class Secur32Util {
 				buffer = new char[len.getValue() + 1];
 				break;
 			default:
-				throw new LastErrorException(Native.getLastError());
+				throw new Win32Exception(Native.getLastError());
 			}
 			
 			result = Secur32.INSTANCE.GetUserNameEx(format, buffer, len);
 		}
 		
 		if (! result) {
-			throw new LastErrorException(Native.getLastError());
+			throw new Win32Exception(Native.getLastError());
 		}
 		
 		return Native.toString(buffer);		
@@ -72,7 +71,7 @@ public abstract class Secur32Util {
     	PSecPkgInfo.ByReference pPackageInfo = new PSecPkgInfo.ByReference();
     	int rc = Secur32.INSTANCE.EnumerateSecurityPackages(pcPackages, pPackageInfo);
     	if(W32Errors.SEC_E_OK != rc) {
-    		throw new LastErrorException(rc);
+    		throw new Win32Exception(rc);
     	}
     	SecPkgInfo.ByReference[] packagesInfo = pPackageInfo.toArray(pcPackages.getValue());
     	ArrayList<SecurityPackage> packages = new ArrayList<SecurityPackage>(pcPackages.getValue());
@@ -84,7 +83,7 @@ public abstract class Secur32Util {
     	}
     	rc = Secur32.INSTANCE.FreeContextBuffer(pPackageInfo.getPointer());
     	if(W32Errors.SEC_E_OK != rc) {
-    		throw new LastErrorException(rc);
+    		throw new Win32Exception(rc);
     	}
     	return packages.toArray(new SecurityPackage[0]);		
 	}

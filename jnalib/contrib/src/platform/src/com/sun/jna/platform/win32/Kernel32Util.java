@@ -14,7 +14,9 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.W32API.HRESULT;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Kernel32 utility API.
@@ -30,8 +32,32 @@ public abstract class Kernel32Util {
     	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH() + 1];
     	IntByReference lpnSize = new IntByReference(buffer.length);
     	if (! Kernel32.INSTANCE.GetComputerName(buffer, lpnSize)) {
-    		throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     	}
     	return Native.toString(buffer);
+	}
+	
+	public static String formatMessageFromHR(HRESULT code) {
+		PointerByReference buffer = new PointerByReference();        
+        if (0 == Kernel32.INSTANCE.FormatMessage(
+        		WinBase.FORMAT_MESSAGE_ALLOCATE_BUFFER
+        		| WinBase.FORMAT_MESSAGE_FROM_SYSTEM 
+        		| WinBase.FORMAT_MESSAGE_IGNORE_INSERTS, 
+                null,
+                code.intValue(), 
+                0, // TODO: MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
+                buffer, 
+                0, 
+                null)) {
+        	throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+        }	       
+    	String s = buffer.getValue().getString(0, ! Boolean.getBoolean("w32.ascii"));
+    	s = s.replace(".\r",".").replace(".\n",".");
+    	Kernel32.INSTANCE.LocalFree(buffer.getValue());
+    	return s;		
+	}
+	
+	public static String formatMessageFromLastErrorCode(int code) {
+		return formatMessageFromHR(W32Errors.HRESULT_FROM_WIN32(code));
 	}
 }

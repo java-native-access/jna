@@ -23805,9 +23805,9 @@ public abstract class W32Errors {
 
 	public static final int FACILITY_NT_BIT = 0x10000000;
 
-	public static final int HRESULT_FROM_WIN32(int x) {
+	public static final HRESULT HRESULT_FROM_WIN32(int x) {
 		int f = FACILITY_WIN32;
-		return (x <= 0 ? x : ((x) & 0x0000FFFF) | (f <<= 16) | 0x80000000);
+		return new HRESULT(x <= 0 ? x : ((x) & 0x0000FFFF) | (f <<= 16) | 0x80000000);
 	}
 
 	// ---------------------- HRESULT value definitions -----------------
