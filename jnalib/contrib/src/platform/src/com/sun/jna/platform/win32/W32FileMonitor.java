@@ -47,8 +47,9 @@ public class W32FileMonitor extends FileMonitor {
     }
     private Thread watcher;
     private HANDLE port;
-    private final Map fileMap = new HashMap();
-    private final Map handleMap = new HashMap();
+    private final Map<File, FileInfo> fileMap = new HashMap<File, FileInfo>();
+    private final Map<HANDLE, FileInfo> handleMap = new HashMap<HANDLE, FileInfo>();
+    private boolean disposing = false;
     
     private void handleChanges(FileInfo finfo) throws IOException {
         Kernel32 klib = Kernel32.INSTANCE;
@@ -77,23 +78,26 @@ public class W32FileMonitor extends FileMonitor {
                 notify(event);
             fni = fni.next();
         } while (fni != null);
-        // Trigger the next read
+        
+        // trigger the next read
         if (!finfo.file.exists()) {
             unwatch(finfo.file);
             return;
         }
         
-        if (!klib.ReadDirectoryChangesW(finfo.handle, finfo.info,
-                                        finfo.info.size(), finfo.recursive,
-                                        finfo.notifyMask, finfo.infoLength, 
-                                        finfo.overlapped, null)) {
-            int err = klib.GetLastError();
-            throw new IOException("ReadDirectoryChangesW failed on "
+        if (!klib.ReadDirectoryChangesW(finfo.handle, finfo.info, 
+        		finfo.info.size(), finfo.recursive, finfo.notifyMask, 
+        		finfo.infoLength, finfo.overlapped, null)) {        	
+        	if (! disposing) {
+        		int err = klib.GetLastError();
+        		throw new IOException("ReadDirectoryChangesW failed on "
                                   + finfo.file + ": '" 
                                   + Kernel32Util.formatMessageFromLastErrorCode(err)
                                   + "' (" + err + ")");
+        	}
         }
     }
+    
     private FileInfo waitForChange() {
         Kernel32 klib = Kernel32.INSTANCE;
         IntByReference rcount = new IntByReference();
@@ -105,6 +109,7 @@ public class W32FileMonitor extends FileMonitor {
             return (FileInfo)handleMap.get(rkey.getValue());
         }
     }
+    
     private int convertMask(int mask) {
         int result = 0;
         if ((mask & FILE_CREATED) != 0) {
@@ -226,6 +231,8 @@ public class W32FileMonitor extends FileMonitor {
     }
     
     public synchronized void dispose() {
+    	disposing = true;
+    	
         // unwatch any remaining files in map, allows watcher thread to exit
         int i = 0;
         for (Object[] keys = fileMap.keySet().toArray(); !fileMap.isEmpty();) {

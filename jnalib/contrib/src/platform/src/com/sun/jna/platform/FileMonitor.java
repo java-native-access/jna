@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +29,7 @@ import com.sun.jna.platform.win32.W32FileMonitor;
  * @author twall
  */
 
+@SuppressWarnings("serial")
 public abstract class FileMonitor {
 
     public static final int FILE_CREATED = 0x1;
@@ -48,7 +48,7 @@ public abstract class FileMonitor {
         public void fileChanged(FileEvent e);
     }
     
-    public class FileEvent extends EventObject {
+	public class FileEvent extends EventObject {
         private final File file;
         private final int type;
         public FileEvent(File file, int type) {
@@ -63,8 +63,8 @@ public abstract class FileMonitor {
         }
     }
     
-    private final Map watched = new HashMap();
-    private List listeners = new ArrayList();
+    private final Map<File, Integer> watched = new HashMap<File, Integer>();
+    private List<FileListener> listeners = new ArrayList<FileListener>();
     
     protected abstract void watch(File file, int mask, boolean recursive) throws IOException ;
     protected abstract void unwatch(File file);
@@ -90,27 +90,28 @@ public abstract class FileMonitor {
     }
     
     protected void notify(FileEvent e) {
-        for (Iterator i=listeners.iterator();i.hasNext();) {
-            ((FileListener)i.next()).fileChanged(e);
-        }
+    	for (FileListener listener : listeners) {
+    		listener.fileChanged(e);
+    	}
     }
     
     public synchronized void addFileListener(FileListener listener) {
-        List list = new ArrayList(listeners);
+        List<FileListener> list = new ArrayList<FileListener>(listeners);
         list.add(listener);
         listeners = list;
     }
     
     public synchronized void removeFileListener(FileListener x) {
-        List list = new ArrayList(listeners);
+        List<FileListener> list = new ArrayList<FileListener>(listeners);
         list.remove(x);
         listeners = list;
     }
     
     protected void finalize() {
-        for (Iterator i=watched.keySet().iterator();i.hasNext();) {
-            removeWatch((File)i.next());
-        }
+    	for (File watchedFile : watched.keySet()) {
+    		removeWatch(watchedFile);
+    	}
+    	
         dispose();
     }
     
@@ -131,18 +132,4 @@ public abstract class FileMonitor {
     public static FileMonitor getInstance() {
         return Holder.INSTANCE;
     }
-    
-    private static class INotifyFileMonitor extends FileMonitor {
-        protected void watch(File file, int mask, boolean recursive) {
-            
-        }
-        
-        protected void unwatch(File file) {
-        
-        }
-        
-        public void dispose() {
-        	
-        }
-    }
-}
+ }

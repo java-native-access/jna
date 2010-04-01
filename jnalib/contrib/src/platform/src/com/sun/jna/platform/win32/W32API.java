@@ -25,11 +25,13 @@ import com.sun.jna.win32.StdCallLibrary;
  * for unicode/ASCII mappings.  Set the system property <code>w32.ascii</code>
  * to <code>true</code> to default to the ASCII mappings.
  */
+@SuppressWarnings("serial")
 public interface W32API extends StdCallLibrary {    
     class HANDLE extends PointerType {
         private boolean immutable;
         public HANDLE() { }
         public HANDLE(Pointer p) { setPointer(p); immutable = true; }
+        
         /** Override to the appropriate object for INVALID_HANDLE_VALUE. */
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             Object o = super.fromNative(nativeValue, context);
@@ -37,6 +39,7 @@ public interface W32API extends StdCallLibrary {
                 return INVALID_HANDLE_VALUE;
             return o;
         }
+        
         public void setPointer(Pointer p) {
             if (immutable)
                 throw new UnsupportedOperationException("immutable reference");
@@ -44,15 +47,17 @@ public interface W32API extends StdCallLibrary {
         }
     }
     
-    class WORD extends IntegerType {
+	class WORD extends IntegerType {
     	public WORD() { this(0); }
     	public WORD(long value) { super(2, value); } 
     }
-    class DWORD extends IntegerType {
+	
+	class DWORD extends IntegerType {
     	public DWORD() { this(0); }
     	public DWORD(long value) { super(4, value); } 
     }
-    class LONG extends IntegerType {
+	
+	class LONG extends IntegerType {
     	public LONG() { this(0); }
     	public LONG(long value) { super(Native.LONG_SIZE, value); } 
     }
@@ -89,16 +94,20 @@ public interface W32API extends StdCallLibrary {
 
     /** LPHANDLE */
     class HANDLEByReference extends ByReference {
-        public HANDLEByReference() {
+        
+    	public HANDLEByReference() {
             this(null);
         }
+        
         public HANDLEByReference(HANDLE h) {
             super(Pointer.SIZE);
             setValue(h);
         }
+        
         public void setValue(HANDLE h) {
             getPointer().setPointer(0, h != null ? h.getPointer() : null);
         }
+        
         public HANDLE getValue() {
             Pointer p = getPointer().getPointer(0);
             if (p == null)
@@ -115,31 +124,38 @@ public interface W32API extends StdCallLibrary {
         public LONG_PTR() { this(0); }
         public LONG_PTR(long value) { super(Pointer.SIZE, value); }
     }
+    
     class SSIZE_T extends LONG_PTR {
         public SSIZE_T() { this(0); }
         public SSIZE_T(long value) { super(value); }
     }
+    
     class ULONG_PTR extends IntegerType { 
         public ULONG_PTR() { this(0); }
         public ULONG_PTR(long value) { super(Pointer.SIZE, value); }
     }
+    
     class SIZE_T extends ULONG_PTR {
         public SIZE_T() { this(0); }
         public SIZE_T(long value) { super(value); }
     }
+    
     class LPARAM extends LONG_PTR { 
         public LPARAM() { this(0); }
         public LPARAM(long value) { super(value); }
     } 
+    
     class LRESULT extends LONG_PTR { 
         public LRESULT() { this(0); }
         public LRESULT(long value) { super(value); }
     }
+
     class UINT_PTR extends IntegerType {
         public UINT_PTR() { super(Pointer.SIZE); }
         public UINT_PTR(long value) { super(Pointer.SIZE, value); }
         public Pointer toPointer() { return Pointer.createConstant(longValue()); }
     }
+
     class WPARAM extends UINT_PTR {
         public WPARAM() { this(0); }
         public WPARAM(long value) { super(value); }

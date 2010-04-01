@@ -14,14 +14,18 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.W32API.HANDLE;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from ShellAPI.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public abstract class ShellAPI {
+public abstract interface ShellAPI extends StdCallLibrary {
+
+	int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
 	
     public static final int FO_MOVE = 0x0001;
     public static final int FO_COPY = 0x0002;
@@ -51,16 +55,48 @@ public abstract class ShellAPI {
 	public static final int PO_PORTCHANGE = 0x0020; // port this printer connected to is being changed
 	public static final int PO_REN_PORT = 0x0034; // PO_RENAME and PO_PORTCHANGE at same time.
 
+	/**
+	 * Contains information that the SHFileOperation function uses to perform file operations. 
+	 */
 	public static class SHFILEOPSTRUCT extends Structure {
+		/**
+		 * A window handle to the dialog box to display information about 
+		 * the status of the file operation.
+		 */
 		public HANDLE hwnd;
+		/**
+		 * An FO_* value that indicates which operation to perform.
+		 */
 		public int wFunc;
-		public String pFrom;
-		public String pTo;
+		/**
+		 * A pointer to one or more source file names, double null-terminated. 
+		 */
+		public WString pFrom;
+		/**
+		 * A pointer to the destination file or directory name.
+		 */
+		public WString pTo;
+		/**
+		 * Flags that control the file operation.
+		 */
 		public short fFlags;
+		/**
+		 * When the function returns, this member contains TRUE if any file operations 
+		 * were aborted before they were completed; otherwise, FALSE. An operation can 
+		 * be manually aborted by the user through UI or it can be silently aborted by 
+		 * the system if the FOF_NOERRORUI or FOF_NOCONFIRMATION flags were set.
+		 */
 		public boolean fAnyOperationsAborted;
+		/**
+		 * When the function returns, this member contains a handle to a name mapping 
+		 * object that contains the old and new names of the renamed files. This member 
+		 * is used only if the fFlags member includes the FOF_WANTMAPPINGHANDLE flag. 
+		 */
 		public Pointer pNameMappings;
-		public String lpszProgressTitle;
-
+		/**
+		 * A pointer to the title of a progress dialog box. This is a null-terminated string. 
+		 */
+		public WString lpszProgressTitle;
 
 		/** Use this to encode <code>pFrom/pTo</code> paths. */
 		public String encodePaths(String[] paths) {

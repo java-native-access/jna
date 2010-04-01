@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
-import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -21,15 +20,9 @@ import com.sun.jna.win32.W32APIOptions;
  * Mapping for Shell32.dll API.  
  */
 public interface Shell32 extends W32API {
-
-	/**
-	 * The C header "shellapi.h" includes "pshpack1.h", which disables automatic 
-	 * alignment of structure fields. 
-	 */
-	int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
 	
     Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, 
-    		W32APIOptions.DEFAULT_OPTIONS);
+    		W32APIOptions.UNICODE_OPTIONS);
     
     /**
      * This function can be used to copy, move, rename, or delete a file system object.

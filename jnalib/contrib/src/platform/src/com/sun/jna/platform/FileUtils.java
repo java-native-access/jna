@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.jna.platform.win32.Shell32;
-import com.sun.jna.platform.win32.ShellAPI;
+import com.sun.jna.platform.mac.MacFileUtils;
+import com.sun.jna.platform.win32.W32FileUtils;
 
 /** Miscellaneous file utils not provided for by Java. */
 public abstract class FileUtils {
@@ -51,56 +51,7 @@ public abstract class FileUtils {
     
     public static FileUtils getInstance() {
         return Holder.INSTANCE;
-    }
-    
-    private static class W32FileUtils extends FileUtils {
-
-        public boolean hasTrash() { return true; }
-
-        public void moveToTrash(File[] files) throws IOException {
-            Shell32 shell = Shell32.INSTANCE;
-            ShellAPI.SHFILEOPSTRUCT fileop = new ShellAPI.SHFILEOPSTRUCT();
-            fileop.wFunc = ShellAPI.FO_DELETE;
-            String[] paths = new String[files.length];
-            for (int i=0;i < paths.length;i++) {
-                paths[i] = files[i].getAbsolutePath();
-            }
-            fileop.pFrom = fileop.encodePaths(paths);
-            fileop.fFlags = ShellAPI.FOF_ALLOWUNDO|ShellAPI.FOF_NOCONFIRMATION|ShellAPI.FOF_SILENT;
-            int ret = shell.SHFileOperation(fileop);
-            if (ret != 0) {
-                throw new IOException("Move to trash failed: " + ret);
-            }
-            if (fileop.fAnyOperationsAborted) {
-                throw new IOException("Move to trash aborted");
-            }
-        }
-    }
-
-    private static class MacFileUtils extends FileUtils {
-
-        public boolean hasTrash() { return true; }
-
-        public void moveToTrash(File[] files) throws IOException {
-            // TODO: use native API for moving to trash (if any)
-            File home = new File(System.getProperty("user.home"));
-            File trash = new File(home, ".Trash");
-            if (!trash.exists()) {
-                throw new IOException("The Trash was not found in its expected location (" + trash + ")");
-            }
-            List failed = new ArrayList();
-            for (int i=0;i < files.length;i++) {
-                File src = files[i];
-                File target = new File(trash, src.getName());
-                if (!src.renameTo(target)) {
-                    failed.add(src);
-                }
-            }
-            if (failed.size() > 0) {
-                throw new IOException("The following files could not be trashed: " + failed);
-            }
-        }
-    }
+    }    
     
     private static class DefaultFileUtils extends FileUtils {
 
@@ -139,7 +90,7 @@ public abstract class FileUtils {
             if (!trash.exists()) {
                 throw new IOException("No trash location found (define fileutils.trash to be the path to the trash)");
             }
-            List failed = new ArrayList();
+            List<File> failed = new ArrayList<File>();
             for (int i=0;i < files.length;i++) {
                 File src = files[i];
                 File target = new File(trash, src.getName());

@@ -27,6 +27,25 @@ public class LastErrorException extends RuntimeException {
             : "errno was " + code;
     }
 
+    private static String parseMessage(String m) {
+        try {
+            return formatMessage(Integer.parseInt(m));
+        }
+        catch(NumberFormatException e) {
+            return m;
+        }
+    }
+    
+    public LastErrorException(String msg) {
+        super(parseMessage(msg));
+        try {
+            this.errorCode = Integer.parseInt(msg);
+        }
+        catch(NumberFormatException e) {
+            this.errorCode = -1;
+        }
+    }
+    
     /**
      * Returns the error code of the error.
      * @return

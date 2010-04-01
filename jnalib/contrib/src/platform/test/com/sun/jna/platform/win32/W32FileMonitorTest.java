@@ -31,12 +31,12 @@ public class W32FileMonitorTest extends TestCase {
         junit.textui.TestRunner.run(W32FileMonitorTest.class);
     }
 	
-    private Map events;
+    private Map<Integer, FileEvent> events;
     private FileMonitor monitor;
     private File tmpdir;
     
     protected void setUp() throws Exception {
-        events = new HashMap();
+        events = new HashMap<Integer, FileEvent>();
         final FileListener listener = new FileListener() {
             public void fileChanged(FileEvent e) {
                 events.put(new Integer(e.getType()), e);
