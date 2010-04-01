@@ -78,7 +78,7 @@ public abstract class Kernel32Util {
 	}
 	
 	/**
-	 * Return the path desigated for temporary files.
+	 * Return the path designated for temporary files.
 	 * @return
 	 *  Path.
 	 */

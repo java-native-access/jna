@@ -2,8 +2,15 @@
 <h2>Release 3.2.5</h2>
 <b>Features</b><br>
 <ul>
+<li>Split code in examples.jar into a contrib platform.jar package and individual packages for demos.
+<li>Fix Eclipse build and added Eclipse projects for all contrib samples, import projects from jnalib and contrib.
 <li>Ensure Structure fields correctly ordered when inherited.
 <li>Use explicit Structure field whenever provided, regardless of whether the VM requires it.
+<li>Add Win32 mappings for two dozen functions from Kernel32.dll, Advapi32.dll, Netapi32.dll, Secur32.dll, NtDll.dll, Ole32.dll, Shell32.dll and Crypt32.dll to com.sun.jna.platform.win32.
+<li>Port parts of WinError.h, WinNT.h, LMAccess.h, LMCons.h, LMErr.h, LMJoin.h, NTStatus.h, ShlObj.h, WinDef.h, ShellApi.h, Wdm.h, WinReg.h, WinCrypt.h, Sspi.h and Guid.h, 
+<li>Add Win32 simplified utility interfaces Kernel32Util, Advapi32Util, Netapi32Util, Crypt32Util, NtDllUtil, Shell32Util, Ole32Util and Secur32Util to com.sun.jna.platform.win32.
+<li>Support unicode paths in W32FileUtils.
+<li>Fix exception during dispose in W32FileMonitor.
 </ul>
 <b>Bug Fixes</b><br>
 <ul>
@@ -282,6 +289,7 @@ NIO Buffer values.
 <li>Versioning information embedded in jna.jar and native library
 </ul>
 <b>Bug Fixes</b><br>
+<ul>
 <li>Avoid attempts to free native library if it failed to load (wmeissner)
 <li>Explicitly check method signatures for varargs instead of heuristically
   guessing (wmeissner)
@@ -300,7 +308,7 @@ NIO Buffer values.
 <li>Properly clean up references and release closure memory on JNI_Unload
 <li>Use simpler AWT/JAWT library loading workaround
 <li>Avoid changing array references within a Structure on read
-
+</ul>
 <h2>Release 2.5</h2>
 <b>Features</b><br>
 <ul>
