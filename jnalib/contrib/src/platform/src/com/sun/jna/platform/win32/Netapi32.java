@@ -13,9 +13,15 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
+import com.sun.jna.platform.win32.DsGetDC.PDS_DOMAIN_TRUSTS;
+import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -309,4 +315,87 @@ public interface Netapi32 extends W32API {
 	 */
 	public int NetUserChangePassword(String domainname, String username, 
 			String oldpassword, String newpassword);
+	
+	/**
+	 * The DsGetDcName function returns the name of a domain controller in a specified domain. 
+	 * This function accepts additional domain controller selection criteria to indicate 
+	 * preference for a domain controller with particular characteristics.
+	 * @param ComputerName
+	 *  Pointer to a null-terminated string that specifies the name of the server to process 
+	 *  this function. Typically, this parameter is NULL, which indicates that the local 
+	 *  computer is used. 
+	 * @param DomainName
+	 *  Pointer to a null-terminated string that specifies the name of the domain or application
+	 *  partition to query. This name can either be a DNS style name, for example, fabrikam.com,
+	 *  or a flat-style name, for example, Fabrikam. If a DNS style name is specified, the name 
+	 *  may be specified with or without a trailing period.
+	 * @param DomainGuid
+	 *  Pointer to a GUID structure that specifies the GUID of the domain queried. If DomainGuid 
+	 *  is not NULL and the domain specified by DomainName or ComputerName cannot be found, 
+	 *  DsGetDcName attempts to locate a domain controller in the domain having the GUID specified 
+	 *  by DomainGuid.
+	 * @param SiteName
+	 *  Pointer to a null-terminated string that specifies the name of the site where the returned 
+	 *  domain controller should physically exist. If this parameter is NULL, DsGetDcName attempts 
+	 *  to return a domain controller in the site closest to the site of the computer specified by 
+	 *  ComputerName. This parameter should be NULL, by default.
+	 * @param Flags
+	 *  Contains a set of flags that provide additional data used to process the request.
+	 * @param DomainControllerInfo
+	 *  Pointer to a PDOMAIN_CONTROLLER_INFO value that receives a pointer to a 
+	 *  DOMAIN_CONTROLLER_INFO structure that contains data about the domain controller selected. 
+	 *  This structure is allocated by DsGetDcName. The caller must free the structure using 
+	 *  the NetApiBufferFree function when it is no longer required.
+	 * @return
+	 *  If the function returns domain controller data, the return value is ERROR_SUCCESS.
+	 *  If the function fails, the return code is one of ERROR_* values.
+	 */
+	public int DsGetDcName(String ComputerName, String DomainName, GUID DomainGuid,
+            String SiteName, int Flags, PDOMAIN_CONTROLLER_INFO.ByReference DomainControllerInfo);
+	
+	/**
+	 * The DsGetForestTrustInformationW function obtains forest trust data for a specified domain.
+	 * @param serverName
+	 *  Contains the name of the domain controller that DsGetForestTrustInformationW 
+	 *  is connected to remotely. The caller must be an authenticated user on this server. 
+	 *  If this parameter is NULL, the local server is used.
+	 * @param trustedDomainName
+	 *  Contains the NETBIOS or DNS name of the trusted domain that the forest trust data 
+	 *  is to be retrieved for. This domain must have the TRUST_ATTRIBUTE_FOREST_TRANSITIVE 
+	 *  trust attribute. If this parameter is NULL, the forest trust data for the domain 
+	 *  hosted by ServerName is retrieved.
+	 * @param Flags
+	 *  Contains a set of flags that modify the behavior of this function.
+	 *  DS_GFTI_UPDATE_TDO: If this flag is set, DsGetForestTrustInformationW will update the 
+	 *  forest trust data of the trusted domain identified by the TrustedDomainName parameter. 
+	 * @param ForestTrustInfo
+	 *  Pointer to an LSA_FOREST_TRUST_INFORMATION structure pointer that receives the forest 
+	 *  trust data that describes the namespaces claimed by the domain specified by 
+	 *  TrustedDomainName. The Time member of all returned records will be zero. 
+	 * @return
+	 *  Returns NO_ERROR if successful or a Win32 error code otherwise. 
+	 */
+	public int DsGetForestTrustInformation(String serverName, String trustedDomainName, int Flags, 
+			PLSA_FOREST_TRUST_INFORMATION.ByReference ForestTrustInfo);
+	
+	/**
+	 * The DsEnumerateDomainTrusts function obtains domain trust data for a specified domain.
+	 * @param serverName
+	 *  Pointer to a null-terminated string that specifies the name of a computer in the domain to 
+	 *  obtain the trust information for. This computer must be running the Windows 2000 or later 
+	 *  operating system. If this parameter is NULL, the name of the local computer is used. 
+	 *  The caller must be an authenticated user in this domain.
+	 * @param Flags
+	 *  Contains a set of flags that determines which domain trusts to enumerate.
+	 * @param Domains
+	 *  Pointer to a PDS_DOMAIN_TRUSTS value that receives an array of DS_DOMAIN_TRUSTS structures. 
+	 *  Each structure in this array contains trust data about a domain. The caller must free this 
+	 *  memory when it is no longer required by calling NetApiBufferFree.
+	 * @param DomainCount
+	 *  Pointer to a ULONG value that receives the number of elements returned in the Domains array.
+	 * @return
+	 *  Returns ERROR_SUCCESS if successful or a Win32 error code otherwise.
+	 */
+	public int DsEnumerateDomainTrusts(String serverName, NativeLong Flags, 
+			PDS_DOMAIN_TRUSTS.ByReference Domains, NativeLongByReference DomainCount);
 }

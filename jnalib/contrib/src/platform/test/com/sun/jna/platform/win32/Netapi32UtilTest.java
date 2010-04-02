@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.platform.win32.Netapi32Util.DomainController;
+import com.sun.jna.platform.win32.Netapi32Util.DomainTrust;
+
 import junit.framework.TestCase;
 
 public class Netapi32UtilTest extends TestCase {
@@ -43,11 +46,26 @@ public class Netapi32UtilTest extends TestCase {
 		for(Netapi32Util.Group localGroup : userLocalGroups) {
 			System.out.println(" " + localGroup.name);
 		}
-		// user domain groups
-		Netapi32Util.Group[] userGroups = Netapi32Util.getCurrentUserGroups();
-        System.out.println("Domain user groups: " + userGroups.length);
-		for(Netapi32Util.Group group : userGroups) {
-			System.out.println(" " + group.name);
+		// domain controller
+		if (Netapi32Util.getJoinStatus() == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName) {
+			System.out.println("Pdc: " + Netapi32Util.getDCName());
+			DomainController dc = Netapi32Util.getDC();
+			System.out.println("Domain controller:");
+			System.out.println("    name: " + dc.name);
+			System.out.println(" address: " + dc.address);
+			System.out.println("  domain: " + dc.domainName);
+			System.out.println("    site: " + dc.clientSiteName);
+			System.out.println("  forest: " + dc.dnsForestName);
+			System.out.println("    guid: " + Ole32Util.getStringFromGUID(dc.domainGuid));
+		}		
+		// domain trusts
+		if (Netapi32Util.getJoinStatus() == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName) {
+			DomainTrust[] trusts = Netapi32Util.getDomainTrusts();
+			System.out.println("Domain trusts: (" + trusts.length + ")");
+			for(DomainTrust trust : trusts) {
+				System.out.println(" " + trust.NetbiosDomainName + ": " + trust.DnsDomainName 
+						+ " (" + trust.DomainSidString + ")");
+			}
 		}
     }
     
@@ -93,15 +111,6 @@ public class Netapi32UtilTest extends TestCase {
 		assertTrue(localGroups.length > 0);
 	}
 
-	public void testGetCurrentUserGroups() {
-		Netapi32Util.Group[] groups = Netapi32Util.getCurrentUserGroups();
-		assertNotNull(groups);
-		for(Netapi32Util.Group group : groups) {
-			assertTrue(group.name.length() > 0);
-		}
-		assertTrue(groups.length > 0);
-	}
-	
 	public void testGetJoinStatus() {
 		int joinStatus = Netapi32Util.getJoinStatus();
 		assertTrue(joinStatus == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName
@@ -110,9 +119,34 @@ public class Netapi32UtilTest extends TestCase {
 	}
 	
 	public void testGetDCName() {
-		if (Netapi32Util.getJoinStatus() == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName) {
-			String domainController = Netapi32Util.getDCName();
-			assertTrue(domainController.length() > 0);
+		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
+			return;
+		
+		String domainController = Netapi32Util.getDCName();
+		assertTrue(domainController.length() > 0);
+		assertTrue(domainController.startsWith("\\\\"));
+	}
+	
+	public void testGetDC() {
+		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
+			return;
+			
+		DomainController dc = Netapi32Util.getDC();
+		assertTrue(dc.address.startsWith("\\\\"));
+		assertTrue(dc.domainName.length() > 0);
+	}
+	
+	public void testGetDomainTrusts() {
+		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
+			return;
+
+		DomainTrust[] trusts = Netapi32Util.getDomainTrusts();
+		assertTrue(trusts.length >= 0);
+		for(DomainTrust trust : trusts) {
+			assertTrue(trust.NetbiosDomainName.length() > 0);
+			assertTrue(trust.DnsDomainName.length() > 0);
+			assertTrue(Advapi32.INSTANCE.IsValidSid(trust.DomainSid));
+			assertTrue(trust.isInbound() || trust.isOutbound() || trust.isPrimary());
 		}
 	}
 }

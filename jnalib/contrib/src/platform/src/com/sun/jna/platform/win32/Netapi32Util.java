@@ -14,11 +14,19 @@ package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.DsGetDC.DS_DOMAIN_TRUSTS;
+import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
+import com.sun.jna.platform.win32.DsGetDC.PDS_DOMAIN_TRUSTS;
+import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.LMAccess.GROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_INFO_1;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_USERS_INFO_0;
+import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
+import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -85,11 +93,11 @@ public abstract class Netapi32Util {
 	    	if (LMErr.NERR_Success != rc) {
 	    		throw new Win32Exception(rc);
 	    	}
-	    	return bufptr.getValue().getString(0);
+	    	return bufptr.getValue().getString(0, true);
 		} finally {
 			if (W32Errors.ERROR_SUCCESS != Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue())) {
 				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-			}			
+			}
 		}
 	}
 
@@ -289,7 +297,8 @@ public abstract class Netapi32Util {
 	 * @return Local groups.
 	 */
 	public static Group[] getCurrentUserLocalGroups() {
-		return getUserLocalGroups(Advapi32Util.getUserName());
+		return getUserLocalGroups(Secur32Util.getUserNameEx(
+				EXTENDED_NAME_FORMAT.NameSamCompatible));
 	}
 	
 	/**
@@ -337,14 +346,6 @@ public abstract class Netapi32Util {
 	}
 	
 	/**
-	 * Get local groups of the current user.
-	 * @return Local groups.
-	 */
-	public static Group[] getCurrentUserGroups() {
-		return getUserGroups(Advapi32Util.getUserName());
-	}
-	
-	/**
 	 * Get groups of a given user.
 	 * @param userName User name.
 	 * @return Groups.
@@ -387,4 +388,218 @@ public abstract class Netapi32Util {
 			}
     	}
 	}	
+	
+	/**
+	 * A domain controller.
+	 */
+	public static class DomainController {
+		/**
+		 * Specifies the computer name of the discovered domain controller.
+		 */
+		public String name;
+		/**
+		 * Specifies the address of the discovered domain controller.
+		 */
+		public String address;
+		/**
+		 * Indicates the type of WString that is contained in the 
+		 * DomainControllerAddress member.
+		 */
+		public int addressType;
+		/**
+		 * The GUID of the domain.
+		 */
+		public GUID domainGuid;
+		/**
+		 * Pointer to a null-terminated WString that specifies the name of the domain. 
+		 */
+		public String domainName;
+		/**
+		 * Pointer to a null-terminated WString that specifies the name of the domain at the root 
+	     * of the DS tree.
+		 */
+		public String dnsForestName;
+		/**
+		 * Contains a set of flags that describe the domain controller. 
+		 */
+		public int flags;
+		/**
+		 * The name of the site that the computer belongs to.
+		 */
+		public String clientSiteName;
+	}
+	
+	/**
+	 * Return the domain controller for a current computer.
+	 * @return
+	 *  Domain controller information.
+	 */
+	public static DomainController getDC() {
+        PDOMAIN_CONTROLLER_INFO.ByReference pdci = new PDOMAIN_CONTROLLER_INFO.ByReference();
+        int rc = Netapi32.INSTANCE.DsGetDcName(null, null, null, null, 0, pdci);
+    	if (W32Errors.ERROR_SUCCESS != rc) {
+    		throw new Win32Exception(rc);
+    	}
+    	DomainController dc = new DomainController();
+    	dc.address = pdci.dci.DomainControllerAddress.toString();
+    	dc.addressType = pdci.dci.DomainControllerAddressType;
+    	dc.clientSiteName = pdci.dci.ClientSiteName.toString();
+    	dc.dnsForestName = pdci.dci.DnsForestName.toString();
+    	dc.domainGuid = pdci.dci.DomainGuid;
+    	dc.domainName = pdci.dci.DomainName.toString();
+    	dc.flags = pdci.dci.Flags;
+    	dc.name = pdci.dci.DomainControllerName.toString();
+		rc = Netapi32.INSTANCE.NetApiBufferFree(pdci.getPointer());
+		if (LMErr.NERR_Success != rc) {
+			throw new Win32Exception(rc);
+		}
+		return dc;
+	}
+	
+	/**
+	 * A domain trust relationship.
+	 */
+	public static class DomainTrust {
+		/**
+		 * NetBIOS name of the domain.
+		 */
+		public String NetbiosDomainName;
+		/**
+		 * DNS name of the domain.
+		 */
+		public String DnsDomainName;
+		/**
+		 * Contains the security identifier of the domain represented by this structure.
+		 */
+		public PSID DomainSid;
+		/**
+		 * Contains the string representation of the security identifier of the domain 
+		 * represented by this structure.
+		 */
+		public String DomainSidString;
+		/**
+		 * Contains the GUID of the domain represented by this structure.
+		 */
+		public GUID DomainGuid;
+		/**
+		 * Contains the string representation of the GUID of the domain represented by 
+		 * this structure.
+		 */	
+		public String DomainGuidString;
+		
+		/**
+		 * Contains a set of flags that specify more data about the domain trust.
+		 */
+		private int flags;
+		
+		/**
+		 * The domain represented by this structure is a member of the same forest 
+		 * as the server specified in the ServerName parameter of the 
+		 * DsEnumerateDomainTrusts function.
+		 * @return
+		 *  True or false.
+		 */
+		public boolean isInForest() { 
+			return (flags & DsGetDC.DS_DOMAIN_IN_FOREST) != 0; 
+		}
+		
+		/**
+		 * The domain represented by this structure is directly trusted by the domain
+		 * that the server specified in the ServerName parameter of the 
+		 * DsEnumerateDomainTrusts function is a member of.
+		 * @return
+		 *  True or false.
+		 */
+		public boolean isOutbound() { 
+			return (flags & DsGetDC.DS_DOMAIN_DIRECT_OUTBOUND) != 0; 
+		}
+		
+		/**
+		 * The domain represented by this structure is the root of a tree and a member 
+		 * of the same forest as the server specified in the ServerName parameter of the
+		 * DsEnumerateDomainTrusts function.
+		 * @return
+		 *  True or false.
+		 */
+		public boolean isRoot() { 
+			return (flags & DsGetDC.DS_DOMAIN_TREE_ROOT) != 0; 
+		}
+	
+		/**
+		 * The domain represented by this structure is the primary domain of the server
+		 * specified in the ServerName parameter of the DsEnumerateDomainTrusts function.
+		 * @return
+		 *  True or false.
+		 */
+		public boolean isPrimary() { 
+			return (flags & DsGetDC.DS_DOMAIN_PRIMARY) != 0; 
+		}
+		
+		/**
+		 * The domain represented by this structure is running in the Windows 2000 native mode.
+		 * @return
+		 *  True or false.
+		 */
+		public boolean isNativeMode() {
+			return (flags & DsGetDC.DS_DOMAIN_NATIVE_MODE) != 0; 
+		}
+		
+		/**
+		 * The domain represented by this structure directly trusts the domain that
+		 * the server specified in the ServerName parameter of the DsEnumerateDomainTrusts
+		 * function is a member of.
+		 * @return
+		 *  True or false.
+		 */
+		public boolean isInbound() { 
+			return (flags & DsGetDC.DS_DOMAIN_DIRECT_INBOUND) != 0; 
+		}		
+	}
+	
+	/**
+	 * Retrieve all domain trusts.
+	 * @return
+	 *  An array of domain trusts.
+	 */
+	public static DomainTrust[] getDomainTrusts() {
+		return getDomainTrusts(null);
+	}
+	
+	/**
+	 * Retrieve all domain trusts for a given server.
+	 * @param serverName
+	 *  Server name.
+	 * @return
+	 *  An array of domain trusts.
+	 */
+	public static DomainTrust[] getDomainTrusts(String serverName) {
+    	NativeLongByReference domainCount = new NativeLongByReference();
+    	PDS_DOMAIN_TRUSTS.ByReference domains = new PDS_DOMAIN_TRUSTS.ByReference();
+    	int rc = Netapi32.INSTANCE.DsEnumerateDomainTrusts(
+    			serverName, new NativeLong(DsGetDC.DS_DOMAIN_VALID_FLAGS), domains, domainCount);
+    	if(W32Errors.NO_ERROR != rc) {
+    		throw new Win32Exception(rc);
+    	}
+    	try {
+	    	int domainCountValue = domainCount.getValue().intValue();
+	    	ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainCountValue);
+	    	for(DS_DOMAIN_TRUSTS trust : domains.getTrusts(domainCountValue)) {
+	    		DomainTrust t = new DomainTrust();
+	    		t.DnsDomainName = trust.DnsDomainName.toString();
+	    		t.NetbiosDomainName = trust.NetbiosDomainName.toString();
+	    		t.DomainSid = trust.DomainSid;
+	    		t.DomainSidString = Advapi32Util.convertSidToStringSid(trust.DomainSid);
+	    		t.DomainGuid = trust.DomainGuid;
+	    		t.DomainGuidString = Ole32Util.getStringFromGUID(trust.DomainGuid);
+	    		t.flags = trust.Flags.intValue();
+	    		trusts.add(t);
+	    	}
+	    	return trusts.toArray(new DomainTrust[0]);
+    	} finally {
+	    	rc = Netapi32.INSTANCE.NetApiBufferFree(domains.getPointer());   	    	
+	    	if(W32Errors.NO_ERROR != rc) {
+	    		throw new Win32Exception(rc);
+	    	}
+    	}
+	}
 }

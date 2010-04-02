@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.W32API.DWORD;
 import com.sun.jna.ptr.ByReference;
 
 /**
@@ -764,5 +765,14 @@ public abstract class WinNT {
 	public static class LUID extends Structure {
 		int LowPart;
 		int HighPart;
+	}
+	
+	/**
+	 * A 64-bit integer;
+	 * TODO: this should be a union and allow direct 64-bit integer access.
+	 */
+	public static class LARGE_INTEGER extends Structure {
+		public DWORD LowPart;
+		public DWORD HighPart;					
 	}
 }
