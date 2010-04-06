@@ -141,7 +141,7 @@ public class HelloWorld {
     }
 }
 </textarea>
-  <li>Identify a native <em>target library</em> that you want to use. This can be any shared library with exported functions.  Some examples of mappings for common system libraries may be found in the <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/unix?rev=HEAD">unix</a> and <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/win32?rev=HEAD">win32</a> examples subdirectories.</li>
+  <li>Identify a native <em>target library</em> that you want to use. This can be any shared library with exported functions. Many examples of mappings for common system libraries may be found in the <a href="#platform">platform</a> package.</li>
   <li>Make your target library available to your Java program. There are two ways to do this:
     <ul>
       <li>The preferred method is to set the <code>jna.library.path</code> system property to the path to your target library.  This property is similar to <code>java.library.path</code> but only applies to libraries loaded by JNA.</li> 
@@ -440,7 +440,7 @@ native memory management is taken care of correctly.
 </p>
 <p>
 Before you map your own functions, check the 
-<a href="javadoc/overview-summary.html">documentation</a> for an already mapped one.
+<a href="javadoc/platform/overview-summary.html">platform package documentation</a> for an already mapped one.
 </p>
 <p>
 Platform-specific structures are mapped by header. For example, <code>ShlObj.h</code> structures can

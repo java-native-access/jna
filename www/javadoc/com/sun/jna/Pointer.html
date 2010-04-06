@@ -6,14 +6,15 @@
 Pointer (JNA API)
 </TITLE>
 
-<META NAME="keywords" CONTENT="com.sun.jna.Pointer class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Pointer (JNA API)";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Pointer (JNA API)";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -44,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.2.4</font></EM>
+<b>JNA API</><font size=-1> 3.2.5</font></EM>
 </TD>
 </TR>
 
@@ -87,7 +89,7 @@ com.sun.jna</FONT>
 <BR>
 Class Pointer</H2>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">java.lang.Object</A>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
   <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.Pointer</B>
 </PRE>
 <DL>
@@ -95,7 +97,7 @@ Class Pointer</H2>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>Pointer</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></DL>
+<DT><PRE>public class <B>Pointer</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
 </PRE>
 
 <P>
@@ -201,15 +203,23 @@ An abstraction for a native pointer data type.  A Pointer instance
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#createConstant(int)">createConstant</A></B>(int&nbsp;peer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience constant, equivalent to <code>(void*)CONSTANT</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A></B>(long&nbsp;peer)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience constant, equivalent to <code>(void*)-1</code>.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience constant, equivalent to <code>(void*)CONSTANT</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;o)</CODE>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compares this <code>Pointer</code> to the specified object.</TD>
@@ -233,7 +243,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html" title="class or interface in java.nio">ByteBuffer</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getByteBuffer(long, long)">getByteBuffer</A></B>(long&nbsp;offset,
               long&nbsp;length)</CODE>
 
@@ -378,7 +388,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A></B>(long&nbsp;offset)</CODE>
 
 <BR>
@@ -386,7 +396,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getString(long, boolean)">getString</A></B>(long&nbsp;offset,
           boolean&nbsp;wide)</CODE>
 
@@ -395,7 +405,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A></B>(long&nbsp;base)</CODE>
 
 <BR>
@@ -404,7 +414,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A></B>(long&nbsp;base,
                boolean&nbsp;wide)</CODE>
 
@@ -415,7 +425,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int)">getStringArray</A></B>(long&nbsp;base,
                int&nbsp;length)</CODE>
 
@@ -425,7 +435,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int, boolean)">getStringArray</A></B>(long&nbsp;base,
                int&nbsp;length,
                boolean&nbsp;wide)</CODE>
@@ -437,10 +447,10 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A></B>(long&nbsp;offset,
-         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type,
-         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</CODE>
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -655,7 +665,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A></B>(long&nbsp;offset,
-          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;value)</CODE>
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy string <code>value</code> to the location being pointed to.</TD>
@@ -664,7 +674,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)">setString</A></B>(long&nbsp;offset,
-          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;value,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
           boolean&nbsp;wide)</CODE>
 
 <BR>
@@ -674,8 +684,8 @@ An abstraction for a native pointer data type.  A Pointer instance
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>(package private) &nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A></B>(long&nbsp;offset,
-         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;value,
-         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -699,7 +709,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#toString()">toString</A></B>()</CODE>
 
 <BR>
@@ -804,10 +814,10 @@ An abstraction for a native pointer data type.  A Pointer instance
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></B></TH>
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -903,7 +913,22 @@ createConstant</H3>
 <PRE>
 public static final <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>createConstant</B>(long&nbsp;peer)</PRE>
 <DL>
-<DD>Convenience constant, equivalent to <code>(void*)-1</code>.
+<DD>Convenience constant, equivalent to <code>(void*)CONSTANT</code>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createConstant(int)"><!-- --></A><H3>
+createConstant</H3>
+<PRE>
+public static final <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>createConstant</B>(int&nbsp;peer)</PRE>
+<DL>
+<DD>Convenience constant, equivalent to <code>(void*)CONSTANT</code>.
+        This version will avoid setting any of the high bits on 64-bit
+        systems.
 <P>
 <DD><DL>
 </DL>
@@ -952,12 +977,12 @@ public void <B>clear</B>(long&nbsp;size)</PRE>
 <A NAME="equals(java.lang.Object)"><!-- --></A><H3>
 equals</H3>
 <PRE>
-public boolean <B>equals</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;o)</PRE>
+public boolean <B>equals</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</PRE>
 <DL>
 <DD>Compares this <code>Pointer</code> to the specified object.
 <P>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang">equals</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
 </DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>o</CODE> - A <code>Pointer</code> instance
@@ -977,7 +1002,7 @@ public int <B>hashCode</B>()</PRE>
  <code>Pointer</code> object
 <P>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#hashCode()" title="class or interface in java.lang">hashCode</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
 </DD>
 <DD><DL>
 
@@ -1283,9 +1308,9 @@ public void <B>write</B>(long&nbsp;bOff,
 <A NAME="getValue(long, java.lang.Class, java.lang.Object)"><!-- --></A><H3>
 getValue</H3>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A> <B>getValue</B>(long&nbsp;offset,
-                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type,
-                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>getValue</B>(long&nbsp;offset,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1442,7 +1467,7 @@ public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">
 <A NAME="getByteBuffer(long, long)"><!-- --></A><H3>
 getByteBuffer</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html" title="class or interface in java.nio">ByteBuffer</A> <B>getByteBuffer</B>(long&nbsp;offset,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A> <B>getByteBuffer</B>(long&nbsp;offset,
                                 long&nbsp;length)</PRE>
 <DL>
 <DD>Get a ByteBuffer mapped to the memory pointed to by the pointer,
@@ -1458,7 +1483,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html
 <A NAME="getString(long, boolean)"><!-- --></A><H3>
 getString</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset,
                         boolean&nbsp;wide)</PRE>
 <DL>
 <DD>Copy native memory to a Java String.  If <code>wide</code> is true,
@@ -1476,7 +1501,7 @@ v     * @param wide whether to convert from a wide or standard C string
 <A NAME="getString(long)"><!-- --></A><H3>
 getString</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset)</PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset)</PRE>
 <DL>
 <DD>Copy native memory to a Java String.  If the system property 
  <code>jna.encoding</code> is set, uses it as the native charset
@@ -1605,7 +1630,7 @@ public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">
 <A NAME="getStringArray(long)"><!-- --></A><H3>
 getStringArray</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base)</PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base)</PRE>
 <DL>
 <DD>Returns an array of <code>String</code> based on a native array
  of <code>char *</code>.  The array length is determined by a
@@ -1620,7 +1645,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 <A NAME="getStringArray(long, int)"><!-- --></A><H3>
 getStringArray</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
                                int&nbsp;length)</PRE>
 <DL>
 <DD>Returns an array of <code>String</code> based on a native array
@@ -1635,7 +1660,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 <A NAME="getStringArray(long, boolean)"><!-- --></A><H3>
 getStringArray</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
                                boolean&nbsp;wide)</PRE>
 <DL>
 <DD>Returns an array of <code>String</code> based on a native array
@@ -1652,7 +1677,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 <A NAME="getStringArray(long, int, boolean)"><!-- --></A><H3>
 getStringArray</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
                                int&nbsp;length,
                                boolean&nbsp;wide)</PRE>
 <DL>
@@ -1670,8 +1695,8 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 setValue</H3>
 <PRE>
 void <B>setValue</B>(long&nbsp;offset,
-              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A>&nbsp;value,
-              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1866,7 +1891,7 @@ public void <B>setPointer</B>(long&nbsp;offset,
 setString</H3>
 <PRE>
 public void <B>setString</B>(long&nbsp;offset,
-                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;value,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
                       boolean&nbsp;wide)</PRE>
 <DL>
 <DD>Copy string <code>value</code> to the location being pointed to.  Copy
@@ -1886,7 +1911,7 @@ public void <B>setString</B>(long&nbsp;offset,
 setString</H3>
 <PRE>
 public void <B>setString</B>(long&nbsp;offset,
-                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;value)</PRE>
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value)</PRE>
 <DL>
 <DD>Copy string <code>value</code> to the location being pointed to.  Copy
  each element in <code>value</code>, converted to native encoding, at an
@@ -1905,10 +1930,10 @@ public void <B>setString</B>(long&nbsp;offset,
 <A NAME="toString()"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#toString()" title="class or interface in java.lang">toString</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -1938,7 +1963,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.2.4</font></EM>
+<b>JNA API</><font size=-1> 3.2.5</font></EM>
 </TD>
 </TR>
 

@@ -6,14 +6,15 @@
 Memory (JNA API)
 </TITLE>
 
-<META NAME="keywords" CONTENT="com.sun.jna.Memory class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Memory (JNA API)";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Memory (JNA API)";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -44,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.2.4</font></EM>
+<b>JNA API</><font size=-1> 3.2.5</font></EM>
 </TD>
 </TR>
 
@@ -87,7 +89,7 @@ com.sun.jna</FONT>
 <BR>
 Class Memory</H2>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">java.lang.Object</A>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
   <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">com.sun.jna.Pointer</A>
       <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.Memory</B>
 </PRE>
@@ -238,7 +240,7 @@ A <code>Pointer</code> to memory obtained from the native heap via a
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html" title="class or interface in java.nio">ByteBuffer</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getByteBuffer(long, long)">getByteBuffer</A></B>(long&nbsp;offset,
               long&nbsp;length)</CODE>
 
@@ -318,7 +320,7 @@ A <code>Pointer</code> to memory obtained from the native heap via a
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getString(long, boolean)">getString</A></B>(long&nbsp;offset,
           boolean&nbsp;wide)</CODE>
 
@@ -519,7 +521,7 @@ A <code>Pointer</code> to memory obtained from the native heap via a
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setString(long, java.lang.String, boolean)">setString</A></B>(long&nbsp;offset,
-          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;value,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
           boolean&nbsp;wide)</CODE>
 
 <BR>
@@ -545,7 +547,7 @@ A <code>Pointer</code> to memory obtained from the native heap via a
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#toString()">toString</A></B>()</CODE>
 
 <BR>
@@ -642,16 +644,16 @@ A <code>Pointer</code> to memory obtained from the native heap via a
 <TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#_setMemory(long, long, byte)">_setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</A></CODE></TD>
+<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#_setMemory(long, long, byte)">_setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(int)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></B></TH>
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -744,7 +746,7 @@ public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested memory is outside
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested memory is outside
  the allocated bounds.</DL>
 </DD>
 </DL>
@@ -764,7 +766,7 @@ public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested memory is outside
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested memory is outside
  the allocated bounds.</DL>
 </DD>
 </DL>
@@ -781,9 +783,9 @@ public <A HREF="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">M
 <DT><B>Parameters:</B><DD><CODE>byteBoundary</CODE> - Align memory to this number of bytes; should be a
  power of two.
 <DT><B>Throws:</B>
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested alignment can
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested alignment can
  not be met.
-<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the requested alignment is not
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the requested alignment is not
  a positive power of two.</DL>
 </DD>
 </DL>
@@ -795,7 +797,7 @@ finalize</H3>
 protected void <B>finalize</B>()</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#finalize()" title="class or interface in java.lang">finalize</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html" title="class or interface in java.lang">Object</A></CODE></DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -1335,7 +1337,7 @@ public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">
 <A NAME="getByteBuffer(long, long)"><!-- --></A><H3>
 getByteBuffer</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html" title="class or interface in java.nio">ByteBuffer</A> <B>getByteBuffer</B>(long&nbsp;offset,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A> <B>getByteBuffer</B>(long&nbsp;offset,
                                 long&nbsp;length)</PRE>
 <DL>
 <DD>Get a ByteBuffer mapped to a portion of this memory.
@@ -1353,7 +1355,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html
 <A NAME="getString(long, boolean)"><!-- --></A><H3>
 getString</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset,
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset,
                         boolean&nbsp;wide)</PRE>
 <DL>
 <DD>Indirect the native pointer to <code>malloc</code> space, a la
@@ -1546,7 +1548,7 @@ public void <B>setPointer</B>(long&nbsp;offset,
 setString</H3>
 <PRE>
 public void <B>setString</B>(long&nbsp;offset,
-                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A>&nbsp;value,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
                       boolean&nbsp;wide)</PRE>
 <DL>
 <DD>Indirect the native pointer to <code>malloc</code> space, a la
@@ -1595,7 +1597,7 @@ protected static void <B>free</B>(long&nbsp;ptr)</PRE>
 <A NAME="toString()"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
 <DL>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
@@ -1628,7 +1630,7 @@ public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html" t
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.2.4</font></EM>
+<b>JNA API</><font size=-1> 3.2.5</font></EM>
 </TD>
 </TR>
 
