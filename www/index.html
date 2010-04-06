@@ -3,23 +3,18 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2009-10-16">
+<meta name="date" content="2010-04-06">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <body>
-
-
-
   <div style="display:none">
     <div style="border: 1px solid black; padding: 1em; float: right; font-size: 1.5em; background-color: rgb(255, 255, 240);" id="downloadBox">
       <a href="/servlets/ProjectDocumentList" class=dynamic>
-	<img src="folder.png" style="vertical-align: middle;" border="0">Download
-      </a>
+      	<img src="folder.png" style="vertical-align: middle;" border="0">Download
+	  </a>
       <center>
-	<a href="https://jna.dev.java.net/source/browse/*checkout*/jna/trunk/jnalib/release-notes.html"
-	style="font-size:0.5em" class=dynamic>(release notes)</a>
-        
+	    <a href="https://jna.dev.java.net/source/browse/*checkout*/jna/trunk/jnalib/release-notes.html" style="font-size:0.5em" class=dynamic>(release notes)</a>
       </center>
     </div>
   </div>
@@ -33,7 +28,6 @@
       div.insertBefore(box,div.firstChild);
   </script>
 
-
 <table rows=1 cols=3>
 <colgroup span=1 width=0*>
 <colgroup span=1>
@@ -43,6 +37,7 @@
 <ul>
 <li><a href="#features">Features</a>
 <li><a href="#demos">Demos</a>
+<li><a href="#platform">Platform Library</a></li>
 <li><a href="#community">Community and Support</a>
 <li><a href="#projects">Projects</a>
 <li><a href="#development">Development</a>&nbsp;&nbsp;&nbsp;
@@ -53,10 +48,11 @@
 <td valign=center>
 <a name=top></a>
 <h2>Java Native Access (JNA) </h2>
-<p>JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.  Access is dynamic at runtime without code generation.</p>
+<p>JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.</p>
 <p>JNA allows you to call directly into native functions using natural Java method invocation.  The Java call looks just like it does in native code.  Most calls require no special handling or configuration; no boilerplate or generated code is required.</p>
 <p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.</p>
 <p>While some attention is paid to performance, correctness and ease of use take priority.</p>
+<p>JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.</p>
 </td>
 <td valign=center>
 <ul>
@@ -195,7 +191,9 @@ The INSTANCE variable is for convenient reuse of a single instance of the librar
     void GetSystemTime(SYSTEMTIME result);
                                  </textarea>
   </li>
-  <li>You can now invoke methods on the library instance just like any other Java class.  For a more extensive example, see the <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/WindowUtils.java?rev=HEAD&view=markup">WindowUtils</a> and <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo</a> classes.
+  <li>You can now invoke methods on the library instance just like any other Java class. 
+  	For a more extensive example, see the <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/src/platform/src/com/sun/jna/platform/WindowUtils.java?rev=HEAD&view=markup">WindowUtils</a> 
+  	and <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/jnalib/contrib/src/shapedwindowdemo/com/sun/jna/contrib/demo/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo</a> classes.
     <br>    
     <textarea name="textarea4" cols="80" rows="4" readonly="readonly">
 Kernel32 lib = Kernel32.INSTANCE;
@@ -431,7 +429,36 @@ Libc.fflush(fp)
 Libc.fclose(fp)
 </textarea></blockquote>
 <p>
-
+<a href=#top>Top</a>
+<a name=platform></a>
+<h3>Platform Library</h3>
+<p>
+JNA includes <code>platform.jar</code> that has cross-platform mappings and mappings for a number of 
+commonly used platform functions, including a large number of Win32 mappings as well as a set of utility
+classes that simplify native access. The code is tested and the utility interfaces ensure that
+native memory management is taken care of correctly.
+</p>
+<p>
+Before you map your own functions, check the 
+<a href="javadoc/overview-summary.html">documentation</a> for an already mapped one.
+</p>
+<p>
+Platform-specific structures are mapped by header. For example, <code>ShlObj.h</code> structures can
+be found in <code>com.sun.jna.platform.win32.ShlObj</code>. Platform functions are mapped by 
+library. For example, <code>Advapi32.dll</code> functions can be found in <code>com.sun.jna.platform.win32.Advapi32</code>. 
+Simplified interfaces (wrappers) for <code>Advapi32.dll</code> functions can be found in 
+<code>com.sun.jna.platform.win32.Advapi32Util</code>.
+</p>
+<p>
+Cross-platform functions and structures are implemented in <code>com.sun.jna.platform</code>. These 
+currently include the following.
+<ul>
+ <li><code>FileMonitor</code>: a cross-platform file system watcher</li>
+ <li><code>FileUtils</code>: a cross-platform set of file-related functions, such as move to the recycle bin</li>
+ <li><code>KeyboardUtils</code>: a cross-platform set of keyboard functions, such as finding out whether a key is pressed</li>
+ <li><code>WindowUtils</code>: a cross-platform set of window functions, providing non-rectangular shaped and transparent windows</li>
+</ul>
+</p>
 <a href=#top>Top</a>
 <a name=faq></a>
 <h3>Frequently Asked Questions (FAQ)</h3>
@@ -637,15 +664,31 @@ class instead of the object returned by <code>Native.loadLibrary()</code>.<p>
 <a href=#top>Top</a>
 <a name=demos></a>
 <h3>Examples</h3>
-In the <code>com.sun.jna.examples</code> package are some examples of using
-the JNA library (and are pretty nifty utilities in and of themselves).
+<p>
+There're several good examples for using the JNA library In the <code>jnacontrib</code> distribution folder.
+These are pretty nifty utilities in and of themselves as well.
+</p>
+<p>
+You can see some live demos here.
 <ul>
-<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo</a>: Non-rectangular windows (a circular clock) (<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/WindowUtils.java?rev=HEAD&view=markup">WindowUtils code</a>).<p>
-<a href="demo/ShapedWindowDemo.jnlp"><img src="http://swinglabs.org/images/demobutton.png" /></a>
-<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/BalloonManagerDemo.java?rev=HEAD&view=markup">BalloonManagerDemo</a>: Speech-balloon windows (a la Google Maps) (<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/BalloonManager.java?rev=HEAD&view=markup">BalloonManager code</a>).<p>
-<a href="demo/BalloonManagerDemo.jnlp"><img src="http://swinglabs.org/images/demobutton.png" /></a>
-<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/FileUtils.java?rev=HEAD&view=markup">FileUtils</a>: Cross-platform move-to-trash functionality
-<li><a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/src/com/sun/jna/examples/FileMonitor.java?rev=HEAD&view=markup">FileMonitor</a>: Cross-platform file change notification (still needs inotify and kqueues implementations)
+<li><a href="demo/BalloonManagerDemo.jnlp">Demo</a> -  
+<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/src/balloonmanagerdemo/com/sun/jna/contrib/demo/BalloonManagerDemo.java?rev=HEAD&view=markup">BaloonManagerDemo.java Source</a>
+: Speech-balloon windows (a la Google Maps)
+</li>
+<li><a href="demo/ShapedWindowDemo.jnlp">Demo</a> -  
+<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/src/shapedwindowdemo/com/sun/jna/contrib/demo/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo.java Source</a>
+: Non-rectangular windows (a circular clock)
+</li>
+</ul>
+</p>
+<p>
+Other demos.
+<ul>
+<li><code>demo-alphamask.jar</code></li>
+<li><code>demo-balloontips.jar</code></li>
+<li><code>demo-dnd.jar</code></li>
+<li><code>demo-w32keyhook.jar</code></li>
+<li><code>demo-x11.jar</code></li>
 </ul>
 <p>
 
@@ -699,7 +742,8 @@ If you are interested in paid support, feel free to say so on one of the JNA mai
    <li>Build the <code>jnidispatch</code> library backend on new platforms (it should mostly work out of the box if we can just get access to the appropriate build platform).</li>
    <li>More comprehensive documentation on using JNA, including examples of Java to native conversions of data types, function usage, and proper memory management.</li>
    <li>Tips and recommended usage of JNA: Likely danger areas, failure modes, best practices, multithreading, etc.</li>
-   <li>Native library definitions for the more useful libraries on various platforms; for example, <code>user32</code> on Windows.  This is important not for having an exhaustive library definition but to illustrate all the different ways a native library may need to be mapped.</li>
+   <li>Native library definitions in <code>platform.jar</code> for the more useful libraries on various platforms and native utility interfaces; for example, <code>User32.dll</code> on Windows. 
+   	This is important for both having an exhaustive library definition and to illustrate all the different ways a native library may need to be mapped.</li>
    <li>Testing on various JDK versions and platforms (linux flavors!).</li>
    <li>See the TODO file in the project directory for more up-to-date items.</li>
  </ul>

@@ -52,8 +52,16 @@
         </javac>
 
         <!-- Copy all non-java files to classes. -->
-        <copy todir="${buildClasses}">
-            <fileset dir="${src}">
+        <copy todir="${buildClasses}/com">
+            <fileset dir="${src}/com">
+                <exclude name="**/*.java"/>
+            </fileset>
+        	<!-- platform -->
+            <fileset dir="../platform/build/classes/com">
+                <exclude name="**/*.java"/>
+            </fileset>
+        	<!-- jna -->
+            <fileset dir="../../../build/classes/com">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -64,7 +72,6 @@
         <jar jarfile="${buildJar}" basedir="${buildClasses}">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
-                <attribute name="Class-Path" value="${jna-dist}/jna.jar"/>
             </manifest>
         </jar>
     </target>

@@ -65,6 +65,14 @@
             <fileset dir="src">
                 <exclude name="**/*.java"/>
             </fileset>
+        	<!-- platform -->
+            <fileset dir="../platform/build/classes">
+                <exclude name="**/*.java"/>
+            </fileset>
+        	<!-- jna -->
+            <fileset dir="../../../build/classes">
+                <exclude name="**/*.java"/>
+            </fileset>
         </copy>
     </target>
 
@@ -73,7 +81,6 @@
         <jar jarfile="${buildJar}" basedir="${buildClasses}">
             <manifest>
                 <attribute name="Main-Class" value="jnacontrib.x11.demos.XDesktopDemo"/>
-                <attribute name="Class-Path" value="${jna-dist}/jna.jar"/>
             </manifest>
         </jar>
     </target>
