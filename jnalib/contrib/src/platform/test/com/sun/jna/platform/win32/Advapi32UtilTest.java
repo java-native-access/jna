@@ -30,7 +30,7 @@ public class Advapi32UtilTest extends TestCase {
         String currentUserName = Advapi32Util.getUserName();
         System.out.println("GetUserName: " + currentUserName);
 		
-        for(Advapi32Util.Group group : Advapi32Util.getCurrentUserGroups()) {
+        for(Account group : Advapi32Util.getCurrentUserGroups()) {
 			System.out.println(" " + group.fqn + " [" + group.sidString + "]");
 		}
 		
@@ -86,9 +86,9 @@ public class Advapi32UtilTest extends TestCase {
 	}
 	
 	public void testGetCurrentUserGroups() {
-		Advapi32Util.Group[] groups = Advapi32Util.getCurrentUserGroups();
+		Account[] groups = Advapi32Util.getCurrentUserGroups();
 		assertTrue(groups.length > 0);
-		for(Advapi32Util.Group group : groups) {
+		for(Account group : groups) {
 			assertTrue(group.name.length() > 0);
 			assertTrue(group.sidString.length() > 0);
 			assertTrue(group.sid.length > 0);
@@ -108,9 +108,9 @@ public class Advapi32UtilTest extends TestCase {
 				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
 						null, userInfo.usri1_password.toString(), WinBase.LOGON32_LOGON_NETWORK, 
 						WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
-				Advapi32Util.Group[] groups = Advapi32Util.getTokenGroups(phUser.getValue());
+				Account[] groups = Advapi32Util.getTokenGroups(phUser.getValue());
 				assertTrue(groups.length > 0);
-				for(Advapi32Util.Group group : groups) {
+				for(Account group : groups) {
 					assertTrue(group.name.length() > 0);
 					assertTrue(group.sidString.length() > 0);
 					assertTrue(group.sid.length > 0);

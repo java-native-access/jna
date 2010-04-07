@@ -23,6 +23,7 @@ import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -33,34 +34,7 @@ import com.sun.jna.ptr.PointerByReference;
  * @author dblock[at]dblock.org
  */
 public abstract class Advapi32Util {
-
-	/**
-	 * A group.
-	 */
-	public static class Group {
-		/**
-		 * Group name. When unavailable, always equals to sidString.
-		 */
-		public String name;
-		/**
-		 * Group domain, when available.
-		 */
-		public String domain;
-		/**
-		 * Fully qualified group name, including the domain.
-		 * When unavailable, always equals to sidString.
-		 */
-		public String fqn;
-		/**
-		 * String representation of the group SID.
-		 */
-		public String sidString;
-		/**
-		 * Binary representation of the group SID.
-		 */
-		public byte[] sid;
-	}
-
+	
 	/**
 	 * An account.
 	 */
@@ -300,7 +274,7 @@ public abstract class Advapi32Util {
 	 * @param hToken Token.
 	 * @return Token groups.
 	 */
-	public static Group[] getTokenGroups(HANDLE hToken) {
+	public static Account[] getTokenGroups(HANDLE hToken) {
     	// get token group information size
         IntByReference tokenInformationLength = new IntByReference();
         if (Advapi32.INSTANCE.GetTokenInformation(hToken, 
@@ -316,24 +290,23 @@ public abstract class Advapi32Util {
         		tokenInformationLength.getValue(), tokenInformationLength)) {
         	throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        ArrayList<Group> userGroups = new ArrayList<Group>(); 
+        ArrayList<Account> userGroups = new ArrayList<Account>(); 
         // make array of names
     	for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
-    		Group group = new Group();
-    		group.sid = sidAndAttribute.Sid.getBytes();
-    		group.sidString = Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid);
+    		Account group = null;
     		try {
-    			Account account = Advapi32Util.getAccountBySid(sidAndAttribute.Sid);
-    			group.name = account.name;
-    			group.domain = account.domain;
-    			group.fqn = account.fqn;
+    			group = Advapi32Util.getAccountBySid(sidAndAttribute.Sid);
     		} catch(Exception e) {
+    			group = new Account();
+        		group.sid = sidAndAttribute.Sid.getBytes();
+        		group.sidString = Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid);
     			group.name = group.sidString;
     			group.fqn = group.sidString;
+        		group.accountType = SID_NAME_USE.SidTypeGroup;
     		}
     		userGroups.add(group);
     	}
-        return userGroups.toArray(new Group[0]);
+        return userGroups.toArray(new Account[0]);
 	}
 
 	/**
@@ -365,7 +338,7 @@ public abstract class Advapi32Util {
 	 * Return the group memberships of the currently logged on user.
 	 * @return An array of groups.
 	 */
-	public static Group[] getCurrentUserGroups() {		
+	public static Account[] getCurrentUserGroups() {		
     	HANDLEByReference phToken = new HANDLEByReference();    	
     	try {
     		// open thread or process token
