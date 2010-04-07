@@ -43,6 +43,15 @@ public abstract class Advapi32Util {
 		 */
 		public String name;
 		/**
+		 * Group domain, when available.
+		 */
+		public String domain;
+		/**
+		 * Fully qualified group name, including the domain.
+		 * When unavailable, always equals to sidString.
+		 */
+		public String fqn;
+		/**
 		 * String representation of the group SID.
 		 */
 		public String sidString;
@@ -314,9 +323,13 @@ public abstract class Advapi32Util {
     		group.sid = sidAndAttribute.Sid.getBytes();
     		group.sidString = Advapi32Util.convertSidToStringSid(sidAndAttribute.Sid);
     		try {
-    			group.name = Advapi32Util.getAccountBySid(sidAndAttribute.Sid).name;
+    			Account account = Advapi32Util.getAccountBySid(sidAndAttribute.Sid);
+    			group.name = account.name;
+    			group.domain = account.domain;
+    			group.fqn = account.fqn;
     		} catch(Exception e) {
     			group.name = group.sidString;
+    			group.fqn = group.sidString;
     		}
     		userGroups.add(group);
     	}

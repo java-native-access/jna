@@ -31,7 +31,7 @@ public class Advapi32UtilTest extends TestCase {
         System.out.println("GetUserName: " + currentUserName);
 		
         for(Advapi32Util.Group group : Advapi32Util.getCurrentUserGroups()) {
-			System.out.println(" " + group.name + " [" + group.sidString + "]");
+			System.out.println(" " + group.fqn + " [" + group.sidString + "]");
 		}
 		
 		Account accountByName = Advapi32Util.getAccountByName(currentUserName);
