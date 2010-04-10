@@ -442,7 +442,7 @@ ENTRY(ffi_closure_SYSV)
 #if defined __ELF__ && defined __linux__
 	.section	.note.GNU-stack,"",@progbits
 #endif
-	
+
 	.section	".eh_frame","aw",@progbits
 __FRAME_BEGIN__:
 	.4byte	.LECIE1-.LSCIE1	/* Length of Common Information Entry */

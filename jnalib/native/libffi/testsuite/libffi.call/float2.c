@@ -4,7 +4,7 @@
    PR:		none.
    Originator:	From the original ffitest.c  */
 
-/* { dg-excess-errors "" { target x86_64-*-mingw* x86_64-*-cygwin* } } */
+/* { dg-excess-errors "fails" { target x86_64-*-mingw* x86_64-*-cygwin* } } */
 /* { dg-do run { xfail x86_64-*-mingw* x86_64-*-cygwin* } } */
 
 #include "ffitest.h"
