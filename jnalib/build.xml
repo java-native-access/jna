@@ -139,7 +139,7 @@
     <condition property="jdk.home" value="${java.home}/..">
       <available file="${java.home}/../include"/>
     </condition>
-    <fail unless="jdk.home" message="JAVA_HOME/java.home must be a JDK, not JRE"/>
+    <fail unless="jdk.home" message="Can't find JNI headers"/>
     <condition property="libjsig"
                value="${java.home}/lib/${jre.arch}/libjsig.so" else="">
       <available file="${java.home}/lib/${jre.arch}/libjsig.so"/>
@@ -337,6 +337,10 @@
     </condition>
     <condition property="make.SDKROOT" value="SDKROOT=${SDKROOT}">
       <isset property="SDKROOT"/>
+    </condition>
+    <condition property="make.SDKROOT"
+	       value="SDKROOT=/Developer/SDKs/MacOSX10.6.sdk">
+      <available file="/Developer/SDKs/MacOSX10.6.sdk"/>
     </condition>
     <condition property="make.SDKROOT"
 	       value="SDKROOT=/Developer/SDKs/MacOSX10.5.sdk">
