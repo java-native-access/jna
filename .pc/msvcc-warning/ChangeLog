@@ -3,6 +3,16 @@
 	* src/x86/ffi64.c: Fix typo in comment.
 	* src/x86/ffi.c: Use /* ... */ comment style.
 
+2010-02-24  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	* doc/libffi.texi (The Closure API): Fix typo.
+	* doc/libffi.info: Remove.
+
+2010-02-15  Matthias Klose  <doko@ubuntu.com>
+
+	* src/arm/sysv.S (__ARM_ARCH__): Define for processor
+	__ARM_ARCH_7EM__.
+
 2010-01-07  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
 
 	PR libffi/40701

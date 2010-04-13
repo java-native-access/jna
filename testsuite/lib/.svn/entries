@@ -1,9 +1,9 @@
 10
 
 dir
-155837
-svn+ssh://green@gcc.gnu.org/svn/gcc/trunk/libffi/testsuite/lib
-svn+ssh://green@gcc.gnu.org/svn/gcc
+157074
+svn://gcc.gnu.org/svn/gcc/trunk/libffi/testsuite/lib
+svn://gcc.gnu.org/svn/gcc
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2010-01-01T12:29:31.181317Z
+2010-01-06T00:59:53.816646Z
 4ff7f7a31a97eec90af2e4dfb964b213
 2010-01-01T12:32:24.799527Z
 155549

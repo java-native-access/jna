@@ -120,6 +120,10 @@ case "$host" in
 	TARGET=MIPS; TARGETDIR=mips
 	;;
 
+  moxie-*-*)
+        TARGET=MOXIE; TARGETDIR=moxie
+	;;
+
   powerpc*-*-linux* | powerpc-*-sysv*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;

@@ -8,9 +8,9 @@ Index: libffi/ChangeLog
 +	* src/x86/ffi64.c: Fix typo in comment.
 +	* src/x86/ffi.c: Use /* ... */ comment style.
 +
- 2010-01-07  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+ 2010-02-24  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
  
- 	PR libffi/40701
+ 	* doc/libffi.texi (The Closure API): Fix typo.
 Index: libffi/src/x86/ffi.c
 ===================================================================
 --- libffi.orig/src/x86/ffi.c

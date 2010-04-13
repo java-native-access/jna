@@ -623,7 +623,7 @@ Index: libffi/Makefile.am
  
  SUBDIRS = include testsuite man
  
-@@ -27,10 +26,15 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -27,11 +26,15 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
  	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
  	src/sparc/ffi.c src/x86/darwin64.S \
@@ -632,8 +632,8 @@ Index: libffi/Makefile.am
 +	src/x86/darwin.S src/x86/freebsd.S \
  	src/x86/ffi64.c src/x86/unix64.S src/x86/ffitarget.h \
  	src/pa/ffitarget.h src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S \
--	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c
-+	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+-	src/moxie/ffi.c src/moxie/eabi.S
 +	libtool-version ChangeLog.libffi m4/libtool.m4 \
 +	m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4
 +
@@ -641,7 +641,7 @@ Index: libffi/Makefile.am
  
  ## ################################################################
  
-@@ -77,12 +81,17 @@ AM_MAKEFLAGS = \
+@@ -78,12 +81,17 @@ AM_MAKEFLAGS = \
  
  MAKEOVERRIDES=
  
@@ -660,7 +660,7 @@ Index: libffi/Makefile.am
  nodist_libffi_la_SOURCES =
  
  if MIPS
-@@ -166,17 +175,12 @@ nodist_libffi_convenience_la_SOURCES = $
+@@ -170,17 +178,12 @@ nodist_libffi_convenience_la_SOURCES = $
  
  AM_CFLAGS = -Wall -g -fexceptions
  
@@ -21841,7 +21841,7 @@ Index: libffi/configure
  	;;
  
    avr32*-*-*)
-@@ -11444,7 +12271,9 @@ esac
+@@ -11448,7 +12275,9 @@ esac
  
  
  if test $TARGETDIR = unknown; then
@@ -21852,7 +21852,7 @@ Index: libffi/configure
  fi
  
   if test x$TARGET = xMIPS; then
-@@ -11656,12 +12485,16 @@ else
+@@ -11660,12 +12489,16 @@ else
  fi
  
  
@@ -21872,7 +21872,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <stdlib.h>
  #include <stdarg.h>
-@@ -11676,23 +12509,48 @@ main ()
+@@ -11680,23 +12513,48 @@ main ()
    return 0;
  }
  _ACEOF
@@ -21926,7 +21926,7 @@ Index: libffi/configure
  else
    ac_cv_header_stdc=no
  fi
-@@ -11702,14 +12560,18 @@ fi
+@@ -11706,14 +12564,18 @@ fi
  
  if test $ac_cv_header_stdc = yes; then
    # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
@@ -21948,7 +21948,7 @@ Index: libffi/configure
  else
    ac_cv_header_stdc=no
  fi
-@@ -11719,10 +12581,14 @@ fi
+@@ -11723,10 +12585,14 @@ fi
  
  if test $ac_cv_header_stdc = yes; then
    # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
@@ -21965,7 +21965,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <ctype.h>
  #include <stdlib.h>
-@@ -11749,31 +12615,150 @@ main ()
+@@ -11753,31 +12619,150 @@ main ()
    return 0;
  }
  _ACEOF
@@ -22127,7 +22127,7 @@ Index: libffi/configure
  _ACEOF
  
  fi
-@@ -11781,12 +12766,16 @@ done
+@@ -11785,12 +12770,16 @@ done
  
  # The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
  # for constant arguments.  Useless!
@@ -22147,7 +22147,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <alloca.h>
  int
-@@ -11798,28 +12787,59 @@ char *p = (char *) alloca (2 * sizeof (i
+@@ -11802,28 +12791,59 @@ char *p = (char *) alloca (2 * sizeof (i
    return 0;
  }
  _ACEOF
@@ -22216,7 +22216,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #ifdef __GNUC__
  # define alloca __builtin_alloca
-@@ -11851,20 +12871,47 @@ char *p = (char *) alloca (1);
+@@ -11855,20 +12875,47 @@ char *p = (char *) alloca (1);
    return 0;
  }
  _ACEOF
@@ -22270,7 +22270,7 @@ Index: libffi/configure
  
  else
    # The SVR3 libPW and SVR4 libucb both contain incompatible functions
-@@ -11874,15 +12921,21 @@ else
+@@ -11878,15 +12925,21 @@ else
  
  ALLOCA=\${LIBOBJDIR}alloca.$ac_objext
  
@@ -22296,7 +22296,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #if defined CRAY && ! defined CRAY2
  webecray
-@@ -11892,7 +12945,7 @@ wenotbecray
+@@ -11896,7 +12949,7 @@ wenotbecray
  
  _ACEOF
  if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
@@ -22305,7 +22305,7 @@ Index: libffi/configure
    ac_cv_os_cray=yes
  else
    ac_cv_os_cray=no
-@@ -11900,14 +12953,101 @@ fi
+@@ -11904,14 +12957,101 @@ fi
  rm -f conftest*
  
  fi
@@ -22411,7 +22411,7 @@ Index: libffi/configure
  
  cat >>confdefs.h <<_ACEOF
  #define CRAY_STACKSEG_END $ac_func
-@@ -11919,15 +13059,19 @@ fi
+@@ -11923,15 +13063,19 @@ fi
    done
  fi
  
@@ -22435,7 +22435,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  $ac_includes_default
  int
-@@ -11947,88 +13091,766 @@ find_stack_direction ()
+@@ -11951,88 +13095,766 @@ find_stack_direction ()
  int
  main ()
  {
@@ -23265,7 +23265,7 @@ Index: libffi/configure
  $as_echo "$ac_cv_sizeof_long_double" >&6; }
  
  
-@@ -12046,21 +13868,28 @@ if test -z "$HAVE_LONG_DOUBLE"; then
+@@ -12050,21 +13872,28 @@ if test -z "$HAVE_LONG_DOUBLE"; then
      if test $ac_cv_sizeof_long_double != 0; then
        HAVE_LONG_DOUBLE=1
  
@@ -23298,7 +23298,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #ifndef __APPLE_CC__
  	       not a universal capable compiler
-@@ -12068,34 +13897,46 @@ else
+@@ -12072,34 +13901,46 @@ else
  	     typedef int dummy;
  
  _ACEOF
@@ -23367,7 +23367,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <sys/types.h>
  	     #include <sys/param.h>
-@@ -12113,9 +13954,30 @@ main ()
+@@ -12117,9 +13958,30 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23400,7 +23400,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <sys/types.h>
  		#include <sys/param.h>
-@@ -12131,18 +13993,49 @@ main ()
+@@ -12135,18 +13997,49 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23453,7 +23453,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <limits.h>
  
-@@ -12157,9 +14050,30 @@ main ()
+@@ -12161,9 +14054,30 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23486,7 +23486,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <limits.h>
  
-@@ -12174,20 +14088,51 @@ main ()
+@@ -12178,20 +14092,51 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23542,7 +23542,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  short int ascii_mm[] =
  		  { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
-@@ -12213,7 +14158,24 @@ return use_ascii (foo) == use_ebcdic (fo
+@@ -12217,7 +14162,24 @@ return use_ascii (foo) == use_ebcdic (fo
    return 0;
  }
  _ACEOF
@@ -23568,7 +23568,7 @@ Index: libffi/configure
    if grep BIGenDianSyS conftest.$ac_objext >/dev/null; then
  	      ac_cv_c_bigendian=yes
  	    fi
-@@ -12225,10 +14187,20 @@ if ac_fn_c_try_compile "$LINENO"; then :
+@@ -12229,10 +14191,20 @@ if ac_fn_c_try_compile "$LINENO"; then :
  		ac_cv_c_bigendian=unknown
  	      fi
  	    fi
@@ -23590,7 +23590,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  $ac_includes_default
  int
-@@ -12248,44 +14220,82 @@ main ()
+@@ -12252,44 +14224,82 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23685,7 +23685,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  asm (".cfi_startproc\n\t.cfi_endproc");
  int
-@@ -12296,26 +14306,49 @@ main ()
+@@ -12300,26 +14310,49 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23741,7 +23741,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
  
-@@ -12323,7 +14356,11 @@ else
+@@ -12327,7 +14360,11 @@ else
  	save_LDFLAGS="$LDFLAGS"
  	CFLAGS="$CFLAGS -fpic"
  	LDFLAGS="$LDFLAGS -shared"
@@ -23754,7 +23754,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  asm (".text; foo: nop; .data; .align 4; .byte 0; .uaword %r_disp32(foo); .text");
  int
-@@ -12334,33 +14371,64 @@ main ()
+@@ -12338,33 +14375,64 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23828,7 +23828,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  asm (".register %g2, #scratch");
  int
-@@ -12371,27 +14439,50 @@ main ()
+@@ -12375,27 +14443,50 @@ main ()
    return 0;
  }
  _ACEOF
@@ -23885,7 +23885,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
  
-@@ -12402,11 +14493,13 @@ else
+@@ -12406,11 +14497,13 @@ else
  	fi
  
  fi
@@ -23901,7 +23901,7 @@ Index: libffi/configure
  
      fi
  fi
-@@ -12414,14 +14507,16 @@ fi
+@@ -12418,14 +14511,16 @@ fi
  case "$target" in
       *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
  
@@ -23921,7 +23921,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
  
-@@ -12438,35 +14533,41 @@ else
+@@ -12442,35 +14537,41 @@ else
  	rm -f conftest.*
  
  fi
@@ -23972,7 +23972,7 @@ Index: libffi/configure
  	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
  		libffi_cv_hidden_visibility_attribute=yes
  	    fi
-@@ -12474,11 +14575,13 @@ else
+@@ -12478,11 +14579,13 @@ else
  	rm -f conftest.*
  
  fi
@@ -23988,7 +23988,7 @@ Index: libffi/configure
  
  fi
  
-@@ -12489,41 +14592,50 @@ fi
+@@ -12493,41 +14596,50 @@ fi
  
  
  
@@ -24047,7 +24047,7 @@ Index: libffi/configure
  
    fi
  fi
-@@ -12559,7 +14671,7 @@ ac_config_commands="$ac_config_commands 
+@@ -12563,7 +14675,7 @@ ac_config_commands="$ac_config_commands 
  ac_config_links="$ac_config_links include/ffitarget.h:src/$TARGETDIR/ffitarget.h"
  
  
@@ -24056,7 +24056,7 @@ Index: libffi/configure
  
  
  cat >confcache <<\_ACEOF
-@@ -12589,13 +14701,13 @@ _ACEOF
+@@ -12593,13 +14705,13 @@ _ACEOF
      case $ac_val in #(
      *${as_nl}*)
        case $ac_var in #(
@@ -24072,7 +24072,7 @@ Index: libffi/configure
        esac ;;
      esac
    done
-@@ -12603,8 +14715,8 @@ $as_echo "$as_me: WARNING: cache variabl
+@@ -12607,8 +14719,8 @@ $as_echo "$as_me: WARNING: cache variabl
    (set) 2>&1 |
      case $as_nl`(ac_space=' '; set) 2>&1` in #(
      *${as_nl}ac_space=\ *)
@@ -24083,7 +24083,7 @@ Index: libffi/configure
        sed -n \
  	"s/'/'\\\\''/g;
  	  s/^\\([_$as_cr_alnum]*_cv_[_$as_cr_alnum]*\\)=\\(.*\\)/\\1='\\2'/p"
-@@ -12627,11 +14739,11 @@ $as_echo "$as_me: WARNING: cache variabl
+@@ -12631,11 +14743,11 @@ $as_echo "$as_me: WARNING: cache variabl
  if diff "$cache_file" confcache >/dev/null 2>&1; then :; else
    if test -w "$cache_file"; then
      test "x$cache_file" != "x/dev/null" &&
@@ -24097,7 +24097,7 @@ Index: libffi/configure
  $as_echo "$as_me: not updating unwritable cache $cache_file" >&6;}
    fi
  fi
-@@ -12651,8 +14763,8 @@ for ac_i in : $LIBOBJS; do test "x$ac_i"
+@@ -12655,8 +14767,8 @@ for ac_i in : $LIBOBJS; do test "x$ac_i"
    ac_i=`$as_echo "$ac_i" | sed "$ac_script"`
    # 2. Prepend LIBOBJDIR.  When used with automake>=1.10 LIBOBJDIR
    #    will be set to the directory where LIBOBJS objects are built.
@@ -24108,7 +24108,7 @@ Index: libffi/configure
  done
  LIBOBJS=$ac_libobjs
  
-@@ -12668,128 +14780,221 @@ else
+@@ -12672,128 +14784,221 @@ else
  fi
  
  if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
@@ -24392,7 +24392,7 @@ Index: libffi/configure
  fi
  
  
-@@ -12797,10 +15002,9 @@ fi
+@@ -12801,10 +15006,9 @@ fi
  ac_write_fail=0
  ac_clean_files_save=$ac_clean_files
  ac_clean_files="$ac_clean_files $CONFIG_STATUS"
@@ -24405,7 +24405,7 @@ Index: libffi/configure
  #! $SHELL
  # Generated by $as_me.
  # Run this file to recreate the current configuration.
-@@ -12810,18 +15014,17 @@ cat >$CONFIG_STATUS <<_ASEOF || as_write
+@@ -12814,18 +15018,17 @@ cat >$CONFIG_STATUS <<_ASEOF || as_write
  debug=false
  ac_cs_recheck=false
  ac_cs_silent=false
@@ -24431,7 +24431,7 @@ Index: libffi/configure
    emulate sh
    NULLCMD=:
    # Pre-4.2 versions of Zsh do word splitting on ${1+"$@"}, which
-@@ -12829,15 +15032,23 @@ if test -n "${ZSH_VERSION+set}" && (emul
+@@ -12833,15 +15036,23 @@ if test -n "${ZSH_VERSION+set}" && (emul
    alias -g '${1+"$@"}'='"$@"'
    setopt NO_GLOB_SUBST
  else
@@ -24460,7 +24460,7 @@ Index: libffi/configure
  as_nl='
  '
  export as_nl
-@@ -12845,13 +15056,7 @@ export as_nl
+@@ -12849,13 +15060,7 @@ export as_nl
  as_echo='\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
  as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo
  as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo$as_echo
@@ -24475,7 +24475,7 @@ Index: libffi/configure
    as_echo='printf %s\n'
    as_echo_n='printf %s'
  else
-@@ -12862,7 +15067,7 @@ else
+@@ -12866,7 +15071,7 @@ else
      as_echo_body='eval expr "X$1" : "X\\(.*\\)"'
      as_echo_n_body='eval
        arg=$1;
@@ -24484,7 +24484,7 @@ Index: libffi/configure
        *"$as_nl"*)
  	expr "X$arg" : "X\\(.*\\)$as_nl";
  	arg=`expr "X$arg" : ".*$as_nl\\(.*\\)"`;;
-@@ -12885,6 +15090,13 @@ if test "${PATH_SEPARATOR+set}" != set; 
+@@ -12889,6 +15094,13 @@ if test "${PATH_SEPARATOR+set}" != set; 
    }
  fi
  
@@ -24498,7 +24498,7 @@ Index: libffi/configure
  
  # IFS
  # We need space, tab and new line, in precisely that order.  Quoting is
-@@ -12894,15 +15106,15 @@ fi
+@@ -12898,15 +15110,15 @@ fi
  IFS=" ""	$as_nl"
  
  # Find who we are.  Look in the path if we contain no directory separator.
@@ -24517,7 +24517,7 @@ Index: libffi/configure
  IFS=$as_save_IFS
  
       ;;
-@@ -12914,16 +15126,12 @@ if test "x$as_myself" = x; then
+@@ -12918,16 +15130,12 @@ if test "x$as_myself" = x; then
  fi
  if test ! -f "$as_myself"; then
    $as_echo "$as_myself: error: cannot find myself; rerun with an absolute file name" >&2
@@ -24538,7 +24538,7 @@ Index: libffi/configure
  done
  PS1='$ '
  PS2='> '
-@@ -12935,89 +15143,7 @@ export LC_ALL
+@@ -12939,89 +15147,7 @@ export LC_ALL
  LANGUAGE=C
  export LANGUAGE
  
@@ -24629,7 +24629,7 @@ Index: libffi/configure
  if expr a : '\(a\)' >/dev/null 2>&1 &&
     test "X`expr 00001 : '.*\(...\)'`" = X001; then
    as_expr=expr
-@@ -13031,12 +15157,8 @@ else
+@@ -13035,12 +15161,8 @@ else
    as_basename=false
  fi
  
@@ -24643,7 +24643,7 @@ Index: libffi/configure
  as_me=`$as_basename -- "$0" ||
  $as_expr X/"$0" : '.*/\([^/][^/]*\)/*$' \| \
  	 X"$0" : 'X\(//\)$' \| \
-@@ -13056,25 +15178,76 @@ $as_echo X/"$0" |
+@@ -13060,25 +15182,76 @@ $as_echo X/"$0" |
  	  }
  	  s/.*/./; q'`
  
@@ -24731,7 +24731,7 @@ Index: libffi/configure
  
  rm -f conf$$ conf$$.exe conf$$.file
  if test -d conf$$.dir; then
-@@ -13103,56 +15276,8 @@ fi
+@@ -13107,56 +15280,8 @@ fi
  rm -f conf$$ conf$$.exe conf$$.dir/conf$$.file conf$$.file
  rmdir conf$$.dir 2>/dev/null
  
@@ -24789,7 +24789,7 @@ Index: libffi/configure
  else
    test -d ./-p && rmdir ./-p
    as_mkdir_p=false
-@@ -13171,10 +15296,10 @@ else
+@@ -13175,10 +15300,10 @@ else
        if test -d "$1"; then
  	test -d "$1/.";
        else
@@ -24802,7 +24802,7 @@ Index: libffi/configure
  	???[sx]*):;;*)false;;esac;fi
      '\'' sh
    '
-@@ -13189,19 +15314,13 @@ as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr
+@@ -13193,19 +15318,13 @@ as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr
  
  
  exec 6>&1
@@ -24825,7 +24825,7 @@ Index: libffi/configure
  
    CONFIG_FILES    = $CONFIG_FILES
    CONFIG_HEADERS  = $CONFIG_HEADERS
-@@ -13234,11 +15353,10 @@ _ACEOF
+@@ -13238,11 +15357,10 @@ _ACEOF
  
  cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
  ac_cs_usage="\
@@ -24840,7 +24840,7 @@ Index: libffi/configure
  
    -h, --help       print this help, then exit
    -V, --version    print version number and configuration settings, then exit
-@@ -13263,16 +15381,16 @@ $config_links
+@@ -13267,16 +15385,16 @@ $config_links
  Configuration commands:
  $config_commands
  
@@ -24861,7 +24861,7 @@ Index: libffi/configure
  This config.status script is free software; the Free Software Foundation
  gives unlimited permission to copy, distribute and modify it."
  
-@@ -13315,19 +15433,20 @@ do
+@@ -13319,19 +15437,20 @@ do
      case $ac_optarg in
      *\'*) ac_optarg=`$as_echo "$ac_optarg" | sed "s/'/'\\\\\\\\''/g"` ;;
      esac
@@ -24886,7 +24886,7 @@ Index: libffi/configure
    --help | --hel | -h )
      $as_echo "$ac_cs_usage"; exit ;;
    -q | -quiet | --quiet | --quie | --qui | --qu | --q \
-@@ -13335,10 +15454,11 @@ Try \`$0 --help' for more information.";
+@@ -13339,10 +15458,11 @@ Try \`$0 --help' for more information.";
      ac_cs_silent=: ;;
  
    # This is an error.
@@ -24901,7 +24901,7 @@ Index: libffi/configure
       ac_need_defaults=false ;;
  
    esac
-@@ -13379,20 +15499,6 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -13383,20 +15503,6 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
  #
  # INIT-COMMANDS
  #
@@ -24922,7 +24922,7 @@ Index: libffi/configure
  AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
  
  
-@@ -13403,143 +15509,131 @@ AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac
+@@ -13407,143 +15513,131 @@ AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac
  sed_quote_subst='$sed_quote_subst'
  double_quote_subst='$double_quote_subst'
  delay_variable_subst='$delay_variable_subst'
@@ -25185,7 +25185,7 @@ Index: libffi/configure
  GREP \
  EGREP \
  FGREP \
-@@ -13563,6 +15657,8 @@ lt_cv_sys_global_symbol_pipe \
+@@ -13567,6 +15661,8 @@ lt_cv_sys_global_symbol_pipe \
  lt_cv_sys_global_symbol_to_cdecl \
  lt_cv_sys_global_symbol_to_c_name_address \
  lt_cv_sys_global_symbol_to_c_name_address_lib_prefix \
@@ -25194,7 +25194,7 @@ Index: libffi/configure
  lt_prog_compiler_no_builtin_flag \
  lt_prog_compiler_wl \
  lt_prog_compiler_pic \
-@@ -13592,13 +15688,12 @@ variables_saved_for_relink \
+@@ -13596,13 +15692,12 @@ variables_saved_for_relink \
  libname_spec \
  library_names_spec \
  soname_spec \
@@ -25210,7 +25210,7 @@ Index: libffi/configure
        ;;
      *)
        eval "lt_\$var=\\\\\\"\\\$\$var\\\\\\""
-@@ -13625,9 +15720,9 @@ postuninstall_cmds \
+@@ -13629,9 +15724,9 @@ postuninstall_cmds \
  finish_cmds \
  sys_lib_search_path_spec \
  sys_lib_dlsearch_path_spec; do
@@ -25222,7 +25222,7 @@ Index: libffi/configure
        ;;
      *)
        eval "lt_\$var=\\\\\\"\\\$\$var\\\\\\""
-@@ -13635,6 +15730,12 @@ sys_lib_dlsearch_path_spec; do
+@@ -13639,6 +15734,12 @@ sys_lib_dlsearch_path_spec; do
      esac
  done
  
@@ -25235,7 +25235,7 @@ Index: libffi/configure
  ac_aux_dir='$ac_aux_dir'
  xsi_shell='$xsi_shell'
  lt_shell_append='$lt_shell_append'
-@@ -13665,7 +15766,6 @@ for ac_config_target in $ac_config_targe
+@@ -13669,7 +15770,6 @@ for ac_config_target in $ac_config_targe
  do
    case $ac_config_target in
      "fficonfig.h") CONFIG_HEADERS="$CONFIG_HEADERS fficonfig.h" ;;
@@ -25243,7 +25243,7 @@ Index: libffi/configure
      "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
      "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
      "include") CONFIG_COMMANDS="$CONFIG_COMMANDS include" ;;
-@@ -13676,8 +15776,11 @@ do
+@@ -13680,8 +15780,11 @@ do
      "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
      "testsuite/Makefile") CONFIG_FILES="$CONFIG_FILES testsuite/Makefile" ;;
      "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
@@ -25256,7 +25256,7 @@ Index: libffi/configure
    esac
  done
  
-@@ -13705,7 +15808,7 @@ $debug ||
+@@ -13709,7 +15812,7 @@ $debug ||
    trap 'exit_status=$?
    { test -z "$tmp" || test ! -d "$tmp" || rm -fr "$tmp"; } && exit $exit_status
  ' 0
@@ -25265,7 +25265,7 @@ Index: libffi/configure
  }
  # Create a (secure) tmp directory for tmp files.
  
-@@ -13716,7 +15819,11 @@ $debug ||
+@@ -13720,7 +15823,11 @@ $debug ||
  {
    tmp=./conf$$-$RANDOM
    (umask 077 && mkdir "$tmp")
@@ -25278,7 +25278,7 @@ Index: libffi/configure
  
  # Set up the scripts for CONFIG_FILES section.
  # No need to generate them if there are no CONFIG_FILES.
-@@ -13724,16 +15831,10 @@ $debug ||
+@@ -13728,16 +15835,10 @@ $debug ||
  if test -n "$CONFIG_FILES"; then
  
  
@@ -25297,7 +25297,7 @@ Index: libffi/configure
  else
    ac_cs_awk_cr=$ac_cr
  fi
-@@ -13747,18 +15848,24 @@ _ACEOF
+@@ -13751,18 +15852,24 @@ _ACEOF
    echo "$ac_subst_vars" | sed 's/.*/&!$&$ac_delim/' &&
    echo "_ACEOF"
  } >conf$$subs.sh ||
@@ -25325,7 +25325,7 @@ Index: libffi/configure
    else
      ac_delim="$ac_delim!$ac_delim _$ac_delim!! "
    fi
-@@ -13847,7 +15954,9 @@ if sed "s/$ac_cr//" < /dev/null > /dev/n
+@@ -13851,7 +15958,9 @@ if sed "s/$ac_cr//" < /dev/null > /dev/n
  else
    cat
  fi < "$tmp/subs1.awk" > "$tmp/subs.awk" \
@@ -25336,7 +25336,7 @@ Index: libffi/configure
  _ACEOF
  
  # VPATH may cause trouble with some makes, so we remove $(srcdir),
-@@ -13888,7 +15997,9 @@ for ac_last_try in false false :; do
+@@ -13892,7 +16001,9 @@ for ac_last_try in false false :; do
    if test -z "$ac_t"; then
      break
    elif $ac_last_try; then
@@ -25347,7 +25347,7 @@ Index: libffi/configure
    else
      ac_delim="$ac_delim!$ac_delim _$ac_delim!! "
    fi
-@@ -13973,7 +16084,9 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -13977,7 +16088,9 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
  _ACAWK
  _ACEOF
  cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
@@ -25358,7 +25358,7 @@ Index: libffi/configure
  fi # test -n "$CONFIG_HEADERS"
  
  
-@@ -13986,7 +16099,9 @@ do
+@@ -13990,7 +16103,9 @@ do
    esac
    case $ac_mode$ac_tag in
    :[FHL]*:*);;
@@ -25369,7 +25369,7 @@ Index: libffi/configure
    :[FH]-) ac_tag=-:-;;
    :[FH]*) ac_tag=$ac_tag:$ac_tag.in;;
    esac
-@@ -14014,10 +16129,12 @@ do
+@@ -14018,10 +16133,12 @@ do
  	   [\\/$]*) false;;
  	   *) test -f "$srcdir/$ac_f" && ac_f="$srcdir/$ac_f";;
  	   esac ||
@@ -25384,7 +25384,7 @@ Index: libffi/configure
      done
  
      # Let's still pretend it is `configure' which instantiates (i.e., don't
-@@ -14028,7 +16145,7 @@ do
+@@ -14032,7 +16149,7 @@ do
  	`' by configure.'
      if test x"$ac_file" != x-; then
        configure_input="$ac_file.  $configure_input"
@@ -25393,7 +25393,7 @@ Index: libffi/configure
  $as_echo "$as_me: creating $ac_file" >&6;}
      fi
      # Neutralize special characters interpreted by sed in replacement strings.
-@@ -14041,7 +16158,9 @@ $as_echo "$as_me: creating $ac_file" >&6
+@@ -14045,7 +16162,9 @@ $as_echo "$as_me: creating $ac_file" >&6
  
      case $ac_tag in
      *:-:* | *:-) cat >"$tmp/stdin" \
@@ -25404,7 +25404,7 @@ Index: libffi/configure
      esac
      ;;
    esac
-@@ -14069,7 +16188,47 @@ $as_echo X"$ac_file" |
+@@ -14073,7 +16192,47 @@ $as_echo X"$ac_file" |
  	    q
  	  }
  	  s/.*/./; q'`
@@ -25453,7 +25453,7 @@ Index: libffi/configure
    ac_builddir=.
  
  case "$ac_dir" in
-@@ -14126,6 +16285,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_wri
+@@ -14130,6 +16289,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_wri
  # If the template does not know about datarootdir, expand it.
  # FIXME: This hack should be removed a few years after 2.60.
  ac_datarootdir_hack=; ac_datarootdir_seen=
@@ -25461,7 +25461,7 @@ Index: libffi/configure
  ac_sed_dataroot='
  /datarootdir/ {
    p
-@@ -14135,11 +16295,12 @@ ac_sed_dataroot='
+@@ -14139,11 +16299,12 @@ ac_sed_dataroot='
  /@docdir@/p
  /@infodir@/p
  /@localedir@/p
@@ -25476,7 +25476,7 @@ Index: libffi/configure
  $as_echo "$as_me: WARNING: $ac_file_inputs seems to ignore the --datarootdir setting" >&2;}
  _ACEOF
  cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
-@@ -14149,7 +16310,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -14153,7 +16314,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
    s&@infodir@&$infodir&g
    s&@localedir@&$localedir&g
    s&@mandir@&$mandir&g
@@ -25485,7 +25485,7 @@ Index: libffi/configure
  esac
  _ACEOF
  
-@@ -14178,12 +16339,14 @@ s&@MKDIR_P@&$ac_MKDIR_P&;t t
+@@ -14182,12 +16343,14 @@ s&@MKDIR_P@&$ac_MKDIR_P&;t t
  $ac_datarootdir_hack
  "
  eval sed \"\$ac_sed_extra\" "$ac_file_inputs" | $AWK -f "$tmp/subs.awk" >$tmp/out \
@@ -25502,7 +25502,7 @@ Index: libffi/configure
  which seems to be undefined.  Please make sure it is defined." >&5
  $as_echo "$as_me: WARNING: $ac_file contains a reference to the variable \`datarootdir'
  which seems to be undefined.  Please make sure it is defined." >&2;}
-@@ -14193,7 +16356,9 @@ which seems to be undefined.  Please mak
+@@ -14197,7 +16360,9 @@ which seems to be undefined.  Please mak
    -) cat "$tmp/out" && rm -f "$tmp/out";;
    *) rm -f "$ac_file" && mv "$tmp/out" "$ac_file";;
    esac \
@@ -25513,7 +25513,7 @@ Index: libffi/configure
   ;;
    :H)
    #
-@@ -14204,19 +16369,25 @@ which seems to be undefined.  Please mak
+@@ -14208,19 +16373,25 @@ which seems to be undefined.  Please mak
        $as_echo "/* $configure_input  */" \
        && eval '$AWK -f "$tmp/defines.awk"' "$ac_file_inputs"
      } >"$tmp/config.h" \
@@ -25543,7 +25543,7 @@ Index: libffi/configure
    fi
  # Compute "$ac_file"'s index in $config_headers.
  _am_arg="$ac_file"
-@@ -14266,11 +16437,13 @@ $as_echo X"$_am_arg" |
+@@ -14270,11 +16441,13 @@ $as_echo X"$_am_arg" |
        ac_source=$srcdir/$ac_source
      fi
  
@@ -25559,7 +25559,7 @@ Index: libffi/configure
      fi
      rm -f "$ac_file"
  
-@@ -14282,24 +16455,18 @@ $as_echo "$as_me: linking $ac_source to 
+@@ -14286,24 +16459,18 @@ $as_echo "$as_me: linking $ac_source to 
      ln -s "$ac_rel_source" "$ac_file" 2>/dev/null ||
        ln "$ac_source" "$ac_file" 2>/dev/null ||
        cp -p "$ac_source" "$ac_file" ||
@@ -25588,7 +25588,7 @@ Index: libffi/configure
      "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
    # Autoconf 2.62 quotes --file arguments for eval, but not when files
    # are listed without --file.  Let's play safe and only enable the eval
-@@ -14388,7 +16555,47 @@ $as_echo X"$file" |
+@@ -14392,7 +16559,47 @@ $as_echo X"$file" |
  	    q
  	  }
  	  s/.*/./; q'`
@@ -25637,7 +25637,7 @@ Index: libffi/configure
        # echo "creating $dirpart/$file"
        echo '# dummy' > "$dirpart/$file"
      done
-@@ -14416,7 +16623,7 @@ $as_echo X"$file" |
+@@ -14420,7 +16627,7 @@ $as_echo X"$file" |
  # NOTE: Changes made to this file will be lost: look at ltmain.sh.
  #
  #   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005,
@@ -25646,7 +25646,7 @@ Index: libffi/configure
  #   Written by Gordon Matzigkeit, 1996
  #
  #   This file is part of GNU Libtool.
-@@ -14464,12 +16671,6 @@ pic_mode=$pic_mode
+@@ -14468,12 +16675,6 @@ pic_mode=$pic_mode
  # Whether or not to optimize for fast installation.
  fast_install=$enable_fast_install
  
@@ -25659,7 +25659,7 @@ Index: libffi/configure
  # The host system.
  host_alias=$host_alias
  host=$host
-@@ -14519,6 +16720,10 @@ SP2NL=$lt_lt_SP2NL
+@@ -14523,6 +16724,10 @@ SP2NL=$lt_lt_SP2NL
  # turn newlines into spaces.
  NL2SP=$lt_lt_NL2SP
  
@@ -25670,7 +25670,7 @@ Index: libffi/configure
  # An object symbol dumper.
  OBJDUMP=$lt_OBJDUMP
  
-@@ -14540,9 +16745,6 @@ RANLIB=$lt_RANLIB
+@@ -14544,9 +16749,6 @@ RANLIB=$lt_RANLIB
  old_postinstall_cmds=$lt_old_postinstall_cmds
  old_postuninstall_cmds=$lt_old_postuninstall_cmds
  
@@ -25680,7 +25680,7 @@ Index: libffi/configure
  # A C compiler.
  LTCC=$lt_CC
  
-@@ -14564,6 +16766,12 @@ global_symbol_to_c_name_address_lib_pref
+@@ -14568,6 +16770,12 @@ global_symbol_to_c_name_address_lib_pref
  # The name of the directory that contains temporary libtool files.
  objdir=$objdir
  
@@ -25693,7 +25693,7 @@ Index: libffi/configure
  # Used to examine libraries when file_magic_cmd begins with "file".
  MAGIC_CMD=$MAGIC_CMD
  
-@@ -14626,9 +16834,6 @@ library_names_spec=$lt_library_names_spe
+@@ -14630,9 +16838,6 @@ library_names_spec=$lt_library_names_spe
  # The coded name of the library, if different from the real name.
  soname_spec=$lt_soname_spec
  
@@ -25703,7 +25703,7 @@ Index: libffi/configure
  # Command to use after installation of a shared archive.
  postinstall_cmds=$lt_postinstall_cmds
  
-@@ -14668,10 +16873,6 @@ striplib=$lt_striplib
+@@ -14672,10 +16877,6 @@ striplib=$lt_striplib
  # The linker used to build libraries.
  LD=$lt_LD
  
@@ -25714,7 +25714,7 @@ Index: libffi/configure
  # Commands used to build an old-style archive.
  old_archive_cmds=$lt_old_archive_cmds
  
-@@ -14931,7 +17132,7 @@ _LT_EOF
+@@ -14935,7 +17136,7 @@ _LT_EOF
  func_dirname ()
  {
    # Extract subdirectory from the argument.
@@ -25723,7 +25723,7 @@ Index: libffi/configure
    if test "X$func_dirname_result" = "X${1}"; then
      func_dirname_result="${3}"
    else
-@@ -14942,7 +17143,7 @@ func_dirname ()
+@@ -14946,7 +17147,7 @@ func_dirname ()
  # func_basename file
  func_basename ()
  {
@@ -25732,7 +25732,7 @@ Index: libffi/configure
  }
  
  
-@@ -14955,8 +17156,10 @@ func_basename ()
+@@ -14959,8 +17160,10 @@ func_basename ()
  func_stripname ()
  {
    case ${2} in
@@ -25745,7 +25745,7 @@ Index: libffi/configure
    esac
  }
  
-@@ -14967,20 +17170,20 @@ my_sed_long_arg='1s/^-[^=]*=//'
+@@ -14971,20 +17174,20 @@ my_sed_long_arg='1s/^-[^=]*=//'
  # func_opt_split
  func_opt_split ()
  {
@@ -25770,7 +25770,7 @@ Index: libffi/configure
  }
  
  # func_arith arithmetic-term...
-@@ -15044,12 +17247,15 @@ test -d src/$TARGETDIR || mkdir src/$TAR
+@@ -15048,12 +17251,15 @@ test -d src/$TARGETDIR || mkdir src/$TAR
  done # for ac_tag
  
  
@@ -25788,7 +25788,7 @@ Index: libffi/configure
  
  
  # configure is writing to config.log, and then calls config.status.
-@@ -15070,10 +17276,10 @@ if test "$no_create" != yes; then
+@@ -15074,10 +17280,10 @@ if test "$no_create" != yes; then
    exec 5>>config.log
    # Use ||, not &&, to avoid exiting from the if with $? = 1, which
    # would make configure fail if this is the last instruction.
@@ -25848,7 +25848,7 @@ Index: libffi/configure.ac
  	;;
  
    avr32*-*-*)
-@@ -399,6 +403,6 @@ test -d src/$TARGETDIR || mkdir src/$TAR
+@@ -403,6 +407,6 @@ test -d src/$TARGETDIR || mkdir src/$TAR
  
  AC_CONFIG_LINKS(include/ffitarget.h:src/$TARGETDIR/ffitarget.h)
  

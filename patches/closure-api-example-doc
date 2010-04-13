@@ -2,7 +2,7 @@ Index: libffi/doc/libffi.info
 ===================================================================
 --- libffi.orig/doc/libffi.info
 +++ libffi/doc/libffi.info
-@@ -4,7 +4,7 @@ from ../libffi/doc/libffi.texi.
+@@ -4,7 +4,7 @@ This is doc/libffi.info, produced by mak
  This manual is for Libffi, a portable foreign-function interface
  library.
  
@@ -100,39 +100,6 @@ Index: libffi/doc/libffi.info
  File: libffi.info,  Node: Missing Features,  Next: Index,  Prev: Using libffi,  Up: Top
  
  3 Missing Features
-@@ -516,18 +573,19 @@ Index
- 
- 
- Tag Table:
--Node: Top700
--Node: Introduction1436
--Node: Using libffi3072
--Node: The Basics3507
--Node: Simple Example6114
--Node: Types7141
--Node: Primitive Types7424
--Node: Structures9244
--Node: Type Example10104
--Node: Multiple ABIs11327
--Node: The Closure API11698
--Node: Missing Features14618
--Node: Index15111
-+Node: Top706
-+Node: Introduction1448
-+Node: Using libffi3084
-+Node: The Basics3570
-+Node: Simple Example6177
-+Node: Types7204
-+Node: Primitive Types7487
-+Node: Structures9307
-+Node: Type Example10167
-+Node: Multiple ABIs11390
-+Node: The Closure API11761
-+Node: Closure Example14705
-+Node: Missing Features16264
-+Node: Index16757
- 
- End Tag Table
 Index: libffi/doc/libffi.texi
 ===================================================================
 --- libffi.orig/doc/libffi.texi
