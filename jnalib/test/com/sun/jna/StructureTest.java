@@ -1233,7 +1233,7 @@ public class StructureTest extends TestCase {
         }
         Memory p = new Memory(256);
         Structure s = new TestStructure(p);
-        assertEquals("Wrong structure size", p.getSize(), s.size());
+        assertEquals("Wrong structure size", p.size(), s.size());
     }
 
 }
