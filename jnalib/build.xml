@@ -35,7 +35,7 @@
   <!-- JNA library release version -->            
   <property name="jna.major" value="3"/>
   <property name="jna.minor" value="2"/>
-  <property name="jna.revision" value="5"/>
+  <property name="jna.revision" value="6"/>
   <property name="jna.build" value="${build.number}"/>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->
@@ -231,11 +231,15 @@
         <patternset refid="jar-compiled"/>
       </fileset>
     </jar>
-  	<subant target="jar">
- 		<fileset dir="${contrib}" includes="platform/build.xml" />
- 		<fileset dir="${contrib}" includes="*/build.xml" />
-  	</subant>
   </target>
+
+  <target name="contrib-jars" depends="jar" description="Build contrib jars">
+    <subant target="jar">
+      <fileset dir="${contrib}" includes="platform/build.xml" />
+      <fileset dir="${contrib}" includes="*/build.xml" />
+    </subant>
+  </target>
+
   <target name="javah" depends="compile">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
       <class name="com.sun.jna.Function"/>
@@ -435,7 +439,7 @@
 	
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="jar,compile-tests"
+  <target name="test" depends="jar,contrib-jars,compile-tests"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>
@@ -482,9 +486,9 @@
         </fileset>
       </batchtest>
     </junit>
-  	<subant target="test">
- 		<fileset dir="${contrib}" includes="platform/build.xml"/>
-  	</subant>
+    <subant target="test">
+      <fileset dir="${contrib}" includes="platform/build.xml"/>
+    </subant>
     <junitreport todir="${results.junit}">
       <fileset dir="${results.junit}">
         <include name="TEST-*.xml"/>
@@ -548,12 +552,12 @@
     	
       <arg value="-notimestamp"/>
     </javadoc>
-  	<subant target="javadoc">
- 		<fileset dir="${contrib}" includes="platform/build.xml"/>
-  	</subant>	
+    <subant target="javadoc">
+      <fileset dir="${contrib}" includes="platform/build.xml"/>
+    </subant>	
   </target>
 
-  <target name="dist" depends="jar,compile-tests,native,javadoc"
+  <target name="dist" depends="jar,contrib-jars,compile-tests,native,javadoc"
           description="Build distribution files">
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <manifest>
@@ -656,9 +660,9 @@
       <fileset dir="${javadoc}"/>
       <fileset dir="." includes="*~,**/*~"/>
     </delete>
-  	<subant target="clean">
- 		<fileset dir="${contrib}" includes="*/build.xml"/>
-  	</subant>
+    <subant target="clean">
+      <fileset dir="${contrib}" includes="*/build.xml"/>
+    </subant>
   </target>
 
 </project>
