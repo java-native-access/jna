@@ -1035,7 +1035,7 @@ public abstract class Structure {
             // reallocate if necessary
             Memory m = (Memory)this.memory;
             int requiredSize = array.length * size();
-            if (m.getSize() < requiredSize) {
+            if (m.size() < requiredSize) {
                 useMemory(autoAllocate(requiredSize));
             }
         }
