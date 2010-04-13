@@ -143,13 +143,23 @@ public class Memory extends Pointer {
         clear(size);
     }
 
-    /** Returns false if the memory has been freed. */
+    /** @deprecated use {@link #valid()} instead. */
     public boolean isValid() {
+        return valid();
+    }
+
+    /** Returns false if the memory has been freed. */
+    public boolean valid() {
         return peer != 0;
     }
 
-    public long getSize() {
+    public long size() {
         return size;
+    }
+
+    /** @deprecated use {@link #size()} instead. */
+    public long getSize() {
+        return size();
     }
 
 

@@ -1223,4 +1223,17 @@ public class StructureTest extends TestCase {
         Memory p = new Memory(4);
         Structure s = new TestStructure(p);
     }
+
+    public void testPointerCTORWithInitializedFields() {
+        class TestStructure extends Structure {
+            public byte[] field = new byte[256];
+            public TestStructure(Pointer p) {
+                super(p);
+            }
+        }
+        Memory p = new Memory(256);
+        Structure s = new TestStructure(p);
+        assertEquals("Wrong structure size", p.getSize(), s.size());
+    }
+
 }

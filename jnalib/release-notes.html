@@ -1,6 +1,13 @@
 <a name="top"></a>
+<h2>Release 3.x.x</h2>
+<h3>Features</h3>
+<h3>BugFixes</h3>
+<ul>
+<li>Fix bug initializing a structure object from existing memory when the
+  structure has initialized fields (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=133">issue 133</a>).
+</ul>
 <h2>Release 3.2.5</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Split code in examples.jar into a contrib platform.jar package and individual packages for demos.
 <li>Fix Eclipse build and added Eclipse projects for all contrib samples, import projects from jnalib and contrib.
@@ -12,30 +19,30 @@
 <li>Support unicode paths in W32FileUtils.
 <li>Fix exception during dispose in W32FileMonitor.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Avoid allocating memory when Structure is provided a pointer in the ctor.
 <li>Ensure proper value returned in Pointer.getValue() for non-null, unchanged
 NIO Buffer values.
-<li>Use 1.4-compatible URI generation, fixes (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=149">issue 149</a>).
+<li>Use 1.4-compatible URI generation (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=149">issue 149</a>).
 </ul>
 <h2>Release 3.2.4</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Make Pointer ctor public.
 <li>Provide access to Function objects for arbitrary Pointer values.
 <li>Add linux/ia64 binaries (bpiwowar).  See <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=134">issue 134 patch</a>.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Use a more robust method to decode a file-based URL (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=135">issue 135</a>).
 </ul>
 <h2>Release 3.2.3</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Include version information in code in case package information lost.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Fix WindowUtils exception on mouse over TrayIcon.
 <li>Fix bug toggling windows transparent/opaque (win32/OSX).
@@ -48,11 +55,11 @@ NIO Buffer values.
 <li>Properly include sources in Maven zip file (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=129">Issue 129</a>).
 </ul>
 <h2>Release 3.2.2</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Provide length-specified Pointer.getStringArray()
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Fix crash with direct mapping if NULL struct* used (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=125">Issue 125</a>).
 <li>Fix case where null-valued Structure fields would get non-null values on
@@ -65,11 +72,11 @@ NIO Buffer values.
  actually used.
 </ul>
 <h2>Release 3.2.1</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Add HRESULT, LONG mapping to W32API (marc strapetz).
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Fix definition of HWND_BROADCAST in W32API.
 <li>Fix memory alignment checking (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=121">Issue 121</a>).
@@ -80,7 +87,7 @@ NIO Buffer values.
   reads/writes. 
 </ul>
 <h2>Release 3.2.0</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Handle String, Structure, Callback, Buffer, and primitive arrays in direct
   mappings.  Handle NativeMapped and TypeMapper, with optimized paths for
@@ -93,7 +100,7 @@ NIO Buffer values.
   libraries (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=90">Issue 90</a>).
 <li>Enable function lookup within current process on Windows.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Restrict recursive structure reads/writes by thread instead of globally.
   This avoids potentially missed reads/writes with concurrent access (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=120">Issue 120</a>).
@@ -101,7 +108,7 @@ NIO Buffer values.
 <li>Allow types derived from java.nio.Buffer as Structure fields.
 </ul>
 <h2>Release 3.1.0</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Add raw JNI mapping of static Java methods.  Performance is about 10X that of traditional JNA interface mapping, although with less type conversion functionality. 
 <li>Add library option to allow passing/return of Java Objects.
@@ -133,23 +140,23 @@ NIO Buffer values.
 <li> Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=93">issue 93</a> by only manually searching jna.library.path, then falling back to passing the mapped library name to dlopen/LoadLibrary.  This fixes an <a href="http://jira.codehaus.org/browse/JRUBY-3084">issue in JRUBY</a> where the incorrect libc.so.6 was being loaded.
 </ul>
 <h2>Release 3.0.8</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Auto-map Pointer[]/String[]/WString[] return values.
 <li>Provide utility functions to convert String to primitive array.
 <li>Add jna.library.boot.path property to define the directory that the native stub library is loaded from
 </ul>
 <h2>Release 3.0.7</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Improve win32 loading of libraries with dependencies.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Fix bug reading structures with PointerType fields, introduced with Pointer field preservation fix.
 </ul>
 <h2>Release 3.0.6</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Allow arbitrary callback method names if only one method is defined in the class which implements Callback (colinwalters).
 <li>Allow specification of callback type mappers by using a TYPE_MAPPER field (colinwalters).
@@ -159,7 +166,7 @@ NIO Buffer values.
 <li>Allow Structure auto-synch across native calls to be disabled.
 <li>Win64 support.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Avoid overwriting unchanged Structure fields of type Pointer.
 <li>Avoid more content dragging on OSX or warn if it's too late.
@@ -169,7 +176,7 @@ NIO Buffer values.
 <li>Ensure structure memory is allocated in Structure.read/writeField.
 </ul>
 <h2>Release 3.0.5</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Allow explicit declaration of field order for VMs which have an unpredictable field order.
 <li>Check for w32 libraries with a "lib" prefix in addition to normal lookup.
@@ -178,7 +185,7 @@ NIO Buffer values.
 <li>Look up libraries using web start library path, if appropriate (Corey Puffalt).
 <li>Use constants to return integer boolean values.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Properly track cursor on alpha-masked windows.
 <li>Avoid searching /lib or /usr/lib on 64-bit Linux.
@@ -189,14 +196,14 @@ NIO Buffer values.
 <li>Fix NPE reading back into StringArray.
 </ul>
 <h2>Release 3.0.4</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Automatically write contents of Structure.ByReference fields on Structure.write().
 <li>Use the actual parameter type in Function invocations if no parameter type information is available (whether method is missing or untyped varargs).
 <li>Augmented X11 library mappings (xylo).
 <li>Support read/write of NativeMapped arrays within Structure (notably NativeLong).
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Fix library load error when /usr/lib32 and /usr/lib both exist (linux) (Marek Slama).
 <li>Avoid incorrect matches against libraries named with the same prefix
@@ -207,13 +214,13 @@ NIO Buffer values.
 <li>Ensure proper arch name is used on Debian (amd64 instead of x86_64).
 </ul>
 <h2>Release 3.0.3</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Enable build/run using IBM's J9 VM (leonardo).
 <li>Make StdCallFunctionMapper attempt a leading underscore if the simpler mapping doesn't work.
 <li>Allow Structure.read to overwrite final fields (may not work on some 1.4 VMs). 
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Fix NPE when passing an array of Structure.ByReference.
 <li>Compare entire linux library version when finding a match.
@@ -229,12 +236,12 @@ NIO Buffer values.
 </ul>
 
 <h2>Release 3.0.2</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Attempt to force unload of jnidispatch library prior to deleting it (w32).
 <li>Added amd64 targets for OSX, FreeBSD, and Solaris.
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Reduce space allocated for invocation arguments.
 <li>Fix NPE when NativeMapped type is used in a Structure.
@@ -245,12 +252,12 @@ NIO Buffer values.
 </ul>
 
 <h2>Release 3.0.1</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Improve transparent window drawing performance on w32
 <li>Use closure allocation from libffi
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Ensure nested structure arrays initialized with Structure.toArray use the
   appropriate native memory.
@@ -260,7 +267,7 @@ NIO Buffer values.
 </ul>
 
 <h2>Release 3.0</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>More supported platforms, via GCC's libffi (wmeissner)
 <li>Support struct by value as parameter and return value (duncan)
@@ -288,7 +295,7 @@ NIO Buffer values.
 <li>Provide access to aligned memory
 <li>Versioning information embedded in jna.jar and native library
 </ul>
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Avoid attempts to free native library if it failed to load (wmeissner)
 <li>Explicitly check method signatures for varargs instead of heuristically
@@ -310,7 +317,7 @@ NIO Buffer values.
 <li>Avoid changing array references within a Structure on read
 </ul>
 <h2>Release 2.5</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Unions
 <li>Optimized shaped windows (chris deckers & olivier chafik); instantiation time
@@ -320,7 +327,7 @@ improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
 <li>Provide customization of native string encoding with jna.encoding system property 
 </ul>
 
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Properly handle VMs with reversed Structure member storage
 <li>Avoid making window undecorated when clearing window mask on X11
@@ -334,7 +341,7 @@ improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
 </ul>
 
 <h2>Release 2.4</h2>
-<b>Features</b><br>
+<h3>Features</h3>
 <ul>
 <li>Explicitly support unaligned structures
 <li>Auto-reallocate structure arrays
@@ -353,7 +360,7 @@ improved by about 2-3 orders of magnitude for large, mostly contiguous shapes
 <li>Change default w32 build to use GCC (it's free, yo)
 </ul>
 
-<b>Bug Fixes</b><br>
+<h3>Bug Fixes</h3>
 <ul>
 <li>Structure.toArray failed to initialize members
 <li>Disallow explicit free of Structure/Memory

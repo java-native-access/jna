@@ -250,7 +250,12 @@ public abstract class Structure {
             // Set the structure's memory field temporarily to avoid
             // auto-allocating memory in the call to size()
             this.memory = m;
-            this.memory = m.share(offset, size());
+            if (size == CALCULATE_SIZE) {
+                size = calculateSize(false);
+            }
+            if (size != CALCULATE_SIZE) {
+                this.memory = m.share(offset, size);
+            }
             this.array = null;
         }
         catch(IndexOutOfBoundsException e) {
@@ -259,7 +264,7 @@ public abstract class Structure {
     }
 
     protected void ensureAllocated() {
-        if (size == CALCULATE_SIZE) {
+        if (memory == null) {
             allocateMemory();
         }
     }
@@ -297,6 +302,9 @@ public abstract class Structure {
 
     public int size() {
         ensureAllocated();
+        if (size == CALCULATE_SIZE) {
+            size = calculateSize(true);
+        }
         return size;
     }
 
@@ -848,6 +856,11 @@ public abstract class Structure {
             // Update native FFI type information, if needed
             if (this instanceof ByValue) {
                 getTypeInfo();
+            }
+            if (this.memory != null
+                && !(this.memory instanceof AutoAllocated)) {
+                // Ensure we've set bounds on the memory used
+                this.memory = this.memory.share(0, size);
             }
             return size;
         }
