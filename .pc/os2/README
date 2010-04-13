@@ -75,7 +75,6 @@ tested:
 | X86          | Linux            |
 | X86          | Mac OSX          |
 | X86          | OpenBSD          |
-| X86          | OS/2             |
 | X86          | Solaris          |
 | X86          | Windows/Cygwin   |
 | X86          | Windows/MingW    |

@@ -4,3 +4,5 @@ sunstudio
 msvc
 fix-comments
 msvcc-warning
+remove-warnings
+os2
