@@ -852,21 +852,25 @@ v     * @param wide whether to convert from a wide or standard C string
     public String[] getStringArray(long base, int length, boolean wide) {
     
         List strings = new ArrayList();
+        Pointer p;
         int offset = 0;
-        Pointer p = getPointer(base);
         if (length != -1) {
+            p = getPointer(base + offset);
             int count = 0;
             while (count++ < length) {
-                strings.add(p.getString(0, wide));
-                offset += SIZE;
-                p = getPointer(base + offset);
+                String s = p == null ? null : p.getString(0, wide);
+                strings.add(s);
+                if (count < length) {
+                    offset += SIZE;
+                    p = getPointer(base + offset);
+                }
             }
         }
         else {
-            while (p != null) {
-                strings.add(p.getString(0, wide));
+            while ((p = getPointer(base + offset)) != null) {
+                String s = p == null ? null : p.getString(0, wide);
+                strings.add(s);
                 offset += SIZE;
-                p = getPointer(base + offset);
             }
         }
         return (String[])strings.toArray(new String[strings.size()]);

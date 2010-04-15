@@ -309,6 +309,14 @@ public class PointerTest extends TestCase {
         assertEquals("Wrong peer value", p.peer, -1);
     }
 
+    public void testReadStringArrayNULLElement() {
+        Memory m = new Memory(Pointer.SIZE);
+        m.clear();
+        String[] arr = m.getStringArray(0, 1);
+        assertEquals("Wrong array size", 1, arr.length);
+        assertNull("Array element should be null", arr[0]);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(PointerTest.class);
     }
