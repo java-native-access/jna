@@ -1078,10 +1078,12 @@ public abstract class Structure {
      * and visible data fields.
      */
     public boolean equals(Object o) {
-        if (o == this)
+        if (o == this) {
             return true;
-        if (o == null)
+        }
+        if (!(o instanceof Structure)) {
             return false;
+        }
         if (o.getClass() != getClass()
             && ((Structure)o).baseClass() != baseClass()) {
             return false;

@@ -1236,4 +1236,14 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong structure size", p.size(), s.size());
     }
 
+    public void testEquals() {
+        class TestStructure extends Structure {
+            public int field;
+        }
+        Structure s = new TestStructure();
+        assertTrue("Should match self", s.equals(s));
+        assertFalse("Not equal null", s.equals(null));
+        assertFalse("Not equal some other object", s.equals(new Object()));
+    }
+
 }
