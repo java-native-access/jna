@@ -14,13 +14,16 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Ole32.dll Interface.
  * @author dblock[at]dblock.org
  */
-public interface Ole32 extends W32API {
+public interface Ole32 extends StdCallLibrary {
+	
 	Ole32 INSTANCE = (Ole32) Native.loadLibrary(
 			"Ole32", Ole32.class, W32APIOptions.UNICODE_OPTIONS);
 	

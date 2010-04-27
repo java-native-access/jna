@@ -15,7 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.W32API.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
@@ -23,7 +23,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public abstract interface ShellAPI extends StdCallLibrary {
+public interface ShellAPI extends StdCallLibrary {
 
 	int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
 	

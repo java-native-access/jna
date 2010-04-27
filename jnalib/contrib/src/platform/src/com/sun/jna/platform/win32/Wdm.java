@@ -15,13 +15,14 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from Wdm.h.
  * Microsoft Windows DDK.
  * @author dblock[at]dblock.org
  */
-public abstract class Wdm {
+public interface Wdm extends StdCallLibrary {
 	
 	/**
 	 * The KEY_BASIC_INFORMATION structure defines a subset of 
@@ -79,7 +80,7 @@ public abstract class Wdm {
 	 * The KEY_INFORMATION_CLASS enumeration type represents 
 	 * the type of information to supply about a registry key.
 	 */
-	public abstract static class KEY_INFORMATION_CLASS { 
+	public abstract class KEY_INFORMATION_CLASS { 
 		public static final int KeyBasicInformation = 0;
 		public static final int KeyNodeInformation = 1;
 		public static final int KeyFullInformation = 2;

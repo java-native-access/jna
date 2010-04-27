@@ -14,12 +14,17 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /** 
  * Mapping for Shell32.dll API.  
  */
-public interface Shell32 extends W32API {
+public interface Shell32 extends StdCallLibrary {
 	
     Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, 
     		W32APIOptions.UNICODE_OPTIONS);

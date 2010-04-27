@@ -12,10 +12,10 @@
  */
 package com.sun.jna.platform.win32;
 
+import junit.framework.TestCase;
+
 import com.sun.jna.platform.win32.Netapi32Util.DomainController;
 import com.sun.jna.platform.win32.Netapi32Util.DomainTrust;
-
-import junit.framework.TestCase;
 
 public class Netapi32UtilTest extends TestCase {
 

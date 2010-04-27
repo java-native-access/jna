@@ -12,12 +12,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.win32.StdCallLibrary;
+
 /**
  * Ported from LMJoin.h.
  * Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface LMJoin {
+public interface LMJoin extends StdCallLibrary {
 
 	/**
 	 * Status of a workstation.

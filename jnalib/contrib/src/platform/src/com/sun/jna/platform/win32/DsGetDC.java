@@ -6,6 +6,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.win32.StdCallLibrary;
 
 
 /**
@@ -13,7 +14,7 @@ import com.sun.jna.platform.win32.WinNT.PSID;
  * Windows SDK 6.0a
  * @author dblock[at]dblock.org 
  */
-public abstract class DsGetDC {
+public interface DsGetDC extends StdCallLibrary {
 	
 	/**
 	 * The DOMAIN_CONTROLLER_INFO structure is used with the DsGetDcName 
@@ -203,6 +204,7 @@ public abstract class DsGetDC {
 		 * @param count
 		 *  Number of domain trusts.
 		 * @return
+		 *  An array of domain trusts.
 		 */
 		public DS_DOMAIN_TRUSTS[] getTrusts(int count) {
 			return (DS_DOMAIN_TRUSTS[]) t.toArray(count);

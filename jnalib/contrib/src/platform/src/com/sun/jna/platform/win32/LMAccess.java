@@ -16,13 +16,14 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from LMAccess.h.
  * Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface LMAccess {
+public interface LMAccess extends StdCallLibrary {
 	
 	public static class LOCALGROUP_INFO_0 extends Structure {
 		public LOCALGROUP_INFO_0() {

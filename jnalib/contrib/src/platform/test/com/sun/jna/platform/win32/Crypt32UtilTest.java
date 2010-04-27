@@ -12,9 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Native;
-
 import junit.framework.TestCase;
+
+import com.sun.jna.Native;
 
 public class Crypt32UtilTest extends TestCase {
 

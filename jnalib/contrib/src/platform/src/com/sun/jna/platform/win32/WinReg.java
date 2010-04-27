@@ -13,7 +13,9 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * This module contains the function prototypes and constant, type and structure 
@@ -23,9 +25,9 @@ import com.sun.jna.ptr.ByReference;
  * 
  * @author dblock[at]dblock.org Windows SDK 6.0A
  */
-public abstract class WinReg {
+public interface WinReg extends StdCallLibrary {
 	
-	public static class HKEY extends W32API.HANDLE {
+	public static class HKEY extends HANDLE {
         public HKEY() { }
         public HKEY(Pointer p) { super(p); }
         public HKEY(int value) { super(new Pointer(value)); }
@@ -49,8 +51,8 @@ public abstract class WinReg {
             Pointer p = getPointer().getPointer(0);
             if (p == null)
                 return null;
-            if (W32API.INVALID_HANDLE_VALUE.getPointer().equals(p)) 
-                return (HKEY) W32API.INVALID_HANDLE_VALUE;
+            if (WinBase.INVALID_HANDLE_VALUE.getPointer().equals(p)) 
+                return (HKEY) WinBase.INVALID_HANDLE_VALUE;
             HKEY h = new HKEY();
             h.setPointer(p);
             return h;

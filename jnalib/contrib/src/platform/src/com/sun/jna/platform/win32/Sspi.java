@@ -17,13 +17,14 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from Sspi.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public abstract class Sspi {
+public interface Sspi extends StdCallLibrary {
 
     /**
      * Maximum size in bytes of a security token.

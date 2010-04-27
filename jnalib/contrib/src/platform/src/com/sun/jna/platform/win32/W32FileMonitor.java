@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.jna.platform.FileMonitor;
-import com.sun.jna.platform.win32.W32API.HANDLE;
-import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinBase.OVERLAPPED;
 import com.sun.jna.platform.win32.WinNT.FILE_NOTIFY_INFORMATION;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -60,22 +60,32 @@ public class W32FileMonitor extends FileMonitor {
             FileEvent event = null;
             File file = new File(finfo.file, fni.getFilename());
             switch(fni.Action) {
+            case 0:
+            	break;
             case WinNT.FILE_ACTION_MODIFIED:
-                event = new FileEvent(file, FILE_MODIFIED); break;
+                event = new FileEvent(file, FILE_MODIFIED); 
+                break;
             case WinNT.FILE_ACTION_ADDED:
-                event = new FileEvent(file, FILE_CREATED); break;
+                event = new FileEvent(file, FILE_CREATED); 
+                break;
             case WinNT.FILE_ACTION_REMOVED:
-                event = new FileEvent(file, FILE_DELETED); break;
+                event = new FileEvent(file, FILE_DELETED); 
+                break;
             case WinNT.FILE_ACTION_RENAMED_OLD_NAME:
-                event = new FileEvent(file, FILE_NAME_CHANGED_OLD); break;
+                event = new FileEvent(file, FILE_NAME_CHANGED_OLD); 
+                break;
             case WinNT.FILE_ACTION_RENAMED_NEW_NAME:
-                event = new FileEvent(file, FILE_NAME_CHANGED_NEW); break;
+                event = new FileEvent(file, FILE_NAME_CHANGED_NEW); 
+                break;
             default:
                 // TODO: other actions...
                 System.err.println("Unrecognized file action '" + fni.Action + "'");
             }
-            if (event != null)
+        
+            if (event != null) {
                 notify(event);
+            }
+            
             fni = fni.next();
         } while (fni != null);
         
@@ -163,7 +173,7 @@ public class W32FileMonitor extends FileMonitor {
         		WinNT.FILE_LIST_DIRECTORY,
         		mask, null, WinNT.OPEN_EXISTING,
                 flags, null);
-        if (Kernel32.INVALID_HANDLE_VALUE.equals(handle)) {
+        if (WinBase.INVALID_HANDLE_VALUE.equals(handle)) {
             throw new IOException("Unable to open " + file + " (" 
                                   + klib.GetLastError() + ")");
         }
@@ -173,7 +183,7 @@ public class W32FileMonitor extends FileMonitor {
         handleMap.put(handle, finfo);
         // Existing port is returned
         port = klib.CreateIoCompletionPort(handle, port, handle.getPointer(), 0);
-        if (Kernel32.INVALID_HANDLE_VALUE.equals(port)) {
+        if (WinBase.INVALID_HANDLE_VALUE.equals(port)) {
             throw new IOException("Unable to create/use I/O Completion port "
                     + "for " + file + " ("
                     + klib.GetLastError() + ")");

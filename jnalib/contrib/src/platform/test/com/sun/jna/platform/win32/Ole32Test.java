@@ -12,10 +12,10 @@
  */
 package com.sun.jna.platform.win32;
 
+import junit.framework.TestCase;
+
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Guid.GUID;
-
-import junit.framework.TestCase;
 
 public class Ole32Test extends TestCase {
 

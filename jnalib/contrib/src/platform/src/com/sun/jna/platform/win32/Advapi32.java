@@ -14,6 +14,8 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SECURITY_ATTRIBUTES;
@@ -21,13 +23,14 @@ import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Advapi32.dll Interface.
  * @author dblock[at]dblock.org
  */
-public interface Advapi32 extends W32API {
+public interface Advapi32 extends StdCallLibrary {
 	Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32",
 			Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
 

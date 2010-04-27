@@ -23,13 +23,15 @@ import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Netapi32.dll Interface.
  * @author dblock[at]dblock.org
  */
-public interface Netapi32 extends W32API {
+public interface Netapi32 extends StdCallLibrary {
+	
 	Netapi32 INSTANCE = (Netapi32) Native.loadLibrary("Netapi32",
 			Netapi32.class, W32APIOptions.UNICODE_OPTIONS);
 

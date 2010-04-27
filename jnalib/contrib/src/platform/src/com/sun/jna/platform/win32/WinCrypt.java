@@ -16,14 +16,15 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.W32API.HWND;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from WinCrypt.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public abstract class WinCrypt {
+public interface WinCrypt extends StdCallLibrary {
 	
 	/**
 	 * The CryptoAPI CRYPTOAPI_BLOB structure is used for an arbitrary array of bytes.

@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
-import com.sun.jna.platform.win32.W32API.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 
@@ -116,7 +116,7 @@ public class Advapi32UtilTest extends TestCase {
 					assertTrue(group.sid.length > 0);
 				}
 			} finally {
-				if (phUser.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+				if (phUser.getValue() != WinBase.INVALID_HANDLE_VALUE) {
 					Kernel32.INSTANCE.CloseHandle(phUser.getValue());
 				}				
 			}
@@ -143,7 +143,7 @@ public class Advapi32UtilTest extends TestCase {
 				assertTrue(account.name.length() > 0);
 				assertEquals(userInfo.usri1_name.toString(), account.name);
 			} finally {
-				if (phUser.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+				if (phUser.getValue() != WinBase.INVALID_HANDLE_VALUE) {
 					Kernel32.INSTANCE.CloseHandle(phUser.getValue());
 				}
 			}

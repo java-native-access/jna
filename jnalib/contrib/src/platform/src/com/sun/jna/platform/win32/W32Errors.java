@@ -12,7 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.platform.win32.W32API.HRESULT;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 /**
  * Error code definitions for the Win32 API functions.

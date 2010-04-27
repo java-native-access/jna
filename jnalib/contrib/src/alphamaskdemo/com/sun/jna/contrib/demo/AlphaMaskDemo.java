@@ -68,10 +68,10 @@ import com.sun.jna.platform.win32.GDI32.BITMAPINFO;
 import com.sun.jna.platform.win32.User32.BLENDFUNCTION;
 import com.sun.jna.platform.win32.User32.POINT;
 import com.sun.jna.platform.win32.User32.SIZE;
-import com.sun.jna.platform.win32.W32API.HANDLE;
-import com.sun.jna.platform.win32.W32API.HBITMAP;
-import com.sun.jna.platform.win32.W32API.HDC;
-import com.sun.jna.platform.win32.W32API.HWND;
+import com.sun.jna.platform.win32.WinDef.HBITMAP;
+import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.PointerByReference;
 
 // TODO: put this into a reasonable API; right now this is pretty much

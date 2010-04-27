@@ -21,16 +21,18 @@ import com.sun.jna.platform.win32.Sspi.PSecHandle;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecBufferDesc;
 import com.sun.jna.platform.win32.Sspi.TimeStamp;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LUID;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Secur32.dll Interface.
  * @author dblock[at]dblock.org
  */
-public interface Secur32 extends W32API {
+public interface Secur32 extends StdCallLibrary {
 	Secur32 INSTANCE = (Secur32) Native.loadLibrary(
 			"Secur32", Secur32.class, W32APIOptions.UNICODE_OPTIONS);
 	

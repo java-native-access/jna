@@ -17,11 +17,16 @@ import java.awt.Rectangle;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.WinDef.HBITMAP;
+import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HRGN;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /** Definition (incomplete) of <code>gdi32.dll</code>. */
-public interface GDI32 extends W32API {
+public interface GDI32 extends StdCallLibrary {
 
     GDI32 INSTANCE = (GDI32)
         Native.loadLibrary("gdi32", GDI32.class, W32APIOptions.DEFAULT_OPTIONS);

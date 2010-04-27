@@ -15,9 +15,10 @@ package com.sun.jna.platform.win32;
 import java.util.Date;
 
 import com.sun.jna.Platform;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.W32API.HANDLE;
-import com.sun.jna.platform.win32.W32API.ULONG_PTR;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 /**
  * Ported from Winbase.h.
@@ -25,6 +26,10 @@ import com.sun.jna.platform.win32.W32API.ULONG_PTR;
  * @author dblock[at]dblock.org
  */
 public abstract class WinBase {
+
+    /** Constant value representing an invalid HANDLE. */
+    public static HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.createConstant(
+    		Pointer.SIZE == 8 ? -1 : 0xFFFFFFFFL));
 
 	public static final int WAIT_FAILED = 0xFFFFFFFF;
 	public static final int WAIT_OBJECT_0 = ((NTStatus.STATUS_WAIT_0 ) + 0 );

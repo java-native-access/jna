@@ -12,7 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
-public abstract class NTStatus {
+import com.sun.jna.win32.StdCallLibrary;
+
+public interface NTStatus extends StdCallLibrary {
 	
 	public static final int STATUS_SUCCESS = 0x00000000; // ntsubauth
 	public static final int STATUS_BUFFER_TOO_SMALL  = 0xC0000023;

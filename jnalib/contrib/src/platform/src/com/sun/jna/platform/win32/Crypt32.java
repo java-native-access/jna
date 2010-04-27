@@ -17,13 +17,15 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Crypt32.dll Interface.
  * @author dblock[at]dblock.org
  */
-public interface Crypt32 extends W32API {
+public interface Crypt32 extends StdCallLibrary {
+	
 	Crypt32 INSTANCE = (Crypt32) Native.loadLibrary("Crypt32",
 			Crypt32.class, W32APIOptions.UNICODE_OPTIONS);
 	

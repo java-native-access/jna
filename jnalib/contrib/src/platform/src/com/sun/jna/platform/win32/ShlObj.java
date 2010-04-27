@@ -12,14 +12,15 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.platform.win32.W32API.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from ShlObj.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public abstract class ShlObj {
+public interface ShlObj extends StdCallLibrary {
 	
 	public static final DWORD SHGFP_TYPE_CURRENT = new DWORD(0); // current value for user, verify it exists
 	public static final DWORD SHGFP_TYPE_DEFAULT = new DWORD(1); // default value, may not exist

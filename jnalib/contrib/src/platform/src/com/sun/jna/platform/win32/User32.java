@@ -11,11 +11,24 @@
  * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HICON;
+import com.sun.jna.platform.win32.WinDef.HINSTANCE;
+import com.sun.jna.platform.win32.WinDef.HRGN;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.LPARAM;
+import com.sun.jna.platform.win32.WinDef.LRESULT;
+import com.sun.jna.platform.win32.WinDef.WPARAM;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /** Provides access to the w32 user32 library.
@@ -24,7 +37,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author  Todd Fast, todd.fast@sun.com
  * @author twalljava@dev.java.net
  */
-public interface User32 extends W32API {
+public interface User32 extends StdCallLibrary {
 
     User32 INSTANCE = (User32)
         Native.loadLibrary("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);

@@ -16,9 +16,9 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.W32API.HANDLE;
-import com.sun.jna.platform.win32.W32API.HANDLEByReference;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
@@ -271,7 +271,7 @@ public class Advapi32Test extends TestCase {
     	HKEYByReference phKey = new HKEYByReference();
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
     			WinReg.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft", 0, WinNT.KEY_READ, phKey));
-    	assertTrue(W32API.INVALID_HANDLE_VALUE != phKey.getValue());
+    	assertTrue(WinBase.INVALID_HANDLE_VALUE != phKey.getValue());
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	
     }
     

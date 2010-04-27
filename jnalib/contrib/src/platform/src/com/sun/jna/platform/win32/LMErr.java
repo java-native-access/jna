@@ -12,12 +12,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.win32.StdCallLibrary;
+
 /**
  * Ported from LMErr.h.
  * @author dblock[at]dblock.org
  * Windows SDK 6.0A
  */
-public interface LMErr {
+public interface LMErr extends StdCallLibrary {
     public static final int NERR_Success =  0;
     public static final int NERR_BASE =  2100;
     

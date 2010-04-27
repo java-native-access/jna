@@ -18,8 +18,8 @@ import java.util.TreeMap;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.W32API.HANDLE;
-import com.sun.jna.platform.win32.W32API.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
@@ -356,7 +356,7 @@ public abstract class Advapi32Util {
         	}
         	return getTokenGroups(phToken.getValue());
     	} finally {
-    		if (phToken.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+    		if (phToken.getValue() != WinBase.INVALID_HANDLE_VALUE) {
     			if (! Kernel32.INSTANCE.CloseHandle(phToken.getValue())) {
     				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     			}
@@ -424,7 +424,7 @@ public abstract class Advapi32Util {
 				throw new Win32Exception(rc);
 			}
 		} finally {
-			if (phkKey.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+			if (phkKey.getValue() != WinBase.INVALID_HANDLE_VALUE) {
 				rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 				if (rc != W32Errors.ERROR_SUCCESS) {
 					throw new Win32Exception(rc);

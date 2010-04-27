@@ -12,12 +12,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.win32.StdCallLibrary;
+
 /**
  * Ported from LMCons.h.
  * @author dblock[at]dblock.org
  * Windows SDK 6.0A
  */
-public interface LMCons {
+public interface LMCons extends StdCallLibrary {
 	public static final int  NETBIOS_NAME_LEN = 16;            // NetBIOS net name (bytes)
 
 	/**

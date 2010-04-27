@@ -14,7 +14,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.W32API.HRESULT;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 /**
  * Ole32 Utility API.

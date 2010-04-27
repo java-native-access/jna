@@ -13,10 +13,9 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.W32API.DWORD;
-import com.sun.jna.platform.win32.W32API.HRESULT;
-import com.sun.jna.platform.win32.W32API.HWND;
-
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 /**
  * Shell32 Utility API.

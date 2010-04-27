@@ -18,8 +18,9 @@ import junit.framework.TestCase;
 
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
-import com.sun.jna.platform.win32.W32API.DWORD;
-import com.sun.jna.platform.win32.W32API.HANDLE;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 
 public class Kernel32Test extends TestCase {
@@ -68,7 +69,7 @@ public class Kernel32Test extends TestCase {
     }
     
     public void testConvertHWND_BROADCAST() {
-        W32API.HWND hwnd = W32API.HWND_BROADCAST;
+        HWND hwnd = WinUser.HWND_BROADCAST;
         NativeMappedConverter.getInstance(hwnd.getClass()).toNative(hwnd, null);
     }
     
@@ -82,7 +83,7 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testWaitForSingleObject() {
-		W32API.HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+		HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
 		
 		// handle runs into timeout since it is not triggered
 		// WAIT_TIMEOUT = 0x00000102 
@@ -93,7 +94,7 @@ public class Kernel32Test extends TestCase {
 	}
     
     public void testWaitForMultipleObjects(){    	
-    	W32API.HANDLE[] handles = new W32API.HANDLE[2];
+    	HANDLE[] handles = new HANDLE[2];
     	
 		handles[0] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
 		handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
@@ -107,7 +108,7 @@ public class Kernel32Test extends TestCase {
 		Kernel32.INSTANCE.CloseHandle(handles[1]);
 		
 		// invalid Handle
-		handles[0] = W32API.INVALID_HANDLE_VALUE;
+		handles[0] = WinBase.INVALID_HANDLE_VALUE;
 		handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
 		
 		// returns WAIT_FAILED since handle is invalid

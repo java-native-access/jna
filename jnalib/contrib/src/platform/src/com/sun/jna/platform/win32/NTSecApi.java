@@ -19,13 +19,14 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from NTSecApi.h
  * Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public abstract class NTSecApi {
+public interface NTSecApi extends StdCallLibrary {
 	
 	/**
 	 * The LSA_UNICODE_STRING structure is used by various Local Security Authority (LSA) 
@@ -193,6 +194,7 @@ public abstract class NTSecApi {
 		/**
 		 * Get an array of LSA_FOREST_TRUST_RECORD entries.
 		 * @return
+		 *  An array of forest trust records.
 		 */
 		public PLSA_FOREST_TRUST_RECORD[] getEntries() {
 			return (PLSA_FOREST_TRUST_RECORD[]) Entries.toArray(RecordCount.intValue());

@@ -12,11 +12,15 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.FromNativeContext;
 import com.sun.jna.Memory;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.W32API.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -26,7 +30,8 @@ import com.sun.jna.ptr.ByReference;
  * 
  * @author dblock[at]dblock.org Windows SDK 6.0A
  */
-public abstract class WinNT {
+@SuppressWarnings("serial")
+public interface WinNT extends StdCallLibrary {
 
 	//
 	// The following are masks for the predefined standard access types
@@ -304,8 +309,7 @@ public abstract class WinNT {
             h.setPointer(p);
             return h;
         }
-    }
-	
+    }	
 	
 	/**
 	 * The TOKEN_USER structure identifies the user associated with an access token.
@@ -424,7 +428,7 @@ public abstract class WinNT {
 
     public static final int GENERIC_WRITE = 0x40000000;
     
-    public class SECURITY_ATTRIBUTES extends Structure {
+    public static class SECURITY_ATTRIBUTES extends Structure {
         public final int nLength = size();
         public Pointer lpSecurityDescriptor;
         public boolean bInheritHandle;
@@ -775,4 +779,74 @@ public abstract class WinNT {
 		public DWORD LowPart;
 		public DWORD HighPart;					
 	}
+	
+	/**
+	 * Handle to an object.
+	 */
+    public static class HANDLE extends PointerType {
+        private boolean immutable;
+        public HANDLE() { }
+        public HANDLE(Pointer p) { setPointer(p); immutable = true; }
+        
+        /** Override to the appropriate object for INVALID_HANDLE_VALUE. */
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            Object o = super.fromNative(nativeValue, context);
+            if (WinBase.INVALID_HANDLE_VALUE.equals(o))
+                return WinBase.INVALID_HANDLE_VALUE;
+            return o;
+        }
+        
+        public void setPointer(Pointer p) {
+            if (immutable) {
+                throw new UnsupportedOperationException("immutable reference");
+            }
+ 
+            super.setPointer(p);
+        }
+    }
+
+    /**
+     * LPHANDLE
+     */
+    public static class HANDLEByReference extends ByReference {
+        
+    	public HANDLEByReference() {
+            this(null);
+        }
+        
+        public HANDLEByReference(HANDLE h) {
+            super(Pointer.SIZE);
+            setValue(h);
+        }
+        
+        public void setValue(HANDLE h) {
+            getPointer().setPointer(0, h != null ? h.getPointer() : null);
+        }
+        
+        public HANDLE getValue() {
+            Pointer p = getPointer().getPointer(0);
+            if (p == null)
+                return null;
+            if (WinBase.INVALID_HANDLE_VALUE.getPointer().equals(p)) 
+                return WinBase.INVALID_HANDLE_VALUE;
+            HANDLE h = new HANDLE();
+            h.setPointer(p);
+            return h;
+        }
+    }
+    
+
+    /**
+     * Return code used by interfaces. It is zero upon success and 
+     * nonzero to represent an error code or status information. 
+     */
+    class HRESULT extends NativeLong {
+    	public HRESULT() {
+    		
+    	}
+    	
+    	public HRESULT(int value) {
+    		super(value);
+    	}
+    }
 }
