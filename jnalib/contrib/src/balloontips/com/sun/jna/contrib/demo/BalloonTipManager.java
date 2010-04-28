@@ -62,6 +62,7 @@ public class BalloonTipManager {
    * The BalloonTip class defines the look of the BalloonTip object.
    */
   private static final class BalloonTip extends JWindow {
+		private static final long serialVersionUID = 1L;
     private static final Integer HMARGIN = 10;
     private static final Integer VMARGIN = 6;
     private static final Integer VSPACER = 4;
@@ -475,7 +476,6 @@ public class BalloonTipManager {
       /*
        * This class handles events spawned from moving the component.
        */
-      @SuppressWarnings("serial")
       final class ComponentEar extends ComponentAdapter {
         /*
          * (non-Javadoc)
@@ -490,7 +490,6 @@ public class BalloonTipManager {
       /*
        * This class handles events spawned when a mouse button is pressed.
        */
-      @SuppressWarnings("serial")
       final class MouseEar extends MouseAdapter {
         /*
          * (non-Javadoc)
@@ -505,7 +504,6 @@ public class BalloonTipManager {
       /*
        * This class handles events spawned when the component loses focus.
        */
-      @SuppressWarnings("serial")
       final class FocusEar extends FocusAdapter {
         /*
          * (non-Javadoc)

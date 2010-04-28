@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("unused")
 public class LastErrorTest extends TestCase {
     
     private static final Map OPTIONS = new HashMap() {{

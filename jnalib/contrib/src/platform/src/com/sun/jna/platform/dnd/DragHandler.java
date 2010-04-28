@@ -180,7 +180,7 @@ public abstract class DragHandler
     private Component dragSource;
     private GhostedDragImage ghost;
     private Point imageOffset;
-    private Dimension maxGhostSize = MAX_GHOST_SIZE;
+	private Dimension maxGhostSize = MAX_GHOST_SIZE;
     private float ghostAlpha = DEFAULT_GHOST_ALPHA;
 
     /** Enable drags from the given component, supporting the actions in

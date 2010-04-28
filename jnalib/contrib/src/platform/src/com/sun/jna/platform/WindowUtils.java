@@ -149,6 +149,7 @@ public class WindowUtils {
      * </pre></code>
      */
     private static class HeavyweightForcer extends Window {
+		private static final long serialVersionUID = 1L;
         private final boolean packed;
 
         public HeavyweightForcer(Window parent) {
@@ -174,6 +175,7 @@ public class WindowUtils {
      * invoked whenever any part of the ancestor window is repainted.
      */
     protected static class RepaintTrigger extends JComponent {
+		private static final long serialVersionUID = 1L;
 
         protected class Listener
             extends WindowAdapter
@@ -264,6 +266,7 @@ public class WindowUtils {
     public static abstract class NativeWindowUtils {
         protected abstract class TransparentContentPane
             extends JPanel implements AWTEventListener {
+    		private static final long serialVersionUID = 1L;
             private boolean transparent;
             public TransparentContentPane(Container oldContent) {
                 super(new BorderLayout());
@@ -672,6 +675,7 @@ public class WindowUtils {
          * when the window is transparent.
          */
         private class W32TransparentContentPane extends TransparentContentPane {
+    		private static final long serialVersionUID = 1L;
             private HDC memDC;
             private HBITMAP hBitmap;
             private Pointer pbits;
@@ -871,9 +875,9 @@ public class WindowUtils {
             int mode = pi.getWindingRule() == PathIterator.WIND_NON_ZERO
                 ? GDI32.WINDING: GDI32.ALTERNATE;
             float[] coords = new float[6];
-            List points = new ArrayList();
+            List<POINT> points = new ArrayList<POINT>();
             int size = 0;
-            List sizes = new ArrayList();
+            List<Integer> sizes = new ArrayList<Integer>();
             while (!pi.isDone()) {
                 int type = pi.currentSegment(coords);
                 if (type == PathIterator.SEG_MOVETO) {
@@ -1008,7 +1012,7 @@ public class WindowUtils {
                 fixWindowDragging(w, "setWindowAlpha");
             }
             whenDisplayable(w, new Runnable() {
-                public void run() {
+				public void run() {
                     Object peer = w.getPeer();
                     try {
                         peer.getClass().getMethod("setAlpha", new Class[]{
@@ -1049,6 +1053,7 @@ public class WindowUtils {
          * @author Olivier Chafik
          */
         private static class OSXMaskingContentPane extends JPanel {
+    		private static final long serialVersionUID = 1L;
             private Shape shape;
 
             public OSXMaskingContentPane(Component oldContent) {
@@ -1123,7 +1128,7 @@ public class WindowUtils {
             }
             x11.XSetForeground(dpy, gc, new NativeLong(0));
             x11.XFillRectangle(dpy, pm, gc, 0, 0, width, height);
-            final List rlist = new ArrayList();
+            final List<Rectangle> rlist = new ArrayList<Rectangle>();
             try {
                 RasterRangesUtils.outputOccupiedRanges(raster, new RasterRangesUtils.RangesOutput() {
                     public boolean outputRange(int x, int y, int w, int h) {
@@ -1229,7 +1234,7 @@ public class WindowUtils {
                 IntByReference pcount = new IntByReference();
                 info = x11.XGetVisualInfo(dpy, mask, template, pcount);
                 if (info != null) {
-                    List list = new ArrayList();
+                    List<X11.VisualID> list = new ArrayList<X11.VisualID>();
                     XVisualInfo[] infos =
                         (XVisualInfo[])info.toArray(pcount.getValue());
                     for (int i = 0; i < infos.length; i++) {
@@ -1269,9 +1274,9 @@ public class WindowUtils {
                 x11.XQueryTree(dpy, win, rootp, parentp, childrenp, countp);
                 Pointer p = childrenp.getValue();
                 int[] ids = p.getIntArray(0, countp.getValue());
-                for (int i=0;i < ids.length;i++) {
+                for (int id : ids) {
                     // TODO: more verification of correct window?
-                    X11.Window child = new X11.Window(ids[i]);
+                    X11.Window child = new X11.Window(id);
                     X11.XWindowAttributes xwa = new X11.XWindowAttributes();
                     x11.XGetWindowAttributes(dpy, child, xwa);
                     offset.x = -xwa.x;
@@ -1333,6 +1338,7 @@ public class WindowUtils {
         }
 
         private class X11TransparentContentPane extends TransparentContentPane {
+    		private static final long serialVersionUID = 1L;
 
             public X11TransparentContentPane(Container oldContent) {
                 super(oldContent);
@@ -1344,7 +1350,7 @@ public class WindowUtils {
             // Painting directly to the original Graphics
             // fails to properly composite unless the destination
             // is pure black.  Too bad.
-            protected void paintDirect(BufferedImage buf, Rectangle bounds) {
+			protected void paintDirect(BufferedImage buf, Rectangle bounds) {
                 Window window = SwingUtilities.getWindowAncestor(this);
                 X11 x11 = X11.INSTANCE;
                 X11.Display dpy = x11.XOpenDisplay(null);

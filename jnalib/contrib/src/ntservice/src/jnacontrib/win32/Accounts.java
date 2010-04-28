@@ -19,8 +19,6 @@ import java.util.*;
  * @author TB
  */
 public class Accounts {
-  private static Object userInfoLock = new Object();
-  private static Object groupInfoLock = new Object();
   
   /** Creates a new instance of Accounts */
   private Accounts() {
@@ -290,7 +288,6 @@ public class Accounts {
     IntByReference cbSid;
     IntByReference cchReferencedDomainName;
     PointerByReference peUse;
-    String sidString = null;
     byte[] sid;
     char[] referencedDomainName;
     

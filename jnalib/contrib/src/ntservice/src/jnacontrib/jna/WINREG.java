@@ -9,7 +9,6 @@
 
 package jnacontrib.jna;
 
-import com.sun.jna.Pointer;
 
 /**
  *

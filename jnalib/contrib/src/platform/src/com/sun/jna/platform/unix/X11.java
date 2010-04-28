@@ -29,12 +29,14 @@ import com.sun.jna.ptr.PointerByReference;
 public interface X11 extends Library {
 
     class VisualID extends NativeLong {
-        public VisualID() { }
+		private static final long serialVersionUID = 1L;
+		public VisualID() { }
         public VisualID(long value) { super(value); }
     }
 
     class XID extends NativeLong {
-        public static final XID None = null;
+		private static final long serialVersionUID = 1L;
+		public static final XID None = null;
         public XID() { this(0); }
         public XID(long id) { super(id); }
         protected boolean isNone(Object o) {
@@ -52,6 +54,7 @@ public interface X11 extends Library {
         }
     }
     class Atom extends XID {
+		private static final long serialVersionUID = 1L;
         public static final Atom None = null;
         public Atom() { }
         public Atom(long id) { super(id); }
@@ -143,6 +146,7 @@ public interface X11 extends Library {
         }
     }
     class Colormap extends XID {
+		private static final long serialVersionUID = 1L;
         public static final Colormap None = null;
         public Colormap() { }
         public Colormap(long id) { super(id); }
@@ -153,6 +157,7 @@ public interface X11 extends Library {
         }
     }
     class Font extends XID {
+		private static final long serialVersionUID = 1L;
         public static final Font None = null;
         public Font() { }
         public Font(long id) { super(id); }
@@ -163,6 +168,7 @@ public interface X11 extends Library {
         }
     }
     class Cursor extends XID {
+		private static final long serialVersionUID = 1L;
         public static final Cursor None = null;
         public Cursor() { }
         public Cursor(long id) { super(id); }
@@ -173,6 +179,7 @@ public interface X11 extends Library {
         }
     }
     class KeySym extends XID {
+		private static final long serialVersionUID = 1L;
         public static final KeySym None = null;
         public KeySym() { }
         public KeySym(long id) { super(id); }
@@ -183,6 +190,7 @@ public interface X11 extends Library {
         }
     }
     class Drawable extends XID {
+		private static final long serialVersionUID = 1L;
         public static final Drawable None = null;
         public Drawable() { }
         public Drawable(long id) { super(id); }
@@ -193,7 +201,8 @@ public interface X11 extends Library {
         }
     }
     class Window extends Drawable {
-        public static final Window None = null;
+		private static final long serialVersionUID = 1L;
+		public static final Window None = null;
         public Window() { }
         public Window(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
@@ -211,7 +220,8 @@ public interface X11 extends Library {
         }
     }
     class Pixmap extends Drawable {
-        public static final Pixmap None = null;
+		private static final long serialVersionUID = 1L;
+		public static final Pixmap None = null;
         public Pixmap() { }
         public Pixmap(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
@@ -268,6 +278,7 @@ public interface X11 extends Library {
             public short alpha, alphaMask;
         }
         class PictFormat extends NativeLong {
+    		private static final long serialVersionUID = 1L;
             public PictFormat(long value) { super(value); }
             public PictFormat() { }
         }

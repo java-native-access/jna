@@ -44,7 +44,7 @@ public class RasterRangesUtils {
         0x0008, 0x0004, 0x0002, 0x0001
     };
 
-    private static final Comparator COMPARATOR = new Comparator() {
+    private static final Comparator<Object> COMPARATOR = new Comparator<Object>() {
         public int compare(Object o1, Object o2) {
             return ((Rectangle)o1).x - ((Rectangle)o2).x;
         }
@@ -116,11 +116,11 @@ public class RasterRangesUtils {
      * @return true if the output succeeded, false otherwise
      */
     public static boolean outputOccupiedRangesOfBinaryPixels(byte[] binaryBits, int w, int h, RangesOutput out) {
-        Set rects = new HashSet();
-        Set prevLine = Collections.EMPTY_SET;
+        Set<Rectangle> rects = new HashSet<Rectangle>();
+        Set<Rectangle> prevLine = Collections.EMPTY_SET;
         int scanlineBytes = binaryBits.length / h;
         for (int row = 0; row < h; row++) {
-            Set curLine = new TreeSet(COMPARATOR);
+            Set<Rectangle> curLine = new TreeSet<Rectangle>(COMPARATOR);
             int rowOffsetBytes = row * scanlineBytes;
             int startCol = -1;
             // Look at each batch of 8 columns in this row
@@ -163,14 +163,14 @@ public class RasterRangesUtils {
                 // end of last region
                 curLine.add(new Rectangle(startCol, row, w - startCol, 1));
             }
-            Set unmerged = mergeRects(prevLine, curLine);
+            Set<Rectangle> unmerged = mergeRects(prevLine, curLine);
             rects.addAll(unmerged);
             prevLine = curLine;
         }
         // Add anything left over
         rects.addAll(prevLine);
-        for (Iterator i=rects.iterator();i.hasNext();) {
-            Rectangle r = (Rectangle)i.next();
+        for (Iterator<Rectangle> i=rects.iterator();i.hasNext();) {
+            Rectangle r = i.next();
             if (!out.outputRange(r.x, r.y, r.width, r.height)) {
                 return false;
             }
@@ -189,10 +189,10 @@ public class RasterRangesUtils {
      * @return true if the output succeeded, false otherwise
      */
     public static boolean outputOccupiedRanges(int[] pixels, int w, int h, int occupationMask, RangesOutput out) {
-        Set rects = new HashSet();
-        Set prevLine = Collections.EMPTY_SET;
+        Set<Rectangle> rects = new HashSet<Rectangle>();
+        Set<Rectangle> prevLine = Collections.EMPTY_SET;
         for (int row = 0; row < h; row++) {
-            Set curLine = new TreeSet(COMPARATOR);
+            Set<Rectangle> curLine = new TreeSet<Rectangle>(COMPARATOR);
             int idxOffset = row * w;
             int startCol = -1;
 
@@ -213,14 +213,14 @@ public class RasterRangesUtils {
                 // end of last region of current row
                 curLine.add(new Rectangle(startCol, row, w-startCol, 1));
             }
-            Set unmerged = mergeRects(prevLine, curLine);
+            Set<Rectangle> unmerged = mergeRects(prevLine, curLine);
             rects.addAll(unmerged);
             prevLine = curLine;
         }
         // Add anything left over
         rects.addAll(prevLine);
-        for (Iterator i=rects.iterator();i.hasNext();) {
-            Rectangle r = (Rectangle)i.next();
+        for (Iterator<Rectangle> i=rects.iterator();i.hasNext();) {
+            Rectangle r = i.next();
             if (!out.outputRange(r.x, r.y, r.width, r.height)) {
                 return false;
             }
@@ -228,11 +228,11 @@ public class RasterRangesUtils {
         return true;
     }
 
-    private static Set mergeRects(Set prev, Set current) {
-        Set unmerged = new HashSet(prev);
+    private static Set<Rectangle> mergeRects(Set<Rectangle> prev, Set<Rectangle> current) {
+        Set<Rectangle> unmerged = new HashSet<Rectangle>(prev);
         if (!prev.isEmpty() && !current.isEmpty()) {
-            Rectangle[] pr = (Rectangle[])prev.toArray(new Rectangle[prev.size()]);
-            Rectangle[] cr = (Rectangle[])current.toArray(new Rectangle[current.size()]);
+            Rectangle[] pr = prev.toArray(new Rectangle[prev.size()]);
+            Rectangle[] cr = current.toArray(new Rectangle[current.size()]);
             int ipr = 0;
             int icr = 0;
             while (ipr < pr.length && icr < cr.length) {

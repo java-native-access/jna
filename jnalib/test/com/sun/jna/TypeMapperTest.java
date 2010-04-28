@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
 
+@SuppressWarnings("unused")
 public class TypeMapperTest extends TestCase {
     public static interface TestLibrary extends Library {
         int returnInt32Argument(boolean b);
@@ -157,7 +158,7 @@ public class TypeMapperTest extends TestCase {
         mapper.addTypeConverter(Boolean.class, converter);
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
-        StructureTestLibrary lib = (StructureTestLibrary)
+		StructureTestLibrary lib = (StructureTestLibrary)
             Native.loadLibrary("testlib", StructureTestLibrary.class, options);
         StructureTestLibrary.TestStructure s = new StructureTestLibrary.TestStructure(mapper);
         assertEquals("Wrong native size", 4, s.size());

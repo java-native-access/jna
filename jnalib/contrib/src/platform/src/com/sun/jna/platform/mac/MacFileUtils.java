@@ -30,7 +30,7 @@ public class MacFileUtils extends FileUtils {
         if (!trash.exists()) {
             throw new IOException("The Trash was not found in its expected location (" + trash + ")");
         }
-        List failed = new ArrayList();
+        List<File> failed = new ArrayList<File>();
         for (int i=0;i < files.length;i++) {
             File src = files[i];
             File target = new File(trash, src.getName());

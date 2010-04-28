@@ -114,8 +114,7 @@ public class WindowUtilsTest extends TestCase {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             content = frame.getContentPane();
             w = frame;
-        }
-        else {
+        } else {
             Frame frame = JOptionPane.getRootFrame();
             JWindow window = new JWindow(frame, gconfig);
             content = window.getContentPane();
@@ -124,7 +123,8 @@ public class WindowUtilsTest extends TestCase {
         final Window f = w;
         WindowUtils.setWindowTransparent(f, true);
         content.add(new JButton("Quit") {
-            {
+			private static final long serialVersionUID = 1L;
+			{
                 addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         System.exit(0);
@@ -133,6 +133,7 @@ public class WindowUtilsTest extends TestCase {
             }
         }, BorderLayout.SOUTH);
         content.add(new JComponent() {
+			private static final long serialVersionUID = 1L;
             public Dimension getPreferredSize() {
                 return new Dimension(SIZE, SIZE);
             }
@@ -188,7 +189,8 @@ public class WindowUtilsTest extends TestCase {
         transparent.setLocation(X, Y);
         ((JComponent)transparent.getContentPane()).setOpaque(false);
         transparent.getContentPane().add(new JComponent() {
-            public Dimension getPreferredSize() {
+			private static final long serialVersionUID = 1L;
+			public Dimension getPreferredSize() {
                 return new Dimension(W, H);
             }
             protected void paintComponent(Graphics g) {
@@ -362,10 +364,10 @@ public class WindowUtilsTest extends TestCase {
 		});
 		try {
 			Window[] owned = w.getOwnedWindows();
-			WeakReference ref = null;
+			WeakReference<Window> ref = null;
 			for (int i = 0; i < owned.length; i++) {
 				if (owned[i].getClass().getName().indexOf("Heavy") != -1) {
-					ref = new WeakReference(owned[i]);
+					ref = new WeakReference<Window>(owned[i]);
 					break;
 				}
 			}

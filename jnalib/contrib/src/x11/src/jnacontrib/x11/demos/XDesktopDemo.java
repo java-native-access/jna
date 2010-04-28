@@ -28,6 +28,7 @@ import java.util.ArrayList;
  * @author Stefan Endrullis
  */
 public class XDesktopDemo extends JFrame {
+	private static final long serialVersionUID = 1L;
     public static void main(String[] args) throws X.X11Exception {
         new XDesktopDemo();
     }
@@ -152,7 +153,7 @@ public class XDesktopDemo extends JFrame {
     private void refreshDesktopsAndWindows() throws X.X11Exception {
         // update desktop list
         X.Desktop[] desktops = display.getDesktops();
-        ArrayList list = new ArrayList(desktops.length);
+        ArrayList<Object> list = new ArrayList<Object>(desktops.length);
         for (int i = 0; i < desktops.length; i++) {
             list.add(desktops[i].name);
         }
@@ -309,9 +310,10 @@ public class XDesktopDemo extends JFrame {
      * A simple ListModel managing a list of objects.
      */
     public static class SimpleListModel extends AbstractListModel {
-        private ArrayList list;
+		private static final long serialVersionUID = 1L;
+        private ArrayList<Object> list;
 
-        public SimpleListModel(ArrayList list) {
+        public SimpleListModel(ArrayList<Object> list) {
             this.list = list;
         }
 

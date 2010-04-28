@@ -26,7 +26,7 @@ import com.sun.jna.platform.RasterRangesUtils.RangesOutput;
 
 public class RasterRangesUtilsTest extends TestCase {
 
-    Set rects = new HashSet();
+    Set<Rectangle> rects = new HashSet<Rectangle>();
 
     RangesOutput out = new RangesOutput() {
         public boolean outputRange(int x, int y, int w, int h) {
@@ -44,11 +44,12 @@ public class RasterRangesUtilsTest extends TestCase {
     }
 
     public void testDecomposeRectangles() {
-        Set EXPECTED = new HashSet() {
+        Set<Rectangle> EXPECTED = new HashSet<Rectangle>() {
             {
                 add(new Rectangle(0, 0, 100, 50));
                 add(new Rectangle(0, 50, 50, 50));
             }
+    		private static final long serialVersionUID = 1L;
         };
 
         Area mask = new Area(new Rectangle(0, 0, 100, 100));
@@ -60,13 +61,14 @@ public class RasterRangesUtilsTest extends TestCase {
     }
 
     public void testDecomposeRectanglesWithHole() {
-        Set EXPECTED = new HashSet() {
+        Set<Rectangle> EXPECTED = new HashSet<Rectangle>() {
             {
                 add(new Rectangle(0, 0, 100, 25));
                 add(new Rectangle(0, 25, 25, 50));
                 add(new Rectangle(75, 25, 25, 50));
                 add(new Rectangle(0, 75, 100, 25));
             }
+    		private static final long serialVersionUID = 1L;
         };
 
         Area mask = new Area(new Rectangle(0, 0, 100, 100));

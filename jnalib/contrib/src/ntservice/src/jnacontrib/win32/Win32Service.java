@@ -180,7 +180,6 @@ public abstract class Win32Service {
    */
   public void init() {
     Advapi32 advapi32;
-    Advapi32.SERVICE_TABLE_ENTRY[] entries = new Advapi32.SERVICE_TABLE_ENTRY[2];
     Advapi32.SERVICE_TABLE_ENTRY entry;
     
     serviceMain = new ServiceMain();

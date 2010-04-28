@@ -88,7 +88,7 @@ import java.util.Set;
 public abstract class DropHandler implements DropTargetListener {
 
     private int acceptedActions;
-    private List acceptedFlavors;
+    private List<DataFlavor> acceptedFlavors;
     private DropTarget dropTarget;
     private boolean active = true;
     private DropTargetPainter painter;
@@ -347,7 +347,7 @@ public abstract class DropHandler implements DropTargetListener {
      * constructor.
      */
     protected boolean isSupported(DataFlavor[] flavors) {
-        Set set = new HashSet(Arrays.asList(flavors));
+        Set<DataFlavor> set = new HashSet<DataFlavor>(Arrays.asList(flavors));
         set.retainAll(acceptedFlavors);
         return !set.isEmpty();
     }

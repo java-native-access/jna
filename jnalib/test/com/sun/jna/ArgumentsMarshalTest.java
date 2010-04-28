@@ -29,6 +29,7 @@ import junit.framework.TestCase;
  *
  * @author twall@users.sf.net
  */
+@SuppressWarnings("unused")
 public class ArgumentsMarshalTest extends TestCase {
 
     public static interface TestLibrary extends Library {

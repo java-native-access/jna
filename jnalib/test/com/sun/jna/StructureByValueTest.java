@@ -91,14 +91,14 @@ public class StructureByValueTest extends TestCase {
     }
     public void testStructureArgByValue64() {
         ByValue64 data = new ByValue64();
-        final long DATA = (long)MAGIC;
+        final long DATA = MAGIC;
         data.data = DATA;
         assertEquals("Failed to pass 64-bit struct by value",
                      DATA, lib.testStructureByValueArgument64(data));
     }
     public void testStructureArgByValue128() {
         ByValue128 data = new ByValue128();
-        final long DATA = (long)MAGIC;
+        final long DATA = MAGIC;
         data.data = DATA;
         data.data1 = DATA;
         assertEquals("Failed to pass 128-bit struct by value",

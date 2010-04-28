@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.awt.Rectangle;
 
 import com.sun.jna.platform.unix.X11;
+import com.sun.jna.platform.unix.X11.Atom;
 
 /**
  * Object oriented X window system.
@@ -74,7 +75,7 @@ public class X {
         /**
          * HashMap<String,X11.Atom>.
          */
-        private HashMap atomsHash = new HashMap();
+        private HashMap<String, Atom> atomsHash = new HashMap<String, Atom>();
 
         /**
          * Creates the OOWindowUtils using the default display.
@@ -130,7 +131,7 @@ public class X {
          * @return atom
          */
         public X11.Atom getAtom(String name) {
-            X11.Atom atom = (X11.Atom) atomsHash.get(name);
+            X11.Atom atom = atomsHash.get(name);
             if (atom == null) {
                 atom = x11.XInternAtom(x11Display, name, false);
                 atomsHash.put(name, atom);
@@ -404,21 +405,21 @@ public class X {
      */
     public static class ModifierKeymap {
         /** Shift modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList shift = new ArrayList(4);
+        public ArrayList<Byte> shift = new ArrayList<Byte>(4);
         /** Lock modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList lock = new ArrayList(4);
+        public ArrayList<Byte> lock = new ArrayList<Byte>(4);
         /** Control modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList control = new ArrayList(4);
+        public ArrayList<Byte> control = new ArrayList<Byte>(4);
         /** Mod1 modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList mod1 = new ArrayList(4);
+        public ArrayList<Byte> mod1 = new ArrayList<Byte>(4);
         /** Mod2 modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList mod2 = new ArrayList(4);
+        public ArrayList<Byte> mod2 = new ArrayList<Byte>(4);
         /** Mod3 modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList mod3 = new ArrayList(4);
+        public ArrayList<Byte> mod3 = new ArrayList<Byte>(4);
         /** Mod4 modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList mod4 = new ArrayList(4);
+        public ArrayList<Byte> mod4 = new ArrayList<Byte>(4);
         /** Mod5 modifier as an ArrayList&lt;Byte&gt;. */
-        public ArrayList mod5 = new ArrayList(4);
+        public ArrayList<Byte> mod5 = new ArrayList<Byte>(4);
 
         /**
          * Creates an empty modifier keymap.
@@ -444,10 +445,10 @@ public class X {
             int count = xModifierKeymapRef.max_keypermod;
             byte[] keys = xModifierKeymapRef.modifiermap.getByteArray(0, 8*count);
 
-            ArrayList[] allModifiers = getAllModifiers();
+            ArrayList<Byte>[] allModifiers = getAllModifiers();
 
             for (int modNr = 0; modNr < 8; modNr++) {
-                ArrayList modifier = allModifiers[modNr];
+                ArrayList<Byte> modifier = allModifiers[modNr];
                 modifier.clear();
 
                 for (int keyNr = 0; keyNr < count; keyNr++) {
@@ -465,7 +466,7 @@ public class X {
          * @return XModifierKeymap
          */
         public X11.XModifierKeymapRef toXModifierKeyamp() {
-            ArrayList[] allModifiers = getAllModifiers();
+            ArrayList<Byte>[] allModifiers = getAllModifiers();
 
             // determine max list size
             int count = 0;
@@ -475,10 +476,10 @@ public class X {
 
             byte[] keys = new byte[8*count];
             for (int modNr = 0; modNr < 8; modNr++) {
-                ArrayList modifier = allModifiers[modNr];
+                ArrayList<Byte> modifier = allModifiers[modNr];
 
                 for (int keyNr = 0; keyNr < modifier.size(); keyNr++) {
-                    keys[modNr*count + keyNr] = ((Byte) modifier.get(keyNr)).byteValue();
+                    keys[modNr*count + keyNr] = modifier.get(keyNr).byteValue();
                 }
             }
 
@@ -495,7 +496,7 @@ public class X {
          *
          * @return array of modifier lists
          */
-        public ArrayList[] getAllModifiers() {
+        public ArrayList<Byte>[] getAllModifiers() {        	
             return new ArrayList[] {
                     shift, lock, control, mod1, mod2, mod3, mod4, mod5
             };
@@ -1089,6 +1090,7 @@ public class X {
      * General exception which is thrown when an X11 window error occurred.
      */
     public static class X11Exception extends Exception {
+		private static final long serialVersionUID = 1L;
         public X11Exception() {
         }
 

@@ -84,7 +84,7 @@ public abstract class Structure {
             "first", "second", "middle", "penultimate", "last",
         };
         public int first;
-        public int second;
+		public int second;
         public int middle;
         public int penultimate;
         public int last;
@@ -369,7 +369,7 @@ public abstract class Structure {
             private int indexOf(Object o) {
                 Structure s1 = (Structure)o;
                 for (int i=0;i < count;i++) {
-                    Structure s2 = (Structure)elements[i];
+                    Structure s2 = elements[i];
                     if (s1 == s2
                         || (s1.getClass() == s2.getClass()
                             && s1.size() == s2.size()

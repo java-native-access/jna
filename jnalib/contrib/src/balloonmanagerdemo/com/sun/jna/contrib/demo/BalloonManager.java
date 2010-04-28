@@ -57,6 +57,7 @@ public class BalloonManager {
     }
     
     private static class DropShadow extends JWindow {
+		private static final long serialVersionUID = 1L;
         private static final float SHADOW_ALPHA = .25f;
         private static final float YSCALE = .80f;
         private static final double ANGLE = 2*Math.PI/24;
@@ -149,6 +150,7 @@ public class BalloonManager {
     }
     
     private static final class BubbleWindow extends JWindow {
+		private static final long serialVersionUID = 1L;
         private static final int Y_OFFSET = 50;
         private static final int ARC = 25;
 

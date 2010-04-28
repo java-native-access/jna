@@ -28,6 +28,7 @@ import com.sun.jna.ptr.LongByReference;
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net
  */
+@SuppressWarnings("unused")
 public class StructureTest extends TestCase {
 
     public static void main(java.lang.String[] argList) {

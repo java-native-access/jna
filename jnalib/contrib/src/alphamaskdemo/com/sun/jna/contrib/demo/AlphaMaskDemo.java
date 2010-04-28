@@ -127,7 +127,7 @@ public class AlphaMaskDemo implements Runnable {
 
     private com.sun.jna.Memory buffer;
     private int[] pixels;
-    private void updateX11(boolean a, boolean i) {
+	private void updateX11(boolean a, boolean i) {
         X11 x11 = X11.INSTANCE;
         X11.Window win = X11.Window.None;
         Display dpy = x11.XOpenDisplay(null);
@@ -386,8 +386,9 @@ public class AlphaMaskDemo implements Runnable {
         JPanel p = new JPanel(new BorderLayout(8, 8));
         p.setBorder(new EmptyBorder(8, 8, 8, 8));
         p.setTransferHandler(new TransferHandler() {
+    		private static final long serialVersionUID = 1L;
             public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-                List list = Arrays.asList(transferFlavors);
+                List<DataFlavor> list = Arrays.asList(transferFlavors);
                 if (list.contains(URL_FLAVOR)
                     || list.contains(URI_LIST_FLAVOR)
                     || list.contains(DataFlavor.imageFlavor)
@@ -424,8 +425,8 @@ public class AlphaMaskDemo implements Runnable {
                         return true;
                     }
                     if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
-                        List files = (List)t.getTransferData(DataFlavor.javaFileListFlavor);
-                        File f = (File)files.get(0);
+                        List<File> files = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+                        File f = files.get(0);
                         URL url = new URL("file://" + f.toURI().toURL().getPath());
                         Image image = Toolkit.getDefaultToolkit().getImage(url);
                         setImage(image);

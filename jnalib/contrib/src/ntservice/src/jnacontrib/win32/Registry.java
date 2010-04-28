@@ -9,16 +9,19 @@
 
 package jnacontrib.win32;
 
-import jnacontrib.jna.*;
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import jnacontrib.jna.Advapi32;
+import jnacontrib.jna.WINBASE;
+import jnacontrib.jna.WINERROR;
+import jnacontrib.jna.WINNT;
+import jnacontrib.jna.WINREG;
+
+import com.sun.jna.ptr.IntByReference;
 
 /**
  * Methods for accessing the Windows Registry. Only String and DWORD values supported at the moment.

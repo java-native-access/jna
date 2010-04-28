@@ -61,6 +61,7 @@ public class ShapedWindowDemo {
     public static final int ICON_SIZE = 64;
 
     private static class ClockFace extends JComponent {
+		private static final long serialVersionUID = 1L;
         private Stroke border;
         private Stroke secondHand;
         private Stroke minuteHand;
@@ -206,11 +207,13 @@ public class ShapedWindowDemo {
                     public void actionPerformed(ActionEvent e) {
                         frame.setState(JFrame.ICONIFIED);
                     }
+            		private static final long serialVersionUID = 1L;
                 });
                 m.add(new AbstractAction("Close") {
                     public void actionPerformed(ActionEvent e) {
                         System.exit(0);
                     }
+            		private static final long serialVersionUID = 1L;
                 });
                 m.pack();
                 m.show(e.getComponent(), e.getX(), e.getY());

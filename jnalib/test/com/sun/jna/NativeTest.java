@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import junit.framework.TestCase;
 
+@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
     
     public void testDefaultStringEncoding() throws Exception {

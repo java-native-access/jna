@@ -9,10 +9,14 @@
 
 package jnacontrib.jna;
 
-import static com.sun.jna.Library.*;
-import com.sun.jna.TypeMapper;
-import com.sun.jna.win32.*;
-import java.util.*;
+import static com.sun.jna.Library.OPTION_FUNCTION_MAPPER;
+import static com.sun.jna.Library.OPTION_TYPE_MAPPER;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.sun.jna.win32.W32APIFunctionMapper;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  *
@@ -24,5 +28,6 @@ public interface Options {
       put(OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
       put(OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
     }
+	private static final long serialVersionUID = 1L;
   };
 }

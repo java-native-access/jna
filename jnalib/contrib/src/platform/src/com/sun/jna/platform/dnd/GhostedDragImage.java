@@ -56,6 +56,7 @@ public class GhostedDragImage {
         // FIXME ensure gc is compatible (X11)
         GraphicsConfiguration gc = parent.getGraphicsConfiguration();
         dragImage = new Window(JOptionPane.getRootFrame(), gc) {
+    		private static final long serialVersionUID = 1L;
             public void paint(Graphics g) {
                 icon.paintIcon(this, g, 0, 0);
             }

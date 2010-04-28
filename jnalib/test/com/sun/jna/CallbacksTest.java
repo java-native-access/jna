@@ -29,6 +29,7 @@ import com.sun.jna.ptr.IntByReference;
  *
  * @author twall@users.sf.net
  */
+@SuppressWarnings("unused")
 public class CallbacksTest extends TestCase {
 
     private static final double DOUBLE_MAGIC = -118.625d;
