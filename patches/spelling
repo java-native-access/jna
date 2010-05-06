@@ -1,0 +1,67 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,10 @@
++2010-05-05  Michael Kohler <michaelkohler@live.com>
++
++	* src/dlmalloc.c (dlfree): Fix spelling.
++	* src/ia64/ffi.c (ffi_prep_cif_machdep): Ditto.
++	* configure.ac: Ditto.
++	* configure: Rebuilt.
++
+ 2010-04-13  Dan Witte  <dwitte@mozilla.com>
+ 
+ 	* msvcc.sh: Build with -W3 instead of -Wall.
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -12143,7 +12143,7 @@ TARGETDIR="unknown"
+ case "$host" in
+   alpha*-*-*)
+ 	TARGET=ALPHA; TARGETDIR=alpha;
+-	# Support 128-bit long double, changable via command-line switch.
++	# Support 128-bit long double, changeable via command-line switch.
+ 	HAVE_LONG_DOUBLE='defined(__LONG_DOUBLE_128__)'
+ 	;;
+ 
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -43,7 +43,7 @@ TARGETDIR="unknown"
+ case "$host" in
+   alpha*-*-*)
+ 	TARGET=ALPHA; TARGETDIR=alpha;
+-	# Support 128-bit long double, changable via command-line switch.
++	# Support 128-bit long double, changeable via command-line switch.
+ 	HAVE_LONG_DOUBLE='defined(__LONG_DOUBLE_128__)'
+ 	;;
+ 
+Index: libffi/src/dlmalloc.c
+===================================================================
+--- libffi.orig/src/dlmalloc.c
++++ libffi/src/dlmalloc.c
+@@ -4251,7 +4251,7 @@ void* dlmalloc(size_t bytes) {
+ 
+ void dlfree(void* mem) {
+   /*
+-     Consolidate freed chunks with preceeding or succeeding bordering
++     Consolidate freed chunks with preceding or succeeding bordering
+      free chunks, if they exist, and then place in a bin.  Intermixed
+      with special cases for top, dv, mmapped chunks, and usage errors.
+   */
+Index: libffi/src/ia64/ffi.c
+===================================================================
+--- libffi.orig/src/ia64/ffi.c
++++ libffi/src/ia64/ffi.c
+@@ -225,7 +225,7 @@ ffi_prep_cif_machdep(ffi_cif *cif)
+   int flags;
+ 
+   /* Adjust cif->bytes to include space for the bits of the ia64_args frame
+-     that preceeds the integer register portion.  The estimate that the 
++     that precedes the integer register portion.  The estimate that the
+      generic bits did for the argument space required is good enough for the
+      integer component.  */
+   cif->bytes += offsetof(struct ia64_args, gp_regs[0]);

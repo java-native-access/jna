@@ -1,10 +1,3 @@
-2010-05-05  Michael Kohler <michaelkohler@live.com>
-
-	* src/dlmalloc.c (dlfree): Fix spelling.
-	* src/ia64/ffi.c (ffi_prep_cif_machdep): Ditto.
-	* configure.ac: Ditto.
-	* configure: Rebuilt.
-
 2010-04-13  Dan Witte  <dwitte@mozilla.com>
 
 	* msvcc.sh: Build with -W3 instead of -Wall.
