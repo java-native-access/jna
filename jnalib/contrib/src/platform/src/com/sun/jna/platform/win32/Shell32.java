@@ -22,7 +22,7 @@ import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /** 
- * Mapping for Shell32.dll API.  
+ * Shell32.dll Interface.
  */
 public interface Shell32 extends StdCallLibrary {
 	

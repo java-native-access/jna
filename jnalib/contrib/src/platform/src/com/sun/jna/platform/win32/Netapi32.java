@@ -39,13 +39,13 @@ public interface Netapi32 extends StdCallLibrary {
 	 * Retrieves join status information for the specified computer.
 	 * 
 	 * @param lpServer
-	 *            Specifies the DNS or NetBIOS name of the computer on which to
-	 *            call the function.
+	 *  Specifies the DNS or NetBIOS name of the computer on which to
+	 *  call the function.
 	 * @param lpNameBuffer
-	 *            Receives the NetBIOS name of the domain or workgroup to which
-	 *            the computer is joined.
+	 *  Receives the NetBIOS name of the domain or workgroup to which
+	 *  the computer is joined.
 	 * @param BufferType
-	 *            Join status of the specified computer.
+	 *  Join status of the specified computer.
 	 * @return If the function succeeds, the return value is NERR_Success. If
 	 *         the function fails, the return value is a system error code.
 	 */
@@ -66,27 +66,27 @@ public interface Netapi32 extends StdCallLibrary {
 	 * server.
 	 * 
 	 * @param serverName
-	 *            Specifies the DNS or NetBIOS name of the remote server on
-	 *            which the function is to execute. If this parameter is NULL,
-	 *            the local computer is used.
+	 *  Specifies the DNS or NetBIOS name of the remote server on
+	 *  which the function is to execute. If this parameter is NULL,
+	 *  the local computer is used.
 	 * @param level
-	 *            Specifies the information level of the data.
+	 *  Specifies the information level of the data.
 	 * @param bufptr
-	 *            Pointer to the address of the buffer that receives the
-	 *            information structure.
+	 *  Pointer to the address of the buffer that receives the
+	 *  information structure.
 	 * @param prefmaxlen
-	 *            Specifies the preferred maximum length of returned data, in
-	 *            bytes.
+	 *  Specifies the preferred maximum length of returned data, in
+	 *  bytes.
 	 * @param entriesread
-	 *            Pointer to a value that receives the count of elements
-	 *            actually enumerated.
+	 *  Pointer to a value that receives the count of elements
+	 *  actually enumerated.
 	 * @param totalentries
-	 *            Pointer to a value that receives the approximate total number
-	 *            of entries that could have been enumerated from the current
-	 *            resume position.
+	 *  Pointer to a value that receives the approximate total number
+	 *  of entries that could have been enumerated from the current
+	 *  resume position.
 	 * @param resume_handle
-	 *            Pointer to a value that contains a resume handle that is used
-	 *            to continue an existing local group search.
+	 *  Pointer to a value that contains a resume handle that is used
+	 *  to continue an existing local group search.
 	 * @return If the function succeeds, the return value is NERR_Success.
 	 */
 	public int NetLocalGroupEnum(String serverName, int level,

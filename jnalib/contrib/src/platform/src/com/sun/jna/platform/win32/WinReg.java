@@ -20,10 +20,9 @@ import com.sun.jna.win32.StdCallLibrary;
 /**
  * This module contains the function prototypes and constant, type and structure 
  * definitions for the Windows 32-Bit Registry API.
- * 
- * Ported from WinReg.h.
- * 
- * @author dblock[at]dblock.org Windows SDK 6.0A
+ * Ported from WinReg.h
+ * Microsoft Windows SDK 6.0A.
+ * @author dblock[at]dblock.org
  */
 public interface WinReg extends StdCallLibrary {
 	

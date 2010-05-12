@@ -20,8 +20,8 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
- * Ported from Windef.h. Windows SDK 6.0a
- * 
+ * Ported from Windef.h. 
+ * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")

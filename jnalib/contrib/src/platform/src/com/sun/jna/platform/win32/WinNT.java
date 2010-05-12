@@ -25,10 +25,9 @@ import com.sun.jna.win32.StdCallLibrary;
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
  * by NT, but exposed through the Win32 API.
- * 
  * Ported from WinNT.h.
- * 
- * @author dblock[at]dblock.org Windows SDK 6.0A
+ * Microsoft Windows SDK 6.0A.
+ * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
 public interface WinNT extends StdCallLibrary {
