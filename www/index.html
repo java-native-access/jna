@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2010-04-06">
+<meta name="date" content="2010-05-12">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -763,10 +763,11 @@ If you want to do a build yourself, you'll need <a
 href="http://ant.apache.org">ANT</a>, <a
 href="http://directory.fsf.org/make.html">GNU make</a> and <a
 href="http://gcc.gnu.org">GCC</a>.  On windows, you will need either <a
-href="http://www.cygwin.com">cygwin GCC</a> or the MINGW32 version (MSVC is
-used to build the win64 target, so you could probably use it for win32 as
-well, but I doubt it's worth the effort).  To rebuild <code>jna.jar</code>,
-and run the unit tests, do<br>   
+href="http://www.cygwin.com">cygwin GCC (3.4.4)</a> (the build is not yet
+configured properly to use GCC 4) or the MINGW32 version
+(MSVC is used to build the win64 target, so you could probably use it for
+win32 as well, but I doubt it's worth the effort).  To
+rebuild <code>jna.jar</code>, and run the unit tests, do<br>   
 <blockquote><code><pre>
 % ant dist test
 </pre></code></blockquote>
