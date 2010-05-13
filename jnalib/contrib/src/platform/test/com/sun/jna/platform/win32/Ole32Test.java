@@ -79,12 +79,15 @@ public class Ole32Test extends TestCase {
         GUID riid = Ole32Util.getGUIDFromString("{D8F015C0-C278-11CE-A49E-444553540000}"); //IShellDispatch
 
         PointerByReference iUnknown = new PointerByReference();
-        int dwClsContext = Ole32.CLSCTX_ALL;
+        final int CLSCTX_ALL = (WTypes.CLSCTX_INPROC_SERVER
+            | WTypes.CLSCTX_INPROC_HANDLER
+            | WTypes.CLSCTX_LOCAL_SERVER
+            | WTypes.CLSCTX_REMOTE_SERVER);
 
         HRESULT hr = Ole32.INSTANCE.CoCreateInstance(
                 guid,
                 null, // pOuter = null, no aggregation
-                dwClsContext,
+                CLSCTX_ALL,
                 riid,
                 iUnknown);
         assertTrue(W32Errors.SUCCEEDED(hr.intValue()));

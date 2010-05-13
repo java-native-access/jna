@@ -87,21 +87,11 @@ public interface Ole32 extends StdCallLibrary {
      */
     void CoUninitialize();
 
-    public static final int CLSCTX_INPROC_SERVER = 0x1;
-    public static final int CLSCTX_INPROC_HANDLER = 0x2;
-    public static final int CLSCTX_LOCAL_SERVER = 0x4;
-    public static final int CLSCTX_INPROC_SERVER16 = 0x8;
-    public static final int CLSCTX_REMOTE_SERVER = 0x10;
-    public static final int CLSCTX_ALL = (CLSCTX_INPROC_SERVER
-            | CLSCTX_INPROC_HANDLER
-            | CLSCTX_LOCAL_SERVER
-            | CLSCTX_REMOTE_SERVER);
-
     /**
      * Creates a single uninitialized object of the class associated with a specified CLSID.
      * @param rclsid The CLSID associated with the data and code that will be used to create the object.
      * @param pUnkOuter If NULL, indicates that the object is not being created as part of an aggregate. If non-NULL, pointer to the aggregate object's IUnknown interface (the controlling IUnknown).
-     * @param dwClsContext Context in which the code that manages the newly created object will run. The values are taken from the enumeration CLSCTX.
+     * @param dwClsContext Context in which the code that manages the newly created object will run. The values are taken from the enumeration CLSCTX defined in WTypes.
      * @param riid A reference to the identifier of the interface to be used to communicate with the object.
      * @param ppv Address of pointer variable that receives the interface pointer requested in riid. Upon successful return, *ppv contains the requested interface pointer. Upon failure, *ppv contains NULL.
      * @return an HRESULT
