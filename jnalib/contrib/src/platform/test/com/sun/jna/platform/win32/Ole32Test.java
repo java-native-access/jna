@@ -15,7 +15,10 @@ package com.sun.jna.platform.win32;
 import junit.framework.TestCase;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.PointerByReference;
 
 public class Ole32Test extends TestCase {
 
@@ -60,5 +63,35 @@ public class Ole32Test extends TestCase {
     	assertTrue(len > 1);
     	lpsz[len - 1] = 0;    	
     	assertEquals("{00000000-0000-0000-0000-000000000000}", Native.toString(lpsz));
+    }
+
+    public void testCoInitializeEx() {
+        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, 0);
+        assertTrue(W32Errors.SUCCEEDED(hr.intValue()) || hr.intValue() == W32Errors.RPC_E_CHANGED_MODE);
+        if (W32Errors.SUCCEEDED(hr.intValue()))
+            Ole32.INSTANCE.CoUninitialize();
+    }
+
+    public void testCoCreateInstance() {
+        HRESULT hrCI = Ole32.INSTANCE.CoInitializeEx(null, 0);
+
+        GUID guid = Ole32Util.getGUIDFromString("{13709620-C279-11CE-A49E-444553540000}"); //Shell object
+        GUID riid = Ole32Util.getGUIDFromString("{D8F015C0-C278-11CE-A49E-444553540000}"); //IShellDispatch
+
+        PointerByReference iUnknown = new PointerByReference();
+        int dwClsContext = Ole32.CLSCTX_ALL;
+
+        HRESULT hr = Ole32.INSTANCE.CoCreateInstance(
+                guid,
+                null, // pOuter = null, no aggregation
+                dwClsContext,
+                riid,
+                iUnknown);
+        assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
+        assertTrue(!iUnknown.getValue().equals(Pointer.NULL));
+        // we leak this reference because we don't have the JNACOM here to
+        // call Release();
+        if (W32Errors.SUCCEEDED(hrCI.intValue()))
+            Ole32.INSTANCE.CoUninitialize();
     }
 }

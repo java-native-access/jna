@@ -13,8 +13,10 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -63,4 +65,52 @@ public interface Ole32 extends StdCallLibrary {
 	 *  and S_OK.
 	 */
 	HRESULT IIDFromString(String lpsz, GUID.ByReference lpiid);
+
+    /**
+     * Initializes the COM library for use by the calling thread, sets the thread's
+     * concurrency model, and creates a new apartment for the thread if one is required.
+     * @param reserved This parameter is reserved and must be NULL.
+     * @param dwCoInit The concurrency model and initialization options for the
+     * thread. Values for this parameter are taken from the COINIT enumeration.
+     * Any combination of values from COINIT can be used, except that the
+     * COINIT_APARTMENTTHREADED and COINIT_MULTITHREADED flags cannot both be
+     * set. The default (and only sane choice) is COINIT_MULTITHREADED.
+     * @return This function can return the standard return values E_INVALIDARG, E_OUTOFMEMORY, and E_UNEXPECTED, as well as the following values. S_OK, S_FALSE, RPC_E_CHANGED_MODE
+     */
+    HRESULT CoInitializeEx(Pointer reserved, int dwCoInit);
+    
+    /**
+     * Closes the COM library on the current thread, unloads all DLLs loaded by
+     * the thread, frees any other resources that the thread maintains, and
+     * forces all RPC connections on the thread to close.
+     * 
+     */
+    void CoUninitialize();
+
+    public static final int CLSCTX_INPROC_SERVER = 0x1;
+    public static final int CLSCTX_INPROC_HANDLER = 0x2;
+    public static final int CLSCTX_LOCAL_SERVER = 0x4;
+    public static final int CLSCTX_INPROC_SERVER16 = 0x8;
+    public static final int CLSCTX_REMOTE_SERVER = 0x10;
+    public static final int CLSCTX_ALL = (CLSCTX_INPROC_SERVER
+            | CLSCTX_INPROC_HANDLER
+            | CLSCTX_LOCAL_SERVER
+            | CLSCTX_REMOTE_SERVER);
+
+    /**
+     * Creates a single uninitialized object of the class associated with a specified CLSID.
+     * @param rclsid The CLSID associated with the data and code that will be used to create the object.
+     * @param pUnkOuter If NULL, indicates that the object is not being created as part of an aggregate. If non-NULL, pointer to the aggregate object's IUnknown interface (the controlling IUnknown).
+     * @param dwClsContext Context in which the code that manages the newly created object will run. The values are taken from the enumeration CLSCTX.
+     * @param riid A reference to the identifier of the interface to be used to communicate with the object.
+     * @param ppv Address of pointer variable that receives the interface pointer requested in riid. Upon successful return, *ppv contains the requested interface pointer. Upon failure, *ppv contains NULL.
+     * @return an HRESULT
+     */
+    HRESULT CoCreateInstance(
+            GUID rclsid,
+            Pointer pUnkOuter,
+            int dwClsContext,
+            GUID riid,
+            PointerByReference ppv);
+
 }
