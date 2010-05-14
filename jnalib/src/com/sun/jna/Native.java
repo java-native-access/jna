@@ -146,6 +146,9 @@ public final class Native {
         }
         // Reach into the bowels of ClassLoader to force the native
         // library to unload
+        // NOTE: this may cause a failure when freeing com.sun.jna.Memory
+        // after the library has been unloaded, see
+        // https://jna.dev.java.net/issues/show_bug.cgi?id=157
         try {
             ClassLoader cl = Native.class.getClassLoader();
             Field f = ClassLoader.class.getDeclaredField("nativeLibraries");
@@ -156,7 +159,8 @@ public final class Native {
                 f = lib.getClass().getDeclaredField("name");
                 f.setAccessible(true);
                 String name = (String)f.get(lib);
-                if (name.equals(path) || name.indexOf(path) != -1) {
+                if (name.equals(path) || name.indexOf(path) != -1
+                    || name.equals(flib.getCanonicalPath())) {
                     Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
                     m.setAccessible(true);
                     m.invoke(lib, new Object[0]);
