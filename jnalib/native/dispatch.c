@@ -2808,7 +2808,9 @@ Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass ncls, jclass cls, jlongAr
     free(md);
   }
   (*env)->ReleaseLongArrayElements(env, handles, data, 0);
-  (*env)->UnregisterNatives(env, cls);
+  // Not required, or recommended (see description in JNA docs,
+  // http://java.sun.com/j2se/1.4.2/docs/guide/jni/spec/functions.html
+  //(*env)->UnregisterNatives(env, cls);
 }
 
 JNIEXPORT jlong JNICALL
