@@ -288,13 +288,69 @@ public interface Kernel32 extends StdCallLibrary {
     boolean CreateDirectory(String lpPathName, 
     		WinNT.SECURITY_ATTRIBUTES lpSecurityAttributes);
 
+    /**
+     * Creates an input/output (I/O) completion port and associates it with a specified
+     * file handle, or creates an I/O completion port that is not yet associated with a
+     * file handle, allowing association at a later time.
+     * @param FileHandle
+     *  An open file handle or INVALID_HANDLE_VALUE.
+     * @param ExistingCompletionPort
+     *  A handle to an existing I/O completion port or NULL.
+     * @param CompletionKey
+     *  The per-handle user-defined completion key that is included in every I/O completion 
+     *  packet for the specified file handle.
+     * @param NumberOfConcurrentThreads
+     * 	The maximum number of threads that the operating system can allow to concurrently 
+     * 	process I/O completion packets for the I/O completion port.
+     * @return
+     * 	If the function succeeds, the return value is the handle to an I/O completion port:
+     *   If the ExistingCompletionPort parameter was NULL, the return value is a new handle.
+     *   If the ExistingCompletionPort parameter was a valid I/O completion port handle, the return value is that same handle.
+     *   If the FileHandle parameter was a valid handle, that file handle is now associated with the returned I/O completion port.
+     *   If the function fails, the return value is NULL. To get extended error information, call the GetLastError function.
+     */
     HANDLE CreateIoCompletionPort(HANDLE FileHandle, HANDLE ExistingCompletionPort,
     		Pointer CompletionKey, int NumberOfConcurrentThreads);
-    
+
+    /**
+     * Attempts to dequeue an I/O completion packet from the specified I/O completion 
+     * port. If there is no completion packet queued, the function waits for a pending 
+     * I/O operation associated with the completion port to complete.
+     * @param CompletionPort
+     *  A handle to the completion port.
+     * @param lpNumberOfBytes
+     *  A pointer to a variable that receives the number of bytes transferred during 
+     *  an I/O operation that has completed.
+     * @param lpCompletionKey
+     *  A pointer to a variable that receives the completion key value associated with 
+     *  the file handle whose I/O operation has completed.
+     * @param lpOverlapped
+     *  A pointer to a variable that receives the address of the OVERLAPPED structure 
+     *  that was specified when the completed I/O operation was started. 
+     * @param dwMilliseconds
+     *  The number of milliseconds that the caller is willing to wait for a completion 
+     *  packet to appear at the completion port. 
+     * @return
+     *  Returns nonzero (TRUE) if successful or zero (FALSE) otherwise.
+     */
     boolean GetQueuedCompletionStatus(HANDLE CompletionPort, 
     		IntByReference lpNumberOfBytes, ByReference lpCompletionKey, 
     		PointerByReference lpOverlapped, int dwMilliseconds);
 
+    /**
+     * Posts an I/O completion packet to an I/O completion port.
+     * @param CompletionPort
+     *  A handle to an I/O completion port to which the I/O completion packet is to be posted.
+     * @param dwNumberOfBytesTransferred
+     *  The value to be returned through the lpNumberOfBytesTransferred parameter of the GetQueuedCompletionStatus function.
+     * @param dwCompletionKey
+     *  The value to be returned through the lpCompletionKey parameter of the GetQueuedCompletionStatus function.
+     * @param lpOverlapped
+     *  The value to be returned through the lpOverlapped parameter of the GetQueuedCompletionStatus function.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError .
+     */
     boolean PostQueuedCompletionStatus(HANDLE CompletionPort,
     		int dwNumberOfBytesTransferred, Pointer dwCompletionKey,
     		WinBase.OVERLAPPED lpOverlapped);
@@ -389,22 +445,60 @@ public interface Kernel32 extends StdCallLibrary {
         		WinBase.OVERLAPPED overlapped);
     }
     
-    /** NOTE: only exists in unicode form (W suffix).  Define this method
-     * explicitly with the W suffix to avoid inadvertent calls in ASCII mode.
-     */    
+    /**
+     * Retrieves information that describes the changes within the specified directory. 
+     * The function does not report changes to the specified directory itself.
+     * Note: there's no ReadDirectoryChangesA.
+     * @param directory
+     *  A handle to the directory to be monitored. This directory must be opened with the 
+     *  FILE_LIST_DIRECTORY access right.
+     * @param info
+     *  A pointer to the DWORD-aligned formatted buffer in which the read results are to be returned.
+     * @param length
+     *  The size of the buffer that is pointed to by the lpBuffer parameter, in bytes.
+     * @param watchSubtree
+     *  If this parameter is TRUE, the function monitors the directory tree rooted at the specified
+     *  directory. If this parameter is FALSE, the function monitors only the directory specified by
+     *  the hDirectory parameter.
+     * @param notifyFilter
+     *  The filter criteria that the function checks to determine if the wait operation has completed.
+     * @param bytesReturned
+     *  For synchronous calls, this parameter receives the number of bytes transferred into the 
+     *  lpBuffer parameter. For asynchronous calls, this parameter is undefined. You must use an asynchronous 
+     *  notification technique to retrieve the number of bytes transferred.
+     * @param overlapped
+     *  A pointer to an OVERLAPPED structure that supplies data to be used during asynchronous operation. 
+     *  Otherwise, this value is NULL. The Offset and OffsetHigh members of this structure are not used.
+     * @param completionRoutine
+     * 	A pointer to a completion routine to be called when the operation has been completed or canceled and
+     *  the calling thread is in an alertable wait state.
+     * @return
+     *  If the function succeeds, the return value is nonzero. For synchronous calls, this means that the 
+     *  operation succeeded. For asynchronous calls, this indicates that the operation was successfully queued.
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     *  If the network redirector or the target file system does not support this operation, the function 
+     *  fails with ERROR_INVALID_FUNCTION.
+     */
     public boolean ReadDirectoryChangesW(HANDLE directory, 
     		WinNT.FILE_NOTIFY_INFORMATION info, int length, boolean watchSubtree,
             int notifyFilter, IntByReference bytesReturned, WinBase.OVERLAPPED overlapped, 
             OVERLAPPED_COMPLETION_ROUTINE completionRoutine);
 
-    /** ASCII version.  Use {@link Native#toString(byte[])} to obtain the short
-     * path from the <code>byte</code> array.
-     * Use only if <code>w32.ascii==true</code>.
-     */
-    int GetShortPathName(String lpszLongPath, byte[] lpdzShortPath, int cchBuffer);
-
-    /** Unicode version (the default).  Use {@link Native#toString(char[])} to
-     * obtain the short path from the <code>char</code> array.
+    /**
+     * Retrieves the short path form of the specified path.
+     * @param lpszLongPath
+     *  The path string. 
+     * @param lpdzShortPath
+     *  A pointer to a buffer to receive the null-terminated short form of the path that lpszLongPath specifies.
+     * @param cchBuffer
+     *  The size of the buffer that lpszShortPath points to, in TCHARs.
+     * @return
+     *  If the function succeeds, the return value is the length, in TCHARs, of the string that is copied to 
+     *  lpszShortPath, not including the terminating null character.
+     *  If the lpszShortPath buffer is too small to contain the path, the return value is the size of the buffer, 
+     *  in TCHARs, that is required to hold the path and the terminating null character. 
+     *  If the function fails for any other reason, the return value is zero. To get extended error information, 
+     *  call GetLastError.
      */
     int GetShortPathName(String lpszLongPath, char[] lpdzShortPath, int cchBuffer);
 
@@ -423,26 +517,128 @@ public interface Kernel32 extends StdCallLibrary {
      */
     Pointer LocalAlloc(int type, int cbInput);
 
+    /**
+     * Writes data to the specified file or input/output (I/O) device.
+     * @param hFile
+     *  A handle to the file or I/O device (for example, a file, file stream, physical disk, volume, 
+     *  console buffer, tape drive, socket, communications resource, mailslot, or pipe). 
+     * @param lpBuffer
+     *  A pointer to the buffer containing the data to be written to the file or device.
+     * @param nNumberOfBytesToWrite
+     *  The number of bytes to be written to the file or device.
+     * @param lpNumberOfBytesWritten
+     *  A pointer to the variable that receives the number of bytes written when using a synchronous hFile parameter. 
+     * @param lpOverlapped
+     *  A pointer to an OVERLAPPED structure is required if the hFile parameter was opened with FILE_FLAG_OVERLAPPED, 
+     *  otherwise this parameter can be NULL. 
+     * @return
+     *  If the function succeeds, the return value is nonzero (TRUE).
+     *  If the function fails, or is completing asynchronously, the return value is zero (FALSE). 
+     *  To get extended error information, call the GetLastError function. 
+     */
     boolean WriteFile(HANDLE hFile, byte[] lpBuffer, int nNumberOfBytesToWrite,
                       IntByReference lpNumberOfBytesWritten,
                       WinBase.OVERLAPPED lpOverlapped);
 
+    /**
+     * Creates or opens a named or unnamed event object.
+     * @param lpEventAttributes
+     *  A pointer to a SECURITY_ATTRIBUTES structure. If this parameter is NULL, 
+     *  the handle cannot be inherited by child processes.
+     * @param bManualReset
+     *  If this parameter is TRUE, the function creates a manual-reset event object,
+     *  which requires the use of the ResetEvent function to set the event state to nonsignaled. 
+     *  If this parameter is FALSE, the function creates an auto-reset event object, and system 
+     *  automatically resets the event state to nonsignaled after a single waiting thread has
+     *  been released. 
+     * @param bInitialState
+     *  If this parameter is TRUE, the initial state of the event object is signaled; otherwise, 
+     *  it is nonsignaled. 
+     * @param lpName
+     *  The name of the event object. The name is limited to MAX_PATH characters. Name comparison 
+     *  is case sensitive. 
+     * @return
+     *  If the function succeeds, the return value is a handle to the event object. If the named event 
+     *  object existed before the function call, the function returns a handle to the existing object
+     *  and GetLastError returns ERROR_ALREADY_EXISTS. 
+     *  If the function fails, the return value is NULL. To get extended error information, call GetLastError. 
+     */
     HANDLE CreateEvent(WinNT.SECURITY_ATTRIBUTES lpEventAttributes,
                        boolean bManualReset, boolean bInitialState,
                        String lpName);
 
+    /**
+     * Sets the specified event object to the signaled state.
+     * @param hEvent
+     *  A handle to the event object. The CreateEvent or OpenEvent function returns this handle.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
     boolean SetEvent(HANDLE hEvent);
 
+    /**
+     * Sets the specified event object to the signaled state and then resets it to the nonsignaled 
+     * state after releasing the appropriate number of waiting threads.
+     * @param hEvent
+     *  A handle to the event object. The CreateEvent or OpenEvent function returns this handle. 
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
     boolean PulseEvent(HANDLE hEvent);
 
+    /**
+     * Creates or opens a named or unnamed file mapping object for a specified file.
+     * @param hFile
+     *  A handle to the file from which to create a file mapping object. 
+     * @param lpAttributes
+     *  A pointer to a SECURITY_ATTRIBUTES structure that determines whether a returned handle can be inherited by child processes. The lpSecurityDescriptor member of the SECURITY_ATTRIBUTES structure specifies a security descriptor for a new file mapping object. 
+     * @param flProtect
+     *  Specifies the page protection of the file mapping object. All mapped views of the object must be compatible with this protection. 
+     * @param dwMaximumSizeHigh
+     *  The high-order DWORD of the maximum size of the file mapping object.
+     * @param dwMaximumSizeLow
+     *  The low-order DWORD of the maximum size of the file mapping object. 
+     * @param lpName
+     *  The name of the file mapping object. 
+     * @return
+     *  If the function succeeds, the return value is a handle to the newly created file mapping object.
+     *  If the object exists before the function call, the function returns a handle to the existing object (with its current size, not the specified size), and GetLastError returns ERROR_ALREADY_EXISTS. 
+     *  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
+     */
     HANDLE CreateFileMapping(HANDLE hFile, WinNT.SECURITY_ATTRIBUTES lpAttributes,
                              int flProtect, int dwMaximumSizeHigh,
                              int dwMaximumSizeLow, String lpName);
 
+    /**
+     * Maps a view of a file mapping into the address space of a calling process.
+     * @param hFileMappingObject
+     *  A handle to a file mapping object. The CreateFileMapping and OpenFileMapping functions return this handle.
+     * @param dwDesiredAccess
+     *  The type of access to a file mapping object, which determines the protection of the pages.
+     * @param dwFileOffsetHigh
+     *  A high-order DWORD of the file offset where the view begins.
+     * @param dwFileOffsetLow
+     *  A low-order DWORD of the file offset where the view is to begin.
+     * @param dwNumberOfBytesToMap
+     *  The number of bytes of a file mapping to map to the view. 
+     * @return
+     *  If the function succeeds, the return value is the starting address of the mapped view.
+     *  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
+     */
     Pointer MapViewOfFile(HANDLE hFileMappingObject, int dwDesiredAccess,
                           int dwFileOffsetHigh, int dwFileOffsetLow,
                           int dwNumberOfBytesToMap);
 
+    /**
+     * Unmaps a mapped view of a file from the calling process's address space.
+     * @param lpBaseAddress
+     *  A pointer to the base address of the mapped view of a file that is to be unmapped. 
+     * @return
+     *  If the function succeeds, the return value is the starting address of the mapped view.
+     *  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
+     */
     boolean UnmapViewOfFile(Pointer lpBaseAddress);
     
     /**
