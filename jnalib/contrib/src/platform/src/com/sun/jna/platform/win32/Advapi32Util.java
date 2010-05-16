@@ -283,8 +283,7 @@ public abstract class Advapi32Util {
         	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
         }
         // get token group information
-        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
-		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationBuffer);
+		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationLength.getValue());
         if (! Advapi32.INSTANCE.GetTokenInformation(hToken,
         		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups, 
         		tokenInformationLength.getValue(), tokenInformationLength)) {
@@ -324,8 +323,7 @@ public abstract class Advapi32Util {
         	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
         }
         // get token user information
-        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
-		WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(tokenInformationBuffer);
+		WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(tokenInformationLength.getValue());
         if (! Advapi32.INSTANCE.GetTokenInformation(hToken,
         		WinNT.TOKEN_INFORMATION_CLASS.TokenUser, user, 
         		tokenInformationLength.getValue(), tokenInformationLength)) {

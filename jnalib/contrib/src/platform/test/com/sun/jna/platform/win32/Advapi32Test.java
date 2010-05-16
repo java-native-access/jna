@@ -202,8 +202,7 @@ public class Advapi32Test extends TestCase {
         assertFalse(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
         		WinNT.TOKEN_INFORMATION_CLASS.TokenUser, null, 0, tokenInformationLength));
         assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
-        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
-		WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(tokenInformationBuffer);
+		WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(tokenInformationLength.getValue());
         assertTrue(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
         		WinNT.TOKEN_INFORMATION_CLASS.TokenUser, user, 
         		tokenInformationLength.getValue(), tokenInformationLength));
@@ -225,8 +224,7 @@ public class Advapi32Test extends TestCase {
         assertFalse(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
         		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0, tokenInformationLength));
         assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
-        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
-		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationBuffer);
+		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationLength.getValue());
         assertTrue(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
         		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups, 
         		tokenInformationLength.getValue(), tokenInformationLength));

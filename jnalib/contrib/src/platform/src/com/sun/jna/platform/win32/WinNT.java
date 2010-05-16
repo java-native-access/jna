@@ -322,6 +322,10 @@ public interface WinNT extends StdCallLibrary {
 			super(memory);
 			read();
 		}
+		
+		public TOKEN_USER(int size) {
+			super(new Memory(size));
+		}
 
 		/**
 		 * Specifies a SID_AND_ATTRIBUTES structure representing the user associated with 
@@ -343,6 +347,10 @@ public interface WinNT extends StdCallLibrary {
 		public TOKEN_GROUPS(Pointer memory) {
 			super(memory);
 			read();
+		}
+		
+		public TOKEN_GROUPS(int size) {
+			super(new Memory(size));
 		}
 
 		/**
