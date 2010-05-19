@@ -79,21 +79,17 @@ public class Ole32Test extends TestCase {
         GUID riid = Ole32Util.getGUIDFromString("{D8F015C0-C278-11CE-A49E-444553540000}"); //IShellDispatch
 
         PointerByReference iUnknown = new PointerByReference();
-        final int CLSCTX_ALL = (WTypes.CLSCTX_INPROC_SERVER
-            | WTypes.CLSCTX_INPROC_HANDLER
-            | WTypes.CLSCTX_LOCAL_SERVER
-            | WTypes.CLSCTX_REMOTE_SERVER);
 
         HRESULT hr = Ole32.INSTANCE.CoCreateInstance(
                 guid,
                 null, // pOuter = null, no aggregation
-                CLSCTX_ALL,
+                ObjBase.CLSCTX_ALL,
                 riid,
                 iUnknown);
         assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
         assertTrue(!iUnknown.getValue().equals(Pointer.NULL));
-        // we leak this reference because we don't have the JNACOM here to
-        // call Release();
+        // We leak this iUnknown reference because we don't have the JNACOM lib
+        // here to wrap the native iUnknown pointer and call iUnknown.release()
         if (W32Errors.SUCCEEDED(hrCI.intValue()))
             Ole32.INSTANCE.CoUninitialize();
     }
