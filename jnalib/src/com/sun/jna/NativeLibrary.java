@@ -53,7 +53,6 @@ public class NativeLibrary {
     private static final Map libraries = new HashMap();
     private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
     private static final List librarySearchPath = new LinkedList();
-    private static final List userSearchPath = new LinkedList();
 
     static {
         // Force initialization of native library
@@ -109,7 +108,7 @@ public class NativeLibrary {
             }
         }
         
-        searchPath.addAll(userSearchPath);
+        searchPath.addAll(initPaths("jna.library.path"));
         String libraryPath = findLibraryPath(libraryName, searchPath);
         long handle = 0;
         //
@@ -592,7 +591,6 @@ public class NativeLibrary {
     private static native void close(long handle);
     private static native long findSymbol(long handle, String name);
     static {
-        userSearchPath.addAll(initPaths("jna.library.path"));
         String webstartPath = Native.getWebStartLibraryPath("jnidispatch");
         if (webstartPath != null) {
             librarySearchPath.add(webstartPath);
