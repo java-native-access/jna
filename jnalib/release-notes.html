@@ -1,6 +1,9 @@
 <a name="top"></a>
 <h2>Release 3.x.x</h2>
 <h3>Features</h3>
+<ul>
+<li>The <code>jna.library.path</code> property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.</li>
+</ul>
 <h3>BugFixes</h3>
 <ul>
 <li>Fix ClassCastException in Structure.equals (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=152">issue 152</a>).
@@ -296,7 +299,7 @@ NIO Buffer values.
 <li>Invocation interception to facilitate translation of C preprocessor macros
   and inline functions
 <li>Provide utility to determine Web Start native library cache location;
-  auto-include this path if jnidispatch is included as a <nativelib>
+  auto-include this path if jnidispatch is included as a &lt;nativelib&gt;
   (robertengels) 
 <li>Provide access to aligned memory
 <li>Versioning information embedded in jna.jar and native library
