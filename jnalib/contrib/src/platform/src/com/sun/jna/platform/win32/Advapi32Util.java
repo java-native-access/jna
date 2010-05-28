@@ -278,9 +278,12 @@ public abstract class Advapi32Util {
     	// get token group information size
         IntByReference tokenInformationLength = new IntByReference();
         if (Advapi32.INSTANCE.GetTokenInformation(hToken, 
-        		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0, tokenInformationLength)
-        		|| Kernel32.INSTANCE.GetLastError() != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0, tokenInformationLength)) {
         	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
+        int rc = Kernel32.INSTANCE.GetLastError();
+        if (rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+        	throw new Win32Exception(rc);
         }
         // get token group information
 		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(tokenInformationLength.getValue());
@@ -318,9 +321,12 @@ public abstract class Advapi32Util {
     	// get token group information size
         IntByReference tokenInformationLength = new IntByReference();
         if (Advapi32.INSTANCE.GetTokenInformation(hToken, 
-        		WinNT.TOKEN_INFORMATION_CLASS.TokenUser, null, 0, tokenInformationLength)
-        		|| Kernel32.INSTANCE.GetLastError() != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+        		WinNT.TOKEN_INFORMATION_CLASS.TokenUser, null, 0, tokenInformationLength)) {
         	throw new RuntimeException("Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
+        int rc = Kernel32.INSTANCE.GetLastError();
+        if (rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+        	throw new Win32Exception(rc);
         }
         // get token user information
 		WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(tokenInformationLength.getValue());

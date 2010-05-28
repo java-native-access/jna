@@ -16,6 +16,8 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.WString;
+import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -240,15 +242,13 @@ public class Advapi32Test extends TestCase {
         assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
     }
     
-    /*
     public void testImpersonateLoggedOnUser() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
     	userInfo.usri1_name = new WString("JNAAdvapi32TestImp");
     	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null));
 		try {
-	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
-	    			null, 1, userInfo, null));
 			HANDLEByReference phUser = new HANDLEByReference();
 			try {
 				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
@@ -257,7 +257,7 @@ public class Advapi32Test extends TestCase {
 				assertTrue(Advapi32.INSTANCE.ImpersonateLoggedOnUser(phUser.getValue()));
 				assertTrue(Advapi32.INSTANCE.RevertToSelf());
 			} finally {
-				if (phUser.getValue() != Kernel32.INVALID_HANDLE_VALUE) {
+				if (phUser.getValue() != WinBase.INVALID_HANDLE_VALUE) {
 					Kernel32.INSTANCE.CloseHandle(phUser.getValue());
 				}				
 			}
@@ -266,7 +266,6 @@ public class Advapi32Test extends TestCase {
 	    			null, userInfo.usri1_name.toString()));			
 		}
     }
-	*/
     
     public void testRegOpenKeyEx() {
     	HKEYByReference phKey = new HKEYByReference();
