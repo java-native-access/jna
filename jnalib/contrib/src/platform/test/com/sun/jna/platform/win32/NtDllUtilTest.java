@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,9 @@ import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 
+/**
+ * @author dblock[at]dblock[dot]org
+ */
 public class NtDllUtilTest extends TestCase {
 
     public static void main(String[] args) {
