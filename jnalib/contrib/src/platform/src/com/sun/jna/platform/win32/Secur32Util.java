@@ -85,15 +85,15 @@ public abstract class Secur32Util {
     	if(W32Errors.SEC_E_OK != rc) {
     		throw new Win32Exception(rc);
     	}
-    	SecPkgInfo.ByReference[] packagesInfo = pPackageInfo.toArray(pcPackages.getValue());
+    	SecPkgInfo[] packagesInfo = pPackageInfo.toArray(pcPackages.getValue());
     	ArrayList<SecurityPackage> packages = new ArrayList<SecurityPackage>(pcPackages.getValue());
-    	for(SecPkgInfo.ByReference packageInfo : packagesInfo) {
+    	for(SecPkgInfo packageInfo : packagesInfo) {
     		SecurityPackage securityPackage = new SecurityPackage();
     		securityPackage.name = packageInfo.Name.toString();
     		securityPackage.comment = packageInfo.Comment.toString();
     		packages.add(securityPackage);
     	}
-    	rc = Secur32.INSTANCE.FreeContextBuffer(pPackageInfo.getPointer());
+    	rc = Secur32.INSTANCE.FreeContextBuffer(pPackageInfo.pPkgInfo.getPointer());
     	if(W32Errors.SEC_E_OK != rc) {
     		throw new Win32Exception(rc);
     	}
