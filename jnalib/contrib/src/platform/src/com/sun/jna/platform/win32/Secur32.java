@@ -17,7 +17,6 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
-import com.sun.jna.platform.win32.Sspi.PSecHandle;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
 import com.sun.jna.platform.win32.Sspi.SecBufferDesc;
 import com.sun.jna.platform.win32.Sspi.TimeStamp;
@@ -284,6 +283,34 @@ public interface Secur32 extends StdCallLibrary {
 	 *  If the function fails, it returns a nonzero error code. One possible error code return is 
 	 *  SEC_E_INVALID_HANDLE.
 	 */
-	public int QuerySecurityContextToken(PSecHandle phContext, 
+	public int QuerySecurityContextToken(CtxtHandle phContext, 
 			HANDLEByReference phToken);
+	
+	/**
+	 * The ImpersonateSecurityContext function allows a server to impersonate a client by using 
+	 * a token previously obtained by a call to AcceptSecurityContext or QuerySecurityContextToken. 
+	 * This function allows the application server to act as the client, and thus all necessary 
+	 * access controls are enforced.
+	 * @param phContext
+	 *  The handle of the context to impersonate. This handle must have been obtained by a call 
+	 *  to the AcceptSecurityContext function.
+	 * @return
+	 *  If the function succeeds, the function returns SEC_E_OK.
+	 *  If the function fails, it returns a SEC_E_INVALID_HANDLE, SEC_E_NO_IMPERSONATION or 
+	 *  SEC_E_UNSUPPORTED_FUNCTION error code.
+	 */
+	public int ImpersonateSecurityContext(CtxtHandle phContext);
+	
+	/**
+	 * Allows a security package to discontinue the impersonation of the caller and restore its 
+	 * own security context.
+	 * @param phContext
+	 *  Handle of the security context being impersonated. This handle must have been obtained in 
+	 *  the call to the AcceptSecurityContext function and used in the call to the 
+	 *  ImpersonateSecurityContext function.
+	 * @return
+	 *  If the function succeeds, the return value is SEC_E_OK.
+	 *  If the function fails, the return value can be either SEC_E_INVALID_HANDLE or SEC_E_UNSUPPORTED_FUNCTION.
+	 */
+	public int RevertSecurityContext(CtxtHandle phContext);
 }

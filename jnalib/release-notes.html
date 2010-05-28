@@ -3,6 +3,10 @@
 <h3>Features</h3>
 <ul>
 <li>The <code>jna.library.path</code> property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.</li>
+<li>Refactor com.sun.jna.platform.win32.WINBASE into WinDef, WinNT and BaseTSD, matching Windows SDK headers.
+<li>Add com.sun.jna.platform.win32.ObjBase, com.sun.jna.platform.win32.Ole32.CoInitializeEx, CoUninitialize, and CoCreateInstance.
+<li>Add com.sun.jna.platform.win32.Oleaut32.SysAllocString and SysFreeString.
+<li>Add com.sun.jna.platform.win32.Secur32.ImpersonateSecurityContext and RevertSecurityContext.
 </ul>
 <h3>BugFixes</h3>
 <ul>
@@ -13,7 +17,8 @@
   array is NULL (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=151">issue 151</a>).
 <li>Avoid calling UnregisterNatives in native code (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=154">issue 154</a>).
 <li>Compare unpacked libarary path against canonical (long) filename (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=156">issue 156</a>).
-<li>Refactor com.sun.jna.platform.win32.WINBASE into WinDef, WinNT and BaseTSD, matching Windows SDK headers.
+<li>Fix read() of uninitialized memory in platform.win32.Advapi32Util.getTokenGroups and getTokenAccount.
+<li>Fix com.sun.jna.platform.win32.Secur32.QuerySecurityContextToken to take a CtxtHandle instead of PSecHandle.
 </ul>
 <h2>Release 3.2.5</h2>
 <h3>Features</h3>
