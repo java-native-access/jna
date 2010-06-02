@@ -158,7 +158,7 @@ public abstract class Structure {
         this((Pointer)null, ALIGN_DEFAULT, mapper);
     }
 
-    /** Create a structure cast onto pre-allocated memory. */
+    /** Create a structure cast onto preallocated memory. */
     protected Structure(Pointer p) {
         this(p, ALIGN_DEFAULT);
     }
@@ -1118,7 +1118,7 @@ public abstract class Structure {
         return p;
     }
 
-    /** Set whether the structure is automatically synched to native memory
+    /** Set whether the structure is automatically synchronized to native memory
         before and after a native function call.  Convenience method for
         <pre><code>
         boolean auto = ...;
@@ -1131,28 +1131,28 @@ public abstract class Structure {
         setAutoWrite(auto);
     }
 
-    /** Set whether the struture is written to native memory prior to
+    /** Set whether the structure is read from native memory prior to
         a native function call.
     */
     public void setAutoRead(boolean auto) {
         this.autoRead = auto;
     }
 
-    /** Returns whether the struture is written to native memory prior to
+    /** Returns whether the structure is read from native memory prior to
         a native function call.
     */
     public boolean getAutoRead() {
         return this.autoRead;
     }
 
-    /** Set whether the structure is read from native memory after a native
-        function call. 
+    /** Set whether the structure is written to native memory after a native
+        function call.
     */
     public void setAutoWrite(boolean auto) {
         this.autoWrite = auto;
     }
 
-    /** Returns whether the structure is read from native memory after a native
+    /** Returns whether the structure is written to native memory after a native
         function call. 
     */
     public boolean getAutoWrite() {
