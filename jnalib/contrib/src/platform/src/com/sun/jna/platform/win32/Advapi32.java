@@ -168,6 +168,38 @@ public interface Advapi32 extends StdCallLibrary {
 	public boolean IsValidSid(PSID pSid);
 	
 	/**
+	 * Compares a SID to a well known SID and returns TRUE if they match.
+	 * @param pSid
+	 *  SID to test.
+	 * @param wellKnownSidType
+	 *  Member of the WELL_KNOWN_SID_TYPE enumeration to compare with the SID at pSid. 
+	 * @return
+	 */
+	public boolean IsWellKnownSid(PSID pSid, int wellKnownSidType);
+	
+	
+	/**
+	 * The CreateWellKnownSid function creates a SID for predefined aliases.
+	 * @param wellKnownSidType
+	 *  Member of the WELL_KNOWN_SID_TYPE enumeration that specifies what the SID will identify.
+	 * @param domainSid
+	 *  Pointer to a SID that identifies the domain control to use when creating the SID. 
+	 *  Pass NULL to use the local computer.
+	 * @param pSid
+	 *  Pointer to memory where CreateWellKnownSid will store the new SID.
+	 * @param cbSid
+	 *  Pointer to a DWORD that contains the number of bytes available at pSid. 
+	 *  The CreateWellKnownSid function stores the number of bytes actually used 
+	 *  at this location. 
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. For extended error information, 
+	 *  call GetLastError.
+	 */
+	public boolean CreateWellKnownSid(int wellKnownSidType, 
+			PSID domainSid, PSID pSid, IntByReference cbSid);
+	
+	/**
 	 * The LogonUser function attempts to log a user on to the local computer. The local computer is
 	 * the computer from which LogonUser was called. You cannot use LogonUser to log on to a remote
 	 * computer. You specify the user with a user name and domain, and authenticate the user with a 

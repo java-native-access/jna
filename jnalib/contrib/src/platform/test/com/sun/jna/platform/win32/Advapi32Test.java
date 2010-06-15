@@ -25,6 +25,7 @@ import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
+import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -445,5 +446,30 @@ public class Advapi32Test extends TestCase {
     			lpcMaxValueNameLen, lpcMaxValueLen, lpcbSecurityDescriptor, 
     			lpftLastWriteTime));
     	assertTrue(lpcSubKeys.getValue() > 0);
+    }
+    
+    public void testIsWellKnownSid() {
+    	String sidString = "S-1-1-0"; // Everyone
+    	PSIDByReference sid = new PSIDByReference();
+    	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
+    	assertTrue(Advapi32.INSTANCE.IsWellKnownSid(sid.getValue(), 
+    			WELL_KNOWN_SID_TYPE.WinWorldSid));
+    	assertFalse(Advapi32.INSTANCE.IsWellKnownSid(sid.getValue(), 
+    			WELL_KNOWN_SID_TYPE.WinAccountAdministratorSid));
+    }
+    
+    public void testCreateWellKnownSid() {
+    	PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+    	IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+    	assertTrue(Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinWorldSid,
+    			null, pSid, cbSid));
+    	assertTrue(Advapi32.INSTANCE.IsWellKnownSid(pSid, 
+    			WELL_KNOWN_SID_TYPE.WinWorldSid));
+    	assertTrue(cbSid.getValue() <= WinNT.SECURITY_MAX_SID_SIZE);
+    	PointerByReference convertedSidStringPtr = new PointerByReference();
+    	assertTrue(Advapi32.INSTANCE.ConvertSidToStringSid(
+    			pSid, convertedSidStringPtr));
+    	String convertedSidString = convertedSidStringPtr.getValue().getString(0, true);
+    	assertEquals("S-1-1-0", convertedSidString);
     }
 }

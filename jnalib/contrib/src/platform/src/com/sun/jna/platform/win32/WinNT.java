@@ -271,6 +271,10 @@ public interface WinNT extends StdCallLibrary {
 			setPointer(memory);
 		}
 		
+		public PSID(int size) {
+			super(new Memory(size));
+		}
+		
 		public PSID(Pointer memory) {
 			super(memory);
 			read();
@@ -856,4 +860,348 @@ public interface WinNT extends StdCallLibrary {
     		super(value);
     	}
     }
+    
+    /**
+     * The WELL_KNOWN_SID_TYPE enumeration type is a list of commonly used security identifiers 
+     * (SIDs). Programs can pass these values to the CreateWellKnownSid function to create a SID 
+     * from this list.
+     */
+    public abstract class WELL_KNOWN_SID_TYPE {
+    	/**
+    	 * Indicates a null SID.
+    	 */
+    	public static final int WinNullSid = 0;
+    	/**
+    	 * Indicates a SID that matches everyone.
+    	 */
+    	public static final int WinWorldSid = 1;
+    	/**
+    	 * Indicates a local SID. 
+    	 */
+    	public static final int WinLocalSid = 2;
+    	/**
+    	 * Indicates a SID that matches the owner or creator of an object.
+    	 */
+    	public static final int WinCreatorOwnerSid = 3;
+    	/**
+    	 * Indicates a SID that matches the creator group of an object. 
+    	 */
+    	public static final int WinCreatorGroupSid = 4;
+    	/**
+    	 * Indicates a creator owner server SID.
+    	 */
+    	public static final int WinCreatorOwnerServerSid = 5;
+    	/**
+    	 * Indicates a creator group server SID. 
+    	 */
+    	public static final int WinCreatorGroupServerSid = 6;
+    	/**
+    	 * Indicates a SID for the Windows NT authority. 
+    	 */
+    	public static final int WinNtAuthoritySid = 7;
+    	/**
+    	 * Indicates a SID for a dial-up account.
+    	 */
+    	public static final int WinDialupSid = 8;
+    	/**
+    	 * Indicates a SID for a network account. This SID is added to the process of a token 
+    	 * when it logs on across a network. The corresponding logon type is 
+    	 * LOGON32_LOGON_NETWORK. 
+    	 */
+    	public static final int WinNetworkSid = 9;
+    	/**
+    	 * Indicates a SID for a batch process. This SID is added to the process of a token 
+    	 * when it logs on as a batch job. The corresponding logon type is LOGON32_LOGON_BATCH. 
+    	 */
+    	public static final int WinBatchSid = 10;
+    	/**
+    	 * Indicates a SID for an interactive account. This SID is added to the process of a 
+    	 * token when it logs on interactively. The corresponding logon type is
+    	 * LOGON32_LOGON_INTERACTIVE. 
+    	 */
+    	public static final int WinInteractiveSid = 11;
+    	/**
+    	 * Indicates a SID for a service. This SID is added to the process of a token when it 
+    	 * logs on as a service. The corresponding logon type is LOGON32_LOGON_bSERVICE.
+    	 */
+    	public static final int WinServiceSid = 12;
+    	/**
+    	 * Indicates a SID for the anonymous account. 
+    	 */
+    	public static final int WinAnonymousSid = 13;
+    	/**
+    	 * Indicates a proxy SID. 
+    	 */
+    	public static final int WinProxySid = 14;
+    	/**
+    	 * Indicates a SID for an enterprise controller. 
+    	 */
+    	public static final int WinEnterpriseControllersSid = 15;
+    	/**
+    	 * Indicates a SID for self.
+    	 */
+    	public static final int WinSelfSid = 16;
+    	/**
+    	 * Indicates a SID that matches any authenticated user. 
+    	 */
+    	public static final int WinAuthenticatedUserSid = 17;
+    	/**
+    	 * Indicates a SID for restricted code. 
+    	 */
+    	public static final int WinRestrictedCodeSid = 18;
+    	/**
+    	 * Indicates a SID that matches a terminal server account. 
+    	 */
+    	public static final int WinTerminalServerSid = 19;
+    	/**
+    	 * Indicates a SID that matches remote logons. 
+    	 */
+    	public static final int WinRemoteLogonIdSid = 20;
+    	/**
+    	 * Indicates a SID that matches logon IDs. 
+    	 */
+    	public static final int WinLogonIdsSid = 21;
+    	/**
+    	 * Indicates a SID that matches the local system. 
+    	 */
+    	public static final int WinLocalSystemSid = 22;
+    	/**
+    	 * Indicates a SID that matches a local service. 
+    	 */
+    	public static final int WinLocalServiceSid = 23;
+    	/**
+    	 * Indicates a SID that matches a network service. 
+    	 */
+    	public static final int WinNetworkServiceSid = 24;
+    	/**
+    	 * Indicates a SID that matches the domain account. 
+    	 */
+    	public static final int WinBuiltinDomainSid = 25;
+    	/**
+    	 * Indicates a SID that matches the administrator account. 
+    	 */
+    	public static final int WinBuiltinAdministratorsSid = 26;
+    	/**
+    	 * Indicates a SID that matches built-in user accounts. 
+    	 */
+    	public static final int WinBuiltinUsersSid = 27;
+    	/**
+    	 * Indicates a SID that matches the guest account. 
+    	 */
+    	public static final int WinBuiltinGuestsSid = 28;
+    	/**
+    	 * Indicates a SID that matches the power users group. 
+    	 */
+    	public static final int WinBuiltinPowerUsersSid = 29;
+    	/**
+    	 * Indicates a SID that matches the account operators account. 
+    	 */
+    	public static final int WinBuiltinAccountOperatorsSid = 30;
+    	/**
+    	 * Indicates a SID that matches the system operators group. 
+    	 */
+    	public static final int WinBuiltinSystemOperatorsSid = 31;
+    	/**
+    	 * Indicates a SID that matches the print operators group. 
+    	 */
+    	public static final int WinBuiltinPrintOperatorsSid = 32;
+    	/**
+    	 * Indicates a SID that matches the backup operators group. 
+    	 */
+    	public static final int WinBuiltinBackupOperatorsSid = 33;
+    	/**
+    	 * Indicates a SID that matches the replicator account. 
+    	 */
+    	public static final int WinBuiltinReplicatorSid = 34;
+    	/**
+    	 * Indicates a SID that matches pre-Windows 2000 compatible accounts. 
+    	 */
+    	public static final int WinBuiltinPreWindows2000CompatibleAccessSid = 35;
+    	/**
+    	 * Indicates a SID that matches remote desktop users. 
+    	 */
+    	public static final int WinBuiltinRemoteDesktopUsersSid = 36;
+    	/**
+    	 * Indicates a SID that matches the network operators group.
+    	 */
+    	public static final int WinBuiltinNetworkConfigurationOperatorsSid = 37;
+    	/**
+    	 * Indicates a SID that matches the account administrators group. 
+    	 */
+    	public static final int WinAccountAdministratorSid = 38;
+    	/**
+    	 * Indicates a SID that matches the account guest group. 
+    	 */
+    	public static final int WinAccountGuestSid = 39;
+    	/**
+    	 * Indicates a SID that matches account Kerberos target group. 
+    	 */
+    	public static final int WinAccountKrbtgtSid = 40;
+    	/**
+    	 * Indicates a SID that matches the account domain administrator group. 
+    	 */
+    	public static final int WinAccountDomainAdminsSid = 41;
+    	/**
+    	 * Indicates a SID that matches the account domain users group. 
+    	 */
+    	public static final int WinAccountDomainUsersSid = 42;
+    	/**
+    	 * Indicates a SID that matches the account domain guests group. 
+    	 */
+    	public static final int WinAccountDomainGuestsSid = 43;
+    	/**
+    	 * Indicates a SID that matches the account computer group. 
+    	 */
+    	public static final int WinAccountComputersSid = 44;
+    	/**
+    	 * Indicates a SID that matches the account controller group. 
+    	 */
+    	public static final int WinAccountControllersSid = 45;
+    	/**
+    	 * Indicates a SID that matches the certificate administrators group.
+    	 */
+    	public static final int WinAccountCertAdminsSid = 46;
+    	/**
+    	 * Indicates a SID that matches the schema administrators group. 
+    	 */
+    	public static final int WinAccountSchemaAdminsSid = 47;
+    	/**
+    	 * Indicates a SID that matches the enterprise administrators group. 
+    	 */
+    	public static final int WinAccountEnterpriseAdminsSid = 48;
+    	/**
+    	 * Indicates a SID that matches the policy administrators group. 
+    	 */
+    	public static final int WinAccountPolicyAdminsSid = 49;
+    	/**
+    	 * Indicates a SID that matches the RAS and IAS server account. 
+    	 */
+    	public static final int WinAccountRasAndIasServersSid = 50;
+    	/**
+    	 * Indicates a SID present when the Microsoft NTLM authentication package 
+    	 * authenticated the client. 
+    	 */
+    	public static final int WinNTLMAuthenticationSid = 51;
+    	/**
+    	 * Indicates a SID present when the Microsoft Digest authentication package 
+    	 * authenticated the client. 
+    	 */
+    	public static final int WinDigestAuthenticationSid = 52;
+    	/**
+    	 * Indicates a SID present when the Secure Channel (SSL/TLS) authentication 
+    	 * package authenticated the client. 
+    	 */
+    	public static final int WinSChannelAuthenticationSid = 53;
+    	/**
+    	 * Indicates a SID present when the user authenticated from within the forest 
+    	 * or across a trust that does not have the selective authentication option 
+    	 * enabled. If this SID is present, then WinOtherOrganizationSid cannot be present. 
+    	 */
+    	public static final int WinThisOrganizationSid = 54;
+    	/**
+    	 * Indicates a SID present when the user authenticated across a forest with the
+    	 * selective authentication option enabled. If this SID is present, then 
+    	 * WinThisOrganizationSid cannot be present. 
+    	 */
+    	public static final int WinOtherOrganizationSid = 55;
+    	/**
+    	 * Indicates a SID that allows a user to create incoming forest trusts. It is added 
+    	 * to the token of users who are a member of the Incoming Forest Trust Builders 
+    	 * built-in group in the root domain of the forest. 
+    	 */
+    	public static final int WinBuiltinIncomingForestTrustBuildersSid = 56;
+    	/**
+    	 * Indicates a SID that matches the performance monitor user group. 
+    	 */
+    	public static final int WinBuiltinPerfMonitoringUsersSid = 57;
+    	/**
+    	 * Indicates a SID that matches the performance log user group. 
+    	 */
+    	public static final int WinBuiltinPerfLoggingUsersSid = 58;
+    	/**
+    	 * Indicates a SID that matches the Windows Authorization Access group.
+    	 */
+    	public static final int WinBuiltinAuthorizationAccessSid = 59;
+    	/**
+    	 * Indicates a SID is present in a server that can issue Terminal Server licenses. 
+    	 */
+    	public static final int WinBuiltinTerminalServerLicenseServersSid = 60;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinBuiltinDCOMUsersSid = 61;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinBuiltinIUsersSid = 62;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinIUserSid = 63;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinBuiltinCryptoOperatorsSid = 64;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinUntrustedLabelSid = 65;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinLowLabelSid = 66;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinMediumLabelSid = 67;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinHighLabelSid = 68;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinSystemLabelSid = 69;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinWriteRestrictedCodeSid = 70;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinCreatorOwnerRightsSid = 71;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinCacheablePrincipalsGroupSid = 72;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinNonCacheablePrincipalsGroupSid = 73;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinEnterpriseReadonlyControllersSid = 74;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinAccountReadonlyControllersSid = 75;
+    	/**
+    	 * 
+    	 */
+    	public static final int WinBuiltinEventLogReadersGroup = 76;
+    }
+    
+    /**
+     * Current SID revision level.
+     */
+    public static final int SID_REVISION = 1;
+    public static final int SID_MAX_SUB_AUTHORITIES = 15;
+    public static final int SID_RECOMMENDED_SUB_AUTHORITIES = 1;
+    
+    /**
+     * Maximum bytes used by a SID.
+     * (sizeof(SID) - sizeof(DWORD) + (SID_MAX_SUB_AUTHORITIES * sizeof(DWORD)))
+     */
+    public static final int SECURITY_MAX_SID_SIZE = 68;
 }

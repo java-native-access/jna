@@ -3,22 +3,24 @@
 <h3>Features</h3>
 <ul>
 <li>The <code>jna.library.path</code> property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.</li>
-<li>Refactor com.sun.jna.platform.win32.WINBASE into WinDef, WinNT and BaseTSD, matching Windows SDK headers.
-<li>Add com.sun.jna.platform.win32.ObjBase, com.sun.jna.platform.win32.Ole32.CoInitializeEx, CoUninitialize, and CoCreateInstance.
-<li>Add com.sun.jna.platform.win32.Oleaut32.SysAllocString and SysFreeString.
-<li>Add com.sun.jna.platform.win32.Secur32.ImpersonateSecurityContext and RevertSecurityContext.
+<li>Refactor <code>com.sun.jna.platform.win32.WINBASE</code> into <code>WinDef</code>, <code>WinNT</code> and <code>BaseTSD</code>, matching Windows SDK headers.
+<li>Add <code>com.sun.jna.platform.win32.ObjBase</code>, <code>com.sun.jna.platform.win32.Ole32.CoInitializeEx</code>, <code>CoUninitialize</code>, and <code>CoCreateInstance</code>.
+<li>Add <code>com.sun.jna.platform.win32.Oleaut32.SysAllocString</code> and <code>SysFreeString</code>.
+<li>Add <code>com.sun.jna.platform.win32.Secur32.ImpersonateSecurityContext</code> and <code>RevertSecurityContext</code>.
+<li>Add <code>com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE</code>, <code>SECURITY_MAX_SID_SIZE</code> and other related SID-related constants.
+<li>Add <code>com.sun.jna.platform.win32.Advapi32.CreateWellKnownSid</code> and <code>IsWellKnownSid</code>.
 </ul>
 <h3>BugFixes</h3>
 <ul>
-<li>Fix ClassCastException in Structure.equals (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=152">issue 152</a>).
+<li>Fix <code>ClassCastException</code> in <code>Structure.equals</code> (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=152">issue 152</a>).
 <li>Fix bug initializing a structure object from existing memory when the
   structure has initialized fields (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=133">issue 133</a>).
 <li>Fix NPE reading an array of string from a pointer when an element of the
-  array is NULL (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=151">issue 151</a>).
-<li>Avoid calling UnregisterNatives in native code (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=154">issue 154</a>).
-<li>Compare unpacked libarary path against canonical (long) filename (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=156">issue 156</a>).
-<li>Fix read() of uninitialized memory in platform.win32.Advapi32Util.getTokenGroups and getTokenAccount.
-<li>Fix com.sun.jna.platform.win32.Secur32.QuerySecurityContextToken to take a CtxtHandle instead of PSecHandle.
+  array is <code>NULL</code> (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=151">issue 151</a>).
+<li>Avoid calling <code>UnregisterNatives</code> in native code (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=154">issue 154</a>).
+<li>Compare unpacked library path against canonical (long) filename (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=156">issue 156</a>).
+<li>Fix <code>read()</code> of uninitialized memory in <code>platform.win32.Advapi32Util.getTokenGroups</code> and <code>getTokenAccount</code>.
+<li>Fix <code>com.sun.jna.platform.win32.Secur32.QuerySecurityContextToken</code> to take a <code>CtxtHandle</code> instead of <code>PSecHandle</code>.
 </ul>
 <h2>Release 3.2.5</h2>
 <h3>Features</h3>
