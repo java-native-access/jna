@@ -22,6 +22,7 @@ import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
+import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -230,5 +231,14 @@ public class Advapi32UtilTest extends TestCase {
 		assertEquals("FourtyTwo", values.get("42"));
 		assertEquals(42, values.get("FourtyTwo"));
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");						
+	}
+	
+	public void testIsWellKnownSid() {		
+		String everyoneString = "S-1-1-0";
+        assertTrue(Advapi32Util.isWellKnownSid(everyoneString, WELL_KNOWN_SID_TYPE.WinWorldSid));		
+        assertFalse(Advapi32Util.isWellKnownSid(everyoneString, WELL_KNOWN_SID_TYPE.WinAccountAdministratorSid));
+        byte[] everyoneBytes = Advapi32Util.convertStringSidToSid(everyoneString);
+        assertTrue(Advapi32Util.isWellKnownSid(everyoneBytes, WELL_KNOWN_SID_TYPE.WinWorldSid));		
+        assertFalse(Advapi32Util.isWellKnownSid(everyoneBytes, WELL_KNOWN_SID_TYPE.WinAccountAdministratorSid));
 	}
 }

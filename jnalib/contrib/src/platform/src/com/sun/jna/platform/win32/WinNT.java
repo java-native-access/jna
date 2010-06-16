@@ -1183,11 +1183,11 @@ public interface WinNT extends StdCallLibrary {
     	 */
     	public static final int WinEnterpriseReadonlyControllersSid = 74;
     	/**
-    	 * 
+    	 * Indicates a SID that matches a read-only enterprise domain controller.
     	 */
     	public static final int WinAccountReadonlyControllersSid = 75;
     	/**
-    	 * 
+    	 * Indicates a SID that matches the built-in DCOM certification services access group.
     	 */
     	public static final int WinBuiltinEventLogReadersGroup = 76;
     }

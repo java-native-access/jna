@@ -238,12 +238,43 @@ public abstract class Advapi32Util {
 	 * @param sid String SID.
 	 * @return SID bytes.
 	 */
-	public static byte[] convertStringSidToSid(String sid) {
+	public static byte[] convertStringSidToSid(String sidString) {
 		PSIDByReference pSID = new PSIDByReference();
-		if (! Advapi32.INSTANCE.ConvertStringSidToSid(sid, pSID)) {
+		if (! Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
 		return pSID.getValue().getBytes();
+	}
+	
+	/**
+	 * Compares a SID to a well known SID and returns TRUE if they match.
+	 * @param sidString
+	 *  String representation of a SID.
+	 * @param wellKnownSidType
+	 *  Member of the WELL_KNOWN_SID_TYPE enumeration to compare with the SID at pSid.
+	 * @return
+	 *  True if the SID is of the well-known type, false otherwise.
+	 */
+	public static boolean isWellKnownSid(String sidString, int wellKnownSidType) {
+		PSIDByReference pSID = new PSIDByReference();
+		if (! Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+		return Advapi32.INSTANCE.IsWellKnownSid(pSID.getValue(), wellKnownSidType);
+	}
+
+	/**
+	 * Compares a SID to a well known SID and returns TRUE if they match.
+	 * @param sidBytes
+	 *  Byte representation of a SID.
+	 * @param wellKnownSidType
+	 *  Member of the WELL_KNOWN_SID_TYPE enumeration to compare with the SID at pSid.
+	 * @return
+	 *  True if the SID is of the well-known type, false otherwise.
+	 */
+	public static boolean isWellKnownSid(byte[] sidBytes, int wellKnownSidType) {
+		PSID pSID = new PSID(sidBytes);
+		return Advapi32.INSTANCE.IsWellKnownSid(pSID, wellKnownSidType);		
 	}
 	
 	/**
