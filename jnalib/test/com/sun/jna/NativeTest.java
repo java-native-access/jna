@@ -293,6 +293,13 @@ public class NativeTest extends TestCase {
                      Native.getTypeMapper(TestCallback.class));
     }
 
+    public void testStringReplace() {
+        assertEquals("Bad replace", "abcdefg", Native.replace("z", "a", "zbcdefg"));
+        assertEquals("Bad replace", "abcdefg", Native.replace("z", "g", "abcdefz"));
+        assertEquals("Bad replace", "abcdefg", Native.replace("z", "d", "abczefg"));
+        assertEquals("Bad replace", "abcaefa", Native.replace("z", "a", "zbczefz"));
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeTest.class);
     }

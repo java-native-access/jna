@@ -1113,7 +1113,25 @@ public final class Native {
             if (cls == float.class) return "F";
             if (cls == double.class) return "D";
         }
-        return "L" + cls.getName().replace(".", "/") + ";";
+        return "L" + replace(".", "/", cls.getName()) + ";";
+    }
+
+    // No String.replace available in 1.4 
+    static String replace(String s1, String s2, String str) {
+        StringBuffer buf = new StringBuffer();
+        while (true) {
+            int idx = str.indexOf(s1);
+            if (idx == -1) {
+                buf.append(str);
+                break;
+            }
+            else {
+                buf.append(str.substring(0, idx));
+                buf.append(s2);
+                str = str.substring(idx + s1.length());
+            }
+        }
+        return buf.toString();
     }
 
     private static final int CVT_UNSUPPORTED = -1;
