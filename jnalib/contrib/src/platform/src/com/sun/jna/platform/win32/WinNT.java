@@ -19,6 +19,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
@@ -1245,6 +1246,72 @@ public interface WinNT extends StdCallLibrary {
         }
 
 		public OSVERSIONINFO(Pointer memory) {
+			useMemory(memory);
+			read();
+		}
+    };
+    
+    /**
+     * Contains operating system version information. The information includes major and minor version numbers, 
+     * a build number, a platform identifier, and information about product suites and the latest Service Pack 
+     * installed on the system.
+     */
+    public static class OSVERSIONINFOEX extends Structure {
+    	/**
+    	 * The size of this data structure, in bytes.
+    	 */
+        public DWORD dwOSVersionInfoSize;
+        /**
+         * The major version number of the operating system.
+         */
+        public DWORD dwMajorVersion;
+        /**
+         * The minor version number of the operating system.
+         */
+        public DWORD dwMinorVersion;
+        /**
+         * The build number of the operating system.
+         */
+        public DWORD dwBuildNumber;
+        /**
+         * The operating system platform. This member can be VER_PLATFORM_WIN32_NT.
+         */
+        public DWORD dwPlatformId;
+        /**
+         * A null-terminated string, such as "Service Pack 3", that indicates the latest Service Pack 
+         * installed on the system. If no Service Pack has been installed, the string is empty.
+         */
+        public char szCSDVersion[];
+        /**
+         * The major version number of the latest Service Pack installed on the system. For example, for 
+         * Service Pack 3, the major version number is 3. If no Service Pack has been installed, the value 
+         * is zero.
+         */
+        public WORD wServicePackMajor;
+        /**
+         * The minor version number of the latest Service Pack installed on the system. For example, for 
+         * Service Pack 3, the minor version number is 0.
+         */
+        public WORD wServicePackMinor;
+        /**
+         * A bit mask that identifies the product suites available on the system.
+         */
+        public WORD wSuiteMask;
+        /**
+         * Any additional information about the system. 
+         */
+        public byte wProductType;
+        /**
+         * Reserved for future use.
+         */
+        public byte wReserved;
+        
+        public OSVERSIONINFOEX() {
+        	szCSDVersion = new char[128];
+        	dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFOEX)
+        }
+
+		public OSVERSIONINFOEX(Pointer memory) {
 			useMemory(memory);
 			read();
 		}

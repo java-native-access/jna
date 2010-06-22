@@ -2,17 +2,20 @@
 <h2>Release 3.x.x</h2>
 <h3>Features</h3>
 <ul>
-<li>The <code>jna.library.path</code> property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.</li>
+<li>The <code>jna.library.path</code> property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.
 <li>Refactor <code>com.sun.jna.platform.win32.WINBASE</code> into <code>WinDef</code>, <code>WinNT</code> and <code>BaseTSD</code>, matching Windows SDK headers.
 <li>Add <code>com.sun.jna.platform.win32.ObjBase</code>, <code>com.sun.jna.platform.win32.Ole32.CoInitializeEx</code>, <code>CoUninitialize</code>, and <code>CoCreateInstance</code>.
 <li>Add <code>com.sun.jna.platform.win32.Oleaut32.SysAllocString</code> and <code>SysFreeString</code>.
 <li>Add <code>com.sun.jna.platform.win32.Secur32.ImpersonateSecurityContext</code> and <code>RevertSecurityContext</code>.
 <li>Add <code>com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE</code>, <code>SECURITY_MAX_SID_SIZE</code> and other related SID-related constants.
 <li>Add <code>com.sun.jna.platform.win32.Advapi32.CreateWellKnownSid</code> and <code>IsWellKnownSid</code> and <code>com.sun.jna.platform.win32.Advapi32Util.isWellKnownSid</code>.
-<li>Add <code>com.sun.jna.platform.win32.Kernel32.GetVersion</code> and <code>GetVersionEx</code>.
+<li>Add <code>com.sun.jna.platform.win32.Kernel32.GetVersion</code>, <code>GetVersionEx</code>, <code>GetSystemInfo</code>, <code>GetNativeSystemInfo</code> and <code>IsWow64Process</code>.
 <li>Add <code>com.sun.jna.platform.win32.User32.GetSystemMetrics</code>.
 <li>Refactor constants from <code>com.sun.jna.platform.win32.GDI32</code> into <code>WinGDI</code>, matching Windows SDK headers.
 <li>Refactor constants from <code>com.sun.jna.platform.win32.User32</code> into <code>WinUser</code>, matching Windows SDK headers.
+<li>Add <code>com.sun.jna.platform.win32.BaseTSD.DWORD_PTR</code>.
+<li>Add <code>com.sun.jna.platform.win32.WinBase.SYSTEM_INFO</code>.
+<li>Add <code>com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX</code>.
 </ul>
 <h3>BugFixes</h3>
 <ul>

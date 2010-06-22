@@ -17,7 +17,11 @@ import java.util.Date;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Union;
+import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 /**
@@ -311,4 +315,97 @@ public abstract class WinBase {
     }        
     
     public static final int INFINITE = 0xFFFFFFFF;
+    
+    public static class SYSTEM_INFO extends Structure {
+    	
+    	public static class PI extends Structure {
+    		
+        	public static class ByReference extends PI implements Structure.ByReference {
+        		
+        	}
+
+    		/**
+    		 * System's processor architecture. 
+    		 * This value can be one of the following values:
+    		 *  
+    		 * 	PROCESSOR_ARCHITECTURE_UNKNOWN
+    		 * 	PROCESSOR_ARCHITECTURE_INTEL
+    		 * 	PROCESSOR_ARCHITECTURE_IA64
+    		 * 	PROCESSOR_ARCHITECTURE_AMD64
+    		 */
+    		public WORD wProcessorArchitecture;
+    		/**
+    		 * Reserved for future use.
+    		 */
+    		public WORD wReserved;
+    	}
+    	
+		public static class UNION extends Union {
+			
+	    	public static class ByReference extends UNION implements Structure.ByReference {
+	    		
+	    	}
+
+			/**
+			 * An obsolete member that is retained for compatibility with Windows NT 3.5 and earlier.
+			 * New applications should use the wProcessorArchitecture branch of the union.
+			 * Windows Me/98/95: The system always sets this member to zero, the value defined 
+			 * for PROCESSOR_ARCHITECTURE_INTEL.
+			 */
+			public DWORD dwOemID;
+			/**
+			 * Processor architecture.
+			 */
+			public PI.ByReference pi;
+		}
+		
+		/**
+		 * Processor architecture.
+		 */
+		public UNION.ByReference processorArchitecture;
+		/**
+		 * Page size and the granularity of page protection and commitment.
+		 */
+		public DWORD dwPageSize;
+		/**
+		 * Pointer to the lowest memory address accessible to applications and dynamic-link libraries (DLLs). 
+		 */
+		public Pointer lpMinimumApplicationAddress;
+		/**
+		 * Pointer to the highest memory address accessible to applications and DLLs. 
+		 */
+		public Pointer lpMaximumApplicationAddress;
+		/**
+		 * Mask representing the set of processors configured into the system. Bit 0 is processor 0; bit 31 is processor 31. 
+		 */
+		public DWORD_PTR dwActiveProcessorMask;
+		/**
+		 * Number of processors in the system. 
+		 */
+		public DWORD dwNumberOfProcessors;
+		/**
+		 * An obsolete member that is retained for compatibility with Windows NT 3.5 and Windows Me/98/95. 
+		 * Use the wProcessorArchitecture, wProcessorLevel, and wProcessorRevision members to determine 
+		 * the type of processor. 
+		 * 	PROCESSOR_INTEL_386
+		 * 	PROCESSOR_INTEL_486
+		 * 	PROCESSOR_INTEL_PENTIUM
+		 */
+		public DWORD dwProcessorType; 
+		/**
+		 * Granularity for the starting address at which virtual memory can be allocated.
+		 */
+		public DWORD dwAllocationGranularity;
+		/**
+		 * System's architecture-dependent processor level. It should be used only for display purposes. 
+		 * To determine the feature set of a processor, use the IsProcessorFeaturePresent function.
+		 * If wProcessorArchitecture is PROCESSOR_ARCHITECTURE_INTEL, wProcessorLevel is defined by the CPU vendor.
+		 * If wProcessorArchitecture is PROCESSOR_ARCHITECTURE_IA64, wProcessorLevel is set to 1.
+		 */
+		public WORD wProcessorLevel;
+		/**
+		 * Architecture-dependent processor revision.
+		 */
+		public WORD wProcessorRevision;
+    }
 }

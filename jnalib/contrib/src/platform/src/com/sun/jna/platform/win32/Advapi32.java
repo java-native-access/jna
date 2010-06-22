@@ -174,6 +174,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 * @param wellKnownSidType
 	 *  Member of the WELL_KNOWN_SID_TYPE enumeration to compare with the SID at pSid. 
 	 * @return
+	 *  True if the SID is of a given well known type, false otherwise.
 	 */
 	public boolean IsWellKnownSid(PSID pSid, int wellKnownSidType);
 	

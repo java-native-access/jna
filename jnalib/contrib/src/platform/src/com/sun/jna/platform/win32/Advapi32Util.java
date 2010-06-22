@@ -235,7 +235,8 @@ public abstract class Advapi32Util {
 	/**
 	 * Convert a string representation of a security identifier (SID) to 
 	 * a binary format.
-	 * @param sid String SID.
+	 * @param sidString 
+	 * 	String SID.
 	 * @return SID bytes.
 	 */
 	public static byte[] convertStringSidToSid(String sidString) {

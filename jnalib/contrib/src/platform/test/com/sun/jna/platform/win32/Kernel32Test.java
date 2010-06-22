@@ -19,10 +19,12 @@ import junit.framework.TestCase;
 import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
+import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
+import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.IntByReference;
 
 public class Kernel32Test extends TestCase {
@@ -179,7 +181,7 @@ public class Kernel32Test extends TestCase {
     	assertTrue(version.getLow().intValue() >= 0);
     }
     
-    public void testGetVersionEx() {
+    public void testGetVersionEx_OSVERSIONINFO() {
     	OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO(); 
     	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
     	assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
@@ -190,4 +192,45 @@ public class Kernel32Test extends TestCase {
     	assertTrue(lpVersionInfo.dwBuildNumber.longValue() > 0);
     	assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);    	
     }
+    
+    public void testGetVersionEx_OSVERSIONINFOEX() {
+    	OSVERSIONINFOEX lpVersionInfo = new OSVERSIONINFOEX(); 
+    	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
+    	assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
+    	assertTrue(lpVersionInfo.dwMajorVersion.longValue() > 0);
+    	assertTrue(lpVersionInfo.dwMinorVersion.longValue() >= 0);
+    	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
+    	assertTrue(lpVersionInfo.dwPlatformId.longValue() > 0);
+    	assertTrue(lpVersionInfo.dwBuildNumber.longValue() > 0);
+    	assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);    	
+    	assertTrue(lpVersionInfo.wProductType >= 0);
+    }
+    
+    public void testGetSystemInfo() {
+    	SYSTEM_INFO lpSystemInfo = new SYSTEM_INFO();
+    	Kernel32.INSTANCE.GetSystemInfo(lpSystemInfo);
+    	assertTrue(lpSystemInfo.dwNumberOfProcessors.intValue() > 0);
+    }
+    
+    public void testIsWow64Process() {
+    	try {
+	    	IntByReference isWow64 = new IntByReference(42);
+	    	HANDLE hProcess = Kernel32.INSTANCE.GetCurrentProcess();
+	    	assertTrue(Kernel32.INSTANCE.IsWow64Process(hProcess, isWow64));
+	    	assertTrue(0 == isWow64.getValue() || 1 == isWow64.getValue());
+    	} catch (UnsatisfiedLinkError e) {
+    		// IsWow64Process is not available on this OS
+    	}
+    }
+    
+    public void testGetNativeSystemInfo() {
+    	try {
+        	SYSTEM_INFO lpSystemInfo = new SYSTEM_INFO();
+        	Kernel32.INSTANCE.GetNativeSystemInfo(lpSystemInfo);
+        	assertTrue(lpSystemInfo.dwNumberOfProcessors.intValue() > 0);
+    	} catch (UnsatisfiedLinkError e) {
+    		// only available under WOW64
+    	}
+    }
+
 }

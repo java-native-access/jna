@@ -16,11 +16,13 @@ import java.nio.Buffer;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
+import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -736,4 +738,47 @@ public interface Kernel32 extends StdCallLibrary {
      *  dwOSVersionInfoSize member of the OSVERSIONINFO or OSVERSIONINFOEX structure.
      */
     boolean GetVersionEx(OSVERSIONINFO lpVersionInfo);
+    
+    /**
+     * The GetVersionEx function obtains extended information about the version of the operating 
+     * system that is currently running.
+     * @param lpVersionInfo
+     *  Pointer to an OSVERSIONINFOEX data structure that the function fills with operating system 
+     *  version information. 
+     * @return
+     *  If the function succeeds, the return value is a nonzero value.
+     *  If the function fails, the return value is zero. To get extended error information, 
+     *  call GetLastError. The function fails if you specify an invalid value for the 
+     *  dwOSVersionInfoSize member of the OSVERSIONINFO or OSVERSIONINFOEX structure.
+     */
+    boolean GetVersionEx(OSVERSIONINFOEX lpVersionInfo);
+    
+    /**
+     * The GetSystemInfo function returns information about the current system.
+     * @param lpSystemInfo
+     *  Pointer to a SYSTEM_INFO structure that receives the information. 
+     */
+    void GetSystemInfo(SYSTEM_INFO lpSystemInfo);
+    
+    /**
+     * The GetNativeSystemInfo function retrieves information about the current system to an 
+     * application running under WOW64. If the function is called from a 64-bit application, 
+     * it is equivalent to the GetSystemInfo function.
+     * @param lpSystemInfo
+     *  Pointer to a SYSTEM_INFO structure that receives the information. 
+     */
+    void GetNativeSystemInfo(SYSTEM_INFO lpSystemInfo);
+    
+    /**
+     * The IsWow64Process function determines whether the specified process is running under WOW64.
+     * @param hProcess
+     *  Handle to a process. 
+     * @param Wow64Process
+     *  Pointer to a value that is set to TRUE if the process is running under WOW64. 
+     *  Otherwise, the value is set to FALSE. 
+     * @return
+     *  If the function succeeds, the return value is a nonzero value.
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean IsWow64Process(HANDLE hProcess, IntByReference Wow64Process);
 }

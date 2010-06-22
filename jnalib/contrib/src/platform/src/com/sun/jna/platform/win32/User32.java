@@ -160,7 +160,7 @@ public interface User32 extends StdCallLibrary {
 	boolean GetWindowRect(HWND hWnd, RECT rect);
 
 	/**
-	 * This function copies the text of the specified window's title bar — if it has one — into a buffer. If 
+	 * This function copies the text of the specified window's title bar - if it has one - into a buffer. If 
 	 * the specified window is a control, the text of the control is copied.
 	 * @param hWnd
 	 *  Handle to the window or control containing the text. 
@@ -178,7 +178,7 @@ public interface User32 extends StdCallLibrary {
 	int GetWindowText(HWND hWnd, char[] lpString, int nMaxCount);
 
 	/**
-	 * This function retrieves the length, in characters, of the specified window's title bar text — 
+	 * This function retrieves the length, in characters, of the specified window's title bar text -
 	 * if the window has a title bar. If the specified window is a control, the function retrieves the
 	 * length of the text within the control.
 	 * @param hWnd

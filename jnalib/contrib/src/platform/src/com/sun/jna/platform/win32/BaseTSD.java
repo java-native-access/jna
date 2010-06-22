@@ -62,6 +62,19 @@ public interface BaseTSD extends StdCallLibrary {
 	}
 
 	/**
+	 * Unsigned DWORD_PTR. 
+	 */
+	public static class DWORD_PTR extends IntegerType {
+		public DWORD_PTR() {
+			this(0);
+		}
+
+		public DWORD_PTR(long value) {
+			super(Pointer.SIZE, value);
+		}
+	}
+
+	/**
 	 * The maximum number of bytes to which a pointer can point. 
 	 * Use for a count that must span the full range of a pointer. 
 	 */
