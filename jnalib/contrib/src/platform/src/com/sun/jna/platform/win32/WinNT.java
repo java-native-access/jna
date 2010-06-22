@@ -1204,4 +1204,49 @@ public interface WinNT extends StdCallLibrary {
      * (sizeof(SID) - sizeof(DWORD) + (SID_MAX_SUB_AUTHORITIES * sizeof(DWORD)))
      */
     public static final int SECURITY_MAX_SID_SIZE = 68;
+    
+    /**
+     * The OSVERSIONINFO data structure contains operating system version information. 
+     * The information includes major and minor version numbers, a build number, a 
+     * platform identifier, and descriptive text about the operating system. This structure 
+     * is used with the GetVersionEx function.
+     */
+    public static class OSVERSIONINFO extends Structure {
+    	/**
+    	 * Size of this data structure, in bytes. Set this member to sizeof(OSVERSIONINFO) 
+    	 * before calling the GetVersionEx function.
+    	 */
+        public DWORD dwOSVersionInfoSize;      
+        /**
+         * Major version number of the operating system. 
+         */
+        public DWORD dwMajorVersion;
+        /**
+         * Minor version number of the operating system.
+         */
+        public DWORD dwMinorVersion;
+        /**
+         * Build number of the operating system.
+         */
+        public DWORD dwBuildNumber;
+        /**
+         * Operating system platform.
+         */
+        public DWORD dwPlatformId;
+        /**
+         * Pointer to a null-terminated string, such as "Service Pack 3", 
+         * that indicates the latest Service Pack installed on the system.
+         */
+        public char szCSDVersion[];
+        
+        public OSVERSIONINFO() {
+        	szCSDVersion = new char[128];
+        	dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFO)
+        }
+
+		public OSVERSIONINFO(Pointer memory) {
+			useMemory(memory);
+			read();
+		}
+    };
 }

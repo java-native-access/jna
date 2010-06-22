@@ -12,9 +12,12 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.awt.Rectangle;
+
 import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
@@ -52,6 +55,24 @@ public interface WinDef extends StdCallLibrary {
 
 		public DWORD(long value) {
 			super(4, value);
+		}
+		
+		/**
+		 * Low WORD.
+		 * @return
+		 *  Low WORD.
+		 */
+		public WORD getLow() {
+			return new WORD(longValue() & 0xFF);
+		}
+				
+		/**
+		 * High WORD.
+		 * @return
+		 *  High WORD.
+		 */
+		public WORD getHigh() {
+			return new WORD((longValue() >> 8) & 0xFF);
 		}
 	}
 
@@ -280,4 +301,19 @@ public interface WinDef extends StdCallLibrary {
 			super(value);
 		}
 	}
+	
+    public class RECT extends Structure {
+        public int left;
+        public int top;
+        public int right;
+        public int bottom;
+        
+        public Rectangle toRectangle() {
+            return new Rectangle(left, top, right-left, bottom-top);
+        }
+        
+        public String toString() {
+            return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
+        }
+    }
 }

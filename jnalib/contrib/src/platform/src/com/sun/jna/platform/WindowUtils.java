@@ -71,15 +71,17 @@ import com.sun.jna.platform.unix.X11.Xext;
 import com.sun.jna.platform.unix.X11.Xrender.XRenderPictFormat;
 import com.sun.jna.platform.win32.GDI32;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.GDI32.BITMAPINFO;
-import com.sun.jna.platform.win32.User32.BLENDFUNCTION;
-import com.sun.jna.platform.win32.User32.POINT;
-import com.sun.jna.platform.win32.User32.SIZE;
+import com.sun.jna.platform.win32.WinGDI;
+import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HRGN;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinUser.BLENDFUNCTION;
+import com.sun.jna.platform.win32.WinUser.POINT;
+import com.sun.jna.platform.win32.WinUser.SIZE;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -642,27 +644,27 @@ public class WindowUtils {
                 public void run() {
                     HWND hWnd = getHWnd(w);
                     User32 user = User32.INSTANCE;
-                    int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
+                    int flags = user.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
                     byte level = (byte)((int)(255 * alpha) & 0xFF);
                     if (usingUpdateLayeredWindow(w)) {
                         // If already using UpdateLayeredWindow, continue to
                         // do so
-                        User32.BLENDFUNCTION blend = new User32.BLENDFUNCTION();
+                        BLENDFUNCTION blend = new BLENDFUNCTION();
                         blend.SourceConstantAlpha = level;
-                        blend.AlphaFormat = User32.AC_SRC_ALPHA;
+                        blend.AlphaFormat = WinUser.AC_SRC_ALPHA;
                         user.UpdateLayeredWindow(hWnd, null, null, null, null,
                                                  null, 0, blend,
-                                                 User32.ULW_ALPHA);
+                                                 WinUser.ULW_ALPHA);
                     }
                     else if (alpha == 1f) {
-                        flags &= ~User32.WS_EX_LAYERED;
-                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
+                        flags &= ~WinUser.WS_EX_LAYERED;
+                        user.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, flags);
                     }
                     else {
-                        flags |= User32.WS_EX_LAYERED;
-                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
+                        flags |= WinUser.WS_EX_LAYERED;
+                        user.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, flags);
                         user.SetLayeredWindowAttributes(hWnd, 0, level,
-                                                        User32.LWA_ALPHA);
+                        		WinUser.LWA_ALPHA);
                     }
                     setForceHeavyweightPopups(w, alpha != 1f);
                     storeAlpha(w, level);
@@ -732,12 +734,12 @@ public class WindowUtils {
                         bmi.bmiHeader.biHeight = wh;
                         bmi.bmiHeader.biPlanes = 1;
                         bmi.bmiHeader.biBitCount = 32;
-                        bmi.bmiHeader.biCompression = GDI32.BI_RGB;
+                        bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
                         bmi.bmiHeader.biSizeImage = ww * wh * 4;
                         PointerByReference ppbits = new PointerByReference();
                         hBitmap = gdi.CreateDIBSection(memDC, bmi,
-                                                       GDI32.DIB_RGB_COLORS,
-                                                       ppbits, null, 0);
+                        		WinGDI.DIB_RGB_COLORS,
+                        		ppbits, null, 0);
                         pbits = ppbits.getValue();
                         bitmapSize = new Dimension(ww, wh);
                     }
@@ -773,18 +775,17 @@ public class WindowUtils {
                     try {
                         // GetLayeredwindowAttributes supported WinXP and later
                         if (user.GetLayeredWindowAttributes(hWnd, null, bref, iref)
-                            && (iref.getValue() & User32.LWA_ALPHA) != 0) {
+                            && (iref.getValue() & WinUser.LWA_ALPHA) != 0) {
                             level = bref.getValue();
                         }
                     }
                     catch(UnsatisfiedLinkError e) {
                     }
                     blend.SourceConstantAlpha = level;
-                    blend.AlphaFormat = User32.AC_SRC_ALPHA;
+                    blend.AlphaFormat = WinUser.AC_SRC_ALPHA;
                     user.UpdateLayeredWindow(hWnd, screenDC, winLoc, winSize, memDC,
-                                             srcLoc, 0, blend, User32.ULW_ALPHA);
-                }
-                finally {
+                                             srcLoc, 0, blend, WinUser.ULW_ALPHA);
+                } finally {
                     user.ReleaseDC(null, screenDC);
                     if (memDC != null && oldBitmap != null) {
                         gdi.SelectObject(memDC, oldBitmap);
@@ -812,7 +813,7 @@ public class WindowUtils {
                 public void run() {
                     User32 user = User32.INSTANCE;
                     HWND hWnd = getHWnd(w);
-                    int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
+                    int flags = user.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
                     JRootPane root = ((RootPaneContainer)w).getRootPane();
                     JLayeredPane lp = root.getLayeredPane();
                     Container content = root.getContentPane();
@@ -827,12 +828,12 @@ public class WindowUtils {
                                JLayeredPane.DRAG_LAYER);
                     }
                     if (transparent && !usingUpdateLayeredWindow(w)) {
-                        flags |= User32.WS_EX_LAYERED;
-                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
+                        flags |= WinUser.WS_EX_LAYERED;
+                        user.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, flags);
                     }
                     else if (!transparent && usingUpdateLayeredWindow(w)) {
-                        flags &= ~User32.WS_EX_LAYERED;
-                        user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
+                        flags &= ~WinUser.WS_EX_LAYERED;
+                        user.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, flags);
                     }
                     setLayersTransparent(w, transparent);
                     setForceHeavyweightPopups(w, transparent);
@@ -873,7 +874,7 @@ public class WindowUtils {
             GDI32 gdi = GDI32.INSTANCE;
             PathIterator pi = area.getPathIterator(null);
             int mode = pi.getWindingRule() == PathIterator.WIND_NON_ZERO
-                ? GDI32.WINDING: GDI32.ALTERNATE;
+                ? WinGDI.WINDING: WinGDI.ALTERNATE;
             float[] coords = new float[6];
             List<POINT> points = new ArrayList<POINT>();
             int size = 0;
@@ -921,7 +922,7 @@ public class WindowUtils {
                         public boolean outputRange(int x, int y, int w, int h) {
                             GDI32 gdi = GDI32.INSTANCE;
                             gdi.SetRectRgn(tempRgn, x, y, x + w, y + h);
-                            return gdi.CombineRgn(region, region, tempRgn, GDI32.RGN_OR) != GDI32.ERROR;
+                            return gdi.CombineRgn(region, region, tempRgn, WinGDI.RGN_OR) != WinGDI.ERROR;
                         }
                     });
                 }

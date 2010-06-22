@@ -20,6 +20,7 @@ import com.sun.jna.Platform;
 import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.unix.X11.Display;
 import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinUser;
 
 /** Provide access to the local keyboard state.  Note that this is meaningless
  * on a headless system and some VNC setups.
@@ -71,30 +72,30 @@ public class KeyboardUtils {
             }
             if (code == KeyEvent.VK_SHIFT) {
                 if ((loc & KeyEvent.KEY_LOCATION_RIGHT) != 0) {
-                    return User32.VK_RSHIFT; 
+                    return WinUser.VK_RSHIFT; 
                 }
                 if ((loc & KeyEvent.KEY_LOCATION_LEFT) != 0) {
-                    return User32.VK_LSHIFT; 
+                    return WinUser.VK_LSHIFT; 
                 }
-                return User32.VK_SHIFT;
+                return WinUser.VK_SHIFT;
             }
             if (code == KeyEvent.VK_CONTROL) {
                 if ((loc & KeyEvent.KEY_LOCATION_RIGHT) != 0) {
-                    return User32.VK_RCONTROL; 
+                    return WinUser.VK_RCONTROL; 
                 }
                 if ((loc & KeyEvent.KEY_LOCATION_LEFT) != 0) {
-                    return User32.VK_LCONTROL; 
+                    return WinUser.VK_LCONTROL; 
                 }
-                return User32.VK_CONTROL;
+                return WinUser.VK_CONTROL;
             }
             if (code == KeyEvent.VK_ALT) {
                 if ((loc & KeyEvent.KEY_LOCATION_RIGHT) != 0) {
-                    return User32.VK_RMENU; 
+                    return WinUser.VK_RMENU; 
                 }
                 if ((loc & KeyEvent.KEY_LOCATION_LEFT) != 0) {
-                    return User32.VK_LMENU; 
+                    return WinUser.VK_LMENU; 
                 }
-                return User32.VK_MENU;
+                return WinUser.VK_MENU;
             }
             return 0;
         }

@@ -1,12 +1,13 @@
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.User32.HHOOK;
-import com.sun.jna.platform.win32.User32.KBDLLHOOKSTRUCT;
-import com.sun.jna.platform.win32.User32.LowLevelKeyboardProc;
-import com.sun.jna.platform.win32.User32.MSG;
+import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
+import com.sun.jna.platform.win32.WinUser.HHOOK;
+import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
+import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
+import com.sun.jna.platform.win32.WinUser.MSG;
 
 /** Sample implementation of a low-level keyboard hook on W32. */
 public class KeyHook {
@@ -21,10 +22,10 @@ public class KeyHook {
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT info) {
                 if (nCode >= 0) {
                     switch(wParam.intValue()) {
-                    case User32.WM_KEYUP:
-                    case User32.WM_KEYDOWN:
-                    case User32.WM_SYSKEYUP:
-                    case User32.WM_SYSKEYDOWN:
+                    case WinUser.WM_KEYUP:
+                    case WinUser.WM_KEYDOWN:
+                    case WinUser.WM_SYSKEYUP:
+                    case WinUser.WM_SYSKEYDOWN:
                         System.err.println("in callback, key=" + info.vkCode);
                         if (info.vkCode == 81) {
                             quit = true;
@@ -34,7 +35,7 @@ public class KeyHook {
                 return lib.CallNextHookEx(hhk, nCode, wParam, info.getPointer());
             }
         };
-        hhk = lib.SetWindowsHookEx(User32.WH_KEYBOARD_LL, keyboardHook, hMod, 0);
+        hhk = lib.SetWindowsHookEx(WinUser.WH_KEYBOARD_LL, keyboardHook, hMod, 0);
         System.out.println("Keyboard hook installed, type anywhere, 'q' to quit");
         new Thread() {
             public void run() {

@@ -64,14 +64,16 @@ import com.sun.jna.platform.unix.X11.Display;
 import com.sun.jna.platform.unix.X11.GC;
 import com.sun.jna.platform.win32.GDI32;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.GDI32.BITMAPINFO;
-import com.sun.jna.platform.win32.User32.BLENDFUNCTION;
-import com.sun.jna.platform.win32.User32.POINT;
-import com.sun.jna.platform.win32.User32.SIZE;
+import com.sun.jna.platform.win32.WinGDI;
+import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinUser.BLENDFUNCTION;
+import com.sun.jna.platform.win32.WinUser.POINT;
+import com.sun.jna.platform.win32.WinUser.SIZE;
 import com.sun.jna.ptr.PointerByReference;
 
 // TODO: put this into a reasonable API; right now this is pretty much
@@ -230,9 +232,9 @@ public class AlphaMaskDemo implements Runnable {
         if (!alphaWindow.isDisplayable()) {
             alphaWindow.pack();
             hWnd = getHwnd(alphaWindow);
-            int flags = user.GetWindowLong(hWnd, User32.GWL_EXSTYLE);
-            flags |= User32.WS_EX_LAYERED;
-            user.SetWindowLong(hWnd, User32.GWL_EXSTYLE, flags);
+            int flags = user.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
+            flags |= WinUser.WS_EX_LAYERED;
+            user.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, flags);
             Window parent = alphaWindow.getOwner();
             Point where = parent.getLocationOnScreen();
             where.translate(parent.getWidth(), 0);
@@ -260,11 +262,11 @@ public class AlphaMaskDemo implements Runnable {
                 bmi.bmiHeader.biHeight = h;
                 bmi.bmiHeader.biPlanes = 1;
                 bmi.bmiHeader.biBitCount = 32;
-                bmi.bmiHeader.biCompression = GDI32.BI_RGB;
+                bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
                 bmi.bmiHeader.biSizeImage = w * h * 4;
                 
                 PointerByReference ppbits = new PointerByReference();
-                hBitmap = gdi.CreateDIBSection(memDC, bmi, GDI32.DIB_RGB_COLORS,
+                hBitmap = gdi.CreateDIBSection(memDC, bmi, WinGDI.DIB_RGB_COLORS,
                                                ppbits, null, 0);
                 oldBitmap = gdi.SelectObject(memDC, hBitmap);
                 Pointer pbits = ppbits.getValue();
@@ -293,9 +295,9 @@ public class AlphaMaskDemo implements Runnable {
                 POINT srcLoc = new POINT();
                 BLENDFUNCTION blend = new BLENDFUNCTION();
                 blend.SourceConstantAlpha = (byte)(alpha * 255);
-                blend.AlphaFormat = User32.AC_SRC_ALPHA;
+                blend.AlphaFormat = WinUser.AC_SRC_ALPHA;
                 user.UpdateLayeredWindow(hWnd, screenDC, loc, size, memDC, srcLoc, 
-                                         0, blend, User32.ULW_ALPHA);
+                                         0, blend, WinUser.ULW_ALPHA);
             }
             finally {
                 user.ReleaseDC(null, screenDC);
@@ -309,9 +311,9 @@ public class AlphaMaskDemo implements Runnable {
         else if (a) {
             BLENDFUNCTION blend = new BLENDFUNCTION();
             blend.SourceConstantAlpha = (byte)(alpha * 255);
-            blend.AlphaFormat = User32.AC_SRC_ALPHA;
+            blend.AlphaFormat = WinUser.AC_SRC_ALPHA;
             user.UpdateLayeredWindow(hWnd, null, null, null, null, null, 
-                                     0, blend, User32.ULW_ALPHA);
+                                     0, blend, WinUser.ULW_ALPHA);
         }
         
         if (!alphaWindow.isVisible()) {

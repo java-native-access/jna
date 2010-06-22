@@ -16,16 +16,24 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.ptr.IntByReference;
 
 public class Kernel32Test extends TestCase {
     
     public static void main(String[] args) {
+    	OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO(); 
+    	assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
+    	System.out.println("Operating system: " 
+    			+ lpVersionInfo.dwMajorVersion.longValue() + "." + lpVersionInfo.dwMinorVersion.longValue()
+    			+ " (" + lpVersionInfo.dwBuildNumber + ")"
+    			+ " [" + Native.toString(lpVersionInfo.szCSDVersion) + "]");
         junit.textui.TestRunner.run(Kernel32Test.class);
     }
     
@@ -163,5 +171,23 @@ public class Kernel32Test extends TestCase {
     public void testGetTempPath() {
     	char[] buffer = new char[WinDef.MAX_PATH]; 
     	assertTrue(Kernel32.INSTANCE.GetTempPath(new DWORD(WinDef.MAX_PATH), buffer).intValue() > 0);    	
+    }
+    
+    public void testGetVersion() {
+    	DWORD version = Kernel32.INSTANCE.GetVersion();
+    	assertTrue(version.getHigh().intValue() != 0);
+    	assertTrue(version.getLow().intValue() >= 0);
+    }
+    
+    public void testGetVersionEx() {
+    	OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO(); 
+    	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
+    	assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
+    	assertTrue(lpVersionInfo.dwMajorVersion.longValue() > 0);
+    	assertTrue(lpVersionInfo.dwMinorVersion.longValue() >= 0);
+    	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
+    	assertTrue(lpVersionInfo.dwPlatformId.longValue() > 0);
+    	assertTrue(lpVersionInfo.dwBuildNumber.longValue() > 0);
+    	assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);    	
     }
 }

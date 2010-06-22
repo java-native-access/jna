@@ -20,6 +20,7 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -712,4 +713,27 @@ public interface Kernel32 extends StdCallLibrary {
      *  call GetLastError.
      */
     DWORD GetTempPath(DWORD nBufferLength, char[] buffer);
+    
+    /**
+     * The GetVersion function returns the current version number of the operating system.
+     * @return
+     *  If the function succeeds, the return value includes the major and minor version numbers 
+     *  of the operating system in the low order word, and information about the operating system 
+     *  platform in the high order word.
+     */
+    DWORD GetVersion();
+
+    /**
+     * The GetVersionEx function obtains extended information about the version of the operating 
+     * system that is currently running.
+     * @param lpVersionInfo
+     *  Pointer to an OSVERSIONINFO data structure that the function fills with operating system 
+     *  version information. 
+     * @return
+     *  If the function succeeds, the return value is a nonzero value.
+     *  If the function fails, the return value is zero. To get extended error information, 
+     *  call GetLastError. The function fails if you specify an invalid value for the 
+     *  dwOSVersionInfoSize member of the OSVERSIONINFO or OSVERSIONINFOEX structure.
+     */
+    boolean GetVersionEx(OSVERSIONINFO lpVersionInfo);
 }
