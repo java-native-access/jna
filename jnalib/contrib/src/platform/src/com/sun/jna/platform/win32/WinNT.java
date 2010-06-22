@@ -1316,4 +1316,32 @@ public interface WinNT extends StdCallLibrary {
 			read();
 		}
     };
+
+    public static final int VER_EQUAL = 1;
+    public static final int VER_GREATER = 2;
+    public static final int VER_GREATER_EQUAL = 3;
+    public static final int VER_LESS = 4;
+    public static final int VER_LESS_EQUAL = 5;
+    public static final int VER_AND = 6;
+    public static final int VER_OR = 7;
+    
+    public static final int VER_CONDITION_MASK = 7;
+    public static final int VER_NUM_BITS_PER_CONDITION_MASK = 3;
+
+    public static final int VER_MINORVERSION  = 0x0000001;
+    public static final int VER_MAJORVERSION = 0x0000002;
+    public static final int VER_BUILDNUMBER = 0x0000004;
+    public static final int VER_PLATFORMID = 0x0000008;
+    public static final int VER_SERVICEPACKMINOR = 0x0000010;
+    public static final int VER_SERVICEPACKMAJOR = 0x0000020;
+    public static final int VER_SUITENAME = 0x0000040;
+    public static final int VER_PRODUCT_TYPE = 0x0000080;
+
+    public static final int VER_NT_WORKSTATION = 0x0000001;
+    public static final int VER_NT_DOMAIN_CONTROLLER = 0x0000002;
+    public static final int VER_NT_SERVER = 0x0000003;
+
+    public static final int VER_PLATFORM_WIN32s = 0;
+    public static final int VER_PLATFORM_WIN32_WINDOWS = 1;
+    public static final int VER_PLATFORM_WIN32_NT = 2;
 }
