@@ -16,11 +16,13 @@ import java.nio.Buffer;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.ByReference;
@@ -149,14 +151,14 @@ public interface Kernel32 extends StdCallLibrary {
     /**
      * The GetDriveType function determines whether a disk drive is a removable,
      * fixed, CD-ROM, RAM disk, or network drive.
-     * @param rootPathName
+     * @param lpRootPathName
      *  Pointer to a null-terminated string that specifies the root directory of
      *  the disk to return information about. A trailing backslash is required. 
      *  If this parameter is NULL, the function uses the root of the current directory.
      * @return
      *  The return value specifies the type of drive.
      */
-    int GetDriveType(String rootPathName);
+    int GetDriveType(String lpRootPathName);
 
     /**
      * The FormatMessage function formats a message string. The function requires a
@@ -781,4 +783,66 @@ public interface Kernel32 extends StdCallLibrary {
      *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
      */
     boolean IsWow64Process(HANDLE hProcess, IntByReference Wow64Process);
+    
+    /**
+     * Retrieves information about the system's current usage of both physical and virtual memory.
+     * @param lpBuffer
+     *  A pointer to a MEMORYSTATUSEX structure that receives information about current memory availability.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero. To get extended error information, 
+     *  call GetLastError.
+     */
+    boolean GlobalMemoryStatusEx(MEMORYSTATUSEX lpBuffer);
+    
+    /**
+     * The GetLogicalDriveStrings function fills a buffer with strings that specify 
+     * valid drives in the system.
+     * @param nBufferLength
+     *  Maximum size of the buffer pointed to by lpBuffer, in TCHARs. This size does not include 
+     *  the terminating null character. If this parameter is zero, lpBuffer is not used.
+     * @param lpBuffer
+     *  Pointer to a buffer that receives a series of null-terminated strings, one for each valid 
+     *  drive in the system, plus with an additional null character. Each string is a device name.
+     * @return
+     *  If the function succeeds, the return value is the length, in characters, of the strings 
+     *  copied to the buffer, not including the terminating null character. Note that an ANSI-ASCII 
+     *  null character uses one byte, but a Unicode null character uses two bytes.
+     *  If the buffer is not large enough, the return value is greater than nBufferLength. It is 
+     *  the size of the buffer required to hold the drive strings.
+     *  If the function fails, the return value is zero. To get extended error information, use 
+     *  the GetLastError function.
+     */
+    DWORD GetLogicalDriveStrings(DWORD nBufferLength, char[] lpBuffer);
+    
+    /**
+     * The GetDiskFreeSpaceEx function retrieves information about the amount of space that is 
+     * available on a disk volume, which is the total amount of space, the total amount of free 
+     * space, and the total amount of free space available to the user that is associated with 
+     * the calling thread.
+     * @param lpDirectoryName
+     *  A pointer to a null-terminated string that specifies a directory on a disk. 
+     *  If this parameter is NULL, the function uses the root of the current disk. 
+     *  If this parameter is a UNC name, it must include a trailing backslash, for example,
+     *   \\MyServer\MyShare\.
+     *   This parameter does not have to specify the root directory on a disk. The function 
+     *   accepts any directory on a disk. 
+     * @param lpFreeBytesAvailable
+     *   A pointer to a variable that receives the total number of free bytes on a disk that
+     *   are available to the user who is associated with the calling thread.  
+     *   This parameter can be NULL.
+     * @param lpTotalNumberOfBytes
+     *  A pointer to a variable that receives the total number of bytes on a disk that are 
+     *  available to the user who is associated with the calling thread. 
+     *  This parameter can be NULL.
+     * @param lpTotalNumberOfFreeBytes
+     *  A pointer to a variable that receives the total number of free bytes on a disk. 
+     *  This parameter can be NULL.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is 0 (zero). To get extended error information, 
+     *  call GetLastError.
+     */
+    boolean GetDiskFreeSpaceEx(String lpDirectoryName, LARGE_INTEGER.ByReference lpFreeBytesAvailable,
+    		LARGE_INTEGER.ByReference lpTotalNumberOfBytes, LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes);
 }

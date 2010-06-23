@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -90,4 +93,35 @@ public abstract class Kernel32Util {
     	}
     	return Native.toString(buffer);
 	}
+	
+	/**
+	 * Returns valid drives in the system.
+	 * @return
+	 *  An array of valid drives.
+	 */
+	public static String[] getLogicalDriveStrings() {
+    	DWORD dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(new DWORD(0), null);
+    	if (dwSize.intValue() <= 0) {
+    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    	}
+    	
+    	char buf[] = new char[dwSize.intValue()];
+    	dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(dwSize, buf);
+    	if (dwSize.intValue() <= 0) {
+    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    	}
+
+    	List<String> drives = new ArrayList<String>();    	
+    	String drive = "";
+    	// the buffer is double-null-terminated
+    	for(int i = 0; i < buf.length - 1; i++) {
+    		if (buf[i] == 0) {
+    			drives.add(drive);
+    			drive = "";
+    		} else {
+    			drive += buf[i];
+    		}
+    	}
+    	return drives.toArray(new String[0]);
+	}	
 }

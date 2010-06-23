@@ -316,4 +316,30 @@ public interface WinDef extends StdCallLibrary {
             return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
         }
     }
+    
+	/**
+	 * 64-bit unsigned integer.
+	 */
+	public static class ULONGLONG extends IntegerType {
+		public ULONGLONG() {
+			this(0);
+		}
+
+		public ULONGLONG(long value) {
+			super(8, value);
+		}
+	}
+	
+	/**
+	 * 64-bit unsigned integer.
+	 */
+	public static class DWORDLONG extends IntegerType {
+		public DWORDLONG() {
+			this(0);
+		}
+
+		public DWORDLONG(long value) {
+			super(8, value);
+		}
+	}
 }

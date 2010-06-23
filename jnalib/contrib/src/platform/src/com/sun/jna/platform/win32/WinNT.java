@@ -18,6 +18,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
+import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.ptr.ByReference;
@@ -785,11 +786,51 @@ public interface WinNT extends StdCallLibrary {
 	
 	/**
 	 * A 64-bit integer;
-	 * TODO: this should be a union and allow direct 64-bit integer access.
 	 */
 	public static class LARGE_INTEGER extends Structure {
-		public DWORD LowPart;
-		public DWORD HighPart;					
+		public static class ByReference extends LARGE_INTEGER 
+			implements Structure.ByReference {
+
+		}
+		
+		public static class LowHigh extends Structure {
+			public DWORD LowPart;
+			public DWORD HighPart;
+		}
+		
+		public static class UNION extends Union {
+			public LowHigh lh;
+			public long value;
+		}
+		
+		public UNION u;
+		
+		/**
+		 * Low DWORD.
+		 * @return
+		 *  DWORD.
+		 */
+		public DWORD getLow() {
+			return u.lh.LowPart;
+		}
+		
+		/**
+		 * High DWORD.
+		 * @return
+		 *  DWORD.
+		 */
+		public DWORD getHigh() {
+			return u.lh.HighPart;
+		}
+
+		/**
+		 * 64-bit value.
+		 * @return
+		 *  64-bit value.
+		 */
+		public long getValue() {
+			return u.value;
+		}
 	}
 	
 	/**

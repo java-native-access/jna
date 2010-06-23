@@ -19,10 +19,12 @@ import junit.framework.TestCase;
 import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
+import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.IntByReference;
@@ -232,5 +234,29 @@ public class Kernel32Test extends TestCase {
     		// only available under WOW64
     	}
     }
+    
+    public void testGlobalMemoryStatusEx() {
+    	MEMORYSTATUSEX lpBuffer = new MEMORYSTATUSEX();
+    	assertTrue(Kernel32.INSTANCE.GlobalMemoryStatusEx(lpBuffer));
+    	assertTrue(lpBuffer.ullTotalPhys.longValue() > 0);
+    	assertTrue(lpBuffer.dwMemoryLoad.intValue() >= 0 && lpBuffer.dwMemoryLoad.intValue() <= 100);
+    	assertEquals(0, lpBuffer.ullAvailExtendedVirtual.intValue());
+    }
 
+    public void testGetLogicalDriveStrings() {
+    	DWORD dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(new DWORD(0), null);
+    	assertTrue(dwSize.intValue() > 0);
+    	char buf[] = new char[dwSize.intValue()];
+    	assertTrue(Kernel32.INSTANCE.GetLogicalDriveStrings(dwSize, buf).intValue() > 0);
+    }
+    
+    public void testGetDiskFreeSpaceEx() {
+    	LARGE_INTEGER.ByReference lpFreeBytesAvailable = new LARGE_INTEGER.ByReference(); 
+    	LARGE_INTEGER.ByReference lpTotalNumberOfBytes = new LARGE_INTEGER.ByReference(); 
+    	LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes = new LARGE_INTEGER.ByReference(); 
+    	assertTrue(Kernel32.INSTANCE.GetDiskFreeSpaceEx(null, 
+    			lpFreeBytesAvailable, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes));
+    	assertTrue(lpTotalNumberOfFreeBytes.getValue() > 0);
+    	assertTrue(lpTotalNumberOfFreeBytes.getValue() < lpTotalNumberOfBytes.getValue());
+    }
 }

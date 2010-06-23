@@ -21,6 +21,7 @@ import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDLONG;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
@@ -315,7 +316,12 @@ public abstract class WinBase {
     }        
     
     public static final int INFINITE = 0xFFFFFFFF;
-    
+
+    /**
+     * Contains information about the current computer system. This includes the architecture and 
+     * type of the processor, the number of processors in the system, the page size, and other such
+     * information.
+     */
     public static class SYSTEM_INFO extends Structure {
     	
     	public static class PI extends Structure {
@@ -408,4 +414,56 @@ public abstract class WinBase {
 		 */
 		public WORD wProcessorRevision;
     }
+    
+    /**
+     * Contains information about the current state of both physical and virtual memory, including 
+     * extended memory. The GlobalMemoryStatusEx function stores information in this structure.
+     */
+    public static class MEMORYSTATUSEX extends Structure {
+    	/**
+    	 * The size of the structure, in bytes.
+    	 */
+        public DWORD dwLength;
+        /**
+         * A number between 0 and 100 that specifies the approximate percentage of physical memory 
+         * that is in use (0 indicates no memory use and 100 indicates full memory use).
+         */
+        public DWORD dwMemoryLoad;
+        /**
+         * The amount of actual physical memory, in bytes.
+         */
+        public DWORDLONG ullTotalPhys;
+        /**
+         * The amount of physical memory currently available, in bytes. This is the amount of physical
+         * memory that can be immediately reused without having to write its contents to disk first. 
+         * It is the sum of the size of the standby, free, and zero lists.
+         */
+        public DWORDLONG ullAvailPhys;
+        /**
+         * The current committed memory limit for the system or the current process, whichever is smaller, in bytes. 
+         */
+        public DWORDLONG ullTotalPageFile;
+        /**
+         * The maximum amount of memory the current process can commit, in bytes. This value is equal to or smaller
+         * than the system-wide available commit value.
+         */
+        public DWORDLONG ullAvailPageFile;
+        /**
+         * The size of the user-mode portion of the virtual address space of the calling process, in bytes.
+         */
+        public DWORDLONG ullTotalVirtual;
+        /**
+         * The amount of unreserved and uncommitted memory currently in the user-mode portion of the 
+         * virtual address space of the calling process, in bytes.
+         */
+        public DWORDLONG ullAvailVirtual;
+        /**
+         * Reserved. This value is always 0.
+         */
+        public DWORDLONG ullAvailExtendedVirtual;
+        
+        public MEMORYSTATUSEX() {
+        	dwLength = new DWORD(size());
+        }
+    };
 }
