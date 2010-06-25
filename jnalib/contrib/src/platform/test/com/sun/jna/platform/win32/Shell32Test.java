@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -40,4 +41,13 @@ public class Shell32Test extends TestCase {
     			pszPath));
     	assertTrue(Native.toString(pszPath).length() > 0);
     }
+
+    public void testSHGetDesktopFolder() {
+        PointerByReference ppshf = new PointerByReference();
+        WinNT.HRESULT hr = Shell32.INSTANCE.SHGetDesktopFolder(ppshf);
+        assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
+        assertTrue(ppshf.getValue() != null);
+        // should release the interface, but we need Com4JNA to do that.
+    }
+
 }

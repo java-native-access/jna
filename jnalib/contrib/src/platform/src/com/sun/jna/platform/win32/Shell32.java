@@ -18,6 +18,7 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -62,4 +63,14 @@ public interface Shell32 extends StdCallLibrary {
      */
     HRESULT SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, 
     		char[] pszPath);
+
+    /**
+     * Retrieves the IShellFolder interface for the desktop folder, which is the root of the Shell's namespace.
+     * The retrieved COM interface pointer can be used via Com4JNA's ComObject.wrapNativeInterface call
+     * given a suitable interface definition for IShellFolder
+     * @param ppshf A place to put the IShellFolder interface pointer
+     * @return If the function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
+     */
+    HRESULT SHGetDesktopFolder( PointerByReference ppshf );
+
 }
