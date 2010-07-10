@@ -1,7 +1,3 @@
-2010-07-10  Evan Phoenix  <evan@fallingsnow.net>
-
-	* src/closures.c (selinux_enabled_check): Fix strncmp usage bug.
-
 2010-05-05  Michael Kohler <michaelkohler@live.com>
 
 	* src/dlmalloc.c (dlfree): Fix spelling.
