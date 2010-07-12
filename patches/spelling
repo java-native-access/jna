@@ -17,7 +17,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -12143,7 +12143,7 @@ TARGETDIR="unknown"
+@@ -11178,7 +11178,7 @@ TARGETDIR="unknown"
  case "$host" in
    alpha*-*-*)
  	TARGET=ALPHA; TARGETDIR=alpha;

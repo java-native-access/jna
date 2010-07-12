@@ -8,9 +8,9 @@ Index: libffi/ChangeLog
 +	* src/x86/ffi64.c: Fix typo in comment.
 +	* src/x86/ffi.c: Use /* ... */ comment style.
 +
- 2010-02-24  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+ 2010-07-07   Neil Roberts <neil@linux.intel.com>
  
- 	* doc/libffi.texi (The Closure API): Fix typo.
+ 	* src/x86/sysv.S (ffi_call_SYSV): Align the stack pointer to
 Index: libffi/src/x86/ffi.c
 ===================================================================
 --- libffi.orig/src/x86/ffi.c

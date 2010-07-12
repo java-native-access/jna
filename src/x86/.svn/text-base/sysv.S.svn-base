@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   sysv.S - Copyright (c) 1996, 1998, 2001-2003, 2005, 2008  Red Hat, Inc.
+   sysv.S - Copyright (c) 1996, 1998, 2001-2003, 2005, 2008, 2010  Red Hat, Inc.
    
    X86 Foreign Function Interface 
 
@@ -47,6 +47,9 @@ ffi_call_SYSV:
 	/* Make room for all of the new args.  */
 	movl  16(%ebp),%ecx
 	subl  %ecx,%esp
+
+        /* Align the stack pointer to 16-bytes */
+        andl  $0xfffffff0, %esp
 
 	movl  %esp,%eax
 
@@ -331,10 +334,20 @@ ffi_closure_raw_SYSV:
 .LSCIE1:
 	.long	0x0	/* CIE Identifier Tag */
 	.byte	0x1	/* CIE Version */
+#ifdef HAVE_AS_ASCII_PSEUDO_OP
 #ifdef __PIC__
 	.ascii "zR\0"	/* CIE Augmentation */
 #else
 	.ascii "\0"	/* CIE Augmentation */
+#endif
+#elif defined HAVE_AS_STRING_PSEUDO_OP
+#ifdef __PIC__
+	.string "zR"	/* CIE Augmentation */
+#else
+	.string ""	/* CIE Augmentation */
+#endif
+#else
+#error missing .ascii/.string
 #endif
 	.byte	0x1	/* .uleb128 0x1; CIE Code Alignment Factor */
 	.byte	0x7c	/* .sleb128 -4; CIE Data Alignment Factor */
