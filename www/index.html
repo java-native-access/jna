@@ -584,10 +584,16 @@ can parse a COM interface definition and generate a Java object to match it.
 <h4>Why does the VM sometimes crash in my shutdown hook on Windows?</h4>
 If JNA unpacks its native code from its own jar file, it saves it in a
 temporary location and attempts to remove it when the VM exits.  In order to
-do so, it must first unload its native library from memory, and it does so in
-a shutdown hook.  The workaround is to either make jnidispatch.dll available
-on the system library load path, or ensure your shutdown hook runs before
-JNA's. 
+do so, it must first unload its native library from memory, and it does so 
+when the class com.sun.jna.Native is unloaded.  The workaround is to either
+make jnidispatch.dll available on the system library load path, or ensure your
+shutdown hook runs before the class com.sun.jna.Native is garbage-collected.
+Since <a href="http://download.oracle.com/docs/cd/E17409_01/javase/6/docs/api/java/lang/Runtime.html#addShutdownHook(java.lang.Thread)">Runtime.addShutdownHook
+  documentation</a> indicates that shutdown hooks will be run in an
+unspecified order, and also that you must be careful about depending on
+services which might also be shutting down, you should probably find an
+alternate method of calling your cleanup actions before the JNA classes are
+unloaded, or simply put the native DLL in the system library path.
 
 <a name=osx></a>
 <h4>I get an UnsatisfiedLinkError on OSX when I provide my native library via Java Web Start</h4>
