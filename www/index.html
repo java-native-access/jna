@@ -475,7 +475,7 @@ currently include the following.
 <li><a href="#performance">How does JNA performance compared to custom JNI?</a>
 <li><a href="#osx">I get an UnsatisfiedLinkError on OSX trying to include my custom library via Java Web Start</a>
 <li><a href="#COM">I need to use a COM/OCX/ActiveX object.  Can JNA help me?</a>
-<li><a href="#shutdown">I'm using a shutdown hook on Windows to perform some JNA cleanup.  Why does the VM sometimes crash?</a>
+<li><a href="#shutdown">I'm using a shutdown hook on Windows to make some native calls (with direct mapping).  Why does the calls sometimes fail?</a>
 </ul>
 <a name=structure_use></a>
 <h4>When should I use Structure.ByReference? Structure.ByValue? Structure[]?</h4>
@@ -582,18 +582,20 @@ can parse a COM interface definition and generate a Java object to match it.
 
 <a name=shutdown></a>
 <h4>Why does the VM sometimes crash in my shutdown hook on Windows?</h4>
+If you are using direct mapping, make sure you keep a reference to the JNA
+class com.sun.jna.Native until your shutdown hook completes.  If you are using
+interface mapping, your library proxy will be keeping a reference internally,
+so an explicit reference is not required.
+<p>
 If JNA unpacks its native code from its own jar file, it saves it in a
-temporary location and attempts to remove it when the VM exits.  In order to
-do so, it must first unload its native library from memory, and it does so 
-when the class com.sun.jna.Native is unloaded.  The workaround is to either
-make jnidispatch.dll available on the system library load path, or ensure your
-shutdown hook runs before the class com.sun.jna.Native is garbage-collected.
-Since <a href="http://download.oracle.com/docs/cd/E17409_01/javase/6/docs/api/java/lang/Runtime.html#addShutdownHook(java.lang.Thread)">Runtime.addShutdownHook
-  documentation</a> indicates that shutdown hooks will be run in an
-unspecified order, and also that you must be careful about depending on
-services which might also be shutting down, you should probably find an
-alternate method of calling your cleanup actions before the JNA classes are
-unloaded, or simply put the native DLL in the system library path.
+temporary location and attempts to remove it when the Native class is
+finalized (which may or may not happen as the VM exits).  In order to
+do so, it must first unload its native library from memory.
+<p>
+Alternatively, if the jnidispatch.dll native library
+is found in the system library load path, JNA will not attempt to unload it,
+although your shutdown hook must still ensure that the JNA classes you wish to
+use have not been GC'd.  
 
 <a name=osx></a>
 <h4>I get an UnsatisfiedLinkError on OSX when I provide my native library via Java Web Start</h4>
