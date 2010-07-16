@@ -3,7 +3,7 @@
 <meta name="author" content="Timothy Wall">
 <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
 <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2010-05-12">
+<meta name="date" content="2010-07-16">
 <title>Java Native Access (JNA): Pure Java access to native libraries</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
@@ -475,6 +475,7 @@ currently include the following.
 <li><a href="#performance">How does JNA performance compared to custom JNI?</a>
 <li><a href="#osx">I get an UnsatisfiedLinkError on OSX trying to include my custom library via Java Web Start</a>
 <li><a href="#COM">I need to use a COM/OCX/ActiveX object.  Can JNA help me?</a>
+<li><a href="#shutdown">I'm using a shutdown hook on Windows to perform some JNA cleanup.  Why does the VM sometimes crash?</a>
 </ul>
 <a name=structure_use></a>
 <h4>When should I use Structure.ByReference? Structure.ByValue? Structure[]?</h4>
@@ -578,6 +579,15 @@ There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implem
 <h4>I need to use a COM/OCX/ActiveX object.  Can JNA do that?</h4>
 Not really.  Try <a href="http://sourceforge.net/projects/jacob-project/develop">JACOB</a> or <a href="http://com4j.dev.java.net/">com4j</a>, both of which
 can parse a COM interface definition and generate a Java object to match it. 
+
+<a name=shutdown></a>
+<h4>Why does the VM sometimes crash in my shutdown hook on Windows?</h4>
+If JNA unpacks its native code from its own jar file, it saves it in a
+temporary location and attempts to remove it when the VM exits.  In order to
+do so, it must first unload its native library from memory, and it does so in
+a shutdown hook.  The workaround is to either make jnidispatch.dll available
+on the system library load path, or ensure your shutdown hook runs before
+JNA's. 
 
 <a name=osx></a>
 <h4>I get an UnsatisfiedLinkError on OSX when I provide my native library via Java Web Start</h4>
