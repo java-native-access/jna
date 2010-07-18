@@ -496,6 +496,11 @@ public class NativeLibrary {
                 return libName;
             }
         }
+        else if (Platform.isWindows()) {
+        	if (libName.endsWith(".drv") || libName.endsWith(".dll")) {
+        		return libName;
+        	}
+        }
 
         return System.mapLibraryName(libName);
     }

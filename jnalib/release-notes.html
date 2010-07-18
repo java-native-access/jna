@@ -3,6 +3,7 @@
 <h3>Features</h3>
 <ul>
 <li>The <code>jna.library.path</code> property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.
+<li><code>Native.loadLibrary</code> can now load <code>.drv</code> files.
 <li>Refactor <code>com.sun.jna.platform.win32.WINBASE</code> into <code>WinDef</code>, <code>WinNT</code> and <code>BaseTSD</code>, matching Windows SDK headers.
 <li>Refactor constants from <code>com.sun.jna.platform.win32.GDI32</code> into <code>WinGDI</code>, matching Windows SDK headers.
 <li>Refactor constants from <code>com.sun.jna.platform.win32.User32</code> into <code>WinUser</code>, matching Windows SDK headers.
@@ -20,6 +21,8 @@
 <li>Add <code>platform.win32.WinNT.OSVERSIONINFOEX</code>, <code>VER</code> constants.
 <li>Add <code>platform.win32.WinDef.ULONGLONG</code> and <code>DWORDLONG</code>.
 <li>Add <code>platform.win32.Shell32.SHGetDesktopFolder</code> (prep work for Com4JNA).
+<li>Add <code>platform.win32.Winspool.GetPrinterInfo</code>.
+<li>Add <code>platform.win32.WinspoolUtil.getPrinterInfo1</code>.
 </ul>
 <h3>BugFixes</h3>
 <ul>
