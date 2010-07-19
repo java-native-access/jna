@@ -1,6 +1,6 @@
 #
 # Makefile for JNA native bits
-# Copyright (c) 2007 Timothy Wall All Rights Reserved
+# Copyright (c) 2007-2010 Timothy Wall All Rights Reserved
 #
 # You may need to run 'ant javah' at the root before performing a build from 
 # this directory.

@@ -1,5 +1,5 @@
 // Resource file to generate version information for jnidispatch.dll
-// Copyright (c) 2008 Timothy Wall
+// Copyright (c) 2008-2010 Timothy Wall
 // Type: version
 
 // Name: 1
@@ -21,7 +21,7 @@ BEGIN
       VALUE "FileVersion","3.0.0"
       VALUE "Full Version","3.0.0 b0"
       VALUE "InternalName", "jnidispatch"
-      VALUE "LegalCopyright", "Copyright \251 2008 Timothy Wall"
+      VALUE "LegalCopyright", "Copyright \251 2008-2010 Timothy Wall"
       VALUE "OriginalFilename", "jnidispatch.dll"
       VALUE "ProductName", "Java(TM) Native Access"
       VALUE "ProductVersion","3"
