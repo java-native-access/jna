@@ -100,6 +100,11 @@
 
 
 # DONE
+* Make a separate jar file for all OS-specific headers
+  Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
+  aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
+  (how useful would it really be, or is this just sorting legos?)
+  o same for windowutils, fileutils, etc. (not useful)
 * check Structure "final" fields; should never write back to native memory
 * OSX ObjC access (see rococoa)
 * do Structure.write for any callback args
@@ -259,11 +264,6 @@ int findNativeWindow(Window w);
     exception if the value is out of bounds).
   o when used as struct fields, could allow detection of field order by order
     of initialization (requires all-or-nothing usage, though)
-* Make a separate jar file for all OS-specific headers
-  Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
-  aggregated per-library (interface CLibrary extends stdlib, stdio, etc)
-  (how useful would it really be, or is this just sorting legos?)
-  o same for windowutils, fileutils, etc. (not useful)
 * StringBuffer/StringBuilder as mutable char*/wchar_t* argument
   NOTE: byte[]/char[] is probably better; it's trivial to convert to String
   and native code can't change the size anyway

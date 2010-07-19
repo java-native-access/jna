@@ -2268,10 +2268,10 @@ Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass classp, jint code) {
 
 JNIEXPORT jstring JNICALL
 Java_com_sun_jna_Native_getNativeVersion(JNIEnv *env, jclass classp) {
-#ifndef VERSION
-#define VERSION "undefined"
+#ifndef JNA_JNI_VERSION
+#define JNA_JNI_VERSION "undefined"
 #endif
-  return newJavaString(env, VERSION, JNI_FALSE);
+  return newJavaString(env, JNA_JNI_VERSION, JNI_FALSE);
 }
 
 JNIEXPORT jstring JNICALL

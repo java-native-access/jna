@@ -41,7 +41,7 @@
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="3"/>
   <property name="jni.minor" value="2"/>
-  <property name="jni.revision" value="1"/>
+  <property name="jni.revision" value="2"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
   <property name="jni.md5" value="c870290c36c8d3fdf85db7c782febc3f"/>
@@ -371,6 +371,7 @@
         <os name="OpenBSD"/>
       </or>
     </condition>
+
     <!-- Default make program -->
     <property name="make" value="make"/>
 
