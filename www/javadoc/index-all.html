@@ -46,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.2.5</font></EM>
+<b>JNA API</><font size=-1> 3.2.6</font></EM>
 </TD>
 </TR>
 
@@ -441,11 +441,11 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/FunctionResultContext.html" t
 <DD>Get the arguments used in this function call.
 <DT><A HREF="./com/sun/jna/Structure.html#getAutoRead()"><B>getAutoRead()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Returns whether the struture is written to native memory prior to
+<DD>Returns whether the structure is read from native memory prior to
         a native function call.
 <DT><A HREF="./com/sun/jna/Structure.html#getAutoWrite()"><B>getAutoWrite()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Returns whether the structure is read from native memory after a native
+<DD>Returns whether the structure is written to native memory after a native
         function call.
 <DT><A HREF="./com/sun/jna/Memory.html#getByte(long)"><B>getByte(long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
@@ -759,7 +759,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Memory.html#getSize()"><B>getSize()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
-<DD>&nbsp;
+<DD><B>Deprecated.</B>&nbsp;<I>use <A HREF="./com/sun/jna/Memory.html#size()"><CODE>Memory.size()</CODE></A> instead.</I>
 <DT><A HREF="./com/sun/jna/Memory.html#getString(long, boolean)"><B>getString(long, boolean)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
 <DD>Indirect the native pointer to <code>malloc</code> space, a la
@@ -1022,7 +1022,7 @@ Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="cl
  type.
 <DT><A HREF="./com/sun/jna/Memory.html#isValid()"><B>isValid()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
-<DD>Returns false if the memory has been freed.
+<DD><B>Deprecated.</B>&nbsp;<I>use <A HREF="./com/sun/jna/Memory.html#valid()"><CODE>Memory.valid()</CODE></A> instead.</I>
 <DT><A HREF="./com/sun/jna/Function.html#isVarArgs(java.lang.reflect.Method)"><B>isVarArgs(Method)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>Varargs are only supported on 1.5+.
@@ -1190,6 +1190,12 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/PointerType.html" title="clas
 <DT><A HREF="./com/sun/jna/ToNativeConverter.html#nativeType()"><B>nativeType()</B></A> - 
 Method in interface com.sun.jna.<A HREF="./com/sun/jna/ToNativeConverter.html" title="interface in com.sun.jna">ToNativeConverter</A>
 <DD>Indicate the type expected from <A HREF="./com/sun/jna/ToNativeConverter.html#toNative(java.lang.Object, com.sun.jna.ToNativeContext)"><CODE>ToNativeConverter.toNative(java.lang.Object, com.sun.jna.ToNativeContext)</CODE></A>.
+<DT><A HREF="./com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer)"><B>nativeValue(Pointer)</B></A> - 
+Static method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
+<DD>Read the native peer value.
+<DT><A HREF="./com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer, long)"><B>nativeValue(Pointer, long)</B></A> - 
+Static method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
+<DD>Set the native peer value.
 <DT><A HREF="./com/sun/jna/Structure.html#newInstance(java.lang.Class)"><B>newInstance(Class)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>Create a new Structure instance of the given type
@@ -1394,6 +1400,9 @@ Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="cl
 <DD>When called from a class static initializer, maps all native methods
  found within that class to native libraries via the JNA raw calling
  interface.
+<DT><A HREF="./com/sun/jna/Native.html#replace(java.lang.String, java.lang.String, java.lang.String)"><B>replace(String, String, String)</B></A> - 
+Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Native.DeleteNativeLibrary.html#run()"><B>run()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Native.DeleteNativeLibrary.html" title="class in com.sun.jna">Native.DeleteNativeLibrary</A>
 <DD>&nbsp;
@@ -1407,15 +1416,15 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class 
 <DD>Change the alignment of this structure.
 <DT><A HREF="./com/sun/jna/Structure.html#setAutoRead(boolean)"><B>setAutoRead(boolean)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Set whether the struture is written to native memory prior to
+<DD>Set whether the structure is read from native memory prior to
         a native function call.
 <DT><A HREF="./com/sun/jna/Structure.html#setAutoSynch(boolean)"><B>setAutoSynch(boolean)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Set whether the structure is automatically synched to native memory
+<DD>Set whether the structure is automatically synchronized to native memory
         before and after a native function call.
 <DT><A HREF="./com/sun/jna/Structure.html#setAutoWrite(boolean)"><B>setAutoWrite(boolean)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Set whether the structure is read from native memory after a native
+<DD>Set whether the structure is written to native memory after a native
         function call.
 <DT><A HREF="./com/sun/jna/Memory.html#setByte(long, byte)"><B>setByte(long, byte)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
@@ -1574,6 +1583,9 @@ Constructor for class com.sun.jna.ptr.<A HREF="./com/sun/jna/ptr/ShortByReferenc
 <DT><A HREF="./com/sun/jna/Memory.html#size"><B>size</B></A> - 
 Variable in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
 <DD>&nbsp;
+<DT><A HREF="./com/sun/jna/Memory.html#size()"><B>size()</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/NativeLong.html#SIZE"><B>SIZE</B></A> - 
 Static variable in class com.sun.jna.<A HREF="./com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A>
 <DD>Size of a native long, in bytes.
@@ -1625,7 +1637,7 @@ Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Structure.html#Structure(com.sun.jna.Pointer)"><B>Structure(Pointer)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Create a structure cast onto pre-allocated memory.
+<DD>Create a structure cast onto preallocated memory.
 <DT><A HREF="./com/sun/jna/Structure.html#Structure(com.sun.jna.Pointer, int)"><B>Structure(Pointer, int)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>&nbsp;
@@ -1812,6 +1824,9 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class 
 <A NAME="_V_"><!-- --></A><H2>
 <B>V</B></H2>
 <DL>
+<DT><A HREF="./com/sun/jna/Memory.html#valid()"><B>valid()</B></A> - 
+Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
+<DD>Returns false if the memory has been freed.
 <DT><A HREF="./com/sun/jna/Function.html#valueOf(boolean)"><B>valueOf(boolean)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>Implementation of Boolean.valueOf for older VMs.
@@ -1953,7 +1968,7 @@ Static method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="c
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size=-1> 3.2.5</font></EM>
+<b>JNA API</><font size=-1> 3.2.6</font></EM>
 </TD>
 </TR>
 
