@@ -1209,6 +1209,16 @@ v     * @param wide whether to convert from a wide or standard C string
         return "native@0x" + Long.toHexString(peer);
     }
     
+    /** Read the native peer value.  Use with caution. */
+    public static long nativeValue(Pointer p) {
+        return p.peer;
+    }
+
+    /** Set the native peer value.  Use with caution. */
+    public static void nativeValue(Pointer p, long value) {
+        p.peer = value;
+    }
+
     /** Pointer which disallows all read/write access. */
     private static class Opaque extends Pointer {
         private Opaque(long peer) { super(peer); }
