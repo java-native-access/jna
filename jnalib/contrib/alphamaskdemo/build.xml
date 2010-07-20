@@ -1,29 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jnacontrib.dnddemo" default="jar" basedir=".">
-    <description>Builds, tests, and runs the project jnacontrib.dnddemo.</description>
+<project name="jnacontrib.alphamaskdemo" default="jar" basedir=".">
+    <description>Builds, tests, and runs the project jnacontrib.alphamaskdemo.</description>
     <!-- Locations -->
     <property name="src"                location="."/>
     <property name="build"              location="build"/>
-    <property name="jna-dist"           location="../../../dist"/>
+    <property name="jna-dist"           location="../../dist"/>
 
-    <property name="buildClasses"       location="${build}/classes"/>
-    <property name="buildJar"           location="${build}/demo-dnd.jar"/>
-    <property name="main-class"			value="com.sun.jna.contrib.demo.GhostedDragImageDemo" />
+    <property name="classes"       location="${build}/classes"/>
+    <property name="jar"           location="${build}/demo-alphamask.jar"/>
+    <property name="file.reference.jna.build" location="../../build"/>
+    <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
+    <property name="main-class"			value="com.sun.jna.contrib.demo.AlphaMaskDemo" />
 
     <path id="classpath">
-        <fileset dir="../../../build">
-            <include name="jna.jar"/>
-        </fileset>
-        <fileset dir="../platform/dist">
-            <include name="platform.jar"/>
-        </fileset>
+        <fileset file="${file.reference.jna.jar}"/>
+        <fileset dir="../platform/dist" includes="platform.jar"/>
     </path>
 
     <!-- Run Demo. -->
     <target name="run" depends="compile">
         <java classname="${main-class}" fork="true">
             <classpath>
-                <pathelement location="${buildClasses}" />
+                <pathelement location="${classes}" />
                 <path refid="classpath"/>
             </classpath>
         </java>
@@ -31,17 +29,17 @@
 
     <!-- Delete class and jar files. -->
     <target name="clean">
-        <delete dir="${buildClasses}"/>
-        <delete file="${buildJar}"/>
+        <delete dir="${classes}"/>
+        <delete file="${jar}"/>
         <delete dir="${build}"/>
     </target>
 
     <!-- Compile all classes. -->
     <target name="compile">
-        <mkdir dir="${buildClasses}"/>
+        <mkdir dir="${classes}"/>
 
         <!-- Compile the project. -->
-        <javac srcdir="${src}" destdir="${buildClasses}" target="1.5" source="1.5" encoding="UTF-8" debug="on">
+        <javac srcdir="${src}" destdir="${classes}" target="1.5" source="1.5" encoding="UTF-8" debug="on">
             <classpath>
                 <path refid="classpath"/>
             </classpath>
@@ -51,7 +49,7 @@
         </javac>
 
         <!-- Copy all non-java files to classes. -->
-        <copy todir="${buildClasses}/com">
+        <copy todir="${classes}/com">
             <fileset dir="${src}/com">
                 <exclude name="**/*.java"/>
             </fileset>
@@ -60,7 +58,7 @@
                 <exclude name="**/*.java"/>
             </fileset>
         	<!-- jna -->
-            <fileset dir="../../../build/classes/com">
+            <fileset dir="${file.reference.jna.build}/classes/com">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -68,7 +66,7 @@
 
     <!-- Create jar-file. -->
     <target name="jar" depends="compile">
-        <jar jarfile="${buildJar}" basedir="${buildClasses}">
+        <jar jarfile="${jar}" basedir="${classes}">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>

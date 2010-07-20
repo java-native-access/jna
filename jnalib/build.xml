@@ -22,7 +22,7 @@
   <property name="dynlink.native" value="false"/>
   <property name="native" location="native"/>
   <property name="src" location="src"/>
-  <property name="contrib" location="contrib/src"/>
+  <property name="contrib" location="contrib"/>
   <property name="dist" location="dist"/>
   <property name="test.src" location="test"/>
   <property name="doc" location="doc"/>
@@ -235,8 +235,12 @@
 
   <target name="contrib-jars" depends="jar" description="Build contrib jars">
     <subant target="jar">
+      <property name="file.reference.jna.build" location="${build}"/>
+      <property name="file.reference.jna.jar" location="${build}/${jar}"/>
+      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <!-- platform.jar needs to be built first -->
       <fileset dir="${contrib}" includes="platform/build.xml" />
-      <fileset dir="${contrib}" includes="*/build.xml" />
+      <fileset dir="${contrib}" includes="*/build.xml" excludes="platform/build.xml"/>
     </subant>
   </target>
 
