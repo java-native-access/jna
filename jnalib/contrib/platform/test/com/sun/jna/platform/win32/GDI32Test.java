@@ -29,12 +29,12 @@ public class GDI32Test extends TestCase {
     
     public void testBITMAPINFO() {    	
         BITMAPINFO info = new BITMAPINFO();
-        assertEquals("Wrong size for BITMAPINFO()", 0, info.size());
+        assertEquals("Wrong size for BITMAPINFO()", 44, info.size());
 
         info = new BITMAPINFO(2);
-        assertEquals("Wrong size for BITMAPINFO(2)", 0, info.size());
+        assertEquals("Wrong size for BITMAPINFO(2)", 48, info.size());
 
         info = new BITMAPINFO(16);
-        assertEquals("Wrong size for BITMAPINFO(16)", 0, info.size());
+        assertEquals("Wrong size for BITMAPINFO(16)", 104, info.size());
     }
 }
