@@ -85,16 +85,10 @@ public interface WinGDI extends StdCallLibrary {
     
     public class BITMAPINFO extends Structure {
         public BITMAPINFOHEADER bmiHeader = new BITMAPINFOHEADER();
-        //RGBQUAD:
-        //byte rgbBlue;
-        //byte rgbGreen;
-        //byte rgbRed;
-        //byte rgbReserved = 0;
-        int[] bmiColors = new int[1];
+        public RGBQUAD[] = new RGBQUAD[1];
         public BITMAPINFO() { this(1); }
         public BITMAPINFO(int size) {
-            bmiColors = new int[size];
-            allocateMemory();
+            bmiColors = new RGBQUAD[size];
         }
     }
     
