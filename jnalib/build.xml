@@ -22,6 +22,7 @@
   <property name="dynlink.native" value="false"/>
   <property name="native" location="native"/>
   <property name="src" location="src"/>
+  <property name="platform.src" location="contrib/platform/src"/>
   <property name="contrib" location="contrib"/>
   <property name="dist" location="dist"/>
   <property name="test.src" location="test"/>
@@ -526,6 +527,14 @@
   </target>
 
   <target name="javadoc" depends="-setup">
+    <path id="javadoc.src.path">
+      <path refid="src.path"/>
+      <pathelement location="${platform.src}"/>
+    </path>
+    <path id="javadoc.compile.path">
+      <path refid="compile.path"/>
+      <pathelement location="${classes}"/>
+    </path>
     <property name="header"
               value="&lt;b&gt;JNA API&lt;/&gt;&lt;font size=&quot;-1&quot;&gt; ${jna.version}&lt;/font&gt;"/>
     <property name="footer"
@@ -534,10 +543,10 @@
     <mkdir dir="${javadoc}"/>
     <javadoc package="true"
              windowtitle="JNA API"
-             sourcepathref="src.path"
-             classpathref="compile.path"
+             sourcepathref="javadoc.src.path"
+             classpathref="javadoc.compile.path"
              maxmemory="256m"
-             packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.platform,com.sun.jna.platform.win32,com.sun.jna.exmaples.unix"
+             packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.platform,com.sun.jna.platform.win32"
              overview="${src}/com/sun/jna/overview.html"
              destdir="${javadoc}">
       <!-- stylesheetfile="${stylesheet}" -->
@@ -551,15 +560,18 @@
           <include name="com/sun/jna/**/*"/>
         </patternset>
       </packageset>
+      <packageset dir="${platform.src}" defaultexcludes="yes">
+        <patternset>
+          <include name="com/sun/jna/platform/**/*"/>
+        </patternset>
+      </packageset>
 
       <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.win32"/>
-      <group title="Platform Specific" packages="com.sun.jna.platform"/>
+      <group title="Platform Utilities" packages="com.sun.jna.platform,com.sun.jna.platform.dnd"/>
+      <group title="Platform Specific" packages="com.sun.jna.platform.*"/>
     	
       <arg value="-notimestamp"/>
     </javadoc>
-    <subant target="javadoc">
-      <fileset dir="${contrib}" includes="platform/build.xml"/>
-    </subant>	
   </target>
 
   <target name="dist" depends="jar,contrib-jars,compile-tests,native,javadoc"
@@ -632,11 +644,10 @@
     </copy>
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
-      <zipfileset dir="${contrib}/platform/dist/javadoc" prefix="platform/javadoc"/>
     </zip>
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,LICENSE.txt"/>
+      <zipfileset dir="." includes="build.xml,pom.xml,LICENSE.txt"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*,build,build/**/*" prefix="native"/>
