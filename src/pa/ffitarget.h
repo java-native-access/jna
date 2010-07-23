@@ -38,21 +38,22 @@ typedef enum ffi_abi {
 
 #ifdef PA_LINUX
   FFI_PA32,
-  FFI_DEFAULT_ABI = FFI_PA32,
+  FFI_LAST_ABI,
+  FFI_DEFAULT_ABI = FFI_PA32
 #endif
 
 #ifdef PA_HPUX
   FFI_PA32,
-  FFI_DEFAULT_ABI = FFI_PA32,
+  FFI_LAST_ABI,
+  FFI_DEFAULT_ABI = FFI_PA32
 #endif
 
 #ifdef PA64_HPUX
 #error "PA64_HPUX FFI is not yet implemented"
   FFI_PA64,
-  FFI_DEFAULT_ABI = FFI_PA64,
+  FFI_LAST_ABI,
+  FFI_DEFAULT_ABI = FFI_PA64
 #endif
-
-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
 } ffi_abi;
 #endif
 

@@ -1,0 +1,349 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,9 @@
++2010-07-22  Dan Witte  <dwitte@mozilla.com>
++
++	* src/*/ffitarget.h: Make FFI_LAST_ABI one past the last valid ABI.
++	* src/prep_cif.c: Fix ABI assertion.
++        * src/cris/ffi.c: Ditto.
++
+ 2010-07-10  Evan Phoenix  <evan@fallingsnow.net>
+ 
+ 	* src/closures.c (selinux_enabled_check): Fix strncmp usage bug.
+Index: libffi/src/arm/ffitarget.h
+===================================================================
+--- libffi.orig/src/arm/ffitarget.h
++++ libffi/src/arm/ffitarget.h
+@@ -34,8 +34,8 @@ typedef signed long            ffi_sarg;
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_SYSV,
+-  FFI_DEFAULT_ABI = FFI_SYSV,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/avr32/ffitarget.h
+===================================================================
+--- libffi.orig/src/avr32/ffitarget.h
++++ libffi/src/avr32/ffitarget.h
+@@ -34,8 +34,8 @@ typedef signed long            ffi_sarg;
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_SYSV,
+-  FFI_DEFAULT_ABI = FFI_SYSV,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/cris/ffi.c
+===================================================================
+--- libffi.orig/src/cris/ffi.c
++++ libffi/src/cris/ffi.c
+@@ -163,7 +163,7 @@ ffi_prep_cif (ffi_cif * cif,
+   ffi_type **ptr;
+ 
+   FFI_ASSERT (cif != NULL);
+-  FFI_ASSERT ((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
++  FFI_ASSERT (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI);
+ 
+   cif->abi = abi;
+   cif->arg_types = atypes;
+Index: libffi/src/cris/ffitarget.h
+===================================================================
+--- libffi.orig/src/cris/ffitarget.h
++++ libffi/src/cris/ffitarget.h
+@@ -34,8 +34,8 @@ typedef signed long            ffi_sarg;
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_SYSV,
+-  FFI_DEFAULT_ABI = FFI_SYSV,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/frv/ffitarget.h
+===================================================================
+--- libffi.orig/src/frv/ffitarget.h
++++ libffi/src/frv/ffitarget.h
+@@ -35,13 +35,9 @@ typedef signed long            ffi_sarg;
+ 
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+-
+-#ifdef FRV
+   FFI_EABI,
+-  FFI_DEFAULT_ABI = FFI_EABI,
+-#endif
+-
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_EABI
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/ia64/ffitarget.h
+===================================================================
+--- libffi.orig/src/ia64/ffitarget.h
++++ libffi/src/ia64/ffitarget.h
+@@ -34,8 +34,8 @@ typedef signed long long            ffi_
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_UNIX,   	/* Linux and all Unix variants use the same conventions	*/
+-  FFI_DEFAULT_ABI = FFI_UNIX,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_UNIX
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/m32r/ffitarget.h
+===================================================================
+--- libffi.orig/src/m32r/ffitarget.h
++++ libffi/src/m32r/ffitarget.h
+@@ -36,8 +36,8 @@ typedef enum ffi_abi
+   {
+     FFI_FIRST_ABI = 0,
+     FFI_SYSV,
+-    FFI_DEFAULT_ABI = FFI_SYSV,
+-    FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++    FFI_LAST_ABI,
++    FFI_DEFAULT_ABI = FFI_SYSV
+   } ffi_abi;
+ #endif
+ 
+Index: libffi/src/m68k/ffitarget.h
+===================================================================
+--- libffi.orig/src/m68k/ffitarget.h
++++ libffi/src/m68k/ffitarget.h
+@@ -34,8 +34,8 @@ typedef signed long            ffi_sarg;
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_SYSV,
+-  FFI_DEFAULT_ABI = FFI_SYSV,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/mips/ffitarget.h
+===================================================================
+--- libffi.orig/src/mips/ffitarget.h
++++ libffi/src/mips/ffitarget.h
+@@ -186,30 +186,29 @@ typedef enum ffi_abi {
+   FFI_O32_SOFT_FLOAT,
+   FFI_N32_SOFT_FLOAT,
+   FFI_N64_SOFT_FLOAT,
++  FFI_LAST_ABI,
+ 
+ #ifdef FFI_MIPS_O32
+ #ifdef __mips_soft_float
+-  FFI_DEFAULT_ABI = FFI_O32_SOFT_FLOAT,
++  FFI_DEFAULT_ABI = FFI_O32_SOFT_FLOAT
+ #else
+-  FFI_DEFAULT_ABI = FFI_O32,
++  FFI_DEFAULT_ABI = FFI_O32
+ #endif
+ #else
+ # if _MIPS_SIM==_ABI64
+ #  ifdef __mips_soft_float
+-  FFI_DEFAULT_ABI = FFI_N64_SOFT_FLOAT,
++  FFI_DEFAULT_ABI = FFI_N64_SOFT_FLOAT
+ #  else
+-  FFI_DEFAULT_ABI = FFI_N64,
++  FFI_DEFAULT_ABI = FFI_N64
+ #  endif
+ # else
+ #  ifdef __mips_soft_float
+-  FFI_DEFAULT_ABI = FFI_N32_SOFT_FLOAT,
++  FFI_DEFAULT_ABI = FFI_N32_SOFT_FLOAT
+ #  else
+-  FFI_DEFAULT_ABI = FFI_N32,
++  FFI_DEFAULT_ABI = FFI_N32
+ #  endif
+ # endif
+ #endif
+-
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
+ } ffi_abi;
+ 
+ #define FFI_EXTRA_CIF_FIELDS unsigned rstruct_flag
+Index: libffi/src/moxie/ffitarget.h
+===================================================================
+--- libffi.orig/src/moxie/ffitarget.h
++++ libffi/src/moxie/ffitarget.h
+@@ -35,13 +35,9 @@ typedef signed long            ffi_sarg;
+ 
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+-
+-#ifdef MOXIE
+   FFI_EABI,
+-  FFI_DEFAULT_ABI = FFI_EABI,
+-#endif
+-
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_EABI
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/pa/ffitarget.h
+===================================================================
+--- libffi.orig/src/pa/ffitarget.h
++++ libffi/src/pa/ffitarget.h
+@@ -38,21 +38,22 @@ typedef enum ffi_abi {
+ 
+ #ifdef PA_LINUX
+   FFI_PA32,
+-  FFI_DEFAULT_ABI = FFI_PA32,
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_PA32
+ #endif
+ 
+ #ifdef PA_HPUX
+   FFI_PA32,
+-  FFI_DEFAULT_ABI = FFI_PA32,
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_PA32
+ #endif
+ 
+ #ifdef PA64_HPUX
+ #error "PA64_HPUX FFI is not yet implemented"
+   FFI_PA64,
+-  FFI_DEFAULT_ABI = FFI_PA64,
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_PA64
+ #endif
+-
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/prep_cif.c
+===================================================================
+--- libffi.orig/src/prep_cif.c
++++ libffi/src/prep_cif.c
+@@ -93,7 +93,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+   ffi_type **ptr;
+ 
+   FFI_ASSERT(cif != NULL);
+-  FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
++  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI);
+ 
+   cif->abi = abi;
+   cif->arg_types = atypes;
+Index: libffi/src/s390/ffitarget.h
+===================================================================
+--- libffi.orig/src/s390/ffitarget.h
++++ libffi/src/s390/ffitarget.h
+@@ -40,8 +40,8 @@ typedef signed long            ffi_sarg;
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_SYSV,
+-  FFI_DEFAULT_ABI = FFI_SYSV,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/sh/ffitarget.h
+===================================================================
+--- libffi.orig/src/sh/ffitarget.h
++++ libffi/src/sh/ffitarget.h
+@@ -36,8 +36,8 @@ typedef signed long            ffi_sarg;
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_SYSV,
+-  FFI_DEFAULT_ABI = FFI_SYSV,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/sh64/ffitarget.h
+===================================================================
+--- libffi.orig/src/sh64/ffitarget.h
++++ libffi/src/sh64/ffitarget.h
+@@ -36,8 +36,8 @@ typedef signed long            ffi_sarg;
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+   FFI_SYSV,
+-  FFI_DEFAULT_ABI = FFI_SYSV,
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ } ffi_abi;
+ 
+ #define FFI_EXTRA_CIF_FIELDS long long flags2
+Index: libffi/src/sparc/ffitarget.h
+===================================================================
+--- libffi.orig/src/sparc/ffitarget.h
++++ libffi/src/sparc/ffitarget.h
+@@ -42,12 +42,12 @@ typedef enum ffi_abi {
+   FFI_V8,
+   FFI_V8PLUS,
+   FFI_V9,
++  FFI_LAST_ABI,
+ #ifdef SPARC64
+-  FFI_DEFAULT_ABI = FFI_V9,
++  FFI_DEFAULT_ABI = FFI_V9
+ #else
+-  FFI_DEFAULT_ABI = FFI_V8,
++  FFI_DEFAULT_ABI = FFI_V8
+ #endif
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
+ } ffi_abi;
+ #endif
+ 
+Index: libffi/src/x86/ffitarget.h
+===================================================================
+--- libffi.orig/src/x86/ffitarget.h
++++ libffi/src/x86/ffitarget.h
+@@ -64,28 +64,29 @@ typedef enum ffi_abi {
+ #ifdef X86_WIN32
+   FFI_SYSV,
+   FFI_STDCALL,
++  FFI_LAST_ABI,
+   /* TODO: Add fastcall support for the sake of completeness */
+-  FFI_DEFAULT_ABI = FFI_SYSV,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ #endif
+ 
+ #ifdef X86_WIN64
+   FFI_WIN64,
+-  FFI_DEFAULT_ABI = FFI_WIN64,
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_WIN64
+ #else
+ 
+   /* ---- Intel x86 and AMD x86-64 - */
+ #if !defined(X86_WIN32) && (defined(__i386__) || defined(__x86_64__) || defined(__i386) || defined(__amd64))
+   FFI_SYSV,
+   FFI_UNIX64,   /* Unix variants all use the same ABI for x86-64  */
++  FFI_LAST_ABI,
+ #if defined(__i386__) || defined(__i386)
+-  FFI_DEFAULT_ABI = FFI_SYSV,
++  FFI_DEFAULT_ABI = FFI_SYSV
+ #else
+-  FFI_DEFAULT_ABI = FFI_UNIX64,
++  FFI_DEFAULT_ABI = FFI_UNIX64
+ #endif
+ #endif
+ #endif /* X86_WIN64 */
+-
+-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
+ } ffi_abi;
+ #endif
+ 

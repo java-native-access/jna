@@ -1,9 +1,3 @@
-2010-07-22  Dan Witte  <dwitte@mozilla.com>
-
-	* src/*/ffitarget.h: Make FFI_LAST_ABI one past the last valid ABI.
-	* src/prep_cif.c: Fix ABI assertion.
-        * src/cris/ffi.c: Ditto.
-
 2010-07-10  Evan Phoenix  <evan@fallingsnow.net>
 
 	* src/closures.c (selinux_enabled_check): Fix strncmp usage bug.
