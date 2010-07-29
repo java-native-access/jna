@@ -1448,13 +1448,16 @@ public final class Native {
         final String DEFAULT_VERSION = VERSION;
         final String DEFAULT_BUILD = VERSION + " (package information missing)";
         Package pkg = Native.class.getPackage();
-        String title = pkg.getSpecificationTitle();
+        String title = pkg != null
+            ? pkg.getSpecificationTitle() : DEFAULT_TITLE;
         if (title == null) title = DEFAULT_TITLE;
-        String version = pkg.getSpecificationVersion();
+        String version = pkg != null 
+            ? pkg.getSpecificationVersion() : DEFAULT_VERSION;
         if (version == null) version = DEFAULT_VERSION;
         title += " API Version " + version;
         System.out.println(title);
-        version = pkg.getImplementationVersion();
+        version = pkg != null
+            ? pkg.getImplementationVersion() : DEFAULT_BUILD;
         if (version == null) version = DEFAULT_BUILD;
         System.out.println("Version: " + version);
         System.out.println(" Native: " + getNativeVersion() + " ("
