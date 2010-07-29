@@ -759,6 +759,13 @@ public class Function extends Pointer {
         return false;
     }
 
+    /** Provide a unique hash code for {@link Function}s which are
+        equivalent.
+    */
+    public int hashCode() {
+        return callFlags + options.hashCode() + peer.hashCode();
+    }
+
     /** Concatenate varargs with normal args to obtain a simple argument 
      * array. 
      */
