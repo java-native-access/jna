@@ -192,7 +192,7 @@ public class Memory extends Pointer {
      * @see Pointer#read(long,byte[],int,int) 
      */
     public void read(long bOff, byte[] buf, int index, int length) {
-        boundsCheck(bOff, length * 1);
+        boundsCheck(bOff, length * 1L);
         super.read(bOff, buf, index, length);
     }
 
@@ -206,7 +206,7 @@ public class Memory extends Pointer {
      * @see Pointer#read(long,short[],int,int)
      */
     public void read(long bOff, short[] buf, int index, int length) {
-        boundsCheck(bOff, length * 2);
+        boundsCheck(bOff, length * 2L);
         super.read(bOff, buf, index, length);
     }
 
@@ -220,7 +220,7 @@ public class Memory extends Pointer {
      * @see Pointer#read(long,char[],int,int) 
      */
     public void read(long bOff, char[] buf, int index, int length) {
-        boundsCheck(bOff, length * 2);
+        boundsCheck(bOff, length * 2L);
         super.read(bOff, buf, index, length);
     }
 
@@ -234,7 +234,7 @@ public class Memory extends Pointer {
      * @see Pointer#read(long,int[],int,int)
      */
     public void read(long bOff, int[] buf, int index, int length) {
-        boundsCheck(bOff, length * 4);
+        boundsCheck(bOff, length * 4L);
         super.read(bOff, buf, index, length);
     }
 
@@ -248,7 +248,7 @@ public class Memory extends Pointer {
      * @see Pointer#read(long,long[],int,int) 
      */
     public void read(long bOff, long[] buf, int index, int length) {
-        boundsCheck(bOff, length * 8);
+        boundsCheck(bOff, length * 8L);
         super.read(bOff, buf, index, length);
     }
 
@@ -262,7 +262,7 @@ public class Memory extends Pointer {
      * @see Pointer#read(long,float[],int,int) 
      */
     public void read(long bOff, float[] buf, int index, int length) {
-        boundsCheck(bOff, length * 4);
+        boundsCheck(bOff, length * 4L);
         super.read(bOff, buf, index, length);
     }
 
@@ -277,7 +277,7 @@ public class Memory extends Pointer {
      */
     public void read(long bOff, double[] buf, int index, int length) 
     {
-        boundsCheck(bOff, length * 8);
+        boundsCheck(bOff, length * 8L);
         super.read(bOff, buf, index, length);
     }
 
@@ -297,7 +297,7 @@ public class Memory extends Pointer {
      * @see Pointer#write(long,byte[],int,int) 
      */
     public void write(long bOff, byte[] buf, int index, int length) {
-        boundsCheck(bOff, length * 1);
+        boundsCheck(bOff, length * 1L);
         super.write(bOff, buf, index, length);
     }
 
@@ -311,7 +311,7 @@ public class Memory extends Pointer {
      * @see Pointer#write(long,short[],int,int)
      */
     public void write(long bOff, short[] buf, int index, int length) {
-        boundsCheck(bOff, length * 2);
+        boundsCheck(bOff, length * 2L);
         super.write(bOff, buf, index, length);
     }
 
@@ -325,7 +325,7 @@ public class Memory extends Pointer {
      * @see Pointer#write(long,char[],int,int)
      */
     public void write(long bOff, char[] buf, int index, int length) {
-        boundsCheck(bOff, length * 2);
+        boundsCheck(bOff, length * 2L);
         super.write(bOff, buf, index, length);
     }
 
@@ -339,7 +339,7 @@ public class Memory extends Pointer {
      * @see Pointer#write(long,int[],int,int) 
      */
     public void write(long bOff, int[] buf, int index, int length) {
-        boundsCheck(bOff, length * 4);
+        boundsCheck(bOff, length * 4L);
         super.write(bOff, buf, index, length);
     }
 
@@ -353,7 +353,7 @@ public class Memory extends Pointer {
      * @see Pointer#write(long,long[],int,int) 
      */
     public void write(long bOff, long[] buf, int index, int length) {
-        boundsCheck(bOff, length * 8);
+        boundsCheck(bOff, length * 8L);
         super.write(bOff, buf, index, length);
     }
 
@@ -367,7 +367,7 @@ public class Memory extends Pointer {
      * @see Pointer#write(long,float[],int,int)
      */
     public void write(long bOff, float[] buf, int index, int length) {
-        boundsCheck(bOff, length * 4);
+        boundsCheck(bOff, length * 4L);
         super.write(bOff, buf, index, length);
     }
 
@@ -381,7 +381,7 @@ public class Memory extends Pointer {
      * @see Pointer#write(long,double[],int,int) 
      */
     public void write(long bOff, double[] buf, int index, int length) {
-        boundsCheck(bOff, length * 8);
+        boundsCheck(bOff, length * 8L);
         super.write(bOff, buf, index, length);
     }
 
@@ -659,9 +659,9 @@ public class Memory extends Pointer {
      */
     public void setString(long offset, String value, boolean wide) {
         if (wide)
-            boundsCheck(offset, (value.length() + 1) * Native.WCHAR_SIZE);
+            boundsCheck(offset, (value.length() + 1L) * Native.WCHAR_SIZE);
         else
-            boundsCheck(offset, value.getBytes().length + 1);
+            boundsCheck(offset, value.getBytes().length + 1L);
         super.setString(offset, value, wide);
     }
 
