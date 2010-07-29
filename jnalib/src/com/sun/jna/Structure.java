@@ -1350,7 +1350,7 @@ public abstract class Structure {
         public AutoAllocated(int size) {
             super(size);
             // Always clear new structure memory
-            clear();
+            super.clear();
         }
     }
 
