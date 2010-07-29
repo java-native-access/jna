@@ -520,6 +520,7 @@ public abstract class Structure {
                                || Callback.class.isAssignableFrom(fieldType)
                                || Buffer.class.isAssignableFrom(fieldType)
                                || Pointer.class.isAssignableFrom(fieldType)
+                               || NativeMapped.class.isAssignableFrom(fieldType)
                                || fieldType.isArray())
             ? getField(structField) : null;
         Object result = memory.getValue(offset, fieldType, currentValue);
