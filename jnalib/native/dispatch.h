@@ -32,6 +32,16 @@
 #endif /* _MSC_VER */
 #endif /* _WIN32 */
 
+#if !defined(UNUSED)
+ #if defined(__GNUC__)
+  #define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+ #elif defined(__LCLINT__)
+  #define UNUSED(x) /*@unused@*/ x
+ #else 
+  #define UNUSED(x) x
+ #endif
+#endif /* !defined(UNUSED) */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
