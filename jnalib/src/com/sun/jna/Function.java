@@ -763,7 +763,7 @@ public class Function extends Pointer {
         equivalent.
     */
     public int hashCode() {
-        return callFlags + options.hashCode() + peer.hashCode();
+        return callFlags + options.hashCode() + super.hashCode();
     }
 
     /** Concatenate varargs with normal args to obtain a simple argument 
