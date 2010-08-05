@@ -1,0 +1,44 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -6,6 +6,10 @@
+ 	* src/prep_cif.c: Push stack space computation into src/x86/ffi.c
+ 	for X86_ANY so return value space doesn't get added twice.
+ 
++2010-08-03  Neil Rashbrooke <neil@parkwaycc.co.uk>
++
++	* msvcc.sh: Don't pass -safeseh to ml64 because behavior is buggy.
++
+ 2010-07-22  Dan Witte  <dwitte@mozilla.com>
+ 
+ 	* src/*/ffitarget.h: Make FFI_LAST_ABI one past the last valid ABI.
+Index: libffi/msvcc.sh
+===================================================================
+--- libffi.orig/msvcc.sh
++++ libffi/msvcc.sh
+@@ -46,6 +46,7 @@ args="-nologo"
+ md=-MD
+ cl="cl"
+ ml="ml"
++safeseh="-safeseh"
+ output=
+ 
+ while [ $# -gt 0 ]
+@@ -63,6 +64,7 @@ do
+     -m64)
+       cl="cl"   # "$MSVC/x86_amd64/cl"
+       ml="ml64" # "$MSVC/x86_amd64/ml64"
++      safeseh=
+       shift 1
+     ;;
+     -O*)
+@@ -164,7 +166,7 @@ if [ -n "$assembly" ]; then
+     echo "$cl -nologo -EP $includes $defines $src > $ppsrc"
+     "$cl" -nologo -EP $includes $defines $src > $ppsrc || exit $?
+     output="$(echo $output | sed 's%/F[dpa][^ ]*%%g')"
+-    args="-nologo -safeseh $single $output $ppsrc"
++    args="-nologo $safeseh $single $output $ppsrc"
+ 
+     echo "$ml $args"
+     eval "\"$ml\" $args"

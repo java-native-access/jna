@@ -12,3 +12,4 @@ ffi_last_abi
 win64-struct-args
 define-generic-symbols-carefully
 stdcall-x86-closure-fix
+ml64-safeseh

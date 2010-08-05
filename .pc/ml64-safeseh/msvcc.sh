@@ -46,7 +46,6 @@ args="-nologo"
 md=-MD
 cl="cl"
 ml="ml"
-safeseh="-safeseh"
 output=
 
 while [ $# -gt 0 ]
@@ -64,7 +63,6 @@ do
     -m64)
       cl="cl"   # "$MSVC/x86_amd64/cl"
       ml="ml64" # "$MSVC/x86_amd64/ml64"
-      safeseh=
       shift 1
     ;;
     -O*)
@@ -166,7 +164,7 @@ if [ -n "$assembly" ]; then
     echo "$cl -nologo -EP $includes $defines $src > $ppsrc"
     "$cl" -nologo -EP $includes $defines $src > $ppsrc || exit $?
     output="$(echo $output | sed 's%/F[dpa][^ ]*%%g')"
-    args="-nologo $safeseh $single $output $ppsrc"
+    args="-nologo -safeseh $single $output $ppsrc"
 
     echo "$ml $args"
     eval "\"$ml\" $args"

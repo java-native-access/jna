@@ -6,10 +6,6 @@
 	* src/prep_cif.c: Push stack space computation into src/x86/ffi.c
 	for X86_ANY so return value space doesn't get added twice.
 
-2010-08-03  Neil Rashbrooke <neil@parkwaycc.co.uk>
-
-	* msvcc.sh: Don't pass -safeseh to ml64 because behavior is buggy.
-
 2010-07-22  Dan Witte  <dwitte@mozilla.com>
 
 	* src/*/ffitarget.h: Make FFI_LAST_ABI one past the last valid ABI.
