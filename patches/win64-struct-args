@@ -66,3 +66,44 @@ Index: libffi/ChangeLog
  2010-05-05  Michael Kohler <michaelkohler@live.com>
  
  	* src/dlmalloc.c (dlfree): Fix spelling.
+Index: libffi/doc/libffi.info
+===================================================================
+--- libffi.orig/doc/libffi.info
++++ libffi/doc/libffi.info
+@@ -147,7 +147,9 @@ To prepare a call interface object, use 
+      AVALUES is a vector of `void *' pointers that point to the memory
+      locations holding the argument values for a call.  If CIF declares
+      that the function has no arguments (i.e., NARGS was 0), then
+-     AVALUES is ignored.
++     AVALUES is ignored.  Note that argument values may be modified by
++     the callee (for instance, structs passed by value); the burden of
++     copying pass-by-value arguments is placed on the caller.
+ 
+ 
+ File: libffi.info,  Node: Simple Example,  Next: Types,  Prev: The Basics,  Up: Using libffi
+@@ -577,15 +579,15 @@ Node: Top706
+ Node: Introduction1448
+ Node: Using libffi3084
+ Node: The Basics3570
+-Node: Simple Example6177
+-Node: Types7204
+-Node: Primitive Types7487
+-Node: Structures9307
+-Node: Type Example10167
+-Node: Multiple ABIs11390
+-Node: The Closure API11761
+-Node: Closure Example14705
+-Node: Missing Features16264
+-Node: Index16757
++Node: Simple Example6356
++Node: Types7383
++Node: Primitive Types7666
++Node: Structures9486
++Node: Type Example10346
++Node: Multiple ABIs11569
++Node: The Closure API11940
++Node: Closure Example14884
++Node: Missing Features16443
++Node: Index16936
+ 
+ End Tag Table
