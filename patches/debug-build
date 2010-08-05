@@ -1,0 +1,299 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,10 @@
++2010-08-05  Dan Witte  <dwitte@mozilla.com>
++
++        * Makefile.am: Pass FFI_DEBUG define to msvcc.sh for linking to the
++        debug CRT when --enable-debug is given.
++        * configure.ac: Define it.
++        * msvcc.sh: Translate -g and -DFFI_DEBUG appropriately.
++
+ 2010-08-04  Dan Witte  <dwitte@mozilla.com>
+ 
+ 	* src/x86/ffitarget.h: Add X86_ANY define for all x86/x86_64
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -178,6 +178,14 @@ libffi_convenience_la_SOURCES = $(libffi
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+ 
+ AM_CFLAGS = -Wall -g -fexceptions
++if FFI_DEBUG
++# Build debug. Define FFI_DEBUG on the commandline so that, when building with
++# MSVC, it can link against the debug CRT.
++AM_CFLAGS += -DFFI_DEBUG
++else
++# Build opt.
++AM_CFLAGS += -O2
++endif
+ 
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+ 
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -16,10 +16,14 @@ AM_INIT_AUTOMAKE
+ # We must force CC to /not/ be precious variables; otherwise
+ # the wrong, non-multilib-adjusted value will be used in multilibs.
+ # As a side effect, we have to subst CFLAGS ourselves.
++# Also save and restore CFLAGS, since AC_PROG_CC will come up with
++# defaults of its own if none are provided.
+ 
+ m4_rename([_AC_ARG_VAR_PRECIOUS],[real_PRECIOUS])
+ m4_define([_AC_ARG_VAR_PRECIOUS],[])
++save_CFLAGS=$CFLAGS
+ AC_PROG_CC
++CFLAGS=$save_CFLAGS
+ m4_undefine([_AC_ARG_VAR_PRECIOUS])
+ m4_rename([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
+ 
+@@ -400,6 +404,7 @@ AC_ARG_ENABLE(debug,
+   if test "$enable_debug" = "yes"; then
+     AC_DEFINE(FFI_DEBUG, 1, [Define this if you want extra debugging.])
+   fi)
++AM_CONDITIONAL(FFI_DEBUG, test "$enable_debug" = "yes")
+ 
+ AC_ARG_ENABLE(structs,
+ [  --disable-structs       omit code for struct support],
+Index: libffi/msvcc.sh
+===================================================================
+--- libffi.orig/msvcc.sh
++++ libffi/msvcc.sh
+@@ -42,7 +42,7 @@
+ # format and translated into something sensible for cl or ml.
+ #
+ 
+-args="-nologo"
++args="-nologo -W3"
+ md=-MD
+ cl="cl"
+ ml="ml"
+@@ -67,13 +67,25 @@ do
+       safeseh=
+       shift 1
+     ;;
++    -O0)
++      args="$args -Od"
++      shift 1
++    ;;
+     -O*)
+-      args="$args $1"
++      # If we're optimizing, make sure we explicitly turn on some optimizations
++      # that are implicitly disabled by debug symbols (-Zi).
++      args="$args $1 -OPT:REF -OPT:ICF -INCREMENTAL:NO"
+       shift 1
+     ;;
+     -g)
+-      # Can't specify -RTC1 or -Zi in opt. -Gy is ok. Use -OPT:REF?
+-      args="$args -D_DEBUG -RTC1 -Zi"
++      # Enable debug symbol generation.
++      args="$args -Zi -DEBUG"
++      shift 1
++    ;;
++    -DFFI_DEBUG)
++      # Link against debug CRT and enable runtime error checks.
++      args="$args -RTC1"
++      defines="$defines $1"
+       md=-MDd
+       shift 1
+     ;;
+@@ -110,8 +122,8 @@ do
+       shift 1
+     ;;
+     -Wall)
+-      # -Wall on MSVC is overzealous. Use -W3 instead.
+-      args="$args -W3"
++      # -Wall on MSVC is overzealous, and we already build with -W3. Nothing
++      # to do here.
+       shift 1
+     ;;
+     -Werror)
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -62,6 +62,11 @@ target_triplet = @target@
+ @SH64_TRUE@am__append_24 = src/sh64/sysv.S src/sh64/ffi.c
+ @PA_LINUX_TRUE@am__append_25 = src/pa/linux.S src/pa/ffi.c
+ @PA_HPUX_TRUE@am__append_26 = src/pa/hpux32.S src/pa/ffi.c
++# Build debug. Define FFI_DEBUG on the commandline so that, when building with
++# MSVC, it can link against the debug CRT.
++@FFI_DEBUG_TRUE@am__append_27 = -DFFI_DEBUG
++# Build opt.
++@FFI_DEBUG_FALSE@am__append_28 = -O2
+ subdir = .
+ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
+@@ -482,7 +487,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+ 	$(am__append_24) $(am__append_25) $(am__append_26)
+ libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+-AM_CFLAGS = -Wall -g -fexceptions
++AM_CFLAGS = -Wall -g -fexceptions $(am__append_27) $(am__append_28)
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+ AM_CCASFLAGS = $(AM_CPPFLAGS)
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -748,6 +748,8 @@ LTLIBOBJS
+ LIBOBJS
+ toolexeclibdir
+ toolexecdir
++FFI_DEBUG_FALSE
++FFI_DEBUG_TRUE
+ TARGETDIR
+ TARGET
+ HAVE_LONG_DOUBLE
+@@ -3189,9 +3191,12 @@ am__tar='${AMTAR} chof - "$$tardir"'; am
+ # We must force CC to /not/ be precious variables; otherwise
+ # the wrong, non-multilib-adjusted value will be used in multilibs.
+ # As a side effect, we have to subst CFLAGS ourselves.
++# Also save and restore CFLAGS, since AC_PROG_CC will come up with
++# defaults of its own if none are provided.
+ 
+ 
+ 
++save_CFLAGS=$CFLAGS
+ ac_ext=c
+ ac_cpp='$CPP $CPPFLAGS'
+ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+@@ -4172,6 +4177,7 @@ else
+ fi
+ 
+ 
++CFLAGS=$save_CFLAGS
+ 
+ 
+ 
+@@ -5044,13 +5050,13 @@ if test "${lt_cv_nm_interface+set}" = se
+ else
+   lt_cv_nm_interface="BSD nm"
+   echo "int some_variable = 0;" > conftest.$ac_ext
+-  (eval echo "\"\$as_me:5047: $ac_compile\"" >&5)
++  (eval echo "\"\$as_me:5053: $ac_compile\"" >&5)
+   (eval "$ac_compile" 2>conftest.err)
+   cat conftest.err >&5
+-  (eval echo "\"\$as_me:5050: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
++  (eval echo "\"\$as_me:5056: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
+   cat conftest.err >&5
+-  (eval echo "\"\$as_me:5053: output\"" >&5)
++  (eval echo "\"\$as_me:5059: output\"" >&5)
+   cat conftest.out >&5
+   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
+     lt_cv_nm_interface="MS dumpbin"
+@@ -6256,7 +6262,7 @@ ia64-*-hpux*)
+   ;;
+ *-*-irix6*)
+   # Find out which ABI we are using.
+-  echo '#line 6259 "configure"' > conftest.$ac_ext
++  echo '#line 6265 "configure"' > conftest.$ac_ext
+   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
+   (eval $ac_compile) 2>&5
+   ac_status=$?
+@@ -7782,11 +7788,11 @@ else
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:7785: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:7791: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:7789: \$? = $ac_status" >&5
++   echo "$as_me:7795: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -8121,11 +8127,11 @@ else
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:8124: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8130: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>conftest.err)
+    ac_status=$?
+    cat conftest.err >&5
+-   echo "$as_me:8128: \$? = $ac_status" >&5
++   echo "$as_me:8134: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s "$ac_outfile"; then
+      # The compiler can only warn and ignore the option if not recognized
+      # So say no if there are warnings other than the usual output.
+@@ -8226,11 +8232,11 @@ else
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:8229: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8235: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:8233: \$? = $ac_status" >&5
++   echo "$as_me:8239: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -8281,11 +8287,11 @@ else
+    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
+    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
+    -e 's:$: $lt_compiler_flag:'`
+-   (eval echo "\"\$as_me:8284: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8290: $lt_compile\"" >&5)
+    (eval "$lt_compile" 2>out/conftest.err)
+    ac_status=$?
+    cat out/conftest.err >&5
+-   echo "$as_me:8288: \$? = $ac_status" >&5
++   echo "$as_me:8294: \$? = $ac_status" >&5
+    if (exit $ac_status) && test -s out/conftest2.$ac_objext
+    then
+      # The compiler can only warn and ignore the option if not recognized
+@@ -10651,7 +10657,7 @@ else
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<_LT_EOF
+-#line 10654 "configure"
++#line 10660 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -10747,7 +10753,7 @@ else
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<_LT_EOF
+-#line 10750 "configure"
++#line 10756 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -12465,6 +12471,14 @@ $as_echo "#define FFI_DEBUG 1" >>confdef
+   fi
+ fi
+ 
++ if test "$enable_debug" = "yes"; then
++  FFI_DEBUG_TRUE=
++  FFI_DEBUG_FALSE='#'
++else
++  FFI_DEBUG_TRUE='#'
++  FFI_DEBUG_FALSE=
++fi
++
+ 
+ # Check whether --enable-structs was given.
+ if test "${enable_structs+set}" = set; then :
+@@ -12763,6 +12777,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+ fi
+ 
++if test -z "${FFI_DEBUG_TRUE}" && test -z "${FFI_DEBUG_FALSE}"; then
++  as_fn_error "conditional \"FFI_DEBUG\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ 
+ : ${CONFIG_STATUS=./config.status}
+ ac_write_fail=0

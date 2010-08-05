@@ -16,14 +16,10 @@ AM_INIT_AUTOMAKE
 # We must force CC to /not/ be precious variables; otherwise
 # the wrong, non-multilib-adjusted value will be used in multilibs.
 # As a side effect, we have to subst CFLAGS ourselves.
-# Also save and restore CFLAGS, since AC_PROG_CC will come up with
-# defaults of its own if none are provided.
 
 m4_rename([_AC_ARG_VAR_PRECIOUS],[real_PRECIOUS])
 m4_define([_AC_ARG_VAR_PRECIOUS],[])
-save_CFLAGS=$CFLAGS
 AC_PROG_CC
-CFLAGS=$save_CFLAGS
 m4_undefine([_AC_ARG_VAR_PRECIOUS])
 m4_rename([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
 
@@ -404,7 +400,6 @@ AC_ARG_ENABLE(debug,
   if test "$enable_debug" = "yes"; then
     AC_DEFINE(FFI_DEBUG, 1, [Define this if you want extra debugging.])
   fi)
-AM_CONDITIONAL(FFI_DEBUG, test "$enable_debug" = "yes")
 
 AC_ARG_ENABLE(structs,
 [  --disable-structs       omit code for struct support],
