@@ -9,3 +9,4 @@ os2
 spelling
 selinux
 ffi_last_abi
+win64-struct-args

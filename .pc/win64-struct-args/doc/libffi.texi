@@ -171,9 +171,7 @@ discarded.
 @var{avalues} is a vector of @code{void *} pointers that point to the
 memory locations holding the argument values for a call.  If @var{cif}
 declares that the function has no arguments (i.e., @var{nargs} was 0),
-then @var{avalues} is ignored.  Note that argument values may be
-modified by the callee (for instance, structs passed by value); the
-burden of copying pass-by-value arguments is placed on the caller.
+then @var{avalues} is ignored.
 @end defun
 
 

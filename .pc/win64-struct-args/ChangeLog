@@ -8,14 +8,6 @@
 
 	* src/closures.c (selinux_enabled_check): Fix strncmp usage bug.
 
-2010-05-11  Dan Witte  <dwitte@mozilla.com>
-
-	* doc/libffi.tex: Document previous change.
-
-2010-05-11  Makoto Kato <m_kato@ga2.so-net.ne.jp>
-
-	* src/x86/ffi.c (ffi_call): Don't copy structs passed by value.
-
 2010-05-05  Michael Kohler <michaelkohler@live.com>
 
 	* src/dlmalloc.c (dlfree): Fix spelling.
