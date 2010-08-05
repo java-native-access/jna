@@ -10,3 +10,4 @@ spelling
 selinux
 ffi_last_abi
 win64-struct-args
+define-generic-symbols-carefully

@@ -1,0 +1,85 @@
+Index: libffi/include/ffi.h.in
+===================================================================
+--- libffi.orig/include/ffi.h.in
++++ libffi/include/ffi.h.in
+@@ -57,7 +57,9 @@ extern "C" {
+ #endif
+ 
+ /* Specify which architecture libffi is configured for. */
++#ifndef @TARGET@
+ #define @TARGET@
++#endif
+ 
+ /* ---- System configuration information --------------------------------- */
+ 
+Index: libffi/src/powerpc/ffitarget.h
+===================================================================
+--- libffi.orig/src/powerpc/ffitarget.h
++++ libffi/src/powerpc/ffitarget.h
+@@ -31,12 +31,18 @@
+ /* ---- System specific configurations ----------------------------------- */
+ 
+ #if defined (POWERPC) && defined (__powerpc64__)	/* linux64 */
++#ifndef POWERPC64
+ #define POWERPC64
++#endif
+ #elif defined (POWERPC_DARWIN) && defined (__ppc64__)	/* Darwin */
++#ifndef POWERPC64
+ #define POWERPC64
++#endif
+ #elif defined (POWERPC_AIX) && defined (__64BIT__)	/* AIX64 */
++#ifndef POWERPC64
+ #define POWERPC64
+ #endif
++#endif
+ 
+ #ifndef LIBFFI_ASM
+ typedef unsigned long          ffi_arg;
+Index: libffi/src/s390/ffitarget.h
+===================================================================
+--- libffi.orig/src/s390/ffitarget.h
++++ libffi/src/s390/ffitarget.h
+@@ -28,8 +28,10 @@
+ #define LIBFFI_TARGET_H
+ 
+ #if defined (__s390x__)
++#ifndef S390X
+ #define S390X
+ #endif
++#endif
+ 
+ /* ---- System specific configurations ----------------------------------- */
+ 
+Index: libffi/src/sparc/ffitarget.h
+===================================================================
+--- libffi.orig/src/sparc/ffitarget.h
++++ libffi/src/sparc/ffitarget.h
+@@ -30,8 +30,10 @@
+ /* ---- System specific configurations ----------------------------------- */
+ 
+ #if defined(__arch64__) || defined(__sparcv9)
++#ifndef SPARC64
+ #define SPARC64
+ #endif
++#endif
+ 
+ #ifndef LIBFFI_ASM
+ typedef unsigned long          ffi_arg;
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -8,6 +8,13 @@
+ 
+ 	* src/closures.c (selinux_enabled_check): Fix strncmp usage bug.
+ 
++2010-07-07  Dan Horák <dan@danny.cz>
++
++	* include/ffi.h.in: Protect #define with #ifndef.
++	* src/powerpc/ffitarget.h: Ditto.
++	* src/s390/ffitarget.h: Ditto.
++	* src/sparc/ffitarget.h: Ditto.
++
+ 2010-05-11  Dan Witte  <dwitte@mozilla.com>
+ 
+ 	* doc/libffi.tex: Document previous change.
