@@ -110,7 +110,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
   FFI_ASSERT_VALID_TYPE(cif->rtype);
 
   /* x86, x86-64 and s390 stack space allocation is handled in prep_machdep. */
-#if !defined M68K && !defined X86_ANY && !defined S390 && !defined PA
+#if !defined M68K && !defined __i386__ && !defined __x86_64__ && !defined S390 && !defined PA
   /* Make space for the return structure pointer */
   if (cif->rtype->type == FFI_TYPE_STRUCT
 #ifdef SPARC
@@ -131,7 +131,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
 	 check after the initialization.  */
       FFI_ASSERT_VALID_TYPE(*ptr);
 
-#if !defined X86_ANY && !defined S390 && !defined PA
+#if !defined __i386__ && !defined __x86_64__ && !defined S390 && !defined PA
 #ifdef SPARC
       if (((*ptr)->type == FFI_TYPE_STRUCT
 	   && ((*ptr)->size > 16 || cif->abi != FFI_V9))
