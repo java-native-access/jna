@@ -34,12 +34,6 @@
 #define CONCAT1(a, b) CONCAT2(a, b)
 #define CONCAT2(a, b) a ## b
 
-/* Use the SOFTFP return value ABI on Mac OS X, as per the iOS ABI
-   Function Call Guide */
-#ifdef __APPLE__
-#define __SOFTFP__
-#endif
-
 /* Use the right prefix for global labels.  */
 #define CNAME(x) CONCAT1 (__USER_LABEL_PREFIX__, x)
 #else
@@ -52,6 +46,12 @@
 #define LSYM(x) .x
 #else
 #define LSYM(x) x
+#endif
+
+/* Use the SOFTFP return value ABI on Mac OS X, as per the iOS ABI
+  Function Call Guide */
+#ifdef __APPLE__
+#define __SOFTFP__
 #endif
 
 /* We need a better way of testing for this, but for now, this is all 
