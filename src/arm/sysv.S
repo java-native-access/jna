@@ -255,7 +255,7 @@ ARM_FUNC_START ffi_closure_SYSV
 	stmfd	sp!, {ip, lr}
 	UNWIND .save	{r0, lr}
 	add	r2, sp, #8
-	.pad #16
+	UNWIND .pad #16
 	sub	sp, sp, #16
 	str	sp, [sp, #8]
 	add	r1, sp, #8
