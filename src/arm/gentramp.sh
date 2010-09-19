@@ -34,7 +34,11 @@ header () {
 # WARNING - Don't modify the trampoline code size without also updating the relevent libffi code
 trampoline () {
     cat << END
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
     // This places the first usable config value at _ffi_closure_trampoline_table-4080
     // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
@@ -42,6 +46,7 @@ trampoline () {
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
 END
 }
 

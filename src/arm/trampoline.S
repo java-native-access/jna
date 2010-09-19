@@ -5,2723 +5,4423 @@
 .align 12
 .globl _ffi_closure_trampoline_table
 _ffi_closure_trampoline_table:
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
+
+    // trampoline
+    // Save to stack
     stmfd sp!, {r0-r3}
+
     // Load the context argument from the config page.
-    // This places the first config value at _ffi_closure_trampoline_table-4080
-    // This accounts for the above, 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
+    // This places the first usable config value at _ffi_closure_trampoline_table-4080
+    // This accounts for the above 4-byte stmfd instruction, plus 8 bytes constant when loading from pc.
     ldr r0, [pc, #-4092]
 
     // Load the jump address from the config page.
     ldr pc, [pc, #-4092]
+
