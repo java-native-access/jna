@@ -259,7 +259,7 @@ ARM_FUNC_START ffi_closure_SYSV
 	sub	sp, sp, #16
 	str	sp, [sp, #8]
 	add	r1, sp, #8
-	bl	ffi_closure_SYSV_inner
+	bl	CNAME(ffi_closure_SYSV_inner)
 	cmp	r0, #FFI_TYPE_INT
 	beq	.Lretint
 
