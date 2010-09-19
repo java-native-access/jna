@@ -8,5 +8,5 @@ mkdir -p "build-ios"
 pushd "build-ios"
 export CC="${PLATFORM_IOS}"/Developer/usr/bin/gcc-4.2
 export CFLAGS="-arch armv6 -isysroot ${PLATFORM_IOS}/Developer/SDKs/iPhoneOS${SDK_IOS_VERSION}.sdk/"
-../configure --host=armv6-apple-darwin && make
+../configure --host=arm-apple-darwin10 && make
 popd
