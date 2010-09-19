@@ -316,6 +316,11 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
 fi
 
 case "$target" in
+     *arm*-apple-darwin*)
+       AC_DEFINE(FFI_EXEC_TRAMPOLINE_TABLE, 1,
+                 [Cannot use PROT_EXEC on this target, so, we revert to
+                   alternative means])
+     ;;
      *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
                  [Cannot use malloc on this target, so, we revert to
