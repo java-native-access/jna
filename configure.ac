@@ -315,6 +315,7 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
     fi
 fi
 
+FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in
      *arm*-apple-darwin*)
        FFI_EXEC_TRAMPOLINE_TABLE=1
@@ -329,6 +330,7 @@ case "$target" in
      ;;
 esac
 AM_CONDITIONAL(FFI_EXEC_TRAMPOLINE_TABLE, test x$FFI_EXEC_TRAMPOLINE_TABLE = x1)
+AC_SUBST(FFI_EXEC_TRAMPOLINE_TABLE)
 
 if test x$TARGET = xX86_64; then
     AC_CACHE_CHECK([assembler supports unwind section type],
