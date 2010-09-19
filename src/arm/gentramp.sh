@@ -26,8 +26,8 @@ header () {
     # Write out the trampoline table, aligned to the page boundary
     echo ".text"
     echo ".align 12"
-    echo ".globl _ffi_closure_trampoline_table"
-    echo "_ffi_closure_trampoline_table:"
+    echo ".globl _ffi_closure_trampoline_table_page"
+    echo "_ffi_closure_trampoline_table_page:"
 }
 
 
