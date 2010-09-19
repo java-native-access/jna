@@ -297,10 +297,17 @@ ffi_prep_closure_loc (ffi_closure* closure,
 {
   FFI_ASSERT (cif->abi == FFI_SYSV);
 
+#if FFI_EXEC_TRAMPOLINE_TABLE
+  // XXX - hardcoded offset
+  void **config = (void **) (((uint8_t *) codeloc) - 4080);
+  config[0] = closure;
+  config[1] = ffi_closure_SYSV;
+#else
   FFI_INIT_TRAMPOLINE (&closure->tramp[0], \
 		       &ffi_closure_SYSV,  \
 		       codeloc);
-    
+#endif
+
   closure->cif  = cif;
   closure->user_data = user_data;
   closure->fun  = fun;
