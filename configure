@@ -752,6 +752,7 @@ FFI_DEBUG_FALSE
 FFI_DEBUG_TRUE
 TARGETDIR
 TARGET
+FFI_EXEC_TRAMPOLINE_TABLE
 FFI_EXEC_TRAMPOLINE_TABLE_FALSE
 FFI_EXEC_TRAMPOLINE_TABLE_TRUE
 HAVE_LONG_DOUBLE
@@ -5057,13 +5058,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5060: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5061: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5063: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5064: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5066: output\"" >&5)
+  (eval echo "\"\$as_me:5067: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -6269,7 +6270,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6272 "configure"' > conftest.$ac_ext
+  echo '#line 6273 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7794,11 +7795,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7797: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7798: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7801: \$? = $ac_status" >&5
+   echo "$as_me:7802: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8133,11 +8134,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8136: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8137: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8140: \$? = $ac_status" >&5
+   echo "$as_me:8141: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8238,11 +8239,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8241: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8242: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8245: \$? = $ac_status" >&5
+   echo "$as_me:8246: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8293,11 +8294,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8296: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8297: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8300: \$? = $ac_status" >&5
+   echo "$as_me:8301: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10663,7 +10664,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10666 "configure"
+#line 10667 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10759,7 +10760,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10762 "configure"
+#line 10763 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12364,6 +12365,7 @@ $as_echo "#define HAVE_AS_STRING_PSEUDO_OP 1" >>confdefs.h
     fi
 fi
 
+FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in
      *arm*-apple-darwin*)
        FFI_EXEC_TRAMPOLINE_TABLE=1
@@ -12384,6 +12386,7 @@ else
   FFI_EXEC_TRAMPOLINE_TABLE_TRUE='#'
   FFI_EXEC_TRAMPOLINE_TABLE_FALSE=
 fi
+
 
 
 if test x$TARGET = xX86_64; then
