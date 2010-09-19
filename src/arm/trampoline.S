@@ -3,8 +3,8 @@
 
 .text
 .align 12
-.globl _ffi_closure_trampoline_table
-_ffi_closure_trampoline_table:
+.globl _ffi_closure_trampoline_table_page
+_ffi_closure_trampoline_table_page:
 
     // trampoline
     // Save to stack
