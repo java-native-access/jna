@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import com.sun.jna.Memory;
@@ -471,5 +473,102 @@ public class Advapi32Test extends TestCase {
     			pSid, convertedSidStringPtr));
     	String convertedSidString = convertedSidStringPtr.getValue().getString(0, true);
     	assertEquals("S-1-1-0", convertedSidString);
+    }
+    
+    public void testOpenEventLog() {
+    	HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
+    	assertNotNull(h);
+    	assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
+    }
+    
+    public void testRegisterEventSource() {
+    	// the Security event log is reserved
+    	HANDLE h = Advapi32.INSTANCE.RegisterEventSource(null, "Security");
+    	assertNull(h);
+    	assertEquals(W32Errors.ERROR_ACCESS_DENIED, Kernel32.INSTANCE.GetLastError());
+    }
+
+    public void testReportEvent() {
+    	String applicationEventLog = "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application";
+    	String jnaEventSource = "JNADevEventSource";    	
+    	String jnaEventSourceRegistryPath = applicationEventLog + "\\" + jnaEventSource;
+    	Advapi32Util.registryCreateKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);    	
+    	HANDLE h = Advapi32.INSTANCE.RegisterEventSource(null, jnaEventSource);    	
+    	IntByReference before = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, before));
+    	assertNotNull(h);
+    	String s[] = { "JNA", "Event" };
+    	Memory m = new Memory(4);
+    	m.setByte(0, (byte) 1);
+    	m.setByte(1, (byte) 2);
+    	m.setByte(2, (byte) 3);
+    	m.setByte(3, (byte) 4);
+    	assertTrue(Advapi32.INSTANCE.ReportEvent(h, WinNT.EVENTLOG_ERROR_TYPE, 0, 0, null, 2, 4, s, m));
+    	IntByReference after = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, after));
+    	assertTrue(before.getValue() < after.getValue());
+    	assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+    	assertTrue(Advapi32.INSTANCE.DeregisterEventSource(h));
+    	Advapi32Util.registryDeleteKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);
+    }
+    
+    public void testGetNumberOfEventLogRecords() {
+    	HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
+    	assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+    	IntByReference n = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, n));
+    	assertTrue(n.getValue() >= 0);
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
+    }
+    
+    /*
+    public void testClearEventLog() {
+    	HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
+    	assertFalse(h.equals(WinBase.INVALID_HANDLE_VALUE));
+    	IntByReference before = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, before));
+    	assertTrue(before.getValue() >= 0);
+    	assertTrue(Advapi32.INSTANCE.ClearEventLog(h, null));
+    	IntByReference after = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, after));
+    	assertTrue(after.getValue() < before.getValue() || before.getValue() == 0);
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));   	
+    }
+    */
+    
+    public void testBackupEventLog() {
+    	HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
+    	assertNotNull(h);
+    	String backupFileName = Kernel32Util.getTempPath() + "\\JNADevEventLog.bak";    	
+    	File f = new File(backupFileName);
+    	if (f.exists()) {
+    		f.delete();
+    	}
+		
+    	assertTrue(Advapi32.INSTANCE.BackupEventLog(h, backupFileName));
+    	HANDLE hBackup = Advapi32.INSTANCE.OpenBackupEventLog(null, backupFileName);
+    	assertNotNull(hBackup);
+    	
+    	IntByReference n = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(hBackup, n));
+    	assertTrue(n.getValue() >= 0);
+    	
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(hBackup));
+    }
+    
+    public void testReadEventLog() {
+    	HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
+    	IntByReference pnBytesRead = new IntByReference();
+    	IntByReference pnMinNumberOfBytesNeeded = new IntByReference();
+    	Memory buffer = new Memory(1);
+    	PointerByReference p = new PointerByReference(buffer);
+    	assertFalse(Advapi32.INSTANCE.ReadEventLog(h, 
+    			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_BACKWARDS_READ, 
+    			0, p, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded));
+    	assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
+    	assertTrue(pnMinNumberOfBytesNeeded.getValue() > 0);
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
     }
 }

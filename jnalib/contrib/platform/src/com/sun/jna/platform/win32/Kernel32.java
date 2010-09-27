@@ -845,4 +845,14 @@ public interface Kernel32 extends StdCallLibrary {
      */
     boolean GetDiskFreeSpaceEx(String lpDirectoryName, LARGE_INTEGER.ByReference lpFreeBytesAvailable,
     		LARGE_INTEGER.ByReference lpTotalNumberOfBytes, LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes);
+    
+    /**
+     * Deletes an existing file.
+     * @param filename
+     *  The name of the file to be deleted.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero (0). To get extended error information, call GetLastError.
+     */
+    public boolean DeleteFile(String filename);
 }

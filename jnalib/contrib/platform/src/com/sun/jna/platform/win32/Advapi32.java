@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -656,4 +657,173 @@ public interface Advapi32 extends StdCallLibrary {
 			IntByReference lpcMaxValueNameLen, IntByReference lpcMaxValueLen,
 			IntByReference lpcbSecurityDescriptor, 
 			WinBase.FILETIME lpftLastWriteTime);
+
+	/**
+	 * Retrieves a registered handle to the specified event log.
+	 * @param lpUNCServerName
+	 *  The Universal Naming Convention (UNC) name of the remote server on which 
+	 *  this operation is to be performed. If this parameter is NULL, the local 
+	 *  computer is used.
+	 * @param lpSourceName
+	 *  The name of the event source whose handle is to be retrieved. 
+	 *  The source name must be a subkey of a log under the Eventlog registry 
+	 *  key. However, the Security log is for system use only.
+	 * @return
+	 *  If the function succeeds, the return value is a handle to the event log. 
+	 *  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
+	 *  The function returns ERROR_ACCESS_DENIED if lpSourceName specifies the Security event log.
+	 */
+	public HANDLE RegisterEventSource(String lpUNCServerName, String lpSourceName);
+	
+	/**
+	 * Closes the specified event log.
+	 * @param hEventLog
+	 *  A handle to the event log. The RegisterEventSource function returns this handle.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean DeregisterEventSource(HANDLE hEventLog);
+	
+	/**
+	 * Opens a handle to the specified event log.
+	 * @param lpUNCServerName
+	 *  The Universal Naming Convention (UNC) name of the remote server on which the event log is to be 
+	 *  opened. If this parameter is NULL, the local computer is used.
+	 * @param lpSourceName
+	 *  The name of the log. If you specify a custom log and it cannot be found, the event logging 
+	 *  service opens the Application log; however, there will be no associated message or category 
+	 *  string file.
+	 * @return
+	 *  If the function succeeds, the return value is the handle to an event log. 
+	 *  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
+	 */
+	public HANDLE OpenEventLog(String lpUNCServerName, String lpSourceName);
+
+	/**
+	 * Closes the specified event log.
+	 * @param hEventLog
+	 *  A handle to the event log to be closed. The OpenEventLog or OpenBackupEventLog function returns this handle.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero. 
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean CloseEventLog(HANDLE hEventLog);
+	
+	/**
+	 * Retrieves the number of records in the specified event log.
+	 * @param hEventLog
+	 *  A handle to the open event log. The OpenEventLog or OpenBackupEventLog function returns this handle.
+	 * @param NumberOfRecords
+	 *  A pointer to a variable that receives the number of records in the specified event log.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero. 
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean GetNumberOfEventLogRecords(HANDLE hEventLog, IntByReference NumberOfRecords);
+
+	/**
+	 * Writes an entry at the end of the specified event log.
+	 * @param hEventLog
+	 *  A handle to the event log. The RegisterEventSource function returns this handle. 
+	 *  As of Windows XP with SP2, this parameter cannot be a handle to the Security log. 
+	 *  To write an event to the Security log, use the AuthzReportSecurityEvent function.
+	 * @param wType
+	 *  The type of event to be logged.
+	 * @param wCategory
+	 *  The event category. This is source-specific information; the category can have any value. 
+	 * @param dwEventID
+	 *  The event identifier. The event identifier specifies the entry in the message file 
+	 *  associated with the event source.
+	 * @param lpUserSid
+	 *  A pointer to the current user's security identifier. This parameter can be NULL if the security identifier is not required.
+	 * @param wNumStrings
+	 *  The number of insert strings in the array pointed to by the lpStrings parameter. A value of zero indicates that no strings are present.
+	 * @param dwDataSize
+	 *  The number of bytes of event-specific raw (binary) data to write to the log. If this parameter is zero, no event-specific data is present.
+	 * @param lpStrings
+	 *  A pointer to a buffer containing an array of null-terminated strings that are merged into 
+	 *  the message before Event Viewer displays the string to the user. This parameter must 
+	 *  be a valid pointer (or NULL), even if wNumStrings is zero. Each string is limited to 
+	 *  31,839 characters.
+	 * @param lpRawData
+	 *  A pointer to the buffer containing the binary data. This parameter must be a valid 
+	 *  pointer (or NULL), even if the dwDataSize parameter is zero.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero, indicating that the entry was written to the log. 
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean ReportEvent(HANDLE hEventLog, int wType, int wCategory, int dwEventID,
+			  PSID lpUserSid, int wNumStrings, int dwDataSize, String[] lpStrings, 
+			  Pointer lpRawData);
+
+	/**
+	 * Clears the specified event log, and optionally saves the current copy of the log to a backup file.
+	 * @param hEventLog
+	 *  A handle to the event log to be cleared. The OpenEventLog function returns this handle.
+	 * @param lpBackupFileName
+	 *  The absolute or relative path of the backup file. If this file already exists, the function fails. 
+	 *  If the lpBackupFileName parameter is NULL, the event log is not backed up.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, 
+	 *  call GetLastError. The ClearEventLog function can fail if the event log is empty or the backup file already exists.
+	 */
+	public boolean ClearEventLog(HANDLE hEventLog, String lpBackupFileName);
+
+	/**
+	 * Saves the specified event log to a backup file. The function does not clear the event log.
+	 * @param hEventLog
+	 *  A handle to the open event log. The OpenEventLog function returns this handle.
+	 * @param lpBackupFileName
+	 *  The absolute or relative path of the backup file.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero. 
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean BackupEventLog(HANDLE hEventLog, String lpBackupFileName);
+	
+	/**
+	 * Opens a handle to a backup event log created by the BackupEventLog function.
+	 * @param lpUNCServerName
+	 *  The Universal Naming Convention (UNC) name of the remote server on which this operation 
+	 *  is to be performed. If this parameter is NULL, the local computer is used.
+	 * @param lpFileName
+	 *  The full path of the backup file.
+	 * @return
+	 *  If the function succeeds, the return value is a handle to the backup event log. 
+	 *  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
+	 */
+	public HANDLE OpenBackupEventLog(String lpUNCServerName, String lpFileName);
+
+	/**
+	 * Reads the specified number of entries from the specified event log. The function can 
+	 * be used to read log entries in chronological or reverse chronological order.
+	 * @param hEventLog
+	 *  A handle to the event log to be read. The OpenEventLog function returns this handle.
+	 * @param dwReadFlags
+	 *  Use the following flag values to indicate how to read the log file. 
+	 * @param dwRecordOffset
+	 *  The record number of the log-entry at which the read operation should start. 
+	 *  This parameter is ignored unless dwReadFlags includes the EVENTLOG_SEEK_READ flag.
+	 * @param lpBuffer
+	 *  An application-allocated buffer that will receive one or more EVENTLOGRECORD structures. 
+	 *  This parameter cannot be NULL, even if the nNumberOfBytesToRead parameter is zero. 
+	 *  The maximum size of this buffer is 0x7ffff bytes.
+	 * @param nNumberOfBytesToRead
+	 *  The size of the lpBuffer buffer, in bytes. This function will read as many log entries 
+	 *  as will fit in the buffer; the function will not return partial entries.
+	 * @param pnBytesRead
+	 *  A pointer to a variable that receives the number of bytes read by the function.
+	 * @param pnMinNumberOfBytesNeeded
+	 *  A pointer to a variable that receives the required size of the lpBuffer buffer. 
+	 *  This value is valid only this function returns zero and GetLastError 
+	 *  returns ERROR_INSUFFICIENT_BUFFER.
+	 * @return
+	 *  If the function succeeds, the return value is nonzero. 
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean ReadEventLog(HANDLE hEventLog, int dwReadFlags, int dwRecordOffset,
+			PointerByReference lpBuffer, int nNumberOfBytesToRead, IntByReference pnBytesRead,
+			IntByReference pnMinNumberOfBytesNeeded);
 }

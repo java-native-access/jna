@@ -1385,4 +1385,50 @@ public interface WinNT extends StdCallLibrary {
     public static final int VER_PLATFORM_WIN32s = 0;
     public static final int VER_PLATFORM_WIN32_WINDOWS = 1;
     public static final int VER_PLATFORM_WIN32_NT = 2;
+    
+    /**
+     * Read the records sequentially. If this is the first read operation, 
+     * the EVENTLOG_FORWARDS_READ EVENTLOG_BACKWARDS_READ flags determines which 
+     * record is read first.
+     */
+    public static final int EVENTLOG_SEQUENTIAL_READ = 0x0001;
+	/**
+	 * Begin reading from the record specified in the dwRecordOffset parameter. 
+	 * This option may not work with large log files if the function cannot determine the log file's size. 
+	 * For details, see Knowledge Base article, 177199.
+	 */
+	public static final int EVENTLOG_SEEK_READ = 0x0002;
+	/**
+	 * The log is read in chronological order (oldest to newest). The default.
+	 */
+	public static final int EVENTLOG_FORWARDS_READ = 0x0004;
+	/**
+	 * The log is read in reverse chronological order (newest to oldest). 
+	 */
+	public static final int EVENTLOG_BACKWARDS_READ = 0x0008;
+
+	/**
+	 * Information event
+	 */
+	public static final int EVENTLOG_SUCCESS = 0x0000;
+	/**
+	 * Error event
+	 */
+	public static final int EVENTLOG_ERROR_TYPE = 0x0001;
+	/**
+	 * Warning event
+	 */
+	public static final int EVENTLOG_WARNING_TYPE = 0x0002;
+	/**
+	 * Information event
+	 */
+	public static final int EVENTLOG_INFORMATION_TYPE = 0x0004;
+	/**
+	 * Success Audit event
+	 */
+	public static final int EVENTLOG_AUDIT_SUCCESS = 0x0008;
+	/**
+	 * Failure Audit event
+	 */
+	public static final int EVENTLOG_AUDIT_FAILURE = 0x0010;
 }

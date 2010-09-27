@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 
 import junit.framework.TestCase;
@@ -101,5 +104,12 @@ public class Kernel32UtilTest extends TestCase {
 		for(String logicalDrive : logicalDrives) {
 			assertTrue(logicalDrive.length() > 0);
 		}
+	}
+	
+	public void testDeleteFile() throws IOException {
+		String filename = Kernel32Util.getTempPath() + "\\FileDoesNotExist.jna";
+		File f = new File(filename);
+		f.createNewFile();
+		Kernel32Util.deleteFile(filename);
 	}
 }

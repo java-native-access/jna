@@ -259,4 +259,10 @@ public class Kernel32Test extends TestCase {
     	assertTrue(lpTotalNumberOfFreeBytes.getValue() > 0);
     	assertTrue(lpTotalNumberOfFreeBytes.getValue() < lpTotalNumberOfBytes.getValue());
     }
+    
+    public void testDeleteFile() {
+    	String filename = Kernel32Util.getTempPath() + "\\FileDoesNotExist.jna";
+    	assertFalse(Kernel32.INSTANCE.DeleteFile(filename));
+    	assertEquals(W32Errors.ERROR_FILE_NOT_FOUND, Kernel32.INSTANCE.GetLastError());
+    }
 }
