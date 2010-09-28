@@ -14,9 +14,7 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.*;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
-import com.sun.jna.platform.win32.WinGDI.RGBQUAD;
 
 /**
  * @author twalljava[at]dev[dot]java[dot]net

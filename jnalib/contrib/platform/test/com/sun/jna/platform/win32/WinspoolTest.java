@@ -37,9 +37,10 @@ public class WinspoolTest extends TestCase {
     	assertTrue(pcReturned.getValue() == 0);
     	assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
     			null, 1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
-    	assertTrue(pcReturned.getValue() > 0);
+    	assertTrue(pcReturned.getValue() >= 0);
     	PRINTER_INFO_1[] printerInfo = (PRINTER_INFO_1[]) pPrinterEnum.toArray(pcReturned.getValue());
     	for(PRINTER_INFO_1 pi : printerInfo) {
+    		assertTrue(pi.pName == null || pi.pName.length() >= 0);
     		// System.out.println(pi.pName);
     	}
     }

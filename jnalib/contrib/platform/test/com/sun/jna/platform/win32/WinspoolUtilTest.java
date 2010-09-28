@@ -29,6 +29,6 @@ public class WinspoolUtilTest extends TestCase {
     }
     
 	public void testGetFolderPath() {
-		assertTrue(WinspoolUtil.getPrinterInfo1().length > 0);
+		assertTrue(WinspoolUtil.getPrinterInfo1().length >= 0);
 	}
 }
