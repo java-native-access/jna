@@ -561,18 +561,22 @@ public abstract class Advapi32Util {
 	 *  Parent key.
 	 * @param keyName 
 	 *  Key name.
+	 * @return
+	 *  True if the key was created, false otherwise.
 	 */
-	public static void registryCreateKey(HKEY hKey, String keyName) {
+	public static boolean registryCreateKey(HKEY hKey, String keyName) {
 		HKEYByReference phkResult = new HKEYByReference();
-    	int rc = Advapi32.INSTANCE.RegCreateKeyEx(hKey, keyName, 0, null, 0, 
-    			WinNT.KEY_READ, null, phkResult, null);
+		IntByReference lpdwDisposition = new IntByReference();
+    	int rc = Advapi32.INSTANCE.RegCreateKeyEx(hKey, keyName, 0, null, WinNT.REG_OPTION_NON_VOLATILE, 
+    			WinNT.KEY_READ, null, phkResult, lpdwDisposition);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
 		rc = Advapi32.INSTANCE.RegCloseKey(phkResult.getValue());
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
-		}		
+		}
+		return WinNT.REG_CREATED_NEW_KEY == lpdwDisposition.getValue();
 	}
 
 	/**
@@ -583,15 +587,17 @@ public abstract class Advapi32Util {
 	 *  Path to an existing registry key.
 	 * @param keyName
 	 *  Key name.
+	 * @return
+	 *  True if the key was created, false otherwise.
 	 */
-	public static void registryCreateKey(HKEY root, String parentPath, String keyName) {
+	public static boolean registryCreateKey(HKEY root, String parentPath, String keyName) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, parentPath, 0, WinNT.KEY_CREATE_SUB_KEY, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
 		try {
-			registryCreateKey(phkKey.getValue(), keyName);
+			return registryCreateKey(phkKey.getValue(), keyName);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
