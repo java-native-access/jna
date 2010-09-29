@@ -31,17 +31,18 @@ public class WinspoolTest extends TestCase {
     	IntByReference pcReturned = new IntByReference();
     	assertFalse(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
     			null, 1, null, 0, pcbNeeded, pcReturned));
-    	assertTrue(pcbNeeded.getValue() > 0);
-    	PRINTER_INFO_1 pPrinterEnum = new PRINTER_INFO_1(pcbNeeded.getValue());
-    	assertTrue(pcbNeeded.getValue() > 0);
     	assertTrue(pcReturned.getValue() == 0);
-    	assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
-    			null, 1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
-    	assertTrue(pcReturned.getValue() >= 0);
-    	PRINTER_INFO_1[] printerInfo = (PRINTER_INFO_1[]) pPrinterEnum.toArray(pcReturned.getValue());
-    	for(PRINTER_INFO_1 pi : printerInfo) {
-    		assertTrue(pi.pName == null || pi.pName.length() >= 0);
-    		// System.out.println(pi.pName);
+    	if (pcbNeeded.getValue() > 0) {
+	    	PRINTER_INFO_1 pPrinterEnum = new PRINTER_INFO_1(pcbNeeded.getValue());
+	    	assertTrue(pcbNeeded.getValue() > 0);
+	    	assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
+	    			null, 1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
+	    	assertTrue(pcReturned.getValue() >= 0);
+	    	PRINTER_INFO_1[] printerInfo = (PRINTER_INFO_1[]) pPrinterEnum.toArray(pcReturned.getValue());
+	    	for(PRINTER_INFO_1 pi : printerInfo) {
+	    		assertTrue(pi.pName == null || pi.pName.length() >= 0);
+	    		// System.out.println(pi.pName);
+	    	}
     	}
     }
 }
