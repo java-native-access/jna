@@ -492,9 +492,6 @@
         </fileset>
       </batchtest>
     </junit>
-    <subant target="test">
-      <fileset dir="${contrib}" includes="platform/build.xml"/>
-    </subant>
     <junitreport todir="${results.junit}">
       <fileset dir="${results.junit}">
         <include name="TEST-*.xml"/>
@@ -502,6 +499,9 @@
       <report todir="${reports.junit}"/>
     </junitreport>
     <echo>View test report in file://${reports.junit}/index.html</echo>
+    <subant target="test">
+      <fileset dir="${contrib}" includes="platform/build.xml"/>
+    </subant>
     <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
