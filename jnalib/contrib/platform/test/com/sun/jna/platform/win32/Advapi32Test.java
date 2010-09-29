@@ -580,14 +580,18 @@ public class Advapi32Test extends TestCase {
     	Memory buffer = new Memory(1024 * 64);
     	IntByReference pOldestRecord = new IntByReference();
     	assertTrue(Advapi32.INSTANCE.GetOldestEventLogRecord(h, pOldestRecord));
-    	int dwRecord = pOldestRecord.getValue(); 
-    	while(Advapi32.INSTANCE.ReadEventLog(
-    			h, WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
-    			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
+    	int dwRecord = pOldestRecord.getValue();
+    	// shorten test, avoid iterating through all events
+    	// note that this makes dwRecord incorrect
+    	int maxReads = 3; 
+    	while(Advapi32.INSTANCE.ReadEventLog(h, 
+    			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+    			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded) 
+    			&& maxReads-- > 0) {
     		int dwRead = pnBytesRead.getValue();
     		Pointer pevlr = buffer;
-    		int max = 3; // shorten test, avoid iterating through all events (note: this makes dwRecord incorrect)
-    		while (dwRead > 0 && max-- > 0) 
+    		int maxRecords = 3;
+    		while (dwRead > 0 && maxRecords-- > 0) 
             {
     			EVENTLOGRECORD record = new EVENTLOGRECORD(pevlr);
     			/*

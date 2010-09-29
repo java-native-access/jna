@@ -69,5 +69,14 @@
     <target name="test" description="Run unit tests." if="tests.platform">
     	<antcall target="${tests.platform}" />
     </target>
+	<target name="test-report">
+	    <junitreport todir="${build.test.results.dir}">
+	      <fileset dir="${build.test.results.dir}">
+	        <include name="TEST-*.xml"/>
+	      </fileset>
+	      <report todir="${build.test.results.dir}"/>
+	    </junitreport>
+	  	<echo message="View test report in file://${build.test.results.dir}/index.html" />
+	</target>
     <target name="test-win32" depends="init,compile-test,-pre-test-run,-do-test-run,test-report,-post-test-run,-test-browse" />
 </project>
