@@ -17,6 +17,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -92,6 +93,20 @@ public interface Winspool extends StdCallLibrary {
 	    }
 	    
 	    public PRINTER_INFO_1(int size) {
+	    	super(new Memory(size));
+	    }
+	}
+
+	public static class PRINTER_INFO_4 extends Structure {
+	    public String pPrinterName;
+	    public String pServerName;
+	    public DWORD Attributes;
+	    
+	    public PRINTER_INFO_4() {
+	    	
+	    }
+	    
+	    public PRINTER_INFO_4(int size) {
 	    	super(new Memory(size));
 	    }
 	}

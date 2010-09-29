@@ -1460,7 +1460,7 @@ public interface WinNT extends StdCallLibrary {
 		}
 		
 		public EVENTLOGRECORD(Pointer p) {
-			useMemory(p);
+			super(p);
 			read();
 		}
 	};

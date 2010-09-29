@@ -14,7 +14,8 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
+// import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
+import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
 import com.sun.jna.ptr.IntByReference;
 
 /**
@@ -26,6 +27,26 @@ public class WinspoolTest extends TestCase {
         junit.textui.TestRunner.run(WinspoolTest.class);
     }
 
+    public void testEnumPrinters_4() {
+    	IntByReference pcbNeeded = new IntByReference();
+    	IntByReference pcReturned = new IntByReference();
+    	assertFalse(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
+    			null, 4, null, 0, pcbNeeded, pcReturned));
+    	assertTrue(pcReturned.getValue() == 0);
+    	if (pcbNeeded.getValue() > 0) {
+    		PRINTER_INFO_4 pPrinterEnum = new PRINTER_INFO_4(pcbNeeded.getValue());
+	    	assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
+	    			null, 4, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
+	    	assertTrue(pcReturned.getValue() >= 0);
+	    	PRINTER_INFO_4[] printerInfo = (PRINTER_INFO_4[]) pPrinterEnum.toArray(pcReturned.getValue());
+	    	for(PRINTER_INFO_4 pi : printerInfo) {
+	    		assertTrue(pi.pPrinterName == null || pi.pPrinterName.length() >= 0);
+	    		// System.out.println(pi.pPrinterName);
+	    	}
+    	}
+    }
+    
+    /*
     public void testEnumPrinters_1() {
     	IntByReference pcbNeeded = new IntByReference();
     	IntByReference pcReturned = new IntByReference();
@@ -44,4 +65,5 @@ public class WinspoolTest extends TestCase {
 	    	}
     	}
     }
+    */
 }

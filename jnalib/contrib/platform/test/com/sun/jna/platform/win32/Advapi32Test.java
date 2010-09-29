@@ -580,7 +580,7 @@ public class Advapi32Test extends TestCase {
     	Memory buffer = new Memory(1024 * 64);
     	IntByReference pOldestRecord = new IntByReference();
     	assertTrue(Advapi32.INSTANCE.GetOldestEventLogRecord(h, pOldestRecord));
-    	int dwRecord = pOldestRecord.getValue();
+    	int dwRecord = pOldestRecord.getValue(); 
     	while(Advapi32.INSTANCE.ReadEventLog(
     			h, WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
     			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
