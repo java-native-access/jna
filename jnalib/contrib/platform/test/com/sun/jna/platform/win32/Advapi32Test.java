@@ -18,9 +18,11 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -563,12 +565,50 @@ public class Advapi32Test extends TestCase {
     	IntByReference pnBytesRead = new IntByReference();
     	IntByReference pnMinNumberOfBytesNeeded = new IntByReference();
     	Memory buffer = new Memory(1);
-    	PointerByReference p = new PointerByReference(buffer);
     	assertFalse(Advapi32.INSTANCE.ReadEventLog(h, 
     			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_BACKWARDS_READ, 
-    			0, p, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded));
+    			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded));
     	assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
     	assertTrue(pnMinNumberOfBytesNeeded.getValue() > 0);
     	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
     }
+    
+    public void testReadEventLogEntries() {
+    	HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
+    	IntByReference pnBytesRead = new IntByReference();
+    	IntByReference pnMinNumberOfBytesNeeded = new IntByReference();
+    	Memory buffer = new Memory(1024 * 64);
+    	IntByReference pOldestRecord = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetOldestEventLogRecord(h, pOldestRecord));
+    	int dwRecord = pOldestRecord.getValue();
+    	while(Advapi32.INSTANCE.ReadEventLog(
+    			h, WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+    			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
+    		int dwRead = pnBytesRead.getValue();
+    		Pointer pevlr = buffer;
+    		int max = 3; // shorten test, avoid iterating through all events (note: this makes dwRecord incorrect)
+    		while (dwRead > 0 && max-- > 0) 
+            {
+    			EVENTLOGRECORD record = new EVENTLOGRECORD(pevlr);
+    			/*
+    			System.out.println(dwRecord
+    					+ " Event ID: " + record.EventID.intValue()
+    					+ " Event Type: " + record.EventType.intValue()
+    					+ " Event Source: " + pevlr.getString(record.size(), true));
+    					*/
+    			dwRecord++;
+    			dwRead -= record.Length.intValue();
+    			pevlr = pevlr.share(record.Length.intValue());
+            }
+    	}
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));    	
+    }
+    
+    public void testGetOldestEventLogRecord() {
+    	HANDLE h = Advapi32.INSTANCE.OpenEventLog(null, "Application");
+    	IntByReference oldestRecord = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetOldestEventLogRecord(h, oldestRecord));
+    	assertTrue(oldestRecord.getValue() >= 0);
+    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
+    }    
 }

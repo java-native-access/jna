@@ -824,6 +824,19 @@ public interface Advapi32 extends StdCallLibrary {
 	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
 	 */
 	public boolean ReadEventLog(HANDLE hEventLog, int dwReadFlags, int dwRecordOffset,
-			PointerByReference lpBuffer, int nNumberOfBytesToRead, IntByReference pnBytesRead,
+			Pointer lpBuffer, int nNumberOfBytesToRead, IntByReference pnBytesRead,
 			IntByReference pnMinNumberOfBytesNeeded);
+
+	/**
+	 * The GetOldestEventLogRecord function retrieves the absolute record number of the oldest
+	 * record in the specified event log.
+	 * @param hEventLog
+	 *  Handle to the open event log. This handle is returned by the OpenEventLog or OpenBackupEventLog function.
+	 * @param OldestRecord
+	 *  Pointer to a variable that receives the absolute record number of the oldest record in the specified event log. 
+	 * @return
+	 *  If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean GetOldestEventLogRecord(HANDLE hEventLog, IntByReference OldestRecord);
 }

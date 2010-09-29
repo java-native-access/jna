@@ -1431,4 +1431,37 @@ public interface WinNT extends StdCallLibrary {
 	 * Failure Audit event
 	 */
 	public static final int EVENTLOG_AUDIT_FAILURE = 0x0010;
+	
+	/**
+	 * The EVENTLOGRECORD structure contains information about an event record returned by the 
+	 * ReadEventLog function.
+	 */
+	public static class EVENTLOGRECORD extends Structure {
+		
+		public DWORD Length;
+		public DWORD Reserved;
+		public DWORD RecordNumber;
+		public DWORD TimeGenerated;
+		public DWORD TimeWritten;
+		public DWORD EventID;
+		public WORD EventType;
+		public WORD NumStrings;
+		public WORD EventCategory;
+		public WORD ReservedFlags;
+		public DWORD ClosingRecordNumber;
+		public DWORD StringOffset;
+		public DWORD UserSidLength;
+		public DWORD UserSidOffset;
+		public DWORD DataLength;
+		public DWORD DataOffset;
+		
+		public EVENTLOGRECORD() {
+			
+		}
+		
+		public EVENTLOGRECORD(Pointer p) {
+			useMemory(p);
+			read();
+		}
+	};
 }

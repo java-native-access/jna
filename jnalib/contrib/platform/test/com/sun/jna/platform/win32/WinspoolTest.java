@@ -34,7 +34,6 @@ public class WinspoolTest extends TestCase {
     	assertTrue(pcReturned.getValue() == 0);
     	if (pcbNeeded.getValue() > 0) {
 	    	PRINTER_INFO_1 pPrinterEnum = new PRINTER_INFO_1(pcbNeeded.getValue());
-	    	assertTrue(pcbNeeded.getValue() > 0);
 	    	assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
 	    			null, 1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
 	    	assertTrue(pcReturned.getValue() >= 0);
