@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
+import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
 
 import junit.framework.TestCase;
 
@@ -26,9 +27,16 @@ public class WinspoolUtilTest extends TestCase {
         for(PRINTER_INFO_1 printerInfo : WinspoolUtil.getPrinterInfo1()) {
             System.out.println(printerInfo.pName + ": " + printerInfo.pDescription);        	
         }
+        for(PRINTER_INFO_4 printerInfo : WinspoolUtil.getPrinterInfo4()) {
+            System.out.println(printerInfo.pPrinterName + " on " + printerInfo.pServerName);        	
+        }
     }
     
-	public void testGetFolderPath() {
+	public void testGetPrinterInfo1() {
 		assertTrue(WinspoolUtil.getPrinterInfo1().length >= 0);
+	}
+	
+	public void testGetPrinterInfo4() {
+		assertTrue(WinspoolUtil.getPrinterInfo4().length >= 0);
 	}
 }

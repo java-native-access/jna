@@ -14,7 +14,7 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-// import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
+import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
 import com.sun.jna.ptr.IntByReference;
 
@@ -30,8 +30,9 @@ public class WinspoolTest extends TestCase {
     public void testEnumPrinters_4() {
     	IntByReference pcbNeeded = new IntByReference();
     	IntByReference pcReturned = new IntByReference();
-    	assertFalse(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
-    			null, 4, null, 0, pcbNeeded, pcReturned));
+    	// if there're no printers installed, EnumPrinters will succeed with zero items returned 
+    	Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
+    			null, 4, null, 0, pcbNeeded, pcReturned);
     	assertTrue(pcReturned.getValue() == 0);
     	if (pcbNeeded.getValue() > 0) {
     		PRINTER_INFO_4 pPrinterEnum = new PRINTER_INFO_4(pcbNeeded.getValue());
@@ -46,12 +47,12 @@ public class WinspoolTest extends TestCase {
     	}
     }
     
-    /*
     public void testEnumPrinters_1() {
     	IntByReference pcbNeeded = new IntByReference();
     	IntByReference pcReturned = new IntByReference();
-    	assertFalse(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
-    			null, 1, null, 0, pcbNeeded, pcReturned));
+    	// if there're no printers installed, EnumPrinters will succeed with zero items returned
+    	Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, 
+    			null, 1, null, 0, pcbNeeded, pcReturned);
     	assertTrue(pcReturned.getValue() == 0);
     	if (pcbNeeded.getValue() > 0) {
 	    	PRINTER_INFO_1 pPrinterEnum = new PRINTER_INFO_1(pcbNeeded.getValue());
@@ -65,5 +66,4 @@ public class WinspoolTest extends TestCase {
 	    	}
     	}
     }
-    */
 }
