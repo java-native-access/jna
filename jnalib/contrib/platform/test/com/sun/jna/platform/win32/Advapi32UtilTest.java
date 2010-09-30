@@ -253,22 +253,54 @@ public class Advapi32UtilTest extends TestCase {
         assertFalse(Advapi32Util.isWellKnownSid(everyoneBytes, WELL_KNOWN_SID_TYPE.WinAccountAdministratorSid));
 	}
 	
-	public void testEventLogIterator() {
+	public void testEventLogIteratorForwards() {
 		EventLogIterator iter = new EventLogIterator("Application");
-		
-		int lastId = 0;
-		while(iter.hasNext()) {
-			EventLogRecord record = iter.next();
-			assertTrue(record.getRecordId() > lastId);
-			lastId = record.getRecordId();
-			assertNotNull(record.getType().name());
-			assertNotNull(record.getSource());
-			/*
-			System.out.println(record.getRecordId()
-					+ ": Event ID: " + record.getEventId()
-					+ ", Event Type: " + record.getType()
-					+ ", Event Source: " + record.getSource());
-					*/
+		try {
+			int max = 100;
+			int lastId = 0;
+			while(iter.hasNext()) {
+				EventLogRecord record = iter.next();
+				assertTrue(record.getRecordNumber() > lastId);
+				lastId = record.getRecordNumber();
+				assertNotNull(record.getType().name());
+				assertNotNull(record.getSource());
+				if (max-- <= 0) {
+					break; // shorten test
+				}
+				/*
+				System.out.println(record.getRecordNumber()
+						+ ": Event ID: " + record.getEventId()
+						+ ", Event Type: " + record.getType()
+						+ ", Event Source: " + record.getSource());
+						*/
+			}
+		} finally {
+			iter.close();
 		}
 	}
+	
+	public void testEventLogIteratorBackwards() {
+		EventLogIterator iter = new EventLogIterator(null, 
+				"Application", WinNT.EVENTLOG_BACKWARDS_READ);
+		try {
+			int max = 100;
+			int lastId = -1;
+			while(iter.hasNext()) {
+				EventLogRecord record = iter.next();
+				/*
+				System.out.println(record.getRecordNumber()
+						+ ": Event ID: " + record.getEventId()
+						+ ", Event Type: " + record.getType()
+						+ ", Event Source: " + record.getSource());
+						*/
+				assertTrue(record.getRecordNumber() < lastId || lastId == -1);
+				lastId = record.getRecordNumber();
+				if (max-- <= 0) {
+					break; // shorten test
+				}
+			}
+		} finally {
+			iter.close();
+		}
+	}	
 }

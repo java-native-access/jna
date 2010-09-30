@@ -1438,21 +1438,81 @@ public interface WinNT extends StdCallLibrary {
 	 */
 	public static class EVENTLOGRECORD extends Structure {
 		
+		/**
+		 * Size of this event record, in bytes. Note that this value is stored at both ends
+		 * of the entry to ease moving forward or backward through the log. The length includes 
+		 * any pad bytes inserted at the end of the record for DWORD alignment. 
+		 */
 		public DWORD Length;
+		/**
+		 * Reserved.
+		 */
 		public DWORD Reserved;
+		/**
+		 * Record number of the record. This value can be used with the EVENTLOG_SEEK_READ flag in
+		 * the ReadEventLog function to begin reading at a specified record.
+		 */
 		public DWORD RecordNumber;
+		/**
+		 * Time at which this entry was submitted. This time is measured in the number of seconds 
+		 * elapsed since 00:00:00 January 1, 1970, Universal Coordinated Time. 
+		 */
 		public DWORD TimeGenerated;
+		/**
+		 * Time at which this entry was received by the service to be written to the log. 
+		 * This time is measured in the number of seconds elapsed since 00:00:00 January 1,
+		 * 1970, Universal Coordinated Time. 
+		 */
 		public DWORD TimeWritten;
+		/**
+		 * Event identifier. The value is specific to the event source for the event, and is used
+		 * with source name to locate a description string in the message file for the event source. 
+		 */
 		public DWORD EventID;
+		/**
+		 * Type of event.
+		 */
 		public WORD EventType;
+		/**
+		 * Number of strings present in the log (at the position indicated by StringOffset). 
+		 * These strings are merged into the message before it is displayed to the user. 
+		 */
 		public WORD NumStrings;
+		/**
+		 * Category for this event. The meaning of this value depends on the event source.
+		 */
 		public WORD EventCategory;
+		/**
+		 * Reserved.
+		 */
 		public WORD ReservedFlags;
+		/**
+		 * Reserved.
+		 */
 		public DWORD ClosingRecordNumber;
+		/**
+		 * Offset of the description strings within this event log record. 
+		 */
 		public DWORD StringOffset;
+		/**
+		 * Size of the UserSid member, in bytes. This value can be zero if no security identifier was provided. 
+		 */
 		public DWORD UserSidLength;
+		/**
+		 * Offset of the security identifier (SID) within this event log record. 
+		 * To obtain the user name for this SID, use the LookupAccountSid function. 
+		 */
 		public DWORD UserSidOffset;
+		/**
+		 * Size of the event-specific data (at the position indicated by DataOffset), in bytes. 
+		 */
 		public DWORD DataLength;
+		/**
+		 * Offset of the event-specific information within this event log record, in bytes. 
+		 * This information could be something specific (a disk driver might log the number 
+		 * of retries, for example), followed by binary information specific to the event 
+		 * being logged and to the source that generated the entry. 
+		 */
 		public DWORD DataOffset;
 		
 		public EVENTLOGRECORD() {

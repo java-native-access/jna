@@ -924,7 +924,6 @@ public abstract class Advapi32Util {
 	 */
 	public static class EventLogRecord {
 		private EVENTLOGRECORD _record = null;
-		private int _recordId;
 		private String _source;
 
 		/**
@@ -937,15 +936,6 @@ public abstract class Advapi32Util {
 		}
 		
 		/**
-		 * Record id.
-		 * @return
-		 *  The absolute record id.
-		 */
-		public int getRecordId() {
-			return _recordId;
-		}
-		
-		/**
 		 * Event Id.
 		 * @return
 		 *  Integer.
@@ -955,12 +945,31 @@ public abstract class Advapi32Util {
 		}
 		
 		/**
-		 * Record source.
+		 * Event source.
 		 * @return
 		 *  String.
 		 */
 		public String getSource() {
 			return _source;
+		}
+		
+		/**
+		 * Status code for the facility, part of the Event ID.
+		 * @return
+		 *  Status code.
+		 */
+		public int getStatusCode() {
+			return _record.EventID.intValue() & 0xFFFF;
+		}
+		
+		/**
+		 * Record number of the record. This value can be used with the EVENTLOG_SEEK_READ flag in 
+		 * the ReadEventLog function to begin reading at a specified record.
+		 * @return
+		 *  Integer.
+		 */
+		public int getRecordNumber() {
+			return _record.RecordNumber.intValue();
 		}
 		
 		/**
@@ -995,9 +1004,8 @@ public abstract class Advapi32Util {
 			}
 		}
 		
-		public EventLogRecord(int recordId, Pointer pevlr) {
+		public EventLogRecord(Pointer pevlr) {
 			_record = new EVENTLOGRECORD(pevlr);
-			_recordId = recordId;
 			_source = pevlr.getString(_record.size(), true);
 		}
 	}
@@ -1013,22 +1021,18 @@ public abstract class Advapi32Util {
     	private boolean _done = false; // no more events
     	private int _dwRead = 0; // number of bytes remaining in the current buffer
     	private Pointer _pevlr = null; // pointer to the current record
-    	private int _dwRecord; // current record id
+    	private int _flags = WinNT.EVENTLOG_FORWARDS_READ;
 
 		public EventLogIterator(String sourceName) {
-			this(null, sourceName);
+			this(null, sourceName, WinNT.EVENTLOG_FORWARDS_READ);
 		}
 		
-		public EventLogIterator(String serverName, String sourceName) {
+		public EventLogIterator(String serverName, String sourceName, int flags) {
+			_flags = flags;
 	    	_h = Advapi32.INSTANCE.OpenEventLog(serverName, sourceName);
 	    	if (_h == null) {
 	    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 	    	}
-	    	IntByReference pOldestRecord = new IntByReference();
-	    	if (! Advapi32.INSTANCE.GetOldestEventLogRecord(_h, pOldestRecord)) {
-	    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-	    	}
-	    	_dwRecord = pOldestRecord.getValue();
 		}
 		
 		private boolean read() {
@@ -1041,7 +1045,7 @@ public abstract class Advapi32Util {
 	    	IntByReference pnMinNumberOfBytesNeeded = new IntByReference();
 			
 			if (! Advapi32.INSTANCE.ReadEventLog(_h, 
-	    			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+	    			WinNT.EVENTLOG_SEQUENTIAL_READ | _flags, 
 	    			0, _buffer, (int) _buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
 
 				int rc = Kernel32.INSTANCE.GetLastError();
@@ -1051,7 +1055,7 @@ public abstract class Advapi32Util {
 					_buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
 					
 					if (! Advapi32.INSTANCE.ReadEventLog(_h, 
-			    			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+			    			WinNT.EVENTLOG_SEQUENTIAL_READ | _flags, 
 			    			0, _buffer, (int) _buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
 						throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 					}					
@@ -1060,7 +1064,7 @@ public abstract class Advapi32Util {
 					close();
 					if (rc != W32Errors.ERROR_HANDLE_EOF) {
 						throw new Win32Exception(rc);
-					}					
+					}
 					return false;
 				}
 			}
@@ -1098,8 +1102,7 @@ public abstract class Advapi32Util {
 		@Override
 		public EventLogRecord next() {
 			read();
-			EventLogRecord record = new EventLogRecord(_dwRecord, _pevlr);
-    		_dwRecord++;
+			EventLogRecord record = new EventLogRecord(_pevlr);
     		_dwRead -= record.getLength();
     		_pevlr = _pevlr.share(record.getLength());
 			return record;
