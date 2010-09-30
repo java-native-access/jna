@@ -583,11 +583,21 @@ public class Advapi32Test extends TestCase {
     	int dwRecord = pOldestRecord.getValue();
     	// shorten test, avoid iterating through all events
     	// note that this makes dwRecord incorrect
-    	int maxReads = 3; 
-    	while(Advapi32.INSTANCE.ReadEventLog(h, 
-    			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
-    			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded) 
-    			&& maxReads-- > 0) {
+    	int maxReads = 3;     	
+    	int rc = 0;
+    	while(true) {
+    		if (maxReads-- <= 0)
+				break;			
+    		if (! Advapi32.INSTANCE.ReadEventLog(h, 
+        			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+        			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
+    			rc = Kernel32.INSTANCE.GetLastError();
+    			if (rc == W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+    				buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
+    				continue;
+    			}    			
+    			break;
+    		}
     		int dwRead = pnBytesRead.getValue();
     		Pointer pevlr = buffer;
     		int maxRecords = 3;
@@ -605,6 +615,7 @@ public class Advapi32Test extends TestCase {
     			pevlr = pevlr.share(record.Length.intValue());
             }
     	}
+    	assertTrue(rc == W32Errors.ERROR_HANDLE_EOF || rc == 0);
     	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));    	
     }
     

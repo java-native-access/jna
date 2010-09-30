@@ -14,10 +14,13 @@ package com.sun.jna.platform.win32;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -904,5 +907,207 @@ public abstract class Advapi32Util {
 			}
 		}		
 	}
+	
+	/**
+	 * Event log types.
+	 */
+	public static enum EventLogType {
+		Error,
+		Warning,
+		Informational,
+		AuditSuccess,
+		AuditFailure
+	}
+	
+	/**
+	 * An event log record.
+	 */
+	public static class EventLogRecord {
+		private EVENTLOGRECORD _record = null;
+		private int _recordId;
+		private String _source;
 
+		/**
+		 * Raw record data.
+		 * @return
+		 *  EVENTLOGRECORD.
+		 */
+		public EVENTLOGRECORD getRecord() {
+			return _record;
+		}
+		
+		/**
+		 * Record id.
+		 * @return
+		 *  The absolute record id.
+		 */
+		public int getRecordId() {
+			return _recordId;
+		}
+		
+		/**
+		 * Event Id.
+		 * @return
+		 *  Integer.
+		 */
+		public int getEventId() {
+			return _record.EventID.intValue();
+		}
+		
+		/**
+		 * Record source.
+		 * @return
+		 *  String.
+		 */
+		public String getSource() {
+			return _source;
+		}
+		
+		/**
+		 * Record length, with data.
+		 * @return
+		 *  Number of bytes in the record including data.
+		 */
+		public int getLength() {
+			return _record.Length.intValue();
+		}
+		
+		/**
+		 * Event log type.
+		 * @return
+		 *  Event log type.
+		 */
+		public EventLogType getType() {
+			switch(_record.EventType.intValue()) {
+			case WinNT.EVENTLOG_SUCCESS:
+			case WinNT.EVENTLOG_INFORMATION_TYPE:
+				return EventLogType.Informational;
+			case WinNT.EVENTLOG_AUDIT_FAILURE:
+				return EventLogType.AuditFailure;
+			case WinNT.EVENTLOG_AUDIT_SUCCESS:
+				return EventLogType.AuditSuccess;
+			case WinNT.EVENTLOG_ERROR_TYPE:
+				return EventLogType.Error;
+			case WinNT.EVENTLOG_WARNING_TYPE:
+				return EventLogType.Warning;
+			default:
+				throw new RuntimeException("Invalid type: " + _record.EventType.intValue());
+			}
+		}
+		
+		public EventLogRecord(int recordId, Pointer pevlr) {
+			_record = new EVENTLOGRECORD(pevlr);
+			_recordId = recordId;
+			_source = pevlr.getString(_record.size(), true);
+		}
+	}
+	
+	/**
+	 * An iterator for Event Log entries.
+	 */
+	public static class EventLogIterator
+		implements Iterable<EventLogRecord>, Iterator<EventLogRecord> {
+		
+    	private HANDLE _h = null;
+    	private Memory _buffer = new Memory(1024 * 64); // memory buffer to store events
+    	private boolean _done = false; // no more events
+    	private int _dwRead = 0; // number of bytes remaining in the current buffer
+    	private Pointer _pevlr = null; // pointer to the current record
+    	private int _dwRecord; // current record id
+
+		public EventLogIterator(String sourceName) {
+			this(null, sourceName);
+		}
+		
+		public EventLogIterator(String serverName, String sourceName) {
+	    	_h = Advapi32.INSTANCE.OpenEventLog(serverName, sourceName);
+	    	if (_h == null) {
+	    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+	    	}
+	    	IntByReference pOldestRecord = new IntByReference();
+	    	if (! Advapi32.INSTANCE.GetOldestEventLogRecord(_h, pOldestRecord)) {
+	    		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+	    	}
+	    	_dwRecord = pOldestRecord.getValue();
+		}
+		
+		private boolean read() {
+			// finished or bytes remain, don't read any new data
+			if (_done || _dwRead > 0) {
+				return false;
+			}
+			
+	    	IntByReference pnBytesRead = new IntByReference();
+	    	IntByReference pnMinNumberOfBytesNeeded = new IntByReference();
+			
+			if (! Advapi32.INSTANCE.ReadEventLog(_h, 
+	    			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+	    			0, _buffer, (int) _buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
+
+				int rc = Kernel32.INSTANCE.GetLastError();
+				
+				// not enough bytes in the buffer, resize
+				if (rc == W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+					_buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
+					
+					if (! Advapi32.INSTANCE.ReadEventLog(_h, 
+			    			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+			    			0, _buffer, (int) _buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
+						throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+					}					
+				} else {
+					// read failed, no more entries or error
+					close();
+					if (rc != W32Errors.ERROR_HANDLE_EOF) {
+						throw new Win32Exception(rc);
+					}					
+					return false;
+				}
+			}
+			
+    		_dwRead = pnBytesRead.getValue();
+    		_pevlr = _buffer;
+    		return true;
+		}
+		
+		/**
+		 * Call close() in the case when the caller needs to abandon the iterator before 
+		 * the iteration completes.
+		 */
+		public void close() {
+			_done = true;
+			if (_h != null) {
+				if (! Advapi32.INSTANCE.CloseEventLog(_h)) {
+					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+				}
+				_h = null;
+			}
+		}
+		
+		@Override
+		public Iterator<EventLogRecord> iterator() {
+			return this;
+		}
+
+		@Override
+		public boolean hasNext() {
+			read();
+			return ! _done;
+		}
+
+		@Override
+		public EventLogRecord next() {
+			read();
+			EventLogRecord record = new EventLogRecord(_dwRecord, _pevlr);
+    		_dwRecord++;
+    		_dwRead -= record.getLength();
+    		_pevlr = _pevlr.share(record.getLength());
+			return record;
+		}
+
+		@Override
+		public void remove() {
+			
+		}
+	}
 }

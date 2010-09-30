@@ -18,6 +18,8 @@ import junit.framework.TestCase;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
+import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
+import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -249,5 +251,24 @@ public class Advapi32UtilTest extends TestCase {
         byte[] everyoneBytes = Advapi32Util.convertStringSidToSid(everyoneString);
         assertTrue(Advapi32Util.isWellKnownSid(everyoneBytes, WELL_KNOWN_SID_TYPE.WinWorldSid));		
         assertFalse(Advapi32Util.isWellKnownSid(everyoneBytes, WELL_KNOWN_SID_TYPE.WinAccountAdministratorSid));
+	}
+	
+	public void testEventLogIterator() {
+		EventLogIterator iter = new EventLogIterator("Application");
+		
+		int lastId = 0;
+		while(iter.hasNext()) {
+			EventLogRecord record = iter.next();
+			assertTrue(record.getRecordId() > lastId);
+			lastId = record.getRecordId();
+			assertNotNull(record.getType().name());
+			assertNotNull(record.getSource());
+			/*
+			System.out.println(record.getRecordId()
+					+ ": Event ID: " + record.getEventId()
+					+ ", Event Type: " + record.getType()
+					+ ", Event Source: " + record.getSource());
+					*/
+		}
 	}
 }
