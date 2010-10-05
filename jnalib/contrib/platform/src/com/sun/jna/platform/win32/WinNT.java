@@ -43,7 +43,7 @@ public interface WinNT extends StdCallLibrary {
 	public static final int WRITE_DAC = 0x00040000;
 	public static final int WRITE_OWNER = 0x00080000;
 	public static final int SYNCHRONIZE = 0x00100000;
-
+	
 	public static final int STANDARD_RIGHTS_REQUIRED = 0x000F0000;
 
 	public static final int STANDARD_RIGHTS_READ = READ_CONTROL;
@@ -439,7 +439,20 @@ public interface WinNT extends StdCallLibrary {
     public static final int FILE_FLAG_OPEN_REPARSE_POINT =   0x00200000;
     public static final int FILE_FLAG_OPEN_NO_RECALL =       0x00100000;
 
-    public static final int GENERIC_WRITE = 0x40000000;
+	//
+	//  These are the generic rights.
+	//
+
+	public static final int GENERIC_READ		= 0x80000000;
+	public static final int GENERIC_WRITE		= 0x40000000;
+	public static final int GENERIC_EXECUTE		= 0x20000000;
+	public static final int GENERIC_ALL			= 0x10000000;
+	
+	//
+	// AccessSystemAcl access type
+	//
+
+	public static final int ACCESS_SYSTEM_SECURITY = 0x01000000;
     
     public static class SECURITY_ATTRIBUTES extends Structure {
         public final int nLength = size();
@@ -1524,4 +1537,26 @@ public interface WinNT extends StdCallLibrary {
 			read();
 		}
 	};
+	
+	//
+	// Service Types (Bit Mask)
+	//
+	public static final int SERVICE_KERNEL_DRIVER		= 0x00000001;
+	public static final int SERVICE_FILE_SYSTEM_DRIVER	= 0x00000002;
+	public static final int SERVICE_ADAPTER				= 0x00000004;
+	public static final int SERVICE_RECOGNIZER_DRIVER	= 0x00000008;
+	
+	public static final int SERVICE_DRIVER = 
+		(SERVICE_KERNEL_DRIVER | SERVICE_FILE_SYSTEM_DRIVER | SERVICE_RECOGNIZER_DRIVER);
+	
+	public static final int SERVICE_WIN32_OWN_PROCESS	= 0x00000010;
+	public static final int SERVICE_WIN32_SHARE_PROCESS	= 0x00000020;
+	
+	public static final int SERVICE_WIN32 = 
+		(SERVICE_WIN32_OWN_PROCESS | SERVICE_WIN32_SHARE_PROCESS);
+	
+	public static final int SERVICE_INTERACTIVE_PROCESS = 0x00000100;
+	
+	public static final int SERVICE_TYPE_ALL = 
+		(SERVICE_WIN32 | SERVICE_ADAPTER | SERVICE_DRIVER | SERVICE_INTERACTIVE_PROCESS);
 }

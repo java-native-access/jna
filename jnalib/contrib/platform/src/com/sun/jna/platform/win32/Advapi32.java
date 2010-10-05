@@ -22,6 +22,10 @@ import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SECURITY_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
+import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
+import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -657,7 +661,8 @@ public interface Advapi32 extends StdCallLibrary {
 			IntByReference lpcMaxValueNameLen, IntByReference lpcMaxValueLen,
 			IntByReference lpcbSecurityDescriptor, 
 			WinBase.FILETIME lpftLastWriteTime);
-
+			
+			
 	/**
 	 * Retrieves a registered handle to the specified event log.
 	 * @param lpUNCServerName
@@ -839,4 +844,169 @@ public interface Advapi32 extends StdCallLibrary {
 	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
 	 */
 	public boolean GetOldestEventLogRecord(HANDLE hEventLog, IntByReference OldestRecord);
+	
+	/**
+	 * Retrieves the current status of the specified service based on the specified information level.
+	 * @param hService 
+	 * 	A handle to the service. This handle is returned by the 
+	 *  OpenService(SC_HANDLE, String, int) or @link #CreateService() function, and
+	 *  it must have the SERVICE_QUERY_STATUS access right. For more information, see 
+	 *  <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">Service Security and Access Rights</a>.
+	 * @param InfoLevel
+	 *  The service attributes to be returned (a value from {@link SC_STATUS_TYPE} enumeration). 
+	 *  Use SC_STATUS_PROCESS_INFO to retrieve the service status information. The lpBuffer 
+	 *  parameter is a pointer to a SERVICE_STATUS_PROCESS  structure.
+	 *  Currently, no other information levels are defined.
+	 * @param lpBuffer (optional)
+	 *  A pointer to the buffer that receives the status information. The format of this data 
+	 *  depends on the value of the InfoLevel parameter.
+	 *  The maximum size of this array is 8K bytes. To determine the required size, specify NULL
+	 *  for this parameter and 0 for the cbBufSize parameter. The function will fail and GetLastError 
+	 *  will return ERROR_INSUFFICIENT_BUFFER. The pcbBytesNeeded parameter will receive the required size.
+	 * @param cbBufSize
+	 *  The size of the buffer pointed to by the lpBuffer parameter, in bytes.
+	 * @param pcbBytesNeeded
+	 *  A pointer to a variable that receives the number of bytes needed to store all status 
+	 *  information, if the function fails with ERROR_INSUFFICIENT_BUFFER.
+	 * @return
+	 *  If the function succeeds, the return value is true.
+	 *  If the function fails, the return value is false. To get extended error information,
+	 *  call GetLastError.  This value is a nonzero error code defined in Winerror.h.
+	 */
+	public boolean QueryServiceStatusEx(SC_HANDLE hService, int InfoLevel,
+			SERVICE_STATUS_PROCESS lpBuffer, int cbBufSize, IntByReference pcbBytesNeeded);
+	
+	/**
+	 * Sends a control code to a service.
+	 * To specify additional information when stopping a service, use the 
+	 * ControlServiceEx function.
+	 * @param hService
+	 *  A handle to the service. This handle is returned by the 
+	 *  OpenService(SC_HANDLE, String, int) or CreateService()
+	 *  function. The access rights required for this handle depend on the
+	 *  dwControl code requested.
+	 * @param dwControl
+	 *  This parameter can be one of the following control codes (found in Winsvc.h):
+	 *  SERVICE_CONTROL_STOP, SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_CONTINUE
+	 *  SERVICE_CONTROL_INTERROGATE, SERVICE_CONTROL_PARAMCHANGE, 
+	 *  SERVICE_CONTROL_NETBINDADD, SERVICE_CONTROL_NETBINDREMOVE,
+	 *  SERVICE_CONTROL_NETBINDENABLE, SERVICE_CONTROL_NETBINDDISABLE
+	 *  This value can also be a user-defined control code, as described below:
+	 *  Range 128 to 255 - The service defines the action associated with the 
+	 *  control code. The hService handle must have the SERVICE_USER_DEFINED_CONTROL 
+	 *  access right.
+	 * @param lpServiceStatus
+	 *  A pointer to a SERVICE_STATUS structure that receives the latest 
+	 *  service status information. The information returned reflects the most 
+	 *  recent status that the service reported to the service control manager.
+	 *  The service control manager fills in the structure only when ControlService
+	 *  returns one of the following error codes: NO_ERROR, ERROR_INVALID_SERVICE_CONTROL,
+	 *  ERROR_SERVICE_CANNOT_ACCEPT_CTRL, or ERROR_SERVICE_NOT_ACTIVE. Otherwise,
+	 *  the structure is not filled in.
+	 * @return
+	 *  If the function succeeds, the return value is true.
+	 *  If the function fails, the return value is false. To get extended error information,
+	 *  call GetLastError.  This value is a nonzero error code defined in Winerror.h.
+	 */
+	public boolean ControlService(SC_HANDLE hService, int dwControl,
+			  SERVICE_STATUS lpServiceStatus);
+	
+	
+	/**
+	 * Starts a service.
+	 * @param hService
+	 *  A handle to the service. This handle is returned by the 
+	 *  OpenService(SC_HANDLE, String, int) or CreateService()
+	 *  function, and it must have the SERVICE_START access right. For more 
+	 *  information, see <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">
+	 * 	Service Security and Access Rights</a>.
+	 * @param dwNumServiceArgs
+	 *  The number of strings in the lpServiceArgVectors array. If lpServiceArgVectors
+	 *  is NULL, this parameter can be zero.
+	 * @param lpServiceArgVectors
+	 *  The null-terminated strings to be passed to the ServiceMain function for the
+	 *  service as arguments. If there are no arguments, this parameter can be null.
+	 *  Otherwise, the first argument (lpServiceArgVectors[0]) is the name of the
+	 *  service, followed by any additional arguments (lpServiceArgVectors[1] through
+	 *  lpServiceArgVectors[dwNumServiceArgs-1]).
+	 *  Driver services do not receive these arguments.
+	 * @return
+	 *  If the function succeeds, the return value is true.
+	 *  If the function fails, the return value is false. To get extended error information,
+	 *  call GetLastError.  This value is a nonzero error code defined in Winerror.h.
+	 */
+	public boolean StartService(SC_HANDLE hService, int dwNumServiceArgs, 
+			String[] lpServiceArgVectors);
+	
+	/**
+	 * Closes a handle to a service control manager or service object.
+	 * @param hSCObject
+	 * A handle to the service control manager object or the service object to 
+	 * close. Handles to service control manager objects are returned by the 
+	 * OpenSCManager(String, String, int) function, and handles to service 
+	 * objects are returned by either the OpenService(SC_HANDLE, String, int)
+	 * or CreateService() function.
+	 * @return
+	 * If the function succeeds, the return value is nonzero.
+	 * If the function fails, the return value is zero. To get extended 
+	 * error information, call GetLastError. This value is a nonzero error code 
+	 * defined in Winerror.h.
+	 */
+	public boolean CloseServiceHandle(SC_HANDLE hSCObject);
+
+	/**
+	 * Opens an existing service.
+	 * @param hSCManager 
+	 * 	A handle to the service control manager database. The 
+	 * 	OpenSCManager(String, String, int) function returns this handle.
+	 * @param lpServiceName
+	 * 	The name of the service to be opened. This is the name specified by the
+	 * 	lpServiceName parameter of the CreateService function when the service
+	 * 	object was created, not the service display name that is shown by user
+	 * 	interface applications to identify the service.
+	 * 	The maximum string length is 256 characters. The service control manager
+	 * 	database preserves the case of the characters, but service name comparisons
+	 * 	are always case insensitive. Forward-slash (/) and backslash (\) are
+	 * 	invalid service name characters.
+	 * @param dwDesiredAccess
+	 * 	The access to the service. For a list of access rights, see 
+	 * 	<a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">
+	 * 	Service Security and Access Rights</a>.
+	 * 	Before granting the requested access, the system checks the access token
+	 *  of the calling process against the discretionary access-control list of the security descriptor associated with the service object.
+	 * @return
+	 *  If the function succeeds, the return value is a handle to the service.
+	 *  If the function fails, the return value is NULL. To get extended error information,
+	 *  call GetLastError. This value is a nonzero error code defined in Winerror.h.
+	 */
+	public SC_HANDLE OpenService(SC_HANDLE hSCManager, String lpServiceName, int dwDesiredAccess);
+
+	/**
+	 * Establishes a connection to the service control manager on the specified 
+	 * computer and opens the specified service control manager database.
+	 * @param lpMachineName
+	 *  The name of the target computer. If the pointer is NULL or points to 
+	 *  an empty string, the function connects to the service control manager 
+	 *  on the local computer.
+	 * @param lpDatabaseName
+	 *  The name of the service control manager database. This parameter should
+	 *  be set to SERVICES_ACTIVE_DATABASE. If it is NULL, the SERVICES_ACTIVE_DATABASE
+	 *  database is opened by default.
+	 * @param dwDesiredAccess
+	 *  The access to the service control manager. For a list of access rights, see 
+	 *  <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">
+	 *  Service Security and Access Rights</a>.
+	 *  Before granting the requested access rights, the system checks the access 
+	 *  token of the calling process against the discretionary access-control list 
+	 *  of the security descriptor associated with the service control manager.
+	 *  The SC_MANAGER_CONNECT access right is implicitly specified by calling this 
+	 *  function.
+	 * @return
+	 *  If the function succeeds, the return value is a handle to the specified
+	 *  service control manager database.
+	 *  If the function fails, the return value is NULL. To get extended error information,
+	 *  call GetLastError. This value is a nonzero error code defined in Winerror.h.
+	 */
+	public SC_HANDLE OpenSCManager(String lpMachineName, String lpDatabaseName, int dwDesiredAccess);
+	 
 }

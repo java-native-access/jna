@@ -31,6 +31,9 @@ import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
+import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
+import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -620,5 +623,106 @@ public class Advapi32Test extends TestCase {
     	assertTrue(Advapi32.INSTANCE.GetOldestEventLogRecord(h, oldestRecord));
     	assertTrue(oldestRecord.getValue() >= 0);
     	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));
-    }    
+    }
+
+    public void testQueryServiceStatusEx() {
+        
+    	SC_HANDLE scmHandle = Advapi32.INSTANCE.OpenSCManager(null, null, Winsvc.SC_MANAGER_CONNECT);
+    	assertNotNull(scmHandle);
+
+    	SC_HANDLE serviceHandle = Advapi32.INSTANCE.OpenService(scmHandle, "eventlog", Winsvc.SERVICE_QUERY_STATUS);
+    	assertNotNull(serviceHandle);
+
+    	IntByReference pcbBytesNeeded = new IntByReference();
+
+    	assertFalse(Advapi32.INSTANCE.QueryServiceStatusEx(serviceHandle, SC_STATUS_TYPE.SC_STATUS_PROCESS_INFO,
+    			null, 0, pcbBytesNeeded));
+    	assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
+    	
+    	assertTrue(pcbBytesNeeded.getValue() > 0);
+
+    	SERVICE_STATUS_PROCESS status = new SERVICE_STATUS_PROCESS(pcbBytesNeeded.getValue());
+
+    	assertTrue(Advapi32.INSTANCE.QueryServiceStatusEx(serviceHandle, SC_STATUS_TYPE.SC_STATUS_PROCESS_INFO,
+    			status, status.size(), pcbBytesNeeded));
+
+    	assertTrue(status.dwCurrentState == Winsvc.SERVICE_STOPPED || 
+    			status.dwCurrentState == Winsvc.SERVICE_RUNNING);
+
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(serviceHandle));
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(scmHandle));
+    }
+
+    
+    public void testControlService() {
+    	SC_HANDLE scmHandle = Advapi32.INSTANCE.OpenSCManager(null, null, Winsvc.SC_MANAGER_CONNECT);
+    	assertNotNull(scmHandle);
+
+    	SC_HANDLE serviceHandle = Advapi32.INSTANCE.OpenService(scmHandle, "eventlog", Winsvc.SERVICE_QUERY_CONFIG);
+    	assertNotNull(serviceHandle);
+
+    	Winsvc.SERVICE_STATUS serverStatus = new Winsvc.SERVICE_STATUS();
+
+    	assertNotNull(serviceHandle);
+    	assertFalse(Advapi32.INSTANCE.ControlService(serviceHandle, Winsvc.SERVICE_CONTROL_STOP, serverStatus));
+    	assertEquals(W32Errors.ERROR_ACCESS_DENIED, Kernel32.INSTANCE.GetLastError());
+
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(serviceHandle));
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(scmHandle));
+    }
+    
+    public void testStartService() {
+    	SC_HANDLE scmHandle = Advapi32.INSTANCE.OpenSCManager(null, null, Winsvc.SC_MANAGER_CONNECT);
+    	assertNotNull(scmHandle);
+    	
+    	SC_HANDLE serviceHandle = Advapi32.INSTANCE.OpenService(scmHandle, "Wecsvc", Winsvc.SERVICE_QUERY_CONFIG);
+    	assertNotNull(serviceHandle);
+    	
+    	assertFalse(Advapi32.INSTANCE.StartService(serviceHandle, 0, null));
+    	assertEquals(W32Errors.ERROR_ACCESS_DENIED, Kernel32.INSTANCE.GetLastError());
+
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(serviceHandle));
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(scmHandle));
+    }
+    
+    public void testOpenService() {
+    	assertNull(Advapi32.INSTANCE.OpenService(null, "eventlog", Winsvc.SERVICE_QUERY_CONFIG ));
+    	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+
+    	SC_HANDLE scmHandle = Advapi32.INSTANCE.OpenSCManager(null, null, Winsvc.SC_MANAGER_CONNECT);
+    	assertNotNull(scmHandle);
+    	
+    	SC_HANDLE serviceHandle = Advapi32.INSTANCE.OpenService(scmHandle, "eventlog", Winsvc.SERVICE_QUERY_CONFIG );
+    	assertNotNull(serviceHandle);
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(serviceHandle));
+
+    	assertNull(Advapi32.INSTANCE.OpenService(scmHandle, "slashesArentValidChars/", Winsvc.SERVICE_QUERY_CONFIG ));
+    	assertEquals(W32Errors.ERROR_INVALID_NAME, Kernel32.INSTANCE.GetLastError());
+
+    	assertNull(Advapi32.INSTANCE.OpenService(scmHandle, "serviceDoesNotExist", Winsvc.SERVICE_QUERY_CONFIG ));
+    	assertEquals(W32Errors.ERROR_SERVICE_DOES_NOT_EXIST, Kernel32.INSTANCE.GetLastError());
+
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(scmHandle));
+    }
+    
+    public void testOpenSCManager() {
+    	SC_HANDLE handle = Advapi32.INSTANCE.OpenSCManager(null, null, Winsvc.SC_MANAGER_CONNECT);
+    	assertNotNull(handle);
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(handle));
+    	
+    	assertNull(Advapi32.INSTANCE.OpenSCManager("invalidMachineName", null, Winsvc.SC_MANAGER_CONNECT));
+    	assertEquals(W32Errors.RPC_S_SERVER_UNAVAILABLE, Kernel32.INSTANCE.GetLastError());
+
+    	assertNull(Advapi32.INSTANCE.OpenSCManager(null, "invalidDatabase", Winsvc.SC_MANAGER_CONNECT));
+    	assertEquals(W32Errors.ERROR_INVALID_NAME, Kernel32.INSTANCE.GetLastError());
+    }
+    
+    public void testCloseServiceHandle() throws Exception {
+    	SC_HANDLE handle = Advapi32.INSTANCE.OpenSCManager(null, null, Winsvc.SC_MANAGER_CONNECT);
+    	assertNotNull(handle);
+    	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(handle));
+    	
+    	assertFalse(Advapi32.INSTANCE.CloseServiceHandle(null));
+    	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    }
 }
