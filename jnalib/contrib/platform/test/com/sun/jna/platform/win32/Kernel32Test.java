@@ -177,6 +177,19 @@ public class Kernel32Test extends TestCase {
     	assertTrue(Kernel32.INSTANCE.GetTempPath(new DWORD(WinDef.MAX_PATH), buffer).intValue() > 0);    	
     }
     
+	public void testGetTickCount() throws InterruptedException {
+		// Tick count rolls over every 49.7 days, so to safeguard from
+		// roll-over, we will get two time spans. At least one should
+		// yield a positive.
+		int tick1 = Kernel32.INSTANCE.GetTickCount();
+		Thread.sleep(10);
+		int tick2 = Kernel32.INSTANCE.GetTickCount();
+		Thread.sleep(10);
+		int tick3 = Kernel32.INSTANCE.GetTickCount();
+
+		assertTrue(tick2 > tick1 || tick3 > tick2);
+	}
+    
     public void testGetVersion() {
     	DWORD version = Kernel32.INSTANCE.GetVersion();
     	assertTrue(version.getHigh().intValue() != 0);

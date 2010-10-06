@@ -851,11 +851,11 @@ public interface Advapi32 extends StdCallLibrary {
 	 * Retrieves the current status of the specified service based on the specified information level.
 	 * @param hService 
 	 * 	A handle to the service. This handle is returned by the 
-	 *  OpenService(SC_HANDLE, String, int) or @link #CreateService() function, and
+	 *  OpenService(SC_HANDLE, String, int) or CreateService() function, and
 	 *  it must have the SERVICE_QUERY_STATUS access right. For more information, see 
 	 *  <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">Service Security and Access Rights</a>.
 	 * @param InfoLevel
-	 *  The service attributes to be returned (a value from {@link SC_STATUS_TYPE} enumeration). 
+	 *  The service attributes to be returned (a value from SC_STATUS_TYPE enumeration). 
 	 *  Use SC_STATUS_PROCESS_INFO to retrieve the service status information. The lpBuffer 
 	 *  parameter is a pointer to a SERVICE_STATUS_PROCESS  structure.
 	 *  Currently, no other information levels are defined.

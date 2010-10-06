@@ -2,8 +2,10 @@
 <h2>Release 3.x.x</h2>
 <h3>Features</h3>
 <ul>
-<li>Add <code>platform.win32.Kernel32.DeleteFile</code> and <code>com.sun.jna.platform.win32.deleteFile</code>.
+<li>Add <code>platform.win32.Kernel32.DeleteFile</code> and <code>platform.win32.Kernel32Util.deleteFile</code>.
+<li>Add <code>platform.win32.Kernel32.GetTickCount</code>.
 <li>Add Win32 Service functions to <code>platform.win32.Advapi32</code>.
+<li>Add <code>platform.win32.W32ServiceManager</code> and <code>W32Service</code>.
 <li>Add Win32 Event Logging functions to <code>platform.win32.Advapi32</code> and <code>platform.win32.Advapi32Util.EventLogIterator</code>.
 <li><code>platform.win32.Advapi32Util.registryCreateKey</code> returns <code>true</code> if key was created, <code>false</code> if it already exists.
 <li>Add <code>REG_BINARY</code>, <code>REG_EXPAND_SZ</code> and <code>REG_MULTI_SZ</code> support to <code>platform.win32.Advapi32Util</code> registry functions.

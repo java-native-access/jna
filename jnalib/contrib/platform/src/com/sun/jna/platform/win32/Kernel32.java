@@ -81,26 +81,37 @@ public interface Kernel32 extends StdCallLibrary {
     void GetSystemTime(WinBase.SYSTEMTIME lpSystemTime);
     
     /**
+     * The GetTickCount function retrieves the number of milliseconds that have elapsed since the system was started, up to 49.7 days.
+     * @return 
+     *  Number of milliseconds that have elapsed since the system was started.
+     */
+    int GetTickCount();
+    
+    /**
      * The GetCurrentThreadId function retrieves the thread identifier of the calling thread.
-     * @return The return value is the thread identifier of the calling thread.
+     * @return 
+     *  The return value is the thread identifier of the calling thread.
      */
     int GetCurrentThreadId();
     
     /**
      * The GetCurrentThread function retrieves a pseudo handle for the current thread.
-     * @return The return value is a pseudo handle for the current thread.
+     * @return 
+     *  The return value is a pseudo handle for the current thread.
      */
     HANDLE GetCurrentThread();
     
     /**
      * This function returns the process identifier of the calling process. 
-     * @return The return value is the process identifier of the calling process.
+     * @return 
+     *  The return value is the process identifier of the calling process.
      */
     int GetCurrentProcessId();
     
     /**
      * This function returns a pseudohandle for the current process. 
-     * @return The return value is a pseudohandle to the current process. 
+     * @return 
+     *  The return value is a pseudohandle to the current process. 
      */
     HANDLE GetCurrentProcess();
     
