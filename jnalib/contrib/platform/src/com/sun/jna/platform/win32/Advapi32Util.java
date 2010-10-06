@@ -966,7 +966,7 @@ public abstract class Advapi32Util {
 	 *  Path to an existing registry key.
 	 * @param name
 	 *  Value name.
-	 * @param value
+	 * @param data
 	 *  Data to write to registry.
 	 */
 	public static void registrySetBinaryValue(HKEY root, String keyPath, String name, byte[] data) {
