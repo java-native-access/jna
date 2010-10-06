@@ -675,7 +675,7 @@ public class Advapi32Test extends TestCase {
     	SC_HANDLE scmHandle = Advapi32.INSTANCE.OpenSCManager(null, null, Winsvc.SC_MANAGER_CONNECT);
     	assertNotNull(scmHandle);
     	
-    	SC_HANDLE serviceHandle = Advapi32.INSTANCE.OpenService(scmHandle, "Wecsvc", Winsvc.SERVICE_QUERY_CONFIG);
+    	SC_HANDLE serviceHandle = Advapi32.INSTANCE.OpenService(scmHandle, "eventlog", Winsvc.SERVICE_QUERY_CONFIG);
     	assertNotNull(serviceHandle);
     	
     	assertFalse(Advapi32.INSTANCE.StartService(serviceHandle, 0, null));
