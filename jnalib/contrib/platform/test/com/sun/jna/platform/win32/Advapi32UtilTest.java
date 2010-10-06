@@ -220,6 +220,19 @@ public class Advapi32UtilTest extends TestCase {
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");		
 	}
 
+	public void testRegistrySetGetBinaryValue() {
+		byte[] data = { 0x00, 0x01, 0x02 };
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+		Advapi32Util.registrySetBinaryValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "BinaryValue", data);
+		byte[] read = Advapi32Util.registryGetBinaryValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "BinaryValue");
+		assertEquals(data.length, read.length);		
+		for(int i = 0; i < data.length; i++) {
+			assertEquals(data[i], read[i]);
+		}
+		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "BinaryValue"));
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+	}
+	
 	public void testRegistryGetKeys() {
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
@@ -237,10 +250,17 @@ public class Advapi32UtilTest extends TestCase {
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
 		Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "FourtyTwo", 42);
 		Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "42", "FourtyTwo");
+		byte[] dataWritten = { 0xD, 0xE, 0xA, 0xD, 0xB, 0xE, 0xE, 0xF };
+		Advapi32Util.registrySetBinaryValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "DeadBeef", dataWritten);
 		TreeMap<String, Object> values = Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
-		assertEquals(2, values.keySet().size());
+		assertEquals(3, values.keySet().size());
 		assertEquals("FourtyTwo", values.get("42"));
 		assertEquals(42, values.get("FourtyTwo"));
+		byte[] dataRead = (byte[]) values.get("DeadBeef");
+		assertEquals(dataWritten.length, dataRead.length);
+		for(int i = 0; i < dataWritten.length; i++) {
+			assertEquals(dataWritten[i], dataRead[i]);
+		}
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");						
 	}
 	

@@ -23,7 +23,6 @@ import com.sun.jna.platform.win32.WinNT.SECURITY_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
-import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;

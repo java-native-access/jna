@@ -516,6 +516,49 @@ public abstract class Advapi32Util {
 	}
 
 	/**
+	 * Get a registry REG_BINARY value.
+	 * @param root
+	 *  Root key.
+	 * @param key
+	 *  Registry path.
+	 * @param value
+	 *  Name of the value to retrieve.
+	 * @return
+	 *  String value.
+	 */
+	public static byte[] registryGetBinaryValue(HKEY root, String key, String value) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+		try {
+			IntByReference lpcbData = new IntByReference();
+			IntByReference lpType = new IntByReference();
+			rc = Advapi32.INSTANCE.RegQueryValueEx(
+					phkKey.getValue(), value, 0, lpType, (char[]) null, lpcbData);
+			if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+				throw new Win32Exception(rc);
+			}
+			if (lpType.getValue() != WinNT.REG_BINARY) {
+				throw new RuntimeException("Unexpected registry type " + lpType.getValue() + ", expected REG_BINARY");
+			}
+			byte[] data = new byte[lpcbData.getValue()];
+			rc = Advapi32.INSTANCE.RegQueryValueEx(
+					phkKey.getValue(), value, 0, lpType, data, lpcbData);
+			if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+				throw new Win32Exception(rc);
+			}
+			return data;
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new Win32Exception(rc);
+			}
+		}
+	}
+	
+	/**
 	 * Get a registry DWORD value.
 	 * @param root
 	 *  Root key.
@@ -700,6 +743,49 @@ public abstract class Advapi32Util {
 			}
 		}
 	}
+
+	/**
+	 * Set a binary value in registry.
+	 * @param hKey
+	 *  Parent key.
+	 * @param name
+	 *  Name.
+	 * @param value
+	 *  Value.
+	 */
+	public static void registrySetBinaryValue(HKEY hKey, String name, byte[] data) {
+		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_BINARY, data, data.length);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}	
+	}
+
+	/**
+	 * Set a binary value in registry.
+	 * @param root
+	 *  Root key.
+	 * @param keyPath
+	 *  Path to an existing registry key.
+	 * @param name
+	 *  Name.
+	 * @param value
+	 *  Value.
+	 */
+	public static void registrySetBinaryValue(HKEY root, String keyPath, String name, byte[] value) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+		try {
+			registrySetBinaryValue(phkKey.getValue(), name, value);
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new Win32Exception(rc);
+			}
+		}
+	}
 	
 	/**
 	 * Delete a registry key.
@@ -876,6 +962,13 @@ public abstract class Advapi32Util {
 				} catch (UnsupportedEncodingException e) {
 					throw new RuntimeException(e.getMessage());
 				}
+        		break;
+        	case WinNT.REG_BINARY:
+        		byte[] dataRead = new byte[lpcbData.getValue()];
+        		for(int dataIndex = 0; dataIndex < lpcbData.getValue(); dataIndex++) {
+        			dataRead[dataIndex] = data[dataIndex];
+        		}
+        		keyValues.put(Native.toString(name), dataRead);
         		break;
         	default:
         		throw new RuntimeException("Unsupported type: " + lpType.getValue());
