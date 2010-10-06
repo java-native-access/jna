@@ -348,10 +348,6 @@ public abstract class WinBase {
     	
 		public static class UNION extends Union {
 			
-	    	public static class ByReference extends UNION implements Structure.ByReference {
-	    		
-	    	}
-
 			/**
 			 * An obsolete member that is retained for compatibility with Windows NT 3.5 and earlier.
 			 * New applications should use the wProcessorArchitecture branch of the union.
@@ -368,7 +364,7 @@ public abstract class WinBase {
 		/**
 		 * Processor architecture.
 		 */
-		public UNION.ByReference processorArchitecture;
+		public UNION processorArchitecture;
 		/**
 		 * Page size and the granularity of page protection and commitment.
 		 */
