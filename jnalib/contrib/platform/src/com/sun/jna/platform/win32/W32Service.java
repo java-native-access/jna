@@ -24,11 +24,20 @@ import com.sun.jna.ptr.IntByReference;
  */
 public class W32Service {
 	SC_HANDLE _serviceHandle = null;
-	
+
+	/**
+	 * Win32 Service
+	 * @param serviceHandle
+	 *  A handle to the service. This handle is returned by the CreateService or OpenService 
+	 *  function, and it must have the SERVICE_QUERY_STATUS access right.
+	 */
 	public W32Service(SC_HANDLE serviceHandle) {
 		_serviceHandle = serviceHandle;
 	}
 	
+	/**
+	 * Close service.
+	 */
 	public void close() {
 		if (_serviceHandle != null) {
 			if (! Advapi32.INSTANCE.CloseServiceHandle(_serviceHandle)) {
@@ -40,12 +49,8 @@ public class W32Service {
 	
 	/**
 	 * Retrieves the current status of the specified service based on the specified information level.
-	 * @param serviceHandle
-	 *  A handle to the service. 
-	 *  This handle is returned by the CreateService or OpenService function, and 
-	 *  it must have the SERVICE_QUERY_STATUS access right.
-	 * @return Service status information
-	 * @throws Win32Exception
+	 * @return 
+	 *  Service status information
 	 */
 	public SERVICE_STATUS_PROCESS queryStatus() {
 		IntByReference size = new IntByReference();
@@ -77,6 +82,9 @@ public class W32Service {
 		}
 	}
 	
+	/**
+	 * Stop service.
+	 */
 	public void stopService() {
 		waitForNonPendingState();
 		// If the service is already stopped - return
@@ -92,7 +100,10 @@ public class W32Service {
 			throw new RuntimeException("Unable to stop the service");
 		}
 	}
-	
+
+	/**
+	 * Continue service.
+	 */
 	public void continueService() {
 		waitForNonPendingState();
 		// If the service is already stopped - return
@@ -109,6 +120,9 @@ public class W32Service {
 		}
 	}
 	
+	/**
+	 * Pause service.
+	 */
 	public void pauseService() {
 		waitForNonPendingState();
 		// If the service is already paused - return
@@ -126,7 +140,7 @@ public class W32Service {
 	}
 
     /**
-     * This call waits for the state to change to something other than a pending state
+     * Wait for the state to change to something other than a pending state.
      */
 	public void waitForNonPendingState() {
 
@@ -137,18 +151,18 @@ public class W32Service {
 
 		while (isPendingState(status.dwCurrentState)) { 
 
-			// If the checkpoint advanced, start new tick count
+			// if the checkpoint advanced, start new tick count
 			if (status.dwCheckPoint > previousCheckPoint) {
 				previousCheckPoint = status.dwCheckPoint;
 				checkpointStartTickCount = Kernel32.INSTANCE.GetTickCount();
 			}			
 
-			// If the time that passed is greater than the wait hint - throw timeout exception
+			// if the time that passed is greater than the wait hint - throw timeout exception
 			if (Kernel32.INSTANCE.GetTickCount() - checkpointStartTickCount > status.dwWaitHint) {
 				throw new RuntimeException("Timeout waiting for service to change to a non-pending state.");
 			}
 
-			// Do not wait longer than the wait hint. A good interval is 
+			// do not wait longer than the wait hint. A good interval is 
 			// one-tenth the wait hint, but no less than 1 second and no 
 			// more than 10 seconds. 
 
@@ -165,7 +179,6 @@ public class W32Service {
 				throw new RuntimeException(e);
 			}
 
-			// Check the status again
 			status = queryStatus();
 		}
 	}

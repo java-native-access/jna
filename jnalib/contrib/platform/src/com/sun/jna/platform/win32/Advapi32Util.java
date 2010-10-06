@@ -750,9 +750,9 @@ public abstract class Advapi32Util {
 	 * @param hKey
 	 *  Parent key.
 	 * @param name
-	 *  Name.
+	 *  Value name.
 	 * @param value
-	 *  Value.
+	 *  Value to write to registry.
 	 */
 	public static void registrySetIntValue(HKEY hKey, String name, int value) {
         byte[] data = new byte[4];
@@ -773,9 +773,9 @@ public abstract class Advapi32Util {
 	 * @param keyPath
 	 *  Path to an existing registry key.
 	 * @param name
-	 *  Name.
+	 *  Value name.
 	 * @param value
-	 *  Value.
+	 *  Value to write to registry.
 	 */
 	public static void registrySetIntValue(HKEY root, String keyPath, String name, int value) {
 		HKEYByReference phkKey = new HKEYByReference();
@@ -798,9 +798,9 @@ public abstract class Advapi32Util {
 	 * @param hKey
 	 *  Parent key.
 	 * @param name
-	 *  Name.
+	 *  Value name.
 	 * @param value
-	 *  Value.
+	 *  Value to write to registry.
 	 */
 	public static void registrySetStringValue(HKEY hKey, String name, String value) {
     	char[] data = Native.toCharArray(value);
@@ -818,9 +818,9 @@ public abstract class Advapi32Util {
 	 * @param keyPath
 	 *  Path to an existing registry key.
 	 * @param name
-	 *  Name.
+	 *  Value name.
 	 * @param value
-	 *  Value.
+	 *  Value to write to registry.
 	 */
 	public static void registrySetStringValue(HKEY root, String keyPath, String name, String value) {
 		HKEYByReference phkKey = new HKEYByReference();
@@ -843,9 +843,9 @@ public abstract class Advapi32Util {
 	 * @param hKey
 	 *  Parent key.
 	 * @param name
-	 *  Name.
+	 *  Value name.
 	 * @param value
-	 *  Value.
+	 *  Value to write to registry.
 	 */
 	public static void registrySetExpandableStringValue(HKEY hKey, String name, String value) {
     	char[] data = Native.toCharArray(value);
@@ -863,9 +863,9 @@ public abstract class Advapi32Util {
 	 * @param keyPath
 	 *  Path to an existing registry key.
 	 * @param name
-	 *  Name.
+	 *  Value name.
 	 * @param value
-	 *  Value.
+	 *  Value to write to registry.
 	 */
 	public static void registrySetExpandableStringValue(HKEY root, String keyPath, String name, String value) {
 		HKEYByReference phkKey = new HKEYByReference();
@@ -889,8 +889,8 @@ public abstract class Advapi32Util {
 	 *  Parent key.
 	 * @param name
 	 *  Name.
-	 * @param value
-	 *  Value.
+	 * @param arr
+	 *  Array of strings to write to registry.
 	 */
 	public static void registrySetStringArray(HKEY hKey, String name, String[] arr) {
 		int size = 0;
@@ -922,18 +922,18 @@ public abstract class Advapi32Util {
 	 * @param keyPath
 	 *  Path to an existing registry key.
 	 * @param name
-	 *  Name.
-	 * @param value
-	 *  Value.
+	 *  Value name.
+	 * @param arr
+	 *  Array of strings to write to registry.
 	 */
-	public static void registrySetStringArray(HKEY root, String keyPath, String name, String[] value) {
+	public static void registrySetStringArray(HKEY root, String keyPath, String name, String[] arr) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
 		try {
-			registrySetStringArray(phkKey.getValue(), name, value);
+			registrySetStringArray(phkKey.getValue(), name, arr);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -947,9 +947,9 @@ public abstract class Advapi32Util {
 	 * @param hKey
 	 *  Parent key.
 	 * @param name
-	 *  Name.
-	 * @param value
-	 *  Value.
+	 *  Value name.
+	 * @param data
+	 *  Data to write to registry.
 	 */
 	public static void registrySetBinaryValue(HKEY hKey, String name, byte[] data) {
 		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_BINARY, data, data.length);
@@ -965,18 +965,18 @@ public abstract class Advapi32Util {
 	 * @param keyPath
 	 *  Path to an existing registry key.
 	 * @param name
-	 *  Name.
+	 *  Value name.
 	 * @param value
-	 *  Value.
+	 *  Data to write to registry.
 	 */
-	public static void registrySetBinaryValue(HKEY root, String keyPath, String name, byte[] value) {
+	public static void registrySetBinaryValue(HKEY root, String keyPath, String name, byte[] data) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
 		try {
-			registrySetBinaryValue(phkKey.getValue(), name, value);
+			registrySetBinaryValue(phkKey.getValue(), name, data);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
