@@ -18,49 +18,8 @@ import com.sun.jna.win32.*;
  * @author TB
  */
 public interface Advapi32  extends StdCallLibrary {
-  Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32", Advapi32.class, Options.UNICODE_OPTIONS);
-  
-/*  
-BOOL WINAPI LookupAccountName(
-  LPCTSTR lpSystemName,
-  LPCTSTR lpAccountName,
-  PSID Sid,
-  LPDWORD cbSid,
-  LPTSTR ReferencedDomainName,
-  LPDWORD cchReferencedDomainName,
-  PSID_NAME_USE peUse
-);*/ 
-  public boolean LookupAccountName(String lpSystemName, String lpAccountName,
-          byte[] Sid, IntByReference cbSid, char[] ReferencedDomainName,
-          IntByReference cchReferencedDomainName, PointerByReference peUse);
-  
-/*  
-BOOL WINAPI LookupAccountSid(
-  LPCTSTR lpSystemName,
-  PSID lpSid,
-  LPTSTR lpName,
-  LPDWORD cchName,
-  LPTSTR lpReferencedDomainName,
-  LPDWORD cchReferencedDomainName,
-  PSID_NAME_USE peUse
-);*/
-  public boolean LookupAccountSid(String lpSystemName, byte[] Sid,
-          char[] lpName, IntByReference cchName,  char[] ReferencedDomainName,
-          IntByReference cchReferencedDomainName, PointerByReference peUse);
-  
-/*
-BOOL ConvertSidToStringSid(
-  PSID Sid,
-  LPTSTR* StringSid
-);*/  
-  public boolean ConvertSidToStringSid(byte[] Sid, PointerByReference StringSid);
-  
-/*
-BOOL WINAPI ConvertStringSidToSid(
-  LPCTSTR StringSid,
-  PSID* Sid
-);*/
-  public boolean ConvertStringSidToSid(String StringSid, PointerByReference Sid);
+  Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32", Advapi32.class, 
+		  W32APIOptions.UNICODE_OPTIONS);  
   
 /*
 SC_HANDLE WINAPI OpenSCManager(
@@ -162,88 +121,6 @@ BOOL WINAPI ChangeServiceConfig2(
   LPVOID lpInfo
 );*/
   public boolean ChangeServiceConfig2(Pointer hService, int dwInfoLevel, ChangeServiceConfig2Info lpInfo);
-  
-/*
-LONG WINAPI RegOpenKeyEx(
-  HKEY hKey,
-  LPCTSTR lpSubKey,
-  DWORD ulOptions,
-  REGSAM samDesired,
-  PHKEY phkResult
-);*/
-  public int RegOpenKeyEx(int hKey, String lpSubKey, int ulOptions, int samDesired, IntByReference phkResult);
-  
-/*
-LONG WINAPI RegQueryValueEx(
-  HKEY hKey,
-  LPCTSTR lpValueName,
-  LPDWORD lpReserved,
-  LPDWORD lpType,
-  LPBYTE lpData,
-  LPDWORD lpcbData
-);*/  
-  public int RegQueryValueEx(int hKey, String lpValueName, IntByReference lpReserved, IntByReference lpType, byte[] lpData, IntByReference lpcbData);
-  
-/*
-LONG WINAPI RegCloseKey(
-  HKEY hKey
-);*/
-  public int RegCloseKey(int hKey);
-
-/*
-LONG WINAPI RegDeleteValue(
-  HKEY hKey,
-  LPCTSTR lpValueName
-);*/
-  public int RegDeleteValue(int hKey, String lpValueName);
-  
-/*
-LONG WINAPI RegSetValueEx(
-  HKEY hKey,
-  LPCTSTR lpValueName,
-  DWORD Reserved,
-  DWORD dwType,
-  const BYTE* lpData,
-  DWORD cbData
-);*/
-  public int RegSetValueEx(int hKey, String lpValueName, int Reserved, int dwType, byte[] lpData, int cbData);
-  
-/*
-LONG WINAPI RegCreateKeyEx(
-  HKEY hKey,
-  LPCTSTR lpSubKey,
-  DWORD Reserved,
-  LPTSTR lpClass,
-  DWORD dwOptions,
-  REGSAM samDesired,
-  LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-  PHKEY phkResult,
-  LPDWORD lpdwDisposition
-);*/
-  public int RegCreateKeyEx(int hKey, String lpSubKey, int Reserved, String lpClass, int dwOptions, 
-          int samDesired, WINBASE.SECURITY_ATTRIBUTES lpSecurityAttributes, IntByReference phkResult,
-          IntByReference lpdwDisposition);
-  
-/*
-LONG WINAPI RegDeleteKey(
-  HKEY hKey,
-  LPCTSTR lpSubKey
-);*/
-  public int RegDeleteKey(int hKey, String name);
-  
-/*
-LONG WINAPI RegEnumKeyEx(
-  HKEY hKey,
-  DWORD dwIndex,
-  LPTSTR lpName,
-  LPDWORD lpcName,
-  LPDWORD lpReserved,
-  LPTSTR lpClass,
-  LPDWORD lpcClass,
-  PFILETIME lpftLastWriteTime
-);*/
-  public int RegEnumKeyEx(int hKey, int dwIndex, char[] lpName, IntByReference lpcName, IntByReference reserved,
-          char[] lpClass, IntByReference lpcClass, WINBASE.FILETIME lpftLastWriteTime);
   
 /*
 LONG WINAPI RegEnumValue(
