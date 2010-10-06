@@ -437,6 +437,9 @@ public interface Advapi32 extends StdCallLibrary {
 
 	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
 			IntByReference lpType, IntByReference lpData, IntByReference lpcbData);
+
+	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
+			IntByReference lpType, Pointer lpData, IntByReference lpcbData);
 	
 	/**
 	 * The RegCloseKey function releases a handle to the specified registry key.

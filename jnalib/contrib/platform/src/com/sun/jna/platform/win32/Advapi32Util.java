@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -516,6 +515,100 @@ public abstract class Advapi32Util {
 	}
 
 	/**
+	 * Get a registry REG_EXPAND_SZ value.
+	 * @param root
+	 *  Root key.
+	 * @param key
+	 *  Registry path.
+	 * @param value
+	 *  Name of the value to retrieve.
+	 * @return
+	 *  String value.
+	 */
+	public static String registryGetExpandableStringValue(HKEY root, String key, String value) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+		try {
+			IntByReference lpcbData = new IntByReference();
+			IntByReference lpType = new IntByReference();
+			rc = Advapi32.INSTANCE.RegQueryValueEx(
+					phkKey.getValue(), value, 0, lpType, (char[]) null, lpcbData);
+			if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+				throw new Win32Exception(rc);
+			}
+			if (lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+				throw new RuntimeException("Unexpected registry type " + lpType.getValue() + ", expected REG_SZ");
+			}
+			char[] data = new char[lpcbData.getValue()];
+			rc = Advapi32.INSTANCE.RegQueryValueEx(
+					phkKey.getValue(), value, 0, lpType, data, lpcbData);
+			if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+				throw new Win32Exception(rc);
+			}
+			return Native.toString(data);
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new Win32Exception(rc);
+			}
+		}
+	}
+	
+	/**
+	 * Get a registry REG_MULTI_SZ value.
+	 * @param root
+	 *  Root key.
+	 * @param key
+	 *  Registry path.
+	 * @param value
+	 *  Name of the value to retrieve.
+	 * @return
+	 *  String value.
+	 */
+	public static String[] registryGetStringArray(HKEY root, String key, String value) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+		try {
+			IntByReference lpcbData = new IntByReference();
+			IntByReference lpType = new IntByReference();
+			rc = Advapi32.INSTANCE.RegQueryValueEx(
+					phkKey.getValue(), value, 0, lpType, (char[]) null, lpcbData);
+			if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+				throw new Win32Exception(rc);
+			}
+			if (lpType.getValue() != WinNT.REG_MULTI_SZ) {
+				throw new RuntimeException("Unexpected registry type " + lpType.getValue() + ", expected REG_SZ");
+			}
+			Memory data = new Memory(lpcbData.getValue());
+			rc = Advapi32.INSTANCE.RegQueryValueEx(
+					phkKey.getValue(), value, 0, lpType, data, lpcbData);
+			if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+				throw new Win32Exception(rc);
+			}
+			ArrayList<String> result = new ArrayList<String>();
+			int offset = 0;
+			while(offset < data.size()) {
+				String s = data.getString(offset, true);
+				offset += s.length() * Native.WCHAR_SIZE;
+				offset += Native.WCHAR_SIZE;
+				result.add(s);
+			}
+			return result.toArray(new String[0]);
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new Win32Exception(rc);
+			}
+		}
+	}
+	
+	/**
 	 * Get a registry REG_BINARY value.
 	 * @param root
 	 *  Root key.
@@ -711,7 +804,8 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringValue(HKEY hKey, String name, String value) {
     	char[] data = Native.toCharArray(value);
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ, data, data.length * 2);
+		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ, 
+				data, data.length * Native.WCHAR_SIZE);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}	
@@ -743,7 +837,111 @@ public abstract class Advapi32Util {
 			}
 		}
 	}
+	
+	/**
+	 * Set an expandable string value in registry.
+	 * @param hKey
+	 *  Parent key.
+	 * @param name
+	 *  Name.
+	 * @param value
+	 *  Value.
+	 */
+	public static void registrySetExpandableStringValue(HKEY hKey, String name, String value) {
+    	char[] data = Native.toCharArray(value);
+		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_EXPAND_SZ, 
+				data, data.length * Native.WCHAR_SIZE);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}	
+	}
 
+	/**
+	 * Set a string value in registry.
+	 * @param root
+	 *  Root key.
+	 * @param keyPath
+	 *  Path to an existing registry key.
+	 * @param name
+	 *  Name.
+	 * @param value
+	 *  Value.
+	 */
+	public static void registrySetExpandableStringValue(HKEY root, String keyPath, String name, String value) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+		try {
+			registrySetExpandableStringValue(phkKey.getValue(), name, value);
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new Win32Exception(rc);
+			}
+		}
+	}
+
+	/**
+	 * Set a string array value in registry.
+	 * @param hKey
+	 *  Parent key.
+	 * @param name
+	 *  Name.
+	 * @param value
+	 *  Value.
+	 */
+	public static void registrySetStringArray(HKEY hKey, String name, String[] arr) {
+		int size = 0;
+		for(String s : arr) {
+			size += s.length() * Native.WCHAR_SIZE;
+			size += Native.WCHAR_SIZE;
+		}
+		
+		int offset = 0;
+		Memory data = new Memory(size);
+		for(String s : arr) {
+			data.setString(offset, s, true);
+			offset += s.length() * Native.WCHAR_SIZE;
+			offset += Native.WCHAR_SIZE;
+		}
+		
+		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_MULTI_SZ, 
+				data.getByteArray(0, size), size);
+		
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}	
+	}
+
+	/**
+	 * Set a string array value in registry.
+	 * @param root
+	 *  Root key.
+	 * @param keyPath
+	 *  Path to an existing registry key.
+	 * @param name
+	 *  Name.
+	 * @param value
+	 *  Value.
+	 */
+	public static void registrySetStringArray(HKEY root, String keyPath, String name, String[] value) {
+		HKEYByReference phkKey = new HKEYByReference();
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+		try {
+			registrySetStringArray(phkKey.getValue(), name, value);
+		} finally {
+			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+			if (rc != W32Errors.ERROR_SUCCESS) {
+				throw new Win32Exception(rc);
+			}
+		}
+	}
+	
 	/**
 	 * Set a binary value in registry.
 	 * @param hKey
@@ -935,7 +1133,7 @@ public abstract class Advapi32Util {
     	if (rc != W32Errors.ERROR_SUCCESS) {
     		throw new Win32Exception(rc);
     	}
-		TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
+		TreeMap<String, Object> keyValues = new TreeMap<String, Object>();		
     	char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
     	byte[] data = new byte[lpcMaxValueLen.getValue()];
     	for (int i = 0; i < lpcValues.getValue(); i++) {
@@ -947,29 +1145,44 @@ public abstract class Advapi32Util {
         	if (rc != W32Errors.ERROR_SUCCESS) {
         		throw new Win32Exception(rc);
         	}
+        	
+        	String nameString = Native.toString(name);
+        	
+			Memory byteData = new Memory(lpcbData.getValue());
+			byteData.write(0, data, 0, lpcbData.getValue());
+        	
         	switch(lpType.getValue()) {
         	case WinNT.REG_DWORD:
-            	keyValues.put(Native.toString(name), 
-            			((int)(data[0] & 0xff)) + 
-            			(((int)(data[1] & 0xff)) << 8) + 
-            			(((int)(data[2] & 0xff)) << 16) + 
-            			(((int)(data[3] & 0xff)) << 24));
+        	{
+            	keyValues.put(nameString, byteData.getInt(0));
         		break;
+        	}
         	case WinNT.REG_SZ:
-            	try {
-					keyValues.put(Native.toString(name),
-							new String(data, 0, data.length - 2, "UTF-16LE"));
-				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeException(e.getMessage());
-				}
+        	case WinNT.REG_EXPAND_SZ:
+        	{
+				keyValues.put(nameString, byteData.getString(0, true));
         		break;
+        	}
         	case WinNT.REG_BINARY:
-        		byte[] dataRead = new byte[lpcbData.getValue()];
-        		for(int dataIndex = 0; dataIndex < lpcbData.getValue(); dataIndex++) {
-        			dataRead[dataIndex] = data[dataIndex];
-        		}
-        		keyValues.put(Native.toString(name), dataRead);
+        	{
+        		keyValues.put(nameString, byteData.getByteArray(0, lpcbData.getValue()));
         		break;
+        	}
+        	case WinNT.REG_MULTI_SZ:
+        	{
+    			Memory stringData = new Memory(lpcbData.getValue());
+    			stringData.write(0, data, 0, lpcbData.getValue());
+    			ArrayList<String> result = new ArrayList<String>();
+    			int offset = 0;
+    			while(offset < stringData.size()) {
+    				String s = stringData.getString(offset, true);
+    				offset += s.length() * Native.WCHAR_SIZE;
+    				offset += Native.WCHAR_SIZE;
+    				result.add(s);
+    			}
+    			keyValues.put(nameString, result.toArray(new String[0]));
+    			break;
+        	}
         	default:
         		throw new RuntimeException("Unsupported type: " + lpType.getValue());
         	}

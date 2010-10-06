@@ -220,6 +220,28 @@ public class Advapi32UtilTest extends TestCase {
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");		
 	}
 
+	public void testRegistrySetGetExpandableStringValue() {
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+		Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringValue", "Temp is %TEMP%");
+		assertEquals("Temp is %TEMP%", Advapi32Util.registryGetExpandableStringValue(WinReg.HKEY_CURRENT_USER, 
+				"Software\\JNA", "StringValue"));
+		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringValue"));
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");		
+	}
+	
+	public void testRegistrySetGetStringArray() {
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+		String[] dataWritten = { "Hello", "World" };
+		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "MultiStringValue", dataWritten);
+		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "MultiStringValue"));
+		String[] dataRead = Advapi32Util.registryGetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "MultiStringValue");
+		assertEquals(dataWritten.length, dataRead.length);
+		for(int i = 0; i < dataRead.length; i++) {
+			assertEquals(dataWritten[i], dataRead[i]);
+		}
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");		
+	}
+	
 	public void testRegistrySetGetBinaryValue() {
 		byte[] data = { 0x00, 0x01, 0x02 };
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
@@ -247,19 +269,29 @@ public class Advapi32UtilTest extends TestCase {
 	}
 	
 	public void testRegistryGetValues() {
+		String uu = new String("A" + "\u00ea" + "\u00f1" + "\u00fc" + "C");
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
-		Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "FourtyTwo", 42);
-		Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "42", "FourtyTwo");
-		byte[] dataWritten = { 0xD, 0xE, 0xA, 0xD, 0xB, 0xE, 0xE, 0xF };
+		Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "FourtyTwo" + uu, 42);
+		Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "42" + uu, "FourtyTwo" + uu);
+		Advapi32Util.registrySetExpandableStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "ExpandableString", "%TEMP%");
+		byte[] dataWritten = { 0xD, 0xE, 0xA, 0xD, 0xB, 0xE, 0xE, 0xF };		
 		Advapi32Util.registrySetBinaryValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "DeadBeef", dataWritten);
+		String[] stringsWritten = { "Hello", "World", "Hello World", uu };
+		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringArray", stringsWritten);		
 		TreeMap<String, Object> values = Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
-		assertEquals(3, values.keySet().size());
-		assertEquals("FourtyTwo", values.get("42"));
-		assertEquals(42, values.get("FourtyTwo"));
+		assertEquals(5, values.keySet().size());
+		assertEquals("FourtyTwo" + uu, values.get("42" + uu));
+		assertEquals(42, values.get("FourtyTwo" + uu));
+		assertEquals("%TEMP%", values.get("ExpandableString"));
 		byte[] dataRead = (byte[]) values.get("DeadBeef");
 		assertEquals(dataWritten.length, dataRead.length);
 		for(int i = 0; i < dataWritten.length; i++) {
 			assertEquals(dataWritten[i], dataRead[i]);
+		}
+		String[] stringsRead = (String[]) values.get("StringArray");
+		assertEquals(stringsWritten.length, stringsRead.length);
+		for(int i = 0; i < stringsWritten.length; i++) {
+			assertEquals(stringsWritten[i], stringsRead[i]);
 		}
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");						
 	}
