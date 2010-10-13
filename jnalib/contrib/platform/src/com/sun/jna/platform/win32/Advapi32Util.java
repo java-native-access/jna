@@ -1231,7 +1231,9 @@ public abstract class Advapi32Util {
 	public static class EventLogRecord {
 		private EVENTLOGRECORD _record = null;
 		private String _source;
-
+		private byte[] _data;
+		private String[] _strings;
+		
 		/**
 		 * Raw record data.
 		 * @return
@@ -1288,6 +1290,15 @@ public abstract class Advapi32Util {
 		}
 		
 		/**
+		 * Strings associated with this event.
+		 * @return
+		 *  Array of strings or null.
+		 */
+		public String[] getStrings() {
+			return _strings;
+		}
+		
+		/**
 		 * Event log type.
 		 * @return
 		 *  Event log type.
@@ -1310,9 +1321,37 @@ public abstract class Advapi32Util {
 			}
 		}
 		
+		/**
+		 * Raw data associated with the record.
+		 * @return
+		 *  Array of bytes or null.
+		 */
+		public byte[] getData() {
+			return _data;
+		}
+		
 		public EventLogRecord(Pointer pevlr) {
 			_record = new EVENTLOGRECORD(pevlr);
 			_source = pevlr.getString(_record.size(), true);
+			// data
+			if (_record.DataLength.intValue() > 0) {
+				_data = pevlr.getByteArray(_record.DataOffset.intValue(),
+						_record.DataLength.intValue());
+			}
+			// strings
+			if (_record.NumStrings.intValue() > 0) {
+				ArrayList<String> strings = new ArrayList<String>();
+				int count = _record.NumStrings.intValue();
+				long offset = _record.StringOffset.intValue();
+				while(count > 0) {
+					String s = pevlr.getString(offset, true);
+					strings.add(s);
+					offset += s.length() * Native.WCHAR_SIZE;
+					offset += Native.WCHAR_SIZE;
+					count--;
+				}
+				_strings = strings.toArray(new String[0]);
+			}
 		}
 	}
 	

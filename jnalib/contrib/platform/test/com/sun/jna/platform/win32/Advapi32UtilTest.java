@@ -316,6 +316,19 @@ public class Advapi32UtilTest extends TestCase {
 				lastId = record.getRecordNumber();
 				assertNotNull(record.getType().name());
 				assertNotNull(record.getSource());
+				if (record.getRecord().DataLength.intValue() > 0) {
+					assertEquals(record.getData().length, 
+							record.getRecord().DataLength.intValue());
+				} else {
+					assertNull(record.getData());
+				}
+				if (record.getRecord().NumStrings.intValue() > 0) {
+					assertEquals(record.getStrings().length, 
+							record.getRecord().NumStrings.intValue());
+				} else {
+					assertNull(record.getStrings());
+				}
+				
 				if (max-- <= 0) {
 					break; // shorten test
 				}
