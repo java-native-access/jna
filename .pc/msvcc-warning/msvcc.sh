@@ -42,10 +42,7 @@
 # format and translated into something sensible for cl or ml.
 #
 
-# Disable specific warnings, and enable warnings-as-errors so we catch any
-# mistranslated args.
-nowarn="-wd4127 -wd4820 -wd4706 -wd4100 -wd4255 -wd4668 -wd4053 -wd4324"
-args="-nologo -W3 -WX $nowarn"
+args="-nologo"
 md=-MD
 cl="cl"
 ml="ml"
@@ -111,7 +108,8 @@ do
       shift 1
     ;;
     -Wall)
-      args="$args -Wall"
+      # -Wall on MSVC is overzealous. Use -W3 instead.
+      args="$args -W3"
       shift 1
     ;;
     -Werror)

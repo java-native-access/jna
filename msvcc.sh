@@ -67,25 +67,13 @@ do
       safeseh=
       shift 1
     ;;
-    -O0)
-      args="$args -Od"
-      shift 1
-    ;;
     -O*)
-      # If we're optimizing, make sure we explicitly turn on some optimizations
-      # that are implicitly disabled by debug symbols (-Zi).
-      args="$args $1 -OPT:REF -OPT:ICF -INCREMENTAL:NO"
+      args="$args $1"
       shift 1
     ;;
     -g)
-      # Enable debug symbol generation.
-      args="$args -Zi -DEBUG"
-      shift 1
-    ;;
-    -DFFI_DEBUG)
-      # Link against debug CRT and enable runtime error checks.
-      args="$args -RTC1"
-      defines="$defines $1"
+      # Can't specify -RTC1 or -Zi in opt. -Gy is ok. Use -OPT:REF?
+      args="$args -D_DEBUG -RTC1 -Zi"
       md=-MDd
       shift 1
     ;;
@@ -122,8 +110,8 @@ do
       shift 1
     ;;
     -Wall)
-      # -Wall on MSVC is overzealous, and we already build with -W3. Nothing
-      # to do here.
+      # -Wall on MSVC is overzealous. Use -W3 instead.
+      args="$args -W3"
       shift 1
     ;;
     -Werror)

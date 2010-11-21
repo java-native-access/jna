@@ -120,10 +120,6 @@ case "$host" in
 	TARGET=MIPS; TARGETDIR=mips
 	;;
 
-  moxie-*-*)
-        TARGET=MOXIE; TARGETDIR=moxie
-	;;
-
   powerpc*-*-linux* | powerpc-*-sysv*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
@@ -138,6 +134,9 @@ case "$host" in
 	;;
   powerpc-*-freebsd*)
 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
+	;;
+ powerpc64-*-freebsd*)
+	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
   powerpc*-*-rtems*)
 	TARGET=POWERPC; TARGETDIR=powerpc

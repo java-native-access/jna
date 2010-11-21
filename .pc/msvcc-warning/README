@@ -75,6 +75,7 @@ tested:
 | X86          | Linux            |
 | X86          | Mac OSX          |
 | X86          | OpenBSD          |
+| X86          | OS/2             |
 | X86          | Solaris          |
 | X86          | Windows/Cygwin   |
 | X86          | Windows/MingW    |
@@ -134,10 +135,14 @@ History
 See the ChangeLog files for details.
 
 3.0.10 ???-??-??
-        Fix the N64 build on mips-sgi-irix6.5.
+	Fix the N64 build on mips-sgi-irix6.5.
 	Testsuite fixes for Tru64 Unix.
 	Enable builds with Microsoft's compiler.
 	Enable x86 builds with Sun's compiler.
+
+3.0.10 ???-??-??
+        Fix the N64 build on mips-sgi-irix6.5.
+	Testsuite fixes for Tru64 Unix.
 
 3.0.9 Dec-31-09
         Add AVR32 and win64 ports.  Add ARM softfp support.

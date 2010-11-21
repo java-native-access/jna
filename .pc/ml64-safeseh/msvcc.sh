@@ -42,7 +42,7 @@
 # format and translated into something sensible for cl or ml.
 #
 
-args="-nologo"
+args="-nologo -W3"
 md=-MD
 cl="cl"
 ml="ml"

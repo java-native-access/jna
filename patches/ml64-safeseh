@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -6,6 +6,10 @@
+@@ -73,6 +73,10 @@
  	* src/prep_cif.c: Push stack space computation into src/x86/ffi.c
  	for X86_ANY so return value space doesn't get added twice.
  
@@ -17,7 +17,7 @@ Index: libffi/msvcc.sh
 ===================================================================
 --- libffi.orig/msvcc.sh
 +++ libffi/msvcc.sh
-@@ -46,6 +46,7 @@ args="-nologo"
+@@ -46,6 +46,7 @@ args="-nologo -W3"
  md=-MD
  cl="cl"
  ml="ml"
