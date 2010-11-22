@@ -795,7 +795,6 @@ FFI_DEBUG_FALSE
 FFI_DEBUG_TRUE
 TARGETDIR
 TARGET
-sys_symbol_underscore
 HAVE_LONG_DOUBLE
 ALLOCA
 PA64_HPUX_FALSE
@@ -4783,13 +4782,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4786: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4785: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4789: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4788: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4792: output\"" >&5)
+  (eval echo "\"\$as_me:4791: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5995,7 +5994,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5998 "configure"' > conftest.$ac_ext
+  echo '#line 5997 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7848,11 +7847,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7851: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7850: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7855: \$? = $ac_status" >&5
+   echo "$as_me:7854: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8187,11 +8186,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8190: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8189: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8194: \$? = $ac_status" >&5
+   echo "$as_me:8193: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8292,11 +8291,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8295: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8294: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8299: \$? = $ac_status" >&5
+   echo "$as_me:8298: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8347,11 +8346,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8350: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8349: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8354: \$? = $ac_status" >&5
+   echo "$as_me:8353: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11150,7 +11149,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11153 "configure"
+#line 11152 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11246,7 +11245,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11249 "configure"
+#line 11248 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14643,63 +14642,6 @@ $as_echo "$libffi_cv_as_string_pseudo_op" >&6; }
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_AS_STRING_PSEUDO_OP 1
-_ACEOF
-
-    fi
-fi
-
-if test x$TARGET = xX86_WIN64; then
-    { $as_echo "$as_me:$LINENO: checking for _ prefix in compiled symbols" >&5
-$as_echo_n "checking for _ prefix in compiled symbols... " >&6; }
-if test "${lt_cv_sys_symbol_underscore+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  lt_cv_sys_symbol_underscore=no
-  cat > conftest.$ac_ext <<_LT_EOF
-void nm_test_func(){}
-int main(){nm_test_func;return 0;}
-_LT_EOF
-  if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
-    # Now try to grab the symbols.
-    ac_nlist=conftest.nm
-    if { (eval echo "$as_me:$LINENO: \"$NM conftest.$ac_objext \| $lt_cv_sys_global_symbol_pipe \> $ac_nlist\"") >&5
-  (eval $NM conftest.$ac_objext \| $lt_cv_sys_global_symbol_pipe \> $ac_nlist) 2>&5
-  ac_status=$?
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && test -s "$ac_nlist"; then
-      # See whether the symbols have a leading underscore.
-      if grep '^. _nm_test_func' "$ac_nlist" >/dev/null; then
-        lt_cv_sys_symbol_underscore=yes
-      else
-        if grep '^. nm_test_func ' "$ac_nlist" >/dev/null; then
-	  :
-        else
-	  echo "configure: cannot find nm_test_func in $ac_nlist" >&5
-        fi
-      fi
-    else
-      echo "configure: cannot run $lt_cv_sys_global_symbol_pipe" >&5
-    fi
-  else
-    echo "configure: failed program was:" >&5
-    cat conftest.c >&5
-  fi
-  rm -rf conftest*
-
-fi
-{ $as_echo "$as_me:$LINENO: result: $lt_cv_sys_symbol_underscore" >&5
-$as_echo "$lt_cv_sys_symbol_underscore" >&6; }
-  sys_symbol_underscore=$lt_cv_sys_symbol_underscore
-
-
-    if test "x$sys_symbol_underscore" = xyes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define SYMBOL_UNDERSCORE 1
 _ACEOF
 
     fi

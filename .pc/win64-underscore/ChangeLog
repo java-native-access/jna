@@ -1,10 +1,3 @@
-2010-11-22  Jacek Caban <jacek@codeweavers.com>
-
-	* configure.ac: Check for symbol underscores on mingw-w64.
-	* configure: Rebuilt.
-	* src/x86/win64.S: Correctly access extern symbols in respect to
-	underscores.
-
 2010-11-15  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
 
 	* testsuite/lib/libffi-dg.exp: Rename ...
