@@ -1252,28 +1252,32 @@ public class StructureTest extends TestCase {
     }
 
 
-    public static class TestArrayByReference extends Structure {
-        public TestArrayByReference() { }
-        public TestArrayByReference(Pointer m) { super(m); read(); }
+    public static class TestByReferenceArrayField extends Structure {
+        public TestByReferenceArrayField() { }
+        public TestByReferenceArrayField(Pointer m) { super(m); read(); }
 
         public int value1;
         public ByReference[] array = new ByReference[13];
         public int value2;
 
-        public static class ByReference extends TestArrayByReference implements Structure.ByReference { }
+        public static class ByReference extends TestByReferenceArrayField implements Structure.ByReference { }
     }
 
-    public static void testReadWriteOfArrayByReference() {
-        TestArrayByReference.ByReference s = new TestArrayByReference.ByReference();
+    public static void testByReferenceArrayField() {
+        TestByReferenceArrayField.ByReference s = new TestByReferenceArrayField.ByReference();
         s.value1 = 22;
         s.array[0] = s;
         s.value2 = 42;
         s.write();
 
-        TestArrayByReference s2 = new TestArrayByReference(s.getPointer());
+        TestByReferenceArrayField s2 =
+            new TestByReferenceArrayField(s.getPointer());
         assertEquals("value1 not properly read from Pointer", s.value1, s2.value1);
-        assertEquals("array[0] not properly read from Pointer", s.array[0].getPointer(), s2.array[0].getPointer());
-        assertEquals("value2 not properly read from Pointer", s.value2, s2.value2);
+        assertNotNull("Structure.ByReference array field was not initialized", s2.array);
+        assertEquals("Structure.ByReference array field initialized to incorrect length", 13, s2.array.length);
+        assertNotNull("Structure.ByReference array field element was not initialized", s2.array[0]);
+        assertEquals("Incorrect value for Structure.ByReference array field element", s.array[0].getPointer(), s2.array[0].getPointer());
+        assertEquals("Field 'value2' not properly read from Pointer", s.value2, s2.value2);
     }
 
     public void testEquals() {

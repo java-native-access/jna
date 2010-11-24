@@ -988,8 +988,13 @@ v     * @param wide whether to convert from a wide or standard C string
             if (Structure.ByReference.class.isAssignableFrom(cls)) {
                 Pointer[] buf = new Pointer[sbuf.length];
                 for (int i=0;i < sbuf.length;i++) {
-                    buf[i] = sbuf[i] == null ? null : sbuf[i].getPointer();
-                    sbuf[i].write();
+                    if (sbuf[i] == null) {
+                        buf[i] = null;
+                    }
+                    else {
+                        buf[i] = sbuf[i].getPointer();
+                        sbuf[i].write();
+                    }
                 }
                 write(offset, buf, 0, buf.length);
             }
