@@ -1230,11 +1230,50 @@ public class StructureTest extends TestCase {
             public byte[] field = new byte[256];
             public TestStructure(Pointer p) {
                 super(p);
+                read();
             }
         }
         Memory p = new Memory(256);
-        Structure s = new TestStructure(p);
+        p.setByte(0, (byte)1);
+        p.setByte(1, (byte)2);
+        p.setByte(2, (byte)3);
+        p.setByte(3, (byte)4);
+        TestStructure s = new TestStructure(p);
         assertEquals("Wrong structure size", p.size(), s.size());
+
+        assertEquals("Structure primitive array field not initialized",
+                     (byte)1, s.field[0]);
+        assertEquals("Structure primitive array field not initialized",
+                     (byte)2, s.field[1]);
+        assertEquals("Structure primitive array field not initialized",
+                     (byte)3, s.field[2]);
+        assertEquals("Structure primitive array field not initialized",
+                     (byte)4, s.field[4]);
+    }
+
+
+    public static class TestArrayByReference extends Structure {
+        public TestArrayByReference() { }
+        public TestArrayByReference(Pointer m) { super(m); read(); }
+
+        public int value1;
+        public ByReference[] array = new ByReference[13];
+        public int value2;
+
+        public static class ByReference extends TestArrayByReference implements Structure.ByReference { }
+    }
+
+    public static void testReadWriteOfArrayByReference() {
+        TestArrayByReference.ByReference s = new TestArrayByReference.ByReference();
+        s.value1 = 22;
+        s.array[0] = s;
+        s.value2 = 42;
+        s.write();
+
+        TestArrayByReference s2 = new TestArrayByReference(s.getPointer());
+        assertEquals("value1 not properly read from Pointer", s.value1, s2.value1);
+        assertEquals("array[0] not properly read from Pointer", s.array[0].getPointer(), s2.array[0].getPointer());
+        assertEquals("value2 not properly read from Pointer", s.value2, s2.value2);
     }
 
     public void testEquals() {

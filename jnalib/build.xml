@@ -188,6 +188,7 @@
            source="${compatibility}"
            target="${compatibility}"
            destdir="${classes}" 
+           includeantruntime="false"
            deprecation="on" debug="${debug}">
       <src path="${src}"/>
     </javac>
@@ -422,6 +423,7 @@
            source="${test.compatibility}"
            target="${test.compatibility}"
            destdir="${test.classes}" 
+           includeantruntime="false"
            deprecation="on" debug="${debug}">
       <src path="${test.src}"/>
     </javac>
