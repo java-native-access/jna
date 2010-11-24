@@ -1246,5 +1246,8 @@ public class StructureTest extends TestCase {
         assertFalse("Not equal null", s.equals(null));
         assertFalse("Not equal some other object", s.equals(new Object()));
     }
-
+    public void testStructureSetIterator() {
+        assertNotNull("Indirect test of StructureSet.Iterator",
+                      Structure.busy().toString());
+    }
 }

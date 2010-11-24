@@ -390,9 +390,13 @@ public abstract class Structure {
                 }
                 return false;
             }
+            /** Simple implementation so that toString() doesn't break.
+                Provides an iterator over a snapshot of this Set.
+            */
             public Iterator iterator() {
-                // never actually used
-                return null;
+                Structure[] e = new Structure[count];
+                System.arraycopy(elements, 0, e, 0, count);
+                return Arrays.asList(e).iterator();
             }
         }
         protected synchronized Object initialValue() {
