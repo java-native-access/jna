@@ -172,23 +172,29 @@ endif
 endif
 
 ifeq ($(OS),darwin)
+JAVA_INCLUDES=-I/System/Library/Frameworks/JavaVM.framework/Headers
 ARCH=$(shell arch)
-ifeq ($(ARCH),ppc)
-ALT_ARCHS=i386
-else
-ALT_ARCHS=ppc
+ALT_ARCHS=x86_64
+ifneq ($(ARCH),i386)
+ALT_ARCHS+=i386 
+endif
+ifneq ($(ARCH),ppc)
+ifeq ($(findstring 10.6,$(SDKROOT)),)
+ALT_ARCHS+=ppc
+endif
 endif
 LIBSFX=.dylib
 JNISFX=.jnilib
 ifneq ($(SDKROOT),)
 SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
 ISYSROOT=-isysroot $(SDKROOT)
-ARCHFLAGS=-arch ppc -arch i386
-ifneq ($(findstring 10.5,$(SDKROOT)),)
-ALT_ARCHS+=x86_64 
-ARCHFLAGS+=-arch x86_64
+ARCHFLAGS=-arch i386 -arch x86_64
+# As of 10.6, ppc version of libffi doesn't link, so omit it for now
+ifeq ($(findstring 10.6,$(SDKROOT)),)
+ARCHFLAGS+=-arch ppc 
 endif
 endif
+
 PCFLAGS+=$(ISYSROOT) -x objective-c
 CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT
 LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
@@ -261,7 +267,11 @@ ifneq ($(SDKROOT),)
 	  fi; \
 	  $(MAKE) -C $(BUILD)/libffi.$$arch; \
 	done
+ifneq ($(ALT_ARCHS),)
 	/usr/bin/libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F} $(BUILD)/libffi.*/.libs/${@F}
+else
+	/usr/bin/libtool -static -o $@.tmp $(FFI_BUILD)/.libs/${@F} 
+endif
 	mv $@.tmp $@
 endif
 endif

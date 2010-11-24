@@ -140,7 +140,10 @@
     <condition property="jdk.home" value="${java.home}/..">
       <available file="${java.home}/../include"/>
     </condition>
-    <fail unless="jdk.home" message="Can't find JNI headers"/>
+    <condition property="jdk.home" value="/System/Library/Frameworks/JavaVM.framework/Home">
+      <available file="/System/Library/Frameworks/JavaVM.framework/Headers"/>
+    </condition>
+    <fail unless="jdk.home" message="Can't find JNI headers (java.home=${java.home})"/>
     <condition property="libjsig"
                value="${java.home}/lib/${jre.arch}/libjsig.so" else="">
       <available file="${java.home}/lib/${jre.arch}/libjsig.so"/>
