@@ -504,6 +504,7 @@ public class Pointer {
         return result;
     }
 
+    /** Copy memory starting at offset into the array with element type cls. */
     private void getArrayValue(long offset, Object o, Class cls) {
         int length = 0;
         length = Array.getLength(o);

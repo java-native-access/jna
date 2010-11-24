@@ -1227,34 +1227,41 @@ public class StructureTest extends TestCase {
 
     public void testPointerCTORWithInitializedFields() {
         class TestStructure extends Structure {
-            public byte[] field = new byte[256];
+            public int intField;
+            public byte[] arrayField = new byte[256];
             public TestStructure(Pointer p) {
                 super(p);
-                read();
+                read(); // Important!
             }
         }
-        Memory p = new Memory(256);
-        p.setByte(0, (byte)1);
-        p.setByte(1, (byte)2);
-        p.setByte(2, (byte)3);
-        p.setByte(3, (byte)4);
+        Memory p = new Memory(260);
+        p.setInt(0, 1);
+        p.setByte(4, (byte)2);
+        p.setByte(5, (byte)3);
+        p.setByte(6, (byte)4);
+        p.setByte(7, (byte)5);
         TestStructure s = new TestStructure(p);
-        assertEquals("Wrong structure size", p.size(), s.size());
 
+        assertEquals("Structure primitive field not initialized",
+                     (byte)1, s.intField);
         assertEquals("Structure primitive array field not initialized",
-                     (byte)1, s.field[0]);
+                     (byte)2, s.arrayField[0]);
         assertEquals("Structure primitive array field not initialized",
-                     (byte)2, s.field[1]);
+                     (byte)3, s.arrayField[1]);
         assertEquals("Structure primitive array field not initialized",
-                     (byte)3, s.field[2]);
+                     (byte)4, s.arrayField[2]);
         assertEquals("Structure primitive array field not initialized",
-                     (byte)4, s.field[4]);
+                     (byte)5, s.arrayField[3]);
+        assertEquals("Wrong structure size", p.size(), s.size());
     }
 
 
     public static class TestByReferenceArrayField extends Structure {
         public TestByReferenceArrayField() { }
-        public TestByReferenceArrayField(Pointer m) { super(m); read(); }
+        public TestByReferenceArrayField(Pointer m) {
+            super(m);
+            read(); // Important!
+        }
 
         public int value1;
         public ByReference[] array = new ByReference[13];

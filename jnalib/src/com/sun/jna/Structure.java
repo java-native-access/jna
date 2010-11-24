@@ -267,6 +267,9 @@ public abstract class Structure {
         if (memory == null) {
             allocateMemory();
         }
+        else if (size == CALCULATE_SIZE) {
+            size = calculateSize(true);
+        }
     }
 
     /** Attempt to allocate memory if sufficient information is available.
@@ -414,10 +417,12 @@ public abstract class Structure {
      * Reads the fields of the struct from native memory
      */
     public void read() {
-        // convenience: allocate memory if it hasn't been already; this
-        // allows structures to do field-based initialization of arrays and not
-        // have to explicitly call allocateMemory in a ctor
+        // convenience: allocate memory and/or calculate size if it hasn't
+        // been already; this allows structures to do field-based
+        // initialization of arrays and not have to explicitly call
+        // allocateMemory in a ctor 
         ensureAllocated();
+
         // Avoid redundant reads
         if (busy().contains(this)) {
             return;
@@ -527,9 +532,8 @@ public abstract class Structure {
                                || NativeMapped.class.isAssignableFrom(fieldType)
                                || fieldType.isArray())
             ? getField(structField) : null;
+
         Object result = memory.getValue(offset, fieldType, currentValue);
-        // TODO: process against current value here
-        
         if (readConverter != null) {
             result = readConverter.fromNative(result, structField.context);
         }
