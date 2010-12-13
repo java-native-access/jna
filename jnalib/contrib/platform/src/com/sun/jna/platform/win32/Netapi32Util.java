@@ -449,7 +449,7 @@ public abstract class Netapi32Util {
     	dc.domainName = pdci.dci.DomainName.toString();
     	dc.flags = pdci.dci.Flags;
     	dc.name = pdci.dci.DomainControllerName.toString();
-		rc = Netapi32.INSTANCE.NetApiBufferFree(pdci.getPointer());
+		rc = Netapi32.INSTANCE.NetApiBufferFree(pdci.dci.getPointer());
 		if (LMErr.NERR_Success != rc) {
 			throw new Win32Exception(rc);
 		}

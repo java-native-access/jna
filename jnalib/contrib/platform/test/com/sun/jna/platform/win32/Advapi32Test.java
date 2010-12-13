@@ -192,8 +192,7 @@ public class Advapi32Test extends TestCase {
         assertFalse(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
         		WinNT.TOKEN_INFORMATION_CLASS.TokenOwner, null, 0, tokenInformationLength));
         assertEquals(W32Errors.ERROR_INSUFFICIENT_BUFFER, Kernel32.INSTANCE.GetLastError());
-        Memory tokenInformationBuffer = new Memory(tokenInformationLength.getValue());
-		WinNT.TOKEN_OWNER owner = new WinNT.TOKEN_OWNER(tokenInformationBuffer);
+		WinNT.TOKEN_OWNER owner = new WinNT.TOKEN_OWNER(tokenInformationLength.getValue());
         assertTrue(Advapi32.INSTANCE.GetTokenInformation(phToken.getValue(), 
         		WinNT.TOKEN_INFORMATION_CLASS.TokenOwner, owner, 
         		tokenInformationLength.getValue(), tokenInformationLength));
@@ -203,7 +202,7 @@ public class Advapi32Test extends TestCase {
         assertTrue(sidLength < tokenInformationLength.getValue());
         assertTrue(sidLength > 0);
     	// System.out.println(Advapi32Util.convertSidToStringSid(owner.Owner));
-        assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));    	
+        assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
     }
     
     public void testGetTokenUserInformation() {
@@ -226,7 +225,7 @@ public class Advapi32Test extends TestCase {
         assertTrue(sidLength < tokenInformationLength.getValue());
     	// System.out.println(Advapi32Util.convertSidToStringSid(user.User.Sid));
         assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
-    }    
+    }   
     
     public void testGetTokenGroupsInformation() {
     	HANDLEByReference phToken = new HANDLEByReference();

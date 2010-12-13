@@ -242,6 +242,10 @@ public interface WinNT extends StdCallLibrary {
 		public TOKEN_OWNER() {
 			super();
 		}
+		
+		public TOKEN_OWNER(int size) {
+			super(new Memory(size));
+		}
 
 		public TOKEN_OWNER(Pointer memory) {
 			super(memory);
