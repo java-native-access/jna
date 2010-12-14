@@ -23,27 +23,27 @@ import com.sun.jna.ptr.IntByReference;
  * @author EugineLev
  */
 public class W32Service {
-	SC_HANDLE _serviceHandle = null;
+	SC_HANDLE _handle = null;
 
 	/**
 	 * Win32 Service
-	 * @param serviceHandle
+	 * @param handle
 	 *  A handle to the service. This handle is returned by the CreateService or OpenService 
 	 *  function, and it must have the SERVICE_QUERY_STATUS access right.
 	 */
-	public W32Service(SC_HANDLE serviceHandle) {
-		_serviceHandle = serviceHandle;
+	public W32Service(SC_HANDLE handle) {
+		_handle = handle;
 	}
 	
 	/**
 	 * Close service.
 	 */
 	public void close() {
-		if (_serviceHandle != null) {
-			if (! Advapi32.INSTANCE.CloseServiceHandle(_serviceHandle)) {
+		if (_handle != null) {
+			if (! Advapi32.INSTANCE.CloseServiceHandle(_handle)) {
 				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 			}
-			_serviceHandle = null;
+			_handle = null;
 		}
 	}
 	
@@ -55,11 +55,11 @@ public class W32Service {
 	public SERVICE_STATUS_PROCESS queryStatus() {
 		IntByReference size = new IntByReference();
 		
-		Advapi32.INSTANCE.QueryServiceStatusEx(_serviceHandle, SC_STATUS_TYPE.SC_STATUS_PROCESS_INFO,
+		Advapi32.INSTANCE.QueryServiceStatusEx(_handle, SC_STATUS_TYPE.SC_STATUS_PROCESS_INFO,
 				null, 0, size);
 		
 		SERVICE_STATUS_PROCESS status = new SERVICE_STATUS_PROCESS(size.getValue());
-		if(! Advapi32.INSTANCE.QueryServiceStatusEx(_serviceHandle, SC_STATUS_TYPE.SC_STATUS_PROCESS_INFO,
+		if(! Advapi32.INSTANCE.QueryServiceStatusEx(_handle, SC_STATUS_TYPE.SC_STATUS_PROCESS_INFO,
 				status, status.size(), size)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
@@ -73,7 +73,7 @@ public class W32Service {
 		if (queryStatus().dwCurrentState == Winsvc.SERVICE_RUNNING) {
 			return;
 		}
-		if (! Advapi32.INSTANCE.StartService(_serviceHandle, 0, null)) {
+		if (! Advapi32.INSTANCE.StartService(_handle, 0, null)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
 		waitForNonPendingState();
@@ -91,7 +91,7 @@ public class W32Service {
 		if (queryStatus().dwCurrentState == Winsvc.SERVICE_STOPPED) {
 			return;
 		}
-		if (! Advapi32.INSTANCE.ControlService(_serviceHandle, Winsvc.SERVICE_CONTROL_STOP, 
+		if (! Advapi32.INSTANCE.ControlService(_handle, Winsvc.SERVICE_CONTROL_STOP, 
 				new Winsvc.SERVICE_STATUS())) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
@@ -110,7 +110,7 @@ public class W32Service {
 		if (queryStatus().dwCurrentState == Winsvc.SERVICE_RUNNING) {
 			return;
 		}
-		if (! Advapi32.INSTANCE.ControlService(_serviceHandle, Winsvc.SERVICE_CONTROL_CONTINUE, 
+		if (! Advapi32.INSTANCE.ControlService(_handle, Winsvc.SERVICE_CONTROL_CONTINUE, 
 				new Winsvc.SERVICE_STATUS())) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
@@ -129,7 +129,7 @@ public class W32Service {
 		if (queryStatus().dwCurrentState == Winsvc.SERVICE_PAUSED) {
 			return;
 		}
-		if (! Advapi32.INSTANCE.ControlService(_serviceHandle, Winsvc.SERVICE_CONTROL_PAUSE, 
+		if (! Advapi32.INSTANCE.ControlService(_handle, Winsvc.SERVICE_CONTROL_PAUSE, 
 				new Winsvc.SERVICE_STATUS())) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
@@ -152,10 +152,10 @@ public class W32Service {
 		while (isPendingState(status.dwCurrentState)) { 
 
 			// if the checkpoint advanced, start new tick count
-			if (status.dwCheckPoint > previousCheckPoint) {
+			if (status.dwCheckPoint != previousCheckPoint) {
 				previousCheckPoint = status.dwCheckPoint;
 				checkpointStartTickCount = Kernel32.INSTANCE.GetTickCount();
-			}			
+			}
 
 			// if the time that passed is greater than the wait hint - throw timeout exception
 			if (Kernel32.INSTANCE.GetTickCount() - checkpointStartTickCount > status.dwWaitHint) {
@@ -193,5 +193,15 @@ public class W32Service {
 			default:
 				return false;
 		}
+	}
+	
+	
+	/**
+	 * Gets the service handle.
+	 * @return 
+	 *  Returns the service handle.
+	 */
+	public SC_HANDLE getHandle() {
+		return _handle;
 	}
 }

@@ -80,4 +80,12 @@ public class W32ServiceManager {
 		return new W32Service(serviceHandle);
 	}
 	
+	/**
+	 * Gets the service manager handle.
+	 * @return 
+	 *  Returns the service manager handle.
+	 */
+	public SC_HANDLE getHandle() {
+		return _handle;
+	}	
 }
