@@ -669,6 +669,7 @@
     <!-- Sources package as required by maven -->
     <zip zipfile="${dist}/src-mvn.zip">
       <zipfileset dir="${src}" includes="**/*.java,**/*.html,**/*.png"/>
+      <zipfileset dir="${contrib}/platform" includes="**/*.java"/>
     </zip>
   </target>
 
