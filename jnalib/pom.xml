@@ -33,6 +33,7 @@
               <tasks>
                 <!--<ant dir="." target="dist" />-->
                 <attachArtifact file="dist/jna.jar" />
+                <attachArtifact file="dist/platform.jar" />
                 <attachArtifact file="dist/src-mvn.zip" classifier="sources" type="jar"/>
               </tasks>
             </configuration>
