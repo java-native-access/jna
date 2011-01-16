@@ -27,8 +27,10 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
+import com.sun.jna.platform.win32.WinNT.TOKEN_TYPE;
 import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
@@ -181,6 +183,19 @@ public class Advapi32Test extends TestCase {
         		WinNT.SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, phTokenDup));
     	assertTrue(Kernel32.INSTANCE.CloseHandle(phTokenDup.getValue()));
     	assertTrue(Kernel32.INSTANCE.CloseHandle(phToken.getValue()));
+    }
+    
+    public void testDuplicateTokenEx() {
+    	HANDLEByReference hExistingToken = new HANDLEByReference();
+    	HANDLEByReference phNewToken = new HANDLEByReference();
+    	HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
+    	assertTrue(Advapi32.INSTANCE.OpenProcessToken(processHandle,
+    			WinNT.TOKEN_DUPLICATE | WinNT.TOKEN_QUERY, hExistingToken));
+    	assertTrue(Advapi32.INSTANCE.DuplicateTokenEx(hExistingToken.getValue(),
+    			WinNT.GENERIC_READ, null, SECURITY_IMPERSONATION_LEVEL.SecurityAnonymous,
+    			TOKEN_TYPE.TokenPrimary, phNewToken));
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(phNewToken.getValue()));
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(hExistingToken.getValue()));
     }
     
     public void testGetTokenOwnerInformation() {
@@ -723,5 +738,17 @@ public class Advapi32Test extends TestCase {
     	
     	assertFalse(Advapi32.INSTANCE.CloseServiceHandle(null));
     	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    }
+    
+    public void testCreateProcessAsUser() {
+    	HANDLEByReference hToken = new HANDLEByReference();
+    	HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
+    	assertTrue(Advapi32.INSTANCE.OpenProcessToken(processHandle,
+    			WinNT.TOKEN_DUPLICATE | WinNT.TOKEN_QUERY, hToken));
+    	
+    	assertFalse(Advapi32.INSTANCE.CreateProcessAsUser(hToken.getValue(), null, "InvalidCmdLine.jna",
+    			null, null, false, 0, null, null, new WinBase.STARTUPINFO(),
+    			new WinBase.PROCESS_INFORMATION()));
+    	assertEquals(W32Errors.ERROR_FILE_NOT_FOUND, Kernel32.INSTANCE.GetLastError());
     }
 }

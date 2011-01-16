@@ -24,6 +24,7 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDLONG;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.ptr.ByteByReference;
 
 /**
  * Ported from Winbase.h.
@@ -116,8 +117,55 @@ public abstract class WinBase {
 	 */
 	public static final int LOGON32_PROVIDER_WINNT50 = 3;	
 	
+	/**
+	 * If this flag is set, a child process created with the bInheritHandles parameter of
+	 * CreateProcess set to TRUE will inherit the object handle.
+	 */
+	public static final int HANDLE_FLAG_INHERIT = 1;
 	
-    /**
+	/**
+	 * If this flag is set, calling the {@link Kernel32#CloseHandle} function will not
+	 * close the object handle.
+	 */
+	public static final int HANDLE_FLAG_PROTECT_FROM_CLOSE = 2;
+
+	// STARTUPINFO flags
+	public static final int STARTF_USESHOWWINDOW = 0x001;
+	public static final int STARTF_USESIZE = 0x002;
+	public static final int STARTF_USEPOSITION = 0x004;
+	public static final int STARTF_USECOUNTCHARS = 0x008;
+	public static final int STARTF_USEFILLATTRIBUTE = 0x010;
+	public static final int STARTF_RUNFULLSCREEN = 0x020;
+	public static final int STARTF_FORCEONFEEDBACK = 0x040;
+	public static final int STARTF_FORCEOFFFEEDBACK = 0x080;
+	public static final int STARTF_USESTDHANDLES = 0x100;
+	
+	// Process Creation flags
+	public static final int DEBUG_PROCESS = 0x00000001;
+	public static final int DEBUG_ONLY_THIS_PROCESS = 0x00000002;
+	public static final int CREATE_SUSPENDED = 0x00000004;
+	public static final int DETACHED_PROCESS = 0x00000008;
+	public static final int CREATE_NEW_CONSOLE = 0x00000010;
+	public static final int CREATE_NEW_PROCESS_GROUP = 0x00000200;
+	public static final int CREATE_UNICODE_ENVIRONMENT = 0x00000400;
+	public static final int CREATE_SEPARATE_WOW_VDM = 0x00000800;
+	public static final int CREATE_SHARED_WOW_VDM = 0x00001000;
+	public static final int CREATE_FORCEDOS = 0x00002000;
+	public static final int INHERIT_PARENT_AFFINITY = 0x00010000;
+	public static final int CREATE_PROTECTED_PROCESS = 0x00040000;
+	public static final int EXTENDED_STARTUPINFO_PRESENT = 0x00080000;
+	public static final int CREATE_BREAKAWAY_FROM_JOB = 0x01000000;
+	public static final int CREATE_PRESERVE_CODE_AUTHZ_LEVEL = 0x02000000;
+	public static final int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
+	public static final int CREATE_NO_WINDOW = 0x08000000;
+
+	/**
+	 * Return code for a process still active.
+	 */
+	public static final int STILL_ACTIVE = WinNT.STATUS_PENDING;
+
+	
+	/**
     * The FILETIME structure is a 64-bit value representing the number of 
     * 100-nanosecond intervals since January 1, 1601 (UTC).
     * Conversion code in this class Copyright 2002-2004 Apache Software Foundation.
@@ -462,4 +510,246 @@ public abstract class WinBase {
         	dwLength = new DWORD(size());
         }
     };
+    
+	/**
+	 * The SECURITY_ATTRIBUTES structure contains the security descriptor for an
+	 * object and specifies whether the handle retrieved by specifying this
+	 * structure is inheritable. This structure provides security settings for
+	 * objects created by various functions, such as {@link Kernel32#CreateFile},
+	 * {@link Kernel32#CreatePipe}, {@link Kernel32#CreateProcess},
+	 * {@link Advapi32#RegCreateKeyEx}, or {@link Advapi32#RegSaveKeyEx}.
+	 */
+    public static class SECURITY_ATTRIBUTES extends Structure {
+    	/**
+    	 * The size of the structure, in bytes.
+    	 */
+        public DWORD dwLength;
+        
+        /**
+         * A pointer to a SECURITY_DESCRIPTOR structure that controls access to the object.
+         */
+        public Pointer lpSecurityDescriptor;
+        
+        /**
+         * A Boolean value that specifies whether the returned handle is inherited when
+         * a new process is created
+         */
+        public boolean bInheritHandle;
+        
+        public SECURITY_ATTRIBUTES() {
+			dwLength = new DWORD(size());
+		}
+    }
+    
+    /**
+     * Specifies the window station, desktop, standard handles, and appearance of the main
+     * window for a process at creation time.
+     */
+    public static class STARTUPINFO extends Structure {
+		/**
+		 * The size of the structure, in bytes.
+		 */
+    	public DWORD cb;
+    	
+    	/**
+    	 * Reserved; must be NULL.
+    	 */
+		public String lpReserved;
+		
+		/**
+		 * The name of the desktop, or the name of both the desktop and window station for this process.
+		 * A backslash in the string indicates that the string includes both the desktop and window
+		 * station names. For more information, see Thread Connection to a Desktop.
+		 */
+		public String lpDesktop;
+		
+		/**
+		 * For console processes, this is the title displayed in the title bar
+		 * if a new console window is created. If NULL, the name of the
+		 * executable file is used as the window title instead. This parameter
+		 * must be NULL for GUI or console processes that do not create a new
+		 * console window.
+		 */
+		public String lpTitle;
+		
+		/**
+		 * If dwFlags specifies STARTF_USEPOSITION, this member is the x offset
+		 * of the upper left corner of a window if a new window is created, in
+		 * pixels. Otherwise, this member is ignored.
+		 * 
+		 * The offset is from the upper left corner of the screen. For GUI
+		 * processes, the specified position is used the first time the new
+		 * process calls CreateWindow to create an overlapped window if the x
+		 * parameter of CreateWindow is CW_USEDEFAULT.
+		 */
+		public DWORD dwX;
+
+		/**
+		 * If dwFlags specifies STARTF_USEPOSITION, this member is the y offset
+		 * of the upper left corner of a window if a new window is created, in
+		 * pixels. Otherwise, this member is ignored.
+		 * 
+		 * The offset is from the upper left corner of the screen. For GUI
+		 * processes, the specified position is used the first time the new
+		 * process calls CreateWindow to create an overlapped window if the y
+		 * parameter of CreateWindow is CW_USEDEFAULT.
+		 */
+		public DWORD dwY;
+
+		/**
+		 * If dwFlags specifies STARTF_USESIZE, this member is the width of the
+		 * window if a new window is created, in pixels. Otherwise, this member
+		 * is ignored.
+		 * 
+		 * For GUI processes, this is used only the first time the new process
+		 * calls CreateWindow to create an overlapped window if the nWidth
+		 * parameter of CreateWindow is CW_USEDEFAULT.
+		 */
+		public DWORD dwXSize;
+		
+		/**
+		 * If dwFlags specifies STARTF_USESIZE, this member is the height of the
+		 * window if a new window is created, in pixels. Otherwise, this member
+		 * is ignored.
+		 * 
+		 * For GUI processes, this is used only the first time the new process
+		 * calls CreateWindow to create an overlapped window if the nHeight
+		 * parameter of CreateWindow is CW_USEDEFAULT.
+		 */
+		public DWORD dwYSize;
+
+		/**
+		 * If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+		 * created in a console process, this member specifies the screen buffer
+		 * width, in character columns. Otherwise, this member is ignored.
+		 */
+		public DWORD dwXCountChars;
+
+		/**
+		 * If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+		 * created in a console process, this member specifies the screen buffer
+		 * height, in character rows. Otherwise, this member is ignored.
+		 */
+		public DWORD dwYCountChars;
+
+		/**
+		 * If dwFlags specifies STARTF_USEFILLATTRIBUTE, this member is the
+		 * initial text and background colors if a new console window is created
+		 * in a console application. Otherwise, this member is ignored.
+		 * 
+		 * This value can be any combination of the following values:
+		 * FOREGROUND_BLUE, FOREGROUND_GREEN, FOREGROUND_RED,
+		 * FOREGROUND_INTENSITY, BACKGROUND_BLUE, BACKGROUND_GREEN,
+		 * BACKGROUND_RED, and BACKGROUND_INTENSITY. For example, the following
+		 * combination of values produces red text on a white background:
+		 * 
+		 * FOREGROUND_RED| BACKGROUND_RED| BACKGROUND_GREEN| BACKGROUND_BLUE
+		 */
+		public DWORD dwFillAttribute;
+
+		/**
+		 * A bit field that determines whether certain STARTUPINFO members are
+		 * used when the process creates a window.
+		 */
+		public int dwFlags;
+
+		/**
+		 * If dwFlags specifies STARTF_USESHOWWINDOW, this member can be any of
+		 * the values that can be specified in the nCmdShow parameter for the
+		 * ShowWindow function, except for SW_SHOWDEFAULT. Otherwise, this
+		 * member is ignored.
+		 * 
+		 * For GUI processes, the first time ShowWindow is called, its nCmdShow
+		 * parameter is ignored wShowWindow specifies the default value. In
+		 * subsequent calls to ShowWindow, the wShowWindow member is used if the
+		 * nCmdShow parameter of ShowWindow is set to SW_SHOWDEFAULT.
+		 */
+		public WORD wShowWindow;
+
+		/**
+		 * Reserved for use by the C Run-time; must be zero.
+		 */
+		public WORD cbReserved2;
+
+		/**
+		 * Reserved for use by the C Run-time; must be NULL.
+		 */
+		public ByteByReference lpReserved2;
+
+		/**
+		 * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+		 * standard input handle for the process. If STARTF_USESTDHANDLES is not
+		 * specified, the default for standard input is the keyboard buffer.
+		 * 
+		 * If dwFlags specifies STARTF_USEHOTKEY, this member specifies a hotkey
+		 * value that is sent as the wParam parameter of a WM_SETHOTKEY message
+		 * to the first eligible top-level window created by the application
+		 * that owns the process. If the window is created with the WS_POPUP
+		 * window style, it is not eligible unless the WS_EX_APPWINDOW extended
+		 * window style is also set. For more information, see CreateWindowEx.
+		 * 
+		 * Otherwise, this member is ignored.
+		 */
+		public HANDLE hStdInput;
+
+		/**
+		 * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+		 * standard output handle for the process. Otherwise, this member is
+		 * ignored and the default for standard output is the console window's
+		 * buffer.
+		 */
+		public HANDLE hStdOutput;
+
+		/**
+		 * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+		 * standard error handle for the process. Otherwise, this member is
+		 * ignored and the default for standard error is the console window's
+		 * buffer.
+		 */
+		public HANDLE hStdError;
+		
+		public STARTUPINFO() {
+			cb = new DWORD(size());
+		}
+    }
+
+	/**
+	 * Contains information about a newly created process and its primary
+	 * thread. It is used with the CreateProcess, CreateProcessAsUser,
+	 * CreateProcessWithLogonW, or CreateProcessWithTokenW function.
+	 */
+    public static class PROCESS_INFORMATION extends Structure {
+
+    	/**
+		 * A handle to the newly created process. The handle is used to specify
+		 * the process in all functions that perform operations on the process
+		 * object.
+		 */
+		public HANDLE hProcess;
+		
+		/**
+		 * A handle to the primary thread of the newly created process. The
+		 * handle is used to specify the thread in all functions that perform
+		 * operations on the thread object.
+		 */
+		public HANDLE hThread;
+
+		/**
+		 * A value that can be used to identify a process. The value is valid
+		 * from the time the process is created until all handles to the process
+		 * are closed and the process object is freed; at this point, the
+		 * identifier may be reused.
+		 */
+		public DWORD dwProcessId;
+
+		/**
+		 * A value that can be used to identify a thread. The value is valid
+		 * from the time the thread is created until all handles to the thread
+		 * are closed and the thread object is freed; at this point, the
+		 * identifier may be reused.
+		 */
+		public DWORD dwThreadId;
+		
+    }
+    
 }

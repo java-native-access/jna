@@ -15,11 +15,11 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
-import com.sun.jna.platform.win32.WinNT.SECURITY_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
@@ -309,6 +309,27 @@ public interface Advapi32 extends StdCallLibrary {
 			int ImpersonationLevel, 
 			HANDLEByReference DuplicateTokenHandle);
 	
+	/**
+	 * The DuplicateTokenEx function creates a new access token that duplicates an existing token.
+	 * This function can create either a primary token or an impersonation token.
+	 * @param hExistingToken A handle to an access token opened with TOKEN_DUPLICATE access.
+	 * @param dwDesiredAccess Specifies the requested access rights for the new token.
+	 * @param lpTokenAttributes A pointer to a SECURITY_ATTRIBUTES structure that specifies a security
+	 *  descriptor for the new token and determines whether child processes can inherit the token.
+	 * @param ImpersonationLevel Specifies a value from the SECURITY_IMPERSONATION_LEVEL enumeration
+	 *  that indicates the impersonation level of the new token.
+	 * @param TokenType Specifies one of the following values from the TOKEN_TYPE enumeration.
+	 * @param phNewToken A pointer to a HANDLE variable that receives the new token.
+	 * @return If the function succeeds, the function returns a nonzero value.
+	 *  If the function fails, it returns zero. To get extended error information, call GetLastError.
+	 */
+	public boolean DuplicateTokenEx(
+			HANDLE hExistingToken,
+			int dwDesiredAccess,
+			WinBase.SECURITY_ATTRIBUTES lpTokenAttributes,
+			int ImpersonationLevel,
+			int TokenType,
+			HANDLEByReference phNewToken);
 	
 	/**
 	 * Retrieves a specified type of information about an access token. 
@@ -1010,5 +1031,59 @@ public interface Advapi32 extends StdCallLibrary {
 	 *  call GetLastError. This value is a nonzero error code defined in Winerror.h.
 	 */
 	public SC_HANDLE OpenSCManager(String lpMachineName, String lpDatabaseName, int dwDesiredAccess);
+	
+	/**
+	 * Creates a new process and its primary thread. The new process runs in the
+	 * security context of the user represented by the specified token.
+	 * 
+	 * Typically, the process that calls the CreateProcessAsUser function must
+	 * have the SE_INCREASE_QUOTA_NAME privilege and may require the
+	 * SE_ASSIGNPRIMARYTOKEN_NAME privilege if the token is not assignable. If
+	 * this function fails with ERROR_PRIVILEGE_NOT_HELD (1314), use the
+	 * CreateProcessWithLogonW function instead. CreateProcessWithLogonW
+	 * requires no special privileges, but the specified user account must be
+	 * allowed to log on interactively. Generally, it is best to use
+	 * CreateProcessWithLogonW to create a process with alternate credentials.
+	 * 
+	 * @param hToken A handle to the primary token that represents a user.
+	 * @param lpApplicationName The name of the module to be executed. 
+	 * @param lpCommandLine The command line to be executed. 
+	 * @param lpProcessAttributes A pointer to a SECURITY_ATTRIBUTES structure that
+	 *  specifies a security descriptor for the new process object and determines whether
+	 *  child processes can inherit the returned handle to the process.
+	 * @param lpThreadAttributes A pointer to a SECURITY_ATTRIBUTES structure that specifies
+	 *  a security descriptor for the new thread object and determines whether child processes
+	 *  can inherit the returned handle to the thread.
+	 * @param bInheritHandles If this parameter is TRUE, each inheritable handle in the
+	 *  calling process is inherited by the new process. If the parameter is FALSE, the
+	 *  handles are not inherited. Note that inherited handles have the same value and access
+	 *  rights as the original handles.
+	 * @param dwCreationFlags The flags that control the priority class and the creation of the process.
+	 *  For a list of values, see Process Creation Flags.
+	 * @param lpEnvironment A pointer to an environment block for the new process. If this
+	 *  parameter is NULL, the new process uses the environment of the calling process.
+	 *  
+	 *  An environment block consists of a null-terminated block of null-terminated strings.
+	 *  Each string is in the following form: name=value\0
+	 * @param lpCurrentDirectory The full path to the current directory for the process. The
+	 *  string can also specify a UNC path.
+	 * @param lpStartupInfo A pointer to a STARTUPINFO or STARTUPINFOEX structure.
+	 * @param lpProcessInformation A pointer to a PROCESS_INFORMATION structure that receives
+	 *  identification information about the new process.
+	 * @return If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean CreateProcessAsUser(
+			HANDLE hToken,
+			String lpApplicationName,
+			String lpCommandLine,
+			SECURITY_ATTRIBUTES lpProcessAttributes,
+			SECURITY_ATTRIBUTES lpThreadAttributes,
+			boolean bInheritHandles,
+			int dwCreationFlags,
+			String lpEnvironment,
+			String lpCurrentDirectory,
+			WinBase.STARTUPINFO lpStartupInfo,
+			WinBase.PROCESS_INFORMATION lpProcessInformation);
 	 
 }

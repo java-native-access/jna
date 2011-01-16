@@ -209,6 +209,15 @@ public interface WinNT extends StdCallLibrary {
 	}
 	
 	/**
+	 * The TOKEN_TYPE enumeration type contains values that differentiate between
+	 * a primary token and an impersonation token.
+	 */
+	public abstract class TOKEN_TYPE {
+		 public static final int TokenPrimary = 1;
+		 public static final int TokenImpersonation = 2;
+	}
+	
+	/**
 	 * The SID_AND_ATTRIBUTES structure represents a security identifier (SID) and its 
 	 * attributes. SIDs are used to uniquely identify users or groups.
 	 */
@@ -457,13 +466,7 @@ public interface WinNT extends StdCallLibrary {
 	//
 
 	public static final int ACCESS_SYSTEM_SECURITY = 0x01000000;
-    
-    public static class SECURITY_ATTRIBUTES extends Structure {
-        public final int nLength = size();
-        public Pointer lpSecurityDescriptor;
-        public boolean bInheritHandle;
-    }	
-    
+        
     public static final int PAGE_READONLY = 0x02;
     public static final int PAGE_READWRITE = 0x04;
     public static final int PAGE_WRITECOPY = 0x08;
@@ -1563,4 +1566,7 @@ public interface WinNT extends StdCallLibrary {
 	
 	public static final int SERVICE_TYPE_ALL = 
 		(SERVICE_WIN32 | SERVICE_ADAPTER | SERVICE_DRIVER | SERVICE_INTERACTIVE_PROCESS);
+	
+	public static final int STATUS_PENDING = 0x00000103;
+
 }

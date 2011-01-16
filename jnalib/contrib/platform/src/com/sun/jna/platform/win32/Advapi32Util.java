@@ -14,6 +14,8 @@ package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import com.sun.jna.Memory;
@@ -1212,6 +1214,24 @@ public abstract class Advapi32Util {
 				throw new Win32Exception(rc);
 			}
 		}		
+	}
+	
+	/**
+	 * Converts a map of environment variables to an environment block suitable
+	 * for {@link Advapi32#CreateProcessAsUser}. This environment block consists
+	 * of null-terminated blocks of null-terminated strings. Each string is in the
+	 * following form: name=value\0
+	 * @param environment Environment variables
+	 * @return A environment block
+	 */
+	public static String getEnvironmentBlock(Map<String, String> environment) {
+		StringBuffer out = new StringBuffer();
+		for (Entry<String, String> entry: environment.entrySet()) {
+			if (entry.getValue() != null) {
+				out.append(entry.getKey() + "=" + entry.getValue() + "\0");
+			}
+		}
+		return out.toString() + "\0";
 	}
 	
 	/**

@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
@@ -367,5 +368,22 @@ public class Advapi32UtilTest extends TestCase {
 		} finally {
 			iter.close();
 		}
-	}	
+	}
+	
+	public void testGetEnvironmentBlock() {
+		String expected = "KEY=value\0"
+			+ "KEY_EMPTY=\0" 
+			+ "KEY_NUMBER=2\0"
+			+ "\0";
+		
+		// Order is important to kept checking result simple
+		Map<String, String> mockEnvironment = new TreeMap<String, String>();
+		mockEnvironment.put("KEY", "value");
+		mockEnvironment.put("KEY_EMPTY", "");
+		mockEnvironment.put("KEY_NUMBER", "2");
+		mockEnvironment.put("KEY_NULL", null);		
+		
+		String block = Advapi32Util.getEnvironmentBlock(mockEnvironment);
+		assertEquals(expected, block);
+	}
 }

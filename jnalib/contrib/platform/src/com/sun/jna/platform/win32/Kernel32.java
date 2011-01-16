@@ -144,6 +144,27 @@ public interface Kernel32 extends StdCallLibrary {
     int GetProcessVersion(int processId);
     
     /**
+     * Retrieves the termination status of the specified process.
+     * @param hProcess A handle to the process.
+     * @param lpExitCode A pointer to a variable to receive the process termination status.
+     * @return If the function succeeds, the return value is nonzero.
+     * 
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean GetExitCodeProcess(HANDLE hProcess, IntByReference lpExitCode);
+    
+    /**
+     * Terminates the specified process and all of its threads.
+     * @param hProcess A handle to the process to be terminated.
+     * @param uExitCode The exit code to be used by the process and threads
+     *  terminated as a result of this call.
+     * @return If the function succeeds, the return value is nonzero.
+     * 
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean TerminateProcess(HANDLE hProcess, int uExitCode);
+    
+    /**
      * The GetLastError function retrieves the calling thread's last-error code value.
      * The last-error code is maintained on a per-thread basis. Multiple threads do not
      * overwrite each other's last-error code.
@@ -282,7 +303,7 @@ public interface Kernel32 extends StdCallLibrary {
      *  INVALID_HANDLE_VALUE. To get extended error information, call GetLastError.
      */
     HANDLE CreateFile(String lpFileName, int dwDesiredAccess, int dwShareMode, 
-    		WinNT.SECURITY_ATTRIBUTES lpSecurityAttributes, int dwCreationDisposition, 
+    		WinBase.SECURITY_ATTRIBUTES lpSecurityAttributes, int dwCreationDisposition, 
     		int dwFlagsAndAttributes, HANDLE hTemplateFile);
         
     
@@ -302,8 +323,39 @@ public interface Kernel32 extends StdCallLibrary {
      *  the return value is zero. To get extended error information, call GetLastError. 
      */
     boolean CreateDirectory(String lpPathName, 
-    		WinNT.SECURITY_ATTRIBUTES lpSecurityAttributes);
+    		WinBase.SECURITY_ATTRIBUTES lpSecurityAttributes);
 
+	/**
+	 * Reads data from the specified file or input/output (I/O) device. Reads
+	 * occur at the position specified by the file pointer if supported by the
+	 * device.
+	 * 
+	 * This function is designed for both synchronous and asynchronous
+	 * operations. For a similar function designed solely for asynchronous
+	 * operation, see ReadFileEx
+	 * 
+	 * @param hFile A handle to the device (for example, a file, file stream,
+	 *  physical disk, volume, console buffer, tape drive, socket, communications
+	 *  resource, mailslot, or pipe).
+	 * @param lpBuffer A pointer to the buffer that receives the data read from a file or device.
+	 * @param nNumberOfBytesToRead The maximum number of bytes to be read.
+	 * @param lpNumberOfBytesRead A pointer to the variable that receives the number of bytes
+	 *  read when using a synchronous hFile parameter
+	 * @param lpOverlapped A pointer to an OVERLAPPED structure is required if the hFile
+	 *  parameter was opened with FILE_FLAG_OVERLAPPED, otherwise it can be NULL.
+	 * @return If the function succeeds, the return value is nonzero (TRUE).
+	 *  If the function fails, or is completing asynchronously, the return value is zero (FALSE).
+	 *  To get extended error information, call the GetLastError function.
+	 *  
+	 *  Note  The GetLastError code ERROR_IO_PENDING is not a failure; it designates the read
+	 *  operation is pending completion asynchronously. For more information, see Remarks.
+	 */
+    boolean ReadFile(
+    		HANDLE hFile,
+    		Buffer lpBuffer,
+    		int nNumberOfBytesToRead,
+    		IntByReference lpNumberOfBytesRead,
+    		WinBase.OVERLAPPED lpOverlapped);
     /**
      * Creates an input/output (I/O) completion port and associates it with a specified
      * file handle, or creates an I/O completion port that is not yet associated with a
@@ -579,7 +631,7 @@ public interface Kernel32 extends StdCallLibrary {
      *  and GetLastError returns ERROR_ALREADY_EXISTS. 
      *  If the function fails, the return value is NULL. To get extended error information, call GetLastError. 
      */
-    HANDLE CreateEvent(WinNT.SECURITY_ATTRIBUTES lpEventAttributes,
+    HANDLE CreateEvent(WinBase.SECURITY_ATTRIBUTES lpEventAttributes,
                        boolean bManualReset, boolean bInitialState,
                        String lpName);
 
@@ -623,7 +675,7 @@ public interface Kernel32 extends StdCallLibrary {
      *  If the object exists before the function call, the function returns a handle to the existing object (with its current size, not the specified size), and GetLastError returns ERROR_ALREADY_EXISTS. 
      *  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
      */
-    HANDLE CreateFileMapping(HANDLE hFile, WinNT.SECURITY_ATTRIBUTES lpAttributes,
+    HANDLE CreateFileMapping(HANDLE hFile, WinBase.SECURITY_ATTRIBUTES lpAttributes,
                              int flProtect, int dwMaximumSizeHigh,
                              int dwMaximumSizeLow, String lpName);
 
@@ -866,4 +918,34 @@ public interface Kernel32 extends StdCallLibrary {
      *  If the function fails, the return value is zero (0). To get extended error information, call GetLastError.
      */
     public boolean DeleteFile(String filename);
+    
+    /**
+     * Creates an anonymous pipe, and returns handles to the read and write ends of the pipe.
+     * @param hReadPipe A pointer to a variable that receives the read handle for the pipe.
+     * @param hWritePipe A pointer to a variable that receives the write handle for the pipe.
+     * @param lpPipeAttributes A pointer to a SECURITY_ATTRIBUTES structure that determines whether
+     * the returned handle can be inherited by child processes.
+     * @param nSize The size of the buffer for the pipe, in bytes.
+     * @return If the function succeeds, the return value is nonzero.
+     * If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    public boolean CreatePipe(
+    		HANDLEByReference hReadPipe,
+    		HANDLEByReference hWritePipe,
+    		WinBase.SECURITY_ATTRIBUTES lpPipeAttributes,
+    		int nSize);
+
+    /**
+     * Sets certain properties of an object handle.
+     * @param hObject A handle to an object whose information is to be set.
+     * @param dwMask A mask that specifies the bit flags to be changed. Use the same constants shown in the description of dwFlags.
+     * @param dwFlags Set of bit flags that specifies properties of the object handle.
+     * @return If the function succeeds, the return value is nonzero.
+     *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean SetHandleInformation(
+    		HANDLE hObject,
+    		int dwMask,
+    		int dwFlags);
+
 }
