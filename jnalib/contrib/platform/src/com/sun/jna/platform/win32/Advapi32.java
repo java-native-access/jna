@@ -1085,5 +1085,67 @@ public interface Advapi32 extends StdCallLibrary {
 			String lpCurrentDirectory,
 			WinBase.STARTUPINFO lpStartupInfo,
 			WinBase.PROCESS_INFORMATION lpProcessInformation);
-	 
+
+	/**
+	 * The AdjustTokenPrivileges function enables or disables privileges in the specified access token.
+	 * Enabling or disabling privileges in an access token requires TOKEN_ADJUST_PRIVILEGES access.
+	 * @param TokenHandle A handle to the access token that contains the privileges to be modified.
+	 * @param DisableAllPrivileges Specifies whether the function disables all of the token's privileges. 
+	 * @param NewState A pointer to a TOKEN_PRIVILEGES structure that specifies an array of privileges and their attributes.
+	 * @param BufferLength Specifies the size, in bytes, of the buffer pointed to by the PreviousState
+	 *  parameter. This parameter can be zero if the PreviousState parameter is NULL.
+	 * @param PreviousState A pointer to a buffer that the function fills with a TOKEN_PRIVILEGES structure that contains
+	 *  the previous state of any privileges that the function modifies. 
+	 * @param ReturnLength A pointer to a variable that receives the required size, in bytes, of the buffer
+	 *  pointed to by the PreviousState parameter. 
+	 * @return If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean AdjustTokenPrivileges(
+			HANDLE TokenHandle,
+			boolean DisableAllPrivileges,
+			WinNT.TOKEN_PRIVILEGES NewState,
+			int BufferLength,
+			WinNT. TOKEN_PRIVILEGES PreviousState,
+			IntByReference ReturnLength);
+
+	/**
+	 * The LookupPrivilegeName function retrieves the name that corresponds to the privilege represented
+	 * on a specific system by a specified locally unique identifier (LUID).
+	 * @param lpSystemName A pointer to a null-terminated string that specifies the name of the system on
+	 *  which the privilege name is retrieved.  If a null string is specified, the function attempts to
+	 *  find the privilege name on the local system.
+	 * @param lpLuid A pointer to the LUID by which the privilege is known on the target system.
+	 * @param lpName A pointer to a buffer that receives a null-terminated string that represents the privilege name.
+	 *  For example, this string could be "SeSecurityPrivilege".
+	 * @param cchName A pointer to a variable that specifies the size, in a TCHAR value, of the lpName buffer.
+	 * @return If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean LookupPrivilegeName(
+			String lpSystemName,
+			WinNT.LUID lpLuid,
+			char[] lpName,
+			IntByReference cchName);
+	
+	/**
+	 * The LookupPrivilegeValue function retrieves the locally unique identifier (LUID) used
+	 * on a specified system to locally
+	 * represent the specified privilege name.
+	 * @param lpSystemName A pointer to a null-terminated string that specifies the name of the
+	 *  system on which the privilege name is retrieved. If a null string is specified, the
+	 *  function attempts to find the privilege name on the local system.
+	 * @param lpName A pointer to a null-terminated string that specifies the name of the privilege,
+	 *  as defined in the Winnt.h header file. For example, this parameter could specify the constant,
+	 *  SE_SECURITY_NAME, or its corresponding string, "SeSecurityPrivilege".
+	 * @param lpLuid A pointer to a variable that receives the LUID by which the privilege
+	 *  is known on the system specified by the lpSystemName parameter.
+	 * @return If the function succeeds, the return value is nonzero.
+	 *  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+	 */
+	public boolean LookupPrivilegeValue(
+		String lpSystemName,
+		String lpName,
+		WinNT.LUID lpLuid);
+	
 }

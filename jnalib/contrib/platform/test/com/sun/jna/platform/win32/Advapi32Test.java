@@ -22,6 +22,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -30,6 +31,7 @@ import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
+import com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES;
 import com.sun.jna.platform.win32.WinNT.TOKEN_TYPE;
 import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
@@ -750,5 +752,53 @@ public class Advapi32Test extends TestCase {
     			null, null, false, 0, null, null, new WinBase.STARTUPINFO(),
     			new WinBase.PROCESS_INFORMATION()));
     	assertEquals(W32Errors.ERROR_FILE_NOT_FOUND, Kernel32.INSTANCE.GetLastError());
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(hToken.getValue()));
+    }
+    
+    /**
+     * Tests both {@link Advapi32#LookupPrivilegeValue} and {@link Advapi32#LookupPrivilegeName}
+     */
+    public void testLookupPrivilegeValueAndLookupPrivilegeName() {
+    	WinNT.LUID luid = new WinNT.LUID();
+    	
+    	assertFalse(Advapi32.INSTANCE.LookupPrivilegeValue(null, "InvalidName", luid));
+    	assertEquals(Kernel32.INSTANCE.GetLastError(), W32Errors.ERROR_NO_SUCH_PRIVILEGE);
+    	
+    	assertTrue(Advapi32.INSTANCE.LookupPrivilegeValue(null, WinNT.SE_BACKUP_NAME, luid));
+    	assertTrue(luid.LowPart > 0 || luid.HighPart > 0);
+    	
+    	char[] lpName = new char[256];
+    	IntByReference cchName = new IntByReference(lpName.length);
+    	assertTrue(Advapi32.INSTANCE.LookupPrivilegeName(null, luid, lpName, cchName));
+    	assertEquals(WinNT.SE_BACKUP_NAME.length(), cchName.getValue());
+    	assertEquals(WinNT.SE_BACKUP_NAME, Native.toString(lpName));
+    }
+    
+    public void testAdjustTokenPrivileges() {
+    	HANDLEByReference hToken = new HANDLEByReference();
+    	assertTrue(Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(),
+    			WinNT.TOKEN_ADJUST_PRIVILEGES | WinNT.TOKEN_QUERY, hToken));
+    	
+    	// Find an already enabled privilege
+    	TOKEN_PRIVILEGES tp = new TOKEN_PRIVILEGES(1024);
+    	IntByReference returnLength = new IntByReference();
+    	assertTrue(Advapi32.INSTANCE.GetTokenInformation(hToken.getValue(),	WinNT.TOKEN_INFORMATION_CLASS.TokenPrivileges,
+    			tp, tp.size(), returnLength));
+    	assertTrue(tp.PrivilegeCount.intValue() > 0);
+    	
+    	WinNT.LUID luid = null;
+    	for (int i=0; i<tp.PrivilegeCount.intValue(); i++) {
+    		if ((tp.Privileges[i].Attributes.intValue() & WinNT.SE_PRIVILEGE_ENABLED) > 0) {
+    			luid = tp.Privileges[i].Luid;
+    		}
+    	}
+    	assertTrue(luid != null);    	
+    	
+    	// Re-enable it. That should succeed.
+    	tp = new WinNT.TOKEN_PRIVILEGES(1);
+    	tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(luid, new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
+    	
+    	assertTrue(Advapi32.INSTANCE.AdjustTokenPrivileges(hToken.getValue(), false, tp, 0, null, null));
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(hToken.getValue()));
     }
 }

@@ -218,6 +218,29 @@ public interface WinNT extends StdCallLibrary {
 	}
 	
 	/**
+	 * The LUID_AND_ATTRIBUTES structure represents a locally unique identifier (LUID) and its attributes.
+	 */
+	public static class LUID_AND_ATTRIBUTES extends Structure {
+		/**
+		 * Specifies an LUID value.
+		 */
+		public LUID  Luid;
+		
+		/**
+		 * Specifies attributes of the LUID. This value contains up to 32 one-bit flags.
+		 * Its meaning is dependent on the definition and use of the LUID.
+		 */
+		public DWORD Attributes;
+		
+		public LUID_AND_ATTRIBUTES() { }
+		
+		public LUID_AND_ATTRIBUTES(LUID luid, DWORD attributes) {
+			this.Luid = luid;
+			this.Attributes = attributes;
+		}
+	}
+	
+	/**
 	 * The SID_AND_ATTRIBUTES structure represents a security identifier (SID) and its 
 	 * attributes. SIDs are used to uniquely identify users or groups.
 	 */
@@ -384,6 +407,30 @@ public interface WinNT extends StdCallLibrary {
 		 */
 		public SID_AND_ATTRIBUTES[] getGroups() {
 			return (SID_AND_ATTRIBUTES[]) Group0.toArray(GroupCount);
+		}
+	}
+	
+	/**
+	 * The TOKEN_PRIVILEGES structure contains information about a set of privileges for an access token.
+	 */
+	public static class TOKEN_PRIVILEGES extends Structure {
+		/**
+		 * This must be set to the number of entries in the Privileges array.
+		 */
+		public DWORD PrivilegeCount;
+		
+		/**
+		 * Specifies an array of LUID_AND_ATTRIBUTES structures.
+		 * Each structure contains the LUID and attributes of a privilege.
+		 */
+		public LUID_AND_ATTRIBUTES Privileges[];
+		
+		/**
+		 * @param nbOfPrivileges Desired size of the Privileges array
+		 */
+		public TOKEN_PRIVILEGES(int nbOfPrivileges) {
+			PrivilegeCount = new DWORD(nbOfPrivileges);
+			Privileges = new LUID_AND_ATTRIBUTES[nbOfPrivileges];
 		}
 	}
 
@@ -800,8 +847,8 @@ public interface WinNT extends StdCallLibrary {
 	 * that generated it until the system is restarted. 
 	 */
 	public static class LUID extends Structure {
-		int LowPart;
-		int HighPart;
+		public int LowPart;
+		public int HighPart;
 	}
 	
 	/**
@@ -1568,5 +1615,43 @@ public interface WinNT extends StdCallLibrary {
 		(SERVICE_WIN32 | SERVICE_ADAPTER | SERVICE_DRIVER | SERVICE_INTERACTIVE_PROCESS);
 	
 	public static final int STATUS_PENDING = 0x00000103;
+	
+	// Privilege Constants
+	public static final String SE_CREATE_TOKEN_NAME = "SeCreateTokenPrivilege";
+	public static final String SE_ASSIGNPRIMARYTOKEN_NAME = "SeAssignPrimaryTokenPrivilege";
+	public static final String SE_LOCK_MEMORY_NAME = "SeLockMemoryPrivilege";
+	public static final String SE_INCREASE_QUOTA_NAME = "SeIncreaseQuotaPrivilege";
+	public static final String SE_UNSOLICITED_INPUT_NAME = "SeUnsolicitedInputPrivilege";
+	public static final String SE_MACHINE_ACCOUNT_NAME = "SeMachineAccountPrivilege";
+	public static final String SE_TCB_NAME = "SeTcbPrivilege";
+	public static final String SE_SECURITY_NAME = "SeSecurityPrivilege";
+	public static final String SE_TAKE_OWNERSHIP_NAME = "SeTakeOwnershipPrivilege";
+	public static final String SE_LOAD_DRIVER_NAME = "SeLoadDriverPrivilege";
+	public static final String SE_SYSTEM_PROFILE_NAME = "SeSystemProfilePrivilege";
+	public static final String SE_SYSTEMTIME_NAME = "SeSystemtimePrivilege";
+	public static final String SE_PROF_SINGLE_PROCESS_NAME = "SeProfileSingleProcessPrivilege";
+	public static final String SE_INC_BASE_PRIORITY_NAME = "SeIncreaseBasePriorityPrivilege";
+	public static final String SE_CREATE_PAGEFILE_NAME = "SeCreatePagefilePrivilege";
+	public static final String SE_CREATE_PERMANENT_NAME = "SeCreatePermanentPrivilege";
+	public static final String SE_BACKUP_NAME = "SeBackupPrivilege";
+	public static final String SE_RESTORE_NAME = "SeRestorePrivilege";
+	public static final String SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
+	public static final String SE_DEBUG_NAME = "SeDebugPrivilege";
+	public static final String SE_AUDIT_NAME = "SeAuditPrivilege";
+	public static final String SE_SYSTEM_ENVIRONMENT_NAME = "SeSystemEnvironmentPrivilege";
+	public static final String SE_CHANGE_NOTIFY_NAME = "SeChangeNotifyPrivilege";
+	public static final String SE_REMOTE_SHUTDOWN_NAME = "SeRemoteShutdownPrivilege";
+	public static final String SE_UNDOCK_NAME = "SeUndockPrivilege";
+	public static final String SE_SYNC_AGENT_NAME = "SeSyncAgentPrivilege";
+	public static final String SE_ENABLE_DELEGATION_NAME = "SeEnableDelegationPrivilege";
+	public static final String SE_MANAGE_VOLUME_NAME = "SeManageVolumePrivilege";
+	public static final String SE_IMPERSONATE_NAME = "SeImpersonatePrivilege";
+	public static final String SE_CREATE_GLOBAL_NAME = "SeCreateGlobalPrivilege";
+
+	public static final int SE_PRIVILEGE_ENABLED_BY_DEFAULT = 0x00000001;
+	public static final int SE_PRIVILEGE_ENABLED = 0x00000002;
+	public static final int SE_PRIVILEGE_REMOVED = 0X00000004;
+	public static final int SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
+
 
 }
