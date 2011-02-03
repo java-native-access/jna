@@ -378,8 +378,17 @@ public interface Advapi32 extends StdCallLibrary {
 	 * @return
 	 *  If the function succeeds, the return value is nonzero.
 	 */
-	public boolean ImpersonateLoggedOnUser(
-			HANDLE hToken); 
+	public boolean ImpersonateLoggedOnUser(HANDLE hToken); 
+	
+	/**
+	 * The ImpersonateSelf function obtains an access token that impersonates the security
+	 * context of the calling process. The token is assigned to the calling thread.
+	 * @param ImpersonationLevel Specifies a SECURITY_IMPERSONATION_LEVEL enumerated type
+	 *  that supplies the impersonation level of the new token.
+	 * @return If the function succeeds, the return value is nonzero.
+	 */
+	public boolean ImpersonateSelf(int ImpersonationLevel);
+
 	
 	/**
 	 * The RevertToSelf function terminates the impersonation of a client application.

@@ -801,4 +801,9 @@ public class Advapi32Test extends TestCase {
     	assertTrue(Advapi32.INSTANCE.AdjustTokenPrivileges(hToken.getValue(), false, tp, 0, null, null));
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hToken.getValue()));
     }
+    
+    public void testImpersonateSelf() {
+    	assertTrue(Advapi32.INSTANCE.ImpersonateSelf(WinNT.SECURITY_IMPERSONATION_LEVEL.SecurityAnonymous));
+    	assertTrue(Advapi32.INSTANCE.RevertToSelf());
+    }
 }
