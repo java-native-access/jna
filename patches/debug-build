@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -65,6 +65,13 @@
+@@ -109,6 +109,13 @@
  	* testsuite/libffi.call/cls_longdouble.c: Likewise.
  	* testsuite/libffi.call/huge_struct.c: Likewise.
  
@@ -54,7 +54,7 @@ Index: libffi/configure.ac
  m4_undefine([_AC_ARG_VAR_PRECIOUS])
  m4_rename([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
  
-@@ -399,6 +403,7 @@ AC_ARG_ENABLE(debug,
+@@ -406,6 +410,7 @@ AC_ARG_ENABLE(debug,
    if test "$enable_debug" = "yes"; then
      AC_DEFINE(FFI_DEBUG, 1, [Define this if you want extra debugging.])
    fi)
@@ -78,7 +78,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -481,7 +486,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -483,7 +488,7 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_24) $(am__append_25)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
@@ -147,81 +147,81 @@ Index: libffi/configure
    if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
    (eval $ac_compile) 2>&5
    ac_status=$?
-@@ -7841,11 +7847,11 @@ else
+@@ -7845,11 +7851,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:7844: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:7850: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:7848: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:7854: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>conftest.err)
     ac_status=$?
     cat conftest.err >&5
--   echo "$as_me:7848: \$? = $ac_status" >&5
-+   echo "$as_me:7854: \$? = $ac_status" >&5
+-   echo "$as_me:7852: \$? = $ac_status" >&5
++   echo "$as_me:7858: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s "$ac_outfile"; then
       # The compiler can only warn and ignore the option if not recognized
       # So say no if there are warnings other than the usual output.
-@@ -8180,11 +8186,11 @@ else
+@@ -8184,11 +8190,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8183: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8189: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:8187: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8193: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>conftest.err)
     ac_status=$?
     cat conftest.err >&5
--   echo "$as_me:8187: \$? = $ac_status" >&5
-+   echo "$as_me:8193: \$? = $ac_status" >&5
+-   echo "$as_me:8191: \$? = $ac_status" >&5
++   echo "$as_me:8197: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s "$ac_outfile"; then
       # The compiler can only warn and ignore the option if not recognized
       # So say no if there are warnings other than the usual output.
-@@ -8285,11 +8291,11 @@ else
+@@ -8289,11 +8295,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8288: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8294: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:8292: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8298: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>out/conftest.err)
     ac_status=$?
     cat out/conftest.err >&5
--   echo "$as_me:8292: \$? = $ac_status" >&5
-+   echo "$as_me:8298: \$? = $ac_status" >&5
+-   echo "$as_me:8296: \$? = $ac_status" >&5
++   echo "$as_me:8302: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s out/conftest2.$ac_objext
     then
       # The compiler can only warn and ignore the option if not recognized
-@@ -8340,11 +8346,11 @@ else
+@@ -8344,11 +8350,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8343: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8349: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:8347: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8353: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>out/conftest.err)
     ac_status=$?
     cat out/conftest.err >&5
--   echo "$as_me:8347: \$? = $ac_status" >&5
-+   echo "$as_me:8353: \$? = $ac_status" >&5
+-   echo "$as_me:8351: \$? = $ac_status" >&5
++   echo "$as_me:8357: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s out/conftest2.$ac_objext
     then
       # The compiler can only warn and ignore the option if not recognized
-@@ -11143,7 +11149,7 @@ else
+@@ -11147,7 +11153,7 @@ else
    lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
    lt_status=$lt_dlunknown
    cat > conftest.$ac_ext <<_LT_EOF
--#line 11146 "configure"
-+#line 11152 "configure"
+-#line 11150 "configure"
++#line 11156 "configure"
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -11239,7 +11245,7 @@ else
+@@ -11243,7 +11249,7 @@ else
    lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
    lt_status=$lt_dlunknown
    cat > conftest.$ac_ext <<_LT_EOF
--#line 11242 "configure"
-+#line 11248 "configure"
+-#line 11246 "configure"
++#line 11252 "configure"
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -14766,6 +14772,14 @@ _ACEOF
+@@ -14777,6 +14783,14 @@ _ACEOF
    fi
  fi
  
@@ -236,7 +236,7 @@ Index: libffi/configure
  
  # Check whether --enable-structs was given.
  if test "${enable_structs+set}" = set; then
-@@ -15166,6 +15180,13 @@ Usually this means the macro was only in
+@@ -15177,6 +15191,13 @@ Usually this means the macro was only in
     { (exit 1); exit 1; }; }
  fi
  

@@ -10330,16 +10330,7 @@ Index: libffi/configure
  $as_echo "no" >&6; }
  fi
  
-@@ -7735,25 +7816,16 @@ _lt_linker_boilerplate=`cat conftest.err
- $RM -r conftest*
- 
- 
--## CAVEAT EMPTOR:
--## There is no encapsulation within the following macros, do not change
--## the running order or otherwise move them around unless you know exactly
--## what you are doing...
- if test -n "$compiler"; then
- 
+@@ -7744,16 +7825,11 @@ if test -n "$compiler"; then
  lt_prog_compiler_no_builtin_flag=
  
  if test "$GCC" = yes; then
@@ -10359,17 +10350,17 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    lt_cv_prog_compiler_rtti_exceptions=no
-@@ -7769,15 +7841,15 @@ else
+@@ -7769,15 +7845,15 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
 -   (eval echo "\"\$as_me:$LINENO: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:7844: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:7848: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>conftest.err)
     ac_status=$?
     cat conftest.err >&5
 -   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+   echo "$as_me:7848: \$? = $ac_status" >&5
++   echo "$as_me:7852: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s "$ac_outfile"; then
       # The compiler can only warn and ignore the option if not recognized
       # So say no if there are warnings other than the usual output.
@@ -10378,7 +10369,7 @@ Index: libffi/configure
       $SED '/^$/d; /^ *+/d' conftest.err >conftest.er2
       if test ! -s conftest.er2 || diff conftest.exp conftest.er2 >/dev/null; then
         lt_cv_prog_compiler_rtti_exceptions=yes
-@@ -7786,7 +7858,7 @@ else
+@@ -7786,7 +7862,7 @@ else
     $RM conftest*
  
  fi
@@ -10387,7 +10378,7 @@ Index: libffi/configure
  $as_echo "$lt_cv_prog_compiler_rtti_exceptions" >&6; }
  
  if test x"$lt_cv_prog_compiler_rtti_exceptions" = xyes; then
-@@ -7806,7 +7878,7 @@ fi
+@@ -7806,7 +7882,7 @@ fi
  lt_prog_compiler_pic=
  lt_prog_compiler_static=
  
@@ -10396,7 +10387,7 @@ Index: libffi/configure
  $as_echo_n "checking for $compiler option to produce PIC... " >&6; }
  
    if test "$GCC" = yes; then
-@@ -7855,12 +7927,6 @@ $as_echo_n "checking for $compiler optio
+@@ -7855,12 +7931,6 @@ $as_echo_n "checking for $compiler optio
        lt_prog_compiler_pic='-fno-common'
        ;;
  
@@ -10409,7 +10400,7 @@ Index: libffi/configure
      hpux*)
        # PIC is the default for 64-bit PA HP-UX, but not for 32-bit
        # PA HP-UX.  On IA64 HP-UX, PIC is the default but the pic flag
-@@ -7903,13 +7969,6 @@ $as_echo_n "checking for $compiler optio
+@@ -7903,13 +7973,6 @@ $as_echo_n "checking for $compiler optio
        lt_prog_compiler_pic='-fPIC'
        ;;
      esac
@@ -10423,7 +10414,7 @@ Index: libffi/configure
    else
      # PORTME Check for flag to pass linker flags through the system compiler.
      case $host_os in
-@@ -7951,7 +8010,7 @@ $as_echo_n "checking for $compiler optio
+@@ -7951,7 +8014,7 @@ $as_echo_n "checking for $compiler optio
        lt_prog_compiler_static='-non_shared'
        ;;
  
@@ -10432,7 +10423,7 @@ Index: libffi/configure
        case $cc_basename in
        # old Intel for x86_64 which still supported -KPIC.
        ecc*)
-@@ -7972,7 +8031,7 @@ $as_echo_n "checking for $compiler optio
+@@ -7972,7 +8035,7 @@ $as_echo_n "checking for $compiler optio
  	lt_prog_compiler_pic='--shared'
  	lt_prog_compiler_static='--static'
  	;;
@@ -10441,7 +10432,7 @@ Index: libffi/configure
          # Portland Group compilers (*not* the Pentium gcc compiler,
  	# which looks to be a dead project)
  	lt_prog_compiler_wl='-Wl,'
-@@ -7984,26 +8043,26 @@ $as_echo_n "checking for $compiler optio
+@@ -7984,26 +8047,26 @@ $as_echo_n "checking for $compiler optio
          # All Alpha code is PIC.
          lt_prog_compiler_static='-non_shared'
          ;;
@@ -10476,7 +10467,7 @@ Index: libffi/configure
  	esac
  	;;
        esac
-@@ -8091,7 +8150,7 @@ case $host_os in
+@@ -8091,7 +8154,7 @@ case $host_os in
      lt_prog_compiler_pic="$lt_prog_compiler_pic -DPIC"
      ;;
  esac
@@ -10485,7 +10476,7 @@ Index: libffi/configure
  $as_echo "$lt_prog_compiler_pic" >&6; }
  
  
-@@ -8103,9 +8162,9 @@ $as_echo "$lt_prog_compiler_pic" >&6; }
+@@ -8103,9 +8166,9 @@ $as_echo "$lt_prog_compiler_pic" >&6; }
  # Check to make sure the PIC flag actually works.
  #
  if test -n "$lt_prog_compiler_pic"; then
@@ -10497,17 +10488,17 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    lt_cv_prog_compiler_pic_works=no
-@@ -8121,15 +8180,15 @@ else
+@@ -8121,15 +8184,15 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
 -   (eval echo "\"\$as_me:$LINENO: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8183: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8187: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>conftest.err)
     ac_status=$?
     cat conftest.err >&5
 -   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+   echo "$as_me:8187: \$? = $ac_status" >&5
++   echo "$as_me:8191: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s "$ac_outfile"; then
       # The compiler can only warn and ignore the option if not recognized
       # So say no if there are warnings other than the usual output.
@@ -10516,7 +10507,7 @@ Index: libffi/configure
       $SED '/^$/d; /^ *+/d' conftest.err >conftest.er2
       if test ! -s conftest.er2 || diff conftest.exp conftest.er2 >/dev/null; then
         lt_cv_prog_compiler_pic_works=yes
-@@ -8138,7 +8197,7 @@ else
+@@ -8138,7 +8201,7 @@ else
     $RM conftest*
  
  fi
@@ -10525,7 +10516,7 @@ Index: libffi/configure
  $as_echo "$lt_cv_prog_compiler_pic_works" >&6; }
  
  if test x"$lt_cv_prog_compiler_pic_works" = xyes; then
-@@ -8162,9 +8221,9 @@ fi
+@@ -8162,9 +8225,9 @@ fi
  # Check to make sure the static flag actually works.
  #
  wl=$lt_prog_compiler_wl eval lt_tmp_static_flag=\"$lt_prog_compiler_static\"
@@ -10537,7 +10528,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    lt_cv_prog_compiler_static_works=no
-@@ -8177,7 +8236,7 @@ else
+@@ -8177,7 +8240,7 @@ else
       if test -s conftest.err; then
         # Append any errors to the config.log.
         cat conftest.err 1>&5
@@ -10546,7 +10537,7 @@ Index: libffi/configure
         $SED '/^$/d; /^ *+/d' conftest.err >conftest.er2
         if diff conftest.exp conftest.er2 >/dev/null; then
           lt_cv_prog_compiler_static_works=yes
-@@ -8190,7 +8249,7 @@ else
+@@ -8190,7 +8253,7 @@ else
     LDFLAGS="$save_LDFLAGS"
  
  fi
@@ -10555,7 +10546,7 @@ Index: libffi/configure
  $as_echo "$lt_cv_prog_compiler_static_works" >&6; }
  
  if test x"$lt_cv_prog_compiler_static_works" = xyes; then
-@@ -8205,9 +8264,9 @@ fi
+@@ -8205,9 +8268,9 @@ fi
  
  
  
@@ -10567,17 +10558,17 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    lt_cv_prog_compiler_c_o=no
-@@ -8226,16 +8285,16 @@ else
+@@ -8226,16 +8289,16 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
 -   (eval echo "\"\$as_me:$LINENO: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8288: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8292: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>out/conftest.err)
     ac_status=$?
     cat out/conftest.err >&5
 -   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+   echo "$as_me:8292: \$? = $ac_status" >&5
++   echo "$as_me:8296: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s out/conftest2.$ac_objext
     then
       # The compiler can only warn and ignore the option if not recognized
@@ -10587,7 +10578,7 @@ Index: libffi/configure
       $SED '/^$/d; /^ *+/d' out/conftest.err >out/conftest.er2
       if test ! -s out/conftest.er2 || diff out/conftest.exp out/conftest.er2 >/dev/null; then
         lt_cv_prog_compiler_c_o=yes
-@@ -8252,7 +8311,7 @@ else
+@@ -8252,7 +8315,7 @@ else
     $RM conftest*
  
  fi
@@ -10596,7 +10587,7 @@ Index: libffi/configure
  $as_echo "$lt_cv_prog_compiler_c_o" >&6; }
  
  
-@@ -8260,9 +8319,9 @@ $as_echo "$lt_cv_prog_compiler_c_o" >&6;
+@@ -8260,9 +8323,9 @@ $as_echo "$lt_cv_prog_compiler_c_o" >&6;
  
  
  
@@ -10608,17 +10599,17 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    lt_cv_prog_compiler_c_o=no
-@@ -8281,16 +8340,16 @@ else
+@@ -8281,16 +8344,16 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
 -   (eval echo "\"\$as_me:$LINENO: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8343: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8347: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>out/conftest.err)
     ac_status=$?
     cat out/conftest.err >&5
 -   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+   echo "$as_me:8347: \$? = $ac_status" >&5
++   echo "$as_me:8351: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s out/conftest2.$ac_objext
     then
       # The compiler can only warn and ignore the option if not recognized
@@ -10628,7 +10619,7 @@ Index: libffi/configure
       $SED '/^$/d; /^ *+/d' out/conftest.err >out/conftest.er2
       if test ! -s out/conftest.er2 || diff out/conftest.exp out/conftest.er2 >/dev/null; then
         lt_cv_prog_compiler_c_o=yes
-@@ -8307,7 +8366,7 @@ else
+@@ -8307,7 +8370,7 @@ else
     $RM conftest*
  
  fi
@@ -10637,7 +10628,7 @@ Index: libffi/configure
  $as_echo "$lt_cv_prog_compiler_c_o" >&6; }
  
  
-@@ -8316,7 +8375,7 @@ $as_echo "$lt_cv_prog_compiler_c_o" >&6;
+@@ -8316,7 +8379,7 @@ $as_echo "$lt_cv_prog_compiler_c_o" >&6;
  hard_links="nottested"
  if test "$lt_cv_prog_compiler_c_o" = no && test "$need_locks" != no; then
    # do not overwrite the value of need_locks provided by the user
@@ -10646,7 +10637,7 @@ Index: libffi/configure
  $as_echo_n "checking if we can lock with hard links... " >&6; }
    hard_links=yes
    $RM conftest*
-@@ -8324,10 +8383,10 @@ $as_echo_n "checking if we can lock with
+@@ -8324,10 +8387,10 @@ $as_echo_n "checking if we can lock with
    touch conftest.a
    ln conftest.a conftest.b 2>&5 || hard_links=no
    ln conftest.a conftest.b 2>/dev/null && hard_links=no
@@ -10659,7 +10650,7 @@ Index: libffi/configure
  $as_echo "$as_me: WARNING: \`$CC' does not support \`-c -o', so \`make -j' may be unsafe" >&2;}
      need_locks=warn
    fi
-@@ -8340,7 +8399,7 @@ fi
+@@ -8340,7 +8403,7 @@ fi
  
  
  
@@ -10668,7 +10659,7 @@ Index: libffi/configure
  $as_echo_n "checking whether the $compiler linker ($LD) supports shared libraries... " >&6; }
  
    runpath_var=
-@@ -8403,33 +8462,7 @@ $as_echo_n "checking whether the $compil
+@@ -8403,33 +8466,7 @@ $as_echo_n "checking whether the $compil
    esac
  
    ld_shlibs=yes
@@ -10702,7 +10693,7 @@ Index: libffi/configure
      # If archive_cmds runs LD, not CC, wlarc should be empty
      wlarc='${wl}'
  
-@@ -8447,7 +8480,6 @@ $as_echo_n "checking whether the $compil
+@@ -8447,7 +8484,6 @@ $as_echo_n "checking whether the $compil
      fi
      supports_anon_versioning=no
      case `$LD -v 2>&1` in
@@ -10710,7 +10701,7 @@ Index: libffi/configure
        *\ [01].* | *\ 2.[0-9].* | *\ 2.10.*) ;; # catch versions < 2.11
        *\ 2.11.93.0.2\ *) supports_anon_versioning=yes ;; # RH7.3 ...
        *\ 2.11.92.0.12\ *) supports_anon_versioning=yes ;; # Mandrake 8.2 ...
-@@ -8463,12 +8495,11 @@ $as_echo_n "checking whether the $compil
+@@ -8463,12 +8499,11 @@ $as_echo_n "checking whether the $compil
  	ld_shlibs=no
  	cat <<_LT_EOF 1>&2
  
@@ -10726,7 +10717,7 @@ Index: libffi/configure
  
  _LT_EOF
        fi
-@@ -8504,7 +8535,6 @@ _LT_EOF
+@@ -8504,7 +8539,6 @@ _LT_EOF
        # _LT_TAGVAR(hardcode_libdir_flag_spec, ) is actually meaningless,
        # as there is no search path for DLLs.
        hardcode_libdir_flag_spec='-L$libdir'
@@ -10734,7 +10725,7 @@ Index: libffi/configure
        allow_undefined_flag=unsupported
        always_export_symbols=no
        enable_shared_with_static_runtimes=yes
-@@ -8526,11 +8556,6 @@ _LT_EOF
+@@ -8526,11 +8560,6 @@ _LT_EOF
        fi
        ;;
  
@@ -10746,7 +10737,7 @@ Index: libffi/configure
      interix[3-9]*)
        hardcode_direct=no
        hardcode_shlibpath_var=no
-@@ -8546,7 +8571,7 @@ _LT_EOF
+@@ -8546,7 +8575,7 @@ _LT_EOF
        archive_expsym_cmds='sed "s,^,_," $export_symbols >$output_objdir/$soname.expsym~$CC -shared $pic_flag $libobjs $deplibs $compiler_flags ${wl}-h,$soname ${wl}--retain-symbols-file,$output_objdir/$soname.expsym ${wl}--image-base,`expr ${RANDOM-$$} % 4096 / 2 \* 262144 + 1342177280` -o $lib'
        ;;
  
@@ -10755,7 +10746,7 @@ Index: libffi/configure
        tmp_diet=no
        if test "$host_os" = linux-dietlibc; then
  	case $cc_basename in
-@@ -8560,12 +8585,11 @@ _LT_EOF
+@@ -8560,12 +8589,11 @@ _LT_EOF
  	tmp_sharedflag='-shared'
  	case $cc_basename,$host_cpu in
          pgcc*)				# Portland Group C compiler
@@ -10771,7 +10762,7 @@ Index: libffi/configure
  	  tmp_addflag=' $pic_flag -Mnomain' ;;
  	ecc*,ia64* | icc*,ia64*)	# Intel C compiler on ia64
  	  tmp_addflag=' -i_dynamic' ;;
-@@ -8576,17 +8600,13 @@ _LT_EOF
+@@ -8576,17 +8604,13 @@ _LT_EOF
  	lf95*)				# Lahey Fortran 8.1
  	  whole_archive_flag_spec=
  	  tmp_sharedflag='--shared' ;;
@@ -10791,7 +10782,7 @@ Index: libffi/configure
  	  compiler_needs_object=yes
  	  tmp_sharedflag='-G' ;;
  	*Sun\ F*)			# Sun Fortran 8.3
-@@ -8602,7 +8622,7 @@ _LT_EOF
+@@ -8602,7 +8626,7 @@ _LT_EOF
          fi
  
  	case $cc_basename in
@@ -10800,7 +10791,7 @@ Index: libffi/configure
  	  # IBM XL Fortran 10.1 on PPC cannot create shared libs itself
  	  whole_archive_flag_spec='--whole-archive$convenience --no-whole-archive'
  	  hardcode_libdir_flag_spec=
-@@ -8733,10 +8753,8 @@ _LT_EOF
+@@ -8733,10 +8757,8 @@ _LT_EOF
        else
  	# If we're using GNU nm, then we don't want the "-C" option.
  	# -C means demangle to AIX nm, but means don't demangle with GNU nm
@@ -10812,7 +10803,7 @@ Index: libffi/configure
  	else
  	  export_symbols_cmds='$NM -BCpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B")) && (substr(\$ 3,1,1) != ".")) { print \$ 3 } }'\'' | sort -u > $export_symbols'
  	fi
-@@ -8823,7 +8841,11 @@ _LT_EOF
+@@ -8823,7 +8845,11 @@ _LT_EOF
  	allow_undefined_flag='-berok'
          # Determine the default libpath from the value encoded in an
          # empty executable.
@@ -10825,7 +10816,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  
  int
-@@ -8834,10 +8856,30 @@ main ()
+@@ -8834,10 +8860,30 @@ main ()
    return 0;
  }
  _ACEOF
@@ -10860,7 +10851,7 @@ Index: libffi/configure
  	/^0/ {
  	    s/^0  *\(.*\)$/\1/
  	    p
-@@ -8848,13 +8890,20 @@ aix_libpath=`dump -H conftest$ac_exeext 
+@@ -8848,13 +8894,20 @@ aix_libpath=`dump -H conftest$ac_exeext 
  if test -z "$aix_libpath"; then
    aix_libpath=`dump -HX64 conftest$ac_exeext 2>/dev/null | $SED -n -e "$lt_aix_libpath_sed"`
  fi
@@ -10884,7 +10875,7 @@ Index: libffi/configure
        else
  	if test "$host_cpu" = ia64; then
  	  hardcode_libdir_flag_spec='${wl}-R $libdir:/usr/lib:/lib'
-@@ -8863,7 +8912,11 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -8863,7 +8916,11 @@ if test -z "$aix_libpath"; then aix_libp
  	else
  	 # Determine the default libpath from the value encoded in an
  	 # empty executable.
@@ -10897,7 +10888,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  
  int
-@@ -8874,7 +8927,27 @@ main ()
+@@ -8874,7 +8931,27 @@ main ()
    return 0;
  }
  _ACEOF
@@ -10926,7 +10917,7 @@ Index: libffi/configure
  
  lt_aix_libpath_sed='
      /Import File Strings/,/^$/ {
-@@ -8888,9 +8961,16 @@ aix_libpath=`dump -H conftest$ac_exeext 
+@@ -8888,9 +8965,16 @@ aix_libpath=`dump -H conftest$ac_exeext 
  if test -z "$aix_libpath"; then
    aix_libpath=`dump -HX64 conftest$ac_exeext 2>/dev/null | $SED -n -e "$lt_aix_libpath_sed"`
  fi
@@ -10945,7 +10936,7 @@ Index: libffi/configure
  if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
  
  	 hardcode_libdir_flag_spec='${wl}-blibpath:$libdir:'"$aix_libpath"
-@@ -8898,13 +8978,8 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -8898,13 +8982,8 @@ if test -z "$aix_libpath"; then aix_libp
  	  # -berok will link without error, but may produce a broken library.
  	  no_undefined_flag=' ${wl}-bernotok'
  	  allow_undefined_flag=' ${wl}-berok'
@@ -10961,7 +10952,7 @@ Index: libffi/configure
  	  archive_cmds_need_lc=yes
  	  # This is similar to how AIX traditionally builds its shared libraries.
  	  archive_expsym_cmds="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs ${wl}-bnoentry $compiler_flags ${wl}-bE:$export_symbols${allow_undefined_flag}~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
-@@ -8943,7 +9018,7 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -8943,7 +9022,7 @@ if test -z "$aix_libpath"; then aix_libp
        # Tell ltmain to make .dll files, not .so files.
        shrext_cmds=".dll"
        # FIXME: Setting linknames here is a bad hack.
@@ -10970,7 +10961,7 @@ Index: libffi/configure
        # The linker will automatically build a .lib file if we build a DLL.
        old_archive_from_new_cmds='true'
        # FIXME: Should let the user specify the lib program.
-@@ -8959,11 +9034,7 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -8959,11 +9038,7 @@ if test -z "$aix_libpath"; then aix_libp
    hardcode_direct=no
    hardcode_automatic=yes
    hardcode_shlibpath_var=unsupported
@@ -10983,7 +10974,7 @@ Index: libffi/configure
    link_all_deplibs=yes
    allow_undefined_flag="$_lt_dar_allow_undefined"
    case $cc_basename in
-@@ -8971,7 +9042,7 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -8971,7 +9046,7 @@ if test -z "$aix_libpath"; then aix_libp
       *) _lt_dar_can_shared=$GCC ;;
    esac
    if test "$_lt_dar_can_shared" = "yes"; then
@@ -10992,7 +10983,7 @@ Index: libffi/configure
      archive_cmds="\$CC -dynamiclib \$allow_undefined_flag -o \$lib \$libobjs \$deplibs \$compiler_flags -install_name \$rpath/\$soname \$verstring $_lt_dar_single_mod${_lt_dsymutil}"
      module_cmds="\$CC \$allow_undefined_flag -o \$lib -bundle \$libobjs \$deplibs \$compiler_flags${_lt_dsymutil}"
      archive_expsym_cmds="sed 's,^,_,' < \$export_symbols > \$output_objdir/\${libname}-symbols.expsym~\$CC -dynamiclib \$allow_undefined_flag -o \$lib \$libobjs \$deplibs \$compiler_flags -install_name \$rpath/\$soname \$verstring ${_lt_dar_single_mod}${_lt_dar_export_syms}${_lt_dsymutil}"
-@@ -9037,7 +9108,7 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -9037,7 +9112,7 @@ if test -z "$aix_libpath"; then aix_libp
        ;;
  
      hpux10*)
@@ -11001,7 +10992,7 @@ Index: libffi/configure
  	archive_cmds='$CC -shared -fPIC ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $libobjs $deplibs $compiler_flags'
        else
  	archive_cmds='$LD -b +h $soname +b $install_libdir -o $lib $libobjs $deplibs $linker_flags'
-@@ -9056,7 +9127,7 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -9056,7 +9131,7 @@ if test -z "$aix_libpath"; then aix_libp
        ;;
  
      hpux11*)
@@ -11010,7 +11001,7 @@ Index: libffi/configure
  	case $host_cpu in
  	hppa*64*)
  	  archive_cmds='$CC -shared ${wl}+h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
-@@ -9077,46 +9148,7 @@ if test -z "$aix_libpath"; then aix_libp
+@@ -9077,46 +9152,7 @@ if test -z "$aix_libpath"; then aix_libp
  	  archive_cmds='$CC -b ${wl}+h ${wl}$soname ${wl}+nodefaultrpath -o $lib $libobjs $deplibs $compiler_flags'
  	  ;;
  	*)
@@ -11058,7 +11049,7 @@ Index: libffi/configure
  	  ;;
  	esac
        fi
-@@ -9144,26 +9176,52 @@ fi
+@@ -9144,26 +9180,52 @@ fi
  
      irix5* | irix6* | nonstopux*)
        if test "$GCC" = yes; then
@@ -11120,7 +11111,7 @@ Index: libffi/configure
        fi
        archive_cmds_need_lc='no'
        hardcode_libdir_flag_spec='${wl}-rpath ${wl}$libdir'
-@@ -9225,17 +9283,17 @@ rm -f core conftest.err conftest.$ac_obj
+@@ -9225,17 +9287,17 @@ rm -f core conftest.err conftest.$ac_obj
        hardcode_libdir_flag_spec='-L$libdir'
        hardcode_minus_L=yes
        allow_undefined_flag=unsupported
@@ -11141,7 +11132,7 @@ Index: libffi/configure
        fi
        archive_cmds_need_lc='no'
        hardcode_libdir_flag_spec='${wl}-rpath ${wl}$libdir'
-@@ -9245,13 +9303,13 @@ rm -f core conftest.err conftest.$ac_obj
+@@ -9245,13 +9307,13 @@ rm -f core conftest.err conftest.$ac_obj
      osf4* | osf5*)	# as osf3* with the addition of -msym flag
        if test "$GCC" = yes; then
  	allow_undefined_flag=' ${wl}-expect_unresolved ${wl}\*'
@@ -11158,7 +11149,7 @@ Index: libffi/configure
  
  	# Both c and cxx compiler support -rpath directly
  	hardcode_libdir_flag_spec='-rpath $libdir'
-@@ -9415,7 +9473,7 @@ rm -f core conftest.err conftest.$ac_obj
+@@ -9415,7 +9477,7 @@ rm -f core conftest.err conftest.$ac_obj
      fi
    fi
  
@@ -11167,7 +11158,7 @@ Index: libffi/configure
  $as_echo "$ld_shlibs" >&6; }
  test "$ld_shlibs" = no && can_build_shared=no
  
-@@ -9452,52 +9510,46 @@ x|xyes)
+@@ -9452,52 +9514,46 @@ x|xyes)
        # Test whether the compiler implicitly links with -lc since on some
        # systems, -lgcc has to come before -lc. If gcc already passes -lc
        # to ld, don't add -lc before -lgcc.
@@ -11254,7 +11245,7 @@ Index: libffi/configure
        ;;
      esac
    fi
-@@ -9660,7 +9712,7 @@ esac
+@@ -9660,7 +9716,7 @@ esac
  
  
  
@@ -11263,7 +11254,7 @@ Index: libffi/configure
  $as_echo_n "checking dynamic linker characteristics... " >&6; }
  
  if test "$GCC" = yes; then
-@@ -9668,23 +9720,16 @@ if test "$GCC" = yes; then
+@@ -9668,23 +9724,16 @@ if test "$GCC" = yes; then
      darwin*) lt_awk_arg="/^libraries:/,/LR/" ;;
      *) lt_awk_arg="/^libraries:/" ;;
    esac
@@ -11293,7 +11284,7 @@ Index: libffi/configure
    # Ok, now we have the path, separated by spaces, we can step through it
    # and add multilib dir if necessary.
    lt_tmp_lt_search_path_spec=
-@@ -9697,7 +9742,7 @@ if test "$GCC" = yes; then
+@@ -9697,7 +9746,7 @@ if test "$GCC" = yes; then
  	lt_tmp_lt_search_path_spec="$lt_tmp_lt_search_path_spec $lt_sys_path"
      fi
    done
@@ -11302,7 +11293,7 @@ Index: libffi/configure
  BEGIN {RS=" "; FS="/|\n";} {
    lt_foo="";
    lt_count=0;
-@@ -9717,13 +9762,7 @@ BEGIN {RS=" "; FS="/|\n";} {
+@@ -9717,13 +9766,7 @@ BEGIN {RS=" "; FS="/|\n";} {
    if (lt_foo != "") { lt_freq[lt_foo]++; }
    if (lt_freq[lt_foo] == 1) { print lt_foo; }
  }'`
@@ -11317,7 +11308,7 @@ Index: libffi/configure
  else
    sys_lib_search_path_spec="/lib /usr/lib /usr/local/lib"
  fi
-@@ -9811,7 +9850,7 @@ amigaos*)
+@@ -9811,7 +9854,7 @@ amigaos*)
    m68k)
      library_names_spec='$libname.ixlibrary $libname.a'
      # Create ${libname}_ixlibrary.a entries in /sys/libs.
@@ -11326,7 +11317,7 @@ Index: libffi/configure
      ;;
    esac
    ;;
-@@ -9864,12 +9903,23 @@ cygwin* | mingw* | pw32* | cegcc*)
+@@ -9864,12 +9907,23 @@ cygwin* | mingw* | pw32* | cegcc*)
      cygwin*)
        # Cygwin DLLs use 'cyg' prefix rather than 'lib'
        soname_spec='`echo ${libname} | sed -e 's/^lib/cyg/'``echo ${release} | $SED -e 's/[.]/-/g'`${versuffix}${shared_ext}'
@@ -11352,7 +11343,7 @@ Index: libffi/configure
        ;;
      pw32*)
        # pw32 DLLs use 'pw' prefix rather than 'lib'
-@@ -9969,19 +10019,6 @@ gnu*)
+@@ -9969,19 +10023,6 @@ gnu*)
    hardcode_into_libs=yes
    ;;
  
@@ -11372,7 +11363,7 @@ Index: libffi/configure
  hpux9* | hpux10* | hpux11*)
    # Give a soname corresponding to the major version so that dld.sl refuses to
    # link against other versions.
-@@ -10024,10 +10061,8 @@ hpux9* | hpux10* | hpux11*)
+@@ -10024,10 +10065,8 @@ hpux9* | hpux10* | hpux11*)
      soname_spec='${libname}${release}${shared_ext}$major'
      ;;
    esac
@@ -11384,7 +11375,7 @@ Index: libffi/configure
    ;;
  
  interix[3-9]*)
-@@ -10085,7 +10120,7 @@ linux*oldld* | linux*aout* | linux*coff*
+@@ -10085,7 +10124,7 @@ linux*oldld* | linux*aout* | linux*coff*
    ;;
  
  # This must be Linux ELF.
@@ -11393,7 +11384,7 @@ Index: libffi/configure
    version_type=linux
    need_lib_prefix=no
    need_version=no
-@@ -10094,17 +10129,16 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu)
+@@ -10094,17 +10133,16 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu)
    finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
    shlibpath_var=LD_LIBRARY_PATH
    shlibpath_overrides_runpath=no
@@ -11420,7 +11411,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  
  int
-@@ -10115,29 +10149,56 @@ main ()
+@@ -10115,29 +10153,56 @@ main ()
    return 0;
  }
  _ACEOF
@@ -11488,7 +11479,7 @@ Index: libffi/configure
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-@@ -10337,7 +10398,7 @@ uts4*)
+@@ -10337,7 +10402,7 @@ uts4*)
    dynamic_linker=no
    ;;
  esac
@@ -11497,7 +11488,7 @@ Index: libffi/configure
  $as_echo "$dynamic_linker" >&6; }
  test "$dynamic_linker" = no && can_build_shared=no
  
-@@ -10439,12 +10500,7 @@ fi
+@@ -10439,12 +10504,7 @@ fi
  
  
  
@@ -11511,7 +11502,7 @@ Index: libffi/configure
  $as_echo_n "checking how to hardcode library paths into programs... " >&6; }
  hardcode_action=
  if test -n "$hardcode_libdir_flag_spec" ||
-@@ -10469,7 +10525,7 @@ else
+@@ -10469,7 +10529,7 @@ else
    # directories.
    hardcode_action=unsupported
  fi
@@ -11520,7 +11511,7 @@ Index: libffi/configure
  $as_echo "$hardcode_action" >&6; }
  
  if test "$hardcode_action" = relink ||
-@@ -10514,14 +10570,18 @@ else
+@@ -10514,14 +10574,18 @@ else
  
    darwin*)
    # if libdl is installed we need to link against it
@@ -11542,7 +11533,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  
  /* Override any GCC internal prototype to avoid an error.
-@@ -10539,18 +10599,43 @@ return dlopen ();
+@@ -10539,18 +10603,43 @@ return dlopen ();
    return 0;
  }
  _ACEOF
@@ -11592,7 +11583,7 @@ Index: libffi/configure
    lt_cv_dlopen="dlopen" lt_cv_dlopen_libs="-ldl"
  else
  
-@@ -10563,19 +10648,33 @@ fi
+@@ -10563,19 +10652,33 @@ fi
      ;;
  
    *)
@@ -11636,7 +11627,7 @@ Index: libffi/configure
  
  /* Override any GCC internal prototype to avoid an error.
     Use char because int might match the return type of a GCC
-@@ -10584,6 +10683,13 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_
+@@ -10584,6 +10687,13 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_
  extern "C"
  #endif
  char shl_load ();
@@ -11650,7 +11641,7 @@ Index: libffi/configure
  int
  main ()
  {
-@@ -10592,32 +10698,56 @@ return shl_load ();
+@@ -10592,32 +10702,56 @@ return shl_load ();
    return 0;
  }
  _ACEOF
@@ -11726,7 +11717,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  
  /* Override any GCC internal prototype to avoid an error.
-@@ -10626,76 +10756,290 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_
+@@ -10626,76 +10760,290 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -12052,7 +12043,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  
  /* Override any GCC internal prototype to avoid an error.
-@@ -10713,18 +11057,43 @@ return dld_link ();
+@@ -10713,18 +11061,43 @@ return dld_link ();
    return 0;
  }
  _ACEOF
@@ -12102,7 +12093,7 @@ Index: libffi/configure
    lt_cv_dlopen="dld_link" lt_cv_dlopen_libs="-ldld"
  fi
  
-@@ -10763,9 +11132,9 @@ fi
+@@ -10763,9 +11136,9 @@ fi
      save_LIBS="$LIBS"
      LIBS="$lt_cv_dlopen_libs $LIBS"
  
@@ -12114,16 +12105,16 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    	  if test "$cross_compiling" = yes; then :
-@@ -10774,7 +11143,7 @@ else
+@@ -10774,7 +11147,7 @@ else
    lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
    lt_status=$lt_dlunknown
    cat > conftest.$ac_ext <<_LT_EOF
 -#line 10777 "configure"
-+#line 11146 "configure"
++#line 11150 "configure"
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -10815,13 +11184,7 @@ else
+@@ -10815,13 +11188,7 @@ else
  #  endif
  #endif
  
@@ -12138,7 +12129,7 @@ Index: libffi/configure
  int main ()
  {
    void *self = dlopen (0, LT_DLGLOBAL|LT_DLLAZY_OR_NOW);
-@@ -10830,11 +11193,7 @@ int main ()
+@@ -10830,11 +11197,7 @@ int main ()
    if (self)
      {
        if (dlsym (self,"fnord"))       status = $lt_dlno_uscore;
@@ -12151,7 +12142,7 @@ Index: libffi/configure
        /* dlclose (self); */
      }
    else
-@@ -10843,11 +11202,11 @@ int main ()
+@@ -10843,11 +11206,11 @@ int main ()
    return status;
  }
  _LT_EOF
@@ -12166,7 +12157,7 @@ Index: libffi/configure
      (./conftest; exit; ) >&5 2>/dev/null
      lt_status=$?
      case x$lt_status in
-@@ -10864,14 +11223,14 @@ rm -fr conftest*
+@@ -10864,14 +11227,14 @@ rm -fr conftest*
  
  
  fi
@@ -12184,16 +12175,16 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    	  if test "$cross_compiling" = yes; then :
-@@ -10880,7 +11239,7 @@ else
+@@ -10880,7 +11243,7 @@ else
    lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
    lt_status=$lt_dlunknown
    cat > conftest.$ac_ext <<_LT_EOF
 -#line 10883 "configure"
-+#line 11242 "configure"
++#line 11246 "configure"
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -10921,13 +11280,7 @@ else
+@@ -10921,13 +11284,7 @@ else
  #  endif
  #endif
  
@@ -12208,7 +12199,7 @@ Index: libffi/configure
  int main ()
  {
    void *self = dlopen (0, LT_DLGLOBAL|LT_DLLAZY_OR_NOW);
-@@ -10936,11 +11289,7 @@ int main ()
+@@ -10936,11 +11293,7 @@ int main ()
    if (self)
      {
        if (dlsym (self,"fnord"))       status = $lt_dlno_uscore;
@@ -12221,7 +12212,7 @@ Index: libffi/configure
        /* dlclose (self); */
      }
    else
-@@ -10949,11 +11298,11 @@ int main ()
+@@ -10949,11 +11302,11 @@ int main ()
    return status;
  }
  _LT_EOF
@@ -12236,7 +12227,7 @@ Index: libffi/configure
      (./conftest; exit; ) >&5 2>/dev/null
      lt_status=$?
      case x$lt_status in
-@@ -10970,7 +11319,7 @@ rm -fr conftest*
+@@ -10970,7 +11323,7 @@ rm -fr conftest*
  
  
  fi
@@ -12245,7 +12236,7 @@ Index: libffi/configure
  $as_echo "$lt_cv_dlopen_self_static" >&6; }
      fi
  
-@@ -11009,12 +11358,12 @@ fi
+@@ -11009,12 +11362,12 @@ fi
  
  striplib=
  old_striplib=
@@ -12260,7 +12251,7 @@ Index: libffi/configure
  $as_echo "yes" >&6; }
  else
  # FIXME - insert some real tests, host_os isn't really good enough
-@@ -11023,15 +11372,15 @@ else
+@@ -11023,15 +11376,15 @@ else
      if test -n "$STRIP" ; then
        striplib="$STRIP -x"
        old_striplib="$STRIP -S"
@@ -12279,7 +12270,7 @@ Index: libffi/configure
  $as_echo "no" >&6; }
      ;;
    esac
-@@ -11049,12 +11398,12 @@ fi
+@@ -11049,12 +11402,12 @@ fi
  
  
    # Report which library types will actually be built
@@ -12295,7 +12286,7 @@ Index: libffi/configure
  $as_echo_n "checking whether to build shared libraries... " >&6; }
    test "$can_build_shared" = "no" && enable_shared=no
  
-@@ -11075,14 +11424,14 @@ $as_echo_n "checking whether to build sh
+@@ -11075,14 +11428,14 @@ $as_echo_n "checking whether to build sh
      fi
      ;;
    esac
@@ -12313,7 +12304,7 @@ Index: libffi/configure
  $as_echo "$enable_static" >&6; }
  
  
-@@ -11119,16 +11468,17 @@ CC="$lt_save_CC"
+@@ -11119,16 +11472,17 @@ CC="$lt_save_CC"
  
  
  
@@ -12334,7 +12325,7 @@ Index: libffi/configure
  $as_echo "$USE_MAINTAINER_MODE" >&6; }
     if test $USE_MAINTAINER_MODE = yes; then
    MAINTAINER_MODE_TRUE=
-@@ -11142,79 +11492,523 @@ fi
+@@ -11142,79 +11496,523 @@ fi
  
  
  
@@ -12912,7 +12903,7 @@ Index: libffi/configure
     #    unmap any subset of those pages, the pages that were not
     #    explicitly unmapped remain accessible.
     # 2. If you map two adjacent blocks of memory and then unmap them
-@@ -11228,16 +12022,20 @@ else
+@@ -11228,16 +12026,20 @@ else
  	ac_cv_func_mmap_dev_zero=yes;;
     esac
  fi
@@ -12937,7 +12928,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <sys/types.h>
  #include <sys/mman.h>
-@@ -11255,22 +12053,43 @@ int n = MAP_ANONYMOUS;
+@@ -11255,22 +12057,43 @@ int n = MAP_ANONYMOUS;
    return 0;
  }
  _ACEOF
@@ -12986,7 +12977,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
    # Add a system to this blacklist if it has mmap() and MAP_ANON or
-@@ -11285,24 +12104,30 @@ else
+@@ -11285,24 +12108,30 @@ else
  	ac_cv_func_mmap_anon=yes;;
     esac
  fi
@@ -13021,7 +13012,7 @@ Index: libffi/configure
  
  fi
  
-@@ -11330,6 +12155,10 @@ case "$host" in
+@@ -11330,6 +12159,10 @@ case "$host" in
  
    amd64-*-freebsd* | amd64-*-openbsd*)
  	TARGET=X86_64; TARGETDIR=x86
@@ -13032,7 +13023,7 @@ Index: libffi/configure
  	;;
  
    avr32*-*-*)
-@@ -11447,7 +12276,9 @@ esac
+@@ -11454,7 +12287,9 @@ esac
  
  
  if test $TARGETDIR = unknown; then
@@ -13043,7 +13034,7 @@ Index: libffi/configure
  fi
  
   if test x$TARGET = xMIPS; then
-@@ -11538,6 +12369,14 @@ else
+@@ -11545,6 +12380,14 @@ else
    M68K_FALSE=
  fi
  
@@ -13058,7 +13049,7 @@ Index: libffi/configure
   if test x$TARGET = xPOWERPC; then
    POWERPC_TRUE=
    POWERPC_FALSE='#'
-@@ -11659,12 +12498,16 @@ else
+@@ -11666,12 +12509,16 @@ else
  fi
  
  
@@ -13078,7 +13069,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <stdlib.h>
  #include <stdarg.h>
-@@ -11679,23 +12522,48 @@ main ()
+@@ -11686,23 +12533,48 @@ main ()
    return 0;
  }
  _ACEOF
@@ -13132,7 +13123,7 @@ Index: libffi/configure
  else
    ac_cv_header_stdc=no
  fi
-@@ -11705,14 +12573,18 @@ fi
+@@ -11712,14 +12584,18 @@ fi
  
  if test $ac_cv_header_stdc = yes; then
    # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
@@ -13154,7 +13145,7 @@ Index: libffi/configure
  else
    ac_cv_header_stdc=no
  fi
-@@ -11722,10 +12594,14 @@ fi
+@@ -11729,10 +12605,14 @@ fi
  
  if test $ac_cv_header_stdc = yes; then
    # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
@@ -13171,7 +13162,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <ctype.h>
  #include <stdlib.h>
-@@ -11752,31 +12628,150 @@ main ()
+@@ -11759,31 +12639,150 @@ main ()
    return 0;
  }
  _ACEOF
@@ -13333,7 +13324,7 @@ Index: libffi/configure
  _ACEOF
  
  fi
-@@ -11784,12 +12779,16 @@ done
+@@ -11791,12 +12790,16 @@ done
  
  # The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
  # for constant arguments.  Useless!
@@ -13353,7 +13344,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <alloca.h>
  int
-@@ -11801,28 +12800,59 @@ char *p = (char *) alloca (2 * sizeof (i
+@@ -11808,28 +12811,59 @@ char *p = (char *) alloca (2 * sizeof (i
    return 0;
  }
  _ACEOF
@@ -13422,7 +13413,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #ifdef __GNUC__
  # define alloca __builtin_alloca
-@@ -11854,20 +12884,47 @@ char *p = (char *) alloca (1);
+@@ -11861,20 +12895,47 @@ char *p = (char *) alloca (1);
    return 0;
  }
  _ACEOF
@@ -13476,7 +13467,7 @@ Index: libffi/configure
  
  else
    # The SVR3 libPW and SVR4 libucb both contain incompatible functions
-@@ -11877,15 +12934,21 @@ else
+@@ -11884,15 +12945,21 @@ else
  
  ALLOCA=\${LIBOBJDIR}alloca.$ac_objext
  
@@ -13502,7 +13493,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #if defined CRAY && ! defined CRAY2
  webecray
-@@ -11895,7 +12958,7 @@ wenotbecray
+@@ -11902,7 +12969,7 @@ wenotbecray
  
  _ACEOF
  if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
@@ -13511,7 +13502,7 @@ Index: libffi/configure
    ac_cv_os_cray=yes
  else
    ac_cv_os_cray=no
-@@ -11903,14 +12966,101 @@ fi
+@@ -11910,14 +12977,101 @@ fi
  rm -f conftest*
  
  fi
@@ -13617,7 +13608,7 @@ Index: libffi/configure
  
  cat >>confdefs.h <<_ACEOF
  #define CRAY_STACKSEG_END $ac_func
-@@ -11922,15 +13072,19 @@ fi
+@@ -11929,15 +13083,19 @@ fi
    done
  fi
  
@@ -13641,7 +13632,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  $ac_includes_default
  int
-@@ -11953,18 +13107,46 @@ main ()
+@@ -11960,18 +13118,46 @@ main ()
    return find_stack_direction () < 0;
  }
  _ACEOF
@@ -13693,7 +13684,7 @@ Index: libffi/configure
  cat >>confdefs.h <<_ACEOF
  #define STACK_DIRECTION $ac_cv_c_stack_direction
  _ACEOF
-@@ -11977,61 +13159,711 @@ fi
+@@ -11984,61 +13170,711 @@ fi
  # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
  # declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
  # This bug is HP SR number 8606223364.
@@ -14441,7 +14432,7 @@ Index: libffi/configure
  $as_echo "$ac_cv_sizeof_long_double" >&6; }
  
  
-@@ -12049,21 +13881,28 @@ if test -z "$HAVE_LONG_DOUBLE"; then
+@@ -12056,21 +13892,28 @@ if test -z "$HAVE_LONG_DOUBLE"; then
      if test $ac_cv_sizeof_long_double != 0; then
        HAVE_LONG_DOUBLE=1
  
@@ -14474,7 +14465,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #ifndef __APPLE_CC__
  	       not a universal capable compiler
-@@ -12071,34 +13910,46 @@ else
+@@ -12078,34 +13921,46 @@ else
  	     typedef int dummy;
  
  _ACEOF
@@ -14543,7 +14534,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <sys/types.h>
  	     #include <sys/param.h>
-@@ -12116,9 +13967,30 @@ main ()
+@@ -12123,9 +13978,30 @@ main ()
    return 0;
  }
  _ACEOF
@@ -14576,7 +14567,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <sys/types.h>
  		#include <sys/param.h>
-@@ -12134,18 +14006,49 @@ main ()
+@@ -12141,18 +14017,49 @@ main ()
    return 0;
  }
  _ACEOF
@@ -14629,7 +14620,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <limits.h>
  
-@@ -12160,9 +14063,30 @@ main ()
+@@ -12167,9 +14074,30 @@ main ()
    return 0;
  }
  _ACEOF
@@ -14662,7 +14653,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  #include <limits.h>
  
-@@ -12177,20 +14101,51 @@ main ()
+@@ -12184,20 +14112,51 @@ main ()
    return 0;
  }
  _ACEOF
@@ -14718,7 +14709,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  short int ascii_mm[] =
  		  { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
-@@ -12216,7 +14171,24 @@ return use_ascii (foo) == use_ebcdic (fo
+@@ -12223,7 +14182,24 @@ return use_ascii (foo) == use_ebcdic (fo
    return 0;
  }
  _ACEOF
@@ -14744,7 +14735,7 @@ Index: libffi/configure
    if grep BIGenDianSyS conftest.$ac_objext >/dev/null; then
  	      ac_cv_c_bigendian=yes
  	    fi
-@@ -12228,10 +14200,20 @@ if ac_fn_c_try_compile "$LINENO"; then :
+@@ -12235,10 +14211,20 @@ if ac_fn_c_try_compile "$LINENO"; then :
  		ac_cv_c_bigendian=unknown
  	      fi
  	    fi
@@ -14766,7 +14757,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  $ac_includes_default
  int
-@@ -12251,44 +14233,82 @@ main ()
+@@ -12258,44 +14244,82 @@ main ()
    return 0;
  }
  _ACEOF
@@ -14861,7 +14852,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  asm (".cfi_startproc\n\t.cfi_endproc");
  int
-@@ -12299,26 +14319,49 @@ main ()
+@@ -12306,26 +14330,49 @@ main ()
    return 0;
  }
  _ACEOF
@@ -14917,7 +14908,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
  
-@@ -12326,7 +14369,11 @@ else
+@@ -12333,7 +14380,11 @@ else
  	save_LDFLAGS="$LDFLAGS"
  	CFLAGS="$CFLAGS -fpic"
  	LDFLAGS="$LDFLAGS -shared"
@@ -14930,7 +14921,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  asm (".text; foo: nop; .data; .align 4; .byte 0; .uaword %r_disp32(foo); .text");
  int
-@@ -12337,33 +14384,64 @@ main ()
+@@ -12344,33 +14395,64 @@ main ()
    return 0;
  }
  _ACEOF
@@ -15004,7 +14995,7 @@ Index: libffi/configure
  /* end confdefs.h.  */
  asm (".register %g2, #scratch");
  int
-@@ -12374,27 +14452,50 @@ main ()
+@@ -12381,27 +14463,50 @@ main ()
    return 0;
  }
  _ACEOF
@@ -15061,7 +15052,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
  
-@@ -12405,23 +14506,29 @@ else
+@@ -12412,23 +14517,29 @@ else
  	fi
  
  fi
@@ -15094,9 +15085,9 @@ Index: libffi/configure
 +cat confdefs.h >>conftest.$ac_ext
 +cat >>conftest.$ac_ext <<_ACEOF
  /* end confdefs.h.  */
- asm (".ascii \"string\"");
+ asm (".ascii \\"string\\"");
  int
-@@ -12432,31 +14539,58 @@ main ()
+@@ -12439,31 +14550,58 @@ main ()
    return 0;
  }
  _ACEOF
@@ -15160,9 +15151,9 @@ Index: libffi/configure
 +cat confdefs.h >>conftest.$ac_ext
 +cat >>conftest.$ac_ext <<_ACEOF
  /* end confdefs.h.  */
- asm (".string \"string\"");
+ asm (".string \\"string\\"");
  int
-@@ -12467,19 +14601,42 @@ main ()
+@@ -12474,19 +14612,42 @@ main ()
    return 0;
  }
  _ACEOF
@@ -15209,7 +15200,7 @@ Index: libffi/configure
  
      fi
  fi
-@@ -12487,15 +14644,17 @@ fi
+@@ -12494,15 +14655,17 @@ fi
  case "$target" in
       *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
  
@@ -15230,7 +15221,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
  
-@@ -12506,18 +14665,20 @@ else
+@@ -12513,18 +14676,20 @@ else
  	fi
  
  fi
@@ -15255,7 +15246,7 @@ Index: libffi/configure
    $as_echo_n "(cached) " >&6
  else
  
-@@ -12534,35 +14695,41 @@ else
+@@ -12541,35 +14706,41 @@ else
  	rm -f conftest.*
  
  fi
@@ -15306,7 +15297,7 @@ Index: libffi/configure
  	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
  		libffi_cv_hidden_visibility_attribute=yes
  	    fi
-@@ -12570,11 +14737,13 @@ else
+@@ -12577,11 +14748,13 @@ else
  	rm -f conftest.*
  
  fi
@@ -15322,7 +15313,7 @@ Index: libffi/configure
  
  fi
  
-@@ -12585,41 +14754,50 @@ fi
+@@ -12592,41 +14765,50 @@ fi
  
  
  
@@ -15381,7 +15372,7 @@ Index: libffi/configure
  
    fi
  fi
-@@ -12655,7 +14833,7 @@ ac_config_commands="$ac_config_commands 
+@@ -12662,7 +14844,7 @@ ac_config_commands="$ac_config_commands 
  ac_config_links="$ac_config_links include/ffitarget.h:src/$TARGETDIR/ffitarget.h"
  
  
@@ -15390,7 +15381,7 @@ Index: libffi/configure
  
  
  cat >confcache <<\_ACEOF
-@@ -12685,13 +14863,13 @@ _ACEOF
+@@ -12692,13 +14874,13 @@ _ACEOF
      case $ac_val in #(
      *${as_nl}*)
        case $ac_var in #(
@@ -15406,7 +15397,7 @@ Index: libffi/configure
        esac ;;
      esac
    done
-@@ -12699,8 +14877,8 @@ $as_echo "$as_me: WARNING: cache variabl
+@@ -12706,8 +14888,8 @@ $as_echo "$as_me: WARNING: cache variabl
    (set) 2>&1 |
      case $as_nl`(ac_space=' '; set) 2>&1` in #(
      *${as_nl}ac_space=\ *)
@@ -15417,7 +15408,7 @@ Index: libffi/configure
        sed -n \
  	"s/'/'\\\\''/g;
  	  s/^\\([_$as_cr_alnum]*_cv_[_$as_cr_alnum]*\\)=\\(.*\\)/\\1='\\2'/p"
-@@ -12723,11 +14901,11 @@ $as_echo "$as_me: WARNING: cache variabl
+@@ -12730,11 +14912,11 @@ $as_echo "$as_me: WARNING: cache variabl
  if diff "$cache_file" confcache >/dev/null 2>&1; then :; else
    if test -w "$cache_file"; then
      test "x$cache_file" != "x/dev/null" &&
@@ -15431,7 +15422,7 @@ Index: libffi/configure
  $as_echo "$as_me: not updating unwritable cache $cache_file" >&6;}
    fi
  fi
-@@ -12747,8 +14925,8 @@ for ac_i in : $LIBOBJS; do test "x$ac_i"
+@@ -12754,8 +14936,8 @@ for ac_i in : $LIBOBJS; do test "x$ac_i"
    ac_i=`$as_echo "$ac_i" | sed "$ac_script"`
    # 2. Prepend LIBOBJDIR.  When used with automake>=1.10 LIBOBJDIR
    #    will be set to the directory where LIBOBJS objects are built.
@@ -15442,7 +15433,7 @@ Index: libffi/configure
  done
  LIBOBJS=$ac_libobjs
  
-@@ -12764,128 +14942,228 @@ else
+@@ -12771,128 +14953,228 @@ else
  fi
  
  if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
@@ -15733,7 +15724,7 @@ Index: libffi/configure
  fi
  
  
-@@ -12893,10 +15171,9 @@ fi
+@@ -12900,10 +15182,9 @@ fi
  ac_write_fail=0
  ac_clean_files_save=$ac_clean_files
  ac_clean_files="$ac_clean_files $CONFIG_STATUS"
@@ -15746,7 +15737,7 @@ Index: libffi/configure
  #! $SHELL
  # Generated by $as_me.
  # Run this file to recreate the current configuration.
-@@ -12906,18 +15183,17 @@ cat >$CONFIG_STATUS <<_ASEOF || as_write
+@@ -12913,18 +15194,17 @@ cat >$CONFIG_STATUS <<_ASEOF || as_write
  debug=false
  ac_cs_recheck=false
  ac_cs_silent=false
@@ -15772,7 +15763,7 @@ Index: libffi/configure
    emulate sh
    NULLCMD=:
    # Pre-4.2 versions of Zsh do word splitting on ${1+"$@"}, which
-@@ -12925,15 +15201,23 @@ if test -n "${ZSH_VERSION+set}" && (emul
+@@ -12932,15 +15212,23 @@ if test -n "${ZSH_VERSION+set}" && (emul
    alias -g '${1+"$@"}'='"$@"'
    setopt NO_GLOB_SUBST
  else
@@ -15801,7 +15792,7 @@ Index: libffi/configure
  as_nl='
  '
  export as_nl
-@@ -12941,13 +15225,7 @@ export as_nl
+@@ -12948,13 +15236,7 @@ export as_nl
  as_echo='\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
  as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo
  as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo$as_echo
@@ -15816,7 +15807,7 @@ Index: libffi/configure
    as_echo='printf %s\n'
    as_echo_n='printf %s'
  else
-@@ -12958,7 +15236,7 @@ else
+@@ -12965,7 +15247,7 @@ else
      as_echo_body='eval expr "X$1" : "X\\(.*\\)"'
      as_echo_n_body='eval
        arg=$1;
@@ -15825,7 +15816,7 @@ Index: libffi/configure
        *"$as_nl"*)
  	expr "X$arg" : "X\\(.*\\)$as_nl";
  	arg=`expr "X$arg" : ".*$as_nl\\(.*\\)"`;;
-@@ -12981,6 +15259,13 @@ if test "${PATH_SEPARATOR+set}" != set; 
+@@ -12988,6 +15270,13 @@ if test "${PATH_SEPARATOR+set}" != set; 
    }
  fi
  
@@ -15839,7 +15830,7 @@ Index: libffi/configure
  
  # IFS
  # We need space, tab and new line, in precisely that order.  Quoting is
-@@ -12990,15 +15275,15 @@ fi
+@@ -12997,15 +15286,15 @@ fi
  IFS=" ""	$as_nl"
  
  # Find who we are.  Look in the path if we contain no directory separator.
@@ -15858,7 +15849,7 @@ Index: libffi/configure
  IFS=$as_save_IFS
  
       ;;
-@@ -13010,16 +15295,12 @@ if test "x$as_myself" = x; then
+@@ -13017,16 +15306,12 @@ if test "x$as_myself" = x; then
  fi
  if test ! -f "$as_myself"; then
    $as_echo "$as_myself: error: cannot find myself; rerun with an absolute file name" >&2
@@ -15879,7 +15870,7 @@ Index: libffi/configure
  done
  PS1='$ '
  PS2='> '
-@@ -13031,89 +15312,7 @@ export LC_ALL
+@@ -13038,89 +15323,7 @@ export LC_ALL
  LANGUAGE=C
  export LANGUAGE
  
@@ -15970,7 +15961,7 @@ Index: libffi/configure
  if expr a : '\(a\)' >/dev/null 2>&1 &&
     test "X`expr 00001 : '.*\(...\)'`" = X001; then
    as_expr=expr
-@@ -13127,12 +15326,8 @@ else
+@@ -13134,12 +15337,8 @@ else
    as_basename=false
  fi
  
@@ -15984,7 +15975,7 @@ Index: libffi/configure
  as_me=`$as_basename -- "$0" ||
  $as_expr X/"$0" : '.*/\([^/][^/]*\)/*$' \| \
  	 X"$0" : 'X\(//\)$' \| \
-@@ -13152,25 +15347,76 @@ $as_echo X/"$0" |
+@@ -13159,25 +15358,76 @@ $as_echo X/"$0" |
  	  }
  	  s/.*/./; q'`
  
@@ -16072,7 +16063,7 @@ Index: libffi/configure
  
  rm -f conf$$ conf$$.exe conf$$.file
  if test -d conf$$.dir; then
-@@ -13199,56 +15445,8 @@ fi
+@@ -13206,56 +15456,8 @@ fi
  rm -f conf$$ conf$$.exe conf$$.dir/conf$$.file conf$$.file
  rmdir conf$$.dir 2>/dev/null
  
@@ -16130,7 +16121,7 @@ Index: libffi/configure
  else
    test -d ./-p && rmdir ./-p
    as_mkdir_p=false
-@@ -13267,10 +15465,10 @@ else
+@@ -13274,10 +15476,10 @@ else
        if test -d "$1"; then
  	test -d "$1/.";
        else
@@ -16143,7 +16134,7 @@ Index: libffi/configure
  	???[sx]*):;;*)false;;esac;fi
      '\'' sh
    '
-@@ -13285,19 +15483,13 @@ as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr
+@@ -13292,19 +15494,13 @@ as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr
  
  
  exec 6>&1
@@ -16166,7 +16157,7 @@ Index: libffi/configure
  
    CONFIG_FILES    = $CONFIG_FILES
    CONFIG_HEADERS  = $CONFIG_HEADERS
-@@ -13330,11 +15522,10 @@ _ACEOF
+@@ -13337,11 +15533,10 @@ _ACEOF
  
  cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
  ac_cs_usage="\
@@ -16181,7 +16172,7 @@ Index: libffi/configure
  
    -h, --help       print this help, then exit
    -V, --version    print version number and configuration settings, then exit
-@@ -13359,16 +15550,16 @@ $config_links
+@@ -13366,16 +15561,16 @@ $config_links
  Configuration commands:
  $config_commands
  
@@ -16202,7 +16193,7 @@ Index: libffi/configure
  This config.status script is free software; the Free Software Foundation
  gives unlimited permission to copy, distribute and modify it."
  
-@@ -13411,19 +15602,20 @@ do
+@@ -13418,19 +15613,20 @@ do
      case $ac_optarg in
      *\'*) ac_optarg=`$as_echo "$ac_optarg" | sed "s/'/'\\\\\\\\''/g"` ;;
      esac
@@ -16227,7 +16218,7 @@ Index: libffi/configure
    --help | --hel | -h )
      $as_echo "$ac_cs_usage"; exit ;;
    -q | -quiet | --quiet | --quie | --qui | --qu | --q \
-@@ -13431,10 +15623,11 @@ Try \`$0 --help' for more information.";
+@@ -13438,10 +15634,11 @@ Try \`$0 --help' for more information.";
      ac_cs_silent=: ;;
  
    # This is an error.
@@ -16242,7 +16233,7 @@ Index: libffi/configure
       ac_need_defaults=false ;;
  
    esac
-@@ -13475,20 +15668,6 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -13482,20 +15679,6 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
  #
  # INIT-COMMANDS
  #
@@ -16263,7 +16254,7 @@ Index: libffi/configure
  AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
  
  
-@@ -13499,143 +15678,131 @@ AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac
+@@ -13506,143 +15689,131 @@ AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac
  sed_quote_subst='$sed_quote_subst'
  double_quote_subst='$double_quote_subst'
  delay_variable_subst='$delay_variable_subst'
@@ -16526,7 +16517,7 @@ Index: libffi/configure
  GREP \
  EGREP \
  FGREP \
-@@ -13659,6 +15826,8 @@ lt_cv_sys_global_symbol_pipe \
+@@ -13666,6 +15837,8 @@ lt_cv_sys_global_symbol_pipe \
  lt_cv_sys_global_symbol_to_cdecl \
  lt_cv_sys_global_symbol_to_c_name_address \
  lt_cv_sys_global_symbol_to_c_name_address_lib_prefix \
@@ -16535,7 +16526,7 @@ Index: libffi/configure
  lt_prog_compiler_no_builtin_flag \
  lt_prog_compiler_wl \
  lt_prog_compiler_pic \
-@@ -13688,13 +15857,12 @@ variables_saved_for_relink \
+@@ -13695,13 +15868,12 @@ variables_saved_for_relink \
  libname_spec \
  library_names_spec \
  soname_spec \
@@ -16551,7 +16542,7 @@ Index: libffi/configure
        ;;
      *)
        eval "lt_\$var=\\\\\\"\\\$\$var\\\\\\""
-@@ -13721,9 +15889,9 @@ postuninstall_cmds \
+@@ -13728,9 +15900,9 @@ postuninstall_cmds \
  finish_cmds \
  sys_lib_search_path_spec \
  sys_lib_dlsearch_path_spec; do
@@ -16563,7 +16554,7 @@ Index: libffi/configure
        ;;
      *)
        eval "lt_\$var=\\\\\\"\\\$\$var\\\\\\""
-@@ -13731,6 +15899,12 @@ sys_lib_dlsearch_path_spec; do
+@@ -13738,6 +15910,12 @@ sys_lib_dlsearch_path_spec; do
      esac
  done
  
@@ -16576,7 +16567,7 @@ Index: libffi/configure
  ac_aux_dir='$ac_aux_dir'
  xsi_shell='$xsi_shell'
  lt_shell_append='$lt_shell_append'
-@@ -13761,7 +15935,6 @@ for ac_config_target in $ac_config_targe
+@@ -13768,7 +15946,6 @@ for ac_config_target in $ac_config_targe
  do
    case $ac_config_target in
      "fficonfig.h") CONFIG_HEADERS="$CONFIG_HEADERS fficonfig.h" ;;
@@ -16584,7 +16575,7 @@ Index: libffi/configure
      "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
      "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
      "include") CONFIG_COMMANDS="$CONFIG_COMMANDS include" ;;
-@@ -13772,8 +15945,11 @@ do
+@@ -13779,8 +15956,11 @@ do
      "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
      "testsuite/Makefile") CONFIG_FILES="$CONFIG_FILES testsuite/Makefile" ;;
      "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
@@ -16597,7 +16588,7 @@ Index: libffi/configure
    esac
  done
  
-@@ -13801,7 +15977,7 @@ $debug ||
+@@ -13808,7 +15988,7 @@ $debug ||
    trap 'exit_status=$?
    { test -z "$tmp" || test ! -d "$tmp" || rm -fr "$tmp"; } && exit $exit_status
  ' 0
@@ -16606,7 +16597,7 @@ Index: libffi/configure
  }
  # Create a (secure) tmp directory for tmp files.
  
-@@ -13812,7 +15988,11 @@ $debug ||
+@@ -13819,7 +15999,11 @@ $debug ||
  {
    tmp=./conf$$-$RANDOM
    (umask 077 && mkdir "$tmp")
@@ -16619,7 +16610,7 @@ Index: libffi/configure
  
  # Set up the scripts for CONFIG_FILES section.
  # No need to generate them if there are no CONFIG_FILES.
-@@ -13820,16 +16000,10 @@ $debug ||
+@@ -13827,16 +16011,10 @@ $debug ||
  if test -n "$CONFIG_FILES"; then
  
  
@@ -16638,7 +16629,7 @@ Index: libffi/configure
  else
    ac_cs_awk_cr=$ac_cr
  fi
-@@ -13843,18 +16017,24 @@ _ACEOF
+@@ -13850,18 +16028,24 @@ _ACEOF
    echo "$ac_subst_vars" | sed 's/.*/&!$&$ac_delim/' &&
    echo "_ACEOF"
  } >conf$$subs.sh ||
@@ -16666,7 +16657,7 @@ Index: libffi/configure
    else
      ac_delim="$ac_delim!$ac_delim _$ac_delim!! "
    fi
-@@ -13943,7 +16123,9 @@ if sed "s/$ac_cr//" < /dev/null > /dev/n
+@@ -13950,7 +16134,9 @@ if sed "s/$ac_cr//" < /dev/null > /dev/n
  else
    cat
  fi < "$tmp/subs1.awk" > "$tmp/subs.awk" \
@@ -16677,7 +16668,7 @@ Index: libffi/configure
  _ACEOF
  
  # VPATH may cause trouble with some makes, so we remove $(srcdir),
-@@ -13984,7 +16166,9 @@ for ac_last_try in false false :; do
+@@ -13991,7 +16177,9 @@ for ac_last_try in false false :; do
    if test -z "$ac_t"; then
      break
    elif $ac_last_try; then
@@ -16688,7 +16679,7 @@ Index: libffi/configure
    else
      ac_delim="$ac_delim!$ac_delim _$ac_delim!! "
    fi
-@@ -14069,7 +16253,9 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -14076,7 +16264,9 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
  _ACAWK
  _ACEOF
  cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
@@ -16699,7 +16690,7 @@ Index: libffi/configure
  fi # test -n "$CONFIG_HEADERS"
  
  
-@@ -14082,7 +16268,9 @@ do
+@@ -14089,7 +16279,9 @@ do
    esac
    case $ac_mode$ac_tag in
    :[FHL]*:*);;
@@ -16710,7 +16701,7 @@ Index: libffi/configure
    :[FH]-) ac_tag=-:-;;
    :[FH]*) ac_tag=$ac_tag:$ac_tag.in;;
    esac
-@@ -14110,10 +16298,12 @@ do
+@@ -14117,10 +16309,12 @@ do
  	   [\\/$]*) false;;
  	   *) test -f "$srcdir/$ac_f" && ac_f="$srcdir/$ac_f";;
  	   esac ||
@@ -16725,7 +16716,7 @@ Index: libffi/configure
      done
  
      # Let's still pretend it is `configure' which instantiates (i.e., don't
-@@ -14124,7 +16314,7 @@ do
+@@ -14131,7 +16325,7 @@ do
  	`' by configure.'
      if test x"$ac_file" != x-; then
        configure_input="$ac_file.  $configure_input"
@@ -16734,7 +16725,7 @@ Index: libffi/configure
  $as_echo "$as_me: creating $ac_file" >&6;}
      fi
      # Neutralize special characters interpreted by sed in replacement strings.
-@@ -14137,7 +16327,9 @@ $as_echo "$as_me: creating $ac_file" >&6
+@@ -14144,7 +16338,9 @@ $as_echo "$as_me: creating $ac_file" >&6
  
      case $ac_tag in
      *:-:* | *:-) cat >"$tmp/stdin" \
@@ -16745,7 +16736,7 @@ Index: libffi/configure
      esac
      ;;
    esac
-@@ -14165,7 +16357,47 @@ $as_echo X"$ac_file" |
+@@ -14172,7 +16368,47 @@ $as_echo X"$ac_file" |
  	    q
  	  }
  	  s/.*/./; q'`
@@ -16794,7 +16785,7 @@ Index: libffi/configure
    ac_builddir=.
  
  case "$ac_dir" in
-@@ -14222,6 +16454,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_wri
+@@ -14229,6 +16465,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_wri
  # If the template does not know about datarootdir, expand it.
  # FIXME: This hack should be removed a few years after 2.60.
  ac_datarootdir_hack=; ac_datarootdir_seen=
@@ -16802,7 +16793,7 @@ Index: libffi/configure
  ac_sed_dataroot='
  /datarootdir/ {
    p
-@@ -14231,11 +16464,12 @@ ac_sed_dataroot='
+@@ -14238,11 +16475,12 @@ ac_sed_dataroot='
  /@docdir@/p
  /@infodir@/p
  /@localedir@/p
@@ -16817,7 +16808,7 @@ Index: libffi/configure
  $as_echo "$as_me: WARNING: $ac_file_inputs seems to ignore the --datarootdir setting" >&2;}
  _ACEOF
  cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
-@@ -14245,7 +16479,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -14252,7 +16490,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
    s&@infodir@&$infodir&g
    s&@localedir@&$localedir&g
    s&@mandir@&$mandir&g
@@ -16826,7 +16817,7 @@ Index: libffi/configure
  esac
  _ACEOF
  
-@@ -14274,12 +16508,14 @@ s&@MKDIR_P@&$ac_MKDIR_P&;t t
+@@ -14281,12 +16519,14 @@ s&@MKDIR_P@&$ac_MKDIR_P&;t t
  $ac_datarootdir_hack
  "
  eval sed \"\$ac_sed_extra\" "$ac_file_inputs" | $AWK -f "$tmp/subs.awk" >$tmp/out \
@@ -16843,7 +16834,7 @@ Index: libffi/configure
  which seems to be undefined.  Please make sure it is defined." >&5
  $as_echo "$as_me: WARNING: $ac_file contains a reference to the variable \`datarootdir'
  which seems to be undefined.  Please make sure it is defined." >&2;}
-@@ -14289,7 +16525,9 @@ which seems to be undefined.  Please mak
+@@ -14296,7 +16536,9 @@ which seems to be undefined.  Please mak
    -) cat "$tmp/out" && rm -f "$tmp/out";;
    *) rm -f "$ac_file" && mv "$tmp/out" "$ac_file";;
    esac \
@@ -16854,7 +16845,7 @@ Index: libffi/configure
   ;;
    :H)
    #
-@@ -14300,19 +16538,25 @@ which seems to be undefined.  Please mak
+@@ -14307,19 +16549,25 @@ which seems to be undefined.  Please mak
        $as_echo "/* $configure_input  */" \
        && eval '$AWK -f "$tmp/defines.awk"' "$ac_file_inputs"
      } >"$tmp/config.h" \
@@ -16884,7 +16875,7 @@ Index: libffi/configure
    fi
  # Compute "$ac_file"'s index in $config_headers.
  _am_arg="$ac_file"
-@@ -14362,11 +16606,13 @@ $as_echo X"$_am_arg" |
+@@ -14369,11 +16617,13 @@ $as_echo X"$_am_arg" |
        ac_source=$srcdir/$ac_source
      fi
  
@@ -16900,7 +16891,7 @@ Index: libffi/configure
      fi
      rm -f "$ac_file"
  
-@@ -14378,24 +16624,18 @@ $as_echo "$as_me: linking $ac_source to 
+@@ -14385,24 +16635,18 @@ $as_echo "$as_me: linking $ac_source to 
      ln -s "$ac_rel_source" "$ac_file" 2>/dev/null ||
        ln "$ac_source" "$ac_file" 2>/dev/null ||
        cp -p "$ac_source" "$ac_file" ||
@@ -16929,7 +16920,7 @@ Index: libffi/configure
      "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
    # Autoconf 2.62 quotes --file arguments for eval, but not when files
    # are listed without --file.  Let's play safe and only enable the eval
-@@ -14484,7 +16724,47 @@ $as_echo X"$file" |
+@@ -14491,7 +16735,47 @@ $as_echo X"$file" |
  	    q
  	  }
  	  s/.*/./; q'`
@@ -16978,7 +16969,7 @@ Index: libffi/configure
        # echo "creating $dirpart/$file"
        echo '# dummy' > "$dirpart/$file"
      done
-@@ -14512,7 +16792,7 @@ $as_echo X"$file" |
+@@ -14519,7 +16803,7 @@ $as_echo X"$file" |
  # NOTE: Changes made to this file will be lost: look at ltmain.sh.
  #
  #   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005,
@@ -16987,7 +16978,7 @@ Index: libffi/configure
  #   Written by Gordon Matzigkeit, 1996
  #
  #   This file is part of GNU Libtool.
-@@ -14560,12 +16840,6 @@ pic_mode=$pic_mode
+@@ -14567,12 +16851,6 @@ pic_mode=$pic_mode
  # Whether or not to optimize for fast installation.
  fast_install=$enable_fast_install
  
@@ -17000,7 +16991,7 @@ Index: libffi/configure
  # The host system.
  host_alias=$host_alias
  host=$host
-@@ -14615,6 +16889,10 @@ SP2NL=$lt_lt_SP2NL
+@@ -14622,6 +16900,10 @@ SP2NL=$lt_lt_SP2NL
  # turn newlines into spaces.
  NL2SP=$lt_lt_NL2SP
  
@@ -17011,7 +17002,7 @@ Index: libffi/configure
  # An object symbol dumper.
  OBJDUMP=$lt_OBJDUMP
  
-@@ -14636,9 +16914,6 @@ RANLIB=$lt_RANLIB
+@@ -14643,9 +16925,6 @@ RANLIB=$lt_RANLIB
  old_postinstall_cmds=$lt_old_postinstall_cmds
  old_postuninstall_cmds=$lt_old_postuninstall_cmds
  
@@ -17021,7 +17012,7 @@ Index: libffi/configure
  # A C compiler.
  LTCC=$lt_CC
  
-@@ -14660,6 +16935,12 @@ global_symbol_to_c_name_address_lib_pref
+@@ -14667,6 +16946,12 @@ global_symbol_to_c_name_address_lib_pref
  # The name of the directory that contains temporary libtool files.
  objdir=$objdir
  
@@ -17034,7 +17025,7 @@ Index: libffi/configure
  # Used to examine libraries when file_magic_cmd begins with "file".
  MAGIC_CMD=$MAGIC_CMD
  
-@@ -14722,9 +17003,6 @@ library_names_spec=$lt_library_names_spe
+@@ -14729,9 +17014,6 @@ library_names_spec=$lt_library_names_spe
  # The coded name of the library, if different from the real name.
  soname_spec=$lt_soname_spec
  
@@ -17044,7 +17035,7 @@ Index: libffi/configure
  # Command to use after installation of a shared archive.
  postinstall_cmds=$lt_postinstall_cmds
  
-@@ -14764,10 +17042,6 @@ striplib=$lt_striplib
+@@ -14771,10 +17053,6 @@ striplib=$lt_striplib
  # The linker used to build libraries.
  LD=$lt_LD
  
@@ -17055,7 +17046,7 @@ Index: libffi/configure
  # Commands used to build an old-style archive.
  old_archive_cmds=$lt_old_archive_cmds
  
-@@ -15027,7 +17301,7 @@ _LT_EOF
+@@ -15034,7 +17312,7 @@ _LT_EOF
  func_dirname ()
  {
    # Extract subdirectory from the argument.
@@ -17064,7 +17055,7 @@ Index: libffi/configure
    if test "X$func_dirname_result" = "X${1}"; then
      func_dirname_result="${3}"
    else
-@@ -15038,7 +17312,7 @@ func_dirname ()
+@@ -15045,7 +17323,7 @@ func_dirname ()
  # func_basename file
  func_basename ()
  {
@@ -17073,7 +17064,7 @@ Index: libffi/configure
  }
  
  
-@@ -15051,8 +17325,10 @@ func_basename ()
+@@ -15058,8 +17336,10 @@ func_basename ()
  func_stripname ()
  {
    case ${2} in
@@ -17086,7 +17077,7 @@ Index: libffi/configure
    esac
  }
  
-@@ -15063,20 +17339,20 @@ my_sed_long_arg='1s/^-[^=]*=//'
+@@ -15070,20 +17350,20 @@ my_sed_long_arg='1s/^-[^=]*=//'
  # func_opt_split
  func_opt_split ()
  {
@@ -17111,7 +17102,7 @@ Index: libffi/configure
  }
  
  # func_arith arithmetic-term...
-@@ -15140,12 +17416,15 @@ test -d src/$TARGETDIR || mkdir src/$TAR
+@@ -15147,12 +17427,15 @@ test -d src/$TARGETDIR || mkdir src/$TAR
  done # for ac_tag
  
  
@@ -17129,7 +17120,7 @@ Index: libffi/configure
  
  
  # configure is writing to config.log, and then calls config.status.
-@@ -15166,10 +17445,10 @@ if test "$no_create" != yes; then
+@@ -15173,10 +17456,10 @@ if test "$no_create" != yes; then
    exec 5>>config.log
    # Use ||, not &&, to avoid exiting from the if with $? = 1, which
    # would make configure fail if this is the last instruction.
@@ -17189,7 +17180,7 @@ Index: libffi/configure.ac
  	;;
  
    avr32*-*-*)
-@@ -184,6 +188,7 @@ AM_CONDITIONAL(ALPHA, test x$TARGET = xA
+@@ -191,6 +195,7 @@ AM_CONDITIONAL(ALPHA, test x$TARGET = xA
  AM_CONDITIONAL(IA64, test x$TARGET = xIA64)
  AM_CONDITIONAL(M32R, test x$TARGET = xM32R)
  AM_CONDITIONAL(M68K, test x$TARGET = xM68K)
@@ -17197,7 +17188,7 @@ Index: libffi/configure.ac
  AM_CONDITIONAL(POWERPC, test x$TARGET = xPOWERPC)
  AM_CONDITIONAL(POWERPC_AIX, test x$TARGET = xPOWERPC_AIX)
  AM_CONDITIONAL(POWERPC_DARWIN, test x$TARGET = xPOWERPC_DARWIN)
-@@ -443,6 +448,6 @@ test -d src/$TARGETDIR || mkdir src/$TAR
+@@ -450,6 +455,6 @@ test -d src/$TARGETDIR || mkdir src/$TAR
  
  AC_CONFIG_LINKS(include/ffitarget.h:src/$TARGETDIR/ffitarget.h)
  

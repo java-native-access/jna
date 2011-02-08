@@ -51,7 +51,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -102,6 +102,14 @@
+@@ -146,6 +146,14 @@
  	* fficonfig.h.in: Regenerate.
  	* src/x86/sysv.S (.eh_frame): Use .ascii, .string or error.
  
@@ -70,47 +70,7 @@ Index: libffi/doc/libffi.info
 ===================================================================
 --- libffi.orig/doc/libffi.info
 +++ libffi/doc/libffi.info
-@@ -1,10 +1,10 @@
--This is doc/libffi.info, produced by makeinfo version 4.12 from
--./doc/libffi.texi.
-+This is ../libffi/doc/libffi.info, produced by makeinfo version 4.13
-+from ../libffi/doc/libffi.texi.
- 
- This manual is for Libffi, a portable foreign-function interface
- library.
- 
--   Copyright (C) 2008 Red Hat, Inc.
-+   Copyright (C) 2008, 2010 Red Hat, Inc.
- 
-      Permission is granted to copy, distribute and/or modify this
-      document under the terms of the GNU General Public License as
-@@ -13,7 +13,7 @@ library.
-      included in the section entitled "GNU General Public License".
- 
- 
--INFO-DIR-SECTION
-+INFO-DIR-SECTION Development
- START-INFO-DIR-ENTRY
- * libffi: (libffi).             Portable foreign-function interface library.
- END-INFO-DIR-ENTRY
-@@ -27,7 +27,7 @@ libffi
- This manual is for Libffi, a portable foreign-function interface
- library.
- 
--   Copyright (C) 2008 Red Hat, Inc.
-+   Copyright (C) 2008, 2010 Red Hat, Inc.
- 
-      Permission is granted to copy, distribute and/or modify this
-      document under the terms of the GNU General Public License as
-@@ -89,6 +89,7 @@ File: libffi.info,  Node: Using libffi, 
- * Types::                       libffi type descriptions.
- * Multiple ABIs::               Different passing styles on one platform.
- * The Closure API::             Writing a generic function.
-+* Closure Example::             A closure example.
- 
- 
- File: libffi.info,  Node: The Basics,  Next: Simple Example,  Up: Using libffi
-@@ -146,7 +147,9 @@ To prepare a call interface object, use 
+@@ -147,7 +147,9 @@ To prepare a call interface object, use 
       AVALUES is a vector of `void *' pointers that point to the memory
       locations holding the argument values for a call.  If CIF declares
       that the function has no arguments (i.e., NARGS was 0), then
@@ -121,117 +81,29 @@ Index: libffi/doc/libffi.info
  
  
  File: libffi.info,  Node: Simple Example,  Next: Types,  Prev: The Basics,  Up: Using libffi
-@@ -368,7 +371,7 @@ instance, the x86 platform has both `std
- necessarily platform-specific.
- 
- 
--File: libffi.info,  Node: The Closure API,  Prev: Multiple ABIs,  Up: Using libffi
-+File: libffi.info,  Node: The Closure API,  Next: Closure Example,  Prev: Multiple ABIs,  Up: Using libffi
- 
- 2.5 The Closure API
- ===================
-@@ -444,6 +447,62 @@ is deprecated, as it cannot handle the n
- executable addresses.
- 
- 
-+File: libffi.info,  Node: Closure Example,  Prev: The Closure API,  Up: Using libffi
-+
-+2.6 Closure Example
-+===================
-+
-+A trivial example that creates a new `puts' by binding `fputs' with
-+`stdin'.
-+
-+     #include <stdio.h>
-+     #include <ffi.h>
-+
-+     /* Acts like puts with the file given at time of enclosure. */
-+     void puts_binding(ffi_cif *cif, unsigned int *ret, void* args[],
-+                       FILE *stream)
-+     {
-+       *ret = fputs(*(char **)args[0], stream);
-+     }
-+
-+     int main()
-+     {
-+       ffi_cif cif;
-+       ffi_type *args[1];
-+       ffi_closure *closure;
-+
-+       int (*bound_puts)(char *);
-+       int rc;
-+
-+       /* Allocate closure and bound_puts */
-+       closure = ffi_closure_alloc(sizeof(ffi_closure), &bound_puts);
-+
-+       if (closure)
-+         {
-+           /* Initialize the argument info vectors */
-+           args[0] = &ffi_type_pointer;
-+
-+           /* Initialize the cif */
-+           if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
-+                            &ffi_type_uint, args) == FFI_OK)
-+             {
-+               /* Initialize the closure, setting stream to stdout */
-+               if (ffi_prep_closure_loc(closure, &cif, puts_binding,
-+                                        stdout, bound_puts) == FFI_OK)
-+                 {
-+                   rc = bound_puts("Hello World!");
-+                   /* rc now holds the result of the call to fputs */
-+                 }
-+             }
-+         }
-+
-+       /* Deallocate both closure, and bound_puts */
-+       ffi_closure_free(closure);
-+
-+       return 0;
-+     }
-+
-+
- File: libffi.info,  Node: Missing Features,  Next: Index,  Prev: Using libffi,  Up: Top
- 
- 3 Missing Features
-@@ -480,7 +539,7 @@ Index
- * closures:                              The Closure API.      (line 13)
- * FFI:                                   Introduction.         (line 31)
- * ffi_call:                              The Basics.           (line 41)
--* ffi_closure_alloca:                    The Closure API.      (line 19)
-+* ffi_closure_alloc:                     The Closure API.      (line 19)
- * ffi_closure_free:                      The Closure API.      (line 26)
- * FFI_CLOSURES:                          The Closure API.      (line 13)
- * ffi_prep_cif:                          The Basics.           (line 16)
-@@ -516,18 +575,19 @@ Index
- 
- 
- Tag Table:
--Node: Top670
--Node: Introduction1406
--Node: Using libffi3042
--Node: The Basics3477
--Node: Simple Example6084
--Node: Types7111
--Node: Primitive Types7394
--Node: Structures9214
--Node: Type Example10074
--Node: Multiple ABIs11297
--Node: The Closure API11668
--Node: Missing Features14588
--Node: Index15081
-+Node: Top706
-+Node: Introduction1448
-+Node: Using libffi3084
-+Node: The Basics3570
-+Node: Simple Example6356
-+Node: Types7383
-+Node: Primitive Types7666
-+Node: Structures9486
-+Node: Type Example10346
-+Node: Multiple ABIs11569
-+Node: The Closure API11940
-+Node: Closure Example14884
-+Node: Missing Features16443
-+Node: Index16936
+@@ -577,15 +579,15 @@ Node: Top724
+ Node: Introduction1466
+ Node: Using libffi3102
+ Node: The Basics3588
+-Node: Simple Example6195
+-Node: Types7222
+-Node: Primitive Types7505
+-Node: Structures9325
+-Node: Type Example10185
+-Node: Multiple ABIs11408
+-Node: The Closure API11779
+-Node: Closure Example14723
+-Node: Missing Features16282
+-Node: Index16775
++Node: Simple Example6374
++Node: Types7401
++Node: Primitive Types7684
++Node: Structures9504
++Node: Type Example10364
++Node: Multiple ABIs11587
++Node: The Closure API11958
++Node: Closure Example14902
++Node: Missing Features16461
++Node: Index16954
  
  End Tag Table

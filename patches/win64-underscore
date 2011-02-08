@@ -2,7 +2,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,10 @@
+@@ -42,6 +42,13 @@
+ 	(.eh_frame): Use FDE_ENCODING.
+ 	(.LASFDE1, .LASFDE2, LASFDE3): Simplify with FDE_ENCODE.
+ 
 +2010-11-22  Jacek Caban <jacek@codeweavers.com>
 +
 +	* configure.ac: Check for symbol underscores on mingw-w64.
@@ -17,7 +20,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -314,6 +314,13 @@ if test x$TARGET = xX86 || test x$TARGET
+@@ -321,6 +321,13 @@ if test x$TARGET = xX86 || test x$TARGET
      fi
  fi
  
@@ -91,9 +94,9 @@ Index: libffi/aclocal.m4
 ===================================================================
 --- libffi.orig/aclocal.m4
 +++ libffi/aclocal.m4
-@@ -7364,6 +7364,811 @@ _LT_EOF
-   esac
- ])
+@@ -19,6 +19,811 @@ You have another version of autoconf.  I
+ If you have problems, you may need to regenerate the build system entirely.
+ To do so, use the procedure documented by the package, typically `autoreconf'.])])
  
 +# ltdl.m4 - Configure ltdl for the target system. -*-Autoconf-*-
 +#
@@ -900,9 +903,9 @@ Index: libffi/aclocal.m4
 +dnl aclocal-1.4 backwards compatibility:
 +dnl AC_DEFUN([AC_LTDL_DLSYM_USCORE], [])
 +
- # Helper functions for option handling.                    -*- Autoconf -*-
+ # Copyright (C) 2002, 2003, 2005, 2006, 2007, 2008  Free Software Foundation, Inc.
  #
- #   Copyright (C) 2004, 2005, 2007, 2008 Free Software Foundation, Inc.
+ # This file is free software; the Free Software Foundation
 Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
@@ -941,81 +944,81 @@ Index: libffi/configure
    if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
    (eval $ac_compile) 2>&5
    ac_status=$?
-@@ -7847,11 +7848,11 @@ else
+@@ -7851,11 +7852,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:7850: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:7851: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:7854: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:7855: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>conftest.err)
     ac_status=$?
     cat conftest.err >&5
--   echo "$as_me:7854: \$? = $ac_status" >&5
-+   echo "$as_me:7855: \$? = $ac_status" >&5
+-   echo "$as_me:7858: \$? = $ac_status" >&5
++   echo "$as_me:7859: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s "$ac_outfile"; then
       # The compiler can only warn and ignore the option if not recognized
       # So say no if there are warnings other than the usual output.
-@@ -8186,11 +8187,11 @@ else
+@@ -8190,11 +8191,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8189: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8190: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:8193: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8194: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>conftest.err)
     ac_status=$?
     cat conftest.err >&5
--   echo "$as_me:8193: \$? = $ac_status" >&5
-+   echo "$as_me:8194: \$? = $ac_status" >&5
+-   echo "$as_me:8197: \$? = $ac_status" >&5
++   echo "$as_me:8198: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s "$ac_outfile"; then
       # The compiler can only warn and ignore the option if not recognized
       # So say no if there are warnings other than the usual output.
-@@ -8291,11 +8292,11 @@ else
+@@ -8295,11 +8296,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8294: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8295: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:8298: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8299: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>out/conftest.err)
     ac_status=$?
     cat out/conftest.err >&5
--   echo "$as_me:8298: \$? = $ac_status" >&5
-+   echo "$as_me:8299: \$? = $ac_status" >&5
+-   echo "$as_me:8302: \$? = $ac_status" >&5
++   echo "$as_me:8303: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s out/conftest2.$ac_objext
     then
       # The compiler can only warn and ignore the option if not recognized
-@@ -8346,11 +8347,11 @@ else
+@@ -8350,11 +8351,11 @@ else
     -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
     -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
     -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8349: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8350: $lt_compile\"" >&5)
+-   (eval echo "\"\$as_me:8353: $lt_compile\"" >&5)
++   (eval echo "\"\$as_me:8354: $lt_compile\"" >&5)
     (eval "$lt_compile" 2>out/conftest.err)
     ac_status=$?
     cat out/conftest.err >&5
--   echo "$as_me:8353: \$? = $ac_status" >&5
-+   echo "$as_me:8354: \$? = $ac_status" >&5
+-   echo "$as_me:8357: \$? = $ac_status" >&5
++   echo "$as_me:8358: \$? = $ac_status" >&5
     if (exit $ac_status) && test -s out/conftest2.$ac_objext
     then
       # The compiler can only warn and ignore the option if not recognized
-@@ -11149,7 +11150,7 @@ else
+@@ -11153,7 +11154,7 @@ else
    lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
    lt_status=$lt_dlunknown
    cat > conftest.$ac_ext <<_LT_EOF
--#line 11152 "configure"
-+#line 11153 "configure"
+-#line 11156 "configure"
++#line 11157 "configure"
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -11245,7 +11246,7 @@ else
+@@ -11249,7 +11250,7 @@ else
    lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
    lt_status=$lt_dlunknown
    cat > conftest.$ac_ext <<_LT_EOF
--#line 11248 "configure"
-+#line 11249 "configure"
+-#line 11252 "configure"
++#line 11253 "configure"
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -14647,6 +14648,63 @@ _ACEOF
+@@ -14658,6 +14659,63 @@ _ACEOF
      fi
  fi
  
