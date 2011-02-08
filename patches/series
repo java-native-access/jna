@@ -6,3 +6,4 @@ stdcall-x86-closure-fix
 ml64-safeseh
 debug-build
 win64-underscore
+x86_pcrel_test
