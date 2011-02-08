@@ -32,8 +32,8 @@ Index: libffi/msvcc.sh
 +      safeseh=
        shift 1
      ;;
-     -O*)
-@@ -164,7 +166,7 @@ if [ -n "$assembly" ]; then
+     -O0)
+@@ -176,7 +178,7 @@ if [ -n "$assembly" ]; then
      echo "$cl -nologo -EP $includes $defines $src > $ppsrc"
      "$cl" -nologo -EP $includes $defines $src > $ppsrc || exit $?
      output="$(echo $output | sed 's%/F[dpa][^ ]*%%g')"
