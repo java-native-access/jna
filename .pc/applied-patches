@@ -9,3 +9,4 @@ win64-underscore
 x86_pcrel_test
 aix-ibm-xlc
 fix-grammar
+sparc-v8-aggregate-returns
