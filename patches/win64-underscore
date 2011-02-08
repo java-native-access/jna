@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -42,6 +42,13 @@
+@@ -56,6 +56,13 @@
  	(.eh_frame): Use FDE_ENCODING.
  	(.LASFDE1, .LASFDE2, LASFDE3): Simplify with FDE_ENCODE.
  

@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -109,6 +109,12 @@
+@@ -123,6 +123,12 @@
  	* testsuite/libffi.call/cls_longdouble.c: Likewise.
  	* testsuite/libffi.call/huge_struct.c: Likewise.
  
@@ -127,7 +127,7 @@ Index: libffi/src/mips/ffitarget.h
 ===================================================================
 --- libffi.orig/src/mips/ffitarget.h
 +++ libffi/src/mips/ffitarget.h
-@@ -186,30 +186,29 @@ typedef enum ffi_abi {
+@@ -194,30 +194,29 @@ typedef enum ffi_abi {
    FFI_O32_SOFT_FLOAT,
    FFI_N32_SOFT_FLOAT,
    FFI_N64_SOFT_FLOAT,

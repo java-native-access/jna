@@ -8,9 +8,9 @@ Index: libffi/ChangeLog
 +	* configure.ac: Fix x86 test for pc related relocs.
 +	* confifure: Rebuilt.
 +
- 2011-01-26  Dave Korn  <dave.korn.cygwin@gmail.com>
+ 2011-02-07  Joel Sherrill <joel.sherrill@oarcorp.com>
  
- 	PR target/40125
+ 	* libffi/src/m68k/ffi.c: Add RTEMS support for cache flushing.
 Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure

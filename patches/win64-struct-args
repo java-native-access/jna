@@ -51,7 +51,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -146,6 +146,14 @@
+@@ -160,6 +160,14 @@
  	* fficonfig.h.in: Regenerate.
  	* src/x86/sysv.S (.eh_frame): Use .ascii, .string or error.
  
