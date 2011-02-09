@@ -1,6 +1,5 @@
 /* -----------------------------------------------------------------------
-   prep_cif.c - Copyright (c) 2011  Anthony Green
-                Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
+   prep_cif.c - Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -27,12 +26,6 @@
 #include <ffi_common.h>
 #include <stdlib.h>
 
-#ifndef __GNUC__
-#define __builtin_expect(x, expected_value) (x)
-#endif
-#define LIKELY(x)    __builtin_expect((x),1)
-#define UNLIKELY(x)  __builtin_expect((x),1)
-
 /* Round up to FFI_SIZEOF_ARG. */
 
 #define STACK_ARG_SIZE(x) ALIGN(x, FFI_SIZEOF_ARG)
@@ -52,13 +45,9 @@ static ffi_status initialize_aggregate(ffi_type *arg)
 
   ptr = &(arg->elements[0]);
 
-  if (UNLIKELY(ptr == 0))
-    return FFI_BAD_TYPEDEF;
-
   while ((*ptr) != NULL)
     {
-      if (UNLIKELY(((*ptr)->size == 0)
-		    && (initialize_aggregate((*ptr)) != FFI_OK)))
+      if (((*ptr)->size == 0) && (initialize_aggregate((*ptr)) != FFI_OK))
 	return FFI_BAD_TYPEDEF;
 
       /* Perform a sanity check on the argument type */
@@ -104,8 +93,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
   ffi_type **ptr;
 
   FFI_ASSERT(cif != NULL);
-  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI))
-    return FFI_BAD_ABI;
+  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI);
 
   cif->abi = abi;
   cif->arg_types = atypes;

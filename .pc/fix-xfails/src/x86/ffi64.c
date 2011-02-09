@@ -28,12 +28,6 @@
 #include <ffi.h>
 #include <ffi_common.h>
 
-#ifndef __GNUC__
-#define __builtin_expect(x, expected_value) (x)
-#endif
-#define LIKELY(x)    __builtin_expect((x),1)
-#define UNLIKELY(x)  __builtin_expect((x),1)
-
 #include <stdlib.h>
 #include <stdarg.h>
 
@@ -503,13 +497,6 @@ ffi_prep_closure_loc (ffi_closure* closure,
 		      void *codeloc)
 {
   volatile unsigned short *tramp;
-
-  /* Sanity check on the cif ABI.  */
-  {
-    int abi = cif->abi;
-    if (UNLIKELY (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)))
-      return FFI_BAD_ABI;
-  }
 
   tramp = (volatile unsigned short *) &closure->tramp[0];
 

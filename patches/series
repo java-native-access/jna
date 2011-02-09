@@ -13,3 +13,4 @@ sparc-v8-aggregate-returns
 hpux-mallinfo
 copyright-updates
 ios
+fix-xfails
