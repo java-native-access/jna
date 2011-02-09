@@ -15,3 +15,4 @@ copyright-updates
 ios
 fix-xfails
 interix
+ppc64-darwin

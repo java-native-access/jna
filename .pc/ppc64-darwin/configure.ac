@@ -137,7 +137,7 @@ case "$host" in
   powerpc-*-beos*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
-  powerpc-*-darwin* | powerpc64-*-darwin*)
+  powerpc-*-darwin*)
 	TARGET=POWERPC_DARWIN; TARGETDIR=powerpc
 	;;
   powerpc-*-aix* | rs6000-*-aix*)
@@ -146,7 +146,7 @@ case "$host" in
   powerpc-*-freebsd*)
 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
 	;;
-  powerpc64-*-freebsd*)
+ powerpc64-*-freebsd*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
   powerpc*-*-rtems*)
