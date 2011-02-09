@@ -94,9 +94,9 @@ Index: libffi/aclocal.m4
 ===================================================================
 --- libffi.orig/aclocal.m4
 +++ libffi/aclocal.m4
-@@ -19,6 +19,811 @@ You have another version of autoconf.  I
- If you have problems, you may need to regenerate the build system entirely.
- To do so, use the procedure documented by the package, typically `autoreconf'.])])
+@@ -7968,6 +7968,811 @@ m4_ifndef([_LT_AC_LANG_RC_CONFIG],	[AC_D
+ m4_ifndef([AC_LIBTOOL_CONFIG],		[AC_DEFUN([AC_LIBTOOL_CONFIG])])
+ m4_ifndef([_LT_AC_FILE_LTDLL_C],	[AC_DEFUN([_LT_AC_FILE_LTDLL_C])])
  
 +# ltdl.m4 - Configure ltdl for the target system. -*-Autoconf-*-
 +#

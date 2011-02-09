@@ -2,7 +2,7 @@ Index: libffi/README
 ===================================================================
 --- libffi.orig/README
 +++ libffi/README
-@@ -114,9 +114,13 @@ It's also possible to build libffi on Wi
+@@ -116,9 +116,13 @@ It's also possible to build libffi on Wi
  Microsoft's Visual C++ compiler.  In this case, use the msvcc.sh
  wrapper script during configuration like so:
  
