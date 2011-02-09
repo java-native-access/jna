@@ -1,11 +1,3 @@
-2011-02-09  Stuart Shelton  <srcshelton@gmail.com>
-
-	http://bugs.gentoo.org/show_bug.cgi?id=286911
-	* src/mips/ffitarget.h: Clean up error messages.
-	* src/java_raw_api.c (ffi_java_translate_args): Cast raw arg to
-	ffi_raw*.
-	* include/ffi.h.in: Add pragma for SGI compiler.
-
 2011-02-09  Anthony Green  <green@moxielogic.com>
 
 	* configure.ac: Add powerpc64-*-darwin* support.

@@ -51,7 +51,7 @@
 #  endif
 
 #if !defined(_MIPS_SIM)
-# error -- something is very wrong --
+-- something is very wrong --
 #else
 #  if (_MIPS_SIM==_ABIN32 && defined(_ABIN32)) || (_MIPS_SIM==_ABI64 && defined(_ABI64))
 #    define FFI_MIPS_N32
@@ -59,7 +59,7 @@
 #    if (_MIPS_SIM==_ABIO32 && defined(_ABIO32))
 #      define FFI_MIPS_O32
 #    else
-#     error -- this is an unsupported platform --
+-- this is an unsupported platform --
 #    endif
 #  endif
 #endif

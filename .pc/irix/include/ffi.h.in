@@ -278,9 +278,6 @@ typedef struct {
 } ffi_closure __attribute__((aligned (8)));
 #else
 } ffi_closure;
-# ifdef __sgi
-#  pragma pack 0
-# endif
 #endif
 
 void *ffi_closure_alloc (size_t size, void **code);
@@ -299,9 +296,6 @@ ffi_prep_closure_loc (ffi_closure*,
 		      void *user_data,
 		      void*codeloc);
 
-#ifdef __sgi
-# pragma pack 8
-#endif
 typedef struct {
   char tramp[FFI_TRAMPOLINE_SIZE];
 
