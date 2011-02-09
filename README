@@ -125,6 +125,8 @@ under a MingW environment, you may need to remove the line in configure
 that sets 'fix_srcfile_path' to a 'cygpath' command. ('cygpath' is not
 present in MingW, and is not required when using MingW-style paths.)
 
+For iOS builds, refer to the build-ios.sh script for guidance.
+
 Configure has many other options. Use "configure --help" to see them all.
 
 Once configure has finished, type "make". Note that you must be using

@@ -18,6 +18,7 @@
 	separately.
 	* src/arm/sysv.S: Handle Apple iOS host.
 	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
+	* build-ios.sh: New file.
 	* fficonfig.h.in, configure, Makefile.in: Rebuilt.
 
 2011-02-08  Oren Held  <orenhe@il.ibm.com>

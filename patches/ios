@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,25 @@
+@@ -1,3 +1,26 @@
 +2011-02-09  Anthony Green <green@moxielogic.com>
 +
 +	* README: Mention ARM iOS.
@@ -23,6 +23,7 @@ Index: libffi/ChangeLog
 +	separately.
 +	* src/arm/sysv.S: Handle Apple iOS host.
 +	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
++	* build-ios.sh: New file.
 +	* fficonfig.h.in, configure, Makefile.in: Rebuilt.
 +
  2011-02-08  Oren Held  <orenhe@il.ibm.com>
@@ -977,3 +978,12 @@ Index: libffi/README
  | AVR32        | Linux            |
  | HPPA         | HPUX             |
  | IA-64        | Linux            |
+@@ -124,6 +125,8 @@ under a MingW environment, you may need 
+ that sets 'fix_srcfile_path' to a 'cygpath' command. ('cygpath' is not
+ present in MingW, and is not required when using MingW-style paths.)
+ 
++For iOS builds, refer to the build-ios.sh script for guidance.
++
+ Configure has many other options. Use "configure --help" to see them all.
+ 
+ Once configure has finished, type "make". Note that you must be using
