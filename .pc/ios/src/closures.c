@@ -32,7 +32,7 @@
 #include <ffi.h>
 #include <ffi_common.h>
 
-#if !FFI_MMAP_EXEC_WRIT && !FFI_EXEC_TRAMPOLINE_TABLE
+#ifndef FFI_MMAP_EXEC_WRIT
 # if __gnu_linux__
 /* This macro indicates it may be forbidden to map anonymous memory
    with both write and execute permission.  Code compiled when this
@@ -63,11 +63,7 @@
 
 #if FFI_CLOSURES
 
-# if FFI_EXEC_TRAMPOLINE_TABLE
-
-// Per-target implementation; It's unclear what can reasonable be shared between two OS/architecture implementations.
-
-# elif FFI_MMAP_EXEC_WRIT /* !FFI_EXEC_TRAMPOLINE_TABLE */
+# if FFI_MMAP_EXEC_WRIT
 
 #define USE_LOCKS 1
 #define USE_DL_PREFIX 1

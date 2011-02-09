@@ -328,23 +328,13 @@ if test x$TARGET = xX86_WIN64; then
     fi
 fi
 
-
-FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in
-     *arm*-apple-darwin*)
-       FFI_EXEC_TRAMPOLINE_TABLE=1
-       AC_DEFINE(FFI_EXEC_TRAMPOLINE_TABLE, 1,
-                 [Cannot use PROT_EXEC on this target, so, we revert to
-                   alternative means])
-     ;;
      *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
                  [Cannot use malloc on this target, so, we revert to
                    alternative means])
      ;;
 esac
-AM_CONDITIONAL(FFI_EXEC_TRAMPOLINE_TABLE, test x$FFI_EXEC_TRAMPOLINE_TABLE = x1)
-AC_SUBST(FFI_EXEC_TRAMPOLINE_TABLE)
 
 if test x$TARGET = xX86_64; then
     AC_CACHE_CHECK([assembler supports unwind section type],
