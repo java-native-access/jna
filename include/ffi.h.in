@@ -270,12 +270,7 @@ size_t ffi_java_raw_size (ffi_cif *cif);
 __declspec(align(8))
 #endif
 typedef struct {
-#if @FFI_EXEC_TRAMPOLINE_TABLE@
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
   ffi_cif   *cif;
   void     (*fun)(ffi_cif*,void*,void**,void*);
   void      *user_data;
@@ -302,12 +297,7 @@ ffi_prep_closure_loc (ffi_closure*,
 		      void*codeloc);
 
 typedef struct {
-#if FFI_EXEC_TRAMPOLINE_TABLE
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
 
   ffi_cif   *cif;
 
@@ -328,12 +318,7 @@ typedef struct {
 } ffi_raw_closure;
 
 typedef struct {
-#if FFI_EXEC_TRAMPOLINE_TABLE
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
 
   ffi_cif   *cif;
 
