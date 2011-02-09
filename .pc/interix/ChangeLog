@@ -1,16 +1,5 @@
 2011-02-09  Anthony Green <green@moxielogic.com>
 
-	* README: Mention Interix.
-
-2011-02-09  Jonathan Callen  <abcd@gentoo.org>
-
-	* configure.ac: Add Interix to win32/cygwin/mingw case.
-	* configure: Ditto.
-	* src/closures.c: Treat Interix like Cygwin, instead of as a
-	generic win32.
-
-2011-02-09  Anthony Green <green@moxielogic.com>
-
 	* testsuite/libffi.call/err_bad_typedef.c: Remove xfail.
 	* testsuite/libffi.call/err_bad_abi.c: Remove xfail.
 	* src/x86/ffi64.c (UNLIKELY, LIKELY): Define.
