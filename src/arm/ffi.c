@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
    ffi.c - Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
+	   Copyright (c) 2011 Plausible Labs Cooperative, Inc.
    
    ARM Foreign Function Interface 
 

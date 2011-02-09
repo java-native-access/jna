@@ -1,6 +1,24 @@
-2011-02-08  Anthony Green  <green@moxielogic.com>
+2011-02-09  Anthony Green <green@moxielogic.com>
 
-	* configure.ac (SYMBOL_UNDERSCORE): Define.
+	* README: Mention ARM iOS.
+
+2011-02-09  Landon Fuller <landonf@macports.org>
+
+	* Makefile.am (EXTRA_DIST): Add build-ios.sh, src/arm/gentramp.sh,
+	src/arm/trampoline.S.
+	(nodist_libffi_la_SOURCES): Add src/arc/trampoline.S.
+	* configure.ac (FFI_EXEC_TRAMPOLINE_TABLE): Define.
+	* src/arm/ffi.c (ffi_trampoline_table)
+	(ffi_closure_trampoline_table_page, ffi_trampoline_table_entry)
+	(FFI_TRAMPOLINE_CODELOC_CONFIG, FFI_TRAMPOLINE_CONFIG_PAGE_OFFSET)
+	(FFI_TRAMPOLINE_COUNT, ffi_trampoline_lock, ffi_trampoline_tables)
+	(ffi_trampoline_table_alloc, ffi_closure_alloc, ffi_closure_free):
+	Define for FFI_EXEC_TRAMPOLINE_TABLE case (iOS).
+	(ffi_prep_closure_loc): Handl FFI_EXEC_TRAMPOLINE_TABLE case
+	separately.
+	* src/arm/sysv.S: Handle Apple iOS host.
+	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
+	* fficonfig.h.in, configure, Makefile.in: Rebuilt.
 
 2011-02-08  Oren Held  <orenhe@il.ibm.com>
 

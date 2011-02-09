@@ -2,10 +2,28 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,7 @@
-+2011-02-08  Anthony Green  <green@moxielogic.com>
+@@ -1,3 +1,25 @@
++2011-02-09  Anthony Green <green@moxielogic.com>
 +
-+	* configure.ac (SYMBOL_UNDERSCORE): Define.
++	* README: Mention ARM iOS.
++
++2011-02-09  Landon Fuller <landonf@macports.org>
++
++	* Makefile.am (EXTRA_DIST): Add build-ios.sh, src/arm/gentramp.sh,
++	src/arm/trampoline.S.
++	(nodist_libffi_la_SOURCES): Add src/arc/trampoline.S.
++	* configure.ac (FFI_EXEC_TRAMPOLINE_TABLE): Define.
++	* src/arm/ffi.c (ffi_trampoline_table)
++	(ffi_closure_trampoline_table_page, ffi_trampoline_table_entry)
++	(FFI_TRAMPOLINE_CODELOC_CONFIG, FFI_TRAMPOLINE_CONFIG_PAGE_OFFSET)
++	(FFI_TRAMPOLINE_COUNT, ffi_trampoline_lock, ffi_trampoline_tables)
++	(ffi_trampoline_table_alloc, ffi_closure_alloc, ffi_closure_free):
++	Define for FFI_EXEC_TRAMPOLINE_TABLE case (iOS).
++	(ffi_prep_closure_loc): Handl FFI_EXEC_TRAMPOLINE_TABLE case
++	separately.
++	* src/arm/sysv.S: Handle Apple iOS host.
++	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
++	* fficonfig.h.in, configure, Makefile.in: Rebuilt.
 +
  2011-02-08  Oren Held  <orenhe@il.ibm.com>
  
@@ -14,16 +32,73 @@ Index: libffi/Makefile.am
 ===================================================================
 --- libffi.orig/Makefile.am
 +++ libffi/Makefile.am
-@@ -6,7 +6,7 @@ SUBDIRS = include testsuite man
+@@ -4,37 +4,34 @@ AUTOMAKE_OPTIONS = foreign subdir-object
  
- EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
- 	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
+ SUBDIRS = include testsuite man
+ 
+-EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
+-	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
 -	src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h \
-+	src/arm/ffi.c src/arm/sysv.S src/arm/trampoline.S src/arm/ffitarget.h \
- 	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
- 	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
- 	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
-@@ -144,6 +144,9 @@ nodist_libffi_la_SOURCES += src/powerpc/
+-	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
+-	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
+-	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
+-	src/ia64/unix.S \
+-	src/mips/ffi.c src/mips/n32.S src/mips/o32.S \
+-	src/mips/ffitarget.h \
+-	src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h \
+-	src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h \
+-	src/powerpc/ffi.c src/powerpc/sysv.S \
+-	src/powerpc/linux64.S src/powerpc/linux64_closure.S \
+-	src/powerpc/ppc_closure.S src/powerpc/asm.h \
+-	src/powerpc/aix.S src/powerpc/darwin.S \
+-	src/powerpc/aix_closure.S src/powerpc/darwin_closure.S \
+-	src/powerpc/ffi_darwin.c src/powerpc/ffitarget.h \
+-	src/s390/ffi.c src/s390/sysv.S src/s390/ffitarget.h \
+-	src/sh/ffi.c src/sh/sysv.S src/sh/ffitarget.h \
+-	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
+-	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
+-	src/sparc/ffi.c src/x86/darwin64.S \
+-	src/x86/ffi.c src/x86/sysv.S src/x86/win32.S src/x86/win64.S \
+-	src/x86/darwin.S src/x86/freebsd.S \
+-	src/x86/ffi64.c src/x86/unix64.S src/x86/ffitarget.h \
+-	src/pa/ffitarget.h src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S \
+-	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h \
+-	src/dlmalloc.c \
+-	src/moxie/ffi.c src/moxie/eabi.S \
+-	libtool-version ChangeLog.libffi m4/libtool.m4 \
+-	m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4
++EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
++	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h		\
++	src/arm/ffi.c src/arm/sysv.S src/arm/trampoline.S		\
++	src/arm/ffitarget.h src/avr32/ffi.c src/avr32/sysv.S		\
++	src/avr32/ffitarget.h src/cris/ffi.c src/cris/sysv.S		\
++	src/cris/ffitarget.h src/ia64/ffi.c src/ia64/ffitarget.h	\
++	src/ia64/ia64_flags.h src/ia64/unix.S src/mips/ffi.c		\
++	src/mips/n32.S src/mips/o32.S src/mips/ffitarget.h		\
++	src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h		\
++	src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h		\
++	src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/linux64.S	\
++	src/powerpc/linux64_closure.S src/powerpc/ppc_closure.S		\
++	src/powerpc/asm.h src/powerpc/aix.S src/powerpc/darwin.S	\
++	src/powerpc/aix_closure.S src/powerpc/darwin_closure.S		\
++	src/powerpc/ffi_darwin.c src/powerpc/ffitarget.h		\
++	src/s390/ffi.c src/s390/sysv.S src/s390/ffitarget.h		\
++	src/sh/ffi.c src/sh/sysv.S src/sh/ffitarget.h src/sh64/ffi.c	\
++	src/sh64/sysv.S src/sh64/ffitarget.h src/sparc/v8.S		\
++	src/sparc/v9.S src/sparc/ffitarget.h src/sparc/ffi.c		\
++	src/x86/darwin64.S src/x86/ffi.c src/x86/sysv.S			\
++	src/x86/win32.S src/x86/win64.S src/x86/darwin.S		\
++	src/x86/freebsd.S src/x86/ffi64.c src/x86/unix64.S		\
++	src/x86/ffitarget.h src/pa/ffitarget.h src/pa/ffi.c		\
++	src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c src/frv/eabi.S	\
++	src/frv/ffitarget.h src/dlmalloc.c src/moxie/ffi.c		\
++	src/moxie/eabi.S libtool-version ChangeLog.libffi		\
++	m4/libtool.m4 m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4	\
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+@@ -144,6 +141,9 @@ nodist_libffi_la_SOURCES += src/powerpc/
  endif
  if ARM
  nodist_libffi_la_SOURCES += src/arm/sysv.S src/arm/ffi.c
@@ -146,16 +221,73 @@ Index: libffi/Makefile.in
  sysconfdir = @sysconfdir@
  target = @target@
  target_alias = @target_alias@
-@@ -398,7 +402,7 @@ AUTOMAKE_OPTIONS = foreign subdir-object
+@@ -396,37 +400,34 @@ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = foreign subdir-objects
  SUBDIRS = include testsuite man
- EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
- 	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
+-EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
+-	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
 -	src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h \
-+	src/arm/ffi.c src/arm/sysv.S src/arm/trampoline.S src/arm/ffitarget.h \
- 	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
- 	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
- 	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
-@@ -485,10 +489,10 @@ nodist_libffi_la_SOURCES = $(am__append_
+-	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
+-	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
+-	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
+-	src/ia64/unix.S \
+-	src/mips/ffi.c src/mips/n32.S src/mips/o32.S \
+-	src/mips/ffitarget.h \
+-	src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h \
+-	src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h \
+-	src/powerpc/ffi.c src/powerpc/sysv.S \
+-	src/powerpc/linux64.S src/powerpc/linux64_closure.S \
+-	src/powerpc/ppc_closure.S src/powerpc/asm.h \
+-	src/powerpc/aix.S src/powerpc/darwin.S \
+-	src/powerpc/aix_closure.S src/powerpc/darwin_closure.S \
+-	src/powerpc/ffi_darwin.c src/powerpc/ffitarget.h \
+-	src/s390/ffi.c src/s390/sysv.S src/s390/ffitarget.h \
+-	src/sh/ffi.c src/sh/sysv.S src/sh/ffitarget.h \
+-	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
+-	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
+-	src/sparc/ffi.c src/x86/darwin64.S \
+-	src/x86/ffi.c src/x86/sysv.S src/x86/win32.S src/x86/win64.S \
+-	src/x86/darwin.S src/x86/freebsd.S \
+-	src/x86/ffi64.c src/x86/unix64.S src/x86/ffitarget.h \
+-	src/pa/ffitarget.h src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S \
+-	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h \
+-	src/dlmalloc.c \
+-	src/moxie/ffi.c src/moxie/eabi.S \
+-	libtool-version ChangeLog.libffi m4/libtool.m4 \
+-	m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4
++EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
++	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h		\
++	src/arm/ffi.c src/arm/sysv.S src/arm/trampoline.S		\
++	src/arm/ffitarget.h src/avr32/ffi.c src/avr32/sysv.S		\
++	src/avr32/ffitarget.h src/cris/ffi.c src/cris/sysv.S		\
++	src/cris/ffitarget.h src/ia64/ffi.c src/ia64/ffitarget.h	\
++	src/ia64/ia64_flags.h src/ia64/unix.S src/mips/ffi.c		\
++	src/mips/n32.S src/mips/o32.S src/mips/ffitarget.h		\
++	src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h		\
++	src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h		\
++	src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/linux64.S	\
++	src/powerpc/linux64_closure.S src/powerpc/ppc_closure.S		\
++	src/powerpc/asm.h src/powerpc/aix.S src/powerpc/darwin.S	\
++	src/powerpc/aix_closure.S src/powerpc/darwin_closure.S		\
++	src/powerpc/ffi_darwin.c src/powerpc/ffitarget.h		\
++	src/s390/ffi.c src/s390/sysv.S src/s390/ffitarget.h		\
++	src/sh/ffi.c src/sh/sysv.S src/sh/ffitarget.h src/sh64/ffi.c	\
++	src/sh64/sysv.S src/sh64/ffitarget.h src/sparc/v8.S		\
++	src/sparc/v9.S src/sparc/ffitarget.h src/sparc/ffi.c		\
++	src/x86/darwin64.S src/x86/ffi.c src/x86/sysv.S			\
++	src/x86/win32.S src/x86/win64.S src/x86/darwin.S		\
++	src/x86/freebsd.S src/x86/ffi64.c src/x86/unix64.S		\
++	src/x86/ffitarget.h src/pa/ffitarget.h src/pa/ffi.c		\
++	src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c src/frv/eabi.S	\
++	src/frv/ffitarget.h src/dlmalloc.c src/moxie/ffi.c		\
++	src/moxie/eabi.S libtool-version ChangeLog.libffi		\
++	m4/libtool.m4 m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4	\
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+@@ -485,10 +486,10 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_15) $(am__append_16) $(am__append_17) \
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
@@ -168,7 +300,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)
-@@ -724,6 +728,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
+@@ -724,6 +725,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
  	src/arm/$(DEPDIR)/$(am__dirstamp)
  src/arm/ffi.lo: src/arm/$(am__dirstamp) \
  	src/arm/$(DEPDIR)/$(am__dirstamp)
@@ -177,7 +309,7 @@ Index: libffi/Makefile.in
  src/avr32/$(am__dirstamp):
  	@$(MKDIR_P) src/avr32
  	@: > src/avr32/$(am__dirstamp)
-@@ -811,6 +817,8 @@ mostlyclean-compile:
+@@ -811,6 +814,8 @@ mostlyclean-compile:
  	-rm -f src/arm/ffi.lo
  	-rm -f src/arm/sysv.$(OBJEXT)
  	-rm -f src/arm/sysv.lo
@@ -186,7 +318,7 @@ Index: libffi/Makefile.in
  	-rm -f src/avr32/ffi.$(OBJEXT)
  	-rm -f src/avr32/ffi.lo
  	-rm -f src/avr32/sysv.$(OBJEXT)
-@@ -929,6 +937,7 @@ distclean-compile:
+@@ -929,6 +934,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@
@@ -412,14 +544,15 @@ Index: libffi/src/arm/ffi.c
 ===================================================================
 --- libffi.orig/src/arm/ffi.c
 +++ libffi/src/arm/ffi.c
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,6 @@
  /* -----------------------------------------------------------------------
 -   ffi.c - Copyright (c) 1998, 2008  Red Hat, Inc.
 +   ffi.c - Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
++	   Copyright (c) 2011 Plausible Labs Cooperative, Inc.
     
     ARM Foreign Function Interface 
  
-@@ -337,6 +337,220 @@ ffi_prep_incoming_args_SYSV(char *stack,
+@@ -337,6 +338,220 @@ ffi_prep_incoming_args_SYSV(char *stack,
  
  /* How to make a trampoline.  */
  
@@ -640,7 +773,7 @@ Index: libffi/src/arm/ffi.c
  #define FFI_INIT_TRAMPOLINE(TRAMP,FUN,CTX)				\
  ({ unsigned char *__tramp = (unsigned char*)(TRAMP);			\
     unsigned int  __fun = (unsigned int)(FUN);				\
-@@ -349,6 +563,7 @@ ffi_prep_incoming_args_SYSV(char *stack,
+@@ -349,6 +564,7 @@ ffi_prep_incoming_args_SYSV(char *stack,
     __clear_cache((&__tramp[0]), (&__tramp[19]));			\
   })
  
@@ -648,7 +781,7 @@ Index: libffi/src/arm/ffi.c
  
  /* the cif must already be prep'ed */
  
-@@ -368,10 +583,16 @@ ffi_prep_closure_loc (ffi_closure* closu
+@@ -368,10 +584,16 @@ ffi_prep_closure_loc (ffi_closure* closu
    else
      FFI_ASSERT (0);
      
@@ -670,14 +803,15 @@ Index: libffi/src/arm/sysv.S
 ===================================================================
 --- libffi.orig/src/arm/sysv.S
 +++ libffi/src/arm/sysv.S
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,6 @@
  /* -----------------------------------------------------------------------
 -   sysv.S - Copyright (c) 1998, 2008 Red Hat, Inc.
 +   sysv.S - Copyright (c) 1998, 2008, 2011 Red Hat, Inc.
++	    Copyright (c) 2011 Plausible Labs Cooperative, Inc.
     
     ARM Foreign Function Interface 
  
-@@ -39,7 +39,11 @@
+@@ -39,7 +40,11 @@
  #else
  #define CNAME(x) x
  #endif
@@ -689,7 +823,7 @@ Index: libffi/src/arm/sysv.S
  #endif
  
  #ifdef __ELF__
-@@ -48,6 +52,12 @@
+@@ -48,6 +53,12 @@
  #define LSYM(x) x
  #endif
  
@@ -702,7 +836,7 @@ Index: libffi/src/arm/sysv.S
  /* We need a better way of testing for this, but for now, this is all 
     we can do.  */
  @ This selects the minimum architecture level required.
-@@ -105,21 +115,33 @@
+@@ -105,21 +116,33 @@
  	.align 0
  	.thumb
  	.thumb_func
@@ -737,7 +871,7 @@ Index: libffi/src/arm/sysv.S
  	UNWIND .fnstart
  .endm
  #endif
-@@ -141,8 +163,7 @@ _L__\name:		
+@@ -141,8 +164,7 @@ _L__\name:		
  #endif
  .endm
  
@@ -747,7 +881,7 @@ Index: libffi/src/arm/sysv.S
  	@ r1:   &ecif
  	@ r2:   cif->bytes
  	@ r3:   fig->flags
-@@ -222,11 +243,18 @@ ARM_FUNC_START ffi_call_SYSV
+@@ -222,11 +244,18 @@ ARM_FUNC_START ffi_call_SYSV
  #endif
  
  LSYM(Lepilogue):
@@ -767,7 +901,7 @@ Index: libffi/src/arm/sysv.S
  
  
  /*
-@@ -247,7 +275,7 @@ ARM_FUNC_START ffi_closure_SYSV
+@@ -247,7 +276,7 @@ ARM_FUNC_START ffi_closure_SYSV
  	sub	sp, sp, #16
  	str	sp, [sp, #8]
  	add	r1, sp, #8
@@ -776,7 +910,7 @@ Index: libffi/src/arm/sysv.S
  	cmp	r0, #FFI_TYPE_INT
  	beq	.Lretint
  
-@@ -299,7 +327,9 @@ ARM_FUNC_START ffi_closure_SYSV
+@@ -299,7 +328,9 @@ ARM_FUNC_START ffi_closure_SYSV
  
  .ffi_closure_SYSV_end:
  	UNWIND .fnend
@@ -786,7 +920,7 @@ Index: libffi/src/arm/sysv.S
  
  
  /* Below are VFP hard-float ABI call and closure implementations.
-@@ -371,7 +401,7 @@ LSYM(Lbase_args):
+@@ -371,7 +402,7 @@ LSYM(Lbase_args):
  	@ assume no return value.
  	cmp	r2, #0
  	beq	LSYM(Lepilogue_vfp)
@@ -799,7 +933,17 @@ Index: libffi/src/closures.c
 ===================================================================
 --- libffi.orig/src/closures.c
 +++ libffi/src/closures.c
-@@ -32,7 +32,7 @@
+@@ -1,6 +1,7 @@
+ /* -----------------------------------------------------------------------
+-   closures.c - Copyright (c) 2007  Red Hat, Inc.
+-   Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc
++   closures.c - Copyright (c) 2007, 2009, 2010  Red Hat, Inc.
++                Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc
++                Copyright (c) 2011 Plausible Labs Cooperative, Inc.
+ 
+    Code to allocate and deallocate memory for closures.
+ 
+@@ -32,7 +33,7 @@
  #include <ffi.h>
  #include <ffi_common.h>
  
@@ -808,7 +952,7 @@ Index: libffi/src/closures.c
  # if __gnu_linux__
  /* This macro indicates it may be forbidden to map anonymous memory
     with both write and execute permission.  Code compiled when this
-@@ -63,7 +63,11 @@
+@@ -63,7 +64,11 @@
  
  #if FFI_CLOSURES
  
