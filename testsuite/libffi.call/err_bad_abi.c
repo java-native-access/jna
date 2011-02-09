@@ -4,6 +4,8 @@
    PR:			none.
    Originator:	Blake Chaffin 6/6/2007	 */
 
+/* { dg-do run } */
+
 #include "ffitest.h"
 
 static void

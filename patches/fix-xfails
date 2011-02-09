@@ -108,11 +108,13 @@ Index: libffi/testsuite/libffi.call/err_bad_abi.c
 ===================================================================
 --- libffi.orig/testsuite/libffi.call/err_bad_abi.c
 +++ libffi/testsuite/libffi.call/err_bad_abi.c
-@@ -4,7 +4,6 @@
+@@ -4,7 +4,8 @@
     PR:			none.
     Originator:	Blake Chaffin 6/6/2007	 */
  
 -/* { dg-do run { xfail *-*-* } } */
++/* { dg-do run } */
++
  #include "ffitest.h"
  
  static void
@@ -120,11 +122,13 @@ Index: libffi/testsuite/libffi.call/err_bad_typedef.c
 ===================================================================
 --- libffi.orig/testsuite/libffi.call/err_bad_typedef.c
 +++ libffi/testsuite/libffi.call/err_bad_typedef.c
-@@ -4,7 +4,6 @@
+@@ -4,7 +4,8 @@
     PR:			none.
     Originator:	Blake Chaffin 6/6/2007	 */
  
 -/* { dg-do run { xfail *-*-* } } */
++/* { dg-do run } */
++
  #include "ffitest.h"
  
  int main (void)

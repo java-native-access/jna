@@ -1,4 +1,4 @@
 @set UPDATED 9 February 2011
 @set UPDATED-MONTH February 2011
-@set EDITION 3.0.10rc2
-@set VERSION 3.0.10rc2
+@set EDITION 3.0.10rc3
+@set VERSION 3.0.10rc3
