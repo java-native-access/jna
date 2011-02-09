@@ -487,7 +487,7 @@ Index: libffi/src/arm/ffi.c
 +      fprintf(stderr, "vm_allocate() failure: %d at %s:%d\n", kt, __FILE__, __LINE__);
 +      break;
 +    }
-+  
++
 +    /* Now drop the second half of the allocation to make room for the trampoline table */
 +    vm_address_t trampoline_page = config_page+PAGE_SIZE;
 +    kt = vm_deallocate (mach_task_self (), trampoline_page, PAGE_SIZE);
@@ -518,7 +518,7 @@ Index: libffi/src/arm/ffi.c
 +    table->free_count = FFI_TRAMPOLINE_COUNT;
 +    table->config_page = config_page;
 +    table->trampoline_page = trampoline_page;
-+    
++
 +    /* Create and initialize the free list */
 +    table->free_list_pool = calloc(FFI_TRAMPOLINE_COUNT, sizeof(ffi_trampoline_table_entry));
 +
@@ -602,7 +602,7 @@ Index: libffi/src/arm/ffi.c
 +    /* Remove from the list */
 +    if (table->prev != NULL)
 +      table->prev->next = table->next;
-+  
++
 +    if (table->next != NULL)
 +      table->next->prev = table->prev;
 +
@@ -786,6 +786,15 @@ Index: libffi/src/arm/sysv.S
  
  
  /* Below are VFP hard-float ABI call and closure implementations.
+@@ -371,7 +401,7 @@ LSYM(Lbase_args):
+ 	@ assume no return value.
+ 	cmp	r2, #0
+ 	beq	LSYM(Lepilogue_vfp)
+-	
++
+ 	cmp	r3, #FFI_TYPE_INT
+ 	streq	r0, [r2]
+ 	beq	LSYM(Lepilogue_vfp)
 Index: libffi/src/closures.c
 ===================================================================
 --- libffi.orig/src/closures.c
@@ -812,3 +821,33 @@ Index: libffi/src/closures.c
  
  #define USE_LOCKS 1
  #define USE_DL_PREFIX 1
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -54,6 +54,7 @@ tested:
+ | Alpha        | Linux            |
+ | Alpha        | Tru64            |
+ | ARM          | Linux            |
++| ARM          | iOS              |
+ | AVR32        | Linux            |
+ | HPPA         | HPUX             |
+ | IA-64        | Linux            |
+@@ -139,13 +140,12 @@ History
+ See the ChangeLog files for details.
+ 
+ 3.0.10 ???-??-??
++        Add iOS support.
+ 	Fix the N64 build on mips-sgi-irix6.5.
+-	Testsuite fixes for Tru64 Unix.
+ 	Enable builds with Microsoft's compiler.
+-	Enable x86 builds with Sun's compiler.
+-
+-3.0.10 ???-??-??
+-        Fix the N64 build on mips-sgi-irix6.5.
++	Enable x86 builds with Oracle's Solaris compiler.
++	Fix support for calling code compiled with Oracle's Sparc
++	  Solaris compiler.
+ 	Testsuite fixes for Tru64 Unix.
+ 
+ 3.0.9 Dec-31-09

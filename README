@@ -54,6 +54,7 @@ tested:
 | Alpha        | Linux            |
 | Alpha        | Tru64            |
 | ARM          | Linux            |
+| ARM          | iOS              |
 | AVR32        | Linux            |
 | HPPA         | HPUX             |
 | IA-64        | Linux            |
@@ -139,13 +140,12 @@ History
 See the ChangeLog files for details.
 
 3.0.10 ???-??-??
+        Add iOS support.
 	Fix the N64 build on mips-sgi-irix6.5.
-	Testsuite fixes for Tru64 Unix.
 	Enable builds with Microsoft's compiler.
-	Enable x86 builds with Sun's compiler.
-
-3.0.10 ???-??-??
-        Fix the N64 build on mips-sgi-irix6.5.
+	Enable x86 builds with Oracle's Solaris compiler.
+	Fix support for calling code compiled with Oracle's Sparc
+	  Solaris compiler.
 	Testsuite fixes for Tru64 Unix.
 
 3.0.9 Dec-31-09
