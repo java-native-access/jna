@@ -78,7 +78,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -483,7 +488,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -486,7 +491,7 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_24) $(am__append_25)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
@@ -91,7 +91,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -791,6 +791,8 @@ LTLIBOBJS
+@@ -617,6 +617,8 @@ LTLIBOBJS
  LIBOBJS
  toolexeclibdir
  toolexecdir
@@ -100,7 +100,7 @@ Index: libffi/configure
  TARGETDIR
  TARGET
  HAVE_LONG_DOUBLE
-@@ -2763,9 +2765,12 @@ am__tar='${AMTAR} chof - "$$tardir"'; am
+@@ -3123,9 +3125,12 @@ am__tar='${AMTAR} chof - "$$tardir"'; am
  # We must force CC to /not/ be precious variables; otherwise
  # the wrong, non-multilib-adjusted value will be used in multilibs.
  # As a side effect, we have to subst CFLAGS ourselves.
@@ -113,7 +113,7 @@ Index: libffi/configure
  ac_ext=c
  ac_cpp='$CPP $CPPFLAGS'
  ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-@@ -3888,6 +3893,7 @@ else
+@@ -4105,6 +4110,7 @@ else
  fi
  
  
@@ -121,107 +121,7 @@ Index: libffi/configure
  
  
  
-@@ -4776,13 +4782,13 @@ if test "${lt_cv_nm_interface+set}" = se
- else
-   lt_cv_nm_interface="BSD nm"
-   echo "int some_variable = 0;" > conftest.$ac_ext
--  (eval echo "\"\$as_me:4779: $ac_compile\"" >&5)
-+  (eval echo "\"\$as_me:4785: $ac_compile\"" >&5)
-   (eval "$ac_compile" 2>conftest.err)
-   cat conftest.err >&5
--  (eval echo "\"\$as_me:4782: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
-+  (eval echo "\"\$as_me:4788: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
-   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
-   cat conftest.err >&5
--  (eval echo "\"\$as_me:4785: output\"" >&5)
-+  (eval echo "\"\$as_me:4791: output\"" >&5)
-   cat conftest.out >&5
-   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
-     lt_cv_nm_interface="MS dumpbin"
-@@ -5988,7 +5994,7 @@ ia64-*-hpux*)
-   ;;
- *-*-irix6*)
-   # Find out which ABI we are using.
--  echo '#line 5991 "configure"' > conftest.$ac_ext
-+  echo '#line 5997 "configure"' > conftest.$ac_ext
-   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-   (eval $ac_compile) 2>&5
-   ac_status=$?
-@@ -7845,11 +7851,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:7848: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:7854: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>conftest.err)
-    ac_status=$?
-    cat conftest.err >&5
--   echo "$as_me:7852: \$? = $ac_status" >&5
-+   echo "$as_me:7858: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s "$ac_outfile"; then
-      # The compiler can only warn and ignore the option if not recognized
-      # So say no if there are warnings other than the usual output.
-@@ -8184,11 +8190,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8187: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8193: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>conftest.err)
-    ac_status=$?
-    cat conftest.err >&5
--   echo "$as_me:8191: \$? = $ac_status" >&5
-+   echo "$as_me:8197: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s "$ac_outfile"; then
-      # The compiler can only warn and ignore the option if not recognized
-      # So say no if there are warnings other than the usual output.
-@@ -8289,11 +8295,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8292: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8298: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>out/conftest.err)
-    ac_status=$?
-    cat out/conftest.err >&5
--   echo "$as_me:8296: \$? = $ac_status" >&5
-+   echo "$as_me:8302: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s out/conftest2.$ac_objext
-    then
-      # The compiler can only warn and ignore the option if not recognized
-@@ -8344,11 +8350,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8347: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8353: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>out/conftest.err)
-    ac_status=$?
-    cat out/conftest.err >&5
--   echo "$as_me:8351: \$? = $ac_status" >&5
-+   echo "$as_me:8357: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s out/conftest2.$ac_objext
-    then
-      # The compiler can only warn and ignore the option if not recognized
-@@ -11147,7 +11153,7 @@ else
-   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
-   lt_status=$lt_dlunknown
-   cat > conftest.$ac_ext <<_LT_EOF
--#line 11150 "configure"
-+#line 11156 "configure"
- #include "confdefs.h"
- 
- #if HAVE_DLFCN_H
-@@ -11243,7 +11249,7 @@ else
-   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
-   lt_status=$lt_dlunknown
-   cat > conftest.$ac_ext <<_LT_EOF
--#line 11246 "configure"
-+#line 11252 "configure"
- #include "confdefs.h"
- 
- #if HAVE_DLFCN_H
-@@ -14777,6 +14783,14 @@ _ACEOF
+@@ -13330,6 +13336,14 @@ $as_echo "#define FFI_DEBUG 1" >>confdef
    fi
  fi
  
@@ -235,18 +135,15 @@ Index: libffi/configure
 +
  
  # Check whether --enable-structs was given.
- if test "${enable_structs+set}" = set; then
-@@ -15177,6 +15191,13 @@ Usually this means the macro was only in
-    { (exit 1); exit 1; }; }
+ if test "${enable_structs+set}" = set; then :
+@@ -13640,6 +13654,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi
  
 +if test -z "${FFI_DEBUG_TRUE}" && test -z "${FFI_DEBUG_FALSE}"; then
-+  { { $as_echo "$as_me:$LINENO: error: conditional \"FFI_DEBUG\" was never defined.
-+Usually this means the macro was only invoked conditionally." >&5
-+$as_echo "$as_me: error: conditional \"FFI_DEBUG\" was never defined.
-+Usually this means the macro was only invoked conditionally." >&2;}
-+   { (exit 1); exit 1; }; }
++  as_fn_error $? "conditional \"FFI_DEBUG\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
 +fi
  
- : ${CONFIG_STATUS=./config.status}
+ : "${CONFIG_STATUS=./config.status}"
  ac_write_fail=0

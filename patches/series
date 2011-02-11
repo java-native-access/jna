@@ -18,3 +18,4 @@ interix
 ppc64-darwin
 irix
 sparc-abi-check
+remove-debug-code

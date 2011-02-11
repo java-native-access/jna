@@ -94,7 +94,7 @@ Index: libffi/aclocal.m4
 ===================================================================
 --- libffi.orig/aclocal.m4
 +++ libffi/aclocal.m4
-@@ -19,6 +19,811 @@ You have another version of autoconf.  I
+@@ -19,6 +19,817 @@ You have another version of autoconf.  I
  If you have problems, you may need to regenerate the build system entirely.
  To do so, use the procedure documented by the package, typically `autoreconf'.])])
  
@@ -107,7 +107,7 @@ Index: libffi/aclocal.m4
 +# unlimited permission to copy and/or distribute it, with or without
 +# modifications, as long as this notice is preserved.
 +
-+# serial 17 LTDL_INIT
++# serial 18 LTDL_INIT
 +
 +# LT_CONFIG_LTDL_DIR(DIRECTORY, [LTDL-MODE])
 +# ------------------------------------------
@@ -507,10 +507,16 @@ Index: libffi/aclocal.m4
 +AC_CHECK_FUNCS([closedir opendir readdir], [], [AC_LIBOBJ([lt__dirent])])
 +AC_CHECK_FUNCS([strlcat strlcpy], [], [AC_LIBOBJ([lt__strl])])
 +
++m4_pattern_allow([LT_LIBEXT])dnl
 +AC_DEFINE_UNQUOTED([LT_LIBEXT],["$libext"],[The archive extension])
 +
++name=
++eval "lt_libprefix=\"$libname_spec\""
++m4_pattern_allow([LT_LIBPREFIX])dnl
++AC_DEFINE_UNQUOTED([LT_LIBPREFIX],["$lt_libprefix"],[The archive prefix])
++
 +name=ltdl
-+LTDLOPEN=`eval "\\$ECHO \"$libname_spec\""`
++eval "LTDLOPEN=\"$libname_spec\""
 +AC_SUBST([LTDLOPEN])
 +])# _LTDL_SETUP
 +
@@ -567,7 +573,7 @@ Index: libffi/aclocal.m4
 +  freebsd* | dragonfly*)
 +    lt_cv_sys_dlopen_deplibs=yes
 +    ;;
-+  gnu* | linux* | k*bsd*-gnu)
++  gnu* | linux* | k*bsd*-gnu | kopensolaris*-gnu)
 +    # GNU and its variants, using gnu ld.so (Glibc)
 +    lt_cv_sys_dlopen_deplibs=yes
 +    ;;
@@ -910,7 +916,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -795,6 +795,7 @@ FFI_DEBUG_FALSE
+@@ -621,6 +621,7 @@ FFI_DEBUG_FALSE
  FFI_DEBUG_TRUE
  TARGETDIR
  TARGET
@@ -918,114 +924,14 @@ Index: libffi/configure
  HAVE_LONG_DOUBLE
  ALLOCA
  PA64_HPUX_FALSE
-@@ -4782,13 +4783,13 @@ if test "${lt_cv_nm_interface+set}" = se
- else
-   lt_cv_nm_interface="BSD nm"
-   echo "int some_variable = 0;" > conftest.$ac_ext
--  (eval echo "\"\$as_me:4785: $ac_compile\"" >&5)
-+  (eval echo "\"\$as_me:4786: $ac_compile\"" >&5)
-   (eval "$ac_compile" 2>conftest.err)
-   cat conftest.err >&5
--  (eval echo "\"\$as_me:4788: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
-+  (eval echo "\"\$as_me:4789: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
-   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
-   cat conftest.err >&5
--  (eval echo "\"\$as_me:4791: output\"" >&5)
-+  (eval echo "\"\$as_me:4792: output\"" >&5)
-   cat conftest.out >&5
-   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
-     lt_cv_nm_interface="MS dumpbin"
-@@ -5994,7 +5995,7 @@ ia64-*-hpux*)
-   ;;
- *-*-irix6*)
-   # Find out which ABI we are using.
--  echo '#line 5997 "configure"' > conftest.$ac_ext
-+  echo '#line 5998 "configure"' > conftest.$ac_ext
-   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-   (eval $ac_compile) 2>&5
-   ac_status=$?
-@@ -7851,11 +7852,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:7854: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:7855: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>conftest.err)
-    ac_status=$?
-    cat conftest.err >&5
--   echo "$as_me:7858: \$? = $ac_status" >&5
-+   echo "$as_me:7859: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s "$ac_outfile"; then
-      # The compiler can only warn and ignore the option if not recognized
-      # So say no if there are warnings other than the usual output.
-@@ -8190,11 +8191,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8193: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8194: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>conftest.err)
-    ac_status=$?
-    cat conftest.err >&5
--   echo "$as_me:8197: \$? = $ac_status" >&5
-+   echo "$as_me:8198: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s "$ac_outfile"; then
-      # The compiler can only warn and ignore the option if not recognized
-      # So say no if there are warnings other than the usual output.
-@@ -8295,11 +8296,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8298: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8299: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>out/conftest.err)
-    ac_status=$?
-    cat out/conftest.err >&5
--   echo "$as_me:8302: \$? = $ac_status" >&5
-+   echo "$as_me:8303: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s out/conftest2.$ac_objext
-    then
-      # The compiler can only warn and ignore the option if not recognized
-@@ -8350,11 +8351,11 @@ else
-    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
-    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
-    -e 's:$: $lt_compiler_flag:'`
--   (eval echo "\"\$as_me:8353: $lt_compile\"" >&5)
-+   (eval echo "\"\$as_me:8354: $lt_compile\"" >&5)
-    (eval "$lt_compile" 2>out/conftest.err)
-    ac_status=$?
-    cat out/conftest.err >&5
--   echo "$as_me:8357: \$? = $ac_status" >&5
-+   echo "$as_me:8358: \$? = $ac_status" >&5
-    if (exit $ac_status) && test -s out/conftest2.$ac_objext
-    then
-      # The compiler can only warn and ignore the option if not recognized
-@@ -11153,7 +11154,7 @@ else
-   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
-   lt_status=$lt_dlunknown
-   cat > conftest.$ac_ext <<_LT_EOF
--#line 11156 "configure"
-+#line 11157 "configure"
- #include "confdefs.h"
- 
- #if HAVE_DLFCN_H
-@@ -11249,7 +11250,7 @@ else
-   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
-   lt_status=$lt_dlunknown
-   cat > conftest.$ac_ext <<_LT_EOF
--#line 11252 "configure"
-+#line 11253 "configure"
- #include "confdefs.h"
- 
- #if HAVE_DLFCN_H
-@@ -14658,6 +14659,63 @@ _ACEOF
+@@ -13226,6 +13227,61 @@ $as_echo "#define HAVE_AS_STRING_PSEUDO_
      fi
  fi
  
 +if test x$TARGET = xX86_WIN64; then
-+    { $as_echo "$as_me:$LINENO: checking for _ prefix in compiled symbols" >&5
++    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _ prefix in compiled symbols" >&5
 +$as_echo_n "checking for _ prefix in compiled symbols... " >&6; }
-+if test "${lt_cv_sys_symbol_underscore+set}" = set; then
++if ${lt_cv_sys_symbol_underscore+:} false; then :
 +  $as_echo_n "(cached) " >&6
 +else
 +  lt_cv_sys_symbol_underscore=no
@@ -1033,18 +939,18 @@ Index: libffi/configure
 +void nm_test_func(){}
 +int main(){nm_test_func;return 0;}
 +_LT_EOF
-+  if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
++  if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
 +  (eval $ac_compile) 2>&5
 +  ac_status=$?
-+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); }; then
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; }; then
 +    # Now try to grab the symbols.
 +    ac_nlist=conftest.nm
-+    if { (eval echo "$as_me:$LINENO: \"$NM conftest.$ac_objext \| $lt_cv_sys_global_symbol_pipe \> $ac_nlist\"") >&5
++    if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$NM conftest.$ac_objext \| $lt_cv_sys_global_symbol_pipe \> $ac_nlist\""; } >&5
 +  (eval $NM conftest.$ac_objext \| $lt_cv_sys_global_symbol_pipe \> $ac_nlist) 2>&5
 +  ac_status=$?
-+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); } && test -s "$ac_nlist"; then
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; } && test -s "$ac_nlist"; then
 +      # See whether the symbols have a leading underscore.
 +      if grep '^. _nm_test_func' "$ac_nlist" >/dev/null; then
 +        lt_cv_sys_symbol_underscore=yes
@@ -1065,16 +971,14 @@ Index: libffi/configure
 +  rm -rf conftest*
 +
 +fi
-+{ $as_echo "$as_me:$LINENO: result: $lt_cv_sys_symbol_underscore" >&5
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_sys_symbol_underscore" >&5
 +$as_echo "$lt_cv_sys_symbol_underscore" >&6; }
 +  sys_symbol_underscore=$lt_cv_sys_symbol_underscore
 +
 +
 +    if test "x$sys_symbol_underscore" = xyes; then
 +
-+cat >>confdefs.h <<\_ACEOF
-+#define SYMBOL_UNDERSCORE 1
-+_ACEOF
++$as_echo "#define SYMBOL_UNDERSCORE 1" >>confdefs.h
 +
 +    fi
 +fi

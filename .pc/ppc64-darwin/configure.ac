@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.10rc4], [http://sourceware.org/libffi.html])
+AC_INIT([libffi], [3.0.10rc3], [http://sourceware.org/libffi.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
