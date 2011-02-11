@@ -17,3 +17,4 @@ fix-xfails
 interix
 ppc64-darwin
 irix
+sparc-abi-check

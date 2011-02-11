@@ -1,6 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 2011 Anthony Green
-           Copyright (c) 1996, 2003-2004, 2007-2008 Red Hat, Inc.
+   ffi.c - Copyright (c) 1996, 2003, 2004, 2007, 2008 Red Hat, Inc.
    
    SPARC Foreign Function Interface 
 
@@ -486,8 +485,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
 #ifdef SPARC64
   /* Trampoline address is equal to the closure address.  We take advantage
      of that to reduce the trampoline size by 8 bytes. */
-  if (cif->abi != FFI_V9)
-    return FFI_BAD_ABI;
+  FFI_ASSERT (cif->abi == FFI_V9);
   fn = (unsigned long) ffi_closure_v9;
   tramp[0] = 0x83414000;	/* rd	%pc, %g1	*/
   tramp[1] = 0xca586010;	/* ldx	[%g1+16], %g5	*/
@@ -496,8 +494,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
   *((unsigned long *) &tramp[4]) = fn;
 #else
   unsigned long ctx = (unsigned long) codeloc;
-  if (cif->abi != FFI_V8)
-    return FFI_BAD_ABI;
+  FFI_ASSERT (cif->abi == FFI_V8);
   fn = (unsigned long) ffi_closure_v8;
   tramp[0] = 0x03000000 | fn >> 10;	/* sethi %hi(fn), %g1	*/
   tramp[1] = 0x05000000 | ctx >> 10;	/* sethi %hi(ctx), %g2	*/
