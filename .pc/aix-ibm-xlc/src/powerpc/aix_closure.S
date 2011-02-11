@@ -79,8 +79,6 @@
 	.set f20,20
 	.set f21,21
 
-	.extern .ffi_closure_helper_DARWIN
-
 #define LIBFFI_ASM
 #define JUMPTARGET(name) name
 #define L(x) x

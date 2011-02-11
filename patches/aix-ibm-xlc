@@ -2,7 +2,16 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,7 @@
+@@ -1,3 +1,16 @@
++2011-02-11  Anthony Green  <green@moxielogic.com>
++
++	From Tom Honermann <tom.honermann@oracle.com>:
++	* src/powerpc/aix.S (ffi_call_AIX): Support for xlc toolchain on
++	AIX.  Declare .ffi_prep_args.  Insert nops after branch
++	instructions so that the AIX linker can insert TOC reload
++	instructions.
++	* src/powerpc/aix_closure.S: Declare .ffi_closure_helper_DARWIN.
++
 +2011-02-08  Uli Link  <ul.mcamafia@linkitup.de>
 +
 +	* include/ffi.h.in (FFI_64_BIT_MAX): Define and use.
@@ -98,3 +107,52 @@ Index: libffi/include/ffi.h.in
  #  define FFI_SIZEOF_ARG        8
  # endif
  #endif
+Index: libffi/src/powerpc/aix.S
+===================================================================
+--- libffi.orig/src/powerpc/aix.S
++++ libffi/src/powerpc/aix.S
+@@ -1,5 +1,5 @@
+ /* -----------------------------------------------------------------------
+-   aix.S - Copyright (c) 2002,2009 Free Software Foundation, Inc.
++   aix.S - Copyright (c) 2002, 2009 Free Software Foundation, Inc.
+    based on darwin.S by John Hornkvist
+ 
+    PowerPC Assembly glue.
+@@ -79,6 +79,8 @@
+ 	.set f20,20
+ 	.set f21,21
+ 
++	.extern .ffi_prep_args
++
+ #define LIBFFI_ASM
+ #include <fficonfig.h>
+ #include <ffi.h>
+@@ -125,6 +127,7 @@ ffi_call_AIX:
+ 	/* Call ffi_prep_args.  */
+ 	mr	r4, r1
+ 	bl	.ffi_prep_args
++	nop
+ 
+ 	/* Now do the call.  */
+ 	ld	r0, 0(r29)
+@@ -226,6 +229,7 @@ L(float_return_value):
+ 	/* Call ffi_prep_args.  */
+ 	mr	r4, r1
+ 	bl	.ffi_prep_args
++	nop
+ 
+ 	/* Now do the call.  */
+ 	lwz	r0, 0(r29)
+Index: libffi/src/powerpc/aix_closure.S
+===================================================================
+--- libffi.orig/src/powerpc/aix_closure.S
++++ libffi/src/powerpc/aix_closure.S
+@@ -79,6 +79,8 @@
+ 	.set f20,20
+ 	.set f21,21
+ 
++	.extern .ffi_closure_helper_DARWIN
++
+ #define LIBFFI_ASM
+ #define JUMPTARGET(name) name
+ #define L(x) x

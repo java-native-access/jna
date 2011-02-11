@@ -41,6 +41,15 @@
 
 	* src/powerpc/asm.h: Fix grammar nit in comment.
 
+2011-02-11  Anthony Green  <green@moxielogic.com>
+
+	From Tom Honermann <tom.honermann@oracle.com>:
+	* src/powerpc/aix.S (ffi_call_AIX): Support for xlc toolchain on
+	AIX.  Declare .ffi_prep_args.  Insert nops after branch
+	instructions so that the AIX linker can insert TOC reload
+	instructions.
+	* src/powerpc/aix_closure.S: Declare .ffi_closure_helper_DARWIN.
+
 2011-02-08  Uli Link  <ul.mcamafia@linkitup.de>
 
 	* include/ffi.h.in (FFI_64_BIT_MAX): Define and use.
