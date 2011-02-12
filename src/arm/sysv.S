@@ -147,23 +147,6 @@ _L__\name:
 .endm
 #endif
 
-.macro	RETLDM	regs=, cond=, dirn=ia
-#if defined (__INTERWORKING__)
-	.ifc "\regs",""
-	ldr\cond	lr, [sp], #4
-	.else
-	ldm\cond\dirn	sp!, {\regs, lr}
-	.endif
-	bx\cond	lr
-#else
-	.ifc "\regs",""
-	ldr\cond	pc, [sp], #4
-	.else
-	ldm\cond\dirn	sp!, {\regs, pc}
-	.endif
-#endif
-.endm
-
 	@ r0:   ffi_prep_args
 	@ r1:   &ecif
 	@ r2:   cif->bytes
@@ -424,7 +407,12 @@ LSYM(Lbase_args):
 	fstmiadeq	r2, {d0-d3}
 
 LSYM(Lepilogue_vfp):
-	RETLDM	"r0-r3,fp"
+#if defined (__INTERWORKING__)
+  ldmia   sp!, {r0-r3,fp, lr}
+  bx  lr
+#else
+  ldmia   sp!, {r0-r3,fp, pc}
+#endif
 
 .ffi_call_VFP_end:
 	UNWIND .fnend
