@@ -10,8 +10,6 @@ target_alias=${target_alias-$host_alias}
 
 . ${srcdir}/configure.host
 
-AX_ENABLE_BUILDDIR
-
 AM_INIT_AUTOMAKE
 
 # The same as in boehm-gc and libstdc++. Have to borrow it from there.
@@ -35,12 +33,6 @@ AM_PROG_AS
 AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
-
-AX_CFLAGS_WARN_ALL
-AX_CC_MAXOPT
-if test "x$GCC" = "xyes"; then
-  CFLAGS="$CFLAGS -fexceptions"
-fi
 
 AM_MAINTAINER_MODE
 
