@@ -318,7 +318,12 @@ ARM_FUNC_START ffi_closure_SYSV
 
 /* Below are VFP hard-float ABI call and closure implementations.
    Add VFP FPU directive here. */
+#ifndef __APPLE__
+    /* XXX - .fpu pseudo-directive is not supported by Apple's assembler,
+       and VFP hard-float calling conventions are not supported by the
+       compiler. */
 	.fpu	vfp
+#endif
 
 	@ r0:   fn
 	@ r1:   &ecif
@@ -416,7 +421,9 @@ LSYM(Lepilogue_vfp):
 
 .ffi_call_VFP_end:
 	UNWIND .fnend
+#ifdef __ELF__
         .size    CNAME(ffi_call_VFP),.ffi_call_VFP_end-CNAME(ffi_call_VFP)
+#endif
 
 
 ARM_FUNC_START ffi_closure_VFP
@@ -478,7 +485,9 @@ ARM_FUNC_START ffi_closure_VFP
 
 .ffi_closure_VFP_end:
 	UNWIND .fnend
+#ifdef __ELF__
         .size    CNAME(ffi_closure_VFP),.ffi_closure_VFP_end-CNAME(ffi_closure_VFP)
+#endif
 
 #if defined __ELF__ && defined __linux__
 	.section	.note.GNU-stack,"",%progbits
