@@ -43,7 +43,7 @@ TARGETDIR="unknown"
 case "$host" in
   alpha*-*-*)
 	TARGET=ALPHA; TARGETDIR=alpha;
-	# Support 128-bit long double, changable via command-line switch.
+	# Support 128-bit long double, changeable via command-line switch.
 	HAVE_LONG_DOUBLE='defined(__LONG_DOUBLE_128__)'
 	;;
 
@@ -80,10 +80,17 @@ case "$host" in
   i?86-*-freebsd* | i?86-*-openbsd*)
 	TARGET=X86_FREEBSD; TARGETDIR=x86
 	;;
-  i?86-win32* | i?86-*-cygwin* | i?86-*-mingw*)
+  i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2*)
 	TARGET=X86_WIN32; TARGETDIR=x86
-	# All mingw/cygwin/win32 builds require this for sharedlib
-	AM_LTLDFLAGS="-no-undefined"
+	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+	# We must also check with_cross_host to decide if this is a native
+	# or cross-build and select where to install dlls appropriately.
+	if test -n "$with_cross_host" &&
+	   test x"$with_cross_host" != x"no"; then
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
+	else
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+	fi
 	;;
   i?86-*-darwin*)
 	TARGET=X86_DARWIN; TARGETDIR=x86
@@ -107,17 +114,13 @@ case "$host" in
 	TARGET=M68K; TARGETDIR=m68k
 	;;
 
-  mips-sgi-irix5.* | mips-sgi-irix6.*)
+  mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)
 	TARGET=MIPS; TARGETDIR=mips
 	;;
   mips*-*-linux*)
 	# Support 128-bit long double for NewABI.
 	HAVE_LONG_DOUBLE='defined(__mips64)'
 	TARGET=MIPS; TARGETDIR=mips
-	;;
-
-  moxie-*-*)
-        TARGET=MOXIE; TARGETDIR=moxie
 	;;
 
   powerpc*-*-linux* | powerpc-*-sysv*)
@@ -134,6 +137,9 @@ case "$host" in
 	;;
   powerpc-*-freebsd*)
 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
+	;;
+ powerpc64-*-freebsd*)
+	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
   powerpc*-*-rtems*)
 	TARGET=POWERPC; TARGETDIR=powerpc
@@ -283,7 +289,7 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
        libffi_cv_as_ascii_pseudo_op, [
        libffi_cv_as_ascii_pseudo_op=unknown
        # Check if we have .ascii
-       AC_TRY_COMPILE([asm (".ascii \"string\"");],,
+       AC_TRY_COMPILE([asm (".ascii \\"string\\"");],,
 		       [libffi_cv_as_ascii_pseudo_op=yes],
 		       [libffi_cv_as_ascii_pseudo_op=no])
     ])
@@ -296,7 +302,7 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
        libffi_cv_as_string_pseudo_op, [
        libffi_cv_as_string_pseudo_op=unknown
        # Check if we have .string
-       AC_TRY_COMPILE([asm (".string \"string\"");],,
+       AC_TRY_COMPILE([asm (".string \\"string\\"");],,
 		       [libffi_cv_as_string_pseudo_op=yes],
 		       [libffi_cv_as_string_pseudo_op=no])
     ])

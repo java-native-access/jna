@@ -29,9 +29,17 @@
 
 #ifdef linux
 # include <asm/sgidefs.h>
+#elif defined(__rtems__)
+/*
+ * Subprogram calling convention - copied from sgidefs.h
+ */
+#define _MIPS_SIM_ABI32		1
+#define _MIPS_SIM_NABI32	2
+#define _MIPS_SIM_ABI64		3
 #else
 # include <sgidefs.h>
 #endif
+
 #  ifndef _ABIN32
 #    define _ABIN32 _MIPS_SIM_NABI32
 #  endif
@@ -43,7 +51,7 @@
 #  endif
 
 #if !defined(_MIPS_SIM)
--- something is very wrong --
+# error -- something is very wrong --
 #else
 #  if (_MIPS_SIM==_ABIN32 && defined(_ABIN32)) || (_MIPS_SIM==_ABI64 && defined(_ABI64))
 #    define FFI_MIPS_N32
@@ -51,7 +59,7 @@
 #    if (_MIPS_SIM==_ABIO32 && defined(_ABIO32))
 #      define FFI_MIPS_O32
 #    else
--- this is an unsupported platform --
+#     error -- this is an unsupported platform --
 #    endif
 #  endif
 #endif

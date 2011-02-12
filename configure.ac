@@ -2,13 +2,15 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.10rc0], [http://gcc.gnu.org/bugs.html])
+AC_INIT([libffi], [3.0.10rc4], [http://sourceware.org/libffi.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
 target_alias=${target_alias-$host_alias}
 
 . ${srcdir}/configure.host
+
+AX_ENABLE_BUILDDIR
 
 AM_INIT_AUTOMAKE
 
@@ -33,6 +35,12 @@ AM_PROG_AS
 AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
+
+AX_CFLAGS_WARN_ALL
+AX_CC_MAXOPT
+if test "x$GCC" = "xyes"; then
+  CFLAGS="$CFLAGS -fexceptions"
+fi
 
 AM_MAINTAINER_MODE
 
@@ -88,10 +96,17 @@ case "$host" in
   i?86-*-freebsd* | i?86-*-openbsd*)
 	TARGET=X86_FREEBSD; TARGETDIR=x86
 	;;
-  i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2*)
+  i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2* | i?86-*-interix*)
 	TARGET=X86_WIN32; TARGETDIR=x86
-	# All mingw/cygwin/win32 builds require this for sharedlib
-	AM_LTLDFLAGS="-no-undefined"
+	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+	# We must also check with_cross_host to decide if this is a native
+	# or cross-build and select where to install dlls appropriately.
+	if test -n "$with_cross_host" &&
+	   test x"$with_cross_host" != x"no"; then
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
+	else
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+	fi
 	;;
   i?86-*-darwin*)
 	TARGET=X86_DARWIN; TARGETDIR=x86
@@ -115,7 +130,7 @@ case "$host" in
 	TARGET=M68K; TARGETDIR=m68k
 	;;
 
-  mips-sgi-irix5.* | mips-sgi-irix6.*)
+  mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)
 	TARGET=MIPS; TARGETDIR=mips
 	;;
   mips*-*-linux*)
@@ -124,17 +139,13 @@ case "$host" in
 	TARGET=MIPS; TARGETDIR=mips
 	;;
 
-  moxie-*-*)
-        TARGET=MOXIE; TARGETDIR=moxie
-	;;
-
   powerpc*-*-linux* | powerpc-*-sysv*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
   powerpc-*-beos*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
-  powerpc-*-darwin*)
+  powerpc-*-darwin* | powerpc64-*-darwin*)
 	TARGET=POWERPC_DARWIN; TARGETDIR=powerpc
 	;;
   powerpc-*-aix* | rs6000-*-aix*)
@@ -142,6 +153,9 @@ case "$host" in
 	;;
   powerpc-*-freebsd*)
 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
+	;;
+  powerpc64-*-freebsd*)
+	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
   powerpc*-*-rtems*)
 	TARGET=POWERPC; TARGETDIR=powerpc
@@ -277,10 +291,10 @@ fi
 if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64; then
     AC_CACHE_CHECK([assembler supports pc related relocs],
 	libffi_cv_as_x86_pcrel, [
-	libffi_cv_as_x86_pcrel=yes
+	libffi_cv_as_x86_pcrel=no
 	echo '.text; foo: nop; .data; .long foo-.; .text' > conftest.s
-	if $CC $CFLAGS -c conftest.s 2>&1 | $EGREP -i 'illegal|warning' > /dev/null; then
-	    libffi_cv_as_x86_pcrel=no
+	if $CC $CFLAGS -c conftest.s > /dev/null; then
+	   libffi_cv_as_x86_pcrel=yes
 	fi
 	])
     if test "x$libffi_cv_as_x86_pcrel" = xyes; then
@@ -292,7 +306,7 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
        libffi_cv_as_ascii_pseudo_op, [
        libffi_cv_as_ascii_pseudo_op=unknown
        # Check if we have .ascii
-       AC_TRY_COMPILE([asm (".ascii \"string\"");],,
+       AC_TRY_COMPILE([asm (".ascii \\"string\\"");],,
 		       [libffi_cv_as_ascii_pseudo_op=yes],
 		       [libffi_cv_as_ascii_pseudo_op=no])
     ])
@@ -305,7 +319,7 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
        libffi_cv_as_string_pseudo_op, [
        libffi_cv_as_string_pseudo_op=unknown
        # Check if we have .string
-       AC_TRY_COMPILE([asm (".string \"string\"");],,
+       AC_TRY_COMPILE([asm (".string \\"string\\"");],,
 		       [libffi_cv_as_string_pseudo_op=yes],
 		       [libffi_cv_as_string_pseudo_op=no])
     ])
@@ -314,6 +328,14 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
 	       [Define if your assembler supports .string.])
     fi
 fi
+
+if test x$TARGET = xX86_WIN64; then
+    LT_SYS_SYMBOL_USCORE
+    if test "x$sys_symbol_underscore" = xyes; then
+        AC_DEFINE(SYMBOL_UNDERSCORE, 1, [Define if symbols are underscored.])
+    fi
+fi
+
 
 FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in

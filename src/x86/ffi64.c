@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------
    ffi64.c - Copyright (c) 2002, 2007  Bo Thorsen <bo@suse.de>
-             Copyright (c) 2008  Red Hat, Inc.
+             Copyright (c) 2008, 2010  Red Hat, Inc.
    
    x86-64 Foreign Function Interface 
 
@@ -27,6 +27,12 @@
 
 #include <ffi.h>
 #include <ffi_common.h>
+
+#ifndef __GNUC__
+#define __builtin_expect(x, expected_value) (x)
+#endif
+#define LIKELY(x)    __builtin_expect((x),1)
+#define UNLIKELY(x)  __builtin_expect((x),1)
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -378,7 +384,7 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 	  if (align < 8)
 	    align = 8;
 
-	  bytes = ALIGN(bytes, align);
+	  bytes = ALIGN (bytes, align);
 	  bytes += cif->arg_types[i]->size;
 	}
       else
@@ -390,7 +396,7 @@ ffi_prep_cif_machdep (ffi_cif *cif)
   if (ssecount)
     flags |= 1 << 11;
   cif->flags = flags;
-  cif->bytes = bytes;
+  cif->bytes = ALIGN (bytes, 8);
 
   return FFI_OK;
 }
@@ -497,6 +503,13 @@ ffi_prep_closure_loc (ffi_closure* closure,
 		      void *codeloc)
 {
   volatile unsigned short *tramp;
+
+  /* Sanity check on the cif ABI.  */
+  {
+    int abi = cif->abi;
+    if (UNLIKELY (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)))
+      return FFI_BAD_ABI;
+  }
 
   tramp = (volatile unsigned short *) &closure->tramp[0];
 

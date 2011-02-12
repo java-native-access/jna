@@ -1,5 +1,5 @@
-This is ../libffi/doc/libffi.info, produced by makeinfo version 4.13
-from ../libffi/doc/libffi.texi.
+This is /home/green/libffi/doc/libffi.info, produced by makeinfo
+version 4.13 from /home/green/libffi/doc/libffi.texi.
 
 This manual is for Libffi, a portable foreign-function interface
 library.
@@ -573,19 +573,19 @@ Index
 
 
 Tag Table:
-Node: Top706
-Node: Introduction1448
-Node: Using libffi3084
-Node: The Basics3570
-Node: Simple Example6177
-Node: Types7204
-Node: Primitive Types7487
-Node: Structures9307
-Node: Type Example10167
-Node: Multiple ABIs11390
-Node: The Closure API11761
-Node: Closure Example14705
-Node: Missing Features16264
-Node: Index16757
+Node: Top724
+Node: Introduction1466
+Node: Using libffi3102
+Node: The Basics3588
+Node: Simple Example6195
+Node: Types7222
+Node: Primitive Types7505
+Node: Structures9325
+Node: Type Example10185
+Node: Multiple ABIs11408
+Node: The Closure API11779
+Node: Closure Example14723
+Node: Missing Features16282
+Node: Index16775
 
 End Tag Table

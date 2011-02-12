@@ -1,6 +1,7 @@
 /* -----------------------------------------------------------------------
-   closures.c - Copyright (c) 2007  Red Hat, Inc.
-   Copyright (C) 2007, 2009 Free Software Foundation, Inc
+   closures.c - Copyright (c) 2007, 2009, 2010  Red Hat, Inc.
+                Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc
+                Copyright (c) 2011 Plausible Labs Cooperative, Inc.
 
    Code to allocate and deallocate memory for closures.
 
@@ -197,11 +198,11 @@ static int dlmalloc_trim(size_t) MAYBE_UNUSED;
 static size_t dlmalloc_usable_size(void*) MAYBE_UNUSED;
 static void dlmalloc_stats(void) MAYBE_UNUSED;
 
-#if !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__)
+#if !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__) || defined(__INTERIX)
 /* Use these for mmap and munmap within dlmalloc.c.  */
 static void *dlmmap(void *, size_t, int, int, int, off_t);
 static int dlmunmap(void *, size_t);
-#endif /* !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__) */
+#endif /* !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__) || defined(__INTERIX) */
 
 #define mmap dlmmap
 #define munmap dlmunmap
@@ -211,7 +212,7 @@ static int dlmunmap(void *, size_t);
 #undef mmap
 #undef munmap
 
-#if !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__)
+#if !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__) || defined(__INTERIX)
 
 /* A mutex used to synchronize access to *exec* variables in this file.  */
 static pthread_mutex_t open_temp_exec_file_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -298,7 +299,7 @@ open_temp_exec_file_mnt (const char *mounts)
       struct mntent mnt;
       char buf[MAXPATHLEN * 3];
 
-      if (getmntent_r (last_mntent, &mnt, buf, sizeof (buf)))
+      if (getmntent_r (last_mntent, &mnt, buf, sizeof (buf)) == NULL)
 	return -1;
 
       if (hasmntopt (&mnt, "ro")
@@ -526,7 +527,7 @@ segment_holding_code (mstate m, char* addr)
 }
 #endif
 
-#endif /* !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__) */
+#endif /* !(defined(X86_WIN32) || defined(X86_WIN64) || defined(__OS2__)) || defined (__CYGWIN__) || defined(__INTERIX) */
 
 /* Allocate a chunk of memory with the given size.  Returns a pointer
    to the writable address, and sets *CODE to the executable

@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.10 was released on XXXXXXXXXX, 2010. Check the libffi web
+libffi-3.0.10 was released on XXXXXXXXXX, 2011. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -57,8 +57,10 @@ tested:
 | AVR32        | Linux            |
 | HPPA         | HPUX             |
 | IA-64        | Linux            |
+| M68K         | RTEMS            |
 | MIPS         | IRIX             |
 | MIPS         | Linux            |
+| MIPS         | RTEMS            |
 | MIPS64       | Linux            |
 | PowerPC      | Linux            |
 | PowerPC      | Mac OSX          |
@@ -75,6 +77,7 @@ tested:
 | X86          | Linux            |
 | X86          | Mac OSX          |
 | X86          | OpenBSD          |
+| X86          | OS/2             |
 | X86          | Solaris          |
 | X86          | Windows/Cygwin   |
 | X86          | Windows/MingW    |
@@ -134,10 +137,14 @@ History
 See the ChangeLog files for details.
 
 3.0.10 ???-??-??
-        Fix the N64 build on mips-sgi-irix6.5.
-	Testsuite fixes for Tru64 Unix.
+        Add support for Apple's iOS.
+        Add RTEMS support for MIPS and M68K.
+	Fix the N64 build on mips-sgi-irix6.5.
 	Enable builds with Microsoft's compiler.
-	Enable x86 builds with Sun's compiler.
+	Enable x86 builds with Oracle's Solaris compiler.
+	Fix support for calling code compiled with Oracle's Sparc
+	  Solaris compiler.
+	Testsuite fixes for Tru64 Unix.
 
 3.0.9 Dec-31-09
         Add AVR32 and win64 ports.  Add ARM softfp support.
@@ -318,5 +325,6 @@ Alex Oliva solved the executable page problem for SElinux.
 The list above is almost certainly incomplete and inaccurate.  I'm
 happy to make corrections or additions upon request.
 
-If you have a problem, or have found a bug, please send a note to
-green@redhat.com.
+If you have a problem, or have found a bug, please send a note to the
+author at green@moxielogic.com, or the project mailing list at
+libffi-discuss@sourceware.org.

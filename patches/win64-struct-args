@@ -51,9 +51,9 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -8,6 +8,14 @@
- 
- 	* src/closures.c (selinux_enabled_check): Fix strncmp usage bug.
+@@ -160,6 +160,14 @@
+ 	* fficonfig.h.in: Regenerate.
+ 	* src/x86/sysv.S (.eh_frame): Use .ascii, .string or error.
  
 +2010-05-11  Dan Witte  <dwitte@mozilla.com>
 +
@@ -81,29 +81,29 @@ Index: libffi/doc/libffi.info
  
  
  File: libffi.info,  Node: Simple Example,  Next: Types,  Prev: The Basics,  Up: Using libffi
-@@ -577,15 +579,15 @@ Node: Top706
- Node: Introduction1448
- Node: Using libffi3084
- Node: The Basics3570
--Node: Simple Example6177
--Node: Types7204
--Node: Primitive Types7487
--Node: Structures9307
--Node: Type Example10167
--Node: Multiple ABIs11390
--Node: The Closure API11761
--Node: Closure Example14705
--Node: Missing Features16264
--Node: Index16757
-+Node: Simple Example6356
-+Node: Types7383
-+Node: Primitive Types7666
-+Node: Structures9486
-+Node: Type Example10346
-+Node: Multiple ABIs11569
-+Node: The Closure API11940
-+Node: Closure Example14884
-+Node: Missing Features16443
-+Node: Index16936
+@@ -577,15 +579,15 @@ Node: Top724
+ Node: Introduction1466
+ Node: Using libffi3102
+ Node: The Basics3588
+-Node: Simple Example6195
+-Node: Types7222
+-Node: Primitive Types7505
+-Node: Structures9325
+-Node: Type Example10185
+-Node: Multiple ABIs11408
+-Node: The Closure API11779
+-Node: Closure Example14723
+-Node: Missing Features16282
+-Node: Index16775
++Node: Simple Example6374
++Node: Types7401
++Node: Primitive Types7684
++Node: Structures9504
++Node: Type Example10364
++Node: Multiple ABIs11587
++Node: The Closure API11958
++Node: Closure Example14902
++Node: Missing Features16461
++Node: Index16954
  
  End Tag Table
