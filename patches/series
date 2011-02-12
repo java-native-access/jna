@@ -20,3 +20,4 @@ irix
 sparc-abi-check
 remove-debug-code
 ungccify
+ios-fixes
