@@ -43,7 +43,7 @@
 	* src/prep_cif.c (UNLIKELY, LIKELY): Define.
 	(initialize_aggregate): Check for bad types.
 
-2011-02-09  Landon Fuller <landonf@macports.org>
+2011-02-09  Landon Fuller <landonf@plausible.coop>
 
 	* Makefile.am (EXTRA_DIST): Add build-ios.sh, src/arm/gentramp.sh,
 	src/arm/trampoline.S.
