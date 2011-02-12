@@ -2,7 +2,7 @@
 
 PLATFORM_IOS=/Developer/Platforms/iPhoneOS.platform/
 PLATFORM_IOS_SIM=/Developer/Platforms/iPhoneSimulator.platform/
-SDK_IOS_VERSION="4.1"
+SDK_IOS_VERSION="4.2"
 MIN_IOS_VERSION="3.0"
 
 mkdir -p "build-ios"
