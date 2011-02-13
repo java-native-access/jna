@@ -2,9 +2,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,5 +1,13 @@
+@@ -1,5 +1,14 @@
  2011-02-11  Anthony Green  <green@moxielogic.com>
  
++	* libtool-version: Update.
 +	* Makefile.am (nodist_libffi_la_SOURCES): Add src/debug.c if
 +	FFI_DEBUG.
 +	(libffi_la_SOURCES): Remove src/debug.c
@@ -278,3 +279,13 @@ Index: libffi/Makefile.in
  src/mips/$(am__dirstamp):
  	@$(MKDIR_P) src/mips
  	@: > src/mips/$(am__dirstamp)
+Index: libffi/libtool-version
+===================================================================
+--- libffi.orig/libtool-version
++++ libffi/libtool-version
+@@ -26,4 +26,4 @@
+ #    release, then set age to 0.
+ #
+ # CURRENT:REVISION:AGE
+-5:10:0
++6:0:0

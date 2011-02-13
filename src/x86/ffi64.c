@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------
-   ffi64.c - Copyright (c) 2002, 2007  Bo Thorsen <bo@suse.de>
+   ffi64.c - Copyright (c) 20011  Anthony Green
              Copyright (c) 2008, 2010  Red Hat, Inc.
-   
+             Copyright (c) 2002, 2007  Bo Thorsen <bo@suse.de>
+             
    x86-64 Foreign Function Interface 
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -27,12 +28,6 @@
 
 #include <ffi.h>
 #include <ffi_common.h>
-
-#ifndef __GNUC__
-#define __builtin_expect(x, expected_value) (x)
-#endif
-#define LIKELY(x)    __builtin_expect((x),1)
-#define UNLIKELY(x)  __builtin_expect((x),1)
 
 #include <stdlib.h>
 #include <stdarg.h>

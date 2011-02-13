@@ -1,7 +1,9 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
-	   Copyright (c) 2011 Plausible Labs Cooperative, Inc.
-   
+   ffi.c - Copyright (c) 2011 Plausible Labs Cooperative, Inc.
+           Copyright (c) 2011 Anthony Green
+	   Copyright (c) 2011 Free Software Foundation
+           Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
+	   
    ARM Foreign Function Interface 
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -582,7 +584,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
   else if (cif->abi == FFI_VFP)
     closure_func = &ffi_closure_VFP;
   else
-    FFI_ASSERT (0);
+    return FFI_BAD_ABI;
     
 #if FFI_EXEC_TRAMPOLINE_TABLE
   void **config = FFI_TRAMPOLINE_CODELOC_CONFIG(codeloc);

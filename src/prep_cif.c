@@ -27,12 +27,6 @@
 #include <ffi_common.h>
 #include <stdlib.h>
 
-#ifndef __GNUC__
-#define __builtin_expect(x, expected_value) (x)
-#endif
-#define LIKELY(x)    __builtin_expect((x),1)
-#define UNLIKELY(x)  __builtin_expect((x),1)
-
 /* Round up to FFI_SIZEOF_ARG. */
 
 #define STACK_ARG_SIZE(x) ALIGN(x, FFI_SIZEOF_ARG)
@@ -44,11 +38,11 @@ static ffi_status initialize_aggregate(ffi_type *arg)
 {
   ffi_type **ptr;
 
-  FFI_ASSERT(arg != NULL);
+  if (UNLIKELY(arg == NULL || arg->elements == NULL))
+    return FFI_BAD_TYPEDEF;
 
-  FFI_ASSERT(arg->elements != NULL);
-  FFI_ASSERT(arg->size == 0);
-  FFI_ASSERT(arg->alignment == 0);
+  arg->size = 0;
+  arg->alignment = 0;
 
   ptr = &(arg->elements[0]);
 
