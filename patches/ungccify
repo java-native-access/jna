@@ -83,7 +83,17 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -688,6 +688,7 @@ TESTSUBDIR_TRUE
+@@ -621,6 +621,9 @@ FFI_DEBUG_FALSE
+ FFI_DEBUG_TRUE
+ TARGETDIR
+ TARGET
++FFI_EXEC_TRAMPOLINE_TABLE
++FFI_EXEC_TRAMPOLINE_TABLE_FALSE
++FFI_EXEC_TRAMPOLINE_TABLE_TRUE
+ sys_symbol_underscore
+ HAVE_LONG_DOUBLE
+ ALLOCA
+@@ -685,6 +688,7 @@ TESTSUBDIR_TRUE
  MAINT
  MAINTAINER_MODE_FALSE
  MAINTAINER_MODE_TRUE
@@ -91,7 +101,7 @@ Index: libffi/configure
  CPP
  OTOOL64
  OTOOL
-@@ -754,6 +755,7 @@ am__isrc
+@@ -751,6 +755,7 @@ am__isrc
  INSTALL_DATA
  INSTALL_SCRIPT
  INSTALL_PROGRAM
@@ -99,7 +109,7 @@ Index: libffi/configure
  target_os
  target_vendor
  target_cpu
-@@ -807,6 +809,7 @@ SHELL'
+@@ -804,6 +809,7 @@ SHELL'
  ac_subst_files=''
  ac_user_opts='
  enable_option_checking
@@ -107,7 +117,7 @@ Index: libffi/configure
  enable_dependency_tracking
  enable_shared
  enable_static
-@@ -815,6 +818,8 @@ enable_fast_install
+@@ -812,6 +818,8 @@ enable_fast_install
  with_gnu_ld
  with_sysroot
  enable_libtool_lock
@@ -116,7 +126,7 @@ Index: libffi/configure
  enable_maintainer_mode
  enable_debug
  enable_structs
-@@ -1449,6 +1454,8 @@ Optional Features:
+@@ -1446,6 +1454,8 @@ Optional Features:
    --disable-option-checking  ignore unrecognized --enable/--with options
    --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
    --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
@@ -125,7 +135,7 @@ Index: libffi/configure
    --disable-dependency-tracking  speeds up one-time build
    --enable-dependency-tracking   do not reject slow dependency extractors
    --enable-shared[=PKGS]  build shared libraries [default=yes]
-@@ -1456,6 +1463,9 @@ Optional Features:
+@@ -1453,6 +1463,9 @@ Optional Features:
    --enable-fast-install[=PKGS]
                            optimize for fast installation [default=yes]
    --disable-libtool-lock  avoid locking (might break parallel builds)
@@ -135,7 +145,7 @@ Index: libffi/configure
    --enable-maintainer-mode  enable make rules and dependencies not useful
  			  (and sometimes confusing) to the casual installer
    --enable-debug          debugging mode
-@@ -1471,6 +1481,8 @@ Optional Packages:
+@@ -1468,6 +1481,8 @@ Optional Packages:
    --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
    --with-sysroot=DIR Search for dependent libraries within DIR
                          (or the compiler's sysroot if not specified).
@@ -144,7 +154,7 @@ Index: libffi/configure
  
  Some influential environment variables:
    CC          C compiler command
-@@ -2646,6 +2658,110 @@ target_alias=${target_alias-$host_alias}
+@@ -2643,6 +2658,110 @@ target_alias=${target_alias-$host_alias}
  
  . ${srcdir}/configure.host
  
@@ -255,7 +265,7 @@ Index: libffi/configure
  am__api_version='1.11'
  
  # Find a good install program.  We prefer a C program (faster),
-@@ -2803,9 +2919,6 @@ test "$program_suffix" != NONE &&
+@@ -2800,9 +2919,6 @@ test "$program_suffix" != NONE &&
  ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
  program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
  
@@ -265,7 +275,7 @@ Index: libffi/configure
  if test x"${MISSING+set}" != xset; then
    case $am_aux_dir in
    *\ * | *\	*)
-@@ -11837,201 +11950,1126 @@ CC="$lt_save_CC"
+@@ -11834,201 +11950,1126 @@ CC="$lt_save_CC"
  
  
  
@@ -1548,7 +1558,49 @@ Index: libffi/configure
  fi
  
  
-@@ -14336,6 +15374,14 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -13282,13 +14323,30 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
+     fi
+ fi
+ 
++
++FFI_EXEC_TRAMPOLINE_TABLE=0
+ case "$target" in
++     *arm*-apple-darwin*)
++       FFI_EXEC_TRAMPOLINE_TABLE=1
++
++$as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
++
++     ;;
+      *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
+ 
+ $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
+ 
+      ;;
+ esac
++ if test x$FFI_EXEC_TRAMPOLINE_TABLE = x1; then
++  FFI_EXEC_TRAMPOLINE_TABLE_TRUE=
++  FFI_EXEC_TRAMPOLINE_TABLE_FALSE='#'
++else
++  FFI_EXEC_TRAMPOLINE_TABLE_TRUE='#'
++  FFI_EXEC_TRAMPOLINE_TABLE_FALSE=
++fi
++
++
+ 
+ if test x$TARGET = xX86_64; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler supports unwind section type" >&5
+@@ -13710,6 +14768,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+ fi
+ 
++if test -z "${FFI_EXEC_TRAMPOLINE_TABLE_TRUE}" && test -z "${FFI_EXEC_TRAMPOLINE_TABLE_FALSE}"; then
++  as_fn_error $? "conditional \"FFI_EXEC_TRAMPOLINE_TABLE\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ if test -z "${FFI_DEBUG_TRUE}" && test -z "${FFI_DEBUG_FALSE}"; then
+   as_fn_error $? "conditional \"FFI_DEBUG\" was never defined.
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+@@ -14312,6 +15374,14 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
  #
  # INIT-COMMANDS
  #
@@ -1563,7 +1615,7 @@ Index: libffi/configure
  AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
  
  
-@@ -14625,6 +15671,7 @@ for ac_config_target in $ac_config_targe
+@@ -14601,6 +15671,7 @@ for ac_config_target in $ac_config_targe
  do
    case $ac_config_target in
      "fficonfig.h") CONFIG_HEADERS="$CONFIG_HEADERS fficonfig.h" ;;
@@ -1571,7 +1623,7 @@ Index: libffi/configure
      "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
      "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
      "include") CONFIG_COMMANDS="$CONFIG_COMMANDS include" ;;
-@@ -15263,6 +16310,150 @@ $as_echo "$as_me: executing $ac_file com
+@@ -15239,6 +16310,150 @@ $as_echo "$as_me: executing $ac_file com
  
  
    case $ac_file$ac_mode in

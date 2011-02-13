@@ -145,6 +145,7 @@ See the ChangeLog files for details.
 
 3.0.10 ???-??-??
         Add support for Apple's iOS.
+	Add support for ARM VFP ABI.
         Add RTEMS support for MIPS and M68K.
 	Fix the N64 build on mips-sgi-irix6.5.
 	Enable builds with Microsoft's compiler.

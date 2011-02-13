@@ -1,5 +1,23 @@
+2011-02-13  Anthony Green  <green@moxielogic.com>
+
+	* include/ffi_common.h (UNLIKELY, LIKELY): Define.
+	* src/x86/ffi64.c (UNLIKELY, LIKELY): Remove definition.
+	* src/prep_cif.c (UNLIKELY, LIKELY): Remove definition.
+
+	* src/prep_cif.c (initialize_aggregate): Convert assertion into
+	FFI_BAD_TYPEDEF return.  Initialize arg size and alignment to 0.
+
+	* src/pa/ffi.c (ffi_prep_closure_loc): Don't ASSERT ABI test,
+	just return FFI_BAD_ABI when things are wrong.
+	* src/arm/ffi.c (ffi_prep_closure_loc): Ditto.
+	* src/powerpc/ffi.c (ffi_prep_closure_loc): Ditto.
+	* src/mips/ffi.c (ffi_prep_closure_loc): Ditto.
+	* src/ia64/ffi.c (ffi_prep_closure_loc): Ditto.
+	* src/avr32/ffi.c (ffi_prep_closure_loc): Ditto.
+
 2011-02-11  Anthony Green  <green@moxielogic.com>
 
+	* libtool-version: Update.
 	* Makefile.am (nodist_libffi_la_SOURCES): Add src/debug.c if
 	FFI_DEBUG.
 	(libffi_la_SOURCES): Remove src/debug.c

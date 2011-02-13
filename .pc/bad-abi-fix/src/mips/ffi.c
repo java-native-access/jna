@@ -1,7 +1,6 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 2011  Anthony Green
-           Copyright (c) 2008  David Daney
-           Copyright (c) 1996, 2007, 2008, 2011  Red Hat, Inc.
+   ffi.c - Copyright (c) 1996, 2007, 2008  Red Hat, Inc.
+           Copyright (c) 2008       David Daney
    
    MIPS Foreign Function Interface 
 
@@ -663,12 +662,10 @@ ffi_prep_closure_loc (ffi_closure *closure,
   char *clear_location = (char *) codeloc;
 
 #if defined(FFI_MIPS_O32)
-  if (cif->abi != FFI_O32 && cif->abi != FFI_O32_SOFT_FLOAT)
-    return FFI_BAD_ABI;
+  FFI_ASSERT(cif->abi == FFI_O32 || cif->abi == FFI_O32_SOFT_FLOAT);
   fn = ffi_closure_O32;
 #else /* FFI_MIPS_N32 */
-  if (cif->abi != FFI_N32 && cif->abi != FFI_N64)
-    return FFI_BAD_ABI;
+  FFI_ASSERT(cif->abi == FFI_N32 || cif->abi == FFI_N64);
   fn = ffi_closure_N32;
 #endif /* FFI_MIPS_O32 */
 

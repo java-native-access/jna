@@ -1,8 +1,7 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (C) 2011 Anthony Green
-           Copyright (C) 2008 Red Hat, Inc
-           Copyright (C) 2007, 2008 Free Software Foundation, Inc
-	   Copyright (c) 1998 Geoffrey Keating
+   ffi.c - Copyright (c) 1998 Geoffrey Keating
+   Copyright (C) 2007, 2008 Free Software Foundation, Inc
+   Copyright (C) 2008 Red Hat, Inc
 
    PowerPC Foreign Function Interface
 
@@ -950,16 +949,14 @@ ffi_prep_closure_loc (ffi_closure *closure,
 #ifdef POWERPC64
   void **tramp = (void **) &closure->tramp[0];
 
-  if (cif->abi != FFI_LINUX64)
-    return FFI_BAD_ABI;
+  FFI_ASSERT (cif->abi == FFI_LINUX64);
   /* Copy function address and TOC from ffi_closure_LINUX64.  */
   memcpy (tramp, (char *) ffi_closure_LINUX64, 16);
   tramp[2] = codeloc;
 #else
   unsigned int *tramp;
 
-  if (! (cif->abi == FFI_GCC_SYSV || cif->abi == FFI_SYSV))
-    return FFI_BAD_ABI;
+  FFI_ASSERT (cif->abi == FFI_GCC_SYSV || cif->abi == FFI_SYSV);
 
   tramp = (unsigned int *) &closure->tramp[0];
   tramp[0] = 0x7c0802a6;  /*   mflr    r0 */

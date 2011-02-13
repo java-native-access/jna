@@ -21,3 +21,4 @@ sparc-abi-check
 remove-debug-code
 ungccify
 ios-fixes
+bad-abi-fix
