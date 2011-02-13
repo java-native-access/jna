@@ -22,3 +22,4 @@ remove-debug-code
 ungccify
 ios-fixes
 bad-abi-fix
+msvcc
