@@ -36,8 +36,8 @@ AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 
-AX_CFLAGS_WARN_ALL
 AX_CC_MAXOPT
+AX_CFLAGS_WARN_ALL
 if test "x$GCC" = "xyes"; then
   CFLAGS="$CFLAGS -fexceptions"
 fi

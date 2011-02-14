@@ -145,15 +145,18 @@ History
 See the ChangeLog files for details.
 
 3.0.10 ???-??-??
-        Add support for Apple's iOS.
+
+        Add support for Apple's iOS, 64-bit PowerPC OSX, IBM's OS/2,
+        and more.  See table for details.
+	Add support for native vendor compilers for AIX, IRIX, Solaris
+	and Windows.
 	Add support for ARM VFP ABI.
         Add RTEMS support for MIPS and M68K.
 	Fix the N64 build on mips-sgi-irix6.5.
-	Enable builds with Microsoft's compiler.
-	Enable x86 builds with Oracle's Solaris compiler.
+	Remove debugging code from non-debug build.
 	Fix support for calling code compiled with Oracle's Sparc
-	  Solaris compiler.
-	Testsuite fixes for Tru64 Unix.
+	  Solaris compiler from a GCC compiled libffi.
+	Many minor bug and testsuite fixes.
 
 3.0.9 Dec-31-09
         Add AVR32 and win64 ports.  Add ARM softfp support.

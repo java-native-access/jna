@@ -275,11 +275,10 @@ Index: libffi/configure
  if test x"${MISSING+set}" != xset; then
    case $am_aux_dir in
    *\ * | *\	*)
-@@ -11834,201 +11950,1126 @@ CC="$lt_save_CC"
+@@ -11835,205 +11951,1130 @@ CC="$lt_save_CC"
  
  
  
--
 -{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 -$as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
 -    # Check whether --enable-maintainer-mode was given.
@@ -294,9 +293,9 @@ Index: libffi/configure
 -   if test $USE_MAINTAINER_MODE = yes; then
 -  MAINTAINER_MODE_TRUE=
 -  MAINTAINER_MODE_FALSE='#'
-+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for maximum warnings" >&5
-+$as_echo_n "checking CFLAGS for maximum warnings... " >&6; }
-+if ${ac_cv_cflags_warn_all+:} false; then :
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for C compiler vendor" >&5
++$as_echo_n "checking for C compiler vendor... " >&6; }
++if ${ax_cv_c_compiler_vendor+:} false; then :
 +  $as_echo_n "(cached) " >&6
  else
 -  MAINTAINER_MODE_TRUE='#'
@@ -304,34 +303,42 @@ Index: libffi/configure
 -fi
 -
 -  MAINT=$MAINTAINER_MODE_TRUE
--
--
--
++  ax_cv_c_compiler_vendor=unknown
++  # note: don't check for gcc first since some other compilers define __GNUC__
++  for ventest in intel:__ICC,__ECC,__INTEL_COMPILER ibm:__xlc__,__xlC__,__IBMC__,__IBMCPP__ pathscale:__PATHCC__,__PATHSCALE__ clang:__clang__ gnu:__GNUC__ sun:__SUNPRO_C,__SUNPRO_CC hp:__HP_cc,__HP_aCC dec:__DECC,__DECCXX,__DECC_VER,__DECCXX_VER borland:__BORLANDC__,__TURBOC__ comeau:__COMO__ cray:_CRAYC kai:__KCC lcc:__LCC__ metrowerks:__MWERKS__ sgi:__sgi,sgi microsoft:_MSC_VER watcom:__WATCOMC__ portland:__PGI; do
++    vencpp="defined("`echo $ventest | cut -d: -f2 | sed 's/,/) || defined(/g'`")"
++    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
+ 
++int
++main ()
++{
+ 
++#if !($vencpp)
++      thisisanerror;
++#endif
+ 
 -for ac_header in sys/mman.h
 -do :
 -  ac_fn_c_check_header_mongrel "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
 -if test "x$ac_cv_header_sys_mman_h" = xyes; then :
 -  cat >>confdefs.h <<_ACEOF
 -#define HAVE_SYS_MMAN_H 1
--_ACEOF
-+  ac_cv_cflags_warn_all="no, unknown"
-+ ac_ext=c
-+ac_cpp='$CPP $CPPFLAGS'
-+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-+ac_compiler_gnu=$ac_cv_c_compiler_gnu
- 
--fi
-+ ac_save_CFLAGS="$CFLAGS"
-+for ac_arg in "-pedantic  % -Wall"          "-xstrconst % -v"             "-std1      % -verbose -w0 -warnprotos"    "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd"    "-ansi -ansiE % -fullwarn"    "+ESlit     % +w1"            "-Xc        % -pvctl,fullmsg"    "-h conform % -h msglevel 2"    #
-+do CFLAGS="$ac_save_CFLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
-+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-+/* end confdefs.h.  */
++  ;
++  return 0;
++}
+ _ACEOF
+-
++if ac_fn_c_try_compile "$LINENO"; then :
++  ax_cv_c_compiler_vendor=`echo $ventest | cut -d: -f1`; break
+ fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  done
  
 -done
-+int
-+main ()
-+{
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_c_compiler_vendor" >&5
++$as_echo "$ax_cv_c_compiler_vendor" >&6; }
  
 -for ac_func in mmap
 -do :
@@ -339,22 +346,10 @@ Index: libffi/configure
 -if test "x$ac_cv_func_mmap" = xyes; then :
 -  cat >>confdefs.h <<_ACEOF
 -#define HAVE_MMAP 1
-+  ;
-+  return 0;
-+}
- _ACEOF
--
-+if ac_fn_c_try_compile "$LINENO"; then :
-+  ac_cv_cflags_warn_all=`echo $ac_arg | sed -e 's,.*% *,,'` ; break
- fi
-+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
- done
-+ CFLAGS="$ac_save_CFLAGS"
-+ ac_ext=c
-+ac_cpp='$CPP $CPPFLAGS'
-+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+-_ACEOF
+ 
+-fi
+-done
  
  
 -ac_fn_c_check_header_mongrel "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
@@ -363,36 +358,18 @@ Index: libffi/configure
 -else
 -  libffi_header_sys_mman_h=no
 -fi
--
--
+ 
+ 
 -ac_fn_c_check_func "$LINENO" "mmap" "ac_cv_func_mmap"
 -if test "x$ac_cv_func_mmap" = xyes; then :
 -  libffi_func_mmap=yes
--else
++# Check whether --enable-portable-binary was given.
++if test "${enable_portable_binary+set}" = set; then :
++  enableval=$enable_portable_binary; acx_maxopt_portable=$withval
+ else
 -  libffi_func_mmap=no
++  acx_maxopt_portable=no
  fi
-+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_cflags_warn_all" >&5
-+$as_echo "$ac_cv_cflags_warn_all" >&6; }
-+case ".$ac_cv_cflags_warn_all" in
-+     .ok|.ok,*)  ;;
-+   .|.no|.no,*)
-+ ;;
-+   *)
-+   if echo " $CFLAGS " | grep " $ac_cv_cflags_warn_all " 2>&1 >/dev/null
-+   then { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS does contain \$ac_cv_cflags_warn_all"; } >&5
-+  (: CFLAGS does contain $ac_cv_cflags_warn_all) 2>&5
-+  ac_status=$?
-+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-+  test $ac_status = 0; }
-+   else { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS=\"\$CFLAGS \$ac_cv_cflags_warn_all\""; } >&5
-+  (: CFLAGS="$CFLAGS $ac_cv_cflags_warn_all") 2>&5
-+  ac_status=$?
-+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-+  test $ac_status = 0; }
-+                      CFLAGS="$CFLAGS $ac_cv_cflags_warn_all"
-+   fi
-+ ;;
-+esac
  
 -if test "$libffi_header_sys_mman_h" != yes \
 - || test "$libffi_func_mmap" != yes; then
@@ -448,99 +425,9 @@ Index: libffi/configure
 -   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for MAP_ANON(YMOUS)" >&5
 -$as_echo_n "checking for MAP_ANON(YMOUS)... " >&6; }
 -if ${ac_cv_decl_map_anon+:} false; then :
-+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for C compiler vendor" >&5
-+$as_echo_n "checking for C compiler vendor... " >&6; }
-+if ${ax_cv_c_compiler_vendor+:} false; then :
-   $as_echo_n "(cached) " >&6
- else
--  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-+  ax_cv_c_compiler_vendor=unknown
-+  # note: don't check for gcc first since some other compilers define __GNUC__
-+  for ventest in intel:__ICC,__ECC,__INTEL_COMPILER ibm:__xlc__,__xlC__,__IBMC__,__IBMCPP__ pathscale:__PATHCC__,__PATHSCALE__ clang:__clang__ gnu:__GNUC__ sun:__SUNPRO_C,__SUNPRO_CC hp:__HP_cc,__HP_aCC dec:__DECC,__DECCXX,__DECC_VER,__DECCXX_VER borland:__BORLANDC__,__TURBOC__ comeau:__COMO__ cray:_CRAYC kai:__KCC lcc:__LCC__ metrowerks:__MWERKS__ sgi:__sgi,sgi microsoft:_MSC_VER watcom:__WATCOMC__ portland:__PGI; do
-+    vencpp="defined("`echo $ventest | cut -d: -f2 | sed 's/,/) || defined(/g'`")"
-+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
- /* end confdefs.h.  */
--#include <sys/types.h>
--#include <sys/mman.h>
--#include <unistd.h>
--
--#ifndef MAP_ANONYMOUS
--#define MAP_ANONYMOUS MAP_ANON
--#endif
- 
- int
- main ()
- {
--int n = MAP_ANONYMOUS;
-+
-+#if !($vencpp)
-+      thisisanerror;
-+#endif
-+
-   ;
-   return 0;
- }
- _ACEOF
- if ac_fn_c_try_compile "$LINENO"; then :
--  ac_cv_decl_map_anon=yes
--else
--  ac_cv_decl_map_anon=no
-+  ax_cv_c_compiler_vendor=`echo $ventest | cut -d: -f1`; break
- fi
- rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
--fi
--{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_decl_map_anon" >&5
--$as_echo "$ac_cv_decl_map_anon" >&6; }
-+  done
- 
--   if test $ac_cv_decl_map_anon = no; then
--     ac_cv_func_mmap_anon=no
--   else
--     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether mmap with MAP_ANON(YMOUS) works" >&5
--$as_echo_n "checking whether mmap with MAP_ANON(YMOUS) works... " >&6; }
--if ${ac_cv_func_mmap_anon+:} false; then :
 -  $as_echo_n "(cached) " >&6
 -else
--  # Add a system to this blacklist if it has mmap() and MAP_ANON or
--   # MAP_ANONYMOUS, but using mmap(..., MAP_PRIVATE|MAP_ANONYMOUS, -1, 0)
--   # doesn't give anonymous zeroed pages with the same properties listed
--   # above for use of /dev/zero.
--   # Systems known to be in this category are Windows, VMS, and SCO Unix.
--   case "$host_os" in
--     vms* | cygwin* | pe | mingw* | sco* | udk* )
--	ac_cv_func_mmap_anon=no ;;
--     *)
--	ac_cv_func_mmap_anon=yes;;
--   esac
--fi
--{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_anon" >&5
--$as_echo "$ac_cv_func_mmap_anon" >&6; }
--   fi
- fi
-+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_c_compiler_vendor" >&5
-+$as_echo "$ax_cv_c_compiler_vendor" >&6; }
-+
- 
--if test $ac_cv_func_mmap_file = yes; then
- 
--$as_echo "#define HAVE_MMAP_FILE 1" >>confdefs.h
- 
--fi
--if test $ac_cv_func_mmap_dev_zero = yes; then
- 
--$as_echo "#define HAVE_MMAP_DEV_ZERO 1" >>confdefs.h
- 
-+# Check whether --enable-portable-binary was given.
-+if test "${enable_portable_binary+set}" = set; then :
-+  enableval=$enable_portable_binary; acx_maxopt_portable=$withval
-+else
-+  acx_maxopt_portable=no
- fi
--if test $ac_cv_func_mmap_anon = yes; then
- 
--$as_echo "#define HAVE_MMAP_ANON 1" >>confdefs.h
- 
--fi
+-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 +# Try to determine "good" native compiler flags if none specified via CFLAGS
 +if test "$ac_test_CFLAGS" != "set"; then
 +  CFLAGS=""
@@ -570,27 +457,35 @@ Index: libffi/configure
 +ax_save_FLAGS=$CFLAGS
 +   CFLAGS="$xlc_opt"
 +   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-+/* end confdefs.h.  */
+ /* end confdefs.h.  */
+-#include <sys/types.h>
+-#include <sys/mman.h>
+-#include <unistd.h>
+-
+-#ifndef MAP_ANONYMOUS
+-#define MAP_ANONYMOUS MAP_ANON
+-#endif
  
-+int
-+main ()
-+{
- 
-- if test -d $srcdir/testsuite; then
--  TESTSUBDIR_TRUE=
--  TESTSUBDIR_FALSE='#'
-+  ;
-+  return 0;
-+}
-+_ACEOF
-+if ac_fn_c_try_compile "$LINENO"; then :
+ int
+ main ()
+ {
+-int n = MAP_ANONYMOUS;
++
+   ;
+   return 0;
+ }
+ _ACEOF
+ if ac_fn_c_try_compile "$LINENO"; then :
+-  ac_cv_decl_map_anon=yes
 +  eval `$as_echo "ax_cv_c_flags_$xlc_opt" | $as_tr_sh`=yes
  else
--  TESTSUBDIR_TRUE='#'
--  TESTSUBDIR_FALSE=
+-  ac_cv_decl_map_anon=no
 +  eval `$as_echo "ax_cv_c_flags_$xlc_opt" | $as_tr_sh`=no
-+fi
-+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ fi
+ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_decl_map_anon" >&5
+-$as_echo "$ac_cv_decl_map_anon" >&6; }
 +   CFLAGS=$ax_save_FLAGS
 +eval ax_check_compiler_flags=$`$as_echo "ax_cv_c_flags_$xlc_opt" | $as_tr_sh`
 +{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_check_compiler_flags" >&5
@@ -620,7 +515,13 @@ Index: libffi/configure
 +	  case $host_cpu in
 +	    i686*|x86_64*)
 +              # icc accepts gcc assembly syntax, so these should work:
-+
+ 
+-   if test $ac_cv_decl_map_anon = no; then
+-     ac_cv_func_mmap_anon=no
+-   else
+-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether mmap with MAP_ANON(YMOUS) works" >&5
+-$as_echo_n "checking whether mmap with MAP_ANON(YMOUS) works... " >&6; }
+-if ${ac_cv_func_mmap_anon+:} false; then :
 +ac_ext=c
 +ac_cpp='$CPP $CPPFLAGS'
 +ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -630,8 +531,26 @@ Index: libffi/configure
 +{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for x86 cpuid 0 output" >&5
 +$as_echo_n "checking for x86 cpuid 0 output... " >&6; }
 +if ${ax_cv_gcc_x86_cpuid_0+:} false; then :
-+  $as_echo_n "(cached) " >&6
-+else
+   $as_echo_n "(cached) " >&6
+ else
+-  # Add a system to this blacklist if it has mmap() and MAP_ANON or
+-   # MAP_ANONYMOUS, but using mmap(..., MAP_PRIVATE|MAP_ANONYMOUS, -1, 0)
+-   # doesn't give anonymous zeroed pages with the same properties listed
+-   # above for use of /dev/zero.
+-   # Systems known to be in this category are Windows, VMS, and SCO Unix.
+-   case "$host_os" in
+-     vms* | cygwin* | pe | mingw* | sco* | udk* )
+-	ac_cv_func_mmap_anon=no ;;
+-     *)
+-	ac_cv_func_mmap_anon=yes;;
+-   esac
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_anon" >&5
+-$as_echo "$ac_cv_func_mmap_anon" >&6; }
+-   fi
+-fi
+-
+-if test $ac_cv_func_mmap_file = yes; then
 +  if test "$cross_compiling" = yes; then :
 +  ax_cv_gcc_x86_cpuid_0=unknown
 +else
@@ -641,7 +560,8 @@ Index: libffi/configure
 +int
 +main ()
 +{
-+
+ 
+-$as_echo "#define HAVE_MMAP_FILE 1" >>confdefs.h
 +     int op = 0, eax, ebx, ecx, edx;
 +     FILE *f;
 +      __asm__("cpuid"
@@ -651,7 +571,7 @@ Index: libffi/configure
 +     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
 +     fclose(f);
 +     return 0;
-+
+ 
 +  ;
 +  return 0;
 +}
@@ -660,12 +580,19 @@ Index: libffi/configure
 +  ax_cv_gcc_x86_cpuid_0=`cat conftest_cpuid`; rm -f conftest_cpuid
 +else
 +  ax_cv_gcc_x86_cpuid_0=unknown; rm -f conftest_cpuid
-+fi
+ fi
+-if test $ac_cv_func_mmap_dev_zero = yes; then
+-
+-$as_echo "#define HAVE_MMAP_DEV_ZERO 1" >>confdefs.h
+-
 +rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 +  conftest.$ac_objext conftest.beam conftest.$ac_ext
-+fi
-+
-+fi
+ fi
+-if test $ac_cv_func_mmap_anon = yes; then
+-
+-$as_echo "#define HAVE_MMAP_ANON 1" >>confdefs.h
+ 
+ fi
 +{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_gcc_x86_cpuid_0" >&5
 +$as_echo "$ax_cv_gcc_x86_cpuid_0" >&6; }
 +ac_ext=c
@@ -673,15 +600,24 @@ Index: libffi/configure
 +ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 +ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 +ac_compiler_gnu=$ac_cv_c_compiler_gnu
-+
-+
-+
+ 
+ 
+- if test -d $srcdir/testsuite; then
+-  TESTSUBDIR_TRUE=
+-  TESTSUBDIR_FALSE='#'
+-else
+-  TESTSUBDIR_TRUE='#'
+-  TESTSUBDIR_FALSE=
+-fi
+ 
 +ac_ext=c
 +ac_cpp='$CPP $CPPFLAGS'
 +ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 +ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 +ac_compiler_gnu=$ac_cv_c_compiler_gnu
-+
+ 
+-TARGETDIR="unknown"
+-case "$host" in
 +{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for x86 cpuid 1 output" >&5
 +$as_echo_n "checking for x86 cpuid 1 output... " >&6; }
 +if ${ax_cv_gcc_x86_cpuid_1+:} false; then :
@@ -1356,6 +1292,69 @@ Index: libffi/configure
 +
 +fi
 +
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for maximum warnings" >&5
++$as_echo_n "checking CFLAGS for maximum warnings... " >&6; }
++if ${ac_cv_cflags_warn_all+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_cv_cflags_warn_all="no, unknown"
++ ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++ ac_save_CFLAGS="$CFLAGS"
++for ac_arg in "-pedantic  % -Wall"          "-xstrconst % -v"             "-std1      % -verbose -w0 -warnprotos"    "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd"    "-ansi -ansiE % -fullwarn"    "+ESlit     % +w1"            "-Xc        % -pvctl,fullmsg"    "-h conform % -h msglevel 2"    #
++do CFLAGS="$ac_save_CFLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
++   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  ac_cv_cflags_warn_all=`echo $ac_arg | sed -e 's,.*% *,,'` ; break
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++done
++ CFLAGS="$ac_save_CFLAGS"
++ ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_cflags_warn_all" >&5
++$as_echo "$ac_cv_cflags_warn_all" >&6; }
++case ".$ac_cv_cflags_warn_all" in
++     .ok|.ok,*)  ;;
++   .|.no|.no,*)
++ ;;
++   *)
++   if echo " $CFLAGS " | grep " $ac_cv_cflags_warn_all " 2>&1 >/dev/null
++   then { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS does contain \$ac_cv_cflags_warn_all"; } >&5
++  (: CFLAGS does contain $ac_cv_cflags_warn_all) 2>&5
++  ac_status=$?
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; }
++   else { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS=\"\$CFLAGS \$ac_cv_cflags_warn_all\""; } >&5
++  (: CFLAGS="$CFLAGS $ac_cv_cflags_warn_all") 2>&5
++  ac_status=$?
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; }
++                      CFLAGS="$CFLAGS $ac_cv_cflags_warn_all"
++   fi
++ ;;
++esac
++
 +if test "x$GCC" = "xyes"; then
 +  CFLAGS="$CFLAGS -fexceptions"
 +fi
@@ -1555,9 +1554,14 @@ Index: libffi/configure
 +else
 +  TESTSUBDIR_TRUE='#'
 +  TESTSUBDIR_FALSE=
- fi
- 
- 
++fi
++
++
++TARGETDIR="unknown"
++case "$host" in
+   alpha*-*-*)
+ 	TARGET=ALPHA; TARGETDIR=alpha;
+ 	# Support 128-bit long double, changeable via command-line switch.
 @@ -13282,13 +14323,30 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
      fi
  fi
@@ -1791,8 +1795,8 @@ Index: libffi/configure.ac
  AC_PROG_LIBTOOL
  AC_CONFIG_MACRO_DIR([m4])
  
-+AX_CFLAGS_WARN_ALL
 +AX_CC_MAXOPT
++AX_CFLAGS_WARN_ALL
 +if test "x$GCC" = "xyes"; then
 +  CFLAGS="$CFLAGS -fexceptions"
 +fi
