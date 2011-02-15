@@ -12240,6 +12240,45 @@ $as_echo "$icc_archflag" >&6; }
      # default optimization flags for gcc on all systems
      CFLAGS="-O3 -fomit-frame-pointer"
 
+     # -malign-double for x86 systems
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -malign-double" >&5
+$as_echo_n "checking whether C compiler accepts -malign-double... " >&6; }
+if ${ax_cv_c_flags__malign_double+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+      ax_save_FLAGS=$CFLAGS
+      CFLAGS="-malign-double"
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ax_cv_c_flags__malign_double=yes
+else
+  ax_cv_c_flags__malign_double=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+      CFLAGS=$ax_save_FLAGS
+fi
+
+eval ax_check_compiler_flags=$ax_cv_c_flags__malign_double
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_check_compiler_flags" >&5
+$as_echo "$ax_check_compiler_flags" >&6; }
+if test "x$ax_check_compiler_flags" = xyes; then
+	CFLAGS="$CFLAGS -malign-double"
+else
+	:
+fi
+
+
      #  -fstrict-aliasing for gcc-2.95+
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -fstrict-aliasing" >&5
 $as_echo_n "checking whether C compiler accepts -fstrict-aliasing... " >&6; }
@@ -12279,6 +12318,7 @@ else
 fi
 
 
+     # note that we enable "unsafe" fp optimization with other compilers, too
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -ffast-math" >&5
 $as_echo_n "checking whether C compiler accepts -ffast-math... " >&6; }
 if ${ax_cv_c_flags__ffast_math+:} false; then :

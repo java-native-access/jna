@@ -140,10 +140,14 @@ if test "$ac_test_CFLAGS" != "set"; then
      # default optimization flags for gcc on all systems
      CFLAGS="-O3 -fomit-frame-pointer"
 
+     # -malign-double for x86 systems
+     AX_CHECK_COMPILER_FLAGS(-malign-double, CFLAGS="$CFLAGS -malign-double")
+
      #  -fstrict-aliasing for gcc-2.95+
      AX_CHECK_COMPILER_FLAGS(-fstrict-aliasing,
 	CFLAGS="$CFLAGS -fstrict-aliasing")
 
+     # note that we enable "unsafe" fp optimization with other compilers, too
      AX_CHECK_COMPILER_FLAGS(-ffast-math, CFLAGS="$CFLAGS -ffast-math")
 
      AX_GCC_ARCHFLAG($acx_maxopt_portable)
