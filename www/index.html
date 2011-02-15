@@ -1,79 +1,52 @@
 <html>
-<head>
-<meta name="author" content="Timothy Wall">
-<meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java, replace jni">
-<meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
-<meta name="date" content="2010-07-16">
-<title>Java Native Access (JNA): Pure Java access to native libraries</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <head>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <meta name="keywords" content="java,jna,jni,c,c++,native,method,function,call,ctypes,ffi,foreign function interface,jdirect,jinvoke,pinvoke,platform invoke,native library access,native access,call native from java,java c library,easy jni,call c from java,avoid jni,jni alternative,jni replacement,legacy,call from java,replace jni">
+  <meta name="description" content="Java Native Access (JNA): access native libraries with pure Java code.">
+  <meta name="date" content="2010-07-16">
+  <title>Java Native Access (JNA): Pure Java Access to Native Libraries</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 <body>
-  <div style="display:none">
-    <div style="border: 1px solid black; padding: 1em; float: right; font-size: 1.5em; background-color: rgb(255, 255, 240);" id="downloadBox">
-      <a href="/servlets/ProjectDocumentList" class=dynamic>
-      	<img src="folder.png" style="vertical-align: middle;" border="0">Download
-	  </a>
-      <center>
-	    <a href="https://jna.dev.java.net/source/browse/*checkout*/jna/trunk/jnalib/release-notes.html" style="font-size:0.5em" class=dynamic>(release notes)</a>
-      </center>
-    </div>
-  </div>
-  <script>
-    var div = document.getElementById("projecthome");
-    var box = document.getElementById("downloadBox");
-    var msg = document.getElementById("ownermessage");
-    if (msg) 
-      div.insertBefore(box,msg.nextSibling);
-    else
-      div.insertBefore(box,div.firstChild);
-  </script>
-
-<table rows=1 cols=3>
-<colgroup span=1 width=0*>
-<colgroup span=1>
-<colgroup span=1 width=0*>
-<tr>
-<td valign=center>
-<ul>
-<li><a href="#features">Features</a>
-<li><a href="#demos">Demos</a>
-<li><a href="#platform">Platform Library</a></li>
-<li><a href="#community">Community and Support</a>
-<li><a href="#projects">Projects</a>
-<li><a href="#development">Development</a>&nbsp;&nbsp;&nbsp;
-<li><a href="#building">Building</a>
-<li><a href="#history">History</a>
-</ul>
-</td>
-<td valign=center>
-<a name=top></a>
-<h2>Java Native Access (JNA) </h2>
-<p>JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.</p>
-<p>JNA allows you to call directly into native functions using natural Java method invocation.  The Java call looks just like it does in native code.  Most calls require no special handling or configuration; no boilerplate or generated code is required.</p>
-<p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.</p>
-<p>While some attention is paid to performance, correctness and ease of use take priority.</p>
-<p>JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.</p>
-</td>
-<td valign=center>
-<ul>
-<li><a href="#getting_started">Getting&nbsp;Started</a>
-<li><a href="javadoc/overview-summary.html">Documentation</a>
-<li><a href="/nonav/javadoc/index.html">API&nbsp;(JavaDoc)</a>
-<li><a href="#mapping">Mapping&nbsp;between&nbsp;Java&nbsp;and&nbsp;Native</a>
-<li><a href="#pointers">Using&nbsp;Pointers&nbsp;and&nbsp;Arrays</a>
-<li><a href="#structures">Using&nbsp;Structures&nbsp;and&nbsp;Unions</a>
-<li><a href="#byref">Using&nbsp;By-reference&nbsp;Arguments</a>
-<li><a href="#customize">Customization</a>
-<li><a href="#callbacks">Callbacks/Closures</a>
-<li><a href="#dynamic">JRuby/Jython&nbsp;Usage</a>
-<li><a href="#faq">Frequently&nbsp;Asked&nbsp;Questions&nbsp;(FAQ)</a>
-<li><a href="#direct">Direct method mapping</a>
-</ul>
-</td>
-</tr>
-</table>
+ <h2>Java Native Access (JNA)</h2>
+ <a name=top></a>
+ <img src="images/jnalogo.jpg" align="right" style="margin-right: 20px">
+ <ul>
+  <li><a href="http://java.net/projects/jna/downloads/directory">Download</a>
+  <li><a href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html">License (LGPLv2)</a>
+  <li><a href="release-notes.html">Release Notes</a>
+  <li><a href="http://java.net/projects/jna/sources/svn/show">Source Code</a>
+  <li><a href="#features">Features</a>
+  <li><a href="#demos">Demos</a>
+  <li><a href="#platform">Platform Library</a></li>
+  <li><a href="#community">Community and Support</a>
+  <li><a href="#projects">Projects</a>
+  <li><a href="#development">Development</a>&nbsp;&nbsp;&nbsp;
+  <li><a href="#building">Building</a>
+  <li><a href="#history">History</a>
+ </ul>
+ <h2>What is JNA?</h2>
+ <p>JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code&#8212;no JNI or native code is required.  This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.</p>
+ <p>JNA allows you to call directly into native functions using natural Java method invocation.  The Java call looks just like it does in native code.  Most calls require no special handling or configuration; no boilerplate or generated code is required.</p>
+ <p>The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library.  This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.</p>
+ <p>While some attention is paid to performance, correctness and ease of use take priority.</p>
+ <p>JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.</p>
+ <h2>Using the Library</h2>
+ <ul>
+  <li><a href="#getting_started">Getting&nbsp;Started</a>
+  <li><a href="javadoc/overview-summary.html">API Documentation (JavaDoc)</a>
+  <li><a href="#mapping">Mapping&nbsp;between&nbsp;Java&nbsp;and&nbsp;Native</a>
+  <li><a href="#pointers">Using&nbsp;Pointers&nbsp;and&nbsp;Arrays</a>
+  <li><a href="#structures">Using&nbsp;Structures&nbsp;and&nbsp;Unions</a>
+  <li><a href="#byref">Using&nbsp;By-reference&nbsp;Arguments</a>
+  <li><a href="#customize">Customization</a>
+  <li><a href="#callbacks">Callbacks/Closures</a>
+  <li><a href="#dynamic">JRuby/Jython&nbsp;Usage</a>
+  <li><a href="#faq">Frequently&nbsp;Asked&nbsp;Questions&nbsp;(FAQ)</a>
+  <li><a href="#direct">Direct method mapping</a>
+ </ul>
 <hr>
-The <a href="http://jna.dev.java.net/nonav/javadoc/index.html">JavaDoc is available online</a>,
+The <a href="http://jna.java.net/javadoc/overview-summary.html">JavaDoc is available online</a>,
 which includes detailed descriptions of JNA usage in different situations.<p>
 This library is provided under the <a href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html">LGPL</a>, version 2.1 or later.
 <p>
@@ -111,9 +84,9 @@ This library is provided under the <a href="http://www.gnu.org/licenses/old-lice
  <h3>How To Get Started Using JNA</h3>
  <p>Java Native Access (JNA) has a single component, <code>jna.jar</code>; the supporting native library (<code>jnidispatch</code>) is included in the jar file. JNA is capable of extracting and loading the native library on its own, so you don't need additional configuration.  JNA falls back to extraction if the native library is not already installed on the local system somewhere accessible to <code>System.loadLibrary</code> (see <a href="javadoc/com/sun/jna/Native.html#library_loading">information on library loading</a>).  The native library is also available in platform-specific jar files for use with Java Web Start.</p>
 <ol>
-  <li>Download <code>jna.jar</code> from the <a href="https://jna.dev.java.net/servlets/ProjectDocumentList?folderID=7408&expandFolder=7408&folderID=0">download page</a>.</li>
+  <li>Download <code>jna.jar</code> from the <a href="http://jna.java.net/projects/jna/downloads">download page</a>.</li>
   <li>Compile and run this short example, which maps the <code>printf</code> function from the standard C library and calls it.  Be sure to include jna.jar in the classpath:<br>
-<textarea name="textarea" cols="80" rows="24" readonly="readonly">
+<blockquote><pre><code>
 package com.sun.jna.examples;
 
 import com.sun.jna.Library;
@@ -140,7 +113,7 @@ public class HelloWorld {
         }
     }
 }
-</textarea>
+</code></pre></blockquote>
   <li>Identify a native <em>target library</em> that you want to use. This can be any shared library with exported functions. Many examples of mappings for common system libraries may be found in the <a href="#platform">platform</a> package.</li>
   <li>Make your target library available to your Java program. There are two ways to do this:
     <ul>
@@ -152,7 +125,7 @@ public class HelloWorld {
     the <a href="javadoc/com/sun/jna/Library.html"><code>Library</code></a>
     interface.<p> 
 Following is an example of mapping for the Windows kernel32 library.<br>
-    <textarea name="textarea" cols="80" rows="10" readonly="readonly">
+    <blockquote><pre><code>
 package com.sun.jna.examples.win32;
 
 import com.sun.jna.*;
@@ -162,45 +135,46 @@ import com.sun.jna.*;
 // Most C libraries will just extend com.sun.jna.Library,
 public interface Kernel32 extends StdCallLibrary { 
     // Method declarations, constant and structure definitions go here
-}</textarea>
+}</code></pre></blockquote>
   </li>
   <li>Within this interface, define an instance of the native library using the <code>Native.loadLibrary(Class)</code> method, providing the native library interface you defined in step (5).<br>    
-    <textarea name="textarea" cols="80" rows="6" readonly="readonly">
+    <blockquote><pre><code>
     Kernel32 INSTANCE = (Kernel32)
         Native.loadLibrary("kernel32", Kernel32.class);
     // Optional: wraps every call to the native library in a
     // synchronized block, limiting native calls to one at a time
     Kernel32 SYNC_INSTANCE = (Kernel32)
         Native.synchronizedLibrary(INSTANCE);
-</textarea><br>
+</code></pre></blockquote><br>
 The INSTANCE variable is for convenient reuse of a single instance of the library.  Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope.  A <code>Map</code> of options may be provided as the third argument to <code>loadLibrary</code> to customize the library behavior; some of these options are explained in more detail below.  The SYNC_INSTANCE is also optional; use it if you need to ensure that your native library has only one call to it at a time.
   </li>
-  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the <a href="#mapping">basic mappings</a> below or <a href="javadoc/overview-summary.html#marshalling">the detailed table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class within the interface definition that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).</li>
-    <textarea name="textarea" cols="80" rows="12" readonly="readonly">
-    public static class SYSTEMTIME extends Structure {
-        public short wYear;
-        public short wMonth;
-        public short wDayOfWeek;
-        public short wDay;
-        public short wHour;
-        public short wMinute;
-        public short wSecond;
-        public short wMilliseconds;
-    }
+  <li>Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the <a href="#mapping">basic mappings</a> below or <a href="javadoc/overview-summary.html#marshalling">the detailed table of type mappings</a>).  You may also need to declare native structures to pass to your native functions. To do this, create a class within the interface definition that extends <a href="javadoc/com/sun/jna/Structure.html"><code>Structure</code></a> and add public fields (which may include arrays or nested structures).
+    <br>
+    <blockquote><pre><code>
+public static class SYSTEMTIME extends Structure {
+    public short wYear;
+    public short wMonth;
+    public short wDayOfWeek;
+    public short wDay;
+    public short wHour;
+    public short wMinute;
+    public short wSecond;
+    public short wMilliseconds;
+}
 
-    void GetSystemTime(SYSTEMTIME result);
-                                 </textarea>
+void GetSystemTime(SYSTEMTIME result);
+    </code></pre></blockquote>
   </li>
   <li>You can now invoke methods on the library instance just like any other Java class. 
-  	For a more extensive example, see the <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/src/platform/src/com/sun/jna/platform/WindowUtils.java?rev=HEAD&view=markup">WindowUtils</a> 
-  	and <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/jnalib/contrib/src/shapedwindowdemo/com/sun/jna/contrib/demo/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo</a> classes.
-    <br>    
-    <textarea name="textarea4" cols="80" rows="4" readonly="readonly">
+  	For a more extensive example, see the <a href="http://java.net/projects/jna/sources/svn/content/trunk/jnalib/contrib/platform/src/com/sun/jna/platform/WindowUtils.java">WindowUtils</a> 
+  	and <a href="http://java.net/projects/jna/sources/svn/content/trunk/jnalib/contrib/shapedwindowdemo/com/sun/jna/contrib/demo/ShapedWindowDemo.java">ShapedWindowDemo</a> classes.
+    <br>
+    <blockquote><pre><code>
 Kernel32 lib = Kernel32.INSTANCE;
 SYSTEMTIME time = new SYSTEMTIME();
 lib.GetSystemTime(time);
 System.out.println("Today's integer value is " + time.wDay);
-</textarea>
+</code></pre></blockquote>
   </li>
 <li>Alternatively, you may declare a class to hold your native
     methods, declare any number of methods with the "native" qualifier,
@@ -246,14 +220,14 @@ found <a href="javadoc/overview-summary.html#marshalling">here</a>.
 <h3>Using Pointers and Arrays</h3>
 Primitive array arguments (including <code>struct</code>s) are represented by their corresponding Java types.  For example:
 <blockquote>
-    <textArea name="textarea" cols="80" rows="6" readonly="readonly">
+    <blockquote><pre><code>
 // Original C declarations
 void fill_buffer(int *buf, int len);
 void fill_buffer(int buf[], int len); // same thing with array syntax
 
 // Equivalent JNA mapping
 void fill_buffer(int[] buf, int len);
-</textarea>
+</code></pre></blockquote>
 </blockquote>
 <p>
 NOTE: if the parameter is to be used by the native function outside the
@@ -282,7 +256,7 @@ Unions are generally interchangeable with <code>Structure</code>s, but require t
 <h3>Using By-reference Arguments</h3>
 When a function accepts a pointer-to-type argument you can use one of the <a href="javadoc/com/sun/jna/ptr/ByReference.html"><code>ByReference</code></a> types to capture the returned value, or subclass your own.  For example:<br>
 <blockquote>
-    <textarea name="textarea4" cols="80" rows="12" readonly="readonly">
+    <blockquote><pre><code>
 // Original C declaration
 void allocate_buffer(char **bufp, int* lenp);
 
@@ -295,7 +269,7 @@ IntByReference iref = new IntByReference();
 lib.allocate_buffer(pref, iref);
 Pointer p = pref.getValue();
 byte[] buffer = p.getByteArray(0, iref.getValue());
-    </textarea>
+    </code></pre></blockquote>
 </blockquote>
 
 Alternatively, you could use a Java array with a single element of the desired type, but the <code>ByReference</code> convention better conveys the intent of the code.<p>
@@ -329,7 +303,7 @@ implemented by wrapping a Java object method in a little bit of C glue code.
 The simplest usage resembles using anonymous inner classes to register event
 listeners.  Following is an example of callback usage:<br> 
 <blockquote>
-    <textarea name="textarea4" cols="80" rows="10" readonly="readonly">
+    <blockquote><pre><code>
 // Original C declarations
 typedef void (*sig_t)(int);
 sig_t signal(sig_t);
@@ -357,12 +331,12 @@ CLibrary.sig_t fn = new CLibrary.sig_t() {
 CLibrary.sig_t old_handler = lib.signal(CLibrary.SIGUSR1, fn);
 lib.raise(CLibrary.SIGUSR1);
 ...
-</textarea>
+</code></pre></blockquote>
 </blockquote>
 
 Here is a more involved example, using the w32 APIs to enumerate all native windows:
 <blockquote>
-    <textarea name="textarea4" cols="80" rows="17" readonly="readonly">
+    <blockquote><pre><code>
 // Original C declarations
 typedef int (__stdcall *WNDENUMPROC)(void*,void*);
 int __stdcall EnumWindows(WNDENUMPROC,void*);
@@ -385,7 +359,7 @@ user32.EnumWindows(new WNDENUMPROC() {
         return true;
     }
 }, null);
-</textarea>
+</code></pre></blockquote>
 </blockquote>
 If your callback needs to live beyond the method invocation where it is used, make sure you keep a reference to it or the native code will call back to an empty stub after the callback object is garbage collected.<p>
 
@@ -397,7 +371,7 @@ Proxy wrappers are automatically generated for function pointers found within st
 Languages such as <a href=http://www.jython.org>Jython</a> or <a href=http://jruby.sf.net>JRuby</a> may find it more convenient to access the NativeLibrary and Function classes directly rather than establishing a dedicated interface.<p>
 Here's a brief example of using JNA from JRuby:
 <blockquote>
-    <textarea name="textarea4" cols="80" rows="16" readonly="readonly">
+    <blockquote><pre><code>
 require 'java'
 
 module Libc
@@ -427,7 +401,7 @@ fp = Libc.fopen(path, "w+")
 Libc.fprintf(fp, "fprintf to %s via stdio\n", path)
 Libc.fflush(fp)
 Libc.fclose(fp)
-</textarea></blockquote>
+</code></pre></blockquote></blockquote>
 <p>
 <a href=#top>Top</a>
 <a name=platform></a>
@@ -529,10 +503,10 @@ public class MyStructure extends Structure {
 <a name=char_buffer></a>
 <h4>How do I read back a function's string result?</h4>
 Suppose you have a function:<br>
-<blockquote><code><pre>
+<blockquote><pre><code>
 // Returns the number of characters written to the buffer
 int getString(char* buffer, int bufsize);
-</pre></code></blockquote>
+</code></pre></blockquote>
 The native code is expecting a fixed-size buffer, which it will fill in with the requested data.  A Java <code>String</code> is not appropriate here, since <code>String</code>s are immutable.  Nor is a Java <code>StringBuffer</code>, since the native code only fills the buffer and does not change its size.  The appropriate argument type would be either <code>byte[]</code>, <code>Memory</code>, or an NIO <code>Buffer</code>, with the size of the object passed as the second argument.  The method <a href="javadoc/com/sun/jna/Native#toString(byte[])">Native.toString(byte[])</a> may then be used to convert the array of byte into a Java <code>String</code>.
 
 <a name=native_long></a>
@@ -544,7 +518,7 @@ On Windows, you can use a Java <code>int</code>, since the native <code>long</co
 
 <a name=w32link></a>
 <h4>My library mapping causes an UnsatisfiedLinkError</h4>
-Use a dump utility to examine the names of your exported functions to make sure they match (<a href=http://linux.die.net/man/1/nm>nm</a> on linux, <a href=http://www.dependencywalker.com>depends</a> on Windows).  On Windows, if the functions have a suffix of the form "@NN", you need to pass a StdCallFunctionMapper as an option when initializing your library interface (<a href="#stdcallmapper">see here</a>).  In general, you can use a function mapper (<a href="javadoc/com/sun/jna/FunctionMapper.html">FunctionMapper</a>) to change the name of the looked-up method, or an invocation mapper (<a href="javadoc/com/sun/jna/InvocationMapper.html">InvocationMapper</a>) for more extensive control over the method invocation.
+Use a dump utility to examine the names of your exported functions to make sure they match (<a href="http://linux.die.net/man/1/nm">nm</a> on linux, <a href="http://www.dependencywalker.com">depends</a> on Windows).  On Windows, if the functions have a suffix of the form "@NN", you need to pass a StdCallFunctionMapper as an option when initializing your library interface (<a href="#stdcallmapper">see here</a>).  In general, you can use a function mapper (<a href="javadoc/com/sun/jna/FunctionMapper.html">FunctionMapper</a>) to change the name of the looked-up method, or an invocation mapper (<a href="javadoc/com/sun/jna/InvocationMapper.html">InvocationMapper</a>) for more extensive control over the method invocation.
 
 <a name=crash></a>
 <h4>My library sometimes causes a VM crash</h4>
@@ -573,7 +547,7 @@ Normally when you invoke <code>toString</code> on a <code>Structure</code>, it w
 
 <a name=j2me></a>
 <h4>Does JNA work with J2ME/Windows Mobile?</h4>
-There is an <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=108">implementation</a> available, but it has not yet been integrated into the standard build.<p>
+There is an <a href="http://java.net/jira/browse/JNA-108">implementation</a> available, but it has not yet been integrated into the standard build.<p>
 
 <a name=COM></a>
 <h4>I need to use a COM/OCX/ActiveX object.  Can JNA do that?</h4>
@@ -631,10 +605,6 @@ difference there is by performing targeted optimizations.  The ease of
 programming everything in Java usually outweighs small performance gains when
 using custom JNI. 
 <p>
-See the main method of <a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/test/com/sun/jna/RawTest.java?view=markup">this JUnit test</a> 
-for an example of how you might measure performance for the different mapping
-options in <em>your</em> situation.
-<p>
 See the JavaDoc for
 <a href="javadoc/com/sun/jna/overview-summary.html#performance">performance
 tips</a> related to different types of type mapping.
@@ -650,7 +620,7 @@ the defining class, as in the example below.
 The <code>Native.register()</code> method takes the name of your native
 library, the same as <code>Native.loadLibrary()</code> would.<p>
 
-<textarea name="textarea" cols="80" rows="20" readonly="readonly">
+<blockquote><pre><code>
 import com.sun.jna.*;
 
 /** Simple example of JNA direct mapping. 
@@ -669,7 +639,7 @@ public class HelloWorld {
         System.out.println("sin(0)=" + sin(0));
     }
 }
-</textarea>
+</code></pre></blockquote>
 <p>
 As of version 3.2.0, direct mapping supports the same type mappings as
 interface mapping, except for arrays of Pointer/String/WString/NativeMapped as
@@ -689,40 +659,36 @@ These are pretty nifty utilities in and of themselves as well.
 <p>
 You can see some live demos here.
 <ul>
-<li><a href="demo/BalloonManagerDemo.jnlp">Demo</a> -  
-<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/src/balloonmanagerdemo/com/sun/jna/contrib/demo/BalloonManagerDemo.java?rev=HEAD&view=markup">BaloonManagerDemo.java Source</a>
+<li><a href="demo/BalloonManagerDemo.jnlp">Demo</a> |
+<a href="http://java.net/projects/jna/sources/svn/content/trunk/jnalib/contrib/balloonmanagerdemo/com/sun/jna/contrib/demo/BalloonManagerDemo.java">BaloonManagerDemo.java Source</a>
 : Speech-balloon windows (a la Google Maps)
 </li>
-<li><a href="demo/ShapedWindowDemo.jnlp">Demo</a> -  
-<a href="https://jna.dev.java.net/source/browse/jna/trunk/jnalib/contrib/src/shapedwindowdemo/com/sun/jna/contrib/demo/ShapedWindowDemo.java?rev=HEAD&view=markup">ShapedWindowDemo.java Source</a>
+<li><a href="demo/ShapedWindowDemo.jnlp">Demo</a> | 
+<a href="http://java.net/projects/jna/sources/svn/content/trunk/jnalib/contrib/shapedwindowdemo/com/sun/jna/contrib/demo/ShapedWindowDemo.java">ShapedWindowDemo.java Source</a>
 : Non-rectangular windows (a circular clock)
 </li>
 </ul>
 </p>
 <p>
-Other demos.
-<ul>
-<li><code>demo-alphamask.jar</code></li>
-<li><code>demo-balloontips.jar</code></li>
-<li><code>demo-dnd.jar</code></li>
-<li><code>demo-w32keyhook.jar</code></li>
-<li><code>demo-x11.jar</code></li>
-</ul>
-<p>
-
 <a href=#top>Top</a>
 <a name=community></a>
  <h3>Community</h3>
- <p>Please use the appropriate <a href="https://jna.dev.java.net/servlets/ProjectMailingListList">mailing list</a> to ask for help, suggest ideas, contribute patches, etc.  All contributions are welcome.  When asking about how to do a library mapping, be sure to include C API definitions and example usage, as well as whatever Java mapping you've already tried.</p>
- <p>All mailing lists are also available via RSS:
  <ul>
- <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=announce"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Announcements</a>
- <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=users"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Usage Questions and Discussion</a>
- <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=dev"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Development Discussion</a>
- <li><a href="https://jna.dev.java.net/servlets/MailingListRSS?listName=issues"><img src=https://jna.dev.java.net/branding/images/rss.gif></img> Bugs and Enhancements Issue Tracking</a>
+  <li><a href="http://java.net/jira/browse/JNA">Issues Bugs (JIRA)</a>
+  <li><a href="http://java.net/projects/jna/lists/users/archive">Mailing List (Users)</a>
+  <li><a href="http://java.net/projects/jna/sources/svn/show">Source Code (Subversion)</a>
+ </ul>  
+ <p>Please use the <a href="mailto:users@jna.java.net">mailing list</a> to ask for help, suggest ideas, etc.  
+ Report bugs in <a href="http://java.net/jira/browse/JNA">JIRA</a>.
+ When asking about how to do a library mapping, be sure to include C API definitions and example usage, as well as whatever Java mapping you've already tried.</p>
+ <ul>
+ <li><a href="http://java.net/projects/jna/lists/users/archive">Usage Questions and Discussion</a>
+ <li><a href="http://java.net/projects/jna/lists/dev/archive">Development Discussion</a>
  </ul>
 <p>
-If you are interested in paid support, feel free to say so on one of the JNA mailing lists.  Most simple questions will be answered on the list, but more complicated work, new features or target platforms can be negotiated with any of the JNA developers (this is how several of JNA's features came into being).  You may even encounter other users with the same need and be able to cost share the new development.
+You're encouraged to contribute to JNA. Get the source code from <a href="http://java.net/projects/jna/sources/svn/show">Subversion</a> and upload patches to <a href="http://java.net/jira/browse/JNA">JIRA</a>. To check-out source code from subversion use the <code>https://svn.java.net/svn/jna~svn/trunk</code> url.
+<p>
+If you are interested in paid support, feel free to say so on one of the JNA mailing lists. Most simple questions will be answered on the list, but more complicated work, new features or target platforms can be negotiated with any of the JNA developers (this is how several of JNA's features came into being). You may even encounter other users with the same need and be able to cost share the new development.
 <p>
 
 <a href=#top>Top</a>
@@ -751,13 +717,16 @@ If you are interested in paid support, feel free to say so on one of the JNA mai
 <a href=#top>Top</a>
 <a name=building></a>
 <h3>Building and Multi-platform support</h3>
+Check out source code from <code>https://svn.java.net/svn/jna~svn/trunk</code>.
+<p>
 JNA has been built and tested on OSX (ppc, x86, x86_64), linux (x86, amd64),
 FreeBSD/OpenBSD (x86, amd64), Solaris (x86, amd64, sparc, sparcv9) and Windows
 (x86, amd64).  It has also been built for windows/mobile and Linux/ppc64,
 although those platforms are not included in the distribution.  The ant build
 script's test target will build and run the test suite, which has decent
 coverage and is a quick way to determine if your environment is set up
-correctly.<p>   
+correctly.
+<p>   
 If you want to do a build yourself, you'll need <a
 href="http://ant.apache.org">ANT</a>, <a
 href="http://directory.fsf.org/make.html">GNU make</a> and <a
@@ -767,11 +736,11 @@ configured properly to use GCC 4) or the MINGW32 version
 (MSVC is used to build the win64 target, so you could probably use it for
 win32 as well, but I doubt it's worth the effort).  To
 rebuild <code>jna.jar</code>, and run the unit tests, do<br>   
-<blockquote><code><pre>
+<blockquote><pre><code>
 % ant dist test
-</pre></code></blockquote>
+</code></pre></blockquote>
 <p>
-  If JNA has not yet been built on for your platform, you may need to tweak the build.xml and native/Makefile build configurations so that your platform is recognized. 
+If JNA has not yet been built on for your platform, you may need to tweak the build.xml and native/Makefile build configurations so that your platform is recognized. 
 <p>
 The project also includes <a href="http://netbeans.org">NetBeans</a> and <a href="http://www.eclipse.org">Eclipse</a> project configurations, if you're so inclined.<p>
 
@@ -797,7 +766,7 @@ To get an idea how to use JNA, please refer to the JUnit tests in the test/ dire
 java -Djava.library.path=./native/testlib/Debug;./native/jnidispatch/Debug ... 
 </blockquote>
 
-<p>Timothy Wall rebooted the project in February of 2007, introducing a number of critical features, adding linux and OSX ports, and making the library usable with more than just rudimentary functions.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and better file system access.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the <a href="https://jna.dev.java.net/svn/jna/trunk/jnalib/OTHERS">OTHERS</a> file for some of the projects that are out there).  JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
+<p>Timothy Wall rebooted the project in February of 2007, introducing a number of critical features, adding linux and OSX ports, and making the library usable with more than just rudimentary functions.  I was looking for a way to experiment with native libraries without having to carve out a new Makefile and build process (those of you who've never built multi-lingual projects involving C don't know what you're missing).  Specifically I wanted some shaped windows and better file system access.  After a few proof-of-concept tests, I scouted around for existing projects from which I could bootstrap (see the OTHERS file for some of the projects that are out there). JNA had the simplest, most straightforward architecture (as did <a href="http://nlink.dev.java.net">NLINK</a>, which likely had the same roots).  It was also the least problematic to make work cross-platform with a consistent build process.<p>
 
 Wayne Meissner has contributed enormously ("a metric buttload of hard work") in getting libffi and the various additional native libraries working.  His work on a Java interface to the gstreamer library has contributed a number of critical features to JNA.<p>
 

@@ -1,0 +1,13 @@
+﻿body { color: #000000; font-family: Verdana, Arial; font-size: 0.8em; }
+body p { margin-top: 5px; }
+a { font-family: Arial; text-decoration: none; }
+body h1 { font-size: 1.8em; padding-top: 5px; margin-bottom: 5px;}
+body h2 { font-size: 1.6em; padding-top: 5px; margin-bottom: 5px;}
+body h3 { font-size: 1.5em; padding-top: 5px; margin-bottom: 5px;}
+body h4 { font-weight: bold; padding-top: 5px; margin-bottom: 5px;}
+body  h1, h2, h3, h4 { border-bottom: 1px solid #AAA; font-weight: normal; }
+body table { border: 1pt solid black }
+body tr td { font-size: 10pt; font-family: Verdana, Arial; border: 1pt solid silver; }
+body code { font-size: 10pt }
+body pre { font-size: 10pt }
+body ul { margin-top: 5px; margin-bottom: 5px }
