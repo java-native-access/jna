@@ -136,7 +136,7 @@ Index: libffi/configure
  
  # Check whether --enable-structs was given.
  if test "${enable_structs+set}" = set; then :
-@@ -13640,6 +13654,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+@@ -13644,6 +13658,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi
  

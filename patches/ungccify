@@ -1593,7 +1593,7 @@ Index: libffi/configure
  
  if test x$TARGET = xX86_64; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler supports unwind section type" >&5
-@@ -13710,6 +14768,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+@@ -13714,6 +14772,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi
  
@@ -1604,7 +1604,7 @@ Index: libffi/configure
  if test -z "${FFI_DEBUG_TRUE}" && test -z "${FFI_DEBUG_FALSE}"; then
    as_fn_error $? "conditional \"FFI_DEBUG\" was never defined.
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
-@@ -14312,6 +15374,14 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -14316,6 +15378,14 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
  #
  # INIT-COMMANDS
  #
@@ -1619,7 +1619,7 @@ Index: libffi/configure
  AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
  
  
-@@ -14601,6 +15671,7 @@ for ac_config_target in $ac_config_targe
+@@ -14605,6 +15675,7 @@ for ac_config_target in $ac_config_targe
  do
    case $ac_config_target in
      "fficonfig.h") CONFIG_HEADERS="$CONFIG_HEADERS fficonfig.h" ;;
@@ -1627,7 +1627,7 @@ Index: libffi/configure
      "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
      "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
      "include") CONFIG_COMMANDS="$CONFIG_COMMANDS include" ;;
-@@ -15239,6 +16310,150 @@ $as_echo "$as_me: executing $ac_file com
+@@ -15243,6 +16314,150 @@ $as_echo "$as_me: executing $ac_file com
  
  
    case $ac_file$ac_mode in

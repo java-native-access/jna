@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.10rc5], [http://sourceware.org/libffi.html])
+AC_INIT([libffi], [3.0.10rc6], [http://sourceware.org/libffi.html])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -447,21 +447,25 @@ AC_ARG_ENABLE(purify-safety,
     AC_DEFINE(USING_PURIFY, 1, [Define this if you are using Purify and want to suppress spurious messages.])
   fi)
 
-if test -n "$with_cross_host" &&
-   test x"$with_cross_host" != x"no"; then
-  toolexecdir='$(exec_prefix)/$(target_alias)'
-  toolexeclibdir='$(toolexecdir)/lib'
-else
-  toolexecdir='$(libdir)/gcc-lib/$(target_alias)'
-  toolexeclibdir='$(libdir)'
+# These variables are only ever used when we cross-build to X86_WIN32.
+# And we only support this with GCC, so...
+if test x"$GCC" != x"no"; then
+  if test -n "$with_cross_host" &&
+     test x"$with_cross_host" != x"no"; then
+    toolexecdir='$(exec_prefix)/$(target_alias)'
+    toolexeclibdir='$(toolexecdir)/lib'
+  else
+    toolexecdir='$(libdir)/gcc-lib/$(target_alias)'
+    toolexeclibdir='$(libdir)'
+  fi
+  multi_os_directory=`$CC -print-multi-os-directory`
+  case $multi_os_directory in
+    .) ;; # Avoid trailing /.
+    *) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
+  esac
+  AC_SUBST(toolexecdir)
+  AC_SUBST(toolexeclibdir)
 fi
-multi_os_directory=`$CC -print-multi-os-directory`
-case $multi_os_directory in
-  .) ;; # Avoid trailing /.
-  *) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
-esac
-AC_SUBST(toolexecdir)
-AC_SUBST(toolexeclibdir)
 
 if test "${multilib}" = "yes"; then
   multilib_arg="--enable-multilib"

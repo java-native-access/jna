@@ -14,7 +14,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -12129,7 +12129,7 @@ case "$host" in
+@@ -12126,7 +12126,7 @@ case "$host" in
    powerpc-*-beos*)
  	TARGET=POWERPC; TARGETDIR=powerpc
  	;;
@@ -23,7 +23,7 @@ Index: libffi/configure
  	TARGET=POWERPC_DARWIN; TARGETDIR=powerpc
  	;;
    powerpc-*-aix* | rs6000-*-aix*)
-@@ -12138,7 +12138,7 @@ case "$host" in
+@@ -12135,7 +12135,7 @@ case "$host" in
    powerpc-*-freebsd*)
  	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
  	;;
