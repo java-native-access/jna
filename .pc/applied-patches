@@ -24,3 +24,4 @@ ios-fixes
 bad-abi-fix
 msvcc
 fix_maxopt
+fix-ppc32

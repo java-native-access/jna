@@ -1,3 +1,8 @@
+2011-02-25  Anthony Green  <green@moxielogic.com>
+
+	* src/powerpc/ffi.c (ffi_prep_closure_loc): Accept more 32-bit
+	ABIs for closures.
+
 2011-02-15  Anthony Green  <green@moxielogic.com>
 
 	* m4/ax_cc_maxopt.m4: Don't -malign-double or use -ffast-math.

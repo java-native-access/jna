@@ -958,7 +958,10 @@ ffi_prep_closure_loc (ffi_closure *closure,
 #else
   unsigned int *tramp;
 
-  if (! (cif->abi == FFI_GCC_SYSV || cif->abi == FFI_SYSV))
+  if (! (cif->abi == FFI_GCC_SYSV 
+	 || cif->abi == FFI_SYSV
+	 || cif->abi == FFI_LINUX
+	 || cif->abi == FFI_LINUX_SOFT_FLOAT))
     return FFI_BAD_ABI;
 
   tramp = (unsigned int *) &closure->tramp[0];
