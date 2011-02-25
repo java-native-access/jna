@@ -23,7 +23,7 @@ Index: libffi/src/powerpc/ffi.c
 +  if (! (cif->abi == FFI_GCC_SYSV 
 +	 || cif->abi == FFI_SYSV
 +	 || cif->abi == FFI_LINUX
-+	 || cit->abi == FFI_LINUX_SOFT_FLOAT))
++	 || cif->abi == FFI_LINUX_SOFT_FLOAT))
      return FFI_BAD_ABI;
  
    tramp = (unsigned int *) &closure->tramp[0];
