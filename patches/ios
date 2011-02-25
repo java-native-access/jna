@@ -214,15 +214,7 @@ Index: libffi/Makefile.in
  FGREP = @FGREP@
  GREP = @GREP@
  HAVE_LONG_DOUBLE = @HAVE_LONG_DOUBLE@
-@@ -386,6 +389,7 @@ psdir = @psdir@
- sbindir = @sbindir@
- sharedstatedir = @sharedstatedir@
- srcdir = @srcdir@
-+sys_symbol_underscore = @sys_symbol_underscore@
- sysconfdir = @sysconfdir@
- target = @target@
- target_alias = @target_alias@
-@@ -399,37 +403,34 @@ top_builddir = @top_builddir@
+@@ -399,37 +402,34 @@ top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
  AUTOMAKE_OPTIONS = foreign subdir-objects
  SUBDIRS = include testsuite man
@@ -288,7 +280,7 @@ Index: libffi/Makefile.in
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -488,10 +489,10 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -488,10 +488,10 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_15) $(am__append_16) $(am__append_17) \
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
@@ -301,7 +293,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)
-@@ -727,6 +728,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
+@@ -727,6 +727,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
  	src/arm/$(DEPDIR)/$(am__dirstamp)
  src/arm/ffi.lo: src/arm/$(am__dirstamp) \
  	src/arm/$(DEPDIR)/$(am__dirstamp)
@@ -310,7 +302,7 @@ Index: libffi/Makefile.in
  src/avr32/$(am__dirstamp):
  	@$(MKDIR_P) src/avr32
  	@: > src/avr32/$(am__dirstamp)
-@@ -814,6 +817,8 @@ mostlyclean-compile:
+@@ -814,6 +816,8 @@ mostlyclean-compile:
  	-rm -f src/arm/ffi.lo
  	-rm -f src/arm/sysv.$(OBJEXT)
  	-rm -f src/arm/sysv.lo
@@ -319,7 +311,7 @@ Index: libffi/Makefile.in
  	-rm -f src/avr32/ffi.$(OBJEXT)
  	-rm -f src/avr32/ffi.lo
  	-rm -f src/avr32/sysv.$(OBJEXT)
-@@ -932,6 +937,7 @@ distclean-compile:
+@@ -932,6 +936,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@
@@ -369,16 +361,6 @@ Index: libffi/fficonfig.h.in
  /* Cannot use malloc on this target, so, we revert to alternative means */
  #undef FFI_MMAP_EXEC_WRIT
  
-@@ -157,6 +160,9 @@
- /* Define to 1 if you have the ANSI C header files. */
- #undef STDC_HEADERS
- 
-+/* Define if symbols are underscored. */
-+#undef SYMBOL_UNDERSCORE
-+
- /* Define this if you are using Purify and want to suppress spurious messages.
-    */
- #undef USING_PURIFY
 Index: libffi/src/arm/ffi.c
 ===================================================================
 --- libffi.orig/src/arm/ffi.c

@@ -88,7 +88,7 @@ case "$host" in
   i?86-*-freebsd* | i?86-*-openbsd*)
 	TARGET=X86_FREEBSD; TARGETDIR=x86
 	;;
-  i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2* | i?86-*-interix*)
+  i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2*)
 	TARGET=X86_WIN32; TARGETDIR=x86
 	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
 	# We must also check with_cross_host to decide if this is a native
@@ -328,23 +328,13 @@ if test x$TARGET = xX86_WIN64; then
     fi
 fi
 
-
-FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in
-     *arm*-apple-darwin*)
-       FFI_EXEC_TRAMPOLINE_TABLE=1
-       AC_DEFINE(FFI_EXEC_TRAMPOLINE_TABLE, 1,
-                 [Cannot use PROT_EXEC on this target, so, we revert to
-                   alternative means])
-     ;;
      *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
                  [Cannot use malloc on this target, so, we revert to
                    alternative means])
      ;;
 esac
-AM_CONDITIONAL(FFI_EXEC_TRAMPOLINE_TABLE, test x$FFI_EXEC_TRAMPOLINE_TABLE = x1)
-AC_SUBST(FFI_EXEC_TRAMPOLINE_TABLE)
 
 if test x$TARGET = xX86_64; then
     AC_CACHE_CHECK([assembler supports unwind section type],
@@ -361,46 +351,44 @@ if test x$TARGET = xX86_64; then
     fi
 fi
 
-if test "x$GCC" = "xyes"; then
-  AC_CACHE_CHECK([whether .eh_frame section should be read-only],
-      libffi_cv_ro_eh_frame, [
-  	libffi_cv_ro_eh_frame=no
-  	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
-  	if $CC $CFLAGS -S -fpic -fexceptions -o conftest.s conftest.c > /dev/null 2>&1; then
-  	    if grep '.section.*eh_frame.*"a"' conftest.s > /dev/null; then
-  		libffi_cv_ro_eh_frame=yes
-  	    elif grep '.section.*eh_frame.*#alloc' conftest.c \
-  		 | grep -v '#write' > /dev/null; then
-  		libffi_cv_ro_eh_frame=yes
-  	    fi
-  	fi
-  	rm -f conftest.*
-      ])
-  if test "x$libffi_cv_ro_eh_frame" = xyes; then
-      AC_DEFINE(HAVE_RO_EH_FRAME, 1,
-  	      [Define if .eh_frame sections should be read-only.])
-      AC_DEFINE(EH_FRAME_FLAGS, "a",
-  	      [Define to the flags needed for the .section .eh_frame directive.  ])
-  else
-      AC_DEFINE(EH_FRAME_FLAGS, "aw",
-  	      [Define to the flags needed for the .section .eh_frame directive.  ])
-  fi
+AC_CACHE_CHECK([whether .eh_frame section should be read-only],
+    libffi_cv_ro_eh_frame, [
+	libffi_cv_ro_eh_frame=no
+	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
+	if $CC $CFLAGS -S -fpic -fexceptions -o conftest.s conftest.c > /dev/null 2>&1; then
+	    if grep '.section.*eh_frame.*"a"' conftest.s > /dev/null; then
+		libffi_cv_ro_eh_frame=yes
+	    elif grep '.section.*eh_frame.*#alloc' conftest.c \
+		 | grep -v '#write' > /dev/null; then
+		libffi_cv_ro_eh_frame=yes
+	    fi
+	fi
+	rm -f conftest.*
+    ])
+if test "x$libffi_cv_ro_eh_frame" = xyes; then
+    AC_DEFINE(HAVE_RO_EH_FRAME, 1,
+	      [Define if .eh_frame sections should be read-only.])
+    AC_DEFINE(EH_FRAME_FLAGS, "a",
+	      [Define to the flags needed for the .section .eh_frame directive.])
+else
+    AC_DEFINE(EH_FRAME_FLAGS, "aw",
+	      [Define to the flags needed for the .section .eh_frame directive.])
+fi
 
-  AC_CACHE_CHECK([for __attribute__((visibility("hidden")))],
-      libffi_cv_hidden_visibility_attribute, [
-  	echo 'int __attribute__ ((visibility ("hidden"))) foo (void) { return 1  ; }' > conftest.c
-  	libffi_cv_hidden_visibility_attribute=no
-  	if AC_TRY_COMMAND(${CC-cc} -Werror -S conftest.c -o conftest.s 1>&AS_MESSAGE_LOG_FD); then
-  	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
-  		libffi_cv_hidden_visibility_attribute=yes
-  	    fi
-  	fi
-  	rm -f conftest.*
-      ])
-  if test $libffi_cv_hidden_visibility_attribute = yes; then
-      AC_DEFINE(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE, 1,
-  	      [Define if __attribute__((visibility("hidden"))) is supported.])
-  fi
+AC_CACHE_CHECK([for __attribute__((visibility("hidden")))],
+    libffi_cv_hidden_visibility_attribute, [
+	echo 'int __attribute__ ((visibility ("hidden"))) foo (void) { return 1; }' > conftest.c
+	libffi_cv_hidden_visibility_attribute=no
+	if AC_TRY_COMMAND(${CC-cc} -Werror -S conftest.c -o conftest.s 1>&AS_MESSAGE_LOG_FD); then
+	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
+		libffi_cv_hidden_visibility_attribute=yes
+	    fi
+	fi
+	rm -f conftest.*
+    ])
+if test $libffi_cv_hidden_visibility_attribute = yes; then
+    AC_DEFINE(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE, 1,
+	      [Define if __attribute__((visibility("hidden"))) is supported.])
 fi
 
 AH_BOTTOM([

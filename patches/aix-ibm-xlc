@@ -156,3 +156,190 @@ Index: libffi/src/powerpc/aix_closure.S
  #define LIBFFI_ASM
  #define JUMPTARGET(name) name
  #define L(x) x
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -13313,67 +13313,69 @@ $as_echo "#define HAVE_AS_X86_64_UNWIND_
+     fi
+ fi
+ 
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether .eh_frame section should be read-only" >&5
++if test "x$GCC" = "xyes"; then
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether .eh_frame section should be read-only" >&5
+ $as_echo_n "checking whether .eh_frame section should be read-only... " >&6; }
+ if ${libffi_cv_ro_eh_frame+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+ 
+-	libffi_cv_ro_eh_frame=no
+-	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
+-	if $CC $CFLAGS -S -fpic -fexceptions -o conftest.s conftest.c > /dev/null 2>&1; then
+-	    if grep '.section.*eh_frame.*"a"' conftest.s > /dev/null; then
+-		libffi_cv_ro_eh_frame=yes
+-	    elif grep '.section.*eh_frame.*#alloc' conftest.c \
+-		 | grep -v '#write' > /dev/null; then
+-		libffi_cv_ro_eh_frame=yes
+-	    fi
+-	fi
+-	rm -f conftest.*
++  	libffi_cv_ro_eh_frame=no
++  	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
++  	if $CC $CFLAGS -S -fpic -fexceptions -o conftest.s conftest.c > /dev/null 2>&1; then
++  	    if grep '.section.*eh_frame.*"a"' conftest.s > /dev/null; then
++  		libffi_cv_ro_eh_frame=yes
++  	    elif grep '.section.*eh_frame.*#alloc' conftest.c \
++  		 | grep -v '#write' > /dev/null; then
++  		libffi_cv_ro_eh_frame=yes
++  	    fi
++  	fi
++  	rm -f conftest.*
+ 
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libffi_cv_ro_eh_frame" >&5
+ $as_echo "$libffi_cv_ro_eh_frame" >&6; }
+-if test "x$libffi_cv_ro_eh_frame" = xyes; then
++  if test "x$libffi_cv_ro_eh_frame" = xyes; then
+ 
+ $as_echo "#define HAVE_RO_EH_FRAME 1" >>confdefs.h
+ 
+ 
+ $as_echo "#define EH_FRAME_FLAGS \"a\"" >>confdefs.h
+ 
+-else
++  else
+ 
+ $as_echo "#define EH_FRAME_FLAGS \"aw\"" >>confdefs.h
+ 
+-fi
++  fi
+ 
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for __attribute__((visibility(\"hidden\")))" >&5
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __attribute__((visibility(\"hidden\")))" >&5
+ $as_echo_n "checking for __attribute__((visibility(\"hidden\")))... " >&6; }
+ if ${libffi_cv_hidden_visibility_attribute+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+ 
+-	echo 'int __attribute__ ((visibility ("hidden"))) foo (void) { return 1; }' > conftest.c
+-	libffi_cv_hidden_visibility_attribute=no
+-	if { ac_try='${CC-cc} -Werror -S conftest.c -o conftest.s 1>&5'
++  	echo 'int __attribute__ ((visibility ("hidden"))) foo (void) { return 1  ; }' > conftest.c
++  	libffi_cv_hidden_visibility_attribute=no
++  	if { ac_try='${CC-cc} -Werror -S conftest.c -o conftest.s 1>&5'
+   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+   (eval $ac_try) 2>&5
+   ac_status=$?
+   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+   test $ac_status = 0; }; }; then
+-	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
+-		libffi_cv_hidden_visibility_attribute=yes
+-	    fi
+-	fi
+-	rm -f conftest.*
++  	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
++  		libffi_cv_hidden_visibility_attribute=yes
++  	    fi
++  	fi
++  	rm -f conftest.*
+ 
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libffi_cv_hidden_visibility_attribute" >&5
+ $as_echo "$libffi_cv_hidden_visibility_attribute" >&6; }
+-if test $libffi_cv_hidden_visibility_attribute = yes; then
++  if test $libffi_cv_hidden_visibility_attribute = yes; then
+ 
+ $as_echo "#define HAVE_HIDDEN_VISIBILITY_ATTRIBUTE 1" >>confdefs.h
+ 
++  fi
+ fi
+ 
+ 
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -351,44 +351,46 @@ if test x$TARGET = xX86_64; then
+     fi
+ fi
+ 
+-AC_CACHE_CHECK([whether .eh_frame section should be read-only],
+-    libffi_cv_ro_eh_frame, [
+-	libffi_cv_ro_eh_frame=no
+-	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
+-	if $CC $CFLAGS -S -fpic -fexceptions -o conftest.s conftest.c > /dev/null 2>&1; then
+-	    if grep '.section.*eh_frame.*"a"' conftest.s > /dev/null; then
+-		libffi_cv_ro_eh_frame=yes
+-	    elif grep '.section.*eh_frame.*#alloc' conftest.c \
+-		 | grep -v '#write' > /dev/null; then
+-		libffi_cv_ro_eh_frame=yes
+-	    fi
+-	fi
+-	rm -f conftest.*
+-    ])
+-if test "x$libffi_cv_ro_eh_frame" = xyes; then
+-    AC_DEFINE(HAVE_RO_EH_FRAME, 1,
+-	      [Define if .eh_frame sections should be read-only.])
+-    AC_DEFINE(EH_FRAME_FLAGS, "a",
+-	      [Define to the flags needed for the .section .eh_frame directive.])
+-else
+-    AC_DEFINE(EH_FRAME_FLAGS, "aw",
+-	      [Define to the flags needed for the .section .eh_frame directive.])
+-fi
++if test "x$GCC" = "xyes"; then
++  AC_CACHE_CHECK([whether .eh_frame section should be read-only],
++      libffi_cv_ro_eh_frame, [
++  	libffi_cv_ro_eh_frame=no
++  	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
++  	if $CC $CFLAGS -S -fpic -fexceptions -o conftest.s conftest.c > /dev/null 2>&1; then
++  	    if grep '.section.*eh_frame.*"a"' conftest.s > /dev/null; then
++  		libffi_cv_ro_eh_frame=yes
++  	    elif grep '.section.*eh_frame.*#alloc' conftest.c \
++  		 | grep -v '#write' > /dev/null; then
++  		libffi_cv_ro_eh_frame=yes
++  	    fi
++  	fi
++  	rm -f conftest.*
++      ])
++  if test "x$libffi_cv_ro_eh_frame" = xyes; then
++      AC_DEFINE(HAVE_RO_EH_FRAME, 1,
++  	      [Define if .eh_frame sections should be read-only.])
++      AC_DEFINE(EH_FRAME_FLAGS, "a",
++  	      [Define to the flags needed for the .section .eh_frame directive.  ])
++  else
++      AC_DEFINE(EH_FRAME_FLAGS, "aw",
++  	      [Define to the flags needed for the .section .eh_frame directive.  ])
++  fi
+ 
+-AC_CACHE_CHECK([for __attribute__((visibility("hidden")))],
+-    libffi_cv_hidden_visibility_attribute, [
+-	echo 'int __attribute__ ((visibility ("hidden"))) foo (void) { return 1; }' > conftest.c
+-	libffi_cv_hidden_visibility_attribute=no
+-	if AC_TRY_COMMAND(${CC-cc} -Werror -S conftest.c -o conftest.s 1>&AS_MESSAGE_LOG_FD); then
+-	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
+-		libffi_cv_hidden_visibility_attribute=yes
+-	    fi
+-	fi
+-	rm -f conftest.*
+-    ])
+-if test $libffi_cv_hidden_visibility_attribute = yes; then
+-    AC_DEFINE(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE, 1,
+-	      [Define if __attribute__((visibility("hidden"))) is supported.])
++  AC_CACHE_CHECK([for __attribute__((visibility("hidden")))],
++      libffi_cv_hidden_visibility_attribute, [
++  	echo 'int __attribute__ ((visibility ("hidden"))) foo (void) { return 1  ; }' > conftest.c
++  	libffi_cv_hidden_visibility_attribute=no
++  	if AC_TRY_COMMAND(${CC-cc} -Werror -S conftest.c -o conftest.s 1>&AS_MESSAGE_LOG_FD); then
++  	    if grep '\.hidden.*foo' conftest.s >/dev/null; then
++  		libffi_cv_hidden_visibility_attribute=yes
++  	    fi
++  	fi
++  	rm -f conftest.*
++      ])
++  if test $libffi_cv_hidden_visibility_attribute = yes; then
++      AC_DEFINE(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE, 1,
++  	      [Define if __attribute__((visibility("hidden"))) is supported.])
++  fi
+ fi
+ 
+ AH_BOTTOM([

@@ -1,7 +1,7 @@
 2011-02-25  Anthony Green  <green@moxielogic.com>
 
-	* src/powerpc/ffi.c (ffi_prep_closure_loc): Accept more 32-bit
-	ABIs for closures.
+	* src/powerpc/ffi.c (ffi_prep_closure_loc): Allow for more
+	32-bit ABIs.
 
 2011-02-15  Anthony Green  <green@moxielogic.com>
 

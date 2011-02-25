@@ -233,7 +233,7 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -430,7 +433,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -429,7 +432,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/frv/ffitarget.h src/dlmalloc.c src/moxie/ffi.c		\
  	src/moxie/eabi.S libtool-version ChangeLog.libffi		\
  	m4/libtool.m4 m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4	\
@@ -242,7 +242,7 @@ Index: libffi/Makefile.in
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -476,7 +479,7 @@ MAKEOVERRIDES = 
+@@ -475,7 +478,7 @@ MAKEOVERRIDES = 
  ACLOCAL_AMFLAGS = $(ACLOCAL_AMFLAGS) -I m4
  lib_LTLIBRARIES = libffi.la
  noinst_LTLIBRARIES = libffi_convenience.la
@@ -251,7 +251,7 @@ Index: libffi/Makefile.in
  		src/raw_api.c src/java_raw_api.c src/closures.c
  
  pkgconfigdir = $(libdir)/pkgconfig
-@@ -489,10 +492,11 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -488,10 +491,11 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_15) $(am__append_16) $(am__append_17) \
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
@@ -265,7 +265,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)
-@@ -600,12 +604,12 @@ src/$(am__dirstamp):
+@@ -599,12 +603,12 @@ src/$(am__dirstamp):
  src/$(DEPDIR)/$(am__dirstamp):
  	@$(MKDIR_P) src/$(DEPDIR)
  	@: > src/$(DEPDIR)/$(am__dirstamp)
