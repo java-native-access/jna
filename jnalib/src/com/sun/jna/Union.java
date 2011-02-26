@@ -47,7 +47,9 @@ public abstract class Union extends Structure {
     protected Union(Pointer p, int alignType, TypeMapper mapper) {
         super(p, alignType, mapper);
     }
-    /** Indicates which field will be used to write to native memory. 
+    /** Indicates by type which field will be used to write to native memory.  
+     * If there are multiple fields of the same type, use {@link
+     * #setType(String)} instead with the field name.
      * @throws IllegalArgumentException if the type does not correspond to 
      * any declared union field.
      */
@@ -63,43 +65,51 @@ public abstract class Union extends Structure {
         throw new IllegalArgumentException("No field of type " + type + " in " + this);
     }
     
+    /**
+     * Indicates which field will be used to write to native memory.
+     * @throws IllegalArgumentException if the name does not correspond to
+     * any declared union field.
+     */
+    public void setType(String fieldName) {
+        ensureAllocated();
+        StructField f = (StructField) fields().get(fieldName);
+        if (f != null) {
+            activeField = f;
+        }
+        else {
+            throw new IllegalArgumentException("No field named " + fieldName
+                                               + " in " + this);
+        }
+    }
+
     /** Force a read of the given field from native memory.
      * @return the new field value, after updating
      * @throws IllegalArgumentException if no field exists with the given name
      */
-    public Object readField(String name) {
+    public Object readField(String fieldName) {
         ensureAllocated();
-        StructField f = (StructField)fields().get(name);
-        if (f != null) {
-            setType(f.type);
-        }
-        return super.readField(name);
+        setType(fieldName);
+        return super.readField(fieldName);
     }
 
     /** Write the given field value to native memory.
      * The given field will become the active one.
      * @throws IllegalArgumentException if no field exists with the given name
      */
-    public void writeField(String name) {
+    public void writeField(String fieldName) {
         ensureAllocated();
-        StructField f = (StructField)fields().get(name);
-        if (f != null) {
-            setType(f.type);
-        }
-        super.writeField(name);
+        setType(fieldName);
+        super.writeField(fieldName);
     }
 
     /** Write the given field value to the field and native memory.
      * The given field will become the active one.
      * @throws IllegalArgumentException if no field exists with the given name
      */
-    public void writeField(String name, Object value) {
+    public void writeField(String fieldName, Object value) {
         ensureAllocated();
-        StructField f = (StructField)fields().get(name);
-        if (f != null) {
-            setType(f.type);
-        }
-        super.writeField(name, value);
+        setType(fieldName);
+        super.writeField(fieldName, value);
     }
 
     /** Reads the Structure field of the given type from memory, sets it as

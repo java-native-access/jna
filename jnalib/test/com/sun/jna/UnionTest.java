@@ -167,6 +167,20 @@ public class UnionTest extends TestCase {
         u.setType(int[].class);
     }
 
+    public void testDuplicateFieldTypes() {
+        class TestUnion extends Union {
+            public int field1;
+            public int field2; 
+        }
+        TestUnion u = new TestUnion();
+        u.setType("field1");
+        u.field1 = 42;
+        u.write();
+        u.setType("field2");
+        u.read();
+        assertEquals("Wrong field value after write/read", 42, u.field2);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(UnionTest.class);
     }
