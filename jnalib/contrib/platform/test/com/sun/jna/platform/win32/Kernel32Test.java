@@ -345,4 +345,7 @@ public class Kernel32Test extends TestCase {
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
     }
     
+    public void testGetFileAttributes() {
+    	assertTrue(WinBase.INVALID_FILE_ATTRIBUTES != Kernel32.INSTANCE.GetFileAttributes("."));    	
+    }
 }

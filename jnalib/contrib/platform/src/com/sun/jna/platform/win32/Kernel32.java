@@ -948,4 +948,10 @@ public interface Kernel32 extends StdCallLibrary {
     		int dwMask,
     		int dwFlags);
 
+    /**
+     * Retrieves file system attributes for a specified file or directory.
+     * @param lpFileName The name of the file or directory. Prepend \\?\ to the path for names up to 32,767 wide characters
+     * @return INVALID_FILE_ATTRIBUTES if the function fails, otherwise the file attributes WinNT.FILE_ATTRIBUTE_*
+     */
+    public int GetFileAttributes(String lpFileName);
 }

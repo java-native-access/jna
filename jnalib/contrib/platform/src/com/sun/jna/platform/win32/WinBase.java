@@ -159,6 +159,11 @@ public abstract class WinBase {
 	public static final int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
 	public static final int CREATE_NO_WINDOW = 0x08000000;
 
+	/* Invalid return values */
+	public static final int INVALID_FILE_SIZE           = 0xFFFFFFFF;
+	public static final int INVALID_SET_FILE_POINTER    = 0xFFFFFFFF;
+	public static final int INVALID_FILE_ATTRIBUTES     = 0xFFFFFFFF;
+	
 	/**
 	 * Return code for a process still active.
 	 */
