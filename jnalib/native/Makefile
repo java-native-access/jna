@@ -173,26 +173,27 @@ endif
 
 ifeq ($(OS),darwin)
 JAVA_INCLUDES=-I/System/Library/Frameworks/JavaVM.framework/Headers
+DEFAULT_ARCH=$(shell arch)
 ARCH=$(shell arch)
-ALT_ARCHS=x86_64
+HOST_CONFIG=--host $(ARCH)-apple-darwin
+FFI_ENV += CC="$(CC)" CFLAGS="-arch $(ARCH) $(ISYSROOT) $(COPT) $(CDEBUG)" CPPFLAGS="$(CDEFINES)" LD="$(LD) -arch $(ARCH)"
+ALT_ARCHS=
 ifneq ($(ARCH),i386)
 ALT_ARCHS+=i386 
 endif
-ifneq ($(ARCH),ppc)
-ifeq ($(findstring 10.6,$(SDKROOT)),)
-ALT_ARCHS+=ppc
+ifneq ($(ARCH),x86_64)
+ALT_ARCHS+=x86_64
 endif
+ifneq ($(ARCH),ppc)
+ALT_ARCHS+=ppc
 endif
 LIBSFX=.dylib
 JNISFX=.jnilib
 ifneq ($(SDKROOT),)
 SYSLIBROOT=-Wl,-syslibroot,$(SDKROOT)
 ISYSROOT=-isysroot $(SDKROOT)
-ARCHFLAGS=-arch i386 -arch x86_64
-# As of 10.6, ppc version of libffi doesn't link, so omit it for now
-ifeq ($(findstring 10.6,$(SDKROOT)),)
-ARCHFLAGS+=-arch ppc 
-endif
+ARCHFLAGS=-arch i386 -arch x86_64 -arch ppc
+#ARCHFLAGS=-arch i386 -arch x86_64 
 endif
 
 PCFLAGS+=$(ISYSROOT) -x objective-c
@@ -252,7 +253,7 @@ $(FFI_LIB):
 	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
 	  echo "Configuring libffi ($(ARCH))"; \
 	  (cd $(FFI_BUILD) \
-	    && $(FFI_ENV) $(FFI_SRC)/configure $(FFI_CONFIG)); \
+	    && $(FFI_ENV) $(FFI_SRC)/configure $(FFI_CONFIG) $(HOST_CONFIG)); \
 	fi
 	$(MAKE) -C $(FFI_BUILD)
 ifneq ($(SDKROOT),)
