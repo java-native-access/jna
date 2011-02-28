@@ -11,6 +11,7 @@
 package com.sun.jna;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -37,7 +38,7 @@ import java.util.WeakHashMap;
  */
 public class Memory extends Pointer {
 
-    private static Map buffers = new WeakHashMap();
+    private static Map buffers = Collections.synchronizedMap(new WeakHashMap());
 
     protected long size; // Size of the malloc'ed space
 
@@ -133,7 +134,13 @@ public class Memory extends Pointer {
         throw new IllegalArgumentException("Byte boundary must be a power of two");
     }
 
+    /** Properly dispose of native memory when this object is GC'd. */
     protected void finalize() {
+        dispose();
+    }
+
+    /** Free the native memory and set peer to zero */
+    protected void dispose() {
         free(peer);
         peer = 0;
     }
@@ -504,7 +511,12 @@ public class Memory extends Pointer {
     }
 
     /**
-     * Get a ByteBuffer mapped to a portion of this memory.
+     * Get a ByteBuffer mapped to a portion of this memory.  
+     * We keep a weak reference to all ByteBuffers provided so that this
+     * memory object is not GC'd while there are still implicit outstanding
+     * references to it (it'd be nice if we could attach our own reference to
+     * the ByteBuffer, but the VM generates the object so we have no control
+     * over it).
      *
      * @param offset byte offset from pointer to start the buffer
      * @param length Length of ByteBuffer

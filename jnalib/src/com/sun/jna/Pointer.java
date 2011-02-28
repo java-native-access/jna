@@ -713,7 +713,7 @@ public class Pointer {
      * @param length Length of ByteBuffer
      * @return a direct ByteBuffer that accesses the memory being pointed to, 
      */
-    private native ByteBuffer _getDirectByteBuffer(long addr, long length);
+    protected native ByteBuffer _getDirectByteBuffer(long addr, long length);
 
     /**
      * Copy native memory to a Java String.  If <code>wide</code> is true,
