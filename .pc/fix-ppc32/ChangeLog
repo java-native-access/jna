@@ -116,7 +116,7 @@
 2011-02-08  Rafael Avila de Espindola  <respindola@mozilla.com>
 
 	* configure.ac: Fix x86 test for pc related relocs.
-	* confifure: Rebuilt.
+	* configure: Rebuilt.
 
 2011-02-07  Joel Sherrill <joel.sherrill@oarcorp.com>
 

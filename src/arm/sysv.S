@@ -147,6 +147,23 @@ _L__\name:
 .endm
 #endif
 
+.macro	RETLDM	regs=, cond=, dirn=ia
+#if defined (__INTERWORKING__)
+	.ifc "\regs",""
+	ldr\cond	lr, [sp], #4
+	.else
+	ldm\cond\dirn	sp!, {\regs, lr}
+	.endif
+	bx\cond	lr
+#else
+	.ifc "\regs",""
+	ldr\cond	pc, [sp], #4
+	.else
+	ldm\cond\dirn	sp!, {\regs, pc}
+	.endif
+#endif
+.endm
+
 	@ r0:   ffi_prep_args
 	@ r1:   &ecif
 	@ r2:   cif->bytes
@@ -170,7 +187,7 @@ ARM_FUNC_START ffi_call_SYSV
 	@     r1 already set
 
 	@ Call ffi_prep_args(stack, &ecif)
-	bl	CNAME(ffi_prep_args)
+	bl	ffi_prep_args
 
 	@ move first 4 parameters in registers
 	ldmia	sp, {r0-r3}
@@ -318,12 +335,7 @@ ARM_FUNC_START ffi_closure_SYSV
 
 /* Below are VFP hard-float ABI call and closure implementations.
    Add VFP FPU directive here. */
-#ifndef __APPLE__
-    /* XXX - .fpu pseudo-directive is not supported by Apple's assembler,
-       and VFP hard-float calling conventions are not supported by the
-       compiler. */
 	.fpu	vfp
-#endif
 
 	@ r0:   fn
 	@ r1:   &ecif
@@ -350,7 +362,7 @@ ARM_FUNC_START ffi_call_VFP
 	sub	r2, fp, #64   @ VFP scratch space
 
 	@ Call ffi_prep_args(stack, &ecif, vfp_space)
-	bl	CNAME(ffi_prep_args)
+	bl	ffi_prep_args
 
 	@ Load VFP register args if needed
 	cmp	r0, #0
@@ -412,18 +424,11 @@ LSYM(Lbase_args):
 	fstmiadeq	r2, {d0-d3}
 
 LSYM(Lepilogue_vfp):
-#if defined (__INTERWORKING__)
-  ldmia   sp!, {r0-r3,fp, lr}
-  bx  lr
-#else
-  ldmia   sp!, {r0-r3,fp, pc}
-#endif
+	RETLDM	"r0-r3,fp"
 
 .ffi_call_VFP_end:
 	UNWIND .fnend
-#ifdef __ELF__
         .size    CNAME(ffi_call_VFP),.ffi_call_VFP_end-CNAME(ffi_call_VFP)
-#endif
 
 
 ARM_FUNC_START ffi_closure_VFP
@@ -439,7 +444,7 @@ ARM_FUNC_START ffi_closure_VFP
 	sub	sp, sp, #72
 	str	sp, [sp, #64]
 	add	r1, sp, #64
-	bl	CNAME(ffi_closure_SYSV_inner)
+	bl	ffi_closure_SYSV_inner
 
 	cmp	r0, #FFI_TYPE_INT
 	beq	.Lretint_vfp
@@ -485,9 +490,7 @@ ARM_FUNC_START ffi_closure_VFP
 
 .ffi_closure_VFP_end:
 	UNWIND .fnend
-#ifdef __ELF__
         .size    CNAME(ffi_closure_VFP),.ffi_closure_VFP_end-CNAME(ffi_closure_VFP)
-#endif
 
 #if defined __ELF__ && defined __linux__
 	.section	.note.GNU-stack,"",%progbits

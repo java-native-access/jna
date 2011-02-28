@@ -18,7 +18,7 @@ Index: libffi/include/ffi.h.in
 ===================================================================
 --- libffi.orig/include/ffi.h.in
 +++ libffi/include/ffi.h.in
-@@ -278,6 +278,9 @@ typedef struct {
+@@ -282,6 +282,9 @@ typedef struct {
  } ffi_closure __attribute__((aligned (8)));
  #else
  } ffi_closure;
@@ -28,7 +28,7 @@ Index: libffi/include/ffi.h.in
  #endif
  
  void *ffi_closure_alloc (size_t size, void **code);
-@@ -296,6 +299,9 @@ ffi_prep_closure_loc (ffi_closure*,
+@@ -300,6 +303,9 @@ ffi_prep_closure_loc (ffi_closure*,
  		      void *user_data,
  		      void*codeloc);
  

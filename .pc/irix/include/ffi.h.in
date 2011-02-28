@@ -86,11 +86,15 @@ extern "C" {
 #else
 # ifdef LLONG_MAX
 #  define FFI_LONG_LONG_MAX LLONG_MAX
+#  ifdef _AIX52 /* or newer has C99 LLONG_MAX */
+#   undef FFI_64_BIT_MAX
+#   define FFI_64_BIT_MAX 9223372036854775807LL
+#  endif /* _AIX52 or newer */
 # else
 #  ifdef __GNUC__
 #   define FFI_LONG_LONG_MAX __LONG_LONG_MAX__
 #  endif
-#  ifdef _AIX
+#  ifdef _AIX /* AIX 5.1 and earlier have LONGLONG_MAX */
 #   ifndef __PPC64__
 #    if defined (__IBMC__) || defined (__IBMCPP__)
 #     define FFI_LONG_LONG_MAX LONGLONG_MAX

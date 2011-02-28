@@ -86,11 +86,15 @@ extern "C" {
 #else
 # ifdef LLONG_MAX
 #  define FFI_LONG_LONG_MAX LLONG_MAX
+#  ifdef _AIX52 /* or newer has C99 LLONG_MAX */
+#   undef FFI_64_BIT_MAX
+#   define FFI_64_BIT_MAX 9223372036854775807LL
+#  endif /* _AIX52 or newer */
 # else
 #  ifdef __GNUC__
 #   define FFI_LONG_LONG_MAX __LONG_LONG_MAX__
 #  endif
-#  ifdef _AIX
+#  ifdef _AIX /* AIX 5.1 and earlier have LONGLONG_MAX */
 #   ifndef __PPC64__
 #    if defined (__IBMC__) || defined (__IBMCPP__)
 #     define FFI_LONG_LONG_MAX LONGLONG_MAX
@@ -270,12 +274,7 @@ size_t ffi_java_raw_size (ffi_cif *cif);
 __declspec(align(8))
 #endif
 typedef struct {
-#if @FFI_EXEC_TRAMPOLINE_TABLE@
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
   ffi_cif   *cif;
   void     (*fun)(ffi_cif*,void*,void**,void*);
   void      *user_data;
@@ -308,12 +307,7 @@ ffi_prep_closure_loc (ffi_closure*,
 # pragma pack 8
 #endif
 typedef struct {
-#if @FFI_EXEC_TRAMPOLINE_TABLE@
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
 
   ffi_cif   *cif;
 
@@ -334,12 +328,7 @@ typedef struct {
 } ffi_raw_closure;
 
 typedef struct {
-#if @FFI_EXEC_TRAMPOLINE_TABLE@
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
 
   ffi_cif   *cif;
 
