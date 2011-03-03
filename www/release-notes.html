@@ -17,9 +17,11 @@ and <code>platform.win32.WinNT</code>. Please note that the <code>SECURITY_ATTRI
 <li>Add Win32 Event Logging functions to <code>platform.win32.Advapi32</code> and <code>platform.win32.Advapi32Util.EventLogIterator</code>.
 <li><code>platform.win32.Advapi32Util.registryCreateKey</code> returns <code>true</code> if key was created, <code>false</code> if it already exists.
 <li>Add <code>REG_BINARY</code>, <code>REG_EXPAND_SZ</code> and <code>REG_MULTI_SZ</code> support to <code>platform.win32.Advapi32Util</code> registry functions.
+<li>Reduce JNI crossings in a number of native methods, moving object creation out into pure Java code.
 </ul>
 <h3>Bug Fixes</h3>
 <ul>
+<li>Move all native functions into <code>com.sun.jna.Native</code>, to ensure that all dependent classes must be disposed before the <code>Native</code> class is unloaded. 
 <li>Fix <code>platform.win32.Kernel32.GetNativeSystemInfo</code> and <code>GetSystemInfo</code> AV on Win64.
 <li>Fix several potential minor bugs as reported by TvT.
 <li>Fix bug in Structure.StructureSet.toString (Blair Zajac), exposed by Tomcat ThreadLocal cleanup.
