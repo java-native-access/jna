@@ -123,11 +123,9 @@ public class Pointer {
      * or -1 if the value is not found.
      */
     public long indexOf(long offset, byte value) {
-        return _indexOf(peer + offset, value);
+        return Native.indexOf(peer + offset, value);
     }
     
-    private static native long _indexOf(long addr, byte value);
-
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
      * native pointer, into the specified array.
@@ -138,11 +136,8 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, byte[] buf, int index, int length) {
-        _read(peer + offset, buf, index, length);
+        Native.read(peer + offset, buf, index, length);
     }
-
-    private static native void _read(long addr, byte[] buf, int index, int length);
-
 
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
@@ -154,11 +149,8 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, short[] buf, int index, int length) {
-        _read(peer + offset, buf, index, length);
+        Native.read(peer + offset, buf, index, length);
     }
-
-    private static native void _read(long addr, short[] buf, int index, int length);
-
 
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
@@ -170,12 +162,9 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, char[] buf, int index, int length) {
-        _read(peer + offset, buf, index, length);
+        Native.read(peer + offset, buf, index, length);
     }
     
-    private static native void _read(long addr, char[] buf, int index, int length);
-
-
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
      * native pointer, into the specified array.
@@ -186,10 +175,8 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, int[] buf, int index, int length) {
-        _read(peer + offset, buf, index, length);
+        Native.read(peer + offset, buf, index, length);
     }
-
-    private static native void _read(long addr, int[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
@@ -201,10 +188,8 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, long[] buf, int index, int length) {
-        _read(peer + offset, buf, index, length);
+        Native.read(peer + offset, buf, index, length);
     }
-
-    private static native void _read(long addr, long[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
@@ -216,10 +201,8 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, float[] buf, int index, int length) {
-        _read(peer + offset, buf, index, length);
+        Native.read(peer + offset, buf, index, length);
     }
-
-    private static native void _read(long addr, float[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
@@ -231,10 +214,8 @@ public class Pointer {
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, double[] buf, int index, int length) {
-        _read(peer + offset, buf, index, length);
+        Native.read(peer + offset, buf, index, length);
     }
-
-    private static native void _read(long addr, double[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
@@ -272,11 +253,8 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, byte[] buf, int index, int length) {
-        _write(peer + offset, buf, index, length);
+        Native.write(peer + offset, buf, index, length);
     }
-
-    private static native void _write(long addr, byte[] buf, int index, int length);
-
 
     /**
      * Indirect the native pointer, copying <em>into</em> memory pointed to by
@@ -289,10 +267,8 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, short[] buf, int index, int length) {
-        _write(peer + offset, buf, index, length);
+        Native.write(peer + offset, buf, index, length);
     }
-
-    private static native void _write(long addr, short[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>into</em> memory pointed to by
@@ -305,10 +281,8 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, char[] buf, int index, int length) {
-        _write(peer + offset, buf, index, length);
+        Native.write(peer + offset, buf, index, length);
     }
-
-    private static native void _write(long addr, char[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>into</em> memory pointed to by
@@ -321,10 +295,8 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, int[] buf, int index, int length) {
-        _write(peer + offset, buf, index, length);
+        Native.write(peer + offset, buf, index, length);
     }
-
-    private static native void _write(long addr, int[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>into</em> memory pointed to by 
@@ -337,10 +309,8 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, long[] buf, int index, int length) {
-        _write(peer + offset, buf, index, length);
+        Native.write(peer + offset, buf, index, length);
     }
-
-    private static native void _write(long addr, long[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>into</em> memory pointed to by
@@ -353,10 +323,8 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, float[] buf, int index, int length) {
-        _write(peer + offset, buf, index, length);
+        Native.write(peer + offset, buf, index, length);
     }
-
-    private static native void _write(long addr, float[] buf, int index, int length);
 
     /**
      * Indirect the native pointer, copying <em>into</em> memory pointed to by
@@ -369,10 +337,8 @@ public class Pointer {
      *               copied
      */
     public void write(long offset, double[] buf, int index, int length) {
-        _write(peer + offset, buf, index, length);
+        Native.write(peer + offset, buf, index, length);
     }
-
-    private static native void _write(long addr, double[] buf, int index, int length);
 
     /** Write the given array of Pointer to native memory.
      * @param bOff   byte offset from pointer into which data is copied
@@ -577,10 +543,8 @@ public class Pointer {
      * @return the <code>byte</code> value being pointed to
      */
     public byte getByte(long offset) {
-        return _getByte(peer + offset);
+        return Native.getByte(peer + offset);
     }
-
-    private static native byte _getByte(long addr);
 
     /**
      * Indirect the native pointer as a pointer to <code>wchar_t</code>.  This
@@ -591,10 +555,8 @@ public class Pointer {
      * @return the <code>wchar_t</code> value being pointed to
      */
     public char getChar(long offset) {
-        return _getChar(peer + offset);
+        return Native.getChar(peer + offset);
     }
-
-    private static native char _getChar(long addr);
 
     /**
      * Indirect the native pointer as a pointer to <code>short</code>.  This is
@@ -605,10 +567,8 @@ public class Pointer {
      * @return the <code>short</code> value being pointed to
      */
     public short getShort(long offset) {
-        return _getShort(peer + offset);
+        return Native.getShort(peer + offset);
     }
-
-    private static native short _getShort(long addr);
 
     /**
      * Indirect the native pointer as a pointer to <code>int</code>.  This is
@@ -619,10 +579,8 @@ public class Pointer {
      * @return the <code>int</code> value being pointed to
      */
     public int getInt(long offset) {
-        return _getInt(peer + offset);
+        return Native.getInt(peer + offset);
     }
-
-    private static native int _getInt(long addr);
 
     /**
      * Indirect the native pointer as a pointer to <code>long</code>.  This is
@@ -633,10 +591,8 @@ public class Pointer {
      * @return the <code>long</code> value being pointed to
      */
     public long getLong(long offset) {
-        return _getLong(peer + offset);
+        return Native.getLong(peer + offset);
     }
-
-    private static native long _getLong(long addr);
 
     /**
      * Indirect the native pointer as a pointer to <code>long</code>.  This is
@@ -659,10 +615,8 @@ public class Pointer {
      * @return the <code>float</code> value being pointed to
      */
     public float getFloat(long offset) {
-        return _getFloat(peer + offset);
+        return Native.getFloat(peer + offset);
     }
-
-    private native float _getFloat(long addr);
 
     /**
      * Indirect the native pointer as a pointer to <code>double</code>.  This
@@ -673,10 +627,8 @@ public class Pointer {
      * @return the <code>double</code> value being pointed to
      */
     public double getDouble(long offset) {
-        return _getDouble(peer + offset);
+        return Native.getDouble(peer + offset);
     }
-
-    private static native double _getDouble(long addr);
 
     /**
      * Indirect the native pointer as a pointer to pointer.  This is equivalent
@@ -689,10 +641,8 @@ public class Pointer {
      * <code>NULL</code>;
      */
     public Pointer getPointer(long offset) {
-        return _getPointer(peer + offset);
+        return Native.getPointer(peer + offset);
     }
-
-    private static native Pointer _getPointer(long addr);
 
     /**
      * Get a ByteBuffer mapped to the memory pointed to by the pointer,
@@ -703,17 +653,8 @@ public class Pointer {
      * @return a direct ByteBuffer that accesses the memory being pointed to,
      */
     public ByteBuffer getByteBuffer(long offset, long length) {
-        return _getDirectByteBuffer(peer + offset, length).order(ByteOrder.nativeOrder());
+        return Native.getDirectByteBuffer(peer + offset, length).order(ByteOrder.nativeOrder());
     }
-
-    /**
-     * Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
-     *
-     * @param addr byte offset from pointer to start the buffer
-     * @param length Length of ByteBuffer
-     * @return a direct ByteBuffer that accesses the memory being pointed to, 
-     */
-    protected native ByteBuffer _getDirectByteBuffer(long addr, long length);
 
     /**
      * Copy native memory to a Java String.  If <code>wide</code> is true,
@@ -725,11 +666,9 @@ v     * @param wide whether to convert from a wide or standard C string
      * @return the <code>String</code> value being pointed to 
      */
     public String getString(long offset, boolean wide) {
-        return _getString(peer + offset, wide);
+        return Native.getString(peer + offset, wide);
     }
     
-    private static native String _getString(long addr, boolean wide);
-
     /**
      * Copy native memory to a Java String.  If the system property 
      * <code>jna.encoding</code> is set, uses it as the native charset
@@ -1031,10 +970,8 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value value to be written
      */
     public void setMemory(long offset, long length, byte value) {
-        _setMemory(peer + offset, length, value);
+        Native.setMemory(peer + offset, length, value);
     }
-    
-    static native void _setMemory(long addr, long length, byte value);
     
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
@@ -1046,10 +983,8 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value <code>byte</code> value to set
      */
     public void setByte(long offset, byte value) {
-        _setByte(peer + offset, value);
+        Native.setByte(peer + offset, value);
     }
-
-    private static native void _setByte(long addr, byte value);
 
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
@@ -1061,11 +996,9 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value <code>short</code> value to set
      */
     public void setShort(long offset, short value) {
-        _setShort(peer + offset, value);
+        Native.setShort(peer + offset, value);
     }
     
-    private static native void _setShort(long addr, short value);
-
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
      * to the expression
@@ -1076,11 +1009,9 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value <code>char</code> value to set
      */
     public void setChar(long offset, char value) {
-        _setChar(peer + offset, value);
+        Native.setChar(peer + offset, value);
     }
     
-    private static native void _setChar(long addr, char value);
-
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
      * to the expression
@@ -1091,10 +1022,8 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value <code>int</code> value to set
      */
     public void setInt(long offset, int value) {
-        _setInt(peer + offset, value);
+        Native.setInt(peer + offset, value);
     }
-
-    private static native void _setInt(long addr, int value);
 
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
@@ -1106,11 +1035,9 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value <code>long</code> value to set
      */
     public void setLong(long offset, long value) {
-        _setLong(peer + offset, value);
+        Native.setLong(peer + offset, value);
     }
     
-    private static native void _setLong(long addr, long value);
-
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
      * to the expression
@@ -1138,11 +1065,9 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value <code>float</code> value to set
      */
     public void setFloat(long offset, float value) {
-        _setFloat(peer + offset, value);
+        Native.setFloat(peer + offset, value);
     }
     
-    private static native void _setFloat(long addr, float value);
-
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
      * to the expression
@@ -1153,10 +1078,8 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value <code>double</code> value to set
      */
     public void setDouble(long offset, double value) {
-        _setDouble(peer + offset, value);
+        Native.setDouble(peer + offset, value);
     }
-
-    private static native void _setDouble(long addr, double value);
 
     /**
      * Set <code>value</code> at location being pointed to. This is equivalent
@@ -1170,11 +1093,9 @@ v     * @param wide whether to convert from a wide or standard C string
      * pointer.
      */
     public void setPointer(long offset, Pointer value) {
-        _setPointer(peer + offset, value != null ? value.peer : 0);
+        Native.setPointer(peer + offset, value != null ? value.peer : 0);
     }
 
-    private static native void _setPointer(long addr, long value);
-    
     /**
      * Copy string <code>value</code> to the location being pointed to.  Copy
      * each element in <code>value</code>, converted to native encoding, at an
@@ -1188,11 +1109,9 @@ v     * @param wide whether to convert from a wide or standard C string
      * <code>char</code> using the default platform encoding. 
      */
     public void setString(long offset, String value, boolean wide) {
-        _setString(peer + offset, value, wide);
+        Native.setString(peer + offset, value, wide);
     }
     
-    private static native void _setString(long addr, String value, boolean wide);
-
     /**
      * Copy string <code>value</code> to the location being pointed to.  Copy
      * each element in <code>value</code>, converted to native encoding, at an

@@ -29,8 +29,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.net.URI;
-import java.net.URL;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
@@ -65,14 +65,19 @@ import com.sun.jna.Structure.FFIType;
  * regarding execution or load of files (SELinux, for example), you should 
  * probably install the native library in an accessible location and configure 
  * your system accordingly, rather than relying on JNA to extract the library 
- * from its own jar file.
+ * from its own jar file.<p/>
+ * NOTE: all native functions are provided within this class to ensure that
+ * all other JNA-provided classes and objects are GC'd and/or
+ * finalized/disposed before this class is disposed and/or removed from
+ * memory (most notably Memory and any other class which by default frees its
+ * resources in a finalizer).<p/>
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
 public final class Native {
 
-    private static final String VERSION = "3.2.7";
+    private static final String VERSION = "3.3.0";
 
     private static String nativeLibraryPath = null;
     private static boolean unpacked;
@@ -124,15 +129,22 @@ public final class Native {
     */
     private static final Object finalizer = new Object() {
         protected void finalize() {
-            deleteNativeLibrary();
+            dispose();
         }
     };
 
-    /** Remove any unpacked native library.  Forcing the class loader to
-        unload it first is required on Windows, since the temporary native
-        library can't be deleted until the native library is unloaded.  Any
-        deferred execution we might install at this point would prevent the
-        Native class and its class loader from being GC'd, so we instead force
+    /** Properly dispose of JNA functionality. */
+    private static void dispose() {
+        NativeLibrary.disposeAll();
+        deleteNativeLibrary();
+    }
+
+    /** Remove any automatically unpacked native library.  Forcing the class
+        loader to unload it first is only required on Windows, since the
+        temporary native library is still "in use" and can't be deleted until
+        the native library is removed from its class loader.  Any deferred
+        execution we might install at this point would prevent the Native
+        class and its class loader from being GC'd, so we instead force 
         the native library unload just a little bit prematurely.
      */
     private static boolean deleteNativeLibrary() {
@@ -146,9 +158,6 @@ public final class Native {
         }
         // Reach into the bowels of ClassLoader to force the native
         // library to unload
-        // NOTE: this may cause a failure when freeing com.sun.jna.Memory
-        // after the library has been unloaded, see
-        // https://jna.dev.java.net/issues/show_bug.cgi?id=157
         try {
             ClassLoader cl = Native.class.getClassLoader();
             Field f = ClassLoader.class.getDeclaredField("nativeLibraries");
@@ -293,8 +302,13 @@ public final class Native {
     /** Convert a direct {@link Buffer} into a {@link Pointer}. 
      * @throws IllegalArgumentException if the buffer is not direct.
      */
-    public static native Pointer getDirectBufferPointer(Buffer b);
+    public static Pointer getDirectBufferPointer(Buffer b) {
+        long peer = _getDirectBufferPointer(b);
+        return peer == 0 ? null : new Pointer(peer);
+    }
     
+    private static native long _getDirectBufferPointer(Buffer b);
+
     /** Obtain a Java String from the given native byte array.  If there is
      * no NUL terminator, the String will comprise the entire array.  If the
      * system property <code>jna.encoding</code> is set, its value will 
@@ -1464,4 +1478,223 @@ public final class Native {
                            + getAPIChecksum() + ")");
         System.exit(0);
     }
+
+    /** Free the given callback trampoline. */
+    static synchronized native void freeNativeCallback(long ptr);
+
+    /** Create a native trampoline to delegate execution to the Java callback. 
+     */
+    static synchronized native long createNativeCallback(Callback callback, 
+                                                         Method method, 
+                                                         Class[] parameterTypes,
+                                                         Class returnType,
+                                                         int callingConvention, boolean direct);
+    
+    /**
+     * Call the native function being represented by this object
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param	args
+     *			Arguments to pass to the native function
+     *
+     * @return	The value returned by the target native function
+     */
+    static  native int invokeInt(long fp, int callFlags, Object[] args);
+
+    /**
+     * Call the native function being represented by this object
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param	args
+     *			Arguments to pass to the native function
+     *
+     * @return	The value returned by the target native function
+     */
+    static native long invokeLong(long fp, int callFlags, Object[] args);
+
+    /**
+     * Call the native function being represented by this object
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param	args
+     *			Arguments to pass to the native function
+     */
+    static native void invokeVoid(long fp, int callFlags, Object[] args);
+
+    /**
+     * Call the native function being represented by this object
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param	args
+     *			Arguments to pass to the native function
+     *
+     * @return	The value returned by the target native function
+     */
+    static native float invokeFloat(long fp, int callFlags, Object[] args);
+
+    /**
+     * Call the native function being represented by this object
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param	args
+     *			Arguments to pass to the native function
+     *
+     * @return	The value returned by the target native function
+     */
+    static native double invokeDouble(long fp, int callFlags, Object[] args);
+
+    /**
+     * Call the native function being represented by this object
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param	args
+     *			Arguments to pass to the native function
+     *
+     * @return	The native pointer returned by the target native function
+     */
+    static native long invokePointer(long fp, int callFlags, Object[] args);
+
+    /**
+     * Call the native function being represented by this object, returning
+     * a struct by value.
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param   args Arguments to pass to the native function
+     * @param   memory Memory for pre-allocated structure to hold the result
+     * @param   typeInfo Native type information for the Structure
+     */
+    private static native void invokeStructure(long fp, int callFlags,
+                                               Object[] args, long memory,
+                                               long type_info);
+
+    /**
+     * Call the native function being represented by this object, returning
+     * a struct by value.
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param   args Arguments to pass to the native function
+     * @param   result Pre-allocated structure to hold the result
+     * @return the passed-in Structure
+     */
+    static Structure invokeStructure(long fp, int callFlags, Object[] args,
+                                     Structure s) {
+        invokeStructure(fp, callFlags, args, s.getPointer().peer,
+                        s.getTypeInfo().peer);
+        return s;
+    }
+
+    /**
+     * Call the native function being represented by this object, returning
+     * a Java <code>Object</code>.
+     * @param fp function pointer
+     * @param   callFlags calling convention to be used
+     * @param   args Arguments to pass to the native function
+     *
+     * @return  The returned Java <code>Object</code>
+     */
+    static native Object invokeObject(long fp, int callFlags, Object[] args);
+
+    static native long open(String name);
+
+    static native void close(long handle);
+
+    static native long findSymbol(long handle, String name);
+
+    static native long indexOf(long addr, byte value);
+
+    static native void read(long addr, byte[] buf, int index, int length);
+
+    static native void read(long addr, short[] buf, int index, int length);
+
+    static native void read(long addr, char[] buf, int index, int length);
+
+    static native void read(long addr, int[] buf, int index, int length);
+
+    static native void read(long addr, long[] buf, int index, int length);
+
+    static native void read(long addr, float[] buf, int index, int length);
+
+    static native void read(long addr, double[] buf, int index, int length);
+
+    static native void write(long addr, byte[] buf, int index, int length);
+
+    static native void write(long addr, short[] buf, int index, int length);
+
+    static native void write(long addr, char[] buf, int index, int length);
+
+    static native void write(long addr, int[] buf, int index, int length);
+
+    static native void write(long addr, long[] buf, int index, int length);
+
+    static native void write(long addr, float[] buf, int index, int length);
+
+    static native void write(long addr, double[] buf, int index, int length);
+
+    static native byte getByte(long addr);
+
+    static native char getChar(long addr);
+
+    static native short getShort(long addr);
+
+    static native int getInt(long addr);
+
+    static native long getLong(long addr);
+
+    static native float getFloat(long addr);
+
+    static native double getDouble(long addr);
+
+    static Pointer getPointer(long addr) {
+        long peer = _getPointer(addr);
+        return peer == 0 ? null : new Pointer(peer);
+    }
+
+    private static native long _getPointer(long addr);
+
+    static native String getString(long addr, boolean wide);
+
+    static native void setMemory(long addr, long length, byte value);
+
+    static native void setByte(long addr, byte value);
+
+    static native void setShort(long addr, short value);
+
+    static native void setChar(long addr, char value);
+
+    static native void setInt(long addr, int value);
+
+    static native void setLong(long addr, long value);
+
+    static native void setFloat(long addr, float value);
+
+    static native void setDouble(long addr, double value);
+
+    static native void setPointer(long addr, long value);
+
+    static native void setString(long addr, String value, boolean wide);
+
+    /**
+     * Call the real native malloc
+     * @param size size of the memory to be allocated
+     * @return native address of the allocated memory block; zero if the
+     * allocation failed.
+     */
+    public static native long malloc(long size);
+
+    /**
+     * Call the real native free
+     * @param ptr native address to be freed; a value of zero has no effect,
+     * passing an already-freed pointer will cause pain.
+     */
+    public static native void free(long ptr);
+
+    /**
+     * Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
+     * This method calls through to the JNA NewDirectByteBuffer method.
+     *
+     * @param addr byte offset from pointer to start the buffer
+     * @param length Length of ByteBuffer
+     * @return a direct ByteBuffer that accesses the memory being pointed to, 
+     */
+    public static native ByteBuffer getDirectByteBuffer(long addr, long length);
 }

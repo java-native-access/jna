@@ -140,7 +140,7 @@ public class Memory extends Pointer {
     }
 
     /** Free the native memory and set peer to zero */
-    protected void dispose() {
+    protected synchronized void dispose() {
         free(peer);
         peer = 0;
     }
@@ -677,18 +677,18 @@ public class Memory extends Pointer {
         super.setString(offset, value, wide);
     }
 
-    /**
-     * Call the real native malloc
-     */
-    protected static native long malloc(long size);
-
-    /**
-     * Call the real native free
-     */
-    protected static native void free(long ptr);
-    
     public String toString() {
         return "allocated@0x" + Long.toHexString(peer) + " ("
             + size + " bytes)";
     }
+
+    protected static void free(long p) {
+        Native.free(p);
+    }
+
+    protected static long malloc(long size) {
+        return Native.malloc(size);
+    }
 }
+
+

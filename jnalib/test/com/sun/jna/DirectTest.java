@@ -362,7 +362,7 @@ public class DirectTest extends TestCase {
 
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
-            Pointer._setMemory(0L, 0L, (byte)0);
+            Native.setMemory(0L, 0L, (byte)0);
         }
         delta = System.currentTimeMillis() - start;
         System.out.println("memset (JNI): " + delta + "ms");

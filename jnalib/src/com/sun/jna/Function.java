@@ -325,32 +325,32 @@ public class Function extends Pointer {
     Object invoke(Object[] args, Class returnType, boolean allowObjects) {
         Object result = null;
         if (returnType == null || returnType==void.class || returnType==Void.class) {
-            invokeVoid(callFlags, args);
+            Native.invokeVoid(peer, callFlags, args);
             result = null;
         }
         else if (returnType==boolean.class || returnType==Boolean.class) {
-            result = valueOf(invokeInt(callFlags, args) != 0);
+            result = valueOf(Native.invokeInt(peer, callFlags, args) != 0);
         }
         else if (returnType==byte.class || returnType==Byte.class) {
-            result = new Byte((byte)invokeInt(callFlags, args));
+            result = new Byte((byte)Native.invokeInt(peer, callFlags, args));
         }
         else if (returnType==short.class || returnType==Short.class) {
-            result = new Short((short)invokeInt(callFlags, args));
+            result = new Short((short)Native.invokeInt(peer, callFlags, args));
         }
         else if (returnType==char.class || returnType==Character.class) {
-            result = new Character((char)invokeInt(callFlags, args));
+            result = new Character((char)Native.invokeInt(peer, callFlags, args));
         }
         else if (returnType==int.class || returnType==Integer.class) {
-            result = new Integer(invokeInt(callFlags, args));
+            result = new Integer(Native.invokeInt(peer, callFlags, args));
         }
         else if (returnType==long.class || returnType==Long.class) {
-            result = new Long(invokeLong(callFlags, args));
+            result = new Long(Native.invokeLong(peer, callFlags, args));
         }
         else if (returnType==float.class || returnType==Float.class) {
-            result = new Float(invokeFloat(callFlags, args));
+            result = new Float(Native.invokeFloat(peer, callFlags, args));
         }
         else if (returnType==double.class || returnType==Double.class) {
-            result = new Double(invokeDouble(callFlags, args));
+            result = new Double(Native.invokeDouble(peer, callFlags, args));
         }
         else if (returnType==String.class) {
             result = invokeString(callFlags, args, false);
@@ -362,13 +362,13 @@ public class Function extends Pointer {
             }
         }
         else if (Pointer.class.isAssignableFrom(returnType)) {
-            result = invokePointer(callFlags, args);
+            return invokePointer(callFlags, args);
         }
         else if (Structure.class.isAssignableFrom(returnType)) {
             if (Structure.ByValue.class.isAssignableFrom(returnType)) {
                 Structure s = 
-                    invokeStructure(callFlags, args, 
-                                    Structure.newInstance(returnType));
+                    Native.invokeStructure(peer, callFlags, args,
+                                           Structure.newInstance(returnType));
                 s.autoRead();
                 result = s;
             }
@@ -412,7 +412,7 @@ public class Function extends Pointer {
             }
         }
         else if (allowObjects) {
-            result = invokeObject(callFlags, args);
+            result = Native.invokeObject(peer, callFlags, args);
             if (result != null
                 && !returnType.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Return type " + returnType
@@ -428,6 +428,11 @@ public class Function extends Pointer {
         return result;
     }
     
+    private Pointer invokePointer(int callFlags, Object[] args) {
+        long ptr = Native.invokePointer(peer, callFlags, args);
+        return ptr == 0 ? null : new Pointer(ptr);
+    }
+
     private Object convertArgument(Object[] args, int index,
                                    Method invokingMethod, TypeMapper mapper,
                                    boolean allowObjects) { 
@@ -565,26 +570,6 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
-     * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     * @return	The value returned by the target native function
-     */
-    private  native int invokeInt(int callFlags, Object[] args);
-
-    /**
-     * Call the native function being represented by this object
-     *
-     * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     * @return	The value returned by the target native function
-     */
-    private native long invokeLong(int callFlags, Object[] args);
-
-    /**
-     * Call the native function being represented by this object
-     *
      * @param	args
      *			Arguments to pass to the native function
      */
@@ -592,35 +577,6 @@ public class Function extends Pointer {
         invoke(Void.class, args);
     }
 
-
-    /**
-     * Call the native function being represented by this object
-     *
-     * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     */
-    private native void invokeVoid(int callFlags, Object[] args);
-
-    /**
-     * Call the native function being represented by this object
-     *
-     * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     * @return	The value returned by the target native function
-     */
-    private native float invokeFloat(int callFlags, Object[] args);
-
-    /**
-     * Call the native function being represented by this object
-     *
-     * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     * @return	The value returned by the target native function
-     */
-    private native double invokeDouble(int callFlags, Object[] args);
 
     /**
      * Call the native function being represented by this object
@@ -643,40 +599,6 @@ public class Function extends Pointer {
         }
         return s;
     }
-
-    /**
-     * Call the native function being represented by this object
-     *
-     * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     * @return	The native pointer returned by the target native function
-     */
-    private native Pointer invokePointer(int callFlags, Object[] args);
-    
-    /**
-     * Call the native function being represented by this object, returning
-     * a struct by value.
-     *
-     * @param   callFlags calling convention to be used
-     * @param   args
-     *          Arguments to pass to the native function
-     * @param   result Pre-allocated structure to hold the result
-     * @return  The passed-in struct argument
-     */
-    private native Structure invokeStructure(int callFlags, Object[] args,
-                                             Structure result);
-
-    /**
-     * Call the native function being represented by this object, returning
-     * a Java <code>Object</code>.
-     *
-     * @param   callFlags calling convention to be used
-     * @param   args
-     *          Arguments to pass to the native function
-     * @return  The returned Java <code>Object</code>
-     */
-    private native Object invokeObject(int callFlags, Object[] args);
 
     /** Provide a human-readable representation of this object. */
     public String toString() {

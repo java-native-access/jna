@@ -130,9 +130,10 @@ class CallbackReference extends WeakReference {
             method = getCallbackMethod(callback);
             nativeParamTypes = method.getParameterTypes();
             returnType = method.getReturnType();
-            cbstruct = createNativeCallback(callback, method,
-                                            nativeParamTypes, returnType,
-                                            callingConvention, true);
+            long peer = Native.createNativeCallback(callback, method,
+                                                    nativeParamTypes, returnType,
+                                                    callingConvention, true);
+            cbstruct = peer != 0 ? new Pointer(peer) : null;
         }
         else {
             if (callback instanceof CallbackProxy) {
@@ -173,9 +174,10 @@ class CallbackReference extends WeakReference {
                     + " requires custom type conversion";
                 throw new IllegalArgumentException(msg);
             }
-            cbstruct = createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
-                                            nativeParamTypes, returnType,
-                                            callingConvention, false);
+            long peer = Native.createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
+                                                    nativeParamTypes, returnType,
+                                                    callingConvention, false);
+            cbstruct = peer != 0 ? new Pointer(peer) : null;
         }
 
     }
@@ -277,12 +279,20 @@ class CallbackReference extends WeakReference {
         return cbstruct.getPointer(0);
     }
     
-    /** Free native resources associated with this callback. */
+    /** Free native resources associated with this callback when GC'd. */
     protected void finalize() {
-        freeNativeCallback(cbstruct.peer);
-        cbstruct.peer = 0;
+        dispose();
     }
     
+    /** Free native resources associated with this callback. */
+    protected synchronized void dispose() {
+        if (cbstruct != null) {
+            Native.freeNativeCallback(cbstruct.peer);
+            cbstruct.peer = 0;
+            cbstruct = null;
+        }
+    }
+
     private Callback getCallback() {
         return (Callback)get();
     }
@@ -572,14 +582,4 @@ class CallbackReference extends WeakReference {
         }
         return null;
     }
-
-    /** Create a native trampoline to delegate execution to the Java callback. 
-     */
-    private static synchronized native Pointer createNativeCallback(Callback callback, 
-                                                                    Method method, 
-                                                                    Class[] parameterTypes,
-                                                                    Class returnType,
-                                                                    int callingConvention, boolean direct);
-    /** Free the given callback trampoline. */
-    private static synchronized native void freeNativeCallback(long ptr);
 }

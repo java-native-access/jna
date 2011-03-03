@@ -17,15 +17,18 @@ package com.sun.jna;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.ref.WeakReference;
+import java.lang.ref.Reference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -117,7 +120,7 @@ public class NativeLibrary {
         // name if it cannot find the library.
         //
         try {
-            handle = open(libraryPath);
+            handle = Native.open(libraryPath);
         }
         catch(UnsatisfiedLinkError e) {
             // Add the system paths back for all fallback searching
@@ -126,7 +129,7 @@ public class NativeLibrary {
         try {
             if (handle == 0) {
                 libraryPath = findLibraryPath(libraryName, searchPath);
-                handle = open(libraryPath);
+                handle = Native.open(libraryPath);
             }
         }
         catch(UnsatisfiedLinkError e) {
@@ -137,7 +140,7 @@ public class NativeLibrary {
                 libraryPath = matchLibrary(libraryName, searchPath);
                 if (libraryPath != null) {
                     try {
-                        handle = open(libraryPath);
+                        handle = Native.open(libraryPath);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
@@ -148,7 +151,7 @@ public class NativeLibrary {
                     + ".framework/" + libraryName;
                 if (new File(libraryPath).exists()) {
                     try { 
-                        handle = open(libraryPath);
+                        handle = Native.open(libraryPath);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
@@ -156,7 +159,7 @@ public class NativeLibrary {
             // Try the same library with a "lib" prefix
             else if (Platform.isWindows()) {
                 libraryPath = findLibraryPath("lib" + libraryName, searchPath);
-                try { handle = open(libraryPath); }
+                try { handle = Native.open(libraryPath); }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
             }
             if (handle == 0) {
@@ -230,7 +233,7 @@ public class NativeLibrary {
 
             if (library == null) {
                 if (libraryName == null) {
-                    library = new NativeLibrary("<process>", null, open(null), options);
+                    library = new NativeLibrary("<process>", null, Native.open(null), options);
                 }
                 else {
                     library = loadLibrary(libraryName, options);
@@ -377,7 +380,7 @@ public class NativeLibrary {
         if (handle == 0) {
             throw new UnsatisfiedLinkError("Library has been unloaded");
         }
-        return findSymbol(handle, name);
+        return Native.findSymbol(handle, name);
     }
     public String toString() {
         return "Native Library <" + libraryPath + "@" + handle + ">";
@@ -400,6 +403,22 @@ public class NativeLibrary {
         dispose();
     }
 
+    /** Close all open native libraries. */
+    static void disposeAll() {
+        Set values;
+        synchronized(libraries) {
+            values = new HashSet(libraries.values());
+        }
+        for (Iterator i=values.iterator();i.hasNext();) {
+            Reference ref = (WeakReference)i.next();
+            NativeLibrary lib = (NativeLibrary)ref.get();
+            if (lib != null) {
+                lib.dispose();
+            }
+        }
+    }
+
+    /** Close the native library we're mapped to. */
     public void dispose() {
         synchronized(libraries) {
             libraries.remove(getName() + options);
@@ -411,7 +430,7 @@ public class NativeLibrary {
         }
         synchronized(this) {
             if (handle != 0) {
-                close(handle);
+                Native.close(handle);
                 handle = 0;
             }
         }
@@ -592,9 +611,6 @@ public class NativeLibrary {
     	return v;
     }
 
-    private static native long open(String name);
-    private static native void close(long handle);
-    private static native long findSymbol(long handle, String name);
     static {
         String webstartPath = Native.getWebStartLibraryPath("jnidispatch");
         if (webstartPath != null) {
