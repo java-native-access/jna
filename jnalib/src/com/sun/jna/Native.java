@@ -1573,7 +1573,6 @@ public final class Native {
      * @param fp function pointer
      * @param   callFlags calling convention to be used
      * @param   args Arguments to pass to the native function
-     * @param   result Pre-allocated structure to hold the result
      * @return the passed-in Structure
      */
     static Structure invokeStructure(long fp, int callFlags, Object[] args,
