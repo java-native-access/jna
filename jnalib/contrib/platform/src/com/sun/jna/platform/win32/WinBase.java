@@ -521,8 +521,7 @@ public abstract class WinBase {
 	 * object and specifies whether the handle retrieved by specifying this
 	 * structure is inheritable. This structure provides security settings for
 	 * objects created by various functions, such as {@link Kernel32#CreateFile},
-	 * {@link Kernel32#CreatePipe}, {@link Kernel32#CreateProcess},
-	 * {@link Advapi32#RegCreateKeyEx}, or {@link Advapi32#RegSaveKeyEx}.
+	 * {@link Kernel32#CreatePipe}, or {@link Advapi32#RegCreateKeyEx}.
 	 */
     public static class SECURITY_ATTRIBUTES extends Structure {
     	/**
