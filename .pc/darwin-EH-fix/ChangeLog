@@ -1,8 +1,3 @@
-2011-03-30  Timothy Wall  <twall@users.sf.net>
-
-	* src/powerpc/darwin.S: Fix unknown FDE encoding.
-	* src/powerpc/darwin_closure.S: ditto.
-
 2011-02-25  Anthony Green  <green@moxielogic.com>
 
 	* src/powerpc/ffi.c (ffi_prep_closure_loc): Allow for more
