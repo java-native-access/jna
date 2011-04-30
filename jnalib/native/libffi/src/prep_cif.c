@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
-   prep_cif.c - Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
+   prep_cif.c - Copyright (c) 2011  Anthony Green
+                Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -37,17 +38,21 @@ static ffi_status initialize_aggregate(ffi_type *arg)
 {
   ffi_type **ptr;
 
-  FFI_ASSERT(arg != NULL);
+  if (UNLIKELY(arg == NULL || arg->elements == NULL))
+    return FFI_BAD_TYPEDEF;
 
-  FFI_ASSERT(arg->elements != NULL);
-  FFI_ASSERT(arg->size == 0);
-  FFI_ASSERT(arg->alignment == 0);
+  arg->size = 0;
+  arg->alignment = 0;
 
   ptr = &(arg->elements[0]);
 
+  if (UNLIKELY(ptr == 0))
+    return FFI_BAD_TYPEDEF;
+
   while ((*ptr) != NULL)
     {
-      if (((*ptr)->size == 0) && (initialize_aggregate((*ptr)) != FFI_OK))
+      if (UNLIKELY(((*ptr)->size == 0)
+		    && (initialize_aggregate((*ptr)) != FFI_OK)))
 	return FFI_BAD_TYPEDEF;
 
       /* Perform a sanity check on the argument type */
@@ -93,7 +98,8 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
   ffi_type **ptr;
 
   FFI_ASSERT(cif != NULL);
-  FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
+  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI))
+    return FFI_BAD_ABI;
 
   cif->abi = abi;
   cif->arg_types = atypes;
@@ -110,7 +116,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
   FFI_ASSERT_VALID_TYPE(cif->rtype);
 
   /* x86, x86-64 and s390 stack space allocation is handled in prep_machdep. */
-#if !defined M68K && !defined __i386__ && !defined __x86_64__ && !defined S390 && !defined PA
+#if !defined M68K && !defined X86_ANY && !defined S390 && !defined PA
   /* Make space for the return structure pointer */
   if (cif->rtype->type == FFI_TYPE_STRUCT
 #ifdef SPARC
@@ -131,7 +137,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
 	 check after the initialization.  */
       FFI_ASSERT_VALID_TYPE(*ptr);
 
-#if !defined __i386__ && !defined __x86_64__ && !defined S390 && !defined PA
+#if !defined X86_ANY && !defined S390 && !defined PA
 #ifdef SPARC
       if (((*ptr)->type == FFI_TYPE_STRUCT
 	   && ((*ptr)->size > 16 || cif->abi != FFI_V9))

@@ -30,7 +30,9 @@
 /* ---- System specific configurations ----------------------------------- */
 
 #if defined(__arch64__) || defined(__sparcv9)
+#ifndef SPARC64
 #define SPARC64
+#endif
 #endif
 
 #ifndef LIBFFI_ASM
@@ -42,12 +44,12 @@ typedef enum ffi_abi {
   FFI_V8,
   FFI_V8PLUS,
   FFI_V9,
+  FFI_LAST_ABI,
 #ifdef SPARC64
-  FFI_DEFAULT_ABI = FFI_V9,
+  FFI_DEFAULT_ABI = FFI_V9
 #else
-  FFI_DEFAULT_ABI = FFI_V8,
+  FFI_DEFAULT_ABI = FFI_V8
 #endif
-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
 } ffi_abi;
 #endif
 

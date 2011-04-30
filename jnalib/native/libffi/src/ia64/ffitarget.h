@@ -34,8 +34,8 @@ typedef signed long long            ffi_sarg;
 typedef enum ffi_abi {
   FFI_FIRST_ABI = 0,
   FFI_UNIX,   	/* Linux and all Unix variants use the same conventions	*/
-  FFI_DEFAULT_ABI = FFI_UNIX,
-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
+  FFI_LAST_ABI,
+  FFI_DEFAULT_ABI = FFI_UNIX
 } ffi_abi;
 #endif
 

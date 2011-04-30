@@ -18,7 +18,7 @@ CLEANFILES = *.exe core* *.log *.sum
 EXTRA_DIST = libffi.special/special.exp	\
 libffi.special/unwindtest_ffi_call.cc libffi.special/unwindtest.cc \
 libffi.special/ffitestcxx.h config/default.exp lib/target-libpath.exp \
-lib/libffi-dg.exp lib/wrapper.exp libffi.call/float.c \
+lib/libffi.exp lib/wrapper.exp libffi.call/float.c \
 libffi.call/cls_multi_schar.c libffi.call/float3.c \
 libffi.call/cls_3_1byte.c libffi.call/stret_large2.c \
 libffi.call/cls_5_1_byte.c libffi.call/stret_medium.c \

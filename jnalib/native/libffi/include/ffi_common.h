@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------
-   ffi_common.h - Copyright (c) 1996  Red Hat, Inc.
-   Copyright (C) 2007 Free Software Foundation, Inc
-
+   ffi_common.h - Copyright (C) 2011  Anthony Green
+                  Copyright (C) 2007  Free Software Foundation, Inc
+                  Copyright (c) 1996  Red Hat, Inc.
+                  
    Common internal definitions and macros. Only necessary for building
    libffi.
    ----------------------------------------------------------------------- */
@@ -112,11 +113,14 @@ typedef signed int   SINT64 __attribute__((__mode__(__DI__)));
 
 typedef float FLOAT32;
 
+#ifndef __GNUC__
+#define __builtin_expect(x, expected_value) (x)
+#endif
+#define LIKELY(x)    __builtin_expect((x),1)
+#define UNLIKELY(x)  __builtin_expect((x),1)
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-
-

@@ -171,7 +171,9 @@ discarded.
 @var{avalues} is a vector of @code{void *} pointers that point to the
 memory locations holding the argument values for a call.  If @var{cif}
 declares that the function has no arguments (i.e., @var{nargs} was 0),
-then @var{avalues} is ignored.
+then @var{avalues} is ignored.  Note that argument values may be
+modified by the callee (for instance, structs passed by value); the
+burden of copying pass-by-value arguments is placed on the caller.
 @end defun
 
 
@@ -438,7 +440,7 @@ require special allocation on platforms that have a non-executable
 heap.  Memory management for closures is handled by a pair of
 functions:
 
-@findex ffi_closure_alloca
+@findex ffi_closure_alloc
 @defun void *ffi_closure_alloc (size_t @var{size}, void **@var{code})
 Allocate a chunk of memory holding @var{size} bytes.  This returns a
 pointer to the writable address, and sets *@var{code} to the

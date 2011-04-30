@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------*-C-*-
    ffitarget.h - Copyright (c) 1996-2003  Red Hat, Inc.
-   Copyright (C) 2007, 2008 Free Software Foundation, Inc
+   Copyright (C) 2007, 2008, 2010 Free Software Foundation, Inc
    Target configuration macros for PowerPC.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -31,11 +31,20 @@
 /* ---- System specific configurations ----------------------------------- */
 
 #if defined (POWERPC) && defined (__powerpc64__)	/* linux64 */
+#ifndef POWERPC64
 #define POWERPC64
-#elif defined (POWERPC_DARWIN) && defined (__ppc64__)	/* Darwin */
+#endif
+#elif defined (POWERPC_DARWIN) && defined (__ppc64__)	/* Darwin64 */
+#ifndef POWERPC64
 #define POWERPC64
+#endif
+#ifndef POWERPC_DARWIN64
+#define POWERPC_DARWIN64
+#endif
 #elif defined (POWERPC_AIX) && defined (__64BIT__)	/* AIX64 */
+#ifndef POWERPC64
 #define POWERPC64
+#endif
 #endif
 
 #ifndef LIBFFI_ASM
@@ -108,9 +117,13 @@ typedef enum ffi_abi {
 #define FFI_SYSV_TYPE_SMALL_STRUCT (FFI_TYPE_LAST + 2)
 
 #if defined(POWERPC64) || defined(POWERPC_AIX)
-#define FFI_TRAMPOLINE_SIZE 24
+#  if defined(POWERPC_DARWIN64)
+#    define FFI_TRAMPOLINE_SIZE 48
+#  else
+#    define FFI_TRAMPOLINE_SIZE 24
+#  endif
 #else /* POWERPC || POWERPC_AIX */
-#define FFI_TRAMPOLINE_SIZE 40
+#  define FFI_TRAMPOLINE_SIZE 40
 #endif
 
 #ifndef LIBFFI_ASM

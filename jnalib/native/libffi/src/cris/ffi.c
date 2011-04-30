@@ -163,7 +163,7 @@ ffi_prep_cif (ffi_cif * cif,
   ffi_type **ptr;
 
   FFI_ASSERT (cif != NULL);
-  FFI_ASSERT ((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
+  FFI_ASSERT (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI);
 
   cif->abi = abi;
   cif->arg_types = atypes;

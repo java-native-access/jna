@@ -31,6 +31,9 @@
 
 /* ---- System specific configurations ----------------------------------- */
 
+/* For code common to all platforms on x86 and x86_64. */
+#define X86_ANY
+
 #if defined (X86_64) && defined (__i386__)
 #undef X86_64
 #define X86
@@ -38,7 +41,7 @@
 
 #ifdef X86_WIN64
 #define FFI_SIZEOF_ARG 8
-#define USE_BUILTIN_FFS 0 // not yet implemented in mingw-64 
+#define USE_BUILTIN_FFS 0 /* not yet implemented in mingw-64 */
 #endif
 
 /* ---- Generic type definitions ----------------------------------------- */
@@ -64,28 +67,26 @@ typedef enum ffi_abi {
 #ifdef X86_WIN32
   FFI_SYSV,
   FFI_STDCALL,
+  FFI_LAST_ABI,
   /* TODO: Add fastcall support for the sake of completeness */
-  FFI_DEFAULT_ABI = FFI_SYSV,
-#endif
+  FFI_DEFAULT_ABI = FFI_SYSV
 
-#ifdef X86_WIN64
+#elif defined(X86_WIN64)
   FFI_WIN64,
-  FFI_DEFAULT_ABI = FFI_WIN64,
-#else
+  FFI_LAST_ABI,
+  FFI_DEFAULT_ABI = FFI_WIN64
 
+#else
   /* ---- Intel x86 and AMD x86-64 - */
-#if !defined(X86_WIN32) && (defined(__i386__) || defined(__x86_64__) || defined(__i386) || defined(__amd64))
   FFI_SYSV,
   FFI_UNIX64,   /* Unix variants all use the same ABI for x86-64  */
+  FFI_LAST_ABI,
 #if defined(__i386__) || defined(__i386)
-  FFI_DEFAULT_ABI = FFI_SYSV,
+  FFI_DEFAULT_ABI = FFI_SYSV
 #else
-  FFI_DEFAULT_ABI = FFI_UNIX64,
+  FFI_DEFAULT_ABI = FFI_UNIX64
 #endif
 #endif
-#endif /* X86_WIN64 */
-
-  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
 } ffi_abi;
 #endif
 
