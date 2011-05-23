@@ -4,25 +4,25 @@ Release 3.x.x
 Features
 --------
 
-* Facilitate `Memory</code> subclasses (jbellis).
+* Facilitate `Memory` subclasses (jbellis).
 * Allow multiple fields of the same type in Unions (Francis Barber).
-* Add `platform.win32.Advapi32.AdjustTokenPrivileges</code>, `platform.win32.Advapi32.LookupPrivilegeName</code>, `platform.win32.Advapi32.LookupPrivilegeValue</code>, `platform.win32.Advapi32.ImpersonateSelf</code>.
-* Add `platform.win32.Advapi32.DuplicateTokenEx</code>, `platform.win32.Advapi32.CreateProcessAsUser</code>, `platform.win32.Kernel32.GetExitCodeProcess</code>, `platform.win32.Kernel32.TerminateProcess</code>, `platform.win32.Kernel32.ReadFile</code>, `platform.win32.Kernel32.CreatePipe</code>, `platform.win32.Kernel32.SetHandleInformation</code> and related constants / structures in `platform.win32.WinBase</code> and `platform.win32.WinNT</code>. Please note that the `SECURITY_ATTRIBUTES</code> structure has been moved from `platform.win32.WinNT</code> to `platform.win32.WinBase</code>.
-* Add `platform.win32.Kernel32.DeleteFile</code> and `platform.win32.Kernel32Util.deleteFile</code>.
-* Add `platform.win32.Kernel32.GetFileAttributes</code> and `platform.win32.Kernel32Util.getFileAttributes</code>.
-* Add `platform.win32.Kernel32.GetTickCount</code>.
-* Add Win32 Service functions to `platform.win32.Advapi32</code>.
-* Add `platform.win32.W32ServiceManager</code> and `W32Service</code>.
-* Add Win32 Event Logging functions to `platform.win32.Advapi32</code> and `platform.win32.Advapi32Util.EventLogIterator</code>.
-* `platform.win32.Advapi32Util.registryCreateKey</code> returns `true</code> if key was created, `false</code> if it already exists.
-* Add `REG_BINARY</code>, `REG_EXPAND_SZ</code> and `REG_MULTI_SZ</code> support to `platform.win32.Advapi32Util</code> registry functions.
+* Add `platform.win32.Advapi32.AdjustTokenPrivileges`, `platform.win32.Advapi32.LookupPrivilegeName`, `platform.win32.Advapi32.LookupPrivilegeValue`, `platform.win32.Advapi32.ImpersonateSelf`.
+* Add `platform.win32.Advapi32.DuplicateTokenEx`, `platform.win32.Advapi32.CreateProcessAsUser`, `platform.win32.Kernel32.GetExitCodeProcess`, `platform.win32.Kernel32.TerminateProcess`, `platform.win32.Kernel32.ReadFile`, `platform.win32.Kernel32.CreatePipe`, `platform.win32.Kernel32.SetHandleInformation` and related constants / structures in `platform.win32.WinBase` and `platform.win32.WinNT`. Please note that the `SECURITY_ATTRIBUTES` structure has been moved from `platform.win32.WinNT` to `platform.win32.WinBase`.
+* Add `platform.win32.Kernel32.DeleteFile` and `platform.win32.Kernel32Util.deleteFile`.
+* Add `platform.win32.Kernel32.GetFileAttributes` and `platform.win32.Kernel32Util.getFileAttributes`.
+* Add `platform.win32.Kernel32.GetTickCount`.
+* Add Win32 Service functions to `platform.win32.Advapi32`.
+* Add `platform.win32.W32ServiceManager` and `W32Service`.
+* Add Win32 Event Logging functions to `platform.win32.Advapi32` and `platform.win32.Advapi32Util.EventLogIterator`.
+* `platform.win32.Advapi32Util.registryCreateKey` returns `true` if key was created, `false` if it already exists.
+* Add `REG_BINARY`, `REG_EXPAND_SZ` and `REG_MULTI_SZ` support to `platform.win32.Advapi32Util` registry functions.
 * Reduce JNI crossings in a number of native methods, moving object creation out into pure Java code.
 
 Bug Fixes
 ---------
 
-* Move all native functions into `com.sun.jna.Native</code>, to ensure that all dependent classes must be disposed before the `Native</code> class is unloaded. 
-* Fix `platform.win32.Kernel32.GetNativeSystemInfo</code> and `GetSystemInfo</code> AV on Win64.
+* Move all native functions into `com.sun.jna.Native`, to ensure that all dependent classes must be disposed before the `Native` class is unloaded. 
+* Fix `platform.win32.Kernel32.GetNativeSystemInfo` and `GetSystemInfo` AV on Win64.
 * Fix several potential minor bugs as reported by TvT.
 * Fix bug in Structure.StructureSet.toString (Blair Zajac), exposed by Tomcat ThreadLocal cleanup.
 * Fix several bugs when using Structure(Pointer) ctor and array fields (Samuel Audet).
@@ -34,40 +34,40 @@ Features
 --------
 
 * Add native peer value accessors for Pointer
-* The `jna.library.path</code> property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.
-* `Native.loadLibrary</code> can now load `.drv</code> files.
-* Refactor `com.sun.jna.platform.win32.WINBASE</code> into `WinDef</code>, `WinNT</code> and `BaseTSD</code>, matching Windows SDK headers.
-* Refactor constants from `com.sun.jna.platform.win32.GDI32</code> into `WinGDI</code>, matching Windows SDK headers.
-* Refactor constants from `com.sun.jna.platform.win32.User32</code> into `WinUser</code>, matching Windows SDK headers.
-* Refactor `platform.win32.WinNT.LARGE_INTEGER</code> into a union.
-* Add `platform.win32.ObjBase</code>, `com.sun.jna.platform.win32.Ole32.CoInitializeEx</code>, `CoUninitialize</code>, and `CoCreateInstance</code>.
-* Add `platform.win32.Oleaut32.SysAllocString</code> and `SysFreeString</code>.
-* Add `platform.win32.Secur32.ImpersonateSecurityContext</code> and `RevertSecurityContext</code>.
-* Add `platform.win32.WinNT.WELL_KNOWN_SID_TYPE</code>, `SECURITY_MAX_SID_SIZE</code> and other related SID-related constants.
-* Add `platform.win32.Advapi32.CreateWellKnownSid</code> and `IsWellKnownSid</code> and `com.sun.jna.platform.win32.Advapi32Util.isWellKnownSid</code>.
-* Add `platform.win32.Kernel32.GetVersion</code>, `GetVersionEx</code>, `GetSystemInfo</code>, `GetNativeSystemInfo</code>, `GlobalMemoryStatusEx</code>, `GetLogicalDriveStrings</code> and `IsWow64Process</code>.
-* Add `platform.win32.Kernel32Util.getLogicalDriveStrings</code>.
-* Add `platform.win32.User32.GetSystemMetrics</code>.
-* Add `platform.win32.BaseTSD.DWORD_PTR</code>.
-* Add `platform.win32.WinBase.SYSTEM_INFO</code> and `MEMORYSTATUSEX</code>.
-* Add `platform.win32.WinNT.OSVERSIONINFOEX</code>, `VER</code> constants.
-* Add `platform.win32.WinDef.ULONGLONG</code> and `DWORDLONG</code>.
-* Add `platform.win32.Shell32.SHGetDesktopFolder</code> (prep work for Com4JNA).
-* Add `platform.win32.Winspool.GetPrinterInfo</code>.
-* Add `platform.win32.WinspoolUtil.getPrinterInfo1</code>.
-* Add `platform.win32.GDI32.GetDeviceCaps</code>.
-* Add `platform.win32.GDI32.GetDIBits</code>.
+* The `jna.library.path` property is now re-evaluated whenever a native library is loaded.  Previously this value was cached when the JNA classes loaded.
+* `Native.loadLibrary` can now load `.drv` files.
+* Refactor `com.sun.jna.platform.win32.WINBASE` into `WinDef`, `WinNT` and `BaseTSD`, matching Windows SDK headers.
+* Refactor constants from `com.sun.jna.platform.win32.GDI32` into `WinGDI`, matching Windows SDK headers.
+* Refactor constants from `com.sun.jna.platform.win32.User32` into `WinUser`, matching Windows SDK headers.
+* Refactor `platform.win32.WinNT.LARGE_INTEGER` into a union.
+* Add `platform.win32.ObjBase`, `com.sun.jna.platform.win32.Ole32.CoInitializeEx`, `CoUninitialize`, and `CoCreateInstance`.
+* Add `platform.win32.Oleaut32.SysAllocString` and `SysFreeString`.
+* Add `platform.win32.Secur32.ImpersonateSecurityContext` and `RevertSecurityContext`.
+* Add `platform.win32.WinNT.WELL_KNOWN_SID_TYPE`, `SECURITY_MAX_SID_SIZE` and other related SID-related constants.
+* Add `platform.win32.Advapi32.CreateWellKnownSid` and `IsWellKnownSid` and `com.sun.jna.platform.win32.Advapi32Util.isWellKnownSid`.
+* Add `platform.win32.Kernel32.GetVersion`, `GetVersionEx`, `GetSystemInfo`, `GetNativeSystemInfo`, `GlobalMemoryStatusEx`, `GetLogicalDriveStrings` and `IsWow64Process`.
+* Add `platform.win32.Kernel32Util.getLogicalDriveStrings`.
+* Add `platform.win32.User32.GetSystemMetrics`.
+* Add `platform.win32.BaseTSD.DWORD_PTR`.
+* Add `platform.win32.WinBase.SYSTEM_INFO` and `MEMORYSTATUSEX`.
+* Add `platform.win32.WinNT.OSVERSIONINFOEX`, `VER` constants.
+* Add `platform.win32.WinDef.ULONGLONG` and `DWORDLONG`.
+* Add `platform.win32.Shell32.SHGetDesktopFolder` (prep work for Com4JNA).
+* Add `platform.win32.Winspool.GetPrinterInfo`.
+* Add `platform.win32.WinspoolUtil.getPrinterInfo1`.
+* Add `platform.win32.GDI32.GetDeviceCaps`.
+* Add `platform.win32.GDI32.GetDIBits`.
 
 Bug Fixes
 ---------
 
-* Fix `ClassCastException</code> in `Structure.equals</code> (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=152">issue 152</a>).
-* Fix bug initializing a structure object from existing memory when the structure has initialized fields (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=133">issue 133</a>).
-* Fix NPE reading an array of string from a pointer when an element of the array is `NULL</code> (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=151">issue 151</a>).
-* Avoid calling `UnregisterNatives</code> in native code (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=154">issue 154</a>).
-* Compare unpacked library path against canonical (long) filename (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=156">issue 156</a>).
-* Fix `read()</code> of uninitialized memory in `platform.win32.Advapi32Util.getTokenGroups</code> and `getTokenAccount</code>.
-* Fix `com.sun.jna.platform.win32.Secur32.QuerySecurityContextToken</code> to take a `CtxtHandle</code> instead of `PSecHandle</code>.
+* Fix `ClassCastException` in `Structure.equals` (issue 152).
+* Fix bug initializing a structure object from existing memory when the structure has initialized fields (issue 133).
+* Fix NPE reading an array of string from a pointer when an element of the array is `NULL` (issue 151).
+* Avoid calling `UnregisterNatives` in native code (issue 154).
+* Compare unpacked library path against canonical (long) filename (issue 156).
+* Fix `read()` of uninitialized memory in `platform.win32.Advapi32Util.getTokenGroups` and `getTokenAccount`.
+* Fix `com.sun.jna.platform.win32.Secur32.QuerySecurityContextToken` to take a `CtxtHandle` instead of `PSecHandle`.
 * Fix definition of BITMAPINFO (platform/win32).
 
 Release 3.2.5
@@ -92,7 +92,7 @@ Bug Fixes
 * Provide String.replace for 1.4 compatibility.
 * Avoid allocating memory when Structure is provided a pointer in the ctor.
 * Ensure proper value returned in Pointer.getValue() for non-null, unchanged NIO Buffer values.
-* Use 1.4-compatible URI generation (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=149">issue 149</a>).
+* Use 1.4-compatible URI generation (issue 149).
 
 Release 3.2.4
 =============
@@ -102,12 +102,12 @@ Features
 
 * Make Pointer ctor public.
 * Provide access to Function objects for arbitrary Pointer values.
-* Add linux/ia64 binaries (bpiwowar).  See <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=134">issue 134 patch</a>.
+* Add linux/ia64 binaries (bpiwowar).  See issue 134 patch.
 
 Bug Fixes
 ---------
 
-* Use a more robust method to decode a file-based URL (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=135">issue 135</a>).
+* Use a more robust method to decode a file-based URL (issue 135).
 
 Release 3.2.3
 =============
@@ -123,12 +123,12 @@ Bug Fixes
 * Fix WindowUtils exception on mouse over TrayIcon.
 * Fix bug toggling windows transparent/opaque (win32/OSX).
 * Avoid overwriting unchanged Pointer values in arrays (function calls with Pointer[] and Structure.read). 
-* Ensure Structure fields marked `final</code> are never written.
+* Ensure Structure fields marked `final` are never written.
 * Fix bug preventing proper population Structure.ByReference fields on Structure read.
 * Ensure double buffering is disabled in components added to a transparent window.
 * Fix UnsatisfiedLinkError attempting to load system libraries under Web Start.
 * Fix loading Web Start-provided libraries on OSX (libraries must have a .jnilib suffix under Web Start).
-* Properly include sources in Maven zip file (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=129">Issue 129</a>).
+* Properly include sources in Maven zip file (Issue 129).
 
 Release 3.2.2
 =============
@@ -141,7 +141,7 @@ Features
 Bug Fixes
 ---------
 
-* Fix crash with direct mapping if NULL struct* used (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=125">Issue 125</a>).
+* Fix crash with direct mapping if NULL struct* used (Issue 125).
 * Fix case where null-valued Structure fields would get non-null values on write. 
 * Synch callback Structure/Structure[] arguments on callback return.
 * Fix NPE when mapping an interface to the current process.
@@ -161,8 +161,8 @@ Bug Fixes
 ---------
 
 * Fix definition of HWND_BROADCAST in W32API.
-* Fix memory alignment checking (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=121">Issue 121</a>).
-* Fix Structure <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html#equals(java.lang.Object)">equals/hashCode</a> implementation, based on current Java fields rather than strictly native memory contents.  Avoid using equals/hashCode when avoiding recursive reads/writes.
+* Fix memory alignment checking (Issue 121).
+* Fix Structure equals/hashCode implementation, based on current Java fields rather than strictly native memory contents.  Avoid using equals/hashCode when avoiding recursive reads/writes.
 
 Release 3.2.0
 =============
@@ -174,13 +174,13 @@ Features
 * Optionally throw errno/GetLastError as an exception.  This is preferred to (and more efficient than) calling Native.getLastError().
 * Unload/delete native library unpacked from jna.jar if Native class is garbage collected.  Only install shutdown hook if using the system class loader. 
 * Auto-write contiguous Structure arrays when first element is written.
-* Support NativeMapped[] as function arguments for interface-mapped libraries (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=90">Issue 90</a>).
+* Support NativeMapped[] as function arguments for interface-mapped libraries (Issue 90).
 * Enable function lookup within current process on Windows.
 
 Bug Fixes
 ---------
 
-* Restrict recursive structure reads/writes by thread instead of globally. This avoids potentially missed reads/writes with concurrent access (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=120">Issue 120</a>).
+* Restrict recursive structure reads/writes by thread instead of globally. This avoids potentially missed reads/writes with concurrent access (Issue 120).
 * Ensure Memory is not GC'd and freed if direct NIO buffers mapped to it are extant.
 * Allow types derived from java.nio.Buffer as Structure fields.
 
@@ -192,25 +192,25 @@ Features
 
 * Add raw JNI mapping of static Java methods.  Performance is about 10X that of traditional JNA interface mapping, although with less type conversion functionality. 
 * Add library option to allow passing/return of Java Objects.
-* Allow handling of uncaught callback exceptions (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=63">Issue 63</a>).
+* Allow handling of uncaught callback exceptions (Issue 63).
 * Object oriented interface to X server (see contrib/x11)
 * Make Memory class more accessible.
-* Provide Structure ctor with Pointer argument (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=102">issue 102</a>).
-* Allow implicit library access to current process on linux (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=98">issue 98</a>).
+* Provide Structure ctor with Pointer argument (issue 102).
+* Allow implicit library access to current process on linux (issue 98).
 * Open all shared libraries with RTLD_GLOBAL, if applicable.  This was the default behavior on OSX and changes the default behavior on linux.
-* Allow NIO Buffer as Structure field (with limitations) (<a href="https://jna.dev.java.net/issues/show_bug.cgi?id=57">Issue 57</a>)
+* Allow NIO Buffer as Structure field (with limitations) (Issue 57)
 * Add `size_t` size.
 
 Bug Fixes
 ---------
 
-* Run tests with <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">libjsig.so</a>, if available, which fixes some crashes when running tests on 64-bit platforms. 
-* Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=104">Issue 104</a>.
-* Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=94">Issue 94</a> (Java 1.6 update 10 regression).
-* Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=51">Issue 51</a> (Java 1.6 update 10 regression).
-* Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=95">Issue 95</a>.
-* Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=101">Issue 101</a>.
-* Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=111">Issue 111</a>, memory leak with String-returning Callback.
+* Run tests with libjsig.so, if available, which fixes some crashes when running tests on 64-bit platforms. 
+* Fix Issue 104.
+* Fix Issue 94 (Java 1.6 update 10 regression).
+* Fix Issue 51 (Java 1.6 update 10 regression).
+* Fix Issue 95.
+* Fix Issue 101.
+* Fix Issue 111, memory leak with String-returning Callback.
 * Fix missing storage of union type information (affects usage of struct/union by value as argument and return type).
 * Remove non-functional Structure ctors requiring explicit size.
 
@@ -220,7 +220,7 @@ Release 3.0.9
 Bug Fixes
 ---------
 
-*  Fix <a href="https://jna.dev.java.net/issues/show_bug.cgi?id=93">issue 93</a> by only manually searching jna.library.path, then falling back to passing the mapped library name to dlopen/LoadLibrary.  This fixes an <a href="http://jira.codehaus.org/browse/JRUBY-3084">issue in JRUBY</a> where the incorrect libc.so.6 was being loaded.
+*  Fix issue 93 by only manually searching jna.library.path, then falling back to passing the mapped library name to dlopen/LoadLibrary.  This fixes an issue in JRUBY where the incorrect libc.so.6 was being loaded.
 
 Release 3.0.8
 ==========

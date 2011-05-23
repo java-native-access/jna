@@ -1,4 +1,4 @@
-![JNA](https://github.com/twall/jna/raw/master/www/images/jnalogo.jpg "Java Native Access (JNA)")
+![Java Native Access - JNA](https://github.com/twall/jna/raw/master/www/images/jnalogo.jpg "Java Native Access - JNA")
 
 Java Native Access (JNA)
 ========================
@@ -40,7 +40,7 @@ Features
 Community
 =========
 
-* TODO
+All questions should be posted ot the [jna-users Google group](http://groups.google.com/group/jna-users). Issues can be submitted [here on Github](https://github.com/twall/jna/issues).
 
 Using the Library
 =================
@@ -50,16 +50,19 @@ Using the Library
 * [Using Pointers and Arrays](jna/tree/master/www/PointersAndArrays.md)
 * [Using Structures and Unions](jna/tree/master/www/StructuresAndUnions.md)
 * [Using By-Reference Arguments](jna/tree/master/www/ByRefArguments.md)
-* [Customization](jna/tree/master/www/Customization.md)
-* [Callbacks/Closures](jna/tree/master/www/Callbacks.md)
-* [JRuby/Jython Usage](jna/tree/master/www/JRubyJython.md)
-* [Frequently Asked Questions (FAQ)](jna/tree/master/www/FAQ.md)
+* [Customization](jna/tree/master/www/CustomMappings.md)
+* [Callbacks/Closures](jna/tree/master/www/CallbacksAndClosures.md)
+* [Dynamically Typed Languages (JRuby/Jython)](jna/tree/master/www/DynamicallyTypedLanguages.md)
+* [Platform Library](jna/tree/master/www/PlatformLibrary.md)
+* [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md)
 
 Contributing 
 ============
 
-* TODO
+You're encouraged to contribute to JNA. Fork the code from [github.com/twall/jna](https://github.com/twall/jna) and submit pull requests.
+
+If you are interested in paid support, feel free to say so on the [jna-users mailing list](http://groups.google.com/group/jna-users). Most simple questions will be answered on the list, but more complicated work, new features or target platforms can be negotiated with any of the JNA developers (this is how several of JNA's features came into being). You may even encounter other users with the same need and be able to cost share the new development.
 
 License
 =======
