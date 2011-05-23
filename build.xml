@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="jna" basedir="." default="default">
+	<target name="recurse">
+		<ant dir="jnalib" target="${ant.target}" />
+	</target>
+	<target name="default">
+		<antcall target="recurse">
+			<param name="ant.target" value="default" />
+		</antcall>
+	</target>
+	<target name="clean">
+		<antcall target="recurse">
+			<param name="ant.target" value="clean" />
+		</antcall>
+	</target>
+	<target name="test">
+		<antcall target="recurse">
+			<param name="ant.target" value="test" />
+		</antcall>
+	</target>
+</project>
+
