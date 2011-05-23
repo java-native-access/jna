@@ -54,8 +54,8 @@ Using the Library
 * [Callbacks/Closures](jna/tree/master/www/CallbacksAndClosures.md)
 * [Dynamically Typed Languages (JRuby/Jython)](jna/tree/master/www/DynamicallyTypedLanguages.md)
 * [Platform Library](jna/tree/master/www/PlatformLibrary.md)
-* [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md)
+* [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
 
 Contributing 
 ============
