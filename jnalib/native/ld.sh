@@ -25,9 +25,10 @@ do
       shift 1
     ;;
     -o)
-      dir="$(dirname $2)"
-      base="$(basename $2|sed 's/\.[^.]*//g')"
-      args="$args /out:\"$2\" /pdb:$dir/$base.pdb /implib:$dir/$base.lib"
+      file=$(cygpath -m "$2")
+      dir=$(dirname "$file")
+      base=$(basename "$file"|sed 's/\.[^.]*//g')
+      args="$args /out:\"$file\" /pdb:$dir/$base.pdb /implib:$dir/$base.lib"
       shift 2
     ;;
     -shared)
@@ -38,11 +39,13 @@ do
       shift 1
     ;;
     *.dll)
-      args="$args $(echo $1|sed -e 's/.dll/.lib/g')"
+      file=$(cygpath -m "$1")
+      args="$args $(echo $file|sed -e 's/.dll/.lib/g')"
       shift 1
     ;;
     *.o|*.lib|*.a)
-      args="$args $(echo $1|sed -e 's%\\%/%g')"
+      file=$(cygpath -m "$1")
+      args="$args $(echo $file|sed -e 's%\\%/%g')"
       shift 1
     ;;
     *)

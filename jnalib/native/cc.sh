@@ -53,7 +53,7 @@ do
     -c)
       args="$args /c"
       args="$(echo $args | sed 's%/Fe%/Fo%g')"
-      single="/c"
+      single=/c
       shift 1
     ;;
     -D*=*)
@@ -69,13 +69,16 @@ do
       shift 1
     ;;
     -I)
-      args="$args /I\"$2\""
-      includes="$includes /I\"$2\""
+      file=$(cygpath -m "$2")
+      args="$args /I\"$file\""
+      includes="$includes /I\"$file\""
       shift 2
     ;;
     -I*)
-      args="$args /I\"$(echo $1|sed -e 's/-I//g')\""
-      includes="$includes /I\"$(echo $1|sed -e 's/-I//g')\""
+      file="$(echo $1|sed -e 's/-I//g')"
+      file=$(cygpath -m "$file")
+      args="$args /I\"$file\""
+      includes="$includes /I\"$file\""
       shift 1
     ;;
     -W|-Wextra)
@@ -99,33 +102,36 @@ do
       shift 1
     ;;
     -o)
-      outdir="$(dirname $2)"
-      base="$(basename $2|sed 's/\.[^.]*//g')"
+      file=$(cygpath -m "$2")
+      outdir=$(dirname "$file")
+      base=$(basename "$file"|sed 's/\.[^.]*//g')
       if [ -n "$single" ]; then 
-        output="/Fo$2"
+        output="/Fo$file"
       else
-        output="/Fe$2"
+        output="/Fe$file"
       fi
       if [ -n "$assembly" ]; then
         args="$args $output"
       else
-        args="$args $output /Fd$outdir/$base /Fp$outdir/$base /Fa$outdir/$base"
+        args="$args $output \"/Fd$outdir/$base\" \"/Fp$outdir/$base\" \"/Fa$outdir/$base\""
       fi
       shift 2
     ;;
     *.S)
-      src="$(echo $1|sed -e 's/.S$/.asm/g' -e 's%\\%/%g')"
-      echo "$cl /EP $includes $defines $1 > $src"
-      "$cl" /nologo /EP $includes $defines $1 > $src || exit $?
+      file=$(cygpath -m "$1")
+      src=$(echo $file|sed -e 's/.S$/.asm/g' -e 's%\\%/%g')
+      echo "$cl /EP $includes $defines \"$file\" > \"$src\""
+      "$cl" /nologo /EP $includes $defines "$file" > "$src" || exit $?
       md=""
       cl="$ml"
-      output="$(echo $output | sed 's%/F[dpa][^ ]*%%g')"
-      args="/nologo $single $src $output"
+      output=$(echo $output | sed 's%/F[dpa][^ ]*%%g')
+      args="/nologo $single \"$src\" $output"
       assembly="true"
       shift 1
     ;;
     *.c)
-      args="$args $(echo $1|sed -e 's%\\%/%g')"
+      file=$(cygpath -m "$1")
+      args="$args \"$(echo $file|sed -e 's%\\%/%g')\""
       shift 1
     ;;
     *)
