@@ -1,4 +1,4 @@
-Release 3.x.x
+Release 3.3.0
 =============
 
 Features
@@ -21,7 +21,7 @@ Features
 Bug Fixes
 ---------
 
-* Move all native functions into `com.sun.jna.Native`, to ensure that all dependent classes must be disposed before the `Native` class is unloaded. 
+* Move all native functions into `com.sun.jna.Native`, to ensure that all dependent classes must be disposed before the `Native` class is unloaded.  Note that this change is incompatible with all previous JNA native libraries.
 * Fix `platform.win32.Kernel32.GetNativeSystemInfo` and `GetSystemInfo` AV on Win64.
 * Fix several potential minor bugs as reported by TvT.
 * Fix bug in Structure.StructureSet.toString (Blair Zajac), exposed by Tomcat ThreadLocal cleanup.
