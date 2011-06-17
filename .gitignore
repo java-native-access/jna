@@ -1,0 +1,8 @@
+build
+build.eclipse
+build.number
+.metadata
+bin
+jnalib/contrib/ntservice/dist
+jnalib/contrib/platform/dist
+
