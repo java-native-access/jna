@@ -12,8 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.nio.Buffer;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
@@ -25,17 +23,25 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
+import com.sun.jna.platform.win32.structures.PROCESSENTRY32W;
+import com.sun.jna.platform.win32.structures.PROCESS_INFORMATION;
+import com.sun.jna.platform.win32.structures.STARTUPINFO;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+import java.nio.Buffer;
+
 /** Definition (incomplete) of <code>kernel32.dll</code>. */
 public interface Kernel32 extends StdCallLibrary {
 
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, 
     		W32APIOptions.UNICODE_OPTIONS);
+
+    int PROCESS_TERMINATE = 0x00000001;
+    int PROCESS_SYNCHRONIZE = 0x00100000;
 
     /**
      * Frees the specified local memory object and invalidates its handle.
@@ -142,7 +148,12 @@ public interface Kernel32 extends StdCallLibrary {
      *  invalid value.
      */
     int GetProcessVersion(int processId);
-    
+
+    /**
+     * The value returned from {@link #GetExitCodeProcess} if the process is still running.
+     */
+    int STILL_ACTIVE = 259;
+
     /**
      * Retrieves the termination status of the specified process.
      * @param hProcess A handle to the process.
@@ -305,8 +316,161 @@ public interface Kernel32 extends StdCallLibrary {
     HANDLE CreateFile(String lpFileName, int dwDesiredAccess, int dwShareMode, 
     		WinBase.SECURITY_ATTRIBUTES lpSecurityAttributes, int dwCreationDisposition, 
     		int dwFlagsAndAttributes, HANDLE hTemplateFile);
-        
-    
+
+    /**
+     * Copies an existing file to a new file.
+     * 
+     * @param lpExistingFileName
+     *   The name of an existing file.
+     *
+     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
+     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
+     *   information, see Naming a File.
+     *
+     *   If lpExistingFileName does not exist, CopyFile fails, and GetLastError returns ERROR_FILE_NOT_FOUND.
+     *
+     * @param lpNewFileName
+     *   The name of the new file.
+     *
+     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
+     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
+     *   information, see Naming a File.
+     * 
+     * @param bFailIfExists
+     *   If this parameter is TRUE and the new file specified by lpNewFileName already exists, the function fails. If
+     *   this parameter is FALSE and the new file already exists, the function overwrites the existing file and succeeds.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get
+     *   extended error information, call GetLastError.
+     */
+    boolean CopyFile(String lpExistingFileName, String lpNewFileName, boolean bFailIfExists);
+
+    /**
+     * Moves an existing file or a directory, including its children.
+     *
+     * @param lpExistingFileName
+     *
+     *   The current name of the file or directory on the local computer.
+     *
+     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
+     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
+     *   information, see Naming a File.
+     *
+     * @param lpNewFileName
+     *
+     *   The new name for the file or directory. The new name must not already exist. A new file may be on a different
+     *   file system or drive. A new directory must be on the same drive.
+     *
+     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
+     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
+     *   information, see Naming a File.
+     *
+     * @return
+     *
+     *   If the function succeeds, the return value is nonzero.
+     *
+     *   If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean MoveFile(String lpExistingFileName, String lpNewFileName);
+
+    /**
+     * Moves an existing file or directory, including its children, with various move options.
+     *
+     * @param lpExistingFileName
+     *
+     *   The current name of the file or directory on the local computer.
+     *
+     *   If dwFlags specifies MOVEFILE_DELAY_UNTIL_REBOOT, the file cannot exist on a remote share, because delayed
+     *   operations are performed before the network is available.
+     *
+     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
+     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
+     *   information, see Naming a File
+     *
+     *   Windows 2000:  If you prepend the file name with "\\?\", you cannot also specify the
+     *   MOVEFILE_DELAY_UNTIL_REBOOT flag for dwFlags.
+     *
+     * @param lpNewFileName
+     *
+     *   The new name of the file or directory on the local computer.
+     *
+     *   When moving a file, the destination can be on a different file system or volume. If the destination is on
+     *   another drive, you must set the MOVEFILE_COPY_ALLOWED flag in dwFlags.
+     *
+     *   When moving a directory, the destination must be on the same drive.
+     *
+     *   If dwFlags specifies MOVEFILE_DELAY_UNTIL_REBOOT and lpNewFileName is NULL, MoveFileEx registers the
+     *   lpExistingFileName file to be deleted when the system restarts. If lpExistingFileName refers to a directory,
+     *   the system removes the directory at restart only if the directory is empty.
+     *
+     * @param dwFlags
+     *   This parameter can be one or more of the following values.
+     *
+     * @return
+     *
+     *   If the function succeeds, the return value is nonzero.
+     *
+     *   If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean MoveFileEx(String lpExistingFileName, String lpNewFileName, DWORD dwFlags);
+
+    /**
+     * If the file is to be moved to a different volume, the function simulates the move by using the CopyFile and DeleteFile functions.
+     *
+     * This value cannot be used with MOVEFILE_DELAY_UNTIL_REBOOT.
+     */
+    int MOVEFILE_COPY_ALLOWED = 0x2;
+
+    /**
+     * Reserved for future use.
+     */
+    int MOVEFILE_CREATE_HARDLINK = 0x10;
+
+    /**
+     * The system does not move the file until the operating system is restarted. The system moves the file immediately
+     * after AUTOCHK is executed, but before creating any paging files. Consequently, this parameter enables the
+     * function to delete paging files from previous startups.
+     *
+     * This value can be used only if the process is in the context of a user who belongs to the administrators group or
+     * the LocalSystem account.
+     *
+     * This value cannot be used with MOVEFILE_COPY_ALLOWED.
+     *
+     * Windows Server 2003 and Windows XP:  For information about special situations where this functionality can fail,
+     * and a suggested workaround solution, see Files are not exchanged when Windows Server 2003 restarts if you use the
+     * MoveFileEx function to schedule a replacement for some files in the Help and Support Knowledge Base.
+     *
+     * Windows 2000:  If you specify the MOVEFILE_DELAY_UNTIL_REBOOT flag for dwFlags, you cannot also prepend the file
+     * name that is specified by lpExistingFileName with "\\?".
+     */
+    int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
+
+    /**
+     * The function fails if the source file is a link source, but the file cannot be tracked after the move. This
+     * situation can occur if the destination is a volume formatted with the FAT file system.
+     */
+    int MOVEFILE_FAIL_IF_NOT_TRACKABLE = 0x20;
+
+    /**
+     * If a file named lpNewFileName exists, the function replaces its contents with the contents of the
+     * lpExistingFileName file, provided that security requirements regarding access control lists (ACLs) are met. For
+     * more information, see the Remarks section of this topic.
+     *
+     * This value cannot be used if lpNewFileName or lpExistingFileName names a directory.
+     */
+    int MOVEFILE_REPLACE_EXISTING = 0x1;
+
+    /**
+     * The function does not return until the file is actually moved on the disk.
+     *
+     * Setting this value guarantees that a move performed as a copy and delete operation is flushed to disk before the
+     * function returns. The flush occurs at the end of the copy operation.
+     *
+     * This value has no effect if MOVEFILE_DELAY_UNTIL_REBOOT is set.
+     */
+    int MOVEFILE_WRITE_THROUGH = 0x8;
+
     /**
      * The CreateDirectory function creates a new directory. If the underlying file
      * system supports security on files and directories, the function applies a 
@@ -747,6 +911,72 @@ public interface Kernel32 extends StdCallLibrary {
     HANDLE OpenThread(int dwDesiredAccess, boolean bInheritHandle, int dwThreadId);
     
     /**
+     * Creates a new process and its primary thread. The new process runs in the security context of the calling
+     * process.
+     * 
+     * @param lpApplicationName The name of the module to be executed.
+     * @param lpCommandLine The command line to be executed.
+     * @param lpProcessAttributes
+     *   A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned handle to the new process
+     *   object can be inherited by child processes. If lpProcessAttributes is NULL, the handle cannot be inherited.
+     *
+     * @param lpThreadAttributes
+     *   A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned handle to the new thread
+     *   object can be inherited by child processes. If lpThreadAttributes is NULL, the handle cannot be inherited.
+     *
+     * @param bInheritHandles
+     *   If this parameter TRUE, each inheritable handle in the calling process is inherited by the new process. If the
+     *   parameter is FALSE, the handles are not inherited. Note that inherited handles have the same value and access
+     *   rights as the original handles.
+     *
+     * @param dwCreationFlags The flags that control the priority class and the creation of the process.
+     * @param lpEnvironment
+     *   A pointer to the environment block for the new process. If this parameter is NULL, the new process uses the
+     *   environment of the calling process.
+     *
+     * @param lpCurrentDirectory The full path to the current directory for the process.
+     * @param lpStartupInfo A pointer to a STARTUPINFO or STARTUPINFOEX structure.
+     * @param lpProcessInformation
+     *   A pointer to a PROCESS_INFORMATION structure that receives identification information about the new process.
+     * @return If the function succeeds, the return value is nonzero.
+     */
+    boolean CreateProcess(String lpApplicationName, String lpCommandLine, SECURITY_ATTRIBUTES lpProcessAttributes,
+                          SECURITY_ATTRIBUTES lpThreadAttributes, boolean bInheritHandles, DWORD dwCreationFlags,
+                          Pointer lpEnvironment, String lpCurrentDirectory, STARTUPINFO lpStartupInfo,
+                          PROCESS_INFORMATION.ByReference lpProcessInformation);
+
+    int DEBUG_PROCESS = 0x00000001;
+    int DEBUG_ONLY_THIS_PROCESS = 0x00000002;
+    int CREATE_SUSPENDED = 0x00000004;
+    int DETACHED_PROCESS = 0x00000008;
+    int CREATE_NEW_CONSOLE = 0x00000010;
+    int NORMAL_PRIORITY_CLASS = 0x00000020;
+    int IDLE_PRIORITY_CLASS = 0x00000040;
+    int HIGH_PRIORITY_CLASS = 0x00000080;
+    int REALTIME_PRIORITY_CLASS = 0x00000100;
+    int CREATE_NEW_PROCESS_GROUP = 0x00000200;
+    int CREATE_UNICODE_ENVIRONMENT = 0x00000400;
+    int CREATE_SEPARATE_WOW_VDM = 0x00000800;
+    int CREATE_SHARED_WOW_VDM = 0x00001000;
+    int CREATE_FORCEDOS = 0x00002000;
+    int BELOW_NORMAL_PRIORITY_CLASS = 0x00004000;
+    int ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000;
+    int INHERIT_PARENT_AFFINITY = 0x00010000;
+    int INHERIT_CALLER_PRIORITY = 0x00020000;
+    int CREATE_PROTECTED_PROCESS = 0x00040000;
+    int EXTENDED_STARTUPINFO_PRESENT = 0x00080000;
+    int PROCESS_MODE_BACKGROUND_BEGIN = 0x00100000;
+    int PROCESS_MODE_BACKGROUND_END = 0x00200000;
+    int CREATE_BREAKAWAY_FROM_JOB = 0x01000000;
+    int CREATE_PRESERVE_CODE_AUTHZ_LEVEL = 0x02000000;
+    int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
+    int CREATE_NO_WINDOW = 0x08000000;
+    int PROFILE_USER = 0x10000000;
+    int PROFILE_KERNEL = 0x20000000;
+    int PROFILE_SERVER = 0x40000000;
+    int CREATE_IGNORE_SYSTEM_DEFAULT = 0x80000000;
+
+    /**
      * This function returns a handle to an existing process object.
      * @param fdwAccess
      *  Not supported; set to zero. 
@@ -781,6 +1011,22 @@ public interface Kernel32 extends StdCallLibrary {
      */
     DWORD GetTempPath(DWORD nBufferLength, char[] buffer);
     
+    /**
+     * The SetEnvironmentVariable function sets the contents of the specified environment
+     * variable for the current process.
+     * @param lpName
+     *  Pointer to a string containing the name of the environment variable to set.
+     * @param lpValue
+     *  Pointer to a string containing the value to set it to.
+     *  if this value is NULL, the variable is deleted from the current process' environment.
+     *
+     * @return
+     *  If the function succeeds, the return value is non-zero.
+     *  If the function fails, the return value is zero.  To get extended error information,
+     *  call GetLastError.
+     */
+    boolean SetEnvironmentVariable(String lpName, String lpValue);
+
     /**
      * The GetVersion function returns the current version number of the operating system.
      * @return
@@ -858,6 +1104,82 @@ public interface Kernel32 extends StdCallLibrary {
      */
     boolean GlobalMemoryStatusEx(MEMORYSTATUSEX lpBuffer);
     
+    /**
+     * Retrieves the date and time that a file or directory was created, last accessed, and last modified.
+     * 
+     * @param hFile
+     *   A handle to the file or directory for which dates and times are to be retrieved. The handle must have been
+     *   created using the CreateFile function with the GENERIC_READ access right.
+     *
+     * @param lpCreationTime
+     *   A pointer to a FILETIME structure to receive the date and time the file or directory was created. This
+     *   parameter can be NULL if the application does not require this information.
+     * 
+     * @param lpLastAccessTime
+     *   A pointer to a FILETIME structure to receive the date and time the file or directory was last accessed. The
+     *   last access time includes the last time the file or directory was written to, read from, or, in the case of
+     *   executable files, run. This parameter can be NULL if the application does not require this information.
+     * 
+     * @param lpLastWriteTime
+     *   A pointer to a FILETIME structure to receive the date and time the file or directory was last written to,
+     *   truncated, or overwritten (for example, with WriteFile or SetEndOfFile). This date and time is not updated when
+     *   file attributes or security descriptors are changed. This parameter can be NULL if the application does not
+     *   require this information.
+     *
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get
+     *   extended error information, call GetLastError.
+     */
+    boolean GetFileTime(HANDLE hFile, WinBase.FILETIME.ByReference lpCreationTime,
+                        WinBase.FILETIME.ByReference lpLastAccessTime, WinBase.FILETIME.ByReference lpLastWriteTime);
+
+    /**
+     * Sets the date and time that the specified file or directory was created, last accessed, or last modified.
+     *
+     * @param hFile
+     *  A handle to the file or directory. The handle must have been created using the CreateFile function with the
+     *  FILE_WRITE_ATTRIBUTES access right. For more information, see File Security and Access Rights.
+     * @param lpCreationTime
+     *  A pointer to a FILETIME structure that contains the new creation date and time for the file or directory. This
+     *  parameter can be NULL if the application does not need to change this information.
+     * @param lpLastAccessTime
+     *  A pointer to a FILETIME structure that contains the new last access date and time for the file or directory. The
+     *  last access time includes the last time the file or directory was written to, read from, or (in the case of
+     *  executable files) run. This parameter can be NULL if the application does not need to change this information.
+     *
+     *  To preserve the existing last access time for a file even after accessing a file, call SetFileTime immediately
+     *  after opening the file handle with this parameter's FILETIME structure members initialized to 0xFFFFFFFF.
+     * @param lpLastWriteTime
+     *  A pointer to a FILETIME structure that contains the new last modified date and time for the file or directory.
+     *  This parameter can be NULL if the application does not need to change this information.
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *
+     *  If the function fails, the return value is zero. To get extended error information,
+     *  call GetLastError.
+     */
+    int SetFileTime(HANDLE hFile, WinBase.FILETIME lpCreationTime, WinBase.FILETIME lpLastAccessTime,
+                        WinBase.FILETIME lpLastWriteTime);
+
+    /**
+     * Sets the attributes for a file or directory.
+     * 
+     * @param lpFileName
+     *   The name of the file whose attributes are to be set.
+     *
+     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
+     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path.
+     *
+     * @param dwFileAttributes
+     *   The file attributes to set for the file. This parameter can be one or more values, combined using the
+     *   bitwise-OR operator. However, all other values override FILE_ATTRIBUTE_NORMAL.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get
+     *   extended error information, call GetLastError.
+     */
+    boolean SetFileAttributes(String lpFileName, DWORD dwFileAttributes);
+
     /**
      * The GetLogicalDriveStrings function fills a buffer with strings that specify 
      * valid drives in the system.
@@ -954,4 +1276,131 @@ public interface Kernel32 extends StdCallLibrary {
      * @return INVALID_FILE_ATTRIBUTES if the function fails, otherwise the file attributes WinNT.FILE_ATTRIBUTE_*
      */
     public int GetFileAttributes(String lpFileName);
+
+    /**
+     * Sends a control code directly to a specified device driver, causing the corresponding device to perform the
+     * corresponding operation.
+     *
+     * @param hDevice A handle to the device on which the operation is to be performed. The device is typically a
+     *   volume, directory, file, or stream. To retrieve a device handle, use the CreateFile function. For more
+     *   information, see Remarks.
+     *
+     * @param dwIoControlCode The control code for the operation. This value identifies the specific operation to be
+     *   performed and the type of device on which to perform it. For a list of the control codes, see Remarks. The
+     *   documentation for each control code provides usage details for the lpInBuffer, nInBufferSize, lpOutBuffer, and
+     *   nOutBufferSize parameters.
+     *
+     * @param lpInBuffer A pointer to the input buffer that contains the data required to perform the operation. The
+     *   format of this data depends on the value of the dwIoControlCode parameter. This parameter can be NULL if
+     *   dwIoControlCode specifies an operation that does not require input data.
+     *
+     * @param nInBufferSize The size of the input buffer, in bytes.
+     *
+     * @param lpOutBuffer A pointer to the output buffer that is to receive the data returned by the operation. The
+     *   format of this data depends on the value of the dwIoControlCode parameter. This parameter can be NULL if
+     *   dwIoControlCode specifies an operation that does not return data.
+     *
+     * @param nOutBufferSize The size of the output buffer, in bytes.
+     *
+     * @param lpBytesReturned A pointer to a variable that receives the size of the data stored in the output buffer,
+     *   in bytes. If the output buffer is too small to receive any data, the call fails, GetLastError returns
+     *   ERROR_INSUFFICIENT_BUFFER, and lpBytesReturned is zero. If the output buffer is too small to hold all of the
+     *   data but can hold some entries, some drivers will return as much data as fits. In this case, the call fails,
+     *   GetLastError returns ERROR_MORE_DATA, and lpBytesReturned indicates the amount of data received. Your
+     *   application should call DeviceIoControl again with the same operation, specifying a new starting point. If
+     *   lpOverlapped is NULL, lpBytesReturned cannot be NULL. Even when an operation returns no output data and
+     *   lpOutBuffer is NULL, DeviceIoControl makes use of lpBytesReturned. After such an operation, the value of
+     *   lpBytesReturned is meaningless. If lpOverlapped is not NULL, lpBytesReturned can be NULL. If this parameter is
+     *   not NULL and the operation returns data, lpBytesReturned is meaningless until the overlapped operation has
+     *   completed. To retrieve the number of bytes returned, call GetOverlappedResult. If hDevice is associated with
+     *   an I/O completion port, you can retrieve the number of bytes returned by calling GetQueuedCompletionStatus.
+     *
+     * @param lpOverlapped A pointer to an OVERLAPPED structure. If hDevice was opened without specifying
+     *   FILE_FLAG_OVERLAPPED, lpOverlapped is ignored. If hDevice was opened with the FILE_FLAG_OVERLAPPED flag, the
+     *   operation is performed as an overlapped (asynchronous) operation. In this case, lpOverlapped must point to a
+     *   valid OVERLAPPED structure that contains a handle to an event object. Otherwise, the function fails in
+     *   unpredictable ways. For overlapped operations, DeviceIoControl returns immediately, and the event object is
+     *   signaled when the operation has been completed. Otherwise, the function does not return until the operation has
+     *   been completed or an error occurs.
+     *
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     *
+     *  If the function fails, the return value is zero. To get extended error information,
+     *  call GetLastError.
+     */
+    boolean DeviceIoControl(HANDLE hDevice, int dwIoControlCode, Pointer lpInBuffer, int nInBufferSize,
+        Pointer lpOutBuffer, int nOutBufferSize, IntByReference lpBytesReturned, Pointer lpOverlapped);
+	
+	/**
+	 * Retrieves information about the amount of space that is available on a disk volume, which is the total amount of 
+	 * space, the total amount of free space, and the total amount of free space available to the user that is 
+	 * associated with the calling thread.
+	 *
+	 * @param lpDirectoryName
+	 * @param lpFreeBytesAvailable
+	 * @param lpTotalNumberOfBytes
+	 * @param lpTotalNumberOfFreeBytes
+	 * @return
+	 */
+	boolean GetDiskFreeSpaceEx(String lpDirectoryName, LongByReference lpFreeBytesAvailable, LongByReference lpTotalNumberOfBytes, LongByReference lpTotalNumberOfFreeBytes);
+
+    /**
+     * Takes a snapshot of the specified processes, as well as the heaps, modules, and threads used by these processes.
+     *  
+     * @param dwFlags
+     *   The portions of the system to be included in the snapshot.
+     * 
+     * @param th32ProcessID
+     *   The process identifier of the process to be included in the snapshot. This parameter can be zero to indicate
+     *   the current process. This parameter is used when the TH32CS_SNAPHEAPLIST, TH32CS_SNAPMODULE,
+     *   TH32CS_SNAPMODULE32, or TH32CS_SNAPALL value is specified. Otherwise, it is ignored and all processes are
+     *   included in the snapshot.
+     *
+     *   If the specified process is the Idle process or one of the CSRSS processes, this function fails and the last
+     *   error code is ERROR_ACCESS_DENIED because their access restrictions prevent user-level code from opening them.
+     *
+     *   If the specified process is a 64-bit process and the caller is a 32-bit process, this function fails and the
+     *   last error code is ERROR_PARTIAL_COPY (299).
+     *
+     * @return
+     *   If the function succeeds, it returns an open handle to the specified snapshot.
+     *
+     *   If the function fails, it returns INVALID_HANDLE_VALUE. To get extended error information, call GetLastError.
+     *   Possible error codes include ERROR_BAD_LENGTH.
+     */
+    HANDLE CreateToolhelp32Snapshot(DWORD dwFlags, DWORD th32ProcessID);
+
+    DWORD TH32CS_SNAPHEAPLIST = new DWORD(0x00000001);
+    DWORD TH32CS_SNAPPROCESS  = new DWORD(0x00000002);
+    DWORD TH32CS_SNAPTHREAD   = new DWORD(0x00000004);
+    DWORD TH32CS_SNAPMODULE   = new DWORD(0x00000008);
+    DWORD TH32CS_SNAPMODULE32 = new DWORD(0x00000010);
+    DWORD TH32CS_SNAPALL      = new DWORD((TH32CS_SNAPHEAPLIST.intValue() | TH32CS_SNAPPROCESS.intValue() | TH32CS_SNAPTHREAD.intValue() | TH32CS_SNAPMODULE.intValue()));
+    DWORD TH32CS_INHERIT      = new DWORD(0x80000000);
+
+    /**
+     * Retrieves information about the first process encountered in a system snapshot.
+     *
+     * @param hSnapshot A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.
+     * @param lppe A pointer to a PROCESSENTRY32 structure. It contains process information such as the name of the
+     *   executable file, the process identifier, and the process identifier of the parent process.
+     * @return
+     *   Returns TRUE if the first entry of the process list has been copied to the buffer or FALSE otherwise. The
+     *   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
+     *   does not contain process information.
+     */
+    boolean Process32FirstW(HANDLE hSnapshot, PROCESSENTRY32W.ByReference lppe);
+
+    /**
+     * Retrieves information about the next process recorded in a system snapshot.
+     *
+     * @param hSnapshot A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.
+     * @param lppe A pointer to a PROCESSENTRY32 structure.
+     * @return
+     *   Returns TRUE if the next entry of the process list has been copied to the buffer or FALSE otherwise. The
+     *   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
+     *   does not contain process information.
+     */
+    boolean Process32NextW(HANDLE hSnapshot, PROCESSENTRY32W.ByReference lppe);
 }

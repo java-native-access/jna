@@ -514,6 +514,15 @@ public interface WinNT extends StdCallLibrary {
 
 	public static final int ACCESS_SYSTEM_SECURITY = 0x01000000;
         
+
+    public static final int GENERIC_WRITE = 0x40000000;
+    
+    public static class SECURITY_ATTRIBUTES extends Structure {
+        public final int nLength = size();
+        public Pointer lpSecurityDescriptor;
+        public boolean bInheritHandle;
+    }	
+    
     public static final int PAGE_READONLY = 0x02;
     public static final int PAGE_READWRITE = 0x04;
     public static final int PAGE_WRITECOPY = 0x08;
@@ -525,8 +534,9 @@ public interface WinNT extends StdCallLibrary {
     public static final int SECTION_MAP_WRITE = 0x0002;
     public static final int SECTION_MAP_READ = 0x0004;
     public static final int SECTION_MAP_EXECUTE = 0x0008;
-    public static final int SECTION_EXTEND_SIZE = 0x0010;    
-    
+    public static final int SECTION_EXTEND_SIZE = 0x0010;
+
+    public static final int INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF;
 	public static final int FILE_SHARE_READ  = 0x00000001;
 	public static final int FILE_SHARE_WRITE = 0x00000002; 
 	public static final int FILE_SHARE_DELETE = 0x00000004; 
@@ -842,13 +852,15 @@ public interface WinNT extends StdCallLibrary {
 	 */
 	public static final int REG_QWORD_LITTLE_ENDIAN = 11;
 
+    public static final int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
+
 	/**
 	 * A 64-bit value that is guaranteed to be unique on the operating system 
 	 * that generated it until the system is restarted. 
 	 */
 	public static class LUID extends Structure {
-		public int LowPart;
-		public int HighPart;
+		int LowPart;
+		int HighPart;
 	}
 	
 	/**

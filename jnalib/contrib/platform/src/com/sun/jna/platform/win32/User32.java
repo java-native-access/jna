@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.BLENDFUNCTION;
 import com.sun.jna.platform.win32.WinUser.FLASHWINFO;
+import com.sun.jna.platform.win32.structures.INPUT;
 import com.sun.jna.platform.win32.WinUser.GUITHREADINFO;
 import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.sun.jna.platform.win32.WinUser.HOOKPROC;
@@ -732,4 +733,342 @@ public interface User32 extends StdCallLibrary {
 	 *  error information.
 	 */
 	public int GetSystemMetrics(int nIndex);
+
+    // Nuix additions follow.  TODO: Need docs.
+    HWND SetParent(HWND hWndChild, HWND hWndNewParent);
+    boolean IsWindowVisible(HWND hWnd);
+
+    int SWP_NOZORDER = 0x0004;
+
+    boolean MoveWindow(HWND hWnd, int X,int Y, int nWidth, int nHeight, boolean bRepaint);
+    boolean SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+
+    /**
+     * Attaches or detaches the input processing mechanism of one thread to that of another thread.
+     * 
+     * @param idAttach
+     *   The identifier of the thread to be attached to another thread. The thread to be attached cannot be a system
+     *   thread.
+     * 
+     * @param idAttachTo
+     *   The identifier of the thread to which idAttach will be attached. This thread cannot be a system thread. A
+     *   thread cannot attach to itself. Therefore, idAttachTo cannot equal idAttach.
+     * 
+     * @param fAttach
+     *   If this parameter is TRUE, the two threads are attached. If the parameter is FALSE, the threads are detached.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero.
+     */
+    boolean AttachThreadInput(DWORD idAttach, DWORD idAttachTo, boolean fAttach);
+
+    /**
+     * Brings the thread that created the specified window into the foreground and activates the window. Keyboard input
+     * is directed to the window, and various visual cues are changed for the user. The system assigns a slightly higher
+     * priority to the thread that created the foreground window than it does to other threads.
+     * 
+     * @param hWnd
+     *   A handle to the window that should be activated and brought to the foreground.
+     * 
+     * @return
+     *   If the window was brought to the foreground, the return value is nonzero.
+     */
+    boolean SetForegroundWindow(HWND hWnd);
+
+    /**
+     * Retrieves a handle to the foreground window (the window with which the user is currently working). The system
+     * assigns a slightly higher priority to the thread that creates the foreground window than it does to other
+     * threads.
+     *
+     * @return The return value is a handle to the foreground window. The foreground window can be NULL in certain
+     * circumstances, such as when a window is losing activation.
+     */
+    HWND GetForegroundWindow();
+
+    /**
+     * Sets the keyboard focus to the specified window. The window must be attached to the calling thread's message
+     * queue.
+     *
+     * @param hWnd
+     *   A handle to the window that will receive the keyboard input. If this parameter is NULL, keystrokes are ignored.
+     *
+     * @return
+     *   If the function succeeds, the return value is the handle to the window that previously had the keyboard focus.
+     *   If the hWnd parameter is invalid or the window is not attached to the calling thread's message queue, the
+     *   return value is NULL. To get extended error information, call GetLastError.
+     */
+    HWND SetFocus(HWND hWnd);
+
+    /**
+     * Synthesizes keystrokes, mouse motions, and button clicks.
+     * 
+     * @param nInputs
+     *   The number of structures in the pInputs array.
+     *
+     * @param pInputs
+     *   An array of INPUT structures. Each structure represents an event to be inserted into the keyboard or mouse 
+     *   input stream.
+     *
+     * @param cbSize
+     *   The size, in bytes, of an INPUT structure. If cbSize is not the size of an INPUT structure, the function fails.
+     * 
+     * @return
+     *   The function returns the number of events that it successfully inserted into the keyboard or mouse input
+     *   stream. If the function returns zero, the input was already blocked by another thread. To get extended error
+     *   information, call GetLastError.
+     *
+     *   This function fails when it is blocked by UIPI. Note that neither GetLastError nor the return value will
+     *   indicate the failure was caused by UIPI blocking.
+     */
+    DWORD SendInput(DWORD nInputs, INPUT[] pInputs,int cbSize);
+
+    /**
+     * Waits until the specified process has finished processing its initial input and is waiting for user input with no
+     * input pending, or until the time-out interval has elapsed.
+     *
+     * @param hProcess
+     *   A handle to the process. If this process is a console application or does not have a message queue,
+     *   WaitForInputIdle returns immediately.
+     * 
+     * @param dwMilliseconds
+     *   The time-out interval, in milliseconds. If dwMilliseconds is INFINITE, the function does not return until the
+     *   process is idle.
+     * 
+     * @return
+     *   The following table shows the possible return values for this function.
+     *   <table>
+     *     <tr><th>Return code/value</th><th>Description</th></tr>
+     *     <tr><td>0</td><td>The wait was satisfied successfully.</td></tr>
+     *     <tr><td>WAIT_TIMEOUT</td><td>The wait was terminated because the time-out interval elapsed.</td></tr>
+     *     <tr><td>WAIT_FAILED</td><td>An error occurred.</td></tr>
+     *   </table>
+     */
+    DWORD WaitForInputIdle(HANDLE hProcess, DWORD dwMilliseconds);
+
+    /**
+     * The InvalidateRect function adds a rectangle to the specified window's update region. The update region
+     * represents the portion of the window's client area that must be redrawn.
+     * 
+     * @param hWnd
+     *   A handle to the window whose update region has changed. If this parameter is NULL, the system invalidates and
+     *   redraws all windows, not just the windows for this application, and sends the WM_ERASEBKGND and WM_NCPAINT
+     *   messages before the function returns. Setting this parameter to NULL is not recommended.
+     *
+     * @param lpRect
+     *   A pointer to a RECT structure that contains the client coordinates of the rectangle to be added to the update
+     *   region. If this parameter is NULL, the entire client area is added to the update region.
+     *
+     * @param bErase
+     *   Specifies whether the background within the update region is to be erased when the update region is processed.
+     *   If this parameter is TRUE, the background is erased when the BeginPaint function is called. If this parameter
+     *   is FALSE, the background remains unchanged.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     */
+    boolean InvalidateRect(HWND hWnd, RECT.ByReference lpRect, boolean bErase);
+
+    /**
+     * The RedrawWindow function updates the specified rectangle or region in a window's client area.
+     *
+     * @param hWnd
+     *   A handle to the window to be redrawn. If this parameter is NULL, the desktop window is updated.
+     *
+     * @param lprcUpdate
+     *   A pointer to a RECT structure containing the coordinates, in device units, of the update rectangle. This
+     *   parameter is ignored if the hrgnUpdate parameter identifies a region.
+     * 
+     * @param hrgnUpdate
+     *   A handle to the update region. If both the hrgnUpdate and lprcUpdate parameters are NULL, the entire client
+     *   area is added to the update region.
+     * 
+     * @param flags
+     *   One or more redraw flags. This parameter can be used to invalidate or validate a window, control repainting,
+     *   and control which windows are affected by RedrawWindow.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     */
+    boolean RedrawWindow(HWND hWnd, RECT.ByReference lprcUpdate, HRGN hrgnUpdate, DWORD flags);
+
+    /**
+     * Retrieves a handle to a window that has the specified relationship (Z-Order or owner) to the specified window.
+     * 
+     * @param hWnd
+     *   A handle to a window. The window handle retrieved is relative to this window, based on the value of the uCmd
+     *   parameter.
+     * 
+     * @param uCmd
+     *   The relationship between the specified window and the window whose handle is to be retrieved.
+     *
+     * @return
+     *   If the function succeeds, the return value is a window handle. If no window exists with the specified
+     *   relationship to the specified window, the return value is NULL. To get extended error information, call
+     *   GetLastError.
+     */
+    HWND GetWindow(HWND hWnd, DWORD uCmd);
+
+    /**
+     * The retrieved handle identifies the window of the same type that is highest in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+     * identifies a sibling window. 
+     */
+    int GW_HWNDFIRST = 0;
+
+    /**
+     * The retrieved handle identifies the window of the same type that is lowest in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+     * identifies a sibling window.
+     */
+    int GW_HWNDLAST = 1;
+
+    /**
+     * The retrieved handle identifies the window below the specified window in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+     * identifies a sibling window.
+     */
+    int GW_HWNDNEXT = 2;
+
+    /**
+     * The retrieved handle identifies the window above the specified window in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the
+     * handle identifies a sibling window.
+     */
+    int GW_HWNDPREV = 3;
+
+    /**
+     * The retrieved handle identifies the specified window's owner window, if any. For more information, see Owned
+     * Windows.
+     */
+    int GW_OWNER = 4;
+
+    /**
+     * The retrieved handle identifies the child window at the top of the Z order, if the specified window is a parent
+     * window; otherwise, the retrieved handle is NULL. The function examines only child windows of the specified
+     * window. It does not examine descendant windows.
+     */
+    int GW_CHILD = 5;
+
+    /**
+     * The retrieved handle identifies the enabled popup window owned by the specified window (the search uses the first
+     * such window found using GW_HWNDNEXT); otherwise, if there are no enabled popup windows, the retrieved handle is
+     * that of the specified window.
+     */
+    int GW_ENABLEDPOPUP = 6;
+    
+    /**
+     * The UpdateWindow function updates the client area of the specified window by sending a WM_PAINT message to the
+     * window if the window's update region is not empty. The function sends a WM_PAINT message directly to the window
+     * procedure of the specified window, bypassing the application queue. If the update region is empty, no message is
+     * sent.
+     *  
+     * @param
+     *   hWnd Handle to the window to be updated.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     */
+    boolean UpdateWindow(HWND hWnd);
+
+    int RDW_INVALIDATE = 0x0001;
+    int RDW_INTERNALPAINT = 0x0002;
+    int RDW_ERASE = 0x0004;
+    int RDW_VALIDATE = 0x0008;
+    int RDW_NOINTERNALPAINT = 0x0010;
+    int RDW_NOERASE = 0x0020;
+    int RDW_NOCHILDREN = 0x0040;
+    int RDW_ALLCHILDREN = 0x0080;
+    int RDW_UPDATENOW = 0x0100;
+    int RDW_ERASENOW = 0x0200;
+    int RDW_FRAME = 0x0400;
+    int RDW_NOFRAME = 0x0800;
+
+    int SW_HIDE = 0;
+    int SW_SHOWNORMAL = 1;
+    int SW_NORMAL = 1;
+    int SW_SHOWMINIMIZED = 2;
+    int SW_SHOWMAXIMIZED = 3;
+    int SW_MAXIMIZE = 3;
+    int SW_SHOWNOACTIVATE = 4;
+    int SW_SHOW = 5;
+    int SW_MINIMIZE = 6;
+    int SW_SHOWMINNOACTIVE = 7;
+    int SW_SHOWNA = 8;
+    int SW_RESTORE = 9;
+    int SW_SHOWDEFAULT = 10;
+    int SW_FORCEMINIMIZE = 11;
+    int SW_MAX = 11;
+
+    /**
+     * The WM_PAINT message is sent when the system or another application makes a request to paint a portion of an \
+     * application's window.
+     */
+    int WM_PAINT = 0x000F;
+
+    /**
+     * Sent as a signal that a window or an application should terminate.
+     */
+    int WM_CLOSE = 0x0010;
+
+    /**
+     * Indicates a request to terminate an application, and is generated when the application calls the PostQuitMessage
+     * function.
+     */
+    int WM_QUIT = 0x0012;
+
+    /**
+     * Sent to a window when the window is about to be hidden or shown.
+     */
+    int WM_SHOWWINDOW = 0x0018;
+
+    /**
+     * Sent to the parent window of an owner-drawn button, combo box, list box, or menu when a visual aspect of the
+     * button, combo box, list box, or menu has changed.
+     */
+    int WM_DRAWITEM = 0x002B;
+
+    /**
+     * Posted to the window with the keyboard focus when a nonsystem key is pressed. A nonsystem key is a key that is
+     * pressed when the ALT key is not pressed.
+     */
+    int WM_KEYDOWN = 0x0100;
+
+    /**
+     * Posted to the window with the keyboard focus when a WM_KEYDOWN message is translated by the TranslateMessage
+     * function. The WM_CHAR message contains the character code of the key that was pressed.
+     */
+    int WM_CHAR = 0x0102;
+
+    /**
+     * A window receives this message when the user chooses a command from the Window menu (formerly known as the system
+     * or control menu) or when the user chooses the maximize button, minimize button, restore button, or close button.
+     */
+    int WM_SYSCOMMAND = 0x0112;
+
+    /**
+     * An application sends the WM_MDIMAXIMIZE message to a multiple-document interface (MDI) client window to maximize
+     * an MDI child window.
+     */
+    int WM_MDIMAXIMIZE = 0x0225;
+
+    /**
+     * Minimizes the window.
+     */
+    int SC_MINIMIZE = 0xF020;
+
+    /**
+     * Maximizes the window.
+     */
+    int SC_MAXIMIZE = 0xF030;
+
+    boolean ShowWindow(HWND hWnd, int nCmdShow);
+    boolean CloseWindow(HWND hWnd);
 }

@@ -178,8 +178,25 @@ public abstract class WinBase {
     */
 	public static class FILETIME extends Structure {
 		public int dwLowDateTime;
-		public int dwHighDateTime;
-	
+		public int dwHighDateTime;        
+
+        public static class ByReference extends FILETIME implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        public FILETIME() {
+        }
+
+        public FILETIME(Pointer memory) {
+            useMemory(memory);
+            read();
+        }
+
 		 /**
 		  * <p>The difference between the Windows epoch (1601-01-01
 		  * 00:00:00) and the Unix epoch (1970-01-01 00:00:00) in
@@ -401,6 +418,10 @@ public abstract class WinBase {
     	
 		public static class UNION extends Union {
 			
+	    	public static class ByReference extends UNION implements Structure.ByReference {
+	    		
+	    	}
+
 			/**
 			 * An obsolete member that is retained for compatibility with Windows NT 3.5 and earlier.
 			 * New applications should use the wProcessorArchitecture branch of the union.
@@ -417,7 +438,7 @@ public abstract class WinBase {
 		/**
 		 * Processor architecture.
 		 */
-		public UNION processorArchitecture;
+		public UNION.ByReference processorArchitecture;
 		/**
 		 * Page size and the granularity of page protection and commitment.
 		 */

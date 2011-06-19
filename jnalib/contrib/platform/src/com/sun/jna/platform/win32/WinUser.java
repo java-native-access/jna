@@ -93,6 +93,11 @@ public interface WinUser extends StdCallLibrary {
     public int DWL_MSGRESULT = 0;
     public int DWL_USER = 8;
     
+    public int WS_MAXIMIZE = 0x01000000;
+    public int WS_VISIBLE = 0x10000000;
+    public int WS_MINIMIZE = 0x20000000;
+    public int WS_CHILD = 0x40000000;
+    public int WS_POPUP = 0x80000000;
     public int WS_EX_COMPOSITED = 0x20000000;
     public int WS_EX_LAYERED = 0x80000;
     public int WS_EX_TRANSPARENT = 32;
