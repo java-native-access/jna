@@ -513,7 +513,7 @@ public interface WinNT extends StdCallLibrary {
 	//
 
 	public static final int ACCESS_SYSTEM_SECURITY = 0x01000000;
-    
+        
     public static final int PAGE_READONLY = 0x02;
     public static final int PAGE_READWRITE = 0x04;
     public static final int PAGE_WRITECOPY = 0x08;
@@ -525,8 +525,8 @@ public interface WinNT extends StdCallLibrary {
     public static final int SECTION_MAP_WRITE = 0x0002;
     public static final int SECTION_MAP_READ = 0x0004;
     public static final int SECTION_MAP_EXECUTE = 0x0008;
-    public static final int SECTION_EXTEND_SIZE = 0x0010;
-
+    public static final int SECTION_EXTEND_SIZE = 0x0010;    
+    
 	public static final int FILE_SHARE_READ  = 0x00000001;
 	public static final int FILE_SHARE_WRITE = 0x00000002; 
 	public static final int FILE_SHARE_DELETE = 0x00000004; 
@@ -849,8 +849,8 @@ public interface WinNT extends StdCallLibrary {
 	 * that generated it until the system is restarted. 
 	 */
 	public static class LUID extends Structure {
-		int LowPart;
-		int HighPart;
+		public int LowPart;
+		public int HighPart;
 	}
 	
 	/**
