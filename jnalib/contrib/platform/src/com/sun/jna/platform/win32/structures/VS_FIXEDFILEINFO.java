@@ -21,18 +21,18 @@ public class VS_FIXEDFILEINFO extends Structure {
         useMemory(memory);
         read();
     }
-	
-	public int Signature;
-	public int StrucVersion;
-	public int FileVersionMS;
-	public int FileVersionLS;
-	public int ProductVersionMS;
-	public int ProductVersionLS;
-	public int FileFlagsMask;
-	public int FileFlags;
-	public int FileOS;
-	public int FileType;
-	public int FileSubtype;
-	public int FileDateMS;
-	public int FileDateLS;
+    
+    public int Signature;
+    public int StrucVersion;
+    public int FileVersionMS;
+    public int FileVersionLS;
+    public int ProductVersionMS;
+    public int ProductVersionLS;
+    public int FileFlagsMask;
+    public int FileFlags;
+    public int FileOS;
+    public int FileType;
+    public int FileSubtype;
+    public int FileDateMS;
+    public int FileDateLS;
 }

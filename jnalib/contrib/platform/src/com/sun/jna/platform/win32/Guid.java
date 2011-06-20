@@ -22,12 +22,12 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author dblock[at]dblock.org
  */
 public interface Guid extends StdCallLibrary {
-	
-	public static class GUID extends Structure {
-		
-		public static class ByReference extends GUID implements Structure.ByReference {
-			public ByReference() {				
-			}
+    
+    public static class GUID extends Structure {
+        
+        public static class ByReference extends GUID implements Structure.ByReference {
+            public ByReference() {                
+            }
 
             public ByReference(GUID guid) {
                 super(guid.getPointer());
@@ -37,20 +37,20 @@ public interface Guid extends StdCallLibrary {
                 Data3 = guid.Data3;
                 Data4 = guid.Data4;
             }
-			
-			public ByReference(Pointer memory) {
-				super(memory);
-			}
-		}
-		
-		public GUID() {
-			
-		}
-		    
-		public GUID(Pointer memory) {
-			useMemory(memory);
-		    read();
-		}
+            
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+        
+        public GUID() {
+            
+        }
+            
+        public GUID(Pointer memory) {
+            useMemory(memory);
+            read();
+        }
 
         public GUID(byte[] data) {
             if (data.length != 16) {
@@ -86,9 +86,9 @@ public interface Guid extends StdCallLibrary {
             Data4[7] = data[15];
         }
 
-		public int Data1;
-		public short Data2;
-		public short Data3;
-		public byte[] Data4 = new byte[8];
-	}	
+        public int Data1;
+        public short Data2;
+        public short Data3;
+        public byte[] Data4 = new byte[8];
+    }    
 }

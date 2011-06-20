@@ -14,7 +14,7 @@ public interface Msi extends StdCallLibrary {
     Msi INSTANCE = (Msi)
         Native.loadLibrary("msi", Msi.class, W32APIOptions.DEFAULT_OPTIONS);
 
-	static int INSTALLSTATE_NOTUSED = -7;
+    static int INSTALLSTATE_NOTUSED = -7;
     static int INSTALLSTATE_BADCONFIG = -6;
     static int INSTALLSTATE_INCOMPLETE = -5;
     static int INSTALLSTATE_SOURCEABSENT = -4;
@@ -28,12 +28,12 @@ public interface Msi extends StdCallLibrary {
     static int INSTALLSTATE_LOCAL =  3;
     static int INSTALLSTATE_SOURCE =  4;
     static int INSTALLSTATE_DEFAULT =  5;
-		
-	int MsiGetComponentPathW(WString szProduct, WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
-	
-	int MsiLocateComponentW(WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
-	
-	int MsiGetProductCodeW(WString szComponent, char[] lpProductBuf);
+        
+    int MsiGetComponentPathW(WString szProduct, WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
+    
+    int MsiLocateComponentW(WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
+    
+    int MsiGetProductCodeW(WString szComponent, char[] lpProductBuf);
 
     int MsiEnumComponents(WinDef.DWORD iComponentIndex, char[] lpComponentBuf);
 }
