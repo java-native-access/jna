@@ -145,11 +145,6 @@ public interface Kernel32 extends StdCallLibrary {
     int GetProcessVersion(int processId);
 
     /**
-     * The value returned from {@link #GetExitCodeProcess} if the process is still running.
-     */
-    int STILL_ACTIVE = 259;
-
-    /**
      * Retrieves the termination status of the specified process.
      * @param hProcess A handle to the process.
      * @param lpExitCode A pointer to a variable to receive the process termination status.

@@ -808,7 +808,8 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringValue(HKEY hKey, String name, String value) {
     	char[] data = Native.toCharArray(value);
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ, data, data.length * 2);
+		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ,
+				data, data.length * Native.WCHAR_SIZE);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}	
@@ -1148,22 +1149,44 @@ public abstract class Advapi32Util {
         	if (rc != W32Errors.ERROR_SUCCESS) {
         		throw new Win32Exception(rc);
         	}
+
+        	String nameString = Native.toString(name);
+
+			Memory byteData = new Memory(lpcbData.getValue());
+			byteData.write(0, data, 0, lpcbData.getValue());
+
         	switch(lpType.getValue()) {
         	case WinNT.REG_DWORD:
-            	keyValues.put(Native.toString(name), 
-            			((int)(data[0] & 0xff)) + 
-            			(((int)(data[1] & 0xff)) << 8) + 
-            			(((int)(data[2] & 0xff)) << 16) + 
-            			(((int)(data[3] & 0xff)) << 24));
+        	{
+            	keyValues.put(nameString, byteData.getInt(0));
         		break;
+        	}
         	case WinNT.REG_SZ:
-            	try {
-					keyValues.put(Native.toString(name),
-							new String(data, 0, data.length - 2, "UTF-16LE"));
-				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeException(e.getMessage());
-				}
+        	case WinNT.REG_EXPAND_SZ:
+        	{
+				keyValues.put(nameString, byteData.getString(0, true));
         		break;
+        	}
+        	case WinNT.REG_BINARY:
+        	{
+        		keyValues.put(nameString, byteData.getByteArray(0, lpcbData.getValue()));
+        		break;
+        	}
+        	case WinNT.REG_MULTI_SZ:
+        	{
+    			Memory stringData = new Memory(lpcbData.getValue());
+    			stringData.write(0, data, 0, lpcbData.getValue());
+    			ArrayList<String> result = new ArrayList<String>();
+    			int offset = 0;
+    			while(offset < stringData.size()) {
+    				String s = stringData.getString(offset, true);
+    				offset += s.length() * Native.WCHAR_SIZE;
+    				offset += Native.WCHAR_SIZE;
+    				result.add(s);
+    			}
+    			keyValues.put(nameString, result.toArray(new String[0]));
+    			break;
+        	}
         	default:
         		throw new RuntimeException("Unsupported type: " + lpType.getValue());
         	}

@@ -527,7 +527,6 @@ public interface WinNT extends StdCallLibrary {
     public static final int SECTION_MAP_EXECUTE = 0x0008;
     public static final int SECTION_EXTEND_SIZE = 0x0010;
 
-    public static final int INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF;
 	public static final int FILE_SHARE_READ  = 0x00000001;
 	public static final int FILE_SHARE_WRITE = 0x00000002; 
 	public static final int FILE_SHARE_DELETE = 0x00000004; 
