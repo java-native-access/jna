@@ -13,6 +13,14 @@ While some attention is paid to performance, correctness and ease of use take pr
 
 JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.
 
+Download
+========
+
+Version 3.3.0
+
+* [jna.jar](raw/3.3.0/jnalib/dist/jna.jar)
+* [platform.jar](raw/3.3.0/jnalib/dist/platform.jar)
+
 Features
 ========
 
