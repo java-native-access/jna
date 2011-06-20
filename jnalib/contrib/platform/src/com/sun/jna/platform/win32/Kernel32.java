@@ -12,13 +12,19 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.nio.Buffer;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
-import com.sun.jna.platform.win32.WinNT.*;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
+import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
+import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.platform.win32.structures.PROCESSENTRY32W;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -26,8 +32,6 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
-
-import java.nio.Buffer;
 
 /** Definition (incomplete) of <code>kernel32.dll</code>. */
 public interface Kernel32 extends StdCallLibrary {
@@ -143,7 +147,7 @@ public interface Kernel32 extends StdCallLibrary {
      *  invalid value.
      */
     int GetProcessVersion(int processId);
-
+    
     /**
      * Retrieves the termination status of the specified process.
      * @param hProcess A handle to the process.
@@ -306,7 +310,8 @@ public interface Kernel32 extends StdCallLibrary {
     HANDLE CreateFile(String lpFileName, int dwDesiredAccess, int dwShareMode, 
     		WinBase.SECURITY_ATTRIBUTES lpSecurityAttributes, int dwCreationDisposition, 
     		int dwFlagsAndAttributes, HANDLE hTemplateFile);
-
+        
+    
     /**
      * Copies an existing file to a new file.
      * 
