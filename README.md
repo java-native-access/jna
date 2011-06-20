@@ -18,8 +18,8 @@ Download
 
 Version 3.3.0
 
-* [jna.jar](raw/3.3.0/jnalib/dist/jna.jar)
-* [platform.jar](raw/3.3.0/jnalib/dist/platform.jar)
+* [jna.jar](jna/raw/3.3.0/jnalib/dist/jna.jar)
+* [platform.jar](jna/raw/3.3.0/jnalib/dist/platform.jar)
 
 Features
 ========
