@@ -735,13 +735,107 @@ public interface User32 extends StdCallLibrary {
 	 */
 	public int GetSystemMetrics(int nIndex);
 
-    // Nuix additions follow.  TODO: Need docs.
+    /**
+     * Changes the parent window of the specified child window.
+     *
+     * @param hWndChild
+     *     A handle to the child window.
+     *
+     * @param hWndNewParent
+     *     A handle to the new parent window. If this parameter is NULL, the desktop window becomes the new parent
+     *     window. If this parameter is HWND_MESSAGE, the child window becomes a message-only window.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
     HWND SetParent(HWND hWndChild, HWND hWndNewParent);
+
+    /**
+     * Determines the visibility state of the specified window.
+     *
+     * @param hWnd
+     *     A handle to the window to be tested.
+     *
+     * @return
+     *     If the specified window, its parent window, its parent's parent window, and so forth, have the WS_VISIBLE
+     *     style, the return value is nonzero. Otherwise, the return value is zero.
+     *
+     *     Because the return value specifies whether the window has the WS_VISIBLE style, it may be nonzero even if the
+     *     window is totally obscured by other windows.
+     */
     boolean IsWindowVisible(HWND hWnd);
 
+    /**
+     * Retains the current Z order (ignores the hWndInsertAfter parameter).
+     */
     int SWP_NOZORDER = 0x0004;
 
+    /**
+     * Changes the position and dimensions of the specified window. For a top-level window, the position and dimensions
+     * are relative to the upper-left corner of the screen. For a child window, they are relative to the upper-left
+     * corner of the parent window's client area.
+     *
+     * @param hWnd
+     *     A handle to the window.
+     *
+     * @param X
+     *     The new position of the left side of the window.
+     *
+     * @param Y
+     *     The new position of the top of the window.
+     *
+     * @param nWidth
+     *     The new width of the window.
+     *
+     * @param nHeight
+     *     The new height of the window.
+     *
+     * @param bRepaint
+     *     Indicates whether the window is to be repainted. If this parameter is TRUE, the window receives a message. If
+     *     the parameter is FALSE, no repainting of any kind occurs. This applies to the client area, the nonclient area
+     *     (including the title bar and scroll bars), and any part of the parent window uncovered as a result of moving
+     *     a child window.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
     boolean MoveWindow(HWND hWnd, int X,int Y, int nWidth, int nHeight, boolean bRepaint);
+
+    /**
+     * Changes the size, position, and Z order of a child, pop-up, or top-level window. These windows are ordered
+     * according to their appearance on the screen. The topmost window receives the highest rank and is the first window
+     * in the Z order.
+     *
+     * @param hWnd
+     *     A handle to the window.
+     *
+     * @param hWndInsertAfter
+     *     A handle to the window to precede the positioned window in the Z order.
+     *
+     * @param X
+     *     The new position of the left side of the window, in client coordinates.
+     *
+     * @param Y
+     *     The new position of the top of the window, in client coordinates.
+     *
+     * @param cx
+     *     The new width of the window, in pixels.
+     *
+     * @param cy
+     *     The new height of the window, in pixels.
+     *
+     * @param uFlags
+     *     The window sizing and positioning flags.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
     boolean SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
 
     /**
@@ -1070,6 +1164,35 @@ public interface User32 extends StdCallLibrary {
      */
     int SC_MAXIMIZE = 0xF030;
 
+    /**
+     * Sets the specified window's show state.
+     *
+     * @param hWnd
+     *     A handle to the window.
+     *
+     * @param nCmdShow
+     *     Controls how the window is to be shown. This parameter is ignored the first time an application calls
+     *     ShowWindow, if the program that launched the application provides a STARTUPINFO structure. Otherwise, the
+     *     first time ShowWindow is called, the value should be the value obtained by the WinMain function in its
+     *     nCmdShow parameter.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
     boolean ShowWindow(HWND hWnd, int nCmdShow);
+
+    /**
+     * Minimizes (but does not destroy) the specified window.
+     *
+     * @param hWnd
+     *     A handle to the window to be minimized.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
     boolean CloseWindow(HWND hWnd);
 }
