@@ -808,7 +808,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringValue(HKEY hKey, String name, String value) {
     	char[] data = Native.toCharArray(value);
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ,
+		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ, 
 				data, data.length * Native.WCHAR_SIZE);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -1149,12 +1149,12 @@ public abstract class Advapi32Util {
         	if (rc != W32Errors.ERROR_SUCCESS) {
         		throw new Win32Exception(rc);
         	}
-
+        	
         	String nameString = Native.toString(name);
-
+        	
 			Memory byteData = new Memory(lpcbData.getValue());
 			byteData.write(0, data, 0, lpcbData.getValue());
-
+        	
         	switch(lpType.getValue()) {
         	case WinNT.REG_DWORD:
         	{
