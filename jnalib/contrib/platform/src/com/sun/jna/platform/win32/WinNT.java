@@ -513,15 +513,6 @@ public interface WinNT extends StdCallLibrary {
 	//
 
 	public static final int ACCESS_SYSTEM_SECURITY = 0x01000000;
-        
-
-    public static final int GENERIC_WRITE = 0x40000000;
-    
-    public static class SECURITY_ATTRIBUTES extends Structure {
-        public final int nLength = size();
-        public Pointer lpSecurityDescriptor;
-        public boolean bInheritHandle;
-    }	
     
     public static final int PAGE_READONLY = 0x02;
     public static final int PAGE_READWRITE = 0x04;

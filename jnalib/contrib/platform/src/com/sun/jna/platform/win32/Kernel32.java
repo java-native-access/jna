@@ -28,6 +28,7 @@ import com.sun.jna.platform.win32.structures.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.structures.STARTUPINFO;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -940,8 +941,8 @@ public interface Kernel32 extends StdCallLibrary {
      *   A pointer to a PROCESS_INFORMATION structure that receives identification information about the new process.
      * @return If the function succeeds, the return value is nonzero.
      */
-    boolean CreateProcess(String lpApplicationName, String lpCommandLine, SECURITY_ATTRIBUTES lpProcessAttributes,
-                          SECURITY_ATTRIBUTES lpThreadAttributes, boolean bInheritHandles, DWORD dwCreationFlags,
+    boolean CreateProcess(String lpApplicationName, String lpCommandLine, WinBase.SECURITY_ATTRIBUTES lpProcessAttributes,
+                          WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, boolean bInheritHandles, DWORD dwCreationFlags,
                           Pointer lpEnvironment, String lpCurrentDirectory, STARTUPINFO lpStartupInfo,
                           PROCESS_INFORMATION.ByReference lpProcessInformation);
 
