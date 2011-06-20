@@ -12,8 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Date;
-
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -25,6 +23,8 @@ import com.sun.jna.platform.win32.WinDef.DWORDLONG;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByteByReference;
+
+import java.util.Date;
 
 /**
  * Ported from Winbase.h.
@@ -774,7 +774,22 @@ public abstract class WinBase {
 		 * identifier may be reused.
 		 */
 		public DWORD dwThreadId;
-		
+
+        public static class ByReference extends PROCESS_INFORMATION implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        public PROCESS_INFORMATION() {
+        }
+
+        public PROCESS_INFORMATION(Pointer memory) {
+            useMemory(memory);
+            read();
+        }
     }
-    
 }

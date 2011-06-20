@@ -18,14 +18,8 @@ import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
-import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
-import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
-import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
+import com.sun.jna.platform.win32.WinNT.*;
 import com.sun.jna.platform.win32.structures.PROCESSENTRY32W;
-import com.sun.jna.platform.win32.structures.PROCESS_INFORMATION;
-import com.sun.jna.platform.win32.structures.STARTUPINFO;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -943,8 +937,8 @@ public interface Kernel32 extends StdCallLibrary {
      */
     boolean CreateProcess(String lpApplicationName, String lpCommandLine, WinBase.SECURITY_ATTRIBUTES lpProcessAttributes,
                           WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, boolean bInheritHandles, DWORD dwCreationFlags,
-                          Pointer lpEnvironment, String lpCurrentDirectory, STARTUPINFO lpStartupInfo,
-                          PROCESS_INFORMATION.ByReference lpProcessInformation);
+                          Pointer lpEnvironment, String lpCurrentDirectory, WinBase.STARTUPINFO lpStartupInfo,
+                          WinBase.PROCESS_INFORMATION.ByReference lpProcessInformation);
 
     int DEBUG_PROCESS = 0x00000001;
     int DEBUG_ONLY_THIS_PROCESS = 0x00000002;
