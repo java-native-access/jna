@@ -722,8 +722,6 @@ public final class Native {
                 // Let Java pick the suffix, except on windows, to avoid
                 // problems with Web Start.
                 File dir = getTempDir();
-                dir.mkdirs();
-
                 lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
@@ -864,7 +862,7 @@ public final class Native {
     }
 
     /** Perform cleanup of automatically unpacked native shared library.
-    */
+     */
     static void markTemporaryFile(File file) {
         // If we can't force an unload/delete, flag the file for later 
         // deletion
@@ -878,7 +876,8 @@ public final class Native {
     static File getTempDir() {
         File tmp = new File(System.getProperty("java.io.tmpdir"));
         File jnatmp = new File(tmp, "jna");
-        return jnatmp;
+        jnatmp.mkdirs();
+        return jnatmp.exists() ? jnatmp : tmp;
     }
 
     /** Remove all marked temporary files in the given directory. */
@@ -886,7 +885,7 @@ public final class Native {
         File dir = getTempDir();
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.endsWith(".x");
+                return name.endsWith(".x") && name.indexOf("jna") != -1;
             }
         };
         File[] files = dir.listFiles(filter);
@@ -895,7 +894,7 @@ public final class Native {
             String name = marker.getName();
             name = name.substring(0, name.length()-2);
             File target = new File(marker.getParentFile(), name);
-            if (target.delete()) {
+            if (!target.exists() || target.delete()) {
                 marker.delete();
             }
         }

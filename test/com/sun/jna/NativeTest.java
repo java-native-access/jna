@@ -303,11 +303,17 @@ public class NativeTest extends TestCase {
 
     public void testRemoveTemporaries() throws Exception {
         File dir = Native.getTempDir();
-        File tmp = new File(dir, "temp");
-        assertTrue("Couldn't create temporary file", tmp.createNewFile());
-        Native.markTemporaryFile(tmp);
-        Native.removeTemporaryFiles();
-        assertFalse("Temporary file still exists", tmp.exists());
+        File tmp = new File(dir, "jna");
+        tmp.delete();
+        try {
+            assertTrue("Couldn't create temporary file " + tmp, tmp.createNewFile());
+            Native.markTemporaryFile(tmp);
+            Native.removeTemporaryFiles();
+            assertFalse("Temporary file still exists", tmp.exists());
+        }
+        finally {
+            tmp.delete();
+        }
     }
 
     public static void main(String[] args) {
