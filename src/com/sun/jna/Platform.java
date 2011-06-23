@@ -78,9 +78,6 @@ public final class Platform {
         // TODO: check filesystem for /usr/X11 or some other X11-specific test
         return !Platform.isWindows() && !Platform.isMac();
     }
-    public static final boolean deleteNativeLibraryAfterVMExit() {
-        return osType == WINDOWS;
-    }
     public static final boolean hasRuntimeExec() {
         if (isWindowsCE() && "J9".equals(System.getProperty("java.vm.name")))
             return false;

@@ -17,6 +17,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Window;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,13 +140,14 @@ public final class Native {
         deleteNativeLibrary();
     }
 
-    /** Remove any automatically unpacked native library.  Forcing the class
-        loader to unload it first is only required on Windows, since the
-        temporary native library is still "in use" and can't be deleted until
-        the native library is removed from its class loader.  Any deferred
-        execution we might install at this point would prevent the Native
-        class and its class loader from being GC'd, so we instead force 
-        the native library unload just a little bit prematurely.
+    /** Remove any automatically unpacked native library.
+
+        This will fail on windows, which disallows removal of any file that is
+        still in use. so an alternative is required in that case.
+
+        Do NOT force the class loader to unload the native library, since
+        that introduces issues with cleaning up any extant JNA bits
+        (e.g. Memory) which may still need use of the library before shutdown.
      */
     private static boolean deleteNativeLibrary() {
         String path = nativeLibraryPath;
@@ -156,39 +158,10 @@ public final class Native {
             unpacked = false;
             return true;
         }
-        // Reach into the bowels of ClassLoader to force the native
-        // library to unload
-        try {
-            ClassLoader cl = Native.class.getClassLoader();
-            Field f = ClassLoader.class.getDeclaredField("nativeLibraries");
-            f.setAccessible(true);
-            List libs = (List)f.get(cl);
-            for (Iterator i = libs.iterator();i.hasNext();) {
-                Object lib = i.next();
-                f = lib.getClass().getDeclaredField("name");
-                f.setAccessible(true);
-                String name = (String)f.get(lib);
-                if (name.equals(path) || name.indexOf(path) != -1
-                    || name.equals(flib.getCanonicalPath())) {
-                    Method m = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
-                    m.setAccessible(true);
-                    m.invoke(lib, new Object[0]);
-                    nativeLibraryPath = null;
-                    if (unpacked) {
-                        if (flib.exists()) {
-                            if (flib.delete()) {
-                                unpacked = false;
-                                return true;
-                            }
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            }
-        }
-        catch(Exception e) {
-        }
+
+        // Couldn't delete it, mark for later deletion
+        markTemporaryFile(flib);
+
         return false;
     }
 
@@ -660,6 +633,8 @@ public final class Native {
      * </p>
      */
     private static void loadNativeLibrary() {
+        removeTemporaryFiles();
+
         String libName = "jnidispatch";
         String bootPath = System.getProperty("jna.boot.library.path");
         if (bootPath != null) {
@@ -746,14 +721,11 @@ public final class Native {
                 // Suffix is required on windows, or library fails to load
                 // Let Java pick the suffix, except on windows, to avoid
                 // problems with Web Start.
-                lib = File.createTempFile("jna", Platform.isWindows()?".dll":null);
+                File dir = getTempDir();
+                dir.mkdirs();
+
+                lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
-                ClassLoader cl = Native.class.getClassLoader();
-                if (Platform.deleteNativeLibraryAfterVMExit()
-                    && (cl == null
-                        || cl.equals(ClassLoader.getSystemClassLoader()))) {
-                    Runtime.getRuntime().addShutdownHook(new DeleteNativeLibrary(lib));
-                }
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];
@@ -891,47 +863,44 @@ public final class Native {
         }
     }
 
-    /** For internal use only. */
-    public static class DeleteNativeLibrary extends Thread {
-        private final File file;
-        public DeleteNativeLibrary(File file) {
-            this.file = file;
+    /** Perform cleanup of automatically unpacked native shared library.
+    */
+    static void markTemporaryFile(File file) {
+        // If we can't force an unload/delete, flag the file for later 
+        // deletion
+        try {
+            File marker = new File(file.getParentFile(), file.getName() + ".x");
+            marker.createNewFile();
         }
-        public void run() {
-            // If we can't force an unload/delete, spawn a new process
-            // to do so
-            if (!deleteNativeLibrary()) {
-                try {
-                    Runtime.getRuntime().exec(new String[] {
-                        System.getProperty("java.home") + "/bin/java",
-                        "-cp", System.getProperty("java.class.path"),
-                        getClass().getName(),
-                        file.getAbsolutePath(),
-                    });
-                }
-                catch(IOException e) { e.printStackTrace(); }
-            }
-        }
-        public static void main(String[] args) {
-            if (args.length == 1) {
-                File file = new File(args[0]);
-                if (file.exists()) { 
-                    long start = System.currentTimeMillis();
-                    while (!file.delete() && file.exists()) {
-                        try { Thread.sleep(10); }
-                        catch(InterruptedException e) { }
-                        if (System.currentTimeMillis() - start > 5000) {
-                            System.err.println("Could not remove temp file: "
-                                               + file.getAbsolutePath());
-                            break;
-                        }
-                    }
-                }
-            }
-            System.exit(0);
-        }
+        catch(IOException e) { e.printStackTrace(); }
     }
 
+    static File getTempDir() {
+        File tmp = new File(System.getProperty("java.io.tmpdir"));
+        File jnatmp = new File(tmp, "jna");
+        return jnatmp;
+    }
+
+    /** Remove all marked temporary files in the given directory. */
+    static void removeTemporaryFiles() {
+        File dir = getTempDir();
+        FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".x");
+            }
+        };
+        File[] files = dir.listFiles(filter);
+        for (int i=0;files != null && i < files.length;i++) {
+            File marker = files[i];
+            String name = marker.getName();
+            name = name.substring(0, name.length()-2);
+            File target = new File(marker.getParentFile(), name);
+            if (target.delete()) {
+                marker.delete();
+            }
+        }
+    }
+    
     /** Returns the native size of the given class, in bytes. 
      * For use with arrays.
      */
