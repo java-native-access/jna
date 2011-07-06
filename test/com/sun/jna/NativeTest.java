@@ -12,6 +12,7 @@
  */
 package com.sun.jna;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -298,6 +299,21 @@ public class NativeTest extends TestCase {
         assertEquals("Bad replace", "abcdefg", Native.replace("z", "g", "abcdefz"));
         assertEquals("Bad replace", "abcdefg", Native.replace("z", "d", "abczefg"));
         assertEquals("Bad replace", "abcaefa", Native.replace("z", "a", "zbczefz"));
+    }
+
+    public void testRemoveTemporaries() throws Exception {
+        File dir = Native.getTempDir();
+        File tmp = new File(dir, "jna");
+        tmp.delete();
+        try {
+            assertTrue("Couldn't create temporary file " + tmp, tmp.createNewFile());
+            Native.markTemporaryFile(tmp);
+            Native.removeTemporaryFiles();
+            assertFalse("Temporary file still exists", tmp.exists());
+        }
+        finally {
+            tmp.delete();
+        }
     }
 
     public static void main(String[] args) {

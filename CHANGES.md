@@ -1,3 +1,13 @@
+Release 3.3.x
+=============
+
+Features
+--------
+
+Bug Fixes
+--------
+* Revise cleanup of in-use temporary files on win32 (issue 6)
+
 Release 3.3.0
 =============
 

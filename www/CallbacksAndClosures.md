@@ -2,16 +2,17 @@ Callbacks and Closures
 ======================
 
 Callback declarations consist of a simple interface that extends the Callback interface and implements a callback method (or defines a single method of arbitrary name). Callbacks are implemented by wrapping a Java object method in a little bit of C glue code. The simplest usage resembles using anonymous inner classes to register event listeners. Following is an example of callback usage:
- 
+
     // Original C declarations
-    typedef void (*sig_t)(int);
-    sig_t signal(sig_t);
+    typedef void (*sig_t) (int);
+    sig_t signal(int sig, sig_t func);
+    int SIGUSR1 = 30;
 
     // Equivalent JNA mappings
     public interface CLibrary extends Library {
         int SIGUSR1 = 30;
         interface sig_t extends Callback {
-            void invoke(int signal);        
+            void invoke(int signal);
         }
         sig_t signal(int sig, sig_t fn);
         int raise(int sig);
@@ -32,7 +33,7 @@ Callback declarations consist of a simple interface that extends the Callback in
     ...
 
 Here is a more involved example, using the Win32 APIs to enumerate all native windows:
- 
+
     // Original C declarations
     typedef int (__stdcall *WNDENUMPROC)(void*,void*);
     int __stdcall EnumWindows(WNDENUMPROC,void*);
