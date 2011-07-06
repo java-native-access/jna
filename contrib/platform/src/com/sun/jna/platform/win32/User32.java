@@ -28,7 +28,6 @@ import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.BLENDFUNCTION;
 import com.sun.jna.platform.win32.WinUser.FLASHWINFO;
-import com.sun.jna.platform.win32.structures.INPUT;
 import com.sun.jna.platform.win32.WinUser.GUITHREADINFO;
 import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.sun.jna.platform.win32.WinUser.HOOKPROC;
@@ -915,7 +914,7 @@ public interface User32 extends StdCallLibrary {
      *   This function fails when it is blocked by UIPI. Note that neither GetLastError nor the return value will
      *   indicate the failure was caused by UIPI blocking.
      */
-    DWORD SendInput(DWORD nInputs, INPUT[] pInputs,int cbSize);
+    DWORD SendInput(DWORD nInputs, WinUser.INPUT[] pInputs,int cbSize);
 
     /**
      * Waits until the specified process has finished processing its initial input and is waiting for user input with no

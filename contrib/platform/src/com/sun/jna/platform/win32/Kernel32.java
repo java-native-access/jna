@@ -25,7 +25,6 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
-import com.sun.jna.platform.win32.structures.PROCESSENTRY32W;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -1385,7 +1384,7 @@ public interface Kernel32 extends StdCallLibrary {
      *   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
      *   does not contain process information.
      */
-    boolean Process32FirstW(HANDLE hSnapshot, PROCESSENTRY32W.ByReference lppe);
+    boolean Process32FirstW(HANDLE hSnapshot, Tlhelp32.PROCESSENTRY32W.ByReference lppe);
 
     /**
      * Retrieves information about the next process recorded in a system snapshot.
@@ -1397,5 +1396,5 @@ public interface Kernel32 extends StdCallLibrary {
      *   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
      *   does not contain process information.
      */
-    boolean Process32NextW(HANDLE hSnapshot, PROCESSENTRY32W.ByReference lppe);
+    boolean Process32NextW(HANDLE hSnapshot, Tlhelp32.PROCESSENTRY32W.ByReference lppe);
 }

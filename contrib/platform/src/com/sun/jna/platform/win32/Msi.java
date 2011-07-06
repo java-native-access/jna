@@ -6,7 +6,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-/** 
+/**
  * Provides access to the w32 MSI installer library.
  */
 public interface Msi extends StdCallLibrary {
@@ -28,11 +28,11 @@ public interface Msi extends StdCallLibrary {
     static int INSTALLSTATE_LOCAL =  3;
     static int INSTALLSTATE_SOURCE =  4;
     static int INSTALLSTATE_DEFAULT =  5;
-        
+
     int MsiGetComponentPathW(WString szProduct, WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
-    
+
     int MsiLocateComponentW(WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
-    
+
     int MsiGetProductCodeW(WString szComponent, char[] lpProductBuf);
 
     int MsiEnumComponents(WinDef.DWORD iComponentIndex, char[] lpComponentBuf);
