@@ -410,62 +410,6 @@ public interface Kernel32 extends StdCallLibrary {
     boolean MoveFileEx(String lpExistingFileName, String lpNewFileName, DWORD dwFlags);
 
     /**
-     * If the file is to be moved to a different volume, the function simulates the move by using the CopyFile and DeleteFile functions.
-     *
-     * This value cannot be used with MOVEFILE_DELAY_UNTIL_REBOOT.
-     */
-    int MOVEFILE_COPY_ALLOWED = 0x2;
-
-    /**
-     * Reserved for future use.
-     */
-    int MOVEFILE_CREATE_HARDLINK = 0x10;
-
-    /**
-     * The system does not move the file until the operating system is restarted. The system moves the file immediately
-     * after AUTOCHK is executed, but before creating any paging files. Consequently, this parameter enables the
-     * function to delete paging files from previous startups.
-     *
-     * This value can be used only if the process is in the context of a user who belongs to the administrators group or
-     * the LocalSystem account.
-     *
-     * This value cannot be used with MOVEFILE_COPY_ALLOWED.
-     *
-     * Windows Server 2003 and Windows XP:  For information about special situations where this functionality can fail,
-     * and a suggested workaround solution, see Files are not exchanged when Windows Server 2003 restarts if you use the
-     * MoveFileEx function to schedule a replacement for some files in the Help and Support Knowledge Base.
-     *
-     * Windows 2000:  If you specify the MOVEFILE_DELAY_UNTIL_REBOOT flag for dwFlags, you cannot also prepend the file
-     * name that is specified by lpExistingFileName with "\\?".
-     */
-    int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
-
-    /**
-     * The function fails if the source file is a link source, but the file cannot be tracked after the move. This
-     * situation can occur if the destination is a volume formatted with the FAT file system.
-     */
-    int MOVEFILE_FAIL_IF_NOT_TRACKABLE = 0x20;
-
-    /**
-     * If a file named lpNewFileName exists, the function replaces its contents with the contents of the
-     * lpExistingFileName file, provided that security requirements regarding access control lists (ACLs) are met. For
-     * more information, see the Remarks section of this topic.
-     *
-     * This value cannot be used if lpNewFileName or lpExistingFileName names a directory.
-     */
-    int MOVEFILE_REPLACE_EXISTING = 0x1;
-
-    /**
-     * The function does not return until the file is actually moved on the disk.
-     *
-     * Setting this value guarantees that a move performed as a copy and delete operation is flushed to disk before the
-     * function returns. The flush occurs at the end of the copy operation.
-     *
-     * This value has no effect if MOVEFILE_DELAY_UNTIL_REBOOT is set.
-     */
-    int MOVEFILE_WRITE_THROUGH = 0x8;
-
-    /**
      * The CreateDirectory function creates a new directory. If the underlying file
      * system supports security on files and directories, the function applies a 
      * specified security descriptor to the new directory.
@@ -939,37 +883,6 @@ public interface Kernel32 extends StdCallLibrary {
                           Pointer lpEnvironment, String lpCurrentDirectory, WinBase.STARTUPINFO lpStartupInfo,
                           WinBase.PROCESS_INFORMATION.ByReference lpProcessInformation);
 
-    int DEBUG_PROCESS = 0x00000001;
-    int DEBUG_ONLY_THIS_PROCESS = 0x00000002;
-    int CREATE_SUSPENDED = 0x00000004;
-    int DETACHED_PROCESS = 0x00000008;
-    int CREATE_NEW_CONSOLE = 0x00000010;
-    int NORMAL_PRIORITY_CLASS = 0x00000020;
-    int IDLE_PRIORITY_CLASS = 0x00000040;
-    int HIGH_PRIORITY_CLASS = 0x00000080;
-    int REALTIME_PRIORITY_CLASS = 0x00000100;
-    int CREATE_NEW_PROCESS_GROUP = 0x00000200;
-    int CREATE_UNICODE_ENVIRONMENT = 0x00000400;
-    int CREATE_SEPARATE_WOW_VDM = 0x00000800;
-    int CREATE_SHARED_WOW_VDM = 0x00001000;
-    int CREATE_FORCEDOS = 0x00002000;
-    int BELOW_NORMAL_PRIORITY_CLASS = 0x00004000;
-    int ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000;
-    int INHERIT_PARENT_AFFINITY = 0x00010000;
-    int INHERIT_CALLER_PRIORITY = 0x00020000;
-    int CREATE_PROTECTED_PROCESS = 0x00040000;
-    int EXTENDED_STARTUPINFO_PRESENT = 0x00080000;
-    int PROCESS_MODE_BACKGROUND_BEGIN = 0x00100000;
-    int PROCESS_MODE_BACKGROUND_END = 0x00200000;
-    int CREATE_BREAKAWAY_FROM_JOB = 0x01000000;
-    int CREATE_PRESERVE_CODE_AUTHZ_LEVEL = 0x02000000;
-    int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
-    int CREATE_NO_WINDOW = 0x08000000;
-    int PROFILE_USER = 0x10000000;
-    int PROFILE_KERNEL = 0x20000000;
-    int PROFILE_SERVER = 0x40000000;
-    int CREATE_IGNORE_SYSTEM_DEFAULT = 0x80000000;
-
     /**
      * This function returns a handle to an existing process object.
      * @param fdwAccess
@@ -1364,14 +1277,6 @@ public interface Kernel32 extends StdCallLibrary {
      *   Possible error codes include ERROR_BAD_LENGTH.
      */
     HANDLE CreateToolhelp32Snapshot(DWORD dwFlags, DWORD th32ProcessID);
-
-    DWORD TH32CS_SNAPHEAPLIST = new DWORD(0x00000001);
-    DWORD TH32CS_SNAPPROCESS  = new DWORD(0x00000002);
-    DWORD TH32CS_SNAPTHREAD   = new DWORD(0x00000004);
-    DWORD TH32CS_SNAPMODULE   = new DWORD(0x00000008);
-    DWORD TH32CS_SNAPMODULE32 = new DWORD(0x00000010);
-    DWORD TH32CS_SNAPALL      = new DWORD((TH32CS_SNAPHEAPLIST.intValue() | TH32CS_SNAPPROCESS.intValue() | TH32CS_SNAPTHREAD.intValue() | TH32CS_SNAPMODULE.intValue()));
-    DWORD TH32CS_INHERIT      = new DWORD(0x80000000);
 
     /**
      * Retrieves information about the first process encountered in a system snapshot.

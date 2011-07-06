@@ -6,6 +6,14 @@ import com.sun.jna.win32.StdCallLibrary;
 
 public interface Tlhelp32 extends StdCallLibrary {
 
+    WinDef.DWORD TH32CS_SNAPHEAPLIST = new WinDef.DWORD(0x00000001);
+    WinDef.DWORD TH32CS_SNAPPROCESS  = new WinDef.DWORD(0x00000002);
+    WinDef.DWORD TH32CS_SNAPTHREAD   = new WinDef.DWORD(0x00000004);
+    WinDef.DWORD TH32CS_SNAPMODULE   = new WinDef.DWORD(0x00000008);
+    WinDef.DWORD TH32CS_SNAPMODULE32 = new WinDef.DWORD(0x00000010);
+    WinDef.DWORD TH32CS_SNAPALL      = new WinDef.DWORD((TH32CS_SNAPHEAPLIST.intValue() | TH32CS_SNAPPROCESS.intValue() | TH32CS_SNAPTHREAD.intValue() | TH32CS_SNAPMODULE.intValue()));
+    WinDef.DWORD TH32CS_INHERIT      = new WinDef.DWORD(0x80000000);
+
     public static class PROCESSENTRY32W extends Structure {
 
         public static class ByReference extends PROCESSENTRY32W implements Structure.ByReference {
