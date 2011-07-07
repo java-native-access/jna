@@ -842,8 +842,6 @@ public interface WinNT extends StdCallLibrary {
 	 */
 	public static final int REG_QWORD_LITTLE_ENDIAN = 11;
 
-    public static final int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-
 	/**
 	 * A 64-bit value that is guaranteed to be unique on the operating system 
 	 * that generated it until the system is restarted. 
