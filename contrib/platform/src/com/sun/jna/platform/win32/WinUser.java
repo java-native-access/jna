@@ -189,8 +189,59 @@ public interface WinUser extends StdCallLibrary {
     public interface HOOKPROC extends StdCallCallback { 
     	
     }
-    
-    public int WM_KEYDOWN = 256;
+
+    /**
+     * The WM_PAINT message is sent when the system or another application makes a request to paint a portion of an \
+     * application's window.
+     */
+    public int WM_PAINT = 0x000F;
+
+    /**
+     * Sent as a signal that a window or an application should terminate.
+     */
+    public int WM_CLOSE = 0x0010;
+
+    /**
+     * Indicates a request to terminate an application, and is generated when the application calls the PostQuitMessage
+     * function.
+     */
+    public int WM_QUIT = 0x0012;
+
+    /**
+     * Sent to a window when the window is about to be hidden or shown.
+     */
+    public int WM_SHOWWINDOW = 0x0018;
+
+    /**
+     * Sent to the parent window of an owner-drawn button, combo box, list box, or menu when a visual aspect of the
+     * button, combo box, list box, or menu has changed.
+     */
+    public int WM_DRAWITEM = 0x002B;
+
+    /**
+     * Posted to the window with the keyboard focus when a nonsystem key is pressed. A nonsystem key is a key that is
+     * pressed when the ALT key is not pressed.
+     */
+    public int WM_KEYDOWN = 0x0100;
+
+    /**
+     * Posted to the window with the keyboard focus when a WM_KEYDOWN message is translated by the TranslateMessage
+     * function. The WM_CHAR message contains the character code of the key that was pressed.
+     */
+    public int WM_CHAR = 0x0102;
+
+    /**
+     * A window receives this message when the user chooses a command from the Window menu (formerly known as the system
+     * or control menu) or when the user chooses the maximize button, minimize button, restore button, or close button.
+     */
+    public int WM_SYSCOMMAND = 0x0112;
+
+    /**
+     * An application sends the WM_MDIMAXIMIZE message to a multiple-document interface (MDI) client window to maximize
+     * an MDI child window.
+     */
+    int WM_MDIMAXIMIZE = 0x0225;
+
     public int WM_KEYUP = 257;
     public int WM_SYSKEYDOWN = 260;
     public int WM_SYSKEYUP = 261;
@@ -301,6 +352,106 @@ public interface WinUser extends StdCallLibrary {
 	public int SM_SHUTTINGDOWN = 0x2000;
 	public int SM_REMOTECONTROL = 0x2001;
 	public int SM_CARETBLINKINGENABLED = 0x2002;
+
+    int SW_HIDE = 0;
+    int SW_SHOWNORMAL = 1;
+    int SW_NORMAL = 1;
+    int SW_SHOWMINIMIZED = 2;
+    int SW_SHOWMAXIMIZED = 3;
+    int SW_MAXIMIZE = 3;
+    int SW_SHOWNOACTIVATE = 4;
+    int SW_SHOW = 5;
+    int SW_MINIMIZE = 6;
+    int SW_SHOWMINNOACTIVE = 7;
+    int SW_SHOWNA = 8;
+    int SW_RESTORE = 9;
+    int SW_SHOWDEFAULT = 10;
+    int SW_FORCEMINIMIZE = 11;
+    int SW_MAX = 11;
+
+    int RDW_INVALIDATE = 0x0001;
+    int RDW_INTERNALPAINT = 0x0002;
+    int RDW_ERASE = 0x0004;
+    int RDW_VALIDATE = 0x0008;
+    int RDW_NOINTERNALPAINT = 0x0010;
+    int RDW_NOERASE = 0x0020;
+    int RDW_NOCHILDREN = 0x0040;
+    int RDW_ALLCHILDREN = 0x0080;
+    int RDW_UPDATENOW = 0x0100;
+    int RDW_ERASENOW = 0x0200;
+    int RDW_FRAME = 0x0400;
+    int RDW_NOFRAME = 0x0800;
+
+    /**
+     * The retrieved handle identifies the window of the same type that is highest in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+     * identifies a sibling window.
+     */
+    int GW_HWNDFIRST = 0;
+
+    /**
+     * The retrieved handle identifies the window of the same type that is lowest in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+     * identifies a sibling window.
+     */
+    int GW_HWNDLAST = 1;
+
+    /**
+     * The retrieved handle identifies the window below the specified window in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+     * identifies a sibling window.
+     */
+    int GW_HWNDNEXT = 2;
+
+    /**
+     * The retrieved handle identifies the window above the specified window in the Z order.
+     *
+     * If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+     * top-level window, the handle identifies a top-level window. If the specified window is a child window, the
+     * handle identifies a sibling window.
+     */
+    int GW_HWNDPREV = 3;
+
+    /**
+     * The retrieved handle identifies the specified window's owner window, if any. For more information, see Owned
+     * Windows.
+     */
+    int GW_OWNER = 4;
+
+    /**
+     * The retrieved handle identifies the child window at the top of the Z order, if the specified window is a parent
+     * window; otherwise, the retrieved handle is NULL. The function examines only child windows of the specified
+     * window. It does not examine descendant windows.
+     */
+    int GW_CHILD = 5;
+
+    /**
+     * The retrieved handle identifies the enabled popup window owned by the specified window (the search uses the first
+     * such window found using GW_HWNDNEXT); otherwise, if there are no enabled popup windows, the retrieved handle is
+     * that of the specified window.
+     */
+    int GW_ENABLEDPOPUP = 6;
+
+    /**
+     * Retains the current Z order (ignores the hWndInsertAfter parameter).
+     */
+    int SWP_NOZORDER = 0x0004;
+
+    /**
+     * Minimizes the window.
+     */
+    int SC_MINIMIZE = 0xF020;
+
+    /**
+     * Maximizes the window.
+     */
+    int SC_MAXIMIZE = 0xF030;
 
     /**
      * Contains information about a simulated message generated by an input device other than a keyboard or mouse.
