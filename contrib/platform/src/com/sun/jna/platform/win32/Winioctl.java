@@ -14,8 +14,14 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.win32.StdCallLibrary;
 
+/**
+ * Interface for the Winioctl.h header file.
+ */
 public interface Winioctl extends StdCallLibrary {
 
+    /**
+     * Contains information about a device. This structure is used by the IOCTL_STORAGE_GET_DEVICE_NUMBER control code.
+     */
     public static class STORAGE_DEVICE_NUMBER extends Structure {
 
         public static class ByReference extends STORAGE_DEVICE_NUMBER implements Structure.ByReference {
@@ -35,8 +41,20 @@ public interface Winioctl extends StdCallLibrary {
             read();
         }
 
+        /**
+         * The type of device. Values from 0 through 32,767 are reserved for use by Microsoft. Values from 32,768
+         * through 65,535 are reserved for use by other vendors.
+         */
         public int DeviceType;
+
+        /**
+         * The number of this device.
+         */
         public int DeviceNumber;
+
+        /**
+         * The partition number of the device, if the device can be partitioned. Otherwise, this member is –1.
+         */
         public int PartitionNumber;
     }
 }
