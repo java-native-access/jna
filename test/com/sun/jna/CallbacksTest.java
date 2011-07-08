@@ -219,7 +219,8 @@ public class CallbacksTest extends TestCase {
         assertEquals("Callback lookups for same pointer should return same Callback object", cb, cb2);
     }
 
-    public void testGCCallback() throws Exception {
+    // Fails on OpenJDK(linux/ppc), probably finalize not run
+    public void testGCCallbackOnFinalize() throws Exception {
         final boolean[] called = { false };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
@@ -242,6 +243,7 @@ public class CallbacksTest extends TestCase {
         for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
             try {
                 Thread.sleep(10); // Give the GC a chance to run
+                System.gc();
             } finally {}
         }
         assertNull("Callback not GC'd", ref.get());

@@ -3,10 +3,12 @@ Release 3.3.x
 
 Features
 --------
+* linux/ppc 32-bit support
 
 Bug Fixes
 --------
 * Revise cleanup of in-use temporary files on win32 (issue 6)
+* Fix structure alignment issues on linux/ppc
 
 Release 3.3.0
 =============
