@@ -131,7 +131,9 @@ public abstract class Structure {
     /** Align to an 8-byte boundary. */
     //public static final int ALIGN_8 = 6;
 
-    private static final int MAX_GNUC_ALIGNMENT = isSPARC ? 8 : Native.LONG_SIZE;
+    static final int MAX_GNUC_ALIGNMENT =
+        isSPARC || (isPPC && Platform.isLinux())
+        ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
 
     // This field is accessed by native code
@@ -957,7 +959,11 @@ public abstract class Structure {
     }
 
     public String toString() {
-        return toString(0, true);
+        return toString(Boolean.getBoolean("jna.dump_memory"));
+    }
+
+    public String toString(boolean debug) {
+        return toString(0, true, true);
     }
 
     private String format(Class type) {
@@ -966,7 +972,7 @@ public abstract class Structure {
         return s.substring(dot + 1);
     }
 
-    private String toString(int indent, boolean showContents) {
+    private String toString(int indent, boolean showContents, boolean dumpMemory) {
         String LS = System.getProperty("line.separator");
         String name = format(getClass()) + "(" + getPointer() + ")";
         if (!(getPointer() instanceof Memory)) {
@@ -993,7 +999,7 @@ public abstract class Structure {
             contents += "  " + type + " "
                 + sf.name + index + "@" + Integer.toHexString(sf.offset);
             if (value instanceof Structure) {
-                value = ((Structure)value).toString(indent + 1, !(value instanceof Structure.ByReference));
+                value = ((Structure)value).toString(indent + 1, !(value instanceof Structure.ByReference), dumpMemory);
             }
             contents += "=";
             if (value instanceof Long) {
@@ -1015,7 +1021,7 @@ public abstract class Structure {
             if (!i.hasNext())
                 contents += prefix + "}";
         }
-        if (indent == 0 && Boolean.getBoolean("jna.dump_memory")) {
+        if (indent == 0 && dumpMemory) {
             byte[] buf = getPointer().getByteArray(0, size());
             final int BYTES_PER_ROW = 4;
             contents += LS + "memory dump" + LS;

@@ -341,7 +341,7 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testStructureByValueArgument() {
         TestLibrary.CheckFieldAlignment.ByValue struct = 
             new TestLibrary.CheckFieldAlignment.ByValue();
-        assertEquals("Wrong sum of fields", 
+        assertEquals("Wrong sum of fields for " + struct.toString(true),
                      21d, lib.testStructureByValueArgument(struct));
     }
     
