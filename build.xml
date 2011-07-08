@@ -229,7 +229,7 @@
           <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
           <attribute name="Bundle-Vendor" value="${vendor}"/>
           <attribute name="Bundle-ActivationPolicy" value="lazy"/>
-          <attribute name="Export-Package" value="com.sun.jna*"/>
+          <attribute name="Export-Package" value="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
         </section>
       </manifest>
       <fileset dir="${classes}" excludes="${jar.omitted}">
@@ -416,6 +416,26 @@
       <manifest>
         <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
         <attribute name="Specification-Version" value="${jni.version}"/>
+      	<!-- OSGi Bundle attributes -->
+      	<!-- Need this variable to be conditional per platform -->
+      	<attribute name="Bundle-NativeCode" value="jnidispatch.dll ;
+        osname=Win32 ;
+        processor=x86,
+  		libjnidispatch.so ;
+  		osname=Linux;
+  		processor=x86,
+		libjnidispatch.dylib ;
+		osname=MacOS;
+		processor=x86"/>
+       <attribute name="Bundle-Name" value="JNA Native Code"/>
+       <attribute name="Fragment-Host" value="com.sun.jna"/>
+      	
+	  <attribute name="Bundle-ManifestVersion" value="2"/>
+	  <attribute name="Bundle-SymbolicName" value="com.sun.jna.native.${os.prefix}.${ARCH}"/>
+	  <attribute name="Bundle-Version" value="${spec.version}"/>
+	  <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
+	  <attribute name="Bundle-Vendor" value="${vendor}"/>
+	  <attribute name="Bundle-ActivationPolicy" value="lazy"/>
       </manifest>
     </jar>
   </target>
