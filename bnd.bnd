@@ -1,0 +1,9 @@
+Bundle-ManifestVersion: 2
+Bundle-Name: Java Native Access
+Bundle-Description: JNA Library
+Bundle-SymbolicName: com.sun.jna
+Bundle-Version: 3
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-Vendor: JNA Development Team
+Bundle-ActivationPolicy: lazy
+Export-Package: com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32
