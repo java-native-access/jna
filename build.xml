@@ -225,7 +225,7 @@
           <attribute name="Specification-Title" value="${spec.title}"/>
           <attribute name="Specification-Vendor" value="${spec.vendor}"/>
           <attribute name="Specification-Version" value="${spec.version}"/>
-          <!-- OSGi Bundle attributes -->
+          <!-- OSGi Bundle attributes 
           <attribute name="Bundle-ManifestVersion" value="2"/>
           <attribute name="Bundle-Name" value="jna"/>
           <attribute name="Bundle-Description" value="JNA Library"/>
@@ -234,13 +234,18 @@
           <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
           <attribute name="Bundle-Vendor" value="${vendor}"/>
           <attribute name="Bundle-ActivationPolicy" value="lazy"/>
-          <attribute name="Export-Package" value="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
+          <attribute name="Export-Package" value="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>-->
         </section>
       </manifest>
       <fileset dir="${classes}" excludes="${jar.omitted}">
         <patternset refid="jar-compiled"/>
       </fileset>
     </jar>
+  </target>
+
+  <target name="osgi-jar" depends="jar" description="Wrap Jar including OSGi manifest entries">
+  	<bnd-wrap definitions="${basedir}" output="${build}" jars="${build}/${jar}"/>
+  	<move file="${build}/jna.bar" tofile="${build}/jna_osgi.jar"/>
   </target>
 
   <target name="contrib-jars" depends="jar" description="Build contrib jars">
