@@ -66,6 +66,11 @@
   <target name="init" depends="-setup"/>
   <target name="compile-test-single" depends="compile-tests"/>
   <target name="compile-single" depends="compile"/>
+	
+  <!-- Bnd wrapping task definition -->
+  <taskdef name="bnd-wrap" 
+	         classname="aQute.bnd.ant.WrapTask"
+	         classpath="lib/bnd.jar"/>
 
   <target name="-dynamic-properties">
     <echo>Java version ${java.version}, compatibility: ${compatibility}</echo>
