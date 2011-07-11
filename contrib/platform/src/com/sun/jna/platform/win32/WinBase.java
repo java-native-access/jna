@@ -178,8 +178,31 @@ public abstract class WinBase {
     */
 	public static class FILETIME extends Structure {
 		public int dwLowDateTime;
-		public int dwHighDateTime;
-	
+		public int dwHighDateTime;        
+
+        public static class ByReference extends FILETIME implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        public FILETIME(Date date) {
+            long rawValue = dateToFileTime(date);
+            dwHighDateTime = (int)(rawValue >> 32 & 0xffffffffL);
+            dwLowDateTime = (int)(rawValue & 0xffffffffL);
+        }
+
+        public FILETIME() {
+        }
+
+        public FILETIME(Pointer memory) {
+            useMemory(memory);
+            read();
+        }
+
 		 /**
 		  * <p>The difference between the Windows epoch (1601-01-01
 		  * 00:00:00) and the Unix epoch (1970-01-01 00:00:00) in
@@ -401,6 +424,10 @@ public abstract class WinBase {
     	
 		public static class UNION extends Union {
 			
+	    	public static class ByReference extends UNION implements Structure.ByReference {
+	    		
+	    	}
+
 			/**
 			 * An obsolete member that is retained for compatibility with Windows NT 3.5 and earlier.
 			 * New applications should use the wProcessorArchitecture branch of the union.
@@ -417,7 +444,7 @@ public abstract class WinBase {
 		/**
 		 * Processor architecture.
 		 */
-		public UNION processorArchitecture;
+		public UNION.ByReference processorArchitecture;
 		/**
 		 * Page size and the granularity of page protection and commitment.
 		 */
@@ -753,7 +780,78 @@ public abstract class WinBase {
 		 * identifier may be reused.
 		 */
 		public DWORD dwThreadId;
-		
+
+        public static class ByReference extends PROCESS_INFORMATION implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        public PROCESS_INFORMATION() {
+        }
+
+        public PROCESS_INFORMATION(Pointer memory) {
+            useMemory(memory);
+            read();
+        }
     }
-    
+
+    /**
+     * If the file is to be moved to a different volume, the function simulates the move by using the CopyFile and DeleteFile functions.
+     *
+     * This value cannot be used with MOVEFILE_DELAY_UNTIL_REBOOT.
+     */
+    public static final int MOVEFILE_COPY_ALLOWED = 0x2;
+
+    /**
+     * Reserved for future use.
+     */
+    public static final int MOVEFILE_CREATE_HARDLINK = 0x10;
+
+    /**
+     * The system does not move the file until the operating system is restarted. The system moves the file immediately
+     * after AUTOCHK is executed, but before creating any paging files. Consequently, this parameter enables the
+     * function to delete paging files from previous startups.
+     *
+     * This value can be used only if the process is in the context of a user who belongs to the administrators group or
+     * the LocalSystem account.
+     *
+     * This value cannot be used with MOVEFILE_COPY_ALLOWED.
+     *
+     * Windows Server 2003 and Windows XP:  For information about special situations where this functionality can fail,
+     * and a suggested workaround solution, see Files are not exchanged when Windows Server 2003 restarts if you use the
+     * MoveFileEx function to schedule a replacement for some files in the Help and Support Knowledge Base.
+     *
+     * Windows 2000:  If you specify the MOVEFILE_DELAY_UNTIL_REBOOT flag for dwFlags, you cannot also prepend the file
+     * name that is specified by lpExistingFileName with "\\?".
+     */
+    public static final int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
+
+    /**
+     * The function fails if the source file is a link source, but the file cannot be tracked after the move. This
+     * situation can occur if the destination is a volume formatted with the FAT file system.
+     */
+    public static final int MOVEFILE_FAIL_IF_NOT_TRACKABLE = 0x20;
+
+    /**
+     * If a file named lpNewFileName exists, the function replaces its contents with the contents of the
+     * lpExistingFileName file, provided that security requirements regarding access control lists (ACLs) are met. For
+     * more information, see the Remarks section of this topic.
+     *
+     * This value cannot be used if lpNewFileName or lpExistingFileName names a directory.
+     */
+    public static final int MOVEFILE_REPLACE_EXISTING = 0x1;
+
+    /**
+     * The function does not return until the file is actually moved on the disk.
+     *
+     * Setting this value guarantees that a move performed as a copy and delete operation is flushed to disk before the
+     * function returns. The flush occurs at the end of the copy operation.
+     *
+     * This value has no effect if MOVEFILE_DELAY_UNTIL_REBOOT is set.
+     */
+    public static final int MOVEFILE_WRITE_THROUGH = 0x8;
 }

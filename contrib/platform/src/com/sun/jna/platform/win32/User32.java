@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
@@ -732,4 +733,313 @@ public interface User32 extends StdCallLibrary {
 	 *  error information.
 	 */
 	public int GetSystemMetrics(int nIndex);
+
+    /**
+     * Changes the parent window of the specified child window.
+     *
+     * @param hWndChild
+     *     A handle to the child window.
+     *
+     * @param hWndNewParent
+     *     A handle to the new parent window. If this parameter is NULL, the desktop window becomes the new parent
+     *     window. If this parameter is HWND_MESSAGE, the child window becomes a message-only window.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    HWND SetParent(HWND hWndChild, HWND hWndNewParent);
+
+    /**
+     * Determines the visibility state of the specified window.
+     *
+     * @param hWnd
+     *     A handle to the window to be tested.
+     *
+     * @return
+     *     If the specified window, its parent window, its parent's parent window, and so forth, have the WS_VISIBLE
+     *     style, the return value is nonzero. Otherwise, the return value is zero.
+     *
+     *     Because the return value specifies whether the window has the WS_VISIBLE style, it may be nonzero even if the
+     *     window is totally obscured by other windows.
+     */
+    boolean IsWindowVisible(HWND hWnd);
+
+    /**
+     * Changes the position and dimensions of the specified window. For a top-level window, the position and dimensions
+     * are relative to the upper-left corner of the screen. For a child window, they are relative to the upper-left
+     * corner of the parent window's client area.
+     *
+     * @param hWnd
+     *     A handle to the window.
+     *
+     * @param X
+     *     The new position of the left side of the window.
+     *
+     * @param Y
+     *     The new position of the top of the window.
+     *
+     * @param nWidth
+     *     The new width of the window.
+     *
+     * @param nHeight
+     *     The new height of the window.
+     *
+     * @param bRepaint
+     *     Indicates whether the window is to be repainted. If this parameter is TRUE, the window receives a message. If
+     *     the parameter is FALSE, no repainting of any kind occurs. This applies to the client area, the nonclient area
+     *     (including the title bar and scroll bars), and any part of the parent window uncovered as a result of moving
+     *     a child window.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean MoveWindow(HWND hWnd, int X,int Y, int nWidth, int nHeight, boolean bRepaint);
+
+    /**
+     * Changes the size, position, and Z order of a child, pop-up, or top-level window. These windows are ordered
+     * according to their appearance on the screen. The topmost window receives the highest rank and is the first window
+     * in the Z order.
+     *
+     * @param hWnd
+     *     A handle to the window.
+     *
+     * @param hWndInsertAfter
+     *     A handle to the window to precede the positioned window in the Z order.
+     *
+     * @param X
+     *     The new position of the left side of the window, in client coordinates.
+     *
+     * @param Y
+     *     The new position of the top of the window, in client coordinates.
+     *
+     * @param cx
+     *     The new width of the window, in pixels.
+     *
+     * @param cy
+     *     The new height of the window, in pixels.
+     *
+     * @param uFlags
+     *     The window sizing and positioning flags.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+
+    /**
+     * Attaches or detaches the input processing mechanism of one thread to that of another thread.
+     * 
+     * @param idAttach
+     *   The identifier of the thread to be attached to another thread. The thread to be attached cannot be a system
+     *   thread.
+     * 
+     * @param idAttachTo
+     *   The identifier of the thread to which idAttach will be attached. This thread cannot be a system thread. A
+     *   thread cannot attach to itself. Therefore, idAttachTo cannot equal idAttach.
+     * 
+     * @param fAttach
+     *   If this parameter is TRUE, the two threads are attached. If the parameter is FALSE, the threads are detached.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero.
+     */
+    boolean AttachThreadInput(DWORD idAttach, DWORD idAttachTo, boolean fAttach);
+
+    /**
+     * Brings the thread that created the specified window into the foreground and activates the window. Keyboard input
+     * is directed to the window, and various visual cues are changed for the user. The system assigns a slightly higher
+     * priority to the thread that created the foreground window than it does to other threads.
+     * 
+     * @param hWnd
+     *   A handle to the window that should be activated and brought to the foreground.
+     * 
+     * @return
+     *   If the window was brought to the foreground, the return value is nonzero.
+     */
+    boolean SetForegroundWindow(HWND hWnd);
+
+    /**
+     * Retrieves a handle to the foreground window (the window with which the user is currently working). The system
+     * assigns a slightly higher priority to the thread that creates the foreground window than it does to other
+     * threads.
+     *
+     * @return The return value is a handle to the foreground window. The foreground window can be NULL in certain
+     * circumstances, such as when a window is losing activation.
+     */
+    HWND GetForegroundWindow();
+
+    /**
+     * Sets the keyboard focus to the specified window. The window must be attached to the calling thread's message
+     * queue.
+     *
+     * @param hWnd
+     *   A handle to the window that will receive the keyboard input. If this parameter is NULL, keystrokes are ignored.
+     *
+     * @return
+     *   If the function succeeds, the return value is the handle to the window that previously had the keyboard focus.
+     *   If the hWnd parameter is invalid or the window is not attached to the calling thread's message queue, the
+     *   return value is NULL. To get extended error information, call GetLastError.
+     */
+    HWND SetFocus(HWND hWnd);
+
+    /**
+     * Synthesizes keystrokes, mouse motions, and button clicks.
+     * 
+     * @param nInputs
+     *   The number of structures in the pInputs array.
+     *
+     * @param pInputs
+     *   An array of INPUT structures. Each structure represents an event to be inserted into the keyboard or mouse 
+     *   input stream.
+     *
+     * @param cbSize
+     *   The size, in bytes, of an INPUT structure. If cbSize is not the size of an INPUT structure, the function fails.
+     * 
+     * @return
+     *   The function returns the number of events that it successfully inserted into the keyboard or mouse input
+     *   stream. If the function returns zero, the input was already blocked by another thread. To get extended error
+     *   information, call GetLastError.
+     *
+     *   This function fails when it is blocked by UIPI. Note that neither GetLastError nor the return value will
+     *   indicate the failure was caused by UIPI blocking.
+     */
+    DWORD SendInput(DWORD nInputs, WinUser.INPUT[] pInputs,int cbSize);
+
+    /**
+     * Waits until the specified process has finished processing its initial input and is waiting for user input with no
+     * input pending, or until the time-out interval has elapsed.
+     *
+     * @param hProcess
+     *   A handle to the process. If this process is a console application or does not have a message queue,
+     *   WaitForInputIdle returns immediately.
+     * 
+     * @param dwMilliseconds
+     *   The time-out interval, in milliseconds. If dwMilliseconds is INFINITE, the function does not return until the
+     *   process is idle.
+     * 
+     * @return
+     *   The following table shows the possible return values for this function.
+     *   <table>
+     *     <tr><th>Return code/value</th><th>Description</th></tr>
+     *     <tr><td>0</td><td>The wait was satisfied successfully.</td></tr>
+     *     <tr><td>WAIT_TIMEOUT</td><td>The wait was terminated because the time-out interval elapsed.</td></tr>
+     *     <tr><td>WAIT_FAILED</td><td>An error occurred.</td></tr>
+     *   </table>
+     */
+    DWORD WaitForInputIdle(HANDLE hProcess, DWORD dwMilliseconds);
+
+    /**
+     * The InvalidateRect function adds a rectangle to the specified window's update region. The update region
+     * represents the portion of the window's client area that must be redrawn.
+     * 
+     * @param hWnd
+     *   A handle to the window whose update region has changed. If this parameter is NULL, the system invalidates and
+     *   redraws all windows, not just the windows for this application, and sends the WM_ERASEBKGND and WM_NCPAINT
+     *   messages before the function returns. Setting this parameter to NULL is not recommended.
+     *
+     * @param lpRect
+     *   A pointer to a RECT structure that contains the client coordinates of the rectangle to be added to the update
+     *   region. If this parameter is NULL, the entire client area is added to the update region.
+     *
+     * @param bErase
+     *   Specifies whether the background within the update region is to be erased when the update region is processed.
+     *   If this parameter is TRUE, the background is erased when the BeginPaint function is called. If this parameter
+     *   is FALSE, the background remains unchanged.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     */
+    boolean InvalidateRect(HWND hWnd, RECT.ByReference lpRect, boolean bErase);
+
+    /**
+     * The RedrawWindow function updates the specified rectangle or region in a window's client area.
+     *
+     * @param hWnd
+     *   A handle to the window to be redrawn. If this parameter is NULL, the desktop window is updated.
+     *
+     * @param lprcUpdate
+     *   A pointer to a RECT structure containing the coordinates, in device units, of the update rectangle. This
+     *   parameter is ignored if the hrgnUpdate parameter identifies a region.
+     * 
+     * @param hrgnUpdate
+     *   A handle to the update region. If both the hrgnUpdate and lprcUpdate parameters are NULL, the entire client
+     *   area is added to the update region.
+     * 
+     * @param flags
+     *   One or more redraw flags. This parameter can be used to invalidate or validate a window, control repainting,
+     *   and control which windows are affected by RedrawWindow.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     */
+    boolean RedrawWindow(HWND hWnd, RECT.ByReference lprcUpdate, HRGN hrgnUpdate, DWORD flags);
+
+    /**
+     * Retrieves a handle to a window that has the specified relationship (Z-Order or owner) to the specified window.
+     * 
+     * @param hWnd
+     *   A handle to a window. The window handle retrieved is relative to this window, based on the value of the uCmd
+     *   parameter.
+     * 
+     * @param uCmd
+     *   The relationship between the specified window and the window whose handle is to be retrieved.
+     *
+     * @return
+     *   If the function succeeds, the return value is a window handle. If no window exists with the specified
+     *   relationship to the specified window, the return value is NULL. To get extended error information, call
+     *   GetLastError.
+     */
+    HWND GetWindow(HWND hWnd, DWORD uCmd);
+
+    /**
+     * The UpdateWindow function updates the client area of the specified window by sending a WM_PAINT message to the
+     * window if the window's update region is not empty. The function sends a WM_PAINT message directly to the window
+     * procedure of the specified window, bypassing the application queue. If the update region is empty, no message is
+     * sent.
+     *  
+     * @param
+     *   hWnd Handle to the window to be updated.
+     * 
+     * @return
+     *   If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     */
+    boolean UpdateWindow(HWND hWnd);
+
+    /**
+     * Sets the specified window's show state.
+     *
+     * @param hWnd
+     *     A handle to the window.
+     *
+     * @param nCmdShow
+     *     Controls how the window is to be shown. This parameter is ignored the first time an application calls
+     *     ShowWindow, if the program that launched the application provides a STARTUPINFO structure. Otherwise, the
+     *     first time ShowWindow is called, the value should be the value obtained by the WinMain function in its
+     *     nCmdShow parameter.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean ShowWindow(HWND hWnd, int nCmdShow);
+
+    /**
+     * Minimizes (but does not destroy) the specified window.
+     *
+     * @param hWnd
+     *     A handle to the window to be minimized.
+     *
+     * @return
+	 *     If the function succeeds, the return value is nonzero.
+     *
+	 *     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean CloseWindow(HWND hWnd);
 }
