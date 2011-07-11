@@ -38,9 +38,6 @@ public interface Kernel32 extends StdCallLibrary {
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, 
     		W32APIOptions.UNICODE_OPTIONS);
 
-    int PROCESS_TERMINATE = 0x00000001;
-    int PROCESS_SYNCHRONIZE = 0x00100000;
-
     /**
      * Frees the specified local memory object and invalidates its handle.
      * @param hLocal
