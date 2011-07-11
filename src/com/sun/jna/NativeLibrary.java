@@ -644,11 +644,37 @@ public class NativeLibrary {
                 "/usr/lib",
                 "/lib",
             };
-            // Linux 64-bit does not use /lib or /usr/lib
-            if (Platform.isLinux() && Pointer.SIZE == 8) {
+            // Fix for multi-arch support on Ubuntu (and other
+            // multi-arch distributions)
+            // paths is scanned against real directory
+            // so for platforms which are not multi-arch
+            // this should continue to work.
+            if (Platform.isLinux()) {
+                // Defaults - overridden below
+                String cpu = "";
+                String kernel = "linux";
+                String libc = "gnu";
+
+                if (Platform.isIntel()) {
+                    cpu = (Platform.is64Bit() ? "x86_64" : "i386");
+                } else if (Platform.isPPC()) {
+                    cpu = (Platform.is64Bit() ? "powerpc64" : "powerpc");
+                } else if (Platform.isARM()) {
+                    cpu = "arm";
+					libc = "gnueabi";
+                }
+
+                String multiArchPath =
+                    cpu + "-" + kernel + "-" + libc;
+
+                // Assemble path with all possible options
                 paths = new String[] {
+                    "/usr/lib/" + multiArchPath,
+                    "/lib/" + multiArchPath,
                     "/usr/lib" + archPath,
                     "/lib" + archPath,
+                    "/usr/lib",
+                    "/lib",
                 };
             }
             for (int i=0;i < paths.length;i++) {

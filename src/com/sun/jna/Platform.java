@@ -96,4 +96,37 @@ public final class Platform {
         }
         return Native.POINTER_SIZE == 8;
     }
+
+    public static final boolean isIntel() {
+        String arch =
+            System.getProperty("os.arch").toLowerCase().trim();
+        if (arch.equals("i386") ||
+            arch.equals("x86_64") ||
+            arch.equals("amd64")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static final boolean isPPC() {
+        String arch =
+            System.getProperty("os.arch").toLowerCase().trim();
+        if (arch.equals("ppc") ||
+            arch.equals("ppc64")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static final boolean isARM() {
+        String arch =
+            System.getProperty("os.arch").toLowerCase().trim();
+        if (arch.equals("arm"))  {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
