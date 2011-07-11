@@ -33,6 +33,8 @@ import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * Advapi32 utility API.
  * @author dblock[at]dblock.org
@@ -498,8 +500,8 @@ public abstract class Advapi32Util {
 			if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
 				throw new Win32Exception(rc);
 			}
-			if (lpType.getValue() != WinNT.REG_SZ) {
-				throw new RuntimeException("Unexpected registry type " + lpType.getValue() + ", expected REG_SZ");
+			if (lpType.getValue() != WinNT.REG_SZ && lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+				throw new RuntimeException("Unexpected registry type " + lpType.getValue() + ", expected REG_SZ or REG_EXPAND_SZ");
 			}
 			char[] data = new char[lpcbData.getValue()];
 			rc = Advapi32.INSTANCE.RegQueryValueEx(
