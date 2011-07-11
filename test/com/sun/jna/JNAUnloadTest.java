@@ -95,7 +95,7 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    // Fails under clover
+    // Fails under clover and OpenJDK(linux/ppc)
     public void testUnload() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
@@ -136,8 +136,9 @@ public class JNAUnloadTest extends TestCase {
             }
         }
         try {
-            if (loader == null)
+            if (loader == null) {
                 fail("Native library not unloaded: " + throwable.getMessage());
+            }
         }
         finally {
             loader = null;

@@ -108,8 +108,7 @@ public class StructureTest extends TestCase {
         }
         TestStructure s = new TestStructure();
         s.setAlignType(Structure.ALIGN_GNUC);
-        boolean isSPARC = "sparc".equals(System.getProperty("os.arch"));
-        final int SIZE = NativeLong.SIZE == 4 && !isSPARC ? 28 : 32;
+        final int SIZE = Structure.MAX_GNUC_ALIGNMENT == 8 ? 32 : 28;
         assertEquals("Wrong structure size", SIZE, s.size());
     }
 
@@ -171,7 +170,7 @@ public class StructureTest extends TestCase {
             SizeTest lib = (SizeTest)Native.loadLibrary("testlib", SizeTest.class);
             Class cls = Class.forName(getClass().getName() + "$TestStructure" + index);
             Structure s = Structure.newInstance(cls);
-            assertEquals("Incorrect size: " + s, lib.getStructureSize(index), s.size());
+            assertEquals("Incorrect size for structure " + index + "=>" + s.toString(true), lib.getStructureSize(index), s.size());
         }
         catch(Exception e) {
             throw new Error(e);
