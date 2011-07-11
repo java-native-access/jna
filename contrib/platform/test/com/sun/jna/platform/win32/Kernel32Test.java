@@ -451,14 +451,14 @@ public class Kernel32Test extends TestCase {
         WinNT.HANDLE processEnumHandle = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPALL, new WinDef.DWORD(0));
         assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(processEnumHandle));
 
-        Tlhelp32.PROCESSENTRY32W.ByReference processEntry = new Tlhelp32.PROCESSENTRY32W.ByReference();
+        Tlhelp32.PROCESSENTRY32.ByReference processEntry = new Tlhelp32.PROCESSENTRY32.ByReference();
 
-        assertTrue(Kernel32.INSTANCE.Process32FirstW(processEnumHandle, processEntry));
+        assertTrue(Kernel32.INSTANCE.Process32First(processEnumHandle, processEntry));
 
         List<Long> processIdList = new ArrayList<Long>();
         processIdList.add(processEntry.th32ProcessID.longValue());
 
-        while (Kernel32.INSTANCE.Process32NextW(processEnumHandle, processEntry))
+        while (Kernel32.INSTANCE.Process32Next(processEnumHandle, processEntry))
         {
             processIdList.add(processEntry.th32ProcessID.longValue());
         }

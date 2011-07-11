@@ -62,9 +62,9 @@ public interface Tlhelp32 extends StdCallLibrary {
     /**
      * Describes an entry from a list of the processes residing in the system address space when a snapshot was taken.
      */
-    public static class PROCESSENTRY32W extends Structure {
+    public static class PROCESSENTRY32 extends Structure {
 
-        public static class ByReference extends PROCESSENTRY32W implements Structure.ByReference {
+        public static class ByReference extends PROCESSENTRY32 implements Structure.ByReference {
             public ByReference() {
             }
 
@@ -73,11 +73,11 @@ public interface Tlhelp32 extends StdCallLibrary {
             }
         }
 
-        public PROCESSENTRY32W() {
+        public PROCESSENTRY32() {
             dwSize = new WinDef.DWORD(size());
         }
 
-        public PROCESSENTRY32W(Pointer memory) {
+        public PROCESSENTRY32(Pointer memory) {
             useMemory(memory);
             read();
         }
