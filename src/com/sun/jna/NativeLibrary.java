@@ -627,12 +627,12 @@ public class NativeLibrary {
             // Search first for an arch specific path if one exists, but always
             // include the generic paths if they exist.
             // NOTES (wmeissner):
-            // Some older linux amd64 distros did not have /usr/lib64, and 32bit
-            // distros only have /usr/lib.  FreeBSD also only has /usr/lib by
-            // default, with /usr/lib32 for 32bit compat.
-            // Solaris seems to have both, but defaults to 32bit userland even on
-            // 64bit machines, so we have to explicitly search the 64bit one when
-            // running a 64bit JVM.
+            // Some older linux amd64 distros did not have /usr/lib64, and
+            // 32bit distros only have /usr/lib.  FreeBSD also only has
+            // /usr/lib by default, with /usr/lib32 for 32bit compat. 
+            // Solaris seems to have both, but defaults to 32bit userland even
+            // on 64bit machines, so we have to explicitly search the 64bit
+            // one when running a 64bit JVM.
             //
             if (Platform.isLinux() || Platform.isSolaris() || Platform.isFreeBSD()) {
                 // Linux & FreeBSD use /usr/lib32, solaris uses /usr/lib/32
@@ -661,7 +661,7 @@ public class NativeLibrary {
                     cpu = (Platform.is64Bit() ? "powerpc64" : "powerpc");
                 } else if (Platform.isARM()) {
                     cpu = "arm";
-					libc = "gnueabi";
+                    libc = "gnueabi";
                 }
 
                 String multiArchPath =

@@ -100,9 +100,10 @@ public final class Platform {
     public static final boolean isIntel() {
         String arch =
             System.getProperty("os.arch").toLowerCase().trim();
-        if (arch.equals("i386") ||
-            arch.equals("x86_64") ||
-            arch.equals("amd64")) {
+        if (arch.equals("i386")
+            || arch.equals("x86")
+            || arch.equals("x86_64")
+            || arch.equals("amd64")) {
             return true;
         } else {
             return false;
@@ -112,8 +113,10 @@ public final class Platform {
     public static final boolean isPPC() {
         String arch =
             System.getProperty("os.arch").toLowerCase().trim();
-        if (arch.equals("ppc") ||
-            arch.equals("ppc64")) {
+        if (arch.equals("ppc")
+            || arch.equals("ppc64")
+            || arch.equals("powerpc")
+            || arch.equals("powerpc64")) {
             return true;
         } else {
             return false;

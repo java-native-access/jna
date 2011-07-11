@@ -4,6 +4,7 @@ Release 3.3.x
 Features
 --------
 * linux/ppc 32-bit support
+* linux multi-arch support (kohsuke)
 
 Bug Fixes
 --------
