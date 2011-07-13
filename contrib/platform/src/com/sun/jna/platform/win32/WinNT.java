@@ -1653,5 +1653,6 @@ public interface WinNT extends StdCallLibrary {
 	public static final int SE_PRIVILEGE_REMOVED = 0X00000004;
 	public static final int SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
-
+    int PROCESS_TERMINATE = 0x00000001;
+    int PROCESS_SYNCHRONIZE = 0x00100000;
 }

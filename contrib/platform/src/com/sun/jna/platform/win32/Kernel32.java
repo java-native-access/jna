@@ -38,9 +38,6 @@ public interface Kernel32 extends StdCallLibrary {
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, 
     		W32APIOptions.UNICODE_OPTIONS);
 
-    int PROCESS_TERMINATE = 0x00000001;
-    int PROCESS_SYNCHRONIZE = 0x00100000;
-
     /**
      * Frees the specified local memory object and invalidates its handle.
      * @param hLocal
@@ -317,18 +314,16 @@ public interface Kernel32 extends StdCallLibrary {
      * @param lpExistingFileName
      *   The name of an existing file.
      *
-     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
-     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
-     *   information, see Naming a File.
+     *   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+     *   the path. For more information, see Naming a File.
      *
      *   If lpExistingFileName does not exist, CopyFile fails, and GetLastError returns ERROR_FILE_NOT_FOUND.
      *
      * @param lpNewFileName
      *   The name of the new file.
      *
-     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
-     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
-     *   information, see Naming a File.
+     *   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+     *   the path. For more information, see Naming a File.
      * 
      * @param bFailIfExists
      *   If this parameter is TRUE and the new file specified by lpNewFileName already exists, the function fails. If
@@ -347,18 +342,16 @@ public interface Kernel32 extends StdCallLibrary {
      *
      *   The current name of the file or directory on the local computer.
      *
-     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
-     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
-     *   information, see Naming a File.
+     *   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+     *   the path. For more information, see Naming a File.
      *
      * @param lpNewFileName
      *
      *   The new name for the file or directory. The new name must not already exist. A new file may be on a different
      *   file system or drive. A new directory must be on the same drive.
      *
-     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
-     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
-     *   information, see Naming a File.
+     *   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+     *   the path. For more information, see Naming a File.
      *
      * @return
      *
@@ -378,9 +371,8 @@ public interface Kernel32 extends StdCallLibrary {
      *   If dwFlags specifies MOVEFILE_DELAY_UNTIL_REBOOT, the file cannot exist on a remote share, because delayed
      *   operations are performed before the network is available.
      *
-     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
-     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path. For more
-     *   information, see Naming a File
+     *   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+     *   the path. For more information, see Naming a File
      *
      *   Windows 2000:  If you prepend the file name with "\\?\", you cannot also specify the
      *   MOVEFILE_DELAY_UNTIL_REBOOT flag for dwFlags.
@@ -1074,8 +1066,8 @@ public interface Kernel32 extends StdCallLibrary {
      * @param lpFileName
      *   The name of the file whose attributes are to be set.
      *
-     *   In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this limit to
-     *   32,767 wide characters, call the Unicode version of the function and prepend "\\?\" to the path.
+     *   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+     *   the path.
      *
      * @param dwFileAttributes
      *   The file attributes to set for the file. This parameter can be one or more values, combined using the
@@ -1289,7 +1281,7 @@ public interface Kernel32 extends StdCallLibrary {
      *   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
      *   does not contain process information.
      */
-    boolean Process32FirstW(HANDLE hSnapshot, Tlhelp32.PROCESSENTRY32W.ByReference lppe);
+    boolean Process32First(HANDLE hSnapshot, Tlhelp32.PROCESSENTRY32.ByReference lppe);
 
     /**
      * Retrieves information about the next process recorded in a system snapshot.
@@ -1301,5 +1293,5 @@ public interface Kernel32 extends StdCallLibrary {
      *   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
      *   does not contain process information.
      */
-    boolean Process32NextW(HANDLE hSnapshot, Tlhelp32.PROCESSENTRY32W.ByReference lppe);
+    boolean Process32Next(HANDLE hSnapshot, Tlhelp32.PROCESSENTRY32.ByReference lppe);
 }

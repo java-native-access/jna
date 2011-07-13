@@ -11,7 +11,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
-import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -22,7 +21,7 @@ import com.sun.jna.win32.W32APIOptions;
 public interface Msi extends StdCallLibrary {
 
     Msi INSTANCE = (Msi)
-        Native.loadLibrary("msi", Msi.class, W32APIOptions.DEFAULT_OPTIONS);
+        Native.loadLibrary("msi", Msi.class, W32APIOptions.UNICODE_OPTIONS);
 
     /**
      * The component being requested is disabled on the computer.
@@ -128,7 +127,7 @@ public interface Msi extends StdCallLibrary {
      *   INSTALLSTATE_SOURCEABSENT - The component source is inaccessible.
      *   INSTALLSTATE_UNKNOWN - The product code or component ID is unknown.
      */
-    int MsiGetComponentPathW(WString szProduct, WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
+    int MsiGetComponentPath(String szProduct, String szComponent, char[] lpPathBuf, IntByReference pcchBuf);
 
     /**
      * The MsiLocateComponent function returns the full path to an installed component without a product code. This
@@ -162,7 +161,7 @@ public interface Msi extends StdCallLibrary {
      *   INSTALLSTATE_SOURCEABSENT - The component source is inaccessible.
      *   INSTALLSTATE_UNKNOWN - The product code or component ID is unknown.
      */
-    int MsiLocateComponentW(WString szComponent, char[] lpPathBuf, IntByReference pcchBuf);
+    int MsiLocateComponent(String szComponent, char[] lpPathBuf, IntByReference pcchBuf);
 
     /**
      * The MsiGetProductCode function returns the product code of an application by using the component code of an
@@ -184,7 +183,7 @@ public interface Msi extends StdCallLibrary {
      * ERROR_SUCCESS - The function completed successfully.
      * ERROR_UNKNOWN_COMPONENT - The specified component is unknown.
      */
-    int MsiGetProductCodeW(WString szComponent, char[] lpProductBuf);
+    int MsiGetProductCode(String szComponent, char[] lpProductBuf);
 
     /**
      * The MsiEnumComponents function enumerates the installed components for all products. This function retrieves one

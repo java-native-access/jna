@@ -30,6 +30,8 @@ Features
 * `platform.win32.Advapi32Util.registryCreateKey` returns `true` if key was created, `false` if it already exists.
 * Add `REG_BINARY`, `REG_EXPAND_SZ` and `REG_MULTI_SZ` support to `platform.win32.Advapi32Util` registry functions.
 * Reduce JNI crossings in a number of native methods, moving object creation out into pure Java code.
+* Add several functions to `platform.win32.Kernel32` and `platform.win32.User32`.
+* Added `platform.win32.Msi`, `platform.win32.SetupApi` and `platform.win32.Version`.
 
 Bug Fixes
 ---------
