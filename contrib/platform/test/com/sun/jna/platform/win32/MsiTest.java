@@ -10,7 +10,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 import junit.framework.TestCase;
 
@@ -33,7 +32,7 @@ public class MsiTest extends TestCase {
         String component = new String(componentBuffer).trim();
 
         char[] productBuffer = new char[40];
-        assertTrue(W32Errors.ERROR_SUCCESS == Msi.INSTANCE.MsiGetProductCodeW(new WString(component), productBuffer));
+        assertTrue(W32Errors.ERROR_SUCCESS == Msi.INSTANCE.MsiGetProductCode(component, productBuffer));
 
         String product = new String(productBuffer).trim();
         assertTrue(product.length() > 0);
@@ -46,7 +45,7 @@ public class MsiTest extends TestCase {
 
         char[] pathBuffer = new char[WinDef.MAX_PATH];
         IntByReference pathBufferSize = new IntByReference(pathBuffer.length);
-        Msi.INSTANCE.MsiLocateComponentW(new WString(component), pathBuffer, pathBufferSize);
+        Msi.INSTANCE.MsiLocateComponent(component, pathBuffer, pathBufferSize);
 
         String path = new String(pathBuffer, 0, pathBufferSize.getValue()).trim();
         assertTrue(path.length() > 0);
@@ -58,14 +57,14 @@ public class MsiTest extends TestCase {
         String component = new String(componentBuffer).trim();
 
         char[] productBuffer = new char[40];
-        assertTrue(W32Errors.ERROR_SUCCESS == Msi.INSTANCE.MsiGetProductCodeW(new WString(component), productBuffer));
+        assertTrue(W32Errors.ERROR_SUCCESS == Msi.INSTANCE.MsiGetProductCode(component, productBuffer));
 
         String product = new String(productBuffer).trim();
         assertTrue(product.length() > 0);
 
         char[] pathBuffer = new char[WinDef.MAX_PATH];
         IntByReference pathBufferSize = new IntByReference(pathBuffer.length);
-        Msi.INSTANCE.MsiGetComponentPathW(new WString(product), new WString(component), pathBuffer, pathBufferSize);
+        Msi.INSTANCE.MsiGetComponentPath(product, component, pathBuffer, pathBufferSize);
 
         String path = new String(pathBuffer, 0, pathBufferSize.getValue()).trim();
         assertTrue(path.length() > 0);
