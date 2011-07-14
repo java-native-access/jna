@@ -576,7 +576,19 @@ public final class Native {
         return buf;
     }
 
-    static String getNativeLibraryResourcePath(int osType, String arch, String name) {
+
+
+    /** Returns a string that can be used for platform-specific naming.
+     *  E.g,. resource prefix or lib-name suffix.
+     */
+    static String getPlatformName() {
+        String arch = System.getProperty("os.arch");
+        String name = System.getProperty("os.name");
+        int osType = Platform.getOSType();
+        return getPlatformName(osType, arch, name);
+    }
+
+    private static String getPlatformName(int osType, String arch, String name) {
         String osPrefix;
         arch = arch.toLowerCase();
         switch(osType) {
@@ -618,14 +630,37 @@ public final class Native {
             osPrefix += "-" + arch;
             break;
         }
-        return "/com/sun/jna/" + osPrefix;
+        return osPrefix;
+    }
+
+    static String getNativeLibraryResourcePath(int osType, String arch, String name) {
+        return "/com/sun/jna/" + getPlatformName(osType, arch, name);
     }
 
     /**
-     * Loads the JNA stub library.  It will first attempt to load this library
+     * Loads the JNA stub library.  It uses two passes, first with a
+     * platform-specific name of the library and then the standard name.
+     * This allows the same Java code to run on mixed-platform installations
+     * such as Windows 64-bit with WoW 32-bit support where the PATH cannot
+     * be changed for the hosting process or the JRE cannot be modified.
+     * For Windows platforms the files would be named:
+     * <ul>
+     * <li>jnidispatch-win32-x64.dll for 64-bit processes</li>
+     * <li>jnidispatch-win32-x86.dll for 32-bit processes</li>
+     * <ul>
+     * Both versions of the library could be placed safely
+     * in any directory in the PATH or and the correct DLL for the process
+     * architecture will be found in a 64-bit process or 32-bit.
+     *
+     * <p>
+     * For each pass, it will first attempt to load this library
      * from the directories specified in jna.boot.library.path.  If that fails,
-     * it will fallback to loading from the system library paths. Finally it will
-     * attempt to extract the stub library from from the JNA jar file, and load it.
+     * it will fall back to loading from the system library paths.
+     * </p>
+     * <p>
+     * Finally, if no library can be loaded, it will attempt to extract
+     * the stub library from the JNA jar file, and load it.
+     * </p>
      * <p>
      * The jna.boot.library.path property is mainly to support jna.jar being
      * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
@@ -636,43 +671,50 @@ public final class Native {
         removeTemporaryFiles();
 
         String libName = "jnidispatch";
+        String platform = getPlatformName();
+        String[] plibs = { libName + "-" + platform, libName };
         String bootPath = System.getProperty("jna.boot.library.path");
-        if (bootPath != null) {
-            String[] dirs = bootPath.split(File.pathSeparator);
-            for (int i = 0; i < dirs.length; ++i) {
-                String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
-                try {
-                    System.load(path);
-                    nativeLibraryPath = path;
-                    return;
-                } catch (UnsatisfiedLinkError ex) {
-                }
-                if (Platform.isMac()) {
-                    String orig, ext;
-                    if (path.endsWith("dylib")) {
-                        orig = "dylib";
-                        ext = "jnilib";
-                    } else {
-                        orig = "jnilib";
-                        ext = "dylib";
-                    }
+
+        // Try to load a platform-specific named version first
+        for( String plibname : plibs ) {
+            if (bootPath != null) {
+                String[] dirs = bootPath.split(File.pathSeparator);
+                for (int i = 0; i < dirs.length; ++i) {
+                    String path = new File(new File(dirs[i]), System.mapLibraryName(plibname)).getAbsolutePath();
                     try {
-                        path = path.substring(0, path.lastIndexOf(orig)) + ext;
                         System.load(path);
                         nativeLibraryPath = path;
                         return;
                     } catch (UnsatisfiedLinkError ex) {
                     }
+                    if (Platform.isMac()) {
+                        String orig, ext;
+                        if (path.endsWith("dylib")) {
+                            orig = "dylib";
+                            ext = "jnilib";
+                        } else {
+                            orig = "jnilib";
+                            ext = "dylib";
+                        }
+                        try {
+                            path = path.substring(0, path.lastIndexOf(orig)) + ext;
+                            System.load(path);
+                            nativeLibraryPath = path;
+                            return;
+                        } catch (UnsatisfiedLinkError ex) {
+                        }
+                    }
                 }
             }
+            try {
+                System.loadLibrary(plibname);
+                nativeLibraryPath = plibname;
+                return;
+            }
+            catch(UnsatisfiedLinkError e) {
+            }
         }
-        try {
-            System.loadLibrary(libName);
-            nativeLibraryPath = libName;
-        }
-        catch(UnsatisfiedLinkError e) {
-            loadNativeLibraryFromJar();
-        }
+        loadNativeLibraryFromJar();
     }
 
     /**
