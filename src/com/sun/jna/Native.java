@@ -638,8 +638,18 @@ public final class Native {
     }
 
     /**
-     * Loads the JNA stub library.  It uses two passes, first with a
-     * platform-specific name of the library and then the standard name.
+     * Loads the JNA stub library.  It will first attempt to load this library
+     * from the directories specified in jna.boot.library.path.  If that fails,
+     * it will fallback to loading from the system library paths. Finally it will
+     * attempt to extract the stub library from from the JNA jar file, and load it.
+
+     * The jna.boot.library.path property is mainly to support jna.jar being
+     * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
+     * are ignored.  It might also be useful in other situations.
+     * </p>
+     * <p>
+     * On Windows platforms, an attempt is made to load the library with a
+     * platform-specific name first and then the standard name from the PATH.
      * This allows the same Java code to run on mixed-platform installations
      * such as Windows 64-bit with WoW 32-bit support where the PATH cannot
      * be changed for the hosting process or the JRE cannot be modified.
@@ -650,68 +660,63 @@ public final class Native {
      * <ul>
      * Both versions of the library could be placed safely
      * in any directory in the PATH or and the correct DLL for the process
-     * architecture will be found in a 64-bit process or 32-bit.
-     *
+     * architecture will be found in a 64-bit process or 32-bit. This is
+     * especially useful in situations such as running in a .NET process
+     * via IKVM and you do not have control over the PATH or host process'
+     * configuration.
      * <p>
-     * For each pass, it will first attempt to load this library
-     * from the directories specified in jna.boot.library.path.  If that fails,
-     * it will fall back to loading from the system library paths.
-     * </p>
-     * <p>
-     * Finally, if no library can be loaded, it will attempt to extract
-     * the stub library from the JNA jar file, and load it.
-     * </p>
-     * <p>
-     * The jna.boot.library.path property is mainly to support jna.jar being
-     * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
-     * are ignored.  It might also be useful in other situations.
-     * </p>
      */
     private static void loadNativeLibrary() {
         removeTemporaryFiles();
 
         String libName = "jnidispatch";
-        String platform = getPlatformName();
-        String[] plibs = { libName + "-" + platform, libName };
         String bootPath = System.getProperty("jna.boot.library.path");
 
-        // Try to load a platform-specific named version first
-        for( String plibname : plibs ) {
-            if (bootPath != null) {
-                String[] dirs = bootPath.split(File.pathSeparator);
-                for (int i = 0; i < dirs.length; ++i) {
-                    String path = new File(new File(dirs[i]), System.mapLibraryName(plibname)).getAbsolutePath();
+        if (bootPath != null) {
+            String[] dirs = bootPath.split(File.pathSeparator);
+            for (int i = 0; i < dirs.length; ++i) {
+                String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
+                try {
+                    System.load(path);
+                    nativeLibraryPath = path;
+                    return;
+                } catch (UnsatisfiedLinkError ex) {
+                }
+                if (Platform.isMac()) {
+                    String orig, ext;
+                    if (path.endsWith("dylib")) {
+                        orig = "dylib";
+                        ext = "jnilib";
+                    } else {
+                        orig = "jnilib";
+                        ext = "dylib";
+                    }
                     try {
+                        path = path.substring(0, path.lastIndexOf(orig)) + ext;
                         System.load(path);
                         nativeLibraryPath = path;
                         return;
                     } catch (UnsatisfiedLinkError ex) {
                     }
-                    if (Platform.isMac()) {
-                        String orig, ext;
-                        if (path.endsWith("dylib")) {
-                            orig = "dylib";
-                            ext = "jnilib";
-                        } else {
-                            orig = "jnilib";
-                            ext = "dylib";
-                        }
-                        try {
-                            path = path.substring(0, path.lastIndexOf(orig)) + ext;
-                            System.load(path);
-                            nativeLibraryPath = path;
-                            return;
-                        } catch (UnsatisfiedLinkError ex) {
-                        }
-                    }
                 }
             }
+        }
+
+        String[] plibs = null;
+        if (Platform.isWindows()) {
+            // Try to load a platform-specific named version first
+            String platform = getPlatformName();
+            plibs = new String[]{ libName + "-" + platform, libName };
+        } else {
+           plibs = new String[]{ libName };
+        }
+
+        for (String plibname : plibs) {
             try {
                 System.loadLibrary(plibname);
                 nativeLibraryPath = plibname;
                 return;
-            }
-            catch(UnsatisfiedLinkError e) {
+            } catch(UnsatisfiedLinkError e) {
             }
         }
         loadNativeLibraryFromJar();
