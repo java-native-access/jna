@@ -156,6 +156,8 @@ public final class Native {
         if (flib.delete()) {
             nativeLibraryPath = null;
             unpacked = false;
+            File marker = new File(flib.getParentFile(), flib.getName() + ".x");
+            marker.delete();
             return true;
         }
 
