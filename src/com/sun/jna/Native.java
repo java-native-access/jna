@@ -771,6 +771,12 @@ public final class Native {
                 File dir = getTempDir();
                 lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
+                final File tmplib = lib;
+                Runtime.getRuntime().addShutdownHook(
+                  new Thread() {
+                     public void run() { markTemporaryFile( tmplib ); }
+                  }
+                );
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];
@@ -915,7 +921,9 @@ public final class Native {
         // deletion
         try {
             File marker = new File(file.getParentFile(), file.getName() + ".x");
-            marker.createNewFile();
+            if (!marker.exists()) {
+               marker.createNewFile();
+            }
         }
         catch(IOException e) { e.printStackTrace(); }
     }
