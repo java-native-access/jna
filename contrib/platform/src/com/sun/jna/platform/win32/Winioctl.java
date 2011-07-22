@@ -58,7 +58,7 @@ public interface Winioctl extends StdCallLibrary {
         public int DeviceNumber;
 
         /**
-         * The partition number of the device, if the device can be partitioned. Otherwise, this member is –1.
+         * The partition number of the device, if the device can be partitioned. Otherwise, this member is -1.
          */
         public int PartitionNumber;
     }
