@@ -156,6 +156,8 @@ public final class Native {
         if (flib.delete()) {
             nativeLibraryPath = null;
             unpacked = false;
+            File marker = new File(flib.getParentFile(), flib.getName() + ".x");
+            marker.delete();
             return true;
         }
 
@@ -576,7 +578,19 @@ public final class Native {
         return buf;
     }
 
-    static String getNativeLibraryResourcePath(int osType, String arch, String name) {
+
+
+    /** Returns a string that can be used for platform-specific naming.
+     *  E.g,. resource prefix or lib-name suffix.
+     */
+    static String getPlatformName() {
+        String arch = System.getProperty("os.arch");
+        String name = System.getProperty("os.name");
+        int osType = Platform.getOSType();
+        return getPlatformName(osType, arch, name);
+    }
+
+    private static String getPlatformName(int osType, String arch, String name) {
         String osPrefix;
         arch = arch.toLowerCase();
         switch(osType) {
@@ -618,7 +632,11 @@ public final class Native {
             osPrefix += "-" + arch;
             break;
         }
-        return "/com/sun/jna/" + osPrefix;
+        return osPrefix;
+    }
+
+    static String getNativeLibraryResourcePath(int osType, String arch, String name) {
+        return "/com/sun/jna/" + getPlatformName(osType, arch, name);
     }
 
     /**
@@ -626,17 +644,36 @@ public final class Native {
      * from the directories specified in jna.boot.library.path.  If that fails,
      * it will fallback to loading from the system library paths. Finally it will
      * attempt to extract the stub library from from the JNA jar file, and load it.
-     * <p>
+
      * The jna.boot.library.path property is mainly to support jna.jar being
      * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
      * are ignored.  It might also be useful in other situations.
      * </p>
+     * <p>
+     * On Windows platforms, an attempt is made to load the library with a
+     * platform-specific name first and then the standard name from the PATH.
+     * This allows the same Java code to run on mixed-platform installations
+     * such as Windows 64-bit with WoW 32-bit support where the PATH cannot
+     * be changed for the hosting process or the JRE cannot be modified.
+     * For Windows platforms the files would be named:
+     * <ul>
+     * <li>jnidispatch-win32-x64.dll for 64-bit processes</li>
+     * <li>jnidispatch-win32-x86.dll for 32-bit processes</li>
+     * <ul>
+     * Both versions of the library could be placed safely
+     * in any directory in the PATH or and the correct DLL for the process
+     * architecture will be found in a 64-bit process or 32-bit. This is
+     * especially useful in situations such as running in a .NET process
+     * via IKVM and you do not have control over the PATH or host process'
+     * configuration.
+     * <p>
      */
     private static void loadNativeLibrary() {
         removeTemporaryFiles();
 
         String libName = "jnidispatch";
         String bootPath = System.getProperty("jna.boot.library.path");
+
         if (bootPath != null) {
             String[] dirs = bootPath.split(File.pathSeparator);
             for (int i = 0; i < dirs.length; ++i) {
@@ -666,13 +703,25 @@ public final class Native {
                 }
             }
         }
-        try {
-            System.loadLibrary(libName);
-            nativeLibraryPath = libName;
+
+        String[] plibs = null;
+        if (Platform.isWindows()) {
+            // Try to load a platform-specific named version first
+            String platform = getPlatformName();
+            plibs = new String[]{ libName + "-" + platform, libName };
+        } else {
+           plibs = new String[]{ libName };
         }
-        catch(UnsatisfiedLinkError e) {
-            loadNativeLibraryFromJar();
+
+        for (String plibname : plibs) {
+            try {
+                System.loadLibrary(plibname);
+                nativeLibraryPath = plibname;
+                return;
+            } catch(UnsatisfiedLinkError e) {
+            }
         }
+        loadNativeLibraryFromJar();
     }
 
     /**
@@ -724,6 +773,12 @@ public final class Native {
                 File dir = getTempDir();
                 lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
+                final File tmplib = lib;
+                Runtime.getRuntime().addShutdownHook(
+                  new Thread() {
+                     public void run() { markTemporaryFile( tmplib ); }
+                  }
+                );
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];
@@ -868,7 +923,9 @@ public final class Native {
         // deletion
         try {
             File marker = new File(file.getParentFile(), file.getName() + ".x");
-            marker.createNewFile();
+            if (!marker.exists()) {
+               marker.createNewFile();
+            }
         }
         catch(IOException e) { e.printStackTrace(); }
     }
