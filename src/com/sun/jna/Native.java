@@ -156,6 +156,11 @@ public final class Native {
         if (flib.delete()) {
             nativeLibraryPath = null;
             unpacked = false;
+            // If finalization-on-exit is set, the marker file may have been
+            // created by the shutdown hook (MarkTemporaryFile) just prior
+            // to the finalization. Ensure the marker file is deleted.
+            File marker = new File(flib.getParentFile(), flib.getName() + ".x");
+            marker.delete();
             return true;
         }
 
@@ -771,12 +776,14 @@ public final class Native {
                 File dir = getTempDir();
                 lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
-                final File tmplib = lib;
-                Runtime.getRuntime().addShutdownHook(
-                  new Thread() {
-                     public void run() { markTemporaryFile( tmplib ); }
-                  }
-                );
+
+                // Ensure this file is marked for deletion on Windows.
+                ClassLoader cl = (com.sun.jna.Native.class).getClassLoader();
+                if (Platform.isWindows()
+                    && (cl == null || cl.equals(ClassLoader.getSystemClassLoader()))) {
+                    Runtime.getRuntime().addShutdownHook(new MarkTemporaryFile(lib));
+                }
+
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];
@@ -798,6 +805,33 @@ public final class Native {
         System.load(lib.getAbsolutePath());
         nativeLibraryPath = lib.getAbsolutePath();
     }
+
+    /**
+     * Helper class used in a shutdown hook to ensure that the temporary
+     * stub DLL is marked for deletion.  This is only called on Windows
+     * platforms and only creates the marker file if the temporary (DLL)
+     * exists when the shutdown hook runs.
+     */
+    public static class MarkTemporaryFile extends Thread
+    {
+        private File tlib;
+
+        public MarkTemporaryFile( File lib )
+        {
+            tlib = lib;
+        }
+
+        public void run() {
+            try {
+                if (tlib.exists()) {
+                   File marker = new File(tlib.getParentFile(), tlib.getName() + ".x");
+                   marker.createNewFile();
+                }
+            }
+            catch(IOException e) { e.printStackTrace(); }
+        }
+    }
+
 
     /**
      * Initialize field and method IDs for native methods of this class. 
@@ -921,9 +955,7 @@ public final class Native {
         // deletion
         try {
             File marker = new File(file.getParentFile(), file.getName() + ".x");
-            if (!marker.exists()) {
-               marker.createNewFile();
-            }
+            marker.createNewFile();
         }
         catch(IOException e) { e.printStackTrace(); }
     }
