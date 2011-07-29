@@ -156,6 +156,7 @@ public final class Native {
         if (flib.delete()) {
             nativeLibraryPath = null;
             unpacked = false;
+
             // If finalization-on-exit is set, the marker file may have been
             // created by the shutdown hook (MarkTemporaryFile) just prior
             // to the finalization. Ensure the marker file is deleted.
@@ -660,8 +661,8 @@ public final class Native {
      * be changed for the hosting process or the JRE cannot be modified.
      * For Windows platforms the files would be named:
      * <ul>
-     * <li>jnidispatch-win32-x64.dll for 64-bit processes</li>
      * <li>jnidispatch-win32-x86.dll for 32-bit processes</li>
+     * <li>jnidispatch-win32-amd64.dll for 64-bit processes</li>
      * <ul>
      * Both versions of the library could be placed safely
      * in any directory in the PATH or and the correct DLL for the process
