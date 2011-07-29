@@ -2,7 +2,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,7 +1,20 @@
+@@ -33,6 +33,19 @@
+ 
+ 	* configure: Regenerate.
+ 
 +2011-02-11  Anthony Green  <green@moxielogic.com>
 +
 +	From Tom Honermann <tom.honermann@oracle.com>:
@@ -16,6 +19,10 @@ Index: libffi/ChangeLog
 +
 +	* include/ffi.h.in (FFI_64_BIT_MAX): Define and use.
 +
+ 2011-02-09  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+ 
+ 	PR libffi/46661
+@@ -43,7 +56,7 @@
  2011-02-08  Rafael Avila de Espindola  <respindola@mozilla.com>
  
  	* configure.ac: Fix x86 test for pc related relocs.

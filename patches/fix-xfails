@@ -2,7 +2,8 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,6 +1,11 @@
+@@ -35,7 +35,12 @@
+ 
  2011-02-09  Anthony Green <green@moxielogic.com>
  
 -	* README: Mention ARM iOS.
@@ -15,7 +16,7 @@ Index: libffi/ChangeLog
  
  2011-02-09  Landon Fuller <landonf@macports.org>
  
-@@ -20,6 +25,7 @@
+@@ -55,6 +60,7 @@
  	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
  	* build-ios.sh: New file.
  	* fficonfig.h.in, configure, Makefile.in: Rebuilt.

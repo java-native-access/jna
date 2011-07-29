@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -123,6 +123,13 @@
+@@ -165,6 +165,13 @@
  	* testsuite/libffi.call/cls_longdouble.c: Likewise.
  	* testsuite/libffi.call/huge_struct.c: Likewise.
  
@@ -78,7 +78,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -486,7 +491,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -484,7 +489,7 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_24) $(am__append_25)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)

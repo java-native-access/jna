@@ -1,7 +1,42 @@
+2011-07-11  Andrew Haley  <aph@redhat.com>
+
+        * src/arm/ffi.c (FFI_INIT_TRAMPOLINE): Clear icache.
+
+2011-06-29  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	* testsuite/libffi.call/cls_double_va.c: Move PR number to comment.
+	* testsuite/libffi.call/cls_longdouble_va.c: Likewise.
+
+2011-06-29  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	PR libffi/46660
+	* testsuite/libffi.call/cls_double_va.c: xfail dg-output on
+	mips-sgi-irix6*.
+	* testsuite/libffi.call/cls_longdouble_va.c: Likewise.
+
+2011-06-14  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	* testsuite/libffi.call/huge_struct.c (test_large_fn): Use PRIu8,
+	PRId8 instead of %hhu, %hhd.
+	* testsuite/libffi.call/ffitest.h [__alpha__ && __osf__] (PRId8,
+	PRIu8): Define.
+	[__sgi__] (PRId8, PRIu8): Define.
+
+2011-04-29  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	* src/alpha/osf.S (UA_SI, FDE_ENCODING, FDE_ENCODE, FDE_ARANGE):
+	Define.
+	Use them to handle ELF vs. ECOFF differences.
+	[__osf__] (_GLOBAL__F_ffi_call_osf): Define.
+
 2011-02-15  Anthony Green  <green@moxielogic.com>
 
 	* m4/ax_cc_maxopt.m4: Don't -malign-double or use -ffast-math.
 	* configure: Rebuilt.
+
+2011-02-13  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* configure: Regenerate.
 
 2011-02-13  Anthony Green  <green@moxielogic.com>
 
@@ -96,10 +131,6 @@
 	* src/sparc/ffi.c (ffi_call): Make compatible with Solaris Studio
 	aggregate return ABI.
 
-2011-02-08  Ed  <ed@kdtc.net>
-
-	* src/powerpc/asm.h: Fix grammar nit in comment.
-
 2011-02-11  Anthony Green  <green@moxielogic.com>
 
 	From Tom Honermann <tom.honermann@oracle.com>:
@@ -109,9 +140,20 @@
 	instructions.
 	* src/powerpc/aix_closure.S: Declare .ffi_closure_helper_DARWIN.
 
+2011-02-08  Ed  <ed@kdtc.net>
+
+	* src/powerpc/asm.h: Fix grammar nit in comment.
+
 2011-02-08  Uli Link  <ul.mcamafia@linkitup.de>
 
 	* include/ffi.h.in (FFI_64_BIT_MAX): Define and use.
+
+2011-02-09  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
+
+	PR libffi/46661
+	* testsuite/libffi.call/cls_pointer.c (main): Cast void * to
+	uintptr_t first.
+	* testsuite/libffi.call/cls_pointer_stack.c (main): Likewise.
 
 2011-02-08  Rafael Avila de Espindola  <respindola@mozilla.com>
 
