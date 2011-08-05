@@ -12,14 +12,7 @@
  */
 package com.sun.jna.platform.unix;
 
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
-import com.sun.jna.Structure;
-import com.sun.jna.Union;
+import com.sun.jna.*;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
@@ -1768,6 +1761,18 @@ public interface X11 extends Library {
                   int width, int height);
     int XDestroyImage(XImage image);
 
+    /**
+     * Installs an error handler
+     *
+     * @param handler Specifies the program's supplied error handler
+     * @return The previous error handler
+     */
+    XErrorHandler XSetErrorHandler(XErrorHandler handler);
+
+    public interface XErrorHandler extends Callback {
+        public int apply(Display display, XErrorEvent errorEvent);
+    }
+
 
     /*****************************************************************
      * KeySyms, Keycodes, Keymaps
@@ -1777,6 +1782,33 @@ public interface X11 extends Library {
     KeySym XStringToKeysym(String string);
     byte XKeysymToKeycode(Display display, KeySym keysym);
     KeySym XKeycodeToKeysym(Display display, byte keycode, int index);
+
+    /**
+     * Establishes a passive grab on the keyboard
+     *
+     * @param display Specifies the connection to the X server.
+     * @param keyCode Specifies the KeyCode or {@link #AnyKey}.
+     * @param modifiers Specifies the set of keymasks or {@link #AnyModifier}.
+     *      The mask is the bitwise inclusive OR of the valid keymask bits.
+     * @param grab_window Specifies the grab window.
+     * @param ownerEvents Specifies a Boolean value that indicates whether the keyboard events are to be reported as usual.
+     * @param pointerMode Specifies further processing of pointer events. You can pass {@link #GrabModeSync} or {@link #GrabModeAsync}.
+     * @param keyBoardMode Specifies further processing of keyboard events. You can pass {@link #GrabModeSync} or {@link #GrabModeAsync}.
+     * @return nothing
+     */
+    int XGrabKey(Display display, int keyCode, int modifiers, Window grab_window, int ownerEvents, int pointerMode, int keyBoardMode);
+
+    /**
+     * The XUngrabKey() function releases the key combination on the specified window if it was grabbed by this client.
+     *
+     * @param display Specifies the connection to the X server.
+     * @param keyCode Specifies the KeyCode or {@link #AnyKey}.
+     * @param modifiers Specifies the set of keymasks or {@link #AnyModifier}.
+     *      The mask is the bitwise inclusive OR of the valid keymask bits
+     * @param grab_window Specifies the grab window.
+     * @return nothing
+     */
+    int XUngrabKey(Display display, int keyCode, int modifiers, Window grab_window);
 
     //int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym *keysyms, int num_codes);
     /** Defines the symbols for the specified number of KeyCodes starting with first_keycode. The symbols for KeyCodes outside this range remain unchanged. The number of elements in keysyms must be: num_codes * keysyms_per_keycode. The specified first_keycode must be greater than or equal to min_keycode returned by XDisplayKeycodes, or a BadValue error results. In addition, the following expression must be less than or equal to max_keycode as returned by XDisplayKeycodes, or a BadValue error results: first_keycode + num_codes - 1. */

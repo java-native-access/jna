@@ -177,6 +177,12 @@ public interface WinUser extends StdCallLibrary {
     public int VK_LMENU = 0xA4;
     public int VK_RMENU = 0xA5;
 
+    public int MOD_ALT = 0x0001;
+    public int MOD_CONTROL = 0x0002;
+    public int MOD_NOREPEAT = 0x4000;
+    public int MOD_SHIFT = 0x0004;
+    public int MOD_WIN = 0x0008;
+
     public int WH_KEYBOARD = 2;
     public int WH_MOUSE = 7;
     public int WH_KEYBOARD_LL = 13;
@@ -241,6 +247,12 @@ public interface WinUser extends StdCallLibrary {
      * an MDI child window.
      */
     int WM_MDIMAXIMIZE = 0x0225;
+
+    /**
+     * Posted when the user presses a hot key registered by the RegisterHotKey function.
+     * The message is placed at the top of the message queue associated with the thread that registered the hot key.
+     */
+    public int WM_HOTKEY = 0x0312;
 
     public int WM_KEYUP = 257;
     public int WM_SYSKEYDOWN = 260;

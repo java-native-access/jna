@@ -5,6 +5,13 @@ Features
 --------
 * linux/ppc 32-bit support
 * linux multi-arch support (kohsuke)
+* Add `platform.win32.Kernel32.CopyFile`, `platform.win32.Kernel32.MoveFile`, `platform.win32.Kernel32.MoveFileEx`, `platform.win32.Kernel32.CreateProcess`, `platform.win32.Kernel32.SetEnvironmentVariables`, `platform.win32.Kernel32.GetFileTime`, `platform.win32.Kernel32.SetFileTime`, `platform.win32.Kernel32.SetFileAttributes`, `platform.win32.Kernel32.DeviceIoControl`, `platform.win32.Kernel32.GetDiskFreeSpaceEx`, `platform.win32.Kernel32.CreateToolhelp32Snapshot`, `platform.win32.Kernel32.Process32First`, `platform.win32.Kernel32.Process32Next`.
+* Add `platform.win32.Msi.MsiGetComponentPath`, `platform.win32.Msi.MsiLocateComponent`, `platform.win32.Msi.MsiGetProductCode`, `platform.win32.Msi.MsiEnumComponents`.
+* Add `platform.win32.User32.RegisterHotKey`, `platform.win32.User32.UnregisterHotKey`, `platform.unix.x11.XGRabKey`, `platform.unix.x11.XUngrabKey`, `platform.unix.x11.XSetErrorHandler`, `platform.mac.Carbon.GetEventDispatcherTarget`, `platform.mac.Carbon.InstallEventHandler`, `platform.mac.Carbon.RegisterEventHotKey`, `platform.mac.Carbon.GetEventParameter`, `platform.mac.Carbon.RemoveEventHandler`, `platform.mac.Carbon.UnregisterEventHotKey`
+* Add `platform.win32.SetupApi.SetupDiGetClassDevs`, `platform.win32.SetupApi.SetupDiDestroyDeviceInfoList`, `platform.win32.SetupApi.SetupDiEnumDeviceInterfaces`, `platform.win32.SetupApi.SetupDiGetDeviceInterfaceDetail`, `platform.win32.SetupApi.SetupDiGetDeviceRegistryProperty`.
+* Add `platform.win32.Shell32.ShellExecute`.
+* Add `platform.win32.User32.SetParent`, `platform.win32.User32.IsWindowVisible`, `platform.win32.User32.MoveWindow`, `platform.win32.User32.SetWindowPos`, `platform.win32.User32.AttachInputThread`, `platform.win32.User32.SetForegroundWindow`, `platform.win32.User32.GetForegroundWindow`, `platform.win32.User32.SetFocus`, `platform.win32.User32.SendInput`, `platform.win32.User32.WaitForInputIdle`, `platform.win32.User32.InvalidateRect`, `platform.win32.User32.RedrawWindow`, `platform.win32.User32.GetWindow`, `platform.win32.User32.UpdateWindow`, `platform.win32.User32.ShowWindow`, `platform.win32.User32.CloseWindow`.
+* Add `platform.win32.Version.GetFileVersionInfoSize`, `platform.win32.Version.GetFileVersionInfo`, `platform.win32.Version.VerQueryValue`.
 
 Bug Fixes
 --------
@@ -30,8 +37,6 @@ Features
 * `platform.win32.Advapi32Util.registryCreateKey` returns `true` if key was created, `false` if it already exists.
 * Add `REG_BINARY`, `REG_EXPAND_SZ` and `REG_MULTI_SZ` support to `platform.win32.Advapi32Util` registry functions.
 * Reduce JNI crossings in a number of native methods, moving object creation out into pure Java code.
-* Add several functions to `platform.win32.Kernel32` and `platform.win32.User32`.
-* Added `platform.win32.Msi`, `platform.win32.SetupApi` and `platform.win32.Version`.
 
 Bug Fixes
 ---------

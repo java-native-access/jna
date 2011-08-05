@@ -1,0 +1,2611 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Kernel32 (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Kernel32 (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.ByReference.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Kernel32.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Kernel32.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface Kernel32</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Kernel32</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+Definition (incomplete) of <code>kernel32.dll</code>.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.platform.win32">Kernel32.OVERLAPPED_COMPLETION_ROUTINE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#INSTANCE">INSTANCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)">CloseHandle</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hObject)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The CloseHandle function closes an open object handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CopyFile(java.lang.String, java.lang.String, boolean)">CopyFile</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpExistingFileName,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpNewFileName,
+         boolean&nbsp;bFailIfExists)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies an existing file to a new file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreateDirectory(java.lang.String, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES)">CreateDirectory</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpPathName,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpSecurityAttributes)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The CreateDirectory function creates a new directory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreateEvent(com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, boolean, boolean, java.lang.String)">CreateEvent</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpEventAttributes,
+            boolean&nbsp;bManualReset,
+            boolean&nbsp;bInitialState,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates or opens a named or unnamed event object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreateFile(java.lang.String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)">CreateFile</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName,
+           int&nbsp;dwDesiredAccess,
+           int&nbsp;dwShareMode,
+           <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpSecurityAttributes,
+           int&nbsp;dwCreationDisposition,
+           int&nbsp;dwFlagsAndAttributes,
+           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hTemplateFile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The CreateFile function creates or opens a file, file stream, directory, physical
+ disk, volume, console buffer, tape drive, communications resource, mailslot, or 
+ named pipe.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreateFileMapping(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, int, java.lang.String)">CreateFileMapping</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+                  <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpAttributes,
+                  int&nbsp;flProtect,
+                  int&nbsp;dwMaximumSizeHigh,
+                  int&nbsp;dwMaximumSizeLow,
+                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates or opens a named or unnamed file mapping object for a specified file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreateIoCompletionPort(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.Pointer, int)">CreateIoCompletionPort</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;FileHandle,
+                       <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ExistingCompletionPort,
+                       <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;CompletionKey,
+                       int&nbsp;NumberOfConcurrentThreads)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an input/output (I/O) completion port and associates it with a specified
+ file handle, or creates an I/O completion port that is not yet associated with a
+ file handle, allowing association at a later time.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreatePipe(com.sun.jna.platform.win32.WinNT.HANDLEByReference, com.sun.jna.platform.win32.WinNT.HANDLEByReference, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int)">CreatePipe</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;hReadPipe,
+           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;hWritePipe,
+           <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpPipeAttributes,
+           int&nbsp;nSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an anonymous pipe, and returns handles to the read and write ends of the pipe.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreateProcess(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, boolean, com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.Pointer, java.lang.String, com.sun.jna.platform.win32.WinBase.STARTUPINFO, com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION.ByReference)">CreateProcess</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpApplicationName,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCommandLine,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpProcessAttributes,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpThreadAttributes,
+              boolean&nbsp;bInheritHandles,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwCreationFlags,
+              <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpEnvironment,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCurrentDirectory,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" title="class in com.sun.jna.platform.win32">WinBase.STARTUPINFO</A>&nbsp;lpStartupInfo,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.PROCESS_INFORMATION.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.PROCESS_INFORMATION.ByReference</A>&nbsp;lpProcessInformation)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new process and its primary thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CreateToolhelp32Snapshot(com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.platform.win32.WinDef.DWORD)">CreateToolhelp32Snapshot</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwFlags,
+                         <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;th32ProcessID)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Takes a snapshot of the specified processes, as well as the heaps, modules, and threads used by these processes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#DeleteFile(java.lang.String)">DeleteFile</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;filename)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Deletes an existing file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#DeviceIoControl(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.Pointer, int, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)">DeviceIoControl</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hDevice,
+                int&nbsp;dwIoControlCode,
+                <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpInBuffer,
+                int&nbsp;nInBufferSize,
+                <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpOutBuffer,
+                int&nbsp;nOutBufferSize,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpBytesReturned,
+                <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpOverlapped)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sends a control code directly to a specified device driver, causing the corresponding device to perform the
+ corresponding operation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#DuplicateHandle(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLEByReference, int, boolean, int)">DuplicateHandle</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSourceProcessHandle,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSourceHandle,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hTargetProcessHandle,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;lpTargetHandle,
+                int&nbsp;dwDesiredAccess,
+                boolean&nbsp;bInheritHandle,
+                int&nbsp;dwOptions)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The DuplicateHandle function duplicates an object handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#FormatMessage(int, com.sun.jna.Pointer, int, int, java.nio.Buffer, int, com.sun.jna.Pointer)">FormatMessage</A></B>(int&nbsp;dwFlags,
+              <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpSource,
+              int&nbsp;dwMessageId,
+              int&nbsp;dwLanguageId,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio">Buffer</A>&nbsp;lpBuffer,
+              int&nbsp;nSize,
+              <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;va_list)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The FormatMessage function formats a message string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#FormatMessage(int, com.sun.jna.Pointer, int, int, com.sun.jna.ptr.PointerByReference, int, com.sun.jna.Pointer)">FormatMessage</A></B>(int&nbsp;dwFlags,
+              <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpSource,
+              int&nbsp;dwMessageId,
+              int&nbsp;dwLanguageId,
+              <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;lpBuffer,
+              int&nbsp;nSize,
+              <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;va_list)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The FormatMessage function formats a message string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetComputerName(char[], com.sun.jna.ptr.IntByReference)">GetComputerName</A></B>(char[]&nbsp;buffer,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpnSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves only the NetBIOS name of the local computer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetCurrentProcess()">GetCurrentProcess</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function returns a pseudohandle for the current process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetCurrentProcessId()">GetCurrentProcessId</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function returns the process identifier of the calling process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetCurrentThread()">GetCurrentThread</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetCurrentThread function retrieves a pseudo handle for the current thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetCurrentThreadId()">GetCurrentThreadId</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetCurrentThreadId function retrieves the thread identifier of the calling thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetDiskFreeSpaceEx(java.lang.String, com.sun.jna.ptr.LongByReference, com.sun.jna.ptr.LongByReference, com.sun.jna.ptr.LongByReference)">GetDiskFreeSpaceEx</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpDirectoryName,
+                   <A HREF="../../../../../com/sun/jna/ptr/LongByReference.html" title="class in com.sun.jna.ptr">LongByReference</A>&nbsp;lpFreeBytesAvailable,
+                   <A HREF="../../../../../com/sun/jna/ptr/LongByReference.html" title="class in com.sun.jna.ptr">LongByReference</A>&nbsp;lpTotalNumberOfBytes,
+                   <A HREF="../../../../../com/sun/jna/ptr/LongByReference.html" title="class in com.sun.jna.ptr">LongByReference</A>&nbsp;lpTotalNumberOfFreeBytes)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves information about the amount of space that is available on a disk volume, which is the total amount of 
+ space, the total amount of free space, and the total amount of free space available to the user that is 
+ associated with the calling thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetDiskFreeSpaceEx(java.lang.String, com.sun.jna.platform.win32.WinNT.LARGE_INTEGER.ByReference, com.sun.jna.platform.win32.WinNT.LARGE_INTEGER.ByReference, com.sun.jna.platform.win32.WinNT.LARGE_INTEGER.ByReference)">GetDiskFreeSpaceEx</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpDirectoryName,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.ByReference</A>&nbsp;lpFreeBytesAvailable,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.ByReference</A>&nbsp;lpTotalNumberOfBytes,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.ByReference</A>&nbsp;lpTotalNumberOfFreeBytes)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetDiskFreeSpaceEx function retrieves information about the amount of space that is 
+ available on a disk volume, which is the total amount of space, the total amount of free 
+ space, and the total amount of free space available to the user that is associated with 
+ the calling thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetDriveType(java.lang.String)">GetDriveType</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpRootPathName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetDriveType function determines whether a disk drive is a removable,
+ fixed, CD-ROM, RAM disk, or network drive.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetExitCodeProcess(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)">GetExitCodeProcess</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+                   <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpExitCode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the termination status of the specified process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetFileAttributes(java.lang.String)">GetFileAttributes</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves file system attributes for a specified file or directory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetFileTime(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.FILETIME.ByReference, com.sun.jna.platform.win32.WinBase.FILETIME.ByReference, com.sun.jna.platform.win32.WinBase.FILETIME.ByReference)">GetFileTime</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME.ByReference</A>&nbsp;lpCreationTime,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME.ByReference</A>&nbsp;lpLastAccessTime,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME.ByReference</A>&nbsp;lpLastWriteTime)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the date and time that a file or directory was created, last accessed, and last modified.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetLastError()">GetLastError</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetLastError function retrieves the calling thread's last-error code value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetLogicalDriveStrings(com.sun.jna.platform.win32.WinDef.DWORD, char[])">GetLogicalDriveStrings</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;nBufferLength,
+                       char[]&nbsp;lpBuffer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetLogicalDriveStrings function fills a buffer with strings that specify 
+ valid drives in the system.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMODULE.html" title="class in com.sun.jna.platform.win32">WinDef.HMODULE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetModuleHandle(java.lang.String)">GetModuleHandle</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetModuleHandle function retrieves a module handle for the specified module 
+ if the file has been mapped into the address space of the calling process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetNativeSystemInfo(com.sun.jna.platform.win32.WinBase.SYSTEM_INFO)">GetNativeSystemInfo</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO</A>&nbsp;lpSystemInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetNativeSystemInfo function retrieves information about the current system to an 
+ application running under WOW64.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetProcessId(com.sun.jna.platform.win32.WinNT.HANDLE)">GetProcessId</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;process)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetProcessId function retrieves the process identifier of the 
+ specified process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetProcessVersion(int)">GetProcessVersion</A></B>(int&nbsp;processId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetProcessVersion function retrieves the major and minor version numbers of the system 
+ on which the specified process expects to run.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetQueuedCompletionStatus(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.ByReference, com.sun.jna.ptr.PointerByReference, int)">GetQueuedCompletionStatus</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;CompletionPort,
+                          <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpNumberOfBytes,
+                          <A HREF="../../../../../com/sun/jna/ptr/ByReference.html" title="class in com.sun.jna.ptr">ByReference</A>&nbsp;lpCompletionKey,
+                          <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;lpOverlapped,
+                          int&nbsp;dwMilliseconds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attempts to dequeue an I/O completion packet from the specified I/O completion 
+ port.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetShortPathName(java.lang.String, char[], int)">GetShortPathName</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszLongPath,
+                 char[]&nbsp;lpdzShortPath,
+                 int&nbsp;cchBuffer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the short path form of the specified path.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetSystemInfo(com.sun.jna.platform.win32.WinBase.SYSTEM_INFO)">GetSystemInfo</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO</A>&nbsp;lpSystemInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetSystemInfo function returns information about the current system.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetSystemTime(com.sun.jna.platform.win32.WinBase.SYSTEMTIME)">GetSystemTime</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEMTIME.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEMTIME</A>&nbsp;lpSystemTime)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetSystemTime function retrieves the current system date and time.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetTempPath(com.sun.jna.platform.win32.WinDef.DWORD, char[])">GetTempPath</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;nBufferLength,
+            char[]&nbsp;buffer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetTempPath function retrieves the path of the directory designated 
+ for temporary files.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetTickCount()">GetTickCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetTickCount function retrieves the number of milliseconds that have elapsed since the system was started, up to 49.7 days.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetVersion()">GetVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetVersion function returns the current version number of the operating system.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetVersionEx(com.sun.jna.platform.win32.WinNT.OSVERSIONINFO)">GetVersionEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFO.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFO</A>&nbsp;lpVersionInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetVersionEx function obtains extended information about the version of the operating 
+ system that is currently running.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetVersionEx(com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX)">GetVersionEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFOEX.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFOEX</A>&nbsp;lpVersionInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetVersionEx function obtains extended information about the version of the operating 
+ system that is currently running.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GlobalFree(com.sun.jna.Pointer)">GlobalFree</A></B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;hGlobal)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frees the specified global memory object and invalidates its handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#GlobalMemoryStatusEx(com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX)">GlobalMemoryStatusEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.MEMORYSTATUSEX.html" title="class in com.sun.jna.platform.win32">WinBase.MEMORYSTATUSEX</A>&nbsp;lpBuffer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves information about the system's current usage of both physical and virtual memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#IsWow64Process(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)">IsWow64Process</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+               <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;Wow64Process)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The IsWow64Process function determines whether the specified process is running under WOW64.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#LocalAlloc(int, int)">LocalAlloc</A></B>(int&nbsp;type,
+           int&nbsp;cbInput)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The LocalAlloc function allocates the specified number of bytes from the heap.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#LocalFree(com.sun.jna.Pointer)">LocalFree</A></B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;hLocal)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frees the specified local memory object and invalidates its handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#MapViewOfFile(com.sun.jna.platform.win32.WinNT.HANDLE, int, int, int, int)">MapViewOfFile</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFileMappingObject,
+              int&nbsp;dwDesiredAccess,
+              int&nbsp;dwFileOffsetHigh,
+              int&nbsp;dwFileOffsetLow,
+              int&nbsp;dwNumberOfBytesToMap)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maps a view of a file mapping into the address space of a calling process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#MoveFile(java.lang.String, java.lang.String)">MoveFile</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpExistingFileName,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpNewFileName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Moves an existing file or a directory, including its children.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#MoveFileEx(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinDef.DWORD)">MoveFileEx</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpExistingFileName,
+           <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpNewFileName,
+           <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Moves an existing file or directory, including its children, with various move options.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#OpenProcess(int, boolean, int)">OpenProcess</A></B>(int&nbsp;fdwAccess,
+            boolean&nbsp;fInherit,
+            int&nbsp;IDProcess)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function returns a handle to an existing process object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#OpenThread(int, boolean, int)">OpenThread</A></B>(int&nbsp;dwDesiredAccess,
+           boolean&nbsp;bInheritHandle,
+           int&nbsp;dwThreadId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The OpenThread function opens an existing thread object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#PostQueuedCompletionStatus(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.Pointer, com.sun.jna.platform.win32.WinBase.OVERLAPPED)">PostQueuedCompletionStatus</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;CompletionPort,
+                           int&nbsp;dwNumberOfBytesTransferred,
+                           <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;dwCompletionKey,
+                           <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;lpOverlapped)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts an I/O completion packet to an I/O completion port.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#Process32First(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.Tlhelp32.PROCESSENTRY32.ByReference)">Process32First</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSnapshot,
+               <A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.ByReference.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32.ByReference</A>&nbsp;lppe)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves information about the first process encountered in a system snapshot.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#Process32Next(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.Tlhelp32.PROCESSENTRY32.ByReference)">Process32Next</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSnapshot,
+              <A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.ByReference.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32.ByReference</A>&nbsp;lppe)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves information about the next process recorded in a system snapshot.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#PulseEvent(com.sun.jna.platform.win32.WinNT.HANDLE)">PulseEvent</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEvent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the specified event object to the signaled state and then resets it to the nonsignaled 
+ state after releasing the appropriate number of waiting threads.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#ReadDirectoryChangesW(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.FILE_NOTIFY_INFORMATION, int, boolean, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED, com.sun.jna.platform.win32.Kernel32.OVERLAPPED_COMPLETION_ROUTINE)">ReadDirectoryChangesW</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;directory,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.FILE_NOTIFY_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinNT.FILE_NOTIFY_INFORMATION</A>&nbsp;info,
+                      int&nbsp;length,
+                      boolean&nbsp;watchSubtree,
+                      int&nbsp;notifyFilter,
+                      <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;bytesReturned,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;overlapped,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.platform.win32">Kernel32.OVERLAPPED_COMPLETION_ROUTINE</A>&nbsp;completionRoutine)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves information that describes the changes within the specified directory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#ReadFile(com.sun.jna.platform.win32.WinNT.HANDLE, java.nio.Buffer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)">ReadFile</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio">Buffer</A>&nbsp;lpBuffer,
+         int&nbsp;nNumberOfBytesToRead,
+         <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpNumberOfBytesRead,
+         <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;lpOverlapped)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads data from the specified file or input/output (I/O) device.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#SetEnvironmentVariable(java.lang.String, java.lang.String)">SetEnvironmentVariable</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName,
+                       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SetEnvironmentVariable function sets the contents of the specified environment
+ variable for the current process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#SetEvent(com.sun.jna.platform.win32.WinNT.HANDLE)">SetEvent</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEvent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the specified event object to the signaled state.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#SetFileAttributes(java.lang.String, com.sun.jna.platform.win32.WinDef.DWORD)">SetFileAttributes</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName,
+                  <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwFileAttributes)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the attributes for a file or directory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#SetFileTime(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.FILETIME, com.sun.jna.platform.win32.WinBase.FILETIME, com.sun.jna.platform.win32.WinBase.FILETIME)">SetFileTime</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpCreationTime,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpLastAccessTime,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpLastWriteTime)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the date and time that the specified file or directory was created, last accessed, or last modified.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#SetHandleInformation(com.sun.jna.platform.win32.WinNT.HANDLE, int, int)">SetHandleInformation</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hObject,
+                     int&nbsp;dwMask,
+                     int&nbsp;dwFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets certain properties of an object handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#SetLastError(int)">SetLastError</A></B>(int&nbsp;dwErrCode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SetLastError function sets the last-error code for the calling thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#TerminateProcess(com.sun.jna.platform.win32.WinNT.HANDLE, int)">TerminateProcess</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+                 int&nbsp;uExitCode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Terminates the specified process and all of its threads.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#UnmapViewOfFile(com.sun.jna.Pointer)">UnmapViewOfFile</A></B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpBaseAddress)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unmaps a mapped view of a file from the calling process's address space.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#WaitForMultipleObjects(int, com.sun.jna.platform.win32.WinNT.HANDLE[], boolean, int)">WaitForMultipleObjects</A></B>(int&nbsp;nCount,
+                       <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>[]&nbsp;hHandle,
+                       boolean&nbsp;bWaitAll,
+                       int&nbsp;dwMilliseconds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Waits until one or all of the specified objects are in the signaled state or the time-out interval elapses.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#WaitForSingleObject(com.sun.jna.platform.win32.WinNT.HANDLE, int)">WaitForSingleObject</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hHandle,
+                    int&nbsp;dwMilliseconds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Waits until the specified object is in the signaled state or the time-out interval elapses.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#WriteFile(com.sun.jna.platform.win32.WinNT.HANDLE, byte[], int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)">WriteFile</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+          byte[]&nbsp;lpBuffer,
+          int&nbsp;nNumberOfBytesToWrite,
+          <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpNumberOfBytesWritten,
+          <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;lpOverlapped)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes data to the specified file or input/output (I/O) device.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="INSTANCE"><!-- --></A><H3>
+INSTANCE</H3>
+<PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A> <B>INSTANCE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="LocalFree(com.sun.jna.Pointer)"><!-- --></A><H3>
+LocalFree</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>LocalFree</B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;hLocal)</PRE>
+<DL>
+<DD>Frees the specified local memory object and invalidates its handle.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hLocal</CODE> - A handle to the local memory object.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is NULL.
+        If the function fails, the return value is equal to a handle to the local memory object.
+  To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GlobalFree(com.sun.jna.Pointer)"><!-- --></A><H3>
+GlobalFree</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>GlobalFree</B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;hGlobal)</PRE>
+<DL>
+<DD>Frees the specified global memory object and invalidates its handle.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hGlobal</CODE> - A handle to the global memory object.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is NULL
+        If the function fails, the return value is equal to a handle to the global memory object.
+  To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetModuleHandle(java.lang.String)"><!-- --></A><H3>
+GetModuleHandle</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMODULE.html" title="class in com.sun.jna.platform.win32">WinDef.HMODULE</A> <B>GetModuleHandle</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</PRE>
+<DL>
+<DD>The GetModuleHandle function retrieves a module handle for the specified module 
+ if the file has been mapped into the address space of the calling process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - Pointer to a null-terminated string that contains the name of the module 
+  (either a .dll or .exe file).
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the specified module. 
+  If the function fails, the return value is NULL. To get extended error 
+  information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetSystemTime(com.sun.jna.platform.win32.WinBase.SYSTEMTIME)"><!-- --></A><H3>
+GetSystemTime</H3>
+<PRE>
+void <B>GetSystemTime</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEMTIME.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEMTIME</A>&nbsp;lpSystemTime)</PRE>
+<DL>
+<DD>The GetSystemTime function retrieves the current system date and time. 
+ The system time is expressed in Coordinated Universal Time (UTC).
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemTime</CODE> - Pointer to a SYSTEMTIME structure to receive the current system date and time.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetTickCount()"><!-- --></A><H3>
+GetTickCount</H3>
+<PRE>
+int <B>GetTickCount</B>()</PRE>
+<DL>
+<DD>The GetTickCount function retrieves the number of milliseconds that have elapsed since the system was started, up to 49.7 days.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Number of milliseconds that have elapsed since the system was started.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetCurrentThreadId()"><!-- --></A><H3>
+GetCurrentThreadId</H3>
+<PRE>
+int <B>GetCurrentThreadId</B>()</PRE>
+<DL>
+<DD>The GetCurrentThreadId function retrieves the thread identifier of the calling thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The return value is the thread identifier of the calling thread.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetCurrentThread()"><!-- --></A><H3>
+GetCurrentThread</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>GetCurrentThread</B>()</PRE>
+<DL>
+<DD>The GetCurrentThread function retrieves a pseudo handle for the current thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The return value is a pseudo handle for the current thread.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetCurrentProcessId()"><!-- --></A><H3>
+GetCurrentProcessId</H3>
+<PRE>
+int <B>GetCurrentProcessId</B>()</PRE>
+<DL>
+<DD>This function returns the process identifier of the calling process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The return value is the process identifier of the calling process.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetCurrentProcess()"><!-- --></A><H3>
+GetCurrentProcess</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>GetCurrentProcess</B>()</PRE>
+<DL>
+<DD>This function returns a pseudohandle for the current process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The return value is a pseudohandle to the current process.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetProcessId(com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+GetProcessId</H3>
+<PRE>
+int <B>GetProcessId</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;process)</PRE>
+<DL>
+<DD>The GetProcessId function retrieves the process identifier of the 
+ specified process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>process</CODE> - Handle to the process. The handle must have the PROCESS_QUERY_INFORMATION access right.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the process identifier of the 
+  specified process. If the function fails, the return value is zero. To get
+  extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetProcessVersion(int)"><!-- --></A><H3>
+GetProcessVersion</H3>
+<PRE>
+int <B>GetProcessVersion</B>(int&nbsp;processId)</PRE>
+<DL>
+<DD>The GetProcessVersion function retrieves the major and minor version numbers of the system 
+ on which the specified process expects to run.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>processId</CODE> - Process identifier of the process of interest. A value of zero specifies the 
+  calling process.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the version of the system on 
+  which the process expects to run. The high word of the return value contains 
+  the major version number. The low word of the return value contains the minor
+  version number. If the function fails, the return value is zero. To get extended
+  error information, call GetLastError. The function fails if ProcessId is an 
+  invalid value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetExitCodeProcess(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetExitCodeProcess</H3>
+<PRE>
+boolean <B>GetExitCodeProcess</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+                           <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpExitCode)</PRE>
+<DL>
+<DD>Retrieves the termination status of the specified process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hProcess</CODE> - A handle to the process.<DD><CODE>lpExitCode</CODE> - A pointer to a variable to receive the process termination status.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+ 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="TerminateProcess(com.sun.jna.platform.win32.WinNT.HANDLE, int)"><!-- --></A><H3>
+TerminateProcess</H3>
+<PRE>
+boolean <B>TerminateProcess</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+                         int&nbsp;uExitCode)</PRE>
+<DL>
+<DD>Terminates the specified process and all of its threads.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hProcess</CODE> - A handle to the process to be terminated.<DD><CODE>uExitCode</CODE> - The exit code to be used by the process and threads
+  terminated as a result of this call.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+ 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetLastError()"><!-- --></A><H3>
+GetLastError</H3>
+<PRE>
+int <B>GetLastError</B>()</PRE>
+<DL>
+<DD>The GetLastError function retrieves the calling thread's last-error code value.
+ The last-error code is maintained on a per-thread basis. Multiple threads do not
+ overwrite each other's last-error code.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The return value is the calling thread's last-error code value.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetLastError(int)"><!-- --></A><H3>
+SetLastError</H3>
+<PRE>
+void <B>SetLastError</B>(int&nbsp;dwErrCode)</PRE>
+<DL>
+<DD>The SetLastError function sets the last-error code for the calling thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dwErrCode</CODE> - Last-error code for the thread.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetDriveType(java.lang.String)"><!-- --></A><H3>
+GetDriveType</H3>
+<PRE>
+int <B>GetDriveType</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpRootPathName)</PRE>
+<DL>
+<DD>The GetDriveType function determines whether a disk drive is a removable,
+ fixed, CD-ROM, RAM disk, or network drive.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpRootPathName</CODE> - Pointer to a null-terminated string that specifies the root directory of
+  the disk to return information about. A trailing backslash is required. 
+  If this parameter is NULL, the function uses the root of the current directory.
+<DT><B>Returns:</B><DD>The return value specifies the type of drive.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="FormatMessage(int, com.sun.jna.Pointer, int, int, com.sun.jna.ptr.PointerByReference, int, com.sun.jna.Pointer)"><!-- --></A><H3>
+FormatMessage</H3>
+<PRE>
+int <B>FormatMessage</B>(int&nbsp;dwFlags,
+                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpSource,
+                  int&nbsp;dwMessageId,
+                  int&nbsp;dwLanguageId,
+                  <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;lpBuffer,
+                  int&nbsp;nSize,
+                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;va_list)</PRE>
+<DL>
+<DD>The FormatMessage function formats a message string. The function requires a
+ message definition as input. The message definition can come from a buffer 
+ passed into the function. It can come from a message table resource in an 
+ already-loaded module. Or the caller can ask the function to search the 
+ system's message table resource(s) for the message definition. The function 
+ finds the message definition in a message table resource based on a message 
+ identifier and a language identifier. The function copies the formatted message 
+ text to an output buffer, processing any embedded insert sequences if requested.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dwFlags</CODE> - Formatting options, and how to interpret the lpSource parameter. The low-order
+  byte of dwFlags specifies how the function handles line breaks in the output 
+  buffer. The low-order byte can also specify the maximum width of a formatted
+  output line.<DD><CODE>lpSource</CODE> - Location of the message definition.<DD><CODE>dwMessageId</CODE> - Message identifier for the requested message.<DD><CODE>dwLanguageId</CODE> - Language identifier for the requested message.<DD><CODE>lpBuffer</CODE> - Pointer to a buffer that receives the null-terminated string that specifies the 
+  formatted message.<DD><CODE>nSize</CODE> - If the FORMAT_MESSAGE_ALLOCATE_BUFFER flag is not set, this parameter specifies
+  the size of the output buffer, in TCHARs. If FORMAT_MESSAGE_ALLOCATE_BUFFER is 
+  set, this parameter specifies the minimum number of TCHARs to allocate for an 
+  output buffer.<DD><CODE>va_list</CODE> - Pointer to an array of values that are used as insert values in the formatted message.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the number of TCHARs stored in 
+        the output buffer, excluding the terminating null character. If the function 
+        fails, the return value is zero. To get extended error information, call 
+  GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="FormatMessage(int, com.sun.jna.Pointer, int, int, java.nio.Buffer, int, com.sun.jna.Pointer)"><!-- --></A><H3>
+FormatMessage</H3>
+<PRE>
+int <B>FormatMessage</B>(int&nbsp;dwFlags,
+                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpSource,
+                  int&nbsp;dwMessageId,
+                  int&nbsp;dwLanguageId,
+                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio">Buffer</A>&nbsp;lpBuffer,
+                  int&nbsp;nSize,
+                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;va_list)</PRE>
+<DL>
+<DD>The FormatMessage function formats a message string. The function requires a
+ message definition as input. The message definition can come from a buffer 
+ passed into the function. It can come from a message table resource in an 
+ already-loaded module. Or the caller can ask the function to search the 
+ system's message table resource(s) for the message definition. The function 
+ finds the message definition in a message table resource based on a message 
+ identifier and a language identifier. The function copies the formatted message 
+ text to an output buffer, processing any embedded insert sequences if requested.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dwFlags</CODE> - Formatting options, and how to interpret the lpSource parameter. The low-order
+  byte of dwFlags specifies how the function handles line breaks in the output 
+  buffer. The low-order byte can also specify the maximum width of a formatted
+  output line.<DD><CODE>lpSource</CODE> - Location of the message definition.<DD><CODE>dwMessageId</CODE> - Message identifier for the requested message.<DD><CODE>dwLanguageId</CODE> - Language identifier for the requested message.<DD><CODE>lpBuffer</CODE> - Pointer to a buffer that receives the null-terminated string that specifies the 
+  formatted message.<DD><CODE>nSize</CODE> - If the FORMAT_MESSAGE_ALLOCATE_BUFFER flag is not set, this parameter specifies
+  the size of the output buffer, in TCHARs. If FORMAT_MESSAGE_ALLOCATE_BUFFER is 
+  set, this parameter specifies the minimum number of TCHARs to allocate for an 
+  output buffer.<DD><CODE>va_list</CODE> - Pointer to an array of values that are used as insert values in the formatted message.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the number of TCHARs stored in 
+        the output buffer, excluding the terminating null character. If the function 
+        fails, the return value is zero. To get extended error information, call 
+  GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateFile(java.lang.String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+CreateFile</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>CreateFile</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName,
+                        int&nbsp;dwDesiredAccess,
+                        int&nbsp;dwShareMode,
+                        <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpSecurityAttributes,
+                        int&nbsp;dwCreationDisposition,
+                        int&nbsp;dwFlagsAndAttributes,
+                        <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hTemplateFile)</PRE>
+<DL>
+<DD>The CreateFile function creates or opens a file, file stream, directory, physical
+ disk, volume, console buffer, tape drive, communications resource, mailslot, or 
+ named pipe. The function returns a handle that can be used to access an object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpFileName</CODE> - A pointer to a null-terminated string that specifies the name of an object to create or open.<DD><CODE>dwDesiredAccess</CODE> - The access to the object, which can be read, write, or both.<DD><CODE>dwShareMode</CODE> - The sharing mode of an object, which can be read, write, both, or none.<DD><CODE>lpSecurityAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that determines whether or not 
+  the returned handle can be inherited by child processes.  If lpSecurityAttributes 
+  is NULL, the handle cannot be inherited.<DD><CODE>dwCreationDisposition</CODE> - An action to take on files that exist and do not exist.<DD><CODE>dwFlagsAndAttributes</CODE> - The file attributes and flags.<DD><CODE>hTemplateFile</CODE> - Handle to a template file with the GENERIC_READ access right. The template file
+  supplies file attributes and extended attributes for the file that is being 
+  created. This parameter can be NULL.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is an open handle to a specified file.
+  If a specified file exists before the function call and dwCreationDisposition is
+  CREATE_ALWAYS or OPEN_ALWAYS, a call to GetLastError returns ERROR_ALREADY_EXISTS,
+  even when the function succeeds. If a file does not exist before the call, 
+  GetLastError returns 0 (zero). If the function fails, the return value is 
+  INVALID_HANDLE_VALUE. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CopyFile(java.lang.String, java.lang.String, boolean)"><!-- --></A><H3>
+CopyFile</H3>
+<PRE>
+boolean <B>CopyFile</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpExistingFileName,
+                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpNewFileName,
+                 boolean&nbsp;bFailIfExists)</PRE>
+<DL>
+<DD>Copies an existing file to a new file.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpExistingFileName</CODE> - The name of an existing file.
+
+   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+   the path. For more information, see Naming a File.
+
+   If lpExistingFileName does not exist, CopyFile fails, and GetLastError returns ERROR_FILE_NOT_FOUND.<DD><CODE>lpNewFileName</CODE> - The name of the new file.
+
+   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+   the path. For more information, see Naming a File.<DD><CODE>bFailIfExists</CODE> - If this parameter is TRUE and the new file specified by lpNewFileName already exists, the function fails. If
+   this parameter is FALSE and the new file already exists, the function overwrites the existing file and succeeds.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get
+   extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="MoveFile(java.lang.String, java.lang.String)"><!-- --></A><H3>
+MoveFile</H3>
+<PRE>
+boolean <B>MoveFile</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpExistingFileName,
+                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpNewFileName)</PRE>
+<DL>
+<DD>Moves an existing file or a directory, including its children.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpExistingFileName</CODE> - The current name of the file or directory on the local computer.
+
+   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+   the path. For more information, see Naming a File.<DD><CODE>lpNewFileName</CODE> - The new name for the file or directory. The new name must not already exist. A new file may be on a different
+   file system or drive. A new directory must be on the same drive.
+
+   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+   the path. For more information, see Naming a File.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+   If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="MoveFileEx(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinDef.DWORD)"><!-- --></A><H3>
+MoveFileEx</H3>
+<PRE>
+boolean <B>MoveFileEx</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpExistingFileName,
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpNewFileName,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwFlags)</PRE>
+<DL>
+<DD>Moves an existing file or directory, including its children, with various move options.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpExistingFileName</CODE> - The current name of the file or directory on the local computer.
+
+   If dwFlags specifies MOVEFILE_DELAY_UNTIL_REBOOT, the file cannot exist on a remote share, because delayed
+   operations are performed before the network is available.
+
+   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+   the path. For more information, see Naming a File
+
+   Windows 2000:  If you prepend the file name with "\\?\", you cannot also specify the
+   MOVEFILE_DELAY_UNTIL_REBOOT flag for dwFlags.<DD><CODE>lpNewFileName</CODE> - The new name of the file or directory on the local computer.
+
+   When moving a file, the destination can be on a different file system or volume. If the destination is on
+   another drive, you must set the MOVEFILE_COPY_ALLOWED flag in dwFlags.
+
+   When moving a directory, the destination must be on the same drive.
+
+   If dwFlags specifies MOVEFILE_DELAY_UNTIL_REBOOT and lpNewFileName is NULL, MoveFileEx registers the
+   lpExistingFileName file to be deleted when the system restarts. If lpExistingFileName refers to a directory,
+   the system removes the directory at restart only if the directory is empty.<DD><CODE>dwFlags</CODE> - This parameter can be one or more of the following values.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+   If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateDirectory(java.lang.String, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES)"><!-- --></A><H3>
+CreateDirectory</H3>
+<PRE>
+boolean <B>CreateDirectory</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpPathName,
+                        <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpSecurityAttributes)</PRE>
+<DL>
+<DD>The CreateDirectory function creates a new directory. If the underlying file
+ system supports security on files and directories, the function applies a 
+ specified security descriptor to the new directory.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpPathName</CODE> - Pointer to a null-terminated string that specifies the path of the directory 
+  to be created.<DD><CODE>lpSecurityAttributes</CODE> - Pointer to a SECURITY_ATTRIBUTES structure. The lpSecurityDescriptor member 
+  of the structure specifies a security descriptor for the new directory. If 
+  lpSecurityAttributes is NULL, the directory gets a default security descriptor.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. If the function fails, 
+  the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReadFile(com.sun.jna.platform.win32.WinNT.HANDLE, java.nio.Buffer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)"><!-- --></A><H3>
+ReadFile</H3>
+<PRE>
+boolean <B>ReadFile</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio">Buffer</A>&nbsp;lpBuffer,
+                 int&nbsp;nNumberOfBytesToRead,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpNumberOfBytesRead,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;lpOverlapped)</PRE>
+<DL>
+<DD>Reads data from the specified file or input/output (I/O) device. Reads
+ occur at the position specified by the file pointer if supported by the
+ device.
+ 
+ This function is designed for both synchronous and asynchronous
+ operations. For a similar function designed solely for asynchronous
+ operation, see ReadFileEx
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hFile</CODE> - A handle to the device (for example, a file, file stream,
+  physical disk, volume, console buffer, tape drive, socket, communications
+  resource, mailslot, or pipe).<DD><CODE>lpBuffer</CODE> - A pointer to the buffer that receives the data read from a file or device.<DD><CODE>nNumberOfBytesToRead</CODE> - The maximum number of bytes to be read.<DD><CODE>lpNumberOfBytesRead</CODE> - A pointer to the variable that receives the number of bytes
+  read when using a synchronous hFile parameter<DD><CODE>lpOverlapped</CODE> - A pointer to an OVERLAPPED structure is required if the hFile
+  parameter was opened with FILE_FLAG_OVERLAPPED, otherwise it can be NULL.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero (TRUE).
+  If the function fails, or is completing asynchronously, the return value is zero (FALSE).
+  To get extended error information, call the GetLastError function.
+  
+  Note  The GetLastError code ERROR_IO_PENDING is not a failure; it designates the read
+  operation is pending completion asynchronously. For more information, see Remarks.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateIoCompletionPort(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.Pointer, int)"><!-- --></A><H3>
+CreateIoCompletionPort</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>CreateIoCompletionPort</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;FileHandle,
+                                    <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ExistingCompletionPort,
+                                    <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;CompletionKey,
+                                    int&nbsp;NumberOfConcurrentThreads)</PRE>
+<DL>
+<DD>Creates an input/output (I/O) completion port and associates it with a specified
+ file handle, or creates an I/O completion port that is not yet associated with a
+ file handle, allowing association at a later time.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>FileHandle</CODE> - An open file handle or INVALID_HANDLE_VALUE.<DD><CODE>ExistingCompletionPort</CODE> - A handle to an existing I/O completion port or NULL.<DD><CODE>CompletionKey</CODE> - The per-handle user-defined completion key that is included in every I/O completion 
+  packet for the specified file handle.<DD><CODE>NumberOfConcurrentThreads</CODE> - The maximum number of threads that the operating system can allow to concurrently 
+        process I/O completion packets for the I/O completion port.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the handle to an I/O completion port:
+   If the ExistingCompletionPort parameter was NULL, the return value is a new handle.
+   If the ExistingCompletionPort parameter was a valid I/O completion port handle, the return value is that same handle.
+   If the FileHandle parameter was a valid handle, that file handle is now associated with the returned I/O completion port.
+   If the function fails, the return value is NULL. To get extended error information, call the GetLastError function.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetQueuedCompletionStatus(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.ByReference, com.sun.jna.ptr.PointerByReference, int)"><!-- --></A><H3>
+GetQueuedCompletionStatus</H3>
+<PRE>
+boolean <B>GetQueuedCompletionStatus</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;CompletionPort,
+                                  <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpNumberOfBytes,
+                                  <A HREF="../../../../../com/sun/jna/ptr/ByReference.html" title="class in com.sun.jna.ptr">ByReference</A>&nbsp;lpCompletionKey,
+                                  <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;lpOverlapped,
+                                  int&nbsp;dwMilliseconds)</PRE>
+<DL>
+<DD>Attempts to dequeue an I/O completion packet from the specified I/O completion 
+ port. If there is no completion packet queued, the function waits for a pending 
+ I/O operation associated with the completion port to complete.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>CompletionPort</CODE> - A handle to the completion port.<DD><CODE>lpNumberOfBytes</CODE> - A pointer to a variable that receives the number of bytes transferred during 
+  an I/O operation that has completed.<DD><CODE>lpCompletionKey</CODE> - A pointer to a variable that receives the completion key value associated with 
+  the file handle whose I/O operation has completed.<DD><CODE>lpOverlapped</CODE> - A pointer to a variable that receives the address of the OVERLAPPED structure 
+  that was specified when the completed I/O operation was started.<DD><CODE>dwMilliseconds</CODE> - The number of milliseconds that the caller is willing to wait for a completion 
+  packet to appear at the completion port.
+<DT><B>Returns:</B><DD>Returns nonzero (TRUE) if successful or zero (FALSE) otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="PostQueuedCompletionStatus(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.Pointer, com.sun.jna.platform.win32.WinBase.OVERLAPPED)"><!-- --></A><H3>
+PostQueuedCompletionStatus</H3>
+<PRE>
+boolean <B>PostQueuedCompletionStatus</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;CompletionPort,
+                                   int&nbsp;dwNumberOfBytesTransferred,
+                                   <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;dwCompletionKey,
+                                   <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;lpOverlapped)</PRE>
+<DL>
+<DD>Posts an I/O completion packet to an I/O completion port.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>CompletionPort</CODE> - A handle to an I/O completion port to which the I/O completion packet is to be posted.<DD><CODE>dwNumberOfBytesTransferred</CODE> - The value to be returned through the lpNumberOfBytesTransferred parameter of the GetQueuedCompletionStatus function.<DD><CODE>dwCompletionKey</CODE> - The value to be returned through the lpCompletionKey parameter of the GetQueuedCompletionStatus function.<DD><CODE>lpOverlapped</CODE> - The value to be returned through the lpOverlapped parameter of the GetQueuedCompletionStatus function.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError .</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="WaitForSingleObject(com.sun.jna.platform.win32.WinNT.HANDLE, int)"><!-- --></A><H3>
+WaitForSingleObject</H3>
+<PRE>
+int <B>WaitForSingleObject</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hHandle,
+                        int&nbsp;dwMilliseconds)</PRE>
+<DL>
+<DD>Waits until the specified object is in the signaled state or the time-out interval elapses.
+ To enter an alertable wait state, use the WaitForSingleObjectEx function. 
+ To wait for multiple objects, use the WaitForMultipleObjects.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hHandle</CODE> - A handle to the object. For a list of the object types whose handles can be specified, see the following Remarks section.
+  If this handle is closed while the wait is still pending, the function's behavior is undefined.
+        The handle must have the SYNCHRONIZE access right. For more information, see Standard Access Rights.<DD><CODE>dwMilliseconds</CODE> - The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the object is signaled or the interval elapses. 
+        If dwMilliseconds is zero, the function does not enter a wait state if the object is not signaled; it always returns immediately. 
+        If dwMilliseconds is INFINITE, the function will return only when the object is signaled.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value indicates the event that caused the function to return.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="WaitForMultipleObjects(int, com.sun.jna.platform.win32.WinNT.HANDLE[], boolean, int)"><!-- --></A><H3>
+WaitForMultipleObjects</H3>
+<PRE>
+int <B>WaitForMultipleObjects</B>(int&nbsp;nCount,
+                           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>[]&nbsp;hHandle,
+                           boolean&nbsp;bWaitAll,
+                           int&nbsp;dwMilliseconds)</PRE>
+<DL>
+<DD>Waits until one or all of the specified objects are in the signaled state or the time-out interval elapses.
+ To enter an alertable wait state, use the WaitForMultipleObjectsEx function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>nCount</CODE> - The number of object handles in the array pointed to by lpHandles. The maximum number of object handles is MAXIMUM_WAIT_OBJECTS.<DD><CODE>hHandle</CODE> - An array of object handles. For a list of the object types whose handles can be specified, see the following Remarks section. The array can contain handles to objects of different types. 
+        It may not contain multiple copies of the same handle.
+        If one of these handles is closed while the wait is still pending, the function's behavior is undefined.
+        The handles must have the SYNCHRONIZE access right. For more information, see Standard Access Rights.<DD><CODE>bWaitAll</CODE> - If this parameter is TRUE, the function returns when the state of all objects in the lpHandles array is signaled. 
+        If FALSE, the function returns when the state of any one of the objects is set to signaled. 
+        In the latter case, the return value indicates the object whose state caused the function to return.<DD><CODE>dwMilliseconds</CODE> - The time-out interval, in milliseconds. If a nonzero value is specified, the function waits until the specified objects are signaled or the interval elapses. 
+        If dwMilliseconds is zero, the function does not enter a wait state if the specified objects are not signaled; it always returns immediately. 
+        If dwMilliseconds is INFINITE, the function will return only when the specified objects are signaled.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value indicates the event that caused the function to return.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DuplicateHandle(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.HANDLEByReference, int, boolean, int)"><!-- --></A><H3>
+DuplicateHandle</H3>
+<PRE>
+boolean <B>DuplicateHandle</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSourceProcessHandle,
+                        <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSourceHandle,
+                        <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hTargetProcessHandle,
+                        <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;lpTargetHandle,
+                        int&nbsp;dwDesiredAccess,
+                        boolean&nbsp;bInheritHandle,
+                        int&nbsp;dwOptions)</PRE>
+<DL>
+<DD>The DuplicateHandle function duplicates an object handle.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hSourceProcessHandle</CODE> - Handle to the process with the handle to duplicate. 
+  The handle must have the PROCESS_DUP_HANDLE access right.<DD><CODE>hSourceHandle</CODE> - Handle to duplicate. This is an open object handle that is valid in the 
+  context of the source process.<DD><CODE>hTargetProcessHandle</CODE> - Handle to the process that is to receive the duplicated handle. 
+  The handle must have the PROCESS_DUP_HANDLE access right.<DD><CODE>lpTargetHandle</CODE> - Pointer to a variable that receives the duplicate handle. This handle value is valid in 
+  the context of the target process. If hSourceHandle is a pseudo handle returned by 
+  GetCurrentProcess or GetCurrentThread, DuplicateHandle converts it to a real handle to 
+  a process or thread, respectively.<DD><CODE>dwDesiredAccess</CODE> - Access requested for the new handle.<DD><CODE>bInheritHandle</CODE> - Indicates whether the handle is inheritable.<DD><CODE>dwOptions</CODE> - Optional actions.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+CloseHandle</H3>
+<PRE>
+boolean <B>CloseHandle</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hObject)</PRE>
+<DL>
+<DD>The CloseHandle function closes an open object handle.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hObject</CODE> - Handle to an open object. This parameter can be a pseudo handle or INVALID_HANDLE_VALUE.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReadDirectoryChangesW(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinNT.FILE_NOTIFY_INFORMATION, int, boolean, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED, com.sun.jna.platform.win32.Kernel32.OVERLAPPED_COMPLETION_ROUTINE)"><!-- --></A><H3>
+ReadDirectoryChangesW</H3>
+<PRE>
+boolean <B>ReadDirectoryChangesW</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;directory,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.FILE_NOTIFY_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinNT.FILE_NOTIFY_INFORMATION</A>&nbsp;info,
+                              int&nbsp;length,
+                              boolean&nbsp;watchSubtree,
+                              int&nbsp;notifyFilter,
+                              <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;bytesReturned,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;overlapped,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.platform.win32">Kernel32.OVERLAPPED_COMPLETION_ROUTINE</A>&nbsp;completionRoutine)</PRE>
+<DL>
+<DD>Retrieves information that describes the changes within the specified directory. 
+ The function does not report changes to the specified directory itself.
+ Note: there's no ReadDirectoryChangesA.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>directory</CODE> - A handle to the directory to be monitored. This directory must be opened with the 
+  FILE_LIST_DIRECTORY access right.<DD><CODE>info</CODE> - A pointer to the DWORD-aligned formatted buffer in which the read results are to be returned.<DD><CODE>length</CODE> - The size of the buffer that is pointed to by the lpBuffer parameter, in bytes.<DD><CODE>watchSubtree</CODE> - If this parameter is TRUE, the function monitors the directory tree rooted at the specified
+  directory. If this parameter is FALSE, the function monitors only the directory specified by
+  the hDirectory parameter.<DD><CODE>notifyFilter</CODE> - The filter criteria that the function checks to determine if the wait operation has completed.<DD><CODE>bytesReturned</CODE> - For synchronous calls, this parameter receives the number of bytes transferred into the 
+  lpBuffer parameter. For asynchronous calls, this parameter is undefined. You must use an asynchronous 
+  notification technique to retrieve the number of bytes transferred.<DD><CODE>overlapped</CODE> - A pointer to an OVERLAPPED structure that supplies data to be used during asynchronous operation. 
+  Otherwise, this value is NULL. The Offset and OffsetHigh members of this structure are not used.<DD><CODE>completionRoutine</CODE> - A pointer to a completion routine to be called when the operation has been completed or canceled and
+  the calling thread is in an alertable wait state.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. For synchronous calls, this means that the 
+  operation succeeded. For asynchronous calls, this indicates that the operation was successfully queued.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.
+  If the network redirector or the target file system does not support this operation, the function 
+  fails with ERROR_INVALID_FUNCTION.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetShortPathName(java.lang.String, char[], int)"><!-- --></A><H3>
+GetShortPathName</H3>
+<PRE>
+int <B>GetShortPathName</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszLongPath,
+                     char[]&nbsp;lpdzShortPath,
+                     int&nbsp;cchBuffer)</PRE>
+<DL>
+<DD>Retrieves the short path form of the specified path.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpszLongPath</CODE> - The path string.<DD><CODE>lpdzShortPath</CODE> - A pointer to a buffer to receive the null-terminated short form of the path that lpszLongPath specifies.<DD><CODE>cchBuffer</CODE> - The size of the buffer that lpszShortPath points to, in TCHARs.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the length, in TCHARs, of the string that is copied to 
+  lpszShortPath, not including the terminating null character.
+  If the lpszShortPath buffer is too small to contain the path, the return value is the size of the buffer, 
+  in TCHARs, that is required to hold the path and the terminating null character. 
+  If the function fails for any other reason, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LocalAlloc(int, int)"><!-- --></A><H3>
+LocalAlloc</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>LocalAlloc</B>(int&nbsp;type,
+                   int&nbsp;cbInput)</PRE>
+<DL>
+<DD>The LocalAlloc function allocates the specified number of bytes from the heap. 
+ Windows memory management does not provide a separate local heap and global heap.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>type</CODE> - Memory allocation attributes. The default is the LMEM_FIXED value.<DD><CODE>cbInput</CODE> - Number of bytes to allocate. If this parameter is zero and the uFlags parameter 
+  specifies LMEM_MOVEABLE, the function returns a handle to a memory object that 
+  is marked as discarded.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the newly allocated memory object.
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="WriteFile(com.sun.jna.platform.win32.WinNT.HANDLE, byte[], int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)"><!-- --></A><H3>
+WriteFile</H3>
+<PRE>
+boolean <B>WriteFile</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+                  byte[]&nbsp;lpBuffer,
+                  int&nbsp;nNumberOfBytesToWrite,
+                  <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpNumberOfBytesWritten,
+                  <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A>&nbsp;lpOverlapped)</PRE>
+<DL>
+<DD>Writes data to the specified file or input/output (I/O) device.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hFile</CODE> - A handle to the file or I/O device (for example, a file, file stream, physical disk, volume, 
+  console buffer, tape drive, socket, communications resource, mailslot, or pipe).<DD><CODE>lpBuffer</CODE> - A pointer to the buffer containing the data to be written to the file or device.<DD><CODE>nNumberOfBytesToWrite</CODE> - The number of bytes to be written to the file or device.<DD><CODE>lpNumberOfBytesWritten</CODE> - A pointer to the variable that receives the number of bytes written when using a synchronous hFile parameter.<DD><CODE>lpOverlapped</CODE> - A pointer to an OVERLAPPED structure is required if the hFile parameter was opened with FILE_FLAG_OVERLAPPED, 
+  otherwise this parameter can be NULL.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero (TRUE).
+  If the function fails, or is completing asynchronously, the return value is zero (FALSE). 
+  To get extended error information, call the GetLastError function.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateEvent(com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, boolean, boolean, java.lang.String)"><!-- --></A><H3>
+CreateEvent</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>CreateEvent</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpEventAttributes,
+                         boolean&nbsp;bManualReset,
+                         boolean&nbsp;bInitialState,
+                         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName)</PRE>
+<DL>
+<DD>Creates or opens a named or unnamed event object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpEventAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure. If this parameter is NULL, 
+  the handle cannot be inherited by child processes.<DD><CODE>bManualReset</CODE> - If this parameter is TRUE, the function creates a manual-reset event object,
+  which requires the use of the ResetEvent function to set the event state to nonsignaled. 
+  If this parameter is FALSE, the function creates an auto-reset event object, and system 
+  automatically resets the event state to nonsignaled after a single waiting thread has
+  been released.<DD><CODE>bInitialState</CODE> - If this parameter is TRUE, the initial state of the event object is signaled; otherwise, 
+  it is nonsignaled.<DD><CODE>lpName</CODE> - The name of the event object. The name is limited to MAX_PATH characters. Name comparison 
+  is case sensitive.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the event object. If the named event 
+  object existed before the function call, the function returns a handle to the existing object
+  and GetLastError returns ERROR_ALREADY_EXISTS. 
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetEvent(com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+SetEvent</H3>
+<PRE>
+boolean <B>SetEvent</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEvent)</PRE>
+<DL>
+<DD>Sets the specified event object to the signaled state.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEvent</CODE> - A handle to the event object. The CreateEvent or OpenEvent function returns this handle.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="PulseEvent(com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+PulseEvent</H3>
+<PRE>
+boolean <B>PulseEvent</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEvent)</PRE>
+<DL>
+<DD>Sets the specified event object to the signaled state and then resets it to the nonsignaled 
+ state after releasing the appropriate number of waiting threads.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEvent</CODE> - A handle to the event object. The CreateEvent or OpenEvent function returns this handle.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateFileMapping(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, int, java.lang.String)"><!-- --></A><H3>
+CreateFileMapping</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>CreateFileMapping</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+                               <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpAttributes,
+                               int&nbsp;flProtect,
+                               int&nbsp;dwMaximumSizeHigh,
+                               int&nbsp;dwMaximumSizeLow,
+                               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName)</PRE>
+<DL>
+<DD>Creates or opens a named or unnamed file mapping object for a specified file.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hFile</CODE> - A handle to the file from which to create a file mapping object.<DD><CODE>lpAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that determines whether a returned handle can be inherited by child processes. The lpSecurityDescriptor member of the SECURITY_ATTRIBUTES structure specifies a security descriptor for a new file mapping object.<DD><CODE>flProtect</CODE> - Specifies the page protection of the file mapping object. All mapped views of the object must be compatible with this protection.<DD><CODE>dwMaximumSizeHigh</CODE> - The high-order DWORD of the maximum size of the file mapping object.<DD><CODE>dwMaximumSizeLow</CODE> - The low-order DWORD of the maximum size of the file mapping object.<DD><CODE>lpName</CODE> - The name of the file mapping object.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the newly created file mapping object.
+  If the object exists before the function call, the function returns a handle to the existing object (with its current size, not the specified size), and GetLastError returns ERROR_ALREADY_EXISTS. 
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="MapViewOfFile(com.sun.jna.platform.win32.WinNT.HANDLE, int, int, int, int)"><!-- --></A><H3>
+MapViewOfFile</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>MapViewOfFile</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFileMappingObject,
+                      int&nbsp;dwDesiredAccess,
+                      int&nbsp;dwFileOffsetHigh,
+                      int&nbsp;dwFileOffsetLow,
+                      int&nbsp;dwNumberOfBytesToMap)</PRE>
+<DL>
+<DD>Maps a view of a file mapping into the address space of a calling process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hFileMappingObject</CODE> - A handle to a file mapping object. The CreateFileMapping and OpenFileMapping functions return this handle.<DD><CODE>dwDesiredAccess</CODE> - The type of access to a file mapping object, which determines the protection of the pages.<DD><CODE>dwFileOffsetHigh</CODE> - A high-order DWORD of the file offset where the view begins.<DD><CODE>dwFileOffsetLow</CODE> - A low-order DWORD of the file offset where the view is to begin.<DD><CODE>dwNumberOfBytesToMap</CODE> - The number of bytes of a file mapping to map to the view.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the starting address of the mapped view.
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="UnmapViewOfFile(com.sun.jna.Pointer)"><!-- --></A><H3>
+UnmapViewOfFile</H3>
+<PRE>
+boolean <B>UnmapViewOfFile</B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpBaseAddress)</PRE>
+<DL>
+<DD>Unmaps a mapped view of a file from the calling process's address space.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpBaseAddress</CODE> - A pointer to the base address of the mapped view of a file that is to be unmapped.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the starting address of the mapped view.
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetComputerName(char[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetComputerName</H3>
+<PRE>
+boolean <B>GetComputerName</B>(char[]&nbsp;buffer,
+                        <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpnSize)</PRE>
+<DL>
+<DD>Retrieves only the NetBIOS name of the local computer.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>buffer</CODE> - A pointer to a buffer that receives the computer name or the cluster virtual server
+  name. The buffer size should be large enough to contain MAX_COMPUTERNAME_LENGTH + 1
+  characters.<DD><CODE>lpnSize</CODE> - On input, specifies the size of the buffer, in TCHARs. On output, the number of TCHARs 
+        copied to the destination buffer, not including the terminating null character. If 
+  the buffer is too small, the function fails and GetLastError returns 
+  ERROR_BUFFER_OVERFLOW. The lpnSize parameter specifies the size of the buffer required,
+  including the terminating null character.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a nonzero value.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenThread(int, boolean, int)"><!-- --></A><H3>
+OpenThread</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>OpenThread</B>(int&nbsp;dwDesiredAccess,
+                        boolean&nbsp;bInheritHandle,
+                        int&nbsp;dwThreadId)</PRE>
+<DL>
+<DD>The OpenThread function opens an existing thread object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dwDesiredAccess</CODE> - Access to the thread object. This access right is checked against any security 
+  descriptor for the thread.<DD><CODE>bInheritHandle</CODE> - If this parameter is TRUE, the new process inherits the handle. If the parameter 
+  is FALSE, the handle is not inherited.<DD><CODE>dwThreadId</CODE> - Identifier of the thread to be opened.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is an open handle to the specified process.
+  If the function fails, the return value is NULL. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateProcess(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, boolean, com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.Pointer, java.lang.String, com.sun.jna.platform.win32.WinBase.STARTUPINFO, com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION.ByReference)"><!-- --></A><H3>
+CreateProcess</H3>
+<PRE>
+boolean <B>CreateProcess</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpApplicationName,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCommandLine,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpProcessAttributes,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpThreadAttributes,
+                      boolean&nbsp;bInheritHandles,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwCreationFlags,
+                      <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpEnvironment,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCurrentDirectory,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" title="class in com.sun.jna.platform.win32">WinBase.STARTUPINFO</A>&nbsp;lpStartupInfo,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.PROCESS_INFORMATION.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.PROCESS_INFORMATION.ByReference</A>&nbsp;lpProcessInformation)</PRE>
+<DL>
+<DD>Creates a new process and its primary thread. The new process runs in the security context of the calling
+ process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpApplicationName</CODE> - The name of the module to be executed.<DD><CODE>lpCommandLine</CODE> - The command line to be executed.<DD><CODE>lpProcessAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned handle to the new process
+   object can be inherited by child processes. If lpProcessAttributes is NULL, the handle cannot be inherited.<DD><CODE>lpThreadAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned handle to the new thread
+   object can be inherited by child processes. If lpThreadAttributes is NULL, the handle cannot be inherited.<DD><CODE>bInheritHandles</CODE> - If this parameter TRUE, each inheritable handle in the calling process is inherited by the new process. If the
+   parameter is FALSE, the handles are not inherited. Note that inherited handles have the same value and access
+   rights as the original handles.<DD><CODE>dwCreationFlags</CODE> - The flags that control the priority class and the creation of the process.<DD><CODE>lpEnvironment</CODE> - A pointer to the environment block for the new process. If this parameter is NULL, the new process uses the
+   environment of the calling process.<DD><CODE>lpCurrentDirectory</CODE> - The full path to the current directory for the process.<DD><CODE>lpStartupInfo</CODE> - A pointer to a STARTUPINFO or STARTUPINFOEX structure.<DD><CODE>lpProcessInformation</CODE> - A pointer to a PROCESS_INFORMATION structure that receives identification information about the new process.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenProcess(int, boolean, int)"><!-- --></A><H3>
+OpenProcess</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>OpenProcess</B>(int&nbsp;fdwAccess,
+                         boolean&nbsp;fInherit,
+                         int&nbsp;IDProcess)</PRE>
+<DL>
+<DD>This function returns a handle to an existing process object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fdwAccess</CODE> - Not supported; set to zero.<DD><CODE>fInherit</CODE> - Not supported; set to FALSE.<DD><CODE>IDProcess</CODE> - Specifies the process identifier of the process to open.
+<DT><B>Returns:</B><DD>An open handle to the specified process indicates success. 
+  NULL indicates failure. 
+  To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetTempPath(com.sun.jna.platform.win32.WinDef.DWORD, char[])"><!-- --></A><H3>
+GetTempPath</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>GetTempPath</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;nBufferLength,
+                         char[]&nbsp;buffer)</PRE>
+<DL>
+<DD>The GetTempPath function retrieves the path of the directory designated 
+ for temporary files.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>nBufferLength</CODE> - Size of the string buffer identified by lpBuffer, in TCHARs.<DD><CODE>buffer</CODE> - Pointer to a string buffer that receives the null-terminated string specifying the 
+  temporary file path. The returned string ends with a backslash, for example, 
+  C:\TEMP\.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the length, in TCHARs, of the string 
+  copied to lpBuffer, not including the terminating null character. If the return value 
+  is greater than nBufferLength, the return value is the length, in TCHARs, of the 
+  buffer required to hold the path.
+  
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetEnvironmentVariable(java.lang.String, java.lang.String)"><!-- --></A><H3>
+SetEnvironmentVariable</H3>
+<PRE>
+boolean <B>SetEnvironmentVariable</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName,
+                               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValue)</PRE>
+<DL>
+<DD>The SetEnvironmentVariable function sets the contents of the specified environment
+ variable for the current process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpName</CODE> - Pointer to a string containing the name of the environment variable to set.<DD><CODE>lpValue</CODE> - Pointer to a string containing the value to set it to.
+  if this value is NULL, the variable is deleted from the current process' environment.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is non-zero.
+  If the function fails, the return value is zero.  To get extended error information,
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetVersion()"><!-- --></A><H3>
+GetVersion</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>GetVersion</B>()</PRE>
+<DL>
+<DD>The GetVersion function returns the current version number of the operating system.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>If the function succeeds, the return value includes the major and minor version numbers 
+  of the operating system in the low order word, and information about the operating system 
+  platform in the high order word.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetVersionEx(com.sun.jna.platform.win32.WinNT.OSVERSIONINFO)"><!-- --></A><H3>
+GetVersionEx</H3>
+<PRE>
+boolean <B>GetVersionEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFO.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFO</A>&nbsp;lpVersionInfo)</PRE>
+<DL>
+<DD>The GetVersionEx function obtains extended information about the version of the operating 
+ system that is currently running.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpVersionInfo</CODE> - Pointer to an OSVERSIONINFO data structure that the function fills with operating system 
+  version information.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a nonzero value.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError. The function fails if you specify an invalid value for the 
+  dwOSVersionInfoSize member of the OSVERSIONINFO or OSVERSIONINFOEX structure.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetVersionEx(com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX)"><!-- --></A><H3>
+GetVersionEx</H3>
+<PRE>
+boolean <B>GetVersionEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFOEX.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFOEX</A>&nbsp;lpVersionInfo)</PRE>
+<DL>
+<DD>The GetVersionEx function obtains extended information about the version of the operating 
+ system that is currently running.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpVersionInfo</CODE> - Pointer to an OSVERSIONINFOEX data structure that the function fills with operating system 
+  version information.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a nonzero value.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError. The function fails if you specify an invalid value for the 
+  dwOSVersionInfoSize member of the OSVERSIONINFO or OSVERSIONINFOEX structure.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetSystemInfo(com.sun.jna.platform.win32.WinBase.SYSTEM_INFO)"><!-- --></A><H3>
+GetSystemInfo</H3>
+<PRE>
+void <B>GetSystemInfo</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO</A>&nbsp;lpSystemInfo)</PRE>
+<DL>
+<DD>The GetSystemInfo function returns information about the current system.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemInfo</CODE> - Pointer to a SYSTEM_INFO structure that receives the information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetNativeSystemInfo(com.sun.jna.platform.win32.WinBase.SYSTEM_INFO)"><!-- --></A><H3>
+GetNativeSystemInfo</H3>
+<PRE>
+void <B>GetNativeSystemInfo</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO</A>&nbsp;lpSystemInfo)</PRE>
+<DL>
+<DD>The GetNativeSystemInfo function retrieves information about the current system to an 
+ application running under WOW64. If the function is called from a 64-bit application, 
+ it is equivalent to the GetSystemInfo function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemInfo</CODE> - Pointer to a SYSTEM_INFO structure that receives the information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="IsWow64Process(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+IsWow64Process</H3>
+<PRE>
+boolean <B>IsWow64Process</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+                       <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;Wow64Process)</PRE>
+<DL>
+<DD>The IsWow64Process function determines whether the specified process is running under WOW64.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hProcess</CODE> - Handle to a process.<DD><CODE>Wow64Process</CODE> - Pointer to a value that is set to TRUE if the process is running under WOW64. 
+  Otherwise, the value is set to FALSE.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a nonzero value.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GlobalMemoryStatusEx(com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX)"><!-- --></A><H3>
+GlobalMemoryStatusEx</H3>
+<PRE>
+boolean <B>GlobalMemoryStatusEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.MEMORYSTATUSEX.html" title="class in com.sun.jna.platform.win32">WinBase.MEMORYSTATUSEX</A>&nbsp;lpBuffer)</PRE>
+<DL>
+<DD>Retrieves information about the system's current usage of both physical and virtual memory.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpBuffer</CODE> - A pointer to a MEMORYSTATUSEX structure that receives information about current memory availability.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetFileTime(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.FILETIME.ByReference, com.sun.jna.platform.win32.WinBase.FILETIME.ByReference, com.sun.jna.platform.win32.WinBase.FILETIME.ByReference)"><!-- --></A><H3>
+GetFileTime</H3>
+<PRE>
+boolean <B>GetFileTime</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME.ByReference</A>&nbsp;lpCreationTime,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME.ByReference</A>&nbsp;lpLastAccessTime,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME.ByReference</A>&nbsp;lpLastWriteTime)</PRE>
+<DL>
+<DD>Retrieves the date and time that a file or directory was created, last accessed, and last modified.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hFile</CODE> - A handle to the file or directory for which dates and times are to be retrieved. The handle must have been
+   created using the CreateFile function with the GENERIC_READ access right.<DD><CODE>lpCreationTime</CODE> - A pointer to a FILETIME structure to receive the date and time the file or directory was created. This
+   parameter can be NULL if the application does not require this information.<DD><CODE>lpLastAccessTime</CODE> - A pointer to a FILETIME structure to receive the date and time the file or directory was last accessed. The
+   last access time includes the last time the file or directory was written to, read from, or, in the case of
+   executable files, run. This parameter can be NULL if the application does not require this information.<DD><CODE>lpLastWriteTime</CODE> - A pointer to a FILETIME structure to receive the date and time the file or directory was last written to,
+   truncated, or overwritten (for example, with WriteFile or SetEndOfFile). This date and time is not updated when
+   file attributes or security descriptors are changed. This parameter can be NULL if the application does not
+   require this information.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get
+   extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetFileTime(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinBase.FILETIME, com.sun.jna.platform.win32.WinBase.FILETIME, com.sun.jna.platform.win32.WinBase.FILETIME)"><!-- --></A><H3>
+SetFileTime</H3>
+<PRE>
+int <B>SetFileTime</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hFile,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpCreationTime,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpLastAccessTime,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpLastWriteTime)</PRE>
+<DL>
+<DD>Sets the date and time that the specified file or directory was created, last accessed, or last modified.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hFile</CODE> - A handle to the file or directory. The handle must have been created using the CreateFile function with the
+  FILE_WRITE_ATTRIBUTES access right. For more information, see File Security and Access Rights.<DD><CODE>lpCreationTime</CODE> - A pointer to a FILETIME structure that contains the new creation date and time for the file or directory. This
+  parameter can be NULL if the application does not need to change this information.<DD><CODE>lpLastAccessTime</CODE> - A pointer to a FILETIME structure that contains the new last access date and time for the file or directory. The
+  last access time includes the last time the file or directory was written to, read from, or (in the case of
+  executable files) run. This parameter can be NULL if the application does not need to change this information.
+
+  To preserve the existing last access time for a file even after accessing a file, call SetFileTime immediately
+  after opening the file handle with this parameter's FILETIME structure members initialized to 0xFFFFFFFF.<DD><CODE>lpLastWriteTime</CODE> - A pointer to a FILETIME structure that contains the new last modified date and time for the file or directory.
+  This parameter can be NULL if the application does not need to change this information.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+  If the function fails, the return value is zero. To get extended error information,
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetFileAttributes(java.lang.String, com.sun.jna.platform.win32.WinDef.DWORD)"><!-- --></A><H3>
+SetFileAttributes</H3>
+<PRE>
+boolean <B>SetFileAttributes</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName,
+                          <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwFileAttributes)</PRE>
+<DL>
+<DD>Sets the attributes for a file or directory.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpFileName</CODE> - The name of the file whose attributes are to be set.
+
+   The name is limited to MAX_PATH characters. To extend this limit to 32,767 wide characters, prepend "\\?\" to
+   the path.<DD><CODE>dwFileAttributes</CODE> - The file attributes to set for the file. This parameter can be one or more values, combined using the
+   bitwise-OR operator. However, all other values override FILE_ATTRIBUTE_NORMAL.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get
+   extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetLogicalDriveStrings(com.sun.jna.platform.win32.WinDef.DWORD, char[])"><!-- --></A><H3>
+GetLogicalDriveStrings</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>GetLogicalDriveStrings</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;nBufferLength,
+                                    char[]&nbsp;lpBuffer)</PRE>
+<DL>
+<DD>The GetLogicalDriveStrings function fills a buffer with strings that specify 
+ valid drives in the system.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>nBufferLength</CODE> - Maximum size of the buffer pointed to by lpBuffer, in TCHARs. This size does not include 
+  the terminating null character. If this parameter is zero, lpBuffer is not used.<DD><CODE>lpBuffer</CODE> - Pointer to a buffer that receives a series of null-terminated strings, one for each valid 
+  drive in the system, plus with an additional null character. Each string is a device name.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the length, in characters, of the strings 
+  copied to the buffer, not including the terminating null character. Note that an ANSI-ASCII 
+  null character uses one byte, but a Unicode null character uses two bytes.
+  If the buffer is not large enough, the return value is greater than nBufferLength. It is 
+  the size of the buffer required to hold the drive strings.
+  If the function fails, the return value is zero. To get extended error information, use 
+  the GetLastError function.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetDiskFreeSpaceEx(java.lang.String, com.sun.jna.platform.win32.WinNT.LARGE_INTEGER.ByReference, com.sun.jna.platform.win32.WinNT.LARGE_INTEGER.ByReference, com.sun.jna.platform.win32.WinNT.LARGE_INTEGER.ByReference)"><!-- --></A><H3>
+GetDiskFreeSpaceEx</H3>
+<PRE>
+boolean <B>GetDiskFreeSpaceEx</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpDirectoryName,
+                           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.ByReference</A>&nbsp;lpFreeBytesAvailable,
+                           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.ByReference</A>&nbsp;lpTotalNumberOfBytes,
+                           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.ByReference</A>&nbsp;lpTotalNumberOfFreeBytes)</PRE>
+<DL>
+<DD>The GetDiskFreeSpaceEx function retrieves information about the amount of space that is 
+ available on a disk volume, which is the total amount of space, the total amount of free 
+ space, and the total amount of free space available to the user that is associated with 
+ the calling thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpDirectoryName</CODE> - A pointer to a null-terminated string that specifies a directory on a disk. 
+  If this parameter is NULL, the function uses the root of the current disk. 
+  If this parameter is a UNC name, it must include a trailing backslash, for example,
+   \\MyServer\MyShare\.
+   This parameter does not have to specify the root directory on a disk. The function 
+   accepts any directory on a disk.<DD><CODE>lpFreeBytesAvailable</CODE> - A pointer to a variable that receives the total number of free bytes on a disk that
+   are available to the user who is associated with the calling thread.  
+   This parameter can be NULL.<DD><CODE>lpTotalNumberOfBytes</CODE> - A pointer to a variable that receives the total number of bytes on a disk that are 
+  available to the user who is associated with the calling thread. 
+  This parameter can be NULL.<DD><CODE>lpTotalNumberOfFreeBytes</CODE> - A pointer to a variable that receives the total number of free bytes on a disk. 
+  This parameter can be NULL.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is 0 (zero). To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DeleteFile(java.lang.String)"><!-- --></A><H3>
+DeleteFile</H3>
+<PRE>
+boolean <B>DeleteFile</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;filename)</PRE>
+<DL>
+<DD>Deletes an existing file.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>filename</CODE> - The name of the file to be deleted.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero (0). To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreatePipe(com.sun.jna.platform.win32.WinNT.HANDLEByReference, com.sun.jna.platform.win32.WinNT.HANDLEByReference, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int)"><!-- --></A><H3>
+CreatePipe</H3>
+<PRE>
+boolean <B>CreatePipe</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;hReadPipe,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;hWritePipe,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpPipeAttributes,
+                   int&nbsp;nSize)</PRE>
+<DL>
+<DD>Creates an anonymous pipe, and returns handles to the read and write ends of the pipe.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hReadPipe</CODE> - A pointer to a variable that receives the read handle for the pipe.<DD><CODE>hWritePipe</CODE> - A pointer to a variable that receives the write handle for the pipe.<DD><CODE>lpPipeAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that determines whether
+ the returned handle can be inherited by child processes.<DD><CODE>nSize</CODE> - The size of the buffer for the pipe, in bytes.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+ If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetHandleInformation(com.sun.jna.platform.win32.WinNT.HANDLE, int, int)"><!-- --></A><H3>
+SetHandleInformation</H3>
+<PRE>
+boolean <B>SetHandleInformation</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hObject,
+                             int&nbsp;dwMask,
+                             int&nbsp;dwFlags)</PRE>
+<DL>
+<DD>Sets certain properties of an object handle.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hObject</CODE> - A handle to an object whose information is to be set.<DD><CODE>dwMask</CODE> - A mask that specifies the bit flags to be changed. Use the same constants shown in the description of dwFlags.<DD><CODE>dwFlags</CODE> - Set of bit flags that specifies properties of the object handle.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetFileAttributes(java.lang.String)"><!-- --></A><H3>
+GetFileAttributes</H3>
+<PRE>
+int <B>GetFileAttributes</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName)</PRE>
+<DL>
+<DD>Retrieves file system attributes for a specified file or directory.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpFileName</CODE> - The name of the file or directory. Prepend \\?\ to the path for names up to 32,767 wide characters
+<DT><B>Returns:</B><DD>INVALID_FILE_ATTRIBUTES if the function fails, otherwise the file attributes WinNT.FILE_ATTRIBUTE_*</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DeviceIoControl(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.Pointer, int, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer)"><!-- --></A><H3>
+DeviceIoControl</H3>
+<PRE>
+boolean <B>DeviceIoControl</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hDevice,
+                        int&nbsp;dwIoControlCode,
+                        <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpInBuffer,
+                        int&nbsp;nInBufferSize,
+                        <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpOutBuffer,
+                        int&nbsp;nOutBufferSize,
+                        <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpBytesReturned,
+                        <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpOverlapped)</PRE>
+<DL>
+<DD>Sends a control code directly to a specified device driver, causing the corresponding device to perform the
+ corresponding operation.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hDevice</CODE> - A handle to the device on which the operation is to be performed. The device is typically a
+   volume, directory, file, or stream. To retrieve a device handle, use the CreateFile function. For more
+   information, see Remarks.<DD><CODE>dwIoControlCode</CODE> - The control code for the operation. This value identifies the specific operation to be
+   performed and the type of device on which to perform it. For a list of the control codes, see Remarks. The
+   documentation for each control code provides usage details for the lpInBuffer, nInBufferSize, lpOutBuffer, and
+   nOutBufferSize parameters.<DD><CODE>lpInBuffer</CODE> - A pointer to the input buffer that contains the data required to perform the operation. The
+   format of this data depends on the value of the dwIoControlCode parameter. This parameter can be NULL if
+   dwIoControlCode specifies an operation that does not require input data.<DD><CODE>nInBufferSize</CODE> - The size of the input buffer, in bytes.<DD><CODE>lpOutBuffer</CODE> - A pointer to the output buffer that is to receive the data returned by the operation. The
+   format of this data depends on the value of the dwIoControlCode parameter. This parameter can be NULL if
+   dwIoControlCode specifies an operation that does not return data.<DD><CODE>nOutBufferSize</CODE> - The size of the output buffer, in bytes.<DD><CODE>lpBytesReturned</CODE> - A pointer to a variable that receives the size of the data stored in the output buffer,
+   in bytes. If the output buffer is too small to receive any data, the call fails, GetLastError returns
+   ERROR_INSUFFICIENT_BUFFER, and lpBytesReturned is zero. If the output buffer is too small to hold all of the
+   data but can hold some entries, some drivers will return as much data as fits. In this case, the call fails,
+   GetLastError returns ERROR_MORE_DATA, and lpBytesReturned indicates the amount of data received. Your
+   application should call DeviceIoControl again with the same operation, specifying a new starting point. If
+   lpOverlapped is NULL, lpBytesReturned cannot be NULL. Even when an operation returns no output data and
+   lpOutBuffer is NULL, DeviceIoControl makes use of lpBytesReturned. After such an operation, the value of
+   lpBytesReturned is meaningless. If lpOverlapped is not NULL, lpBytesReturned can be NULL. If this parameter is
+   not NULL and the operation returns data, lpBytesReturned is meaningless until the overlapped operation has
+   completed. To retrieve the number of bytes returned, call GetOverlappedResult. If hDevice is associated with
+   an I/O completion port, you can retrieve the number of bytes returned by calling GetQueuedCompletionStatus.<DD><CODE>lpOverlapped</CODE> - A pointer to an OVERLAPPED structure. If hDevice was opened without specifying
+   FILE_FLAG_OVERLAPPED, lpOverlapped is ignored. If hDevice was opened with the FILE_FLAG_OVERLAPPED flag, the
+   operation is performed as an overlapped (asynchronous) operation. In this case, lpOverlapped must point to a
+   valid OVERLAPPED structure that contains a handle to an event object. Otherwise, the function fails in
+   unpredictable ways. For overlapped operations, DeviceIoControl returns immediately, and the event object is
+   signaled when the operation has been completed. Otherwise, the function does not return until the operation has
+   been completed or an error occurs.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+  If the function fails, the return value is zero. To get extended error information,
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetDiskFreeSpaceEx(java.lang.String, com.sun.jna.ptr.LongByReference, com.sun.jna.ptr.LongByReference, com.sun.jna.ptr.LongByReference)"><!-- --></A><H3>
+GetDiskFreeSpaceEx</H3>
+<PRE>
+boolean <B>GetDiskFreeSpaceEx</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpDirectoryName,
+                           <A HREF="../../../../../com/sun/jna/ptr/LongByReference.html" title="class in com.sun.jna.ptr">LongByReference</A>&nbsp;lpFreeBytesAvailable,
+                           <A HREF="../../../../../com/sun/jna/ptr/LongByReference.html" title="class in com.sun.jna.ptr">LongByReference</A>&nbsp;lpTotalNumberOfBytes,
+                           <A HREF="../../../../../com/sun/jna/ptr/LongByReference.html" title="class in com.sun.jna.ptr">LongByReference</A>&nbsp;lpTotalNumberOfFreeBytes)</PRE>
+<DL>
+<DD>Retrieves information about the amount of space that is available on a disk volume, which is the total amount of 
+ space, the total amount of free space, and the total amount of free space available to the user that is 
+ associated with the calling thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpDirectoryName</CODE> - <DD><CODE>lpFreeBytesAvailable</CODE> - <DD><CODE>lpTotalNumberOfBytes</CODE> - <DD><CODE>lpTotalNumberOfFreeBytes</CODE> - 
+<DT><B>Returns:</B><DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateToolhelp32Snapshot(com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.platform.win32.WinDef.DWORD)"><!-- --></A><H3>
+CreateToolhelp32Snapshot</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>CreateToolhelp32Snapshot</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwFlags,
+                                      <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;th32ProcessID)</PRE>
+<DL>
+<DD>Takes a snapshot of the specified processes, as well as the heaps, modules, and threads used by these processes.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dwFlags</CODE> - The portions of the system to be included in the snapshot.<DD><CODE>th32ProcessID</CODE> - The process identifier of the process to be included in the snapshot. This parameter can be zero to indicate
+   the current process. This parameter is used when the TH32CS_SNAPHEAPLIST, TH32CS_SNAPMODULE,
+   TH32CS_SNAPMODULE32, or TH32CS_SNAPALL value is specified. Otherwise, it is ignored and all processes are
+   included in the snapshot.
+
+   If the specified process is the Idle process or one of the CSRSS processes, this function fails and the last
+   error code is ERROR_ACCESS_DENIED because their access restrictions prevent user-level code from opening them.
+
+   If the specified process is a 64-bit process and the caller is a 32-bit process, this function fails and the
+   last error code is ERROR_PARTIAL_COPY (299).
+<DT><B>Returns:</B><DD>If the function succeeds, it returns an open handle to the specified snapshot.
+
+   If the function fails, it returns INVALID_HANDLE_VALUE. To get extended error information, call GetLastError.
+   Possible error codes include ERROR_BAD_LENGTH.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="Process32First(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.Tlhelp32.PROCESSENTRY32.ByReference)"><!-- --></A><H3>
+Process32First</H3>
+<PRE>
+boolean <B>Process32First</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSnapshot,
+                       <A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.ByReference.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32.ByReference</A>&nbsp;lppe)</PRE>
+<DL>
+<DD>Retrieves information about the first process encountered in a system snapshot.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hSnapshot</CODE> - A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.<DD><CODE>lppe</CODE> - A pointer to a PROCESSENTRY32 structure. It contains process information such as the name of the
+   executable file, the process identifier, and the process identifier of the parent process.
+<DT><B>Returns:</B><DD>Returns TRUE if the first entry of the process list has been copied to the buffer or FALSE otherwise. The
+   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
+   does not contain process information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="Process32Next(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.Tlhelp32.PROCESSENTRY32.ByReference)"><!-- --></A><H3>
+Process32Next</H3>
+<PRE>
+boolean <B>Process32Next</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hSnapshot,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.ByReference.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32.ByReference</A>&nbsp;lppe)</PRE>
+<DL>
+<DD>Retrieves information about the next process recorded in a system snapshot.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hSnapshot</CODE> - A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.<DD><CODE>lppe</CODE> - A pointer to a PROCESSENTRY32 structure.
+<DT><B>Returns:</B><DD>Returns TRUE if the next entry of the process list has been copied to the buffer or FALSE otherwise. The
+   ERROR_NO_MORE_FILES error value is returned by the GetLastError function if no processes exist or the snapshot
+   does not contain process information.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.ByReference.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Kernel32.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Kernel32.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>
