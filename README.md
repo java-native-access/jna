@@ -65,6 +65,11 @@ Using the Library
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md)
 * [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
 
+JavaDoc
+=======
+
+A more detailed reference is available [here](http://twall.github.com/jna/3.3.0/javadoc/).
+
 Contributing 
 ============
 
