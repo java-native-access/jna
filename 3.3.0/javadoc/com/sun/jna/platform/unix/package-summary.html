@@ -1,0 +1,499 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+com.sun.jna.platform.unix (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="com.sun.jna.platform.unix (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/mac/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/unix/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package com.sun.jna.platform.unix
+</H2>
+Provides common library mappings for Unix and X11-based platforms.
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#package_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A></B></TD>
+<TD>Definition (incomplete) of the X library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix">X11.XErrorHandler</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Xevie.html" title="interface in com.sun.jna.platform.unix">X11.Xevie</A></B></TD>
+<TD>Definition of the Xevie library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Xext.html" title="interface in com.sun.jna.platform.unix">X11.Xext</A></B></TD>
+<TD>Definition (incomplete) of the Xext library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Xrender.html" title="interface in com.sun.jna.platform.unix">X11.Xrender</A></B></TD>
+<TD>Definition (incomplete) of the Xrender library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XTest.html" title="interface in com.sun.jna.platform.unix">X11.XTest</A></B></TD>
+<TD>Definition of the XTest library.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Atom.html" title="class in com.sun.jna.platform.unix">X11.Atom</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.AtomByReference.html" title="class in com.sun.jna.platform.unix">X11.AtomByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Colormap.html" title="class in com.sun.jna.platform.unix">X11.Colormap</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Cursor.html" title="class in com.sun.jna.platform.unix">X11.Cursor</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Drawable.html" title="class in com.sun.jna.platform.unix">X11.Drawable</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Font.html" title="class in com.sun.jna.platform.unix">X11.Font</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.GC.html" title="class in com.sun.jna.platform.unix">X11.GC</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.KeySym.html" title="class in com.sun.jna.platform.unix">X11.KeySym</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Pixmap.html" title="class in com.sun.jna.platform.unix">X11.Pixmap</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Screen.html" title="class in com.sun.jna.platform.unix">X11.Screen</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Visual.html" title="class in com.sun.jna.platform.unix">X11.Visual</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.VisualID.html" title="class in com.sun.jna.platform.unix">X11.VisualID</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Window.html" title="class in com.sun.jna.platform.unix">X11.Window</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.WindowByReference.html" title="class in com.sun.jna.platform.unix">X11.WindowByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XAnyEvent.html" title="class in com.sun.jna.platform.unix">X11.XAnyEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XButtonEvent.html" title="class in com.sun.jna.platform.unix">X11.XButtonEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XButtonPressedEvent.html" title="class in com.sun.jna.platform.unix">X11.XButtonPressedEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XButtonReleasedEvent.html" title="class in com.sun.jna.platform.unix">X11.XButtonReleasedEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XCirculateEvent.html" title="class in com.sun.jna.platform.unix">X11.XCirculateEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XCirculateRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XCirculateRequestEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XClientMessageEvent.html" title="class in com.sun.jna.platform.unix">X11.XClientMessageEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XClientMessageEvent.Data.html" title="class in com.sun.jna.platform.unix">X11.XClientMessageEvent.Data</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XColormapEvent.html" title="class in com.sun.jna.platform.unix">X11.XColormapEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XConfigureEvent.html" title="class in com.sun.jna.platform.unix">X11.XConfigureEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XConfigureRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XConfigureRequestEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XCreateWindowEvent.html" title="class in com.sun.jna.platform.unix">X11.XCreateWindowEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XCrossingEvent.html" title="class in com.sun.jna.platform.unix">X11.XCrossingEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XDestroyWindowEvent.html" title="class in com.sun.jna.platform.unix">X11.XDestroyWindowEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XDeviceByReference.html" title="class in com.sun.jna.platform.unix">X11.XDeviceByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XEnterWindowEvent.html" title="class in com.sun.jna.platform.unix">X11.XEnterWindowEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorEvent.html" title="class in com.sun.jna.platform.unix">X11.XErrorEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XEvent.html" title="class in com.sun.jna.platform.unix">X11.XEvent</A></B></TD>
+<TD>DEFINITIONS OF SPECIFIC EVENTS</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XExposeEvent.html" title="class in com.sun.jna.platform.unix">X11.XExposeEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XFocusChangeEvent.html" title="class in com.sun.jna.platform.unix">X11.XFocusChangeEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XFocusInEvent.html" title="class in com.sun.jna.platform.unix">X11.XFocusInEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XFocusOutEvent.html" title="class in com.sun.jna.platform.unix">X11.XFocusOutEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XGCValues.html" title="class in com.sun.jna.platform.unix">X11.XGCValues</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XGraphicsExposeEvent.html" title="class in com.sun.jna.platform.unix">X11.XGraphicsExposeEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XGravityEvent.html" title="class in com.sun.jna.platform.unix">X11.XGravityEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XID.html" title="class in com.sun.jna.platform.unix">X11.XID</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XImage.html" title="class in com.sun.jna.platform.unix">X11.XImage</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XInputClassInfoByReference.html" title="class in com.sun.jna.platform.unix">X11.XInputClassInfoByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XKeyboardControlRef.html" title="class in com.sun.jna.platform.unix">X11.XKeyboardControlRef</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XKeyboardStateRef.html" title="class in com.sun.jna.platform.unix">X11.XKeyboardStateRef</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XKeyEvent.html" title="class in com.sun.jna.platform.unix">X11.XKeyEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XKeymapEvent.html" title="class in com.sun.jna.platform.unix">X11.XKeymapEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XLeaveWindowEvent.html" title="class in com.sun.jna.platform.unix">X11.XLeaveWindowEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XMapEvent.html" title="class in com.sun.jna.platform.unix">X11.XMapEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XMappingEvent.html" title="class in com.sun.jna.platform.unix">X11.XMappingEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XMapRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XMapRequestEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XModifierKeymapRef.html" title="class in com.sun.jna.platform.unix">X11.XModifierKeymapRef</A></B></TD>
+<TD>The modifiermap member of the XModifierKeymap structure contains 8 sets of max_keypermod KeyCodes, one for each modifier in the order Shift, Lock, Control, Mod1, Mod2, Mod3, Mod4, and Mod5.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XMotionEvent.html" title="class in com.sun.jna.platform.unix">X11.XMotionEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XNoExposeEvent.html" title="class in com.sun.jna.platform.unix">X11.XNoExposeEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XPoint.html" title="class in com.sun.jna.platform.unix">X11.XPoint</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XPointerMovedEvent.html" title="class in com.sun.jna.platform.unix">X11.XPointerMovedEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XPropertyEvent.html" title="class in com.sun.jna.platform.unix">X11.XPropertyEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XRectangle.html" title="class in com.sun.jna.platform.unix">X11.XRectangle</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Xrender.PictFormat.html" title="class in com.sun.jna.platform.unix">X11.Xrender.PictFormat</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Xrender.XRenderDirectFormat.html" title="class in com.sun.jna.platform.unix">X11.Xrender.XRenderDirectFormat</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.Xrender.XRenderPictFormat.html" title="class in com.sun.jna.platform.unix">X11.Xrender.XRenderPictFormat</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XReparentEvent.html" title="class in com.sun.jna.platform.unix">X11.XReparentEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XResizeRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XResizeRequestEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XSelectionClearEvent.html" title="class in com.sun.jna.platform.unix">X11.XSelectionClearEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XSelectionEvent.html" title="class in com.sun.jna.platform.unix">X11.XSelectionEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XSelectionRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XSelectionRequestEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XSetWindowAttributes.html" title="class in com.sun.jna.platform.unix">X11.XSetWindowAttributes</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XSizeHints.html" title="class in com.sun.jna.platform.unix">X11.XSizeHints</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XSizeHints.Aspect.html" title="class in com.sun.jna.platform.unix">X11.XSizeHints.Aspect</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XTextProperty.html" title="class in com.sun.jna.platform.unix">X11.XTextProperty</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XUnmapEvent.html" title="class in com.sun.jna.platform.unix">X11.XUnmapEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XVisibilityEvent.html" title="class in com.sun.jna.platform.unix">X11.XVisibilityEvent</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XVisualInfo.html" title="class in com.sun.jna.platform.unix">X11.XVisualInfo</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XWindowAttributes.html" title="class in com.sun.jna.platform.unix">X11.XWindowAttributes</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XWMHints.html" title="class in com.sun.jna.platform.unix">X11.XWMHints</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<A NAME="package_description"><!-- --></A><H2>
+Package com.sun.jna.platform.unix Description
+</H2>
+
+<P>
+<!-- One sentence summary -->
+Provides common library mappings for Unix and X11-based platforms.
+<P>
+
+<P>
+<DL>
+</DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/mac/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/unix/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

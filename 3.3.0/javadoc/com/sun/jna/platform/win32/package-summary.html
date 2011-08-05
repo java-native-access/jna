@@ -1,0 +1,1183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+com.sun.jna.platform.win32 (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="com.sun.jna.platform.win32 (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/unix/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/ptr/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package com.sun.jna.platform.win32
+</H2>
+Provides common library mappings for the Windows platform.
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#package_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html" title="interface in com.sun.jna.platform.win32">Advapi32</A></B></TD>
+<TD>Advapi32.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.html" title="interface in com.sun.jna.platform.win32">BaseTSD</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Crypt32.html" title="interface in com.sun.jna.platform.win32">Crypt32</A></B></TD>
+<TD>Crypt32.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.html" title="interface in com.sun.jna.platform.win32">DsGetDC</A></B></TD>
+<TD>Ported from DsGetDC.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/GDI32.html" title="interface in com.sun.jna.platform.win32">GDI32</A></B></TD>
+<TD>Definition (incomplete) of <code>gdi32.dll</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Guid.html" title="interface in com.sun.jna.platform.win32">Guid</A></B></TD>
+<TD>Ported from Guid.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A></B></TD>
+<TD>Definition (incomplete) of <code>kernel32.dll</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.platform.win32">Kernel32.OVERLAPPED_COMPLETION_ROUTINE</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.html" title="interface in com.sun.jna.platform.win32">LMAccess</A></B></TD>
+<TD>Ported from LMAccess.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMCons.html" title="interface in com.sun.jna.platform.win32">LMCons</A></B></TD>
+<TD>Ported from LMCons.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMErr.html" title="interface in com.sun.jna.platform.win32">LMErr</A></B></TD>
+<TD>Ported from LMErr.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMJoin.html" title="interface in com.sun.jna.platform.win32">LMJoin</A></B></TD>
+<TD>Ported from LMJoin.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html" title="interface in com.sun.jna.platform.win32">Msi</A></B></TD>
+<TD>Provides access to the w32 MSI installer library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Netapi32.html" title="interface in com.sun.jna.platform.win32">Netapi32</A></B></TD>
+<TD>Netapi32.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NtDll.html" title="interface in com.sun.jna.platform.win32">NtDll</A></B></TD>
+<TD>ntdll.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.html" title="interface in com.sun.jna.platform.win32">NTSecApi</A></B></TD>
+<TD>Ported from NTSecApi.h
+ Windows SDK 6.0A.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTStatus.html" title="interface in com.sun.jna.platform.win32">NTStatus</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/ObjBase.html" title="interface in com.sun.jna.platform.win32">ObjBase</A></B></TD>
+<TD>Definitions from ObjBase.h</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Ole32.html" title="interface in com.sun.jna.platform.win32">Ole32</A></B></TD>
+<TD>Ole32.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Oleaut32.html" title="interface in com.sun.jna.platform.win32">Oleaut32</A></B></TD>
+<TD>Oleaut32.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Secur32.html" title="interface in com.sun.jna.platform.win32">Secur32</A></B></TD>
+<TD>Secur32.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/SetupApi.html" title="interface in com.sun.jna.platform.win32">SetupApi</A></B></TD>
+<TD>The interface for the w32 setup API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Shell32.html" title="interface in com.sun.jna.platform.win32">Shell32</A></B></TD>
+<TD>Shell32.dll Interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/ShellAPI.html" title="interface in com.sun.jna.platform.win32">ShellAPI</A></B></TD>
+<TD>Ported from ShellAPI.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/ShlObj.html" title="interface in com.sun.jna.platform.win32">ShlObj</A></B></TD>
+<TD>Ported from ShlObj.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.html" title="interface in com.sun.jna.platform.win32">Sspi</A></B></TD>
+<TD>Ported from Sspi.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.html" title="interface in com.sun.jna.platform.win32">Tlhelp32</A></B></TD>
+<TD>Interface for the Tlhelp32.h header file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A></B></TD>
+<TD>Provides access to the w32 user32 library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/VerRsrc.html" title="interface in com.sun.jna.platform.win32">VerRsrc</A></B></TD>
+<TD>Interface for the VerRsrc.h header file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Version.html" title="interface in com.sun.jna.platform.win32">Version</A></B></TD>
+<TD>Provides access to the w32 version library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Wdm.html" title="interface in com.sun.jna.platform.win32">Wdm</A></B></TD>
+<TD>Ported from Wdm.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinCrypt.html" title="interface in com.sun.jna.platform.win32">WinCrypt</A></B></TD>
+<TD>Ported from WinCrypt.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></B></TD>
+<TD>Ported from Windef.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinGDI.html" title="interface in com.sun.jna.platform.win32">WinGDI</A></B></TD>
+<TD>Ported from WinGDI.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winioctl.html" title="interface in com.sun.jna.platform.win32">Winioctl</A></B></TD>
+<TD>Interface for the Winioctl.h header file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.html" title="interface in com.sun.jna.platform.win32">WinNT</A></B></TD>
+<TD>This module defines the 32-Bit Windows types and constants that are defined
+ by NT, but exposed through the Win32 API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinReg.html" title="interface in com.sun.jna.platform.win32">WinReg</A></B></TD>
+<TD>This module contains the function prototypes and constant, type and structure 
+ definitions for the Windows 32-Bit Registry API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html" title="interface in com.sun.jna.platform.win32">Winspool</A></B></TD>
+<TD>Ported from Winspool.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html" title="interface in com.sun.jna.platform.win32">Winsvc</A></B></TD>
+<TD>This module defines the 32-Bit Windows types and constants that are defined
+ by NT, but exposed through the Win32 API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A></B></TD>
+<TD>Ported from WinUser.h Microsoft Windows SDK 6.0A.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HOOKPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.HOOKPROC</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.LowLevelKeyboardProc.html" title="interface in com.sun.jna.platform.win32">WinUser.LowLevelKeyboardProc</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WTypes.html" title="interface in com.sun.jna.platform.win32">WTypes</A></B></TD>
+<TD>Constant defined in WTypes.h</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32Util.html" title="class in com.sun.jna.platform.win32">Advapi32Util</A></B></TD>
+<TD>Advapi32 utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32Util.Account.html" title="class in com.sun.jna.platform.win32">Advapi32Util.Account</A></B></TD>
+<TD>An account.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32Util.EventLogIterator.html" title="class in com.sun.jna.platform.win32">Advapi32Util.EventLogIterator</A></B></TD>
+<TD>An iterator for Event Log entries.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32Util.EventLogRecord.html" title="class in com.sun.jna.platform.win32">Advapi32Util.EventLogRecord</A></B></TD>
+<TD>An event log record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.DWORD_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.DWORD_PTR</A></B></TD>
+<TD>Unsigned DWORD_PTR.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A></B></TD>
+<TD>Signed long type for pointer precision.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.SIZE_T.html" title="class in com.sun.jna.platform.win32">BaseTSD.SIZE_T</A></B></TD>
+<TD>The maximum number of bytes to which a pointer can point.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.SSIZE_T.html" title="class in com.sun.jna.platform.win32">BaseTSD.SSIZE_T</A></B></TD>
+<TD>Signed SIZE_T.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.ULONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.ULONG_PTR</A></B></TD>
+<TD>Unsigned LONG_PTR.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Crypt32Util.html" title="class in com.sun.jna.platform.win32">Crypt32Util</A></B></TD>
+<TD>Crypt32 utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.DOMAIN_CONTROLLER_INFO.html" title="class in com.sun.jna.platform.win32">DsGetDC.DOMAIN_CONTROLLER_INFO</A></B></TD>
+<TD>The DOMAIN_CONTROLLER_INFO structure is used with the DsGetDcName 
+ function to receive data about a domain controller.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.DOMAIN_CONTROLLER_INFO.ByReference.html" title="class in com.sun.jna.platform.win32">DsGetDC.DOMAIN_CONTROLLER_INFO.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.DS_DOMAIN_TRUSTS.html" title="class in com.sun.jna.platform.win32">DsGetDC.DS_DOMAIN_TRUSTS</A></B></TD>
+<TD>The DS_DOMAIN_TRUSTS structure is used with the DsEnumerateDomainTrusts function to 
+ contain trust data for a domain.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.DS_DOMAIN_TRUSTS.ByReference.html" title="class in com.sun.jna.platform.win32">DsGetDC.DS_DOMAIN_TRUSTS.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.PDOMAIN_CONTROLLER_INFO.html" title="class in com.sun.jna.platform.win32">DsGetDC.PDOMAIN_CONTROLLER_INFO</A></B></TD>
+<TD>Pointer to DOMAIN_CONTROLLER_INFO.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.PDOMAIN_CONTROLLER_INFO.ByReference.html" title="class in com.sun.jna.platform.win32">DsGetDC.PDOMAIN_CONTROLLER_INFO.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.PDS_DOMAIN_TRUSTS.html" title="class in com.sun.jna.platform.win32">DsGetDC.PDS_DOMAIN_TRUSTS</A></B></TD>
+<TD>A pointer to an array of DS_DOMAIN_TRUSTS.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/DsGetDC.PDS_DOMAIN_TRUSTS.ByReference.html" title="class in com.sun.jna.platform.win32">DsGetDC.PDS_DOMAIN_TRUSTS.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.ByReference.html" title="class in com.sun.jna.platform.win32">Guid.GUID.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Kernel32Util.html" title="class in com.sun.jna.platform.win32">Kernel32Util</A></B></TD>
+<TD>Kernel32 utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_0</A></B></TD>
+<TD>The GROUP_INFO_0 structure contains the name of a global group in the security
+ database, which is the security accounts manager (SAM) database or, in the case
+ of domain controllers, the Active Directory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_1.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_1</A></B></TD>
+<TD>The GROUP_INFO_1 structure contains a global group name and a comment to 
+ associate with the group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_2.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_2</A></B></TD>
+<TD>The GROUP_INFO_2 structure contains information about a global group, including
+ name, identifier, and resource attributes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_3.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_3</A></B></TD>
+<TD>The GROUP_INFO_3 structure contains information about a global group, including 
+ name, security identifier (SID), and resource attributes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.GROUP_USERS_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_USERS_INFO_0</A></B></TD>
+<TD>The GROUP_USERS_INFO_0 structure contains global group member information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.LOCALGROUP_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.LOCALGROUP_INFO_0</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.LOCALGROUP_INFO_1.html" title="class in com.sun.jna.platform.win32">LMAccess.LOCALGROUP_INFO_1</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.LOCALGROUP_USERS_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.LOCALGROUP_USERS_INFO_0</A></B></TD>
+<TD>The LOCALGROUP_USERS_INFO_0 structure contains local group member information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.USER_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.USER_INFO_0</A></B></TD>
+<TD>The USER_INFO_0 structure contains a user account name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMAccess.USER_INFO_1.html" title="class in com.sun.jna.platform.win32">LMAccess.USER_INFO_1</A></B></TD>
+<TD>The USER_INFO_1 structure contains information about a user account, including 
+ account name, password data, privilege level, and the path to the user's home 
+ directory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/LMJoin.NETSETUP_JOIN_STATUS.html" title="class in com.sun.jna.platform.win32">LMJoin.NETSETUP_JOIN_STATUS</A></B></TD>
+<TD>Status of a workstation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Netapi32Util.html" title="class in com.sun.jna.platform.win32">Netapi32Util</A></B></TD>
+<TD>Netapi32 Utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Netapi32Util.DomainController.html" title="class in com.sun.jna.platform.win32">Netapi32Util.DomainController</A></B></TD>
+<TD>A domain controller.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Netapi32Util.DomainTrust.html" title="class in com.sun.jna.platform.win32">Netapi32Util.DomainTrust</A></B></TD>
+<TD>A domain trust relationship.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Netapi32Util.Group.html" title="class in com.sun.jna.platform.win32">Netapi32Util.Group</A></B></TD>
+<TD>A group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Netapi32Util.LocalGroup.html" title="class in com.sun.jna.platform.win32">Netapi32Util.LocalGroup</A></B></TD>
+<TD>A local group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Netapi32Util.User.html" title="class in com.sun.jna.platform.win32">Netapi32Util.User</A></B></TD>
+<TD>A user.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NtDllUtil.html" title="class in com.sun.jna.platform.win32">NtDllUtil</A></B></TD>
+<TD>NtDll Utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_BINARY_DATA.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_BINARY_DATA</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_DOMAIN_INFO.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_DOMAIN_INFO</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_INFORMATION.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_INFORMATION</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_INFORMATION.ByReference.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_INFORMATION.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_RECORD.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_RECORD</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_RECORD.ByReference.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_RECORD.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_RECORD.UNION.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_RECORD.UNION</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_RECORD.UNION.ByReference.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_RECORD.UNION.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_UNICODE_STRING.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_UNICODE_STRING</A></B></TD>
+<TD>The LSA_UNICODE_STRING structure is used by various Local Security Authority (LSA) 
+ functions to specify a Unicode string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.LSA_UNICODE_STRING.ByReference.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_UNICODE_STRING.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.PLSA_FOREST_TRUST_INFORMATION.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_FOREST_TRUST_INFORMATION</A></B></TD>
+<TD>The LSA_FOREST_TRUST_INFORMATION structure contains Local Security Authority 
+ forest trust information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.PLSA_FOREST_TRUST_INFORMATION.ByReference.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_FOREST_TRUST_INFORMATION.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.PLSA_FOREST_TRUST_RECORD.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_FOREST_TRUST_RECORD</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.PLSA_FOREST_TRUST_RECORD.ByReference.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_FOREST_TRUST_RECORD.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.PLSA_UNICODE_STRING.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_UNICODE_STRING</A></B></TD>
+<TD>Pointer to an LSA_UNICODE_STRING.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/NTSecApi.PLSA_UNICODE_STRING.ByReference.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_UNICODE_STRING.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Ole32Util.html" title="class in com.sun.jna.platform.win32">Ole32Util</A></B></TD>
+<TD>Ole32 Utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Secur32.EXTENDED_NAME_FORMAT.html" title="class in com.sun.jna.platform.win32">Secur32.EXTENDED_NAME_FORMAT</A></B></TD>
+<TD>Specifies a format for a directory service object name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Secur32Util.html" title="class in com.sun.jna.platform.win32">Secur32Util</A></B></TD>
+<TD>Secur32 Utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Secur32Util.SecurityPackage.html" title="class in com.sun.jna.platform.win32">Secur32Util.SecurityPackage</A></B></TD>
+<TD>An SSPI package.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/SetupApi.SP_DEVICE_INTERFACE_DATA.html" title="class in com.sun.jna.platform.win32">SetupApi.SP_DEVICE_INTERFACE_DATA</A></B></TD>
+<TD>An SP_DEVICE_INTERFACE_DATA structure defines a device interface in a device information set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/SetupApi.SP_DEVICE_INTERFACE_DATA.ByReference.html" title="class in com.sun.jna.platform.win32">SetupApi.SP_DEVICE_INTERFACE_DATA.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/SetupApi.SP_DEVINFO_DATA.html" title="class in com.sun.jna.platform.win32">SetupApi.SP_DEVINFO_DATA</A></B></TD>
+<TD>An SP_DEVINFO_DATA structure defines a device instance that is a member of a device information set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/SetupApi.SP_DEVINFO_DATA.ByReference.html" title="class in com.sun.jna.platform.win32">SetupApi.SP_DEVINFO_DATA.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Shell32Util.html" title="class in com.sun.jna.platform.win32">Shell32Util</A></B></TD>
+<TD>Shell32 Utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/ShellAPI.SHFILEOPSTRUCT.html" title="class in com.sun.jna.platform.win32">ShellAPI.SHFILEOPSTRUCT</A></B></TD>
+<TD>Contains information that the SHFileOperation function uses to perform file operations.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.CredHandle.html" title="class in com.sun.jna.platform.win32">Sspi.CredHandle</A></B></TD>
+<TD>Credentials handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.CtxtHandle.html" title="class in com.sun.jna.platform.win32">Sspi.CtxtHandle</A></B></TD>
+<TD>Security context handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.PSecHandle.html" title="class in com.sun.jna.platform.win32">Sspi.PSecHandle</A></B></TD>
+<TD>A pointer to a SecHandle</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.PSecHandle.ByReference.html" title="class in com.sun.jna.platform.win32">Sspi.PSecHandle.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.PSecPkgInfo.html" title="class in com.sun.jna.platform.win32">Sspi.PSecPkgInfo</A></B></TD>
+<TD>A pointer to an array of SecPkgInfo structures.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.PSecPkgInfo.ByReference.html" title="class in com.sun.jna.platform.win32">Sspi.PSecPkgInfo.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SecBuffer.html" title="class in com.sun.jna.platform.win32">Sspi.SecBuffer</A></B></TD>
+<TD>The SecBuffer structure describes a buffer allocated by a transport application 
+ to pass to a security package.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SecBuffer.ByReference.html" title="class in com.sun.jna.platform.win32">Sspi.SecBuffer.ByReference</A></B></TD>
+<TD>A ByReference SecBuffer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SecBufferDesc.html" title="class in com.sun.jna.platform.win32">Sspi.SecBufferDesc</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SecHandle.html" title="class in com.sun.jna.platform.win32">Sspi.SecHandle</A></B></TD>
+<TD>Security handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SecHandle.ByReference.html" title="class in com.sun.jna.platform.win32">Sspi.SecHandle.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SecPkgInfo.html" title="class in com.sun.jna.platform.win32">Sspi.SecPkgInfo</A></B></TD>
+<TD>The SecPkgInfo structure provides general information about a security package, 
+ such as its name and capabilities.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SecPkgInfo.ByReference.html" title="class in com.sun.jna.platform.win32">Sspi.SecPkgInfo.ByReference</A></B></TD>
+<TD>A reference pointer to a SecPkgInfo structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.SECURITY_INTEGER.html" title="class in com.sun.jna.platform.win32">Sspi.SECURITY_INTEGER</A></B></TD>
+<TD>A security integer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Sspi.TimeStamp.html" title="class in com.sun.jna.platform.win32">Sspi.TimeStamp</A></B></TD>
+<TD>A timestamp.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32</A></B></TD>
+<TD>Describes an entry from a list of the processes residing in the system address space when a snapshot was taken.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.ByReference.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/VerRsrc.VS_FIXEDFILEINFO.html" title="class in com.sun.jna.platform.win32">VerRsrc.VS_FIXEDFILEINFO</A></B></TD>
+<TD>Contains version information for a file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/VerRsrc.VS_FIXEDFILEINFO.ByReference.html" title="class in com.sun.jna.platform.win32">VerRsrc.VS_FIXEDFILEINFO.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/W32Errors.html" title="class in com.sun.jna.platform.win32">W32Errors</A></B></TD>
+<TD>Error code definitions for the Win32 API functions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/W32FileMonitor.html" title="class in com.sun.jna.platform.win32">W32FileMonitor</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/W32FileUtils.html" title="class in com.sun.jna.platform.win32">W32FileUtils</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/W32Service.html" title="class in com.sun.jna.platform.win32">W32Service</A></B></TD>
+<TD>Win32 Service wrapper</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/W32ServiceManager.html" title="class in com.sun.jna.platform.win32">W32ServiceManager</A></B></TD>
+<TD>Win32 Service Manager wrapper</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Wdm.KEY_BASIC_INFORMATION.html" title="class in com.sun.jna.platform.win32">Wdm.KEY_BASIC_INFORMATION</A></B></TD>
+<TD>The KEY_BASIC_INFORMATION structure defines a subset of 
+ the full information that is available for a registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Wdm.KEY_INFORMATION_CLASS.html" title="class in com.sun.jna.platform.win32">Wdm.KEY_INFORMATION_CLASS</A></B></TD>
+<TD>The KEY_INFORMATION_CLASS enumeration type represents 
+ the type of information to supply about a registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.html" title="class in com.sun.jna.platform.win32">WinBase</A></B></TD>
+<TD>Ported from Winbase.h.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A></B></TD>
+<TD>The FILETIME structure is a 64-bit value representing the number of 
+ 100-nanosecond intervals since January 1, 1601 (UTC).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.MEMORYSTATUSEX.html" title="class in com.sun.jna.platform.win32">WinBase.MEMORYSTATUSEX</A></B></TD>
+<TD>Contains information about the current state of both physical and virtual memory, including 
+ extended memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</A></B></TD>
+<TD>The OVERLAPPED structure contains information used in 
+ asynchronous (or overlapped) input and output (I/O).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.PROCESS_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinBase.PROCESS_INFORMATION</A></B></TD>
+<TD>Contains information about a newly created process and its primary
+ thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.PROCESS_INFORMATION.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.PROCESS_INFORMATION.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A></B></TD>
+<TD>The SECURITY_ATTRIBUTES structure contains the security descriptor for an
+ object and specifies whether the handle retrieved by specifying this
+ structure is inheritable.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" title="class in com.sun.jna.platform.win32">WinBase.STARTUPINFO</A></B></TD>
+<TD>Specifies the window station, desktop, standard handles, and appearance of the main
+ window for a process at creation time.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO</A></B></TD>
+<TD>Contains information about the current computer system.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.PI.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO.PI</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.PI.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO.PI.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.UNION.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO.UNION</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.UNION.ByReference.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO.UNION.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEMTIME.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEMTIME</A></B></TD>
+<TD>Specifies a date and time, using individual members for the month, 
+ day, year, weekday, hour, minute, second, and millisecond.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinCrypt.CRYPTPROTECT_PROMPTSTRUCT.html" title="class in com.sun.jna.platform.win32">WinCrypt.CRYPTPROTECT_PROMPTSTRUCT</A></B></TD>
+<TD>The CRYPTPROTECT_PROMPTSTRUCT structure provides the text of a prompt and 
+ information about when and where that prompt is to be displayed when using
+ the CryptProtectData and CryptUnprotectData functions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinCrypt.DATA_BLOB.html" title="class in com.sun.jna.platform.win32">WinCrypt.DATA_BLOB</A></B></TD>
+<TD>The CryptoAPI CRYPTOAPI_BLOB structure is used for an arbitrary array of bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></B></TD>
+<TD>32-bit unsigned integer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORDLONG.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDLONG</A></B></TD>
+<TD>64-bit unsigned integer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HBITMAP.html" title="class in com.sun.jna.platform.win32">WinDef.HBITMAP</A></B></TD>
+<TD>Handle to a bitmap.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HCURSOR.html" title="class in com.sun.jna.platform.win32">WinDef.HCURSOR</A></B></TD>
+<TD>Handle to a cursor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A></B></TD>
+<TD>Handle to a device context (DC).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HFONT.html" title="class in com.sun.jna.platform.win32">WinDef.HFONT</A></B></TD>
+<TD>Handle to a font.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A></B></TD>
+<TD>Handle to an icon.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A></B></TD>
+<TD>Handle to an instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMENU.html" title="class in com.sun.jna.platform.win32">WinDef.HMENU</A></B></TD>
+<TD>Handle to a cursor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMODULE.html" title="class in com.sun.jna.platform.win32">WinDef.HMODULE</A></B></TD>
+<TD>Handle to a module.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPALETTE.html" title="class in com.sun.jna.platform.win32">WinDef.HPALETTE</A></B></TD>
+<TD>Handle to a palette.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPEN.html" title="class in com.sun.jna.platform.win32">WinDef.HPEN</A></B></TD>
+<TD>Handle to a pen.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A></B></TD>
+<TD>Handle to a region.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRSRC.html" title="class in com.sun.jna.platform.win32">WinDef.HRSRC</A></B></TD>
+<TD>Handle to a resource.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></B></TD>
+<TD>Handle to a window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LONG.html" title="class in com.sun.jna.platform.win32">WinDef.LONG</A></B></TD>
+<TD>32-bit signed integer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A></B></TD>
+<TD>Message parameter.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A></B></TD>
+<TD>Signed result of message processing.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.UINT_PTR.html" title="class in com.sun.jna.platform.win32">WinDef.UINT_PTR</A></B></TD>
+<TD>Unsigned INT_PTR.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.ULONGLONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONGLONG</A></B></TD>
+<TD>64-bit unsigned integer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A></B></TD>
+<TD>16-bit unsigned integer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A></B></TD>
+<TD>Message parameter.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinGDI.BITMAPINFO.html" title="class in com.sun.jna.platform.win32">WinGDI.BITMAPINFO</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinGDI.BITMAPINFOHEADER.html" title="class in com.sun.jna.platform.win32">WinGDI.BITMAPINFOHEADER</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinGDI.RGBQUAD.html" title="class in com.sun.jna.platform.win32">WinGDI.RGBQUAD</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinGDI.RGNDATA.html" title="class in com.sun.jna.platform.win32">WinGDI.RGNDATA</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinGDI.RGNDATAHEADER.html" title="class in com.sun.jna.platform.win32">WinGDI.RGNDATAHEADER</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winioctl.STORAGE_DEVICE_NUMBER.html" title="class in com.sun.jna.platform.win32">Winioctl.STORAGE_DEVICE_NUMBER</A></B></TD>
+<TD>Contains information about a device.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winioctl.STORAGE_DEVICE_NUMBER.ByReference.html" title="class in com.sun.jna.platform.win32">Winioctl.STORAGE_DEVICE_NUMBER.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.EVENTLOGRECORD.html" title="class in com.sun.jna.platform.win32">WinNT.EVENTLOGRECORD</A></B></TD>
+<TD>The EVENTLOGRECORD structure contains information about an event record returned by the 
+ ReadEventLog function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.FILE_NOTIFY_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinNT.FILE_NOTIFY_INFORMATION</A></B></TD>
+<TD>The FILE_NOTIFY_INFORMATION structure describes the changes found by the 
+ ReadDirectoryChangesW function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></B></TD>
+<TD>Handle to an object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A></B></TD>
+<TD>LPHANDLE</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></B></TD>
+<TD>Return code used by interfaces.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER</A></B></TD>
+<TD>A 64-bit integer;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.LowHigh.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.LowHigh</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.UNION.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.UNION</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LUID.html" title="class in com.sun.jna.platform.win32">WinNT.LUID</A></B></TD>
+<TD>A 64-bit value that is guaranteed to be unique on the operating system 
+ that generated it until the system is restarted.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LUID_AND_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinNT.LUID_AND_ATTRIBUTES</A></B></TD>
+<TD>The LUID_AND_ATTRIBUTES structure represents a locally unique identifier (LUID) and its attributes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFO.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFO</A></B></TD>
+<TD>The OSVERSIONINFO data structure contains operating system version information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFOEX.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFOEX</A></B></TD>
+<TD>Contains operating system version information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.ByReference.html" title="class in com.sun.jna.platform.win32">WinNT.PSID.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSIDByReference.html" title="class in com.sun.jna.platform.win32">WinNT.PSIDByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.SECURITY_IMPERSONATION_LEVEL.html" title="class in com.sun.jna.platform.win32">WinNT.SECURITY_IMPERSONATION_LEVEL</A></B></TD>
+<TD>The SECURITY_IMPERSONATION_LEVEL enumeration type contains values that specify security 
+ impersonation levels.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.SID_AND_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinNT.SID_AND_ATTRIBUTES</A></B></TD>
+<TD>The SID_AND_ATTRIBUTES structure represents a security identifier (SID) and its 
+ attributes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.SID_NAME_USE.html" title="class in com.sun.jna.platform.win32">WinNT.SID_NAME_USE</A></B></TD>
+<TD>The SID_NAME_USE enumeration type contains values that specify the type of a security identifier (SID).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_GROUPS.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_GROUPS</A></B></TD>
+<TD>The TOKEN_GROUPS structure contains information about the group security identifiers 
+ (SIDs) in an access token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_INFORMATION_CLASS</A></B></TD>
+<TD>The TOKEN_INFORMATION_CLASS enumeration type contains values that specify the type of 
+ information being assigned to or retrieved from an access token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_OWNER.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_OWNER</A></B></TD>
+<TD>The TOKEN_OWNER structure contains the default owner 
+ security identifier (SID) that will be applied to newly created objects.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_PRIVILEGES.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_PRIVILEGES</A></B></TD>
+<TD>The TOKEN_PRIVILEGES structure contains information about a set of privileges for an access token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_TYPE.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_TYPE</A></B></TD>
+<TD>The TOKEN_TYPE enumeration type contains values that differentiate between
+ a primary token and an impersonation token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_USER.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_USER</A></B></TD>
+<TD>The TOKEN_USER structure identifies the user associated with an access token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.WELL_KNOWN_SID_TYPE.html" title="class in com.sun.jna.platform.win32">WinNT.WELL_KNOWN_SID_TYPE</A></B></TD>
+<TD>The WELL_KNOWN_SID_TYPE enumeration type is a list of commonly used security identifiers 
+ (SIDs).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEYByReference.html" title="class in com.sun.jna.platform.win32">WinReg.HKEYByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_1.html" title="class in com.sun.jna.platform.win32">Winspool.PRINTER_INFO_1</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_4.html" title="class in com.sun.jna.platform.win32">Winspool.PRINTER_INFO_4</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinspoolUtil.html" title="class in com.sun.jna.platform.win32">WinspoolUtil</A></B></TD>
+<TD>Winspool Utility API.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_STATUS_TYPE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_STATUS_TYPE</A></B></TD>
+<TD>The SC_STATUS_TYPE enumeration type contains values</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS</A></B></TD>
+<TD>Contains status information for a service.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS_PROCESS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS_PROCESS</A></B></TD>
+<TD>Contains process status information for a service.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32">WinUser.BLENDFUNCTION</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.FLASHWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.FLASHWINFO</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.GUITHREADINFO.html" title="class in com.sun.jna.platform.win32">WinUser.GUITHREADINFO</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HARDWAREINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.HARDWAREINPUT</A></B></TD>
+<TD>Contains information about a simulated message generated by an input device other than a keyboard or mouse.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HARDWAREINPUT.ByReference.html" title="class in com.sun.jna.platform.win32">WinUser.HARDWAREINPUT.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.INPUT.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT</A></B></TD>
+<TD>Used by SendInput to store information for synthesizing input events such as keystrokes, mouse movement, and mouse
+ clicks.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.INPUT.ByReference.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.INPUT.INPUT_UNION.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT.INPUT_UNION</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KBDLLHOOKSTRUCT.html" title="class in com.sun.jna.platform.win32">WinUser.KBDLLHOOKSTRUCT</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.KEYBDINPUT</A></B></TD>
+<TD>Contains information about a simulated keyboard event.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.ByReference.html" title="class in com.sun.jna.platform.win32">WinUser.KEYBDINPUT.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MOUSEINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.MOUSEINPUT</A></B></TD>
+<TD>Contains information about a simulated mouse event.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MOUSEINPUT.ByReference.html" title="class in com.sun.jna.platform.win32">WinUser.MOUSEINPUT.ByReference</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A></B></TD>
+<TD>Defines the x- and y-coordinates of a point.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.SIZE.html" title="class in com.sun.jna.platform.win32">WinUser.SIZE</A></B></TD>
+<TD>Specifies the width and height of a rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WINDOWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.WINDOWINFO</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Enum Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32Util.EventLogType.html" title="enum in com.sun.jna.platform.win32">Advapi32Util.EventLogType</A></B></TD>
+<TD>Event log types.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Exception Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../com/sun/jna/platform/win32/Win32Exception.html" title="class in com.sun.jna.platform.win32">Win32Exception</A></B></TD>
+<TD>Win32 exception.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<A NAME="package_description"><!-- --></A><H2>
+Package com.sun.jna.platform.win32 Description
+</H2>
+
+<P>
+<!-- One sentence summary -->
+Provides common library mappings for the Windows platform.
+<P>
+
+<P>
+<DL>
+</DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/unix/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/ptr/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

@@ -1,0 +1,2025 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Pointer (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Pointer (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/Platform.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/PointerType.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Pointer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Pointer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna</FONT>
+<BR>
+Class Pointer</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.Pointer</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>, <A HREF="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>Pointer</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
+</PRE>
+
+<P>
+An abstraction for a native pointer data type.  A Pointer instance 
+ represents, on the Java side, a native pointer.  The native pointer could 
+ be any <em>type</em> of native pointer.  Methods such as <code>write</code>, 
+ <code>read</code>, <code>getXXX</code>, and <code>setXXX</code>, provide 
+ means to access memory underlying the native pointer.<p>
+ The constructors are intentionally package-private, since it's not generally
+ a good idea to be creating C pointers de novo.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Sheng Liang, originator, Todd Fast, suitability modifications, Timothy Wall, robust library loading</DD>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#NULL">NULL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience constant, same as <code>null</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#peer">peer</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pointer value of the real native pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#SIZE">SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Size of a native pointer, in bytes.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#Pointer()">Pointer</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Derived class must assign peer pointer value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#Pointer(long)">Pointer</A></B>(long&nbsp;peer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create from native pointer.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A></B>(long&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Zero memory for the given number of bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#createConstant(int)">createConstant</A></B>(int&nbsp;peer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience constant, equivalent to <code>(void*)CONSTANT</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A></B>(long&nbsp;peer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience constant, equivalent to <code>(void*)CONSTANT</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compares this <code>Pointer</code> to the specified object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getByte(long)">getByte</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>byte</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</A></B>(long&nbsp;offset,
+             int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getByteBuffer(long, long)">getByteBuffer</A></B>(long&nbsp;offset,
+              long&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a ByteBuffer mapped to the memory pointed to by the pointer,
+ ensuring the buffer uses native byte order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;char</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getChar(long)">getChar</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>wchar_t</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;char[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</A></B>(long&nbsp;offset,
+             int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getDouble(long)">getDouble</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>double</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</A></B>(long&nbsp;offset,
+               int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getFloat(long)">getFloat</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>float</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</A></B>(long&nbsp;offset,
+              int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getInt(long)">getInt</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>int</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</A></B>(long&nbsp;offset,
+            int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getLong(long)">getLong</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>long</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</A></B>(long&nbsp;offset,
+             int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>long</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getPointer(long)">getPointer</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</A></B>(long&nbsp;base)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array of <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</A></B>(long&nbsp;offset,
+                int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array of <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> of the requested size.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getShort(long)">getShort</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer as a pointer to <code>short</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</A></B>(long&nbsp;offset,
+              int&nbsp;arraySize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy native memory to a Java String.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getString(long, boolean)">getString</A></B>(long&nbsp;offset,
+          boolean&nbsp;wide)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy native memory to a Java String.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A></B>(long&nbsp;base)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A></B>(long&nbsp;base,
+               boolean&nbsp;wide)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int)">getStringArray</A></B>(long&nbsp;base,
+               int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>, using the given array length.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int, boolean)">getStringArray</A></B>(long&nbsp;base,
+               int&nbsp;length,
+               boolean&nbsp;wide)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter, using the given array length.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A></B>(long&nbsp;offset,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a hashcode for the native pointer represented by this
+ <code>Pointer</code> object</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</A></B>(long&nbsp;offset,
+        byte&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the offset of the given value in memory from the given offset,
+ or -1 if the value is not found.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer)">nativeValue</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read the native peer value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer, long)">nativeValue</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+            long&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the native peer value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, byte[], int, int)">read</A></B>(long&nbsp;offset,
+     byte[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, char[], int, int)">read</A></B>(long&nbsp;offset,
+     char[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, double[], int, int)">read</A></B>(long&nbsp;offset,
+     double[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, float[], int, int)">read</A></B>(long&nbsp;offset,
+     float[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, int[], int, int)">read</A></B>(long&nbsp;offset,
+     int[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, long[], int, int)">read</A></B>(long&nbsp;offset,
+     long[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</A></B>(long&nbsp;offset,
+     <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#read(long, short[], int, int)">read</A></B>(long&nbsp;offset,
+     short[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setByte(long, byte)">setByte</A></B>(long&nbsp;offset,
+        byte&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setChar(long, char)">setChar</A></B>(long&nbsp;offset,
+        char&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setDouble(long, double)">setDouble</A></B>(long&nbsp;offset,
+          double&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setFloat(long, float)">setFloat</A></B>(long&nbsp;offset,
+         float&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setInt(long, int)">setInt</A></B>(long&nbsp;offset,
+       int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setLong(long, long)">setLong</A></B>(long&nbsp;offset,
+        long&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</A></B>(long&nbsp;offset,
+          long&nbsp;length,
+          byte&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write <code>value</code> to the requested bank of memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</A></B>(long&nbsp;offset,
+              <A HREF="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setPointer(long, com.sun.jna.Pointer)">setPointer</A></B>(long&nbsp;offset,
+           <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setShort(long, short)">setShort</A></B>(long&nbsp;offset,
+         short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set <code>value</code> at location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A></B>(long&nbsp;offset,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy string <code>value</code> to the location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)">setString</A></B>(long&nbsp;offset,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
+          boolean&nbsp;wide)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy string <code>value</code> to the location being pointed to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A></B>(long&nbsp;offset,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#share(long)">share</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#share(long, long)">share</A></B>(long&nbsp;offset,
+      long&nbsp;sz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view of this pointer with a different peer base.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, byte[], int, int)">write</A></B>(long&nbsp;offset,
+      byte[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, char[], int, int)">write</A></B>(long&nbsp;offset,
+      char[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, double[], int, int)">write</A></B>(long&nbsp;offset,
+      double[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, float[], int, int)">write</A></B>(long&nbsp;offset,
+      float[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, int[], int, int)">write</A></B>(long&nbsp;offset,
+      int[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, long[], int, int)">write</A></B>(long&nbsp;offset,
+      long[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>into</em> memory pointed to by 
+ native pointer, from the specified array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</A></B>(long&nbsp;bOff,
+      <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the given array of Pointer to native memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#write(long, short[], int, int)">write</A></B>(long&nbsp;offset,
+      short[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SIZE"><!-- --></A><H3>
+SIZE</H3>
+<PRE>
+public static final int <B>SIZE</B></PRE>
+<DL>
+<DD>Size of a native pointer, in bytes.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="NULL"><!-- --></A><H3>
+NULL</H3>
+<PRE>
+public static final <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>NULL</B></PRE>
+<DL>
+<DD>Convenience constant, same as <code>null</code>.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="peer"><!-- --></A><H3>
+peer</H3>
+<PRE>
+protected long <B>peer</B></PRE>
+<DL>
+<DD>Pointer value of the real native pointer. Use long to be 64-bit safe.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Pointer()"><!-- --></A><H3>
+Pointer</H3>
+<PRE>
+<B>Pointer</B>()</PRE>
+<DL>
+<DD>Derived class must assign peer pointer value.
+<P>
+</DL>
+<HR>
+
+<A NAME="Pointer(long)"><!-- --></A><H3>
+Pointer</H3>
+<PRE>
+public <B>Pointer</B>(long&nbsp;peer)</PRE>
+<DL>
+<DD>Create from native pointer.  Don't use this unless you know what
+ you're doing.
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createConstant(long)"><!-- --></A><H3>
+createConstant</H3>
+<PRE>
+public static final <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>createConstant</B>(long&nbsp;peer)</PRE>
+<DL>
+<DD>Convenience constant, equivalent to <code>(void*)CONSTANT</code>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createConstant(int)"><!-- --></A><H3>
+createConstant</H3>
+<PRE>
+public static final <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>createConstant</B>(int&nbsp;peer)</PRE>
+<DL>
+<DD>Convenience constant, equivalent to <code>(void*)CONSTANT</code>.
+        This version will avoid setting any of the high bits on 64-bit
+        systems.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="share(long)"><!-- --></A><H3>
+share</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="share(long, long)"><!-- --></A><H3>
+share</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset,
+                     long&nbsp;sz)</PRE>
+<DL>
+<DD>Provide a view of this pointer with a different peer base.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clear(long)"><!-- --></A><H3>
+clear</H3>
+<PRE>
+public void <B>clear</B>(long&nbsp;size)</PRE>
+<DL>
+<DD>Zero memory for the given number of bytes.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</PRE>
+<DL>
+<DD>Compares this <code>Pointer</code> to the specified object.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>o</CODE> - A <code>Pointer</code> instance
+<DT><B>Returns:</B><DD>True if the other object is a <code>Pointer</code>, 
+          and the C pointers being pointed to by these objects are also
+                        equal. Returns false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <B>hashCode</B>()</PRE>
+<DL>
+<DD>Returns a hashcode for the native pointer represented by this
+ <code>Pointer</code> object
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>A hash code value for the represented native pointer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="indexOf(long, byte)"><!-- --></A><H3>
+indexOf</H3>
+<PRE>
+public long <B>indexOf</B>(long&nbsp;offset,
+                    byte&nbsp;value)</PRE>
+<DL>
+<DD>Returns the offset of the given value in memory from the given offset,
+ or -1 if the value is not found.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, byte[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 byte[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>byte</code> array into which data is copied<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, short[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 short[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>short</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, char[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 char[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>char</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, int[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 int[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>int</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, long[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 long[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>long</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, float[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 float[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>float</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, double[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 double[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>double</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, com.sun.jna.Pointer[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;offset,
+                 <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, byte[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;offset,
+                  byte[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>byte</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, short[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;offset,
+                  short[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>short</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, char[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;offset,
+                  char[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>char</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, int[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;offset,
+                  int[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>int</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, long[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;offset,
+                  long[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>into</em> memory pointed to by 
+ native pointer, from the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>long</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, float[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;offset,
+                  float[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>float</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, double[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;offset,
+                  double[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>double</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, com.sun.jna.Pointer[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Write the given array of Pointer to native memory.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>Pointer</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValue(long, java.lang.Class, java.lang.Object)"><!-- --></A><H3>
+getValue</H3>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>getValue</B>(long&nbsp;offset,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;currentValue)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getByte(long)"><!-- --></A><H3>
+getByte</H3>
+<PRE>
+public byte <B>getByte</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>byte</code>.  This is
+ equivalent to the expression
+ <code>*((jbyte *)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>byte</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChar(long)"><!-- --></A><H3>
+getChar</H3>
+<PRE>
+public char <B>getChar</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>wchar_t</code>.  This
+ is equivalent to the expression
+ <code>*((wchar_t*)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>wchar_t</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShort(long)"><!-- --></A><H3>
+getShort</H3>
+<PRE>
+public short <B>getShort</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>short</code>.  This is
+ equivalent to the expression
+ <code>*((jshort *)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>short</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInt(long)"><!-- --></A><H3>
+getInt</H3>
+<PRE>
+public int <B>getInt</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>int</code>.  This is
+ equivalent to the expression
+ <code>*((jint *)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>int</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLong(long)"><!-- --></A><H3>
+getLong</H3>
+<PRE>
+public long <B>getLong</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>long</code>.  This is
+ equivalent to the expression
+ <code>*((jlong *)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>long</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNativeLong(long)"><!-- --></A><H3>
+getNativeLong</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A> <B>getNativeLong</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>long</code>.  This is
+ equivalent to the expression
+ <code>*((long *)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>long</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFloat(long)"><!-- --></A><H3>
+getFloat</H3>
+<PRE>
+public float <B>getFloat</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>float</code>.  This is
+ equivalent to the expression
+ <code>*((jfloat *)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>float</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDouble(long)"><!-- --></A><H3>
+getDouble</H3>
+<PRE>
+public double <B>getDouble</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to <code>double</code>.  This
+ is equivalent to the expression
+ <code>*((jdouble *)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>double</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPointer(long)"><!-- --></A><H3>
+getPointer</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getPointer</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer as a pointer to pointer.  This is equivalent
+ to the expression
+ <code>*((void **)((char *)Pointer + offset))</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> equivalent of the pointer value
+ being pointed to, or <code>null</code> if the pointer value is
+ <code>NULL</code>;</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getByteBuffer(long, long)"><!-- --></A><H3>
+getByteBuffer</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A> <B>getByteBuffer</B>(long&nbsp;offset,
+                                long&nbsp;length)</PRE>
+<DL>
+<DD>Get a ByteBuffer mapped to the memory pointed to by the pointer,
+ ensuring the buffer uses native byte order.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to start the buffer<DD><CODE>length</CODE> - Length of ByteBuffer
+<DT><B>Returns:</B><DD>a direct ByteBuffer that accesses the memory being pointed to,</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getString(long, boolean)"><!-- --></A><H3>
+getString</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset,
+                        boolean&nbsp;wide)</PRE>
+<DL>
+<DD>Copy native memory to a Java String.  If <code>wide</code> is true,
+ access the memory as an array of <code>wchar_t</code>, otherwise 
+ as an array of <code>char</code>, using the default platform encoding.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to obtain the native string
+v     * @param wide whether to convert from a wide or standard C string
+<DT><B>Returns:</B><DD>the <code>String</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getString(long)"><!-- --></A><H3>
+getString</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Copy native memory to a Java String.  If the system property 
+ <code>jna.encoding</code> is set, uses it as the native charset
+ when decoding the value, otherwise falls back to the default platform
+ encoding.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to obtain the native string
+<DT><B>Returns:</B><DD>the <code>String</code> value being pointed to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getByteArray(long, int)"><!-- --></A><H3>
+getByteArray</H3>
+<PRE>
+public byte[] <B>getByteArray</B>(long&nbsp;offset,
+                           int&nbsp;arraySize)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCharArray(long, int)"><!-- --></A><H3>
+getCharArray</H3>
+<PRE>
+public char[] <B>getCharArray</B>(long&nbsp;offset,
+                           int&nbsp;arraySize)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShortArray(long, int)"><!-- --></A><H3>
+getShortArray</H3>
+<PRE>
+public short[] <B>getShortArray</B>(long&nbsp;offset,
+                             int&nbsp;arraySize)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIntArray(long, int)"><!-- --></A><H3>
+getIntArray</H3>
+<PRE>
+public int[] <B>getIntArray</B>(long&nbsp;offset,
+                         int&nbsp;arraySize)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLongArray(long, int)"><!-- --></A><H3>
+getLongArray</H3>
+<PRE>
+public long[] <B>getLongArray</B>(long&nbsp;offset,
+                           int&nbsp;arraySize)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFloatArray(long, int)"><!-- --></A><H3>
+getFloatArray</H3>
+<PRE>
+public float[] <B>getFloatArray</B>(long&nbsp;offset,
+                             int&nbsp;arraySize)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDoubleArray(long, int)"><!-- --></A><H3>
+getDoubleArray</H3>
+<PRE>
+public double[] <B>getDoubleArray</B>(long&nbsp;offset,
+                               int&nbsp;arraySize)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPointerArray(long)"><!-- --></A><H3>
+getPointerArray</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[] <B>getPointerArray</B>(long&nbsp;base)</PRE>
+<DL>
+<DD>Returns an array of <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.  The array length is
+ determined by a NULL-valued terminating element.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPointerArray(long, int)"><!-- --></A><H3>
+getPointerArray</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>[] <B>getPointerArray</B>(long&nbsp;offset,
+                                 int&nbsp;arraySize)</PRE>
+<DL>
+<DD>Returns an array of <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> of the requested size.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStringArray(long)"><!-- --></A><H3>
+getStringArray</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base)</PRE>
+<DL>
+<DD>Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>.  The array length is determined by a
+ NULL-valued terminating element.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStringArray(long, int)"><!-- --></A><H3>
+getStringArray</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
+                               int&nbsp;length)</PRE>
+<DL>
+<DD>Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>, using the given array length.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStringArray(long, boolean)"><!-- --></A><H3>
+getStringArray</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
+                               boolean&nbsp;wide)</PRE>
+<DL>
+<DD>Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter.  The array length is determined by a
+ NULL-valued terminating element.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStringArray(long, int, boolean)"><!-- --></A><H3>
+getStringArray</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[] <B>getStringArray</B>(long&nbsp;base,
+                               int&nbsp;length,
+                               boolean&nbsp;wide)</PRE>
+<DL>
+<DD>Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter, using the given array length.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setValue(long, java.lang.Object, java.lang.Class)"><!-- --></A><H3>
+setValue</H3>
+<PRE>
+void <B>setValue</B>(long&nbsp;offset,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMemory(long, long, byte)"><!-- --></A><H3>
+setMemory</H3>
+<PRE>
+public void <B>setMemory</B>(long&nbsp;offset,
+                      long&nbsp;length,
+                      byte&nbsp;value)</PRE>
+<DL>
+<DD>Write <code>value</code> to the requested bank of memory.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to start<DD><CODE>length</CODE> - number of bytes to write<DD><CODE>value</CODE> - value to be written</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setByte(long, byte)"><!-- --></A><H3>
+setByte</H3>
+<PRE>
+public void <B>setByte</B>(long&nbsp;offset,
+                    byte&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jbyte *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+                     must be set<DD><CODE>value</CODE> - <code>byte</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setShort(long, short)"><!-- --></A><H3>
+setShort</H3>
+<PRE>
+public void <B>setShort</B>(long&nbsp;offset,
+                     short&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jshort *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+                     must be set<DD><CODE>value</CODE> - <code>short</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setChar(long, char)"><!-- --></A><H3>
+setChar</H3>
+<PRE>
+public void <B>setChar</B>(long&nbsp;offset,
+                    char&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((wchar_t *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>char</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setInt(long, int)"><!-- --></A><H3>
+setInt</H3>
+<PRE>
+public void <B>setInt</B>(long&nbsp;offset,
+                   int&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jint *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+                     must be set<DD><CODE>value</CODE> - <code>int</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLong(long, long)"><!-- --></A><H3>
+setLong</H3>
+<PRE>
+public void <B>setLong</B>(long&nbsp;offset,
+                    long&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jlong *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>long</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setNativeLong(long, com.sun.jna.NativeLong)"><!-- --></A><H3>
+setNativeLong</H3>
+<PRE>
+public void <B>setNativeLong</B>(long&nbsp;offset,
+                          <A HREF="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A>&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((long *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>long</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFloat(long, float)"><!-- --></A><H3>
+setFloat</H3>
+<PRE>
+public void <B>setFloat</B>(long&nbsp;offset,
+                     float&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jfloat *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>float</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDouble(long, double)"><!-- --></A><H3>
+setDouble</H3>
+<PRE>
+public void <B>setDouble</B>(long&nbsp;offset,
+                      double&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jdouble *)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>double</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPointer(long, com.sun.jna.Pointer)"><!-- --></A><H3>
+setPointer</H3>
+<PRE>
+public void <B>setPointer</B>(long&nbsp;offset,
+                       <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;value)</PRE>
+<DL>
+<DD>Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression 
+ <code>*((void **)((char *)Pointer + offset)) = value</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code> 
+               must be set<DD><CODE>value</CODE> - <code>Pointer</code> holding the actual pointer value to 
+ set, which may be <code>null</code> to indicate a <code>NULL</code>
+ pointer.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setString(long, java.lang.String, boolean)"><!-- --></A><H3>
+setString</H3>
+<PRE>
+public void <B>setString</B>(long&nbsp;offset,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
+                      boolean&nbsp;wide)</PRE>
+<DL>
+<DD>Copy string <code>value</code> to the location being pointed to.  Copy
+ each element in <code>value</code>, converted to native encoding, at an
+ <code>offset</code>from the location pointed to by this pointer.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which characters in
+                     <code>value</code> must be set<DD><CODE>value</CODE> - <code>java.lang.String</code> value to set<DD><CODE>wide</CODE> - whether to write the native string as an array of 
+ <code>wchar_t</code>.  If false, writes as a NUL-terminated array of 
+ <code>char</code> using the default platform encoding.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setString(long, java.lang.String)"><!-- --></A><H3>
+setString</H3>
+<PRE>
+public void <B>setString</B>(long&nbsp;offset,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value)</PRE>
+<DL>
+<DD>Copy string <code>value</code> to the location being pointed to.  Copy
+ each element in <code>value</code>, converted to native encoding, at an
+ <code>offset</code>from the location pointed to by this pointer.
+ Uses the value of the system property <code>jna.encoding</code>, if set, 
+ to determine the appropriate native charset in which to encode the value.  
+ If the property is not set, uses the default platform encoding.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which characters in
+               <code>value</code> must be set<DD><CODE>value</CODE> - <code>java.lang.String</code> value to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="nativeValue(com.sun.jna.Pointer)"><!-- --></A><H3>
+nativeValue</H3>
+<PRE>
+public static long <B>nativeValue</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</PRE>
+<DL>
+<DD>Read the native peer value.  Use with caution.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="nativeValue(com.sun.jna.Pointer, long)"><!-- --></A><H3>
+nativeValue</H3>
+<PRE>
+public static void <B>nativeValue</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+                               long&nbsp;value)</PRE>
+<DL>
+<DD>Set the native peer value.  Use with caution.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/Platform.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/PointerType.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Pointer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Pointer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

@@ -1,0 +1,719 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Winspool (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Winspool (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEYByReference.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_1.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Winspool.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Winspool.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface Winspool</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Winspool</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+Ported from Winspool.h.
+ Windows SDK 6.0a
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>dblock[at]dblock.org</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_1.html" title="class in com.sun.jna.platform.win32">Winspool.PRINTER_INFO_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_4.html" title="class in com.sun.jna.platform.win32">Winspool.PRINTER_INFO_4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html" title="interface in com.sun.jna.platform.win32">Winspool</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#INSTANCE">INSTANCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_CONNECTIONS">PRINTER_ENUM_CONNECTIONS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_CONTAINER">PRINTER_ENUM_CONTAINER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_DEFAULT">PRINTER_ENUM_DEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_EXPAND">PRINTER_ENUM_EXPAND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_FAVORITE">PRINTER_ENUM_FAVORITE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_HIDE">PRINTER_ENUM_HIDE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON1">PRINTER_ENUM_ICON1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON2">PRINTER_ENUM_ICON2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON3">PRINTER_ENUM_ICON3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON4">PRINTER_ENUM_ICON4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON5">PRINTER_ENUM_ICON5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON6">PRINTER_ENUM_ICON6</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON7">PRINTER_ENUM_ICON7</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICON8">PRINTER_ENUM_ICON8</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_ICONMASK">PRINTER_ENUM_ICONMASK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_LOCAL">PRINTER_ENUM_LOCAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_NAME">PRINTER_ENUM_NAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_NETWORK">PRINTER_ENUM_NETWORK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_REMOTE">PRINTER_ENUM_REMOTE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#PRINTER_ENUM_SHARED">PRINTER_ENUM_SHARED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html#EnumPrinters(int, com.sun.jna.WString, int, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)">EnumPrinters</A></B>(int&nbsp;Flags,
+             <A HREF="../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;Name,
+             int&nbsp;Level,
+             <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pPrinterEnum,
+             int&nbsp;cbBuf,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcbNeeded,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcReturned)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The EnumPrinters function enumerates available printers, print servers, domains, or print providers.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="INSTANCE"><!-- --></A><H3>
+INSTANCE</H3>
+<PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/Winspool.html" title="interface in com.sun.jna.platform.win32">Winspool</A> <B>INSTANCE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_DEFAULT"><!-- --></A><H3>
+PRINTER_ENUM_DEFAULT</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_DEFAULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_DEFAULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_LOCAL"><!-- --></A><H3>
+PRINTER_ENUM_LOCAL</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_LOCAL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_LOCAL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_CONNECTIONS"><!-- --></A><H3>
+PRINTER_ENUM_CONNECTIONS</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_CONNECTIONS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_CONNECTIONS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_FAVORITE"><!-- --></A><H3>
+PRINTER_ENUM_FAVORITE</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_FAVORITE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_FAVORITE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_NAME"><!-- --></A><H3>
+PRINTER_ENUM_NAME</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_NAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_NAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_REMOTE"><!-- --></A><H3>
+PRINTER_ENUM_REMOTE</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_REMOTE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_REMOTE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_SHARED"><!-- --></A><H3>
+PRINTER_ENUM_SHARED</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_SHARED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_SHARED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_NETWORK"><!-- --></A><H3>
+PRINTER_ENUM_NETWORK</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_NETWORK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_NETWORK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_EXPAND"><!-- --></A><H3>
+PRINTER_ENUM_EXPAND</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_EXPAND</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_EXPAND">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_CONTAINER"><!-- --></A><H3>
+PRINTER_ENUM_CONTAINER</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_CONTAINER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_CONTAINER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICONMASK"><!-- --></A><H3>
+PRINTER_ENUM_ICONMASK</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICONMASK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICONMASK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON1"><!-- --></A><H3>
+PRINTER_ENUM_ICON1</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON2"><!-- --></A><H3>
+PRINTER_ENUM_ICON2</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON3"><!-- --></A><H3>
+PRINTER_ENUM_ICON3</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON4"><!-- --></A><H3>
+PRINTER_ENUM_ICON4</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON4</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON4">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON5"><!-- --></A><H3>
+PRINTER_ENUM_ICON5</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON5</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON5">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON6"><!-- --></A><H3>
+PRINTER_ENUM_ICON6</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON6</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON6">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON7"><!-- --></A><H3>
+PRINTER_ENUM_ICON7</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON7</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON7">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_ICON8"><!-- --></A><H3>
+PRINTER_ENUM_ICON8</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_ICON8</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_ICON8">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PRINTER_ENUM_HIDE"><!-- --></A><H3>
+PRINTER_ENUM_HIDE</H3>
+<PRE>
+static final int <B>PRINTER_ENUM_HIDE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winspool.PRINTER_ENUM_HIDE">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EnumPrinters(int, com.sun.jna.WString, int, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+EnumPrinters</H3>
+<PRE>
+boolean <B>EnumPrinters</B>(int&nbsp;Flags,
+                     <A HREF="../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;Name,
+                     int&nbsp;Level,
+                     <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pPrinterEnum,
+                     int&nbsp;cbBuf,
+                     <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcbNeeded,
+                     <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcReturned)</PRE>
+<DL>
+<DD>The EnumPrinters function enumerates available printers, print servers, domains, or print providers.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>Flags</CODE> - The types of print objects that the function should enumerate.<DD><CODE>Name</CODE> - If Level is 1, Flags contains PRINTER_ENUM_NAME, and Name is non-NULL, then Name is a pointer 
+  to a null-terminated string that specifies the name of the object to enumerate. This string can 
+  be the name of a server, a domain, or a print provider.
+  If Level is 1, Flags contains PRINTER_ENUM_NAME, and Name is NULL, then the function enumerates 
+  the available print providers.
+  If Level is 1, Flags contains PRINTER_ENUM_REMOTE, and Name is NULL, then the function enumerates 
+  the printers in the user's domain.
+  If Level is 2 or 5,Name is a pointer to a null-terminated string that specifies the name of a 
+  server whose printers are to be enumerated. If this string is NULL, then the function enumerates
+  the printers installed on the local computer.
+  If Level is 4, Name should be NULL. The function always queries on the local computer.
+  When Name is NULL, setting Flags to PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS enumerates
+  printers that are installed on the local machine. These printers include those that are physically
+  attached to the local machine as well as remote printers to which it has a network connection.
+  When Name is not NULL, setting Flags to PRINTER_ENUM_LOCAL | PRINTER_ENUM_NAME enumerates the 
+  local printers that are installed on the server Name.<DD><CODE>Level</CODE> - The type of data structures pointed to by pPrinterEnum. Valid values are 1, 2, 4, and 5, which 
+  correspond to the PRINTER_INFO_1, PRINTER_INFO_2 , PRINTER_INFO_4, and PRINTER_INFO_5 data 
+  structures.<DD><CODE>pPrinterEnum</CODE> - A pointer to a buffer that receives an array of PRINTER_INFO_1, PRINTER_INFO_2, PRINTER_INFO_4, 
+  or PRINTER_INFO_5 structures. Each structure contains data that describes an available print 
+  object.
+  If Level is 1, the array contains PRINTER_INFO_1 structures. If Level is 2, the array contains 
+  PRINTER_INFO_2 structures. If Level is 4, the array contains PRINTER_INFO_4 structures. If Level 
+  is 5, the array contains PRINTER_INFO_5 structures.
+  The buffer must be large enough to receive the array of data structures and any strings or other 
+  data to which the structure members point. If the buffer is too small, the pcbNeeded parameter 
+  returns the required buffer size.<DD><CODE>cbBuf</CODE> - The size, in bytes, of the buffer pointed to by pPrinterEnum.<DD><CODE>pcbNeeded</CODE> - A pointer to a value that receives the number of bytes copied if the function succeeds or the
+  number of bytes required if cbBuf is too small.<DD><CODE>pcReturned</CODE> - A pointer to a value that receives the number of PRINTER_INFO_1, PRINTER_INFO_2 , PRINTER_INFO_4, 
+  or PRINTER_INFO_5 structures that the function returns in the array to which pPrinterEnum points.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a nonzero value.
+  If the function fails, the return value is zero.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEYByReference.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_1.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Winspool.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Winspool.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

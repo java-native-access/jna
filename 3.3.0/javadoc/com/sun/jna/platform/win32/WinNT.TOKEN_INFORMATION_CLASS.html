@@ -1,0 +1,750 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+WinNT.TOKEN_INFORMATION_CLASS (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="WinNT.TOKEN_INFORMATION_CLASS (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_GROUPS.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_OWNER.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinNT.TOKEN_INFORMATION_CLASS.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_java.lang.Object">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Class WinNT.TOKEN_INFORMATION_CLASS</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS</B>
+</PRE>
+<DL>
+<DT><B>Enclosing interface:</B><DD><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.html" title="interface in com.sun.jna.platform.win32">WinNT</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract static class <B>WinNT.TOKEN_INFORMATION_CLASS</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
+</PRE>
+
+<P>
+The TOKEN_INFORMATION_CLASS enumeration type contains values that specify the type of 
+ information being assigned to or retrieved from an access token.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenAccessInformation">TokenAccessInformation</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenAuditPolicy">TokenAuditPolicy</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenDefaultDacl">TokenDefaultDacl</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenElevation">TokenElevation</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenElevationType">TokenElevationType</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenGroups">TokenGroups</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenGroupsAndPrivileges">TokenGroupsAndPrivileges</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenHasRestrictions">TokenHasRestrictions</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenImpersonationLevel">TokenImpersonationLevel</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenIntegrityLevel">TokenIntegrityLevel</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenLinkedToken">TokenLinkedToken</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenLogonSid">TokenLogonSid</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenMandatoryPolicy">TokenMandatoryPolicy</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenOrigin">TokenOrigin</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenOwner">TokenOwner</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenPrimaryGroup">TokenPrimaryGroup</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenPrivileges">TokenPrivileges</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenRestrictedSids">TokenRestrictedSids</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenSandBoxInert">TokenSandBoxInert</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenSessionId">TokenSessionId</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenSessionReference">TokenSessionReference</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenSource">TokenSource</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenStatistics">TokenStatistics</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenType">TokenType</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenUIAccess">TokenUIAccess</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenUser">TokenUser</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenVirtualizationAllowed">TokenVirtualizationAllowed</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#TokenVirtualizationEnabled">TokenVirtualizationEnabled</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html#WinNT.TOKEN_INFORMATION_CLASS()">WinNT.TOKEN_INFORMATION_CLASS</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="TokenUser"><!-- --></A><H3>
+TokenUser</H3>
+<PRE>
+public static final int <B>TokenUser</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenUser">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenGroups"><!-- --></A><H3>
+TokenGroups</H3>
+<PRE>
+public static final int <B>TokenGroups</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenGroups">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenPrivileges"><!-- --></A><H3>
+TokenPrivileges</H3>
+<PRE>
+public static final int <B>TokenPrivileges</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenPrivileges">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenOwner"><!-- --></A><H3>
+TokenOwner</H3>
+<PRE>
+public static final int <B>TokenOwner</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenOwner">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenPrimaryGroup"><!-- --></A><H3>
+TokenPrimaryGroup</H3>
+<PRE>
+public static final int <B>TokenPrimaryGroup</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenPrimaryGroup">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenDefaultDacl"><!-- --></A><H3>
+TokenDefaultDacl</H3>
+<PRE>
+public static final int <B>TokenDefaultDacl</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenDefaultDacl">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenSource"><!-- --></A><H3>
+TokenSource</H3>
+<PRE>
+public static final int <B>TokenSource</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenSource">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenType"><!-- --></A><H3>
+TokenType</H3>
+<PRE>
+public static final int <B>TokenType</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenType">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenImpersonationLevel"><!-- --></A><H3>
+TokenImpersonationLevel</H3>
+<PRE>
+public static final int <B>TokenImpersonationLevel</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenImpersonationLevel">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenStatistics"><!-- --></A><H3>
+TokenStatistics</H3>
+<PRE>
+public static final int <B>TokenStatistics</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenStatistics">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenRestrictedSids"><!-- --></A><H3>
+TokenRestrictedSids</H3>
+<PRE>
+public static final int <B>TokenRestrictedSids</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenRestrictedSids">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenSessionId"><!-- --></A><H3>
+TokenSessionId</H3>
+<PRE>
+public static final int <B>TokenSessionId</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenSessionId">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenGroupsAndPrivileges"><!-- --></A><H3>
+TokenGroupsAndPrivileges</H3>
+<PRE>
+public static final int <B>TokenGroupsAndPrivileges</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenGroupsAndPrivileges">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenSessionReference"><!-- --></A><H3>
+TokenSessionReference</H3>
+<PRE>
+public static final int <B>TokenSessionReference</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenSessionReference">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenSandBoxInert"><!-- --></A><H3>
+TokenSandBoxInert</H3>
+<PRE>
+public static final int <B>TokenSandBoxInert</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenSandBoxInert">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenAuditPolicy"><!-- --></A><H3>
+TokenAuditPolicy</H3>
+<PRE>
+public static final int <B>TokenAuditPolicy</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenAuditPolicy">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenOrigin"><!-- --></A><H3>
+TokenOrigin</H3>
+<PRE>
+public static final int <B>TokenOrigin</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenOrigin">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenElevationType"><!-- --></A><H3>
+TokenElevationType</H3>
+<PRE>
+public static final int <B>TokenElevationType</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenElevationType">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenLinkedToken"><!-- --></A><H3>
+TokenLinkedToken</H3>
+<PRE>
+public static final int <B>TokenLinkedToken</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenLinkedToken">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenElevation"><!-- --></A><H3>
+TokenElevation</H3>
+<PRE>
+public static final int <B>TokenElevation</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenElevation">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenHasRestrictions"><!-- --></A><H3>
+TokenHasRestrictions</H3>
+<PRE>
+public static final int <B>TokenHasRestrictions</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenHasRestrictions">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenAccessInformation"><!-- --></A><H3>
+TokenAccessInformation</H3>
+<PRE>
+public static final int <B>TokenAccessInformation</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenAccessInformation">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenVirtualizationAllowed"><!-- --></A><H3>
+TokenVirtualizationAllowed</H3>
+<PRE>
+public static final int <B>TokenVirtualizationAllowed</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenVirtualizationAllowed">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenVirtualizationEnabled"><!-- --></A><H3>
+TokenVirtualizationEnabled</H3>
+<PRE>
+public static final int <B>TokenVirtualizationEnabled</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenVirtualizationEnabled">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenIntegrityLevel"><!-- --></A><H3>
+TokenIntegrityLevel</H3>
+<PRE>
+public static final int <B>TokenIntegrityLevel</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenIntegrityLevel">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenUIAccess"><!-- --></A><H3>
+TokenUIAccess</H3>
+<PRE>
+public static final int <B>TokenUIAccess</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenUIAccess">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenMandatoryPolicy"><!-- --></A><H3>
+TokenMandatoryPolicy</H3>
+<PRE>
+public static final int <B>TokenMandatoryPolicy</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenMandatoryPolicy">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="TokenLogonSid"><!-- --></A><H3>
+TokenLogonSid</H3>
+<PRE>
+public static final int <B>TokenLogonSid</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinNT.TOKEN_INFORMATION_CLASS.TokenLogonSid">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="WinNT.TOKEN_INFORMATION_CLASS()"><!-- --></A><H3>
+WinNT.TOKEN_INFORMATION_CLASS</H3>
+<PRE>
+public <B>WinNT.TOKEN_INFORMATION_CLASS</B>()</PRE>
+<DL>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_GROUPS.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_OWNER.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinNT.TOKEN_INFORMATION_CLASS.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinNT.TOKEN_INFORMATION_CLASS.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_java.lang.Object">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

@@ -1,0 +1,1085 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Winsvc (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Winsvc (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinspoolUtil.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Winsvc.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Winsvc.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface Winsvc</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Winsvc</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+This module defines the 32-Bit Windows types and constants that are defined
+ by NT, but exposed through the Win32 API.
+ Ported from Winsvc.h.
+ Microsoft Windows SDK 7.0A.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>EugineLev</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_STATUS_TYPE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_STATUS_TYPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SC_STATUS_TYPE enumeration type contains values</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains status information for a service.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS_PROCESS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS_PROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains process status information for a service.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SC_MANAGER_ALL_ACCESS">SC_MANAGER_ALL_ACCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SC_MANAGER_CONNECT">SC_MANAGER_CONNECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SC_MANAGER_CREATE_SERVICE">SC_MANAGER_CREATE_SERVICE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SC_MANAGER_ENUMERATE_SERVICE">SC_MANAGER_ENUMERATE_SERVICE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SC_MANAGER_LOCK">SC_MANAGER_LOCK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SC_MANAGER_MODIFY_BOOT_CONFIG">SC_MANAGER_MODIFY_BOOT_CONFIG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SC_MANAGER_QUERY_LOCK_STATUS">SC_MANAGER_QUERY_LOCK_STATUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_HARDWAREPROFILECHANGE">SERVICE_ACCEPT_HARDWAREPROFILECHANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_NETBINDCHANGE">SERVICE_ACCEPT_NETBINDCHANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_PARAMCHANGE">SERVICE_ACCEPT_PARAMCHANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_PAUSE_CONTINUE">SERVICE_ACCEPT_PAUSE_CONTINUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_POWEREVENT">SERVICE_ACCEPT_POWEREVENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_PRESHUTDOWN">SERVICE_ACCEPT_PRESHUTDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_SESSIONCHANGE">SERVICE_ACCEPT_SESSIONCHANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_SHUTDOWN">SERVICE_ACCEPT_SHUTDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_STOP">SERVICE_ACCEPT_STOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_TIMECHANGE">SERVICE_ACCEPT_TIMECHANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ACCEPT_TRIGGEREVENT">SERVICE_ACCEPT_TRIGGEREVENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ALL_ACCESS">SERVICE_ALL_ACCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CHANGE_CONFIG">SERVICE_CHANGE_CONFIG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTINUE_PENDING">SERVICE_CONTINUE_PENDING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_CONTINUE">SERVICE_CONTROL_CONTINUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_INTERROGATE">SERVICE_CONTROL_INTERROGATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_NETBINDADD">SERVICE_CONTROL_NETBINDADD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_NETBINDDISABLE">SERVICE_CONTROL_NETBINDDISABLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_NETBINDENABLE">SERVICE_CONTROL_NETBINDENABLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_NETBINDREMOVE">SERVICE_CONTROL_NETBINDREMOVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_PARAMCHANGE">SERVICE_CONTROL_PARAMCHANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_PAUSE">SERVICE_CONTROL_PAUSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_CONTROL_STOP">SERVICE_CONTROL_STOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_ENUMERATE_DEPENDENTS">SERVICE_ENUMERATE_DEPENDENTS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_INTERROGATE">SERVICE_INTERROGATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_PAUSE_CONTINUE">SERVICE_PAUSE_CONTINUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_PAUSE_PENDING">SERVICE_PAUSE_PENDING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_PAUSED">SERVICE_PAUSED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_QUERY_CONFIG">SERVICE_QUERY_CONFIG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_QUERY_STATUS">SERVICE_QUERY_STATUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_RUNNING">SERVICE_RUNNING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_RUNS_IN_SYSTEM_PROCESS">SERVICE_RUNS_IN_SYSTEM_PROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_START">SERVICE_START</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_START_PENDING">SERVICE_START_PENDING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_STOP">SERVICE_STOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_STOP_PENDING">SERVICE_STOP_PENDING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_STOPPED">SERVICE_STOPPED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.html#SERVICE_USER_DEFINED_CONTROL">SERVICE_USER_DEFINED_CONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SERVICE_RUNS_IN_SYSTEM_PROCESS"><!-- --></A><H3>
+SERVICE_RUNS_IN_SYSTEM_PROCESS</H3>
+<PRE>
+static final int <B>SERVICE_RUNS_IN_SYSTEM_PROCESS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_RUNS_IN_SYSTEM_PROCESS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MANAGER_CONNECT"><!-- --></A><H3>
+SC_MANAGER_CONNECT</H3>
+<PRE>
+static final int <B>SC_MANAGER_CONNECT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SC_MANAGER_CONNECT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MANAGER_CREATE_SERVICE"><!-- --></A><H3>
+SC_MANAGER_CREATE_SERVICE</H3>
+<PRE>
+static final int <B>SC_MANAGER_CREATE_SERVICE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SC_MANAGER_CREATE_SERVICE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MANAGER_ENUMERATE_SERVICE"><!-- --></A><H3>
+SC_MANAGER_ENUMERATE_SERVICE</H3>
+<PRE>
+static final int <B>SC_MANAGER_ENUMERATE_SERVICE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SC_MANAGER_ENUMERATE_SERVICE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MANAGER_LOCK"><!-- --></A><H3>
+SC_MANAGER_LOCK</H3>
+<PRE>
+static final int <B>SC_MANAGER_LOCK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SC_MANAGER_LOCK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MANAGER_QUERY_LOCK_STATUS"><!-- --></A><H3>
+SC_MANAGER_QUERY_LOCK_STATUS</H3>
+<PRE>
+static final int <B>SC_MANAGER_QUERY_LOCK_STATUS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SC_MANAGER_QUERY_LOCK_STATUS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MANAGER_MODIFY_BOOT_CONFIG"><!-- --></A><H3>
+SC_MANAGER_MODIFY_BOOT_CONFIG</H3>
+<PRE>
+static final int <B>SC_MANAGER_MODIFY_BOOT_CONFIG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SC_MANAGER_MODIFY_BOOT_CONFIG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MANAGER_ALL_ACCESS"><!-- --></A><H3>
+SC_MANAGER_ALL_ACCESS</H3>
+<PRE>
+static final int <B>SC_MANAGER_ALL_ACCESS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SC_MANAGER_ALL_ACCESS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_QUERY_CONFIG"><!-- --></A><H3>
+SERVICE_QUERY_CONFIG</H3>
+<PRE>
+static final int <B>SERVICE_QUERY_CONFIG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_QUERY_CONFIG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CHANGE_CONFIG"><!-- --></A><H3>
+SERVICE_CHANGE_CONFIG</H3>
+<PRE>
+static final int <B>SERVICE_CHANGE_CONFIG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CHANGE_CONFIG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_QUERY_STATUS"><!-- --></A><H3>
+SERVICE_QUERY_STATUS</H3>
+<PRE>
+static final int <B>SERVICE_QUERY_STATUS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_QUERY_STATUS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ENUMERATE_DEPENDENTS"><!-- --></A><H3>
+SERVICE_ENUMERATE_DEPENDENTS</H3>
+<PRE>
+static final int <B>SERVICE_ENUMERATE_DEPENDENTS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ENUMERATE_DEPENDENTS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_START"><!-- --></A><H3>
+SERVICE_START</H3>
+<PRE>
+static final int <B>SERVICE_START</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_START">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_STOP"><!-- --></A><H3>
+SERVICE_STOP</H3>
+<PRE>
+static final int <B>SERVICE_STOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_STOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_PAUSE_CONTINUE"><!-- --></A><H3>
+SERVICE_PAUSE_CONTINUE</H3>
+<PRE>
+static final int <B>SERVICE_PAUSE_CONTINUE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_PAUSE_CONTINUE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_INTERROGATE"><!-- --></A><H3>
+SERVICE_INTERROGATE</H3>
+<PRE>
+static final int <B>SERVICE_INTERROGATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_INTERROGATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_USER_DEFINED_CONTROL"><!-- --></A><H3>
+SERVICE_USER_DEFINED_CONTROL</H3>
+<PRE>
+static final int <B>SERVICE_USER_DEFINED_CONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_USER_DEFINED_CONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ALL_ACCESS"><!-- --></A><H3>
+SERVICE_ALL_ACCESS</H3>
+<PRE>
+static final int <B>SERVICE_ALL_ACCESS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ALL_ACCESS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_STOP"><!-- --></A><H3>
+SERVICE_CONTROL_STOP</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_STOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_STOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_PAUSE"><!-- --></A><H3>
+SERVICE_CONTROL_PAUSE</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_PAUSE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_PAUSE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_CONTINUE"><!-- --></A><H3>
+SERVICE_CONTROL_CONTINUE</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_CONTINUE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_CONTINUE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_INTERROGATE"><!-- --></A><H3>
+SERVICE_CONTROL_INTERROGATE</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_INTERROGATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_INTERROGATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_PARAMCHANGE"><!-- --></A><H3>
+SERVICE_CONTROL_PARAMCHANGE</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_PARAMCHANGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_PARAMCHANGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_NETBINDADD"><!-- --></A><H3>
+SERVICE_CONTROL_NETBINDADD</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_NETBINDADD</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_NETBINDADD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_NETBINDREMOVE"><!-- --></A><H3>
+SERVICE_CONTROL_NETBINDREMOVE</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_NETBINDREMOVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_NETBINDREMOVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_NETBINDENABLE"><!-- --></A><H3>
+SERVICE_CONTROL_NETBINDENABLE</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_NETBINDENABLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_NETBINDENABLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTROL_NETBINDDISABLE"><!-- --></A><H3>
+SERVICE_CONTROL_NETBINDDISABLE</H3>
+<PRE>
+static final int <B>SERVICE_CONTROL_NETBINDDISABLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_NETBINDDISABLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_STOPPED"><!-- --></A><H3>
+SERVICE_STOPPED</H3>
+<PRE>
+static final int <B>SERVICE_STOPPED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_STOPPED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_START_PENDING"><!-- --></A><H3>
+SERVICE_START_PENDING</H3>
+<PRE>
+static final int <B>SERVICE_START_PENDING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_START_PENDING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_STOP_PENDING"><!-- --></A><H3>
+SERVICE_STOP_PENDING</H3>
+<PRE>
+static final int <B>SERVICE_STOP_PENDING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_STOP_PENDING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_RUNNING"><!-- --></A><H3>
+SERVICE_RUNNING</H3>
+<PRE>
+static final int <B>SERVICE_RUNNING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_RUNNING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_CONTINUE_PENDING"><!-- --></A><H3>
+SERVICE_CONTINUE_PENDING</H3>
+<PRE>
+static final int <B>SERVICE_CONTINUE_PENDING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_CONTINUE_PENDING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_PAUSE_PENDING"><!-- --></A><H3>
+SERVICE_PAUSE_PENDING</H3>
+<PRE>
+static final int <B>SERVICE_PAUSE_PENDING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_PAUSE_PENDING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_PAUSED"><!-- --></A><H3>
+SERVICE_PAUSED</H3>
+<PRE>
+static final int <B>SERVICE_PAUSED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_PAUSED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_STOP"><!-- --></A><H3>
+SERVICE_ACCEPT_STOP</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_STOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_STOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_PAUSE_CONTINUE"><!-- --></A><H3>
+SERVICE_ACCEPT_PAUSE_CONTINUE</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_PAUSE_CONTINUE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_PAUSE_CONTINUE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_SHUTDOWN"><!-- --></A><H3>
+SERVICE_ACCEPT_SHUTDOWN</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_SHUTDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_SHUTDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_PARAMCHANGE"><!-- --></A><H3>
+SERVICE_ACCEPT_PARAMCHANGE</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_PARAMCHANGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_PARAMCHANGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_NETBINDCHANGE"><!-- --></A><H3>
+SERVICE_ACCEPT_NETBINDCHANGE</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_NETBINDCHANGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_NETBINDCHANGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_HARDWAREPROFILECHANGE"><!-- --></A><H3>
+SERVICE_ACCEPT_HARDWAREPROFILECHANGE</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_HARDWAREPROFILECHANGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_HARDWAREPROFILECHANGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_POWEREVENT"><!-- --></A><H3>
+SERVICE_ACCEPT_POWEREVENT</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_POWEREVENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_POWEREVENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_SESSIONCHANGE"><!-- --></A><H3>
+SERVICE_ACCEPT_SESSIONCHANGE</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_SESSIONCHANGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_SESSIONCHANGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_PRESHUTDOWN"><!-- --></A><H3>
+SERVICE_ACCEPT_PRESHUTDOWN</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_PRESHUTDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_PRESHUTDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_TIMECHANGE"><!-- --></A><H3>
+SERVICE_ACCEPT_TIMECHANGE</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_TIMECHANGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_TIMECHANGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SERVICE_ACCEPT_TRIGGEREVENT"><!-- --></A><H3>
+SERVICE_ACCEPT_TRIGGEREVENT</H3>
+<PRE>
+static final int <B>SERVICE_ACCEPT_TRIGGEREVENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Winsvc.SERVICE_ACCEPT_TRIGGEREVENT">Constant Field Values</A></DL>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinspoolUtil.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Winsvc.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Winsvc.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

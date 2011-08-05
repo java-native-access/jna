@@ -1,0 +1,4299 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+WinUser (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="WinUser (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS_PROCESS.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinUser.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinUser.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface WinUser</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>WinUser</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+Ported from WinUser.h Microsoft Windows SDK 6.0A.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>dblock[at]dblock.org</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32">WinUser.BLENDFUNCTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.FLASHWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.FLASHWINFO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.GUITHREADINFO.html" title="class in com.sun.jna.platform.win32">WinUser.GUITHREADINFO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HARDWAREINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.HARDWAREINPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains information about a simulated message generated by an input device other than a keyboard or mouse.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HOOKPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.HOOKPROC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.INPUT.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by SendInput to store information for synthesizing input events such as keystrokes, mouse movement, and mouse
+ clicks.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KBDLLHOOKSTRUCT.html" title="class in com.sun.jna.platform.win32">WinUser.KBDLLHOOKSTRUCT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.KEYBDINPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains information about a simulated keyboard event.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.LowLevelKeyboardProc.html" title="interface in com.sun.jna.platform.win32">WinUser.LowLevelKeyboardProc</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MOUSEINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.MOUSEINPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains information about a simulated mouse event.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines the x- and y-coordinates of a point.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.SIZE.html" title="class in com.sun.jna.platform.win32">WinUser.SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies the width and height of a rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WINDOWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.WINDOWINFO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_ALPHA">AC_SRC_ALPHA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_NO_ALPHA">AC_SRC_NO_ALPHA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_NO_PREMULT_ALPHA">AC_SRC_NO_PREMULT_ALPHA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_OVER">AC_SRC_OVER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#DWL_DLGPROC">DWL_DLGPROC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#DWL_MSGRESULT">DWL_MSGRESULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#DWL_USER">DWL_USER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_ALL">FLASHW_ALL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_CAPTION">FLASHW_CAPTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_STOP">FLASHW_STOP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_TIMER">FLASHW_TIMER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_TIMERNOFG">FLASHW_TIMERNOFG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_TRAY">FLASHW_TRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_CHILD">GW_CHILD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The retrieved handle identifies the child window at the top of the Z order, if the specified window is a parent
+ window; otherwise, the retrieved handle is NULL.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_ENABLEDPOPUP">GW_ENABLEDPOPUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The retrieved handle identifies the enabled popup window owned by the specified window (the search uses the first
+ such window found using GW_HWNDNEXT); otherwise, if there are no enabled popup windows, the retrieved handle is
+ that of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDFIRST">GW_HWNDFIRST</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The retrieved handle identifies the window of the same type that is highest in the Z order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDLAST">GW_HWNDLAST</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The retrieved handle identifies the window of the same type that is lowest in the Z order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDNEXT">GW_HWNDNEXT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The retrieved handle identifies the window below the specified window in the Z order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDPREV">GW_HWNDPREV</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The retrieved handle identifies the window above the specified window in the Z order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_OWNER">GW_OWNER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The retrieved handle identifies the specified window's owner window, if any.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_EXSTYLE">GWL_EXSTYLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_HINSTANCE">GWL_HINSTANCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_ID">GWL_ID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_STYLE">GWL_STYLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_USERDATA">GWL_USERDATA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_WNDPROC">GWL_WNDPROC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#HWND_BROADCAST">HWND_BROADCAST</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_BITMAP">IMAGE_BITMAP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_CURSOR">IMAGE_CURSOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_ENHMETAFILE">IMAGE_ENHMETAFILE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_ICON">IMAGE_ICON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COLOR">LR_COLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COPYDELETEORG">LR_COPYDELETEORG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COPYFROMRESOURCE">LR_COPYFROMRESOURCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COPYRETURNORG">LR_COPYRETURNORG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_CREATEDIBSECTION">LR_CREATEDIBSECTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_DEFAULTCOLOR">LR_DEFAULTCOLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_DEFAULTSIZE">LR_DEFAULTSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_LOADFROMFILE">LR_LOADFROMFILE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_LOADMAP3DCOLORS">LR_LOADMAP3DCOLORS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_LOADTRANSPARENT">LR_LOADTRANSPARENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_MONOCHROME">LR_MONOCHROME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_SHARED">LR_SHARED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_VGACOLOR">LR_VGACOLOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LWA_ALPHA">LWA_ALPHA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LWA_COLORKEY">LWA_COLORKEY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_ALT">MOD_ALT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_CONTROL">MOD_CONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_NOREPEAT">MOD_NOREPEAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_SHIFT">MOD_SHIFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_WIN">MOD_WIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_ALLCHILDREN">RDW_ALLCHILDREN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_ERASE">RDW_ERASE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_ERASENOW">RDW_ERASENOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_FRAME">RDW_FRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_INTERNALPAINT">RDW_INTERNALPAINT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_INVALIDATE">RDW_INVALIDATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOCHILDREN">RDW_NOCHILDREN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOERASE">RDW_NOERASE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOFRAME">RDW_NOFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOINTERNALPAINT">RDW_NOINTERNALPAINT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_UPDATENOW">RDW_UPDATENOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_VALIDATE">RDW_VALIDATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SC_MAXIMIZE">SC_MAXIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximizes the window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SC_MINIMIZE">SC_MINIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Minimizes the window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_ARRANGE">SM_ARRANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CARETBLINKINGENABLED">SM_CARETBLINKINGENABLED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CLEANBOOT">SM_CLEANBOOT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CMONITORS">SM_CMONITORS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CMOUSEBUTTONS">SM_CMOUSEBUTTONS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXBORDER">SM_CXBORDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXCURSOR">SM_CXCURSOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXDLGFRAME">SM_CXDLGFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXDOUBLECLK">SM_CXDOUBLECLK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXDRAG">SM_CXDRAG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXEDGE">SM_CXEDGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFIXEDFRAME">SM_CXFIXEDFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFOCUSBORDER">SM_CXFOCUSBORDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFRAME">SM_CXFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFULLSCREEN">SM_CXFULLSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXHSCROLL">SM_CXHSCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXHTHUMB">SM_CXHTHUMB</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXICON">SM_CXICON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXICONSPACING">SM_CXICONSPACING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMAXIMIZED">SM_CXMAXIMIZED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMAXTRACK">SM_CXMAXTRACK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMENUCHECK">SM_CXMENUCHECK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMENUSIZE">SM_CXMENUSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMIN">SM_CXMIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMINIMIZED">SM_CXMINIMIZED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMINSPACING">SM_CXMINSPACING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMINTRACK">SM_CXMINTRACK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXPADDEDBORDER">SM_CXPADDEDBORDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSCREEN">SM_CXSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSIZE">SM_CXSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSIZEFRAME">SM_CXSIZEFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSMICON">SM_CXSMICON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSMSIZE">SM_CXSMSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXVIRTUALSCREEN">SM_CXVIRTUALSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXVSCROLL">SM_CXVSCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYBORDER">SM_CYBORDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYCAPTION">SM_CYCAPTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYCURSOR">SM_CYCURSOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYDLGFRAME">SM_CYDLGFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYDOUBLECLK">SM_CYDOUBLECLK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYDRAG">SM_CYDRAG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYEDGE">SM_CYEDGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFIXEDFRAME">SM_CYFIXEDFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFOCUSBORDER">SM_CYFOCUSBORDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFRAME">SM_CYFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFULLSCREEN">SM_CYFULLSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYHSCROLL">SM_CYHSCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYICON">SM_CYICON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYICONSPACING">SM_CYICONSPACING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYKANJIWINDOW">SM_CYKANJIWINDOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMAXIMIZED">SM_CYMAXIMIZED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMAXTRACK">SM_CYMAXTRACK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMENU">SM_CYMENU</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMENUCHECK">SM_CYMENUCHECK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMENUSIZE">SM_CYMENUSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMIN">SM_CYMIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMINIMIZED">SM_CYMINIMIZED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMINSPACING">SM_CYMINSPACING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMINTRACK">SM_CYMINTRACK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSCREEN">SM_CYSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSIZE">SM_CYSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSIZEFRAME">SM_CYSIZEFRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSMCAPTION">SM_CYSMCAPTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSMICON">SM_CYSMICON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSMSIZE">SM_CYSMSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYVIRTUALSCREEN">SM_CYVIRTUALSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYVSCROLL">SM_CYVSCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYVTHUMB">SM_CYVTHUMB</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_DBCSENABLED">SM_DBCSENABLED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_DEBUG">SM_DEBUG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_IMMENABLED">SM_IMMENABLED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MEDIACENTER">SM_MEDIACENTER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MENUDROPALIGNMENT">SM_MENUDROPALIGNMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MIDEASTENABLED">SM_MIDEASTENABLED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MOUSEHORIZONTALWHEELPRESENT">SM_MOUSEHORIZONTALWHEELPRESENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MOUSEPRESENT">SM_MOUSEPRESENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MOUSEWHEELPRESENT">SM_MOUSEWHEELPRESENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_NETWORK">SM_NETWORK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_PENWINDOWS">SM_PENWINDOWS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_REMOTECONTROL">SM_REMOTECONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_REMOTESESSION">SM_REMOTESESSION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED1">SM_RESERVED1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED2">SM_RESERVED2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED3">SM_RESERVED3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED4">SM_RESERVED4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SAMEDISPLAYFORMAT">SM_SAMEDISPLAYFORMAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SECURE">SM_SECURE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SERVERR2">SM_SERVERR2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SHOWSOUNDS">SM_SHOWSOUNDS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SHUTTINGDOWN">SM_SHUTTINGDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SLOWMACHINE">SM_SLOWMACHINE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_STARTER">SM_STARTER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SWAPBUTTON">SM_SWAPBUTTON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_TABLETPC">SM_TABLETPC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_XVIRTUALSCREEN">SM_XVIRTUALSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_YVIRTUALSCREEN">SM_YVIRTUALSCREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_FORCEMINIMIZE">SW_FORCEMINIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_HIDE">SW_HIDE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_MAX">SW_MAX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_MAXIMIZE">SW_MAXIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_MINIMIZE">SW_MINIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_NORMAL">SW_NORMAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_RESTORE">SW_RESTORE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOW">SW_SHOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWDEFAULT">SW_SHOWDEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWMAXIMIZED">SW_SHOWMAXIMIZED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWMINIMIZED">SW_SHOWMINIMIZED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWMINNOACTIVE">SW_SHOWMINNOACTIVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWNA">SW_SHOWNA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWNOACTIVATE">SW_SHOWNOACTIVATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWNORMAL">SW_SHOWNORMAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SWP_NOZORDER">SWP_NOZORDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retains the current Z order (ignores the hWndInsertAfter parameter).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#ULW_ALPHA">ULW_ALPHA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#ULW_COLORKEY">ULW_COLORKEY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#ULW_OPAQUE">ULW_OPAQUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_CONTROL">VK_CONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_LCONTROL">VK_LCONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_LMENU">VK_LMENU</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_LSHIFT">VK_LSHIFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_MENU">VK_MENU</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_RCONTROL">VK_RCONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_RMENU">VK_RMENU</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_RSHIFT">VK_RSHIFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_SHIFT">VK_SHIFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_KEYBOARD">WH_KEYBOARD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_KEYBOARD_LL">WH_KEYBOARD_LL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_MOUSE">WH_MOUSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_MOUSE_LL">WH_MOUSE_LL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_CHAR">WM_CHAR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posted to the window with the keyboard focus when a WM_KEYDOWN message is translated by the TranslateMessage
+ function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_CLOSE">WM_CLOSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sent as a signal that a window or an application should terminate.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_DRAWITEM">WM_DRAWITEM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sent to the parent window of an owner-drawn button, combo box, list box, or menu when a visual aspect of the
+ button, combo box, list box, or menu has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_HOTKEY">WM_HOTKEY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posted when the user presses a hot key registered by the RegisterHotKey function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_KEYDOWN">WM_KEYDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posted to the window with the keyboard focus when a nonsystem key is pressed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_KEYUP">WM_KEYUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_MDIMAXIMIZE">WM_MDIMAXIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An application sends the WM_MDIMAXIMIZE message to a multiple-document interface (MDI) client window to maximize
+ an MDI child window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_PAINT">WM_PAINT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The WM_PAINT message is sent when the system or another application makes a request to paint a portion of an \
+ application's window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_QUIT">WM_QUIT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates a request to terminate an application, and is generated when the application calls the PostQuitMessage
+ function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SHOWWINDOW">WM_SHOWWINDOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sent to a window when the window is about to be hidden or shown.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SYSCOMMAND">WM_SYSCOMMAND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A window receives this message when the user chooses a command from the Window menu (formerly known as the system
+ or control menu) or when the user chooses the maximize button, minimize button, restore button, or close button.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SYSKEYDOWN">WM_SYSKEYDOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SYSKEYUP">WM_SYSKEYUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_CHILD">WS_CHILD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_EX_COMPOSITED">WS_EX_COMPOSITED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_EX_LAYERED">WS_EX_LAYERED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_EX_TRANSPARENT">WS_EX_TRANSPARENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_MAXIMIZE">WS_MAXIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_MINIMIZE">WS_MINIMIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_POPUP">WS_POPUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_VISIBLE">WS_VISIBLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HWND_BROADCAST"><!-- --></A><H3>
+HWND_BROADCAST</H3>
+<PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>HWND_BROADCAST</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLASHW_STOP"><!-- --></A><H3>
+FLASHW_STOP</H3>
+<PRE>
+static final int <B>FLASHW_STOP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.FLASHW_STOP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FLASHW_CAPTION"><!-- --></A><H3>
+FLASHW_CAPTION</H3>
+<PRE>
+static final int <B>FLASHW_CAPTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.FLASHW_CAPTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FLASHW_TRAY"><!-- --></A><H3>
+FLASHW_TRAY</H3>
+<PRE>
+static final int <B>FLASHW_TRAY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.FLASHW_TRAY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FLASHW_ALL"><!-- --></A><H3>
+FLASHW_ALL</H3>
+<PRE>
+static final int <B>FLASHW_ALL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.FLASHW_ALL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FLASHW_TIMER"><!-- --></A><H3>
+FLASHW_TIMER</H3>
+<PRE>
+static final int <B>FLASHW_TIMER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.FLASHW_TIMER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FLASHW_TIMERNOFG"><!-- --></A><H3>
+FLASHW_TIMERNOFG</H3>
+<PRE>
+static final int <B>FLASHW_TIMERNOFG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.FLASHW_TIMERNOFG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="IMAGE_BITMAP"><!-- --></A><H3>
+IMAGE_BITMAP</H3>
+<PRE>
+static final int <B>IMAGE_BITMAP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.IMAGE_BITMAP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="IMAGE_ICON"><!-- --></A><H3>
+IMAGE_ICON</H3>
+<PRE>
+static final int <B>IMAGE_ICON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.IMAGE_ICON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="IMAGE_CURSOR"><!-- --></A><H3>
+IMAGE_CURSOR</H3>
+<PRE>
+static final int <B>IMAGE_CURSOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.IMAGE_CURSOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="IMAGE_ENHMETAFILE"><!-- --></A><H3>
+IMAGE_ENHMETAFILE</H3>
+<PRE>
+static final int <B>IMAGE_ENHMETAFILE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.IMAGE_ENHMETAFILE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_DEFAULTCOLOR"><!-- --></A><H3>
+LR_DEFAULTCOLOR</H3>
+<PRE>
+static final int <B>LR_DEFAULTCOLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_DEFAULTCOLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_MONOCHROME"><!-- --></A><H3>
+LR_MONOCHROME</H3>
+<PRE>
+static final int <B>LR_MONOCHROME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_MONOCHROME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_COLOR"><!-- --></A><H3>
+LR_COLOR</H3>
+<PRE>
+static final int <B>LR_COLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_COLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_COPYRETURNORG"><!-- --></A><H3>
+LR_COPYRETURNORG</H3>
+<PRE>
+static final int <B>LR_COPYRETURNORG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_COPYRETURNORG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_COPYDELETEORG"><!-- --></A><H3>
+LR_COPYDELETEORG</H3>
+<PRE>
+static final int <B>LR_COPYDELETEORG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_COPYDELETEORG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_LOADFROMFILE"><!-- --></A><H3>
+LR_LOADFROMFILE</H3>
+<PRE>
+static final int <B>LR_LOADFROMFILE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_LOADFROMFILE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_LOADTRANSPARENT"><!-- --></A><H3>
+LR_LOADTRANSPARENT</H3>
+<PRE>
+static final int <B>LR_LOADTRANSPARENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_LOADTRANSPARENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_DEFAULTSIZE"><!-- --></A><H3>
+LR_DEFAULTSIZE</H3>
+<PRE>
+static final int <B>LR_DEFAULTSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_DEFAULTSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_VGACOLOR"><!-- --></A><H3>
+LR_VGACOLOR</H3>
+<PRE>
+static final int <B>LR_VGACOLOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_VGACOLOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_LOADMAP3DCOLORS"><!-- --></A><H3>
+LR_LOADMAP3DCOLORS</H3>
+<PRE>
+static final int <B>LR_LOADMAP3DCOLORS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_LOADMAP3DCOLORS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_CREATEDIBSECTION"><!-- --></A><H3>
+LR_CREATEDIBSECTION</H3>
+<PRE>
+static final int <B>LR_CREATEDIBSECTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_CREATEDIBSECTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_COPYFROMRESOURCE"><!-- --></A><H3>
+LR_COPYFROMRESOURCE</H3>
+<PRE>
+static final int <B>LR_COPYFROMRESOURCE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_COPYFROMRESOURCE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LR_SHARED"><!-- --></A><H3>
+LR_SHARED</H3>
+<PRE>
+static final int <B>LR_SHARED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LR_SHARED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GWL_EXSTYLE"><!-- --></A><H3>
+GWL_EXSTYLE</H3>
+<PRE>
+static final int <B>GWL_EXSTYLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GWL_EXSTYLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GWL_STYLE"><!-- --></A><H3>
+GWL_STYLE</H3>
+<PRE>
+static final int <B>GWL_STYLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GWL_STYLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GWL_WNDPROC"><!-- --></A><H3>
+GWL_WNDPROC</H3>
+<PRE>
+static final int <B>GWL_WNDPROC</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GWL_WNDPROC">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GWL_HINSTANCE"><!-- --></A><H3>
+GWL_HINSTANCE</H3>
+<PRE>
+static final int <B>GWL_HINSTANCE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GWL_HINSTANCE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GWL_ID"><!-- --></A><H3>
+GWL_ID</H3>
+<PRE>
+static final int <B>GWL_ID</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GWL_ID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GWL_USERDATA"><!-- --></A><H3>
+GWL_USERDATA</H3>
+<PRE>
+static final int <B>GWL_USERDATA</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GWL_USERDATA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DWL_DLGPROC"><!-- --></A><H3>
+DWL_DLGPROC</H3>
+<PRE>
+static final int <B>DWL_DLGPROC</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.DWL_DLGPROC">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DWL_MSGRESULT"><!-- --></A><H3>
+DWL_MSGRESULT</H3>
+<PRE>
+static final int <B>DWL_MSGRESULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.DWL_MSGRESULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DWL_USER"><!-- --></A><H3>
+DWL_USER</H3>
+<PRE>
+static final int <B>DWL_USER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.DWL_USER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_MAXIMIZE"><!-- --></A><H3>
+WS_MAXIMIZE</H3>
+<PRE>
+static final int <B>WS_MAXIMIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_MAXIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_VISIBLE"><!-- --></A><H3>
+WS_VISIBLE</H3>
+<PRE>
+static final int <B>WS_VISIBLE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_VISIBLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_MINIMIZE"><!-- --></A><H3>
+WS_MINIMIZE</H3>
+<PRE>
+static final int <B>WS_MINIMIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_MINIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_CHILD"><!-- --></A><H3>
+WS_CHILD</H3>
+<PRE>
+static final int <B>WS_CHILD</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_CHILD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_POPUP"><!-- --></A><H3>
+WS_POPUP</H3>
+<PRE>
+static final int <B>WS_POPUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_POPUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_EX_COMPOSITED"><!-- --></A><H3>
+WS_EX_COMPOSITED</H3>
+<PRE>
+static final int <B>WS_EX_COMPOSITED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_EX_COMPOSITED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_EX_LAYERED"><!-- --></A><H3>
+WS_EX_LAYERED</H3>
+<PRE>
+static final int <B>WS_EX_LAYERED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_EX_LAYERED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WS_EX_TRANSPARENT"><!-- --></A><H3>
+WS_EX_TRANSPARENT</H3>
+<PRE>
+static final int <B>WS_EX_TRANSPARENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WS_EX_TRANSPARENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LWA_COLORKEY"><!-- --></A><H3>
+LWA_COLORKEY</H3>
+<PRE>
+static final int <B>LWA_COLORKEY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LWA_COLORKEY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LWA_ALPHA"><!-- --></A><H3>
+LWA_ALPHA</H3>
+<PRE>
+static final int <B>LWA_ALPHA</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.LWA_ALPHA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ULW_COLORKEY"><!-- --></A><H3>
+ULW_COLORKEY</H3>
+<PRE>
+static final int <B>ULW_COLORKEY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.ULW_COLORKEY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ULW_ALPHA"><!-- --></A><H3>
+ULW_ALPHA</H3>
+<PRE>
+static final int <B>ULW_ALPHA</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.ULW_ALPHA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ULW_OPAQUE"><!-- --></A><H3>
+ULW_OPAQUE</H3>
+<PRE>
+static final int <B>ULW_OPAQUE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.ULW_OPAQUE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="AC_SRC_OVER"><!-- --></A><H3>
+AC_SRC_OVER</H3>
+<PRE>
+static final int <B>AC_SRC_OVER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.AC_SRC_OVER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="AC_SRC_ALPHA"><!-- --></A><H3>
+AC_SRC_ALPHA</H3>
+<PRE>
+static final int <B>AC_SRC_ALPHA</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.AC_SRC_ALPHA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="AC_SRC_NO_PREMULT_ALPHA"><!-- --></A><H3>
+AC_SRC_NO_PREMULT_ALPHA</H3>
+<PRE>
+static final int <B>AC_SRC_NO_PREMULT_ALPHA</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.AC_SRC_NO_PREMULT_ALPHA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="AC_SRC_NO_ALPHA"><!-- --></A><H3>
+AC_SRC_NO_ALPHA</H3>
+<PRE>
+static final int <B>AC_SRC_NO_ALPHA</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.AC_SRC_NO_ALPHA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_SHIFT"><!-- --></A><H3>
+VK_SHIFT</H3>
+<PRE>
+static final int <B>VK_SHIFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_SHIFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_LSHIFT"><!-- --></A><H3>
+VK_LSHIFT</H3>
+<PRE>
+static final int <B>VK_LSHIFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_LSHIFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_RSHIFT"><!-- --></A><H3>
+VK_RSHIFT</H3>
+<PRE>
+static final int <B>VK_RSHIFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_RSHIFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_CONTROL"><!-- --></A><H3>
+VK_CONTROL</H3>
+<PRE>
+static final int <B>VK_CONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_CONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_LCONTROL"><!-- --></A><H3>
+VK_LCONTROL</H3>
+<PRE>
+static final int <B>VK_LCONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_LCONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_RCONTROL"><!-- --></A><H3>
+VK_RCONTROL</H3>
+<PRE>
+static final int <B>VK_RCONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_RCONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_MENU"><!-- --></A><H3>
+VK_MENU</H3>
+<PRE>
+static final int <B>VK_MENU</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_MENU">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_LMENU"><!-- --></A><H3>
+VK_LMENU</H3>
+<PRE>
+static final int <B>VK_LMENU</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_LMENU">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="VK_RMENU"><!-- --></A><H3>
+VK_RMENU</H3>
+<PRE>
+static final int <B>VK_RMENU</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.VK_RMENU">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_ALT"><!-- --></A><H3>
+MOD_ALT</H3>
+<PRE>
+static final int <B>MOD_ALT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_ALT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_CONTROL"><!-- --></A><H3>
+MOD_CONTROL</H3>
+<PRE>
+static final int <B>MOD_CONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_CONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_NOREPEAT"><!-- --></A><H3>
+MOD_NOREPEAT</H3>
+<PRE>
+static final int <B>MOD_NOREPEAT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_NOREPEAT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_SHIFT"><!-- --></A><H3>
+MOD_SHIFT</H3>
+<PRE>
+static final int <B>MOD_SHIFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_SHIFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_WIN"><!-- --></A><H3>
+MOD_WIN</H3>
+<PRE>
+static final int <B>MOD_WIN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_WIN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WH_KEYBOARD"><!-- --></A><H3>
+WH_KEYBOARD</H3>
+<PRE>
+static final int <B>WH_KEYBOARD</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WH_KEYBOARD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WH_MOUSE"><!-- --></A><H3>
+WH_MOUSE</H3>
+<PRE>
+static final int <B>WH_MOUSE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WH_MOUSE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WH_KEYBOARD_LL"><!-- --></A><H3>
+WH_KEYBOARD_LL</H3>
+<PRE>
+static final int <B>WH_KEYBOARD_LL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WH_KEYBOARD_LL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WH_MOUSE_LL"><!-- --></A><H3>
+WH_MOUSE_LL</H3>
+<PRE>
+static final int <B>WH_MOUSE_LL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WH_MOUSE_LL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_PAINT"><!-- --></A><H3>
+WM_PAINT</H3>
+<PRE>
+static final int <B>WM_PAINT</B></PRE>
+<DL>
+<DD>The WM_PAINT message is sent when the system or another application makes a request to paint a portion of an \
+ application's window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_PAINT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_CLOSE"><!-- --></A><H3>
+WM_CLOSE</H3>
+<PRE>
+static final int <B>WM_CLOSE</B></PRE>
+<DL>
+<DD>Sent as a signal that a window or an application should terminate.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_CLOSE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_QUIT"><!-- --></A><H3>
+WM_QUIT</H3>
+<PRE>
+static final int <B>WM_QUIT</B></PRE>
+<DL>
+<DD>Indicates a request to terminate an application, and is generated when the application calls the PostQuitMessage
+ function.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_QUIT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_SHOWWINDOW"><!-- --></A><H3>
+WM_SHOWWINDOW</H3>
+<PRE>
+static final int <B>WM_SHOWWINDOW</B></PRE>
+<DL>
+<DD>Sent to a window when the window is about to be hidden or shown.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_SHOWWINDOW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_DRAWITEM"><!-- --></A><H3>
+WM_DRAWITEM</H3>
+<PRE>
+static final int <B>WM_DRAWITEM</B></PRE>
+<DL>
+<DD>Sent to the parent window of an owner-drawn button, combo box, list box, or menu when a visual aspect of the
+ button, combo box, list box, or menu has changed.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_DRAWITEM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_KEYDOWN"><!-- --></A><H3>
+WM_KEYDOWN</H3>
+<PRE>
+static final int <B>WM_KEYDOWN</B></PRE>
+<DL>
+<DD>Posted to the window with the keyboard focus when a nonsystem key is pressed. A nonsystem key is a key that is
+ pressed when the ALT key is not pressed.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_KEYDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_CHAR"><!-- --></A><H3>
+WM_CHAR</H3>
+<PRE>
+static final int <B>WM_CHAR</B></PRE>
+<DL>
+<DD>Posted to the window with the keyboard focus when a WM_KEYDOWN message is translated by the TranslateMessage
+ function. The WM_CHAR message contains the character code of the key that was pressed.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_CHAR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_SYSCOMMAND"><!-- --></A><H3>
+WM_SYSCOMMAND</H3>
+<PRE>
+static final int <B>WM_SYSCOMMAND</B></PRE>
+<DL>
+<DD>A window receives this message when the user chooses a command from the Window menu (formerly known as the system
+ or control menu) or when the user chooses the maximize button, minimize button, restore button, or close button.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_SYSCOMMAND">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_MDIMAXIMIZE"><!-- --></A><H3>
+WM_MDIMAXIMIZE</H3>
+<PRE>
+static final int <B>WM_MDIMAXIMIZE</B></PRE>
+<DL>
+<DD>An application sends the WM_MDIMAXIMIZE message to a multiple-document interface (MDI) client window to maximize
+ an MDI child window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_MDIMAXIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_HOTKEY"><!-- --></A><H3>
+WM_HOTKEY</H3>
+<PRE>
+static final int <B>WM_HOTKEY</B></PRE>
+<DL>
+<DD>Posted when the user presses a hot key registered by the RegisterHotKey function.
+ The message is placed at the top of the message queue associated with the thread that registered the hot key.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_HOTKEY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_KEYUP"><!-- --></A><H3>
+WM_KEYUP</H3>
+<PRE>
+static final int <B>WM_KEYUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_KEYUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_SYSKEYDOWN"><!-- --></A><H3>
+WM_SYSKEYDOWN</H3>
+<PRE>
+static final int <B>WM_SYSKEYDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_SYSKEYDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_SYSKEYUP"><!-- --></A><H3>
+WM_SYSKEYUP</H3>
+<PRE>
+static final int <B>WM_SYSKEYUP</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_SYSKEYUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXSCREEN"><!-- --></A><H3>
+SM_CXSCREEN</H3>
+<PRE>
+static final int <B>SM_CXSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYSCREEN"><!-- --></A><H3>
+SM_CYSCREEN</H3>
+<PRE>
+static final int <B>SM_CYSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXVSCROLL"><!-- --></A><H3>
+SM_CXVSCROLL</H3>
+<PRE>
+static final int <B>SM_CXVSCROLL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXVSCROLL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYHSCROLL"><!-- --></A><H3>
+SM_CYHSCROLL</H3>
+<PRE>
+static final int <B>SM_CYHSCROLL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYHSCROLL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYCAPTION"><!-- --></A><H3>
+SM_CYCAPTION</H3>
+<PRE>
+static final int <B>SM_CYCAPTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYCAPTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXBORDER"><!-- --></A><H3>
+SM_CXBORDER</H3>
+<PRE>
+static final int <B>SM_CXBORDER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXBORDER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYBORDER"><!-- --></A><H3>
+SM_CYBORDER</H3>
+<PRE>
+static final int <B>SM_CYBORDER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYBORDER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXDLGFRAME"><!-- --></A><H3>
+SM_CXDLGFRAME</H3>
+<PRE>
+static final int <B>SM_CXDLGFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXDLGFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYDLGFRAME"><!-- --></A><H3>
+SM_CYDLGFRAME</H3>
+<PRE>
+static final int <B>SM_CYDLGFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYDLGFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYVTHUMB"><!-- --></A><H3>
+SM_CYVTHUMB</H3>
+<PRE>
+static final int <B>SM_CYVTHUMB</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYVTHUMB">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXHTHUMB"><!-- --></A><H3>
+SM_CXHTHUMB</H3>
+<PRE>
+static final int <B>SM_CXHTHUMB</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXHTHUMB">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXICON"><!-- --></A><H3>
+SM_CXICON</H3>
+<PRE>
+static final int <B>SM_CXICON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXICON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYICON"><!-- --></A><H3>
+SM_CYICON</H3>
+<PRE>
+static final int <B>SM_CYICON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYICON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXCURSOR"><!-- --></A><H3>
+SM_CXCURSOR</H3>
+<PRE>
+static final int <B>SM_CXCURSOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXCURSOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYCURSOR"><!-- --></A><H3>
+SM_CYCURSOR</H3>
+<PRE>
+static final int <B>SM_CYCURSOR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYCURSOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMENU"><!-- --></A><H3>
+SM_CYMENU</H3>
+<PRE>
+static final int <B>SM_CYMENU</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMENU">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXFULLSCREEN"><!-- --></A><H3>
+SM_CXFULLSCREEN</H3>
+<PRE>
+static final int <B>SM_CXFULLSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXFULLSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYFULLSCREEN"><!-- --></A><H3>
+SM_CYFULLSCREEN</H3>
+<PRE>
+static final int <B>SM_CYFULLSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYFULLSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYKANJIWINDOW"><!-- --></A><H3>
+SM_CYKANJIWINDOW</H3>
+<PRE>
+static final int <B>SM_CYKANJIWINDOW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYKANJIWINDOW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_MOUSEPRESENT"><!-- --></A><H3>
+SM_MOUSEPRESENT</H3>
+<PRE>
+static final int <B>SM_MOUSEPRESENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_MOUSEPRESENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYVSCROLL"><!-- --></A><H3>
+SM_CYVSCROLL</H3>
+<PRE>
+static final int <B>SM_CYVSCROLL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYVSCROLL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXHSCROLL"><!-- --></A><H3>
+SM_CXHSCROLL</H3>
+<PRE>
+static final int <B>SM_CXHSCROLL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXHSCROLL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_DEBUG"><!-- --></A><H3>
+SM_DEBUG</H3>
+<PRE>
+static final int <B>SM_DEBUG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_DEBUG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_SWAPBUTTON"><!-- --></A><H3>
+SM_SWAPBUTTON</H3>
+<PRE>
+static final int <B>SM_SWAPBUTTON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_SWAPBUTTON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_RESERVED1"><!-- --></A><H3>
+SM_RESERVED1</H3>
+<PRE>
+static final int <B>SM_RESERVED1</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_RESERVED1">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_RESERVED2"><!-- --></A><H3>
+SM_RESERVED2</H3>
+<PRE>
+static final int <B>SM_RESERVED2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_RESERVED2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_RESERVED3"><!-- --></A><H3>
+SM_RESERVED3</H3>
+<PRE>
+static final int <B>SM_RESERVED3</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_RESERVED3">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_RESERVED4"><!-- --></A><H3>
+SM_RESERVED4</H3>
+<PRE>
+static final int <B>SM_RESERVED4</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_RESERVED4">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMIN"><!-- --></A><H3>
+SM_CXMIN</H3>
+<PRE>
+static final int <B>SM_CXMIN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMIN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMIN"><!-- --></A><H3>
+SM_CYMIN</H3>
+<PRE>
+static final int <B>SM_CYMIN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMIN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXSIZE"><!-- --></A><H3>
+SM_CXSIZE</H3>
+<PRE>
+static final int <B>SM_CXSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYSIZE"><!-- --></A><H3>
+SM_CYSIZE</H3>
+<PRE>
+static final int <B>SM_CYSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXFRAME"><!-- --></A><H3>
+SM_CXFRAME</H3>
+<PRE>
+static final int <B>SM_CXFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYFRAME"><!-- --></A><H3>
+SM_CYFRAME</H3>
+<PRE>
+static final int <B>SM_CYFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMINTRACK"><!-- --></A><H3>
+SM_CXMINTRACK</H3>
+<PRE>
+static final int <B>SM_CXMINTRACK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMINTRACK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMINTRACK"><!-- --></A><H3>
+SM_CYMINTRACK</H3>
+<PRE>
+static final int <B>SM_CYMINTRACK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMINTRACK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXDOUBLECLK"><!-- --></A><H3>
+SM_CXDOUBLECLK</H3>
+<PRE>
+static final int <B>SM_CXDOUBLECLK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXDOUBLECLK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYDOUBLECLK"><!-- --></A><H3>
+SM_CYDOUBLECLK</H3>
+<PRE>
+static final int <B>SM_CYDOUBLECLK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYDOUBLECLK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXICONSPACING"><!-- --></A><H3>
+SM_CXICONSPACING</H3>
+<PRE>
+static final int <B>SM_CXICONSPACING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXICONSPACING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYICONSPACING"><!-- --></A><H3>
+SM_CYICONSPACING</H3>
+<PRE>
+static final int <B>SM_CYICONSPACING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYICONSPACING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_MENUDROPALIGNMENT"><!-- --></A><H3>
+SM_MENUDROPALIGNMENT</H3>
+<PRE>
+static final int <B>SM_MENUDROPALIGNMENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_MENUDROPALIGNMENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_PENWINDOWS"><!-- --></A><H3>
+SM_PENWINDOWS</H3>
+<PRE>
+static final int <B>SM_PENWINDOWS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_PENWINDOWS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_DBCSENABLED"><!-- --></A><H3>
+SM_DBCSENABLED</H3>
+<PRE>
+static final int <B>SM_DBCSENABLED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_DBCSENABLED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CMOUSEBUTTONS"><!-- --></A><H3>
+SM_CMOUSEBUTTONS</H3>
+<PRE>
+static final int <B>SM_CMOUSEBUTTONS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CMOUSEBUTTONS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXFIXEDFRAME"><!-- --></A><H3>
+SM_CXFIXEDFRAME</H3>
+<PRE>
+static final int <B>SM_CXFIXEDFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXFIXEDFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYFIXEDFRAME"><!-- --></A><H3>
+SM_CYFIXEDFRAME</H3>
+<PRE>
+static final int <B>SM_CYFIXEDFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYFIXEDFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXSIZEFRAME"><!-- --></A><H3>
+SM_CXSIZEFRAME</H3>
+<PRE>
+static final int <B>SM_CXSIZEFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXSIZEFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYSIZEFRAME"><!-- --></A><H3>
+SM_CYSIZEFRAME</H3>
+<PRE>
+static final int <B>SM_CYSIZEFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYSIZEFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_SECURE"><!-- --></A><H3>
+SM_SECURE</H3>
+<PRE>
+static final int <B>SM_SECURE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_SECURE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXEDGE"><!-- --></A><H3>
+SM_CXEDGE</H3>
+<PRE>
+static final int <B>SM_CXEDGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXEDGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYEDGE"><!-- --></A><H3>
+SM_CYEDGE</H3>
+<PRE>
+static final int <B>SM_CYEDGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYEDGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMINSPACING"><!-- --></A><H3>
+SM_CXMINSPACING</H3>
+<PRE>
+static final int <B>SM_CXMINSPACING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMINSPACING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMINSPACING"><!-- --></A><H3>
+SM_CYMINSPACING</H3>
+<PRE>
+static final int <B>SM_CYMINSPACING</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMINSPACING">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXSMICON"><!-- --></A><H3>
+SM_CXSMICON</H3>
+<PRE>
+static final int <B>SM_CXSMICON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXSMICON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYSMICON"><!-- --></A><H3>
+SM_CYSMICON</H3>
+<PRE>
+static final int <B>SM_CYSMICON</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYSMICON">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYSMCAPTION"><!-- --></A><H3>
+SM_CYSMCAPTION</H3>
+<PRE>
+static final int <B>SM_CYSMCAPTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYSMCAPTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXSMSIZE"><!-- --></A><H3>
+SM_CXSMSIZE</H3>
+<PRE>
+static final int <B>SM_CXSMSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXSMSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYSMSIZE"><!-- --></A><H3>
+SM_CYSMSIZE</H3>
+<PRE>
+static final int <B>SM_CYSMSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYSMSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMENUSIZE"><!-- --></A><H3>
+SM_CXMENUSIZE</H3>
+<PRE>
+static final int <B>SM_CXMENUSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMENUSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMENUSIZE"><!-- --></A><H3>
+SM_CYMENUSIZE</H3>
+<PRE>
+static final int <B>SM_CYMENUSIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMENUSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_ARRANGE"><!-- --></A><H3>
+SM_ARRANGE</H3>
+<PRE>
+static final int <B>SM_ARRANGE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_ARRANGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMINIMIZED"><!-- --></A><H3>
+SM_CXMINIMIZED</H3>
+<PRE>
+static final int <B>SM_CXMINIMIZED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMINIMIZED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMINIMIZED"><!-- --></A><H3>
+SM_CYMINIMIZED</H3>
+<PRE>
+static final int <B>SM_CYMINIMIZED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMINIMIZED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMAXTRACK"><!-- --></A><H3>
+SM_CXMAXTRACK</H3>
+<PRE>
+static final int <B>SM_CXMAXTRACK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMAXTRACK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMAXTRACK"><!-- --></A><H3>
+SM_CYMAXTRACK</H3>
+<PRE>
+static final int <B>SM_CYMAXTRACK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMAXTRACK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMAXIMIZED"><!-- --></A><H3>
+SM_CXMAXIMIZED</H3>
+<PRE>
+static final int <B>SM_CXMAXIMIZED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMAXIMIZED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMAXIMIZED"><!-- --></A><H3>
+SM_CYMAXIMIZED</H3>
+<PRE>
+static final int <B>SM_CYMAXIMIZED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMAXIMIZED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_NETWORK"><!-- --></A><H3>
+SM_NETWORK</H3>
+<PRE>
+static final int <B>SM_NETWORK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_NETWORK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CLEANBOOT"><!-- --></A><H3>
+SM_CLEANBOOT</H3>
+<PRE>
+static final int <B>SM_CLEANBOOT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CLEANBOOT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXDRAG"><!-- --></A><H3>
+SM_CXDRAG</H3>
+<PRE>
+static final int <B>SM_CXDRAG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXDRAG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYDRAG"><!-- --></A><H3>
+SM_CYDRAG</H3>
+<PRE>
+static final int <B>SM_CYDRAG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYDRAG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_SHOWSOUNDS"><!-- --></A><H3>
+SM_SHOWSOUNDS</H3>
+<PRE>
+static final int <B>SM_SHOWSOUNDS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_SHOWSOUNDS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXMENUCHECK"><!-- --></A><H3>
+SM_CXMENUCHECK</H3>
+<PRE>
+static final int <B>SM_CXMENUCHECK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXMENUCHECK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYMENUCHECK"><!-- --></A><H3>
+SM_CYMENUCHECK</H3>
+<PRE>
+static final int <B>SM_CYMENUCHECK</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYMENUCHECK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_SLOWMACHINE"><!-- --></A><H3>
+SM_SLOWMACHINE</H3>
+<PRE>
+static final int <B>SM_SLOWMACHINE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_SLOWMACHINE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_MIDEASTENABLED"><!-- --></A><H3>
+SM_MIDEASTENABLED</H3>
+<PRE>
+static final int <B>SM_MIDEASTENABLED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_MIDEASTENABLED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_MOUSEWHEELPRESENT"><!-- --></A><H3>
+SM_MOUSEWHEELPRESENT</H3>
+<PRE>
+static final int <B>SM_MOUSEWHEELPRESENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_MOUSEWHEELPRESENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_XVIRTUALSCREEN"><!-- --></A><H3>
+SM_XVIRTUALSCREEN</H3>
+<PRE>
+static final int <B>SM_XVIRTUALSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_XVIRTUALSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_YVIRTUALSCREEN"><!-- --></A><H3>
+SM_YVIRTUALSCREEN</H3>
+<PRE>
+static final int <B>SM_YVIRTUALSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_YVIRTUALSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXVIRTUALSCREEN"><!-- --></A><H3>
+SM_CXVIRTUALSCREEN</H3>
+<PRE>
+static final int <B>SM_CXVIRTUALSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXVIRTUALSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYVIRTUALSCREEN"><!-- --></A><H3>
+SM_CYVIRTUALSCREEN</H3>
+<PRE>
+static final int <B>SM_CYVIRTUALSCREEN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYVIRTUALSCREEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CMONITORS"><!-- --></A><H3>
+SM_CMONITORS</H3>
+<PRE>
+static final int <B>SM_CMONITORS</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CMONITORS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_SAMEDISPLAYFORMAT"><!-- --></A><H3>
+SM_SAMEDISPLAYFORMAT</H3>
+<PRE>
+static final int <B>SM_SAMEDISPLAYFORMAT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_SAMEDISPLAYFORMAT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_IMMENABLED"><!-- --></A><H3>
+SM_IMMENABLED</H3>
+<PRE>
+static final int <B>SM_IMMENABLED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_IMMENABLED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXFOCUSBORDER"><!-- --></A><H3>
+SM_CXFOCUSBORDER</H3>
+<PRE>
+static final int <B>SM_CXFOCUSBORDER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXFOCUSBORDER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CYFOCUSBORDER"><!-- --></A><H3>
+SM_CYFOCUSBORDER</H3>
+<PRE>
+static final int <B>SM_CYFOCUSBORDER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CYFOCUSBORDER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_TABLETPC"><!-- --></A><H3>
+SM_TABLETPC</H3>
+<PRE>
+static final int <B>SM_TABLETPC</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_TABLETPC">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_MEDIACENTER"><!-- --></A><H3>
+SM_MEDIACENTER</H3>
+<PRE>
+static final int <B>SM_MEDIACENTER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_MEDIACENTER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_STARTER"><!-- --></A><H3>
+SM_STARTER</H3>
+<PRE>
+static final int <B>SM_STARTER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_STARTER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_SERVERR2"><!-- --></A><H3>
+SM_SERVERR2</H3>
+<PRE>
+static final int <B>SM_SERVERR2</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_SERVERR2">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_MOUSEHORIZONTALWHEELPRESENT"><!-- --></A><H3>
+SM_MOUSEHORIZONTALWHEELPRESENT</H3>
+<PRE>
+static final int <B>SM_MOUSEHORIZONTALWHEELPRESENT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_MOUSEHORIZONTALWHEELPRESENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CXPADDEDBORDER"><!-- --></A><H3>
+SM_CXPADDEDBORDER</H3>
+<PRE>
+static final int <B>SM_CXPADDEDBORDER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CXPADDEDBORDER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_REMOTESESSION"><!-- --></A><H3>
+SM_REMOTESESSION</H3>
+<PRE>
+static final int <B>SM_REMOTESESSION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_REMOTESESSION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_SHUTTINGDOWN"><!-- --></A><H3>
+SM_SHUTTINGDOWN</H3>
+<PRE>
+static final int <B>SM_SHUTTINGDOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_SHUTTINGDOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_REMOTECONTROL"><!-- --></A><H3>
+SM_REMOTECONTROL</H3>
+<PRE>
+static final int <B>SM_REMOTECONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_REMOTECONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SM_CARETBLINKINGENABLED"><!-- --></A><H3>
+SM_CARETBLINKINGENABLED</H3>
+<PRE>
+static final int <B>SM_CARETBLINKINGENABLED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SM_CARETBLINKINGENABLED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_HIDE"><!-- --></A><H3>
+SW_HIDE</H3>
+<PRE>
+static final int <B>SW_HIDE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_HIDE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOWNORMAL"><!-- --></A><H3>
+SW_SHOWNORMAL</H3>
+<PRE>
+static final int <B>SW_SHOWNORMAL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOWNORMAL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_NORMAL"><!-- --></A><H3>
+SW_NORMAL</H3>
+<PRE>
+static final int <B>SW_NORMAL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_NORMAL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOWMINIMIZED"><!-- --></A><H3>
+SW_SHOWMINIMIZED</H3>
+<PRE>
+static final int <B>SW_SHOWMINIMIZED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOWMINIMIZED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOWMAXIMIZED"><!-- --></A><H3>
+SW_SHOWMAXIMIZED</H3>
+<PRE>
+static final int <B>SW_SHOWMAXIMIZED</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOWMAXIMIZED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_MAXIMIZE"><!-- --></A><H3>
+SW_MAXIMIZE</H3>
+<PRE>
+static final int <B>SW_MAXIMIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_MAXIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOWNOACTIVATE"><!-- --></A><H3>
+SW_SHOWNOACTIVATE</H3>
+<PRE>
+static final int <B>SW_SHOWNOACTIVATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOWNOACTIVATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOW"><!-- --></A><H3>
+SW_SHOW</H3>
+<PRE>
+static final int <B>SW_SHOW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_MINIMIZE"><!-- --></A><H3>
+SW_MINIMIZE</H3>
+<PRE>
+static final int <B>SW_MINIMIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_MINIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOWMINNOACTIVE"><!-- --></A><H3>
+SW_SHOWMINNOACTIVE</H3>
+<PRE>
+static final int <B>SW_SHOWMINNOACTIVE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOWMINNOACTIVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOWNA"><!-- --></A><H3>
+SW_SHOWNA</H3>
+<PRE>
+static final int <B>SW_SHOWNA</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOWNA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_RESTORE"><!-- --></A><H3>
+SW_RESTORE</H3>
+<PRE>
+static final int <B>SW_RESTORE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_RESTORE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_SHOWDEFAULT"><!-- --></A><H3>
+SW_SHOWDEFAULT</H3>
+<PRE>
+static final int <B>SW_SHOWDEFAULT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_SHOWDEFAULT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_FORCEMINIMIZE"><!-- --></A><H3>
+SW_FORCEMINIMIZE</H3>
+<PRE>
+static final int <B>SW_FORCEMINIMIZE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_FORCEMINIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SW_MAX"><!-- --></A><H3>
+SW_MAX</H3>
+<PRE>
+static final int <B>SW_MAX</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SW_MAX">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_INVALIDATE"><!-- --></A><H3>
+RDW_INVALIDATE</H3>
+<PRE>
+static final int <B>RDW_INVALIDATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_INVALIDATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_INTERNALPAINT"><!-- --></A><H3>
+RDW_INTERNALPAINT</H3>
+<PRE>
+static final int <B>RDW_INTERNALPAINT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_INTERNALPAINT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_ERASE"><!-- --></A><H3>
+RDW_ERASE</H3>
+<PRE>
+static final int <B>RDW_ERASE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_ERASE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_VALIDATE"><!-- --></A><H3>
+RDW_VALIDATE</H3>
+<PRE>
+static final int <B>RDW_VALIDATE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_VALIDATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_NOINTERNALPAINT"><!-- --></A><H3>
+RDW_NOINTERNALPAINT</H3>
+<PRE>
+static final int <B>RDW_NOINTERNALPAINT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_NOINTERNALPAINT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_NOERASE"><!-- --></A><H3>
+RDW_NOERASE</H3>
+<PRE>
+static final int <B>RDW_NOERASE</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_NOERASE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_NOCHILDREN"><!-- --></A><H3>
+RDW_NOCHILDREN</H3>
+<PRE>
+static final int <B>RDW_NOCHILDREN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_NOCHILDREN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_ALLCHILDREN"><!-- --></A><H3>
+RDW_ALLCHILDREN</H3>
+<PRE>
+static final int <B>RDW_ALLCHILDREN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_ALLCHILDREN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_UPDATENOW"><!-- --></A><H3>
+RDW_UPDATENOW</H3>
+<PRE>
+static final int <B>RDW_UPDATENOW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_UPDATENOW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_ERASENOW"><!-- --></A><H3>
+RDW_ERASENOW</H3>
+<PRE>
+static final int <B>RDW_ERASENOW</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_ERASENOW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_FRAME"><!-- --></A><H3>
+RDW_FRAME</H3>
+<PRE>
+static final int <B>RDW_FRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_FRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RDW_NOFRAME"><!-- --></A><H3>
+RDW_NOFRAME</H3>
+<PRE>
+static final int <B>RDW_NOFRAME</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.RDW_NOFRAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GW_HWNDFIRST"><!-- --></A><H3>
+GW_HWNDFIRST</H3>
+<PRE>
+static final int <B>GW_HWNDFIRST</B></PRE>
+<DL>
+<DD>The retrieved handle identifies the window of the same type that is highest in the Z order.
+
+ If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+ top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+ identifies a sibling window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GW_HWNDFIRST">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GW_HWNDLAST"><!-- --></A><H3>
+GW_HWNDLAST</H3>
+<PRE>
+static final int <B>GW_HWNDLAST</B></PRE>
+<DL>
+<DD>The retrieved handle identifies the window of the same type that is lowest in the Z order.
+
+ If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+ top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+ identifies a sibling window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GW_HWNDLAST">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GW_HWNDNEXT"><!-- --></A><H3>
+GW_HWNDNEXT</H3>
+<PRE>
+static final int <B>GW_HWNDNEXT</B></PRE>
+<DL>
+<DD>The retrieved handle identifies the window below the specified window in the Z order.
+
+ If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+ top-level window, the handle identifies a top-level window. If the specified window is a child window, the handle
+ identifies a sibling window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GW_HWNDNEXT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GW_HWNDPREV"><!-- --></A><H3>
+GW_HWNDPREV</H3>
+<PRE>
+static final int <B>GW_HWNDPREV</B></PRE>
+<DL>
+<DD>The retrieved handle identifies the window above the specified window in the Z order.
+
+ If the specified window is a topmost window, the handle identifies a topmost window. If the specified window is a
+ top-level window, the handle identifies a top-level window. If the specified window is a child window, the
+ handle identifies a sibling window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GW_HWNDPREV">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GW_OWNER"><!-- --></A><H3>
+GW_OWNER</H3>
+<PRE>
+static final int <B>GW_OWNER</B></PRE>
+<DL>
+<DD>The retrieved handle identifies the specified window's owner window, if any. For more information, see Owned
+ Windows.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GW_OWNER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GW_CHILD"><!-- --></A><H3>
+GW_CHILD</H3>
+<PRE>
+static final int <B>GW_CHILD</B></PRE>
+<DL>
+<DD>The retrieved handle identifies the child window at the top of the Z order, if the specified window is a parent
+ window; otherwise, the retrieved handle is NULL. The function examines only child windows of the specified
+ window. It does not examine descendant windows.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GW_CHILD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="GW_ENABLEDPOPUP"><!-- --></A><H3>
+GW_ENABLEDPOPUP</H3>
+<PRE>
+static final int <B>GW_ENABLEDPOPUP</B></PRE>
+<DL>
+<DD>The retrieved handle identifies the enabled popup window owned by the specified window (the search uses the first
+ such window found using GW_HWNDNEXT); otherwise, if there are no enabled popup windows, the retrieved handle is
+ that of the specified window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.GW_ENABLEDPOPUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SWP_NOZORDER"><!-- --></A><H3>
+SWP_NOZORDER</H3>
+<PRE>
+static final int <B>SWP_NOZORDER</B></PRE>
+<DL>
+<DD>Retains the current Z order (ignores the hWndInsertAfter parameter).
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SWP_NOZORDER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MINIMIZE"><!-- --></A><H3>
+SC_MINIMIZE</H3>
+<PRE>
+static final int <B>SC_MINIMIZE</B></PRE>
+<DL>
+<DD>Minimizes the window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SC_MINIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SC_MAXIMIZE"><!-- --></A><H3>
+SC_MAXIMIZE</H3>
+<PRE>
+static final int <B>SC_MAXIMIZE</B></PRE>
+<DL>
+<DD>Maximizes the window.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.SC_MAXIMIZE">Constant Field Values</A></DL>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS_PROCESS.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinUser.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinUser.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>
