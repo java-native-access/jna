@@ -1,0 +1,1737 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Memory (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Memory (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/MethodParameterContext.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Memory.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Memory.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna</FONT>
+<BR>
+Class Memory</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">com.sun.jna.Pointer</A>
+      <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.Memory</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../com/sun/jna/StringArray.html" title="class in com.sun.jna">StringArray</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>Memory</B><DT>extends <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></DL>
+</PRE>
+
+<P>
+A <code>Pointer</code> to memory obtained from the native heap via a 
+ call to <code>malloc</code>.
+
+ <p>In some cases it might be necessary to use memory obtained from
+ <code>malloc</code>.  For example, <code>Memory</code> helps 
+ accomplish the following idiom:
+ <pre>
+                void *buf = malloc(BUF_LEN * sizeof(char));
+                call_some_function(buf);
+                free(buf);
+ </pre>
+
+ <p>The <A HREF="../../../com/sun/jna/Memory.html#finalize()"><CODE>finalize()</CODE></A> method will free allocated memory when
+ this object is no longer referenced.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Sheng Liang, originator, Todd Fast, suitability modifications, Timothy Wall</DD>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#size">size</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Pointer"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#NULL">NULL</A>, <A HREF="../../../com/sun/jna/Pointer.html#peer">peer</A>, <A HREF="../../../com/sun/jna/Pointer.html#SIZE">SIZE</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#Memory()">Memory</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#Memory(long)">Memory</A></B>(long&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Allocate space in the native heap via a call to C's <code>malloc</code>.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#align(int)">align</A></B>(int&nbsp;byteBoundary)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view onto this structure with the given alignment.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#boundsCheck(long, long)">boundsCheck</A></B>(long&nbsp;off,
+            long&nbsp;sz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check that indirection won't cause us to write outside the 
+ malloc'ed space.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#clear()">clear</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Zero the full extent of this memory region.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#dispose()">dispose</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Free the native memory and set peer to zero</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#finalize()">finalize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Properly dispose of native memory when this object is GC'd.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#free(long)">free</A></B>(long&nbsp;p)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getByte(long)">getByte</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getByte</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getByteBuffer(long, long)">getByteBuffer</A></B>(long&nbsp;offset,
+              long&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a ByteBuffer mapped to a portion of this memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;char</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getChar(long)">getChar</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getByte</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getDouble(long)">getDouble</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getDouble</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getFloat(long)">getFloat</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getFloat</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getInt(long)">getInt</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getInt</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getLong(long)">getLong</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getLong</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getPointer(long)">getPointer</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getPointer</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getShort(long)">getShort</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getShort</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getSize()">getSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../com/sun/jna/Memory.html#size()"><CODE>size()</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#getString(long, boolean)">getString</A></B>(long&nbsp;offset,
+          boolean&nbsp;wide)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getString</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#isValid()">isValid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../com/sun/jna/Memory.html#valid()"><CODE>valid()</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#malloc(long)">malloc</A></B>(long&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#purge()">purge</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Force cleanup of memory that has associated NIO Buffers which have
+        been GC'd.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#read(long, byte[], int, int)">read</A></B>(long&nbsp;bOff,
+     byte[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#read(long, char[], int, int)">read</A></B>(long&nbsp;bOff,
+     char[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#read(long, double[], int, int)">read</A></B>(long&nbsp;bOff,
+     double[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#read(long, float[], int, int)">read</A></B>(long&nbsp;bOff,
+     float[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#read(long, int[], int, int)">read</A></B>(long&nbsp;bOff,
+     int[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#read(long, long[], int, int)">read</A></B>(long&nbsp;bOff,
+     long[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#read(long, short[], int, int)">read</A></B>(long&nbsp;bOff,
+     short[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setByte(long, byte)">setByte</A></B>(long&nbsp;offset,
+        byte&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setByte</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setChar(long, char)">setChar</A></B>(long&nbsp;offset,
+        char&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setChar</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setDouble(long, double)">setDouble</A></B>(long&nbsp;offset,
+          double&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setDouble</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setFloat(long, float)">setFloat</A></B>(long&nbsp;offset,
+         float&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setFloat</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setInt(long, int)">setInt</A></B>(long&nbsp;offset,
+       int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setInt</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setLong(long, long)">setLong</A></B>(long&nbsp;offset,
+        long&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setLong</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setPointer(long, com.sun.jna.Pointer)">setPointer</A></B>(long&nbsp;offset,
+           <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setPointer</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setShort(long, short)">setShort</A></B>(long&nbsp;offset,
+         short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setShort</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#setString(long, java.lang.String, boolean)">setString</A></B>(long&nbsp;offset,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
+          boolean&nbsp;wide)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setString</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#share(long)">share</A></B>(long&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view onto this structure from the given offset.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#share(long, long)">share</A></B>(long&nbsp;offset,
+      long&nbsp;sz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view onto this structure from the given offset.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#size()">size</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#valid()">valid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns false if the memory has been freed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#write(long, byte[], int, int)">write</A></B>(long&nbsp;bOff,
+      byte[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#write(long, char[], int, int)">write</A></B>(long&nbsp;bOff,
+      char[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#write(long, double[], int, int)">write</A></B>(long&nbsp;bOff,
+      double[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#write(long, float[], int, int)">write</A></B>(long&nbsp;bOff,
+      float[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#write(long, int[], int, int)">write</A></B>(long&nbsp;bOff,
+      int[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#write(long, long[], int, int)">write</A></B>(long&nbsp;bOff,
+      long[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#write(long, short[], int, int)">write</A></B>(long&nbsp;bOff,
+      short[]&nbsp;buf,
+      int&nbsp;index,
+      int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.Pointer"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(int)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</A>, <A HREF="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer)">nativeValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer, long)">nativeValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="size"><!-- --></A><H3>
+size</H3>
+<PRE>
+protected long <B>size</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Memory(long)"><!-- --></A><H3>
+Memory</H3>
+<PRE>
+public <B>Memory</B>(long&nbsp;size)</PRE>
+<DL>
+<DD>Allocate space in the native heap via a call to C's <code>malloc</code>.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>size</CODE> - number of <em>bytes</em> of space to allocate</DL>
+</DL>
+<HR>
+
+<A NAME="Memory()"><!-- --></A><H3>
+Memory</H3>
+<PRE>
+protected <B>Memory</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="purge()"><!-- --></A><H3>
+purge</H3>
+<PRE>
+public static void <B>purge</B>()</PRE>
+<DL>
+<DD>Force cleanup of memory that has associated NIO Buffers which have
+        been GC'd.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="share(long)"><!-- --></A><H3>
+share</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Provide a view onto this structure from the given offset.  The
+ returned <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> will have the same size as the original,
+ reduced by the offset.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#share(long)">share</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested memory is outside
+ the allocated bounds.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="share(long, long)"><!-- --></A><H3>
+share</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset,
+                     long&nbsp;sz)</PRE>
+<DL>
+<DD>Provide a view onto this structure from the given offset.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#share(long, long)">share</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested memory is outside
+ the allocated bounds.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="align(int)"><!-- --></A><H3>
+align</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A> <B>align</B>(int&nbsp;byteBoundary)</PRE>
+<DL>
+<DD>Provide a view onto this structure with the given alignment.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>byteBoundary</CODE> - Align memory to this number of bytes; should be a
+ power of two.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</A></CODE> - if the requested alignment can
+ not be met.
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the requested alignment is not
+ a positive power of two.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="finalize()"><!-- --></A><H3>
+finalize</H3>
+<PRE>
+protected void <B>finalize</B>()</PRE>
+<DL>
+<DD>Properly dispose of native memory when this object is GC'd.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A></CODE> in class <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dispose()"><!-- --></A><H3>
+dispose</H3>
+<PRE>
+protected void <B>dispose</B>()</PRE>
+<DL>
+<DD>Free the native memory and set peer to zero
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clear()"><!-- --></A><H3>
+clear</H3>
+<PRE>
+public void <B>clear</B>()</PRE>
+<DL>
+<DD>Zero the full extent of this memory region.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isValid()"><!-- --></A><H3>
+isValid</H3>
+<PRE>
+public boolean <B>isValid</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../com/sun/jna/Memory.html#valid()"><CODE>valid()</CODE></A> instead.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="valid()"><!-- --></A><H3>
+valid</H3>
+<PRE>
+public boolean <B>valid</B>()</PRE>
+<DL>
+<DD>Returns false if the memory has been freed.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="size()"><!-- --></A><H3>
+size</H3>
+<PRE>
+public long <B>size</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSize()"><!-- --></A><H3>
+getSize</H3>
+<PRE>
+public long <B>getSize</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>use <A HREF="../../../com/sun/jna/Memory.html#size()"><CODE>size()</CODE></A> instead.</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="boundsCheck(long, long)"><!-- --></A><H3>
+boundsCheck</H3>
+<PRE>
+protected void <B>boundsCheck</B>(long&nbsp;off,
+                           long&nbsp;sz)</PRE>
+<DL>
+<DD>Check that indirection won't cause us to write outside the 
+ malloc'ed space.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, byte[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;bOff,
+                 byte[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#read(long, byte[], int, int)">read</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>byte</code> array into which data is copied<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from native pointer that must be copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#read(long, byte[], int, int)"><CODE>Pointer.read(long,byte[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, short[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;bOff,
+                 short[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#read(long, short[], int, int)">read</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>short</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#read(long, short[], int, int)"><CODE>Pointer.read(long,short[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, char[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;bOff,
+                 char[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#read(long, char[], int, int)">read</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>char</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#read(long, char[], int, int)"><CODE>Pointer.read(long,char[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, int[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;bOff,
+                 int[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#read(long, int[], int, int)">read</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>int</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#read(long, int[], int, int)"><CODE>Pointer.read(long,int[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, long[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;bOff,
+                 long[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#read(long, long[], int, int)">read</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>long</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#read(long, long[], int, int)"><CODE>Pointer.read(long,long[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, float[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;bOff,
+                 float[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#read(long, float[], int, int)">read</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>float</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#read(long, float[], int, int)"><CODE>Pointer.read(long,float[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(long, double[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public void <B>read</B>(long&nbsp;bOff,
+                 double[]&nbsp;buf,
+                 int&nbsp;index,
+                 int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.read</code>.  But this method performs a bounds checks to
+ ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#read(long, double[], int, int)">read</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer from which data is copied<DD><CODE>buf</CODE> - <code>double</code> array into which data is copied<DD><CODE>index</CODE> - array index to which data is copied<DD><CODE>length</CODE> - number of elements from native pointer that must be copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#read(long, double[], int, int)"><CODE>Pointer.read(long,double[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, byte[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  byte[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#write(long, byte[], int, int)">write</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>byte</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#write(long, byte[], int, int)"><CODE>Pointer.write(long,byte[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, short[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  short[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#write(long, short[], int, int)">write</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>short</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#write(long, short[], int, int)"><CODE>Pointer.write(long,short[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, char[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  char[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#write(long, char[], int, int)">write</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>char</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#write(long, char[], int, int)"><CODE>Pointer.write(long,char[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, int[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  int[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#write(long, int[], int, int)">write</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>int</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#write(long, int[], int, int)"><CODE>Pointer.write(long,int[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, long[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  long[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#write(long, long[], int, int)">write</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>long</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#write(long, long[], int, int)"><CODE>Pointer.write(long,long[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, float[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  float[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#write(long, float[], int, int)">write</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>float</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#write(long, float[], int, int)"><CODE>Pointer.write(long,float[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(long, double[], int, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public void <B>write</B>(long&nbsp;bOff,
+                  double[]&nbsp;buf,
+                  int&nbsp;index,
+                  int&nbsp;length)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.write</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#write(long, double[], int, int)">write</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bOff</CODE> - byte offset from pointer into which data is copied<DD><CODE>buf</CODE> - <code>double</code> array from which to copy<DD><CODE>index</CODE> - array index from which to start copying<DD><CODE>length</CODE> - number of elements from <code>buf</code> that must be
+               copied<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#write(long, double[], int, int)"><CODE>Pointer.write(long,double[],int,int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getByte(long)"><!-- --></A><H3>
+getByte</H3>
+<PRE>
+public byte <B>getByte</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getByte</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getByte(long)">getByte</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>byte</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getByte(long)"><CODE>Pointer.getByte(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChar(long)"><!-- --></A><H3>
+getChar</H3>
+<PRE>
+public char <B>getChar</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getByte</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getChar(long)">getChar</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>wchar_t</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getByte(long)"><CODE>Pointer.getByte(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShort(long)"><!-- --></A><H3>
+getShort</H3>
+<PRE>
+public short <B>getShort</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getShort</code>.  But this method performs a bounds
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getShort(long)">getShort</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>short</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getShort(long)"><CODE>Pointer.getShort(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInt(long)"><!-- --></A><H3>
+getInt</H3>
+<PRE>
+public int <B>getInt</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getInt</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getInt(long)">getInt</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>int</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getInt(long)"><CODE>Pointer.getInt(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLong(long)"><!-- --></A><H3>
+getLong</H3>
+<PRE>
+public long <B>getLong</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getLong</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getLong(long)">getLong</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>long</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getLong(long)"><CODE>Pointer.getLong(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFloat(long)"><!-- --></A><H3>
+getFloat</H3>
+<PRE>
+public float <B>getFloat</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getFloat</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getFloat(long)">getFloat</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>float</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getFloat(long)"><CODE>Pointer.getFloat(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDouble(long)"><!-- --></A><H3>
+getDouble</H3>
+<PRE>
+public double <B>getDouble</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getDouble</code>.  But this method performs a 
+ bounds check to ensure that the indirection does not cause memory 
+ outside the <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getDouble(long)">getDouble</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>the <code>double</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getDouble(long)"><CODE>Pointer.getDouble(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPointer(long)"><!-- --></A><H3>
+getPointer</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getPointer</B>(long&nbsp;offset)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getPointer</code>.  But this method performs 
+ a bounds checks to ensure that the indirection does not cause memory 
+ outside the <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getPointer(long)">getPointer</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to perform the indirection
+<DT><B>Returns:</B><DD>a <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> equivalent of the pointer value
+ being pointed to, or <code>null</code> if the pointer value is
+ <code>NULL</code>;<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getPointer(long)"><CODE>Pointer.getPointer(long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getByteBuffer(long, long)"><!-- --></A><H3>
+getByteBuffer</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</A> <B>getByteBuffer</B>(long&nbsp;offset,
+                                long&nbsp;length)</PRE>
+<DL>
+<DD>Get a ByteBuffer mapped to a portion of this memory.  
+ We keep a weak reference to all ByteBuffers provided so that this
+ memory object is not GC'd while there are still implicit outstanding
+ references to it (it'd be nice if we could attach our own reference to
+ the ByteBuffer, but the VM generates the object so we have no control
+ over it).
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getByteBuffer(long, long)">getByteBuffer</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to start the buffer<DD><CODE>length</CODE> - Length of ByteBuffer
+<DT><B>Returns:</B><DD>a direct ByteBuffer that accesses the memory being pointed to,</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getString(long, boolean)"><!-- --></A><H3>
+getString</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getString</B>(long&nbsp;offset,
+                        boolean&nbsp;wide)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.getString</code>.  But this method performs a 
+ bounds checks to ensure that the indirection does not cause memory 
+ outside the <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#getString(long, boolean)">getString</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer to obtain the native string
+v     * @param wide whether to convert from a wide or standard C string
+<DT><B>Returns:</B><DD>the <code>String</code> value being pointed to<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#getString(long, boolean)"><CODE>Pointer.getString(long, boolean)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setByte(long, byte)"><!-- --></A><H3>
+setByte</H3>
+<PRE>
+public void <B>setByte</B>(long&nbsp;offset,
+                    byte&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setByte</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setByte(long, byte)">setByte</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+                     must be set<DD><CODE>value</CODE> - <code>byte</code> value to set<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setByte(long, byte)"><CODE>Pointer.setByte(long, byte)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setChar(long, char)"><!-- --></A><H3>
+setChar</H3>
+<PRE>
+public void <B>setChar</B>(long&nbsp;offset,
+                    char&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setChar</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setChar(long, char)">setChar</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>char</code> value to set<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setChar(long, char)"><CODE>Pointer.setChar(long, char)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setShort(long, short)"><!-- --></A><H3>
+setShort</H3>
+<PRE>
+public void <B>setShort</B>(long&nbsp;offset,
+                     short&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setShort</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setShort(long, short)">setShort</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+                     must be set<DD><CODE>value</CODE> - <code>short</code> value to set<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setShort(long, short)"><CODE>Pointer.setShort(long, short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setInt(long, int)"><!-- --></A><H3>
+setInt</H3>
+<PRE>
+public void <B>setInt</B>(long&nbsp;offset,
+                   int&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setInt</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setInt(long, int)">setInt</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+                     must be set<DD><CODE>value</CODE> - <code>int</code> value to set<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setInt(long, int)"><CODE>Pointer.setInt(long, int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLong(long, long)"><!-- --></A><H3>
+setLong</H3>
+<PRE>
+public void <B>setLong</B>(long&nbsp;offset,
+                    long&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setLong</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setLong(long, long)">setLong</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>long</code> value to set<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setLong(long, long)"><CODE>Pointer.setLong(long, long)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFloat(long, float)"><!-- --></A><H3>
+setFloat</H3>
+<PRE>
+public void <B>setFloat</B>(long&nbsp;offset,
+                     float&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setFloat</code>.  But this method performs a bounds 
+ checks to ensure that the indirection does not cause memory outside the
+ <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setFloat(long, float)">setFloat</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>float</code> value to set<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setFloat(long, float)"><CODE>Pointer.setFloat(long, float)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDouble(long, double)"><!-- --></A><H3>
+setDouble</H3>
+<PRE>
+public void <B>setDouble</B>(long&nbsp;offset,
+                      double&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setDouble</code>.  But this method performs a 
+ bounds checks to ensure that the indirection does not cause memory 
+ outside the <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setDouble(long, double)">setDouble</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code>
+               must be set<DD><CODE>value</CODE> - <code>double</code> value to set<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setDouble(long, double)"><CODE>Pointer.setDouble(long, double)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPointer(long, com.sun.jna.Pointer)"><!-- --></A><H3>
+setPointer</H3>
+<PRE>
+public void <B>setPointer</B>(long&nbsp;offset,
+                       <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;value)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setPointer</code>.  But this method performs 
+ a bounds checks to ensure that the indirection does not cause memory 
+ outside the <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setPointer(long, com.sun.jna.Pointer)">setPointer</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which <code>value</code> 
+               must be set<DD><CODE>value</CODE> - <code>Pointer</code> holding the actual pointer value to 
+ set, which may be <code>null</code> to indicate a <code>NULL</code>
+ pointer.<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setPointer(long, com.sun.jna.Pointer)"><CODE>Pointer.setPointer(long, com.sun.jna.Pointer)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setString(long, java.lang.String, boolean)"><!-- --></A><H3>
+setString</H3>
+<PRE>
+public void <B>setString</B>(long&nbsp;offset,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;value,
+                      boolean&nbsp;wide)</PRE>
+<DL>
+<DD>Indirect the native pointer to <code>malloc</code> space, a la
+ <code>Pointer.setString</code>.  But this method performs a 
+ bounds checks to ensure that the indirection does not cause memory 
+ outside the <code>malloc</code>ed space to be accessed.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)">setString</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - byte offset from pointer at which characters in
+                     <code>value</code> must be set<DD><CODE>value</CODE> - <code>java.lang.String</code> value to set<DD><CODE>wide</CODE> - whether to write the native string as an array of 
+ <code>wchar_t</code>.  If false, writes as a NUL-terminated array of 
+ <code>char</code> using the default platform encoding.<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)"><CODE>Pointer.setString(long,String,boolean)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="free(long)"><!-- --></A><H3>
+free</H3>
+<PRE>
+protected static void <B>free</B>(long&nbsp;p)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="malloc(long)"><!-- --></A><H3>
+malloc</H3>
+<PRE>
+protected static long <B>malloc</B>(long&nbsp;size)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/MethodParameterContext.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Memory.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Memory.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

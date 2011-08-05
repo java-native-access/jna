@@ -1,0 +1,376 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Library (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Library (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Library.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Library.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna</FONT>
+<BR>
+Interface Library</H2>
+<DL>
+<DT><B>All Known Subinterfaces:</B> <DD><A HREF="../../../com/sun/jna/platform/win32/Advapi32.html" title="interface in com.sun.jna.platform.win32">Advapi32</A>, <A HREF="../../../com/sun/jna/platform/win32/BaseTSD.html" title="interface in com.sun.jna.platform.win32">BaseTSD</A>, <A HREF="../../../com/sun/jna/platform/win32/Crypt32.html" title="interface in com.sun.jna.platform.win32">Crypt32</A>, <A HREF="../../../com/sun/jna/platform/win32/DsGetDC.html" title="interface in com.sun.jna.platform.win32">DsGetDC</A>, <A HREF="../../../com/sun/jna/platform/win32/GDI32.html" title="interface in com.sun.jna.platform.win32">GDI32</A>, <A HREF="../../../com/sun/jna/platform/win32/Guid.html" title="interface in com.sun.jna.platform.win32">Guid</A>, <A HREF="../../../com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>, <A HREF="../../../com/sun/jna/platform/win32/LMAccess.html" title="interface in com.sun.jna.platform.win32">LMAccess</A>, <A HREF="../../../com/sun/jna/platform/win32/LMCons.html" title="interface in com.sun.jna.platform.win32">LMCons</A>, <A HREF="../../../com/sun/jna/platform/win32/LMErr.html" title="interface in com.sun.jna.platform.win32">LMErr</A>, <A HREF="../../../com/sun/jna/platform/win32/LMJoin.html" title="interface in com.sun.jna.platform.win32">LMJoin</A>, <A HREF="../../../com/sun/jna/platform/win32/Msi.html" title="interface in com.sun.jna.platform.win32">Msi</A>, <A HREF="../../../com/sun/jna/platform/win32/Netapi32.html" title="interface in com.sun.jna.platform.win32">Netapi32</A>, <A HREF="../../../com/sun/jna/platform/win32/NtDll.html" title="interface in com.sun.jna.platform.win32">NtDll</A>, <A HREF="../../../com/sun/jna/platform/win32/NTSecApi.html" title="interface in com.sun.jna.platform.win32">NTSecApi</A>, <A HREF="../../../com/sun/jna/platform/win32/NTStatus.html" title="interface in com.sun.jna.platform.win32">NTStatus</A>, <A HREF="../../../com/sun/jna/platform/win32/Ole32.html" title="interface in com.sun.jna.platform.win32">Ole32</A>, <A HREF="../../../com/sun/jna/platform/win32/Oleaut32.html" title="interface in com.sun.jna.platform.win32">Oleaut32</A>, <A HREF="../../../com/sun/jna/platform/win32/Secur32.html" title="interface in com.sun.jna.platform.win32">Secur32</A>, <A HREF="../../../com/sun/jna/platform/win32/SetupApi.html" title="interface in com.sun.jna.platform.win32">SetupApi</A>, <A HREF="../../../com/sun/jna/platform/win32/Shell32.html" title="interface in com.sun.jna.platform.win32">Shell32</A>, <A HREF="../../../com/sun/jna/platform/win32/ShellAPI.html" title="interface in com.sun.jna.platform.win32">ShellAPI</A>, <A HREF="../../../com/sun/jna/platform/win32/ShlObj.html" title="interface in com.sun.jna.platform.win32">ShlObj</A>, <A HREF="../../../com/sun/jna/platform/win32/Sspi.html" title="interface in com.sun.jna.platform.win32">Sspi</A>, <A HREF="../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../com/sun/jna/platform/win32/Tlhelp32.html" title="interface in com.sun.jna.platform.win32">Tlhelp32</A>, <A HREF="../../../com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A>, <A HREF="../../../com/sun/jna/platform/win32/VerRsrc.html" title="interface in com.sun.jna.platform.win32">VerRsrc</A>, <A HREF="../../../com/sun/jna/platform/win32/Version.html" title="interface in com.sun.jna.platform.win32">Version</A>, <A HREF="../../../com/sun/jna/win32/W32APIOptions.html" title="interface in com.sun.jna.win32">W32APIOptions</A>, <A HREF="../../../com/sun/jna/platform/win32/Wdm.html" title="interface in com.sun.jna.platform.win32">Wdm</A>, <A HREF="../../../com/sun/jna/platform/win32/WinCrypt.html" title="interface in com.sun.jna.platform.win32">WinCrypt</A>, <A HREF="../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A>, <A HREF="../../../com/sun/jna/platform/win32/WinGDI.html" title="interface in com.sun.jna.platform.win32">WinGDI</A>, <A HREF="../../../com/sun/jna/platform/win32/Winioctl.html" title="interface in com.sun.jna.platform.win32">Winioctl</A>, <A HREF="../../../com/sun/jna/platform/win32/WinNT.html" title="interface in com.sun.jna.platform.win32">WinNT</A>, <A HREF="../../../com/sun/jna/platform/win32/WinReg.html" title="interface in com.sun.jna.platform.win32">WinReg</A>, <A HREF="../../../com/sun/jna/platform/win32/Winspool.html" title="interface in com.sun.jna.platform.win32">Winspool</A>, <A HREF="../../../com/sun/jna/platform/win32/Winsvc.html" title="interface in com.sun.jna.platform.win32">Winsvc</A>, <A HREF="../../../com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>, <A HREF="../../../com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>, <A HREF="../../../com/sun/jna/platform/unix/X11.Xevie.html" title="interface in com.sun.jna.platform.unix">X11.Xevie</A>, <A HREF="../../../com/sun/jna/platform/unix/X11.Xext.html" title="interface in com.sun.jna.platform.unix">X11.Xext</A>, <A HREF="../../../com/sun/jna/platform/unix/X11.Xrender.html" title="interface in com.sun.jna.platform.unix">X11.Xrender</A>, <A HREF="../../../com/sun/jna/platform/unix/X11.XTest.html" title="interface in com.sun.jna.platform.unix">X11.XTest</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Library</B></DL>
+</PRE>
+
+<P>
+Derive from this interface for all native library definitions.
+
+ Define an instance of your library like this:
+ <code><pre>
+ MyNativeLibrary INSTANCE = (MyNativeLibrary)
+     Native.loadLibrary("mylib", MyNativeLibrary.class);
+ </pre></code>
+ <p>
+ By convention, method names are identical to the native names, although you
+ can map java names to different native names by providing a 
+ <A HREF="../../../com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A> as a value for key <A HREF="../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><CODE>OPTION_FUNCTION_MAPPER</CODE></A>
+ in the options map passed to the
+ <A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary(String, Class, Map)</CODE></A> call.
+ <p>
+ Although the names for structures and structure fields may be chosen 
+ arbitrarily, they should correspond as closely as possible to the native 
+ definitions.  The same is true for parameter names.
+ <p>
+ This interface supports multiple, concurrent invocations of any library
+ methods on the Java side.  Check your library documentation for its
+ multi-threading requirements on the native side.  If a library is not safe
+ for simultaneous multi-threaded access, consider using 
+ <A HREF="../../../com/sun/jna/Native.html#synchronizedLibrary(com.sun.jna.Library)"><CODE>Native.synchronizedLibrary(com.sun.jna.Library)</CODE></A> to prevent simultaneous multi-threaded 
+ access to the native code.  
+ <p>
+ <b>Optional fields</b><br>
+ Interface options will be automatically propagated to structures defined
+ within the library provided a call to 
+ <A HREF="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary(String,Class,Map)</CODE></A> is made prior to instantiating
+ any of those structures.  One common way of ensuring this is to declare
+ an <b>INSTANCE</b> field in the interface which holds the 
+ <code>loadLibrary</code> result.
+ <p>
+ <b>OPTIONS</b> (an instance of <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util"><CODE>Map</CODE></A>),
+ <b>TYPE_MAPPER</b> (an instance of <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A>) and 
+ <b>STRUCTURE_ALIGNMENT</b> (one of the alignment types defined in 
+ <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>) may also be defined.  If no instance of the interface
+ has been instantiated, these fields will be used to determine customization
+ settings for structures and methods defined within the interface.
+ <p>
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Todd Fast, todd.fast@sun.com, Timothy Wall, twalljava@dev.java.net</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for a boolean flag to allow any Java class instance as a
+        parameter.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calling convention for the entire library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for a <A HREF="../../../com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A> for the library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for an <A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> for the library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>), which should
+ be one of the predefined alignment types in <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option key for a <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the library.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="OPTION_TYPE_MAPPER"><!-- --></A><H3>
+OPTION_TYPE_MAPPER</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_TYPE_MAPPER</B></PRE>
+<DL>
+<DD>Option key for a <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the library.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_TYPE_MAPPER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OPTION_FUNCTION_MAPPER"><!-- --></A><H3>
+OPTION_FUNCTION_MAPPER</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_FUNCTION_MAPPER</B></PRE>
+<DL>
+<DD>Option key for a <A HREF="../../../com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A> for the library.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_FUNCTION_MAPPER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OPTION_INVOCATION_MAPPER"><!-- --></A><H3>
+OPTION_INVOCATION_MAPPER</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_INVOCATION_MAPPER</B></PRE>
+<DL>
+<DD>Option key for an <A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> for the library.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_INVOCATION_MAPPER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OPTION_STRUCTURE_ALIGNMENT"><!-- --></A><H3>
+OPTION_STRUCTURE_ALIGNMENT</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_STRUCTURE_ALIGNMENT</B></PRE>
+<DL>
+<DD>Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>), which should
+ be one of the predefined alignment types in <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_STRUCTURE_ALIGNMENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OPTION_ALLOW_OBJECTS"><!-- --></A><H3>
+OPTION_ALLOW_OBJECTS</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_ALLOW_OBJECTS</B></PRE>
+<DL>
+<DD>Option key for a boolean flag to allow any Java class instance as a
+        parameter.  If no type mapper is found, the object is passed as a
+        pointer.
+        <em>NOTE:</em> This is for use with raw JNI interactions via the
+        JNIEnv data structure.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_ALLOW_OBJECTS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OPTION_CALLING_CONVENTION"><!-- --></A><H3>
+OPTION_CALLING_CONVENTION</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_CALLING_CONVENTION</B></PRE>
+<DL>
+<DD>Calling convention for the entire library.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Library.OPTION_CALLING_CONVENTION">Constant Field Values</A></DL>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Library.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Library.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

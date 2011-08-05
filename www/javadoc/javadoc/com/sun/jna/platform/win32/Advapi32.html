@@ -1,0 +1,2276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Advapi32 (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Advapi32 (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Advapi32Util.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Advapi32.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Advapi32.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface Advapi32</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Advapi32</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+Advapi32.dll Interface.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>dblock[at]dblock.org</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html" title="interface in com.sun.jna.platform.win32">Advapi32</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#INSTANCE">INSTANCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#AdjustTokenPrivileges(com.sun.jna.platform.win32.WinNT.HANDLE, boolean, com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES, int, com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES, com.sun.jna.ptr.IntByReference)">AdjustTokenPrivileges</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;TokenHandle,
+                      boolean&nbsp;DisableAllPrivileges,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_PRIVILEGES.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_PRIVILEGES</A>&nbsp;NewState,
+                      int&nbsp;BufferLength,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_PRIVILEGES.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_PRIVILEGES</A>&nbsp;PreviousState,
+                      <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;ReturnLength)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The AdjustTokenPrivileges function enables or disables privileges in the specified access token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#BackupEventLog(com.sun.jna.platform.win32.WinNT.HANDLE, java.lang.String)">BackupEventLog</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpBackupFileName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Saves the specified event log to a backup file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ClearEventLog(com.sun.jna.platform.win32.WinNT.HANDLE, java.lang.String)">ClearEventLog</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpBackupFileName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clears the specified event log, and optionally saves the current copy of the log to a backup file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#CloseEventLog(com.sun.jna.platform.win32.WinNT.HANDLE)">CloseEventLog</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Closes the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#CloseServiceHandle(com.sun.jna.platform.win32.Winsvc.SC_HANDLE)">CloseServiceHandle</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hSCObject)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Closes a handle to a service control manager or service object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ControlService(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, int, com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS)">ControlService</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hService,
+               int&nbsp;dwControl,
+               <A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS</A>&nbsp;lpServiceStatus)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sends a control code to a service.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ConvertSidToStringSid(com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.ptr.PointerByReference)">ConvertSidToStringSid</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;Sid,
+                      <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;StringSid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert a security identifier (SID) to a string format suitable for display, 
+ storage, or transmission.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ConvertStringSidToSid(java.lang.String, com.sun.jna.platform.win32.WinNT.PSIDByReference)">ConvertStringSidToSid</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;StringSid,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSIDByReference.html" title="class in com.sun.jna.platform.win32">WinNT.PSIDByReference</A>&nbsp;Sid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert a string-format security identifier (SID) into a valid, functional SID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#CreateProcessAsUser(com.sun.jna.platform.win32.WinNT.HANDLE, java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, boolean, int, java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinBase.STARTUPINFO, com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION)">CreateProcessAsUser</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hToken,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpApplicationName,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCommandLine,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpProcessAttributes,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpThreadAttributes,
+                    boolean&nbsp;bInheritHandles,
+                    int&nbsp;dwCreationFlags,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpEnvironment,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCurrentDirectory,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" title="class in com.sun.jna.platform.win32">WinBase.STARTUPINFO</A>&nbsp;lpStartupInfo,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.PROCESS_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinBase.PROCESS_INFORMATION</A>&nbsp;lpProcessInformation)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new process and its primary thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#CreateWellKnownSid(int, com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.ptr.IntByReference)">CreateWellKnownSid</A></B>(int&nbsp;wellKnownSidType,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;domainSid,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid,
+                   <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cbSid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The CreateWellKnownSid function creates a SID for predefined aliases.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#DeregisterEventSource(com.sun.jna.platform.win32.WinNT.HANDLE)">DeregisterEventSource</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Closes the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#DuplicateToken(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)">DuplicateToken</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ExistingTokenHandle,
+               int&nbsp;ImpersonationLevel,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;DuplicateTokenHandle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The DuplicateToken function creates a new access token that duplicates 
+ one already in existence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#DuplicateTokenEx(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)">DuplicateTokenEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hExistingToken,
+                 int&nbsp;dwDesiredAccess,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpTokenAttributes,
+                 int&nbsp;ImpersonationLevel,
+                 int&nbsp;TokenType,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;phNewToken)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The DuplicateTokenEx function creates a new access token that duplicates an existing token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#GetLengthSid(com.sun.jna.platform.win32.WinNT.PSID)">GetLengthSid</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the length, in bytes, of a valid security identifier (SID).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#GetNumberOfEventLogRecords(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)">GetNumberOfEventLogRecords</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                           <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;NumberOfRecords)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the number of records in the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#GetOldestEventLogRecord(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)">GetOldestEventLogRecord</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                        <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;OldestRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetOldestEventLogRecord function retrieves the absolute record number of the oldest
+ record in the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#GetTokenInformation(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.Structure, int, com.sun.jna.ptr.IntByReference)">GetTokenInformation</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;tokenHandle,
+                    int&nbsp;tokenInformationClass,
+                    <A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>&nbsp;tokenInformation,
+                    int&nbsp;tokenInformationLength,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;returnLength)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves a specified type of information about an access token.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#GetUserNameW(char[], com.sun.jna.ptr.IntByReference)">GetUserNameW</A></B>(char[]&nbsp;buffer,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the name of the user associated with the current thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ImpersonateLoggedOnUser(com.sun.jna.platform.win32.WinNT.HANDLE)">ImpersonateLoggedOnUser</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hToken)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The ImpersonateLoggedOnUser function lets the calling thread impersonate the 
+ security context of a logged-on user.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ImpersonateSelf(int)">ImpersonateSelf</A></B>(int&nbsp;ImpersonationLevel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The ImpersonateSelf function obtains an access token that impersonates the security
+ context of the calling process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#IsValidSid(com.sun.jna.platform.win32.WinNT.PSID)">IsValidSid</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The IsValidSid function validates a security identifier (SID) by verifying that 
+ the revision number is within a known range, and that the number of subauthorities 
+ is less than the maximum.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#IsWellKnownSid(com.sun.jna.platform.win32.WinNT.PSID, int)">IsWellKnownSid</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid,
+               int&nbsp;wellKnownSidType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compares a SID to a well known SID and returns TRUE if they match.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#LogonUser(java.lang.String, java.lang.String, java.lang.String, int, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)">LogonUser</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszUsername,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszDomain,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszPassword,
+          int&nbsp;logonType,
+          int&nbsp;logonProvider,
+          <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;phToken)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The LogonUser function attempts to log a user on to the local computer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#LookupAccountName(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.PointerByReference)">LookupAccountName</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpAccountName,
+                  <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;Sid,
+                  <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cbSid,
+                  char[]&nbsp;ReferencedDomainName,
+                  <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchReferencedDomainName,
+                  <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;peUse)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accepts the name of a system and anaccount as input and retrieves a security 
+ identifier (SID) for the account and the name of the domain on which the 
+ account was found.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#LookupAccountSid(java.lang.String, com.sun.jna.platform.win32.WinNT.PSID, char[], com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.PointerByReference)">LookupAccountSid</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;Sid,
+                 char[]&nbsp;lpName,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchName,
+                 char[]&nbsp;ReferencedDomainName,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchReferencedDomainName,
+                 <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;peUse)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the name of the account for this SID and the name of the first domain 
+ on which this SID is found.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#LookupPrivilegeName(java.lang.String, com.sun.jna.platform.win32.WinNT.LUID, char[], com.sun.jna.ptr.IntByReference)">LookupPrivilegeName</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LUID.html" title="class in com.sun.jna.platform.win32">WinNT.LUID</A>&nbsp;lpLuid,
+                    char[]&nbsp;lpName,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The LookupPrivilegeName function retrieves the name that corresponds to the privilege represented
+ on a specific system by a specified locally unique identifier (LUID).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#LookupPrivilegeValue(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinNT.LUID)">LookupPrivilegeValue</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                     <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName,
+                     <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LUID.html" title="class in com.sun.jna.platform.win32">WinNT.LUID</A>&nbsp;lpLuid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The LookupPrivilegeValue function retrieves the locally unique identifier (LUID) used
+ on a specified system to locally
+ represent the specified privilege name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#OpenBackupEventLog(java.lang.String, java.lang.String)">OpenBackupEventLog</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpUNCServerName,
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opens a handle to a backup event log created by the BackupEventLog function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#OpenEventLog(java.lang.String, java.lang.String)">OpenEventLog</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpUNCServerName,
+             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSourceName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opens a handle to the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#OpenProcessToken(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)">OpenProcessToken</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ProcessHandle,
+                 int&nbsp;DesiredAccess,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;TokenHandle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The OpenProcessToken function opens the access token associated with a process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#OpenSCManager(java.lang.String, java.lang.String, int)">OpenSCManager</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpMachineName,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpDatabaseName,
+              int&nbsp;dwDesiredAccess)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Establishes a connection to the service control manager on the specified 
+ computer and opens the specified service control manager database.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#OpenService(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, java.lang.String, int)">OpenService</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hSCManager,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpServiceName,
+            int&nbsp;dwDesiredAccess)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Opens an existing service.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#OpenThreadToken(com.sun.jna.platform.win32.WinNT.HANDLE, int, boolean, com.sun.jna.platform.win32.WinNT.HANDLEByReference)">OpenThreadToken</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ThreadHandle,
+                int&nbsp;DesiredAccess,
+                boolean&nbsp;OpenAsSelf,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;TokenHandle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The OpenThreadToken function opens the access token associated with a thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#QueryServiceStatusEx(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, int, com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS, int, com.sun.jna.ptr.IntByReference)">QueryServiceStatusEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hService,
+                     int&nbsp;InfoLevel,
+                     <A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS_PROCESS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS_PROCESS</A>&nbsp;lpBuffer,
+                     int&nbsp;cbBufSize,
+                     <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcbBytesNeeded)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves the current status of the specified service based on the specified information level.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ReadEventLog(com.sun.jna.platform.win32.WinNT.HANDLE, int, int, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)">ReadEventLog</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+             int&nbsp;dwReadFlags,
+             int&nbsp;dwRecordOffset,
+             <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpBuffer,
+             int&nbsp;nNumberOfBytesToRead,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pnBytesRead,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pnMinNumberOfBytesNeeded)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads the specified number of entries from the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegCloseKey(com.sun.jna.platform.win32.WinReg.HKEY)">RegCloseKey</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegCloseKey function releases a handle to the specified registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegCreateKeyEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, java.lang.String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, com.sun.jna.platform.win32.WinReg.HKEYByReference, com.sun.jna.ptr.IntByReference)">RegCreateKeyEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSubKey,
+               int&nbsp;Reserved,
+               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClass,
+               int&nbsp;dwOptions,
+               int&nbsp;samDesired,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpSecurityAttributes,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEYByReference.html" title="class in com.sun.jna.platform.win32">WinReg.HKEYByReference</A>&nbsp;phkResult,
+               <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpdwDisposition)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegDeleteKey(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String)">RegDeleteKey</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegDeleteValue(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String)">RegDeleteValue</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegDeleteValue function removes a named value from the specified registry 
+ key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegEnumKeyEx(com.sun.jna.platform.win32.WinReg.HKEY, int, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.FILETIME)">RegEnumKeyEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+             int&nbsp;dwIndex,
+             char[]&nbsp;lpName,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcName,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;reserved,
+             char[]&nbsp;lpClass,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcClass,
+             <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpftLastWriteTime)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegEnumKeyEx function enumerates subkeys of the specified open registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegEnumValue(com.sun.jna.platform.win32.WinReg.HKEY, int, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, byte[], com.sun.jna.ptr.IntByReference)">RegEnumValue</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+             int&nbsp;dwIndex,
+             char[]&nbsp;lpValueName,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcchValueName,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;reserved,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+             byte[]&nbsp;lpData,
+             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegEnumValue function enumerates the values for the specified open registry 
+ key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegisterEventSource(java.lang.String, java.lang.String)">RegisterEventSource</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpUNCServerName,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSourceName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves a registered handle to the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegOpenKeyEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, com.sun.jna.platform.win32.WinReg.HKEYByReference)">RegOpenKeyEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSubKey,
+             int&nbsp;ulOptions,
+             int&nbsp;samDesired,
+             <A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEYByReference.html" title="class in com.sun.jna.platform.win32">WinReg.HKEYByReference</A>&nbsp;phkResult)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegOpenKeyEx function opens the specified registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegQueryInfoKey(com.sun.jna.platform.win32.WinReg.HKEY, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.FILETIME)">RegQueryInfoKey</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                char[]&nbsp;lpClass,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcClass,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpReserved,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcSubKeys,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxSubKeyLen,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxClassLen,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcValues,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxValueNameLen,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxValueLen,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbSecurityDescriptor,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpftLastWriteTime)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegQueryInfoKey function retrieves information about the specified 
+ registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, byte[], com.sun.jna.ptr.IntByReference)">RegQueryValueEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                int&nbsp;lpReserved,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                byte[]&nbsp;lpData,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference)">RegQueryValueEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                int&nbsp;lpReserved,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                char[]&nbsp;lpData,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegQueryValueEx function retrieves the type and data for a specified value name 
+ associated with an open registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)">RegQueryValueEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                int&nbsp;lpReserved,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpData,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)">RegQueryValueEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                int&nbsp;lpReserved,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpData,
+                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegSetValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, byte[], int)">RegSetValueEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+              int&nbsp;Reserved,
+              int&nbsp;dwType,
+              byte[]&nbsp;lpData,
+              int&nbsp;cbData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RegSetValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, char[], int)">RegSetValueEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+              int&nbsp;Reserved,
+              int&nbsp;dwType,
+              char[]&nbsp;lpData,
+              int&nbsp;cbData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RegSetValueEx function sets the data and type of a specified value under a
+ registry key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#ReportEvent(com.sun.jna.platform.win32.WinNT.HANDLE, int, int, int, com.sun.jna.platform.win32.WinNT.PSID, int, int, java.lang.String[], com.sun.jna.Pointer)">ReportEvent</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+            int&nbsp;wType,
+            int&nbsp;wCategory,
+            int&nbsp;dwEventID,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;lpUserSid,
+            int&nbsp;wNumStrings,
+            int&nbsp;dwDataSize,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;lpStrings,
+            <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpRawData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes an entry at the end of the specified event log.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#RevertToSelf()">RevertToSelf</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RevertToSelf function terminates the impersonation of a client application.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html#StartService(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, int, java.lang.String[])">StartService</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hService,
+             int&nbsp;dwNumServiceArgs,
+             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;lpServiceArgVectors)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Starts a service.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="INSTANCE"><!-- --></A><H3>
+INSTANCE</H3>
+<PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/Advapi32.html" title="interface in com.sun.jna.platform.win32">Advapi32</A> <B>INSTANCE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="GetUserNameW(char[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetUserNameW</H3>
+<PRE>
+boolean <B>GetUserNameW</B>(char[]&nbsp;buffer,
+                     <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;len)</PRE>
+<DL>
+<DD>Retrieves the name of the user associated with the current thread.
+ http://msdn.microsoft.com/en-us/library/ms724432(VS.85).aspx
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>buffer</CODE> - Buffer to receive the user's logon name.<DD><CODE>len</CODE> - On input, the size of the buffer, on output the number of
+  characters copied into the buffer, including the terminating
+  null character.
+<DT><B>Returns:</B><DD>True if succeeded.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LookupAccountName(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.PointerByReference)"><!-- --></A><H3>
+LookupAccountName</H3>
+<PRE>
+boolean <B>LookupAccountName</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpAccountName,
+                          <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;Sid,
+                          <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cbSid,
+                          char[]&nbsp;ReferencedDomainName,
+                          <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchReferencedDomainName,
+                          <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;peUse)</PRE>
+<DL>
+<DD>Accepts the name of a system and anaccount as input and retrieves a security 
+ identifier (SID) for the account and the name of the domain on which the 
+ account was found.
+ http://msdn.microsoft.com/en-us/library/aa379159(VS.85).aspx
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemName</CODE> - Specifies the name of the system.<DD><CODE>lpAccountName</CODE> - Specifies the account name.<DD><CODE>Sid</CODE> - Receives the SID structure that corresponds to the account
+  name pointed to by the lpAccountName parameter.<DD><CODE>cbSid</CODE> - On input, this value specifies the size, in bytes, of the Sid
+  buffer. If the function fails because the buffer is too small
+  or if cbSid is zero, this variable receives the required
+  buffer size.<DD><CODE>ReferencedDomainName</CODE> - Receives the name of the domain where the account name is found.<DD><CODE>cchReferencedDomainName</CODE> - On input, this value specifies the size, in TCHARs, of the
+  ReferencedDomainName buffer. If the function fails because the
+  buffer is too small, this variable receives the required
+  buffer size, including the terminating null character.<DD><CODE>peUse</CODE> - SID_NAME_USE enumerated type that indicates the type of the
+  account when the function returns.
+<DT><B>Returns:</B><DD>True if the function was successful, False otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LookupAccountSid(java.lang.String, com.sun.jna.platform.win32.WinNT.PSID, char[], com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.PointerByReference)"><!-- --></A><H3>
+LookupAccountSid</H3>
+<PRE>
+boolean <B>LookupAccountSid</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                         <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;Sid,
+                         char[]&nbsp;lpName,
+                         <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchName,
+                         char[]&nbsp;ReferencedDomainName,
+                         <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchReferencedDomainName,
+                         <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;peUse)</PRE>
+<DL>
+<DD>Retrieves the name of the account for this SID and the name of the first domain 
+ on which this SID is found.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemName</CODE> - Specifies the target computer.<DD><CODE>Sid</CODE> - The SID to look up.<DD><CODE>lpName</CODE> - Buffer that receives a null-terminated string that contains the 
+        account name that corresponds to the lpSid parameter.<DD><CODE>cchName</CODE> - On input, specifies the size, in TCHARs, of the lpName buffer. If the function fails 
+  because the buffer is too small or if cchName is zero, cchName receives the required 
+  buffer size, including the terminating null character.<DD><CODE>ReferencedDomainName</CODE> - Pointer to a buffer that receives a null-terminated string that contains the name of 
+  the domain where the account name was found.<DD><CODE>cchReferencedDomainName</CODE> - On input, specifies the size, in TCHARs, of the lpReferencedDomainName buffer. If the 
+        function fails because the buffer is too small or if cchReferencedDomainName is zero, 
+        cchReferencedDomainName receives the required buffer size, including the terminating 
+        null character.<DD><CODE>peUse</CODE> - Pointer to a variable that receives a SID_NAME_USE value that indicates the type of 
+  the account.
+<DT><B>Returns:</B><DD>If the function succeeds, the function returns nonzero.
+  If the function fails, it returns zero. To get extended error information, call 
+  GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ConvertSidToStringSid(com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.ptr.PointerByReference)"><!-- --></A><H3>
+ConvertSidToStringSid</H3>
+<PRE>
+boolean <B>ConvertSidToStringSid</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;Sid,
+                              <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;StringSid)</PRE>
+<DL>
+<DD>Convert a security identifier (SID) to a string format suitable for display, 
+ storage, or transmission.
+ http://msdn.microsoft.com/en-us/library/aa376399(VS.85).aspx
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>Sid</CODE> - The SID structure to be converted.<DD><CODE>StringSid</CODE> - Pointer to a variable that receives a pointer to a
+            null-terminated SID string. To free the returned buffer, call
+            the LocalFree function.
+<DT><B>Returns:</B><DD>True if the function was successful, False otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ConvertStringSidToSid(java.lang.String, com.sun.jna.platform.win32.WinNT.PSIDByReference)"><!-- --></A><H3>
+ConvertStringSidToSid</H3>
+<PRE>
+boolean <B>ConvertStringSidToSid</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;StringSid,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSIDByReference.html" title="class in com.sun.jna.platform.win32">WinNT.PSIDByReference</A>&nbsp;Sid)</PRE>
+<DL>
+<DD>Convert a string-format security identifier (SID) into a valid, functional SID.
+ http://msdn.microsoft.com/en-us/library/aa376402(VS.85).aspx
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>StringSid</CODE> - The string-format SID to convert.<DD><CODE>Sid</CODE> - Receives a pointer to the converted SID.
+<DT><B>Returns:</B><DD>True if the function was successful, False otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetLengthSid(com.sun.jna.platform.win32.WinNT.PSID)"><!-- --></A><H3>
+GetLengthSid</H3>
+<PRE>
+int <B>GetLengthSid</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid)</PRE>
+<DL>
+<DD>Returns the length, in bytes, of a valid security identifier (SID).
+ http://msdn.microsoft.com/en-us/library/aa446642(VS.85).aspx
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pSid</CODE> - A pointer to the SID structure whose length is returned.
+<DT><B>Returns:</B><DD>Length of the SID.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="IsValidSid(com.sun.jna.platform.win32.WinNT.PSID)"><!-- --></A><H3>
+IsValidSid</H3>
+<PRE>
+boolean <B>IsValidSid</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid)</PRE>
+<DL>
+<DD>The IsValidSid function validates a security identifier (SID) by verifying that 
+ the revision number is within a known range, and that the number of subauthorities 
+ is less than the maximum.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pSid</CODE> - Pointer to the SID structure to validate. This parameter cannot be NULL.
+<DT><B>Returns:</B><DD>If the SID structure is valid, the return value is nonzero.
+  If the SID structure is not valid, the return value is zero. There is no extended 
+  error information for this function; do not call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="IsWellKnownSid(com.sun.jna.platform.win32.WinNT.PSID, int)"><!-- --></A><H3>
+IsWellKnownSid</H3>
+<PRE>
+boolean <B>IsWellKnownSid</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid,
+                       int&nbsp;wellKnownSidType)</PRE>
+<DL>
+<DD>Compares a SID to a well known SID and returns TRUE if they match.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pSid</CODE> - SID to test.<DD><CODE>wellKnownSidType</CODE> - Member of the WELL_KNOWN_SID_TYPE enumeration to compare with the SID at pSid.
+<DT><B>Returns:</B><DD>True if the SID is of a given well known type, false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateWellKnownSid(int, com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.platform.win32.WinNT.PSID, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+CreateWellKnownSid</H3>
+<PRE>
+boolean <B>CreateWellKnownSid</B>(int&nbsp;wellKnownSidType,
+                           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;domainSid,
+                           <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;pSid,
+                           <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cbSid)</PRE>
+<DL>
+<DD>The CreateWellKnownSid function creates a SID for predefined aliases.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>wellKnownSidType</CODE> - Member of the WELL_KNOWN_SID_TYPE enumeration that specifies what the SID will identify.<DD><CODE>domainSid</CODE> - Pointer to a SID that identifies the domain control to use when creating the SID. 
+  Pass NULL to use the local computer.<DD><CODE>pSid</CODE> - Pointer to memory where CreateWellKnownSid will store the new SID.<DD><CODE>cbSid</CODE> - Pointer to a DWORD that contains the number of bytes available at pSid. 
+  The CreateWellKnownSid function stores the number of bytes actually used 
+  at this location.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. For extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LogonUser(java.lang.String, java.lang.String, java.lang.String, int, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)"><!-- --></A><H3>
+LogonUser</H3>
+<PRE>
+boolean <B>LogonUser</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszUsername,
+                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszDomain,
+                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpszPassword,
+                  int&nbsp;logonType,
+                  int&nbsp;logonProvider,
+                  <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;phToken)</PRE>
+<DL>
+<DD>The LogonUser function attempts to log a user on to the local computer. The local computer is
+ the computer from which LogonUser was called. You cannot use LogonUser to log on to a remote
+ computer. You specify the user with a user name and domain, and authenticate the user with a 
+ plaintext password. If the function succeeds, you receive a handle to a token that represents 
+ the logged-on user. You can then use this token handle to impersonate the specified user or, 
+ in most cases, to create a process that runs in the context of the specified user.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpszUsername</CODE> - A pointer to a null-terminated string that specifies the name of the user. This is the name of 
+  the user account to log on to. If you use the user principal name (UPN) format, 
+  user@DNS_domain_name, the lpszDomain parameter must be NULL.<DD><CODE>lpszDomain</CODE> - A pointer to a null-terminated string that specifies the name of the domain or server whose 
+  account database contains the lpszUsername account. If this parameter is NULL, the user name 
+  must be specified in UPN format. If this parameter is ".", the function validates the account 
+  using only the local account database.<DD><CODE>lpszPassword</CODE> - A pointer to a null-terminated string that specifies the plaintext password for the user 
+  account specified by lpszUsername.<DD><CODE>logonType</CODE> - The type of logon operation to perform.<DD><CODE>logonProvider</CODE> - Specifies the logon provider.<DD><CODE>phToken</CODE> - A pointer to a handle variable that receives a handle to a token that represents the specified user.
+<DT><B>Returns:</B><DD>If the function succeeds, the function returns nonzero.
+  If the function fails, it returns zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenThreadToken(com.sun.jna.platform.win32.WinNT.HANDLE, int, boolean, com.sun.jna.platform.win32.WinNT.HANDLEByReference)"><!-- --></A><H3>
+OpenThreadToken</H3>
+<PRE>
+boolean <B>OpenThreadToken</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ThreadHandle,
+                        int&nbsp;DesiredAccess,
+                        boolean&nbsp;OpenAsSelf,
+                        <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;TokenHandle)</PRE>
+<DL>
+<DD>The OpenThreadToken function opens the access token associated with a thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ThreadHandle</CODE> - Handle to the thread whose access token is opened.<DD><CODE>DesiredAccess</CODE> - Specifies an access mask that specifies the requested types of access to the access token. 
+  These requested access types are reconciled against the token's discretionary access 
+  control list (DACL) to determine which accesses are granted or denied.<DD><CODE>OpenAsSelf</CODE> - Indicates whether the access check is to be made against the security context of the 
+  thread calling the OpenThreadToken function or against the security context of the 
+  process for the calling thread.<DD><CODE>TokenHandle</CODE> - Pointer to a variable that receives the handle to the newly opened access token.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenProcessToken(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)"><!-- --></A><H3>
+OpenProcessToken</H3>
+<PRE>
+boolean <B>OpenProcessToken</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ProcessHandle,
+                         int&nbsp;DesiredAccess,
+                         <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;TokenHandle)</PRE>
+<DL>
+<DD>The OpenProcessToken function opens the access token associated with a process.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ProcessHandle</CODE> - Handle to the process whose access token is opened. The process must have the 
+  PROCESS_QUERY_INFORMATION access permission.<DD><CODE>DesiredAccess</CODE> - Specifies an access mask that specifies the requested types of access to the access 
+  token. These requested access types are compared with the discretionary access 
+  control list (DACL) of the token to determine which accesses are granted or denied.<DD><CODE>TokenHandle</CODE> - Pointer to a handle that identifies the newly opened access token when the function returns.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DuplicateToken(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)"><!-- --></A><H3>
+DuplicateToken</H3>
+<PRE>
+boolean <B>DuplicateToken</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;ExistingTokenHandle,
+                       int&nbsp;ImpersonationLevel,
+                       <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;DuplicateTokenHandle)</PRE>
+<DL>
+<DD>The DuplicateToken function creates a new access token that duplicates 
+ one already in existence.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ExistingTokenHandle</CODE> - Handle to an access token opened with TOKEN_DUPLICATE access.<DD><CODE>ImpersonationLevel</CODE> - Specifies a SECURITY_IMPERSONATION_LEVEL enumerated type that supplies 
+  the impersonation level of the new token.<DD><CODE>DuplicateTokenHandle</CODE> - Pointer to a variable that receives a handle to the duplicate token. 
+  This handle has TOKEN_IMPERSONATE and TOKEN_QUERY access to the new token.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DuplicateTokenEx(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLEByReference)"><!-- --></A><H3>
+DuplicateTokenEx</H3>
+<PRE>
+boolean <B>DuplicateTokenEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hExistingToken,
+                         int&nbsp;dwDesiredAccess,
+                         <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpTokenAttributes,
+                         int&nbsp;ImpersonationLevel,
+                         int&nbsp;TokenType,
+                         <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLEByReference.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLEByReference</A>&nbsp;phNewToken)</PRE>
+<DL>
+<DD>The DuplicateTokenEx function creates a new access token that duplicates an existing token.
+ This function can create either a primary token or an impersonation token.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hExistingToken</CODE> - A handle to an access token opened with TOKEN_DUPLICATE access.<DD><CODE>dwDesiredAccess</CODE> - Specifies the requested access rights for the new token.<DD><CODE>lpTokenAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that specifies a security
+  descriptor for the new token and determines whether child processes can inherit the token.<DD><CODE>ImpersonationLevel</CODE> - Specifies a value from the SECURITY_IMPERSONATION_LEVEL enumeration
+  that indicates the impersonation level of the new token.<DD><CODE>TokenType</CODE> - Specifies one of the following values from the TOKEN_TYPE enumeration.<DD><CODE>phNewToken</CODE> - A pointer to a HANDLE variable that receives the new token.
+<DT><B>Returns:</B><DD>If the function succeeds, the function returns a nonzero value.
+  If the function fails, it returns zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetTokenInformation(com.sun.jna.platform.win32.WinNT.HANDLE, int, com.sun.jna.Structure, int, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetTokenInformation</H3>
+<PRE>
+boolean <B>GetTokenInformation</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;tokenHandle,
+                            int&nbsp;tokenInformationClass,
+                            <A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>&nbsp;tokenInformation,
+                            int&nbsp;tokenInformationLength,
+                            <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;returnLength)</PRE>
+<DL>
+<DD>Retrieves a specified type of information about an access token. 
+ The calling process must have appropriate access rights to obtain the information.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>tokenHandle</CODE> - Handle to an access token from which information is retrieved. If TokenInformationClass
+  specifies TokenSource, the handle must have TOKEN_QUERY_SOURCE access. For all other 
+  TokenInformationClass values, the handle must have TOKEN_QUERY access.<DD><CODE>tokenInformationClass</CODE> - Specifies a value from the TOKEN_INFORMATION_CLASS enumerated type to identify the type of 
+  information the function retrieves.<DD><CODE>tokenInformation</CODE> - Pointer to a buffer the function fills with the requested information. The structure put 
+  into this buffer depends upon the type of information specified by the TokenInformationClass 
+  parameter.<DD><CODE>tokenInformationLength</CODE> - Specifies the size, in bytes, of the buffer pointed to by the TokenInformation parameter. 
+  If TokenInformation is NULL, this parameter must be zero.<DD><CODE>returnLength</CODE> - Pointer to a variable that receives the number of bytes needed for the buffer pointed to by 
+  the TokenInformation parameter. If this value is larger than the value specified in the 
+  TokenInformationLength parameter, the function fails and stores no data in the buffer.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ImpersonateLoggedOnUser(com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+ImpersonateLoggedOnUser</H3>
+<PRE>
+boolean <B>ImpersonateLoggedOnUser</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hToken)</PRE>
+<DL>
+<DD>The ImpersonateLoggedOnUser function lets the calling thread impersonate the 
+ security context of a logged-on user. The user is represented by a token 
+ handle.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hToken</CODE> - Handle to a primary or impersonation access token that represents a logged-on 
+  user. This can be a token handle returned by a call to LogonUser, 
+  CreateRestrictedToken, DuplicateToken, DuplicateTokenEx, OpenProcessToken, 
+  or OpenThreadToken functions. If hToken is a primary token, it must have 
+  TOKEN_QUERY and TOKEN_DUPLICATE access. If hToken is an impersonation token, 
+  it must have TOKEN_QUERY and TOKEN_IMPERSONATE access.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ImpersonateSelf(int)"><!-- --></A><H3>
+ImpersonateSelf</H3>
+<PRE>
+boolean <B>ImpersonateSelf</B>(int&nbsp;ImpersonationLevel)</PRE>
+<DL>
+<DD>The ImpersonateSelf function obtains an access token that impersonates the security
+ context of the calling process. The token is assigned to the calling thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ImpersonationLevel</CODE> - Specifies a SECURITY_IMPERSONATION_LEVEL enumerated type
+  that supplies the impersonation level of the new token.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RevertToSelf()"><!-- --></A><H3>
+RevertToSelf</H3>
+<PRE>
+boolean <B>RevertToSelf</B>()</PRE>
+<DL>
+<DD>The RevertToSelf function terminates the impersonation of a client application.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegOpenKeyEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, com.sun.jna.platform.win32.WinReg.HKEYByReference)"><!-- --></A><H3>
+RegOpenKeyEx</H3>
+<PRE>
+int <B>RegOpenKeyEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSubKey,
+                 int&nbsp;ulOptions,
+                 int&nbsp;samDesired,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEYByReference.html" title="class in com.sun.jna.platform.win32">WinReg.HKEYByReference</A>&nbsp;phkResult)</PRE>
+<DL>
+<DD>The RegOpenKeyEx function opens the specified registry key. 
+ Note that key names are not case sensitive.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - Handle to an open key.<DD><CODE>lpSubKey</CODE> - Pointer to a null-terminated string containing the name of the subkey to open.<DD><CODE>ulOptions</CODE> - Reserved; must be zero.<DD><CODE>samDesired</CODE> - Access mask that specifies the desired access rights to the key. The function 
+  fails if the security descriptor of the key does not permit the requested access
+  for the calling process.<DD><CODE>phkResult</CODE> - Pointer to a variable that receives a handle to the opened key. If the key is 
+  not one of the predefined registry keys, call the RegCloseKey function after 
+  you have finished using the handle.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS.
+  If the function fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+RegQueryValueEx</H3>
+<PRE>
+int <B>RegQueryValueEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                    int&nbsp;lpReserved,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                    char[]&nbsp;lpData,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</PRE>
+<DL>
+<DD>The RegQueryValueEx function retrieves the type and data for a specified value name 
+ associated with an open registry key.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - Handle to an open key. The key must have been opened with the 
+  KEY_QUERY_VALUE access right.<DD><CODE>lpValueName</CODE> - Pointer to a null-terminated string containing the name of the value to query. 
+  If lpValueName is NULL or an empty string, "", the function retrieves the type 
+  and data for the key's unnamed or default value, if any.<DD><CODE>lpReserved</CODE> - Reserved; must be NULL.<DD><CODE>lpType</CODE> - Pointer to a variable that receives a code indicating the type of data stored 
+  in the specified value.<DD><CODE>lpData</CODE> - Pointer to a buffer that receives the value's data. This parameter can be NULL
+  if the data is not required. If the data is a string, the function checks for 
+  a terminating null character. If one is not found, the string is stored with a 
+  null terminator if the buffer is large enough to accommodate the extra 
+  character. Otherwise, the string is stored as is.<DD><CODE>lpcbData</CODE> - Pointer to a variable that specifies the size of the buffer pointed to by the
+  lpData parameter, in bytes. When the function returns, this variable contains 
+  the size of the data copied to lpData. The lpcbData parameter can be NULL only 
+  if lpData is NULL. If the data has the REG_SZ, REG_MULTI_SZ or REG_EXPAND_SZ 
+  type, this size includes any terminating null character or characters. 
+  If the buffer specified by lpData parameter is not large enough to hold the 
+  data, the function returns ERROR_MORE_DATA and stores the required buffer size
+  in the variable pointed to by lpcbData. In this case, the contents of the lpData
+  buffer are undefined. If lpData is NULL, and lpcbData is non-NULL, the function
+  returns ERROR_SUCCESS and stores the size of the data, in bytes, in the variable
+  pointed to by lpcbData. This enables an application to determine the best way 
+  to allocate a buffer for the value's data.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS.
+  If the function fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, byte[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+RegQueryValueEx</H3>
+<PRE>
+int <B>RegQueryValueEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                    int&nbsp;lpReserved,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                    byte[]&nbsp;lpData,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+RegQueryValueEx</H3>
+<PRE>
+int <B>RegQueryValueEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                    int&nbsp;lpReserved,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpData,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegQueryValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+RegQueryValueEx</H3>
+<PRE>
+int <B>RegQueryValueEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                    int&nbsp;lpReserved,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                    <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpData,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegCloseKey(com.sun.jna.platform.win32.WinReg.HKEY)"><!-- --></A><H3>
+RegCloseKey</H3>
+<PRE>
+int <B>RegCloseKey</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey)</PRE>
+<DL>
+<DD>The RegCloseKey function releases a handle to the specified registry key.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - Handle to the open key to be closed. The handle must have been opened by the 
+  RegCreateKeyEx, RegOpenKeyEx, or RegConnectRegistry function.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+  fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegDeleteValue(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String)"><!-- --></A><H3>
+RegDeleteValue</H3>
+<PRE>
+int <B>RegDeleteValue</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName)</PRE>
+<DL>
+<DD>The RegDeleteValue function removes a named value from the specified registry 
+ key. Note that value names are not case sensitive.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - Handle to an open key. The key must have been opened with the KEY_SET_VALUE 
+  access right.<DD><CODE>lpValueName</CODE> - Pointer to a null-terminated string that names the value to remove. If this
+  parameter is NULL or an empty string, the value set by the RegSetValue function
+  is removed.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+  fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegSetValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, char[], int)"><!-- --></A><H3>
+RegSetValueEx</H3>
+<PRE>
+int <B>RegSetValueEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                  int&nbsp;Reserved,
+                  int&nbsp;dwType,
+                  char[]&nbsp;lpData,
+                  int&nbsp;cbData)</PRE>
+<DL>
+<DD>The RegSetValueEx function sets the data and type of a specified value under a
+ registry key.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - Handle to an open key. The key must have been opened with the KEY_SET_VALUE 
+  access right.<DD><CODE>lpValueName</CODE> - Pointer to a string containing the name of the value to set. If a value with
+  this name is not already present in the key, the function adds it to the key. 
+  If lpValueName is NULL or an empty string, "", the function sets the type and
+  data for the key's unnamed or default value.<DD><CODE>Reserved</CODE> - Reserved; must be zero.<DD><CODE>dwType</CODE> - Type of data pointed to by the lpData parameter.<DD><CODE>lpData</CODE> - Pointer to a buffer containing the data to be stored with the specified value name.<DD><CODE>cbData</CODE> - Size of the information pointed to by the lpData parameter, in bytes. If the data 
+  is of type REG_SZ, REG_EXPAND_SZ, or REG_MULTI_SZ, cbData must include the size of 
+  the terminating null character or characters.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+  fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegSetValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, byte[], int)"><!-- --></A><H3>
+RegSetValueEx</H3>
+<PRE>
+int <B>RegSetValueEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                  <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpValueName,
+                  int&nbsp;Reserved,
+                  int&nbsp;dwType,
+                  byte[]&nbsp;lpData,
+                  int&nbsp;cbData)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegCreateKeyEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, java.lang.String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, com.sun.jna.platform.win32.WinReg.HKEYByReference, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+RegCreateKeyEx</H3>
+<PRE>
+int <B>RegCreateKeyEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSubKey,
+                   int&nbsp;Reserved,
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClass,
+                   int&nbsp;dwOptions,
+                   int&nbsp;samDesired,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpSecurityAttributes,
+                   <A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEYByReference.html" title="class in com.sun.jna.platform.win32">WinReg.HKEYByReference</A>&nbsp;phkResult,
+                   <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpdwDisposition)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - <DD><CODE>lpSubKey</CODE> - <DD><CODE>Reserved</CODE> - <DD><CODE>lpClass</CODE> - <DD><CODE>dwOptions</CODE> - <DD><CODE>samDesired</CODE> - <DD><CODE>lpSecurityAttributes</CODE> - <DD><CODE>phkResult</CODE> - <DD><CODE>lpdwDisposition</CODE> - 
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+  fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegDeleteKey(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String)"><!-- --></A><H3>
+RegDeleteKey</H3>
+<PRE>
+int <B>RegDeleteKey</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - <DD><CODE>name</CODE> - 
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+  fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegEnumKeyEx(com.sun.jna.platform.win32.WinReg.HKEY, int, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.FILETIME)"><!-- --></A><H3>
+RegEnumKeyEx</H3>
+<PRE>
+int <B>RegEnumKeyEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                 int&nbsp;dwIndex,
+                 char[]&nbsp;lpName,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcName,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;reserved,
+                 char[]&nbsp;lpClass,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcClass,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpftLastWriteTime)</PRE>
+<DL>
+<DD>The RegEnumKeyEx function enumerates subkeys of the specified open registry key.
+ The function retrieves information about one subkey each time it is called.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - Handle to an open key. The key must have been opened with the 
+  KEY_ENUMERATE_SUB_KEYS access right.<DD><CODE>dwIndex</CODE> - Index of the subkey to retrieve. This parameter should be zero for the first 
+  call to the RegEnumKeyEx function and then incremented for subsequent calls. 
+  Because subkeys are not ordered, any new subkey will have an arbitrary index.
+  This means that the function may return subkeys in any order.<DD><CODE>lpName</CODE> - Pointer to a buffer that receives the name of the subkey, including the 
+  terminating null character. The function copies only the name of the subkey,
+  not the full key hierarchy, to the buffer.<DD><CODE>lpcName</CODE> - Pointer to a variable that specifies the size of the buffer specified by the 
+  lpName parameter, in TCHARs. This size should include the terminating null 
+  character. When the function returns, the variable pointed to by lpcName 
+  contains the number of characters stored in the buffer. The count returned 
+  does not include the terminating null character.<DD><CODE>reserved</CODE> - Reserved; must be NULL.<DD><CODE>lpClass</CODE> - Pointer to a buffer that receives the null-terminated class string of the 
+  enumerated subkey. This parameter can be NULL.<DD><CODE>lpcClass</CODE> - Pointer to a variable that specifies the size of the buffer specified by the
+  lpClass parameter, in TCHARs. The size should include the terminating null 
+  character. When the function returns, lpcClass contains the number of 
+  characters stored in the buffer. The count returned does not include the
+  terminating null character. This parameter can be NULL only if lpClass is NULL.<DD><CODE>lpftLastWriteTime</CODE> - Pointer to a variable that receives the time at which the enumerated subkey 
+  was last written.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+  fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegEnumValue(com.sun.jna.platform.win32.WinReg.HKEY, int, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, byte[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+RegEnumValue</H3>
+<PRE>
+int <B>RegEnumValue</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                 int&nbsp;dwIndex,
+                 char[]&nbsp;lpValueName,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcchValueName,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;reserved,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpType,
+                 byte[]&nbsp;lpData,
+                 <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbData)</PRE>
+<DL>
+<DD>The RegEnumValue function enumerates the values for the specified open registry 
+ key. The function copies one indexed value name and data block for the key each 
+ time it is called.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - Handle to an open key. The key must have been opened with the KEY_QUERY_VALUE 
+  access right.<DD><CODE>dwIndex</CODE> - Index of the value to be retrieved. This parameter should be zero for the first
+  call to the RegEnumValue function and then be incremented for subsequent calls. 
+  Because values are not ordered, any new value will have an arbitrary index. 
+  This means that the function may return values in any order.<DD><CODE>lpValueName</CODE> - Pointer to a buffer that receives the name of the value, including the 
+  terminating null character.<DD><CODE>lpcchValueName</CODE> - Pointer to a variable that specifies the size of the buffer pointed to by the
+  lpValueName parameter, in TCHARs. This size should include the terminating null 
+  character. When the function returns, the variable pointed to by lpcValueName 
+  contains the number of characters stored in the buffer. The count returned 
+  does not include the terminating null character.<DD><CODE>reserved</CODE> - Reserved; must be NULL.<DD><CODE>lpType</CODE> - Pointer to a variable that receives a code indicating the type of data stored 
+  in the specified value.<DD><CODE>lpData</CODE> - Pointer to a buffer that receives the data for the value entry. This parameter 
+  can be NULL if the data is not required.<DD><CODE>lpcbData</CODE> - Pointer to a variable that specifies the size of the buffer pointed to by the 
+  lpData parameter, in bytes.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+  fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegQueryInfoKey(com.sun.jna.platform.win32.WinReg.HKEY, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.FILETIME)"><!-- --></A><H3>
+RegQueryInfoKey</H3>
+<PRE>
+int <B>RegQueryInfoKey</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinReg.HKEY.html" title="class in com.sun.jna.platform.win32">WinReg.HKEY</A>&nbsp;hKey,
+                    char[]&nbsp;lpClass,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcClass,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpReserved,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcSubKeys,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxSubKeyLen,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxClassLen,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcValues,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxValueNameLen,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcMaxValueLen,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpcbSecurityDescriptor,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>&nbsp;lpftLastWriteTime)</PRE>
+<DL>
+<DD>The RegQueryInfoKey function retrieves information about the specified 
+ registry key.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hKey</CODE> - A handle to an open key. The key must have been opened with the 
+  KEY_QUERY_VALUE access right.<DD><CODE>lpClass</CODE> - A pointer to a buffer that receives the null-terminated class 
+  string of the key. This parameter can be ignored. This parameter can be NULL.<DD><CODE>lpcClass</CODE> - A pointer to a variable that specifies the size of the buffer pointed to by
+  the lpClass parameter, in characters.<DD><CODE>lpReserved</CODE> - Reserved; must be NULL.<DD><CODE>lpcSubKeys</CODE> - A pointer to a variable that receives the number of subkeys that are contained by the specified key. 
+  This parameter can be NULL.<DD><CODE>lpcMaxSubKeyLen</CODE> - A pointer to a variable that receives the size of the key's subkey with the 
+  longest name, in characters, not including the terminating null character. 
+  This parameter can be NULL.<DD><CODE>lpcMaxClassLen</CODE> - A pointer to a variable that receives the size of the longest string that 
+  specifies a subkey class, in characters. The count returned does not include
+  the terminating null character. This parameter can be NULL.<DD><CODE>lpcValues</CODE> - A pointer to a variable that receives the number of values that are associated 
+  with the key. This parameter can be NULL.<DD><CODE>lpcMaxValueNameLen</CODE> - A pointer to a variable that receives the size of the key's longest value name,
+  in characters. The size does not include the terminating null character. This 
+  parameter can be NULL.<DD><CODE>lpcMaxValueLen</CODE> - A pointer to a variable that receives the size of the longest data component
+  among the key's values, in bytes. This parameter can be NULL.<DD><CODE>lpcbSecurityDescriptor</CODE> - A pointer to a variable that receives the size of the key's security descriptor,
+  in bytes. This parameter can be NULL.<DD><CODE>lpftLastWriteTime</CODE> - A pointer to a FILETIME structure that receives the last write time. 
+  This parameter can be NULL.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is ERROR_SUCCESS. If the function 
+ fails, the return value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RegisterEventSource(java.lang.String, java.lang.String)"><!-- --></A><H3>
+RegisterEventSource</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>RegisterEventSource</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpUNCServerName,
+                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSourceName)</PRE>
+<DL>
+<DD>Retrieves a registered handle to the specified event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpUNCServerName</CODE> - The Universal Naming Convention (UNC) name of the remote server on which 
+  this operation is to be performed. If this parameter is NULL, the local 
+  computer is used.<DD><CODE>lpSourceName</CODE> - The name of the event source whose handle is to be retrieved. 
+  The source name must be a subkey of a log under the Eventlog registry 
+  key. However, the Security log is for system use only.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the event log. 
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.
+  The function returns ERROR_ACCESS_DENIED if lpSourceName specifies the Security event log.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DeregisterEventSource(com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+DeregisterEventSource</H3>
+<PRE>
+boolean <B>DeregisterEventSource</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog)</PRE>
+<DL>
+<DD>Closes the specified event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - A handle to the event log. The RegisterEventSource function returns this handle.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenEventLog(java.lang.String, java.lang.String)"><!-- --></A><H3>
+OpenEventLog</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>OpenEventLog</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpUNCServerName,
+                          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSourceName)</PRE>
+<DL>
+<DD>Opens a handle to the specified event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpUNCServerName</CODE> - The Universal Naming Convention (UNC) name of the remote server on which the event log is to be 
+  opened. If this parameter is NULL, the local computer is used.<DD><CODE>lpSourceName</CODE> - The name of the log. If you specify a custom log and it cannot be found, the event logging 
+  service opens the Application log; however, there will be no associated message or category 
+  string file.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the handle to an event log. 
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CloseEventLog(com.sun.jna.platform.win32.WinNT.HANDLE)"><!-- --></A><H3>
+CloseEventLog</H3>
+<PRE>
+boolean <B>CloseEventLog</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog)</PRE>
+<DL>
+<DD>Closes the specified event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - A handle to the event log to be closed. The OpenEventLog or OpenBackupEventLog function returns this handle.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetNumberOfEventLogRecords(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetNumberOfEventLogRecords</H3>
+<PRE>
+boolean <B>GetNumberOfEventLogRecords</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                                   <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;NumberOfRecords)</PRE>
+<DL>
+<DD>Retrieves the number of records in the specified event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - A handle to the open event log. The OpenEventLog or OpenBackupEventLog function returns this handle.<DD><CODE>NumberOfRecords</CODE> - A pointer to a variable that receives the number of records in the specified event log.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReportEvent(com.sun.jna.platform.win32.WinNT.HANDLE, int, int, int, com.sun.jna.platform.win32.WinNT.PSID, int, int, java.lang.String[], com.sun.jna.Pointer)"><!-- --></A><H3>
+ReportEvent</H3>
+<PRE>
+boolean <B>ReportEvent</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                    int&nbsp;wType,
+                    int&nbsp;wCategory,
+                    int&nbsp;dwEventID,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</A>&nbsp;lpUserSid,
+                    int&nbsp;wNumStrings,
+                    int&nbsp;dwDataSize,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;lpStrings,
+                    <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpRawData)</PRE>
+<DL>
+<DD>Writes an entry at the end of the specified event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - A handle to the event log. The RegisterEventSource function returns this handle. 
+  As of Windows XP with SP2, this parameter cannot be a handle to the Security log. 
+  To write an event to the Security log, use the AuthzReportSecurityEvent function.<DD><CODE>wType</CODE> - The type of event to be logged.<DD><CODE>wCategory</CODE> - The event category. This is source-specific information; the category can have any value.<DD><CODE>dwEventID</CODE> - The event identifier. The event identifier specifies the entry in the message file 
+  associated with the event source.<DD><CODE>lpUserSid</CODE> - A pointer to the current user's security identifier. This parameter can be NULL if the security identifier is not required.<DD><CODE>wNumStrings</CODE> - The number of insert strings in the array pointed to by the lpStrings parameter. A value of zero indicates that no strings are present.<DD><CODE>dwDataSize</CODE> - The number of bytes of event-specific raw (binary) data to write to the log. If this parameter is zero, no event-specific data is present.<DD><CODE>lpStrings</CODE> - A pointer to a buffer containing an array of null-terminated strings that are merged into 
+  the message before Event Viewer displays the string to the user. This parameter must 
+  be a valid pointer (or NULL), even if wNumStrings is zero. Each string is limited to 
+  31,839 characters.<DD><CODE>lpRawData</CODE> - A pointer to the buffer containing the binary data. This parameter must be a valid 
+  pointer (or NULL), even if the dwDataSize parameter is zero.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero, indicating that the entry was written to the log. 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ClearEventLog(com.sun.jna.platform.win32.WinNT.HANDLE, java.lang.String)"><!-- --></A><H3>
+ClearEventLog</H3>
+<PRE>
+boolean <B>ClearEventLog</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpBackupFileName)</PRE>
+<DL>
+<DD>Clears the specified event log, and optionally saves the current copy of the log to a backup file.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - A handle to the event log to be cleared. The OpenEventLog function returns this handle.<DD><CODE>lpBackupFileName</CODE> - The absolute or relative path of the backup file. If this file already exists, the function fails. 
+  If the lpBackupFileName parameter is NULL, the event log is not backed up.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, 
+  call GetLastError. The ClearEventLog function can fail if the event log is empty or the backup file already exists.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="BackupEventLog(com.sun.jna.platform.win32.WinNT.HANDLE, java.lang.String)"><!-- --></A><H3>
+BackupEventLog</H3>
+<PRE>
+boolean <B>BackupEventLog</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpBackupFileName)</PRE>
+<DL>
+<DD>Saves the specified event log to a backup file. The function does not clear the event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - A handle to the open event log. The OpenEventLog function returns this handle.<DD><CODE>lpBackupFileName</CODE> - The absolute or relative path of the backup file.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenBackupEventLog(java.lang.String, java.lang.String)"><!-- --></A><H3>
+OpenBackupEventLog</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>OpenBackupEventLog</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpUNCServerName,
+                                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpFileName)</PRE>
+<DL>
+<DD>Opens a handle to a backup event log created by the BackupEventLog function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpUNCServerName</CODE> - The Universal Naming Convention (UNC) name of the remote server on which this operation 
+  is to be performed. If this parameter is NULL, the local computer is used.<DD><CODE>lpFileName</CODE> - The full path of the backup file.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the backup event log. 
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReadEventLog(com.sun.jna.platform.win32.WinNT.HANDLE, int, int, com.sun.jna.Pointer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+ReadEventLog</H3>
+<PRE>
+boolean <B>ReadEventLog</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                     int&nbsp;dwReadFlags,
+                     int&nbsp;dwRecordOffset,
+                     <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lpBuffer,
+                     int&nbsp;nNumberOfBytesToRead,
+                     <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pnBytesRead,
+                     <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pnMinNumberOfBytesNeeded)</PRE>
+<DL>
+<DD>Reads the specified number of entries from the specified event log. The function can 
+ be used to read log entries in chronological or reverse chronological order.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - A handle to the event log to be read. The OpenEventLog function returns this handle.<DD><CODE>dwReadFlags</CODE> - Use the following flag values to indicate how to read the log file.<DD><CODE>dwRecordOffset</CODE> - The record number of the log-entry at which the read operation should start. 
+  This parameter is ignored unless dwReadFlags includes the EVENTLOG_SEEK_READ flag.<DD><CODE>lpBuffer</CODE> - An application-allocated buffer that will receive one or more EVENTLOGRECORD structures. 
+  This parameter cannot be NULL, even if the nNumberOfBytesToRead parameter is zero. 
+  The maximum size of this buffer is 0x7ffff bytes.<DD><CODE>nNumberOfBytesToRead</CODE> - The size of the lpBuffer buffer, in bytes. This function will read as many log entries 
+  as will fit in the buffer; the function will not return partial entries.<DD><CODE>pnBytesRead</CODE> - A pointer to a variable that receives the number of bytes read by the function.<DD><CODE>pnMinNumberOfBytesNeeded</CODE> - A pointer to a variable that receives the required size of the lpBuffer buffer. 
+  This value is valid only this function returns zero and GetLastError 
+  returns ERROR_INSUFFICIENT_BUFFER.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetOldestEventLogRecord(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetOldestEventLogRecord</H3>
+<PRE>
+boolean <B>GetOldestEventLogRecord</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hEventLog,
+                                <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;OldestRecord)</PRE>
+<DL>
+<DD>The GetOldestEventLogRecord function retrieves the absolute record number of the oldest
+ record in the specified event log.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hEventLog</CODE> - Handle to the open event log. This handle is returned by the OpenEventLog or OpenBackupEventLog function.<DD><CODE>OldestRecord</CODE> - Pointer to a variable that receives the absolute record number of the oldest record in the specified event log.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="QueryServiceStatusEx(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, int, com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS, int, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+QueryServiceStatusEx</H3>
+<PRE>
+boolean <B>QueryServiceStatusEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hService,
+                             int&nbsp;InfoLevel,
+                             <A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS_PROCESS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS_PROCESS</A>&nbsp;lpBuffer,
+                             int&nbsp;cbBufSize,
+                             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcbBytesNeeded)</PRE>
+<DL>
+<DD>Retrieves the current status of the specified service based on the specified information level.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hService</CODE> - A handle to the service. This handle is returned by the 
+  OpenService(SC_HANDLE, String, int) or CreateService() function, and
+  it must have the SERVICE_QUERY_STATUS access right. For more information, see 
+  <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">Service Security and Access Rights</a>.<DD><CODE>InfoLevel</CODE> - The service attributes to be returned (a value from SC_STATUS_TYPE enumeration). 
+  Use SC_STATUS_PROCESS_INFO to retrieve the service status information. The lpBuffer 
+  parameter is a pointer to a SERVICE_STATUS_PROCESS  structure.
+  Currently, no other information levels are defined.<DD><CODE>lpBuffer</CODE> - (optional)
+  A pointer to the buffer that receives the status information. The format of this data 
+  depends on the value of the InfoLevel parameter.
+  The maximum size of this array is 8K bytes. To determine the required size, specify NULL
+  for this parameter and 0 for the cbBufSize parameter. The function will fail and GetLastError 
+  will return ERROR_INSUFFICIENT_BUFFER. The pcbBytesNeeded parameter will receive the required size.<DD><CODE>cbBufSize</CODE> - The size of the buffer pointed to by the lpBuffer parameter, in bytes.<DD><CODE>pcbBytesNeeded</CODE> - A pointer to a variable that receives the number of bytes needed to store all status 
+  information, if the function fails with ERROR_INSUFFICIENT_BUFFER.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is true.
+  If the function fails, the return value is false. To get extended error information,
+  call GetLastError.  This value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ControlService(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, int, com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS)"><!-- --></A><H3>
+ControlService</H3>
+<PRE>
+boolean <B>ControlService</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hService,
+                       int&nbsp;dwControl,
+                       <A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS</A>&nbsp;lpServiceStatus)</PRE>
+<DL>
+<DD>Sends a control code to a service.
+ To specify additional information when stopping a service, use the 
+ ControlServiceEx function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hService</CODE> - A handle to the service. This handle is returned by the 
+  OpenService(SC_HANDLE, String, int) or CreateService()
+  function. The access rights required for this handle depend on the
+  dwControl code requested.<DD><CODE>dwControl</CODE> - This parameter can be one of the following control codes (found in Winsvc.h):
+  SERVICE_CONTROL_STOP, SERVICE_CONTROL_PAUSE, SERVICE_CONTROL_CONTINUE
+  SERVICE_CONTROL_INTERROGATE, SERVICE_CONTROL_PARAMCHANGE, 
+  SERVICE_CONTROL_NETBINDADD, SERVICE_CONTROL_NETBINDREMOVE,
+  SERVICE_CONTROL_NETBINDENABLE, SERVICE_CONTROL_NETBINDDISABLE
+  This value can also be a user-defined control code, as described below:
+  Range 128 to 255 - The service defines the action associated with the 
+  control code. The hService handle must have the SERVICE_USER_DEFINED_CONTROL 
+  access right.<DD><CODE>lpServiceStatus</CODE> - A pointer to a SERVICE_STATUS structure that receives the latest 
+  service status information. The information returned reflects the most 
+  recent status that the service reported to the service control manager.
+  The service control manager fills in the structure only when ControlService
+  returns one of the following error codes: NO_ERROR, ERROR_INVALID_SERVICE_CONTROL,
+  ERROR_SERVICE_CANNOT_ACCEPT_CTRL, or ERROR_SERVICE_NOT_ACTIVE. Otherwise,
+  the structure is not filled in.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is true.
+  If the function fails, the return value is false. To get extended error information,
+  call GetLastError.  This value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="StartService(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, int, java.lang.String[])"><!-- --></A><H3>
+StartService</H3>
+<PRE>
+boolean <B>StartService</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hService,
+                     int&nbsp;dwNumServiceArgs,
+                     <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;lpServiceArgVectors)</PRE>
+<DL>
+<DD>Starts a service.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hService</CODE> - A handle to the service. This handle is returned by the 
+  OpenService(SC_HANDLE, String, int) or CreateService()
+  function, and it must have the SERVICE_START access right. For more 
+  information, see <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">
+        Service Security and Access Rights</a>.<DD><CODE>dwNumServiceArgs</CODE> - The number of strings in the lpServiceArgVectors array. If lpServiceArgVectors
+  is NULL, this parameter can be zero.<DD><CODE>lpServiceArgVectors</CODE> - The null-terminated strings to be passed to the ServiceMain function for the
+  service as arguments. If there are no arguments, this parameter can be null.
+  Otherwise, the first argument (lpServiceArgVectors[0]) is the name of the
+  service, followed by any additional arguments (lpServiceArgVectors[1] through
+  lpServiceArgVectors[dwNumServiceArgs-1]).
+  Driver services do not receive these arguments.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is true.
+  If the function fails, the return value is false. To get extended error information,
+  call GetLastError.  This value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CloseServiceHandle(com.sun.jna.platform.win32.Winsvc.SC_HANDLE)"><!-- --></A><H3>
+CloseServiceHandle</H3>
+<PRE>
+boolean <B>CloseServiceHandle</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hSCObject)</PRE>
+<DL>
+<DD>Closes a handle to a service control manager or service object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hSCObject</CODE> - A handle to the service control manager object or the service object to 
+ close. Handles to service control manager objects are returned by the 
+ OpenSCManager(String, String, int) function, and handles to service 
+ objects are returned by either the OpenService(SC_HANDLE, String, int)
+ or CreateService() function.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+ If the function fails, the return value is zero. To get extended 
+ error information, call GetLastError. This value is a nonzero error code 
+ defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenService(com.sun.jna.platform.win32.Winsvc.SC_HANDLE, java.lang.String, int)"><!-- --></A><H3>
+OpenService</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A> <B>OpenService</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A>&nbsp;hSCManager,
+                             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpServiceName,
+                             int&nbsp;dwDesiredAccess)</PRE>
+<DL>
+<DD>Opens an existing service.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hSCManager</CODE> - A handle to the service control manager database. The 
+        OpenSCManager(String, String, int) function returns this handle.<DD><CODE>lpServiceName</CODE> - The name of the service to be opened. This is the name specified by the
+        lpServiceName parameter of the CreateService function when the service
+        object was created, not the service display name that is shown by user
+        interface applications to identify the service.
+        The maximum string length is 256 characters. The service control manager
+        database preserves the case of the characters, but service name comparisons
+        are always case insensitive. Forward-slash (/) and backslash (\) are
+        invalid service name characters.<DD><CODE>dwDesiredAccess</CODE> - The access to the service. For a list of access rights, see 
+        <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">
+        Service Security and Access Rights</a>.
+        Before granting the requested access, the system checks the access token
+  of the calling process against the discretionary access-control list of the security descriptor associated with the service object.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the service.
+  If the function fails, the return value is NULL. To get extended error information,
+  call GetLastError. This value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="OpenSCManager(java.lang.String, java.lang.String, int)"><!-- --></A><H3>
+OpenSCManager</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/Winsvc.SC_HANDLE.html" title="class in com.sun.jna.platform.win32">Winsvc.SC_HANDLE</A> <B>OpenSCManager</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpMachineName,
+                               <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpDatabaseName,
+                               int&nbsp;dwDesiredAccess)</PRE>
+<DL>
+<DD>Establishes a connection to the service control manager on the specified 
+ computer and opens the specified service control manager database.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpMachineName</CODE> - The name of the target computer. If the pointer is NULL or points to 
+  an empty string, the function connects to the service control manager 
+  on the local computer.<DD><CODE>lpDatabaseName</CODE> - The name of the service control manager database. This parameter should
+  be set to SERVICES_ACTIVE_DATABASE. If it is NULL, the SERVICES_ACTIVE_DATABASE
+  database is opened by default.<DD><CODE>dwDesiredAccess</CODE> - The access to the service control manager. For a list of access rights, see 
+  <a href="http://msdn.microsoft.com/en-us/library/ms685981.aspx">
+  Service Security and Access Rights</a>.
+  Before granting the requested access rights, the system checks the access 
+  token of the calling process against the discretionary access-control list 
+  of the security descriptor associated with the service control manager.
+  The SC_MANAGER_CONNECT access right is implicitly specified by calling this 
+  function.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a handle to the specified
+  service control manager database.
+  If the function fails, the return value is NULL. To get extended error information,
+  call GetLastError. This value is a nonzero error code defined in Winerror.h.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateProcessAsUser(com.sun.jna.platform.win32.WinNT.HANDLE, java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, boolean, int, java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinBase.STARTUPINFO, com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION)"><!-- --></A><H3>
+CreateProcessAsUser</H3>
+<PRE>
+boolean <B>CreateProcessAsUser</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hToken,
+                            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpApplicationName,
+                            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCommandLine,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpProcessAttributes,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</A>&nbsp;lpThreadAttributes,
+                            boolean&nbsp;bInheritHandles,
+                            int&nbsp;dwCreationFlags,
+                            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpEnvironment,
+                            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpCurrentDirectory,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" title="class in com.sun.jna.platform.win32">WinBase.STARTUPINFO</A>&nbsp;lpStartupInfo,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinBase.PROCESS_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinBase.PROCESS_INFORMATION</A>&nbsp;lpProcessInformation)</PRE>
+<DL>
+<DD>Creates a new process and its primary thread. The new process runs in the
+ security context of the user represented by the specified token.
+ 
+ Typically, the process that calls the CreateProcessAsUser function must
+ have the SE_INCREASE_QUOTA_NAME privilege and may require the
+ SE_ASSIGNPRIMARYTOKEN_NAME privilege if the token is not assignable. If
+ this function fails with ERROR_PRIVILEGE_NOT_HELD (1314), use the
+ CreateProcessWithLogonW function instead. CreateProcessWithLogonW
+ requires no special privileges, but the specified user account must be
+ allowed to log on interactively. Generally, it is best to use
+ CreateProcessWithLogonW to create a process with alternate credentials.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hToken</CODE> - A handle to the primary token that represents a user.<DD><CODE>lpApplicationName</CODE> - The name of the module to be executed.<DD><CODE>lpCommandLine</CODE> - The command line to be executed.<DD><CODE>lpProcessAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that
+  specifies a security descriptor for the new process object and determines whether
+  child processes can inherit the returned handle to the process.<DD><CODE>lpThreadAttributes</CODE> - A pointer to a SECURITY_ATTRIBUTES structure that specifies
+  a security descriptor for the new thread object and determines whether child processes
+  can inherit the returned handle to the thread.<DD><CODE>bInheritHandles</CODE> - If this parameter is TRUE, each inheritable handle in the
+  calling process is inherited by the new process. If the parameter is FALSE, the
+  handles are not inherited. Note that inherited handles have the same value and access
+  rights as the original handles.<DD><CODE>dwCreationFlags</CODE> - The flags that control the priority class and the creation of the process.
+  For a list of values, see Process Creation Flags.<DD><CODE>lpEnvironment</CODE> - A pointer to an environment block for the new process. If this
+  parameter is NULL, the new process uses the environment of the calling process.
+  
+  An environment block consists of a null-terminated block of null-terminated strings.
+  Each string is in the following form: name=value\0<DD><CODE>lpCurrentDirectory</CODE> - The full path to the current directory for the process. The
+  string can also specify a UNC path.<DD><CODE>lpStartupInfo</CODE> - A pointer to a STARTUPINFO or STARTUPINFOEX structure.<DD><CODE>lpProcessInformation</CODE> - A pointer to a PROCESS_INFORMATION structure that receives
+  identification information about the new process.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="AdjustTokenPrivileges(com.sun.jna.platform.win32.WinNT.HANDLE, boolean, com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES, int, com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+AdjustTokenPrivileges</H3>
+<PRE>
+boolean <B>AdjustTokenPrivileges</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;TokenHandle,
+                              boolean&nbsp;DisableAllPrivileges,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_PRIVILEGES.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_PRIVILEGES</A>&nbsp;NewState,
+                              int&nbsp;BufferLength,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.TOKEN_PRIVILEGES.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_PRIVILEGES</A>&nbsp;PreviousState,
+                              <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;ReturnLength)</PRE>
+<DL>
+<DD>The AdjustTokenPrivileges function enables or disables privileges in the specified access token.
+ Enabling or disabling privileges in an access token requires TOKEN_ADJUST_PRIVILEGES access.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>TokenHandle</CODE> - A handle to the access token that contains the privileges to be modified.<DD><CODE>DisableAllPrivileges</CODE> - Specifies whether the function disables all of the token's privileges.<DD><CODE>NewState</CODE> - A pointer to a TOKEN_PRIVILEGES structure that specifies an array of privileges and their attributes.<DD><CODE>BufferLength</CODE> - Specifies the size, in bytes, of the buffer pointed to by the PreviousState
+  parameter. This parameter can be zero if the PreviousState parameter is NULL.<DD><CODE>PreviousState</CODE> - A pointer to a buffer that the function fills with a TOKEN_PRIVILEGES structure that contains
+  the previous state of any privileges that the function modifies.<DD><CODE>ReturnLength</CODE> - A pointer to a variable that receives the required size, in bytes, of the buffer
+  pointed to by the PreviousState parameter.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LookupPrivilegeName(java.lang.String, com.sun.jna.platform.win32.WinNT.LUID, char[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+LookupPrivilegeName</H3>
+<PRE>
+boolean <B>LookupPrivilegeName</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LUID.html" title="class in com.sun.jna.platform.win32">WinNT.LUID</A>&nbsp;lpLuid,
+                            char[]&nbsp;lpName,
+                            <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;cchName)</PRE>
+<DL>
+<DD>The LookupPrivilegeName function retrieves the name that corresponds to the privilege represented
+ on a specific system by a specified locally unique identifier (LUID).
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemName</CODE> - A pointer to a null-terminated string that specifies the name of the system on
+  which the privilege name is retrieved.  If a null string is specified, the function attempts to
+  find the privilege name on the local system.<DD><CODE>lpLuid</CODE> - A pointer to the LUID by which the privilege is known on the target system.<DD><CODE>lpName</CODE> - A pointer to a buffer that receives a null-terminated string that represents the privilege name.
+  For example, this string could be "SeSecurityPrivilege".<DD><CODE>cchName</CODE> - A pointer to a variable that specifies the size, in a TCHAR value, of the lpName buffer.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LookupPrivilegeValue(java.lang.String, java.lang.String, com.sun.jna.platform.win32.WinNT.LUID)"><!-- --></A><H3>
+LookupPrivilegeValue</H3>
+<PRE>
+boolean <B>LookupPrivilegeValue</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpSystemName,
+                             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpName,
+                             <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.LUID.html" title="class in com.sun.jna.platform.win32">WinNT.LUID</A>&nbsp;lpLuid)</PRE>
+<DL>
+<DD>The LookupPrivilegeValue function retrieves the locally unique identifier (LUID) used
+ on a specified system to locally
+ represent the specified privilege name.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemName</CODE> - A pointer to a null-terminated string that specifies the name of the
+  system on which the privilege name is retrieved. If a null string is specified, the
+  function attempts to find the privilege name on the local system.<DD><CODE>lpName</CODE> - A pointer to a null-terminated string that specifies the name of the privilege,
+  as defined in the Winnt.h header file. For example, this parameter could specify the constant,
+  SE_SECURITY_NAME, or its corresponding string, "SeSecurityPrivilege".<DD><CODE>lpLuid</CODE> - A pointer to a variable that receives the LUID by which the privilege
+  is known on the system specified by the lpSystemName parameter.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Advapi32Util.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Advapi32.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Advapi32.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>
