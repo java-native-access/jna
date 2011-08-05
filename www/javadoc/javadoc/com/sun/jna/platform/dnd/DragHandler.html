@@ -1,0 +1,1094 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DragHandler (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DragHandler (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/dnd/DropHandler.html" title="class in com.sun.jna.platform.dnd"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/dnd/DragHandler.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DragHandler.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.dnd</FONT>
+<BR>
+Class DragHandler</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.dnd.DragHandler</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureListener.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceMotionListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceMotionListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/EventListener.html?is-external=true" title="class or interface in java.util">EventListener</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>DragHandler</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A><DT>implements <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceMotionListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceMotionListener</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureListener.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureListener</A></DL>
+</PRE>
+
+<P>
+Provides simplified drag handling for a component.  
+ Usage:<br>
+ <pre><code>
+ int actions = DnDConstants.MOVE_OR_COPY;
+ Component component = ...;
+ DragHandler handler = new DragHandler(component, actions);
+ </code></pre>
+ <ul>
+ <li>Supports painting an arbitrary <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing"><CODE>Icon</CODE></A> with transparency to
+ represent the item being dragged (restricted to the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A> 
+ of the drag source if the platform doesn't support drag images).
+ <li>Disallow starting a drag if the user requests an unsupported action.
+ <li>Adjusts the cursor on drags with no modifier for which the default action
+ is disallowed but where one or more non-default actions are allowed, e.g. a 
+ drag (with no modifiers) to a target which supports "link" should change the 
+ cursor to "link" (prior to 1.6, the JRE behavior is to display a 
+ "not allowed" cursor, even though the action actually depends on how the 
+ drop target responds).  
+ <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4869264">
+ The bug</a> is fixed in java 1.6.
+ <li>Disallow drops to targets if the non-default (user-requested) action 
+ is not supported by the target, e.g. the user requests a "copy" when the 
+ target only supports "move".  This is generally the responsibility of the
+ drop handler, which decides whether or not to accept a drag.  The DragHandler
+ provides static modifier state information since the drop handler doesn't
+ have access to it.
+ </ul>
+ NOTE: Fundamentally, the active action is determined by the drop handler
+ in <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true#acceptDrag(int)" title="class or interface in java.awt.dnd"><CODE>DropTargetDragEvent.acceptDrag(int)</CODE></A>, but often client code
+ simply relies on <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetDragEvent.html?is-external=true#getDropAction()" title="class or interface in java.awt.dnd"><CODE>DropTargetDragEvent.getDropAction()</CODE></A>.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#COPY">COPY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_COPY" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_COPY</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#COPY_MASK">COPY_MASK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier mask for a user-requested copy.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#DEFAULT_GHOST_ALPHA">DEFAULT_GHOST_ALPHA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default transparency for ghosting.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#KEY_MASK">KEY_MASK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier mask for any user-requested action.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#LINK">LINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_LINK" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_LINK</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#LINK_MASK">LINK_MASK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier mask for a user-requested link.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#MAX_GHOST_SIZE">MAX_GHOST_SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default maximum size for ghosted images.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#MOVE">MOVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_MOVE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_MOVE</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#MOVE_MASK">MOVE_MASK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier mask for a user-requested move.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#NONE">NONE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#OSX">OSX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#UNKNOWN_MODIFIERS">UNKNOWN_MODIFIERS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getModifiers()"><CODE>getModifiers()</CODE></A> returns this value when the current
+ modifiers state is unknown.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer">Transferable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#UNKNOWN_TRANSFERABLE">UNKNOWN_TRANSFERABLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getTransferable(java.awt.dnd.DropTargetEvent)"><CODE>getTransferable(java.awt.dnd.DropTargetEvent)</CODE></A> returns this value when 
+ the current <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> is unknown.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#DragHandler(java.awt.Component, int)">DragHandler</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;dragSource,
+            int&nbsp;actions)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enable drags from the given component, supporting the actions in
+ the given action mask.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#actionString(int)">actionString</A></B>(int&nbsp;action)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#adjustDropAction(java.awt.dnd.DragSourceEvent)">adjustDropAction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;ev)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pick a different drop action if the target doesn't support the current
+ one and there are no modifiers.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#canDrag(java.awt.dnd.DragGestureEvent)">canDrag</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Override to control whether a drag is started.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#createDragImage(java.awt.GraphicsConfiguration, javax.swing.Icon)">createDragImage</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/GraphicsConfiguration.html?is-external=true" title="class or interface in java.awt">GraphicsConfiguration</A>&nbsp;gc,
+                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A>&nbsp;icon)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an image from the given icon.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dragDropEnd(java.awt.dnd.DragSourceDropEvent)">dragDropEnd</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDropEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDropEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dragEnter(java.awt.dnd.DragSourceDragEvent)">dragEnter</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dragExit(java.awt.dnd.DragSourceEvent)">dragExit</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dragGestureRecognized(java.awt.dnd.DragGestureEvent)">dragGestureRecognized</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called when a user drag gesture is recognized.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dragMouseMoved(java.awt.dnd.DragSourceDragEvent)">dragMouseMoved</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dragOver(java.awt.dnd.DragSourceDragEvent)">dragOver</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dragStarted(java.awt.dnd.DragGestureEvent)">dragStarted</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Override to perform any decoration of the target at the start of a drag, 
+ if desired.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#dropActionChanged(java.awt.dnd.DragSourceDragEvent)">dropActionChanged</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getAcceptableDropAction(int)">getAcceptableDropAction</A></B>(int&nbsp;targetActions)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the first available action supported by source and target.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Cursor.html?is-external=true" title="class or interface in java.awt">Cursor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getCursorForAction(int)">getCursorForAction</A></B>(int&nbsp;actualAction)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getDragIcon(java.awt.dnd.DragGestureEvent, java.awt.Point)">getDragIcon</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;srcOffset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Override this to provide a custom image.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getDropAction(java.awt.dnd.DragSourceEvent)">getDropAction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;ev)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the currently requested drop action.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getModifiers()">getModifiers</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used to communicate modifier state to <A HREF="../../../../../com/sun/jna/platform/dnd/DropHandler.html" title="class in com.sun.jna.platform.dnd"><CODE>DropHandler</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected abstract &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer">Transferable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getTransferable(java.awt.dnd.DragGestureEvent)">getTransferable</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Override to provide an appropriate <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> representing
+ the data being dragged.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer">Transferable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getTransferable(java.awt.dnd.DropTargetEvent)">getTransferable</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used to communicate the current <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> during a drag, 
+ if available.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#scaleDragIcon(javax.swing.Icon, java.awt.Point)">scaleDragIcon</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A>&nbsp;icon,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;imageOffset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reduce the size of the given drag icon, if appropriate.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#setModifiers(int)">setModifiers</A></B>(int&nbsp;mods)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Update the modifiers hint.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#updateCursor(java.awt.dnd.DragSourceEvent)">updateCursor</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;ev)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="MAX_GHOST_SIZE"><!-- --></A><H3>
+MAX_GHOST_SIZE</H3>
+<PRE>
+public static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</A> <B>MAX_GHOST_SIZE</B></PRE>
+<DL>
+<DD>Default maximum size for ghosted images.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_GHOST_ALPHA"><!-- --></A><H3>
+DEFAULT_GHOST_ALPHA</H3>
+<PRE>
+public static final float <B>DEFAULT_GHOST_ALPHA</B></PRE>
+<DL>
+<DD>Default transparency for ghosting.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.DEFAULT_GHOST_ALPHA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="UNKNOWN_MODIFIERS"><!-- --></A><H3>
+UNKNOWN_MODIFIERS</H3>
+<PRE>
+public static final int <B>UNKNOWN_MODIFIERS</B></PRE>
+<DL>
+<DD><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getModifiers()"><CODE>getModifiers()</CODE></A> returns this value when the current
+ modifiers state is unknown.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.UNKNOWN_MODIFIERS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="UNKNOWN_TRANSFERABLE"><!-- --></A><H3>
+UNKNOWN_TRANSFERABLE</H3>
+<PRE>
+public static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer">Transferable</A> <B>UNKNOWN_TRANSFERABLE</B></PRE>
+<DL>
+<DD><A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#getTransferable(java.awt.dnd.DropTargetEvent)"><CODE>getTransferable(java.awt.dnd.DropTargetEvent)</CODE></A> returns this value when 
+ the current <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> is unknown.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MOVE"><!-- --></A><H3>
+MOVE</H3>
+<PRE>
+protected static final int <B>MOVE</B></PRE>
+<DL>
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_MOVE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_MOVE</CODE></A>.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.MOVE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="COPY"><!-- --></A><H3>
+COPY</H3>
+<PRE>
+protected static final int <B>COPY</B></PRE>
+<DL>
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_COPY" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_COPY</CODE></A>.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.COPY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LINK"><!-- --></A><H3>
+LINK</H3>
+<PRE>
+protected static final int <B>LINK</B></PRE>
+<DL>
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_LINK" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_LINK</CODE></A>.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.LINK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="NONE"><!-- --></A><H3>
+NONE</H3>
+<PRE>
+protected static final int <B>NONE</B></PRE>
+<DL>
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A>.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.NONE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOVE_MASK"><!-- --></A><H3>
+MOVE_MASK</H3>
+<PRE>
+static final int <B>MOVE_MASK</B></PRE>
+<DL>
+<DD>Modifier mask for a user-requested move.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.MOVE_MASK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OSX"><!-- --></A><H3>
+OSX</H3>
+<PRE>
+static final boolean <B>OSX</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="COPY_MASK"><!-- --></A><H3>
+COPY_MASK</H3>
+<PRE>
+static final int <B>COPY_MASK</B></PRE>
+<DL>
+<DD>Modifier mask for a user-requested copy.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LINK_MASK"><!-- --></A><H3>
+LINK_MASK</H3>
+<PRE>
+static final int <B>LINK_MASK</B></PRE>
+<DL>
+<DD>Modifier mask for a user-requested link.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="KEY_MASK"><!-- --></A><H3>
+KEY_MASK</H3>
+<PRE>
+static final int <B>KEY_MASK</B></PRE>
+<DL>
+<DD>Modifier mask for any user-requested action.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.dnd.DragHandler.KEY_MASK">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DragHandler(java.awt.Component, int)"><!-- --></A><H3>
+DragHandler</H3>
+<PRE>
+protected <B>DragHandler</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</A>&nbsp;dragSource,
+                      int&nbsp;actions)</PRE>
+<DL>
+<DD>Enable drags from the given component, supporting the actions in
+ the given action mask.
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getModifiers()"><!-- --></A><H3>
+getModifiers</H3>
+<PRE>
+static int <B>getModifiers</B>()</PRE>
+<DL>
+<DD>Used to communicate modifier state to <A HREF="../../../../../com/sun/jna/platform/dnd/DropHandler.html" title="class in com.sun.jna.platform.dnd"><CODE>DropHandler</CODE></A>.  Note that
+ this field will only be accurate when a <A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd"><CODE>DragHandler</CODE></A> in
+ the same VM started the drag.  Otherwise, <A HREF="../../../../../com/sun/jna/platform/dnd/DragHandler.html#UNKNOWN_MODIFIERS"><CODE>UNKNOWN_MODIFIERS</CODE></A>
+ will be returned.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTransferable(java.awt.dnd.DropTargetEvent)"><!-- --></A><H3>
+getTransferable</H3>
+<PRE>
+public static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer">Transferable</A> <B>getTransferable</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DropTargetEvent.html?is-external=true" title="class or interface in java.awt.dnd">DropTargetEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD>Used to communicate the current <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> during a drag, 
+ if available.  Work around absence of access to the data when dragging 
+ pre-1.5.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="canDrag(java.awt.dnd.DragGestureEvent)"><!-- --></A><H3>
+canDrag</H3>
+<PRE>
+protected boolean <B>canDrag</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD>Override to control whether a drag is started.  The default 
+ implementation disallows the drag if the user is applying modifiers
+ and the user-requested action is not supported.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setModifiers(int)"><!-- --></A><H3>
+setModifiers</H3>
+<PRE>
+protected void <B>setModifiers</B>(int&nbsp;mods)</PRE>
+<DL>
+<DD>Update the modifiers hint.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTransferable(java.awt.dnd.DragGestureEvent)"><!-- --></A><H3>
+getTransferable</H3>
+<PRE>
+protected abstract <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer">Transferable</A> <B>getTransferable</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD>Override to provide an appropriate <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> representing
+ the data being dragged.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDragIcon(java.awt.dnd.DragGestureEvent, java.awt.Point)"><!-- --></A><H3>
+getDragIcon</H3>
+<PRE>
+protected <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A> <B>getDragIcon</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e,
+                           <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;srcOffset)</PRE>
+<DL>
+<DD>Override this to provide a custom image.  The <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing"><CODE>Icon</CODE></A>
+ returned by this method by default is <code>null</code>, which results
+ in no drag image.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>srcOffset</CODE> - set this to be the offset from the drag source 
+ component's upper left corner to the image's upper left corner.  
+ For example, when dragging a row from a list, the offset would be the 
+ row's bounding rectangle's (x,y) coordinate.<p>
+ The default value is (0,0), so if unchanged, the image is will
+ use the same origin as the drag source component.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dragStarted(java.awt.dnd.DragGestureEvent)"><!-- --></A><H3>
+dragStarted</H3>
+<PRE>
+protected void <B>dragStarted</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD>Override to perform any decoration of the target at the start of a drag, 
+ if desired.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dragGestureRecognized(java.awt.dnd.DragGestureEvent)"><!-- --></A><H3>
+dragGestureRecognized</H3>
+<PRE>
+public void <B>dragGestureRecognized</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD>Called when a user drag gesture is recognized.  This method is 
+ responsible for initiating the drag operation.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureListener.html?is-external=true#dragGestureRecognized(java.awt.dnd.DragGestureEvent)" title="class or interface in java.awt.dnd">dragGestureRecognized</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragGestureListener.html?is-external=true" title="class or interface in java.awt.dnd">DragGestureListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="scaleDragIcon(javax.swing.Icon, java.awt.Point)"><!-- --></A><H3>
+scaleDragIcon</H3>
+<PRE>
+protected <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A> <B>scaleDragIcon</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A>&nbsp;icon,
+                             <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</A>&nbsp;imageOffset)</PRE>
+<DL>
+<DD>Reduce the size of the given drag icon, if appropriate.  When using
+ a smaller drag icon, we also need to adjust the cursor offset within
+ the icon.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createDragImage(java.awt.GraphicsConfiguration, javax.swing.Icon)"><!-- --></A><H3>
+createDragImage</H3>
+<PRE>
+protected <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</A> <B>createDragImage</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/GraphicsConfiguration.html?is-external=true" title="class or interface in java.awt">GraphicsConfiguration</A>&nbsp;gc,
+                                <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/Icon.html?is-external=true" title="class or interface in javax.swing">Icon</A>&nbsp;icon)</PRE>
+<DL>
+<DD>Create an image from the given icon.  The image is provided to the
+ native handler if drag images are supported natively.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCursorForAction(int)"><!-- --></A><H3>
+getCursorForAction</H3>
+<PRE>
+protected <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Cursor.html?is-external=true" title="class or interface in java.awt">Cursor</A> <B>getCursorForAction</B>(int&nbsp;actualAction)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAcceptableDropAction(int)"><!-- --></A><H3>
+getAcceptableDropAction</H3>
+<PRE>
+protected int <B>getAcceptableDropAction</B>(int&nbsp;targetActions)</PRE>
+<DL>
+<DD>Returns the first available action supported by source and target.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDropAction(java.awt.dnd.DragSourceEvent)"><!-- --></A><H3>
+getDropAction</H3>
+<PRE>
+protected int <B>getDropAction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;ev)</PRE>
+<DL>
+<DD>Get the currently requested drop action.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="adjustDropAction(java.awt.dnd.DragSourceEvent)"><!-- --></A><H3>
+adjustDropAction</H3>
+<PRE>
+protected int <B>adjustDropAction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;ev)</PRE>
+<DL>
+<DD>Pick a different drop action if the target doesn't support the current
+ one and there are no modifiers.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="updateCursor(java.awt.dnd.DragSourceEvent)"><!-- --></A><H3>
+updateCursor</H3>
+<PRE>
+protected void <B>updateCursor</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;ev)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="actionString(int)"><!-- --></A><H3>
+actionString</H3>
+<PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>actionString</B>(int&nbsp;action)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dragDropEnd(java.awt.dnd.DragSourceDropEvent)"><!-- --></A><H3>
+dragDropEnd</H3>
+<PRE>
+public void <B>dragDropEnd</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDropEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDropEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true#dragDropEnd(java.awt.dnd.DragSourceDropEvent)" title="class or interface in java.awt.dnd">dragDropEnd</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dragEnter(java.awt.dnd.DragSourceDragEvent)"><!-- --></A><H3>
+dragEnter</H3>
+<PRE>
+public void <B>dragEnter</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true#dragEnter(java.awt.dnd.DragSourceDragEvent)" title="class or interface in java.awt.dnd">dragEnter</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dragMouseMoved(java.awt.dnd.DragSourceDragEvent)"><!-- --></A><H3>
+dragMouseMoved</H3>
+<PRE>
+public void <B>dragMouseMoved</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceMotionListener.html?is-external=true#dragMouseMoved(java.awt.dnd.DragSourceDragEvent)" title="class or interface in java.awt.dnd">dragMouseMoved</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceMotionListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceMotionListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dragOver(java.awt.dnd.DragSourceDragEvent)"><!-- --></A><H3>
+dragOver</H3>
+<PRE>
+public void <B>dragOver</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true#dragOver(java.awt.dnd.DragSourceDragEvent)" title="class or interface in java.awt.dnd">dragOver</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dragExit(java.awt.dnd.DragSourceEvent)"><!-- --></A><H3>
+dragExit</H3>
+<PRE>
+public void <B>dragExit</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true#dragExit(java.awt.dnd.DragSourceEvent)" title="class or interface in java.awt.dnd">dragExit</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dropActionChanged(java.awt.dnd.DragSourceDragEvent)"><!-- --></A><H3>
+dropActionChanged</H3>
+<PRE>
+public void <B>dropActionChanged</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceDragEvent.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceDragEvent</A>&nbsp;e)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true#dropActionChanged(java.awt.dnd.DragSourceDragEvent)" title="class or interface in java.awt.dnd">dropActionChanged</A></CODE> in interface <CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSourceListener.html?is-external=true" title="class or interface in java.awt.dnd">DragSourceListener</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/dnd/DropHandler.html" title="class in com.sun.jna.platform.dnd"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/dnd/DragHandler.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DragHandler.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

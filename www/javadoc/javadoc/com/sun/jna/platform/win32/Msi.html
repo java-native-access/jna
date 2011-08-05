@@ -1,0 +1,718 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Msi (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Msi (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/LMJoin.NETSETUP_JOIN_STATUS.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Netapi32.html" title="interface in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Msi.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Msi.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface Msi</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Msi</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+Provides access to the w32 MSI installer library.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_ABSENT">INSTALLSTATE_ABSENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The feature was uninstalled.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_ADVERTISED">INSTALLSTATE_ADVERTISED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The advertised feature.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_BADCONFIG">INSTALLSTATE_BADCONFIG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The configuration data is corrupt.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_BROKEN">INSTALLSTATE_BROKEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The feature is broken.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_DEFAULT">INSTALLSTATE_DEFAULT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The feature is installed in the default location: local or source.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_INCOMPLETE">INSTALLSTATE_INCOMPLETE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The installation is suspended or in progress.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_INVALIDARG">INSTALLSTATE_INVALIDARG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An invalid parameter was passed to the function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_LOCAL">INSTALLSTATE_LOCAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The feature was installed on the local drive.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_MOREDATA">INSTALLSTATE_MOREDATA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The return buffer is full.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_NOTUSED">INSTALLSTATE_NOTUSED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The component being requested is disabled on the computer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_REMOVED">INSTALLSTATE_REMOVED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The component is being removed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_SOURCE">INSTALLSTATE_SOURCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The feature must run from the source, CD-ROM, or network.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_SOURCEABSENT">INSTALLSTATE_SOURCEABSENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The feature must run from the source, and the source is unavailable.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_UNKNOWN">INSTALLSTATE_UNKNOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An unrecognized product or feature was specified.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Msi.html" title="interface in com.sun.jna.platform.win32">Msi</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#INSTANCE">INSTANCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#MsiEnumComponents(com.sun.jna.platform.win32.WinDef.DWORD, char[])">MsiEnumComponents</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;iComponentIndex,
+                  char[]&nbsp;lpComponentBuf)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The MsiEnumComponents function enumerates the installed components for all products.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#MsiGetComponentPath(java.lang.String, java.lang.String, char[], com.sun.jna.ptr.IntByReference)">MsiGetComponentPath</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szProduct,
+                    <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szComponent,
+                    char[]&nbsp;lpPathBuf,
+                    <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcchBuf)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The MsiGetComponentPath function returns the full path to an installed component.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#MsiGetProductCode(java.lang.String, char[])">MsiGetProductCode</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szComponent,
+                  char[]&nbsp;lpProductBuf)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The MsiGetProductCode function returns the product code of an application by using the component code of an
+ installed or advertised component of the application.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/Msi.html#MsiLocateComponent(java.lang.String, char[], com.sun.jna.ptr.IntByReference)">MsiLocateComponent</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szComponent,
+                   char[]&nbsp;lpPathBuf,
+                   <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcchBuf)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The MsiLocateComponent function returns the full path to an installed component without a product code.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="INSTANCE"><!-- --></A><H3>
+INSTANCE</H3>
+<PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/Msi.html" title="interface in com.sun.jna.platform.win32">Msi</A> <B>INSTANCE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_NOTUSED"><!-- --></A><H3>
+INSTALLSTATE_NOTUSED</H3>
+<PRE>
+static final int <B>INSTALLSTATE_NOTUSED</B></PRE>
+<DL>
+<DD>The component being requested is disabled on the computer.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_NOTUSED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_BADCONFIG"><!-- --></A><H3>
+INSTALLSTATE_BADCONFIG</H3>
+<PRE>
+static final int <B>INSTALLSTATE_BADCONFIG</B></PRE>
+<DL>
+<DD>The configuration data is corrupt.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_BADCONFIG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_INCOMPLETE"><!-- --></A><H3>
+INSTALLSTATE_INCOMPLETE</H3>
+<PRE>
+static final int <B>INSTALLSTATE_INCOMPLETE</B></PRE>
+<DL>
+<DD>The installation is suspended or in progress.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_INCOMPLETE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_SOURCEABSENT"><!-- --></A><H3>
+INSTALLSTATE_SOURCEABSENT</H3>
+<PRE>
+static final int <B>INSTALLSTATE_SOURCEABSENT</B></PRE>
+<DL>
+<DD>The feature must run from the source, and the source is unavailable.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_SOURCEABSENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_MOREDATA"><!-- --></A><H3>
+INSTALLSTATE_MOREDATA</H3>
+<PRE>
+static final int <B>INSTALLSTATE_MOREDATA</B></PRE>
+<DL>
+<DD>The return buffer is full.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_MOREDATA">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_INVALIDARG"><!-- --></A><H3>
+INSTALLSTATE_INVALIDARG</H3>
+<PRE>
+static final int <B>INSTALLSTATE_INVALIDARG</B></PRE>
+<DL>
+<DD>An invalid parameter was passed to the function.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_INVALIDARG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_UNKNOWN"><!-- --></A><H3>
+INSTALLSTATE_UNKNOWN</H3>
+<PRE>
+static final int <B>INSTALLSTATE_UNKNOWN</B></PRE>
+<DL>
+<DD>An unrecognized product or feature was specified.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_UNKNOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_BROKEN"><!-- --></A><H3>
+INSTALLSTATE_BROKEN</H3>
+<PRE>
+static final int <B>INSTALLSTATE_BROKEN</B></PRE>
+<DL>
+<DD>The feature is broken.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_BROKEN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_ADVERTISED"><!-- --></A><H3>
+INSTALLSTATE_ADVERTISED</H3>
+<PRE>
+static final int <B>INSTALLSTATE_ADVERTISED</B></PRE>
+<DL>
+<DD>The advertised feature.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_ADVERTISED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_REMOVED"><!-- --></A><H3>
+INSTALLSTATE_REMOVED</H3>
+<PRE>
+static final int <B>INSTALLSTATE_REMOVED</B></PRE>
+<DL>
+<DD>The component is being removed.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_REMOVED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_ABSENT"><!-- --></A><H3>
+INSTALLSTATE_ABSENT</H3>
+<PRE>
+static final int <B>INSTALLSTATE_ABSENT</B></PRE>
+<DL>
+<DD>The feature was uninstalled.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_ABSENT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_LOCAL"><!-- --></A><H3>
+INSTALLSTATE_LOCAL</H3>
+<PRE>
+static final int <B>INSTALLSTATE_LOCAL</B></PRE>
+<DL>
+<DD>The feature was installed on the local drive.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_LOCAL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_SOURCE"><!-- --></A><H3>
+INSTALLSTATE_SOURCE</H3>
+<PRE>
+static final int <B>INSTALLSTATE_SOURCE</B></PRE>
+<DL>
+<DD>The feature must run from the source, CD-ROM, or network.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_SOURCE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTALLSTATE_DEFAULT"><!-- --></A><H3>
+INSTALLSTATE_DEFAULT</H3>
+<PRE>
+static final int <B>INSTALLSTATE_DEFAULT</B></PRE>
+<DL>
+<DD>The feature is installed in the default location: local or source.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.Msi.INSTALLSTATE_DEFAULT">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="MsiGetComponentPath(java.lang.String, java.lang.String, char[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+MsiGetComponentPath</H3>
+<PRE>
+int <B>MsiGetComponentPath</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szProduct,
+                        <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szComponent,
+                        char[]&nbsp;lpPathBuf,
+                        <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcchBuf)</PRE>
+<DL>
+<DD>The MsiGetComponentPath function returns the full path to an installed component. If the key path for the
+ component is a registry key then the registry key is returned.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>szProduct</CODE> - Specifies the product code for the client product.<DD><CODE>szComponent</CODE> - Specifies the component ID of the component to be located.<DD><CODE>lpPathBuf</CODE> - Pointer to a variable that receives the path to the component. This parameter can be null. If the component is
+   a registry key, the registry roots are represented numerically. If this is a registry subkey path, there is a
+   backslash at the end of the Key Path. If this is a registry value key path, there is no backslash at the end.
+   For example, a registry path on a 32-bit operating system of HKEY_CURRENT_USER\SOFTWARE\Microsoft is returned
+   as "01:\SOFTWARE\Microsoft\".<DD><CODE>pcchBuf</CODE> - Pointer to a variable that specifies the size, in characters, of the buffer pointed to by the lpPathBuf
+   parameter. On input, this is the full size of the buffer, including a space for a terminating null character.
+   If the buffer passed in is too small, the count returned does not include the terminating null character.
+
+   If lpPathBuf is null, pcchBuf can be null.
+<DT><B>Returns:</B><DD>The MsiGetComponentPath function returns the following values.
+   INSTALLSTATE_NOTUSED - The component being requested is disabled on the computer.
+   INSTALLSTATE_ABSENT - The component is not installed.
+   INSTALLSTATE_INVALIDARG - One of the function parameters is invalid.
+   INSTALLSTATE_LOCAL - The component is installed locally.
+   INSTALLSTATE_SOURCE - The component is installed to run from source.
+   INSTALLSTATE_SOURCEABSENT - The component source is inaccessible.
+   INSTALLSTATE_UNKNOWN - The product code or component ID is unknown.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="MsiLocateComponent(java.lang.String, char[], com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+MsiLocateComponent</H3>
+<PRE>
+int <B>MsiLocateComponent</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szComponent,
+                       char[]&nbsp;lpPathBuf,
+                       <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcchBuf)</PRE>
+<DL>
+<DD>The MsiLocateComponent function returns the full path to an installed component without a product code. This
+ function attempts to determine the product using MsiGetProductCode, but is not guaranteed to find the correct
+ product for the caller. MsiGetComponentPath should always be called when possible.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>szComponent</CODE> - Specifies the component ID of the component to be located.<DD><CODE>lpPathBuf</CODE> - Pointer to a variable that receives the path to the component. The variable includes the terminating null
+   character.<DD><CODE>pcchBuf</CODE> - Pointer to a variable that specifies the size, in characters, of the buffer pointed to by the lpPathBuf
+   parameter. On input, this is the full size of the buffer, including a space for a terminating null character.
+   Upon success of the MsiLocateComponent function, the variable pointed to by pcchBuf contains the count of
+   characters not including the terminating null character. If the size of the buffer passed in is too small, the
+   function returns INSTALLSTATE_MOREDATA.
+
+   If lpPathBuf is null, pcchBuf can be null.
+<DT><B>Returns:</B><DD>The MsiGetComponentPath function returns the following values.
+   INSTALLSTATE_NOTUSED - The component being requested is disabled on the computer.
+   INSTALLSTATE_ABSENT - The component is not installed.
+   INSTALLSTATE_INVALIDARG - One of the function parameters is invalid.
+   INSTALLSTATE_LOCAL - The component is installed locally.
+   INSTALLSTATE_MOREDATA - The buffer provided was too small.
+   INSTALLSTATE_SOURCE - The component is installed to run from source.
+   INSTALLSTATE_SOURCEABSENT - The component source is inaccessible.
+   INSTALLSTATE_UNKNOWN - The product code or component ID is unknown.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="MsiGetProductCode(java.lang.String, char[])"><!-- --></A><H3>
+MsiGetProductCode</H3>
+<PRE>
+int <B>MsiGetProductCode</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;szComponent,
+                      char[]&nbsp;lpProductBuf)</PRE>
+<DL>
+<DD>The MsiGetProductCode function returns the product code of an application by using the component code of an
+ installed or advertised component of the application. During initialization, an application must determine under
+ which product code it has been installed or advertised.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>szComponent</CODE> - This parameter specifies the component code of a component that has been installed by the application. This
+   will be typically the component code of the component containing the executable file of the application.<DD><CODE>lpProductBuf</CODE> - Pointer to a buffer that receives the product code. This buffer must be 39 characters long. The first 38
+   characters are for the GUID, and the last character is for the terminating null character.
+<DT><B>Returns:</B><DD>ERROR_BAD_CONFIGURATION - The configuration data is corrupt.
+ ERROR_INSTALL_FAILURE - The product code could not be determined.
+ ERROR_INVALID_PARAMETER - An invalid parameter was passed to the function.
+ ERROR_SUCCESS - The function completed successfully.
+ ERROR_UNKNOWN_COMPONENT - The specified component is unknown.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="MsiEnumComponents(com.sun.jna.platform.win32.WinDef.DWORD, char[])"><!-- --></A><H3>
+MsiEnumComponents</H3>
+<PRE>
+int <B>MsiEnumComponents</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;iComponentIndex,
+                      char[]&nbsp;lpComponentBuf)</PRE>
+<DL>
+<DD>The MsiEnumComponents function enumerates the installed components for all products. This function retrieves one
+ component code each time it is called.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>iComponentIndex</CODE> - Specifies the index of the component to retrieve. This parameter should be zero for the first call to the
+   MsiEnumComponents function and then incremented for subsequent calls. Because components are not ordered, any
+   new component has an arbitrary index. This means that the function can return components in any order.<DD><CODE>lpComponentBuf</CODE> - Pointer to a buffer that receives the component code. This buffer must be 39 characters long. The first 38
+   characters are for the GUID, and the last character is for the terminating null character.
+<DT><B>Returns:</B><DD>ERROR_BAD_CONFIGURATION - The configuration data is corrupt.
+  ERROR_INVALID_PARAMETER - An invalid parameter was passed to the function.
+  ERROR_NO_MORE_ITEMS - There are no components to return.
+  ERROR_NOT_ENOUGH_MEMORY - The system does not have enough memory to complete the operation. Available with
+    Windows Server 2003.
+  ERROR_SUCCESS - A value was enumerated.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/LMJoin.NETSETUP_JOIN_STATUS.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Netapi32.html" title="interface in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/Msi.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Msi.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

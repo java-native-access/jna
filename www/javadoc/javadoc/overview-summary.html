@@ -1,0 +1,874 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Overview (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Overview (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Overview</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Package</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="index.html?overview-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="overview-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<CENTER>
+<H1>
+JNA API Documentation
+</H1>
+</CENTER>
+This document is the API specification for the
+<a href=http://jna.dev.java.net>JNA</a>
+library for simplified native library access for Java.
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#overview_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Java Native Access</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/package-summary.html">com.sun.jna</A></B></TD>
+<TD>Provides simplified native library access.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/ptr/package-summary.html">com.sun.jna.ptr</A></B></TD>
+<TD>Provides various native pointer-to-type (<code>&lt;type&gt; *</code>)
+representations.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/win32/package-summary.html">com.sun.jna.win32</A></B></TD>
+<TD>Provides type and function mappers required for standard APIs on the Windows platform.</TD>
+</TR>
+</TABLE>
+
+<P>
+&nbsp;
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Platform Utilities</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A></B></TD>
+<TD>Provides cross-platform utilities based on platform-specific libraries.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/platform/dnd/package-summary.html">com.sun.jna.platform.dnd</A></B></TD>
+<TD>Provides integrated, extended drag and drop functionality,
+allowing ghosted drag images to be used on all platforms.</TD>
+</TR>
+</TABLE>
+
+<P>
+&nbsp;
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Platform Specific</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/platform/mac/package-summary.html">com.sun.jna.platform.mac</A></B></TD>
+<TD>Provides common library mappings for the OS X platform.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/platform/unix/package-summary.html">com.sun.jna.platform.unix</A></B></TD>
+<TD>Provides common library mappings for Unix and X11-based platforms.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/platform/win32/package-summary.html">com.sun.jna.platform.win32</A></B></TD>
+<TD>Provides common library mappings for the Windows platform.</TD>
+</TR>
+</TABLE>
+
+<P>
+&nbsp;<A NAME="overview_description"><!-- --></A>
+<P>
+This document is the API specification for the
+<a href=http://jna.dev.java.net>JNA</a>
+library for simplified native library access for Java.
+<p>
+<a href=#navbar_top>Top</a>&nbsp;
+<a href=http://jna.dev.java.net>JNA Home</a>&nbsp;
+<a href=index.html target=_top>API w/FRAMES</a>&nbsp;
+<p>
+
+<a name="overview"></a>
+<h1>Java Native Access (JNA)</h1>
+JNA provides simplified access to native library methods without requiring any
+additional JNI or native code.
+<p>
+
+<a name="toc"></a>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#library-mapping">Library Mapping</a>
+<li><a href="#function-mapping">Function Mapping</a>
+<li><a href="#marshalling">Type Mapping</a>
+  <ul>
+  <li><a href="#marshalling">Primitive Types</a>
+  <li><a href="#pointers">Pointers</a>
+  <li><a href="#strings">Strings</a>
+  <li><a href="#wide-strings">Wide (UNICODE) Strings</a>
+  <li><a href="#arrays">Primitive Arrays</a>
+  <li><a href="#buffers">Buffers/Memory Blocks</a>
+  <li><a href="#callbacks">Callbacks/Function Pointers</a>
+  <li><a href="#varargs">Variable Argument Lists (Varargs)</a>
+  <li><a href="#structures">Structures</a>
+  <li><a href="#unions">Unions</a>
+  <li><a href="#java-objects">Java Objects</a>
+  <li><a href="#last-error">Last Error</a>
+  </ul>
+<li><a href="#invocation-mapping">Invocation Mapping</a>
+<li><a href="#global-data">Library Global Data</a>
+<li><a href="#crash-protection">VM Crash Protection</a>
+<li><a href="#performance">Performance</a>
+</ul>
+
+<p>
+<a href=#navbar_top>Top</a>
+<a name="library-mapping"></a>
+<h2>Library Mapping</h2>
+When you've determined which shared library holds the methods to which you
+need access, create a class corresponding to that library.  For
+example, a mapping for the C library itself would look like one of the
+following:<br> 
+<blockquote><code><pre>
+// Alternative 1: interface-mapped class, dynamically load the C library
+public interface CLibrary extends Library {
+    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+}
+
+// Alternative 2: direct-mapped class
+public class CLibrary {
+    static {
+        Native.register("c");
+    }
+}
+</pre></code></blockquote>
+The <code>String</code> passed to the
+<A HREF="com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class)"><CODE>Native.loadLibrary(String,Class)</CODE></A>
+(or <A HREF="com/sun/jna/NativeLibrary.html#getInstance(java.lang.String)"><CODE>NativeLibrary.getInstance(String)</CODE></A>) method
+is the undecorated name of the shared library file.  Here are some examples of
+library name mappings.<p>  
+<style type="text/css">
+table.styled { border-collapse:collapse; background-color:#EAEAEA; }
+td { padding-left: 10px; padding-right: 10px; }
+blockquote { background-color:#EAEAEA; }
+</style>
+<table border=1 borderColor=white class=styled>
+<tr><td><b>OS</b></td><td><b>Library Name</b></td><td><b>String</b></td></tr>
+<tr><td>Windows</td><td>user32.dll</td><td>user32</td></tr>
+<tr><td>Linux</td><td>libX11.so</td><td>X11</td></tr>
+<tr><td>Mac OS X</td><td>libm.dylib</td><td>m</td></tr>
+<tr><td>Mac OS X Framework</td><td>/System/Library/Frameworks/Carbon.framework/Carbon</td><td>Carbon</td></tr>
+<tr><td>Any Platform</td><td>&lt;current process&gt;</td><td><code>null</code></td></tr>
+</table>
+<p>
+Any given native library with a unique filesystem path is represented by a single instance of <A HREF="com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> and obtained via <A HREF="com/sun/jna/NativeLibrary.html#getInstance(java.lang.String)"><CODE>NativeLibrary.getInstance(String)</CODE></A>.  The native library will be unloaded when no longer referenced by any Java code.
+<p>
+If the library name is <code>null</code>, your mappings will apply to the
+current process instead of a separately loaded library.  This may help avoid
+conflicts if there are several incompatible versions of a library available.
+<p>
+The search path for loaded native libraries may be modified by
+setting <code>jna.library.path</code> and a few other properties.  See <A HREF="com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> for details. 
+<p>
+<a href="#toc">Table of Contents</a>
+<a name="function-mapping"></a>
+<h2>Function Mapping</h2>
+Function names are mapped directly from their Java interface name to the
+symbol exported by the native library.  For instance, the function to convert
+an ASCII string into an integer would look like this:<br>
+<blockquote><code><pre>
+public interface CLibrary extends Library {
+    int atol(String s);
+}
+</pre></code></blockquote>
+Alternatively, you can map directly to a declared native method:<br>
+<blockquote><code><pre>
+public class CLibrary {
+    public static native int atol(String s);
+}
+</pre></code></blockquote>
+
+If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry (<A HREF="com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><CODE>Library.OPTION_FUNCTION_MAPPER</CODE></A>/<A HREF="com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A>) in the options <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util"><CODE>Map</CODE></A> passed to <A HREF="com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary()</CODE></A> which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
+An instance of the <A HREF="com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> class is obtained through the <A HREF="com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> instance corresponding to the containing native library.  This <A HREF="com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> instance handles argument marshalling and delegation to the native function. 
+
+<!-- TODO: when to use primitive array vs NIO Buffer vs Memory -->
+
+<p>
+<a href="#toc">Table of Contents</a>
+<a name="marshalling"></a>
+<h2>Marshalling/Unmarshalling (Java/Native Type Conversions)</h2>
+Java types must be chosen to match native types of the same size.  Following are the types supported by the JNA library.<p>
+<center>
+<table border=1 borderColor=white class=styled width="100%">
+<tr><td><b>C Type</b></td><td><b>Native Representation</b></td><td><b>Java Type</b></td></tr>
+<tr><td>char</td><td>8-bit integer</td><td>byte</td></tr>
+<tr><td>wchar_t</td><td>platform-dependent</td><td>char</td></tr>
+<tr><td>short</td><td>16-bit integer</td><td>short</td></tr>
+<tr><td>int</td><td>32-bit integer</td><td>int</td></tr>
+<tr><td>int</td><td>boolean flag</td><td>boolean</td></tr>
+<tr><td>enum</td><td>enumeration type</td><td>int (usually)</td></tr>
+<tr><td>long long, __int64</td><td>64-bit integer</td><td>long</td></tr>
+<tr><td>float</td><td>32-bit floating point</td><td>float</td></tr>
+<tr><td>double</td><td>64-bit floating point</td><td>double</td></tr>
+<tr><td>pointer (e.g. void*)</td><td>platform-dependent (32- or 64-bit pointer to memory)</td><td><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A><br>
+<A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A></td></tr>
+<tr><td>pointer (e.g. void*),<br>array</td><td>32- or 64-bit pointer to memory (argument/return)<br>contiguous memory (struct member)</td><td>&lt;P&gt;[] (array of primitive type)</td></tr>
+<tr><td colspan='3'  style='padding:20px 5px'>In addition to the above types, which are supported at the native layer, the JNA Java library automatically handles the following types.  All but <code>NativeMapped</code> and <code>NativeLong</code> are converted to <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> before being passed to the native layer.</td></tr>
+<tr><td>long</td><td>platform-dependent (32- or 64-bit integer)</td><td><A HREF="com/sun/jna/NativeLong.html" title="class in com.sun.jna"><CODE>NativeLong</CODE></A></td></tr>
+<tr><td>const char*</td><td>NUL-terminated array (native encoding or <code>jna.encoding</code>)</td><td><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang"><CODE>String</CODE></A></td></tr>
+<tr><td>const wchar_t*</td><td>NUL-terminated array (unicode)</td><td><A HREF="com/sun/jna/WString.html" title="class in com.sun.jna"><CODE>WString</CODE></A></td></tr>
+<tr><td>char**</td><td>NULL-terminated array of C strings</td><td><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang"><CODE>String[]</CODE></A></td></tr>
+<tr><td>wchar_t**</td><td>NULL-terminated array of wide C strings</td><td><A HREF="com/sun/jna/WString.html" title="class in com.sun.jna"><CODE>WString[]</CODE></A></td></tr>
+<tr><td>void**</td><td>NULL-terminated array of pointers</td><td><A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer[]</CODE></A></td></tr>
+<tr><td>struct*<br>struct</td><td>pointer to struct (argument or return) (<A HREF="com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><CODE>or explicitly</CODE></A>)<br>struct by value (member of struct) (<A HREF="com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>or explicitly</CODE></A>)</td><td><A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A></td></tr>
+<tr><td>union</td><td>same as <code>Structure</code></td><td><A HREF="com/sun/jna/Union.html" title="class in com.sun.jna"><CODE>Union</CODE></A></td></tr>
+<tr><td>struct[]</td><td>array of structs, contiguous in memory</td><td><A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure[]</CODE></A></td></tr>
+<tr><td>void (*FP)()</td><td>function pointer (Java or native)</td><td><A HREF="com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A></td></tr>
+<tr><td>pointer (&lt;T&gt; *)</td><td>same as <code>Pointer</code></td><td><A HREF="com/sun/jna/PointerType.html" title="class in com.sun.jna"><CODE>PointerType</CODE></A></td></tr>
+<tr><td>other</td><td>integer type</td><td><A HREF="com/sun/jna/IntegerType.html" title="class in com.sun.jna"><CODE>IntegerType</CODE></A></td></tr>
+<tr><td>other</td><td>custom mapping, depends on definition</td><td><A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A></td></tr>
+</table>
+</center>
+<p>
+<b>NOTES</b>
+<ul>
+<li>Unsigned values may be passed by assigning the corresponding
+  two's-complement representation to the signed type of the same size.  
+<li>Java arrays of primitive type may be wrapped by <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> in
+  order to access a subset of the array (changing the effective size and/or
+  offest).
+<li>Java arrays of primitive type are only valid for use within the scope of a
+  single call.  If the native code keeps a reference to the memory, use <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> instead.
+<li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
+<li>Bitfields must be manually packed into an integer type.  
+<li>All other types must eventually be converted to one of the types in the this table.  Methods with arguments or return values of types other than these must either use types deriving from <A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A> or supply type conversion information for the unsupported types.  
+<li>Type mapping behavior may be customized by providing a <A HREF="com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the <A HREF="com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><CODE>Library.OPTION_TYPE_MAPPER</CODE></A> option when initializing a library interface.  See <A HREF="com/sun/jna/win32/W32APITypeMapper.html" title="class in com.sun.jna.win32"><CODE>W32APITypeMapper</CODE></A> for an example which provides custom conversion of boolean and String types.  You are free to use whatever types are convenient in your defined interfaces, but all custom types <em>must</em> provide a mapping to one of the basic or derived types listed above.
+<li>Type mapping may also be customized on a per-class basis for user-defined types by making the user-defined type implement the <A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A> interface.  
+<li><code>Structure</code> and <code>Union</code> are <em>not</em> converted to <code>Pointer</code> when passed by value.
+</ul>
+
+<a name="arrays"></a>
+<h3>Primitive Arrays</h3>
+Java primitive arrays may be used wherever a native primitive array is used.  Any changes made by the native code to an array during a function call will be reflected in the Java array.  If the native code will use the array outside of the function call where the array is provided, <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> should be used instead (see <a href="#buffers">Buffers</a>).
+<p>
+To map a native multi-dimensional array, use a single-dimensional Java array with a number of elements equivalent to the full native array, e.g.<br>
+<blockquote><code><pre>
+// Original C code
+#define DIM0 2
+#define DIM1 3
+int array[DIM0][DIM1];
+int i,j;
+
+for (i=0;i < DIM0;i++) {
+  for (j=0;j < DIM1;j++) {
+    array[i][j] = i*DIM1 + j;
+  }
+}
+
+// Equivalent JNA code
+final int DIM0 = 2;
+final int DIM1 = 3;
+int[] array = new int[6];
+for (int i=0;i < DIM0;i++) {
+  for (int j=0;j < DIM1;j++) {
+    array[i*DIM1 + j] = i*DIM1 + j;                   
+  }                   
+}
+</pre></code></blockquote>
+
+<a name="pointers"></a>
+<h3>Pointers</h3>
+Pointers may be used as an opaque type from which other data types may be extracted.  The Pointer type is a reasonable fallback for any pointer-based type (including arrays).  The user is generally not allowed to construct a Pointer de novo. 
+<p>
+Type-safe pointers may be defined by deriving from the <A HREF="com/sun/jna/PointerType.html" title="class in com.sun.jna"><CODE>PointerType</CODE></A> class.  Any such user-defined type will be treated the same as a <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+
+<a name="strings"></a>
+<h3>Strings</h3>
+Java <code>String</code>s perform the same function as the native types
+<code>const char*</code> and <code>const wchar_t*</code>
+(<code>NUL</code>-terminated arrays).  In order to use the proper type when
+calling a native function, we have to introduce some sort of annotation to
+identify how the java  <code>String</code> should be converted.
+
+Java <code>String</code>s are normally converted to <code>char*</code>
+since this is the most common usage of strings.  Strings are automatically
+converted to a <code>NUL</code>-terminated array of <code>char</code> across
+the function call.  Returned <code>char*</code> values are automatically
+copied into a <code>String</code> if the method signature returns
+<code>String</code> (<code>strdup</code>, for example).
+<p>
+If the native method returns char* and actually allocates
+memory, a return type of <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> should be used to avoid
+leaking the memory.  It is then up to you to take the necessary steps to free
+the allocated memory.
+<p>
+When converting Java unicode characters into an array of <code>char</code>,
+the default platform encoding is used, unless the system property
+<code>jna.encoding</code> is set to a valid encoding.  This property may be
+set to "UTF8", for example, to ensure all native strings use that encoding.
+<p>
+Arrays of <code>String</code> passed to native code (either as a function argument or callback return value) will be converted into a NULL-terminated array of <code>char*</code> (or <code>wchar_t*</code> in the case of an array of <code>WString</code>.
+
+<a name="wide-strings"></a>
+<h3>Wide Strings</h3>
+The <A HREF="com/sun/jna/WString.html" title="class in com.sun.jna"><CODE>WString</CODE></A> class is used to identify wide character strings.  Unicode values are copied directly from the Java <code>char</code> array to a native <code>wchar_t</code> array.
+<p>
+
+<a name="buffers"></a>
+<h3>Buffers/Memory Blocks</h3>
+Use arrays to represent buffers of primitive types passed to a function for use only during the function invocation.  A native method cannot return a Java array, since there is no canonical way to indicate the intended length of the returned array.  Instead, use one of the array access methods in the Pointer class, supplying the length of the returned array.<p>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A>s may also be used as a memory buffer input
+argument; direct byte buffers can often provide much improved performance over
+primitive arrays.  A pointer provided by native code may be converted to a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> by calling <A HREF="com/sun/jna/Pointer.html#getByteBuffer(long, long)"><CODE>Pointer.getByteBuffer(long, long)</CODE></A>.
+<p>
+If you need to pass in a subset of a primitive array, you can do so by
+wrapping it in a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> subclass, such as <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio"><CODE>ByteBuffer</CODE></A>, using the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true#wrap(byte[], int, int)" title="class or interface in java.nio"><CODE>ByteBuffer.wrap(byte[],int,int)</CODE></A> method.  Wrapping an array in a
+buffer also allows you to pass only a subset of a Java array to the native
+function. 
+
+<a name="callbacks"></a>
+<h3>Callbacks (Function Pointers)</h3>
+JNA supports supplying Java callbacks to native code.  You must define an
+interface that extends the <A HREF="com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> interface, and define
+a single <code>callback</code> method with a signature that matches the
+function pointer required by the native code.  The name of the method
+may be something other than "callback" only if there is only a single method
+in the interface which extends Callback or the class which implements
+<A HREF="com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A>.  The arguments and return value follow the same rules
+as for a 
+direct function invocation. 
+<p>
+If the callback returns a <code>String</code> or <code>String[]</code>, the
+returned memory will be valid until the returned object is GC'd.
+<p>
+If your native code initializes function pointers within a struct, JNA will
+automatically generate an <code>Callback</code> instance matching the declared
+type.  This enables you to easily call the function supplied by native code
+using proper Java syntax.
+<blockquote><code><pre>
+// Original C code
+struct _functions {
+  int (*open)(const char*,int);
+  int (*close)(int);
+};
+
+// Equivalent JNA mapping
+public class Functions extends Structure {
+  public static interface OpenFunc extends Callback {
+    int invoke(String name, int options);
+  }
+  public static interface CloseFunc extends Callback {
+    int invoke(int fd);
+  }
+  public OpenFunc open;
+  public CloseFunc close;
+}
+...
+Functions funcs = new Functions();
+lib.init(funcs);
+int fd = funcs.open.invoke("myfile", 0);
+funcs.close.invoke(fd);
+</pre></code></blockquote>
+
+Callbacks may also be used as return values.  Native function pointers are wrapped in a proxy implementing the declared Callback type, to facilitate calling from Java.  
+<blockquote><code><pre>
+// Original C code
+typedef void (*sig_t)(int);
+sig_t signal(int signal, sig_t sigfunc);
+
+// Equivalent JNA mapping
+public interface CLibrary extends Library {
+    public interface SignalFunction extends Callback {
+        void invoke(int signal);
+    }
+    SignalFunction signal(int signal, SignalFunction func);
+}
+</pre></code></blockquote>
+
+<a name="varargs"></a>
+<h3>Varargs</h3>
+The C varargs function definition may be mapped to a Java varargs method definition.  For example,
+<blockquote><code><pre>
+// Original C code
+extern int printf(const char* fmt, ...);
+
+// Equivalent JNA mapping
+interface CLibrary extends Library {
+    int printf(String fmt, ...);
+}
+</pre></code></blockquote>
+
+<a name="structures"></a>
+<h3>Structures</h3>
+
+The Java <A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> represents a native <code>struct</code>.  By default, this type is treated as a pointer to structure (<code>struct *</code>) on the native side when used as a parameter or return value.  When used as a structure field, the structure is interpreted as by value.  To force the complementary interpretation, the tagging interfaces <A HREF="com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>Structure.ByValue</CODE></A> and <A HREF="com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><CODE>Structure.ByReference</CODE></A> are provided.<p>
+
+<h4>Pointer-to-Structure Arguments</h4>
+To pass a pointer to a structure as an argument, simply use the Java structure
+subclass, and a pointer to native data memory will be used.  The contents of
+the structure will be passed to the function and updated when the function
+returns.  Structures are packed according to the default alignment rules for
+the platform's native C <code>struct</code>s.  
+<blockquote><code><pre>
+// Original C code
+typedef struct _Point {
+  int x, y;
+} Point;
+
+Point* translate(Point* pt, int dx, int dy);
+
+// Equivalent JNA mapping
+class Point extends Structure { public int x, y; }
+Point translate(Point pt, int x, int y);
+...
+Point pt = new Point();
+Point result = translate(pt, 100, 100);
+</pre></code></blockquote>
+
+<a name="byvalue"></a>
+<h4>Structure by Value Arguments/Return</h4>
+To pass a structure by value, first define the structure, then define an empty
+class from that which implements <A HREF="com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>Structure.ByValue</CODE></A>.  Use
+the <code>ByValue</code> class as the argument or return type.<p>
+<blockquote><code><pre>
+// Original C code
+typedef struct _Point {
+  int x, y;
+} Point;
+
+Point translate(Point pt, int dx, int dy);
+
+// Equivalent JNA mapping
+class Point extends Structure {
+    public static class ByValue extends Point implements Structure.ByValue { }
+    public int x, y;
+}
+Point.ByValue translate(Point.ByValue pt, int x, int y);
+...
+Point.ByValue pt = new Point.ByValue();
+Point result = translate(pt, 100, 100);
+</pre></code></blockquote>
+
+
+<h4>Array-of-Structure Arguments</h4>
+To pass an array of structures, simply use a Java array of the desired
+structure type.  If the array is uninitialized, it will be auto-initialized
+prior to the function call.<p>
+<blockquote><code><pre>
+// Original C code
+void get_devices(struct Device[], int size);
+
+// Equivalent JNA mapping
+int size = ...
+Device[] devices = new Device[size];
+lib.get_devices(devices, devices.length);
+</pre></code></blockquote>
+
+Alternatively, you can reallocate a single Structure instance into an array as
+follows:<br>
+<blockquote><code><pre>
+Device dev = new Device();
+// As an array of Structure
+Structure[] structs = dev.toArray(size);
+// As an array of Device
+Device[] devices = (Device[])dev.toArray(size);
+</pre></code></blockquote>
+
+<h4>Returning an Array of <code>struct</code></h4>
+Declare the method as returning a <A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> of the
+appropriate type, then invoke <A HREF="com/sun/jna/Structure.html#toArray(int)"><CODE>Structure.toArray(int)</CODE></A> to
+convert to an array of initialized structures of the appropriate size.  Note
+that your <A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> class must have a no-args constructor,
+and you are responsible for freeing the returned memory if applicable in
+whatever way is appropriate for the called function.<p>
+<blockquote><code><pre>
+// Original C code
+struct Display* get_displays(int* pcount);
+void free_displays(struct Display* displays);
+
+// Equivalent JNA mapping
+Display get_displays(IntByReference pcount);
+void free_displays(Display[] displays);
+...
+IntByReference pcount = new IntByReference();
+Display d = lib.get_displays(pcount);
+Display[] displays = (Display[])d.toArray(pcount.getValue());
+...
+lib.free_displays(displays);
+</pre></code></blockquote>
+
+<h4>Nested Structure Definitions</h4>
+Nested structures are treated as consecutive memory (as opposed to pointers to
+structures).  For example:<br>
+<blockquote><code><pre>
+// Original C code
+typedef struct _Point {
+  int x, y;
+} Point;
+
+typedef struct _Line {
+  Point start;
+  Point end;
+} Line;
+
+// Equivalent JNA mapping
+class Point extends Structure {
+  public int x, y;
+}
+
+class Line extends Structure {
+  public Point start;
+  public Point end;
+}
+</pre></code></blockquote>
+
+Explicit initialization of nested structures is not required; the objects will
+be created as needed and properly mapped to the parent structure's memory.<p>
+
+If you need a pointer to a structure within your structure, you can use the
+<A HREF="com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><CODE>Structure.ByReference</CODE></A> tagging interface to indicate the
+field should be treated as a pointer instead of inlining the full structure.
+<blockquote><code><pre>
+// Original C code
+typedef struct _Line2 {
+  Point* p1;
+  Point* p2;
+} Line2;
+
+// Equivalent JNA mapping
+class Point extends Structure {
+    public static class ByReference extends Point implements Structure.ByReference { }
+    public int x, y;
+}
+class Line2 extends Structure {
+  public Point.ByReference p1;
+  public Point.ByReference p2;
+}
+</pre></code></blockquote>
+
+The more general case is just a pointer to memory.  This allows you to define
+the field without necessarily defining the inner structure itself, similar to
+declaring a struct without defining it in C:<br>
+
+<blockquote><code><pre>
+// Original C code
+typedef struct _Line2 {
+  Point* p1;
+  Point* p2;
+} Line2;
+
+// Equivalent JNA mapping
+class Line2 extends Structure {
+  public Pointer p1;
+  public Pointer p2;
+}
+
+Line2 line2;
+Point p1, p2;
+...
+line2.p1 = p1.getPointer();
+line2.p2 = p2.getPointer();
+</pre></code></blockquote>
+
+<h4>Nested arrays</h4>
+Structures with nested arrays require an explicit constructor to ensure the
+structure size is properly calculated.
+<blockquote><code><pre>
+typedef struct _Buffer {
+  char buf1[32];
+  char buf2[1024];
+} Buffer;
+
+class Buffer extends Structure {
+  public byte[] buf1 = new byte[32];
+  public byte[] buf2 = new byte[1024];
+}
+</pre></code></blockquote>
+
+Calculation of the native size of the structure is deferred until the
+structure is actually used.
+
+<h4>Variable-sized structures</h4>
+Structures with variable size, or with primitive array elements, for example:<br>
+<blockquote><code><pre>
+// Original C code
+typedef struct _Header {
+  int flags;
+  int buf_length;
+  char buffer[1];
+} Header;
+</pre></code></blockquote>
+
+require a constructor which establishes the required size for the structure
+and initializes things appropriately.  For example:<br>
+
+<blockquote><code><pre>
+// Equivalent JNA mapping
+class Header extends Structure {
+  public int flags;
+  public int buf_length;
+  public byte[] buffer;
+  public Header(int bufferSize) {
+    buffer = new byte[bufferSize];
+    buf_length = buffer.length;
+    allocateMemory();
+  }
+}
+</pre></code></blockquote>
+
+<h4>Volatile fields</h4>
+Normally, JNA will write the entire contents of a <code>Structure</code> prior
+to a function call and read back from native memory after the function call.
+Sometimes a structure field is not intended for client use, gets modified
+asynchronously by hardware, or otherwise is effectively read-only.
+If you expect any fields of the structure to be modified by any agent outside
+your Java program, you should mark the field <code>volatile</code>.  This
+prevents JNA from automatically updating the native memory from the Java
+value.  You can still force an update of the native memory from the Java value
+by calling <A HREF="com/sun/jna/Structure.html#writeField(java.lang.String)"><CODE>Structure.writeField(String)</CODE></A> for the field in
+question. 
+<blockquote><code><pre>
+class Data extends com.sun.jna.Structure {
+  public volatile int refCount;
+  public int value;
+}
+...
+Data data = new Data();
+</pre></code></blockquote>
+In the above example, the field <code>refCount</code> will only be written
+to native memory based on the Java value with a call to
+<code>data.writeField("refCount")</code>.  To obtain the current state of
+native memory, call <A HREF="com/sun/jna/Structure.html#read()"><CODE>Structure.read()</CODE></A> (to update the entire
+structure) or <A HREF="com/sun/jna/Structure.html#readField(java.lang.String)"><CODE>data.readField("refCount")</CODE></A> (to update just the <code>refCount</code> field). 
+
+<h4>Read-only fields</h4>
+If you want to absolutely prevent Java code from modifying
+a <code>Structure</code>'s contents, you may mark its
+fields <code>final</code>.  Structure reads can still overwrite the values
+based on native memory contents, but no Java code will be able to modify any
+of the fields.
+<blockquote><code><pre>
+class ReadOnly extends com.sun.jna.Structure {
+  // Do not initialize the field here, or the compiler will inline the value!
+  public final int refCount;
+  {
+    // Initialize fields here, to ensure the values are not inlined
+    refCount = -1;
+    read();
+    // refCount might now have a different value
+  }
+}
+...
+ReadOnly ro = new ReadOnly();
+// Will not compile!
+ro.refCount = 0;
+</pre></code></blockquote>
+
+Make certain you attend to the following:
+<ol>
+<li>All final fields should be initialized in the constructor.
+<li>If you call Structure.read() from anywhere but the constructor, keep in
+  mind that the compiler and/or hotspot will be assuming field values will not
+  change across that function call.
+</ol>
+
+<a name="unions"></a>
+<h3>Unions</h3>
+Unions are a special type of Structure.  Each declared field within the union
+overlays the same space in native memory.  When writing a union to native
+memory, you <em>must</em> specify which field is to be written by supplying
+the desired field's class to the <A HREF="com/sun/jna/Union.html#setType(java.lang.Class)"><CODE>Union.setType(java.lang.Class)</CODE></A>
+method.  On read, all non-pointer-based fields will be initialized from native
+memory.  Structure, String, and WString members will <em>not</em> be
+initialized unless they are selected via <A HREF="com/sun/jna/Union.html#setType(java.lang.Class)"><CODE>Union.setType(java.lang.Class)</CODE></A>.
+
+<a name="last-error"></a>
+<h3>Obtaining "last" error</h3>
+If a function sets the system error property
+(<code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> or <code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>), the error code will be thrown as a <A HREF="com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><CODE>LastErrorException</CODE></A> if you declare the exception in your JNA mapping.  Alternatively, you can use <A HREF="com/sun/jna/Native.html#getLastError()"><CODE>Native.getLastError()</CODE></A> to retrieve it, providing that <A HREF="com/sun/jna/Native.html#setPreserveLastError(boolean)"><CODE>Native.setPreserveLastError(boolean)</CODE></A> has been called with a <code>true</code> value.  Throwing an exception is preferred since it has better performance.
+
+<a name="java-objects"></a>
+<h3>Arbitrary Java Object arguments/return values</h3>
+In some cases, such as invoking native VM functions directly, it is necessary
+to pass Java objects to the native methods.  By default, JNA disallows using
+any Java object that is not explicitly supported unless it derives from
+<A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A>, because it is generally unnecessary to use
+such objects and usually signals a programmer error.  To avoid errors flagging
+the use of Java objects, use the library load option <A HREF="com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS"><CODE>Library.OPTION_ALLOW_OBJECTS</CODE></A> with Boolean.TRUE.
+<p>
+<a href="#toc">Table of Contents</a>
+<a name="invocation-mapping"></a>
+<h2>Invocation Mapping</h2>
+Sometimes native functions exist only as C preprocessor macros or as inline functions.  If you need to do more than simply change the name of the invoked function (which can be handled via <a href="#function-mapping">Function Mapping</a>), an <A HREF="com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> allows you to arbitrarily reconfigure the function invocation, including changing the method name and reordering, adding, or removing arguments.  See the <A HREF="com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna"><CODE>InvocationMapper</CODE></A> documentation for details.
+
+<p>
+<a href="#toc">Table of Contents</a>
+<a name="global-data"></a>
+<h2>Library Global Data</h2>
+The method <A HREF="com/sun/jna/NativeLibrary.html#getGlobalVariableAddress(java.lang.String)"><CODE>NativeLibrary.getGlobalVariableAddress(java.lang.String)</CODE></A> may be used to obtain the address of global variables as a <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.  Pointer methods may then be used to read or write the value as appropriate for the variable type.
+
+<p>
+<a href="#toc">Table of Contents</a>
+<a name="crash-protection"></a>
+<h2>VM Crash Protection</h2>
+It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call <A HREF="com/sun/jna/Native.html#setProtected(boolean)"><CODE>Native.setProtected(true)</CODE></A></code>.  Not all platforms support this protection; if not, the value of <A HREF="com/sun/jna/Native.html#isProtected()"><CODE>Native.isProtected()</CODE></A> will remain <code>false</code>.<p>
+NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
+ 
+
+<p>
+<a href="#toc">Table of Contents</a>
+<a name="performance"></a>
+<h2>Performance</h2>
+<h3>Use direct mapping of methods</h3>
+Using <a href="#direct-mapping">direct mapping</a> of methods makes native
+calls more efficiently than does interface mapping.  Direct mapping does not
+support varargs calls or arrays of Pointer, String, or WString as an argument
+or return value.
+<h3>Avoid type mapping</h3>
+Type mapping incurs additional overhead on each function call.  You can avoid
+this by ensuring that your arguments and/or return types are already primitive
+types.
+<h3>Pointer/Array/Buffer Variants</h3>
+Java primitive arrays are generally slower to use than direct memory
+(Pointer, Memory, or ByReference) or NIO buffers, since the Java memory has to
+be pinned and possibly copied across the native call, since the Java array is not necessarily contiguously allocated.
+<h3>Large Structures</h3>
+Structures are normally written to native memory before and read back from
+native memory after a function call.  With very large structures, there can be
+a performance hit using reflection to walk through all the fields.  Structure
+auto-synch can be disabled by calling
+<A HREF="com/sun/jna/Structure.html#setAutoSynch(boolean)"><CODE>Structure.setAutoSynch(boolean)</CODE></A> with a <code>false</code> parameter.
+It is then up to you to use <A HREF="com/sun/jna/Structure.html#readField(java.lang.String)"><CODE>Structure.readField(String)</CODE></A>
+and <A HREF="com/sun/jna/Structure.html#writeField(java.lang.String)"><CODE>Structure.writeField(String)</CODE></A> or <A HREF="com/sun/jna/Structure.html#writeField(java.lang.String, java.lang.Object)"><CODE>Structure.writeField(String,Object)</CODE></A> to synch with just the fields
+of interest.
+<P>
+
+<P>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Overview</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Package</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="index.html?overview-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="overview-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

@@ -1,0 +1,395 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+com.sun.jna (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="com.sun.jna (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV PACKAGE&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/platform/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package com.sun.jna
+</H2>
+Provides simplified native library access.
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#package_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A></B></TD>
+<TD>Tagging interface to indicate the library or callback uses an alternate
+ calling convention.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna">Callback</A></B></TD>
+<TD>All callback definitions must derive from this interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Callback.UncaughtExceptionHandler.html" title="interface in com.sun.jna">Callback.UncaughtExceptionHandler</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/CallbackProxy.html" title="interface in com.sun.jna">CallbackProxy</A></B></TD>
+<TD>Placeholder proxy interface to allow an InvocationHandler to convert
+ arguments/return values on callback methods.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/FromNativeConverter.html" title="interface in com.sun.jna">FromNativeConverter</A></B></TD>
+<TD>Define conversion from a native type to the appropriate Java type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Function.PostCallRead.html" title="interface in com.sun.jna">Function.PostCallRead</A></B></TD>
+<TD>Any argument which implements this interface will have the
+ <A HREF="../../../com/sun/jna/Function.PostCallRead.html#read()"><CODE>Function.PostCallRead.read()</CODE></A> method called immediately after function invocation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna">FunctionMapper</A></B></TD>
+<TD>Provides mapping of Java method names to native function names.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna">InvocationMapper</A></B></TD>
+<TD>Provide a method for overriding how a given function is invoked.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TD>
+<TD>Derive from this interface for all native library definitions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Native.ffi_callback.html" title="interface in com.sun.jna">Native.ffi_callback</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></B></TD>
+<TD>Provide conversion for a Java type to and from a native type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A></B></TD>
+<TD>Tagging interface to indicate the address of an instance of the
+ Structure type is to be used within a <code>Structure</code> definition
+ rather than nesting the full Structure contents.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna">Structure.ByValue</A></B></TD>
+<TD>Tagging interface to indicate the value of an instance of the
+ <code>Structure</code> type is to be used in function invocations rather
+ than its address.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/ToNativeConverter.html" title="interface in com.sun.jna">ToNativeConverter</A></B></TD>
+<TD>Define conversion from a Java type to its corresponding native type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/TypeConverter.html" title="interface in com.sun.jna">TypeConverter</A></B></TD>
+<TD>Convenience interface for bidirectional conversion.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A></B></TD>
+<TD>Provides converters for conversion to and from native types.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/CallbackParameterContext.html" title="class in com.sun.jna">CallbackParameterContext</A></B></TD>
+<TD>Provide argument conversion context for a callback invocation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/CallbackReference.html" title="class in com.sun.jna">CallbackReference</A></B></TD>
+<TD>Provides a reference to an association between a native callback closure
+ and a Java <A HREF="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> closure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/CallbackResultContext.html" title="class in com.sun.jna">CallbackResultContext</A></B></TD>
+<TD>Conversion context from a Java <A HREF="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> result to a native value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/DefaultTypeMapper.html" title="class in com.sun.jna">DefaultTypeMapper</A></B></TD>
+<TD>Provide custom mappings to and from native types.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/FromNativeContext.html" title="class in com.sun.jna">FromNativeContext</A></B></TD>
+<TD>Provides context for converting a native value into a Java type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A></B></TD>
+<TD>An abstraction for a native function pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/FunctionParameterContext.html" title="class in com.sun.jna">FunctionParameterContext</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/FunctionResultContext.html" title="class in com.sun.jna">FunctionResultContext</A></B></TD>
+<TD>Provide result conversion context for a function call.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/IntegerType.html" title="class in com.sun.jna">IntegerType</A></B></TD>
+<TD>Represents a native integer value, which may have a platform-specific size
+ (e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A></B></TD>
+<TD>A <code>Pointer</code> to memory obtained from the native heap via a 
+ call to <code>malloc</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/MethodParameterContext.html" title="class in com.sun.jna">MethodParameterContext</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/MethodResultContext.html" title="class in com.sun.jna">MethodResultContext</A></B></TD>
+<TD>Provide result conversion context for a function call that is called via
+ a Library interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Native.html" title="class in com.sun.jna">Native</A></B></TD>
+<TD>Provides generation of invocation plumbing for a defined native
+ library interface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A></B></TD>
+<TD>Provides management of native library resources.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</A></B></TD>
+<TD>Represents the <code>long</code> C data type, which may be 32 or 64 bits
+ on *nix-based systems.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/NativeMappedConverter.html" title="class in com.sun.jna">NativeMappedConverter</A></B></TD>
+<TD>Provides type conversion for instances of <A HREF="../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/NativeString.html" title="class in com.sun.jna">NativeString</A></B></TD>
+<TD>Provides a temporary allocation of an immutable C string 
+ (<code>const char*</code> or <code>const wchar_t*</code>) for use when 
+ converting a Java String into a native memory function argument.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A></B></TD>
+<TD>Provide simplified platform information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></B></TD>
+<TD>An abstraction for a native pointer data type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/PointerType.html" title="class in com.sun.jna">PointerType</A></B></TD>
+<TD>Type representing a type-safe native pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/StringArray.html" title="class in com.sun.jna">StringArray</A></B></TD>
+<TD>Handle native array of <code>char*</code> or <code>wchar_t*</code> type 
+ by managing allocation/disposal of native strings within an array of 
+ pointers.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TD>
+<TD>Represents a native structure with a Java peer class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Structure.FFIType.html" title="class in com.sun.jna">Structure.FFIType</A></B></TD>
+<TD>This class auto-generates an ffi_type structure appropriate for a given
+ structure for use by libffi.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Structure.FFIType.size_t.html" title="class in com.sun.jna">Structure.FFIType.size_t</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/StructureReadContext.html" title="class in com.sun.jna">StructureReadContext</A></B></TD>
+<TD>Provide native to Java type conversion context for a <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> 
+ field read.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/StructureWriteContext.html" title="class in com.sun.jna">StructureWriteContext</A></B></TD>
+<TD>Provide Java to native type conversion context for a <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> 
+ field write.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/ToNativeContext.html" title="class in com.sun.jna">ToNativeContext</A></B></TD>
+<TD>Context for converting a Java value to a native one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/Union.html" title="class in com.sun.jna">Union</A></B></TD>
+<TD>Represents a native union.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A></B></TD>
+<TD>Simple wrapper class to identify a wide string argument or return type.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Exception Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../com/sun/jna/LastErrorException.html" title="class in com.sun.jna">LastErrorException</A></B></TD>
+<TD>Exception representing a non-zero error code returned in either
+ <code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> 
+ or <code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<A NAME="package_description"><!-- --></A><H2>
+Package com.sun.jna Description
+</H2>
+
+<P>
+<!-- One sentence summary -->
+Provides simplified native library access.  See the <a href="../../../overview-summary.html#overview_description">overview</a> for usage details.
+<P>
+
+<P>
+<DL>
+</DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV PACKAGE&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/platform/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

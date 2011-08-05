@@ -1,0 +1,493 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+WinUser.KEYBDINPUT (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="WinUser.KEYBDINPUT (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KBDLLHOOKSTRUCT.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.ByReference.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinUser.KEYBDINPUT.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_com.sun.jna.Structure">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Class WinUser.KEYBDINPUT</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">com.sun.jna.Structure</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.win32.WinUser.KEYBDINPUT</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.ByReference.html" title="class in com.sun.jna.platform.win32">WinUser.KEYBDINPUT.ByReference</A></DD>
+</DL>
+<DL>
+<DT><B>Enclosing interface:</B><DD><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public static class <B>WinUser.KEYBDINPUT</B><DT>extends <A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></DL>
+</PRE>
+
+<P>
+Contains information about a simulated keyboard event.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.ByReference.html" title="class in com.sun.jna.platform.win32">WinUser.KEYBDINPUT.ByReference</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna">Structure.ByValue</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.ULONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.ULONG_PTR</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#dwExtraInfo">dwExtraInfo</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An additional value associated with the keystroke.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#dwFlags">dwFlags</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies various aspects of a keystroke.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#KEYEVENTF_EXTENDEDKEY">KEYEVENTF_EXTENDEDKEY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If specified, the scan code was preceded by a prefix byte that has the value 0xE0 (224).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#KEYEVENTF_KEYUP">KEYEVENTF_KEYUP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If specified, the key is being released.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#KEYEVENTF_SCANCODE">KEYEVENTF_SCANCODE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If specified, wScan identifies the key and wVk is ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#KEYEVENTF_UNICODE">KEYEVENTF_UNICODE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If specified, the system synthesizes a VK_PACKET keystroke.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#time">time</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The time stamp for the event, in milliseconds.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#wScan">wScan</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A hardware scan code for the key.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#wVk">wVk</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A virtual-key code.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_DEFAULT">ALIGN_DEFAULT</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_GNUC">ALIGN_GNUC</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_MSVC">ALIGN_MSVC</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_NONE">ALIGN_NONE</A>, <A HREF="../../../../../com/sun/jna/Structure.html#CALCULATE_SIZE">CALCULATE_SIZE</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#WinUser.KEYBDINPUT()">WinUser.KEYBDINPUT</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html#WinUser.KEYBDINPUT(com.sun.jna.Pointer)">WinUser.KEYBDINPUT</A></B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;memory)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Structure.html#allocateMemory()">allocateMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#allocateMemory(int)">allocateMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoAllocate(int)">autoAllocate</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoRead()">autoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoRead(com.sun.jna.Structure[])">autoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoWrite()">autoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoWrite(com.sun.jna.Structure[])">autoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#cacheTypeInfo(com.sun.jna.Pointer)">cacheTypeInfo</A>, <A HREF="../../../../../com/sun/jna/Structure.html#clear()">clear</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ensureAllocated()">ensureAllocated</A>, <A HREF="../../../../../com/sun/jna/Structure.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getAutoRead()">getAutoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getAutoWrite()">getAutoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getFieldOrder()">getFieldOrder</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getFields(boolean)">getFields</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getNativeAlignment(java.lang.Class, java.lang.Object, boolean)">getNativeAlignment</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getPointer()">getPointer</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getStructAlignment()">getStructAlignment</A>, <A HREF="../../../../../com/sun/jna/Structure.html#hashCode()">hashCode</A>, <A HREF="../../../../../com/sun/jna/Structure.html#newInstance(java.lang.Class)">newInstance</A>, <A HREF="../../../../../com/sun/jna/Structure.html#read()">read</A>, <A HREF="../../../../../com/sun/jna/Structure.html#readField(java.lang.String)">readField</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAlignType(int)">setAlignType</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAutoRead(boolean)">setAutoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAutoSynch(boolean)">setAutoSynch</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAutoWrite(boolean)">setAutoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])">setFieldOrder</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setTypeMapper(com.sun.jna.TypeMapper)">setTypeMapper</A>, <A HREF="../../../../../com/sun/jna/Structure.html#size()">size</A>, <A HREF="../../../../../com/sun/jna/Structure.html#sortFields(java.util.List, java.util.List)">sortFields</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toArray(int)">toArray</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toArray(com.sun.jna.Structure[])">toArray</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toString()">toString</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toString(boolean)">toString</A>, <A HREF="../../../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer)">useMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer, int)">useMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#write()">write</A>, <A HREF="../../../../../com/sun/jna/Structure.html#writeField(java.lang.String)">writeField</A>, <A HREF="../../../../../com/sun/jna/Structure.html#writeField(java.lang.String, java.lang.Object)">writeField</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="KEYEVENTF_EXTENDEDKEY"><!-- --></A><H3>
+KEYEVENTF_EXTENDEDKEY</H3>
+<PRE>
+public static final int <B>KEYEVENTF_EXTENDEDKEY</B></PRE>
+<DL>
+<DD>If specified, the scan code was preceded by a prefix byte that has the value 0xE0 (224).
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.KEYBDINPUT.KEYEVENTF_EXTENDEDKEY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="KEYEVENTF_KEYUP"><!-- --></A><H3>
+KEYEVENTF_KEYUP</H3>
+<PRE>
+public static final int <B>KEYEVENTF_KEYUP</B></PRE>
+<DL>
+<DD>If specified, the key is being released. If not specified, the key is being pressed.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.KEYBDINPUT.KEYEVENTF_KEYUP">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="KEYEVENTF_UNICODE"><!-- --></A><H3>
+KEYEVENTF_UNICODE</H3>
+<PRE>
+public static final int <B>KEYEVENTF_UNICODE</B></PRE>
+<DL>
+<DD>If specified, the system synthesizes a VK_PACKET keystroke. The wVk parameter must be zero. This flag can only be
+ combined with the KEYEVENTF_KEYUP flag. For more information, see the Remarks section.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.KEYBDINPUT.KEYEVENTF_UNICODE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="KEYEVENTF_SCANCODE"><!-- --></A><H3>
+KEYEVENTF_SCANCODE</H3>
+<PRE>
+public static final int <B>KEYEVENTF_SCANCODE</B></PRE>
+<DL>
+<DD>If specified, wScan identifies the key and wVk is ignored.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.KEYBDINPUT.KEYEVENTF_SCANCODE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="wVk"><!-- --></A><H3>
+wVk</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A> <B>wVk</B></PRE>
+<DL>
+<DD>A virtual-key code. The code must be a value in the range 1 to 254. If the dwFlags member specifies
+ KEYEVENTF_UNICODE, wVk must be 0.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="wScan"><!-- --></A><H3>
+wScan</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A> <B>wScan</B></PRE>
+<DL>
+<DD>A hardware scan code for the key. If dwFlags specifies KEYEVENTF_UNICODE, wScan specifies a Unicode character
+ which is to be sent to the foreground application.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwFlags"><!-- --></A><H3>
+dwFlags</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwFlags</B></PRE>
+<DL>
+<DD>Specifies various aspects of a keystroke. This member can be certain combinations of the following values.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="time"><!-- --></A><H3>
+time</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>time</B></PRE>
+<DL>
+<DD>The time stamp for the event, in milliseconds. If this parameter is zero, the system will provide its own time
+ stamp.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwExtraInfo"><!-- --></A><H3>
+dwExtraInfo</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.ULONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.ULONG_PTR</A> <B>dwExtraInfo</B></PRE>
+<DL>
+<DD>An additional value associated with the keystroke. Use the GetMessageExtraInfo function to obtain this
+ information.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="WinUser.KEYBDINPUT()"><!-- --></A><H3>
+WinUser.KEYBDINPUT</H3>
+<PRE>
+public <B>WinUser.KEYBDINPUT</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="WinUser.KEYBDINPUT(com.sun.jna.Pointer)"><!-- --></A><H3>
+WinUser.KEYBDINPUT</H3>
+<PRE>
+public <B>WinUser.KEYBDINPUT</B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;memory)</PRE>
+<DL>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KBDLLHOOKSTRUCT.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.ByReference.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinUser.KEYBDINPUT.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_com.sun.jna.Structure">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>
