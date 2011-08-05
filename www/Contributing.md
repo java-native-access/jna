@@ -69,9 +69,7 @@ Windows system mappings live in the `com.sun.jna.platform.win32` namespace. Ther
        * @author dblock[at]dblock.org
        */
       public interface ShlObj extends StdCallLibrary {
-
         public static final int CSIDL_DESKTOP = 0x0000; // desktop
-
       }
 
 * Utilities that wrap Win32 functions into more user-friendly implementations are defined in `Util` classes.
@@ -81,11 +79,9 @@ Windows system mappings live in the `com.sun.jna.platform.win32` namespace. Ther
        * @author dblock[at]dblock.org
        */
       public abstract class WinspoolUtil {
-
         public static PRINTER_INFO_1[] getPrinterInfo1() {
           ...
         }
-
       }
 
 Javadoc Pages
