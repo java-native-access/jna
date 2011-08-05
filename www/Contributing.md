@@ -47,42 +47,42 @@ Contributing Windows Win32 API Mappings
 
 Windows system mappings live in the `com.sun.jna.platform.win32` namespace. There're several rules of thumb to follow for mapping Win32 functions.
 
-* DLL functions are mapped into Unicode interfaces of the same name, like this
+DLL functions are mapped into Unicode interfaces of the same name, like this
 
-      /**
-       * Advapi32.dll Interface.
-       * @author dblock[at]dblock.org
-       */
-      public interface Advapi32 extends StdCallLibrary {
-        Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32", 
-          Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
+        /**
+         * Advapi32.dll Interface.
+         * @author dblock[at]dblock.org
+         */
+        public interface Advapi32 extends StdCallLibrary {
+          Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32", 
+            Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
 
           // function definitions go here
 
-      }
+        }
 
-* Constants are defined in files matching the Platform SDK headers. For example, `CSIDL_DESKTOP` is defined in `shlobj.h` and is therefore declared in `ShlObj.java`.
+Constants are defined in files matching the Platform SDK headers. For example, `CSIDL_DESKTOP` is defined in `shlobj.h` and is therefore declared in `ShlObj.java`.
 
-      /**
-       * Ported from ShlObj.h.
-       * Microsoft Windows SDK 6.0A.
-       * @author dblock[at]dblock.org
-       */
-      public interface ShlObj extends StdCallLibrary {
-        public static final int CSIDL_DESKTOP = 0x0000; // desktop
-      }
+        /**
+         * Ported from ShlObj.h.
+         * Microsoft Windows SDK 6.0A.
+         * @author dblock[at]dblock.org
+         */
+        public interface ShlObj extends StdCallLibrary {
+          public static final int CSIDL_DESKTOP = 0x0000; // desktop
+        }
 
 * Utilities that wrap Win32 functions into more user-friendly implementations are defined in `Util` classes.
 
-      /**
-       * Winspool Utility API.
-       * @author dblock[at]dblock.org
-       */
-      public abstract class WinspoolUtil {
-        public static PRINTER_INFO_1[] getPrinterInfo1() {
-          ...
+        /**
+         * Winspool Utility API.
+         * @author dblock[at]dblock.org
+         */
+        public abstract class WinspoolUtil {
+          public static PRINTER_INFO_1[] getPrinterInfo1() {
+            
+          }
         }
-      }
 
 Javadoc Pages
 =============
