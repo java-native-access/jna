@@ -96,6 +96,6 @@ Javadoc pages are published with [gh-pages](http://pages.github.com/) to a root 
     git fetch origin
     git checkout -b gh-pages origin/gh-pages
     ... update javadoc content ...
-    git push origin master:gh-pages
+    git push origin
 
 
