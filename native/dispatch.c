@@ -1119,7 +1119,7 @@ JNIEXPORT jchar JNICALL Java_com_sun_jna_Native_getChar
 
 /*
  * Class:     Native
- * Method:    _getNative
+ * Method:    _getPointer
  * Signature: (J)LPointer;
  */
 JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
