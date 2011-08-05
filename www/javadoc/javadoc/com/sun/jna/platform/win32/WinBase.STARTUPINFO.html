@@ -1,0 +1,735 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+WinBase.STARTUPINFO (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="WinBase.STARTUPINFO (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinBase.STARTUPINFO.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_com.sun.jna.Structure">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Class WinBase.STARTUPINFO</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">com.sun.jna.Structure</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.win32.WinBase.STARTUPINFO</B>
+</PRE>
+<DL>
+<DT><B>Enclosing class:</B><DD><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.html" title="class in com.sun.jna.platform.win32">WinBase</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public static class <B>WinBase.STARTUPINFO</B><DT>extends <A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></DL>
+</PRE>
+
+<P>
+Specifies the window station, desktop, standard handles, and appearance of the main
+ window for a process at creation time.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>, <A HREF="../../../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna">Structure.ByValue</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#cb">cb</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The size of the structure, in bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#cbReserved2">cbReserved2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reserved for use by the C Run-time; must be zero.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwFillAttribute">dwFillAttribute</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USEFILLATTRIBUTE, this member is the
+ initial text and background colors if a new console window is created
+ in a console application.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwFlags">dwFlags</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A bit field that determines whether certain STARTUPINFO members are
+ used when the process creates a window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwX">dwX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USEPOSITION, this member is the x offset
+ of the upper left corner of a window if a new window is created, in
+ pixels.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwXCountChars">dwXCountChars</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+ created in a console process, this member specifies the screen buffer
+ width, in character columns.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwXSize">dwXSize</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USESIZE, this member is the width of the
+ window if a new window is created, in pixels.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwY">dwY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USEPOSITION, this member is the y offset
+ of the upper left corner of a window if a new window is created, in
+ pixels.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwYCountChars">dwYCountChars</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+ created in a console process, this member specifies the screen buffer
+ height, in character rows.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#dwYSize">dwYSize</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USESIZE, this member is the height of the
+ window if a new window is created, in pixels.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#hStdError">hStdError</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+ standard error handle for the process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#hStdInput">hStdInput</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+ standard input handle for the process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#hStdOutput">hStdOutput</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+ standard output handle for the process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#lpDesktop">lpDesktop</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the desktop, or the name of both the desktop and window station for this process.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#lpReserved">lpReserved</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reserved; must be NULL.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/ptr/ByteByReference.html" title="class in com.sun.jna.ptr">ByteByReference</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#lpReserved2">lpReserved2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reserved for use by the C Run-time; must be NULL.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#lpTitle">lpTitle</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For console processes, this is the title displayed in the title bar
+ if a new console window is created.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#wShowWindow">wShowWindow</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If dwFlags specifies STARTF_USESHOWWINDOW, this member can be any of
+ the values that can be specified in the nCmdShow parameter for the
+ ShowWindow function, except for SW_SHOWDEFAULT.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_DEFAULT">ALIGN_DEFAULT</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_GNUC">ALIGN_GNUC</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_MSVC">ALIGN_MSVC</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ALIGN_NONE">ALIGN_NONE</A>, <A HREF="../../../../../com/sun/jna/Structure.html#CALCULATE_SIZE">CALCULATE_SIZE</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#WinBase.STARTUPINFO()">WinBase.STARTUPINFO</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Structure.html#allocateMemory()">allocateMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#allocateMemory(int)">allocateMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoAllocate(int)">autoAllocate</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoRead()">autoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoRead(com.sun.jna.Structure[])">autoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoWrite()">autoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#autoWrite(com.sun.jna.Structure[])">autoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#cacheTypeInfo(com.sun.jna.Pointer)">cacheTypeInfo</A>, <A HREF="../../../../../com/sun/jna/Structure.html#clear()">clear</A>, <A HREF="../../../../../com/sun/jna/Structure.html#ensureAllocated()">ensureAllocated</A>, <A HREF="../../../../../com/sun/jna/Structure.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getAutoRead()">getAutoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getAutoWrite()">getAutoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getFieldOrder()">getFieldOrder</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getFields(boolean)">getFields</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getNativeAlignment(java.lang.Class, java.lang.Object, boolean)">getNativeAlignment</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getPointer()">getPointer</A>, <A HREF="../../../../../com/sun/jna/Structure.html#getStructAlignment()">getStructAlignment</A>, <A HREF="../../../../../com/sun/jna/Structure.html#hashCode()">hashCode</A>, <A HREF="../../../../../com/sun/jna/Structure.html#newInstance(java.lang.Class)">newInstance</A>, <A HREF="../../../../../com/sun/jna/Structure.html#read()">read</A>, <A HREF="../../../../../com/sun/jna/Structure.html#readField(java.lang.String)">readField</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAlignType(int)">setAlignType</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAutoRead(boolean)">setAutoRead</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAutoSynch(boolean)">setAutoSynch</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setAutoWrite(boolean)">setAutoWrite</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])">setFieldOrder</A>, <A HREF="../../../../../com/sun/jna/Structure.html#setTypeMapper(com.sun.jna.TypeMapper)">setTypeMapper</A>, <A HREF="../../../../../com/sun/jna/Structure.html#size()">size</A>, <A HREF="../../../../../com/sun/jna/Structure.html#sortFields(java.util.List, java.util.List)">sortFields</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toArray(int)">toArray</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toArray(com.sun.jna.Structure[])">toArray</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toString()">toString</A>, <A HREF="../../../../../com/sun/jna/Structure.html#toString(boolean)">toString</A>, <A HREF="../../../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer)">useMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer, int)">useMemory</A>, <A HREF="../../../../../com/sun/jna/Structure.html#write()">write</A>, <A HREF="../../../../../com/sun/jna/Structure.html#writeField(java.lang.String)">writeField</A>, <A HREF="../../../../../com/sun/jna/Structure.html#writeField(java.lang.String, java.lang.Object)">writeField</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="cb"><!-- --></A><H3>
+cb</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>cb</B></PRE>
+<DL>
+<DD>The size of the structure, in bytes.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="lpReserved"><!-- --></A><H3>
+lpReserved</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>lpReserved</B></PRE>
+<DL>
+<DD>Reserved; must be NULL.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="lpDesktop"><!-- --></A><H3>
+lpDesktop</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>lpDesktop</B></PRE>
+<DL>
+<DD>The name of the desktop, or the name of both the desktop and window station for this process.
+ A backslash in the string indicates that the string includes both the desktop and window
+ station names. For more information, see Thread Connection to a Desktop.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="lpTitle"><!-- --></A><H3>
+lpTitle</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>lpTitle</B></PRE>
+<DL>
+<DD>For console processes, this is the title displayed in the title bar
+ if a new console window is created. If NULL, the name of the
+ executable file is used as the window title instead. This parameter
+ must be NULL for GUI or console processes that do not create a new
+ console window.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwX"><!-- --></A><H3>
+dwX</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwX</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USEPOSITION, this member is the x offset
+ of the upper left corner of a window if a new window is created, in
+ pixels. Otherwise, this member is ignored.
+ 
+ The offset is from the upper left corner of the screen. For GUI
+ processes, the specified position is used the first time the new
+ process calls CreateWindow to create an overlapped window if the x
+ parameter of CreateWindow is CW_USEDEFAULT.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwY"><!-- --></A><H3>
+dwY</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwY</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USEPOSITION, this member is the y offset
+ of the upper left corner of a window if a new window is created, in
+ pixels. Otherwise, this member is ignored.
+ 
+ The offset is from the upper left corner of the screen. For GUI
+ processes, the specified position is used the first time the new
+ process calls CreateWindow to create an overlapped window if the y
+ parameter of CreateWindow is CW_USEDEFAULT.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwXSize"><!-- --></A><H3>
+dwXSize</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwXSize</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USESIZE, this member is the width of the
+ window if a new window is created, in pixels. Otherwise, this member
+ is ignored.
+ 
+ For GUI processes, this is used only the first time the new process
+ calls CreateWindow to create an overlapped window if the nWidth
+ parameter of CreateWindow is CW_USEDEFAULT.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwYSize"><!-- --></A><H3>
+dwYSize</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwYSize</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USESIZE, this member is the height of the
+ window if a new window is created, in pixels. Otherwise, this member
+ is ignored.
+ 
+ For GUI processes, this is used only the first time the new process
+ calls CreateWindow to create an overlapped window if the nHeight
+ parameter of CreateWindow is CW_USEDEFAULT.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwXCountChars"><!-- --></A><H3>
+dwXCountChars</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwXCountChars</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+ created in a console process, this member specifies the screen buffer
+ width, in character columns. Otherwise, this member is ignored.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwYCountChars"><!-- --></A><H3>
+dwYCountChars</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwYCountChars</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+ created in a console process, this member specifies the screen buffer
+ height, in character rows. Otherwise, this member is ignored.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwFillAttribute"><!-- --></A><H3>
+dwFillAttribute</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>dwFillAttribute</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USEFILLATTRIBUTE, this member is the
+ initial text and background colors if a new console window is created
+ in a console application. Otherwise, this member is ignored.
+ 
+ This value can be any combination of the following values:
+ FOREGROUND_BLUE, FOREGROUND_GREEN, FOREGROUND_RED,
+ FOREGROUND_INTENSITY, BACKGROUND_BLUE, BACKGROUND_GREEN,
+ BACKGROUND_RED, and BACKGROUND_INTENSITY. For example, the following
+ combination of values produces red text on a white background:
+ 
+ FOREGROUND_RED| BACKGROUND_RED| BACKGROUND_GREEN| BACKGROUND_BLUE
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="dwFlags"><!-- --></A><H3>
+dwFlags</H3>
+<PRE>
+public int <B>dwFlags</B></PRE>
+<DL>
+<DD>A bit field that determines whether certain STARTUPINFO members are
+ used when the process creates a window.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="wShowWindow"><!-- --></A><H3>
+wShowWindow</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A> <B>wShowWindow</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USESHOWWINDOW, this member can be any of
+ the values that can be specified in the nCmdShow parameter for the
+ ShowWindow function, except for SW_SHOWDEFAULT. Otherwise, this
+ member is ignored.
+ 
+ For GUI processes, the first time ShowWindow is called, its nCmdShow
+ parameter is ignored wShowWindow specifies the default value. In
+ subsequent calls to ShowWindow, the wShowWindow member is used if the
+ nCmdShow parameter of ShowWindow is set to SW_SHOWDEFAULT.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="cbReserved2"><!-- --></A><H3>
+cbReserved2</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A> <B>cbReserved2</B></PRE>
+<DL>
+<DD>Reserved for use by the C Run-time; must be zero.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="lpReserved2"><!-- --></A><H3>
+lpReserved2</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/ptr/ByteByReference.html" title="class in com.sun.jna.ptr">ByteByReference</A> <B>lpReserved2</B></PRE>
+<DL>
+<DD>Reserved for use by the C Run-time; must be NULL.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="hStdInput"><!-- --></A><H3>
+hStdInput</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>hStdInput</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+ standard input handle for the process. If STARTF_USESTDHANDLES is not
+ specified, the default for standard input is the keyboard buffer.
+ 
+ If dwFlags specifies STARTF_USEHOTKEY, this member specifies a hotkey
+ value that is sent as the wParam parameter of a WM_SETHOTKEY message
+ to the first eligible top-level window created by the application
+ that owns the process. If the window is created with the WS_POPUP
+ window style, it is not eligible unless the WS_EX_APPWINDOW extended
+ window style is also set. For more information, see CreateWindowEx.
+ 
+ Otherwise, this member is ignored.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="hStdOutput"><!-- --></A><H3>
+hStdOutput</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>hStdOutput</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+ standard output handle for the process. Otherwise, this member is
+ ignored and the default for standard output is the console window's
+ buffer.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="hStdError"><!-- --></A><H3>
+hStdError</H3>
+<PRE>
+public <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>hStdError</B></PRE>
+<DL>
+<DD>If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+ standard error handle for the process. Otherwise, this member is
+ ignored and the default for standard error is the console window's
+ buffer.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="WinBase.STARTUPINFO()"><!-- --></A><H3>
+WinBase.STARTUPINFO</H3>
+<PRE>
+public <B>WinBase.STARTUPINFO</B>()</PRE>
+<DL>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="WinBase.STARTUPINFO.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_com.sun.jna.Structure">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

@@ -1,0 +1,724 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Union (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Union (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/WString.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Union.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Union.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna</FONT>
+<BR>
+Class Union</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">com.sun.jna.Structure</A>
+      <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.Union</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_RECORD.UNION.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_RECORD.UNION</A>, <A HREF="../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.UNION.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO.UNION</A>, <A HREF="../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.UNION.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.UNION</A>, <A HREF="../../../com/sun/jna/platform/win32/WinUser.INPUT.INPUT_UNION.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT.INPUT_UNION</A>, <A HREF="../../../com/sun/jna/platform/unix/X11.XClientMessageEvent.Data.html" title="class in com.sun.jna.platform.unix">X11.XClientMessageEvent.Data</A>, <A HREF="../../../com/sun/jna/platform/unix/X11.XEvent.html" title="class in com.sun.jna.platform.unix">X11.XEvent</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>Union</B><DT>extends <A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></DL>
+</PRE>
+
+<P>
+Represents a native union.  When writing to native memory, the field
+ corresponding to the type passed to <A HREF="../../../com/sun/jna/Union.html#setType(java.lang.Class)"><CODE>setType(java.lang.Class)</CODE></A> will be written
+ to native memory.  Upon reading from native memory, Structure, String,
+ or WString fields will <em>not</em> be initialized unless they are 
+ the current field as identified by a call to <A HREF="../../../com/sun/jna/Union.html#setType(java.lang.Class)"><CODE>setType(java.lang.Class)</CODE></A>.  The current
+ field is always unset by default to avoid accidentally attempting to read
+ a field that is not valid.  In the case of a String, for instance, an 
+ invalid pointer may result in a memory fault when attempting to initialize
+ the String.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>, <A HREF="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna">Structure.ByValue</A>, <A HREF="../../../com/sun/jna/Structure.FFIType.html" title="class in com.sun.jna">Structure.FFIType</A>, <A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#biggestField">biggestField</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../com/sun/jna/Structure.html#ALIGN_DEFAULT">ALIGN_DEFAULT</A>, <A HREF="../../../com/sun/jna/Structure.html#ALIGN_GNUC">ALIGN_GNUC</A>, <A HREF="../../../com/sun/jna/Structure.html#ALIGN_MSVC">ALIGN_MSVC</A>, <A HREF="../../../com/sun/jna/Structure.html#ALIGN_NONE">ALIGN_NONE</A>, <A HREF="../../../com/sun/jna/Structure.html#CALCULATE_SIZE">CALCULATE_SIZE</A>, <A HREF="../../../com/sun/jna/Structure.html#isPPC">isPPC</A>, <A HREF="../../../com/sun/jna/Structure.html#isSPARC">isSPARC</A>, <A HREF="../../../com/sun/jna/Structure.html#MAX_GNUC_ALIGNMENT">MAX_GNUC_ALIGNMENT</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union()">Union</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a Union whose size and alignment will be calculated 
+ automatically.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(com.sun.jna.Pointer)">Union</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a Union of the given size, using default alignment.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(com.sun.jna.Pointer, int)">Union</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+      int&nbsp;alignType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a Union of the given size and alignment type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(com.sun.jna.Pointer, int, com.sun.jna.TypeMapper)">Union</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+      int&nbsp;alignType,
+      <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A>&nbsp;mapper)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a Union of the given size and alignment type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#Union(com.sun.jna.TypeMapper)">Union</A></B>(<A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A>&nbsp;mapper)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a Union of the given size and alignment type.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#calculateSize(boolean)">calculateSize</A></B>(boolean&nbsp;force)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adjust the size to be the size of the largest element, and ensure
+ all fields begin at offset zero.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#getNativeAlignment(java.lang.Class, java.lang.Object, boolean)">getNativeAlignment</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value,
+                   boolean&nbsp;isFirstElement)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All fields are considered the "first" element.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#getTypedValue(java.lang.Class)">getTypedValue</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads the Structure field of the given type from memory, sets it as
+ the active type and returns it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#getTypeInfo()">getTypeInfo</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Avoid calculating type information until we know our biggest field.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#readField(java.lang.String)">readField</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Force a read of the given field from native memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#readField(com.sun.jna.Structure.StructField)">readField</A></B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;field)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Avoid reading pointer-based fields and structures unless explicitly
+ selected.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#setType(java.lang.Class)">setType</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates by type which field will be used to write to native memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#setType(java.lang.String)">setType</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates which field will be used to write to native memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#setTypedValue(java.lang.Object)">setTypedValue</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;object)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the active type and its value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#writeField(java.lang.String)">writeField</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the given field value to native memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#writeField(java.lang.String, java.lang.Object)">writeField</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName,
+           <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the given field value to the field and native memory.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Union.html#writeField(com.sun.jna.Structure.StructField)">writeField</A></B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;field)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only the currently selected field will be written.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.Structure"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../com/sun/jna/Structure.html#allocateMemory()">allocateMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#allocateMemory(int)">allocateMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#autoAllocate(int)">autoAllocate</A>, <A HREF="../../../com/sun/jna/Structure.html#autoRead()">autoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#autoRead(com.sun.jna.Structure[])">autoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#autoWrite()">autoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#autoWrite(com.sun.jna.Structure[])">autoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#busy()">busy</A>, <A HREF="../../../com/sun/jna/Structure.html#cacheTypeInfo(com.sun.jna.Pointer)">cacheTypeInfo</A>, <A HREF="../../../com/sun/jna/Structure.html#calculateAlignedSize(int)">calculateAlignedSize</A>, <A HREF="../../../com/sun/jna/Structure.html#clear()">clear</A>, <A HREF="../../../com/sun/jna/Structure.html#ensureAllocated()">ensureAllocated</A>, <A HREF="../../../com/sun/jna/Structure.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../com/sun/jna/Structure.html#fields()">fields</A>, <A HREF="../../../com/sun/jna/Structure.html#getAutoRead()">getAutoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#getAutoWrite()">getAutoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#getField(com.sun.jna.Structure.StructField)">getField</A>, <A HREF="../../../com/sun/jna/Structure.html#getFieldOrder()">getFieldOrder</A>, <A HREF="../../../com/sun/jna/Structure.html#getFields(boolean)">getFields</A>, <A HREF="../../../com/sun/jna/Structure.html#getPointer()">getPointer</A>, <A HREF="../../../com/sun/jna/Structure.html#getStructAlignment()">getStructAlignment</A>, <A HREF="../../../com/sun/jna/Structure.html#getTypeInfo(java.lang.Object)">getTypeInfo</A>, <A HREF="../../../com/sun/jna/Structure.html#hashCode()">hashCode</A>, <A HREF="../../../com/sun/jna/Structure.html#newInstance(java.lang.Class)">newInstance</A>, <A HREF="../../../com/sun/jna/Structure.html#read()">read</A>, <A HREF="../../../com/sun/jna/Structure.html#reading()">reading</A>, <A HREF="../../../com/sun/jna/Structure.html#setAlignType(int)">setAlignType</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoRead(boolean)">setAutoRead</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoSynch(boolean)">setAutoSynch</A>, <A HREF="../../../com/sun/jna/Structure.html#setAutoWrite(boolean)">setAutoWrite</A>, <A HREF="../../../com/sun/jna/Structure.html#setField(com.sun.jna.Structure.StructField, java.lang.Object)">setField</A>, <A HREF="../../../com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])">setFieldOrder</A>, <A HREF="../../../com/sun/jna/Structure.html#setTypeMapper(com.sun.jna.TypeMapper)">setTypeMapper</A>, <A HREF="../../../com/sun/jna/Structure.html#size()">size</A>, <A HREF="../../../com/sun/jna/Structure.html#sortFields(java.util.List, java.util.List)">sortFields</A>, <A HREF="../../../com/sun/jna/Structure.html#toArray(int)">toArray</A>, <A HREF="../../../com/sun/jna/Structure.html#toArray(com.sun.jna.Structure[])">toArray</A>, <A HREF="../../../com/sun/jna/Structure.html#toString()">toString</A>, <A HREF="../../../com/sun/jna/Structure.html#toString(boolean)">toString</A>, <A HREF="../../../com/sun/jna/Structure.html#updateStructureByReference(java.lang.Class, com.sun.jna.Structure, com.sun.jna.Pointer)">updateStructureByReference</A>, <A HREF="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer)">useMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer, int)">useMemory</A>, <A HREF="../../../com/sun/jna/Structure.html#write()">write</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="biggestField"><!-- --></A><H3>
+biggestField</H3>
+<PRE>
+<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A> <B>biggestField</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Union()"><!-- --></A><H3>
+Union</H3>
+<PRE>
+protected <B>Union</B>()</PRE>
+<DL>
+<DD>Create a Union whose size and alignment will be calculated 
+ automatically.
+<P>
+</DL>
+<HR>
+
+<A NAME="Union(com.sun.jna.Pointer)"><!-- --></A><H3>
+Union</H3>
+<PRE>
+protected <B>Union</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</PRE>
+<DL>
+<DD>Create a Union of the given size, using default alignment.
+<P>
+</DL>
+<HR>
+
+<A NAME="Union(com.sun.jna.Pointer, int)"><!-- --></A><H3>
+Union</H3>
+<PRE>
+protected <B>Union</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+                int&nbsp;alignType)</PRE>
+<DL>
+<DD>Create a Union of the given size and alignment type.
+<P>
+</DL>
+<HR>
+
+<A NAME="Union(com.sun.jna.TypeMapper)"><!-- --></A><H3>
+Union</H3>
+<PRE>
+protected <B>Union</B>(<A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A>&nbsp;mapper)</PRE>
+<DL>
+<DD>Create a Union of the given size and alignment type.
+<P>
+</DL>
+<HR>
+
+<A NAME="Union(com.sun.jna.Pointer, int, com.sun.jna.TypeMapper)"><!-- --></A><H3>
+Union</H3>
+<PRE>
+protected <B>Union</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+                int&nbsp;alignType,
+                <A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</A>&nbsp;mapper)</PRE>
+<DL>
+<DD>Create a Union of the given size and alignment type.
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setType(java.lang.Class)"><!-- --></A><H3>
+setType</H3>
+<PRE>
+public void <B>setType</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+<DL>
+<DD>Indicates by type which field will be used to write to native memory.  
+ If there are multiple fields of the same type, use <A HREF="../../../com/sun/jna/Union.html#setType(java.lang.String)"><CODE>setType(String)</CODE></A> instead with the field name.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the type does not correspond to 
+ any declared union field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setType(java.lang.String)"><!-- --></A><H3>
+setType</H3>
+<PRE>
+public void <B>setType</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName)</PRE>
+<DL>
+<DD>Indicates which field will be used to write to native memory.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if the name does not correspond to
+ any declared union field.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readField(java.lang.String)"><!-- --></A><H3>
+readField</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>readField</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName)</PRE>
+<DL>
+<DD>Force a read of the given field from native memory.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#readField(java.lang.String)">readField</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the new field value, after updating
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if no field exists with the given name</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeField(java.lang.String)"><!-- --></A><H3>
+writeField</H3>
+<PRE>
+public void <B>writeField</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName)</PRE>
+<DL>
+<DD>Write the given field value to native memory.
+ The given field will become the active one.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#writeField(java.lang.String)">writeField</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if no field exists with the given name</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeField(java.lang.String, java.lang.Object)"><!-- --></A><H3>
+writeField</H3>
+<PRE>
+public void <B>writeField</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;fieldName,
+                       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value)</PRE>
+<DL>
+<DD>Write the given field value to the field and native memory.
+ The given field will become the active one.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#writeField(java.lang.String, java.lang.Object)">writeField</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</A></CODE> - if no field exists with the given name</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTypedValue(java.lang.Class)"><!-- --></A><H3>
+getTypedValue</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>getTypedValue</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type)</PRE>
+<DL>
+<DD>Reads the Structure field of the given type from memory, sets it as
+ the active type and returns it.  Convenience method for
+ <pre><code>
+ Union u;
+ Class type;
+ u.setType(type);
+ u.read();
+ value = u.<i>field</i>;
+ </code></pre>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>type</CODE> - class type of the Structure field to read
+<DT><B>Returns:</B><DD>the Structure field with the given type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTypedValue(java.lang.Object)"><!-- --></A><H3>
+setTypedValue</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>setTypedValue</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;object)</PRE>
+<DL>
+<DD>Set the active type and its value.  Convenience method for
+ <pre><code>
+ Union u;
+ Class type;
+ u.setType(type);
+ u.<i>field</i> = value;
+ </code></pre>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>object</CODE> - instance of a class which is part of the union
+<DT><B>Returns:</B><DD>this Union object</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeField(com.sun.jna.Structure.StructField)"><!-- --></A><H3>
+writeField</H3>
+<PRE>
+void <B>writeField</B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;field)</PRE>
+<DL>
+<DD>Only the currently selected field will be written.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#writeField(com.sun.jna.Structure.StructField)">writeField</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readField(com.sun.jna.Structure.StructField)"><!-- --></A><H3>
+readField</H3>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>readField</B>(<A HREF="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>&nbsp;field)</PRE>
+<DL>
+<DD>Avoid reading pointer-based fields and structures unless explicitly
+ selected.  Structures may contain pointer-based fields which can 
+ crash the VM if not properly initialized.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#readField(com.sun.jna.Structure.StructField)">readField</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateSize(boolean)"><!-- --></A><H3>
+calculateSize</H3>
+<PRE>
+int <B>calculateSize</B>(boolean&nbsp;force)</PRE>
+<DL>
+<DD>Adjust the size to be the size of the largest element, and ensure
+ all fields begin at offset zero.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#calculateSize(boolean)">calculateSize</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNativeAlignment(java.lang.Class, java.lang.Object, boolean)"><!-- --></A><H3>
+getNativeAlignment</H3>
+<PRE>
+protected int <B>getNativeAlignment</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;type,
+                                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;value,
+                                 boolean&nbsp;isFirstElement)</PRE>
+<DL>
+<DD>All fields are considered the "first" element.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#getNativeAlignment(java.lang.Class, java.lang.Object, boolean)">getNativeAlignment</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTypeInfo()"><!-- --></A><H3>
+getTypeInfo</H3>
+<PRE>
+<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>getTypeInfo</B>()</PRE>
+<DL>
+<DD>Avoid calculating type information until we know our biggest field.
+ Return type information for the largest field to ensure all available
+ bits are used.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Structure.html#getTypeInfo()">getTypeInfo</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/WString.html" title="class in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Union.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Union.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.Structure">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

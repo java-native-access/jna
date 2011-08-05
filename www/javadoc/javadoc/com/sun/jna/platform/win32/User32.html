@@ -1,0 +1,2144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+User32 (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="User32 (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.ByReference.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/VerRsrc.html" title="interface in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/User32.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="User32.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface User32</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>User32</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+Provides access to the w32 user32 library. Incomplete implementation to
+ support demos.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Todd Fast, todd.fast@sun.com, twalljava@dev.java.net</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#INSTANCE">INSTANCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#AttachThreadInput(com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.platform.win32.WinDef.DWORD, boolean)">AttachThreadInput</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;idAttach,
+                  <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;idAttachTo,
+                  boolean&nbsp;fAttach)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attaches or detaches the input processing mechanism of one thread to that of another thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#CallNextHookEx(com.sun.jna.platform.win32.WinUser.HHOOK, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.Pointer)">CallNextHookEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A>&nbsp;hhk,
+               int&nbsp;nCode,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A>&nbsp;wParam,
+               <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lParam)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The CallNextHookEx function passes the hook information to the next hook procedure
+ in the current hook chain.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#CallNextHookEx(com.sun.jna.platform.win32.WinUser.HHOOK, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.platform.win32.WinDef.LPARAM)">CallNextHookEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A>&nbsp;hhk,
+               int&nbsp;nCode,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A>&nbsp;wParam,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A>&nbsp;lParam)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The CallNextHookEx function passes the hook information to the next hook procedure
+ in the current hook chain.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#CloseWindow(com.sun.jna.platform.win32.WinDef.HWND)">CloseWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Minimizes (but does not destroy) the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#DestroyIcon(com.sun.jna.platform.win32.WinDef.HICON)">DestroyIcon</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A>&nbsp;hicon)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function destroys an icon and frees any memory the icon occupied.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#DispatchMessage(com.sun.jna.platform.win32.WinUser.MSG)">DispatchMessage</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function dispatches a message to a window procedure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#EnumChildWindows(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinUser.WNDENUMPROC, com.sun.jna.Pointer)">EnumChildWindows</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A>&nbsp;lpEnumFunc,
+                 <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The EnumChildWindows function enumerates the child windows that belong to the specified parent window
+ by passing the handle to each child window, in turn, to an application-defined callback function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#EnumThreadWindows(int, com.sun.jna.platform.win32.WinUser.WNDENUMPROC, com.sun.jna.Pointer)">EnumThreadWindows</A></B>(int&nbsp;dwThreadId,
+                  <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A>&nbsp;lpEnumFunc,
+                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The EnumThreadWindows function enumerates all nonchild windows associated with a thread by passing 
+ the handle to each window, in turn, to an application-defined callback function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#EnumWindows(com.sun.jna.platform.win32.WinUser.WNDENUMPROC, com.sun.jna.Pointer)">EnumWindows</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A>&nbsp;lpEnumFunc,
+            <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function enumerates all top-level windows on the screen by passing the handle to each window,
+ in turn, to an application-defined callback function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#FindWindow(java.lang.String, java.lang.String)">FindWindow</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClassName,
+           <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpWindowName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves the handle to the top-level window whose class name and 
+ window name match the specified strings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#FlashWindowEx(com.sun.jna.platform.win32.WinUser.FLASHWINFO)">FlashWindowEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.FLASHWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.FLASHWINFO</A>&nbsp;pfwi)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The FlashWindowEx function flashes the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetAsyncKeyState(int)">GetAsyncKeyState</A></B>(int&nbsp;vKey)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function determines whether a key is up or down at the time the function is called, 
+ and whether the key was pressed after a previous call to GetAsyncKeyState.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetClassName(com.sun.jna.platform.win32.WinDef.HWND, char[], int)">GetClassName</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+             char[]&nbsp;lpClassName,
+             int&nbsp;nMaxCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves the name of the class to which the specified window belongs.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetDC(com.sun.jna.platform.win32.WinDef.HWND)">GetDC</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves a handle to a display device context (DC) for the
+ client area of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetForegroundWindow()">GetForegroundWindow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves a handle to the foreground window (the window with which the user is currently working).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetGUIThreadInfo(int, com.sun.jna.platform.win32.WinUser.GUITHREADINFO)">GetGUIThreadInfo</A></B>(int&nbsp;idThread,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.GUITHREADINFO.html" title="class in com.sun.jna.platform.win32">WinUser.GUITHREADINFO</A>&nbsp;lpgui)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves information about the active window or a specified graphical user 
+ interface (GUI) thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetKeyboardState(byte[])">GetKeyboardState</A></B>(byte[]&nbsp;lpKeyState)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetKeyboardState function copies the status of the 256 virtual keys to the specified buffer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetLayeredWindowAttributes(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.ByteByReference, com.sun.jna.ptr.IntByReference)">GetLayeredWindowAttributes</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hwnd,
+                           <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcrKey,
+                           <A HREF="../../../../../com/sun/jna/ptr/ByteByReference.html" title="class in com.sun.jna.ptr">ByteByReference</A>&nbsp;pbAlpha,
+                           <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pdwFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetLayeredWindowAttributes function retrieves the opacity and transparency color 
+ key of a layered window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetMessage(com.sun.jna.platform.win32.WinUser.MSG, com.sun.jna.platform.win32.WinDef.HWND, int, int)">GetMessage</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg,
+           <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+           int&nbsp;wMsgFilterMin,
+           int&nbsp;wMsgFilterMax)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves a message from the calling thread's message queue 
+ and places it in the specified structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetSystemMetrics(int)">GetSystemMetrics</A></B>(int&nbsp;nIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetSystemMetrics function retrieves various system metrics (widths
+ and heights of display elements) and system configuration settings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindow(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.DWORD)">GetWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+          <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;uCmd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves a handle to a window that has the specified relationship (Z-Order or owner) to the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowInfo(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinUser.WINDOWINFO)">GetWindowInfo</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WINDOWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.WINDOWINFO</A>&nbsp;pwi)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetWindowInfo function retrieves information about the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowLong(com.sun.jna.platform.win32.WinDef.HWND, int)">GetWindowLong</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+              int&nbsp;nIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves information about the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowLongPtr(com.sun.jna.platform.win32.WinDef.HWND, int)">GetWindowLongPtr</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                 int&nbsp;nIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetWindowLongPtr function retrieves information about the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowModuleFileName(com.sun.jna.platform.win32.WinDef.HWND, char[], int)">GetWindowModuleFileName</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                        char[]&nbsp;lpszFileName,
+                        int&nbsp;cchFileNameMax)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The GetWindowModuleFileName function retrieves the full path and file name of the module associated
+ with the specified window handle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowRect(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.RECT)">GetWindowRect</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</A>&nbsp;rect)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves the dimensions of the bounding rectangle of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowText(com.sun.jna.platform.win32.WinDef.HWND, char[], int)">GetWindowText</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+              char[]&nbsp;lpString,
+              int&nbsp;nMaxCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function copies the text of the specified window's title bar - if it has one - into a buffer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowTextLength(com.sun.jna.platform.win32.WinDef.HWND)">GetWindowTextLength</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves the length, in characters, of the specified window's title bar text -
+ if the window has a title bar.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#GetWindowThreadProcessId(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.ptr.IntByReference)">GetWindowThreadProcessId</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                         <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpdwProcessId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves the identifier of the thread that created the specified window and, optionally,
+ the identifier of the process that created the window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#InvalidateRect(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.Structure.ByReference, boolean)">InvalidateRect</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+               <A HREF="../../../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>&nbsp;lpRect,
+               boolean&nbsp;bErase)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The InvalidateRect function adds a rectangle to the specified window's update region.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#IsWindowVisible(com.sun.jna.platform.win32.WinDef.HWND)">IsWindowVisible</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Determines the visibility state of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#LoadIcon(com.sun.jna.platform.win32.WinDef.HINSTANCE, java.lang.String)">LoadIcon</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hInstance,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;iconName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function loads the specified icon resource from the executable (.exe) file associated with an 
+ application instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#LoadImage(com.sun.jna.platform.win32.WinDef.HINSTANCE, java.lang.String, int, int, int, int)">LoadImage</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hinst,
+          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
+          int&nbsp;type,
+          int&nbsp;xDesired,
+          int&nbsp;yDesired,
+          int&nbsp;load)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function loads an icon, cursor, or bitmap.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#MoveWindow(com.sun.jna.platform.win32.WinDef.HWND, int, int, int, int, boolean)">MoveWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+           int&nbsp;X,
+           int&nbsp;Y,
+           int&nbsp;nWidth,
+           int&nbsp;nHeight,
+           boolean&nbsp;bRepaint)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changes the position and dimensions of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#PeekMessage(com.sun.jna.platform.win32.WinUser.MSG, com.sun.jna.platform.win32.WinDef.HWND, int, int, int)">PeekMessage</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+            int&nbsp;wMsgFilterMin,
+            int&nbsp;wMsgFilterMax,
+            int&nbsp;wRemoveMsg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function checks a thread message queue for a message and places the 
+ message (if any) in the specified structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#PostMessage(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.platform.win32.WinDef.LPARAM)">PostMessage</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+            int&nbsp;msg,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A>&nbsp;wParam,
+            <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A>&nbsp;lParam)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function places a message in the message queue associated with the thread that
+ created the specified window and then returns without waiting for the thread to process
+ the message.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#PostQuitMessage(int)">PostQuitMessage</A></B>(int&nbsp;nExitCode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function indicates to Windows that a thread has made a request to terminate (quit).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#RedrawWindow(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.Structure.ByReference, com.sun.jna.platform.win32.WinDef.HRGN, com.sun.jna.platform.win32.WinDef.DWORD)">RedrawWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+             <A HREF="../../../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>&nbsp;lprcUpdate,
+             <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A>&nbsp;hrgnUpdate,
+             <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;flags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RedrawWindow function updates the specified rectangle or region in a window's client area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#ReleaseDC(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HDC)">ReleaseDC</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+          <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>&nbsp;hDC)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function releases a device context (DC), freeing it for use by other
+ applications.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SendInput(com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.platform.win32.WinUser.INPUT[], int)">SendInput</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;nInputs,
+          <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.INPUT.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT</A>[]&nbsp;pInputs,
+          int&nbsp;cbSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Synthesizes keystrokes, mouse motions, and button clicks.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetFocus(com.sun.jna.platform.win32.WinDef.HWND)">SetFocus</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the keyboard focus to the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetForegroundWindow(com.sun.jna.platform.win32.WinDef.HWND)">SetForegroundWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brings the thread that created the specified window into the foreground and activates the window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetLayeredWindowAttributes(com.sun.jna.platform.win32.WinDef.HWND, int, byte, int)">SetLayeredWindowAttributes</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hwnd,
+                           int&nbsp;crKey,
+                           byte&nbsp;bAlpha,
+                           int&nbsp;dwFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SetLayeredWindowAttributes function sets the opacity and transparency color key of a layered window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetParent(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HWND)">SetParent</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWndChild,
+          <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWndNewParent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changes the parent window of the specified child window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetWindowLong(com.sun.jna.platform.win32.WinDef.HWND, int, int)">SetWindowLong</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+              int&nbsp;nIndex,
+              int&nbsp;dwNewLong)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function changes an attribute of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetWindowLong(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.Pointer)">SetWindowLong</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+              int&nbsp;nIndex,
+              <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;dwNewLong)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function changes an attribute of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetWindowLongPtr(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.platform.win32.BaseTSD.LONG_PTR)">SetWindowLongPtr</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                 int&nbsp;nIndex,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A>&nbsp;dwNewLongPtr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SetWindowLongPtr function changes an attribute of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetWindowLongPtr(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.Pointer)">SetWindowLongPtr</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                 int&nbsp;nIndex,
+                 <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;dwNewLongPtr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SetWindowLongPtr function changes an attribute of the specified window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetWindowPos(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HWND, int, int, int, int, int)">SetWindowPos</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+             <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWndInsertAfter,
+             int&nbsp;X,
+             int&nbsp;Y,
+             int&nbsp;cx,
+             int&nbsp;cy,
+             int&nbsp;uFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changes the size, position, and Z order of a child, pop-up, or top-level window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetWindowRgn(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HRGN, boolean)">SetWindowRgn</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+             <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A>&nbsp;hRgn,
+             boolean&nbsp;bRedraw)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function sets the window region of a window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#SetWindowsHookEx(int, com.sun.jna.platform.win32.WinUser.HOOKPROC, com.sun.jna.platform.win32.WinDef.HINSTANCE, int)">SetWindowsHookEx</A></B>(int&nbsp;idHook,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HOOKPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.HOOKPROC</A>&nbsp;lpfn,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hMod,
+                 int&nbsp;dwThreadId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SetWindowsHookEx function installs an application-defined hook procedure into a hook chain.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#ShowWindow(com.sun.jna.platform.win32.WinDef.HWND, int)">ShowWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+           int&nbsp;nCmdShow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the specified window's show state.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#TranslateMessage(com.sun.jna.platform.win32.WinUser.MSG)">TranslateMessage</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function translates virtual-key messages into character messages.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#UnhookWindowsHookEx(com.sun.jna.platform.win32.WinUser.HHOOK)">UnhookWindowsHookEx</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A>&nbsp;hhk)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The UnhookWindowsHookEx function removes a hook procedure installed in 
+ a hook chain by the SetWindowsHookEx function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#UpdateLayeredWindow(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HDC, com.sun.jna.platform.win32.WinUser.POINT, com.sun.jna.platform.win32.WinUser.SIZE, com.sun.jna.platform.win32.WinDef.HDC, com.sun.jna.platform.win32.WinUser.POINT, int, com.sun.jna.platform.win32.WinUser.BLENDFUNCTION, int)">UpdateLayeredWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hwnd,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>&nbsp;hdcDst,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A>&nbsp;pptDst,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.SIZE.html" title="class in com.sun.jna.platform.win32">WinUser.SIZE</A>&nbsp;psize,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>&nbsp;hdcSrc,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A>&nbsp;pptSrc,
+                    int&nbsp;crKey,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32">WinUser.BLENDFUNCTION</A>&nbsp;pblend,
+                    int&nbsp;dwFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The UpdateLayeredWindow function updates the position, size, shape, content, and 
+ translucency of a layered window.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#UpdateWindow(com.sun.jna.platform.win32.WinDef.HWND)">UpdateWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The UpdateWindow function updates the client area of the specified window by sending a WM_PAINT message to the
+ window if the window's update region is not empty.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#WaitForInputIdle(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinDef.DWORD)">WaitForInputIdle</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwMilliseconds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Waits until the specified process has finished processing its initial input and is waiting for user input with no
+ input pending, or until the time-out interval has elapsed.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="INSTANCE"><!-- --></A><H3>
+INSTANCE</H3>
+<PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A> <B>INSTANCE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="GetDC(com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+GetDC</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A> <B>GetDC</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</PRE>
+<DL>
+<DD>This function retrieves a handle to a display device context (DC) for the
+ client area of the specified window. The display device context can be
+ used in subsequent graphics display interface (GDI) functions to draw in
+ the client area of the window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window whose device context is to be retrieved.
+  If this value is NULL, GetDC retrieves the device context for
+  the entire screen.
+<DT><B>Returns:</B><DD>The handle the device context for the specified window's client
+  area indicates success. NULL indicates failure. To get extended
+  error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReleaseDC(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HDC)"><!-- --></A><H3>
+ReleaseDC</H3>
+<PRE>
+int <B>ReleaseDC</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>&nbsp;hDC)</PRE>
+<DL>
+<DD>This function releases a device context (DC), freeing it for use by other
+ applications. The effect of ReleaseDC depends on the type of device
+ context.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window whose device context is to be released.<DD><CODE>hDC</CODE> - Handle to the device context to be released.
+<DT><B>Returns:</B><DD>The return value specifies whether the device context is
+  released. 1 indicates that the device context is released. Zero
+  indicates that the device context is not released.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="FindWindow(java.lang.String, java.lang.String)"><!-- --></A><H3>
+FindWindow</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>FindWindow</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClassName,
+                       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpWindowName)</PRE>
+<DL>
+<DD>This function retrieves the handle to the top-level window whose class name and 
+ window name match the specified strings. This function does not search child windows.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpClassName</CODE> - Long pointer to a null-terminated string that specifies the class name or is an atom 
+  that identifies the class-name string. If this parameter is an atom, it must be a 
+  global atom created by a previous call to the GlobalAddAtom function. The atom, a 
+  16-bit value, must be placed in the low-order word of lpClassName; the high-order 
+  word must be zero.<DD><CODE>lpWindowName</CODE> - Long pointer to a null-terminated string that specifies the window name (the window's 
+  title). If this parameter is NULL, all window names match.
+<DT><B>Returns:</B><DD>A handle to the window that has the specified class name and window name indicates 
+  success. NULL indicates failure. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetClassName(com.sun.jna.platform.win32.WinDef.HWND, char[], int)"><!-- --></A><H3>
+GetClassName</H3>
+<PRE>
+int <B>GetClassName</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                 char[]&nbsp;lpClassName,
+                 int&nbsp;nMaxCount)</PRE>
+<DL>
+<DD>This function retrieves the name of the class to which the specified window belongs.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window and, indirectly, the class to which the window belongs.<DD><CODE>lpClassName</CODE> - Long pointer to the buffer that is to receive the class name string.<DD><CODE>nMaxCount</CODE> - Specifies the length, in characters, of the buffer pointed to by the lpClassName 
+  parameter. The class name string is truncated if it is longer than the buffer.
+<DT><B>Returns:</B><DD>The number of characters copied to the specified buffer indicates success. Zero 
+  indicates failure. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetGUIThreadInfo(int, com.sun.jna.platform.win32.WinUser.GUITHREADINFO)"><!-- --></A><H3>
+GetGUIThreadInfo</H3>
+<PRE>
+boolean <B>GetGUIThreadInfo</B>(int&nbsp;idThread,
+                         <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.GUITHREADINFO.html" title="class in com.sun.jna.platform.win32">WinUser.GUITHREADINFO</A>&nbsp;lpgui)</PRE>
+<DL>
+<DD>Retrieves information about the active window or a specified graphical user 
+ interface (GUI) thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>idThread</CODE> - Identifies the thread for which information is to be retrieved. To retrieve 
+  this value, use the GetWindowThreadProcessId function. If this parameter is NULL,
+  the function returns information for the foreground thread.<DD><CODE>lpgui</CODE> - Pointer to a GUITHREADINFO structure that receives information describing the thread. 
+  Note that you must set GUITHREADINFO.cbSize to sizeof(GUITHREADINFO) before calling this function.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowInfo(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinUser.WINDOWINFO)"><!-- --></A><H3>
+GetWindowInfo</H3>
+<PRE>
+boolean <B>GetWindowInfo</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WINDOWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.WINDOWINFO</A>&nbsp;pwi)</PRE>
+<DL>
+<DD>The GetWindowInfo function retrieves information about the specified window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window whose information is to be retrieved.<DD><CODE>pwi</CODE> - Pointer to a WINDOWINFO structure to receive the information. Note that you must set WINDOWINFO.cbSize 
+  to sizeof(WINDOWINFO) before calling this function.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowRect(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.RECT)"><!-- --></A><H3>
+GetWindowRect</H3>
+<PRE>
+boolean <B>GetWindowRect</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</A>&nbsp;rect)</PRE>
+<DL>
+<DD>This function retrieves the dimensions of the bounding rectangle of the specified window. The 
+ dimensions are given in screen coordinates that are relative to the upper-left corner of the screen.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window.<DD><CODE>rect</CODE> - Long pointer to a RECT structure that receives the screen coordinates of the upper-left and lower-right 
+  corners of the window.
+<DT><B>Returns:</B><DD>Nonzero indicates success. Zero indicates failure. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowText(com.sun.jna.platform.win32.WinDef.HWND, char[], int)"><!-- --></A><H3>
+GetWindowText</H3>
+<PRE>
+int <B>GetWindowText</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                  char[]&nbsp;lpString,
+                  int&nbsp;nMaxCount)</PRE>
+<DL>
+<DD>This function copies the text of the specified window's title bar - if it has one - into a buffer. If 
+ the specified window is a control, the text of the control is copied.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window or control containing the text.<DD><CODE>lpString</CODE> - Long pointer to the buffer that will receive the text.<DD><CODE>nMaxCount</CODE> - Specifies the maximum number of characters to copy to the buffer, including the NULL character. 
+  If the text exceeds this limit, it is truncated.
+<DT><B>Returns:</B><DD>The length, in characters, of the copied string, not including the terminating null character, 
+  indicates success. Zero indicates that the window has no title bar or text, if the title bar is
+  empty, or if the window or control handle is invalid. To get extended error information, call 
+  GetLastError. This function cannot retrieve the text of an edit control in another application.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowTextLength(com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+GetWindowTextLength</H3>
+<PRE>
+int <B>GetWindowTextLength</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</PRE>
+<DL>
+<DD>This function retrieves the length, in characters, of the specified window's title bar text -
+ if the window has a title bar. If the specified window is a control, the function retrieves the
+ length of the text within the control.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window or control.
+<DT><B>Returns:</B><DD>The length, in characters, of the text indicates success. Under certain conditions, this value 
+  may actually be greater than the length of the text. Zero indicates that the window has no text. 
+  To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowModuleFileName(com.sun.jna.platform.win32.WinDef.HWND, char[], int)"><!-- --></A><H3>
+GetWindowModuleFileName</H3>
+<PRE>
+int <B>GetWindowModuleFileName</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                            char[]&nbsp;lpszFileName,
+                            int&nbsp;cchFileNameMax)</PRE>
+<DL>
+<DD>The GetWindowModuleFileName function retrieves the full path and file name of the module associated
+ with the specified window handle.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window whose module file name will be retrieved.<DD><CODE>lpszFileName</CODE> - Pointer to a buffer that receives the path and file name.<DD><CODE>cchFileNameMax</CODE> - Specifies the maximum number of TCHARs that can be copied into the lpszFileName buffer.
+<DT><B>Returns:</B><DD>The return value is the total number of TCHARs copied into the buffer.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowThreadProcessId(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetWindowThreadProcessId</H3>
+<PRE>
+int <B>GetWindowThreadProcessId</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                             <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;lpdwProcessId)</PRE>
+<DL>
+<DD>This function retrieves the identifier of the thread that created the specified window and, optionally,
+ the identifier of the process that created the window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window.<DD><CODE>lpdwProcessId</CODE> - Pointer to a 32-bit value that receives the process identifier. If this parameter is not NULL, 
+  GetWindowThreadProcessId copies the identifier of the process to the 32-bit value; otherwise, 
+  it does not.
+<DT><B>Returns:</B><DD>The return value is the identifier of the thread that created the window.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="EnumWindows(com.sun.jna.platform.win32.WinUser.WNDENUMPROC, com.sun.jna.Pointer)"><!-- --></A><H3>
+EnumWindows</H3>
+<PRE>
+boolean <B>EnumWindows</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A>&nbsp;lpEnumFunc,
+                    <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;data)</PRE>
+<DL>
+<DD>This function enumerates all top-level windows on the screen by passing the handle to each window,
+ in turn, to an application-defined callback function. EnumWindows continues until the last top-level
+ window is enumerated or the callback function returns FALSE.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpEnumFunc</CODE> - Long pointer to an application-defined callback function.<DD><CODE>data</CODE> - Specifies an application-defined value to be passed to the callback function.
+<DT><B>Returns:</B><DD>Nonzero indicates success. Zero indicates failure. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="EnumChildWindows(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinUser.WNDENUMPROC, com.sun.jna.Pointer)"><!-- --></A><H3>
+EnumChildWindows</H3>
+<PRE>
+boolean <B>EnumChildWindows</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                         <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A>&nbsp;lpEnumFunc,
+                         <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;data)</PRE>
+<DL>
+<DD>The EnumChildWindows function enumerates the child windows that belong to the specified parent window
+ by passing the handle to each child window, in turn, to an application-defined callback function. 
+ EnumChildWindows continues until the last child window is enumerated or the callback function returns FALSE.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the parent window whose child windows are to be enumerated. If this parameter is NULL, this 
+  function is equivalent to EnumWindows.<DD><CODE>lpEnumFunc</CODE> - Pointer to an application-defined callback function.<DD><CODE>data</CODE> - Specifies an application-defined value to be passed to the callback function.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError. 
+  If EnumChildProc returns zero, the return value is also zero. In this case, the callback function 
+  should call SetLastError to obtain a meaningful error code to be returned to the caller of 
+  EnumChildWindows.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="EnumThreadWindows(int, com.sun.jna.platform.win32.WinUser.WNDENUMPROC, com.sun.jna.Pointer)"><!-- --></A><H3>
+EnumThreadWindows</H3>
+<PRE>
+boolean <B>EnumThreadWindows</B>(int&nbsp;dwThreadId,
+                          <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A>&nbsp;lpEnumFunc,
+                          <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;data)</PRE>
+<DL>
+<DD>The EnumThreadWindows function enumerates all nonchild windows associated with a thread by passing 
+ the handle to each window, in turn, to an application-defined callback function. EnumThreadWindows
+ continues until the last window is enumerated or the callback function returns FALSE. To enumerate
+ child windows of a particular window, use the EnumChildWindows function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dwThreadId</CODE> - Identifies the thread whose windows are to be enumerated.<DD><CODE>lpEnumFunc</CODE> - Pointer to an application-defined callback function.<DD><CODE>data</CODE> - Specifies an application-defined value to be passed to the callback function.
+<DT><B>Returns:</B><DD>If the callback function returns TRUE for all windows in the thread specified by dwThreadId, the 
+  return value is TRUE. If the callback function returns FALSE on any enumerated window, or if there
+  are no windows found in the thread specified by dwThreadId, the return value is FALSE.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="FlashWindowEx(com.sun.jna.platform.win32.WinUser.FLASHWINFO)"><!-- --></A><H3>
+FlashWindowEx</H3>
+<PRE>
+boolean <B>FlashWindowEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.FLASHWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.FLASHWINFO</A>&nbsp;pfwi)</PRE>
+<DL>
+<DD>The FlashWindowEx function flashes the specified window. It does not change the active state of the window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pfwi</CODE> - Pointer to the FLASHWINFO structure.
+<DT><B>Returns:</B><DD>The return value specifies the window's state before the call to the FlashWindowEx function. If the window
+  caption was drawn as active before the call, the return value is nonzero. Otherwise, the return value is zero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LoadIcon(com.sun.jna.platform.win32.WinDef.HINSTANCE, java.lang.String)"><!-- --></A><H3>
+LoadIcon</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A> <B>LoadIcon</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hInstance,
+                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;iconName)</PRE>
+<DL>
+<DD>This function loads the specified icon resource from the executable (.exe) file associated with an 
+ application instance.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hInstance</CODE> - Handle to an instance of the module whose executable file contains the icon to be loaded. 
+  This parameter must be NULL when a standard icon is being loaded.<DD><CODE>iconName</CODE> - Long pointer to a null-terminated string that contains the name of the icon resource to be loaded. 
+  Alternatively, this parameter can contain the resource identifier in the low-order word and zero 
+  in the high-order word. Use the MAKEINTRESOURCE macro to create this value.
+<DT><B>Returns:</B><DD>A handle to the newly loaded icon indicates success. NULL indicates failure. To get extended 
+  error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LoadImage(com.sun.jna.platform.win32.WinDef.HINSTANCE, java.lang.String, int, int, int, int)"><!-- --></A><H3>
+LoadImage</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>LoadImage</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hinst,
+                       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
+                       int&nbsp;type,
+                       int&nbsp;xDesired,
+                       int&nbsp;yDesired,
+                       int&nbsp;load)</PRE>
+<DL>
+<DD>This function loads an icon, cursor, or bitmap.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hinst</CODE> - Handle to an instance of the module that contains the image to be loaded.<DD><CODE>name</CODE> - Pointer to a null-terminated string that contains the name of the image resource 
+  in the hinst module that identifies the image to load.<DD><CODE>type</CODE> - Specifies the type of image to be loaded.<DD><CODE>xDesired</CODE> - Specifies the width, in pixels, of the icon or cursor. If this parameter is zero, the function uses 
+  the SM_CXICON or SM_CXCURSOR system metric value to set the width. If uType is IMAGE_BITMAP, this 
+  parameter must be zero.<DD><CODE>yDesired</CODE> - Specifies the height, in pixels, of the icon or cursor. If this parameter is zero, the function uses 
+  the SM_CYICON or SM_CYCURSOR system metric value to set the height. If uType is IMAGE_BITMAP, this 
+  parameter must be zero.<DD><CODE>load</CODE> - Set to zero.
+<DT><B>Returns:</B><DD>The handle of the newly loaded image indicates success. NULL indicates failure. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DestroyIcon(com.sun.jna.platform.win32.WinDef.HICON)"><!-- --></A><H3>
+DestroyIcon</H3>
+<PRE>
+boolean <B>DestroyIcon</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A>&nbsp;hicon)</PRE>
+<DL>
+<DD>This function destroys an icon and frees any memory the icon occupied.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hicon</CODE> - Handle to the icon to be destroyed. The icon must not be in use.
+<DT><B>Returns:</B><DD>Nonzero indicates success. Zero indicates failure. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowLong(com.sun.jna.platform.win32.WinDef.HWND, int)"><!-- --></A><H3>
+GetWindowLong</H3>
+<PRE>
+int <B>GetWindowLong</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                  int&nbsp;nIndex)</PRE>
+<DL>
+<DD>This function retrieves information about the specified window. GetWindowLong also retrieves 
+ the 32-bit (long) value at the specified offset into the extra window memory of a window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window and, indirectly, the class to which the window belongs.<DD><CODE>nIndex</CODE> - Specifies the zero-based offset to the value to be retrieved.
+<DT><B>Returns:</B><DD>The requested 32-bit value indicates success. Zero indicates failure. To get extended error 
+  information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetWindowLong(com.sun.jna.platform.win32.WinDef.HWND, int, int)"><!-- --></A><H3>
+SetWindowLong</H3>
+<PRE>
+int <B>SetWindowLong</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                  int&nbsp;nIndex,
+                  int&nbsp;dwNewLong)</PRE>
+<DL>
+<DD>This function changes an attribute of the specified window. SetWindowLong also sets a 32-bit (LONG) 
+ value at the specified offset into the extra window memory of a window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window and, indirectly, the class to which the window belongs.<DD><CODE>nIndex</CODE> - Specifies the zero-based offset to the value to be set.<DD><CODE>dwNewLong</CODE> - Specifies the replacement value.
+<DT><B>Returns:</B><DD>The previous value of the specified 32-bit integer indicates success. Zero indicates failure. 
+  To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetWindowLong(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.Pointer)"><!-- --></A><H3>
+SetWindowLong</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>SetWindowLong</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                      int&nbsp;nIndex,
+                      <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;dwNewLong)</PRE>
+<DL>
+<DD>This function changes an attribute of the specified window. SetWindowLong also sets a 
+ 32-bit (LONG) value at the specified offset into the extra window memory of a window.
+ Do not use this version on Windows-64.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window and, indirectly, the class to which the window belongs.<DD><CODE>nIndex</CODE> - Specifies the zero-based offset to the value to be set.<DD><CODE>dwNewLong</CODE> - Specifies the replacement value.
+<DT><B>Returns:</B><DD>The previous value of the specified 32-bit integer indicates success. Zero indicates failure.
+  To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindowLongPtr(com.sun.jna.platform.win32.WinDef.HWND, int)"><!-- --></A><H3>
+GetWindowLongPtr</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A> <B>GetWindowLongPtr</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                                  int&nbsp;nIndex)</PRE>
+<DL>
+<DD>The GetWindowLongPtr function retrieves information about the specified window. 
+ The function also retrieves the value at a specified offset into the extra window memory.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window and, indirectly, the class to which the window belongs.<DD><CODE>nIndex</CODE> - Specifies the zero-based offset to the value to be retrieved.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the requested value.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError. 
+  If SetWindowLong or SetWindowLongPtr has not been called previously, GetWindowLongPtr returns zero for
+  values in the extra window or class memory.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetWindowLongPtr(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.platform.win32.BaseTSD.LONG_PTR)"><!-- --></A><H3>
+SetWindowLongPtr</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A> <B>SetWindowLongPtr</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                                  int&nbsp;nIndex,
+                                  <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A>&nbsp;dwNewLongPtr)</PRE>
+<DL>
+<DD>The SetWindowLongPtr function changes an attribute of the specified window. The function also
+ sets a value at the specified offset in the extra window memory.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window and, indirectly, the class to which the window belongs.<DD><CODE>nIndex</CODE> - Specifies the zero-based offset to the value to be set.<DD><CODE>dwNewLongPtr</CODE> - Specifies the replacement value.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the previous value of the specified offset.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError. 
+  If the previous value is zero and the function succeeds, the return value is zero, but the function 
+  does not clear the last error information. To determine success or failure, clear the last error 
+  information by calling SetLastError(0), then call SetWindowLongPtr. Function failure will be indicated
+  by a return value of zero and a GetLastError result that is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetWindowLongPtr(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.Pointer)"><!-- --></A><H3>
+SetWindowLongPtr</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>SetWindowLongPtr</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                         int&nbsp;nIndex,
+                         <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;dwNewLongPtr)</PRE>
+<DL>
+<DD>The SetWindowLongPtr function changes an attribute of the specified window. The function also
+ sets a value at the specified offset in the extra window memory.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window and, indirectly, the class to which the window belongs.<DD><CODE>nIndex</CODE> - Specifies the zero-based offset to the value to be set.<DD><CODE>dwNewLongPtr</CODE> - Specifies the replacement value.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the previous value of the specified offset.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError. 
+  If the previous value is zero and the function succeeds, the return value is zero, but the function 
+  does not clear the last error information. To determine success or failure, clear the last error 
+  information by calling SetLastError(0), then call SetWindowLongPtr. Function failure will be indicated
+  by a return value of zero and a GetLastError result that is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetLayeredWindowAttributes(com.sun.jna.platform.win32.WinDef.HWND, int, byte, int)"><!-- --></A><H3>
+SetLayeredWindowAttributes</H3>
+<PRE>
+boolean <B>SetLayeredWindowAttributes</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hwnd,
+                                   int&nbsp;crKey,
+                                   byte&nbsp;bAlpha,
+                                   int&nbsp;dwFlags)</PRE>
+<DL>
+<DD>The SetLayeredWindowAttributes function sets the opacity and transparency color key of a layered window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hwnd</CODE> - Handle to the layered window.<DD><CODE>crKey</CODE> - COLORREF structure that specifies the transparency color key to be used when composing the layered window.<DD><CODE>bAlpha</CODE> - Alpha value used to describe the opacity of the layered window.<DD><CODE>dwFlags</CODE> - Specifies an action to take.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. 
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetLayeredWindowAttributes(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.ByteByReference, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetLayeredWindowAttributes</H3>
+<PRE>
+boolean <B>GetLayeredWindowAttributes</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hwnd,
+                                   <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pcrKey,
+                                   <A HREF="../../../../../com/sun/jna/ptr/ByteByReference.html" title="class in com.sun.jna.ptr">ByteByReference</A>&nbsp;pbAlpha,
+                                   <A HREF="../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pdwFlags)</PRE>
+<DL>
+<DD>The GetLayeredWindowAttributes function retrieves the opacity and transparency color 
+ key of a layered window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hwnd</CODE> - Handle to the layered window. A layered window is created by specifying WS_EX_LAYERED 
+  when creating the window with the CreateWindowEx function or by setting WS_EX_LAYERED
+  via SetWindowLong after the window has been created.<DD><CODE>pcrKey</CODE> - Pointer to a COLORREF value that receives the transparency color key to be used when 
+  composing the layered window. All pixels painted by the window in this color will be 
+  transparent. This can be NULL if the argument is not needed.<DD><CODE>pbAlpha</CODE> - Pointer to a BYTE that receives the Alpha value used to describe the opacity of the 
+  layered window. Similar to the SourceConstantAlpha member of the BLENDFUNCTION structure.
+  When the variable referred to by pbAlpha is 0, the window is completely transparent. 
+  When the variable referred to by pbAlpha is 255, the window is opaque. This can be NULL 
+  if the argument is not needed.<DD><CODE>pdwFlags</CODE> - Pointer to a DWORD that receives a layering flag. This can be NULL if the argument is not needed.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="UpdateLayeredWindow(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HDC, com.sun.jna.platform.win32.WinUser.POINT, com.sun.jna.platform.win32.WinUser.SIZE, com.sun.jna.platform.win32.WinDef.HDC, com.sun.jna.platform.win32.WinUser.POINT, int, com.sun.jna.platform.win32.WinUser.BLENDFUNCTION, int)"><!-- --></A><H3>
+UpdateLayeredWindow</H3>
+<PRE>
+boolean <B>UpdateLayeredWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hwnd,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>&nbsp;hdcDst,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A>&nbsp;pptDst,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.SIZE.html" title="class in com.sun.jna.platform.win32">WinUser.SIZE</A>&nbsp;psize,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>&nbsp;hdcSrc,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A>&nbsp;pptSrc,
+                            int&nbsp;crKey,
+                            <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32">WinUser.BLENDFUNCTION</A>&nbsp;pblend,
+                            int&nbsp;dwFlags)</PRE>
+<DL>
+<DD>The UpdateLayeredWindow function updates the position, size, shape, content, and 
+ translucency of a layered window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hwnd</CODE> - Handle to a layered window. A layered window is created by specifying WS_EX_LAYERED 
+  when creating the window with the CreateWindowEx function.<DD><CODE>hdcDst</CODE> - Handle to a device context (DC) for the screen. This handle is obtained by specifying NULL 
+  when calling the function. It is used for palette color matching when the window contents 
+  are updated. If hdcDst isNULL, the default palette will be used. If hdcSrc is NULL, hdcDst must be NULL.<DD><CODE>pptDst</CODE> - Pointer to a POINT structure that specifies the new screen position of the layered window. 
+  If the current position is not changing, pptDst can be NULL.<DD><CODE>psize</CODE> - Pointer to a SIZE structure that specifies the new size of the layered window. If the size of the window
+  is not changing, psize can be NULL. If hdcSrc is NULL, psize must be NULL.<DD><CODE>hdcSrc</CODE> - Handle to a DC for the surface that defines the layered window. This handle can be obtained by calling 
+  the CreateCompatibleDC function. If the shape and visual context of the window are not changing, hdcSrc 
+  can be NULL.<DD><CODE>pptSrc</CODE> - Pointer to a POINT structure that specifies the location of the layer in the device context. 
+  If hdcSrc is NULL, pptSrc should be NULL.<DD><CODE>crKey</CODE> - Pointer to a COLORREF value that specifies the color key to be used when composing the layered window.
+  To generate a COLORREF, use the RGB macro.<DD><CODE>pblend</CODE> - Pointer to a BLENDFUNCTION structure that specifies the transparency value to be used when composing 
+  the layered window.<DD><CODE>dwFlags</CODE> - ULW_* flags.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetWindowRgn(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HRGN, boolean)"><!-- --></A><H3>
+SetWindowRgn</H3>
+<PRE>
+int <B>SetWindowRgn</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A>&nbsp;hRgn,
+                 boolean&nbsp;bRedraw)</PRE>
+<DL>
+<DD>This function sets the window region of a window. The window region determines the area within the 
+ window where the system permits drawing. The system does not display any portion of a window that lies
+ outside of the window region.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window whose window region is to be set.<DD><CODE>hRgn</CODE> - Handle to a region.  The function sets the window region of the window to this region. 
+  If hRgn is NULL, the function sets the window region to NULL.<DD><CODE>bRedraw</CODE> - Specifies whether the system redraws the window after setting the window region.  
+  If bRedraw is TRUE, the system does so; otherwise, it does not. 
+  Typically, you set bRedraw to TRUE if the window is visible.
+<DT><B>Returns:</B><DD>Nonzero indicates success. 
+  Zero indicates failure. 
+  To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetKeyboardState(byte[])"><!-- --></A><H3>
+GetKeyboardState</H3>
+<PRE>
+boolean <B>GetKeyboardState</B>(byte[]&nbsp;lpKeyState)</PRE>
+<DL>
+<DD>The GetKeyboardState function copies the status of the 256 virtual keys to the specified buffer.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpKeyState</CODE> - Pointer to the 256-byte array that receives the status data for each virtual key.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetAsyncKeyState(int)"><!-- --></A><H3>
+GetAsyncKeyState</H3>
+<PRE>
+short <B>GetAsyncKeyState</B>(int&nbsp;vKey)</PRE>
+<DL>
+<DD>This function determines whether a key is up or down at the time the function is called, 
+ and whether the key was pressed after a previous call to GetAsyncKeyState.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>vKey</CODE> - Specifies one of 256 possible virtual-key codes.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value specifies whether the key was pressed since the last 
+  call to GetAsyncKeyState, and whether the key is currently up or down. If the most significant 
+  bit is set, the key is down.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetWindowsHookEx(int, com.sun.jna.platform.win32.WinUser.HOOKPROC, com.sun.jna.platform.win32.WinDef.HINSTANCE, int)"><!-- --></A><H3>
+SetWindowsHookEx</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A> <B>SetWindowsHookEx</B>(int&nbsp;idHook,
+                               <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HOOKPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.HOOKPROC</A>&nbsp;lpfn,
+                               <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hMod,
+                               int&nbsp;dwThreadId)</PRE>
+<DL>
+<DD>The SetWindowsHookEx function installs an application-defined hook procedure into a hook chain. 
+ You would install a hook procedure to monitor the system for certain types of events. These 
+ events are associated either with a specific thread or with all threads in the same desktop 
+ as the calling thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>idHook</CODE> - Specifies the type of hook procedure to be installed.<DD><CODE>lpfn</CODE> - Pointer to the hook procedure.<DD><CODE>hMod</CODE> - Handle to the DLL containing the hook procedure pointed to by the lpfn parameter.<DD><CODE>dwThreadId</CODE> - Specifies the identifier of the thread with which the hook procedure is to be associated.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the handle to the hook procedure. 
+  If the function fails, the return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CallNextHookEx(com.sun.jna.platform.win32.WinUser.HHOOK, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.platform.win32.WinDef.LPARAM)"><!-- --></A><H3>
+CallNextHookEx</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A> <B>CallNextHookEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A>&nbsp;hhk,
+                              int&nbsp;nCode,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A>&nbsp;wParam,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A>&nbsp;lParam)</PRE>
+<DL>
+<DD>The CallNextHookEx function passes the hook information to the next hook procedure
+ in the current hook chain. A hook procedure can call this function either before or
+ after processing the hook information.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hhk</CODE> - Ignored.<DD><CODE>nCode</CODE> - Specifies the hook code passed to the current hook procedure. The next hook procedure 
+  uses this code to determine how to process the hook information.<DD><CODE>wParam</CODE> - Specifies the wParam value passed to the current hook procedure. The meaning of this
+  parameter depends on the type of hook associated with the current hook chain.<DD><CODE>lParam</CODE> - Specifies the lParam value passed to the current hook procedure. The meaning of this 
+  parameter depends on the type of hook associated with the current hook chain.
+<DT><B>Returns:</B><DD>This value is returned by the next hook procedure in the chain. The current hook procedure
+  must also return this value. The meaning of the return value depends on the hook type.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CallNextHookEx(com.sun.jna.platform.win32.WinUser.HHOOK, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.Pointer)"><!-- --></A><H3>
+CallNextHookEx</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A> <B>CallNextHookEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A>&nbsp;hhk,
+                              int&nbsp;nCode,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A>&nbsp;wParam,
+                              <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;lParam)</PRE>
+<DL>
+<DD>The CallNextHookEx function passes the hook information to the next hook procedure
+ in the current hook chain. A hook procedure can call this function either before or
+ after processing the hook information.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hhk</CODE> - Ignored.<DD><CODE>nCode</CODE> - Specifies the hook code passed to the current hook procedure. The next hook procedure 
+  uses this code to determine how to process the hook information.<DD><CODE>wParam</CODE> - Specifies the wParam value passed to the current hook procedure. The meaning of this
+  parameter depends on the type of hook associated with the current hook chain.<DD><CODE>lParam</CODE> - Specifies the lParam value passed to the current hook procedure. The meaning of this 
+  parameter depends on the type of hook associated with the current hook chain.
+<DT><B>Returns:</B><DD>This value is returned by the next hook procedure in the chain. The current hook procedure
+  must also return this value. The meaning of the return value depends on the hook type.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="UnhookWindowsHookEx(com.sun.jna.platform.win32.WinUser.HHOOK)"><!-- --></A><H3>
+UnhookWindowsHookEx</H3>
+<PRE>
+boolean <B>UnhookWindowsHookEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A>&nbsp;hhk)</PRE>
+<DL>
+<DD>The UnhookWindowsHookEx function removes a hook procedure installed in 
+ a hook chain by the SetWindowsHookEx function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hhk</CODE> - Handle to the hook to be removed. This parameter is a hook handle obtained 
+  by a previous call to SetWindowsHookEx.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+  If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetMessage(com.sun.jna.platform.win32.WinUser.MSG, com.sun.jna.platform.win32.WinDef.HWND, int, int)"><!-- --></A><H3>
+GetMessage</H3>
+<PRE>
+int <B>GetMessage</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+               int&nbsp;wMsgFilterMin,
+               int&nbsp;wMsgFilterMax)</PRE>
+<DL>
+<DD>This function retrieves a message from the calling thread's message queue 
+ and places it in the specified structure.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpMsg</CODE> - Pointer to an MSG structure that receives message information from the thread's message queue.<DD><CODE>hWnd</CODE> - Handle to the window whose messages are to be retrieved. One value has a special meaning.<DD><CODE>wMsgFilterMin</CODE> - Specifies the integer value of the lowest message value to be retrieved.<DD><CODE>wMsgFilterMax</CODE> - Specifies the integer value of the highest message value to be retrieved.
+<DT><B>Returns:</B><DD>Nonzero indicates that the function retrieves a message other than WM_QUIT. Zero indicates 
+  that the function retrieves the WM_QUIT message, or that lpMsg is an invalid pointer. To 
+  get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="PeekMessage(com.sun.jna.platform.win32.WinUser.MSG, com.sun.jna.platform.win32.WinDef.HWND, int, int, int)"><!-- --></A><H3>
+PeekMessage</H3>
+<PRE>
+boolean <B>PeekMessage</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                    int&nbsp;wMsgFilterMin,
+                    int&nbsp;wMsgFilterMax,
+                    int&nbsp;wRemoveMsg)</PRE>
+<DL>
+<DD>This function checks a thread message queue for a message and places the 
+ message (if any) in the specified structure.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpMsg</CODE> - Pointer to an MSG structure that receives message information.<DD><CODE>hWnd</CODE> - Handle to the window whose messages are to be examined.<DD><CODE>wMsgFilterMin</CODE> - Specifies the value of the first message in the range of messages to be examined.<DD><CODE>wMsgFilterMax</CODE> - Specifies the value of the last message in the range of messages to be examined.<DD><CODE>wRemoveMsg</CODE> - Specifies how messages are handled. This parameter can be one of the following values.
+<DT><B>Returns:</B><DD>Nonzero indicates success. Zero indicates failure.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="TranslateMessage(com.sun.jna.platform.win32.WinUser.MSG)"><!-- --></A><H3>
+TranslateMessage</H3>
+<PRE>
+boolean <B>TranslateMessage</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg)</PRE>
+<DL>
+<DD>This function translates virtual-key messages into character messages. The character messages 
+ are posted to the calling thread's message queue, to be read the next time the thread calls the 
+ GetMessage or PeekMessage function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpMsg</CODE> - Pointer to an MSG structure that contains message information retrieved from the calling thread's 
+  message queue by using the GetMessage or PeekMessage function.
+<DT><B>Returns:</B><DD>Nonzero indicates that the message is translated, that is, a character message is posted to the 
+  thread's message queue. If the message is WM_KEYDOWN or WM_SYSKEYDOWN, the return value is nonzero, 
+  regardless of the translation. Zero indicates that the message is not translated, that is, a 
+  character message is not posted to the thread's message queue.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="DispatchMessage(com.sun.jna.platform.win32.WinUser.MSG)"><!-- --></A><H3>
+DispatchMessage</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A> <B>DispatchMessage</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>&nbsp;lpMsg)</PRE>
+<DL>
+<DD>This function dispatches a message to a window procedure. It is typically used
+ to dispatch a message retrieved by the GetMessage function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpMsg</CODE> - Pointer to an MSG structure that contains the message.
+<DT><B>Returns:</B><DD>The return value specifies the value returned by the window procedure. Although its meaning 
+  depends on the message being dispatched, the return value generally is ignored.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="PostMessage(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.platform.win32.WinDef.LPARAM)"><!-- --></A><H3>
+PostMessage</H3>
+<PRE>
+void <B>PostMessage</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                 int&nbsp;msg,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A>&nbsp;wParam,
+                 <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A>&nbsp;lParam)</PRE>
+<DL>
+<DD>This function places a message in the message queue associated with the thread that
+ created the specified window and then returns without waiting for the thread to process
+ the message. Messages in a message queue are retrieved by calls to the GetMessage
+ or PeekMessage function.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window whose window procedure is to receive the message.<DD><CODE>msg</CODE> - Specifies the message to be posted.<DD><CODE>wParam</CODE> - Specifies additional message-specific information.<DD><CODE>lParam</CODE> - Specifies additional message-specific information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="PostQuitMessage(int)"><!-- --></A><H3>
+PostQuitMessage</H3>
+<PRE>
+void <B>PostQuitMessage</B>(int&nbsp;nExitCode)</PRE>
+<DL>
+<DD>This function indicates to Windows that a thread has made a request to terminate (quit). 
+ It is typically used in response to a WM_DESTROY message.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>nExitCode</CODE> - Specifies an application exit code. This value is used as the wParam parameter of 
+  the WM_QUIT message.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetSystemMetrics(int)"><!-- --></A><H3>
+GetSystemMetrics</H3>
+<PRE>
+int <B>GetSystemMetrics</B>(int&nbsp;nIndex)</PRE>
+<DL>
+<DD>The GetSystemMetrics function retrieves various system metrics (widths
+ and heights of display elements) and system configuration settings. All
+ dimensions retrieved by GetSystemMetrics are in pixels.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>nIndex</CODE> - System metric or configuration setting to retrieve. This
+  parameter can be one of the following values. Note that all
+  SM_CX* values are widths and all SM_CY* values are heights.
+  Also note that all settings designed to return Boolean data
+  represent TRUE as any nonzero value, and FALSE as a zero
+  value.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the requested
+  system metric or configuration setting. If the function fails,
+  the return value is zero. GetLastError does not provide extended
+  error information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetParent(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+SetParent</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>SetParent</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWndChild,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWndNewParent)</PRE>
+<DL>
+<DD>Changes the parent window of the specified child window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWndChild</CODE> - A handle to the child window.<DD><CODE>hWndNewParent</CODE> - A handle to the new parent window. If this parameter is NULL, the desktop window becomes the new parent
+     window. If this parameter is HWND_MESSAGE, the child window becomes a message-only window.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+     If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="IsWindowVisible(com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+IsWindowVisible</H3>
+<PRE>
+boolean <B>IsWindowVisible</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</PRE>
+<DL>
+<DD>Determines the visibility state of the specified window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window to be tested.
+<DT><B>Returns:</B><DD>If the specified window, its parent window, its parent's parent window, and so forth, have the WS_VISIBLE
+     style, the return value is nonzero. Otherwise, the return value is zero.
+
+     Because the return value specifies whether the window has the WS_VISIBLE style, it may be nonzero even if the
+     window is totally obscured by other windows.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="MoveWindow(com.sun.jna.platform.win32.WinDef.HWND, int, int, int, int, boolean)"><!-- --></A><H3>
+MoveWindow</H3>
+<PRE>
+boolean <B>MoveWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                   int&nbsp;X,
+                   int&nbsp;Y,
+                   int&nbsp;nWidth,
+                   int&nbsp;nHeight,
+                   boolean&nbsp;bRepaint)</PRE>
+<DL>
+<DD>Changes the position and dimensions of the specified window. For a top-level window, the position and dimensions
+ are relative to the upper-left corner of the screen. For a child window, they are relative to the upper-left
+ corner of the parent window's client area.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window.<DD><CODE>X</CODE> - The new position of the left side of the window.<DD><CODE>Y</CODE> - The new position of the top of the window.<DD><CODE>nWidth</CODE> - The new width of the window.<DD><CODE>nHeight</CODE> - The new height of the window.<DD><CODE>bRepaint</CODE> - Indicates whether the window is to be repainted. If this parameter is TRUE, the window receives a message. If
+     the parameter is FALSE, no repainting of any kind occurs. This applies to the client area, the nonclient area
+     (including the title bar and scroll bars), and any part of the parent window uncovered as a result of moving
+     a child window.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+     If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetWindowPos(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HWND, int, int, int, int, int)"><!-- --></A><H3>
+SetWindowPos</H3>
+<PRE>
+boolean <B>SetWindowPos</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                     <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWndInsertAfter,
+                     int&nbsp;X,
+                     int&nbsp;Y,
+                     int&nbsp;cx,
+                     int&nbsp;cy,
+                     int&nbsp;uFlags)</PRE>
+<DL>
+<DD>Changes the size, position, and Z order of a child, pop-up, or top-level window. These windows are ordered
+ according to their appearance on the screen. The topmost window receives the highest rank and is the first window
+ in the Z order.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window.<DD><CODE>hWndInsertAfter</CODE> - A handle to the window to precede the positioned window in the Z order.<DD><CODE>X</CODE> - The new position of the left side of the window, in client coordinates.<DD><CODE>Y</CODE> - The new position of the top of the window, in client coordinates.<DD><CODE>cx</CODE> - The new width of the window, in pixels.<DD><CODE>cy</CODE> - The new height of the window, in pixels.<DD><CODE>uFlags</CODE> - The window sizing and positioning flags.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+     If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="AttachThreadInput(com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.platform.win32.WinDef.DWORD, boolean)"><!-- --></A><H3>
+AttachThreadInput</H3>
+<PRE>
+boolean <B>AttachThreadInput</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;idAttach,
+                          <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;idAttachTo,
+                          boolean&nbsp;fAttach)</PRE>
+<DL>
+<DD>Attaches or detaches the input processing mechanism of one thread to that of another thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>idAttach</CODE> - The identifier of the thread to be attached to another thread. The thread to be attached cannot be a system
+   thread.<DD><CODE>idAttachTo</CODE> - The identifier of the thread to which idAttach will be attached. This thread cannot be a system thread. A
+   thread cannot attach to itself. Therefore, idAttachTo cannot equal idAttach.<DD><CODE>fAttach</CODE> - If this parameter is TRUE, the two threads are attached. If the parameter is FALSE, the threads are detached.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetForegroundWindow(com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+SetForegroundWindow</H3>
+<PRE>
+boolean <B>SetForegroundWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</PRE>
+<DL>
+<DD>Brings the thread that created the specified window into the foreground and activates the window. Keyboard input
+ is directed to the window, and various visual cues are changed for the user. The system assigns a slightly higher
+ priority to the thread that created the foreground window than it does to other threads.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window that should be activated and brought to the foreground.
+<DT><B>Returns:</B><DD>If the window was brought to the foreground, the return value is nonzero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetForegroundWindow()"><!-- --></A><H3>
+GetForegroundWindow</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>GetForegroundWindow</B>()</PRE>
+<DL>
+<DD>Retrieves a handle to the foreground window (the window with which the user is currently working). The system
+ assigns a slightly higher priority to the thread that creates the foreground window than it does to other
+ threads.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The return value is a handle to the foreground window. The foreground window can be NULL in certain
+ circumstances, such as when a window is losing activation.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SetFocus(com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+SetFocus</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>SetFocus</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</PRE>
+<DL>
+<DD>Sets the keyboard focus to the specified window. The window must be attached to the calling thread's message
+ queue.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window that will receive the keyboard input. If this parameter is NULL, keystrokes are ignored.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is the handle to the window that previously had the keyboard focus.
+   If the hWnd parameter is invalid or the window is not attached to the calling thread's message queue, the
+   return value is NULL. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SendInput(com.sun.jna.platform.win32.WinDef.DWORD, com.sun.jna.platform.win32.WinUser.INPUT[], int)"><!-- --></A><H3>
+SendInput</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>SendInput</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;nInputs,
+                       <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.INPUT.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT</A>[]&nbsp;pInputs,
+                       int&nbsp;cbSize)</PRE>
+<DL>
+<DD>Synthesizes keystrokes, mouse motions, and button clicks.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>nInputs</CODE> - The number of structures in the pInputs array.<DD><CODE>pInputs</CODE> - An array of INPUT structures. Each structure represents an event to be inserted into the keyboard or mouse 
+   input stream.<DD><CODE>cbSize</CODE> - The size, in bytes, of an INPUT structure. If cbSize is not the size of an INPUT structure, the function fails.
+<DT><B>Returns:</B><DD>The function returns the number of events that it successfully inserted into the keyboard or mouse input
+   stream. If the function returns zero, the input was already blocked by another thread. To get extended error
+   information, call GetLastError.
+
+   This function fails when it is blocked by UIPI. Note that neither GetLastError nor the return value will
+   indicate the failure was caused by UIPI blocking.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="WaitForInputIdle(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.platform.win32.WinDef.DWORD)"><!-- --></A><H3>
+WaitForInputIdle</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A> <B>WaitForInputIdle</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A>&nbsp;hProcess,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;dwMilliseconds)</PRE>
+<DL>
+<DD>Waits until the specified process has finished processing its initial input and is waiting for user input with no
+ input pending, or until the time-out interval has elapsed.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hProcess</CODE> - A handle to the process. If this process is a console application or does not have a message queue,
+   WaitForInputIdle returns immediately.<DD><CODE>dwMilliseconds</CODE> - The time-out interval, in milliseconds. If dwMilliseconds is INFINITE, the function does not return until the
+   process is idle.
+<DT><B>Returns:</B><DD>The following table shows the possible return values for this function.
+   <table>
+     <tr><th>Return code/value</th><th>Description</th></tr>
+     <tr><td>0</td><td>The wait was satisfied successfully.</td></tr>
+     <tr><td>WAIT_TIMEOUT</td><td>The wait was terminated because the time-out interval elapsed.</td></tr>
+     <tr><td>WAIT_FAILED</td><td>An error occurred.</td></tr>
+   </table></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="InvalidateRect(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.Structure.ByReference, boolean)"><!-- --></A><H3>
+InvalidateRect</H3>
+<PRE>
+boolean <B>InvalidateRect</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                       <A HREF="../../../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>&nbsp;lpRect,
+                       boolean&nbsp;bErase)</PRE>
+<DL>
+<DD>The InvalidateRect function adds a rectangle to the specified window's update region. The update region
+ represents the portion of the window's client area that must be redrawn.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window whose update region has changed. If this parameter is NULL, the system invalidates and
+   redraws all windows, not just the windows for this application, and sends the WM_ERASEBKGND and WM_NCPAINT
+   messages before the function returns. Setting this parameter to NULL is not recommended.<DD><CODE>lpRect</CODE> - A pointer to a RECT structure that contains the client coordinates of the rectangle to be added to the update
+   region. If this parameter is NULL, the entire client area is added to the update region.<DD><CODE>bErase</CODE> - Specifies whether the background within the update region is to be erased when the update region is processed.
+   If this parameter is TRUE, the background is erased when the BeginPaint function is called. If this parameter
+   is FALSE, the background remains unchanged.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RedrawWindow(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.Structure.ByReference, com.sun.jna.platform.win32.WinDef.HRGN, com.sun.jna.platform.win32.WinDef.DWORD)"><!-- --></A><H3>
+RedrawWindow</H3>
+<PRE>
+boolean <B>RedrawWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                     <A HREF="../../../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</A>&nbsp;lprcUpdate,
+                     <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A>&nbsp;hrgnUpdate,
+                     <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;flags)</PRE>
+<DL>
+<DD>The RedrawWindow function updates the specified rectangle or region in a window's client area.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window to be redrawn. If this parameter is NULL, the desktop window is updated.<DD><CODE>lprcUpdate</CODE> - A pointer to a RECT structure containing the coordinates, in device units, of the update rectangle. This
+   parameter is ignored if the hrgnUpdate parameter identifies a region.<DD><CODE>hrgnUpdate</CODE> - A handle to the update region. If both the hrgnUpdate and lprcUpdate parameters are NULL, the entire client
+   area is added to the update region.<DD><CODE>flags</CODE> - One or more redraw flags. This parameter can be used to invalidate or validate a window, control repainting,
+   and control which windows are affected by RedrawWindow.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetWindow(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.DWORD)"><!-- --></A><H3>
+GetWindow</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>GetWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                      <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>&nbsp;uCmd)</PRE>
+<DL>
+<DD>Retrieves a handle to a window that has the specified relationship (Z-Order or owner) to the specified window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to a window. The window handle retrieved is relative to this window, based on the value of the uCmd
+   parameter.<DD><CODE>uCmd</CODE> - The relationship between the specified window and the window whose handle is to be retrieved.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is a window handle. If no window exists with the specified
+   relationship to the specified window, the return value is NULL. To get extended error information, call
+   GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="UpdateWindow(com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+UpdateWindow</H3>
+<PRE>
+boolean <B>UpdateWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</PRE>
+<DL>
+<DD>The UpdateWindow function updates the client area of the specified window by sending a WM_PAINT message to the
+ window if the window's update region is not empty. The function sends a WM_PAINT message directly to the window
+ procedure of the specified window, bypassing the application queue. If the update region is empty, no message is
+ sent.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - Handle to the window to be updated.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ShowWindow(com.sun.jna.platform.win32.WinDef.HWND, int)"><!-- --></A><H3>
+ShowWindow</H3>
+<PRE>
+boolean <B>ShowWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                   int&nbsp;nCmdShow)</PRE>
+<DL>
+<DD>Sets the specified window's show state.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window.<DD><CODE>nCmdShow</CODE> - Controls how the window is to be shown. This parameter is ignored the first time an application calls
+     ShowWindow, if the program that launched the application provides a STARTUPINFO structure. Otherwise, the
+     first time ShowWindow is called, the value should be the value obtained by the WinMain function in its
+     nCmdShow parameter.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+     If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CloseWindow(com.sun.jna.platform.win32.WinDef.HWND)"><!-- --></A><H3>
+CloseWindow</H3>
+<PRE>
+boolean <B>CloseWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd)</PRE>
+<DL>
+<DD>Minimizes (but does not destroy) the specified window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window to be minimized.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+     If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.ByReference.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/VerRsrc.html" title="interface in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/User32.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="User32.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

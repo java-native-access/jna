@@ -1,0 +1,1112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Function (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Function (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/FromNativeConverter.html" title="interface in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/Function.PostCallRead.html" title="interface in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Function.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Function.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna</FONT>
+<BR>
+Class Function</H2>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">com.sun.jna.Pointer</A>
+      <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.Function</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>Function</B><DT>extends <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></DL>
+</PRE>
+
+<P>
+An abstraction for a native function pointer.  An instance of 
+ <code>Function</code> represents a pointer to some native function.  
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[], java.util.Map)"><CODE>invoke(Class,Object[],Map)</CODE></A> is the primary means to call
+ the function. <p/>
+ <a name=callflags></a>
+ Function call behavior may be modified by passing one of the following call
+ flags: 
+ <ul>
+ <li><A HREF="../../../com/sun/jna/Function.html#C_CONVENTION"><CODE>C_CONVENTION</CODE></A> Use C calling convention (default)
+ <li><A HREF="../../../com/sun/jna/Function.html#ALT_CONVENTION"><CODE>ALT_CONVENTION</CODE></A> Use alternate calling convention (e.g. stdcall)
+ <li><A HREF="../../../com/sun/jna/Function.html#THROW_LAST_ERROR"><CODE>THROW_LAST_ERROR</CODE></A> Throw a <A HREF="../../../com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><CODE>LastErrorException</CODE></A> if
+ the native function sets the system error to a non-zero value (errno or
+ GetLastError).  Setting this flag will cause the system error to be cleared
+ prior to native function invocation.
+ </ul>
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Sheng Liang, originator, Todd Fast, suitability modifications, Timothy Wall</DD>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A></DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.PostCallRead.html" title="interface in com.sun.jna">Function.PostCallRead</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Any argument which implements this interface will have the
+ <A HREF="../../../com/sun/jna/Function.PostCallRead.html#read()"><CODE>Function.PostCallRead.read()</CODE></A> method called immediately after function invocation.</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#ALT_CONVENTION">ALT_CONVENTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First alternate convention (currently used only for w32 stdcall).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#C_CONVENTION">C_CONVENTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Standard C calling convention.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#callFlags">callFlags</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#INTEGER_FALSE">INTEGER_FALSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#INTEGER_TRUE">INTEGER_TRUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#MAX_NARGS">MAX_NARGS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum number of arguments supported by a JNA function call.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#OPTION_INVOKING_METHOD">OPTION_INVOKING_METHOD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For internal JNA use.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#options">options</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#THROW_LAST_ERROR">THROW_LAST_ERROR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to throw an exception if last error is non-zero after call.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Pointer"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#NULL">NULL</A>, <A HREF="../../../com/sun/jna/Pointer.html#peer">peer</A>, <A HREF="../../../com/sun/jna/Pointer.html#SIZE">SIZE</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#Function(com.sun.jna.NativeLibrary, java.lang.String, int)">Function</A></B>(<A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>&nbsp;library,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName,
+         int&nbsp;callFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new <code>Function</code> that is linked with a native 
+ function that follows the given calling convention.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#Function(com.sun.jna.Pointer, int)">Function</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;functionAddress,
+         int&nbsp;callFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new <code>Function</code> that is linked with a native 
+ function that follows the given calling convention.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#concatenateVarArgs(java.lang.Object[])">concatenateVarArgs</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;inArgs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concatenate varargs with normal args to obtain a simple argument 
+ array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#equals(java.lang.Object)">equals</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two function pointers are equal if they share the same peer address
+ and calling convention.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#getCallingConvention()">getCallingConvention</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#getFunction(com.sun.jna.Pointer)">getFunction</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Obtain a <code>Function</code> representing a native 
+ function pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#getFunction(com.sun.jna.Pointer, int)">getFunction</A></B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+            int&nbsp;callFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Obtain a <code>Function</code> representing a native 
+ function pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#getFunction(java.lang.String, java.lang.String)">getFunction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libraryName,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Obtain a <code>Function</code> representing a native 
+ function that follows the standard "C" calling convention.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#getFunction(java.lang.String, java.lang.String, int)">getFunction</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libraryName,
+            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName,
+            int&nbsp;callFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Obtain a <code>Function</code> representing a native 
+ function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#getName()">getName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a unique hash code for <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A>s which are
+        equivalent.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])">invoke</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;returnType,
+       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;inArgs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoke the native function with the given arguments, returning the
+ native result as an Object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[], java.util.Map)">invoke</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;returnType,
+       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;inArgs,
+       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;options)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoke the native function with the given arguments, returning the
+ native result as an Object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Object[])">invoke</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call the native function being represented by this object</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) &nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Object[], java.lang.Class, boolean)">invoke</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args,
+       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;returnType,
+       boolean&nbsp;allowObjects)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokeDouble(java.lang.Object[])">invokeDouble</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Double.class, args)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokeFloat(java.lang.Object[])">invokeFloat</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Float.class, args)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokeInt(java.lang.Object[])">invokeInt</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Integer.class, args)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokeLong(java.lang.Object[])">invokeLong</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Long.class, args)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokeObject(java.lang.Object[])">invokeObject</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invokeObject(Object.class, args)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokePointer(java.lang.Object[])">invokePointer</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Pointer.class, args)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokeString(java.lang.Object[], boolean)">invokeString</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args,
+             boolean&nbsp;wide)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(String.class, args)</CODE></A>
+ or <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(WString.class, args)</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#invokeVoid(java.lang.Object[])">invokeVoid</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Void.class, args)</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#isVarArgs(java.lang.reflect.Method)">isVarArgs</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</A>&nbsp;m)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Varargs are only supported on 1.5+.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a human-readable representation of this object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>(package private) static&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Boolean.html?is-external=true" title="class or interface in java.lang">Boolean</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/sun/jna/Function.html#valueOf(boolean)">valueOf</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Implementation of Boolean.valueOf for older VMs.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.Pointer"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../com/sun/jna/Pointer.html#clear(long)">clear</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(int)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByte(long)">getByte</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getByteBuffer(long, long)">getByteBuffer</A>, <A HREF="../../../com/sun/jna/Pointer.html#getChar(long)">getChar</A>, <A HREF="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDouble(long)">getDouble</A>, <A HREF="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloat(long)">getFloat</A>, <A HREF="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getInt(long)">getInt</A>, <A HREF="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLong(long)">getLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointer(long)">getPointer</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShort(long)">getShort</A>, <A HREF="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getString(long, boolean)">getString</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getStringArray(long, int, boolean)">getStringArray</A>, <A HREF="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</A>, <A HREF="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer)">nativeValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer, long)">nativeValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, byte[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, char[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, double[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, float[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, int[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, long[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#read(long, short[], int, int)">read</A>, <A HREF="../../../com/sun/jna/Pointer.html#setByte(long, byte)">setByte</A>, <A HREF="../../../com/sun/jna/Pointer.html#setChar(long, char)">setChar</A>, <A HREF="../../../com/sun/jna/Pointer.html#setDouble(long, double)">setDouble</A>, <A HREF="../../../com/sun/jna/Pointer.html#setFloat(long, float)">setFloat</A>, <A HREF="../../../com/sun/jna/Pointer.html#setInt(long, int)">setInt</A>, <A HREF="../../../com/sun/jna/Pointer.html#setLong(long, long)">setLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</A>, <A HREF="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</A>, <A HREF="../../../com/sun/jna/Pointer.html#setPointer(long, com.sun.jna.Pointer)">setPointer</A>, <A HREF="../../../com/sun/jna/Pointer.html#setShort(long, short)">setShort</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)">setString</A>, <A HREF="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</A>, <A HREF="../../../com/sun/jna/Pointer.html#share(long)">share</A>, <A HREF="../../../com/sun/jna/Pointer.html#share(long, long)">share</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, byte[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, char[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, double[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, float[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, int[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, long[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</A>, <A HREF="../../../com/sun/jna/Pointer.html#write(long, short[], int, int)">write</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="MAX_NARGS"><!-- --></A><H3>
+MAX_NARGS</H3>
+<PRE>
+public static final int <B>MAX_NARGS</B></PRE>
+<DL>
+<DD>Maximum number of arguments supported by a JNA function call.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Function.MAX_NARGS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="C_CONVENTION"><!-- --></A><H3>
+C_CONVENTION</H3>
+<PRE>
+public static final int <B>C_CONVENTION</B></PRE>
+<DL>
+<DD>Standard C calling convention.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Function.C_CONVENTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="ALT_CONVENTION"><!-- --></A><H3>
+ALT_CONVENTION</H3>
+<PRE>
+public static final int <B>ALT_CONVENTION</B></PRE>
+<DL>
+<DD>First alternate convention (currently used only for w32 stdcall).
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Function.ALT_CONVENTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="THROW_LAST_ERROR"><!-- --></A><H3>
+THROW_LAST_ERROR</H3>
+<PRE>
+public static final int <B>THROW_LAST_ERROR</B></PRE>
+<DL>
+<DD>Whether to throw an exception if last error is non-zero after call.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Function.THROW_LAST_ERROR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INTEGER_TRUE"><!-- --></A><H3>
+INTEGER_TRUE</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</A> <B>INTEGER_TRUE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="INTEGER_FALSE"><!-- --></A><H3>
+INTEGER_FALSE</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</A> <B>INTEGER_FALSE</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="callFlags"><!-- --></A><H3>
+callFlags</H3>
+<PRE>
+int <B>callFlags</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="options"><!-- --></A><H3>
+options</H3>
+<PRE>
+final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A> <B>options</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="OPTION_INVOKING_METHOD"><!-- --></A><H3>
+OPTION_INVOKING_METHOD</H3>
+<PRE>
+static final <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>OPTION_INVOKING_METHOD</B></PRE>
+<DL>
+<DD>For internal JNA use.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#com.sun.jna.Function.OPTION_INVOKING_METHOD">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Function(com.sun.jna.NativeLibrary, java.lang.String, int)"><!-- --></A><H3>
+Function</H3>
+<PRE>
+<B>Function</B>(<A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>&nbsp;library,
+         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName,
+         int&nbsp;callFlags)</PRE>
+<DL>
+<DD>Create a new <code>Function</code> that is linked with a native 
+ function that follows the given calling convention.
+ 
+ <p>The allocated instance represents a pointer to the named native 
+ function from the supplied library, called with the given calling 
+ convention.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>library</CODE> - <A HREF="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callFlags</CODE> - Function <a href="#callflags">call flags</a>
+<DT><B>Throws:</B>
+<DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the given function name is
+ not found within the library.</DL>
+</DL>
+<HR>
+
+<A NAME="Function(com.sun.jna.Pointer, int)"><!-- --></A><H3>
+Function</H3>
+<PRE>
+<B>Function</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;functionAddress,
+         int&nbsp;callFlags)</PRE>
+<DL>
+<DD>Create a new <code>Function</code> that is linked with a native 
+ function that follows the given calling convention.
+ 
+ <p>The allocated instance represents a pointer to the given 
+ function address, called with the given calling 
+ convention.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>functionAddress</CODE> - Address of the native function<DD><CODE>callFlags</CODE> - Function <a href="#callflags">call flags</a></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getFunction(java.lang.String, java.lang.String)"><!-- --></A><H3>
+getFunction</H3>
+<PRE>
+public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A> <B>getFunction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libraryName,
+                                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName)</PRE>
+<DL>
+<DD>Obtain a <code>Function</code> representing a native 
+ function that follows the standard "C" calling convention.
+ 
+ <p>The allocated instance represents a pointer to the named native 
+ function from the named library, called with the standard "C" calling
+ convention.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the native function<DD><CODE>functionName</CODE> - Name of the native function to be linked with
+<DT><B>Throws:</B>
+<DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the library is not found or
+ the given function name is not found within the library.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFunction(java.lang.String, java.lang.String, int)"><!-- --></A><H3>
+getFunction</H3>
+<PRE>
+public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A> <B>getFunction</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;libraryName,
+                                   <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;functionName,
+                                   int&nbsp;callFlags)</PRE>
+<DL>
+<DD>Obtain a <code>Function</code> representing a native 
+ function.
+ 
+ <p>The allocated instance represents a pointer to the named native 
+ function from the named library.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>libraryName</CODE> - Library in which to find the function<DD><CODE>functionName</CODE> - Name of the native function to be linked with<DD><CODE>callFlags</CODE> - Function <a href="#callflags">call flags</a>
+<DT><B>Throws:</B>
+<DD><CODE>{@link</CODE> - UnsatisfiedLinkError} if the library is not found or
+ the given function name is not found within the library.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFunction(com.sun.jna.Pointer)"><!-- --></A><H3>
+getFunction</H3>
+<PRE>
+public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A> <B>getFunction</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p)</PRE>
+<DL>
+<DD>Obtain a <code>Function</code> representing a native 
+ function pointer.  In general, this function should be used by dynamic
+ languages; Java code should allow JNA to bind to a specific Callback
+ interface instead by defining a return type or Structure field type.
+ 
+ <p>The allocated instance represents a pointer to the native 
+ function pointer.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>p</CODE> - Native function pointer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFunction(com.sun.jna.Pointer, int)"><!-- --></A><H3>
+getFunction</H3>
+<PRE>
+public static <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</A> <B>getFunction</B>(<A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;p,
+                                   int&nbsp;callFlags)</PRE>
+<DL>
+<DD>Obtain a <code>Function</code> representing a native 
+ function pointer.  In general, this function should be used by dynamic
+ languages; Java code should allow JNA to bind to a specific Callback
+ interface instead by defining a return type or Structure field type. 
+ 
+ <p>The allocated instance represents a pointer to the native 
+ function pointer.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>p</CODE> - Native function pointer<DD><CODE>callFlags</CODE> - Function <a href="#callflags">call flags</a></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getName()"><!-- --></A><H3>
+getName</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>getName</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCallingConvention()"><!-- --></A><H3>
+getCallingConvention</H3>
+<PRE>
+public int <B>getCallingConvention</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invoke(java.lang.Class, java.lang.Object[])"><!-- --></A><H3>
+invoke</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>invoke</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;returnType,
+                     <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;inArgs)</PRE>
+<DL>
+<DD>Invoke the native function with the given arguments, returning the
+ native result as an Object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invoke(java.lang.Class, java.lang.Object[], java.util.Map)"><!-- --></A><H3>
+invoke</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>invoke</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;returnType,
+                     <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;inArgs,
+                     <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</A>&nbsp;options)</PRE>
+<DL>
+<DD>Invoke the native function with the given arguments, returning the
+ native result as an Object.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invoke(java.lang.Object[], java.lang.Class, boolean)"><!-- --></A><H3>
+invoke</H3>
+<PRE>
+<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>invoke</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args,
+              <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</A>&nbsp;returnType,
+              boolean&nbsp;allowObjects)</PRE>
+<DL>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../com/sun/jna/NativeLibrary.html#NativeLibrary(java.lang.String, java.lang.String, long, java.util.Map)"><CODE>implementation</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invoke(java.lang.Object[])"><!-- --></A><H3>
+invoke</H3>
+<PRE>
+public void <B>invoke</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Call the native function being represented by this object
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>args</CODE> - Arguments to pass to the native function</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>toString</B>()</PRE>
+<DL>
+<DD>Provide a human-readable representation of this object.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#toString()">toString</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeObject(java.lang.Object[])"><!-- --></A><H3>
+invokeObject</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A> <B>invokeObject</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Convenience method for
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invokeObject(Object.class, args)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokePointer(java.lang.Object[])"><!-- --></A><H3>
+invokePointer</H3>
+<PRE>
+public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>invokePointer</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Pointer.class, args)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeString(java.lang.Object[], boolean)"><!-- --></A><H3>
+invokeString</H3>
+<PRE>
+public <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>invokeString</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args,
+                           boolean&nbsp;wide)</PRE>
+<DL>
+<DD>Convenience method for
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(String.class, args)</CODE></A>
+ or <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(WString.class, args)</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>args</CODE> - Arguments passed to native function<DD><CODE>wide</CODE> - Whether the return value is of type <code>wchar_t*</code>;
+ if false, the return value is of type <code>char*</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeInt(java.lang.Object[])"><!-- --></A><H3>
+invokeInt</H3>
+<PRE>
+public int <B>invokeInt</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Integer.class, args)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeLong(java.lang.Object[])"><!-- --></A><H3>
+invokeLong</H3>
+<PRE>
+public long <B>invokeLong</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Long.class, args)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeFloat(java.lang.Object[])"><!-- --></A><H3>
+invokeFloat</H3>
+<PRE>
+public float <B>invokeFloat</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Float.class, args)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeDouble(java.lang.Object[])"><!-- --></A><H3>
+invokeDouble</H3>
+<PRE>
+public double <B>invokeDouble</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Double.class, args)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invokeVoid(java.lang.Object[])"><!-- --></A><H3>
+invokeVoid</H3>
+<PRE>
+public void <B>invokeVoid</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;args)</PRE>
+<DL>
+<DD>Convenience method for 
+ <A HREF="../../../com/sun/jna/Function.html#invoke(java.lang.Class, java.lang.Object[])"><CODE>invoke(Void.class, args)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>&nbsp;o)</PRE>
+<DL>
+<DD>Two function pointers are equal if they share the same peer address
+ and calling convention.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>o</CODE> - A <code>Pointer</code> instance
+<DT><B>Returns:</B><DD>True if the other object is a <code>Pointer</code>, 
+          and the C pointers being pointed to by these objects are also
+                        equal. Returns false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <B>hashCode</B>()</PRE>
+<DL>
+<DD>Provide a unique hash code for <A HREF="../../../com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A>s which are
+        equivalent.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>A hash code value for the represented native pointer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="concatenateVarArgs(java.lang.Object[])"><!-- --></A><H3>
+concatenateVarArgs</H3>
+<PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[] <B>concatenateVarArgs</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A>[]&nbsp;inArgs)</PRE>
+<DL>
+<DD>Concatenate varargs with normal args to obtain a simple argument 
+ array.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isVarArgs(java.lang.reflect.Method)"><!-- --></A><H3>
+isVarArgs</H3>
+<PRE>
+static boolean <B>isVarArgs</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/Method.html?is-external=true" title="class or interface in java.lang.reflect">Method</A>&nbsp;m)</PRE>
+<DL>
+<DD>Varargs are only supported on 1.5+.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="valueOf(boolean)"><!-- --></A><H3>
+valueOf</H3>
+<PRE>
+static <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Boolean.html?is-external=true" title="class or interface in java.lang">Boolean</A> <B>valueOf</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>Implementation of Boolean.valueOf for older VMs.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/sun/jna/FromNativeConverter.html" title="interface in com.sun.jna"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/sun/jna/Function.PostCallRead.html" title="interface in com.sun.jna"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/sun/jna/Function.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Function.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>
