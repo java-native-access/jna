@@ -6,13 +6,15 @@ Features
 * Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq)
 * linux/ppc 32-bit support (Fritiof Hedman)
 * linux multi-arch support (kohsuke)
-* Add `platform.win32.Kernel32.CopyFile`, `platform.win32.Kernel32.MoveFile`, `platform.win32.Kernel32.MoveFileEx`, `platform.win32.Kernel32.CreateProcess`, `platform.win32.Kernel32.SetEnvironmentVariables`, `platform.win32.Kernel32.GetFileTime`, `platform.win32.Kernel32.SetFileTime`, `platform.win32.Kernel32.SetFileAttributes`, `platform.win32.Kernel32.DeviceIoControl`, `platform.win32.Kernel32.GetDiskFreeSpaceEx`, `platform.win32.Kernel32.CreateToolhelp32Snapshot`, `platform.win32.Kernel32.Process32First`, `platform.win32.Kernel32.Process32Next`.
-* Add `platform.win32.Msi.MsiGetComponentPath`, `platform.win32.Msi.MsiLocateComponent`, `platform.win32.Msi.MsiGetProductCode`, `platform.win32.Msi.MsiEnumComponents`.
-* Add `platform.win32.User32.RegisterHotKey`, `platform.win32.User32.UnregisterHotKey`, `platform.unix.x11.XGRabKey`, `platform.unix.x11.XUngrabKey`, `platform.unix.x11.XSetErrorHandler`, `platform.mac.Carbon.GetEventDispatcherTarget`, `platform.mac.Carbon.InstallEventHandler`, `platform.mac.Carbon.RegisterEventHotKey`, `platform.mac.Carbon.GetEventParameter`, `platform.mac.Carbon.RemoveEventHandler`, `platform.mac.Carbon.UnregisterEventHotKey`
-* Add `platform.win32.SetupApi.SetupDiGetClassDevs`, `platform.win32.SetupApi.SetupDiDestroyDeviceInfoList`, `platform.win32.SetupApi.SetupDiEnumDeviceInterfaces`, `platform.win32.SetupApi.SetupDiGetDeviceInterfaceDetail`, `platform.win32.SetupApi.SetupDiGetDeviceRegistryProperty`.
+* Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`
+* Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`
+* Add to `platform.win32.Kernel32`: `CopyFile`, `MoveFile`, `MoveFileEx`, `CreateProcess`, `SetEnvironmentVariables`, `GetFileTime`, `SetFileTime`, `SetFileAttributes`, `DeviceIoControl`, `GetDiskFreeSpaceEx`, `CreateToolhelp32Snapshot`, `Process32First`, `Process32Next`.
+* Add to `platform.win32.Msi`: `MsiGetComponentPath`, `MsiLocateComponent`, `MsiGetProductCode`, `MsiEnumComponents`.
+* Add to `platform.win32.User32`: `RegisterHotKey`, `UnregisterHotKey`
+* Add to `platform.win32.SetupApi`: `SetupDiGetClassDevs`, `SetupDiDestroyDeviceInfoList`, `SetupDiEnumDeviceInterfaces`, `SetupDiGetDeviceInterfaceDetail`, `SetupDiGetDeviceRegistryProperty`.
 * Add `platform.win32.Shell32.ShellExecute`.
-* Add `platform.win32.User32.SetParent`, `platform.win32.User32.IsWindowVisible`, `platform.win32.User32.MoveWindow`, `platform.win32.User32.SetWindowPos`, `platform.win32.User32.AttachInputThread`, `platform.win32.User32.SetForegroundWindow`, `platform.win32.User32.GetForegroundWindow`, `platform.win32.User32.SetFocus`, `platform.win32.User32.SendInput`, `platform.win32.User32.WaitForInputIdle`, `platform.win32.User32.InvalidateRect`, `platform.win32.User32.RedrawWindow`, `platform.win32.User32.GetWindow`, `platform.win32.User32.UpdateWindow`, `platform.win32.User32.ShowWindow`, `platform.win32.User32.CloseWindow`.
-* Add `platform.win32.Version.GetFileVersionInfoSize`, `platform.win32.Version.GetFileVersionInfo`, `platform.win32.Version.VerQueryValue`.
+* Add to `platform.win32.User32`: `SetParent`, `IsWindowVisible`, `MoveWindow`, `SetWindowPos`, `AttachInputThread`, `SetForegroundWindow`, `GetForegroundWindow`, `SetFocus`, `SendInput`, `WaitForInputIdle`, `InvalidateRect`, `RedrawWindow`, `GetWindow`, `UpdateWindow`, `ShowWindow`, `CloseWindow`.
+* Add to `platform.win32.Version`: `GetFileVersionInfoSize`, `GetFileVersionInfo`, `VerQueryValue`.
 
 Bug Fixes
 --------

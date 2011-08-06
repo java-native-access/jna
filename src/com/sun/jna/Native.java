@@ -686,6 +686,7 @@ public final class Native {
         String name = System.getProperty("os.name");
         String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
         URL url = Native.class.getResource(resourceName);
+        boolean unpacked = false;
                 
         // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual
         // .dylib extension 
@@ -731,6 +732,7 @@ public final class Native {
                 while ((count = is.read(buf, 0, buf.length)) > 0) {
                     fos.write(buf, 0, count);
                 }
+                unpacked = true;
             }
             catch(IOException e) {
                 throw new Error("Failed to create temporary file for jnidispatch library: " + e);
@@ -743,11 +745,14 @@ public final class Native {
             }
         }
         System.load(lib.getAbsolutePath());
+        nativeLibraryPath = lib.getAbsolutePath();
         // Attempt to delete immediately once jnidispatch is successfully
         // loaded.  This avoids the complexity of trying to do so on "exit",
         // which point can vary under different circumstances (native
         // compilation, dynamically loaded modules, normal application, etc).
-        deleteNativeLibrary(nativeLibraryPath = lib.getAbsolutePath());
+        if (unpacked) {
+            deleteNativeLibrary(lib.getAbsolutePath());
+        }
     }
 
     /**
