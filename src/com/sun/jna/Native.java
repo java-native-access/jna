@@ -67,6 +67,9 @@ import com.sun.jna.Structure.FFIType;
  * probably install the native library in an accessible location and configure 
  * your system accordingly, rather than relying on JNA to extract the library 
  * from its own jar file.<p/>
+ * To avoid the automatic unpacking (in situations where you want to force a
+ * failure if the JNA native library is not properly installed on the system),
+ * set the system property <code>jna.nounpack=true</code>.
  * NOTE: all native functions are provided within this class to ensure that
  * all other JNA-provided classes and objects are GC'd and/or
  * finalized/disposed before this class is disposed and/or removed from
@@ -671,6 +674,9 @@ public final class Native {
             nativeLibraryPath = libName;
         }
         catch(UnsatisfiedLinkError e) {
+            if (Boolean.getBoolean("jna.nounpack")) {
+                throw e;
+            }
             loadNativeLibraryFromJar();
         }
     }

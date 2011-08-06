@@ -3,7 +3,8 @@ Release 3.3.x
 
 Features
 --------
-* linux/ppc 32-bit support
+* Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq)
+* linux/ppc 32-bit support (Fritiof Hedman)
 * linux multi-arch support (kohsuke)
 * Add `platform.win32.Kernel32.CopyFile`, `platform.win32.Kernel32.MoveFile`, `platform.win32.Kernel32.MoveFileEx`, `platform.win32.Kernel32.CreateProcess`, `platform.win32.Kernel32.SetEnvironmentVariables`, `platform.win32.Kernel32.GetFileTime`, `platform.win32.Kernel32.SetFileTime`, `platform.win32.Kernel32.SetFileAttributes`, `platform.win32.Kernel32.DeviceIoControl`, `platform.win32.Kernel32.GetDiskFreeSpaceEx`, `platform.win32.Kernel32.CreateToolhelp32Snapshot`, `platform.win32.Kernel32.Process32First`, `platform.win32.Kernel32.Process32Next`.
 * Add `platform.win32.Msi.MsiGetComponentPath`, `platform.win32.Msi.MsiLocateComponent`, `platform.win32.Msi.MsiGetProductCode`, `platform.win32.Msi.MsiEnumComponents`.

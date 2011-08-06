@@ -35,10 +35,28 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
+    public void testAvoidJarUnpacking() throws Exception {
+        System.setProperty("jna.nounpack", "true");
+        ClassLoader loader = new TestLoader(true);
+        try {
+            Class cls = Class.forName("com.sun.jna.Native", true, loader);
+
+            fail("Native class should not be loadable if jna.nounpack=true: "
+                 + cls.getClassLoader());
+        }
+        catch(UnsatisfiedLinkError e) {
+        }
+        finally {
+            System.setProperty("jna.nounpack", "false");
+        }
+    }
+
     // Fails under clover
     public void testUnloadFromJar() throws Exception {
         File jar = new File(BUILDDIR + "/jna.jar");
-        assertTrue("Expected JNA jar file at " + jar + " is missing", jar.exists());
+        if (!jar.exists()) {
+            throw new Error("Expected JNA jar file at " + jar + " is missing");
+        }
 
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
@@ -66,19 +84,6 @@ public class JNAUnloadTest extends TestCase {
         for (int i=0;i < 100 && f.exists();i++) {
             Thread.sleep(10);
             System.gc();
-        }
-        // NOTE: Temporary file removal on Windows only works on a Sun VM
-        try {
-            if (Platform.isWindows()) {
-                ClassLoader.class.getDeclaredField("nativeLibraries");
-            }
-            if (f.exists() && !f.delete()) {
-                assertFalse("Temporary native library still locked: " + path,
-                            f.exists());
-            }
-        }
-        catch(Exception e) {
-            // Skip on non-supported VMs
         }
 
         try {
