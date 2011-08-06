@@ -55,7 +55,7 @@ public class WebStartTest extends TestCase {
         + "  <information>\n"
         + "    <title>JNLP Web Start Test</title>\n"
         + "    <vendor>JNA</vendor>\n"
-        + "    <homepage href='http://jna.dev.java.net'/>\n"
+        + "    <homepage href='http://github.com/twall/jna'/>\n"
         + "    <description>Local JNLP launch test.</description>\n"
         + "    <description kind='short'>Launch Test</description>\n"
         + "  </information>\n"
