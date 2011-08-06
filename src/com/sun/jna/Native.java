@@ -83,8 +83,8 @@ public final class Native {
 
     private static final String VERSION = "3.3.0";
 
+    // Used by tests, do not remove
     private static String nativeLibraryPath = null;
-    private static boolean unpacked;
     private static Map typeMappers = new WeakHashMap();
     private static Map alignments = new WeakHashMap();
     private static Map options = new WeakHashMap();
@@ -128,9 +128,7 @@ public final class Native {
         }
     }
     
-    /** Ensure our unpacked native library gets cleaned up if this class gets
-        garbage-collected.
-    */
+    /** Force a dispose when this class is GC'd. */
     private static final Object finalizer = new Object() {
         protected void finalize() {
             dispose();
@@ -140,25 +138,23 @@ public final class Native {
     /** Properly dispose of JNA functionality. */
     private static void dispose() {
         NativeLibrary.disposeAll();
-        deleteNativeLibrary();
+        nativeLibraryPath = null;
     }
 
     /** Remove any automatically unpacked native library.
 
         This will fail on windows, which disallows removal of any file that is
-        still in use. so an alternative is required in that case.
+        still in use, so an alternative is required in that case.  Mark
+        the file that could not be deleted, and attempt to delete any
+        temporaries on next startup.
 
         Do NOT force the class loader to unload the native library, since
         that introduces issues with cleaning up any extant JNA bits
         (e.g. Memory) which may still need use of the library before shutdown.
      */
-    private static boolean deleteNativeLibrary() {
-        String path = nativeLibraryPath;
-        if (path == null || !unpacked) return true;
+    private static boolean deleteNativeLibrary(String path) {
         File flib = new File(path);
         if (flib.delete()) {
-            nativeLibraryPath = null;
-            unpacked = false;
             return true;
         }
 
@@ -671,7 +667,6 @@ public final class Native {
         }
         try {
             System.loadLibrary(libName);
-            nativeLibraryPath = libName;
         }
         catch(UnsatisfiedLinkError e) {
             if (Boolean.getBoolean("jna.nounpack")) {
@@ -746,10 +741,13 @@ public final class Native {
                     try { fos.close(); } catch(IOException e) { }
                 }
             }
-            unpacked = true;
         }
         System.load(lib.getAbsolutePath());
-        nativeLibraryPath = lib.getAbsolutePath();
+        // Attempt to delete immediately once jnidispatch is successfully
+        // loaded.  This avoids the complexity of trying to do so on "exit",
+        // which point can vary under different circumstances (native
+        // compilation, dynamically loaded modules, normal application, etc).
+        deleteNativeLibrary(nativeLibraryPath = lib.getAbsolutePath());
     }
 
     /**

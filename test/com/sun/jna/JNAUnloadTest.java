@@ -65,6 +65,7 @@ public class JNAUnloadTest extends TestCase {
         Field field = cls.getDeclaredField("nativeLibraryPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
+        assertNotNull("Native library path unavailable", path);
         assertTrue("Native library not unpacked from jar: " + path,
                    path.startsWith(System.getProperty("java.io.tmpdir")));
 
@@ -80,18 +81,27 @@ public class JNAUnloadTest extends TestCase {
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
+
+        // Check for temporary file deletion
         File f = new File(path);
         for (int i=0;i < 100 && f.exists();i++) {
             Thread.sleep(10);
             System.gc();
         }
 
+        if (f.exists()) {
+            assertTrue("Temporary jnidispatch not marked for later deletion: "
+                       + f, new File(f.getAbsolutePath()+".x").exists());
+        }
+
+        // Should be able to load again without complaints about library
+        // already loaded in another class loader
         try {
             loader = new TestLoader(true);
             cls = Class.forName("com.sun.jna.Native", true, loader);
         }
         catch(Throwable t) {
-            fail("Native library not unloaded: " + t.getMessage());
+            fail("Couldn't load class again after discarding first load: " + t.getMessage());
         }
         finally {
             loader = null;
