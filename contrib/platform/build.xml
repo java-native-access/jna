@@ -76,7 +76,8 @@
 	      </fileset>
 	      <report todir="${build.test.results.dir}"/>
 	    </junitreport>
-	  	<echo message="View test report in file://${build.test.results.dir}/index.html" />
+            <property name="build.test.results.dir.abs" location="${build.test.results.dir}"/>
+	    <echo message="View test report in file://${build.test.results.dir.abs}/index.html" />
 	</target>
     <target name="test-win32" depends="init,compile-test,-pre-test-run,-do-test-run,test-report,-post-test-run,-test-browse" />
 </project>
