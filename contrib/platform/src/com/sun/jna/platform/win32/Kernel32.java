@@ -1231,18 +1231,22 @@ public interface Kernel32 extends StdCallLibrary {
     boolean DeviceIoControl(HANDLE hDevice, int dwIoControlCode, Pointer lpInBuffer, int nInBufferSize,
         Pointer lpOutBuffer, int nOutBufferSize, IntByReference lpBytesReturned, Pointer lpOverlapped);
 	
-	/**
-	 * Retrieves information about the amount of space that is available on a disk volume, which is the total amount of 
-	 * space, the total amount of free space, and the total amount of free space available to the user that is 
-	 * associated with the calling thread.
-	 *
-	 * @param lpDirectoryName
-	 * @param lpFreeBytesAvailable
-	 * @param lpTotalNumberOfBytes
-	 * @param lpTotalNumberOfFreeBytes
-	 * @return
-	 */
-	boolean GetDiskFreeSpaceEx(String lpDirectoryName, LongByReference lpFreeBytesAvailable, LongByReference lpTotalNumberOfBytes, LongByReference lpTotalNumberOfFreeBytes);
+    /**
+     * Retrieves information about the amount of space that is available on a disk volume, which is the total amount of 
+     * space, the total amount of free space, and the total amount of free space available to the user that is 
+     * associated with the calling thread.
+     *
+     * @param lpDirectoryName
+     * @param lpFreeBytesAvailable
+     * @param lpTotalNumberOfBytes
+     * @param lpTotalNumberOfFreeBytes
+     * @return
+     *  If the function succeeds, the return value is nonzero.
+     * 
+     *  If the function fails, the return value is zero (0). To get extended error information, 
+     *  call GetLastError.
+     */
+     boolean GetDiskFreeSpaceEx(String lpDirectoryName, LongByReference lpFreeBytesAvailable, LongByReference lpTotalNumberOfBytes, LongByReference lpTotalNumberOfFreeBytes);
 
     /**
      * Takes a snapshot of the specified processes, as well as the heaps, modules, and threads used by these processes.
