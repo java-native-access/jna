@@ -581,7 +581,10 @@
           <attribute name="Specification-Title" value="${spec.title}"/>
           <attribute name="Specification-Vendor" value="${spec.vendor}"/>
           <attribute name="Specification-Version" value="${spec.version}"/>
-          <!-- OSGi Bundle attributes -->
+          <!--
+              OSGi Bundle attributes
+              see http://www.osgi.org/Specifications/Reference
+            -->
           <attribute name="Bundle-ManifestVersion" value="2"/>
           <attribute name="Bundle-Name" value="jna"/>
           <attribute name="Bundle-Description" value="JNA Library"/>
@@ -590,7 +593,42 @@
           <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
           <attribute name="Bundle-Vendor" value="${vendor}"/>
           <attribute name="Bundle-ActivationPolicy" value="lazy"/>
-          <attribute name="Export-Package" value="com.sun.jna*"/>
+          <attribute name="Export-Package" value="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
+          <!-- Note that no terminal "*" is included in this list,
+               which will force failure on unsupported platforms.
+            -->
+          <attribute name="Bundle-NativeCode"
+                     value="
+com/sun/jna/win32-x86/jnidispatch.dll;
+processor=x86;osname=win32,
+com/sun/jna/win32-amd64/jnidispatch.dll;
+processor=x86-64;osname=win32,
+
+com/sun/jna/sunos-x86/libjnidispatch.so;
+processor=x86;osname=sunos,
+com/sun/jna/sunos-amd64/libjnidispatch.so;
+processor=x86-64;osname=sunos,
+com/sun/jna/sunos-sparc/libjnidispatch.so;
+processor=sparc;osname=sunos,
+com/sun/jna/sunos-sparcv9/libjnidispatch.so;
+processor=sparcv9;osname=sunos,
+
+com/sun/jna/linux-ppc/libjnidispatch.so;
+processor=ppc;osname=linux,
+com/sun/jna/linux-i386/libjnidispatch.so;
+processor=x86;osname=linux,
+com/sun/jna/linux-amd64/libjnidispatch.so;
+processor=x86-64;osname=linux,
+
+com/sun/jna/freebsd-i386/libjnidispatch.so;
+processor=x86;osname=freebsd,
+com/sun/jna/freebsd-amd64/libjnidispatch.so;
+processor=x86-64;osname=freebsd,
+
+com/sun/jna/darwin/libjnidispatch.jnilib;
+osname=macos,
+                            "/>
+
         </section>
       </manifest>
       <zipfileset src="${build}/${jar}"/>
