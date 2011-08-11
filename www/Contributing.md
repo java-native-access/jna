@@ -10,6 +10,14 @@ JNA contains work from many developers. You're encouraged to contribute to both 
 - Make your code changes, write tests, build
 - Submit pull requests, topical branches are encouraged.
 
+Build Environment
+=================
+Most non-windows environments should work out of the box if you have make, gcc, autotools (for libffi), ant, a JDK, and a few other typical command-line utilities available.  Feel free to report any issues, we'll generally pull build fixes immediately.
+
+On windows 32-bit, install cygwin (http://cygwin.com and download/run setup.exe) to obtain make, gcc, autotools, et al.  You should be able to select the basic cygwin installation and add the gcc and make packages.
+
+On windows 64-bit, you'll need the same cygwin setup, plus either mingw64 or the free microsoft C++ compiler available in the path.  You may have to tweak the makefiles to select the one you have available.  Note that if you build with mingw64, you don't get the structured exception handling required for JNA's protected mode operation.  I run my build setup on Vista64 and don't ever change it if I don't have to.
+
 Required Testing
 ================
 
