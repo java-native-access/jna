@@ -39,6 +39,8 @@ typedef __int64 int64_t;
 #define EXPORT __declspec(dllexport)
 #else
 #define EXPORT
+#include <unistd.h>
+#include <pthread.h>
 #endif
 
 #ifdef _MSC_VER
@@ -549,6 +551,27 @@ modifyStructureArray(struct CheckFieldAlignment arg[], int length) {
 EXPORT void
 callVoidCallback(void (*func)(void)) {
   (*func)();
+}
+
+static int repeat_count = 0;
+static int sleep_time = 0;
+static void* thread_function(void *arg) {
+  void (*func)(void) = (void (*)(void))arg;
+  int i;
+  for (i=0;i < repeat_count;i++) {
+    int status;
+    func();
+    usleep(sleep_time*1000);
+  }
+  pthread_exit(NULL);
+}
+
+EXPORT void
+callVoidCallbackThreaded(void (*func)(void), int n, int ms) {
+  pthread_t thread;
+  repeat_count = n;
+  sleep_time = ms;
+  pthread_create(&thread, NULL, &thread_function, func);
 }
 
 EXPORT int 

@@ -16,7 +16,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import junit.framework.TestCase;
@@ -67,6 +69,7 @@ public class CallbacksTest extends TestCase {
             void callback();
         }
         void callVoidCallback(VoidCallback c);
+        void callVoidCallbackThreaded(VoidCallback c, int count, int ms);
         interface VoidCallbackCustom extends Callback {
             void customMethodName();
         }
@@ -231,11 +234,9 @@ public class CallbacksTest extends TestCase {
         assertTrue("Callback not called", called[0]);
         
         Map refs = new WeakHashMap(CallbackReference.callbackMap);
-        refs.putAll(CallbackReference.directCallbackMap);
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = (CallbackReference)refs.get(cb);
-        refs = ref.proxy != null ? CallbackReference.callbackMap
-            : CallbackReference.directCallbackMap;
+        refs = CallbackReference.callbackMap;
         Pointer cbstruct = ref.cbstruct;
         
         cb = null;
@@ -902,6 +903,32 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong callback argument 1", -1, ARGS[0], 0);
         assertEquals("Wrong callback argument 2", -1, ARGS[1], 0);
         assertEquals("Incorrect result of callback invocation", -2, result, 0);
+    }
+
+    public void testNativeThreadAttachment() throws Exception {
+    	final boolean[] called = {false};
+        final Set threads = new HashSet();
+        int COUNT = 10;
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                System.out.println("in callback: " + Thread.currentThread());
+                called[0] = true;
+                threads.add(Thread.currentThread());
+            }
+        };
+        // TODO: check thread count
+        // TODO: check thread name, group, daemon status
+        lib.callVoidCallbackThreaded(cb, COUNT, 1000);
+
+        // OSX: with one big sleep, we get different threads;
+        // with smaller ones, the thread object is apparently re-used
+        /*
+        for (int i=0;i < COUNT;i++) {
+            System.out.println("sleep 1s");
+            Thread.sleep(1000);
+        }
+        */
+        Thread.sleep(10000);
     }
 
     public static void main(java.lang.String[] argList) {

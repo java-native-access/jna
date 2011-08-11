@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2011 Timothy Wall, All Rights Reserved
  * Copyright (c) 2007 Wayne Meissner, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
@@ -391,19 +391,24 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
 
 static void
 callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
-  JavaVM* jvm = ((callback *)user_data)->vm;
+  callback* cb = ((callback *)user_data); 
+  JavaVM* jvm = cb->vm;
   JNIEnv* env;
-  int attached;
-  
-  attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
-  if (!attached) {
-    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach to current thread\n");
+  int daemon = cb->behavior_flags & CB_DAEMON;
+  int was_attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
+  if (!was_attached) {
+    JavaVMAttachArgs args;
+    args.version = JNI_VERSION_1_2;
+    args.name = NULL;
+    args.group = NULL;
+    if ((daemon && ((*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args) != JNI_OK))
+        || (!daemon && ((*jvm)->AttachCurrentThread(jvm, (void *)&env, &args) != JNI_OK))) {
+      fprintf(stderr, "JNA: Can't attach to native thread for callback\n");
       return;
     }
   }
   
-  // Give the callback its own local frame to ensure all local references
+  // Give the callback glue its own local frame to ensure all local references
   // are properly disposed
   if ((*env)->PushLocalFrame(env, 16) < 0) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
@@ -413,7 +418,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     (*env)->PopLocalFrame(env, NULL);
   }
   
-  if (!attached) {
+  if (!was_attached && !(cb->behavior_flags & CB_NODETACH)) {
     (*jvm)->DetachCurrentThread(jvm);
   }
 }

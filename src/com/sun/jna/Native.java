@@ -1050,6 +1050,11 @@ public final class Native {
         return context[3];
     }
 
+    /** Set callback options. */
+    public static void setCallbackOptions(Callback cb, int options) {
+        CallbackReference.setCallbackOptions(cb, options);
+    }
+
     private static Map registeredClasses = new HashMap();
     private static Map registeredLibraries = new HashMap();
     private static Object unloader = new Object() {
@@ -1124,6 +1129,17 @@ public final class Native {
         }
         return buf.toString();
     }
+
+    /** This callback behavior flag indicates that the native thread on which
+        the callback is invoked should be treated as a daemon thread.  This is
+        only meaningful when used with the {@link #CB_NODETACH}.
+    */
+    public static final int CB_DAEMON = 1;
+    /** This callback behavior flag indicates that the thread on which the
+     * callback is invoked should not be detached from the VM.  Use this when
+     * you know your callback will be called repeatedly from the same thread.
+     */
+    public static final int CB_NODETACH = 2;
 
     private static final int CVT_UNSUPPORTED = -1;
     private static final int CVT_DEFAULT = 0;

@@ -2561,7 +2561,9 @@ typedef struct _method_data {
   jboolean throw_last_error;
 } method_data;
 
-// VM vectors to this callback, which calls native code
+/** Direct invocation glue.  VM vectors to this callback, which in turn calls
+    native code 
+*/
 static void
 method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   JNIEnv* env = (JNIEnv*)*(void **)argp[0];

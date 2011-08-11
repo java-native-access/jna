@@ -82,9 +82,16 @@ enum {
   CVT_TYPE_MAPPER = com_sun_jna_Native_CVT_TYPE_MAPPER,
 };
 
+/* callback behavior flags */
+enum {
+  CB_DAEMON = com_sun_jna_Native_CB_DAEMON,
+  CB_NODETACH = com_sun_jna_Native_CB_NODETACH,
+};
+
 typedef struct _callback {
-  // Location of this field must agree with CallbackReference.getTrampoline()
+  /* CallbackReference.getTrampoline() expects this field at offset 0. */
   void* x_closure;
+  int behavior_flags;
   ffi_closure* closure;
   ffi_cif cif;
   ffi_cif java_cif;
