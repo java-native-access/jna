@@ -394,17 +394,25 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   callback* cb = ((callback *)user_data); 
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
-  int daemon = cb->behavior_flags & CB_DAEMON;
   int was_attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
+
   if (!was_attached) {
+    int daemon = 0;
     JavaVMAttachArgs args;
     args.version = JNI_VERSION_1_2;
     args.name = NULL;
     args.group = NULL;
+    if (cb->behavior_flags & CB_HAS_INITIALIZER) {
+      initializeThread(cb, &args);
+    }
+    daemon = cb->behavior_flags & CB_DAEMON;
     if ((daemon && ((*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args) != JNI_OK))
         || (!daemon && ((*jvm)->AttachCurrentThread(jvm, (void *)&env, &args) != JNI_OK))) {
       fprintf(stderr, "JNA: Can't attach to native thread for callback\n");
       return;
+    }
+    if (args.group) {
+      (*env)->DeleteGlobalRef(env, args.group);
     }
   }
   
@@ -414,7 +422,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
   }
   else {
-    callback_invoke(env, (callback *)user_data, cif, resp, cbargs);
+    callback_invoke(env, cb, cif, resp, cbargs);
     (*env)->PopLocalFrame(env, NULL);
   }
   

@@ -1055,6 +1055,17 @@ public final class Native {
         CallbackReference.setCallbackOptions(cb, options);
     }
 
+    /** Set a thread initializer for the given callback.
+        The thread initializer indicates desired thread configuration when the
+        given Callback is invoked on a native thread not yet attached to the
+        VM. 
+     */
+    public static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
+        CallbackReference.setCallbackThreadInitializer(cb, initializer);
+        setCallbackOptions(cb, CB_HAS_INITIALIZER);
+    }
+
+
     private static Map registeredClasses = new HashMap();
     private static Map registeredLibraries = new HashMap();
     private static Object unloader = new Object() {
@@ -1140,6 +1151,8 @@ public final class Native {
      * you know your callback will be called repeatedly from the same thread.
      */
     public static final int CB_NODETACH = 2;
+    /** Indicates whether the callback has an initializer. */
+    private static final int CB_HAS_INITIALIZER = 4;
 
     private static final int CVT_UNSUPPORTED = -1;
     private static final int CVT_DEFAULT = 0;

@@ -909,6 +909,12 @@ public class CallbacksTest extends TestCase {
     	final boolean[] called = {false};
         final Set threads = new HashSet();
         int COUNT = 10;
+        CallbackThreadInitializer init = new CallbackThreadInitializer() {
+            public String getName() {
+                System.out.println("Thread initializer called on " + Thread.currentThread());
+                return CallbacksTest.this.getName();
+            }
+        };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
                 System.out.println("in callback: " + Thread.currentThread());
@@ -918,6 +924,7 @@ public class CallbacksTest extends TestCase {
         };
         // TODO: check thread count
         // TODO: check thread name, group, daemon status
+        Native.setCallbackThreadInitializer(cb, init);
         lib.callVoidCallbackThreaded(cb, COUNT, 1000);
 
         // OSX: with one big sleep, we get different threads;

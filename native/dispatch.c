@@ -136,6 +136,7 @@ static jclass classStructure;
 static jclass classStructureByValue;
 static jclass classCallback;
 static jclass classCallbackReference;
+static jclass classJavaVMAttachArgs;
 static jclass classNativeMapped;
 static jclass classIntegerType;
 static jclass classPointerType;
@@ -186,6 +187,7 @@ static jmethodID MID_Structure_write;
 static jmethodID MID_CallbackReference_getCallback;
 static jmethodID MID_CallbackReference_getFunctionPointer;
 static jmethodID MID_CallbackReference_getNativeString;
+static jmethodID MID_CallbackReference_initializeThread;
 static jmethodID MID_NativeMapped_toNative;
 static jmethodID MID_WString_init;
 static jmethodID MID_ToNativeConverter_nativeType;
@@ -1547,14 +1549,19 @@ newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory)
 {
   if (data != NULL) {
     volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
-    ffi_type* rtype = getStructureType(env, obj);
-    if (new_memory) {
-      MEMCPY(getStructureAddress(env, obj), data, rtype->size);
+    if (obj != NULL) {
+      ffi_type* rtype = getStructureType(env, obj);
+      if (new_memory) {
+        MEMCPY(getStructureAddress(env, obj), data, rtype->size);
+      }
+      else {
+        (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
+      }
+      (*env)->CallVoidMethod(env, obj, MID_Structure_read);
     }
     else {
-      (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
+      fprintf(stderr, "JNA: failed to create structure\n");
     }
-    (*env)->CallVoidMethod(env, obj, MID_Structure_read);
     return obj;
   }
   return NULL;
@@ -1712,6 +1719,32 @@ getCallbackAddress(JNIEnv *env, jobject obj) {
     return getNativeAddress(env, ptr);
   }
   return NULL;
+}
+
+void
+initializeThread(callback* cb, JavaVMAttachArgs* args) {
+  JavaVM* jvm = cb->vm;
+  JNIEnv* env;
+  jobject cbobj;
+
+  if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, &args) != JNI_OK) {
+    fprintf(stderr, "JNA: Can't attach to native thread for callback\n");
+    return;
+  }
+  (*env)->PushLocalFrame(env, 16);
+
+  cbobj = (*env)->NewLocalRef(env, cb->object);
+  if (!(*env)->IsSameObject(env, cbobj, NULL)) {
+    jobject argsobj = newJavaStructure(env, args, classJavaVMAttachArgs, JNI_FALSE);
+    (*env)->CallStaticVoidMethod(env, classCallbackReference,
+                                 MID_CallbackReference_initializeThread,
+                                 cbobj, argsobj);
+    if (args->group != NULL) {
+      args->group = (*env)->NewGlobalRef(env, args->group);
+    }
+  }
+  (*env)->PopLocalFrame(env, NULL);
+  (*jvm)->DetachCurrentThread(jvm);
 }
 
 jclass
@@ -1973,6 +2006,10 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain class com.sun.jna.Callback");
   }
+  else if (!LOAD_CREF(env, JavaVMAttachArgs, "com/sun/jna/CallbackReference$JavaVMAttachArgs")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain class com.sun.jna.CallbackReference.JavaVMAttachArgs");
+  }
   else if (!LOAD_CREF(env, CallbackReference, "com/sun/jna/CallbackReference")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain class com.sun.jna.CallbackReference");
@@ -1994,6 +2031,12 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
                                          "getNativeString", "(Ljava/lang/Object;Z)Lcom/sun/jna/Pointer;"))) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain static method getNativeString from class com.sun.jna.CallbackReference");
+  }
+  else if (!(MID_CallbackReference_initializeThread
+             = (*env)->GetStaticMethodID(env, classCallbackReference,
+                                         "initializeThread", "(Lcom/sun/jna/Callback;Lcom/sun/jna/CallbackReference$JavaVMAttachArgs;)V"))) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain static method initializeThread from class com.sun.jna.CallbackReference");
   }
   else if (!LOAD_CREF(env, WString, "com/sun/jna/WString")) {
     throwByName(env, EUnsatisfiedLink,
@@ -2453,7 +2496,7 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     &classDouble, &classPrimitiveDouble,
     &classPointer, &classNative, &classWString,
     &classStructure, &classStructureByValue,
-    &classCallbackReference, &classNativeMapped,
+    &classCallbackReference, &classJavaVMAttachArgs, &classNativeMapped,
     &classIntegerType, &classPointerType,
   };
   unsigned i;

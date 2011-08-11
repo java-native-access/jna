@@ -45,6 +45,23 @@ class CallbackReference extends WeakReference {
         }
     }
 
+    private static void setCallbackOption(Callback cb, int options) {
+        Map map = callbackMap;
+        synchronized(map) {
+            CallbackReference ref = (CallbackReference)map.get(cb);
+            if (ref != null) {
+                ref.setCallbackOption(options);
+            }
+            else {
+                Integer current = (Integer)pendingOptions.get(cb);
+                if (current != null) {
+                    options |= current.intValue();
+                }
+                pendingOptions.put(cb, new Integer(options));
+            }
+        }
+    }
+
     /** Set behavioral options for the given callback object. */
     static void setCallbackOptions(Callback cb, int options) {
         Map map = callbackMap;
@@ -56,6 +73,68 @@ class CallbackReference extends WeakReference {
             else {
                 pendingOptions.put(cb, new Integer(options));
             }
+        }
+    }
+
+    private static final Map initializers = new WeakHashMap();
+    static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
+        synchronized(callbackMap) {
+            initializers.put(cb, initializer);
+        }
+    }
+
+    static class JavaVMAttachArgs extends Structure {
+        public int version;
+        public String name;
+        public ThreadGroup group;
+        protected int getNativeSize(Class type, Object value) {
+            if (ThreadGroup.class.equals(type)) {
+                return Pointer.SIZE;
+            }
+            return super.getNativeSize(type, value);
+        }
+        protected int getNativeAlignment(Class type, Object value, boolean isFirstElement) {
+            if (ThreadGroup.class.equals(type)) {
+                type = Pointer.class;
+            }
+            return super.getNativeAlignment(type, value, isFirstElement);
+        }
+        protected Pointer getFieldTypeInfo(StructField f) {
+            if (ThreadGroup.class.equals(f.type)) {
+                return getTypeInfo(Pointer.class);
+            }
+            return super.getFieldTypeInfo(f);
+        }
+        protected Object readField(StructField f) {
+            if (ThreadGroup.class.equals(f.type)) {
+                return null;
+            }
+            return super.readField(f);
+        }
+    }
+    /** Called from native code to initialize a callback thread. */
+    private static void initializeThread(Callback cb, JavaVMAttachArgs args) {
+        CallbackThreadInitializer init = null;
+        synchronized(initializers) {
+            init = (CallbackThreadInitializer)initializers.get(cb);
+        }
+        if (init != null) {
+            String name = init.getName(cb);
+            if (name != null) {
+                args.name = name;
+            }
+            ThreadGroup group = init.getThreadGroup(cb);
+            if (group != null) {
+                args.group = group;
+            }
+            int options = 0;
+            if (init.isDaemon(cb)) {
+                options |= Native.CB_DAEMON;
+            }
+            if (!init.detach(cb)) {
+                options |= Native.CB_NODETACH;
+            }
+            setCallbackOption(cb, options);
         }
     }
 
@@ -289,6 +368,12 @@ class CallbackReference extends WeakReference {
     
     /** Set the behavioral options for this callback. */
     private void setCallbackOptions(int options) {
+        cbstruct.setInt(Pointer.SIZE, options);
+    }
+
+    /** Set  a single behavioral option flag for this callback. */
+    private void setCallbackOption(int options) {
+        options |= cbstruct.getInt(Pointer.SIZE);
         cbstruct.setInt(Pointer.SIZE, options);
     }
 

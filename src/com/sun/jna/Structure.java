@@ -838,7 +838,7 @@ public abstract class Structure {
                 }
             }
             try {
-                structField.size = Native.getNativeSize(nativeType, value);
+                structField.size = getNativeSize(nativeType, value);
                 fieldAlignment = getNativeAlignment(nativeType, value, firstField);
             }
             catch(IllegalArgumentException e) {
@@ -1126,6 +1126,11 @@ public abstract class Structure {
         typeInfo = p.peer;
     }
 
+    /** Override to supply native type information for the given field. */
+    protected Pointer getFieldTypeInfo(StructField f) {
+        return FFIType.get(getField(f), f.type);
+    }
+
     /** Obtain native type information for this structure. */
     Pointer getTypeInfo() {
         Pointer p = getTypeInfo(this);
@@ -1293,7 +1298,7 @@ public abstract class Structure {
                 int idx = 0;
                 for (Iterator i=ref.fields().values().iterator();i.hasNext();) {
                     StructField sf = (StructField)i.next();
-                    els[idx++] = get(ref.getField(sf), sf.type);
+                    els[idx++] = ref.getFieldTypeInfo(sf);
                 }
             }
             init(els);
@@ -1356,7 +1361,7 @@ public abstract class Structure {
                     typeInfoMap.put(obj, type);
                     return type.getPointer();
                 }
-                throw new IllegalArgumentException("Unsupported type " + cls);
+                throw new IllegalArgumentException("Unsupported Structure field type " + cls);
             }
         }
     }
@@ -1426,4 +1431,9 @@ public abstract class Structure {
             }
         }
     }
+
+    protected int getNativeSize(Class nativeType, Object value) {
+        return Native.getNativeSize(nativeType, value);
+    }
+
 }
