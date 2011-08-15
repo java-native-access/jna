@@ -34,6 +34,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c    \
 	msvcc.sh
 
+
 info_TEXINFOS = doc/libffi.texi
 
 ## ################################################################
@@ -87,17 +88,13 @@ ACLOCAL_AMFLAGS=$(ACLOCAL_AMFLAGS) -I m4
 lib_LTLIBRARIES = libffi.la
 noinst_LTLIBRARIES = libffi_convenience.la
 
-libffi_la_SOURCES = src/prep_cif.c src/types.c \
+libffi_la_SOURCES = src/debug.c src/prep_cif.c src/types.c \
 		src/raw_api.c src/java_raw_api.c src/closures.c
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libffi.pc
 
 nodist_libffi_la_SOURCES =
-
-if FFI_DEBUG
-nodist_libffi_la_SOURCES += src/debug.c
-endif
 
 if MIPS
 nodist_libffi_la_SOURCES += src/mips/ffi.c src/mips/o32.S src/mips/n32.S

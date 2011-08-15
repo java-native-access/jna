@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -79,7 +79,7 @@
+@@ -70,7 +70,7 @@
  	* src/prep_cif.c (UNLIKELY, LIKELY): Define.
  	(initialize_aggregate): Check for bad types.
  

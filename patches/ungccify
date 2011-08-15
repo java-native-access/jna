@@ -2,7 +2,7 @@ Index: libffi/Makefile.am
 ===================================================================
 --- libffi.orig/Makefile.am
 +++ libffi/Makefile.am
-@@ -180,14 +180,11 @@ endif
+@@ -176,14 +176,11 @@ endif
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
  
@@ -22,21 +22,21 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -66,8 +66,6 @@ target_triplet = @target@
+@@ -65,8 +65,6 @@ target_triplet = @target@
  # Build debug. Define FFI_DEBUG on the commandline so that, when building with
  # MSVC, it can link against the debug CRT.
- @FFI_DEBUG_TRUE@am__append_28 = -DFFI_DEBUG
+ @FFI_DEBUG_TRUE@am__append_27 = -DFFI_DEBUG
 -# Build opt.
--@FFI_DEBUG_FALSE@am__append_29 = -O2
+-@FFI_DEBUG_FALSE@am__append_28 = -O2
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -494,7 +492,7 @@ nodist_libffi_la_SOURCES = $(am__append_
- 	$(am__append_27)
+@@ -490,7 +488,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+ 	$(am__append_24) $(am__append_25) $(am__append_26)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
--AM_CFLAGS = -Wall -g -fexceptions $(am__append_28) $(am__append_29)
-+AM_CFLAGS = -g $(am__append_28)
+-AM_CFLAGS = -Wall -g -fexceptions $(am__append_27) $(am__append_28)
++AM_CFLAGS = -g $(am__append_27)
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)

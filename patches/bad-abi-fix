@@ -25,7 +25,7 @@ Index: libffi/ChangeLog
 +
  2011-02-11  Anthony Green  <green@moxielogic.com>
  
- 	* libtool-version: Update.
+ 	* src/sparc/ffi.c (ffi_prep_closure_loc): Don't ASSERT ABI test,
 Index: libffi/include/ffi_common.h
 ===================================================================
 --- libffi.orig/include/ffi_common.h
