@@ -466,7 +466,7 @@
     </condition>
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
-    <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
+    <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
       <!-- avoid VM conflicts with JNA protected mode -->
       <env key="${ld.preload}" file="${libjsig}"/>
       <jvmarg value="-Djna.library.path=${build.native}"/>
@@ -475,6 +475,7 @@
       <jvmarg value="-Djna.builddir=${build}"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
+      <formatter type="brief" usefile="false"/>
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
         <fileset dir="${test.src}">
