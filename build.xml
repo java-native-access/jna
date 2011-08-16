@@ -162,21 +162,18 @@
   </target>
 
   <target name="-setup" depends="-dynamic-properties">
-  	<path id="compile-test.path">
-      <pathelement path="${test.src}"/>
+    <path id="compile-test.path">
       <path id="test.libs">
         <fileset dir="lib">
           <include name="junit.jar"/>   
         </fileset>
         <pathelement path="${classes}"/>
       </path>
-      <path id="compile.path">
-        <path id="src.path">
-          <pathelement location="${src}"/>
-        </path>
-      </path>
-    </path>                           
-
+    </path>
+    <path id="compile.path"/>
+    <path id="src.path">
+      <pathelement location="${src}"/>
+    </path>
     <path id="test.runpath">
       <pathelement path="${build}/${jar}"/>
       <pathelement path="${test.classes}"/>
@@ -193,7 +190,7 @@
            destdir="${classes}" 
            includeantruntime="false"
            deprecation="on" debug="${debug}">
-      <src path="${src}"/>
+      <src refid="src.path"/>
     </javac>
   </target>
 
