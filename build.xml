@@ -469,10 +469,10 @@
     <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
       <!-- avoid VM conflicts with JNA protected mode -->
       <env key="${ld.preload}" file="${libjsig}"/>
-      <jvmarg value="-Djna.library.path=${build.native}"/>
+      <sysproperty key="jna.library.path" value="${build.native}"/>
       <!-- Avoid VM crashes, if possible -->
-      <jvmarg value="-Djna.protected=true"/>
-      <jvmarg value="-Djna.builddir=${build}"/>
+      <sysproperty key="jna.protected" value="true"/>
+      <sysproperty key="jna.builddir" value="${build}"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="brief" usefile="false"/>
