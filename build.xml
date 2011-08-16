@@ -76,7 +76,7 @@
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2" 
-                   file="pom.xml"/>
+                   file="pom-fake.xml"/>
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
                    file="src/com/sun/jna/Native.java"/>
@@ -690,7 +690,7 @@ osname=macos,
     </zip>
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,pom.xml,LICENSE.txt"/>
+      <zipfileset dir="." includes="build.xml,pom-fake.xml,LICENSE.txt"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*,build,build/**/*" prefix="native"/>
