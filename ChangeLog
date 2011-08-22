@@ -1,3 +1,8 @@
+2011-08-22  Jasper Lievisse Adriaanse <jasper@openbsd.org>
+
+	* configure.ac: Add OpenBSD/hppa and OpenBSD/powerpc support.
+	* configure: Rebuilt.
+
 2011-07-11  Andrew Haley  <aph@redhat.com>
 
         * src/arm/ffi.c (FFI_INIT_TRAMPOLINE): Clear icache.
@@ -130,7 +135,8 @@
 2011-02-08  Ginn Chen  <ginn.chen@oracle.com>
 
 	* src/sparc/ffi.c (ffi_call): Make compatible with Solaris Studio
-	aggregate return ABI.
+	aggregate return ABI.  Flush cache.
+	(ffi_prep_closure_loc): Flush cache.
 
 2011-02-11  Anthony Green  <green@moxielogic.com>
 

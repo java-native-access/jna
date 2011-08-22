@@ -149,7 +149,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -140,16 +141,17 @@ am_libffi_la_OBJECTS = src/debug.lo src/
+@@ -142,16 +143,17 @@ am_libffi_la_OBJECTS = src/debug.lo src/
  @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
  @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
  @ARM_TRUE@am__objects_16 = src/arm/sysv.lo src/arm/ffi.lo
@@ -176,7 +176,7 @@ Index: libffi/Makefile.in
  nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
  	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-@@ -158,17 +160,17 @@ nodist_libffi_la_OBJECTS = $(am__objects
+@@ -160,17 +162,17 @@ nodist_libffi_la_OBJECTS = $(am__objects
  	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
  	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
  	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
@@ -198,7 +198,7 @@ Index: libffi/Makefile.in
  	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
  	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
  	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
-@@ -176,8 +178,8 @@ am__objects_27 = $(am__objects_1) $(am__
+@@ -178,8 +180,8 @@ am__objects_27 = $(am__objects_1) $(am__
  	$(am__objects_16) $(am__objects_17) $(am__objects_18) \
  	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
  	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
@@ -209,7 +209,7 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -295,6 +297,7 @@ ECHO_N = @ECHO_N@
+@@ -297,6 +299,7 @@ ECHO_N = @ECHO_N@
  ECHO_T = @ECHO_T@
  EGREP = @EGREP@
  EXEEXT = @EXEEXT@
@@ -217,7 +217,7 @@ Index: libffi/Makefile.in
  FGREP = @FGREP@
  GREP = @GREP@
  HAVE_LONG_DOUBLE = @HAVE_LONG_DOUBLE@
-@@ -384,6 +387,7 @@ psdir = @psdir@
+@@ -386,6 +389,7 @@ psdir = @psdir@
  sbindir = @sbindir@
  sharedstatedir = @sharedstatedir@
  srcdir = @srcdir@
@@ -225,7 +225,7 @@ Index: libffi/Makefile.in
  sysconfdir = @sysconfdir@
  target = @target@
  target_alias = @target_alias@
-@@ -397,37 +401,34 @@ top_builddir = @top_builddir@
+@@ -399,37 +403,34 @@ top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
  AUTOMAKE_OPTIONS = foreign subdir-objects
  SUBDIRS = include testsuite man
@@ -291,7 +291,7 @@ Index: libffi/Makefile.in
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -486,10 +487,10 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -488,10 +489,10 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_15) $(am__append_16) $(am__append_17) \
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
@@ -304,7 +304,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)
-@@ -725,6 +726,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
+@@ -727,6 +728,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
  	src/arm/$(DEPDIR)/$(am__dirstamp)
  src/arm/ffi.lo: src/arm/$(am__dirstamp) \
  	src/arm/$(DEPDIR)/$(am__dirstamp)
@@ -313,7 +313,7 @@ Index: libffi/Makefile.in
  src/avr32/$(am__dirstamp):
  	@$(MKDIR_P) src/avr32
  	@: > src/avr32/$(am__dirstamp)
-@@ -812,6 +815,8 @@ mostlyclean-compile:
+@@ -814,6 +817,8 @@ mostlyclean-compile:
  	-rm -f src/arm/ffi.lo
  	-rm -f src/arm/sysv.$(OBJEXT)
  	-rm -f src/arm/sysv.lo
@@ -322,7 +322,7 @@ Index: libffi/Makefile.in
  	-rm -f src/avr32/ffi.$(OBJEXT)
  	-rm -f src/avr32/ffi.lo
  	-rm -f src/avr32/sysv.$(OBJEXT)
-@@ -930,6 +935,7 @@ distclean-compile:
+@@ -932,6 +937,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@

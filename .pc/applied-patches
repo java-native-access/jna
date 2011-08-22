@@ -25,3 +25,7 @@ msvcc
 fix_maxopt
 fix-ppc32
 darwin-EH-fix
+more-openbsd
+more-openbsd-mips
+minix
+interix-patch

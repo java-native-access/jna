@@ -36,7 +36,7 @@
 #define _MIPS_SIM_ABI32		1
 #define _MIPS_SIM_NABI32	2
 #define _MIPS_SIM_ABI64		3
-#else
+#elif !defined(__OpenBSD__)
 # include <sgidefs.h>
 #endif
 

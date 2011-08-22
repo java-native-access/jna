@@ -93,7 +93,8 @@
 2011-02-08  Ginn Chen  <ginn.chen@oracle.com>
 
 	* src/sparc/ffi.c (ffi_call): Make compatible with Solaris Studio
-	aggregate return ABI.
+	aggregate return ABI.  Flush cache.
+	(ffi_prep_closure_loc): Flush cache.
 
 2011-02-11  Anthony Green  <green@moxielogic.com>
 
