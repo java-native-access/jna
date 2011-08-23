@@ -82,15 +82,3 @@ Index: libffi/ChangeLog
  	* testsuite/libffi.call/err_bad_typedef.c: Remove xfail.
  	* testsuite/libffi.call/err_bad_abi.c: Remove xfail.
  	* src/x86/ffi64.c (UNLIKELY, LIKELY): Define.
-Index: libffi/README
-===================================================================
---- libffi.orig/README
-+++ libffi/README
-@@ -74,6 +74,7 @@ tested:
- | SPARC64      | Linux            |
- | SPARC64      | FreeBSD          |
- | X86          | FreeBSD          |
-+| X86          | Interix          |
- | X86          | kFreeBSD         |
- | X86          | Linux            |
- | X86          | Mac OSX          |

@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.10 was released on XXXXXXXXXX, 2011. Check the libffi web
+libffi-3.0.10 was released on August 23, 2011. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -144,16 +144,19 @@ History
 
 See the ChangeLog files for details.
 
-3.0.10 ???-??-??
+3.0.10 Aug-23-11
         Add support for Apple's iOS.
 	Add support for ARM VFP ABI.
         Add RTEMS support for MIPS and M68K.
+	Fix instruction cache clearing problems on
+	  ARM and SPARC.
 	Fix the N64 build on mips-sgi-irix6.5.
 	Enable builds with Microsoft's compiler.
 	Enable x86 builds with Oracle's Solaris compiler.
 	Fix support for calling code compiled with Oracle's Sparc
 	  Solaris compiler.
 	Testsuite fixes for Tru64 Unix.
+	Additional platform support.
 
 3.0.9 Dec-31-09
         Add AVR32 and win64 ports.  Add ARM softfp support.
