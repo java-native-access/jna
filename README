@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.10 was released on August 23, 2011. Check the libffi web
+libffi-3.0.11 was released on *****************. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -43,7 +43,7 @@ Libffi has been ported to many different platforms.
 For specific configuration details and testing status, please
 refer to the wiki page here:
 
- http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.10
+ http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.11
 
 At the time of release, the following basic configurations have been
 tested:
@@ -143,6 +143,9 @@ History
 =======
 
 See the ChangeLog files for details.
+
+3.0.11 MMM-DD-YY
+        ??????????
 
 3.0.10 Aug-23-11
         Add support for Apple's iOS.

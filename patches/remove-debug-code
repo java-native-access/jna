@@ -2,36 +2,36 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -35,6 +35,15 @@
- 
- 2011-02-11  Anthony Green  <green@moxielogic.com>
- 
+@@ -1,3 +1,13 @@
++2011-08-32  Anthony Green  <green@moxielogic.com>
++
 +	* libtool-version: Update.
 +	* Makefile.am (nodist_libffi_la_SOURCES): Add src/debug.c if
 +	FFI_DEBUG.
 +	(libffi_la_SOURCES): Remove src/debug.c
 +	(EXTRA_DIST): Add src/debug.c
 +	* Makefile.in: Rebuilt.
++	* README: Update for 3.0.11.
 +
-+2011-02-11  Anthony Green  <green@moxielogic.com>
-+
- 	* src/sparc/ffi.c (ffi_prep_closure_loc): Don't ASSERT ABI test,
- 	just return FFI_BAD_ABI when things are wrong.
+ 2011-08-22  Jasper Lievisse Adriaanse <jasper@openbsd.org>
  
+ 	* configure.ac: Add OpenBSD/hppa and OpenBSD/powerpc support.
 Index: libffi/Makefile.am
 ===================================================================
 --- libffi.orig/Makefile.am
 +++ libffi/Makefile.am
-@@ -31,7 +31,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -31,9 +31,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/frv/ffitarget.h src/dlmalloc.c src/moxie/ffi.c		\
  	src/moxie/eabi.S libtool-version ChangeLog.libffi		\
  	m4/libtool.m4 m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4	\
--	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
-+	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c    \
+-	msvcc.sh
+-
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh msvcc.sh
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -86,7 +86,7 @@ ACLOCAL_AMFLAGS=$(ACLOCAL_AMFLAGS) -I m4
+@@ -88,7 +86,7 @@ ACLOCAL_AMFLAGS=$(ACLOCAL_AMFLAGS) -I m4
  lib_LTLIBRARIES = libffi.la
  noinst_LTLIBRARIES = libffi_convenience.la
  
@@ -40,7 +40,7 @@ Index: libffi/Makefile.am
  		src/raw_api.c src/java_raw_api.c src/closures.c
  
  pkgconfigdir = $(libdir)/pkgconfig
-@@ -94,6 +94,10 @@ pkgconfig_DATA = libffi.pc
+@@ -96,6 +94,10 @@ pkgconfig_DATA = libffi.pc
  
  nodist_libffi_la_SOURCES =
  
@@ -55,7 +55,7 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -36,37 +36,38 @@ POST_UNINSTALL = :
+@@ -36,35 +36,36 @@ POST_UNINSTALL = :
  build_triplet = @build@
  host_triplet = @host@
  target_triplet = @target@
@@ -116,9 +116,6 @@ Index: libffi/Makefile.in
  # MSVC, it can link against the debug CRT.
 -@FFI_DEBUG_TRUE@am__append_27 = -DFFI_DEBUG
 +@FFI_DEBUG_TRUE@am__append_28 = -DFFI_DEBUG
- # Build opt.
--@FFI_DEBUG_FALSE@am__append_28 = -O2
-+@FFI_DEBUG_FALSE@am__append_29 = -O2
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
@@ -234,16 +231,17 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -428,7 +431,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -428,8 +431,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/frv/ffitarget.h src/dlmalloc.c src/moxie/ffi.c		\
  	src/moxie/eabi.S libtool-version ChangeLog.libffi		\
  	m4/libtool.m4 m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4	\
--	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
-+	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c    \
+-	msvcc.sh
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh msvcc.sh
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -474,7 +477,7 @@ MAKEOVERRIDES = 
+@@ -475,7 +477,7 @@ MAKEOVERRIDES = 
  ACLOCAL_AMFLAGS = $(ACLOCAL_AMFLAGS) -I m4
  lib_LTLIBRARIES = libffi.la
  noinst_LTLIBRARIES = libffi_convenience.la
@@ -252,7 +250,7 @@ Index: libffi/Makefile.in
  		src/raw_api.c src/java_raw_api.c src/closures.c
  
  pkgconfigdir = $(libdir)/pkgconfig
-@@ -487,10 +490,11 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -488,10 +490,11 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_15) $(am__append_16) $(am__append_17) \
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
@@ -261,12 +259,12 @@ Index: libffi/Makefile.in
 +	$(am__append_27)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
--AM_CFLAGS = -Wall -g -fexceptions $(am__append_27) $(am__append_28)
-+AM_CFLAGS = -Wall -g -fexceptions $(am__append_28) $(am__append_29)
+-AM_CFLAGS = -g $(am__append_27)
++AM_CFLAGS = -g $(am__append_28)
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)
-@@ -598,12 +602,12 @@ src/$(am__dirstamp):
+@@ -599,12 +602,12 @@ src/$(am__dirstamp):
  src/$(DEPDIR)/$(am__dirstamp):
  	@$(MKDIR_P) src/$(DEPDIR)
  	@: > src/$(DEPDIR)/$(am__dirstamp)

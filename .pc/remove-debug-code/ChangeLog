@@ -1,13 +1,3 @@
-2011-08-32  Anthony Green  <green@moxielogic.com>
-
-	* libtool-version: Update.
-	* Makefile.am (nodist_libffi_la_SOURCES): Add src/debug.c if
-	FFI_DEBUG.
-	(libffi_la_SOURCES): Remove src/debug.c
-	(EXTRA_DIST): Add src/debug.c
-	* Makefile.in: Rebuilt.
-	* README: Update for 3.0.11.
-
 2011-08-22  Jasper Lievisse Adriaanse <jasper@openbsd.org>
 
 	* configure.ac: Add OpenBSD/hppa and OpenBSD/powerpc support.

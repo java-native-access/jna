@@ -30,3 +30,4 @@ more-openbsd-mips
 minix
 
 interix-patch
+remove-debug-code
