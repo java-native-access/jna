@@ -1,3 +1,7 @@
+2011-08-24  Jasper Lievisse Adriaanse <jasper@openbsd.org>
+
+	* README: Update list of supported OpenBSD systems.
+
 2011-08-32  Anthony Green  <green@moxielogic.com>
 
 	* libtool-version: Update.
