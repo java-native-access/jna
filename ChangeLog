@@ -1,3 +1,9 @@
+2011-09-06  Anthony Green  <green@moxielogic.com>
+
+	* Makefile.am (AM_CCASFLAGS): Add -g option to build assembly
+	files with debug info.
+	* Makefile.in: Rebuilt.
+
 2011-08-24  Jasper Lievisse Adriaanse <jasper@openbsd.org>
 
 	* README: Update list of supported OpenBSD systems.

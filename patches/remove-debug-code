@@ -2,7 +2,17 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,13 @@
+@@ -1,3 +1,23 @@
++2011-09-06  Anthony Green  <green@moxielogic.com>
++
++	* Makefile.am (AM_CCASFLAGS): Add -g option to build assembly
++	files with debug info.
++	* Makefile.in: Rebuilt.
++
++2011-08-24  Jasper Lievisse Adriaanse <jasper@openbsd.org>
++
++	* README: Update list of supported OpenBSD systems.
++
 +2011-08-32  Anthony Green  <green@moxielogic.com>
 +
 +	* libtool-version: Update.
@@ -51,6 +61,15 @@ Index: libffi/Makefile.am
  if MIPS
  nodist_libffi_la_SOURCES += src/mips/ffi.c src/mips/o32.S src/mips/n32.S
  endif
+@@ -188,7 +190,7 @@ endif
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+ 
+ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+-AM_CCASFLAGS = $(AM_CPPFLAGS)
++AM_CCASFLAGS = $(AM_CPPFLAGS) -g
+ 
+ # No install-html or install-pdf support in automake yet
+ .PHONY: install-html install-pdf
 Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
@@ -119,7 +138,30 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -111,47 +112,48 @@ am__installdirs = "$(DESTDIR)$(libdir)" 
+@@ -73,10 +74,18 @@ DIST_COMMON = README $(am__configure_dep
+ 	compile config.guess config.sub depcomp install-sh ltmain.sh \
+ 	mdate-sh missing texinfo.tex
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+-am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+-	$(top_srcdir)/acinclude.m4 $(top_srcdir)/configure.ac
++am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cc_maxopt.m4 \
++	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
++	$(top_srcdir)/m4/ax_check_compiler_flags.m4 \
++	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
++	$(top_srcdir)/m4/ax_configure_args.m4 \
++	$(top_srcdir)/m4/ax_enable_builddir.m4 \
++	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
++	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
++	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
++	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
++	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
++	$(top_srcdir)/configure.ac
+ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
+ 	$(ACLOCAL_M4)
+ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
+@@ -111,47 +120,48 @@ am__installdirs = "$(DESTDIR)$(libdir)" 
  LTLIBRARIES = $(lib_LTLIBRARIES) $(noinst_LTLIBRARIES)
  libffi_la_LIBADD =
  am__dirstamp = $(am__leading_dot)dirstamp
@@ -196,7 +238,7 @@ Index: libffi/Makefile.in
  nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
  	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-@@ -160,17 +162,18 @@ nodist_libffi_la_OBJECTS = $(am__objects
+@@ -160,17 +170,18 @@ nodist_libffi_la_OBJECTS = $(am__objects
  	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
  	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
  	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
@@ -220,7 +262,7 @@ Index: libffi/Makefile.in
  	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
  	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
  	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
-@@ -178,8 +181,8 @@ am__objects_28 = $(am__objects_1) $(am__
+@@ -178,8 +189,8 @@ am__objects_28 = $(am__objects_1) $(am__
  	$(am__objects_16) $(am__objects_17) $(am__objects_18) \
  	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
  	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
@@ -231,7 +273,23 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -428,8 +431,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -332,6 +343,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+ PACKAGE_URL = @PACKAGE_URL@
+ PACKAGE_VERSION = @PACKAGE_VERSION@
+ PATH_SEPARATOR = @PATH_SEPARATOR@
++PRTDIAG = @PRTDIAG@
+ RANLIB = @RANLIB@
+ SED = @SED@
+ SET_MAKE = @SET_MAKE@
+@@ -352,6 +364,7 @@ am__leading_dot = @am__leading_dot@
+ am__quote = @am__quote@
+ am__tar = @am__tar@
+ am__untar = @am__untar@
++ax_enable_builddir_sed = @ax_enable_builddir_sed@
+ bindir = @bindir@
+ build = @build@
+ build_alias = @build_alias@
+@@ -428,8 +441,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/frv/ffitarget.h src/dlmalloc.c src/moxie/ffi.c		\
  	src/moxie/eabi.S libtool-version ChangeLog.libffi		\
  	m4/libtool.m4 m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4	\
@@ -241,7 +299,7 @@ Index: libffi/Makefile.in
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -475,7 +477,7 @@ MAKEOVERRIDES = 
+@@ -475,7 +487,7 @@ MAKEOVERRIDES = 
  ACLOCAL_AMFLAGS = $(ACLOCAL_AMFLAGS) -I m4
  lib_LTLIBRARIES = libffi.la
  noinst_LTLIBRARIES = libffi_convenience.la
@@ -250,7 +308,7 @@ Index: libffi/Makefile.in
  		src/raw_api.c src/java_raw_api.c src/closures.c
  
  pkgconfigdir = $(libdir)/pkgconfig
-@@ -488,10 +490,11 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -488,13 +500,14 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_15) $(am__append_16) $(am__append_17) \
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
@@ -263,8 +321,12 @@ Index: libffi/Makefile.in
 +AM_CFLAGS = -g $(am__append_28)
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
- AM_CCASFLAGS = $(AM_CPPFLAGS)
-@@ -599,12 +602,12 @@ src/$(am__dirstamp):
+-AM_CCASFLAGS = $(AM_CPPFLAGS)
++AM_CCASFLAGS = $(AM_CPPFLAGS) -g
+ all: fficonfig.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+ 
+@@ -599,12 +612,12 @@ src/$(am__dirstamp):
  src/$(DEPDIR)/$(am__dirstamp):
  	@$(MKDIR_P) src/$(DEPDIR)
  	@: > src/$(DEPDIR)/$(am__dirstamp)
