@@ -6,4 +6,4 @@ build.number
 bin
 contrib/ntservice/dist
 contrib/platform/dist
-
+doc
