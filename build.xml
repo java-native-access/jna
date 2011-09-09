@@ -61,8 +61,6 @@
 
   <target name="default" depends="test" description="Build and Test."/>
 
-  <!-- uncomment for netbeans profiling -->
-  <!--<import file="nbproject/profiler-build-impl.xml"/>-->
   <target name="init" depends="-setup"/>
   <target name="compile-test-single" depends="compile-tests"/>
   <target name="compile-single" depends="compile"/>
@@ -699,7 +697,6 @@ osname=macos,
       <zipfileset src="${dist}/src.zip"/>
       <zipfileset dir="lib" includes="junit.jar,clover.jar" prefix="lib"/>
       <zipfileset dir="." includes=".classpath,.project"/>
-      <zipfileset dir="nbproject" includes="**/*" prefix="nbproject"/>
       <zipfileset dir="${native}" includes="libffi,libffi/**/*" prefix="native"/>
     </zip>
     <!-- Sources package as required by maven -->
