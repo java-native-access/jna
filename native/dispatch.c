@@ -1122,7 +1122,7 @@ JNIEXPORT jchar JNICALL Java_com_sun_jna_Native_getChar
 /*
  * Class:     Native
  * Method:    _getPointer
- * Signature: (J)LPointer;
+ * Signature: (J)Lcom/sun/jna/Pointer;
  */
 JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
     (JNIEnv *env, jclass UNUSED(cls), jlong addr)
@@ -1130,6 +1130,19 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
     void *ptr = NULL;
     MEMCPY(&ptr, L2A(addr), sizeof(ptr));
     return A2L(ptr);
+}
+
+/*
+ * Class:     Native
+ * Method:    getObject
+ * Signature: (J)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getObject
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr)
+{
+    jobject obj = NULL;
+    MEMCPY(&obj, L2A(addr), sizeof(obj));
+    return obj;
 }
 
 /*
@@ -1345,6 +1358,17 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setString
     }
 }
 
+/*
+ * Class:     Native
+ * Method:    setObject
+ * Signature: (JLjava/lang/Object;Z)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setObject
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jobject value)
+{
+  value = (*env)->NewLocalRef(env, value);
+  MEMCPY(L2A(addr), &value, sizeof(jobject));
+}
 
 /*
  * Class:     Native
@@ -1721,30 +1745,33 @@ getCallbackAddress(JNIEnv *env, jobject obj) {
   return NULL;
 }
 
-void
+jobject
 initializeThread(callback* cb, JavaVMAttachArgs* args) {
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
-  jobject cbobj;
+  jobject group = NULL;
 
   if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, &args) != JNI_OK) {
     fprintf(stderr, "JNA: Can't attach to native thread for callback\n");
-    return;
+    return NULL;
   }
   (*env)->PushLocalFrame(env, 16);
-
-  cbobj = (*env)->NewLocalRef(env, cb->object);
-  if (!(*env)->IsSameObject(env, cbobj, NULL)) {
-    jobject argsobj = newJavaStructure(env, args, classJavaVMAttachArgs, JNI_FALSE);
-    (*env)->CallStaticVoidMethod(env, classCallbackReference,
-                                 MID_CallbackReference_initializeThread,
-                                 cbobj, argsobj);
-    if (args->group != NULL) {
-      args->group = (*env)->NewGlobalRef(env, args->group);
+  {
+    jobject cbobj = (*env)->NewLocalRef(env, cb->object);
+    if (!(*env)->IsSameObject(env, cbobj, NULL)) {
+      jobject argsobj = newJavaStructure(env, args, classJavaVMAttachArgs, JNI_FALSE);
+      group = (*env)->CallStaticObjectMethod(env, classCallbackReference,
+                                             MID_CallbackReference_initializeThread,
+                                             cbobj, argsobj);
+      if (group != NULL) {
+        group = (*env)->NewWeakGlobalRef(env, group);
+      }
     }
   }
   (*env)->PopLocalFrame(env, NULL);
   (*jvm)->DetachCurrentThread(jvm);
+
+  return group;
 }
 
 jclass
@@ -2034,7 +2061,7 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
   else if (!(MID_CallbackReference_initializeThread
              = (*env)->GetStaticMethodID(env, classCallbackReference,
-                                         "initializeThread", "(Lcom/sun/jna/Callback;Lcom/sun/jna/CallbackReference$JavaVMAttachArgs;)V"))) {
+                                         "initializeThread", "(Lcom/sun/jna/Callback;Lcom/sun/jna/CallbackReference$JavaVMAttachArgs;)Ljava/lang/ThreadGroup;"))) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain static method initializeThread from class com.sun.jna.CallbackReference");
   }
@@ -3064,6 +3091,14 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
     return 0;
   }
   return (jint)type->size;
+}
+
+/** Returns whether the current thread should be detached before return to
+    native code.
+*/
+int detachThread() {
+  // Kind of a hack, use last error value rather than setting up our own TLS
+  return GET_LAST_ERROR() == THREAD_DETACH;
 }
 
 #ifdef __cplusplus

@@ -421,11 +421,11 @@ public class NativeLibrary {
     /** Close the native library we're mapped to. */
     public void dispose() {
         synchronized(libraries) {
-            libraries.remove(getName() + options);
-            File file = getFile();
-            if (file != null) {
-                libraries.remove(file.getAbsolutePath() + options);
-                libraries.remove(file.getName() + options);
+            for (Iterator i=libraries.values().iterator();i.hasNext();) {
+                Reference ref = (WeakReference)i.next();
+                if (ref.get() == this) {
+                    i.remove();
+                }
             }
         }
         synchronized(this) {

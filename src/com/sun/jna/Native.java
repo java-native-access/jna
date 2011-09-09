@@ -114,6 +114,9 @@ public final class Native {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
+    private static final int THREAD_DETACH = -1;
+    private static final int THREAD_ATTACH = -2;
+
     static {
         loadNativeLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
@@ -1055,6 +1058,11 @@ public final class Native {
         CallbackReference.setCallbackOptions(cb, options);
     }
 
+    /** Get callback options. */
+    public static int getCallbackOptions(Callback cb) {
+        return CallbackReference.getCallbackOptions(cb);
+    }
+
     /** Set a thread initializer for the given callback.
         The thread initializer indicates desired thread configuration when the
         given Callback is invoked on a native thread not yet attached to the
@@ -1062,7 +1070,6 @@ public final class Native {
      */
     public static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
         CallbackReference.setCallbackThreadInitializer(cb, initializer);
-        setCallbackOptions(cb, CB_HAS_INITIALIZER);
     }
 
 
@@ -1152,7 +1159,7 @@ public final class Native {
      */
     public static final int CB_NODETACH = 2;
     /** Indicates whether the callback has an initializer. */
-    private static final int CB_HAS_INITIALIZER = 4;
+    static final int CB_HAS_INITIALIZER = 4;
 
     private static final int CVT_UNSUPPORTED = -1;
     private static final int CVT_DEFAULT = 0;
@@ -1678,6 +1685,10 @@ public final class Native {
 
     static native void setString(long addr, String value, boolean wide);
 
+    /** NOTE: no JNI references are created. */
+    static native void setObject(long addr, Object object);
+    static native Object getObject(long addr);
+
     /**
      * Call the real native malloc
      * @param size size of the memory to be allocated
@@ -1702,4 +1713,9 @@ public final class Native {
      * @return a direct ByteBuffer that accesses the memory being pointed to, 
      */
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
+
+    /** Indicate the desired attachment state for the current thread. */
+    public static void detach(boolean detach) {
+        setLastError(detach ? THREAD_DETACH : THREAD_ATTACH);
+    }
 }

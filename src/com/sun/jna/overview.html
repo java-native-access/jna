@@ -269,15 +269,14 @@ a single <code>callback</code> method with a signature that matches the
 function pointer required by the native code.  The name of the method
 may be something other than "callback" only if there is only a single method
 in the interface which extends Callback or the class which implements
-{@link com.sun.jna.Callback}.  The arguments and return value follow the same rules
-as for a 
-direct function invocation. 
+{@link com.sun.jna.Callback}.  The arguments and return value follow the same
+rules as for a direct function invocation. 
 <p>
 If the callback returns a <code>String</code> or <code>String[]</code>, the
 returned memory will be valid until the returned object is GC'd.
 <p>
 If your native code initializes function pointers within a struct, JNA will
-automatically generate an <code>Callback</code> instance matching the declared
+automatically generate a <code>Callback</code> instance matching the declared
 type.  This enables you to easily call the function supplied by native code
 using proper Java syntax.
 <blockquote><code><pre>
@@ -319,6 +318,26 @@ public interface CLibrary extends Library {
     SignalFunction signal(int signal, SignalFunction func);
 }
 </pre></code></blockquote>
+
+If you need control over the thread context in which a <code>Callback</code>
+operates, you can install a {@link com.sun.jna.CallbackThreadInitializer} for any given
+callback object.  The first time the callback is called on a thread that is
+not currently attached to the VM, the initializer will be queried to determine
+how the thread should be set up.  You can indicate the desired name, thread
+group, and daemon state for the thread, as well as indicating whether the
+thread should be left attached to the VM after callback exit.  The latter
+improves performance if you know you will be getting multiple callbacks on the
+same thread, avoiding the need for the VM to generate multiple Java Thread
+objects for the same native thread.  If you do leave the native thread
+attached, you should either ensure you detach it at some later point (by
+calling {@link com.sun.jna.Native#setCallbackOptions(Callback)} without
+{@link com.sun.jna.Native#CB_NODETACH}
+or return true from your
+{@link com.sun.jna.CallbackThreadInitializer#isDaemon(Callback)} method so
+that the native thread will not prevent the VM from exiting.<p/>
+If you don't need to otherwise customize the callback thread, you can simply
+call {@link com.sun.jna.Native#detach(boolean)} from within your callback to
+indicate whether the thread attachment should be maintained or not.<p/>
 
 <a name="varargs"></a>
 <h3>Varargs</h3>

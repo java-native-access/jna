@@ -905,37 +905,121 @@ public class CallbacksTest extends TestCase {
         assertEquals("Incorrect result of callback invocation", -2, result, 0);
     }
 
-    public void testNativeThreadAttachment() throws Exception {
-    	final boolean[] called = {false};
-        final Set threads = new HashSet();
-        int COUNT = 10;
-        CallbackThreadInitializer init = new CallbackThreadInitializer() {
-            public String getName() {
-                System.out.println("Thread initializer called on " + Thread.currentThread());
-                return CallbacksTest.this.getName();
+    protected void callCallback(TestLibrary.VoidCallback cb,
+                                CallbackThreadInitializer cti,
+                                int repeat, int sleepms,
+                                int[] called) throws Exception {
+        Native.setCallbackThreadInitializer(cb, cti);
+        lib.callVoidCallbackThreaded(cb, repeat, sleepms);
+
+        long start = System.currentTimeMillis();
+        while (called[0] < repeat) {
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > 5000) {
+                fail("Timed out waiting for callback");
             }
-        };
+        }
+    }
+
+    public void testCallbackThreadDefaults() throws Exception {
+    	final int[] called = {0};
+    	final boolean[] daemon = {false};
+        final String[] name = { null };
+        final ThreadGroup[] group = { null };
+        final Thread[] t = { null };
+
+        ThreadGroup testGroup = new ThreadGroup(getName());
+        CallbackThreadInitializer init = new CallbackThreadInitializer();
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
-                System.out.println("in callback: " + Thread.currentThread());
-                called[0] = true;
-                threads.add(Thread.currentThread());
+                Thread thread = Thread.currentThread();
+                daemon[0] = thread.isDaemon();
+                name[0] = thread.getName();
+                group[0] = thread.getThreadGroup();
+                t[0] = thread;
+                ++called[0];
             }
         };
-        // TODO: check thread count
-        // TODO: check thread name, group, daemon status
-        Native.setCallbackThreadInitializer(cb, init);
-        lib.callVoidCallbackThreaded(cb, COUNT, 1000);
+        callCallback(cb, init, 1, 100, called);
 
-        // OSX: with one big sleep, we get different threads;
-        // with smaller ones, the thread object is apparently re-used
-        /*
-        for (int i=0;i < COUNT;i++) {
-            System.out.println("sleep 1s");
-            Thread.sleep(1000);
+        assertFalse("Callback thread default should not be attached as daemon", daemon[0]);
+    }
+
+    public void testCustomizeCallbackThread() throws Exception {
+    	final int[] called = {0};
+    	final boolean[] daemon = {false};
+        final String[] name = { null };
+        final ThreadGroup[] group = { null };
+        final Thread[] t = { null };
+
+        ThreadGroup testGroup = new ThreadGroup(getName());
+        CallbackThreadInitializer init = new CallbackThreadInitializer(true, true, getName(), testGroup);
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                Thread thread = Thread.currentThread();
+                daemon[0] = thread.isDaemon();
+                name[0] = thread.getName();
+                group[0] = thread.getThreadGroup();
+                t[0] = thread;
+                ++called[0];
+            }
+        };
+        callCallback(cb, init, 1, 100, called);
+
+        assertTrue("Callback thread not attached as daemon", daemon[0]);
+        assertEquals("Wrong thread name", getName(), name[0]);
+        assertEquals("Wrong thread group", testGroup, group[0]);
+    }
+
+    public void testCallbackThreadPersistence() throws Exception {
+    	final int[] called = {0};
+        final Set threads = new HashSet();
+
+        ThreadGroup testGroup = new ThreadGroup(getName());
+        CallbackThreadInitializer init = new CallbackThreadInitializer(true, false, getName(), testGroup);
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                threads.add(Thread.currentThread());
+                ++called[0];
+            }
+        };
+        callCallback(cb, init, 10, 100, called);
+
+        assertEquals("Should only map a single Java Thread", 1, threads.size());
+    }
+
+    public void testDynamicCallbackThreadPersistence() throws Exception {
+    	final int[] called = {0};
+        final Set threads = new HashSet();
+
+        ThreadGroup testGroup = new ThreadGroup(getName());
+        CallbackThreadInitializer init = new CallbackThreadInitializer(true, true, getName(), testGroup);
+        final int COUNT = 10;
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                threads.add(Thread.currentThread());
+                // detach on final invocation
+                int count = called[0] + 1;
+                if (count == 1) {
+                    Native.detach(false);
+                }
+                else if (count == COUNT) {
+                    Native.detach(true);
+                }
+                called[0] = count;
+            }
+        };
+        callCallback(cb, init, COUNT, 100, called);
+
+        assertEquals("Should only map a single Java Thread", 1, threads.size());
+        Thread thread = (Thread)threads.iterator().next();
+        long start = System.currentTimeMillis();
+        while (thread.isAlive()) {
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > 5000) {
+                fail("Timed out waiting for callback thread to die");
+            }
         }
-        */
-        Thread.sleep(10000);
     }
 
     public static void main(java.lang.String[] argList) {

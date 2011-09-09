@@ -250,8 +250,9 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   // Avoid calling back to a GC'd object
   if ((*env)->IsSameObject(env, self, NULL)) {
     fprintf(stderr, "JNA: callback object has been garbage collected\n");
-    if (cif->rtype->type != FFI_TYPE_VOID)
+    if (cif->rtype->type != FFI_TYPE_VOID) {
       memset(resp, 0, cif->rtype->size); 
+    }
   }
   else if (cb->direct) {
     unsigned int i;
@@ -395,24 +396,31 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
   int was_attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
+  jboolean detach = !was_attached;
 
   if (!was_attached) {
-    int daemon = 0;
+    int attach_status = 0;
     JavaVMAttachArgs args;
+    jobject group = NULL;
+
     args.version = JNI_VERSION_1_2;
     args.name = NULL;
     args.group = NULL;
     if (cb->behavior_flags & CB_HAS_INITIALIZER) {
-      initializeThread(cb, &args);
+      args.group = initializeThread(cb, &args);
     }
-    daemon = cb->behavior_flags & CB_DAEMON;
-    if ((daemon && ((*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args) != JNI_OK))
-        || (!daemon && ((*jvm)->AttachCurrentThread(jvm, (void *)&env, &args) != JNI_OK))) {
-      fprintf(stderr, "JNA: Can't attach to native thread for callback\n");
+    if (cb->behavior_flags & CB_DAEMON) {
+      attach_status = (*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args);
+    }
+    else {
+      attach_status = (*jvm)->AttachCurrentThread(jvm, (void *)&env, &args);
+    }
+    if (attach_status != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach to native thread for callback: %d\n", attach_status);
       return;
     }
     if (args.group) {
-      (*env)->DeleteGlobalRef(env, args.group);
+      (*env)->DeleteWeakGlobalRef(env, args.group);
     }
   }
   
@@ -423,10 +431,13 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   }
   else {
     callback_invoke(env, cb, cif, resp, cbargs);
+    // Must be invoked immediately after return to avoid anything
+    // stepping on errno/GetLastError
+    detach = detachThread();
     (*env)->PopLocalFrame(env, NULL);
   }
   
-  if (!was_attached && !(cb->behavior_flags & CB_NODETACH)) {
+  if (!was_attached && detach) {
     (*jvm)->DetachCurrentThread(jvm);
   }
 }

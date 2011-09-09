@@ -45,23 +45,6 @@ class CallbackReference extends WeakReference {
         }
     }
 
-    private static void setCallbackOption(Callback cb, int options) {
-        Map map = callbackMap;
-        synchronized(map) {
-            CallbackReference ref = (CallbackReference)map.get(cb);
-            if (ref != null) {
-                ref.setCallbackOption(options);
-            }
-            else {
-                Integer current = (Integer)pendingOptions.get(cb);
-                if (current != null) {
-                    options |= current.intValue();
-                }
-                pendingOptions.put(cb, new Integer(options));
-            }
-        }
-    }
-
     /** Set behavioral options for the given callback object. */
     static void setCallbackOptions(Callback cb, int options) {
         Map map = callbackMap;
@@ -71,7 +54,22 @@ class CallbackReference extends WeakReference {
                 ref.setCallbackOptions(options);
             }
             else {
+                Integer old = (Integer)pendingOptions.get(cb);
                 pendingOptions.put(cb, new Integer(options));
+            }
+        }
+    }
+
+    static int getCallbackOptions(Callback cb) {
+        Map map = callbackMap;
+        synchronized(map) {
+            CallbackReference ref = (CallbackReference)map.get(cb);
+            if (ref != null) {
+                return ref.getCallbackOptions();
+            }
+            else {
+                Integer old = (Integer)pendingOptions.get(cb);
+                return old != null ? old.intValue() : 0;
             }
         }
     }
@@ -80,6 +78,8 @@ class CallbackReference extends WeakReference {
     static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
         synchronized(callbackMap) {
             initializers.put(cb, initializer);
+            int options = getCallbackOptions(cb);
+            setCallbackOptions(cb, options | Native.CB_HAS_INITIALIZER);
         }
     }
 
@@ -105,16 +105,13 @@ class CallbackReference extends WeakReference {
             }
             return super.getFieldTypeInfo(f);
         }
-        protected Object readField(StructField f) {
-            if (ThreadGroup.class.equals(f.type)) {
-                return null;
-            }
-            return super.readField(f);
-        }
     }
     /** Called from native code to initialize a callback thread. */
-    private static void initializeThread(Callback cb, JavaVMAttachArgs args) {
+    private static ThreadGroup initializeThread(Callback cb, JavaVMAttachArgs args) {
         CallbackThreadInitializer init = null;
+        if (cb instanceof DefaultCallbackProxy) {
+            cb = ((DefaultCallbackProxy)cb).getCallback();
+        }
         synchronized(initializers) {
             init = (CallbackThreadInitializer)initializers.get(cb);
         }
@@ -127,15 +124,23 @@ class CallbackReference extends WeakReference {
             if (group != null) {
                 args.group = group;
             }
-            int options = 0;
+            int options = getCallbackOptions(cb);
             if (init.isDaemon(cb)) {
                 options |= Native.CB_DAEMON;
             }
-            if (!init.detach(cb)) {
+            else {
+                options &= ~Native.CB_DAEMON;
+            }
+            if (init.detach(cb)) {
+                options &= ~Native.CB_NODETACH;
+            }
+            else {
                 options |= Native.CB_NODETACH;
             }
-            setCallbackOption(cb, options);
+            setCallbackOptions(cb, options);
+            args.write();
         }
+        return args.group;
     }
 
     /** Return a Callback associated with the given function pointer.
@@ -371,10 +376,9 @@ class CallbackReference extends WeakReference {
         cbstruct.setInt(Pointer.SIZE, options);
     }
 
-    /** Set  a single behavioral option flag for this callback. */
-    private void setCallbackOption(int options) {
-        options |= cbstruct.getInt(Pointer.SIZE);
-        cbstruct.setInt(Pointer.SIZE, options);
+    /** Returns the currently set behavioral options for this callback. */
+    private int getCallbackOptions() {
+        return cbstruct.getInt(Pointer.SIZE);
     }
 
     /** Obtain a pointer to the native glue code for this callback. */
@@ -479,6 +483,10 @@ class CallbackReference extends WeakReference {
             }
         }
         
+        public Callback getCallback() {
+            return CallbackReference.this.getCallback();
+        }
+
         private Object invokeCallback(Object[] args) {
             Class[] paramTypes = callbackMethod.getParameterTypes();
             Object[] callbackArgs = new Object[args.length];
@@ -498,7 +506,7 @@ class CallbackReference extends WeakReference {
             }
             
             Object result = null;
-            Callback cb = getCallback();
+            Callback cb = DefaultCallbackProxy.this.getCallback();
             if (cb != null) {
                 try {
                     result = convertResult(callbackMethod.invoke(cb, callbackArgs));
@@ -555,7 +563,7 @@ class CallbackReference extends WeakReference {
                     value = ((Pointer)value).getStringArray(0, dstType == WString[].class);
                 }
                 else if (Callback.class.isAssignableFrom(dstType)) {
-                    value = getCallback(dstType, (Pointer)value);
+                    value = CallbackReference.this.getCallback(dstType, (Pointer)value);
                 }
                 else if (Structure.class.isAssignableFrom(dstType)) {
                     Structure s = Structure.newInstance(dstType);

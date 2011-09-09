@@ -553,25 +553,32 @@ callVoidCallback(void (*func)(void)) {
   (*func)();
 }
 
-static int repeat_count = 0;
-static int sleep_time = 0;
+typedef struct thread_data {
+  int repeat_count;
+  int sleep_time;
+  void (*func)(void);
+} thread_data;
 static void* thread_function(void *arg) {
-  void (*func)(void) = (void (*)(void))arg;
+  // make a local copy
+  thread_data td = *(thread_data*)arg;
+  void (*func)(void) = td.func;
   int i;
-  for (i=0;i < repeat_count;i++) {
+  for (i=0;i < td.repeat_count;i++) {
     int status;
     func();
-    usleep(sleep_time*1000);
+    usleep(td.sleep_time*1000);
   }
   pthread_exit(NULL);
 }
 
+static thread_data data;
 EXPORT void
 callVoidCallbackThreaded(void (*func)(void), int n, int ms) {
   pthread_t thread;
-  repeat_count = n;
-  sleep_time = ms;
-  pthread_create(&thread, NULL, &thread_function, func);
+  data.repeat_count = n;
+  data.sleep_time = ms;
+  data.func = func;
+  pthread_create(&thread, NULL, &thread_function, &data);
 }
 
 EXPORT int 
