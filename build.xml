@@ -61,8 +61,6 @@
 
   <target name="default" depends="test" description="Build and Test."/>
 
-  <!-- uncomment for netbeans profiling -->
-  <!--<import file="nbproject/profiler-build-impl.xml"/>-->
   <target name="init" depends="-setup"/>
   <target name="compile-test-single" depends="compile-tests"/>
   <target name="compile-single" depends="compile"/>
@@ -76,7 +74,7 @@
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2" 
-                   file="pom.xml"/>
+                   file="pom-fake.xml"/>
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
                    file="src/com/sun/jna/Native.java"/>
@@ -162,21 +160,18 @@
   </target>
 
   <target name="-setup" depends="-dynamic-properties">
-  	<path id="compile-test.path">
-      <pathelement path="${test.src}"/>
+    <path id="compile-test.path">
       <path id="test.libs">
         <fileset dir="lib">
           <include name="junit.jar"/>   
         </fileset>
         <pathelement path="${classes}"/>
       </path>
-      <path id="compile.path">
-        <path id="src.path">
-          <pathelement location="${src}"/>
-        </path>
-      </path>
-    </path>                           
-
+    </path>
+    <path id="compile.path"/>
+    <path id="src.path">
+      <pathelement location="${src}"/>
+    </path>
     <path id="test.runpath">
       <pathelement path="${build}/${jar}"/>
       <pathelement path="${test.classes}"/>
@@ -193,7 +188,7 @@
            destdir="${classes}" 
            includeantruntime="false"
            deprecation="on" debug="${debug}">
-      <src path="${src}"/>
+      <src refid="src.path"/>
     </javac>
   </target>
 
@@ -469,15 +464,16 @@
     </condition>
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
-    <junit printsummary="yes" fork="${test.fork}" failureproperty="testfailure">
+    <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
       <!-- avoid VM conflicts with JNA protected mode -->
       <env key="${ld.preload}" file="${libjsig}"/>
-      <jvmarg value="-Djna.library.path=${build.native}"/>
+      <sysproperty key="jna.library.path" file="${build.native}"/>
       <!-- Avoid VM crashes, if possible -->
-      <jvmarg value="-Djna.protected=true"/>
-      <jvmarg value="-Djna.builddir=${build}"/>
+      <sysproperty key="jna.protected" value="true"/>
+      <sysproperty key="jna.builddir" file="${build}"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
+      <formatter type="brief" usefile="false"/>
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
         <fileset dir="${test.src}">
@@ -690,7 +686,7 @@ osname=macos,
     </zip>
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,pom.xml,LICENSE.txt"/>
+      <zipfileset dir="." includes="build.xml,pom-fake.xml,LICENSE.txt"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*,build,build/**/*" prefix="native"/>
@@ -701,7 +697,6 @@ osname=macos,
       <zipfileset src="${dist}/src.zip"/>
       <zipfileset dir="lib" includes="junit.jar,clover.jar" prefix="lib"/>
       <zipfileset dir="." includes=".classpath,.project"/>
-      <zipfileset dir="nbproject" includes="**/*" prefix="nbproject"/>
       <zipfileset dir="${native}" includes="libffi,libffi/**/*" prefix="native"/>
     </zip>
     <!-- Sources package as required by maven -->
