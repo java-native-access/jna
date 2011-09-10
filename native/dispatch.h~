@@ -189,7 +189,7 @@ extern jclass fromNative(JNIEnv*, jclass, ffi_type*, void*, jboolean);
 typedef struct _AttachOptions {
   int daemon;
   int detach;
-  char* name;
+  const char* name;
 } AttachOptions;
 extern jobject initializeThread(callback*,AttachOptions*);
 extern int lastError();

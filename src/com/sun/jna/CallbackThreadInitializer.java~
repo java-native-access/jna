@@ -45,7 +45,7 @@ public class CallbackThreadInitializer {
         using the default thread name and group.
     */
     public CallbackThreadInitializer(boolean daemon) {
-        this(daemon, false);
+        this(daemon, true);
     }
     /** Uses the default thread name and group. */
     public CallbackThreadInitializer(boolean daemon, boolean detach) {

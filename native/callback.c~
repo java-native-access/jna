@@ -413,8 +413,8 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       options.detach = JNI_TRUE; // default detach behavior
       options.name = NULL;
       args.group = initializeThread(cb, &options);
-      daemon = options.daemon ? JNI_TRUE : JNI_FALSE;
-      detach = options.detach ? JNI_TRUE : JNI_FALSE;
+      daemon = options.daemon;
+      detach = options.detach;
       args.name = options.name;
     }
     if (daemon) {

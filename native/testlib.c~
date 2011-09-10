@@ -37,22 +37,10 @@ typedef __int64 int64_t;
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #define EXPORT __declspec(dllexport)
-#define SLEEP(MS) Sleep(MS)
-#define THREAD_T DWORD
-#define THREAD_CREATE(TP, FN, DATA) CreateThread(NULL, 0, FN, DATA, 0, TP)
-#define THREAD_EXIT() ExitThread(0)
-#define THREAD_FUNC(FN,ARG) DWORD WINAPI FN(LPVOID ARG)
-#define THREAD_CURRENT() GetCurrentThreadId()
 #else
 #define EXPORT
 #include <unistd.h>
 #include <pthread.h>
-#define SLEEP(MS) usleep(MS*1000)
-#define THREAD_T pthread_t
-#define THREAD_CREATE(TP, FN, DATA) pthread_create(TP, NULL, FN, DATA)
-#define THREAD_EXIT() pthread_exit(NULL)
-#define THREAD_FUNC(FN,ARG) void* FN(void *ARG)
-#define THREAD_CURRENT() pthread_self()
 #endif
 
 #ifdef _MSC_VER
@@ -570,28 +558,27 @@ typedef struct thread_data {
   int sleep_time;
   void (*func)(void);
 } thread_data;
-static THREAD_FUNC(thread_function, arg) {
+static void* thread_function(void *arg) {
   // make a local copy
   thread_data td = *(thread_data*)arg;
   void (*func)(void) = td.func;
   int i;
-
   for (i=0;i < td.repeat_count;i++) {
     int status;
     func();
-    SLEEP(td.sleep_time);
+    usleep(td.sleep_time*1000);
   }
-  THREAD_EXIT();
+  pthread_exit(NULL);
 }
 
 static thread_data data;
 EXPORT void
 callVoidCallbackThreaded(void (*func)(void), int n, int ms) {
-  THREAD_T thread;
+  pthread_t thread;
   data.repeat_count = n;
   data.sleep_time = ms;
   data.func = func;
-  THREAD_CREATE(&thread, &thread_function, &data);
+  pthread_create(&thread, NULL, &thread_function, &data);
 }
 
 EXPORT int 
