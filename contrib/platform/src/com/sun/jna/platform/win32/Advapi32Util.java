@@ -1455,18 +1455,18 @@ public abstract class Advapi32Util {
 			}
 		}
 		
-		@Override
+		//@Override - @todo restore Override annotation after we move to source level 1.6
 		public Iterator<EventLogRecord> iterator() {
 			return this;
 		}
 
-		@Override
+		//@Override - @todo restore Override annotation after we move to source level 1.6
 		public boolean hasNext() {
 			read();
 			return ! _done;
 		}
 
-		@Override
+		//@Override - @todo restore Override annotation after we move to source level 1.6
 		public EventLogRecord next() {
 			read();
 			EventLogRecord record = new EventLogRecord(_pevlr);
@@ -1475,7 +1475,7 @@ public abstract class Advapi32Util {
 			return record;
 		}
 
-		@Override
+		//@Override - @todo restore Override annotation after we move to source level 1.6
 		public void remove() {
 			
 		}
