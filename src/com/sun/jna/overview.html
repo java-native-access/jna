@@ -330,8 +330,7 @@ improves performance if you know you will be getting multiple callbacks on the
 same thread, avoiding the need for the VM to generate multiple Java Thread
 objects for the same native thread.  If you do leave the native thread
 attached, you should either ensure you detach it at some later point (by
-calling {@link com.sun.jna.Native#setCallbackOptions(Callback)} without
-{@link com.sun.jna.Native#CB_NODETACH}
+calling {@link com.sun.jna.Native#detach} from within the callback)
 or return true from your
 {@link com.sun.jna.CallbackThreadInitializer#isDaemon(Callback)} method so
 that the native thread will not prevent the VM from exiting.<p/>

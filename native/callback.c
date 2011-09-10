@@ -402,14 +402,22 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     int attach_status = 0;
     JavaVMAttachArgs args;
     jobject group = NULL;
+    int daemon = JNI_FALSE;
 
     args.version = JNI_VERSION_1_2;
     args.name = NULL;
     args.group = NULL;
     if (cb->behavior_flags & CB_HAS_INITIALIZER) {
-      args.group = initializeThread(cb, &args);
+      AttachOptions options;
+      options.daemon = JNI_FALSE;
+      options.detach = JNI_TRUE;
+      options.name = NULL;
+      args.group = initializeThread(cb, &options);
+      daemon = options.daemon;
+      detach = detach && options.detach;
+      args.name = options.name;
     }
-    if (cb->behavior_flags & CB_DAEMON) {
+    if (daemon) {
       attach_status = (*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args);
     }
     else {
@@ -430,10 +438,16 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
   }
   else {
+    // Kind of a hack, use last error value rather than setting up our own TLS
+    setLastError(0);
     callback_invoke(env, cb, cif, resp, cbargs);
     // Must be invoked immediately after return to avoid anything
     // stepping on errno/GetLastError
-    detach = detachThread();
+    switch(lastError()) {
+    case THREAD_DETACH: detach = JNI_TRUE; break;
+    case THREAD_ATTACH: detach = JNI_FALSE; break;
+    default: break;
+    }
     (*env)->PopLocalFrame(env, NULL);
   }
   

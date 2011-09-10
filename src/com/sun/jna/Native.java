@@ -114,6 +114,7 @@ public final class Native {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
+    private static final int THREAD_NOCHANGE = 0;
     private static final int THREAD_DETACH = -1;
     private static final int THREAD_ATTACH = -2;
 
@@ -1053,16 +1054,6 @@ public final class Native {
         return context[3];
     }
 
-    /** Set callback options. */
-    public static void setCallbackOptions(Callback cb, int options) {
-        CallbackReference.setCallbackOptions(cb, options);
-    }
-
-    /** Get callback options. */
-    public static int getCallbackOptions(Callback cb) {
-        return CallbackReference.getCallbackOptions(cb);
-    }
-
     /** Set a thread initializer for the given callback.
         The thread initializer indicates desired thread configuration when the
         given Callback is invoked on a native thread not yet attached to the
@@ -1148,18 +1139,8 @@ public final class Native {
         return buf.toString();
     }
 
-    /** This callback behavior flag indicates that the native thread on which
-        the callback is invoked should be treated as a daemon thread.  This is
-        only meaningful when used with the {@link #CB_NODETACH}.
-    */
-    public static final int CB_DAEMON = 1;
-    /** This callback behavior flag indicates that the thread on which the
-     * callback is invoked should not be detached from the VM.  Use this when
-     * you know your callback will be called repeatedly from the same thread.
-     */
-    public static final int CB_NODETACH = 2;
     /** Indicates whether the callback has an initializer. */
-    static final int CB_HAS_INITIALIZER = 4;
+    static final int CB_HAS_INITIALIZER = 1;
 
     private static final int CVT_UNSUPPORTED = -1;
     private static final int CVT_DEFAULT = 0;
@@ -1684,10 +1665,6 @@ public final class Native {
     static native void setPointer(long addr, long value);
 
     static native void setString(long addr, String value, boolean wide);
-
-    /** NOTE: no JNI references are created. */
-    static native void setObject(long addr, Object object);
-    static native Object getObject(long addr);
 
     /**
      * Call the real native malloc

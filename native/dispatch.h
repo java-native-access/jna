@@ -84,8 +84,6 @@ enum {
 
 /* callback behavior flags */
 enum {
-  CB_DAEMON = com_sun_jna_Native_CB_DAEMON,
-  CB_NODETACH = com_sun_jna_Native_CB_NODETACH,
   CB_HAS_INITIALIZER = com_sun_jna_Native_CB_HAS_INITIALIZER,
   THREAD_ATTACH = com_sun_jna_Native_THREAD_ATTACH,
   THREAD_DETACH = com_sun_jna_Native_THREAD_DETACH,
@@ -187,8 +185,15 @@ extern void writeStructure(JNIEnv*, jobject);
 extern jclass getNativeType(JNIEnv*, jclass);
 extern void toNative(JNIEnv*, jobject, void*, size_t, jboolean);
 extern jclass fromNative(JNIEnv*, jclass, ffi_type*, void*, jboolean);
-extern jobject initializeThread(callback*,JavaVMAttachArgs*);
-extern int detachThread();
+
+typedef struct _AttachOptions {
+  int daemon;
+  int detach;
+  const char* name;
+} AttachOptions;
+extern jobject initializeThread(callback*,AttachOptions*);
+extern int lastError();
+extern void setLastError(int err);
 
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION

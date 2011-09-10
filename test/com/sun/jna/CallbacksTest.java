@@ -929,7 +929,6 @@ public class CallbacksTest extends TestCase {
         final Thread[] t = { null };
 
         ThreadGroup testGroup = new ThreadGroup(getName());
-        CallbackThreadInitializer init = new CallbackThreadInitializer();
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
                 Thread thread = Thread.currentThread();
@@ -940,9 +939,10 @@ public class CallbacksTest extends TestCase {
                 ++called[0];
             }
         };
-        callCallback(cb, init, 1, 100, called);
+        callCallback(cb, null, 1, 100, called);
 
         assertFalse("Callback thread default should not be attached as daemon", daemon[0]);
+        // thread name and group are not defined
     }
 
     public void testCustomizeCallbackThread() throws Exception {

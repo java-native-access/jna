@@ -83,31 +83,13 @@ class CallbackReference extends WeakReference {
         }
     }
 
-    static class JavaVMAttachArgs extends Structure {
-        public int version;
+    static class AttachOptions extends Structure {
+        public boolean daemon;
+        public boolean detach;
         public String name;
-        public ThreadGroup group;
-        protected int getNativeSize(Class type, Object value) {
-            if (ThreadGroup.class.equals(type)) {
-                return Pointer.SIZE;
-            }
-            return super.getNativeSize(type, value);
-        }
-        protected int getNativeAlignment(Class type, Object value, boolean isFirstElement) {
-            if (ThreadGroup.class.equals(type)) {
-                type = Pointer.class;
-            }
-            return super.getNativeAlignment(type, value, isFirstElement);
-        }
-        protected Pointer getFieldTypeInfo(StructField f) {
-            if (ThreadGroup.class.equals(f.type)) {
-                return getTypeInfo(Pointer.class);
-            }
-            return super.getFieldTypeInfo(f);
-        }
     }
     /** Called from native code to initialize a callback thread. */
-    private static ThreadGroup initializeThread(Callback cb, JavaVMAttachArgs args) {
+    private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {
         CallbackThreadInitializer init = null;
         if (cb instanceof DefaultCallbackProxy) {
             cb = ((DefaultCallbackProxy)cb).getCallback();
@@ -115,32 +97,15 @@ class CallbackReference extends WeakReference {
         synchronized(initializers) {
             init = (CallbackThreadInitializer)initializers.get(cb);
         }
+        ThreadGroup group = null;
         if (init != null) {
-            String name = init.getName(cb);
-            if (name != null) {
-                args.name = name;
-            }
-            ThreadGroup group = init.getThreadGroup(cb);
-            if (group != null) {
-                args.group = group;
-            }
-            int options = getCallbackOptions(cb);
-            if (init.isDaemon(cb)) {
-                options |= Native.CB_DAEMON;
-            }
-            else {
-                options &= ~Native.CB_DAEMON;
-            }
-            if (init.detach(cb)) {
-                options &= ~Native.CB_NODETACH;
-            }
-            else {
-                options |= Native.CB_NODETACH;
-            }
-            setCallbackOptions(cb, options);
+            group = init.getThreadGroup(cb);
+            args.name = init.getName(cb);
+            args.daemon = init.isDaemon(cb);
+            args.detach = init.detach(cb);
             args.write();
         }
-        return args.group;
+        return group;
     }
 
     /** Return a Callback associated with the given function pointer.

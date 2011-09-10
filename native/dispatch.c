@@ -136,7 +136,7 @@ static jclass classStructure;
 static jclass classStructureByValue;
 static jclass classCallback;
 static jclass classCallbackReference;
-static jclass classJavaVMAttachArgs;
+static jclass classAttachOptions;
 static jclass classNativeMapped;
 static jclass classIntegerType;
 static jclass classPointerType;
@@ -1133,19 +1133,6 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
 }
 
 /*
- * Class:     Native
- * Method:    getObject
- * Signature: (J)Ljava/lang/Object;
- */
-JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getObject
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr)
-{
-    jobject obj = NULL;
-    MEMCPY(&obj, L2A(addr), sizeof(obj));
-    return obj;
-}
-
-/*
  * Class:     com_sun_jna_Native
  * Method:    _getDirectByteBuffer
  * Signature: (JJ)Ljava/nio/ByteBuffer;
@@ -1356,18 +1343,6 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setString
       MEMCPY(L2A(addr), str, size);
       free((void*)str);
     }
-}
-
-/*
- * Class:     Native
- * Method:    setObject
- * Signature: (JLjava/lang/Object;Z)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setObject
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jobject value)
-{
-  value = (*env)->NewLocalRef(env, value);
-  MEMCPY(L2A(addr), &value, sizeof(jobject));
 }
 
 /*
@@ -1746,7 +1721,7 @@ getCallbackAddress(JNIEnv *env, jobject obj) {
 }
 
 jobject
-initializeThread(callback* cb, JavaVMAttachArgs* args) {
+initializeThread(callback* cb, AttachOptions* args) {
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
   jobject group = NULL;
@@ -1759,7 +1734,7 @@ initializeThread(callback* cb, JavaVMAttachArgs* args) {
   {
     jobject cbobj = (*env)->NewLocalRef(env, cb->object);
     if (!(*env)->IsSameObject(env, cbobj, NULL)) {
-      jobject argsobj = newJavaStructure(env, args, classJavaVMAttachArgs, JNI_FALSE);
+      jobject argsobj = newJavaStructure(env, args, classAttachOptions, JNI_FALSE);
       group = (*env)->CallStaticObjectMethod(env, classCallbackReference,
                                              MID_CallbackReference_initializeThread,
                                              cbobj, argsobj);
@@ -2033,9 +2008,9 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain class com.sun.jna.Callback");
   }
-  else if (!LOAD_CREF(env, JavaVMAttachArgs, "com/sun/jna/CallbackReference$JavaVMAttachArgs")) {
+  else if (!LOAD_CREF(env, AttachOptions, "com/sun/jna/CallbackReference$AttachOptions")) {
     throwByName(env, EUnsatisfiedLink,
-                "Can't obtain class com.sun.jna.CallbackReference.JavaVMAttachArgs");
+                "Can't obtain class com.sun.jna.CallbackReference.AttachOptions");
   }
   else if (!LOAD_CREF(env, CallbackReference, "com/sun/jna/CallbackReference")) {
     throwByName(env, EUnsatisfiedLink,
@@ -2061,7 +2036,7 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
   else if (!(MID_CallbackReference_initializeThread
              = (*env)->GetStaticMethodID(env, classCallbackReference,
-                                         "initializeThread", "(Lcom/sun/jna/Callback;Lcom/sun/jna/CallbackReference$JavaVMAttachArgs;)Ljava/lang/ThreadGroup;"))) {
+                                         "initializeThread", "(Lcom/sun/jna/Callback;Lcom/sun/jna/CallbackReference$AttachOptions;)Ljava/lang/ThreadGroup;"))) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain static method initializeThread from class com.sun.jna.CallbackReference");
   }
@@ -2523,7 +2498,7 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     &classDouble, &classPrimitiveDouble,
     &classPointer, &classNative, &classWString,
     &classStructure, &classStructureByValue,
-    &classCallbackReference, &classJavaVMAttachArgs, &classNativeMapped,
+    &classCallbackReference, &classAttachOptions, &classNativeMapped,
     &classIntegerType, &classPointerType,
   };
   unsigned i;
@@ -3093,12 +3068,13 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
   return (jint)type->size;
 }
 
-/** Returns whether the current thread should be detached before return to
-    native code.
-*/
-int detachThread() {
-  // Kind of a hack, use last error value rather than setting up our own TLS
-  return GET_LAST_ERROR() == THREAD_DETACH;
+/** Returns the last error code. */
+int lastError() {
+  return GET_LAST_ERROR();
+}
+/** Set the last error code. */
+void setLastError(int err) {
+  SET_LAST_ERROR(err);
 }
 
 #ifdef __cplusplus

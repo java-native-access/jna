@@ -464,11 +464,8 @@ public class Pointer {
             getArrayValue(offset, result, type.getComponentType());
         }
         else {
-            result = getObject(offset);
-            /*
             throw new IllegalArgumentException("Reading \""
                                                + type + "\" from memory is not supported");
-            */
         }
         return result;
     }
@@ -645,13 +642,6 @@ public class Pointer {
      */
     public Pointer getPointer(long offset) {
         return Native.getPointer(peer + offset);
-    }
-
-    /**
-     * Read a native jobject pointer as a Java Object. 
-     */
-    Object getObject(long offset) {
-        return Native.getObject(peer + offset);
     }
 
     /**
@@ -896,8 +886,7 @@ v     * @param wide whether to convert from a wide or standard C string
             setArrayValue(offset, value, type.getComponentType());
         }
         else {
-            setObject(offset, value);
-            //throw new IllegalArgumentException("Writing " + type + " to memory is not supported");
+            throw new IllegalArgumentException("Writing " + type + " to memory is not supported");
         }
     }
 
@@ -1105,11 +1094,6 @@ v     * @param wide whether to convert from a wide or standard C string
      */
     public void setPointer(long offset, Pointer value) {
         Native.setPointer(peer + offset, value != null ? value.peer : 0);
-    }
-
-    /** Write a Java Object as a native jobject pointer. */
-    void setObject(long offset, Object value) {
-        Native.setObject(peer + offset, value);
     }
 
     /**
