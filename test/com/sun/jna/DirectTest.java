@@ -232,7 +232,7 @@ public class DirectTest extends TestCase {
         }
         else {
             b.putLong(0, Structure.FFIType.get(double.class).peer);
-            cif = Native.ffi_prep_cif(0, 1, Structure.FFIType.get(double.class).peer, types);
+            cif = Native.ffi_prep_cif(1, 1, Structure.FFIType.get(double.class).peer, types);
             resp = pb.peer + 8;
             argv = pb.peer + 16;
             double INPUT = 42;
