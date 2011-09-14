@@ -29,7 +29,7 @@ Find your corresponding native declaration below:
     // Field is a pointer to an array of struct
     typedef struct _outerstruct5 {
       simplestruct* ptr_to_array; // use Structure.ByReference, and use
-                                  // Structure.toArray() to allocate array
+                                  // Structure.toArray() to allocate the array
     } outerstruct5;
 
     // struct pointers as return value or argument
@@ -91,9 +91,8 @@ First, you probably don't actually want an arbitrary value. Ask yourself what yo
 
 Clean up the sloppy C code by declaring an appropriate function interface. If your function in C takes either a `Pointer` or an integer type, simply declare both method signatures in your JNA interface. They will both invoke the same function, but you get the added benefit of type checking on the arguments.
 
-If you really, really, *have* to convert an integer value into a `Pointer`, you can do something like this:
+If you really, really, *have* to convert an integer value into a `Pointer`, use the `Pointer(long)` constructor.
 
-    new IntByReference(value).getPointer().getPointer(0)
 
 Debugging Structure Definitions
 -------------------------------
@@ -108,7 +107,7 @@ There is an implementation available, but it has not yet been integrated into th
 I need to use a COM/OCX/ActiveX object. Can JNA do that?
 --------------------------------------------------------
 
-Not really. Try JACOB or com4j, both of which can parse a COM interface definition and generate a Java object to match it.
+Not really. Try JACOB or com4j, both of which can parse a COM interface definition and generate a Java object to match it.  JNAerator is also working on generating COM bindings.
 
 Why does the VM sometimes crash in my shutdown hook on Windows?
 ---------------------------------------------------------------
