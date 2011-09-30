@@ -424,7 +424,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       attach_status = (*jvm)->AttachCurrentThread(jvm, (void *)&env, &args);
     }
     if (attach_status != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach to native thread for callback: %d\n", attach_status);
+      fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d\n", attach_status);
       return;
     }
     if (args.group) {
@@ -444,9 +444,9 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     // Must be invoked immediately after return to avoid anything
     // stepping on errno/GetLastError
     switch(lastError()) {
-    case THREAD_ATTACH: detach = JNI_FALSE; break;
+    case THREAD_LEAVE_ATTACHED: detach = JNI_FALSE; break;
     case THREAD_DETACH: detach = JNI_TRUE; break;
-    default: break;
+    default: break; /* use default detach behavior */
     }
     (*env)->PopLocalFrame(env, NULL);
   }

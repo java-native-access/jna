@@ -4,10 +4,12 @@ Release 3.3.x
 Features
 --------
 * Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq)
-* linux/ppc 32-bit support (Fritiof Hedman)
-* linux multi-arch support (kohsuke)
-* Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`
-* Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`
+* Improved callback thread-mapping support; re-use, rename, and group callback
+threads.
+* linux/ppc 32-bit support (Fritiof Hedman).
+* linux multi-arch support (kohsuke).
+* Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
+* Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`.
 * Add to `platform.win32.Kernel32`: `CopyFile`, `MoveFile`, `MoveFileEx`, `CreateProcess`, `SetEnvironmentVariables`, `GetFileTime`, `SetFileTime`, `SetFileAttributes`, `DeviceIoControl`, `GetDiskFreeSpaceEx`, `CreateToolhelp32Snapshot`, `Process32First`, `Process32Next`.
 * Add to `platform.win32.Msi`: `MsiGetComponentPath`, `MsiLocateComponent`, `MsiGetProductCode`, `MsiEnumComponents`.
 * Add to `platform.win32.User32`: `RegisterHotKey`, `UnregisterHotKey`

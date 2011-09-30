@@ -1727,7 +1727,7 @@ initializeThread(callback* cb, AttachOptions* args) {
   jobject group = NULL;
 
   if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, &args) != JNI_OK) {
-    fprintf(stderr, "JNA: Can't attach to native thread for callback\n");
+    fprintf(stderr, "JNA: Can't attach native thread to VM for callback thread initialization\n");
     return NULL;
   }
   (*env)->PushLocalFrame(env, 16);
@@ -2458,7 +2458,7 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
 
   if (!attached) {
     if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach to JVM thread on load\n");
+      fprintf(stderr, "JNA: Can't attach native thread to VM on load\n");
       return 0;
     }
   }
@@ -2506,7 +2506,7 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
   int attached = (*vm)->GetEnv(vm, (void*)&env, JNI_VERSION_1_4) == JNI_OK;
   if (!attached) {
     if ((*vm)->AttachCurrentThread(vm, (void*)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach to JVM thread on unload\n");
+      fprintf(stderr, "JNA: Can't attach native thread to VM on unload\n");
       return;
     }
   }
@@ -2977,7 +2977,7 @@ JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi, jint nargs, jlong ffi_return_type, jlong ffi_types) 
 {
   ffi_cif* cif = malloc(sizeof(ffi_cif));
-  ffi_status s = ffi_prep_cif(L2A(cif), abi, nargs, L2A(ffi_return_type), L2A(ffi_types));
+  ffi_status s = ffi_prep_cif(L2A(cif), abi ? abi : FFI_DEFAULT_ABI, nargs, L2A(ffi_return_type), L2A(ffi_types));
   if (ffi_error(env, "ffi_prep_cif", s)) {
     return 0;
   }
@@ -2996,7 +2996,7 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
   attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
   if (!attached) {
     if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach to current thread\n");
+      fprintf(stderr, "JNA: Can't attach native thread to VM for closure handler\n");
       return;
     }
   }

@@ -33,7 +33,6 @@ class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
-    private static final Map pendingOptions = new HashMap();
     private static final Method PROXY_CALLBACK_METHOD;
     
     static {
@@ -45,41 +44,15 @@ class CallbackReference extends WeakReference {
         }
     }
 
-    /** Set behavioral options for the given callback object. */
-    static void setCallbackOptions(Callback cb, int options) {
-        Map map = callbackMap;
-        synchronized(map) {
-            CallbackReference ref = (CallbackReference)map.get(cb);
-            if (ref != null) {
-                ref.setCallbackOptions(options);
-            }
-            else {
-                Integer old = (Integer)pendingOptions.get(cb);
-                pendingOptions.put(cb, new Integer(options));
-            }
-        }
-    }
-
-    static int getCallbackOptions(Callback cb) {
-        Map map = callbackMap;
-        synchronized(map) {
-            CallbackReference ref = (CallbackReference)map.get(cb);
-            if (ref != null) {
-                return ref.getCallbackOptions();
-            }
-            else {
-                Integer old = (Integer)pendingOptions.get(cb);
-                return old != null ? old.intValue() : 0;
-            }
-        }
-    }
-
     private static final Map initializers = new WeakHashMap();
     static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
         synchronized(callbackMap) {
-            initializers.put(cb, initializer);
-            int options = getCallbackOptions(cb);
-            setCallbackOptions(cb, options | Native.CB_HAS_INITIALIZER);
+            if (initializer != null) {
+                initializers.put(cb, initializer);
+            }
+            else {
+                initializers.remove(cb);
+            }
         }
     }
 
@@ -341,11 +314,6 @@ class CallbackReference extends WeakReference {
         cbstruct.setInt(Pointer.SIZE, options);
     }
 
-    /** Returns the currently set behavioral options for this callback. */
-    private int getCallbackOptions() {
-        return cbstruct.getInt(Pointer.SIZE);
-    }
-
     /** Obtain a pointer to the native glue code for this callback. */
     public Pointer getTrampoline() {
         return cbstruct.getPointer(0);
@@ -406,9 +374,8 @@ class CallbackReference extends WeakReference {
             if (cbref == null) {
                 cbref = new CallbackReference(cb, callingConvention, direct);
                 map.put(cb, cbref);
-                if (pendingOptions.containsKey(cb)) {
-                    cbref.setCallbackOptions(((Integer)pendingOptions.get(cb)).intValue());
-                    pendingOptions.remove(cb);
+                if (initializers.containsKey(cb)) {
+                    cbref.setCallbackOptions(Native.CB_HAS_INITIALIZER);
                 }
             }
             return cbref.getTrampoline();

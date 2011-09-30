@@ -85,13 +85,14 @@ enum {
 /* callback behavior flags */
 enum {
   CB_HAS_INITIALIZER = com_sun_jna_Native_CB_HAS_INITIALIZER,
-  THREAD_ATTACH = com_sun_jna_Native_THREAD_ATTACH,
+  THREAD_LEAVE_ATTACHED = com_sun_jna_Native_THREAD_LEAVE_ATTACHED,
   THREAD_DETACH = com_sun_jna_Native_THREAD_DETACH,
 };
 
 typedef struct _callback {
   /* CallbackReference.getTrampoline() expects this field at offset 0. */
   void* x_closure;
+  /* CallbackReference.setCallbackOptions() expects this field at offset Pointer.SIZE. */
   int behavior_flags;
   ffi_closure* closure;
   ffi_cif cif;

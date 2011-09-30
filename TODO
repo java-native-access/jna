@@ -21,8 +21,11 @@
 
 # TODO
 
+* dispose memory/callbacks in Native finalizer to ensure they run first
+  (use referencequeue to run them when they become unreachable)
+
 * fix setFieldOrder to *always* apply if used
-* cache structure information
+* cache structure information per-class
 
 * make direct calls call back *once* to Java where conversion is required,
   and process all arguments from there (instead of potentially swapping back

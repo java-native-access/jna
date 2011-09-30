@@ -320,18 +320,18 @@ public interface CLibrary extends Library {
 </pre></code></blockquote>
 
 If you need control over the thread context in which a <code>Callback</code>
-operates, you can install a {@link com.sun.jna.CallbackThreadInitializer} for any given
-callback object.  The first time the callback is called on a thread that is
-not currently attached to the VM, the initializer will be queried to determine
-how the thread should be set up.  You can indicate the desired name, thread
-group, and daemon state for the thread, as well as indicating whether the
-thread should be left attached to the VM after callback exit.  The latter
+operates, you can install a {@link com.sun.jna.CallbackThreadInitializer} for
+any given callback object.  The first time the callback is called on a thread
+that is not currently attached to the VM, the initializer will be queried to
+determine how the thread should be set up.  You can indicate the desired name,
+thread group, and daemon state for the thread, as well as indicating whether
+the thread should be left attached to the VM after callback exit.  The latter
 improves performance if you know you will be getting multiple callbacks on the
 same thread, avoiding the need for the VM to generate multiple Java Thread
 objects for the same native thread.  If you do leave the native thread
 attached, you should either ensure you detach it at some later point (by
-calling {@link com.sun.jna.Native#detach} from within the callback)
-or return true from your
+calling {@link com.sun.jna.Native#detach} from within the callback just prior
+to return) or return true from your
 {@link com.sun.jna.CallbackThreadInitializer#isDaemon(Callback)} method so
 that the native thread will not prevent the VM from exiting.<p/>
 If you don't need to otherwise customize the callback thread, you can simply
