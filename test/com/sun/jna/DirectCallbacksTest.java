@@ -42,6 +42,7 @@ public class DirectCallbacksTest extends CallbacksTest {
         public native Int32CallbackX returnCallback();
         public native Int32CallbackX returnCallbackArgument(Int32CallbackX cb);
         public native void callVoidCallback(VoidCallback c);
+        public native void callVoidCallbackThreaded(VoidCallback c, int count, int ms);
 
         public native int callInt32Callback(CustomCallback cb, int arg1, int arg2);
         public native void callCallbackInStruct(CbStruct s);
