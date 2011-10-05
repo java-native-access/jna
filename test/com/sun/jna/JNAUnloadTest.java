@@ -41,7 +41,7 @@ public class JNAUnloadTest extends TestCase {
         try {
             Class cls = Class.forName("com.sun.jna.Native", true, loader);
 
-            fail("Native class should not be loadable if jna.nounpack=true: "
+            fail("Class com.sun.jna.Native should not be loadable if jna.nounpack=true: "
                  + cls.getClassLoader());
         }
         catch(UnsatisfiedLinkError e) {

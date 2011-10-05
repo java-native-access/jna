@@ -3,6 +3,8 @@ Release 3.3.x
 
 Features
 --------
+* Use jna.nosys to avoid loading any system-provided JNA (useful for local build/development)
+* Throw an Error if a system install of JNA is incompatible
 * Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq)
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
