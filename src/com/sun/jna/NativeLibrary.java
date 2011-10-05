@@ -120,7 +120,6 @@ public class NativeLibrary {
         // name if it cannot find the library.
         //
         try {
-            System.out.println("Attempt " + libraryPath);
             handle = Native.open(libraryPath);
         }
         catch(UnsatisfiedLinkError e) {
@@ -130,7 +129,6 @@ public class NativeLibrary {
         try {
             if (handle == 0) {
                 libraryPath = findLibraryPath(libraryName, searchPath);
-                System.out.println("Attempt " + libraryPath);
                 handle = Native.open(libraryPath);
                 if (handle == 0) {
                     throw new UnsatisfiedLinkError("Failed to load library '" + libraryName + "'");
