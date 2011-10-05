@@ -59,14 +59,15 @@ import com.sun.jna.Structure.FFIType;
  * <a name=library_loading></a>
  * <h2>Library Loading</h2>
  * When JNA classes are loaded, the native shared library (jnidispatch) is
- * loaded as well.  An attempt is made to load it from the system library path
- * using {@link System#loadLibrary}.  If not found, the appropriate library
- * will be extracted from the class path into a temporary directory and
- * loaded from there.  If your system has additional security constraints
- * regarding execution or load of files (SELinux, for example), you should 
- * probably install the native library in an accessible location and configure 
- * your system accordingly, rather than relying on JNA to extract the library 
- * from its own jar file.<p/>
+ * loaded as well.  An attempt is made to load it from the any paths defined
+ * in <code>jna.boot.library.path</code> (if defined), then the system library
+ * path using {@link System#loadLibrary}, unless <code>jna.nosys=true</code>.
+ * If not found, the appropriate library will be extracted from the class path
+ * into a temporary directory and loaded from there.  If your system has
+ * additional security constraints regarding execution or load of files
+ * (SELinux, for example), you should  probably install the native library in
+ * an accessible location and configure  your system accordingly, rather than
+ * relying on JNA to extract the library  from its own jar file.<p/>
  * To avoid the automatic unpacking (in situations where you want to force a
  * failure if the JNA native library is not properly installed on the system),
  * set the system property <code>jna.nounpack=true</code>.
@@ -82,6 +83,7 @@ import com.sun.jna.Structure.FFIType;
 public final class Native {
 
     private static final String VERSION = "3.3.0";
+    private static final String VERSION_NATIVE = "3.3.0";
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -125,6 +127,16 @@ public final class Native {
         initIDs();
         if (Boolean.getBoolean("jna.protected")) {
             setProtected(true);
+        }
+        String version = getNativeVersion();
+        if (!VERSION_NATIVE.equals(version)) {
+            String LS = System.getProperty("line.separator");
+            throw new Error(LS + LS
+                            + "There is an incompatible JNA native library installed on this system." + LS
+                            + "To resolve this issue you may do one of the following:" + LS
+                            + " - remove or uninstall the offending library" + LS
+                            + " - set the system property jna.nosys=true" + LS
+                            + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
     }
     
@@ -666,14 +678,21 @@ public final class Native {
             }
         }
         try {
-            System.loadLibrary(libName);
+            if (!Boolean.getBoolean("jna.nosys")) {
+                System.loadLibrary(libName);
+                return;
+            }
         }
         catch(UnsatisfiedLinkError e) {
             if (Boolean.getBoolean("jna.nounpack")) {
                 throw e;
             }
-            loadNativeLibraryFromJar();
         }
+        if (!Boolean.getBoolean("jna.nounpack")) {
+            loadNativeLibraryFromJar();
+            return;
+        }
+        throw new UnsatisfiedLinkError("Native jnidispatch library not found");
     }
 
     /**
