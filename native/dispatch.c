@@ -1726,7 +1726,7 @@ initializeThread(callback* cb, AttachOptions* args) {
   JNIEnv* env;
   jobject group = NULL;
 
-  if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, &args) != JNI_OK) {
+  if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
     fprintf(stderr, "JNA: Can't attach native thread to VM for callback thread initialization\n");
     return NULL;
   }
