@@ -478,6 +478,7 @@
       <zipfileset src="build/jna.jar"/>
       <zipfileset src="build/jna-test.jar"/>
     </jar>
+    <copy todir="shared" file="build/jna.jar"/>
     <copy todir="shared" file="build/native/jnidispatch.dll"/>
     <copy todir="shared" file="build/native/testlib.dll"/>
     <copy todir="shared" file="build/native/testlib2.dll"/>

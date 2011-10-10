@@ -103,7 +103,7 @@ CDEFINES=-D_WIN32_IE=0x400 -D_WIN32_WCE=0x0420 -DNO_JAWT -DNO_NIO_BUFFERS -DWINC
 CFLAGS+=-Wno-unknown-pragmas
 LD=arm-mingw32ce-gcc
 LIBDIR=/opt/mingw32ce/lib/gcc/arm-mingw32ce/4.4.0
-LDFLAGS=-o $@ -shared -Wl,-Map ${@:$(LIBSFX)=.map}
+LDFLAGS=-o $@ -shared 
 LIBS=-lcoredll -lgcc -ltoolhelp
 WINDRES=arm-mingw32ce-windres
 EXTRAOBJS=$(RSRC)

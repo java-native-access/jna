@@ -389,9 +389,19 @@ setPointerByReferenceNull(void **arg) {
 
 EXPORT int64_t 
 checkInt64ArgumentAlignment(int32_t i, int64_t j, int32_t i2, int64_t j2) {
-  if (i != 0x10101010 || j != LONG(0x1111111111111111)
-      || i2 != 0x01010101 || j2 != LONG(0x2222222222222222))
+
+  if (i != 0x10101010) {
     return -1;
+  }
+  if (j != LONG(0x1111111111111111)) {
+    return -2;
+  }
+  if (i2 != 0x01010101) {
+    return -3;
+  }
+  if (j2 != LONG(0x2222222222222222)) {
+    return -4;
+  }
 
   return i + j + i2 + j2;
 }
@@ -400,8 +410,14 @@ EXPORT double
 checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   // float:  1=3f800000 2=40000000 3=40400000 4=40800000
   // double: 1=3ff00... 2=40000... 3=40080... 4=40100...
-  if (f != 1 || d != 2 || f2 != 3 || d2 != 4)
-    return -1;
+  wchar_t wbuf[1024];
+  wsprintf(wbuf, L"double align: %p %p %p %p\n", &f, &d, &f2, &d2);
+  OutputDebugString(wbuf);
+
+  if (f != 1) return -1;
+  if (d != 2) return -2;
+  if (f2 != 3) return -3;
+  if (d2 != 4) return -4;
 
   return f + d + f2 + d2;
 }

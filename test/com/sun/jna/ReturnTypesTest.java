@@ -90,7 +90,6 @@ public class ReturnTypesTest extends TestCase {
 
     TestLibrary lib;
     protected void setUp() {
-        System.out.println("test: " + getName());
         lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
     

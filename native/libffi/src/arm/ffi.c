@@ -600,6 +600,11 @@ ffi_prep_closure_loc (ffi_closure* closure,
   closure->user_data = user_data;
   closure->fun  = fun;
 
+#ifdef _WIN32_WCE
+  /* This is important to allow calling the trampoline safely */
+  FlushInstructionCache(GetCurrentProcess(), 0, 0);
+#endif
+
   return FFI_OK;
 }
 

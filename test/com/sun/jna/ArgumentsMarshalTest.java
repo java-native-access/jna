@@ -120,7 +120,6 @@ public class ArgumentsMarshalTest extends TestCase {
 
     TestLibrary lib;
     protected void setUp() {
-        System.out.println("test: " + getName());
         lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
     
@@ -287,15 +286,16 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Expect string magic", MAGIC, lib.returnStringArgument(MAGIC).toString());
     }
     
-    // wce fail
-    public void XFAIL_WCE_testInt64ArgumentAlignment() {
+    // wce fail; 2nd 64-bit argument is received incorrectly
+    public void testInt64ArgumentAlignment() {
         long value = lib.checkInt64ArgumentAlignment(0x10101010, 0x1111111111111111L, 
                                                      0x01010101, 0x2222222222222222L);
         assertEquals("Improper handling of interspersed int32/int64",
                      0x3333333344444444L, value);
     }
 
-    public void XFAIL_WCE_testDoubleArgumentAlignment() {
+    // wce fail; 2nd double argument is received incorrectly
+    public void testDoubleArgumentAlignment() {
         double value = lib.checkDoubleArgumentAlignment(1f, 2d, 3f, 4d);
         assertEquals("Improper handling of interspersed float/double",
                      10d, value, 0);

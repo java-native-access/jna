@@ -30,18 +30,18 @@ public class JNAUnloadTest extends TestCase {
     private static class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {
-                new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
+                    Platform.isWindowsCE() 
+                    ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
+                    : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
             }, null);
         }
     }
 
-    // wce support this?  do we have a tmpdir?
-    public void XFAIL_WCE_testLoadFromJar() throws Exception {
+    public void testLoadFromJar() throws Exception {
         Class.forName("com.sun.jna.Native", true, new TestLoader(true));
     }
 
-    // wce support this?
-    public void XFAIL_WCE_testAvoidJarUnpacking() throws Exception {
+    public void testAvoidJarUnpacking() throws Exception {
         System.setProperty("jna.nounpack", "true");
         ClassLoader loader = new TestLoader(true);
         try {
@@ -58,9 +58,8 @@ public class JNAUnloadTest extends TestCase {
     }
 
     // Fails under clover
-    // wce support this?
-    public void XFAIL_WCE_testUnloadFromJar() throws Exception {
-        File jar = new File(BUILDDIR + "/jna.jar");
+    public void testUnloadFromJar() throws Exception {
+        File jar = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR) + "/jna.jar");
         if (!jar.exists()) {
             throw new Error("Expected JNA jar file at " + jar + " is missing");
         }
@@ -118,8 +117,7 @@ public class JNAUnloadTest extends TestCase {
     }
 
     // Fails under clover and OpenJDK(linux/ppc)
-    // wce class not found
-    public void XFAIL_WCE_testUnload() throws Exception {
+    public void testUnload() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());

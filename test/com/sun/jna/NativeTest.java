@@ -324,7 +324,7 @@ public class NativeTest extends TestCase {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            args = new String[] { "com.sun.jna.NativeTest" };
+            junit.textui.TestRunner.run(NativeTest.class);
         }
         else {
             if (args.length == 1 && "all".equals(args[0])) {
@@ -361,12 +361,11 @@ public class NativeTest extends TestCase {
                 try {
                     junit.textui.TestRunner.run(Class.forName(args[i]));
                 }
-                catch(Throwable t) {
-                    System.err.println("Error in test: ");
-                    t.printStackTrace();
+                catch(ClassNotFoundException e) {
+                    System.err.println("No such class: " + args[i]);
                 }
             }
+            try { Thread.sleep(300000); } catch(Exception e) { }
         }
-        try { Thread.sleep(300000); } catch(Exception e) { }
     }
 }

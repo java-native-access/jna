@@ -676,7 +676,7 @@ public final class Native {
                         nativeLibraryPath = path;
                         return;
                     } catch (UnsatisfiedLinkError ex) {
-                        ex.printStackTrace();
+                        System.err.println("File found at " + file + " but not loadable: " + ex.getMessage());
                     }
                 }
                 if (Platform.isMac()) {
@@ -695,6 +695,7 @@ public final class Native {
                             nativeLibraryPath = path;
                             return;
                         } catch (UnsatisfiedLinkError ex) {
+                            System.err.println("File found at " + path + " but not loadable: " + ex.getMessage());
                         }
                     }
                 }
