@@ -16,9 +16,6 @@
  * Lesser General Public License for more details.  
  */
 
-#define CALLBACKS
-//#define FFI
-
 /*
  * JNI native methods supporting the infrastructure for shared
  * dispatchers.  
@@ -43,7 +40,12 @@
  * directory, and the alternate search begins in the directory of the         
  * executable module that LoadLibraryEx is loading."                          
  */
-#define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_WITH_ALTERED_SEARCH_PATH) : GetModuleHandleW(NULL))
+#ifdef _WIN32_WCE
+#define LOAD_OPTS 0 /* altered search path unsupported on CE */
+#else
+#define LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
+#endif
+#define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_OPTS) : GetModuleHandleW(NULL))
 #define LOAD_ERROR(BUF,LEN) w32_format_error(BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
 #define FIND_ENTRY(HANDLE, NAME) GetProcAddress(HANDLE, NAME)
@@ -101,6 +103,11 @@ w32_format_error(char* buf, int len) {
   FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
                  0, wbuf, len, NULL);
   WideCharToMultiByte(CP_UTF8, 0, wbuf, wcslen(wbuf), buf, len, NULL, NULL);
+  {
+    wchar_t wbuf2[1024];
+    wsprintf(wbuf2, L"Convert %ls to %s\n", wbuf, buf);
+    OutputDebugString(wbuf2);
+  }
   return buf;
 }
 #endif
@@ -240,22 +247,6 @@ static void update_last_error(JNIEnv*, int);
 
 typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
 
-#ifndef FFI
-#define dummy (*(ffi_type*)0)
-#define ffi_type_pointer dummy
-#define ffi_type_sint64 dummy
-#define ffi_type_uint64 dummy
-#define ffi_type_sint32 dummy
-#define ffi_type_uint32 dummy
-#define ffi_type_sint16 dummy
-#define ffi_type_uint16 dummy
-#define ffi_type_sint8 dummy
-#define ffi_type_uint8 dummy
-#define ffi_type_float dummy
-#define ffi_type_double dummy
-#define ffi_type_void dummy
-#endif
-
 #if 0
 /** Invokes System.err.println (for debugging only). */
 static void
@@ -277,6 +268,15 @@ void
 throwByName(JNIEnv *env, const char *name, const char *msg)
 {
   jclass cls;
+
+  {
+    wchar_t wbuf[1024], wbuf2[1024];
+    MultiByteToWideChar(CP_UTF8, 0, name, strlen(name)+1, wbuf, sizeof(wbuf));
+    wsprintf(wbuf2, L"Exception thrown: %ls", wbuf);
+    MultiByteToWideChar(CP_UTF8, 0, msg, strlen(msg)+1, wbuf, sizeof(wbuf));
+    wsprintf(wbuf2, L"%ls: %ls\n", wbuf2, wbuf);
+    OutputDebugString(wbuf2);
+  }
 
   (*env)->ExceptionClear(env);
   
@@ -1822,22 +1822,17 @@ Java_com_sun_jna_Native_createNativeCallback(JNIEnv *env,
                                              jclass return_type,
                                              jint call_conv,
                                              jboolean direct) {
-#ifdef CALLBACKS
   callback* cb =
     create_callback(env, obj, method, param_types, return_type, call_conv, direct);
+
   return A2L(cb);
-#else
-  return 0;
-#endif
 }
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_freeNativeCallback(JNIEnv *env,
                                            jclass UNUSED(cls),
                                            jlong ptr) {
-#ifdef CALLBACKS
   free_callback(env, (callback*)L2A(ptr));
-#endif
 }
 
 /*
@@ -1847,10 +1842,10 @@ Java_com_sun_jna_Native_freeNativeCallback(JNIEnv *env,
  */
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
-    void *handle = NULL;
-    const STRTYPE libname = NULL;
-
     /* dlopen on Unix allows NULL to mean "current process" */
+    const STRTYPE libname = NULL;
+    void *handle = NULL;
+
     if (lib != NULL) {
       if ((libname = NAME2CSTR(env, lib)) == NULL) {
         return A2L(NULL);
@@ -1892,9 +1887,9 @@ Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
 
     void *handle = L2A(libHandle);
     void *func = NULL;
-    const STRTYPE funname = NULL;
+    const STRTYPE funname = NAME2CSTR(env, fun);
 
-    if ((funname = NAME2CSTR(env, fun)) != NULL) {
+    if (funname != NULL) {
 #if defined(_WIN32) && !defined(_WIN32_WCE)
       if (handle == GetModuleHandleW(NULL)) {
         HANDLE cur_proc = GetCurrentProcess ();
@@ -2869,12 +2864,10 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
     fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
     result = 0;
   }
-#ifdef CALLBACKS
   else if ((err = jnidispatch_callback_init(env)) != NULL) {
     fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
     result = 0;
   }
-#endif
   if (!attached) {
     (*jvm)->DetachCurrentThread(jvm);
   }
@@ -2923,9 +2916,7 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     }
   }
   
-#ifdef CALLBACKS
   jnidispatch_callback_dispose(env);
-#endif
 
 #ifdef JAWT_HEADLESS_HACK
   if (jawt_handle != NULL) {

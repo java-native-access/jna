@@ -601,6 +601,12 @@ public final class Native {
     static String getNativeLibraryResourcePath(int osType, String arch, String name) {
         String osPrefix;
         arch = arch.toLowerCase();
+        if ("powerpc".equals(arch)) {
+            arch = "ppc";
+        }
+        else if ("powerpc64".equals(arch)) {
+            arch = "ppc64";
+        }
         switch(osType) {
         case Platform.WINDOWS:
             if ("i386".equals(arch))
@@ -632,9 +638,6 @@ public final class Native {
             }
             if ("x86_64".equals(arch)) {
                 arch = "amd64";
-            }
-            if ("powerpc".equals(arch)) {
-                arch = "ppc";
             }
             int space = osPrefix.indexOf(" ");
             if (space != -1) {

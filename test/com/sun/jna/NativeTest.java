@@ -324,11 +324,17 @@ public class NativeTest extends TestCase {
 
     public static void main(String[] args) {
         try {
-            junit.textui.TestRunner.run(NativeTest.class);
+            if (args.length == 0) {
+                junit.textui.TestRunner.run(NativeTest.class);
+            }
+            else {
+                junit.textui.TestRunner.run(Class.forName(args[0]));
+            }
         }
         catch(Throwable t) {
+            System.err.println("Error in test: ");
             t.printStackTrace();
         }
-        try { Thread.sleep(60000); } catch(Exception e) { }
+        try { Thread.sleep(300000); } catch(Exception e) { }
     }
 }
