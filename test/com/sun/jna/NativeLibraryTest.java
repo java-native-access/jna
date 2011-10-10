@@ -183,7 +183,7 @@ public class NativeLibraryTest extends TestCase {
     	}
     }
     
-    public void XFAIL_WCE_testGetProcess() {
+    public void testGetProcess() {
         NativeLibrary process = NativeLibrary.getProcess();
         // Access a common C library function
         process.getFunction("printf");

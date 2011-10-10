@@ -114,16 +114,13 @@ w32_find_entry(HANDLE handle, const STRTYPE funname) {
   }
   else {
 #if defined(_WIN32_WCE) 
-#if 1
-    func = GetProcAddress(handle, funname);
-#else
-    // FIXME figure out proper linkage with cegcc
     /* CE has no EnumProcessModules, have to use an alternate API */
     HANDLE snapshot;
     if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0)) != INVALID_HANDLE_VALUE) {
+      // FIXME this crashes...
       MODULEENTRY32 moduleInfo;
       moduleInfo.dwSize = sizeof(moduleInfo);
-      if (Module32First(handle, &moduleInfo)) {
+      if (Module32First(snapshot, &moduleInfo)) {
         do {
           if ((func = (void *) GetProcAddress(moduleInfo.hModule, funname))) {
             break;
@@ -132,7 +129,6 @@ w32_find_entry(HANDLE handle, const STRTYPE funname) {
       }
       CloseToolhelp32Snapshot(snapshot);
     }
-#endif
 #else
     HANDLE cur_proc = GetCurrentProcess ();
     HMODULE *modules;

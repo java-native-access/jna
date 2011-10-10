@@ -104,7 +104,7 @@ CFLAGS+=-Wno-unknown-pragmas
 LD=arm-mingw32ce-gcc
 LIBDIR=/opt/mingw32ce/lib/gcc/arm-mingw32ce/4.4.0
 LDFLAGS=-o $@ -shared -Wl,-Map ${@:$(LIBSFX)=.map}
-LIBS=$(LIBDIR)/libgcc.a -lcoredll 
+LIBS=-lcoredll -lgcc -ltoolhelp
 WINDRES=arm-mingw32ce-windres
 EXTRAOBJS=$(RSRC)
 #STRIP=arm-mingw32ce-strip -x
