@@ -623,6 +623,11 @@
 
   <target name="dist" depends="jar,contrib-jars,compile-tests,native,javadoc"
           description="Build distribution files">
+    <copy todir="${dist}">
+      <fileset dir="${build}">
+        <include name="${native.jar}"/>
+      </fileset>
+    </copy>
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
@@ -655,6 +660,8 @@ com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win32,
 com/sun/jna/win32-amd64/jnidispatch.dll;
 processor=x86-64;osname=win32,
+com/sun/jna/w32ce-arm/jnidispatch.dll;
+processor=arm;osname=wince,
 
 com/sun/jna/sunos-x86/libjnidispatch.so;
 processor=x86;osname=sunos,
@@ -728,17 +735,14 @@ osname=macos,
                   prefix="com/sun/jna/w32ce-arm"/>
     </jar>
     <copy todir="${dist}">
-      <fileset dir="${build}">
-        <include name="${native.jar}"/>
+      <fileset dir="${contrib}/platform/dist">
+  	<include name="platform.jar" />
       </fileset>
-  	  <fileset dir="${contrib}/platform/dist">
-  		<include name="platform.jar" />
-  	  </fileset>
     </copy>
     <copy todir="${dist}/jnacontrib" flatten="true">
-	  <fileset dir="${contrib}">
-		<include name="**/build/demo-*.jar" />
-	  </fileset>
+      <fileset dir="${contrib}">
+	<include name="**/build/demo-*.jar" />
+      </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>
