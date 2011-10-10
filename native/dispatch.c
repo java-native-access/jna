@@ -41,6 +41,7 @@
  * executable module that LoadLibraryEx is loading."                          
  */
 #ifdef _WIN32_WCE
+#include <tlhelp32.h>
 #define LOAD_OPTS 0 /* altered search path unsupported on CE */
 #else
 #define LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
@@ -48,7 +49,7 @@
 #define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_OPTS) : GetModuleHandleW(NULL))
 #define LOAD_ERROR(BUF,LEN) w32_format_error(BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
-#define FIND_ENTRY(HANDLE, NAME) GetProcAddress(HANDLE, NAME)
+#define FIND_ENTRY(HANDLE, NAME) w32_find_entry(HANDLE, NAME)
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
@@ -103,13 +104,59 @@ w32_format_error(char* buf, int len) {
   FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
                  0, wbuf, len, NULL);
   WideCharToMultiByte(CP_UTF8, 0, wbuf, wcslen(wbuf), buf, len, NULL, NULL);
-  {
-    wchar_t wbuf2[1024];
-    wsprintf(wbuf2, L"Convert %ls to %s\n", wbuf, buf);
-    OutputDebugString(wbuf2);
-  }
   return buf;
 }
+static HANDLE
+w32_find_entry(HANDLE handle, const STRTYPE funname) {
+  void* func = NULL;
+  if (handle != GetModuleHandleW(NULL)) {
+    func = GetProcAddress(handle, funname);
+  }
+  else {
+#if defined(_WIN32_WCE) 
+#if 1
+    func = GetProcAddress(handle, funname);
+#else
+    // FIXME figure out proper linkage with cegcc
+    /* CE has no EnumProcessModules, have to use an alternate API */
+    HANDLE snapshot;
+    if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0)) != INVALID_HANDLE_VALUE) {
+      MODULEENTRY32 moduleInfo;
+      moduleInfo.dwSize = sizeof(moduleInfo);
+      if (Module32First(handle, &moduleInfo)) {
+        do {
+          if ((func = (void *) GetProcAddress(moduleInfo.hModule, funname))) {
+            break;
+          }
+        } while (Module32Next(snapshot, &moduleInfo));
+      }
+      CloseToolhelp32Snapshot(snapshot);
+    }
+#endif
+#else
+    HANDLE cur_proc = GetCurrentProcess ();
+    HMODULE *modules;
+    DWORD needed, i;
+    if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
+    fail:
+      throwByName(env, EError, "Unexpected error enumerating modules");
+      free((void *)funname);
+      return 0;
+    }
+    modules = (HMODULE*) alloca (needed);
+    if (!EnumProcessModules (cur_proc, modules, needed, &needed)) {
+      goto fail;
+    }
+    for (i = 0; i < needed / sizeof (HMODULE); i++) {
+      if ((func = (void *) GetProcAddress (modules[i], funname))) {
+        break;
+      }
+    }
+#endif
+  }
+  return func;
+}
+
 #endif
 
 #define MEMCPY(D,S,L) do { \
@@ -268,15 +315,6 @@ void
 throwByName(JNIEnv *env, const char *name, const char *msg)
 {
   jclass cls;
-
-  {
-    wchar_t wbuf[1024], wbuf2[1024];
-    MultiByteToWideChar(CP_UTF8, 0, name, strlen(name)+1, wbuf, sizeof(wbuf));
-    wsprintf(wbuf2, L"Exception thrown: %ls", wbuf);
-    MultiByteToWideChar(CP_UTF8, 0, msg, strlen(msg)+1, wbuf, sizeof(wbuf));
-    wsprintf(wbuf2, L"%ls: %ls\n", wbuf2, wbuf);
-    OutputDebugString(wbuf2);
-  }
 
   (*env)->ExceptionClear(env);
   
@@ -1857,8 +1895,9 @@ Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
       char buf[1024];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
     }
-    if (libname != NULL)
+    if (libname != NULL) {
       free((void *)libname);
+    }
     return A2L(handle);
 }
 
@@ -1890,28 +1929,7 @@ Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
     const STRTYPE funname = NAME2CSTR(env, fun);
 
     if (funname != NULL) {
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-      if (handle == GetModuleHandleW(NULL)) {
-        HANDLE cur_proc = GetCurrentProcess ();
-        HMODULE *modules;
-        DWORD needed, i;
-        if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
-        fail:
-          throwByName(env, EError, "Unexpected error enumerating modules");
-          free((void *)funname);
-          return 0;
-        }
-        modules = (HMODULE*) alloca (needed);
-        if (!EnumProcessModules (cur_proc, modules, needed, &needed)) {
-          goto fail;
-        }
-        for (i = 0; i < needed / sizeof (HMODULE); i++)
-          if ((func = (void *) GetProcAddress (modules[i], funname)))
-            break;
-      }
-      else
-#endif
-        func = (void *)FIND_ENTRY(handle, funname);
+      func = (void *)FIND_ENTRY(handle, funname);
       if (!func) {
         char buf[1024];
         throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));

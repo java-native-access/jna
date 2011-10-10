@@ -23,7 +23,7 @@ import java.nio.ShortBuffer;
  *
  * @author twall@users.sf.net
  */
-public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
+public class DirectBufferArgumentsMarshalTest extends DirectArgumentsMarshalTest {
 
     public static class DirectTestLibrary implements TestLibrary {
         /** Dummy.  Automatically fail when passed an object. */
@@ -65,6 +65,21 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native int fillFloatBuffer(float[] buf, int len, float value);
         public native int fillDoubleBuffer(double[] buf, int len, double value);
 
+        // ByteBuffer alternative definitions
+        public native int fillInt8Buffer(ByteBuffer buf, int len, byte value);
+        public native int fillInt16Buffer(ByteBuffer buf, int len, short value);
+        public native int fillInt32Buffer(ByteBuffer buf, int len, int value);
+        public native int fillInt64Buffer(ByteBuffer buf, int len, long value);
+        public native int fillFloatBuffer(ByteBuffer buf, int len, float value);
+        public native int fillDoubleBuffer(ByteBuffer buf, int len, double value);
+        
+        // {Short|Int|Long|Float|Double}Buffer alternative definitions        
+        public native int fillInt16Buffer(ShortBuffer buf, int len, short value);
+        public native int fillInt32Buffer(IntBuffer buf, int len, int value);
+        public native int fillInt64Buffer(LongBuffer buf, int len, long value);
+        public native int fillFloatBuffer(FloatBuffer buf, int len, float value);
+        public native int fillDoubleBuffer(DoubleBuffer buf, int len, double value);
+
         // dummy to avoid causing Native.register to fail
         public boolean returnBooleanArgument(Object arg) {throw new IllegalArgumentException();}
 
@@ -93,38 +108,8 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         return new DirectNativeMappedLibrary();
     }
 
-    // This test crashes on w32 IBM J9 unless -Xint is used
-    // (jvmwi3260-20080415_18762)
-    public void testWideCharArgument() {
-        if (Platform.isWindows()
-            && "IBM".equals(System.getProperty("java.vm.vendor"))) {
-            fail("XFAIL, crash avoided");
-        }
-        super.testWideCharArgument();
-    }
-    // This test crashes on w32 IBM J9 unless -Xint is used
-    // (jvmwi3260-20080415_18762)
-    public void testWStringArgumentReturn() {
-        if (Platform.isWindows()
-            && "IBM".equals(System.getProperty("java.vm.vendor"))) {
-            fail("XFAIL, crash avoided");
-        }
-        super.testWStringArgumentReturn();
-    }
-
-    // Override tests not yet supported
-    public void testStringArrayArgument() { }
-    public void testWriteStructureArrayArgumentMemory() { }
-    public void testUninitializedStructureArrayArgument() { }
-    public void testRejectNoncontiguousStructureArrayArgument() { }
-    public void testWideStringArrayArgument() { }
-    public void testPointerArrayArgument() { }
-    public void testNativeMappedArrayArgument() { }
-    public void testStructureByReferenceArrayArgument() { }
-    public void testModifiedCharArrayArgument() { }
-
     public static void main(java.lang.String[] argList) {
-        junit.textui.TestRunner.run(DirectArgumentsMarshalTest.class);
+        junit.textui.TestRunner.run(DirectBufferArgumentsMarshalTest.class);
     }
     
 }

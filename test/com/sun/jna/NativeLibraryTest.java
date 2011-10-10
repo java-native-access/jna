@@ -38,7 +38,8 @@ public class NativeLibraryTest extends TestCase {
         assertNull("Library not GC'd", ref.get());
     }
 
-    public void testAvoidDuplicateLoads() {
+    // DLL never unloaded, so count keeps incrementing
+    public void XFAIL_WCE_testAvoidDuplicateLoads() {
         TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
         assertEquals("Library should be loaded exactly once",
                      1, lib.callCount());
@@ -182,7 +183,7 @@ public class NativeLibraryTest extends TestCase {
     	}
     }
     
-    public void testGetProcess() {
+    public void XFAIL_WCE_testGetProcess() {
         NativeLibrary process = NativeLibrary.getProcess();
         // Access a common C library function
         process.getFunction("printf");

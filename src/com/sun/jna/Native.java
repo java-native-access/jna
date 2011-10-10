@@ -122,13 +122,12 @@ public final class Native {
     private static final int THREAD_LEAVE_ATTACHED = -2;
 
     static {
-        System.out.println("Load native library");
         loadNativeLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
         SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
-        System.out.println("Init JNI IDs");
+
         // Perform initialization of other JNA classes until *after* 
         // initializing the above final fields
         initIDs();
@@ -145,7 +144,6 @@ public final class Native {
                             + " - set the system property jna.nosys=true" + LS
                             + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
-        System.out.println("Using native version " + version);
     }
     
     /** Force a dispose when this class is GC'd. */
@@ -673,10 +671,8 @@ public final class Native {
                 File file = new File(new File(dir), System.mapLibraryName(libName));
                 String path = file.getAbsolutePath();
                 if (file.exists()) {
-                    System.out.println("Try " + path);
                     try {
                         System.load(path);
-                        System.out.println("Loaded " + path);
                         nativeLibraryPath = path;
                         return;
                     } catch (UnsatisfiedLinkError ex) {
@@ -1008,7 +1004,7 @@ public final class Native {
             return POINTER_SIZE;
         }
         if (Pointer.class.isAssignableFrom(cls)
-            || Buffer.class.isAssignableFrom(cls)
+            || (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(cls))
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
             || WString.class == cls) {
@@ -1234,7 +1230,7 @@ public final class Native {
         if (WString.class.isAssignableFrom(type)) {
             return CVT_WSTRING;
         }
-        if (Buffer.class.isAssignableFrom(type)) {
+        if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
             return CVT_BUFFER;
         }
         if (Structure.class.isAssignableFrom(type)) {

@@ -107,7 +107,7 @@ public class WebStartTest extends TestCase {
     }
 
     public void testJNLPFindProcessLibrary() {
-        String libname = Platform.isWindows()?"msvcrt":"c";
+        String libname = Platform.C_LIBRARY_NAME;
         assertNull("Process library path not expected to be found by JNLP class loader",
                    Native.getWebStartLibraryPath(libname));
         Native.loadLibrary(libname, Dummy.class);

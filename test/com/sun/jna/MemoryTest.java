@@ -108,6 +108,8 @@ public class MemoryTest extends TestCase {
     }
 
     public void testAvoidGCWithExtantBuffer() throws Exception {
+        if (!Platform.HAS_BUFFERS) return;
+
         Memory m = new Memory(1024);
         ByteBuffer b = m.getByteBuffer(0, m.size());
         WeakReference ref = new WeakReference(m);

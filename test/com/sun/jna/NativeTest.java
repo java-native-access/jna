@@ -323,17 +323,49 @@ public class NativeTest extends TestCase {
     }
 
     public static void main(String[] args) {
-        try {
-            if (args.length == 0) {
-                junit.textui.TestRunner.run(NativeTest.class);
-            }
-            else {
-                junit.textui.TestRunner.run(Class.forName(args[0]));
-            }
+        if (args.length == 0) {
+            args = new String[] { "com.sun.jna.NativeTest" };
         }
-        catch(Throwable t) {
-            System.err.println("Error in test: ");
-            t.printStackTrace();
+        else {
+            if (args.length == 1 && "all".equals(args[0])) {
+                args = new String[] {
+                    "com.sun.jna.NativeTest",
+                    "com.sun.jna.NativeLibraryTest",
+                    "com.sun.jna.PointerTest",
+                    "com.sun.jna.MemoryTest",
+                    "com.sun.jna.LibraryLoadTest", 
+                    "com.sun.jna.ArgumentsMarshalTest",
+                    "com.sun.jna.ReturnTypesTest", 
+                    "com.sun.jna.TypeMapperTest", 
+                    "com.sun.jna.ByReferenceArgumentsTest",
+                    "com.sun.jna.LastErrorTest", 
+                    "com.sun.jna.StructureTest",
+                    "com.sun.jna.StructureByValueTest",
+                    "com.sun.jna.UnionTest",
+                    "com.sun.jna.IntegerTypeTest", 
+                    "com.sun.jna.VMCrashProtectionTest",
+                    "com.sun.jna.CallbacksTest",
+                    "com.sun.jna.JNAUnloadTest",
+                    "com.sun.jna.DirectTest",
+                    // not yet tested
+                    "com.sun.jna.DirectArgumentsMarshalTest",
+                    "com.sun.jna.DirectByReferenceArgumentsTest",
+                    "com.sun.jna.DirectTypeMapperTest",
+                    "com.sun.jna.DirectReturnTypes",
+                    "com.sun.jna.DirectStructureByValueTest",
+                    "com.sun.jna.DirectCallbacksTest",
+                };
+            }
+            for (int i=0;i < args.length;i++) {
+                System.out.println("Running tests on class " + args[i]);
+                try {
+                    junit.textui.TestRunner.run(Class.forName(args[i]));
+                }
+                catch(Throwable t) {
+                    System.err.println("Error in test: ");
+                    t.printStackTrace();
+                }
+            }
         }
         try { Thread.sleep(300000); } catch(Exception e) { }
     }

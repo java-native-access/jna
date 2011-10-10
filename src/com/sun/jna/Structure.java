@@ -529,7 +529,7 @@ public abstract class Structure {
         // Get the current value only for types which might need to be preserved
         Object currentValue = (Structure.class.isAssignableFrom(fieldType)
                                || Callback.class.isAssignableFrom(fieldType)
-                               || Buffer.class.isAssignableFrom(fieldType)
+                               || (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(fieldType))
                                || Pointer.class.isAssignableFrom(fieldType)
                                || NativeMapped.class.isAssignableFrom(fieldType)
                                || fieldType.isArray())
@@ -919,7 +919,7 @@ public abstract class Structure {
             alignment = size;
         }
         else if (Pointer.class == type
-                 || Buffer.class.isAssignableFrom(type)
+                 || (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type))
                  || Callback.class.isAssignableFrom(type)
                  || WString.class == type
                  || String.class == type) {
@@ -1336,7 +1336,7 @@ public abstract class Structure {
                 if (o instanceof FFIType) {
                     return ((FFIType)o).getPointer();
                 }
-                if (Buffer.class.isAssignableFrom(cls)
+                if ((Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(cls))
                     || Callback.class.isAssignableFrom(cls)) {
                     typeInfoMap.put(cls, FFITypes.ffi_type_pointer);
                     return FFITypes.ffi_type_pointer;

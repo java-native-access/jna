@@ -430,7 +430,7 @@ public class Pointer {
                 result = cb;
             }
         }
-        else if (Buffer.class.isAssignableFrom(type)) {
+        else if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
             Pointer bp = getPointer(offset);
             if (bp == null) {
                 result = null;
@@ -893,7 +893,7 @@ v     * @param wide whether to convert from a wide or standard C string
         else if (Callback.class.isAssignableFrom(type)) {
             setPointer(offset, CallbackReference.getFunctionPointer((Callback)value));
         }
-        else if (Buffer.class.isAssignableFrom(type)) {
+        else if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
             Pointer p = value == null ? null
                 : Native.getDirectBufferPointer((Buffer)value);
             setPointer(offset, p);
