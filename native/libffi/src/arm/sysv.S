@@ -40,7 +40,7 @@
 #else
 #define CNAME(x) x
 #endif
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(_WIN32_IE)
 #define ENTRY(x) .globl CNAME(x); CNAME(x):
 #else
 #define ENTRY(x) .globl CNAME(x); .type CNAME(x),%function; CNAME(x):
@@ -428,7 +428,9 @@ LSYM(Lepilogue_vfp):
 
 .ffi_call_VFP_end:
 	UNWIND .fnend
+#ifdef __ELF__
         .size    CNAME(ffi_call_VFP),.ffi_call_VFP_end-CNAME(ffi_call_VFP)
+#endif	
 
 
 ARM_FUNC_START ffi_closure_VFP
@@ -490,7 +492,9 @@ ARM_FUNC_START ffi_closure_VFP
 
 .ffi_closure_VFP_end:
 	UNWIND .fnend
+#ifdef __ELF__
         .size    CNAME(ffi_closure_VFP),.ffi_closure_VFP_end-CNAME(ffi_closure_VFP)
+#endif	
 
 #if defined __ELF__ && defined __linux__
 	.section	.note.GNU-stack,"",%progbits

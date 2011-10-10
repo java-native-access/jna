@@ -133,7 +133,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }

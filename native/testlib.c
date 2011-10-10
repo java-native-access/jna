@@ -19,7 +19,9 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+#if !defined(_WIN32_WCE)
 #include <errno.h>
+#endif
 
 #ifdef _MSC_VER
 typedef signed char int8_t;
@@ -829,7 +831,7 @@ returnStringVarArgs(const char *fmt, ...) {
   return cp;
 }
 
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
 ///////////////////////////////////////////////////////////////////////
 // stdcall tests
 ///////////////////////////////////////////////////////////////////////

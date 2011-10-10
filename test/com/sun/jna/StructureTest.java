@@ -28,7 +28,7 @@ import com.sun.jna.ptr.LongByReference;
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class StructureTest extends TestCase {
 
     public static void main(java.lang.String[] argList) {
@@ -389,8 +389,8 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong short field value after write/read", s.s, 3);
         assertEquals("Wrong int field value after write/read", s.i, 4);
         assertEquals("Wrong long field value after write/read", s.l, 5);
-        assertEquals("Wrong float field value after write/read", s.f, 6.0f);
-        assertEquals("Wrong double field value after write/read", s.d, 7.0);
+        assertEquals("Wrong float field value after write/read", s.f, 6.0f, 0f);
+        assertEquals("Wrong double field value after write/read", s.d, 7.0, 0d);
         assertEquals("Wrong nested struct field value after write/read (x)", s.nested.x, 1);
         assertEquals("Wrong nested struct field value after write/read (y)", s.nested.y, 2);
         for (int i = 0; i < 3; i++) {
@@ -399,8 +399,8 @@ public class StructureTest extends TestCase {
             assertEquals("Wrong short array field value after write/read", s.sa[i], (short) (14 + i));
             assertEquals("Wrong int array field value after write/read", s.ia[i], 17 + i);
             assertEquals("Wrong long array field value after write/read", s.la[i], 23 + i);
-            assertEquals("Wrong float array field value after write/read", s.fa[i], (float) 26 + i);
-            assertEquals("Wrong double array field value after write/read", s.da[i], (double) 29 + i);
+            assertEquals("Wrong float array field value after write/read", s.fa[i], (float) 26 + i, 0f);
+            assertEquals("Wrong double array field value after write/read", s.da[i], (double) 29 + i, 0d);
         }
         // test constancy of references after read
         int[] ia = s.ia;

@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 import junit.framework.TestCase;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
     
     public void testDefaultStringEncoding() throws Exception {
@@ -229,6 +229,9 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path Windows/i386", "/com/sun/jna/win32-x86",
                      Native.getNativeLibraryResourcePath(Platform.WINDOWS,
                                                          "i386", "Windows"));
+        assertEquals("Wrong resource path Windows CE/arm", "/com/sun/jna/w32ce-arm",
+                     Native.getNativeLibraryResourcePath(Platform.WINDOWSCE,
+                                                         "arm", "Windows CE"));
         assertEquals("Wrong resource path Mac/x86", "/com/sun/jna/darwin",
                      Native.getNativeLibraryResourcePath(Platform.MAC,
                                                          "x86", "Darwin"));
@@ -247,6 +250,9 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path Linux/x86", "/com/sun/jna/linux-i386",
                      Native.getNativeLibraryResourcePath(Platform.LINUX,
                                                          "x86", "Linux"));
+        assertEquals("Wrong resource path Linux/ppc", "/com/sun/jna/linux-ppc",
+                     Native.getNativeLibraryResourcePath(Platform.LINUX,
+                                                         "powerpc", "Linux"));
         assertEquals("Wrong resource path OpenBSD/x86", "/com/sun/jna/openbsd-i386",
                      Native.getNativeLibraryResourcePath(Platform.OPENBSD,
                                                          "x86", "OpenBSD"));
@@ -317,6 +323,12 @@ public class NativeTest extends TestCase {
     }
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(NativeTest.class);
+        try {
+            junit.textui.TestRunner.run(NativeTest.class);
+        }
+        catch(Throwable t) {
+            t.printStackTrace();
+        }
+        try { Thread.sleep(60000); } catch(Exception e) { }
     }
 }

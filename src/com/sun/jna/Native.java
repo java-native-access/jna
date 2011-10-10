@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 
 import com.sun.jna.Callback.UncaughtExceptionHandler;
@@ -121,11 +122,13 @@ public final class Native {
     private static final int THREAD_LEAVE_ATTACHED = -2;
 
     static {
+        System.out.println("Load native library");
         loadNativeLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
         SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
+        System.out.println("Init JNI IDs");
         // Perform initialization of other JNA classes until *after* 
         // initializing the above final fields
         initIDs();
@@ -142,6 +145,7 @@ public final class Native {
                             + " - set the system property jna.nosys=true" + LS
                             + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
+        System.out.println("Using native version " + version);
     }
     
     /** Force a dispose when this class is GC'd. */
@@ -591,6 +595,9 @@ public final class Native {
         return buf;
     }
 
+    /** Generate a canonical String prefix based on the given OS
+        type/arch/name.
+    */
     static String getNativeLibraryResourcePath(int osType, String arch, String name) {
         String osPrefix;
         arch = arch.toLowerCase();
@@ -599,6 +606,9 @@ public final class Native {
             if ("i386".equals(arch))
                 arch = "x86";
             osPrefix = "win32-" + arch;
+            break;
+        case Platform.WINDOWSCE:
+            osPrefix = "w32ce-" + arch;
             break;
         case Platform.MAC:
             osPrefix = "darwin";
@@ -653,14 +663,22 @@ public final class Native {
         String libName = "jnidispatch";
         String bootPath = System.getProperty("jna.boot.library.path");
         if (bootPath != null) {
-            String[] dirs = bootPath.split(File.pathSeparator);
-            for (int i = 0; i < dirs.length; ++i) {
-                String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
-                try {
-                    System.load(path);
-                    nativeLibraryPath = path;
-                    return;
-                } catch (UnsatisfiedLinkError ex) {
+            // String.split not available in 1.4
+            StringTokenizer dirs = new StringTokenizer(bootPath, File.pathSeparator);
+            while (dirs.hasMoreTokens()) {
+                String dir = dirs.nextToken();
+                File file = new File(new File(dir), System.mapLibraryName(libName));
+                String path = file.getAbsolutePath();
+                if (file.exists()) {
+                    System.out.println("Try " + path);
+                    try {
+                        System.load(path);
+                        System.out.println("Loaded " + path);
+                        nativeLibraryPath = path;
+                        return;
+                    } catch (UnsatisfiedLinkError ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 if (Platform.isMac()) {
                     String orig, ext;
@@ -671,12 +689,14 @@ public final class Native {
                         orig = "jnilib";
                         ext = "dylib";
                     }
-                    try {
-                        path = path.substring(0, path.lastIndexOf(orig)) + ext;
-                        System.load(path);
-                        nativeLibraryPath = path;
-                        return;
-                    } catch (UnsatisfiedLinkError ex) {
+                    path = path.substring(0, path.lastIndexOf(orig)) + ext;
+                    if (new File(path).exists()) {
+                        try {
+                            System.load(path);
+                            nativeLibraryPath = path;
+                            return;
+                        } catch (UnsatisfiedLinkError ex) {
+                        }
                     }
                 }
             }

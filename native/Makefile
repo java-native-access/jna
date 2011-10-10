@@ -14,10 +14,17 @@
 #   Linux (i386/amd64/ppc) 
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
+#   Windows CE/Mobile (arm)
 #
 # If you want to do a Win64 build, you'll need to manually install things or
 # tweak paths appropriately, since there is no "standard" distribution of the
-# toolchain, which includes both MSVC and MINGW tools. 
+# toolchain, which includes both MSVC and MINGW tools.  Things should generally
+# work if either toolchain is available on the path (MSVC builds require
+# the windres binary from MINGW).
+#
+# The w32ce build requires cegcc and phoneME for cross-compilation; if these
+# tools are available on the path than "ant -Dos.prefix=w32ce-arm" should
+# result in a proper build.
 
 # Systems which support POSIX signals may be able to support VM crash
 # protection simply by defining HAVE_PROTECTION.  This option has been only
@@ -86,6 +93,30 @@ endif
 STRIP=strip -x
 # end defaults
 
+# W32CE build requires cegcc cross-compiler and phoneME JavaME implementation
+# cegcc: http://sf.net/projects/cegcc
+# phoneme: http://davy.preuveneers.net/
+ifeq ($(OS),w32ce)
+ARCH=arm
+CC=arm-mingw32ce-gcc -mwin32
+CDEFINES=-D_WIN32_IE=0x400 -D_WIN32_WCE=0x0420 -DNO_JAWT -DNO_NIO_BUFFERS -DWINCE -D_WIN32_STDARG_H
+CFLAGS+=-Wno-unknown-pragmas
+LD=arm-mingw32ce-gcc
+LIBDIR=/opt/mingw32ce/lib/gcc/arm-mingw32ce/4.4.0
+LDFLAGS=-o $@ -shared -Wl,-Map ${@:$(LIBSFX)=.map}
+LIBS=$(LIBDIR)/libgcc.a -lcoredll 
+WINDRES=arm-mingw32ce-windres
+EXTRAOBJS=$(RSRC)
+#STRIP=arm-mingw32ce-strip -x
+STRIP=@echo
+LIBPFX=
+LIBSFX=.dll
+HOST_CONFIG=--host=arm-mingw32ce
+FFI_ENV+=LD="$(LD)" CPP=cpp CFLAGS="$(CDEFINES)"
+PHONEME=../phoneme/cdc/src
+JAVA_INCLUDES=-I$(PHONEME)/share/javavm/export -I$(PHONEME)/share -I$(PHONEME)/win32 -I$(PHONEME)/win32-arm 
+endif
+
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1
@@ -121,8 +152,8 @@ LD=$(FFI_SRC)/../ld.sh -m64
 COPT=
 LIBS=psapi.lib
 ARSFX=.lib
-FFI_CONFIG += --host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV += LD="$(LD)" CPP=cpp
+FFI_CONFIG+=--host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
+FFI_ENV+=LD="$(LD)" CPP=cpp
 endif
 endif
 endif
@@ -228,10 +259,11 @@ $(RSRC): $(BUILD)/jnidispatch.rc
           || (echo > $@.c && $(CC) $(CFLAGS) -c $@.c $(COUT))
 
 $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB) 
-	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
+	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS) 
+	$(STRIP) $@
 
 $(TESTLIB): $(BUILD)/testlib.o 
-	$(LD) $(LDFLAGS) $<
+	$(LD) $(LDFLAGS) $< $(LIBS)
 
 ifeq ($(ARSFX),.lib)
 TESTDEP=$(TESTLIB:.dll=.lib)

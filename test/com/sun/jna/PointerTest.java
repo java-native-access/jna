@@ -136,8 +136,7 @@ public class PointerTest extends TestCase {
         ByteBuffer buf = m.getByteBuffer(0, m.size()).order(ByteOrder.nativeOrder());
         FloatBuffer fb = buf.asFloatBuffer();
         fb.put(MAGIC).flip();
-        assertEquals("Int not written to memory", MAGIC, 
-                m.getFloat(0));
+        assertEquals("Int not written to memory", MAGIC, m.getFloat(0), 0f);
     }
     public void testDoubleBufferPut() {
         final double MAGIC = 1234.5678;
@@ -145,8 +144,7 @@ public class PointerTest extends TestCase {
         ByteBuffer buf = m.getByteBuffer(0, m.size()).order(ByteOrder.nativeOrder());
         DoubleBuffer db = buf.asDoubleBuffer();
         db.put(MAGIC).flip();
-        assertEquals("Int not written to memory", MAGIC, 
-                m.getDouble(0));
+        assertEquals("Int not written to memory", MAGIC, m.getDouble(0), 0d);
     }
     public void testIntBufferGet() {
         final int MAGIC = 0xABEDCF23;
@@ -172,8 +170,7 @@ public class PointerTest extends TestCase {
         ByteBuffer buf = m.getByteBuffer(0, m.size()).order(ByteOrder.nativeOrder());
         FloatBuffer fb = buf.asFloatBuffer();
         m.setFloat(0, MAGIC);
-        assertEquals("Float not read from memory", MAGIC, 
-                fb.get(0));
+        assertEquals("Float not read from memory", MAGIC, fb.get(0), 0f);
     }
     public void testDoubleBufferGet() {
         final double MAGIC = 1234.5678;
@@ -181,8 +178,7 @@ public class PointerTest extends TestCase {
         ByteBuffer buf = m.getByteBuffer(0, m.size()).order(ByteOrder.nativeOrder());
         DoubleBuffer db = buf.asDoubleBuffer();
         m.setDouble(0, MAGIC);
-        assertEquals("Double not read from memory", MAGIC, 
-                db.get(0));
+        assertEquals("Double not read from memory", MAGIC, db.get(0), 0d);
     }
     public void testSetStringWithEncoding() throws Exception {
         String old = System.getProperty("jna.encoding");

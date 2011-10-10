@@ -24,7 +24,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class DirectTest extends TestCase {
 
     private static final String BUILDDIR = 

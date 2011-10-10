@@ -14,7 +14,7 @@ package com.sun.jna;
 
 import junit.framework.TestCase;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class UnionTest extends TestCase {
 
     public static class TestStructure extends Structure {

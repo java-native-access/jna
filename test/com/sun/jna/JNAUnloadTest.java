@@ -35,6 +35,10 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
+    public void testLoadFromJar() throws Exception {
+        Class.forName("com.sun.jna.Native", true, new TestLoader(true));
+    }
+
     public void testAvoidJarUnpacking() throws Exception {
         System.setProperty("jna.nounpack", "true");
         ClassLoader loader = new TestLoader(true);

@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  *
  * @author twall@users.sf.net
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class ArgumentsMarshalTest extends TestCase {
 
     public static interface TestLibrary extends Library {
@@ -342,7 +342,7 @@ public class ArgumentsMarshalTest extends TestCase {
         TestLibrary.CheckFieldAlignment.ByValue struct = 
             new TestLibrary.CheckFieldAlignment.ByValue();
         assertEquals("Wrong sum of fields for " + struct.toString(true),
-                     21d, lib.testStructureByValueArgument(struct));
+                     21d, lib.testStructureByValueArgument(struct), 0d);
     }
     
     public void testStructureByValueTypeInfo() {
@@ -567,7 +567,7 @@ public class ArgumentsMarshalTest extends TestCase {
         lib.fillFloatBuffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
             assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
+                         i < 512 ? 0 : MAGIC, array[i], 0f);
         }
     }
     public void testWrappedDoubleArrayArguent() {
@@ -577,7 +577,7 @@ public class ArgumentsMarshalTest extends TestCase {
         lib.fillDoubleBuffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
             assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
+                         i < 512 ? 0 : MAGIC, array[i], 0d);
         }
     }
     

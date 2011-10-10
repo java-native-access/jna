@@ -31,7 +31,7 @@ import com.sun.jna.ptr.IntByReference;
  *
  * @author twall@users.sf.net
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class CallbacksTest extends TestCase {
 
     private static final double DOUBLE_MAGIC = -118.625d;
@@ -373,10 +373,10 @@ public class CallbacksTest extends TestCase {
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong argument passed to callback", s.getPointer(), cbarg[0]);
         assertEquals("Structure argument not synched on callback return",
-                     MAGIC, s.value);
+                     MAGIC, s.value, 0d);
         assertEquals("Wrong structure return", s.getPointer(), value.getPointer());
         assertEquals("Structure return not synched",
-                     MAGIC, value.value);
+                     MAGIC, value.value, 0d);
     }
     
     public void testCallStructureArrayCallback() {
@@ -394,9 +394,9 @@ public class CallbacksTest extends TestCase {
         };
         SmallTestStructure value = lib.callStructureCallback(cb, s);
         assertEquals("Structure array element 0 not synched on callback return",
-                     MAGIC, array[0].value);
+                     MAGIC, array[0].value, 0d);
         assertEquals("Structure array element 1 not synched on callback return",
-                     MAGIC*2, array[1].value);
+                     MAGIC*2, array[1].value, 0d);
     }
     
     public void testCallBooleanCallback() {
