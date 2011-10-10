@@ -69,6 +69,7 @@ public final class Platform {
     public static final boolean isWindowsCE() {
         return osType == WINDOWSCE;
     }
+    /** Returns true for any windows variant. */
     public static final boolean isWindows() {
         return osType == WINDOWS || osType == WINDOWSCE;
     }

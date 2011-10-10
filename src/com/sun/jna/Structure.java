@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.zip.Adler32;
 
 /**
  * Represents a native structure with a Java peer class.  When used as a
@@ -345,7 +346,7 @@ public abstract class Structure {
     // reads (avoids problems with circular references).
     private static final ThreadLocal busy = new ThreadLocal() {
         /** Avoid using a hash-based implementation since the hash code
-            will change if structure field values change.
+            for a Structure is not immutable.
         */
         class StructureSet extends AbstractCollection implements Set {
             private Structure[] elements;
@@ -400,7 +401,9 @@ public abstract class Structure {
             */
             public Iterator iterator() {
                 Structure[] e = new Structure[count];
-                System.arraycopy(elements, 0, e, 0, count);
+                if (count > 0) {
+                    System.arraycopy(elements, 0, e, 0, count);
+                }
                 return Arrays.asList(e).iterator();
             }
         }
@@ -473,11 +476,15 @@ public abstract class Structure {
         }
     }
 
+    // WARNING: this operation may or may not fail if a field is "final"
     void setField(StructField structField, Object value) {
         try {
             structField.field.set(this, value);
         }
         catch(IllegalAccessException e) {
+            if ((structField.field.getModifiers() & Modifier.FINAL) != 0) {
+                throw new UnsupportedOperationException("Read-only (final) structure fields may only be updated from native memory (field '" + structField.name + "' within " + getClass() + ")");
+            }
             throw new Error("Unexpectedly unable to write to field '"
                             + structField.name + "' within " + getClass()
                             + ": " + e);
@@ -1090,7 +1097,7 @@ public abstract class Structure {
     }
 
     /** This structure is equal to another based on the same data type
-     * and visible data fields.
+     * and memory contents.
      */
     public boolean equals(Object o) {
         if (o == this) {
@@ -1104,6 +1111,9 @@ public abstract class Structure {
             return false;
         }
         Structure s = (Structure)o;
+        if (s.getPointer().equals(getPointer())) {
+            return true;
+        }
         if (s.size() == size()) {
             clear(); write();
             byte[] buf = getPointer().getByteArray(0, size());
@@ -1114,12 +1124,14 @@ public abstract class Structure {
         return false;
     }
 
-    /** Since {@link #equals} depends on the native address, use that
-     * as the hash code.
+    /** Since {@link #equals} depends on the contents of memory, use that
+     * as the basis for the hash code.
      */
     public int hashCode() {
         clear(); write();
-        return Arrays.hashCode(getPointer().getByteArray(0, size()));
+        Adler32 code = new Adler32();
+        code.update(getPointer().getByteArray(0, size()));
+        return (int)code.getValue();
     }
 
     protected void cacheTypeInfo(Pointer p) {

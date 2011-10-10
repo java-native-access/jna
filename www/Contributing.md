@@ -18,6 +18,9 @@ On windows 32-bit, install cygwin (http://cygwin.com and download/run setup.exe)
 
 On windows 64-bit, you'll need the same cygwin setup, plus either mingw64 or the free microsoft C++ compiler available in the path.  You may have to tweak the makefiles to select the one you have available.  Note that if you build with mingw64, you don't get the structured exception handling required for JNA's protected mode operation.  I run my build setup on Vista64 and don't ever change it if I don't have to.
 
+For windows CE/Mobile 6.x, you'll need cegcc (http://gitorious.org/cegcc) for
+cross-compiling and a JavaME implementation (phoneME (http://davy.preuveneers.be/phoneme) works well).
+
 Required Testing
 ================
 

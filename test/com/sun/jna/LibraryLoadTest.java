@@ -89,11 +89,13 @@ public class LibraryLoadTest extends TestCase {
         }
     }
 
-    // wc2 fail (class/load path)
-    public void XFAIL_WCE_testLoadLibraryWithUnicodeName() throws Exception {
+    public void testLoadLibraryWithUnicodeName() throws Exception {
         String tmp = System.getProperty("java.io.tmpdir");
         String libName = System.mapLibraryName("jnidispatch");
         File src = new File(BUILDDIR + "/native", libName);
+        if (Platform.isWindowsCE()) {
+            src = new File("/Storage Card", libName);
+        }
         assertTrue("Expected JNA native library at " + src + " is missing", src.exists());
 
         String newLibName = UNICODE;
@@ -134,15 +136,17 @@ public class LibraryLoadTest extends TestCase {
     public interface TestLib2 extends Library {
         int dependentReturnFalse();
     }
-    // wce fails to find testlib2
-    public void XFAIL_WCE_testLoadDependentLibrary() {
+
+    // Only desktop windows provides an altered search path, looking for
+    // dependent libraries in the same directory as the original
+    public void testLoadDependentLibraryWithAlteredSearchPath() {
         try {
             TestLib2 lib = (TestLib2)Native.loadLibrary("testlib2", TestLib2.class);
             lib.dependentReturnFalse();
         }
         catch(UnsatisfiedLinkError e) {
             // failure expected on anything but windows
-            if (Platform.isWindows()) {
+            if (Platform.isWindows() && !Platform.isWindowsCE()) {
                 fail("Failed to load dependent libraries: " + e);
             }
         }

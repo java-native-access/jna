@@ -595,7 +595,9 @@ native memory, call {@link com.sun.jna.Structure#read()} (to update the entire
 structure) or {@link com.sun.jna.Structure#readField(String)
 data.readField("refCount")} (to update just the <code>refCount</code> field). 
 
-<h4>Read-only fields</h4>
+<h4><em>Read-only fields -- Deprecated</em></h4>
+<em>Whether or not Structure fields may be updated to correspond to native 
+  memory is VM-dependent.  Use of final Structure fields is discouraged.</em><p/>
 If you want to absolutely prevent Java code from modifying
 a <code>Structure</code>'s contents, you may mark its
 fields <code>final</code>.  Structure reads can still overwrite the values

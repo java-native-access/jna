@@ -117,7 +117,6 @@ w32_find_entry(HANDLE handle, const STRTYPE funname) {
     /* CE has no EnumProcessModules, have to use an alternate API */
     HANDLE snapshot;
     if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0)) != INVALID_HANDLE_VALUE) {
-      // FIXME this crashes...
       MODULEENTRY32 moduleInfo;
       moduleInfo.dwSize = sizeof(moduleInfo);
       if (Module32First(snapshot, &moduleInfo)) {

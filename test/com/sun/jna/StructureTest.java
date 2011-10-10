@@ -780,8 +780,10 @@ public class StructureTest extends TestCase {
                      Structure.getTypeInfo(null));
     }
 
-    // wce missing String method
-    public void XFAIL_WCE_testToString() {
+    public void testToString() {
+        // wce missing String.matches() method
+        if (Platform.isWindowsCE()) return;
+
         class TestStructure extends Structure {
             public int intField;
             public PublicTestStructure inner;
@@ -850,8 +852,8 @@ public class StructureTest extends TestCase {
         return s;
     }
 
-    // wce can't write final field?
-    public void XFAIL_WCE_testReadOnlyField() {
+    // This functionality is no longer supported
+    public void xtestReadOnlyField() {
         ROStructure s = new ROStructure();
         s.getPointer().setInt(0, 42);
         s.read();
@@ -863,11 +865,12 @@ public class StructureTest extends TestCase {
         s = avoidConstantFieldOptimization(s);
         assertEquals("Field value not synched after native change", 0, s.field);
 
+        // Read-only fields  should not be copied to native memory
         s.getPointer().setInt(0, 42);
-        // current Java field value of zero should not be written to native mem
-        s.write();
+        try { s.write(); } catch(UnsupportedOperationException e) { }
         assertEquals("Field should not be written", 42, s.getPointer().getInt(0));
 
+        // Native changes should propagate to read-only fields
         s.read();
         s = avoidConstantFieldOptimization(s);
         assertEquals("Field value not synched after native change (2)", 42, s.field);
@@ -1074,8 +1077,7 @@ public class StructureTest extends TestCase {
         
     }
 
-    // wce missing Arrays.hashCode
-    public void XFAIL_WCE_testStructureHashCodeMatchesEqualsTrue() {
+    public void testStructureHashCodeMatchesEqualsTrue() {
         class TestStructure extends Structure {
             public int first;
         }
@@ -1242,8 +1244,8 @@ public class StructureTest extends TestCase {
         assertFalse("Not equal null", s.equals(null));
         assertFalse("Not equal some other object", s.equals(new Object()));
     }
-    // NPE
-    public void XFAIL_WCE_testStructureSetIterator() {
+
+    public void testStructureSetIterator() {
         assertNotNull("Indirect test of StructureSet.Iterator",
                       Structure.busy().toString());
     }
