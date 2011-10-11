@@ -410,9 +410,6 @@ EXPORT double
 checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   // float:  1=3f800000 2=40000000 3=40400000 4=40800000
   // double: 1=3ff00... 2=40000... 3=40080... 4=40100...
-  wchar_t wbuf[1024];
-  wsprintf(wbuf, L"double align: %p %p %p %p\n", &f, &d, &f2, &d2);
-  OutputDebugString(wbuf);
 
   if (f != 1) return -1;
   if (d != 2) return -2;

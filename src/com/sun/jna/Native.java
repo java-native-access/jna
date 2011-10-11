@@ -648,20 +648,14 @@ public final class Native {
     }
 
     /**
-     * Loads the JNA stub library.  It will first attempt to load this library
-     * from the directories specified in jna.boot.library.path.  If that fails,
-     * it will fallback to loading from the system library paths. Finally it will
-     * attempt to extract the stub library from from the JNA jar file, and load it.
-     * <p>
-     * The jna.boot.library.path property is mainly to support jna.jar being
-     * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
-     * are ignored.  It might also be useful in other situations.
-     * </p>
+     * Loads the JNA stub library.
+     * First tries jna.boot.library.path, then the system path, then from the
+     * jar file.
      */
     private static void loadNativeLibrary() {
         removeTemporaryFiles();
 
-        String libName = "jnidispatch";
+        String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
         String bootPath = System.getProperty("jna.boot.library.path");
         if (bootPath != null) {
             // String.split not available in 1.4
