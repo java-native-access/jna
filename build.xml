@@ -316,7 +316,7 @@
     <condition property="-rsrc">
       <and>
         <not><os family="windows"/></not>
-        <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+        <not><equals arg1="${os.prefix}" arg2="w32ce-arm"/></not>
       </and>
     </condition>
   </target>

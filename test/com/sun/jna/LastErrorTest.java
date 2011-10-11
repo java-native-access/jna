@@ -63,7 +63,7 @@ public class LastErrorTest extends TestCase {
     }
 
     // wce setlasterror doesn't persist
-    public void XFAIL_WCE_testThrowLastErrorDirect() {
+    public void testThrowLastErrorDirect() {
         TestLibrary lib = new DirectTestLibrary();
 
         final int ERROR = -1;

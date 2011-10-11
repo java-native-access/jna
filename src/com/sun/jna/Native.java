@@ -144,6 +144,7 @@ public final class Native {
                             + " - set the system property jna.nosys=true" + LS
                             + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
+        setPreserveLastError(Boolean.parseBoolean(System.getProperty("jna.preserve_last_error", "true")));
     }
     
     /** Force a dispose when this class is GC'd. */

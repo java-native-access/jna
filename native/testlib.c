@@ -88,6 +88,12 @@ struct CheckFieldAlignment {
 
 static int _callCount;
 
+EXPORT int
+callCount() {
+  return ++_callCount;
+}
+
+/** Simulate native code setting an arbitrary errno/LastError */
 EXPORT void
 setLastError(int err) {
 #ifdef _WIN32  
@@ -95,11 +101,6 @@ setLastError(int err) {
 #else
   errno = err;
 #endif
-}
-
-EXPORT int
-callCount() {
-  return ++_callCount;
 }
 
 EXPORT int  

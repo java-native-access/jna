@@ -1614,6 +1614,9 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         throw_msg = msg;
       }
     }
+    else if (preserve_last_error) {
+      update_last_error(env, GET_LAST_ERROR()); 
+    }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
 
