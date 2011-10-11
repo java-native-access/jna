@@ -102,9 +102,8 @@ CC=arm-mingw32ce-gcc -mwin32
 CDEFINES=-D_WIN32_IE=0x400 -D_WIN32_WCE=0x0420 -DNO_JAWT -DNO_NIO_BUFFERS -DWINCE -D_WIN32_STDARG_H
 CFLAGS+=-Wno-unknown-pragmas
 LD=arm-mingw32ce-gcc
-LIBDIR=/opt/mingw32ce/lib/gcc/arm-mingw32ce/4.4.0
 LDFLAGS=-o $@ -shared 
-LIBS=-lcoredll -lgcc -ltoolhelp
+LIBS=-ltoolhelp
 WINDRES=arm-mingw32ce-windres
 EXTRAOBJS=$(RSRC)
 #STRIP=arm-mingw32ce-strip -x
@@ -112,10 +111,11 @@ STRIP=@echo
 LIBPFX=
 LIBSFX=.dll
 HOST_CONFIG=--host=arm-mingw32ce
-FFI_ENV+=LD="$(LD)" CPP=cpp CFLAGS="$(CDEFINES)"
+# libffi must use GNU ld; jnidispatch.dll requires gcc
+FFI_ENV+=LD=arm-mingw32ce-ld CPP=cpp CFLAGS="$(CDEFINES)" 
 PHONEME=../phoneme/cdc/src
 JAVA_INCLUDES=-I$(PHONEME)/share/javavm/export -I$(PHONEME)/share -I$(PHONEME)/win32 -I$(PHONEME)/win32-arm 
-endif
+endif	
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
