@@ -731,7 +731,7 @@ of interest.
 <h3>Throw exceptions on last error</h3>
 If you are interested in the value of errno/GetLastError(), declare your
 method to throw LastErrorException, and call
-{@link com.sun.jna.Native#PreserveLastError PreserveLastError(false)} or set
+{@link com.sun.jna.Native#setPreserveLastError setPreserveLastError(false)} or set
 the System property <code>jna.preserve_last_error=false</code>.
 </body>
 </html>
