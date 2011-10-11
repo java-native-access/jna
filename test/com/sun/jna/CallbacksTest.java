@@ -293,7 +293,7 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong callback return", -3, value);
     }
     
-    public void XFAIL_WCE_testCallInt64Callback() {
+    public void testCallInt64Callback() {
         final long MAGIC = 0x1111111111111111L;
         final boolean[] called = { false };
         TestLibrary.Int64Callback cb = new TestLibrary.Int64Callback() {
@@ -334,7 +334,7 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong callback return", -3f, value, 0);
     }
     
-    public void XFAIL_WCE_testCallDoubleCallback() {
+    public void testCallDoubleCallback() {
         final boolean[] called = { false };
         final double[] args = { 0, 0 };
         TestLibrary.DoubleCallback cb = new TestLibrary.DoubleCallback() {

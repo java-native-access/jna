@@ -418,8 +418,7 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
-    // crash
-    public void XFAIL_WCE_testLongArrayArgument() { 
+    public void testLongArrayArgument() { 
         long[] buf = new long[1024];
         final long MAGIC = 0x1234567887654321L;
         assertEquals("Wrong return value", buf.length, 
@@ -540,7 +539,7 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Auto read should be disabled", EXPECTED, s.field);
     }
 
-    // crash
+    // w32ce crash
     public void XFAIL_WCE_testUnionByValueCallbackArgument() throws Exception{ 
         TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
         arg.setType(String.class);
