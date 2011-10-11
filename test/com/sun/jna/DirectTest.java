@@ -110,15 +110,19 @@ public class DirectTest extends TestCase {
 
     private static class TestLoader extends URLClassLoader {
         public TestLoader() throws MalformedURLException {
-            super(new URL[] {
-                new File(BUILDDIR + "/classes").toURI().toURL(),
-                new File(BUILDDIR + "/test-classes").toURI().toURL(),
-            }, null);
+            super(Platform.isWindowsCE()
+                  ? new URL[] {
+                      new File("/Storage Card/test.jar").toURI().toURL()
+                  }
+                  : new URL[] {
+                      new File(BUILDDIR + "/classes").toURI().toURL(),
+                      new File(BUILDDIR + "/test-classes").toURI().toURL(),
+                  }, null);
         }
     }
 
     // wce class loading path
-    public void XFAIL_WCE_testRegisterMethods() throws Exception {
+    public void testRegisterMethods() throws Exception {
         // Use a dedicated class loader to ensure the class can be gc'd
         String name = "com.sun.jna.DirectTest$MathLibrary";
         ClassLoader loader = new TestLoader();

@@ -347,7 +347,6 @@ public class NativeTest extends TestCase {
                     "com.sun.jna.CallbacksTest",
                     "com.sun.jna.JNAUnloadTest",
                     "com.sun.jna.DirectTest",
-                    // not yet tested
                     "com.sun.jna.DirectArgumentsMarshalTest",
                     "com.sun.jna.DirectByReferenceArgumentsTest",
                     "com.sun.jna.DirectTypeMapperTest",
