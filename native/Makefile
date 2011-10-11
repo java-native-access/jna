@@ -103,11 +103,10 @@ CDEFINES=-D_WIN32_IE=0x400 -D_WIN32_WCE=0x0420 -DNO_JAWT -DNO_NIO_BUFFERS -DWINC
 CFLAGS+=-Wno-unknown-pragmas
 LD=arm-mingw32ce-gcc
 LDFLAGS=-o $@ -shared 
-LIBS=-ltoolhelp
+LIBS=-lcoredll -lgcc -ltoolhelp
 WINDRES=arm-mingw32ce-windres
 EXTRAOBJS=$(RSRC)
-#STRIP=arm-mingw32ce-strip -x
-STRIP=@echo
+STRIP=arm-mingw32ce-strip -x
 LIBPFX=
 LIBSFX=.dll
 HOST_CONFIG=--host=arm-mingw32ce
