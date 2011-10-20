@@ -36,7 +36,7 @@ Features
 * Wide (wchar_t-based) strings
 * Native long support (32- or 64-bit as appropriate)
 * Demo applications
-* Supported on 1.4 or later JVMs (earlier VMs may work with stubbed NIO support)
+* Supported on 1.4 or later JVMs, including JavaME (earlier VMs may work with stubbed NIO support)
 * Customizable marshalling/unmarshalling (argument and return value conversions)
 * Customizable mapping from Java method to native function name, and customizable invocation to simulate C preprocessor function macros
 * Support for automatic Windows ASCII/UNICODE function mappings
@@ -65,10 +65,10 @@ Using the Library
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md)
 * [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
 
-JavaDoc
-=======
+Primary Documentation (JavaDoc)
+===============================
 
-A more detailed reference is available [here](http://twall.github.com/jna/3.3.0/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.3.0/javadoc/).
 
 Contributing 
 ============
@@ -82,7 +82,7 @@ If you are interested in paid support, feel free to say so on the [jna-users mai
 License
 =======
 
-This library is provided under the LGPL, version 2.1 or later.
+This library is provided under the LGPL, version 2.1 or later.  Alternative license arrangements are negotiable.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
 
