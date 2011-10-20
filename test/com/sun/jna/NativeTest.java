@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 import junit.framework.TestCase;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
     
     public void testDefaultStringEncoding() throws Exception {
@@ -229,6 +229,9 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path Windows/i386", "/com/sun/jna/win32-x86",
                      Native.getNativeLibraryResourcePath(Platform.WINDOWS,
                                                          "i386", "Windows"));
+        assertEquals("Wrong resource path Windows CE/arm", "/com/sun/jna/w32ce-arm",
+                     Native.getNativeLibraryResourcePath(Platform.WINDOWSCE,
+                                                         "arm", "Windows CE"));
         assertEquals("Wrong resource path Mac/x86", "/com/sun/jna/darwin",
                      Native.getNativeLibraryResourcePath(Platform.MAC,
                                                          "x86", "Darwin"));
@@ -247,6 +250,9 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path Linux/x86", "/com/sun/jna/linux-i386",
                      Native.getNativeLibraryResourcePath(Platform.LINUX,
                                                          "x86", "Linux"));
+        assertEquals("Wrong resource path Linux/ppc", "/com/sun/jna/linux-ppc",
+                     Native.getNativeLibraryResourcePath(Platform.LINUX,
+                                                         "powerpc", "Linux"));
         assertEquals("Wrong resource path OpenBSD/x86", "/com/sun/jna/openbsd-i386",
                      Native.getNativeLibraryResourcePath(Platform.OPENBSD,
                                                          "x86", "OpenBSD"));
@@ -317,6 +323,48 @@ public class NativeTest extends TestCase {
     }
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(NativeTest.class);
+        if (args.length == 0) {
+            junit.textui.TestRunner.run(NativeTest.class);
+        }
+        else {
+            if (args.length == 1 && "all".equals(args[0])) {
+                args = new String[] {
+                    "com.sun.jna.NativeTest",
+                    "com.sun.jna.NativeLibraryTest",
+                    "com.sun.jna.PointerTest",
+                    "com.sun.jna.MemoryTest",
+                    "com.sun.jna.LibraryLoadTest", 
+                    "com.sun.jna.ArgumentsMarshalTest",
+                    "com.sun.jna.ReturnTypesTest", 
+                    "com.sun.jna.TypeMapperTest", 
+                    "com.sun.jna.ByReferenceArgumentsTest",
+                    "com.sun.jna.LastErrorTest", 
+                    "com.sun.jna.StructureTest",
+                    "com.sun.jna.StructureByValueTest",
+                    "com.sun.jna.UnionTest",
+                    "com.sun.jna.IntegerTypeTest", 
+                    "com.sun.jna.VMCrashProtectionTest",
+                    "com.sun.jna.CallbacksTest",
+                    "com.sun.jna.JNAUnloadTest",
+                    "com.sun.jna.DirectTest",
+                    "com.sun.jna.DirectArgumentsMarshalTest",
+                    "com.sun.jna.DirectByReferenceArgumentsTest",
+                    "com.sun.jna.DirectTypeMapperTest",
+                    "com.sun.jna.DirectReturnTypes",
+                    "com.sun.jna.DirectStructureByValueTest",
+                    "com.sun.jna.DirectCallbacksTest",
+                };
+            }
+            for (int i=0;i < args.length;i++) {
+                System.out.println("Running tests on class " + args[i]);
+                try {
+                    junit.textui.TestRunner.run(Class.forName(args[i]));
+                }
+                catch(ClassNotFoundException e) {
+                    System.err.println("No such class: " + args[i]);
+                }
+            }
+            try { Thread.sleep(300000); } catch(Exception e) { }
+        }
     }
 }

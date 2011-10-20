@@ -12,9 +12,6 @@
  */
 package com.sun.jna;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +25,7 @@ import com.sun.jna.ptr.LongByReference;
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class StructureTest extends TestCase {
 
     public static void main(java.lang.String[] argList) {
@@ -389,8 +386,8 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong short field value after write/read", s.s, 3);
         assertEquals("Wrong int field value after write/read", s.i, 4);
         assertEquals("Wrong long field value after write/read", s.l, 5);
-        assertEquals("Wrong float field value after write/read", s.f, 6.0f);
-        assertEquals("Wrong double field value after write/read", s.d, 7.0);
+        assertEquals("Wrong float field value after write/read", s.f, 6.0f, 0f);
+        assertEquals("Wrong double field value after write/read", s.d, 7.0, 0d);
         assertEquals("Wrong nested struct field value after write/read (x)", s.nested.x, 1);
         assertEquals("Wrong nested struct field value after write/read (y)", s.nested.y, 2);
         for (int i = 0; i < 3; i++) {
@@ -399,8 +396,8 @@ public class StructureTest extends TestCase {
             assertEquals("Wrong short array field value after write/read", s.sa[i], (short) (14 + i));
             assertEquals("Wrong int array field value after write/read", s.ia[i], 17 + i);
             assertEquals("Wrong long array field value after write/read", s.la[i], 23 + i);
-            assertEquals("Wrong float array field value after write/read", s.fa[i], (float) 26 + i);
-            assertEquals("Wrong double array field value after write/read", s.da[i], (double) 29 + i);
+            assertEquals("Wrong float array field value after write/read", s.fa[i], (float) 26 + i, 0f);
+            assertEquals("Wrong double array field value after write/read", s.da[i], (double) 29 + i, 0d);
         }
         // test constancy of references after read
         int[] ia = s.ia;
@@ -596,60 +593,6 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong first element", s.getPointer(), s.array[0]);
     }
 
-    class BufferStructure extends Structure {
-        public Buffer buffer;
-        public DoubleBuffer dbuffer;
-    }
-    public void testBufferFieldWriteNULL() {
-        BufferStructure bs = new BufferStructure();
-        bs.write();
-    }
-    public void testBufferFieldWriteNonNULL() {
-        BufferStructure bs = new BufferStructure();
-        bs.buffer = ByteBuffer.allocateDirect(16);
-        bs.dbuffer = ((ByteBuffer)bs.buffer).asDoubleBuffer();
-        bs.write();
-    }
-    public void testBufferFieldReadUnchanged() {
-        BufferStructure bs = new BufferStructure();
-        Buffer b = ByteBuffer.allocateDirect(16);
-        bs.buffer = b;
-        bs.dbuffer = ((ByteBuffer)bs.buffer).asDoubleBuffer();
-        bs.write();
-        bs.read();
-        assertEquals("Buffer field should be unchanged", b, bs.buffer);
-    }
-    public void testBufferFieldReadChanged() {
-        BufferStructure bs = new BufferStructure();
-        if (Pointer.SIZE == 4) {
-            bs.getPointer().setInt(0, 0x1);
-        }
-        else {
-            bs.getPointer().setLong(0, 0x1);
-        }
-        try {
-            bs.read();
-            fail("Structure read should fail if Buffer pointer was set");
-        }
-        catch(IllegalStateException e) {
-        }
-        bs.buffer = ByteBuffer.allocateDirect(16);
-        try {
-            bs.read();
-            fail("Structure read should fail if Buffer pointer has changed");
-        }
-        catch(IllegalStateException e) {
-        }
-    }
-    public void testBufferFieldReadChangedToNULL() {
-        BufferStructure bs = new BufferStructure();
-        bs.buffer = ByteBuffer.allocateDirect(16);
-        bs.dbuffer = ((ByteBuffer)bs.buffer).asDoubleBuffer();
-        bs.read();
-        assertNull("Structure Buffer field should be set null", bs.buffer);
-        assertNull("Structure DoubleBuffer field should be set null", bs.dbuffer);
-    }
-
     public void testVolatileStructureField() {
         class VolatileStructure extends Structure {
             public volatile int counter;
@@ -838,6 +781,9 @@ public class StructureTest extends TestCase {
     }
 
     public void testToString() {
+        // wce missing String.matches() method
+        if (Platform.isWindowsCE()) return;
+
         class TestStructure extends Structure {
             public int intField;
             public PublicTestStructure inner;
@@ -905,7 +851,9 @@ public class StructureTest extends TestCase {
     private ROStructure avoidConstantFieldOptimization(ROStructure s) {
         return s;
     }
-    public void testReadOnlyField() {
+
+    // This functionality is no longer supported
+    public void xtestReadOnlyField() {
         ROStructure s = new ROStructure();
         s.getPointer().setInt(0, 42);
         s.read();
@@ -917,11 +865,12 @@ public class StructureTest extends TestCase {
         s = avoidConstantFieldOptimization(s);
         assertEquals("Field value not synched after native change", 0, s.field);
 
+        // Read-only fields  should not be copied to native memory
         s.getPointer().setInt(0, 42);
-        // current Java field value of zero should not be written to native mem
-        s.write();
+        try { s.write(); } catch(UnsupportedOperationException e) { }
         assertEquals("Field should not be written", 42, s.getPointer().getInt(0));
 
+        // Native changes should propagate to read-only fields
         s.read();
         s = avoidConstantFieldOptimization(s);
         assertEquals("Field value not synched after native change (2)", 42, s.field);
@@ -1295,6 +1244,7 @@ public class StructureTest extends TestCase {
         assertFalse("Not equal null", s.equals(null));
         assertFalse("Not equal some other object", s.equals(new Object()));
     }
+
     public void testStructureSetIterator() {
         assertNotNull("Indirect test of StructureSet.Iterator",
                       Structure.busy().toString());

@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class LastErrorTest extends TestCase {
     
     private static final Map OPTIONS = new HashMap() {{
@@ -62,6 +62,7 @@ public class LastErrorTest extends TestCase {
         }
     }
 
+    // wce setlasterror doesn't persist
     public void testThrowLastErrorDirect() {
         TestLibrary lib = new DirectTestLibrary();
 

@@ -31,8 +31,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <psapi.h>
-#define LIBNAMETYPE wchar_t*
-#define LIBNAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
+#define STRTYPE wchar_t*
+#define NAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
 /* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:
  * "Note that the standard search strategy and the alternate search strategy  
  * specified by LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH differ in    
@@ -40,26 +40,26 @@
  * directory, and the alternate search begins in the directory of the         
  * executable module that LoadLibraryEx is loading."                          
  */
-#define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_WITH_ALTERED_SEARCH_PATH) : GetModuleHandleW(NULL))
+#ifdef _WIN32_WCE
+#include <tlhelp32.h>
+#define LOAD_OPTS 0 /* altered search path unsupported on CE */
+#else
+#define LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
+#endif
+#define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_OPTS) : GetModuleHandleW(NULL))
 #define LOAD_ERROR(BUF,LEN) w32_format_error(BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
-#define FIND_ENTRY(HANDLE, NAME) GetProcAddress(HANDLE, NAME)
+#define FIND_ENTRY(HANDLE, NAME) w32_find_entry(HANDLE, NAME)
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
-static char*
-w32_format_error(char* buf, int len) {
-  FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
-                 0, buf, len, NULL);
-  return buf;
-}
 #else
 #include <dlfcn.h>
 #include <errno.h>
-#define LIBNAMETYPE char*
+#define STRTYPE char*
 #ifdef __APPLE__
-#define LIBNAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
+#define NAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
 #else
-#define LIBNAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
+#define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
 #endif
 #define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)
@@ -74,8 +74,10 @@ w32_format_error(char* buf, int len) {
 #include <wchar.h>
 #include <jni.h>
 
+#ifndef NO_JAWT
 #include <jawt.h>
 #include <jawt_md.h>
+#endif
 
 #include "dispatch.h"
 #include "com_sun_jna_Pointer.h"
@@ -95,7 +97,62 @@ static int _protect;
 extern "C"
 #endif
 
-static jboolean preserve_last_error;
+#ifdef _WIN32
+static char*
+w32_format_error(char* buf, int len) {
+  wchar_t* wbuf = (wchar_t*)alloca(len);
+  FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
+                 0, wbuf, len, NULL);
+  WideCharToMultiByte(CP_UTF8, 0, wbuf, wcslen(wbuf), buf, len, NULL, NULL);
+  return buf;
+}
+static HANDLE
+w32_find_entry(HANDLE handle, const STRTYPE funname) {
+  void* func = NULL;
+  if (handle != GetModuleHandleW(NULL)) {
+    func = GetProcAddress(handle, funname);
+  }
+  else {
+#if defined(_WIN32_WCE) 
+    /* CE has no EnumProcessModules, have to use an alternate API */
+    HANDLE snapshot;
+    if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0)) != INVALID_HANDLE_VALUE) {
+      MODULEENTRY32 moduleInfo;
+      moduleInfo.dwSize = sizeof(moduleInfo);
+      if (Module32First(snapshot, &moduleInfo)) {
+        do {
+          if ((func = (void *) GetProcAddress(moduleInfo.hModule, funname))) {
+            break;
+          }
+        } while (Module32Next(snapshot, &moduleInfo));
+      }
+      CloseToolhelp32Snapshot(snapshot);
+    }
+#else
+    HANDLE cur_proc = GetCurrentProcess ();
+    HMODULE *modules;
+    DWORD needed, i;
+    if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
+    fail:
+      throwByName(env, EError, "Unexpected error enumerating modules");
+      free((void *)funname);
+      return 0;
+    }
+    modules = (HMODULE*) alloca (needed);
+    if (!EnumProcessModules (cur_proc, modules, needed, &needed)) {
+      goto fail;
+    }
+    for (i = 0; i < needed / sizeof (HMODULE); i++) {
+      if ((func = (void *) GetProcAddress (modules[i], funname))) {
+        break;
+      }
+    }
+#endif
+  }
+  return func;
+}
+
+#endif
 
 #define MEMCPY(D,S,L) do { \
   PSTART(); memcpy(D,S,L); PEND(); \
@@ -106,6 +163,8 @@ static jboolean preserve_last_error;
 
 #define MASK_CC          com_sun_jna_Function_MASK_CC
 #define THROW_LAST_ERROR com_sun_jna_Function_THROW_LAST_ERROR
+
+static jboolean preserve_last_error;
 
 /* Cached class, field and method IDs */
 static jclass classObject;
@@ -121,6 +180,7 @@ static jclass classLong, classPrimitiveLong;
 static jclass classFloat, classPrimitiveFloat;
 static jclass classDouble, classPrimitiveDouble;
 static jclass classString, classWString;
+#ifndef NO_NIO_BUFFERS
 static jclass classBuffer;
 static jclass classByteBuffer;
 static jclass classCharBuffer;
@@ -129,6 +189,7 @@ static jclass classIntBuffer;
 static jclass classLongBuffer;
 static jclass classFloatBuffer;
 static jclass classDoubleBuffer;
+#endif /* NO_NIO_BUFFERS */
 
 static jclass classPointer;
 static jclass classNative;
@@ -158,6 +219,7 @@ static jmethodID MID_Byte_init;
 static jmethodID MID_Boolean_init;
 static jmethodID MID_Float_init;
 static jmethodID MID_Double_init;
+#ifndef NO_NIO_BUFFERS
 static jmethodID MID_ByteBuffer_array;
 static jmethodID MID_ByteBuffer_arrayOffset;
 static jmethodID MID_CharBuffer_array;
@@ -172,6 +234,7 @@ static jmethodID MID_FloatBuffer_array;
 static jmethodID MID_FloatBuffer_arrayOffset;
 static jmethodID MID_DoubleBuffer_array;
 static jmethodID MID_DoubleBuffer_arrayOffset;
+#endif /* NO_NIO_BUFFERS */
 
 static jmethodID MID_Pointer_init;
 static jmethodID MID_Native_updateLastError;
@@ -217,7 +280,9 @@ static char* newCStringUTF8(JNIEnv *env, jstring jstr);
 static char* newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding);
 static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 
+#ifndef NO_NIO_BUFFERS
 static void* getBufferArray(JNIEnv*, jobject, jobject*, void **, void **);
+#endif
 static char getArrayComponentType(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
 static void update_last_error(JNIEnv*, int);
@@ -240,6 +305,25 @@ println(JNIEnv* env, const char* msg) {
 }
 #endif
 
+/** Throw an exception by name */
+void
+throwByName(JNIEnv *env, const char *name, const char *msg)
+{
+  jclass cls;
+
+  (*env)->ExceptionClear(env);
+  
+  cls = (*env)->FindClass(env, name);
+  
+  if (cls != NULL) { /* Otherwise an exception has already been thrown */
+    (*env)->ThrowNew(env, cls, msg);
+    
+    /* It's a good practice to clean up the local references. */
+    (*env)->DeleteLocalRef(env, cls);
+  }
+}
+
+/** Translate FFI errors into exceptions. */
 jboolean
 ffi_error(JNIEnv* env, const char* op, ffi_status status) {
   char msg[256];
@@ -378,6 +462,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
         goto cleanup;
       }
     }
+#ifndef NO_NIO_BUFFERS
     else if ((*env)->IsInstanceOf(env, arg, classBuffer)) {
       c_args[i].l = (*env)->GetDirectBufferAddress(env, arg);
       ffi_types[i] = &ffi_type_pointer;
@@ -395,6 +480,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
         ++array_count;
       }
     }
+#endif /* NO_NIO_BUFFERS */
     else if ((array_pt = getArrayComponentType(env, arg)) != 0
              && array_pt != 'L') {
       void *ptr = NULL;
@@ -437,8 +523,8 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     break;
 #ifdef _WIN32
   case CALLCONV_STDCALL:
-#ifdef _WIN64
-    // Ignore requests for stdcall on win64
+#if defined(_WIN64) || defined(_WIN32_WCE)
+    // Ignore requests for stdcall on win64/wince
     abi = FFI_DEFAULT_ABI;
 #else
     abi = FFI_STDCALL;
@@ -519,875 +605,6 @@ setChars(JNIEnv* env, wchar_t* src, jcharArray chars, jint off, jint len) {
   }
   (*env)->SetCharArrayRegion(env, chars, off, len, buf);
   PEND();
-}
-
-/*
- * Class:     Native
- * Method:    invokePointer
- * Signature: (JI[Ljava/lang/Object;)J;
- */
-JNIEXPORT jlong JNICALL 
-Java_com_sun_jna_Native_invokePointer(JNIEnv *env, jclass UNUSED(cls),
-                                      jlong fp, jint callconv, jobjectArray arr)
-{
-    jvalue result;
-    dispatch(env, L2A(fp), callconv, arr, &ffi_type_pointer, &result);
-    return A2L(result.l);
-}
-
-
-/*
- * Class:     Native
- * Method:    invokeObject
- * Signature: (JI[Ljava/lang/Object;)Ljava/lang/Object;
- */
-JNIEXPORT jobject JNICALL 
-Java_com_sun_jna_Native_invokeObject(JNIEnv *env, jclass UNUSED(cls),
-                                     jlong fp, jint callconv, jobjectArray arr)
-{
-    jvalue result;
-    dispatch(env, L2A(fp), callconv, arr, &ffi_type_pointer, &result);
-    return result.l;
-}
-
-
-/*
- * Class:     Native
- * Method:    invokeStructure
- * Signature: (JI[Ljava/lang/Object;Lcom/sun/jna/Structure)LStructure;
- */
-JNIEXPORT void JNICALL 
-Java_com_sun_jna_Native_invokeStructure(JNIEnv *env, jclass UNUSED(cls),
-                                        jlong fp, jint callconv, jobjectArray arr,
-                                        jlong memory, jlong type_info)
-{
-  ffi_type* rtype = (ffi_type*)L2A(type_info);
-  if (!rtype) {
-    throwByName(env, EIllegalState, "Return structure type info not initialized");
-  }
-  else {
-    dispatch(env, L2A(fp), callconv, arr, rtype, L2A(memory));
-  }
-}
-
-/*
- * Class:     Native
- * Method:    invokeDouble
- * Signature: (JI[Ljava/lang/Object;)D
- */
-JNIEXPORT jdouble JNICALL 
-Java_com_sun_jna_Native_invokeDouble(JNIEnv *env, jclass UNUSED(cls),
-                                     jlong fp, jint callconv, jobjectArray arr)
-{
-    jvalue result;
-    dispatch(env, L2A(fp), callconv, arr, &ffi_type_double, &result);
-    return result.d;
-}
-
-/*
- * Class:     Native
- * Method:    invokeFloat
- * Signature: (JI[Ljava/lang/Object;)F
- */
-JNIEXPORT jfloat JNICALL
-Java_com_sun_jna_Native_invokeFloat(JNIEnv *env, jclass UNUSED(cls),
-                                    jlong fp, jint callconv, jobjectArray arr)
-{
-    jvalue result;
-    dispatch(env, L2A(fp), callconv, arr, &ffi_type_float, &result);
-    return result.f;
-}
-
-/*
- * Class:     Native
- * Method:    invokeInt
- * Signature: (JI[Ljava/lang/Object;)I
- */
-JNIEXPORT jint JNICALL
-Java_com_sun_jna_Native_invokeInt(JNIEnv *env, jclass UNUSED(cls),
-                                  jlong fp, jint callconv, jobjectArray arr)
-{
-    ffi_arg result;
-    dispatch(env, L2A(fp), callconv, arr, &ffi_type_sint32, &result);
-    return (jint)result;
-}
-
-/*
- * Class:     Native
- * Method:    invokeLong
- * Signature: (JI[Ljava/lang/Object;)J
- */
-JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_invokeLong(JNIEnv *env, jclass UNUSED(cls), 
-                                   jlong fp, jint callconv, jobjectArray arr)
-{
-    jvalue result;
-    dispatch(env, L2A(fp), callconv, arr, &ffi_type_sint64, &result);
-    return result.j;
-}
-
-/*
- * Class:     Native
- * Method:    invokeVoid
- * Signature: (JI[Ljava/lang/Object;)V
- */
-JNIEXPORT void JNICALL
-Java_com_sun_jna_Native_invokeVoid(JNIEnv *env, jclass UNUSED(cls), 
-                                   jlong fp, jint callconv, jobjectArray arr)
-{
-    jvalue result;
-    dispatch(env, L2A(fp), callconv, arr, &ffi_type_void, &result);
-}
-
-JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_createNativeCallback(JNIEnv *env,
-                                             jclass UNUSED(cls),
-                                             jobject obj,
-                                             jobject method,
-                                             jobjectArray param_types,
-                                             jclass return_type,
-                                             jint call_conv,
-                                             jboolean direct) {
-  callback* cb =
-    create_callback(env, obj, method, param_types, return_type, call_conv, direct);
-  return A2L(cb);
-}
-
-JNIEXPORT void JNICALL
-Java_com_sun_jna_Native_freeNativeCallback(JNIEnv *env,
-                                           jclass UNUSED(cls),
-                                           jlong ptr) {
-  free_callback(env, (callback*)L2A(ptr));
-}
-
-/*
- * Class:     Native
- * Method:    open
- * Signature: (Ljava/lang/String;)J
- */
-JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
-    void *handle = NULL;
-    const LIBNAMETYPE libname = NULL;
-
-    /* dlopen on Unix allows NULL to mean "current process" */
-    if (lib != NULL) {
-      if ((libname = LIBNAME2CSTR(env, lib)) == NULL) {
-        return A2L(NULL);
-      }
-    }
-
-    handle = (void *)LOAD_LIBRARY(libname);
-    if (!handle) {
-      char buf[1024];
-      throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
-    }
-    if (libname != NULL)
-      free((void *)libname);
-    return A2L(handle);
-}
-
-/*
- * Class:     Native
- * Method:    close
- * Signature: (J)V
- */
-JNIEXPORT void JNICALL
-Java_com_sun_jna_Native_close(JNIEnv *env, jclass UNUSED(cls), jlong handle)
-{
-  if (FREE_LIBRARY(L2A(handle))) {
-    char buf[1024];
-    throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
-  }
-}
-
-/*
- * Class:     Native
- * Method:    findSymbol
- * Signature: (JLjava/lang/String;)J
- */
-JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
-                                   jlong libHandle, jstring fun) {
-
-    void *handle = L2A(libHandle);
-    void *func = NULL;
-    const char *funname = NULL;
-
-    if ((funname = newCString(env, fun)) != NULL) {
-#ifdef _WIN32
-      if (handle == GetModuleHandleW(NULL)) {
-        HANDLE cur_proc = GetCurrentProcess ();
-        HMODULE *modules;
-        DWORD needed, i;
-        if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
-        fail:
-          throwByName(env, EError, "Unexpected error enumerating modules");
-          free((void *)funname);
-          return 0;
-        }
-        modules = (HMODULE*) alloca (needed);
-        if (!EnumProcessModules (cur_proc, modules, needed, &needed)) {
-          goto fail;
-        }
-        for (i = 0; i < needed / sizeof (HMODULE); i++)
-          if ((func = (void *) GetProcAddress (modules[i], funname)))
-            break;
-      }
-      else
-#endif
-        func = (void *)FIND_ENTRY(handle, funname);
-      if (!func) {
-        char buf[1024];
-        throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
-      }
-      free((void *)funname);
-    }
-    return A2L(func);
-}
-
-static const void*
-get_system_property(JNIEnv* env, const char* name, jboolean wide) {
-  jclass classSystem = (*env)->FindClass(env, "java/lang/System");
-  if (classSystem != NULL) {
-    jmethodID mid = (*env)->GetStaticMethodID(env, classSystem, "getProperty",
-                                              "(Ljava/lang/String;)Ljava/lang/String;");
-    if (mid != NULL) {
-      jstring propname = newJavaString(env, name, JNI_FALSE);
-      jstring value = (*env)->CallStaticObjectMethod(env, classSystem,
-                                                     mid, propname);
-      if (value) {
-        if (wide) 
-          return newWideCString(env, value);
-        return newCStringUTF8(env, value);
-      }
-    }
-  }
-  return NULL;
-}
-
-static const char*
-jnidispatch_init(JNIEnv* env) {
-  if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
-  if (!LOAD_CREF(env, Class, "java/lang/Class")) return "java.lang.Class";
-  if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return "java.lang.reflect.Method";
-  if (!LOAD_CREF(env, String, "java/lang/String")) return "java.lang.String";
-  if (!LOAD_CREF(env, Buffer, "java/nio/Buffer")) return "java.nio.Buffer";
-  if (!LOAD_CREF(env, ByteBuffer, "java/nio/ByteBuffer")) return "java.nio.ByteBuffer";
-  if (!LOAD_CREF(env, CharBuffer, "java/nio/CharBuffer")) return "java.nio.CharBuffer";
-  if (!LOAD_CREF(env, ShortBuffer, "java/nio/ShortBuffer")) return "java.nio.ShortBuffer";
-  if (!LOAD_CREF(env, IntBuffer, "java/nio/IntBuffer")) return "java.nio.IntBuffer";
-  if (!LOAD_CREF(env, LongBuffer, "java/nio/LongBuffer")) return "java.nio.LongBuffer";
-  if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return "java.nio.FloatBuffer";
-  if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return "java.nio.DoubleBuffer";
-  
-  if (!LOAD_PCREF(env, Void, "java/lang/Void")) return "java.lang.Void";
-  if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return "java.lang.Boolean";
-  if (!LOAD_PCREF(env, Byte, "java/lang/Byte")) return "java.lang.Byte";
-  if (!LOAD_PCREF(env, Character, "java/lang/Character")) return "java.lang.Character";
-  if (!LOAD_PCREF(env, Short, "java/lang/Short")) return "java.lang.Short";
-  if (!LOAD_PCREF(env, Integer, "java/lang/Integer")) return "java.lang.Integer";
-  if (!LOAD_PCREF(env, Long, "java/lang/Long")) return "java.lang.Long";
-  if (!LOAD_PCREF(env, Float, "java/lang/Float")) return "java.lang.Float";
-  if (!LOAD_PCREF(env, Double, "java/lang/Double")) return "java.lang.Double";
-  
-  if (!LOAD_MID(env, MID_Long_init, classLong,
-                "<init>", "(J)V"))
-    return "java.lang.Long<init>(J)V";
-  if (!LOAD_MID(env, MID_Integer_init, classInteger,
-                "<init>", "(I)V"))
-    return "java.lang.Integer<init>(I)V";
-  if (!LOAD_MID(env, MID_Short_init, classShort,
-                "<init>", "(S)V"))
-    return "java.lang.Short<init>(S)V";
-  if (!LOAD_MID(env, MID_Character_init, classCharacter,
-                "<init>", "(C)V"))
-    return "java.lang.Character<init>(C)V";
-  if (!LOAD_MID(env, MID_Byte_init, classByte,
-                "<init>", "(B)V"))
-    return "java.lang.Byte<init>(B)V";
-  if (!LOAD_MID(env, MID_Boolean_init, classBoolean,
-                "<init>", "(Z)V"))
-    return "java.lang.Boolean<init>(Z)V";
-  if (!LOAD_MID(env, MID_Float_init, classFloat,
-                "<init>", "(F)V"))
-    return "java.lang.Float<init>(F)V";
-  if (!LOAD_MID(env, MID_Double_init, classDouble,
-                "<init>", "(D)V"))
-    return "java.lang.Double<init>(D)V";
-  if (!LOAD_MID(env, MID_Class_getComponentType, classClass,
-                "getComponentType", "()Ljava/lang/Class;"))
-    return "Class.getComponentType()";
-  if (!LOAD_MID(env, MID_Object_toString, classObject,
-                "toString", "()Ljava/lang/String;"))
-    return "Object.toString()";
-  if (!LOAD_MID(env, MID_String_getBytes, classString,
-                "getBytes", "()[B"))
-    return "String.getBytes()";
-  if (!LOAD_MID(env, MID_String_getBytes2, classString,
-                "getBytes", "(Ljava/lang/String;)[B"))
-    return "String.getBytes(String)";
-  if (!LOAD_MID(env, MID_String_toCharArray, classString,
-                "toCharArray", "()[C"))
-    return "String.toCharArray()";
-  if (!LOAD_MID(env, MID_String_init_bytes, classString,
-                "<init>", "([B)V"))
-    return "String<init>([B)V";
-  if (!LOAD_MID(env, MID_Method_getParameterTypes, classMethod,
-                "getParameterTypes", "()[Ljava/lang/Class;"))
-    return "Method.getParameterTypes()";
-  if (!LOAD_MID(env, MID_Method_getReturnType, classMethod,
-                "getReturnType", "()Ljava/lang/Class;"))
-    return "Method.getReturnType()";
-  
-  if (!LOAD_MID(env, MID_ByteBuffer_array, classByteBuffer, "array", "()[B"))
-    return "ByteBuffer.array";
-  if (!LOAD_MID(env, MID_ByteBuffer_arrayOffset, classByteBuffer, "arrayOffset", "()I"))
-    return "ByteBuffer.arrayOffset";
-  if (!LOAD_MID(env, MID_CharBuffer_array, classCharBuffer, "array", "()[C"))
-    return "CharBuffer.array";
-  if (!LOAD_MID(env, MID_CharBuffer_arrayOffset, classCharBuffer, "arrayOffset", "()I"))
-    return "CharBuffer.arrayOffset";
-  if (!LOAD_MID(env, MID_ShortBuffer_array, classShortBuffer, "array", "()[S"))
-    return "ShortBuffer.array";
-  if (!LOAD_MID(env, MID_ShortBuffer_arrayOffset, classShortBuffer, "arrayOffset", "()I"))
-    return "ShortBuffer.arrayOffset";
-  if (!LOAD_MID(env, MID_IntBuffer_array, classIntBuffer, "array", "()[I"))
-    return "IntBuffer.array";
-  if (!LOAD_MID(env, MID_IntBuffer_arrayOffset, classIntBuffer, "arrayOffset", "()I"))
-    return "IntBuffer.arrayOffset";
-  if (!LOAD_MID(env, MID_LongBuffer_array, classLongBuffer, "array", "()[J"))
-    return "LongBuffer.array";
-  if (!LOAD_MID(env, MID_LongBuffer_arrayOffset, classLongBuffer, "arrayOffset", "()I"))
-    return "LongBuffer.arrayOffset";
-  if (!LOAD_MID(env, MID_FloatBuffer_array, classFloatBuffer, "array", "()[F"))
-    return "FloatBuffer.array";
-  if (!LOAD_MID(env, MID_FloatBuffer_arrayOffset, classFloatBuffer, "arrayOffset", "()I"))
-    return "FloatBuffer.arrayOffset";
-  if (!LOAD_MID(env, MID_DoubleBuffer_array, classDoubleBuffer, "array", "()[D"))
-    return "DoubleBuffer.array";
-  if (!LOAD_MID(env, MID_DoubleBuffer_arrayOffset, classDoubleBuffer, "arrayOffset", "()I"))
-    return "DoubleBuffer.arrayOffset";
-
-
-  if (!LOAD_FID(env, FID_Boolean_value, classBoolean, "value", "Z"))
-    return "Boolean.value";
-  if (!LOAD_FID(env, FID_Byte_value, classByte, "value", "B"))
-    return "Byte.value";
-  if (!LOAD_FID(env, FID_Short_value, classShort, "value", "S"))
-    return "Short.value";
-  if (!LOAD_FID(env, FID_Character_value, classCharacter, "value", "C"))
-    return "Character.value";
-  if (!LOAD_FID(env, FID_Integer_value, classInteger, "value", "I"))
-    return "Integer.value";
-  if (!LOAD_FID(env, FID_Long_value, classLong, "value", "J"))
-    return "Long.value";
-  if (!LOAD_FID(env, FID_Float_value, classFloat, "value", "F"))
-    return "Float.value";
-  if (!LOAD_FID(env, FID_Double_value, classDouble, "value", "D"))
-    return "Double.value";
-
-  // Cache jna.encoding value
-  jna_encoding = get_system_property(env, "jna.encoding", JNI_FALSE);
-
-  return NULL;
-}
-
-/*
- * Class:     Native
- * Method:    _write
- * Signature: (J[BII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3BII
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jbyteArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->GetByteArrayRegion(env, arr, off, n, L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _write
- * Signature: (J[CII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3CII
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jcharArray arr, jint off, jint n)
-{
-  getChars(env, (wchar_t*)L2A(addr), arr, off, n);
-}
-
-/*
- * Class:     Native
- * Method:    _write
- * Signature: (J[DII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3DII
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jdoubleArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _write
- * Signature: (J[FII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3FII
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jfloatArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _write
- * Signature: (J[III)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3III
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jintArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _write
- * Signature: (J[JII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3JII
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jlongArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _write
- * Signature: (J[SII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3SII
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jshortArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _indexOf
- * Signature: (JB)J
- */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_indexOf__JB
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jbyte value)
-{
-  jbyte *peer = (jbyte *)L2A(addr);
-  volatile jlong i = 0;
-  volatile jlong result = -1L;
-  PSTART();
-  while (i >= 0 && result == -1L) {
-    if (peer[i] == value) 
-      result = i;
-    ++i;
-  }
-  PEND();
-
-  return result;
-}
-
-/*
- * Class:     Native
- * Method:    _read
- * Signature: (J[BII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3BII
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jbyteArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->SetByteArrayRegion(env, arr, off, n, L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _read
- * Signature: (J[CII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3CII
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jcharArray arr, jint off, jint n)
-{
-  setChars(env, (wchar_t*)L2A(addr), arr, off, n);
-}
-
-/*
- * Class:     Native
- * Method:    _read
- * Signature: (J[DII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3DII
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jdoubleArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _read
- * Signature: (J[FII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3FII
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jfloatArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _read
- * Signature: (J[III)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3III
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jintArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _read
- * Signature: (J[JII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3JII
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jlongArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _read
- * Signature: (J[SII)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3SII
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jshortArray arr, jint off, jint n)
-{
-  PSTART();
-  (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
-  PEND();
-}
-
-/*
- * Class:     Native
- * Method:    _getByte
- * Signature: (J)B
- */
-JNIEXPORT jbyte JNICALL Java_com_sun_jna_Native_getByte
-    (JNIEnv * env, jclass UNUSED(cls), jlong addr)
-{
-    jbyte res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
-    return res;
-}
-
-/*
- * Class:     Native
- * Method:    _getChar
- * Signature: (J)C
- */
-JNIEXPORT jchar JNICALL Java_com_sun_jna_Native_getChar
-    (JNIEnv * env, jclass UNUSED(cls), jlong addr)
-{
-    wchar_t res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
-    return (jchar)res;
-}
-
-/*
- * Class:     Native
- * Method:    _getPointer
- * Signature: (J)Lcom/sun/jna/Pointer;
- */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr)
-{
-    void *ptr = NULL;
-    MEMCPY(&ptr, L2A(addr), sizeof(ptr));
-    return A2L(ptr);
-}
-
-/*
- * Class:     com_sun_jna_Native
- * Method:    _getDirectByteBuffer
- * Signature: (JJ)Ljava/nio/ByteBuffer;
- */
-JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jlong length)
-{
-    return (*env)->NewDirectByteBuffer(env, L2A(addr), length);
-}
-
-/*
- * Class:     Native
- * Method:    _getDouble
- * Signature: (J)D
- */
-JNIEXPORT jdouble JNICALL Java_com_sun_jna_Native_getDouble
-(JNIEnv * env, jclass UNUSED(cls), jlong addr)
-{
-    jdouble res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
-    return res;
-}
-
-/*
- * Class:     Native
- * Method:    _getFloat
- * Signature: (J)F
- */
-JNIEXPORT jfloat JNICALL Java_com_sun_jna_Native_getFloat
-(JNIEnv * env, jclass UNUSED(cls), jlong addr)
-{
-    jfloat res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
-    return res;
-}
-
-/*
- * Class:     Native
- * Method:    _getInt
- * Signature: (J)I
- */
-JNIEXPORT jint JNICALL Java_com_sun_jna_Native_getInt
-(JNIEnv * env, jclass UNUSED(cls), jlong addr)
-{
-    jint res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
-    return res;
-}
-
-/*
- * Class:     Native
- * Method:    _getLong
- * Signature: (J)J
- */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_getLong
-(JNIEnv * env, jclass UNUSED(cls), jlong addr)
-{
-    jlong res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
-    return res;
-}
-
-/*
- * Class:     Native
- * Method:    _getShort
- * Signature: (J)S
- */
-JNIEXPORT jshort JNICALL Java_com_sun_jna_Native_getShort
-(JNIEnv * env, jclass UNUSED(cls), jlong addr)
-{
-    jshort res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
-    return res;
-}
-
-/*
- * Class:     Native
- * Method:    _getString
- * Signature: (JB)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_com_sun_jna_Native_getString
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jboolean wide)
-{
-  return newJavaString(env, L2A(addr), wide);
-}
-
-/*
- * Class:     Native
- * Method:    _setMemory
- * Signature: (JJB)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setMemory
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jlong count, jbyte value)
-{
-  MEMSET(L2A(addr), (int)value, (size_t)count);
-}
-
-/*
- * Class:     Native
- * Method:    _setByte
- * Signature: (JB)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setByte
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jbyte value)
-{
-  MEMCPY(L2A(addr), &value, sizeof(value));
-}
-
-/*
- * Class:     Native
- * Method:    _setChar
- * Signature: (JC)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setChar
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jchar value)
-{
-  wchar_t ch = value;
-  MEMCPY(L2A(addr), &ch, sizeof(ch));
-}
-
-/*
- * Class:     Native
- * Method:    _setNative
- * Signature: (JJ)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setPointer
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jlong value)
-{
-  void *ptr = L2A(value);
-  MEMCPY(L2A(addr), &ptr, sizeof(void *));
-}
-
-/*
- * Class:     Native
- * Method:    _setDouble
- * Signature: (JD)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setDouble
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jdouble value)
-{
-  MEMCPY(L2A(addr), &value, sizeof(value));
-}
-
-/*
- * Class:     Native
- * Method:    _setFloat
- * Signature: (JF)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setFloat
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jfloat value)
-{
-  MEMCPY(L2A(addr), &value, sizeof(value));
-}
-
-/*
- * Class:     Native
- * Method:    _setInt
- * Signature: (JI)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setInt
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jint value)
-{
-  MEMCPY(L2A(addr), &value, sizeof(value));
-}
-
-/*
- * Class:     Native
- * Method:    _setLong
- * Signature: (JJ)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setLong
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jlong value)
-{
-  MEMCPY(L2A(addr), &value, sizeof(value));
-}
-
-/*
- * Class:     Native
- * Method:    _setShort
- * Signature: (JS)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setShort
-(JNIEnv * env, jclass UNUSED(cls), jlong addr, jshort value)
-{
-  MEMCPY(L2A(addr), &value, sizeof(value));
-}
-
-/*
- * Class:     Native
- * Method:    _setString
- * Signature: (JLjava/lang/String;Z)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setString
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jstring value, jboolean wide)
-{
-    int len = (*env)->GetStringLength(env, value);
-    const void* volatile str;
-    volatile int size = len + 1;
-
-    if (wide) {
-      size *= sizeof(wchar_t);
-      str = newWideCString(env, value);
-    }
-    else {
-      str = newCStringEncoding(env, value, jna_encoding);
-    }
-    if (str != NULL) {
-      MEMCPY(L2A(addr), str, size);
-      free((void*)str);
-    }
-}
-
-/*
- * Class:     Native
- * Method:    malloc
- * Signature: (J)J
- */
-JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_malloc
-(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong size)
-{
-    return A2L(malloc((size_t)size));
-}
-
-/*
- * Class:     Native
- * Method:    free
- * Signature: (J)V
- */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_free
-(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong ptr)
-{
-    free(L2A(ptr));
-}
-
-
-//*******************************************************************
-//                         Utility functions                        
-//*******************************************************************
-
-/* Throw an exception by name */
-void 
-throwByName(JNIEnv *env, const char *name, const char *msg)
-{
-  jclass cls;
-
-  (*env)->ExceptionClear(env);
-  
-  cls = (*env)->FindClass(env, name);
-  
-  if (cls != NULL) { /* Otherwise an exception has already been thrown */
-    (*env)->ThrowNew(env, cls, msg);
-    
-    /* It's a good practice to clean up the local references. */
-    (*env)->DeleteLocalRef(env, cls);
-  }
 }
 
 /* Translates a Java string to a C string using the String.getBytes 
@@ -1833,7 +1050,7 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
   return 0;
 }
 
-
+#ifndef NO_NIO_BUFFERS
 static void*
 getBufferArray(JNIEnv* env, jobject buf,
                jobject* arrayp, void **basep,
@@ -1883,6 +1100,1319 @@ do { \
   }
 
   return ptr;
+}
+#endif /* NO_NIO_BUFFERS */
+
+/** Returns the last error code. */
+int lastError() {
+  return GET_LAST_ERROR();
+}
+/** Set the last error code. */
+void setLastError(int err) {
+  SET_LAST_ERROR(err);
+}
+
+static const void*
+get_system_property(JNIEnv* env, const char* name, jboolean wide) {
+  jclass classSystem = (*env)->FindClass(env, "java/lang/System");
+  if (classSystem != NULL) {
+    jmethodID mid = (*env)->GetStaticMethodID(env, classSystem, "getProperty",
+                                              "(Ljava/lang/String;)Ljava/lang/String;");
+    if (mid != NULL) {
+      jstring propname = newJavaString(env, name, JNI_FALSE);
+      jstring value = (*env)->CallStaticObjectMethod(env, classSystem,
+                                                     mid, propname);
+      if (value) {
+        if (wide) 
+          return newWideCString(env, value);
+        return newCStringUTF8(env, value);
+      }
+    }
+  }
+  return NULL;
+}
+
+static const char*
+jnidispatch_init(JNIEnv* env) {
+  if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
+  if (!LOAD_CREF(env, Class, "java/lang/Class")) return "java.lang.Class";
+  if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return "java.lang.reflect.Method";
+  if (!LOAD_CREF(env, String, "java/lang/String")) return "java.lang.String";
+#ifndef NO_NIO_BUFFERS
+  if (!LOAD_CREF(env, Buffer, "java/nio/Buffer")) return "java.nio.Buffer";
+  if (!LOAD_CREF(env, ByteBuffer, "java/nio/ByteBuffer")) return "java.nio.ByteBuffer";
+  if (!LOAD_CREF(env, CharBuffer, "java/nio/CharBuffer")) return "java.nio.CharBuffer";
+  if (!LOAD_CREF(env, ShortBuffer, "java/nio/ShortBuffer")) return "java.nio.ShortBuffer";
+  if (!LOAD_CREF(env, IntBuffer, "java/nio/IntBuffer")) return "java.nio.IntBuffer";
+  if (!LOAD_CREF(env, LongBuffer, "java/nio/LongBuffer")) return "java.nio.LongBuffer";
+  if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return "java.nio.FloatBuffer";
+  if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return "java.nio.DoubleBuffer";
+#endif
+  
+  if (!LOAD_PCREF(env, Void, "java/lang/Void")) return "java.lang.Void";
+  if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return "java.lang.Boolean";
+  if (!LOAD_PCREF(env, Byte, "java/lang/Byte")) return "java.lang.Byte";
+  if (!LOAD_PCREF(env, Character, "java/lang/Character")) return "java.lang.Character";
+  if (!LOAD_PCREF(env, Short, "java/lang/Short")) return "java.lang.Short";
+  if (!LOAD_PCREF(env, Integer, "java/lang/Integer")) return "java.lang.Integer";
+  if (!LOAD_PCREF(env, Long, "java/lang/Long")) return "java.lang.Long";
+  if (!LOAD_PCREF(env, Float, "java/lang/Float")) return "java.lang.Float";
+  if (!LOAD_PCREF(env, Double, "java/lang/Double")) return "java.lang.Double";
+  
+  if (!LOAD_MID(env, MID_Long_init, classLong,
+                "<init>", "(J)V"))
+    return "java.lang.Long<init>(J)V";
+  if (!LOAD_MID(env, MID_Integer_init, classInteger,
+                "<init>", "(I)V"))
+    return "java.lang.Integer<init>(I)V";
+  if (!LOAD_MID(env, MID_Short_init, classShort,
+                "<init>", "(S)V"))
+    return "java.lang.Short<init>(S)V";
+  if (!LOAD_MID(env, MID_Character_init, classCharacter,
+                "<init>", "(C)V"))
+    return "java.lang.Character<init>(C)V";
+  if (!LOAD_MID(env, MID_Byte_init, classByte,
+                "<init>", "(B)V"))
+    return "java.lang.Byte<init>(B)V";
+  if (!LOAD_MID(env, MID_Boolean_init, classBoolean,
+                "<init>", "(Z)V"))
+    return "java.lang.Boolean<init>(Z)V";
+  if (!LOAD_MID(env, MID_Float_init, classFloat,
+                "<init>", "(F)V"))
+    return "java.lang.Float<init>(F)V";
+  if (!LOAD_MID(env, MID_Double_init, classDouble,
+                "<init>", "(D)V"))
+    return "java.lang.Double<init>(D)V";
+  if (!LOAD_MID(env, MID_Class_getComponentType, classClass,
+                "getComponentType", "()Ljava/lang/Class;"))
+    return "Class.getComponentType()";
+  if (!LOAD_MID(env, MID_Object_toString, classObject,
+                "toString", "()Ljava/lang/String;"))
+    return "Object.toString()";
+  if (!LOAD_MID(env, MID_String_getBytes, classString,
+                "getBytes", "()[B"))
+    return "String.getBytes()";
+  if (!LOAD_MID(env, MID_String_getBytes2, classString,
+                "getBytes", "(Ljava/lang/String;)[B"))
+    return "String.getBytes(String)";
+  if (!LOAD_MID(env, MID_String_toCharArray, classString,
+                "toCharArray", "()[C"))
+    return "String.toCharArray()";
+  if (!LOAD_MID(env, MID_String_init_bytes, classString,
+                "<init>", "([B)V"))
+    return "String<init>([B)V";
+  if (!LOAD_MID(env, MID_Method_getParameterTypes, classMethod,
+                "getParameterTypes", "()[Ljava/lang/Class;"))
+    return "Method.getParameterTypes()";
+  if (!LOAD_MID(env, MID_Method_getReturnType, classMethod,
+                "getReturnType", "()Ljava/lang/Class;"))
+    return "Method.getReturnType()";
+  
+#ifndef NO_NIO_BUFFERS
+  if (!LOAD_MID(env, MID_ByteBuffer_array, classByteBuffer, "array", "()[B"))
+    return "ByteBuffer.array";
+  if (!LOAD_MID(env, MID_ByteBuffer_arrayOffset, classByteBuffer, "arrayOffset", "()I"))
+    return "ByteBuffer.arrayOffset";
+  if (!LOAD_MID(env, MID_CharBuffer_array, classCharBuffer, "array", "()[C"))
+    return "CharBuffer.array";
+  if (!LOAD_MID(env, MID_CharBuffer_arrayOffset, classCharBuffer, "arrayOffset", "()I"))
+    return "CharBuffer.arrayOffset";
+  if (!LOAD_MID(env, MID_ShortBuffer_array, classShortBuffer, "array", "()[S"))
+    return "ShortBuffer.array";
+  if (!LOAD_MID(env, MID_ShortBuffer_arrayOffset, classShortBuffer, "arrayOffset", "()I"))
+    return "ShortBuffer.arrayOffset";
+  if (!LOAD_MID(env, MID_IntBuffer_array, classIntBuffer, "array", "()[I"))
+    return "IntBuffer.array";
+  if (!LOAD_MID(env, MID_IntBuffer_arrayOffset, classIntBuffer, "arrayOffset", "()I"))
+    return "IntBuffer.arrayOffset";
+  if (!LOAD_MID(env, MID_LongBuffer_array, classLongBuffer, "array", "()[J"))
+    return "LongBuffer.array";
+  if (!LOAD_MID(env, MID_LongBuffer_arrayOffset, classLongBuffer, "arrayOffset", "()I"))
+    return "LongBuffer.arrayOffset";
+  if (!LOAD_MID(env, MID_FloatBuffer_array, classFloatBuffer, "array", "()[F"))
+    return "FloatBuffer.array";
+  if (!LOAD_MID(env, MID_FloatBuffer_arrayOffset, classFloatBuffer, "arrayOffset", "()I"))
+    return "FloatBuffer.arrayOffset";
+  if (!LOAD_MID(env, MID_DoubleBuffer_array, classDoubleBuffer, "array", "()[D"))
+    return "DoubleBuffer.array";
+  if (!LOAD_MID(env, MID_DoubleBuffer_arrayOffset, classDoubleBuffer, "arrayOffset", "()I"))
+    return "DoubleBuffer.arrayOffset";
+#endif /* NO_NIO_BUFFERS */
+
+  if (!LOAD_FID(env, FID_Boolean_value, classBoolean, "value", "Z"))
+    return "Boolean.value";
+  if (!LOAD_FID(env, FID_Byte_value, classByte, "value", "B"))
+    return "Byte.value";
+  if (!LOAD_FID(env, FID_Short_value, classShort, "value", "S"))
+    return "Short.value";
+  if (!LOAD_FID(env, FID_Character_value, classCharacter, "value", "C"))
+    return "Character.value";
+  if (!LOAD_FID(env, FID_Integer_value, classInteger, "value", "I"))
+    return "Integer.value";
+  if (!LOAD_FID(env, FID_Long_value, classLong, "value", "J"))
+    return "Long.value";
+  if (!LOAD_FID(env, FID_Float_value, classFloat, "value", "F"))
+    return "Float.value";
+  if (!LOAD_FID(env, FID_Double_value, classDouble, "value", "D"))
+    return "Double.value";
+
+  // Cache jna.encoding value
+  jna_encoding = get_system_property(env, "jna.encoding", JNI_FALSE);
+
+  return NULL;
+}
+
+void
+extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean promote) {
+  if (value == NULL) {
+    *(void **)resp = NULL;
+  }
+  else if ((*env)->IsInstanceOf(env, value, classVoid)) {
+    // nothing to do
+  }
+  else if ((*env)->IsInstanceOf(env, value, classBoolean)) {
+    jboolean b = (*env)->GetBooleanField(env, value, FID_Boolean_value);
+    if (promote) {
+      *(ffi_arg*)resp = b;
+    }
+    else {
+      *(jint*)resp = b;
+    }
+  }
+  else if ((*env)->IsInstanceOf(env, value, classByte)) {
+    jbyte b = (*env)->GetByteField(env, value, FID_Byte_value);
+    if (promote) {
+      *(ffi_arg*)resp = b;
+    }
+    else {
+      *(jbyte*)resp = b;
+    }
+  }
+  else if ((*env)->IsInstanceOf(env, value, classShort)) {
+    jshort s = (*env)->GetShortField(env, value, FID_Short_value);
+    if (promote) {
+      *(ffi_arg*)resp = s;
+    }
+    else {
+      *(jshort*)resp = s;
+    }
+  }
+  else if ((*env)->IsInstanceOf(env, value, classCharacter)) {
+    jchar c = (*env)->GetCharField(env, value, FID_Character_value);
+    if (promote) {
+      *(ffi_arg*)resp = c;
+    }
+    else {
+      *(wchar_t*)resp = c;
+    }
+  }
+  else if ((*env)->IsInstanceOf(env, value, classInteger)) {
+    jint i = (*env)->GetIntField(env, value, FID_Integer_value);
+    if (promote) {
+      *(ffi_arg*)resp = i;
+    }
+    else {
+      *(jint*)resp = i;
+    }
+  }
+  else if ((*env)->IsInstanceOf(env, value, classLong)) {
+    *(jlong *)resp = (*env)->GetLongField(env, value, FID_Long_value);
+  }
+  else if ((*env)->IsInstanceOf(env, value, classFloat)) {
+    *(float *)resp = (*env)->GetFloatField(env, value, FID_Float_value);
+  }
+  else if ((*env)->IsInstanceOf(env, value, classDouble)) {
+    *(double *)resp = (*env)->GetDoubleField(env, value, FID_Double_value);
+  }
+  else if ((*env)->IsInstanceOf(env, value, classStructure)) {
+    void* ptr = getStructureAddress(env, value);
+    memcpy(resp, ptr, size);
+  }
+  else if ((*env)->IsInstanceOf(env, value, classPointer)) {
+    *(void **)resp = getNativeAddress(env, value);
+  }
+  else {
+    fprintf(stderr, "JNA: unrecognized return type, size %d\n", (int)size);
+    memset(resp, 0, size);
+  }
+}
+
+/** Construct a new Java object from a native value.  */
+jobject
+new_object(JNIEnv* env, char jtype, void* valuep, jboolean promote) {
+    switch(jtype) {
+    case 's':
+      return newJavaPointer(env, valuep);
+    case '*': 
+      return newJavaPointer(env, *(void**)valuep);
+    case 'J':
+      return (*env)->NewObject(env, classLong, MID_Long_init,
+                               *(jlong *)valuep);
+    case 'F':
+      return (*env)->NewObject(env, classFloat, MID_Float_init,
+                               *(float *)valuep);
+    case 'D':
+      return (*env)->NewObject(env, classDouble, MID_Double_init,
+                               *(double *)valuep);
+    case 'Z':
+      // Default mapping for boolean is int32_t
+      return (*env)->NewObject(env, classBoolean, MID_Boolean_init,
+                               (promote
+				? (jint)*(ffi_arg*)valuep
+				: (*(jint *)valuep)) ? JNI_TRUE : JNI_FALSE);
+    case 'B':
+      return (*env)->NewObject(env, classByte, MID_Byte_init,
+                               promote
+			       ? (jbyte)*(ffi_arg*)valuep
+			       : (*(jbyte *)valuep));
+    case 'C':
+      return (*env)->NewObject(env, classCharacter, MID_Character_init,
+                               promote
+			       ? (jchar)*(ffi_arg*)valuep
+			       : (jchar)(*(wchar_t *)valuep));
+    case 'S':
+      return (*env)->NewObject(env, classShort, MID_Short_init,
+                               promote
+			       ? (jshort)*(ffi_arg*)valuep
+			       : (*(jshort *)valuep));
+    case 'I':
+      return (*env)->NewObject(env, classInteger, MID_Integer_init,
+                               promote
+			       ? (jint)*(ffi_arg*)valuep
+			       : *(jint *)valuep);
+    default:
+      return NULL;
+    }
+}
+
+/** Get the FFI type for the native type which will be converted to the given
+    Java class. */
+ffi_type*
+get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
+  switch (jtype) {
+  case 'Z': 
+    return &ffi_type_uint32;
+  case 'B':
+    return &ffi_type_sint8;
+  case 'C':
+    return sizeof(wchar_t) == 2 ? &ffi_type_uint16 : &ffi_type_uint32;
+  case 'S':
+    return &ffi_type_sint16;
+  case 'I':
+    return &ffi_type_sint32;
+  case 'J':
+    return &ffi_type_sint64;
+  case 'F':
+    return &ffi_type_float;
+  case 'D':
+    return &ffi_type_double;
+  case 'V':
+    return &ffi_type_void;
+  case 's': {
+    jobject s = (*env)->CallStaticObjectMethod(env, classStructure,
+                                               MID_Structure_newInstance, cls);
+    return getStructureType(env, s);
+  }
+  case '*':
+  default:
+    return &ffi_type_pointer;
+  }
+}
+
+/** Return the FFI type corresponding to the native equivalent of a
+    callback function's return value. */
+ffi_type*
+get_ffi_rtype(JNIEnv* env, jclass cls, char jtype) {
+  switch (jtype) {
+  case 'Z': 
+  case 'B': 
+  case 'C': 
+  case 'S':    
+  case 'I':
+    /*
+     * Always use a return type the size of a cpu register.  This fixes up
+     * callbacks on big-endian 64bit machines, and does not break things on
+     * i386 or amd64. 
+     */
+    return &ffi_type_slong;
+  default:
+    return get_ffi_type(env, cls, jtype);
+  }
+}
+
+typedef struct _method_data {
+  ffi_cif cif;
+  ffi_cif closure_cif;
+  void*   fptr;
+  ffi_type** arg_types;
+  ffi_type** closure_arg_types;
+  int*    flags;
+  int     rflag;
+  jclass  closure_rclass;
+  jobject* to_native;
+  jobject  from_native;
+  jboolean throw_last_error;
+} method_data;
+
+/** Direct invocation glue.  VM vectors to this callback, which in turn calls
+    native code 
+*/
+static void
+method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
+  JNIEnv* env = (JNIEnv*)*(void **)argp[0];
+  method_data *data = (method_data*)cdata;
+
+  // ignore first two arguments, which are pointers
+  void** args = argp + 2;
+  void** volatile objects = NULL;
+  release_t* volatile release = NULL;
+  void** volatile elems = NULL;
+  unsigned i;
+  void* oldresp = resp;
+  const char* volatile throw_type = NULL;
+  const char* volatile throw_msg = NULL;
+  char msg[64];
+
+  if (data->flags) {
+    objects = alloca(data->cif.nargs * sizeof(void*));
+    memset(objects, 0, data->cif.nargs * sizeof(void*));
+    release = alloca(data->cif.nargs * sizeof(release_t));
+    memset(release, 0, data->cif.nargs * sizeof(release_t));
+    elems = alloca(data->cif.nargs * sizeof(void*));
+    for (i=0;i < data->cif.nargs;i++) {
+      if (data->flags[i] == CVT_DEFAULT) {
+        continue;
+      }
+      if (data->arg_types[i]->type == FFI_TYPE_POINTER
+          && *(void **)args[i] == NULL) {
+        continue;
+      }
+      switch(data->flags[i]) {
+      case CVT_INTEGER_TYPE:
+        {
+          jlong value = getIntegerTypeValue(env, *(void **)args[i]);
+          if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
+            args[i] = alloca(data->cif.arg_types[i]->size);
+          }
+          if (data->cif.arg_types[i]->size > sizeof(ffi_arg)) {
+            *(jlong *)args[i] = value;
+          }
+          else {
+            *(ffi_arg *)args[i] = (ffi_arg)value;
+          }
+        }
+        break;
+      case CVT_POINTER_TYPE:
+        *(void **)args[i] = getPointerTypeAddress(env, *(void **)args[i]);
+        break;
+      case CVT_TYPE_MAPPER:
+        {
+          void* valuep = args[i];
+          int jtype = get_jtype_from_ffi_type(data->closure_cif.arg_types[i+2]);
+          jobject obj = jtype == '*'
+            ? *(void **)valuep
+            : new_object(env, (char)jtype, valuep, JNI_FALSE);
+          if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
+            args[i] = alloca(data->cif.arg_types[i]->size);
+          }
+          toNativeTypeMapped(env, obj, args[i],
+                             data->cif.arg_types[i]->size,
+                             data->to_native[i]);
+        }
+        break;
+      case CVT_NATIVE_MAPPED:
+        toNative(env, *(void **)args[i], args[i], data->cif.arg_types[i]->size, JNI_FALSE);
+        break;
+      case CVT_POINTER:
+        *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
+        break;
+      case CVT_STRUCTURE:
+        objects[i] = *(void **)args[i];
+        writeStructure(env, *(void **)args[i]);
+        *(void **)args[i] = getStructureAddress(env, *(void **)args[i]);
+        break;
+      case CVT_STRUCTURE_BYVAL:
+        objects[i] = *(void **)args[i];
+        writeStructure(env, objects[i]);
+        args[i] = getStructureAddress(env, objects[i]);
+        break;
+      case CVT_STRING:
+        *(void **)args[i] = newCStringEncoding(env, (jstring)*(void **)args[i], jna_encoding);
+        break;
+      case CVT_WSTRING:
+        {
+          jstring s = (*env)->CallObjectMethod(env, *(void **)args[i], MID_Object_toString);
+          *(void **)args[i] = newWideCString(env, s);
+        }
+        break;
+      case CVT_CALLBACK:
+        *(void **)args[i] = getCallbackAddress(env, *(void **)args[i]);
+        break;
+#ifndef NO_NIO_BUFFERS
+      case CVT_BUFFER:
+        {
+          void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
+          if (ptr != NULL) {
+            objects[i] = NULL;
+            release[i] = NULL;
+          }
+          else {
+            ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &elems[i], (void**)&release[i]);
+            if (ptr == NULL) {
+              throw_type = EIllegalArgument;
+              throw_msg = "Buffer arguments must be direct or have a primitive backing array";
+              goto cleanup;
+            }
+          }
+          *(void **)args[i] = ptr;
+        }
+        break;
+#endif /* NO_NIO_BUFFERS */
+#define ARRAY(Type)                             \
+ do { \
+   objects[i] = *(void **)args[i];                                      \
+   release[i] = (void *)(*env)->Release##Type##ArrayElements;           \
+   elems[i] = *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } while(0)
+      case CVT_ARRAY_BYTE: ARRAY(Byte); break;
+      case CVT_ARRAY_SHORT: ARRAY(Short); break;
+      case CVT_ARRAY_CHAR: ARRAY(Char); break;
+      case CVT_ARRAY_INT: ARRAY(Int); break;
+      case CVT_ARRAY_LONG: ARRAY(Long); break;
+      case CVT_ARRAY_FLOAT: ARRAY(Float); break;
+      case CVT_ARRAY_DOUBLE: ARRAY(Double); break;
+      default:
+        break;
+      }
+    }
+  }
+
+  if (data->rflag == CVT_NATIVE_MAPPED) {
+    resp = alloca(sizeof(jobject));
+  }
+  else if (data->rflag == CVT_TYPE_MAPPER) {
+    // Ensure enough space for the inner call result
+    resp = alloca(data->cif.rtype->size);
+  }
+  else if (data->rflag == CVT_STRUCTURE_BYVAL) {
+    // In the case of returned structure by value, the inner and
+    // outer calls have different return types; we pass the structure memory
+    // to the inner call but return a Java object to the outer call.
+    resp = alloca(data->cif.rtype->size);
+  }
+
+  {
+    PSTART();
+    if (data->throw_last_error) {
+      SET_LAST_ERROR(0);
+    }
+    ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
+    if (data->throw_last_error) {
+      int error = GET_LAST_ERROR();
+      if (error) {
+        snprintf(msg, sizeof(msg), "%d", error);
+        throw_type = ELastError;
+        throw_msg = msg;
+      }
+    }
+    else if (preserve_last_error) {
+      update_last_error(env, GET_LAST_ERROR()); 
+    }
+    PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
+  }
+
+  switch(data->rflag) {
+  case CVT_TYPE_MAPPER:
+    fromNativeTypeMapped(env, data->from_native, resp, data->cif.rtype, data->closure_rclass, oldresp);
+    break;
+  case CVT_INTEGER_TYPE:
+  case CVT_POINTER_TYPE:
+  case CVT_NATIVE_MAPPED:
+    *(void **)oldresp = fromNative(env, data->closure_rclass, data->cif.rtype, resp, JNI_TRUE);
+    break;
+  case CVT_POINTER:
+    *(void **)resp = newJavaPointer(env, *(void **)resp);
+    break;
+  case CVT_STRING:
+    *(void **)resp = newJavaString(env, *(void **)resp, JNI_FALSE);
+    break;
+  case CVT_WSTRING:
+    *(void **)resp = newJavaWString(env, *(void **)resp);
+    break;
+  case CVT_STRUCTURE:
+    *(void **)resp = newJavaStructure(env, *(void **)resp, data->closure_rclass, JNI_FALSE);
+    break;
+  case CVT_STRUCTURE_BYVAL:
+    *(void **)oldresp = newJavaStructure(env, resp, data->closure_rclass, JNI_TRUE);
+    break;
+  case CVT_CALLBACK:
+    *(void **)resp = newJavaCallback(env, *(void **)resp, data->closure_rclass);
+    break;
+  default:
+    break;
+  }
+
+  cleanup:
+  if (data->flags) {
+    for (i=0;i < data->cif.nargs;i++) {
+      switch(data->flags[i]) {
+      case CVT_STRUCTURE:
+        if (objects[i]) {
+          (*env)->CallVoidMethod(env, objects[i], MID_Structure_read);
+        }
+        break;
+      case CVT_STRING:
+      case CVT_WSTRING:
+        // Free allocated native strings
+        free(*(void **)args[i]);
+        break;
+      case CVT_BUFFER:
+      case CVT_ARRAY_BYTE:
+      case CVT_ARRAY_SHORT:
+      case CVT_ARRAY_CHAR:
+      case CVT_ARRAY_INT:
+      case CVT_ARRAY_LONG:
+      case CVT_ARRAY_FLOAT:
+      case CVT_ARRAY_DOUBLE:
+        if (*(void **)args[i] && release[i])
+          release[i](env, objects[i], elems[i], 0);
+        break;
+      }
+    }
+  }
+
+  if (throw_type) {
+    throwByName(env, throw_type, throw_msg);
+  }
+}
+
+static void
+closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
+{
+  callback* cb = (callback *)cdata;
+  JavaVM* jvm = cb->vm;
+  JNIEnv* env;
+  jobject obj;
+  int attached;
+
+  attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
+  if (!attached) {
+    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach native thread to VM for closure handler\n");
+      return;
+    }
+  }
+
+  // Give the callback its own local frame to ensure all local references
+  // are properly disposed
+  if ((*env)->PushLocalFrame(env, 16) < 0) {
+    fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
+  }
+  else {
+    obj = (*env)->NewLocalRef(env, cb->object);
+    if ((*env)->IsSameObject(env, obj, NULL)) {
+      fprintf(stderr, "JNA: callback object has been garbage collected\n");
+      if (cif->rtype->type != FFI_TYPE_VOID)
+        memset(resp, 0, cif->rtype->size);
+    }
+    else {
+      (*env)->CallVoidMethod(env, obj, MID_ffi_callback_invoke,
+                             A2L(cif), A2L(resp), A2L(argp));
+    }    
+    
+    (*env)->PopLocalFrame(env, NULL);
+  }
+
+  if (!attached) {
+    (*jvm)->DetachCurrentThread(jvm);
+  }
+}
+
+////////////////////
+// API Methods
+////////////////////
+
+/*
+ * Class:     Native
+ * Method:    invokePointer
+ * Signature: (JI[Ljava/lang/Object;)J;
+ */
+JNIEXPORT jlong JNICALL 
+Java_com_sun_jna_Native_invokePointer(JNIEnv *env, jclass UNUSED(cls),
+                                      jlong fp, jint callconv, jobjectArray arr)
+{
+    jvalue result;
+    dispatch(env, L2A(fp), callconv, arr, &ffi_type_pointer, &result);
+    return A2L(result.l);
+}
+
+
+/*
+ * Class:     Native
+ * Method:    invokeObject
+ * Signature: (JI[Ljava/lang/Object;)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL 
+Java_com_sun_jna_Native_invokeObject(JNIEnv *env, jclass UNUSED(cls),
+                                     jlong fp, jint callconv, jobjectArray arr)
+{
+    jvalue result;
+    dispatch(env, L2A(fp), callconv, arr, &ffi_type_pointer, &result);
+    return result.l;
+}
+
+
+/*
+ * Class:     Native
+ * Method:    invokeStructure
+ * Signature: (JI[Ljava/lang/Object;Lcom/sun/jna/Structure)LStructure;
+ */
+JNIEXPORT void JNICALL 
+Java_com_sun_jna_Native_invokeStructure(JNIEnv *env, jclass UNUSED(cls),
+                                        jlong fp, jint callconv, jobjectArray arr,
+                                        jlong memory, jlong type_info)
+{
+  ffi_type* rtype = (ffi_type*)L2A(type_info);
+  if (!rtype) {
+    throwByName(env, EIllegalState, "Return structure type info not initialized");
+  }
+  else {
+    dispatch(env, L2A(fp), callconv, arr, rtype, L2A(memory));
+  }
+}
+
+/*
+ * Class:     Native
+ * Method:    invokeDouble
+ * Signature: (JI[Ljava/lang/Object;)D
+ */
+JNIEXPORT jdouble JNICALL 
+Java_com_sun_jna_Native_invokeDouble(JNIEnv *env, jclass UNUSED(cls),
+                                     jlong fp, jint callconv, jobjectArray arr)
+{
+    jvalue result;
+    dispatch(env, L2A(fp), callconv, arr, &ffi_type_double, &result);
+    return result.d;
+}
+
+/*
+ * Class:     Native
+ * Method:    invokeFloat
+ * Signature: (JI[Ljava/lang/Object;)F
+ */
+JNIEXPORT jfloat JNICALL
+Java_com_sun_jna_Native_invokeFloat(JNIEnv *env, jclass UNUSED(cls),
+                                    jlong fp, jint callconv, jobjectArray arr)
+{
+    jvalue result;
+    dispatch(env, L2A(fp), callconv, arr, &ffi_type_float, &result);
+    return result.f;
+}
+
+/*
+ * Class:     Native
+ * Method:    invokeInt
+ * Signature: (JI[Ljava/lang/Object;)I
+ */
+JNIEXPORT jint JNICALL
+Java_com_sun_jna_Native_invokeInt(JNIEnv *env, jclass UNUSED(cls),
+                                  jlong fp, jint callconv, jobjectArray arr)
+{
+    ffi_arg result;
+    dispatch(env, L2A(fp), callconv, arr, &ffi_type_sint32, &result);
+    return (jint)result;
+}
+
+/*
+ * Class:     Native
+ * Method:    invokeLong
+ * Signature: (JI[Ljava/lang/Object;)J
+ */
+JNIEXPORT jlong JNICALL
+Java_com_sun_jna_Native_invokeLong(JNIEnv *env, jclass UNUSED(cls), 
+                                   jlong fp, jint callconv, jobjectArray arr)
+{
+    jvalue result;
+    dispatch(env, L2A(fp), callconv, arr, &ffi_type_sint64, &result);
+    return result.j;
+}
+
+/*
+ * Class:     Native
+ * Method:    invokeVoid
+ * Signature: (JI[Ljava/lang/Object;)V
+ */
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_invokeVoid(JNIEnv *env, jclass UNUSED(cls), 
+                                   jlong fp, jint callconv, jobjectArray arr)
+{
+    jvalue result;
+    dispatch(env, L2A(fp), callconv, arr, &ffi_type_void, &result);
+}
+
+JNIEXPORT jlong JNICALL
+Java_com_sun_jna_Native_createNativeCallback(JNIEnv *env,
+                                             jclass UNUSED(cls),
+                                             jobject obj,
+                                             jobject method,
+                                             jobjectArray param_types,
+                                             jclass return_type,
+                                             jint call_conv,
+                                             jboolean direct) {
+  callback* cb =
+    create_callback(env, obj, method, param_types, return_type, call_conv, direct);
+
+  return A2L(cb);
+}
+
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_freeNativeCallback(JNIEnv *env,
+                                           jclass UNUSED(cls),
+                                           jlong ptr) {
+  free_callback(env, (callback*)L2A(ptr));
+}
+
+/*
+ * Class:     Native
+ * Method:    open
+ * Signature: (Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL
+Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
+    /* dlopen on Unix allows NULL to mean "current process" */
+    const STRTYPE libname = NULL;
+    void *handle = NULL;
+
+    if (lib != NULL) {
+      if ((libname = NAME2CSTR(env, lib)) == NULL) {
+        return A2L(NULL);
+      }
+    }
+
+    handle = (void *)LOAD_LIBRARY(libname);
+    if (!handle) {
+      char buf[1024];
+      throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+    }
+    if (libname != NULL) {
+      free((void *)libname);
+    }
+    return A2L(handle);
+}
+
+/*
+ * Class:     Native
+ * Method:    close
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_close(JNIEnv *env, jclass UNUSED(cls), jlong handle)
+{
+  if (FREE_LIBRARY(L2A(handle))) {
+    char buf[1024];
+    throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
+  }
+}
+
+/*
+ * Class:     Native
+ * Method:    findSymbol
+ * Signature: (JLjava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL
+Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
+                                   jlong libHandle, jstring fun) {
+
+    void *handle = L2A(libHandle);
+    void *func = NULL;
+    const STRTYPE funname = NAME2CSTR(env, fun);
+
+    if (funname != NULL) {
+      func = (void *)FIND_ENTRY(handle, funname);
+      if (!func) {
+        char buf[1024];
+        throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
+      }
+      free((void *)funname);
+    }
+    return A2L(func);
+}
+
+/*
+ * Class:     Native
+ * Method:    _write
+ * Signature: (J[BII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3BII
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jbyteArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->GetByteArrayRegion(env, arr, off, n, L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _write
+ * Signature: (J[CII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3CII
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jcharArray arr, jint off, jint n)
+{
+  getChars(env, (wchar_t*)L2A(addr), arr, off, n);
+}
+
+/*
+ * Class:     Native
+ * Method:    _write
+ * Signature: (J[DII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3DII
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jdoubleArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _write
+ * Signature: (J[FII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3FII
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jfloatArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _write
+ * Signature: (J[III)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3III
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jintArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _write
+ * Signature: (J[JII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3JII
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jlongArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _write
+ * Signature: (J[SII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3SII
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jshortArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _indexOf
+ * Signature: (JB)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_indexOf__JB
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jbyte value)
+{
+  jbyte *peer = (jbyte *)L2A(addr);
+  volatile jlong i = 0;
+  volatile jlong result = -1L;
+  PSTART();
+  while (i >= 0 && result == -1L) {
+    if (peer[i] == value) 
+      result = i;
+    ++i;
+  }
+  PEND();
+
+  return result;
+}
+
+/*
+ * Class:     Native
+ * Method:    _read
+ * Signature: (J[BII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3BII
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jbyteArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->SetByteArrayRegion(env, arr, off, n, L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _read
+ * Signature: (J[CII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3CII
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jcharArray arr, jint off, jint n)
+{
+  setChars(env, (wchar_t*)L2A(addr), arr, off, n);
+}
+
+/*
+ * Class:     Native
+ * Method:    _read
+ * Signature: (J[DII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3DII
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jdoubleArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _read
+ * Signature: (J[FII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3FII
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jfloatArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _read
+ * Signature: (J[III)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3III
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jintArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _read
+ * Signature: (J[JII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3JII
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jlongArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _read
+ * Signature: (J[SII)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3SII
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jshortArray arr, jint off, jint n)
+{
+  PSTART();
+  (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
+  PEND();
+}
+
+/*
+ * Class:     Native
+ * Method:    _getByte
+ * Signature: (J)B
+ */
+JNIEXPORT jbyte JNICALL Java_com_sun_jna_Native_getByte
+    (JNIEnv * env, jclass UNUSED(cls), jlong addr)
+{
+    jbyte res = 0;
+    MEMCPY(&res, L2A(addr), sizeof(res));
+    return res;
+}
+
+/*
+ * Class:     Native
+ * Method:    _getChar
+ * Signature: (J)C
+ */
+JNIEXPORT jchar JNICALL Java_com_sun_jna_Native_getChar
+    (JNIEnv * env, jclass UNUSED(cls), jlong addr)
+{
+    wchar_t res = 0;
+    MEMCPY(&res, L2A(addr), sizeof(res));
+    return (jchar)res;
+}
+
+/*
+ * Class:     Native
+ * Method:    _getPointer
+ * Signature: (J)Lcom/sun/jna/Pointer;
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr)
+{
+    void *ptr = NULL;
+    MEMCPY(&ptr, L2A(addr), sizeof(ptr));
+    return A2L(ptr);
+}
+
+/*
+ * Class:     com_sun_jna_Native
+ * Method:    _getDirectByteBuffer
+ * Signature: (JJ)Ljava/nio/ByteBuffer;
+ */
+JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer
+    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jlong length)
+{
+#ifdef NO_NIO_BUFFERS
+    return NULL;
+#else
+    return (*env)->NewDirectByteBuffer(env, L2A(addr), length);
+#endif
+}
+
+/*
+ * Class:     Native
+ * Method:    _getDouble
+ * Signature: (J)D
+ */
+JNIEXPORT jdouble JNICALL Java_com_sun_jna_Native_getDouble
+(JNIEnv * env, jclass UNUSED(cls), jlong addr)
+{
+    jdouble res = 0;
+    MEMCPY(&res, L2A(addr), sizeof(res));
+    return res;
+}
+
+/*
+ * Class:     Native
+ * Method:    _getFloat
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL Java_com_sun_jna_Native_getFloat
+(JNIEnv * env, jclass UNUSED(cls), jlong addr)
+{
+    jfloat res = 0;
+    MEMCPY(&res, L2A(addr), sizeof(res));
+    return res;
+}
+
+/*
+ * Class:     Native
+ * Method:    _getInt
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_com_sun_jna_Native_getInt
+(JNIEnv * env, jclass UNUSED(cls), jlong addr)
+{
+    jint res = 0;
+    MEMCPY(&res, L2A(addr), sizeof(res));
+    return res;
+}
+
+/*
+ * Class:     Native
+ * Method:    _getLong
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_getLong
+(JNIEnv * env, jclass UNUSED(cls), jlong addr)
+{
+    jlong res = 0;
+    MEMCPY(&res, L2A(addr), sizeof(res));
+    return res;
+}
+
+/*
+ * Class:     Native
+ * Method:    _getShort
+ * Signature: (J)S
+ */
+JNIEXPORT jshort JNICALL Java_com_sun_jna_Native_getShort
+(JNIEnv * env, jclass UNUSED(cls), jlong addr)
+{
+    jshort res = 0;
+    MEMCPY(&res, L2A(addr), sizeof(res));
+    return res;
+}
+
+/*
+ * Class:     Native
+ * Method:    _getString
+ * Signature: (JB)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_sun_jna_Native_getString
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jboolean wide)
+{
+  return newJavaString(env, L2A(addr), wide);
+}
+
+/*
+ * Class:     Native
+ * Method:    _setMemory
+ * Signature: (JJB)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setMemory
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jlong count, jbyte value)
+{
+  MEMSET(L2A(addr), (int)value, (size_t)count);
+}
+
+/*
+ * Class:     Native
+ * Method:    _setByte
+ * Signature: (JB)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setByte
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jbyte value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setChar
+ * Signature: (JC)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setChar
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jchar value)
+{
+  wchar_t ch = value;
+  MEMCPY(L2A(addr), &ch, sizeof(ch));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setNative
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setPointer
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jlong value)
+{
+  void *ptr = L2A(value);
+  MEMCPY(L2A(addr), &ptr, sizeof(void *));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setDouble
+ * Signature: (JD)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setDouble
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jdouble value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setFloat
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setFloat
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jfloat value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setInt
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setInt
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jint value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setLong
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setLong
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jlong value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setShort
+ * Signature: (JS)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setShort
+(JNIEnv * env, jclass UNUSED(cls), jlong addr, jshort value)
+{
+  MEMCPY(L2A(addr), &value, sizeof(value));
+}
+
+/*
+ * Class:     Native
+ * Method:    _setString
+ * Signature: (JLjava/lang/String;Z)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setString
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jstring value, jboolean wide)
+{
+    int len = (*env)->GetStringLength(env, value);
+    const void* volatile str;
+    volatile int size = len + 1;
+
+    if (wide) {
+      size *= sizeof(wchar_t);
+      str = newWideCString(env, value);
+    }
+    else {
+      str = newCStringEncoding(env, value, jna_encoding);
+    }
+    if (str != NULL) {
+      MEMCPY(L2A(addr), str, size);
+      free((void*)str);
+    }
+}
+
+/*
+ * Class:     Native
+ * Method:    malloc
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_malloc
+(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong size)
+{
+    return A2L(malloc((size_t)size));
+}
+
+/*
+ * Class:     Native
+ * Method:    free
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_free
+(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong ptr)
+{
+    free(L2A(ptr));
 }
 
 
@@ -2120,6 +2650,7 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
 }
   
+#ifndef NO_JAWT
 #if !defined(__APPLE__)
 #define JAWT_HEADLESS_HACK
 #ifdef _WIN32
@@ -2133,10 +2664,12 @@ static void* jawt_handle = NULL;
 static jboolean (JNICALL *pJAWT_GetAWT)(JNIEnv*,JAWT*);
 #define JAWT_GetAWT (*pJAWT_GetAWT)
 #endif
+#endif /* NO_JAWT */
 
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), jobject w) {
   jlong handle = 0;
+#ifndef NO_JAWT
   JAWT_DrawingSurface* ds;
   JAWT_DrawingSurfaceInfo* dsi;
   jint lock;
@@ -2257,13 +2790,16 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
     ds->Unlock(ds);
     awt.FreeDrawingSurface(ds);
   }
-
+#endif /* NO_JAWT */
   return handle;
 }
 
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native__1getDirectBufferPointer(JNIEnv *env, jclass UNUSED(classp), jobject buffer) {
-  void* addr = (*env)->GetDirectBufferAddress(env, buffer);
+  void* addr = NULL;
+#ifndef NO_NIO_BUFFERS
+  addr = (*env)->GetDirectBufferAddress(env, buffer);
+#endif
   if (addr == NULL) {
     throwByName(env, EIllegalArgument, "Non-direct Buffer is not supported");
     return 0;
@@ -2326,129 +2862,6 @@ Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass UNUSED(classp)) {
   return newJavaString(env, CHECKSUM, JNI_FALSE);
 }
 
-void
-extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean promote) {
-  if (value == NULL) {
-    *(void **)resp = NULL;
-  }
-  else if ((*env)->IsInstanceOf(env, value, classVoid)) {
-    // nothing to do
-  }
-  else if ((*env)->IsInstanceOf(env, value, classBoolean)) {
-    jboolean b = (*env)->GetBooleanField(env, value, FID_Boolean_value);
-    if (promote) {
-      *(ffi_arg*)resp = b;
-    }
-    else {
-      *(jint*)resp = b;
-    }
-  }
-  else if ((*env)->IsInstanceOf(env, value, classByte)) {
-    jbyte b = (*env)->GetByteField(env, value, FID_Byte_value);
-    if (promote) {
-      *(ffi_arg*)resp = b;
-    }
-    else {
-      *(jbyte*)resp = b;
-    }
-  }
-  else if ((*env)->IsInstanceOf(env, value, classShort)) {
-    jshort s = (*env)->GetShortField(env, value, FID_Short_value);
-    if (promote) {
-      *(ffi_arg*)resp = s;
-    }
-    else {
-      *(jshort*)resp = s;
-    }
-  }
-  else if ((*env)->IsInstanceOf(env, value, classCharacter)) {
-    jchar c = (*env)->GetCharField(env, value, FID_Character_value);
-    if (promote) {
-      *(ffi_arg*)resp = c;
-    }
-    else {
-      *(wchar_t*)resp = c;
-    }
-  }
-  else if ((*env)->IsInstanceOf(env, value, classInteger)) {
-    jint i = (*env)->GetIntField(env, value, FID_Integer_value);
-    if (promote) {
-      *(ffi_arg*)resp = i;
-    }
-    else {
-      *(jint*)resp = i;
-    }
-  }
-  else if ((*env)->IsInstanceOf(env, value, classLong)) {
-    *(jlong *)resp = (*env)->GetLongField(env, value, FID_Long_value);
-  }
-  else if ((*env)->IsInstanceOf(env, value, classFloat)) {
-    *(float *)resp = (*env)->GetFloatField(env, value, FID_Float_value);
-  }
-  else if ((*env)->IsInstanceOf(env, value, classDouble)) {
-    *(double *)resp = (*env)->GetDoubleField(env, value, FID_Double_value);
-  }
-  else if ((*env)->IsInstanceOf(env, value, classStructure)) {
-    void* ptr = getStructureAddress(env, value);
-    memcpy(resp, ptr, size);
-  }
-  else if ((*env)->IsInstanceOf(env, value, classPointer)) {
-    *(void **)resp = getNativeAddress(env, value);
-  }
-  else {
-    fprintf(stderr, "JNA: unrecognized return type, size %d\n", (int)size);
-    memset(resp, 0, size);
-  }
-}
-
-/** Construct a new Java object from a native value.  */
-jobject
-new_object(JNIEnv* env, char jtype, void* valuep, jboolean promote) {
-    switch(jtype) {
-    case 's':
-      return newJavaPointer(env, valuep);
-    case '*': 
-      return newJavaPointer(env, *(void**)valuep);
-    case 'J':
-      return (*env)->NewObject(env, classLong, MID_Long_init,
-                               *(jlong *)valuep);
-    case 'F':
-      return (*env)->NewObject(env, classFloat, MID_Float_init,
-                               *(float *)valuep);
-    case 'D':
-      return (*env)->NewObject(env, classDouble, MID_Double_init,
-                               *(double *)valuep);
-    case 'Z':
-      // Default mapping for boolean is int32_t
-      return (*env)->NewObject(env, classBoolean, MID_Boolean_init,
-                               (promote
-				? (jint)*(ffi_arg*)valuep
-				: (*(jint *)valuep)) ? JNI_TRUE : JNI_FALSE);
-    case 'B':
-      return (*env)->NewObject(env, classByte, MID_Byte_init,
-                               promote
-			       ? (jbyte)*(ffi_arg*)valuep
-			       : (*(jbyte *)valuep));
-    case 'C':
-      return (*env)->NewObject(env, classCharacter, MID_Character_init,
-                               promote
-			       ? (jchar)*(ffi_arg*)valuep
-			       : (jchar)(*(wchar_t *)valuep));
-    case 'S':
-      return (*env)->NewObject(env, classShort, MID_Short_init,
-                               promote
-			       ? (jshort)*(ffi_arg*)valuep
-			       : (*(jshort *)valuep));
-    case 'I':
-      return (*env)->NewObject(env, classInteger, MID_Integer_init,
-                               promote
-			       ? (jint)*(ffi_arg*)valuep
-			       : *(jint *)valuep);
-    default:
-      return NULL;
-    }
-}
-
 JNIEXPORT jint JNICALL 
 JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
   JNIEnv* env;
@@ -2471,7 +2884,6 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
     fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
     result = 0;
   }
-
   if (!attached) {
     (*jvm)->DetachCurrentThread(jvm);
   }
@@ -2484,9 +2896,11 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
   jobject* refs[] = {
     &classObject, &classClass, &classMethod,
     &classString, 
+#ifndef NO_NIO_BUFFERS
     &classBuffer, &classByteBuffer, &classCharBuffer,
     &classShortBuffer, &classIntBuffer, &classLongBuffer,
     &classFloatBuffer, &classDoubleBuffer,
+#endif /* NO_NIO_BUFFERS */
     &classVoid, &classPrimitiveVoid,
     &classBoolean, &classPrimitiveBoolean,
     &classByte, &classPrimitiveByte,
@@ -2534,301 +2948,6 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
 
   if (!attached) {
     (*vm)->DetachCurrentThread(vm);
-  }
-}
-
-/** Get the FFI type for the native type which will be converted to the given
-    Java class. */
-ffi_type*
-get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
-  switch (jtype) {
-  case 'Z': 
-    return &ffi_type_uint32;
-  case 'B':
-    return &ffi_type_sint8;
-  case 'C':
-    return sizeof(wchar_t) == 2 ? &ffi_type_uint16 : &ffi_type_uint32;
-  case 'S':
-    return &ffi_type_sint16;
-  case 'I':
-    return &ffi_type_sint32;
-  case 'J':
-    return &ffi_type_sint64;
-  case 'F':
-    return &ffi_type_float;
-  case 'D':
-    return &ffi_type_double;
-  case 'V':
-    return &ffi_type_void;
-  case 's': {
-    jobject s = (*env)->CallStaticObjectMethod(env, classStructure,
-                                               MID_Structure_newInstance, cls);
-    return getStructureType(env, s);
-  }
-  case '*':
-  default:
-    return &ffi_type_pointer;
-  }
-}
-
-/** Return the FFI type corresponding to the native equivalent of a
-    callback function's return value. */
-ffi_type*
-get_ffi_rtype(JNIEnv* env, jclass cls, char jtype) {
-  switch (jtype) {
-  case 'Z': 
-  case 'B': 
-  case 'C': 
-  case 'S':    
-  case 'I':
-    /*
-     * Always use a return type the size of a cpu register.  This fixes up
-     * callbacks on big-endian 64bit machines, and does not break things on
-     * i386 or amd64. 
-     */
-    return &ffi_type_slong;
-  default:
-    return get_ffi_type(env, cls, jtype);
-  }
-}
-
-typedef struct _method_data {
-  ffi_cif cif;
-  ffi_cif closure_cif;
-  void*   fptr;
-  ffi_type** arg_types;
-  ffi_type** closure_arg_types;
-  int*    flags;
-  int     rflag;
-  jclass  closure_rclass;
-  jobject* to_native;
-  jobject  from_native;
-  jboolean throw_last_error;
-} method_data;
-
-/** Direct invocation glue.  VM vectors to this callback, which in turn calls
-    native code 
-*/
-static void
-method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
-  JNIEnv* env = (JNIEnv*)*(void **)argp[0];
-  method_data *data = (method_data*)cdata;
-
-  // ignore first two arguments, which are pointers
-  void** args = argp + 2;
-  void** volatile objects = NULL;
-  release_t* volatile release = NULL;
-  void** volatile elems = NULL;
-  unsigned i;
-  void* oldresp = resp;
-  const char* volatile throw_type = NULL;
-  const char* volatile throw_msg = NULL;
-  char msg[64];
-
-  if (data->flags) {
-    objects = alloca(data->cif.nargs * sizeof(void*));
-    memset(objects, 0, data->cif.nargs * sizeof(void*));
-    release = alloca(data->cif.nargs * sizeof(release_t));
-    memset(release, 0, data->cif.nargs * sizeof(release_t));
-    elems = alloca(data->cif.nargs * sizeof(void*));
-    for (i=0;i < data->cif.nargs;i++) {
-      if (data->flags[i] == CVT_DEFAULT) {
-        continue;
-      }
-      if (data->arg_types[i]->type == FFI_TYPE_POINTER
-          && *(void **)args[i] == NULL) {
-        continue;
-      }
-      switch(data->flags[i]) {
-      case CVT_INTEGER_TYPE:
-        {
-          jlong value = getIntegerTypeValue(env, *(void **)args[i]);
-          if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
-            args[i] = alloca(data->cif.arg_types[i]->size);
-          }
-          if (data->cif.arg_types[i]->size > sizeof(ffi_arg)) {
-            *(jlong *)args[i] = value;
-          }
-          else {
-            *(ffi_arg *)args[i] = (ffi_arg)value;
-          }
-        }
-        break;
-      case CVT_POINTER_TYPE:
-        *(void **)args[i] = getPointerTypeAddress(env, *(void **)args[i]);
-        break;
-      case CVT_TYPE_MAPPER:
-        {
-          void* valuep = args[i];
-          int jtype = get_jtype_from_ffi_type(data->closure_cif.arg_types[i+2]);
-          jobject obj = jtype == '*'
-            ? *(void **)valuep
-            : new_object(env, (char)jtype, valuep, JNI_FALSE);
-          if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
-            args[i] = alloca(data->cif.arg_types[i]->size);
-          }
-          toNativeTypeMapped(env, obj, args[i],
-                             data->cif.arg_types[i]->size,
-                             data->to_native[i]);
-        }
-        break;
-      case CVT_NATIVE_MAPPED:
-        toNative(env, *(void **)args[i], args[i], data->cif.arg_types[i]->size, JNI_FALSE);
-        break;
-      case CVT_POINTER:
-        *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
-        break;
-      case CVT_STRUCTURE:
-        objects[i] = *(void **)args[i];
-        writeStructure(env, *(void **)args[i]);
-        *(void **)args[i] = getStructureAddress(env, *(void **)args[i]);
-        break;
-      case CVT_STRUCTURE_BYVAL:
-        objects[i] = *(void **)args[i];
-        writeStructure(env, objects[i]);
-        args[i] = getStructureAddress(env, objects[i]);
-        break;
-      case CVT_STRING:
-        *(void **)args[i] = newCStringEncoding(env, (jstring)*(void **)args[i], jna_encoding);
-        break;
-      case CVT_WSTRING:
-        {
-          jstring s = (*env)->CallObjectMethod(env, *(void **)args[i], MID_Object_toString);
-          *(void **)args[i] = newWideCString(env, s);
-        }
-        break;
-      case CVT_CALLBACK:
-        *(void **)args[i] = getCallbackAddress(env, *(void **)args[i]);
-        break;
-      case CVT_BUFFER:
-        {
-          void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
-          if (ptr != NULL) {
-            objects[i] = NULL;
-            release[i] = NULL;
-          }
-          else {
-            ptr = getBufferArray(env, *(jobject *)args[i], (jobject *)&objects[i], &elems[i], (void**)&release[i]);
-            if (ptr == NULL) {
-              throw_type = EIllegalArgument;
-              throw_msg = "Buffer arguments must be direct or have a primitive backing array";
-              goto cleanup;
-            }
-          }
-          *(void **)args[i] = ptr;
-        }
-        break;
-#define ARRAY(Type)                             \
- do { \
-   objects[i] = *(void **)args[i];                                      \
-   release[i] = (void *)(*env)->Release##Type##ArrayElements;           \
-   elems[i] = *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } while(0)
-      case CVT_ARRAY_BYTE: ARRAY(Byte); break;
-      case CVT_ARRAY_SHORT: ARRAY(Short); break;
-      case CVT_ARRAY_CHAR: ARRAY(Char); break;
-      case CVT_ARRAY_INT: ARRAY(Int); break;
-      case CVT_ARRAY_LONG: ARRAY(Long); break;
-      case CVT_ARRAY_FLOAT: ARRAY(Float); break;
-      case CVT_ARRAY_DOUBLE: ARRAY(Double); break;
-      default:
-        break;
-      }
-    }
-  }
-
-  if (data->rflag == CVT_NATIVE_MAPPED) {
-    resp = alloca(sizeof(jobject));
-  }
-  else if (data->rflag == CVT_TYPE_MAPPER) {
-    // Ensure enough space for the inner call result
-    resp = alloca(data->cif.rtype->size);
-  }
-  else if (data->rflag == CVT_STRUCTURE_BYVAL) {
-    // In the case of returned structure by value, the inner and
-    // outer calls have different return types; we pass the structure memory
-    // to the inner call but return a Java object to the outer call.
-    resp = alloca(data->cif.rtype->size);
-  }
-
-  {
-    PSTART();
-    if (data->throw_last_error) {
-      SET_LAST_ERROR(0);
-    }
-    ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
-    if (data->throw_last_error) {
-      int error = GET_LAST_ERROR();
-      if (error) {
-        snprintf(msg, sizeof(msg), "%d", error);
-        throw_type = ELastError;
-        throw_msg = msg;
-      }
-    }
-    PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
-  }
-
-  switch(data->rflag) {
-  case CVT_TYPE_MAPPER:
-    fromNativeTypeMapped(env, data->from_native, resp, data->cif.rtype, data->closure_rclass, oldresp);
-    break;
-  case CVT_INTEGER_TYPE:
-  case CVT_POINTER_TYPE:
-  case CVT_NATIVE_MAPPED:
-    *(void **)oldresp = fromNative(env, data->closure_rclass, data->cif.rtype, resp, JNI_TRUE);
-    break;
-  case CVT_POINTER:
-    *(void **)resp = newJavaPointer(env, *(void **)resp);
-    break;
-  case CVT_STRING:
-    *(void **)resp = newJavaString(env, *(void **)resp, JNI_FALSE);
-    break;
-  case CVT_WSTRING:
-    *(void **)resp = newJavaWString(env, *(void **)resp);
-    break;
-  case CVT_STRUCTURE:
-    *(void **)resp = newJavaStructure(env, *(void **)resp, data->closure_rclass, JNI_FALSE);
-    break;
-  case CVT_STRUCTURE_BYVAL:
-    *(void **)oldresp = newJavaStructure(env, resp, data->closure_rclass, JNI_TRUE);
-    break;
-  case CVT_CALLBACK:
-    *(void **)resp = newJavaCallback(env, *(void **)resp, data->closure_rclass);
-    break;
-  default:
-    break;
-  }
-
-  cleanup:
-  if (data->flags) {
-    for (i=0;i < data->cif.nargs;i++) {
-      switch(data->flags[i]) {
-      case CVT_STRUCTURE:
-        if (objects[i]) {
-          (*env)->CallVoidMethod(env, objects[i], MID_Structure_read);
-        }
-        break;
-      case CVT_STRING:
-      case CVT_WSTRING:
-        // Free allocated native strings
-        free(*(void **)args[i]);
-        break;
-      case CVT_BUFFER:
-      case CVT_ARRAY_BYTE:
-      case CVT_ARRAY_SHORT:
-      case CVT_ARRAY_CHAR:
-      case CVT_ARRAY_INT:
-      case CVT_ARRAY_LONG:
-      case CVT_ARRAY_FLOAT:
-      case CVT_ARRAY_DOUBLE:
-        if (*(void **)args[i] && release[i])
-          release[i](env, objects[i], elems[i], 0);
-        break;
-      }
-    }
-  }
-
-  if (throw_type) {
-    throwByName(env, throw_type, throw_msg);
   }
 }
 
@@ -2894,7 +3013,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   jlong* types = atypes ? (*env)->GetLongArrayElements(env, atypes, NULL) : NULL;
   jlong* closure_types = closure_atypes ? (*env)->GetLongArrayElements(env, closure_atypes, NULL) : NULL;
   jint* cvts = conversions ? (*env)->GetIntArrayElements(env, conversions, NULL) : NULL;
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
   if (cc == CALLCONV_STDCALL) abi = FFI_STDCALL;
 #else
   // avoid compiler warning
@@ -2984,48 +3103,6 @@ Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi
   return A2L(cif);
 }
 
-static void
-closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
-{
-  callback* cb = (callback *)cdata;
-  JavaVM* jvm = cb->vm;
-  JNIEnv* env;
-  jobject obj;
-  int attached;
-
-  attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
-  if (!attached) {
-    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach native thread to VM for closure handler\n");
-      return;
-    }
-  }
-
-  // Give the callback its own local frame to ensure all local references
-  // are properly disposed
-  if ((*env)->PushLocalFrame(env, 16) < 0) {
-    fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
-  }
-  else {
-    obj = (*env)->NewLocalRef(env, cb->object);
-    if ((*env)->IsSameObject(env, obj, NULL)) {
-      fprintf(stderr, "JNA: callback object has been garbage collected\n");
-      if (cif->rtype->type != FFI_TYPE_VOID)
-        memset(resp, 0, cif->rtype->size);
-    }
-    else {
-      (*env)->CallVoidMethod(env, obj, MID_ffi_callback_invoke,
-                             A2L(cif), A2L(resp), A2L(argp));
-    }    
-    
-    (*env)->PopLocalFrame(env, NULL);
-  }
-
-  if (!attached) {
-    (*jvm)->DetachCurrentThread(jvm);
-  }
-}
-
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_ffi_1prep_1closure(JNIEnv *env, jclass UNUSED(cls), jlong cif, jobject obj) 
 {
@@ -3066,15 +3143,6 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
     return 0;
   }
   return (jint)type->size;
-}
-
-/** Returns the last error code. */
-int lastError() {
-  return GET_LAST_ERROR();
-}
-/** Set the last error code. */
-void setLastError(int err) {
-  SET_LAST_ERROR(err);
 }
 
 #ifdef __cplusplus
