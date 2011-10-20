@@ -1,3 +1,5 @@
+An implementation of balloon tips.
+
 Compile the two classes in this directory.  Requires Java 1.5+.
 
 javac -cp examples.jar *.java
