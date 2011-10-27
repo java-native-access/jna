@@ -45,10 +45,12 @@ Features
 * VM crash protection (optional)
 * Optimized direct mapping for high-performance applications.
 
-Community
-=========
+Community and Support
+=====================
 
 All questions should be posted ot the [jna-users Google group](http://groups.google.com/group/jna-users). Issues can be submitted [here on Github](https://github.com/twall/jna/issues).
+
+For commercial support, please contact twalljava [at] java [dot] net.
 
 Using the Library
 =================
