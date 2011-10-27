@@ -409,10 +409,36 @@ testStructurePointerArgument(struct CheckFieldAlignment* arg) {
   return arg;
 }
 
-EXPORT double
+EXPORT int
 testStructureByValueArgument(struct CheckFieldAlignment arg) {
-  return arg.int8Field + arg.int16Field + arg.int32Field
-    + arg.int64Field + arg.floatField + arg.doubleField;
+  int offset;
+  struct CheckFieldAlignment *base = (struct CheckFieldAlignment *)0;
+#define FLAG(F) ((F)<<8)
+  offset = (char *)&base->int8Field - (char*)base;
+  if (arg.int8Field != offset) {
+    return (int)offset | FLAG(1);
+  }
+  offset = (char *)&base->int16Field - (char*)base;
+  if (arg.int16Field != offset) {
+    return (int)offset | FLAG(2);
+  }
+  offset = (char *)&base->int32Field - (char*)base;
+  if (arg.int32Field != offset) {
+    return (int)offset | FLAG(3);
+  }
+  offset = (char *)&base->int64Field - (char*)base;
+  if (arg.int64Field != offset) {
+    return (int)offset | FLAG(4);
+  }
+  offset = (char *)&base->floatField - (char*)base;
+  if (arg.floatField != offset) {
+    return (int)offset | FLAG(5);
+  }
+  offset = (char *)&base->doubleField - (char*)base;
+  if (arg.doubleField != offset) {
+    return (int)offset | FLAG(6);
+  }
+  return 0;
 }
 
 typedef struct ByValue8 { int8_t data; } ByValue8;

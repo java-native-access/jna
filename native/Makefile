@@ -11,7 +11,7 @@
 #
 #   Windows 2000/XP/2003/Vista (x86/amd64)
 #   Darwin/OS X (i386/x86_64/ppc)
-#   Linux (i386/amd64/ppc) 
+#   Linux (i386/amd64/ppc/arm) 
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
 #

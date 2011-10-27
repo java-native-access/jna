@@ -40,12 +40,20 @@ public class ArgumentsMarshalTest extends TestCase {
             public static class ByReference extends CheckFieldAlignment
                 implements Structure.ByReference { }
         
-            public byte int8Field = 1;
-            public short int16Field = 2;
-            public int int32Field = 3;
-            public long int64Field = 4;
-            public float floatField = 5f;
-            public double doubleField = 6d;
+            public byte int8Field;
+            public short int16Field;
+            public int int32Field;
+            public long int64Field;
+            public float floatField;
+            public double doubleField;
+	    public CheckFieldAlignment() {
+		int8Field = (byte)fieldOffset("int8Field");
+		int16Field = (short)fieldOffset("int16Field");
+		int32Field = fieldOffset("int32Field");
+		int64Field = fieldOffset("int64Field");
+		floatField = fieldOffset("floatField");
+		doubleField = fieldOffset("doubleField");
+	    }
         }
 
         String returnStringArgument(Object arg);
@@ -76,7 +84,7 @@ public class ArgumentsMarshalTest extends TestCase {
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
         Pointer testStructurePointerArgument(CheckFieldAlignment p);
-        double testStructureByValueArgument(CheckFieldAlignment.ByValue p);
+        int testStructureByValueArgument(CheckFieldAlignment.ByValue p);
         int testStructureArrayInitialization(CheckFieldAlignment[] p, int len);
         void modifyStructureArray(CheckFieldAlignment[] p, int length);
         
@@ -341,8 +349,8 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testStructureByValueArgument() {
         TestLibrary.CheckFieldAlignment.ByValue struct = 
             new TestLibrary.CheckFieldAlignment.ByValue();
-        assertEquals("Wrong sum of fields for " + struct.toString(true),
-                     21d, lib.testStructureByValueArgument(struct));
+        assertEquals("Wrong alignment in " + struct.toString(true),
+                     "0", Integer.toHexString(lib.testStructureByValueArgument(struct)));
     }
     
     public void testStructureByValueTypeInfo() {

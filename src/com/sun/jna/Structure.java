@@ -84,7 +84,7 @@ public abstract class Structure {
             "first", "second", "middle", "penultimate", "last",
         };
         public int first;
-		public int second;
+	public int second;
         public int middle;
         public int penultimate;
         public int last;
@@ -95,6 +95,7 @@ public abstract class Structure {
 
     static final boolean isPPC;
     static final boolean isSPARC;
+    static final boolean isARM;
 
     static {
         // Check for predictable field order; IBM and JRockit store fields in
@@ -113,6 +114,7 @@ public abstract class Structure {
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
+	isARM = "arm".equals(arch);
     }
 
     /** Use the platform default alignment. */
@@ -132,7 +134,7 @@ public abstract class Structure {
     //public static final int ALIGN_8 = 6;
 
     static final int MAX_GNUC_ALIGNMENT =
-        isSPARC || (isPPC && Platform.isLinux())
+        isSPARC || ((isPPC || isARM) && Platform.isLinux())
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
 
@@ -444,6 +446,15 @@ public abstract class Structure {
                 reading().remove(getPointer());
             }
         }
+    }
+
+    /** Returns the calculated offset of the given field. */
+    protected int fieldOffset(String name) {
+	ensureAllocated();
+	StructField f = (StructField)structFields.get(name);
+        if (f == null)
+            throw new IllegalArgumentException("No such field: " + name);
+	return f.offset;
     }
 
     /** Force a read of the given field from native memory.  The Java field
@@ -1022,9 +1033,9 @@ public abstract class Structure {
                 contents += prefix + "}";
         }
         if (indent == 0 && dumpMemory) {
-            byte[] buf = getPointer().getByteArray(0, size());
             final int BYTES_PER_ROW = 4;
             contents += LS + "memory dump" + LS;
+            byte[] buf = getPointer().getByteArray(0, size());
             for (int i=0;i < buf.length;i++) {
                 if ((i % BYTES_PER_ROW) == 0) contents += "[";
                 if (buf[i] >=0 && buf[i] < 16)
