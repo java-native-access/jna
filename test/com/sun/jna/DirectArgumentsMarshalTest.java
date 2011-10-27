@@ -50,7 +50,7 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         public native double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
         public native Pointer testStructurePointerArgument(CheckFieldAlignment p);
-        public native double testStructureByValueArgument(CheckFieldAlignment.ByValue p);
+        public native int testStructureByValueArgument(CheckFieldAlignment.ByValue p);
         public int testStructureArrayInitialization(CheckFieldAlignment[] p, int len) {
             throw new UnsupportedOperationException();
         }
