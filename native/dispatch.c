@@ -2,7 +2,7 @@
  * @(#)dispatch.c       1.9 98/03/22
  * 
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
- * Copyright (c) 2007-2009 Timothy Wall. All Rights Reserved.
+ * Copyright (c) 2007-2011 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -158,6 +158,7 @@ static jmethodID MID_Byte_init;
 static jmethodID MID_Boolean_init;
 static jmethodID MID_Float_init;
 static jmethodID MID_Double_init;
+static jmethodID MID_Buffer_position;
 static jmethodID MID_ByteBuffer_array;
 static jmethodID MID_ByteBuffer_arrayOffset;
 static jmethodID MID_CharBuffer_array;
@@ -840,6 +841,8 @@ jnidispatch_init(JNIEnv* env) {
                 "getReturnType", "()Ljava/lang/Class;"))
     return "Method.getReturnType()";
   
+  if (!LOAD_MID(env, MID_Buffer_position, classBuffer, "position", "()I"))
+    return "Buffer.position";
   if (!LOAD_MID(env, MID_ByteBuffer_array, classByteBuffer, "array", "()[B"))
     return "ByteBuffer.array";
   if (!LOAD_MID(env, MID_ByteBuffer_arrayOffset, classByteBuffer, "arrayOffset", "()I"))
@@ -1847,9 +1850,10 @@ do { \
   array = (*env)->CallObjectMethod(env, buf, MID_##TYPE##Buffer_array); \
   if (array != NULL) { \
     offset = \
-       (*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset) \
-       * ELEM_SIZE; \
-    ptr = (*env)->Get##TYPE##ArrayElements(env, array, NULL); \
+      ((*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset)  \
+       + (*env)->CallIntMethod(env, buf, MID_Buffer_position))          \
+      * ELEM_SIZE;                                             \
+     ptr = (*env)->Get##TYPE##ArrayElements(env, array, NULL); \
     if (releasep) *releasep = (void*)(*env)->Release##TYPE##ArrayElements; \
   } \
   else if (releasep) *releasep = NULL; \

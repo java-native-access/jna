@@ -530,7 +530,7 @@ public class ArgumentsMarshalTest extends TestCase {
     
     public void testWrappedByteArrayArgument() {
         byte[] array = new byte[1024];
-        ByteBuffer buf = ByteBuffer.wrap(array, 512, 512).slice();
+        ByteBuffer buf = ByteBuffer.wrap(array, 512, 512);
         final byte MAGIC = (byte)0xAB;
         lib.fillInt8Buffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
@@ -540,7 +540,7 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     public void testWrappedShortArrayArgument() {
         short[] array = new short[1024];
-        ShortBuffer buf = ShortBuffer.wrap(array, 512, 512).slice();
+        ShortBuffer buf = ShortBuffer.wrap(array, 512, 512);
         final short MAGIC = (short)0xABED;
         lib.fillInt16Buffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
@@ -550,7 +550,7 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     public void testWrappedIntArrayArgument() {
         int[] array = new int[1024];
-        IntBuffer buf  = IntBuffer.wrap(array, 512, 512).slice();
+        IntBuffer buf  = IntBuffer.wrap(array, 512, 512);
         final int MAGIC = 0xABEDCF23;
         lib.fillInt32Buffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
@@ -560,7 +560,7 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     public void testWrappedLongArrayArguent() {
         long[] array = new long[1024];
-        LongBuffer buf  = LongBuffer.wrap(array, 512, 512).slice();
+        LongBuffer buf  = LongBuffer.wrap(array, 512, 512);
         final long MAGIC = 0x1234567887654321L;
         lib.fillInt64Buffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
@@ -570,7 +570,7 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     public void testWrappedFloatArrayArguent() {
         float[] array = new float[1024];
-        FloatBuffer buf  = FloatBuffer.wrap(array, 512, 512).slice();
+        FloatBuffer buf  = FloatBuffer.wrap(array, 512, 512);
         final float MAGIC = -118.625f;
         lib.fillFloatBuffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
@@ -580,7 +580,7 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     public void testWrappedDoubleArrayArguent() {
         double[] array = new double[1024];
-        DoubleBuffer buf  = DoubleBuffer.wrap(array, 512, 512).slice();
+        DoubleBuffer buf  = DoubleBuffer.wrap(array, 512, 512);
         final double MAGIC = -118.625;
         lib.fillDoubleBuffer(buf, 512, MAGIC);
         for (int i=0;i < array.length;i++) {
