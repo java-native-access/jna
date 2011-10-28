@@ -3,11 +3,13 @@ Release 3.3.x
 
 Features
 --------
-* Use jna.nosys to avoid loading any system-provided JNA (useful for local build/development)
-* Throw an Error if a system install of JNA is incompatible
-* Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq)
+* Use jna.nosys to avoid loading any system-provided JNA (useful for local build/development).
+* Throw an Error if a system install of JNA is incompatible or if JNA's JNI library does not match.
+* Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq).
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
+* Added jna.nosys to ignore any system-installed JNA.
+* linux/arm 32-bit support (Alex Lam).
 * linux/ppc 32-bit support (Fritiof Hedman).
 * linux multi-arch support (kohsuke).
 * Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
@@ -22,8 +24,10 @@ threads.
 
 Bug Fixes
 --------
-* Revise cleanup of in-use temporary files on win32 (issue 6)
-* Fix structure alignment issues on linux/ppc
+* Revise cleanup of in-use temporary files on win32 (issue 6).
+* Fix structure alignment issues on linux/ppc.
+* Fix structure alignment issues on linux/arm.
+* Account for NIO Buffer position (JIRA issue 185).
 
 Release 3.3.0
 =============

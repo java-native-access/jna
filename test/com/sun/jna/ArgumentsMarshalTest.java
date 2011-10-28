@@ -496,6 +496,12 @@ public class ArgumentsMarshalTest extends TestCase {
         for (int i=0;i < buf.capacity();i++) {
             assertEquals("Bad value at index " + i, MAGIC, buf.get(i));
         }
+        buf.position(512);
+        lib.fillInt8Buffer(buf, 512, (byte)0);
+        for (int i=0;i < buf.capacity();i++) {
+            assertEquals("Bad value at index " + i,
+                         i < 512 ? MAGIC : 0, buf.get(i));
+        }
     }
     
     public void testDirectShortBufferArgument() {

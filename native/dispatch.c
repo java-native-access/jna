@@ -219,6 +219,7 @@ static char* newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding)
 static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 
 static void* getBufferArray(JNIEnv*, jobject, jobject*, void **, void **);
+static void* getDirectBufferAddress(JNIEnv*, jobject);
 static char getArrayComponentType(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
 static void update_last_error(JNIEnv*, int);
@@ -380,7 +381,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
       }
     }
     else if ((*env)->IsInstanceOf(env, arg, classBuffer)) {
-      c_args[i].l = (*env)->GetDirectBufferAddress(env, arg);
+      c_args[i].l = getDirectBufferAddress(env, arg);
       ffi_types[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
       if (c_args[i].l == NULL) {
@@ -1836,6 +1837,43 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
   return 0;
 }
 
+/** Get the direct buffer address, accounting for buffer position. */
+static void*
+getDirectBufferAddress(JNIEnv* env, jobject buf) {
+  void *ptr = (*env)->GetDirectBufferAddress(env, buf);
+  if (ptr != NULL) {
+    int offset = (*env)->CallIntMethod(env, buf, MID_Buffer_position);
+    int size = 0;
+    if ((*env)->IsInstanceOf(env, buf, classByteBuffer)) {
+      size = 1;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classCharBuffer)) {
+      // WARNING: likely mismatch with sizeof(wchar_t)
+      size = 2;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classShortBuffer)) {
+      size = 2;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classIntBuffer)) {
+      size = 4;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classLongBuffer)) {
+      size = 8;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classFloatBuffer)) {
+      size = 4;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classDoubleBuffer)) {
+      size = 8;
+    }
+    else {
+      ptr = NULL;
+      throwByName(env, EError, "Unrecognized NIO buffer type");
+    }
+    ptr = (char*)ptr + offset*size;
+  }
+  return ptr;
+}
 
 static void*
 getBufferArray(JNIEnv* env, jobject buf,
@@ -1856,13 +1894,14 @@ do { \
      ptr = (*env)->Get##TYPE##ArrayElements(env, array, NULL); \
     if (releasep) *releasep = (void*)(*env)->Release##TYPE##ArrayElements; \
   } \
-  else if (releasep) *releasep = NULL; \
+  else if (releasep) *releasep = NULL;         \
 } while(0)
 
   if ((*env)->IsInstanceOf(env, buf, classByteBuffer)) {
     GET_ARRAY(Byte, 1);
   }
   else if((*env)->IsInstanceOf(env, buf, classCharBuffer)) {
+    // WARNING: likely mismatch with sizeof(wchar_t)
     GET_ARRAY(Char, 2);
   }
   else if((*env)->IsInstanceOf(env, buf, classShortBuffer)) {
@@ -2706,7 +2745,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         break;
       case CVT_BUFFER:
         {
-          void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
+          void *ptr = getDirectBufferAddress(env, *(void **)args[i]);
           if (ptr != NULL) {
             objects[i] = NULL;
             release[i] = NULL;
