@@ -8,7 +8,6 @@ Features
 * Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq).
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
-* Added jna.nosys to ignore any system-installed JNA.
 * linux/arm 32-bit support (Alex Lam).
 * linux/ppc 32-bit support (Fritiof Hedman).
 * linux multi-arch support (kohsuke).
