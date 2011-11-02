@@ -619,7 +619,6 @@ static THREAD_FUNC(thread_function, arg) {
   int i;
 
   for (i=0;i < td.repeat_count;i++) {
-    int status;
     func();
     SLEEP(td.sleep_time);
   }

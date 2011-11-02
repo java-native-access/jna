@@ -119,9 +119,19 @@ public class DirectTest extends TestCase {
                       new File(BUILDDIR + "/test-classes").toURI().toURL(),
                   }, null);
         }
+        protected Class findClass(String name) throws ClassNotFoundException {
+            String boot = System.getProperty("jna.boot.library.path");
+            if (boot != null) {
+                System.setProperty("jna.boot.library.path", "");
+            }
+            Class cls = super.findClass(name);
+            if (boot != null) {
+                System.setProperty("jna.boot.library.path", boot);
+            }
+            return cls;
+        }
     }
 
-    // wce class loading path
     public void testRegisterMethods() throws Exception {
         // Use a dedicated class loader to ensure the class can be gc'd
         String name = "com.sun.jna.DirectTest$MathLibrary";

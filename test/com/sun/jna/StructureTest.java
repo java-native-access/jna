@@ -781,7 +781,7 @@ public class StructureTest extends TestCase {
     }
 
     public void testToString() {
-        // wce missing String.matches() method
+        // wce missing String.matches() and regex support
         if (Platform.isWindowsCE()) return;
 
         class TestStructure extends Structure {

@@ -62,7 +62,6 @@ public class LastErrorTest extends TestCase {
         }
     }
 
-    // wce setlasterror doesn't persist
     public void testThrowLastErrorDirect() {
         TestLibrary lib = new DirectTestLibrary();
 

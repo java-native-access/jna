@@ -35,6 +35,17 @@ public class JNAUnloadTest extends TestCase {
                     : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
             }, null);
         }
+        protected Class findClass(String name) throws ClassNotFoundException {
+            String boot = System.getProperty("jna.boot.library.path");
+            if (boot != null) {
+                System.setProperty("jna.boot.library.path", "");
+            }
+            Class cls = super.findClass(name);
+            if (boot != null) {
+                System.setProperty("jna.boot.library.path", boot);
+            }
+            return cls;
+        }
     }
 
     public void testLoadFromJar() throws Exception {

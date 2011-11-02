@@ -162,6 +162,26 @@ public class CallbacksTest extends TestCase {
         lib = null;
     }
 
+    public static class Custom implements NativeMapped {
+        private int value;
+        public Custom() { }
+        public Custom(int value) {
+            this.value = value;
+        }
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            return new Custom(((Integer)nativeValue).intValue());
+        }
+        public Class nativeType() {
+            return Integer.class;
+        }
+        public Object toNative() {
+            return new Integer(value);
+        }
+        public boolean equals(Object o) {
+            return o instanceof Custom && ((Custom)o).value == value;
+        }
+    }
+
     public void testLookupNullCallback() {
         assertNull("NULL pointer should result in null callback",
                    CallbackReference.getCallback(null, null));
@@ -491,25 +511,6 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong boolean return", new NativeLong(3), value);
     }
     
-    public static class Custom implements NativeMapped {
-        private int value;
-        public Custom() { }
-        public Custom(int value) {
-            this.value = value;
-        }
-        public Object fromNative(Object nativeValue, FromNativeContext context) {
-            return new Custom(((Integer)nativeValue).intValue());
-        }
-        public Class nativeType() {
-            return Integer.class;
-        }
-        public Object toNative() {
-            return new Integer(value);
-        }
-        public boolean equals(Object o) {
-            return o instanceof Custom && ((Custom)o).value == value;
-        }
-    }
     public void testCallNativeMappedCallback() {
         final boolean[] called = {false};
         final Custom[] cbargs = { null, null};
@@ -678,9 +679,8 @@ public class CallbacksTest extends TestCase {
         }
     }
 
-    /* Most Callbacks are wrapped in DefaultCallbackProxy, which catches their
-     * exceptions.
-     */
+    // Most Callbacks are wrapped in DefaultCallbackProxy, which catches their
+    // exceptions.
     public void testCallbackExceptionHandler() {
         final RuntimeException ERROR = new RuntimeException(getName());
         final Throwable CAUGHT[] = { null };
@@ -710,7 +710,7 @@ public class CallbacksTest extends TestCase {
         }
     }
 
-    /* CallbackProxy is called directly from native. */
+    // CallbackProxy is called directly from native.
     public void testCallbackExceptionHandlerWithCallbackProxy() throws Throwable {
         final RuntimeException ERROR = new RuntimeException(getName());
         final Throwable CAUGHT[] = { null };
@@ -955,6 +955,7 @@ public class CallbacksTest extends TestCase {
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
         final String tname = getName() + " thread";
+        final boolean[] alive = {false};
 
         ThreadGroup testGroup = new ThreadGroup(getName() + " thread group");
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false, tname, testGroup);
@@ -965,21 +966,26 @@ public class CallbacksTest extends TestCase {
                 name[0] = thread.getName();
                 group[0] = thread.getThreadGroup();
                 t[0] = thread;
+                if (thread.isAlive()) {
+                    // NOTE: phoneME incorrectly reports thread "alive" status
+                    alive[0] = true;
+                }
 
-                if (called[0] == 1) {
+                if (++called[0] == 2) {
                     // Allow the thread to exit
-                    System.out.println("Callback detach");
                     Native.detach(true);
                 }
-                ++called[0];
             }
         };
-        callThreadedCallback(cb, init, 1, 100, called);
+        callThreadedCallback(cb, init, 1, 5000, called);
 
         assertTrue("Callback thread not attached as daemon", daemon[0]);
         assertEquals("Wrong thread name", tname, name[0]);
         assertEquals("Wrong thread group", testGroup, group[0]);
-        // fails on wce
+        // NOTE: phoneME incorrectly reports thread "alive" status
+        if (!alive[0]) {
+            throw new Error("VM incorrectly reports Thread.isAlive() == false within callback");
+        }
         assertTrue("Thread should still be alive", t[0].isAlive());
     }
 

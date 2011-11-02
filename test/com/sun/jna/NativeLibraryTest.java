@@ -38,6 +38,7 @@ public class NativeLibraryTest extends TestCase {
         assertNull("Library not GC'd", ref.get());
     }
 
+    // wce fail
     public void testAvoidDuplicateLoads() {
         TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
         assertEquals("Library should be loaded exactly once",

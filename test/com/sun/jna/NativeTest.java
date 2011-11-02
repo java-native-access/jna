@@ -350,11 +350,12 @@ public class NativeTest extends TestCase {
                     "com.sun.jna.DirectArgumentsMarshalTest",
                     "com.sun.jna.DirectByReferenceArgumentsTest",
                     "com.sun.jna.DirectTypeMapperTest",
-                    "com.sun.jna.DirectReturnTypes",
+                    "com.sun.jna.DirectReturnTypesTest",
                     "com.sun.jna.DirectStructureByValueTest",
                     "com.sun.jna.DirectCallbacksTest",
                 };
             }
+            System.out.println("Test suites: " + args.length);
             for (int i=0;i < args.length;i++) {
                 System.out.println("Running tests on class " + args[i]);
                 try {

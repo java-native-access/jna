@@ -671,7 +671,9 @@ public final class Native {
                         nativeLibraryPath = path;
                         return;
                     } catch (UnsatisfiedLinkError ex) {
-                        System.err.println("File found at " + file + " but not loadable: " + ex.getMessage());
+                        // Not a problem if already loaded in anoteher class loader
+                        // Unfortunately we can't distinguish the difference...
+                        //System.out.println("File found at " + file + " but not loadable: " + ex.getMessage());
                     }
                 }
                 if (Platform.isMac()) {

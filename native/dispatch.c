@@ -43,6 +43,8 @@
 #ifdef _WIN32_WCE
 #include <tlhelp32.h>
 #define LOAD_OPTS 0 /* altered search path unsupported on CE */
+#undef GetProcAddress
+#define GetProcAddress GetProcAddressA
 #else
 #define LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
 #endif
@@ -1041,6 +1043,17 @@ getNativeAddress(JNIEnv *env, jobject obj) {
   return NULL;
 }
 
+static char
+getArrayComponentType(JNIEnv *env, jobject obj) {
+  jclass cls = (*env)->GetObjectClass(env, obj);
+  jclass type = (*env)->CallObjectMethod(env, cls, MID_Class_getComponentType);
+  if (type != NULL) {
+    return (char)get_jtype(env, type);
+  }
+  return 0;
+}
+
+#ifndef NO_NIO_BUFFERS
 /** Get the direct buffer address, accounting for buffer position. */
 static void*
 getDirectBufferAddress(JNIEnv* env, jobject buf) {
@@ -1079,17 +1092,6 @@ getDirectBufferAddress(JNIEnv* env, jobject buf) {
   return ptr;
 }
 
-static char
-getArrayComponentType(JNIEnv *env, jobject obj) {
-  jclass cls = (*env)->GetObjectClass(env, obj);
-  jclass type = (*env)->CallObjectMethod(env, cls, MID_Class_getComponentType);
-  if (type != NULL) {
-    return (char)get_jtype(env, type);
-  }
-  return 0;
-}
-
-#ifndef NO_NIO_BUFFERS
 static void*
 getBufferArray(JNIEnv* env, jobject buf,
                jobject* arrayp, void **basep,
@@ -1099,18 +1101,18 @@ getBufferArray(JNIEnv* env, jobject buf,
   jobject array = NULL;
 
 #define GET_ARRAY(TYPE, ELEM_SIZE) \
-do { \
-  array = (*env)->CallObjectMethod(env, buf, MID_##TYPE##Buffer_array); \
-  if (array != NULL) { \
-    offset = \
-      ((*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset)  \
-       + (*env)->CallIntMethod(env, buf, MID_Buffer_position))          \
-      * ELEM_SIZE;                                             \
-    ptr = (*env)->Get##TYPE##ArrayElements(env, array, NULL); \
-    if (releasep) *releasep = (void*)(*env)->Release##TYPE##ArrayElements; \
-  } \
-  else if (releasep) *releasep = NULL; \
-} while(0)
+  do {                                                                  \
+    array = (*env)->CallObjectMethod(env, buf, MID_##TYPE##Buffer_array); \
+    if (array != NULL) {                                                \
+      offset =                                                          \
+        ((*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset) \
+         + (*env)->CallIntMethod(env, buf, MID_Buffer_position))        \
+        * ELEM_SIZE;                                                    \
+      ptr = (*env)->Get##TYPE##ArrayElements(env, array, NULL);         \
+      if (releasep) *releasep = (void*)(*env)->Release##TYPE##ArrayElements; \
+    }                                                                   \
+    else if (releasep) *releasep = NULL;                                \
+  } while(0)
 
   if ((*env)->IsInstanceOf(env, buf, classByteBuffer)) {
     GET_ARRAY(Byte, 1);
@@ -1179,6 +1181,7 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_CREF(env, Class, "java/lang/Class")) return "java.lang.Class";
   if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return "java.lang.reflect.Method";
   if (!LOAD_CREF(env, String, "java/lang/String")) return "java.lang.String";
+#ifndef NO_NIO_BUFFERS
   if (!LOAD_CREF(env, Buffer, "java/nio/Buffer")) return "java.nio.Buffer";
   if (!LOAD_CREF(env, ByteBuffer, "java/nio/ByteBuffer")) return "java.nio.ByteBuffer";
   if (!LOAD_CREF(env, CharBuffer, "java/nio/CharBuffer")) return "java.nio.CharBuffer";
@@ -1187,6 +1190,7 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_CREF(env, LongBuffer, "java/nio/LongBuffer")) return "java.nio.LongBuffer";
   if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return "java.nio.FloatBuffer";
   if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return "java.nio.DoubleBuffer";
+#endif
   
   if (!LOAD_PCREF(env, Void, "java/lang/Void")) return "java.lang.Void";
   if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return "java.lang.Boolean";
