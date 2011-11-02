@@ -2,7 +2,7 @@
  * @(#)dispatch.c       1.9 98/03/22
  * 
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
- * Copyright (c) 2007-2009 Timothy Wall. All Rights Reserved.
+ * Copyright (c) 2007-2011 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@
 #define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_OPTS) : GetModuleHandleW(NULL))
 #define LOAD_ERROR(BUF,LEN) w32_format_error(BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
-#define FIND_ENTRY(HANDLE, NAME) w32_find_entry(HANDLE, NAME)
+#define FIND_ENTRY(HANDLE, NAME) w32_find_entry(env, HANDLE, NAME)
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
@@ -107,9 +107,9 @@ w32_format_error(char* buf, int len) {
   return buf;
 }
 static HANDLE
-w32_find_entry(HANDLE handle, const STRTYPE funname) {
+w32_find_entry(JNIEnv* env, HANDLE handle, const char* funname) {
   void* func = NULL;
-  if (handle != GetModuleHandleW(NULL)) {
+  if (handle != GetModuleHandle(NULL)) {
     func = GetProcAddress(handle, funname);
   }
   else {
@@ -135,7 +135,6 @@ w32_find_entry(HANDLE handle, const STRTYPE funname) {
     if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
     fail:
       throwByName(env, EError, "Unexpected error enumerating modules");
-      free((void *)funname);
       return 0;
     }
     modules = (HMODULE*) alloca (needed);
@@ -220,6 +219,7 @@ static jmethodID MID_Boolean_init;
 static jmethodID MID_Float_init;
 static jmethodID MID_Double_init;
 #ifndef NO_NIO_BUFFERS
+static jmethodID MID_Buffer_position;
 static jmethodID MID_ByteBuffer_array;
 static jmethodID MID_ByteBuffer_arrayOffset;
 static jmethodID MID_CharBuffer_array;
@@ -282,6 +282,7 @@ static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 
 #ifndef NO_NIO_BUFFERS
 static void* getBufferArray(JNIEnv*, jobject, jobject*, void **, void **);
+static void* getDirectBufferAddress(JNIEnv*, jobject);
 #endif
 static char getArrayComponentType(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
@@ -464,7 +465,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     }
 #ifndef NO_NIO_BUFFERS
     else if ((*env)->IsInstanceOf(env, arg, classBuffer)) {
-      c_args[i].l = (*env)->GetDirectBufferAddress(env, arg);
+      c_args[i].l = getDirectBufferAddress(env, arg);
       ffi_types[i] = &ffi_type_pointer;
       ffi_values[i] = &c_args[i].l;
       if (c_args[i].l == NULL) {
@@ -1040,6 +1041,44 @@ getNativeAddress(JNIEnv *env, jobject obj) {
   return NULL;
 }
 
+/** Get the direct buffer address, accounting for buffer position. */
+static void*
+getDirectBufferAddress(JNIEnv* env, jobject buf) {
+  void *ptr = (*env)->GetDirectBufferAddress(env, buf);
+  if (ptr != NULL) {
+    int offset = (*env)->CallIntMethod(env, buf, MID_Buffer_position);
+    int size = 0;
+    if ((*env)->IsInstanceOf(env, buf, classByteBuffer)) {
+      size = 1;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classCharBuffer)) {
+      // WARNING: likely mismatch with sizeof(wchar_t)
+      size = 2;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classShortBuffer)) {
+      size = 2;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classIntBuffer)) {
+      size = 4;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classLongBuffer)) {
+      size = 8;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classFloatBuffer)) {
+      size = 4;
+    }
+    else if ((*env)->IsInstanceOf(env, buf, classDoubleBuffer)) {
+      size = 8;
+    }
+    else {
+      ptr = NULL;
+      throwByName(env, EError, "Unrecognized NIO buffer type");
+    }
+    ptr = (char*)ptr + offset*size;
+  }
+  return ptr;
+}
+
 static char
 getArrayComponentType(JNIEnv *env, jobject obj) {
   jclass cls = (*env)->GetObjectClass(env, obj);
@@ -1064,8 +1103,9 @@ do { \
   array = (*env)->CallObjectMethod(env, buf, MID_##TYPE##Buffer_array); \
   if (array != NULL) { \
     offset = \
-       (*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset) \
-       * ELEM_SIZE; \
+      ((*env)->CallIntMethod(env, buf, MID_##TYPE##Buffer_arrayOffset)  \
+       + (*env)->CallIntMethod(env, buf, MID_Buffer_position))          \
+      * ELEM_SIZE;                                             \
     ptr = (*env)->Get##TYPE##ArrayElements(env, array, NULL); \
     if (releasep) *releasep = (void*)(*env)->Release##TYPE##ArrayElements; \
   } \
@@ -1076,6 +1116,7 @@ do { \
     GET_ARRAY(Byte, 1);
   }
   else if((*env)->IsInstanceOf(env, buf, classCharBuffer)) {
+    // WARNING: likely mismatch with sizeof(wchar_t)
     GET_ARRAY(Char, 2);
   }
   else if((*env)->IsInstanceOf(env, buf, classShortBuffer)) {
@@ -1138,7 +1179,6 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_CREF(env, Class, "java/lang/Class")) return "java.lang.Class";
   if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return "java.lang.reflect.Method";
   if (!LOAD_CREF(env, String, "java/lang/String")) return "java.lang.String";
-#ifndef NO_NIO_BUFFERS
   if (!LOAD_CREF(env, Buffer, "java/nio/Buffer")) return "java.nio.Buffer";
   if (!LOAD_CREF(env, ByteBuffer, "java/nio/ByteBuffer")) return "java.nio.ByteBuffer";
   if (!LOAD_CREF(env, CharBuffer, "java/nio/CharBuffer")) return "java.nio.CharBuffer";
@@ -1147,7 +1187,6 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_CREF(env, LongBuffer, "java/nio/LongBuffer")) return "java.nio.LongBuffer";
   if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return "java.nio.FloatBuffer";
   if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return "java.nio.DoubleBuffer";
-#endif
   
   if (!LOAD_PCREF(env, Void, "java/lang/Void")) return "java.lang.Void";
   if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return "java.lang.Boolean";
@@ -1209,6 +1248,8 @@ jnidispatch_init(JNIEnv* env) {
     return "Method.getReturnType()";
   
 #ifndef NO_NIO_BUFFERS
+  if (!LOAD_MID(env, MID_Buffer_position, classBuffer, "position", "()I"))
+    return "Buffer.position";
   if (!LOAD_MID(env, MID_ByteBuffer_array, classByteBuffer, "array", "()[B"))
     return "ByteBuffer.array";
   if (!LOAD_MID(env, MID_ByteBuffer_arrayOffset, classByteBuffer, "arrayOffset", "()I"))
@@ -1237,7 +1278,7 @@ jnidispatch_init(JNIEnv* env) {
     return "DoubleBuffer.array";
   if (!LOAD_MID(env, MID_DoubleBuffer_arrayOffset, classDoubleBuffer, "arrayOffset", "()I"))
     return "DoubleBuffer.arrayOffset";
-#endif /* NO_NIO_BUFFERS */
+#endif 
 
   if (!LOAD_FID(env, FID_Boolean_value, classBoolean, "value", "Z"))
     return "Boolean.value";
@@ -1551,7 +1592,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
 #ifndef NO_NIO_BUFFERS
       case CVT_BUFFER:
         {
-          void *ptr = (*env)->GetDirectBufferAddress(env, *(void **)args[i]);
+          void *ptr = getDirectBufferAddress(env, *(void **)args[i]);
           if (ptr != NULL) {
             objects[i] = NULL;
             release[i] = NULL;
@@ -1924,7 +1965,7 @@ Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
 
     void *handle = L2A(libHandle);
     void *func = NULL;
-    const STRTYPE funname = NAME2CSTR(env, fun);
+    const char* funname = newCString(env, fun);
 
     if (funname != NULL) {
       func = (void *)FIND_ENTRY(handle, funname);
@@ -2655,7 +2696,11 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
 #define JAWT_HEADLESS_HACK
 #ifdef _WIN32
 #define JAWT_NAME "jawt.dll"
-#define METHOD_NAME (sizeof(void*)==4?"_JAWT_GetAWT@8":"JAWT_GetAWT")
+#if defined(_WIN64)
+#define METHOD_NAME "JAWT_GetAWT"
+#else
+#define METHOD_NAME "_JAWT_GetAWT@8"
+#endif
 #else
 #define JAWT_NAME "libjawt.so"
 #define METHOD_NAME "JAWT_GetAWT"
@@ -2714,8 +2759,8 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
     }
     if ((pJAWT_GetAWT = (void*)FIND_ENTRY(jawt_handle, METHOD_NAME)) == NULL) {
       char msg[1024], buf[1024];
-      snprintf(msg, sizeof(msg), "Error looking up %s: %s",
-              METHOD_NAME, LOAD_ERROR(buf, sizeof(buf)));
+      snprintf(msg, sizeof(msg), "Error looking up JAWT method %s: %s",
+               METHOD_NAME, LOAD_ERROR(buf, sizeof(buf)));
       throwByName(env, EUnsatisfiedLink, msg);
       return -1;
     }

@@ -961,7 +961,6 @@ public class CallbacksTest extends TestCase {
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
                 Thread thread = Thread.currentThread();
-                System.out.println("Callback called on " + thread);
                 daemon[0] = thread.isDaemon();
                 name[0] = thread.getName();
                 group[0] = thread.getThreadGroup();

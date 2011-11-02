@@ -29,7 +29,7 @@ import com.sun.jna.ptr.LongByReference;
  * @author twall@users.sf.net
  */
 //@SuppressWarnings("unused")
-public class StructureTest extends TestCase {
+public class StructureBufferFieldTest extends TestCase {
 
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(StructureBufferFieldTest.class);

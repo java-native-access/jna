@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -16,8 +18,6 @@ public class AnnotatedLibraryTest extends TestCase {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface TestAnnotation {
     }
-
-    public interface Library { } 
 
     public interface AnnotatedLibrary extends Library {
         @TestAnnotation boolean isAnnotated();

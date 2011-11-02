@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import junit.framework.TestCase;
 
 
-public class PointerTest extends TestCase {
+public class PointerBufferTest extends TestCase {
     
     public void testByteBufferPutString() {
         final String MAGIC = "magic";

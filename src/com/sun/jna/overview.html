@@ -152,8 +152,6 @@ public class CLibrary {
 If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry ({@link com.sun.jna.Library#OPTION_FUNCTION_MAPPER}/{@link com.sun.jna.FunctionMapper}) in the options {@link java.util.Map} passed to {@link com.sun.jna.Native#loadLibrary(String,Class,java.util.Map) Native.loadLibrary()} which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
 An instance of the {@link com.sun.jna.Function} class is obtained through the {@link com.sun.jna.NativeLibrary} instance corresponding to the containing native library.  This {@link com.sun.jna.Function} instance handles argument marshalling and delegation to the native function. 
 
-<!-- TODO: when to use primitive array vs NIO Buffer vs Memory -->
-
 <p>
 <a href="#toc">Table of Contents</a>
 <a name="marshalling"></a>
@@ -384,6 +382,10 @@ interface CLibrary extends Library {
 <h3>Structures</h3>
 
 The Java {@link com.sun.jna.Structure} represents a native <code>struct</code>.  By default, this type is treated as a pointer to structure (<code>struct *</code>) on the native side when used as a parameter or return value.  When used as a structure field, the structure is interpreted as by value.  To force the complementary interpretation, the tagging interfaces {@link com.sun.jna.Structure.ByValue} and {@link com.sun.jna.Structure.ByReference} are provided.<p>
+
+The data within a Java <code>Structure</code> is automatically written to
+native memory just before a native function call with a struct parameter, and
+automatically read from native memory after the function returns.<p>
 
 <h4>Pointer-to-Structure Arguments</h4>
 To pass a pointer to a structure as an argument, simply use the Java structure

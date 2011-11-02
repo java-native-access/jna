@@ -24,8 +24,13 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import com.sun.jna.DirectTest.TestInterface;
+import com.sun.jna.DirectTest.TestLibrary;
+
 //@SuppressWarnings("unused")
 public class PerformanceTest extends TestCase {
+
+    public void testEmpty() { }
 
     private static final String BUILDDIR = 
         System.getProperty("jna.builddir",
