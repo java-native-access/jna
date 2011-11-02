@@ -10,6 +10,7 @@ Features
 threads.
 * linux/arm 32-bit support (Alex Lam).
 * linux/ppc 32-bit support (Fritiof Hedman).
+* Windows CE/Mobile support (w32ce-arm) (andrea antonello)
 * linux multi-arch support (kohsuke).
 * Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
 * Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`.
