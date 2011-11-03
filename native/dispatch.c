@@ -1508,7 +1508,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   method_data *data = (method_data*)cdata;
 
   // ignore first two arguments, which are pointers
-  void** args = argp + 2;
+  void** volatile args = argp + 2;
   void** volatile objects = NULL;
   release_t* volatile release = NULL;
   void** volatile elems = NULL;
