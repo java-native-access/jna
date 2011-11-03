@@ -291,7 +291,10 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-amd64.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-arm.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ia64.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ppc.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ppc64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/openbsd-i386.jar" overwrite="true"/>
@@ -629,10 +632,14 @@ processor=sparcv9;osname=sunos,
 
 com/sun/jna/linux-ppc/libjnidispatch.so;
 processor=ppc;osname=linux,
+com/sun/jna/linux-ppc64/libjnidispatch.so;
+processor=ppc64;osname=linux,
 com/sun/jna/linux-i386/libjnidispatch.so;
 processor=x86;osname=linux,
 com/sun/jna/linux-amd64/libjnidispatch.so;
 processor=x86-64;osname=linux,
+com/sun/jna/linux-arm/libjnidispatch.so;
+processor=arm;osname=linux,
 
 com/sun/jna/freebsd-i386/libjnidispatch.so;
 processor=x86;osname=freebsd,
@@ -658,9 +665,18 @@ osname=macos,
       <zipfileset src="${dist}/linux-amd64.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-amd64"/>
+      <zipfileset src="${dist}/linux-arm.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-arm"/>
       <zipfileset src="${dist}/linux-ia64.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ia64"/>
+      <zipfileset src="${dist}/linux-ppc.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-ppc"/>
+      <zipfileset src="${dist}/linux-ppc64.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-ppc64"/>
       <zipfileset src="${dist}/sunos-x86.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
