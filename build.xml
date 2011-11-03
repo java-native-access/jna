@@ -260,6 +260,19 @@
       <arg value="JNIEXPORT"/>
       <fileset dir="${build.native}" includes="*.h"/>
     </apply>
+    <!-- gcj formats a little differently -->
+    <replaceregexp match="^((.*\.h):JNIEXPORT[^(]+)( +\(.*)"
+                   replace="\1&#xa;\2- \3&#xa;--"
+		   byline="true"
+                   file="${md5.file}"/>
+    <replaceregexp match="(JNIEnv *\*) *env"
+                   replace="\1"
+		   byline="true"
+                   file="${md5.file}"/>
+    <replaceregexp match="&#xa;--&#xa;.*\.h-$"
+                   replace=""
+		   flags="m"
+                   file="${md5.file}"/>
     <fixcrlf srcdir="${build.native}" includes="sig" eol="unix"/>
     <checksum property="md5" file="${md5.file}" />
     <condition property="jni.valid" value="true">
