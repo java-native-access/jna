@@ -30,9 +30,12 @@
 # protection simply by defining HAVE_PROTECTION.  This option has been only
 # been enabled for those platforms on which it has been tested successfully.
 
-OS=$(shell uname | sed -e 's/\(CYGWIN\|MINGW32\).*/win32/g' \
+OS=$(shell uname | sed -e 's/CYGWIN.*/win32/g' \
+	                -e 's/MINGW32.*/win32/g' \
                         -e 's/SunOS.*/solaris/g' \
-                        -e 's/\(Net\|Free\|Open\)BSD.*/bsd/g' \
+                        -e 's/NetBSD/netbsd/g' \
+                        -e 's/FreeBSD/freebsd/g' \
+                        -e 's/OpenBSD/openbsd/g' \
                         -e 's/Darwin.*/darwin/g' \
                         -e 's/Linux.*/linux/g')
 
@@ -164,7 +167,7 @@ CDEFINES+=-DHAVE_PROTECTION
 LDFLAGS+=-Wl,-soname,$@
 endif
 
-ifeq ($(OS),bsd)
+ifneq (,$(findstring bsd,$(OS)))
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
