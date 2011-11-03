@@ -124,6 +124,10 @@ typedef struct _callback {
 #define L2A(X) ((void *)(X))
 #define A2L(X) ((jlong)(X))
 #define snprintf sprintf_s
+#else
+#if defined(_WIN32_WCE)
+#define snprintf _snprintf
+#endif
 #endif
 
 /* Convenience macros */

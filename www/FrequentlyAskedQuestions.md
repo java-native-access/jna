@@ -103,10 +103,10 @@ Debugging Structure Definitions
 
 Normally when you invoke `toString` on a `Structure`, it will print each defined field with its calculated memory offset. If when launching the VM, you pass it `"-Djna.dump_memory=true"`, `toString` will also dump the contents of the corresponding native memory. This is useful to determine if you've added or omitted a field, or chosen an incorrect size. Viewing the memory as bytes usually makes it clear where field boundaries should be, assuming the memory has been initialized by native code.
 
-Does JNA work with J2ME/Windows Mobile?
----------------------------------------
+Does JNA work with J2ME/Windows CE/Mobile?
+------------------------------------------
 
-There is an implementation available, but it has not yet been integrated into the standard build.
+There is an implementation included in the regular JNA distribution built with cegcc and tested against phoneME.
 
 I need to use a COM/OCX/ActiveX object. Can JNA do that?
 --------------------------------------------------------

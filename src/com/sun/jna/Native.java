@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 
 import com.sun.jna.Callback.UncaughtExceptionHandler;
@@ -82,7 +83,7 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.3.0";
+    private static final String VERSION = "3.4.0";
     private static final String VERSION_NATIVE = "3.4.0";
 
     // Used by tests, do not remove
@@ -126,6 +127,7 @@ public final class Native {
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
         SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
+
         // Perform initialization of other JNA classes until *after* 
         // initializing the above final fields
         initIDs();
@@ -142,6 +144,7 @@ public final class Native {
                             + " - set the system property jna.nosys=true" + LS
                             + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
+        setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
     }
     
     /** Force a dispose when this class is GC'd. */
@@ -591,14 +594,26 @@ public final class Native {
         return buf;
     }
 
+    /** Generate a canonical String prefix based on the given OS
+        type/arch/name.
+    */
     static String getNativeLibraryResourcePath(int osType, String arch, String name) {
         String osPrefix;
         arch = arch.toLowerCase();
+        if ("powerpc".equals(arch)) {
+            arch = "ppc";
+        }
+        else if ("powerpc64".equals(arch)) {
+            arch = "ppc64";
+        }
         switch(osType) {
         case Platform.WINDOWS:
             if ("i386".equals(arch))
                 arch = "x86";
             osPrefix = "win32-" + arch;
+            break;
+        case Platform.WINDOWSCE:
+            osPrefix = "w32ce-" + arch;
             break;
         case Platform.MAC:
             osPrefix = "darwin";
@@ -623,9 +638,6 @@ public final class Native {
             if ("x86_64".equals(arch)) {
                 arch = "amd64";
             }
-            if ("powerpc".equals(arch)) {
-                arch = "ppc";
-            }
             int space = osPrefix.indexOf(" ");
             if (space != -1) {
                 osPrefix = osPrefix.substring(0, space);
@@ -637,30 +649,32 @@ public final class Native {
     }
 
     /**
-     * Loads the JNA stub library.  It will first attempt to load this library
-     * from the directories specified in jna.boot.library.path.  If that fails,
-     * it will fallback to loading from the system library paths. Finally it will
-     * attempt to extract the stub library from from the JNA jar file, and load it.
-     * <p>
-     * The jna.boot.library.path property is mainly to support jna.jar being
-     * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
-     * are ignored.  It might also be useful in other situations.
-     * </p>
+     * Loads the JNA stub library.
+     * First tries jna.boot.library.path, then the system path, then from the
+     * jar file.
      */
     private static void loadNativeLibrary() {
         removeTemporaryFiles();
 
-        String libName = "jnidispatch";
+        String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
         String bootPath = System.getProperty("jna.boot.library.path");
         if (bootPath != null) {
-            String[] dirs = bootPath.split(File.pathSeparator);
-            for (int i = 0; i < dirs.length; ++i) {
-                String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
-                try {
-                    System.load(path);
-                    nativeLibraryPath = path;
-                    return;
-                } catch (UnsatisfiedLinkError ex) {
+            // String.split not available in 1.4
+            StringTokenizer dirs = new StringTokenizer(bootPath, File.pathSeparator);
+            while (dirs.hasMoreTokens()) {
+                String dir = dirs.nextToken();
+                File file = new File(new File(dir), System.mapLibraryName(libName));
+                String path = file.getAbsolutePath();
+                if (file.exists()) {
+                    try {
+                        System.load(path);
+                        nativeLibraryPath = path;
+                        return;
+                    } catch (UnsatisfiedLinkError ex) {
+                        // Not a problem if already loaded in anoteher class loader
+                        // Unfortunately we can't distinguish the difference...
+                        //System.out.println("File found at " + file + " but not loadable: " + ex.getMessage());
+                    }
                 }
                 if (Platform.isMac()) {
                     String orig, ext;
@@ -671,12 +685,15 @@ public final class Native {
                         orig = "jnilib";
                         ext = "dylib";
                     }
-                    try {
-                        path = path.substring(0, path.lastIndexOf(orig)) + ext;
-                        System.load(path);
-                        nativeLibraryPath = path;
-                        return;
-                    } catch (UnsatisfiedLinkError ex) {
+                    path = path.substring(0, path.lastIndexOf(orig)) + ext;
+                    if (new File(path).exists()) {
+                        try {
+                            System.load(path);
+                            nativeLibraryPath = path;
+                            return;
+                        } catch (UnsatisfiedLinkError ex) {
+                            System.err.println("File found at " + path + " but not loadable: " + ex.getMessage());
+                        }
                     }
                 }
             }
@@ -985,7 +1002,7 @@ public final class Native {
             return POINTER_SIZE;
         }
         if (Pointer.class.isAssignableFrom(cls)
-            || Buffer.class.isAssignableFrom(cls)
+            || (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(cls))
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
             || WString.class == cls) {
@@ -1211,7 +1228,7 @@ public final class Native {
         if (WString.class.isAssignableFrom(type)) {
             return CVT_WSTRING;
         }
-        if (Buffer.class.isAssignableFrom(type)) {
+        if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
             return CVT_BUFFER;
         }
         if (Structure.class.isAssignableFrom(type)) {

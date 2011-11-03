@@ -601,36 +601,37 @@ public class Advapi32Test extends TestCase {
     	int maxReads = 3;     	
     	int rc = 0;
     	while(true) {
-    		if (maxReads-- <= 0)
-				break;			
-    		if (! Advapi32.INSTANCE.ReadEventLog(h, 
-        			WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
-        			0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
-    			rc = Kernel32.INSTANCE.GetLastError();
-    			if (rc == W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-    				buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
-    				continue;
-    			}    			
-    			break;
-    		}
-    		int dwRead = pnBytesRead.getValue();
-    		Pointer pevlr = buffer;
-    		int maxRecords = 3;
-    		while (dwRead > 0 && maxRecords-- > 0) 
-            {
-    			EVENTLOGRECORD record = new EVENTLOGRECORD(pevlr);
-    			/*
-    			System.out.println(record.RecordNumber.intValue()
-    					+ " Event ID: " + record.EventID.intValue()
-    					+ " Event Type: " + record.EventType.intValue()
-    					+ " Event Source: " + pevlr.getString(record.size(), true));
-    					*/
-    			dwRead -= record.Length.intValue();
-    			pevlr = pevlr.share(record.Length.intValue());
+            if (maxReads-- <= 0)
+                break;			
+            if (! Advapi32.INSTANCE.ReadEventLog(h, 
+                                                 WinNT.EVENTLOG_SEQUENTIAL_READ | WinNT.EVENTLOG_FORWARDS_READ, 
+                                                 0, buffer, (int) buffer.size(), pnBytesRead, pnMinNumberOfBytesNeeded)) {
+                rc = Kernel32.INSTANCE.GetLastError();
+                if (rc == W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+                    buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
+                    continue;
+                }    			
+                break;
+            }
+            int dwRead = pnBytesRead.getValue();
+            Pointer pevlr = buffer;
+            int maxRecords = 3;
+            while (dwRead > 0 && maxRecords-- > 0) {
+                EVENTLOGRECORD record = new EVENTLOGRECORD(pevlr);
+                /*
+                  System.out.println(record.RecordNumber.intValue()
+                  + " Event ID: " + record.EventID.intValue()
+                  + " Event Type: " + record.EventType.intValue()
+                  + " Event Source: " + pevlr.getString(record.size(), true));
+                */
+                dwRead -= record.Length.intValue();
+                pevlr = pevlr.share(record.Length.intValue());
             }
     	}
-    	assertTrue(rc == W32Errors.ERROR_HANDLE_EOF || rc == 0);
-    	assertTrue(Advapi32.INSTANCE.CloseEventLog(h));    	
+        assertTrue("Unexpected error after reading event log: " + rc,
+                   rc == W32Errors.ERROR_HANDLE_EOF || rc == 0);
+        assertTrue("Error closing event log",
+                   Advapi32.INSTANCE.CloseEventLog(h));    	
     }
     
     public void testGetOldestEventLogRecord() {

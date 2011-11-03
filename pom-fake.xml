@@ -6,7 +6,7 @@
   <groupId>net.java.dev.jna</groupId>
   <artifactId>jna</artifactId>
   <packaging>jar</packaging>
-  <version>3.3.0</version>
+  <version>3.4.0</version>
   <name>Java Native Access</name>
     
    <distributionManagement>

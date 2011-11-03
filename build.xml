@@ -2,6 +2,16 @@
 <project name="JNA" default="default" basedir=".">
   <description>Builds and tests JNA</description>
 
+  <!-- Default build compiles all platform-independent stuff as well
+       as the JNI bits for the current platform, using the arch model
+       of the current Java VM to determine whether 32- or 64-bit 
+       binaries are built (ANT_OPTS=-d32/-d64 to switch on platforms that 
+       support it).
+
+       Cross-compile by specifying -Dos.prefix={name-arch} to ant 
+       (cross-compile currently only configured/tested on w32ce-arm)
+    -->
+
   <!--  
   Conventions (since ant can't easily specify arbitrary file dependencies):
   The uptodate property for a given target TARGET is "-TARGET"; the actual
@@ -35,7 +45,7 @@
   <buildnumber/>
   <!-- JNA library release version -->            
   <property name="jna.major" value="3"/>
-  <property name="jna.minor" value="3"/>
+  <property name="jna.minor" value="4"/>
   <property name="jna.revision" value="0"/>
   <property name="jna.build" value="${build.number}"/>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
@@ -53,7 +63,14 @@
   <property name="impl.vendor" value="${spec.vendor}"/>
   <property name="impl.version" value="${jna.version} (b${jna.build})"/>
 
+  <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
   <property name="compatibility" value="1.4"/>
+  <condition property="test.compatibility" value="1.4">
+    <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+  </condition>
+  <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java">
+    <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+  </condition>
   <property name="test.compatibility" value="1.5"/>
 
   <!-- Miscellaneous -->
@@ -66,11 +83,6 @@
   <target name="compile-single" depends="compile"/>
 
   <target name="-dynamic-properties">
-    <echo>Java version ${java.version}, compatibility: ${compatibility}</echo>
-    <echo>JNA version ${jna.version}, native ${jni.version}</echo>
-    <echo>${java.vm.name} (${java.vm.vendor}, ${java.vm.version})</echo>
-    <echo>java.home=${java.home}</echo>
-    <echo>java.library.path=${java.library.path}</echo>
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2" 
@@ -159,6 +171,13 @@
     <mkdir dir="${test.classes}"/>
     <mkdir dir="${reports}"/>
     <mkdir dir="${doc}"/>
+
+    <echo>Java version ${java.version}, compatibility: ${compatibility}</echo>
+    <echo>JNA version ${jna.version}, native ${jni.version}</echo>
+    <echo>${java.vm.name} (${java.vm.vendor}, ${java.vm.version})</echo>
+    <echo>java.home=${java.home}</echo>
+    <echo>java.library.path=${java.library.path}</echo>
+    <echo>os.prefix=${os.prefix}</echo>
 
   </target>
 
@@ -260,7 +279,7 @@
       <arg value="JNIEXPORT"/>
       <fileset dir="${build.native}" includes="*.h"/>
     </apply>
-    <!-- gcj formats a little differently -->
+    <!-- Clean up gcj javah output to match that of Sun's javah -->
     <replaceregexp match="^((.*\.h):JNIEXPORT[^(]+)( +\(.*)"
                    replace="\1&#xa;\2- \3&#xa;--"
 		   byline="true"
@@ -289,6 +308,7 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/darwin.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-x86.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-amd64.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/w32ce-arm.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-arm.jar" overwrite="true"/>
@@ -310,7 +330,10 @@
 
   <target name=":rsrc">
     <condition property="-rsrc">
-      <not><os family="windows"/></not>
+      <and>
+        <not><os family="windows"/></not>
+        <not><equals arg1="${os.prefix}" arg2="w32ce-arm"/></not>
+      </and>
     </condition>
   </target>
   <target name="rsrc" depends="-setup,:rsrc" unless="-rsrc"
@@ -343,6 +366,13 @@
     <replaceregexp match="^CHECKSUM=.*"
                    replace="CHECKSUM=${jni.md5} ${comment}"
                    file="native/Makefile" byline="true"/>
+    <!-- Handle cross-compilation -->
+    <condition property="make.OS" value="OS=w32ce" else="IGNORE=">
+      <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+    </condition>
+    <condition property="ARCH" value="arm">
+      <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+    </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64 to build 64-bit if not the platform default -->
     <property name="ARCH" value="${os.arch}"/>
@@ -376,12 +406,16 @@
       <os name="SunOS"/>
     </condition>
     <condition property="make" value="/usr/sfw/bin/gmake">
-      <os name="SunOS"/>
+      <and>
+        <os name="SunOS"/>
+        <available file="/usr/sfw/bin/gmake"/>
+      </and>
     </condition>
     <condition property="make" value="gmake">
       <or>
         <os name="FreeBSD"/>
         <os name="OpenBSD"/>
+        <os name="SunOS"/>
       </or>
     </condition>
 
@@ -399,6 +433,7 @@
       <arg value="${make.SDKROOT}"/>
       <arg value="${make.ARCH}"/>
       <arg value="${make.PATH}"/>
+      <arg value="${make.OS}"/>
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
@@ -431,9 +466,12 @@
            target="${test.compatibility}"
            destdir="${test.classes}" 
            includeantruntime="false"
+           excludes="${tests.exclude-patterns}"
            deprecation="on" debug="${debug}">
       <src path="${test.src}"/>
+      <exclude name="${tests.exclude}"/>
     </javac>
+    <!-- Create a jar for easy movement of tests -->
     <jar jarfile="${build}/${testjar}">
       <fileset dir="${test.classes}">
         <patternset refid="jar-compiled"/>
@@ -450,8 +488,27 @@
     <signjar alias="jna" keystore="jna.keystore" storepass="jnadev" lazy="true"> 
       <fileset dir="${build}/jws" includes="jna.jar,jna-test.jar,junit.jar,jnidispatch.jar,clover.jar"/>
     </signjar>
+
   </target>
 	
+  <target name="wince-test-setup" depends="compile-tests"
+          description="Configure tests for running on a Windows Mobile device">
+    <!-- 'shared' should be the path to a folder mounted as the mobile
+         device/simulator storage card. -->
+    <property name="shared" value="shared"/>
+    <!-- w32ce arm testing -->
+    <jar jarfile="${shared}/test.jar">
+      <zipfileset src="${build}/jna.jar"/>
+      <zipfileset src="${build}/jna-test.jar"/>
+    </jar>
+    <copy todir="${shared}" file="${build}/jna.jar"/>
+    <copy todir="${shared}" file="${build}/native/jnidispatch.dll"/>
+    <copy todir="${shared}" file="${build}/native/testlib.dll"/>
+    <copy todir="${shared}" file="${build}/native/testlib2.dll"/>
+    <copy todir="${shared}" file="w32ce-test.lnk"/>
+    <chmod file="${shared}/*.dll" perm="+x"/>
+  </target>
+
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
   <target name="test" depends="jar,contrib-jars,compile-tests"
@@ -483,6 +540,7 @@
     </condition>
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
+    <property name="tests.exclude-patterns" value=""/>
     <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
       <!-- avoid VM conflicts with JNA protected mode -->
       <env key="${ld.preload}" file="${libjsig}"/>
@@ -497,7 +555,7 @@
       <formatter type="brief" usefile="false"/>
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
-        <fileset dir="${test.src}">
+        <fileset dir="${test.src}" excludes="${tests.exclude-patterns}">
           <include name="com/sun/jna/*Test.java"/>
           <include name="${tests.platform}"/>
           <exclude name="${tests.exclude}"/>
@@ -588,6 +646,11 @@
 
   <target name="dist" depends="jar,contrib-jars,compile-tests,native,javadoc"
           description="Build distribution files">
+    <copy todir="${dist}">
+      <fileset dir="${build}">
+        <include name="${native.jar}"/>
+      </fileset>
+    </copy>
     <jar jarfile="${dist}/jna.jar" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
@@ -620,6 +683,8 @@ com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win32,
 com/sun/jna/win32-amd64/jnidispatch.dll;
 processor=x86-64;osname=win32,
+com/sun/jna/w32ce-arm/jnidispatch.dll;
+processor=arm;osname=wince,
 
 com/sun/jna/sunos-x86/libjnidispatch.so;
 processor=x86;osname=sunos,
@@ -703,19 +768,19 @@ osname=macos,
       <zipfileset src="${dist}/win32-amd64.jar" 
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-amd64"/>
+      <zipfileset src="${dist}/w32ce-arm.jar" 
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/w32ce-arm"/>
     </jar>
     <copy todir="${dist}">
-      <fileset dir="${build}">
-        <include name="${native.jar}"/>
+      <fileset dir="${contrib}/platform/dist">
+  	<include name="platform.jar" />
       </fileset>
-  	  <fileset dir="${contrib}/platform/dist">
-  		<include name="platform.jar" />
-  	  </fileset>
     </copy>
     <copy todir="${dist}/jnacontrib" flatten="true">
-	  <fileset dir="${contrib}">
-		<include name="**/build/demo-*.jar" />
-	  </fileset>
+      <fileset dir="${contrib}">
+	<include name="**/build/demo-*.jar" />
+      </fileset>
     </copy>
     <zip zipfile="${dist}/doc.zip">
       <zipfileset dir="${javadoc}" prefix="javadoc"/>

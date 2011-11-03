@@ -19,7 +19,9 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+#if !defined(_WIN32_WCE)
 #include <errno.h>
+#endif
 
 #ifdef _MSC_VER
 typedef signed char int8_t;
@@ -86,6 +88,12 @@ struct CheckFieldAlignment {
 
 static int _callCount;
 
+EXPORT int
+callCount() {
+  return ++_callCount;
+}
+
+/** Simulate native code setting an arbitrary errno/LastError */
 EXPORT void
 setLastError(int err) {
 #ifdef _WIN32  
@@ -93,11 +101,6 @@ setLastError(int err) {
 #else
   errno = err;
 #endif
-}
-
-EXPORT int
-callCount() {
-  return ++_callCount;
 }
 
 EXPORT int  
@@ -387,9 +390,19 @@ setPointerByReferenceNull(void **arg) {
 
 EXPORT int64_t 
 checkInt64ArgumentAlignment(int32_t i, int64_t j, int32_t i2, int64_t j2) {
-  if (i != 0x10101010 || j != LONG(0x1111111111111111)
-      || i2 != 0x01010101 || j2 != LONG(0x2222222222222222))
+
+  if (i != 0x10101010) {
     return -1;
+  }
+  if (j != LONG(0x1111111111111111)) {
+    return -2;
+  }
+  if (i2 != 0x01010101) {
+    return -3;
+  }
+  if (j2 != LONG(0x2222222222222222)) {
+    return -4;
+  }
 
   return i + j + i2 + j2;
 }
@@ -398,8 +411,11 @@ EXPORT double
 checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   // float:  1=3f800000 2=40000000 3=40400000 4=40800000
   // double: 1=3ff00... 2=40000... 3=40080... 4=40100...
-  if (f != 1 || d != 2 || f2 != 3 || d2 != 4)
-    return -1;
+
+  if (f != 1) return -1;
+  if (d != 2) return -2;
+  if (f2 != 3) return -3;
+  if (d2 != 4) return -4;
 
   return f + d + f2 + d2;
 }
@@ -603,7 +619,6 @@ static THREAD_FUNC(thread_function, arg) {
   int i;
 
   for (i=0;i < td.repeat_count;i++) {
-    int status;
     func();
     SLEEP(td.sleep_time);
   }
@@ -855,7 +870,7 @@ returnStringVarArgs(const char *fmt, ...) {
   return cp;
 }
 
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
 ///////////////////////////////////////////////////////////////////////
 // stdcall tests
 ///////////////////////////////////////////////////////////////////////

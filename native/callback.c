@@ -53,7 +53,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   const char* throw_msg = NULL;
 
   if ((*env)->GetJavaVM(env, &vm) != JNI_OK) {
-    throwByName(env, EUnsatisfiedLink, "Can't get Java VM");
+    throwByName(env, EUnsatisfiedLink, "Can't get Java VM to create native callback");
     return NULL;
   }
   argc = (*env)->GetArrayLength(env, param_types);
@@ -62,6 +62,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
+
   cb->vm = vm;
   cb->arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
   cb->java_arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * (argc + 3));
@@ -83,7 +84,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 
     jtype = get_jtype(env, cls);
     if (jtype == -1) {
-      snprintf(msg, sizeof(msg), "Unsupported argument at index %d", i);
+      snprintf(msg, sizeof(msg), "Unsupported callback argument at index %d", i);
       throw_type = EIllegalArgument;
       throw_msg = msg;
       goto failure_cleanup;
@@ -97,7 +98,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       ncls = getNativeType(env, cls);
       jtype = get_jtype(env, ncls);
       if (jtype == -1) {
-        snprintf(msg, sizeof(msg), "Unsupported NativeMapped argument native type at argument %d", i);
+        snprintf(msg, sizeof(msg), "Unsupported NativeMapped callback argument native type at argument %d", i);
         throw_type = EIllegalArgument;
         throw_msg = msg;
         goto failure_cleanup;
@@ -133,7 +134,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }
@@ -143,13 +144,13 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   rtype = get_jtype(env, return_type);
   if (rtype == -1) {
     throw_type = EIllegalArgument;
-    throw_msg = "Unsupported return type";
+    throw_msg = "Unsupported callback return type";
     goto failure_cleanup;
   }
   ffi_rtype = get_ffi_rtype(env, return_type, (char)rtype);
   if (!ffi_rtype) {
     throw_type = EIllegalArgument;
-    throw_msg = "Error in return type";
+    throw_msg = "Error in callback return type";
     goto failure_cleanup;
   }
   status = ffi_prep_cif(&cb->cif, abi, argc, ffi_rtype, cb->arg_types);
@@ -187,7 +188,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
  failure_cleanup:
   free_callback(env, cb);
   if (throw_type) {
-    throwByName(env, throw_type, msg);
+    throwByName(env, throw_type, throw_msg);
   }
 
   return NULL;

@@ -30,9 +30,26 @@ public class JNAUnloadTest extends TestCase {
     private static class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {
-                new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
+                    Platform.isWindowsCE() 
+                    ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
+                    : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
             }, null);
         }
+        protected Class findClass(String name) throws ClassNotFoundException {
+            String boot = System.getProperty("jna.boot.library.path");
+            if (boot != null) {
+                System.setProperty("jna.boot.library.path", "");
+            }
+            Class cls = super.findClass(name);
+            if (boot != null) {
+                System.setProperty("jna.boot.library.path", boot);
+            }
+            return cls;
+        }
+    }
+
+    public void testLoadFromJar() throws Exception {
+        Class.forName("com.sun.jna.Native", true, new TestLoader(true));
     }
 
     public void testAvoidJarUnpacking() throws Exception {
@@ -53,7 +70,7 @@ public class JNAUnloadTest extends TestCase {
 
     // Fails under clover
     public void testUnloadFromJar() throws Exception {
-        File jar = new File(BUILDDIR + "/jna.jar");
+        File jar = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR) + "/jna.jar");
         if (!jar.exists()) {
             throw new Error("Expected JNA jar file at " + jar + " is missing");
         }

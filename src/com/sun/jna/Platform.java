@@ -20,6 +20,10 @@ public final class Platform {
     public static final int OPENBSD = 5;
     public static final int WINDOWSCE = 6;
 
+    public static final boolean HAS_BUFFERS;
+    public static final String MATH_LIBRARY_NAME;
+    public static final String C_LIBRARY_NAME;
+
     private static final int osType;
     
     static {
@@ -48,6 +52,16 @@ public final class Platform {
         else {
             osType = UNSPECIFIED;
         }
+        boolean hasBuffers = false;
+        try {
+            Class.forName("java.nio.Buffer");
+            hasBuffers = true;
+        }
+        catch(ClassNotFoundException e) {
+        }
+        HAS_BUFFERS = hasBuffers;
+        C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
+        MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
     }
     private Platform() { }
     public static final int getOSType() {
@@ -62,6 +76,7 @@ public final class Platform {
     public static final boolean isWindowsCE() {
         return osType == WINDOWSCE;
     }
+    /** Returns true for any windows variant. */
     public static final boolean isWindows() {
         return osType == WINDOWS || osType == WINDOWSCE;
     }

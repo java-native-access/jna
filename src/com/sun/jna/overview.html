@@ -29,6 +29,7 @@ additional JNI or native code.
 <a name="toc"></a>
 <h2>Table of Contents</h2>
 <ul>
+<li><a href="#loading">Loading JNA</a>
 <li><a href="#library-mapping">Library Mapping</a>
 <li><a href="#function-mapping">Function Mapping</a>
 <li><a href="#marshalling">Type Mapping</a>
@@ -53,6 +54,34 @@ additional JNI or native code.
 </ul>
 
 <p>
+<a href=#navbar_top>Top</a>
+<a name="loading"></a>
+<h2>Loading JNA</h2>
+JNA includes a small, platform-specific shared library which enables all
+native access.  When the {@link com.sun.jna.Native} class is first accessed,
+JNA will first attempt to load this library from the directories specified
+in <code>jna.boot.library.path</code>.  If that fails, it will fall back to
+loading from the system library paths. Finally it will attempt to extract the
+stub library from from the JNA jar file, and load it. 
+<p/>
+The <code>jna.boot.library.path</code> property is mainly to support
+jna.jar being included in -Xbootclasspath, where
+<code>java.library.path</code> and LD_LIBRARY_PATH are ignored.  It is also
+useful for designating a version of the library to use in preference to any
+which may already be installed on the system.  
+<p/>
+Loading from the system may be disabled by <code>jna.nosys=true</code>,
+and unpacking from the jar file may be disabled by
+<code>jna.nounpack=true</code>. 
+<p/>
+The library name used to search for JNA's native library may be altered
+by setting <code>jna.boot.library.name</code>, which defaults to
+"jnidispatch".  It may be useful to set this value if your system
+requires unique names for shared libraries (rather than unique paths),
+or if your system must store different versions of the JNA shared
+library (e.g. for different architectures) in the same directory.
+<p/>
+
 <a href=#navbar_top>Top</a>
 <a name="library-mapping"></a>
 <h2>Library Mapping</h2>
@@ -669,7 +698,7 @@ The method {@link com.sun.jna.NativeLibrary#getGlobalVariableAddress} may be use
 <a name="crash-protection"></a>
 <h2>VM Crash Protection</h2>
 It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.  Not all platforms support this protection; if not, the value of {@link com.sun.jna.Native#isProtected} will remain <code>false</code>.<p>
-NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
+NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://download.oracle.com/javase/6/docs/technotes/guides//vm/signal-chaining.htmld">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
  
 
 <p>
@@ -699,5 +728,10 @@ It is then up to you to use {@link com.sun.jna.Structure#readField(String)}
 and {@link com.sun.jna.Structure#writeField(String)} or {@link
 com.sun.jna.Structure#writeField(String,Object)} to synch with just the fields
 of interest. 
+<h3>Throw exceptions on last error</h3>
+If you are interested in the value of errno/GetLastError(), declare your
+method to throw LastErrorException, and call
+{@link com.sun.jna.Native#setPreserveLastError setPreserveLastError(false)} or set
+the System property <code>jna.preserve_last_error=false</code>.
 </body>
 </html>
