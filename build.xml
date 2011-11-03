@@ -640,6 +640,8 @@ com/sun/jna/linux-amd64/libjnidispatch.so;
 processor=x86-64;osname=linux,
 com/sun/jna/linux-arm/libjnidispatch.so;
 processor=arm;osname=linux,
+com/sun/jna/linux-ia64/libjnidispatch.so;
+processor=ia64;osname=linux,
 
 com/sun/jna/freebsd-i386/libjnidispatch.so;
 processor=x86;osname=freebsd,
