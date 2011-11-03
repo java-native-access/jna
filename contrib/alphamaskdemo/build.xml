@@ -44,9 +44,6 @@
             <classpath>
                 <path refid="classpath"/>
             </classpath>
-            <src>
-                <dirset dir="${src}"/>
-            </src>
         </javac>
 
         <!-- Copy all non-java files to classes. -->
