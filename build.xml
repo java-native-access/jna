@@ -488,7 +488,6 @@
     <signjar alias="jna" keystore="jna.keystore" storepass="jnadev" lazy="true"> 
       <fileset dir="${build}/jws" includes="jna.jar,jna-test.jar,junit.jar,jnidispatch.jar,clover.jar"/>
     </signjar>
-
   </target>
 	
   <target name="wince-test-setup" depends="compile-tests"
@@ -511,7 +510,7 @@
 
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="jar,contrib-jars,compile-tests"
+  <target name="test" depends="jar,compile-tests"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>
@@ -569,10 +568,14 @@
       <report todir="${reports.junit}"/>
     </junitreport>
     <echo>View test report in file://${reports.junit}/index.html</echo>
+    <fail if="testfailure" unless="clover">One or more tests failed</fail>
+  </target>
+
+  <target name="contrib-test" depends="contrib-jars,compile-tests">
     <subant target="test">
+      <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <fileset dir="${contrib}" includes="platform/build.xml"/>
     </subant>
-    <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
   <target name="with.clover" description="Enable code coverage for tests">
