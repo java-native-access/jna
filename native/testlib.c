@@ -430,27 +430,27 @@ testStructureByValueArgument(struct CheckFieldAlignment arg) {
   int offset;
   struct CheckFieldAlignment *base = (struct CheckFieldAlignment *)0;
 #define FLAG(F) ((F)<<8)
-  offset = (char *)&base->int8Field - (char*)base;
+  offset = (int)((char *)&base->int8Field - (char*)base);
   if (arg.int8Field != offset) {
     return (int)offset | FLAG(1);
   }
-  offset = (char *)&base->int16Field - (char*)base;
+  offset = (int)((char *)&base->int16Field - (char*)base);
   if (arg.int16Field != offset) {
     return (int)offset | FLAG(2);
   }
-  offset = (char *)&base->int32Field - (char*)base;
+  offset = (int)((char *)&base->int32Field - (char*)base);
   if (arg.int32Field != offset) {
     return (int)offset | FLAG(3);
   }
-  offset = (char *)&base->int64Field - (char*)base;
+  offset = (int)((char *)&base->int64Field - (char*)base);
   if (arg.int64Field != offset) {
     return (int)offset | FLAG(4);
   }
-  offset = (char *)&base->floatField - (char*)base;
+  offset = (int)((char *)&base->floatField - (char*)base);
   if (arg.floatField != offset) {
     return (int)offset | FLAG(5);
   }
-  offset = (char *)&base->doubleField - (char*)base;
+  offset = (int)((char *)&base->doubleField - (char*)base);
   if (arg.doubleField != offset) {
     return (int)offset | FLAG(6);
   }

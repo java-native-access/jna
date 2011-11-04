@@ -105,7 +105,7 @@ w32_format_error(char* buf, int len) {
   wchar_t* wbuf = (wchar_t*)alloca(len);
   FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
                  0, wbuf, len, NULL);
-  WideCharToMultiByte(CP_UTF8, 0, wbuf, wcslen(wbuf), buf, len, NULL, NULL);
+  WideCharToMultiByte(CP_UTF8, 0, wbuf, (int)wcslen(wbuf), buf, len, NULL, NULL);
   return buf;
 }
 static HANDLE

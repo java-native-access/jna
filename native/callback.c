@@ -402,7 +402,6 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   if (!was_attached) {
     int attach_status = 0;
     JavaVMAttachArgs args;
-    jobject group = NULL;
     int daemon = JNI_FALSE;
 
     args.version = JNI_VERSION_1_2;
