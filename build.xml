@@ -161,6 +161,9 @@
                value="${java.home}/lib/${jre.arch}/libjsig.so" else="">
       <available file="${java.home}/lib/${jre.arch}/libjsig.so"/>
     </condition>
+    <condition property="ld.preload.name" value="${ld.preload}" else="IGNORE">
+      <not><equals arg1="${libjsig}" arg2=""/></not>
+    </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/native"/>
     <property name="md5.file" location="${build.native}/sig"/>
@@ -542,7 +545,7 @@
     <property name="tests.exclude-patterns" value=""/>
     <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
       <!-- avoid VM conflicts with JNA protected mode -->
-      <env key="${ld.preload}" file="${libjsig}"/>
+      <env key="${ld.preload.name}" file="${libjsig}"/>
       <sysproperty key="jna.library.path" file="${build.native}"/>
       <!-- Ignore any system install of JNA -->
       <sysproperty key="jna.nosys" value="true"/>
