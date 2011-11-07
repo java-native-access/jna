@@ -6,12 +6,13 @@ Features
 * Use jna.nosys to avoid loading any system-provided JNA (useful for local build/development).
 * Allow override of default jnidispatch library name with `jna.boot.library.name` system property.
 * Throw an Error if a system install of JNA is incompatible or if JNA's JNI library does not match.
-* Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq).
+* Disable automatic jnidispatch unpacking with jna.nounpack=true.
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
-* linux/arm 32-bit support (Alex Lam).
-* linux/ppc 32-bit support (Fritiof Hedman).
-* Windows CE/Mobile support (w32ce-arm) (andrea antonello)
+* linux/arm 32-bit support (hardware provided by Alex Lam).
+* linux/ppc 32-bit support (hardware provided by Fritiof Hedman).
+* linux/ia64, linux/ppc64 support (thanks to GCC compile farm).
+* Windows CE/Mobile support (w32ce-arm) (resources provided by andrea antonello).
 * linux multi-arch support (kohsuke).
 * Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
 * Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`.

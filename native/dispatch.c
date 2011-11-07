@@ -579,7 +579,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
 
 /** Copy characters from the Java character array into native memory. */
 static void
-getChars(JNIEnv* env, wchar_t* dst, jcharArray chars, jint off, jint len) {
+getChars(JNIEnv* env, wchar_t* volatile dst, jcharArray chars, volatile jint off, volatile jint len) {
   PSTART();
 
   if (sizeof(jchar) == sizeof(wchar_t)) {
@@ -610,7 +610,7 @@ getChars(JNIEnv* env, wchar_t* dst, jcharArray chars, jint off, jint len) {
 }
 
 static void
-setChars(JNIEnv* env, wchar_t* src, jcharArray chars, jint off, jint len) {
+setChars(JNIEnv* env, wchar_t* src, jcharArray chars, volatile jint off, volatile jint len) {
   jchar* buf = (jchar*)src;
   int malloced = 0;
   PSTART();
