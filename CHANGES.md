@@ -29,6 +29,7 @@ Bug Fixes
 * Fix structure alignment issues on linux/ppc.
 * Fix structure alignment issues on linux/arm.
 * Account for NIO Buffer position (JIRA issue 185).
+* Avoid crash with very long Strings (> 150k in length).
 
 Release 3.3.0
 =============

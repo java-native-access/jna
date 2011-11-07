@@ -402,7 +402,7 @@
     <condition property="make.BUILD" value="BUILD=../${build}/native" else="BUILD=${build.native}">
       <os family="windows"/>
     </condition>
-    <condition property="make.PATH" value="PATH=/usr/sfw/bin:/usr/bin:/usr/ccs/bin" else="IGNORE=">
+    <condition property="make.PATH" value="PATH=/opt/csw/bin:/usr/sfw/bin:/usr/bin:/usr/ccs/bin" else="IGNORE=">
       <os name="SunOS"/>
     </condition>
     <condition property="make" value="/usr/sfw/bin/gmake">
@@ -711,6 +711,8 @@ processor=arm;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
+com/sun/jna/openbsd-i386/libjnidispatch.so;
+processor=x86;osname=openbsd,
 com/sun/jna/freebsd-i386/libjnidispatch.so;
 processor=x86;osname=freebsd,
 com/sun/jna/freebsd-amd64/libjnidispatch.so;

@@ -577,18 +577,33 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   }
 }
 
+/** Copy characters from the Java character array into native memory. */
 static void
 getChars(JNIEnv* env, wchar_t* dst, jcharArray chars, jint off, jint len) {
   PSTART();
+
   if (sizeof(jchar) == sizeof(wchar_t)) {
     (*env)->GetCharArrayRegion(env, chars, off, len, (jchar*)dst);
   }
   else {
-    int i;
-    jchar* buf = (jchar *)alloca(len * sizeof(jchar));
-    (*env)->GetCharArrayRegion(env, chars, off, len, buf);
-    for (i=0;i < len;i++) {
-      dst[i] = (wchar_t)buf[i];
+    jchar* buf;
+    int count = len > 1000 ? 1000 : len;
+    buf = (jchar *)alloca(count * sizeof(jchar));
+    if (!buf) {
+      throwByName(env, EOutOfMemory, "Can't read characters");
+    }
+    else {
+      while (len > 0) {
+        int i;
+        (*env)->GetCharArrayRegion(env, chars, off, count, buf);
+        for (i=0;i < count;i++) {
+          dst[i] = (wchar_t)buf[i];
+        }
+        dst += count;
+        off += count;
+        len -= count;
+        if (count > len) count = len;
+      }
     }
   }
   PEND();
@@ -597,16 +612,31 @@ getChars(JNIEnv* env, wchar_t* dst, jcharArray chars, jint off, jint len) {
 static void
 setChars(JNIEnv* env, wchar_t* src, jcharArray chars, jint off, jint len) {
   jchar* buf = (jchar*)src;
+  int malloced = 0;
   PSTART();
 
-  if (sizeof(jchar) != sizeof(wchar_t)) {
-    int i;
-    buf = (jchar *)alloca(len * sizeof(jchar));
-    for (i=0;i < len;i++) {
-      buf[i] = (jchar)src[i];
+  if (sizeof(jchar) == sizeof(wchar_t)) {
+    (*env)->SetCharArrayRegion(env, chars, off, len, buf);
+  }
+  else {
+    int count = len > 1000 ? 1000 : len;
+    buf = (jchar *)alloca(count * sizeof(jchar));
+    if (!buf) {
+      throwByName(env, EOutOfMemory, "Can't write characters");
+    }
+    else {
+      while (len > 0) {
+        int i;
+        for (i=0;i < count;i++) {
+          buf[i] = (jchar)src[off+i];
+        }
+        (*env)->SetCharArrayRegion(env, chars, off, count, buf);
+        off += count;
+        len -= count;
+        if (count > len) count = len;
+      }
     }
   }
-  (*env)->SetCharArrayRegion(env, chars, off, len, buf);
   PEND();
 }
 
@@ -690,7 +720,13 @@ newWideCString(JNIEnv *env, jstring str)
         }
         // TODO: ensure proper encoding conversion from jchar to native wchar_t
         getChars(env, result, chars, 0, len);
-        result[len] = 0; /* NUL-terminate */
+        if ((*env)->ExceptionCheck(env)) {
+          free((void *)result);
+          result = NULL;
+        }
+        else {
+          result[len] = 0; /* NUL-terminate */
+        }
     }
     (*env)->DeleteLocalRef(env, chars);
     return result;
@@ -722,14 +758,22 @@ newJavaString(JNIEnv *env, const char *ptr, jboolean wide)
     if (ptr) {
       if (wide) {
         // TODO: proper conversion from native wchar_t to jchar, if any
-        int len = (int)wcslen((const wchar_t*)ptr);
+        jsize len = (int)wcslen((const wchar_t*)ptr);
         if (sizeof(jchar) != sizeof(wchar_t)) {
-          jchar* buf = (jchar*)alloca(len * sizeof(jchar));
-          int i;
-          for (i=0;i < len;i++) {
-            buf[i] =  *((const wchar_t*)ptr + i);
+          // NOTE: while alloca may succeed here, writing to the stack
+          // memory may fail with really large buffers
+          jchar* buf = (jchar*)malloc(len * sizeof(jchar));
+          if (!buf) {
+            throwByName(env, EOutOfMemory, "Can't allocate space for conversion to Java String");
           }
-          result = (*env)->NewString(env, buf, len);
+          else {
+            int i;
+            for (i=0;i < len;i++) {
+              buf[i] = *((const wchar_t*)ptr + i);
+            }
+            result = (*env)->NewString(env, buf, len);
+            free((void*)buf);
+          }
         }
         else {
           result = (*env)->NewString(env, (const jchar*)ptr, len);
@@ -1166,8 +1210,9 @@ get_system_property(JNIEnv* env, const char* name, jboolean wide) {
       jstring value = (*env)->CallStaticObjectMethod(env, classSystem,
                                                      mid, propname);
       if (value) {
-        if (wide) 
+        if (wide) {
           return newWideCString(env, value);
+        }
         return newCStringUTF8(env, value);
       }
     }
@@ -2751,7 +2796,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
 #else
       swprintf(path, L"%s%s", prop, suffix);
 #endif
-      free(prop);
+      free((void *)prop);
     }
 #undef JAWT_NAME
 #define JAWT_NAME path

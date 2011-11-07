@@ -21,6 +21,21 @@ import junit.framework.TestCase;
 //@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
     
+    public void testLongStringGeneration() {
+        StringBuffer buf = new StringBuffer();
+        final int MAX = 2000000;
+        for (int i=0;i < MAX;i++) {
+            buf.append('a');
+        }
+        String s1 = buf.toString();
+        Memory m = new Memory((MAX + 1)*Native.WCHAR_SIZE);
+        m.setString(0, s1, true);
+        assertEquals("Missing terminator after write", 0, m.getChar(MAX*Native.WCHAR_SIZE));
+        String s2 = m.getString(0, true);
+        assertEquals("Wrong string read length", s1.length(), s2.length());
+        assertEquals("Improper wide string read", s1, s2);
+    }
+
     public void testDefaultStringEncoding() throws Exception {
         String encoding = System.getProperty("file.encoding");
         // Keep stuff within the extended ASCII range so we work with more
