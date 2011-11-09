@@ -10,11 +10,15 @@
 # Supported platforms (built and tested):
 #
 #   Windows 2000/XP/2003/Vista (x86/amd64)
+#   Windows CE/Mobile (arm)
 #   Darwin/OS X (i386/x86_64/ppc)
 #   Linux (i386/amd64/ppc/arm) 
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
-#   Windows CE/Mobile (arm)
+#
+# Built, but with outstanding bugs (not necessarily within JNA):
+#
+#   Linux (ppc64/ia64)
 #
 # If you want to do a Win64 build, you'll need to manually install things or
 # tweak paths appropriately, since there is no "standard" distribution of the

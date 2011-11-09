@@ -1,4 +1,4 @@
-Release 3.3.x
+Release 3.4.0
 =============
 
 Features
@@ -11,7 +11,7 @@ Features
 threads.
 * linux/arm 32-bit support (hardware provided by Alex Lam).
 * linux/ppc 32-bit support (hardware provided by Fritiof Hedman).
-* linux/ia64, linux/ppc64 support (thanks to GCC compile farm).
+* Preliminary linux/ia64, linux/ppc64 support (thanks to GCC compile farm).
 * Windows CE/Mobile support (w32ce-arm) (resources provided by andrea antonello).
 * linux multi-arch support (kohsuke).
 * Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
