@@ -21,6 +21,7 @@ public final class Platform {
     public static final int WINDOWSCE = 6;
 
     public static final boolean HAS_BUFFERS;
+    public static final boolean HAS_AWT;
     public static final String MATH_LIBRARY_NAME;
     public static final String C_LIBRARY_NAME;
 
@@ -52,6 +53,14 @@ public final class Platform {
         else {
             osType = UNSPECIFIED;
         }
+        boolean hasAWT = false;
+        try {
+            Class.forName("java.awt.Component");
+            hasAWT = true;
+        }
+        catch(ClassNotFoundException e) {
+        }
+        HAS_AWT = hasAWT;
         boolean hasBuffers = false;
         try {
             Class.forName("java.nio.Buffer");

@@ -487,15 +487,25 @@ public abstract class Structure {
         }
     }
 
-    // WARNING: phoneME fails to set a 'final' field even after calling
-    // setAccessible(true) on the field
     void setField(StructField structField, Object value) {
+        setField(structField, value, false);
+    }
+
+    void setField(StructField structField, Object value, boolean overrideFinal) {
         try {
             structField.field.set(this, value);
         }
         catch(IllegalAccessException e) {
-            if (Modifier.isFinal(structField.field.getModifiers())) {
-                throw new UnsupportedOperationException("Read-only (final) structure fields may only be updated from native memory (field '" + structField.name + "' within " + getClass() + ")");
+            int modifiers = structField.field.getModifiers();
+            if (Modifier.isFinal(modifiers)) {
+                if (overrideFinal) {
+                    // WARNING: setAccessible(true) on phoneME does *not* allow overwriting of
+                    // a final field.  It also ignores any changes made to the
+                    // field's modifiers (temporarily removing the final flag
+                    // on the field does not work).
+                    throw new UnsupportedOperationException("This VM does not support Structures with final fields (field '" + structField.name + "' within " + getClass() + ")");
+                }
+                throw new UnsupportedOperationException("Attempt to write to read-only field '" + structField.name + "' within " + getClass());
             }
             throw new Error("Unexpectedly unable to write to field '"
                             + structField.name + "' within " + getClass()
@@ -560,10 +570,7 @@ public abstract class Structure {
         }
 
         // Update the value on the field
-        if (Modifier.isFinal(structField.field.getModifiers())) {
-            structField.field.setAccessible(true);
-        }
-        setField(structField, result);
+        setField(structField, result, true);
         return result;
     }
 
@@ -785,6 +792,7 @@ public abstract class Structure {
             structField.isVolatile = Modifier.isVolatile(modifiers);
             structField.isReadOnly = Modifier.isFinal(modifiers);
             if (Modifier.isFinal(modifiers)) {
+                // In most cases, this allows overriding the value of final fields
                 field.setAccessible(true);
             }
             structField.field = field;

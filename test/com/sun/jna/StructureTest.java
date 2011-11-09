@@ -852,7 +852,7 @@ public class StructureTest extends TestCase {
         return s;
     }
 
-    // This functionality is no longer supported
+    // wce/phoneME fails to write final field
     public void testReadOnlyField() {
         ROStructure s = new ROStructure();
         s.getPointer().setInt(0, 42);

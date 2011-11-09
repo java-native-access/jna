@@ -546,7 +546,7 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong String return", VALUE, value);
     }
     
-    public void XFAIL_WCE_testStringCallbackMemoryReclamation() throws InterruptedException {
+    public void testStringCallbackMemoryReclamation() throws InterruptedException {
         TestLibrary.StringCallback cb = new TestLibrary.StringCallback() {
             public String callback(String arg) {
                 return arg;
@@ -623,8 +623,7 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong value in by reference memory", VALUE, ref.getValue());
     }
     
-    // crash
-    public void XFAIL_WCE_testCallCallbackWithStructByValue() {
+    public void testCallCallbackWithStructByValue() {
         final TestStructure.ByValue s = new TestStructure.ByValue();
         final TestStructure innerResult = new TestStructure();
         TestStructure.TestCallback cb = new TestStructure.TestCallback() {
