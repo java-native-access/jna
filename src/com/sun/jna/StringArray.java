@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** Handle native array of <code>char*</code> or <code>wchar_t*</code> type 
@@ -63,5 +64,11 @@ public class StringArray extends Memory implements Function.PostCallRead {
             }
             original[si] = s;
         }
+    }
+
+    public String toString() {
+        String s = wide ? "const wchar_t*[]" : "const char*[]";
+        s += Arrays.asList(original);
+        return s;
     }
 }

@@ -555,6 +555,8 @@ public class CallbacksTest extends TestCase {
 
         // A little internal groping
         Map m = CallbackReference.allocations;
+        m.clear();
+
         String arg = getName() + "1";
         String value = lib.callStringCallback(cb, arg);
         WeakReference ref = new WeakReference(value);
@@ -562,14 +564,14 @@ public class CallbacksTest extends TestCase {
         arg = null;
         value = null;
         System.gc();
-        for (int i = 0; i < 100 && (ref.get() != null || m.values().size() > 0); ++i) {
+        for (int i = 0; i < 100 && (ref.get() != null || m.size() > 0); ++i) {
             try {
                 Thread.sleep(10); // Give the GC a chance to run
                 System.gc();
             } finally {}
         }
-        assertNull("String reference not GC'd", ref.get());
-        assertEquals("NativeString reference still held", 0, m.values().size());
+        assertNull("NativeString reference not GC'd", ref.get());
+        assertEquals("NativeString reference still held: " + m.values(), 0, m.size());
     }
 
     public void testCallWideStringCallback() {

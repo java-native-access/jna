@@ -345,7 +345,7 @@ public class NativeTest extends TestCase {
             if (args.length == 1 && "all".equals(args[0])) {
                 args = new String[] {
                     "com.sun.jna.NativeTest",
-                    "com.sun.jna.NativeLibraryTest", // 1 wce failure
+                    "com.sun.jna.NativeLibraryTest",
                     "com.sun.jna.PointerTest",
                     "com.sun.jna.MemoryTest",
                     "com.sun.jna.LibraryLoadTest", 
@@ -354,13 +354,12 @@ public class NativeTest extends TestCase {
                     "com.sun.jna.TypeMapperTest", 
                     "com.sun.jna.ByReferenceArgumentsTest",
                     "com.sun.jna.LastErrorTest", 
-                    "com.sun.jna.StructureTest",// 1 wce failure (ro)
+                    "com.sun.jna.StructureTest",// 1 wce failure (RO fields)
                     "com.sun.jna.StructureByValueTest",
                     "com.sun.jna.UnionTest",
                     "com.sun.jna.IntegerTypeTest", 
                     "com.sun.jna.VMCrashProtectionTest",
-                    "com.sun.jna.CallbacksTest", // 1 wce failure (String
-                                                 // memory reclamation)
+                    "com.sun.jna.CallbacksTest", 
                     "com.sun.jna.JNAUnloadTest",
                     "com.sun.jna.DirectTest",
                     "com.sun.jna.DirectArgumentsMarshalTest",
