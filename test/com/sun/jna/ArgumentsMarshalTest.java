@@ -545,8 +545,7 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Auto read should be disabled", EXPECTED, s.field);
     }
 
-    // w32ce crash
-    public void XFAIL_WCE_testUnionByValueCallbackArgument() throws Exception{ 
+    public void testUnionByValueCallbackArgument() throws Exception{ 
         TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
         arg.setType(String.class);
         final String VALUE = getName();

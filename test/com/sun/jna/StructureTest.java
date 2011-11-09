@@ -852,8 +852,17 @@ public class StructureTest extends TestCase {
         return s;
     }
 
-    // This functionality is no longer supported
     public void testReadOnlyField() {
+        if (!Platform.RO_FIELDS) {
+            try {
+                new ROStructure();
+                fail("Creation of a Structure with final fields should fail");
+            }
+            catch(Exception e) {
+            }
+            return;
+        }
+
         ROStructure s = new ROStructure();
         s.getPointer().setInt(0, 42);
         s.read();
