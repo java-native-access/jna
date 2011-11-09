@@ -20,9 +20,15 @@ public final class Platform {
     public static final int OPENBSD = 5;
     public static final int WINDOWSCE = 6;
 
+    /** Whether read-only (final) fields within Structures are supported. */
+    public static final boolean RO_FIELDS;
+    /** Whether this platform provides NIO Buffers. */
     public static final boolean HAS_BUFFERS;
+    /** Whether this platform provides the AWT Component class. */
     public static final boolean HAS_AWT;
+    /** Canonical name of this platform's math library. */
     public static final String MATH_LIBRARY_NAME;
+    /** Canonical name of this platform's C runtime library. */
     public static final String C_LIBRARY_NAME;
 
     private static final int osType;
@@ -69,6 +75,7 @@ public final class Platform {
         catch(ClassNotFoundException e) {
         }
         HAS_BUFFERS = hasBuffers;
+        RO_FIELDS = osType != WINDOWSCE;
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
     }

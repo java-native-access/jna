@@ -499,10 +499,8 @@ public abstract class Structure {
             int modifiers = structField.field.getModifiers();
             if (Modifier.isFinal(modifiers)) {
                 if (overrideFinal) {
-                    // WARNING: setAccessible(true) on phoneME does *not* allow overwriting of
-                    // a final field.  It also ignores any changes made to the
-                    // field's modifiers (temporarily removing the final flag
-                    // on the field does not work).
+                    // WARNING: setAccessible(true) on J2ME does *not* allow overwriting of
+                    // a final field.  
                     throw new UnsupportedOperationException("This VM does not support Structures with final fields (field '" + structField.name + "' within " + getClass() + ")");
                 }
                 throw new UnsupportedOperationException("Attempt to write to read-only field '" + structField.name + "' within " + getClass());
@@ -675,7 +673,6 @@ public abstract class Structure {
             memory.setValue(offset, value, fieldType);
         }
         catch(IllegalArgumentException e) {
-            e.printStackTrace();
             String msg = "Structure field \"" + structField.name
                 + "\" was declared as " + structField.type
                 + (structField.type == fieldType
@@ -791,8 +788,12 @@ public abstract class Structure {
             StructField structField = new StructField();
             structField.isVolatile = Modifier.isVolatile(modifiers);
             structField.isReadOnly = Modifier.isFinal(modifiers);
-            if (Modifier.isFinal(modifiers)) {
-                // In most cases, this allows overriding the value of final fields
+            if (structField.isReadOnly) {
+                if (!Platform.RO_FIELDS) {
+                    throw new IllegalArgumentException("This VM does not support read-only fields (field '"
+                                                       + field.getName() + "' within " + getClass() + ")");
+                }
+                // In J2SE VMs, this allows overriding the value of final fields
                 field.setAccessible(true);
             }
             structField.field = field;
