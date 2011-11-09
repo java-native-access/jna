@@ -67,7 +67,7 @@ LIBSFX=.so
 ARSFX=.a
 JNISFX=$(LIBSFX)
 CC=gcc
-LD=gcc
+LD=$(CC)
 LIBS=
 # Default to Sun recommendations for JNI compilation
 COPT=-O2 -fno-omit-frame-pointer -fno-strict-aliasing 
@@ -195,6 +195,15 @@ ifeq ($(CC),gcc)
 ifeq ($(ARCH),amd64)
   CC += -m64
   LD += -m64
+endif
+ifeq ($(ARCH),ppc64)
+  CC += -m64
+  LD += -m64
+endif
+ifeq ($(ARCH),ppc)
+  CC += -m32
+  LD += -m32
+HOST_CONFIG=--host=ppc-linux
 endif
 endif
 
