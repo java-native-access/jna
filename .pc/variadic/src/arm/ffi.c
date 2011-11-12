@@ -196,18 +196,6 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
   return FFI_OK;
 }
 
-/* Perform machine dependent cif processing for variadic calls */
-ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
-				    unsigned int nfixedargs,
-				    unsigned int ntotalargs)
-{
-  /* VFP variadic calls actually use the SYSV ABI */
-  if (cif->abi == FFI_VFP)
-	cif->abi = FFI_SYSV;
-
-  return ffi_prep_cif_machdep(cif);
-}
-
 /* Prototypes for assembly functions, in sysv.S */
 extern void ffi_call_SYSV (void (*fn)(void), extended_cif *, unsigned, unsigned, unsigned *);
 extern void ffi_call_VFP (void (*fn)(void), extended_cif *, unsigned, unsigned, unsigned *);

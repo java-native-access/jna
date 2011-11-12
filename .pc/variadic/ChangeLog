@@ -1,14 +1,3 @@
-2011-11-12  David Gilbert <david.gilbert@linaro.org>
-
-	* doc/libffi.texi, include/ffi.h.in, include/ffi_common.h,
-	man/Makefile.am, man/ffi.3, man/ffi_prep_cif.3,
-	man/ffi_prep_cif_var.3, src/arm/ffi.c, src/arm/ffitarget.h,
-	src/cris/ffi.c, src/prep_cif.c,
-	testsuite/libffi.call/cls_double_va.c,
-	testsuite/libffi.call/cls_longdouble_va.c,
-	testsuite/libffi.call/float_va.c: Many changes to support variadic
-	function calls.
-
 2011-11-12  Kyle Moffett <Kyle.D.Moffett@boeing.com>
 
 	* src/powerpc/ffi.c, src/powerpc/ffitarget.h,

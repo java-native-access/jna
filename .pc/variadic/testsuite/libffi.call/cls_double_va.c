@@ -37,8 +37,7 @@ int main (void)
 	arg_types[1] = &ffi_type_double;
 	arg_types[2] = NULL;
 
-	/* This printf call is variadic */
-	CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 2, &ffi_type_sint,
+	CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_sint,
 		arg_types) == FFI_OK);
 
 	args[0] = &format;
