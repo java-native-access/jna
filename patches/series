@@ -29,6 +29,7 @@ more-openbsd
 more-openbsd-mips
 darwin11
 powerpc-sysv-without-string-ops
+windows-ce-arm
 minix
 
 interix-patch

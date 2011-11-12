@@ -27,6 +27,6 @@ fix-ppc32
 darwin-EH-fix
 more-openbsd
 more-openbsd-mips
-minix
-interix-patch
-remove-debug-code
+darwin11
+powerpc-sysv-without-string-ops
+windows-ce-arm

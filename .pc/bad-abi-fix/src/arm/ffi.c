@@ -338,6 +338,8 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
 
 /* How to make a trampoline.  */
 
+extern unsigned int ffi_arm_trampoline[3];
+
 #if FFI_EXEC_TRAMPOLINE_TABLE
 
 #include <mach/mach.h>
@@ -557,9 +559,7 @@ ffi_closure_free (void *ptr)
    unsigned int  __fun = (unsigned int)(FUN);				\
    unsigned int  __ctx = (unsigned int)(CTX);				\
    unsigned char *insns = (unsigned char *)(CTX);                       \
-   *(unsigned int*) &__tramp[0] = 0xe92d000f; /* stmfd sp!, {r0-r3} */	\
-   *(unsigned int*) &__tramp[4] = 0xe59f0000; /* ldr r0, [pc] */	\
-   *(unsigned int*) &__tramp[8] = 0xe59ff000; /* ldr pc, [pc] */	\
+   memcpy (__tramp, ffi_arm_trampoline, sizeof ffi_arm_trampoline);     \
    *(unsigned int*) &__tramp[12] = __ctx;				\
    *(unsigned int*) &__tramp[16] = __fun;				\
    __clear_cache((&__tramp[0]), (&__tramp[19])); /* Clear data mapping.  */ \
