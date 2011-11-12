@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -40,6 +40,11 @@
+@@ -57,6 +57,11 @@
  	uintptr_t first.
  	* testsuite/libffi.call/cls_pointer_stack.c (main): Likewise.
  
@@ -18,7 +18,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -13141,10 +13141,10 @@ if ${libffi_cv_as_x86_pcrel+:} false; th
+@@ -13113,10 +13113,10 @@ if ${libffi_cv_as_x86_pcrel+:} false; th
    $as_echo_n "(cached) " >&6
  else
  
@@ -36,7 +36,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -283,10 +283,10 @@ fi
+@@ -277,10 +277,10 @@ fi
  if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64; then
      AC_CACHE_CHECK([assembler supports pc related relocs],
  	libffi_cv_as_x86_pcrel, [

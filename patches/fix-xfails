@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -35,7 +35,12 @@
+@@ -52,7 +52,12 @@
  
  2011-02-09  Anthony Green <green@moxielogic.com>
  
@@ -16,7 +16,7 @@ Index: libffi/ChangeLog
  
  2011-02-09  Landon Fuller <landonf@macports.org>
  
-@@ -55,6 +60,7 @@
+@@ -72,6 +77,7 @@
  	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
  	* build-ios.sh: New file.
  	* fficonfig.h.in, configure, Makefile.in: Rebuilt.

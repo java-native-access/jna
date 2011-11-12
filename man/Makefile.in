@@ -37,7 +37,8 @@ target_triplet = @target@
 subdir = man
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cc_maxopt.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
+	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
 	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
 	$(top_srcdir)/m4/ax_check_compiler_flags.m4 \
 	$(top_srcdir)/m4/ax_compiler_vendor.m4 \

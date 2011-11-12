@@ -2,7 +2,7 @@ Index: libffi/Makefile.am
 ===================================================================
 --- libffi.orig/Makefile.am
 +++ libffi/Makefile.am
-@@ -176,14 +176,11 @@ endif
+@@ -179,14 +179,11 @@ endif
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
  
@@ -22,21 +22,56 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -65,8 +65,6 @@ target_triplet = @target@
+@@ -66,8 +66,6 @@ target_triplet = @target@
  # Build debug. Define FFI_DEBUG on the commandline so that, when building with
  # MSVC, it can link against the debug CRT.
- @FFI_DEBUG_TRUE@am__append_27 = -DFFI_DEBUG
+ @FFI_DEBUG_TRUE@am__append_28 = -DFFI_DEBUG
 -# Build opt.
--@FFI_DEBUG_FALSE@am__append_28 = -O2
+-@FFI_DEBUG_FALSE@am__append_29 = -O2
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -492,7 +490,7 @@ nodist_libffi_la_SOURCES = $(am__append_
- 	$(am__append_24) $(am__append_25) $(am__append_26)
+@@ -76,7 +74,17 @@ DIST_COMMON = README $(am__configure_dep
+ 	compile config.guess config.sub depcomp install-sh ltmain.sh \
+ 	mdate-sh missing texinfo.tex
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+-am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
++am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cc_maxopt.m4 \
++	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
++	$(top_srcdir)/m4/ax_check_compiler_flags.m4 \
++	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
++	$(top_srcdir)/m4/ax_configure_args.m4 \
++	$(top_srcdir)/m4/ax_enable_builddir.m4 \
++	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
++	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
++	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
++	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
++	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
+ 	$(top_srcdir)/configure.ac
+ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
+ 	$(ACLOCAL_M4)
+@@ -335,6 +343,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+ PACKAGE_URL = @PACKAGE_URL@
+ PACKAGE_VERSION = @PACKAGE_VERSION@
+ PATH_SEPARATOR = @PATH_SEPARATOR@
++PRTDIAG = @PRTDIAG@
+ RANLIB = @RANLIB@
+ SED = @SED@
+ SET_MAKE = @SET_MAKE@
+@@ -355,6 +364,7 @@ am__leading_dot = @am__leading_dot@
+ am__quote = @am__quote@
+ am__tar = @am__tar@
+ am__untar = @am__untar@
++ax_enable_builddir_sed = @ax_enable_builddir_sed@
+ bindir = @bindir@
+ build = @build@
+ build_alias = @build_alias@
+@@ -493,7 +503,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+ 	$(am__append_27)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
--AM_CFLAGS = -Wall -g -fexceptions $(am__append_27) $(am__append_28)
-+AM_CFLAGS = -g $(am__append_27)
+-AM_CFLAGS = -Wall -g -fexceptions $(am__append_28) $(am__append_29)
++AM_CFLAGS = -g $(am__append_28)
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)

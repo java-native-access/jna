@@ -52,33 +52,27 @@ tested:
 | Architecture | Operating System |
 |--------------+------------------|
 | Alpha        | Linux            |
-| Alpha        | OpenBSD          |
 | Alpha        | Tru64            |
 | ARM          | Linux            |
 | ARM          | iOS              |
 | AVR32        | Linux            |
 | HPPA         | HPUX             |
-| HPPA         | OpenBSD          |
 | IA-64        | Linux            |
 | M68K         | RTEMS            |
 | MIPS         | IRIX             |
 | MIPS         | Linux            |
 | MIPS         | RTEMS            |
 | MIPS64       | Linux            |
-| MIPS64       | OpenBSD          |
 | PowerPC      | Linux            |
 | PowerPC      | Mac OSX          |
 | PowerPC      | FreeBSD          |
-| PowerPC      | OpenBSD          |
 | PowerPC64    | Linux            |
 | S390         | Linux            |
 | S390X        | Linux            |
 | SPARC        | Linux            |
-| SPARC        | OpenBSD          |
 | SPARC        | Solaris          |
 | SPARC64      | Linux            |
 | SPARC64      | FreeBSD          |
-| SPARC64      | OpenBSD          |
 | X86          | FreeBSD          |
 | X86          | Interix          |
 | X86          | kFreeBSD         |

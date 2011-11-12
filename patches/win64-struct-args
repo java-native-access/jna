@@ -51,7 +51,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -202,6 +202,14 @@
+@@ -219,6 +219,14 @@
  	* fficonfig.h.in: Regenerate.
  	* src/x86/sysv.S (.eh_frame): Use .ascii, .string or error.
  
@@ -70,7 +70,7 @@ Index: libffi/doc/libffi.info
 ===================================================================
 --- libffi.orig/doc/libffi.info
 +++ libffi/doc/libffi.info
-@@ -147,7 +147,9 @@ To prepare a call interface object, use 
+@@ -147,7 +147,9 @@ To prepare a call interface object, use
       AVALUES is a vector of `void *' pointers that point to the memory
       locations holding the argument values for a call.  If CIF declares
       that the function has no arguments (i.e., NARGS was 0), then
