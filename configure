@@ -12240,6 +12240,45 @@ $as_echo "$icc_archflag" >&6; }
      # default optimization flags for gcc on all systems
      CFLAGS="-O3 -fomit-frame-pointer"
 
+     # -malign-double for x86 systems
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -malign-double" >&5
+$as_echo_n "checking whether C compiler accepts -malign-double... " >&6; }
+if ${ax_cv_c_flags__malign_double+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+      ax_save_FLAGS=$CFLAGS
+      CFLAGS="-malign-double"
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ax_cv_c_flags__malign_double=yes
+else
+  ax_cv_c_flags__malign_double=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+      CFLAGS=$ax_save_FLAGS
+fi
+
+eval ax_check_compiler_flags=$ax_cv_c_flags__malign_double
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_check_compiler_flags" >&5
+$as_echo "$ax_check_compiler_flags" >&6; }
+if test "x$ax_check_compiler_flags" = xyes; then
+	CFLAGS="$CFLAGS -malign-double"
+else
+	:
+fi
+
+
      #  -fstrict-aliasing for gcc-2.95+
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -fstrict-aliasing" >&5
 $as_echo_n "checking whether C compiler accepts -fstrict-aliasing... " >&6; }
@@ -12279,6 +12318,7 @@ else
 fi
 
 
+     # note that we enable "unsafe" fp optimization with other compilers, too
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -ffast-math" >&5
 $as_echo_n "checking whether C compiler accepts -ffast-math... " >&6; }
 if ${ax_cv_c_flags__ffast_math+:} false; then :
@@ -13065,7 +13105,7 @@ case "$host" in
 	TARGET=FRV; TARGETDIR=frv
 	;;
 
-  hppa*-*-linux* | parisc*-*-linux* | hppa*-*-openbsd*)
+  hppa*-*-linux* | parisc*-*-linux*)
 	TARGET=PA_LINUX; TARGETDIR=pa
 	;;
   hppa*64-*-hpux*)
@@ -13115,7 +13155,7 @@ case "$host" in
   mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)
 	TARGET=MIPS; TARGETDIR=mips
 	;;
-  mips*-*-linux* | mips*-*-openbsd*)
+  mips*-*-linux*)
 	# Support 128-bit long double for NewABI.
 	HAVE_LONG_DOUBLE='defined(__mips64)'
 	TARGET=MIPS; TARGETDIR=mips
@@ -13137,7 +13177,7 @@ case "$host" in
   powerpc-*-aix* | rs6000-*-aix*)
 	TARGET=POWERPC_AIX; TARGETDIR=powerpc
 	;;
-  powerpc-*-freebsd* | powerpc-*-openbsd*)
+  powerpc-*-freebsd*)
 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
 	;;
   powerpc64-*-freebsd*)
@@ -16344,7 +16384,7 @@ a\\
 	; test ".\$\$HOST" = "." && HOST=$x sh $ax_enable_builddir_auxdir/config.guess $x \\\\\\
 	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 	; use=$x basename "\$\@" -all $x; n=$x echo \$\$BUILD | wc -w $x \\\\\\
-	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" = "0" ; then : \\\\\\
+	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" -eq "0" ; then : \\\\\\
 	; BUILD=$x grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' $x ; fi \\\\\\
 	; test ".\$\$BUILD" = "." && BUILD="." \\\\\\
 	; test "\$\$use" = "\$\@" && BUILD=$x echo "\$\$BUILD" | tail -1 $x \\\\\\
@@ -16356,7 +16396,7 @@ a\\
 	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
 	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).tar.*" \\\\\\
-	; if test "\$\$found" = "0" ; then : \\\\\\
+	; if test "\$\$found" -eq "0" ; then : \\\\\\
 	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
 	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
 	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).tar.* \\\\\\
@@ -16367,7 +16407,7 @@ a\\
 	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
 	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).*" \\\\\\
-	; if test "\$\$found" = "0" ; then : \\\\\\
+	; if test "\$\$found" -eq "0" ; then : \\\\\\
 	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
 	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
 	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).* \\\\\\

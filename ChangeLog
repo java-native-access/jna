@@ -1,22 +1,7 @@
-2011-11-12  Anthony Green  <green@moxielogic.com>
+2011-11-12  Kimura Wataru  <kimuraw@i.nifty.jp>
 
-	* Makefile.am (AM_CCASFLAGS): Add -g option to build assembly
-	files with debug info.
-	* Makefile.in: Rebuilt.
-
-2011-11-12  Jasper Lievisse Adriaanse <jasper@openbsd.org>
-
-	* README: Update list of supported OpenBSD systems.
-
-2011-11-12  Anthony Green  <green@moxielogic.com>
-
-	* libtool-version: Update.
-	* Makefile.am (nodist_libffi_la_SOURCES): Add src/debug.c if
-	FFI_DEBUG.
-	(libffi_la_SOURCES): Remove src/debug.c
-	(EXTRA_DIST): Add src/debug.c
-	* Makefile.in: Rebuilt.
-	* README: Update for 3.0.11.
+	* m4/ax_enable_builddir: Change from string comparison to numeric
+	comparison for wc output. 
 
 2011-11-10  Richard Henderson  <rth@redhat.com>
 

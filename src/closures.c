@@ -172,7 +172,7 @@ selinux_enabled_check (void)
 
 #endif /* !FFI_MMAP_EXEC_SELINUX */
 
-#elif defined (__CYGWIN__) || defined(__INTERIX)
+#elif defined (__CYGWIN__)
 
 #include <sys/mman.h>
 

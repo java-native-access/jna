@@ -19,7 +19,7 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -428,7 +428,9 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -441,7 +441,9 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
  	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
  	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
@@ -30,7 +30,7 @@ Index: libffi/Makefile.in
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -1818,7 +1820,6 @@ uninstall-am: uninstall-dvi-am uninstall
+@@ -1831,7 +1833,6 @@ uninstall-am: uninstall-dvi-am uninstall
  	uninstall-info-am uninstall-libLTLIBRARIES uninstall-pdf-am \
  	uninstall-pkgconfigDATA uninstall-ps-am
  

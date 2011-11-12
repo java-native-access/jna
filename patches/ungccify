@@ -31,12 +31,13 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -76,7 +74,17 @@ DIST_COMMON = README $(am__configure_dep
+@@ -76,7 +74,18 @@ DIST_COMMON = README $(am__configure_dep
  	compile config.guess config.sub depcomp install-sh ltmain.sh \
  	mdate-sh missing texinfo.tex
  ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 -am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
-+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cc_maxopt.m4 \
++am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
++	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
 +	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
 +	$(top_srcdir)/m4/ax_check_compiler_flags.m4 \
 +	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
@@ -50,7 +51,7 @@ Index: libffi/Makefile.in
  	$(top_srcdir)/configure.ac
  am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
  	$(ACLOCAL_M4)
-@@ -335,6 +343,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+@@ -335,6 +344,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
  PACKAGE_URL = @PACKAGE_URL@
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
@@ -58,7 +59,7 @@ Index: libffi/Makefile.in
  RANLIB = @RANLIB@
  SED = @SED@
  SET_MAKE = @SET_MAKE@
-@@ -355,6 +364,7 @@ am__leading_dot = @am__leading_dot@
+@@ -355,6 +365,7 @@ am__leading_dot = @am__leading_dot@
  am__quote = @am__quote@
  am__tar = @am__tar@
  am__untar = @am__untar@
@@ -66,7 +67,7 @@ Index: libffi/Makefile.in
  bindir = @bindir@
  build = @build@
  build_alias = @build_alias@
-@@ -493,7 +503,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -493,7 +504,7 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_27)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
@@ -921,7 +922,7 @@ Index: libffi/m4/ax_enable_builddir.m4
 +	; test ".\$\$HOST" = "." && HOST=$x sh $AUX/config.guess $x \\\\\\
 +	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 +	; use=$x basename "\$\@" _ALL $x; n=$x echo \$\$BUILD | wc -w $x \\\\\\
-+	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" = "0" ; then : \\\\\\
++	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" -eq "0" ; then : \\\\\\
 +	; BUILD=$x grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' $x ; fi \\\\\\
 +	; test ".\$\$BUILD" = "." && BUILD="." \\\\\\
 +	; test "\$\$use" = "\$\@" && BUILD=$x echo "\$\$BUILD" | tail -1 $x \\\\\\
@@ -934,7 +935,7 @@ Index: libffi/m4/ax_enable_builddir.m4
 +	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 +	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
 +	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).tar.*" \\\\\\
-+	; if test "\$\$found" = "0" ; then : \\\\\\
++	; if test "\$\$found" -eq "0" ; then : \\\\\\
 +	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
 +	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
 +	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).tar.* \\\\\\
@@ -946,7 +947,7 @@ Index: libffi/m4/ax_enable_builddir.m4
 +	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 +	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
 +	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).*" \\\\\\
-+	; if test "\$\$found" = "0" ; then : \\\\\\
++	; if test "\$\$found" -eq "0" ; then : \\\\\\
 +	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
 +	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
 +	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).* \\\\\\

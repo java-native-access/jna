@@ -204,7 +204,7 @@ a\\
 	; test ".\$\$HOST" = "." && HOST=$x sh $AUX/config.guess $x \\\\\\
 	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 	; use=$x basename "\$\@" _ALL $x; n=$x echo \$\$BUILD | wc -w $x \\\\\\
-	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" = "0" ; then : \\\\\\
+	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" -eq "0" ; then : \\\\\\
 	; BUILD=$x grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' $x ; fi \\\\\\
 	; test ".\$\$BUILD" = "." && BUILD="." \\\\\\
 	; test "\$\$use" = "\$\@" && BUILD=$x echo "\$\$BUILD" | tail -1 $x \\\\\\
@@ -217,7 +217,7 @@ dnl special rule add-on: "dist" copies the tarball to $(PUB). (source tree)
 	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
 	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).tar.*" \\\\\\
-	; if test "\$\$found" = "0" ; then : \\\\\\
+	; if test "\$\$found" -eq "0" ; then : \\\\\\
 	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
 	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
 	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).tar.* \\\\\\
@@ -229,7 +229,7 @@ dnl special rule add-on: "dist-foo" copies all the archives to $(PUB). (source t
 	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
 	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
 	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).*" \\\\\\
-	; if test "\$\$found" = "0" ; then : \\\\\\
+	; if test "\$\$found" -eq "0" ; then : \\\\\\
 	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
 	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
 	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).* \\\\\\
