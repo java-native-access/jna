@@ -34,3 +34,4 @@ kfreebsd-mmap
 minix
 interix-patch
 remove-debug-code
+powerpc-ffi-softfloat

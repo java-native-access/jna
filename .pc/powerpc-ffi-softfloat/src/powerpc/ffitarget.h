@@ -60,14 +60,18 @@ typedef enum ffi_abi {
   FFI_LINUX64,
   FFI_LINUX,
   FFI_LINUX_SOFT_FLOAT,
-# if defined(POWERPC64)
+# ifdef POWERPC64
   FFI_DEFAULT_ABI = FFI_LINUX64,
-# elif defined(__NO_FPRS__)
-  FFI_DEFAULT_ABI = FFI_LINUX_SOFT_FLOAT,
-# elif (__LDBL_MANT_DIG__ == 106)
-  FFI_DEFAULT_ABI = FFI_LINUX,
 # else
+#  if (!defined(__NO_FPRS__) && (__LDBL_MANT_DIG__ == 106))
+  FFI_DEFAULT_ABI = FFI_LINUX,
+#  else
+#   ifdef __NO_FPRS__
+  FFI_DEFAULT_ABI = FFI_LINUX_SOFT_FLOAT,
+#   else
   FFI_DEFAULT_ABI = FFI_GCC_SYSV,
+#   endif
+#  endif
 # endif
 #endif
 
