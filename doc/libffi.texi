@@ -152,9 +152,7 @@ If the function being called is variadic (varargs) then
 @code{ffi_prep_cif_var} must be used instead of @code{ffi_prep_cif}.
 
 @findex ffi_prep_cif_var
-@defun ffi_status ffi_prep_cif_var (ffi_cif *@var{cif}, ffi_abi
-var{abi}, unsigned int @var{nfixedargs}, unsigned int
-var{ntotalargs}, ffi_type *@var{rtype}, ffi_type **@var{argtypes})
+@defun ffi_status ffi_prep_cif_var (ffi_cif *@var{cif}, ffi_abi var{abi}, unsigned int @var{nfixedargs}, unsigned int var{ntotalargs}, ffi_type *@var{rtype}, ffi_type **@var{argtypes})
 This initializes @var{cif} according to the given parameters for
 a call to a variadic function.  In general it's operation is the
 same as for @code{ffi_prep_cif} except that:

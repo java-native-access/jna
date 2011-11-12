@@ -507,7 +507,7 @@ Index: libffi/doc/libffi.texi
  
  @var{rtype} is a pointer to an @code{ffi_type} structure that
  describes the return type of the function.  @xref{Types}.
-@@ -150,6 +148,32 @@ objects is incorrect; or @code{FFI_BAD_A
+@@ -150,6 +148,30 @@ objects is incorrect; or @code{FFI_BAD_A
  is invalid.
  @end defun
  
@@ -515,9 +515,7 @@ Index: libffi/doc/libffi.texi
 +@code{ffi_prep_cif_var} must be used instead of @code{ffi_prep_cif}.
 +
 +@findex ffi_prep_cif_var
-+@defun ffi_status ffi_prep_cif_var (ffi_cif *@var{cif}, ffi_abi
-+var{abi}, unsigned int @var{nfixedargs}, unsigned int
-+var{ntotalargs}, ffi_type *@var{rtype}, ffi_type **@var{argtypes})
++@defun ffi_status ffi_prep_cif_var (ffi_cif *@var{cif}, ffi_abi var{abi}, unsigned int @var{nfixedargs}, unsigned int var{ntotalargs}, ffi_type *@var{rtype}, ffi_type **@var{argtypes})
 +This initializes @var{cif} according to the given parameters for
 +a call to a variadic function.  In general it's operation is the
 +same as for @code{ffi_prep_cif} except that:
@@ -540,7 +538,7 @@ Index: libffi/doc/libffi.texi
  
  To call a function using an initialized @code{ffi_cif}, use the
  @code{ffi_call} function:
-@@ -572,9 +596,7 @@ support for these.
+@@ -572,9 +594,7 @@ support for these.
  
  @itemize @bullet
  @item
@@ -551,7 +549,7 @@ Index: libffi/doc/libffi.texi
  
  @item
  There is no support for bit fields in structures.
-@@ -591,6 +613,8 @@ The ``raw'' API is undocumented.
+@@ -591,6 +611,8 @@ The ``raw'' API is undocumented.
  @c anything else?
  @end itemize
  
