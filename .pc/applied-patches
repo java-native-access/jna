@@ -30,3 +30,7 @@ more-openbsd-mips
 darwin11
 powerpc-sysv-without-string-ops
 windows-ce-arm
+kfreebsd-mmap
+minix
+interix-patch
+remove-debug-code

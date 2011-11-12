@@ -88,13 +88,17 @@ ACLOCAL_AMFLAGS=$(ACLOCAL_AMFLAGS) -I m4
 lib_LTLIBRARIES = libffi.la
 noinst_LTLIBRARIES = libffi_convenience.la
 
-libffi_la_SOURCES = src/debug.c src/prep_cif.c src/types.c \
+libffi_la_SOURCES = src/prep_cif.c src/types.c \
 		src/raw_api.c src/java_raw_api.c src/closures.c
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libffi.pc
 
 nodist_libffi_la_SOURCES =
+
+if FFI_DEBUG
+nodist_libffi_la_SOURCES += src/debug.c
+endif
 
 if MIPS
 nodist_libffi_la_SOURCES += src/mips/ffi.c src/mips/o32.S src/mips/n32.S
@@ -191,7 +195,7 @@ endif
 libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
 
 AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
-AM_CCASFLAGS = $(AM_CPPFLAGS)
+AM_CCASFLAGS = $(AM_CPPFLAGS) -g
 
 # No install-html or install-pdf support in automake yet
 .PHONY: install-html install-pdf

@@ -14297,7 +14297,7 @@ case "$target" in
 $as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
 
      ;;
-     *-apple-darwin1[10]* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+     *-apple-darwin1[10]* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
 
 $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
 

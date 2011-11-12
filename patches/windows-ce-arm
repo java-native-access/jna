@@ -46,3 +46,16 @@ Index: libffi/src/arm/ffi.c
        /* Align if necessary */
        if ((alignment - 1) & (unsigned) argp) {
  	argp = (char *) ALIGN(argp, alignment);
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,8 @@
++2011-11-12  Timothy Wall  <twall@users.sf.net>
++
++	* src/arm/ffi.c (ffi_prep_args, ffi_prep_incoming_args_SYSV): Max
++	alignment of 4 for wince on ARM.
++
+ 2011-11-12  Kyle Moffett <Kyle.D.Moffett@boeing.com>
+ 	    Anthony Green <green@moxielogic.com>
+ 
