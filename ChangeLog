@@ -1,3 +1,9 @@
+2011-11-12  Kyle Moffett <Kyle.D.Moffett@boeing.com>
+	    Anthony Green <green@moxielogic.com>
+
+	* src/ppc/sysv.S, src/ppc/ffi.c: Remove use of ppc string
+	instructions (not available on some cores, like the PPC440).
+
 2011-11-12  Kimura Wataru  <kimuraw@i.nifty.jp>
 
 	* m4/ax_enable_builddir: Change from string comparison to numeric
