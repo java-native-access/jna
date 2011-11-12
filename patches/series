@@ -27,6 +27,7 @@ fix-ppc32
 darwin-EH-fix
 more-openbsd
 more-openbsd-mips
+darwin11
 minix
 
 interix-patch

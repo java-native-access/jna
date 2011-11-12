@@ -339,7 +339,7 @@ case "$target" in
                  [Cannot use PROT_EXEC on this target, so, we revert to
                    alternative means])
      ;;
-     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
+     *-apple-darwin1[[10]]* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
                  [Cannot use malloc on this target, so, we revert to
                    alternative means])
