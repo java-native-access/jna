@@ -12,7 +12,7 @@
 2011-11-12  Kimura Wataru  <kimuraw@i.nifty.jp>
 
 	* m4/ax_enable_builddir: Change from string comparison to numeric
-	comparison for wc output. 
+	comparison for wc output.
 	* configure.ac: Enable FFI_MMAP_EXEC_WRIT for darwin11 aka Mac OS
 	X 10.7.
 	* configure: Rebuilt.

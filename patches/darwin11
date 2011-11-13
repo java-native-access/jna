@@ -2,75 +2,23 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -2,6 +2,9 @@
- 
- 	* m4/ax_enable_builddir: Change from string comparison to numeric
- 	comparison for wc output. 
+@@ -1,3 +1,11 @@
++2011-11-12  Kimura Wataru  <kimuraw@i.nifty.jp>
++
++	* m4/ax_enable_builddir: Change from string comparison to numeric
++	comparison for wc output.
 +	* configure.ac: Enable FFI_MMAP_EXEC_WRIT for darwin11 aka Mac OS
 +	X 10.7.
 +	* configure: Rebuilt.
- 
++
  2011-11-10  Richard Henderson  <rth@redhat.com>
  
+ 	* configure.ac (GCC_AS_CFI_PSEUDO_OP): Use it instead of inline check.
 Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -12240,45 +12240,6 @@ $as_echo "$icc_archflag" >&6; }
-      # default optimization flags for gcc on all systems
-      CFLAGS="-O3 -fomit-frame-pointer"
- 
--     # -malign-double for x86 systems
--      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -malign-double" >&5
--$as_echo_n "checking whether C compiler accepts -malign-double... " >&6; }
--if ${ax_cv_c_flags__malign_double+:} false; then :
--  $as_echo_n "(cached) " >&6
--else
--
--      ax_save_FLAGS=$CFLAGS
--      CFLAGS="-malign-double"
--      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
--/* end confdefs.h.  */
--
--int
--main ()
--{
--
--  ;
--  return 0;
--}
--_ACEOF
--if ac_fn_c_try_compile "$LINENO"; then :
--  ax_cv_c_flags__malign_double=yes
--else
--  ax_cv_c_flags__malign_double=no
--fi
--rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
--      CFLAGS=$ax_save_FLAGS
--fi
--
--eval ax_check_compiler_flags=$ax_cv_c_flags__malign_double
--{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_check_compiler_flags" >&5
--$as_echo "$ax_check_compiler_flags" >&6; }
--if test "x$ax_check_compiler_flags" = xyes; then
--	CFLAGS="$CFLAGS -malign-double"
--else
--	:
--fi
--
--
-      #  -fstrict-aliasing for gcc-2.95+
-       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -fstrict-aliasing" >&5
- $as_echo_n "checking whether C compiler accepts -fstrict-aliasing... " >&6; }
-@@ -12318,7 +12279,6 @@ else
- fi
- 
- 
--     # note that we enable "unsafe" fp optimization with other compilers, too
-       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -ffast-math" >&5
- $as_echo_n "checking whether C compiler accepts -ffast-math... " >&6; }
- if ${ax_cv_c_flags__ffast_math+:} false; then :
-@@ -13105,7 +13065,7 @@ case "$host" in
+@@ -12064,7 +12064,7 @@ case "$host" in
  	TARGET=FRV; TARGETDIR=frv
  	;;
  
@@ -79,7 +27,7 @@ Index: libffi/configure
  	TARGET=PA_LINUX; TARGETDIR=pa
  	;;
    hppa*64-*-hpux*)
-@@ -13155,7 +13115,7 @@ case "$host" in
+@@ -12114,7 +12114,7 @@ case "$host" in
    mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)
  	TARGET=MIPS; TARGETDIR=mips
  	;;
@@ -88,7 +36,7 @@ Index: libffi/configure
  	# Support 128-bit long double for NewABI.
  	HAVE_LONG_DOUBLE='defined(__mips64)'
  	TARGET=MIPS; TARGETDIR=mips
-@@ -13177,7 +13137,7 @@ case "$host" in
+@@ -12136,7 +12136,7 @@ case "$host" in
    powerpc-*-aix* | rs6000-*-aix*)
  	TARGET=POWERPC_AIX; TARGETDIR=powerpc
  	;;
@@ -97,15 +45,6 @@ Index: libffi/configure
  	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
  	;;
    powerpc64-*-freebsd*)
-@@ -14337,7 +14297,7 @@ case "$target" in
- $as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
- 
-      ;;
--     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
-+     *-apple-darwin1[10]* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
- 
- $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
- 
 Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac

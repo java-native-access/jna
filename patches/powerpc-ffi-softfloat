@@ -12,15 +12,6 @@ Index: libffi/ChangeLog
  2011-11-12  Petr Salinger <Petr.Salinger@seznam.cz>
  
  	* configure.ac (FFI_EXEC_TRAMPOLINE_TABLE): Fix kfreebsd support.
-@@ -17,7 +23,7 @@
- 2011-11-12  Kimura Wataru  <kimuraw@i.nifty.jp>
- 
- 	* m4/ax_enable_builddir: Change from string comparison to numeric
--	comparison for wc output. 
-+	comparison for wc output.
- 	* configure.ac: Enable FFI_MMAP_EXEC_WRIT for darwin11 aka Mac OS
- 	X 10.7.
- 	* configure: Rebuilt.
 Index: libffi/src/powerpc/ffi.c
 ===================================================================
 --- libffi.orig/src/powerpc/ffi.c
