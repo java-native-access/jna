@@ -188,6 +188,11 @@ public abstract class Structure {
         return structFields;
     }
 
+    /** Return the type mapper in effect for this Structure. */
+    TypeMapper getTypeMapper() {
+        return typeMapper;
+    }
+
     /** Change the type mapping for this structure.  May cause the structure
      * to be resized and any existing memory to be reallocated.
      * If <code>null</code>, the default mapper for the
@@ -268,12 +273,18 @@ public abstract class Structure {
         }
     }
 
+    /** Ensure this memory has its size and layout calculated and its
+        memory allocated. */ 
     protected void ensureAllocated() {
+        ensureAllocated(false);
+    }
+
+    private void ensureAllocated(boolean avoidFFIType) {
         if (memory == null) {
-            allocateMemory();
+            allocateMemory(avoidFFIType);
         }
         else if (size == CALCULATE_SIZE) {
-            size = calculateSize(true);
+            size = calculateSize(true, avoidFFIType);
         }
     }
 
@@ -281,8 +292,13 @@ public abstract class Structure {
      * Returns whether the operation was successful.
      */
     protected void allocateMemory() {
-        allocateMemory(calculateSize(true));
+        allocateMemory(false);
     }
+
+    private void allocateMemory(boolean avoidFFIType) {
+        allocateMemory(calculateSize(true, avoidFFIType));
+    }
+
 
     /** Provided for derived classes to indicate a different
      * size than the default.  Returns whether the operation was successful.
@@ -768,6 +784,10 @@ public abstract class Structure {
      * encountered
      */
     int calculateSize(boolean force) {
+        return calculateSize(force, false);
+    }
+
+    private int calculateSize(boolean force, boolean avoidFFIType) {
         // TODO: maybe cache this information on a per-class basis
         // so that we don't have to re-analyze this static information each
         // time a struct is allocated.
@@ -873,7 +893,7 @@ public abstract class Structure {
                 fieldAlignment = getNativeAlignment(nativeType, value, firstField);
             }
             catch(IllegalArgumentException e) {
-                // Might simply not yet have a type mapper set
+                // Might simply not yet have a type mapper set yet
                 if (!force && typeMapper == null) {
                     return CALCULATE_SIZE;
                 }
@@ -896,7 +916,7 @@ public abstract class Structure {
         if (calculatedSize > 0) {
             int size = calculateAlignedSize(calculatedSize);
             // Update native FFI type information, if needed
-            if (this instanceof ByValue) {
+            if (this instanceof ByValue && !avoidFFIType) {
                 getTypeInfo();
             }
             if (this.memory != null
@@ -1164,7 +1184,16 @@ public abstract class Structure {
 
     /** Override to supply native type information for the given field. */
     protected Pointer getFieldTypeInfo(StructField f) {
-        return FFIType.get(getField(f), f.type);
+        Class type = f.type;
+        Object value = getField(f);
+        if (typeMapper != null) {
+            ToNativeConverter nc = typeMapper.getToNativeConverter(type);
+            if (nc != null) {
+                type = nc.nativeType();
+                value = nc.toNative(value, new ToNativeContext());
+            }
+        }
+        return FFIType.get(value, type);
     }
 
     /** Obtain native type information for this structure. */
@@ -1307,11 +1336,11 @@ public abstract class Structure {
             typeInfoMap.put(Character.class, ctype);
             typeInfoMap.put(byte.class, FFITypes.ffi_type_sint8);
             typeInfoMap.put(Byte.class, FFITypes.ffi_type_sint8);
-            typeInfoMap.put(boolean.class, FFITypes.ffi_type_uint32);
-            typeInfoMap.put(Boolean.class, FFITypes.ffi_type_uint32);
             typeInfoMap.put(Pointer.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(String.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(WString.class, FFITypes.ffi_type_pointer);
+            typeInfoMap.put(boolean.class, FFITypes.ffi_type_uint32);
+            typeInfoMap.put(Boolean.class, FFITypes.ffi_type_uint32);
         }
         // From ffi.h
         private static final int FFI_TYPE_STRUCT = 13;
@@ -1323,6 +1352,9 @@ public abstract class Structure {
 
         private FFIType(Structure ref) {
             Pointer[] els;
+
+            ref.ensureAllocated(true);
+
             if (ref instanceof Union) {
                 StructField sf = ((Union)ref).biggestField;
                 els = new Pointer[] {
@@ -1364,6 +1396,13 @@ public abstract class Structure {
         }
 
         private static Pointer get(Object obj, Class cls) {
+            TypeMapper mapper = Native.getTypeMapper(cls);
+            if (mapper != null) {
+                ToNativeConverter nc = mapper.getToNativeConverter(cls);
+                if (nc != null) {
+                    cls = nc.nativeType();
+                }
+            }
             synchronized(typeInfoMap) {
                 Object o = typeInfoMap.get(cls);
                 if (o instanceof Pointer) {

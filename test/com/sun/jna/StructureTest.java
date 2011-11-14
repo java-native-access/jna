@@ -739,20 +739,25 @@ public class StructureTest extends TestCase {
         public size_t() { this(0); }
         public size_t(long value) { super(Native.POINTER_SIZE, value); }
     }
-    public void testNestedStructureTypeInfo() {
-        class FFIType extends Structure {
-            public FFIType(Pointer p) {
-                useMemory(p); read();
-            }
-            public size_t size;
-            public short alignment;
-            public short type;
-            public Pointer elements;
+    class FFIType extends Structure {
+        public FFIType(Pointer p) {
+            super(p); 
+            // Must explicitly calculate our size field
+            Native.initialize_ffi_type(p.peer); 
+            read();
         }
+        // NOTE: this field is never initialized by libffi
+        public size_t size;
+        public short alignment;
+        public short type;
+        public Pointer elements;
+    }
+    public void testNestedStructureTypeInfo() {
         NestedTypeInfoStructure s = new NestedTypeInfoStructure();
         Pointer p = s.getTypeInfo();
-        FFIType ffi_type = new FFIType(p);
         assertNotNull("Type info should not be null", p);
+        FFIType ffi_type = new FFIType(p);
+        assertEquals("FFIType size mismatch", s.size(), ffi_type.size.intValue());
         Pointer els = ffi_type.elements;
         Pointer inner = s.inner.getTypeInfo();
         assertEquals("Wrong type information for 'inner' field",
@@ -769,9 +774,11 @@ public class StructureTest extends TestCase {
             public int[] inner = new int[5];
         }
         TestStructure s = new TestStructure();
-        assertEquals("Wrong structure size", 20, s.size());
         Pointer p = s.getTypeInfo();
         assertNotNull("Type info should not be null", p);
+        FFIType ffi_type = new FFIType(p);
+        assertEquals("Wrong structure size", 20, s.size());
+        assertEquals("FFIType info size mismatch", s.size(), ffi_type.size.intValue());
     }
 
     public void testTypeInfoForNull() {
@@ -1000,11 +1007,12 @@ public class StructureTest extends TestCase {
     }
 
     public void testCustomTypeMapper() {
+        final DefaultTypeMapper mapper = new DefaultTypeMapper();
         class TestField { }
         class TestStructure extends Structure {
             public TestField field;
             public TestStructure() {
-                DefaultTypeMapper m = new DefaultTypeMapper();
+                DefaultTypeMapper m = mapper;
                 m.addTypeConverter(TestField.class, new TypeConverter() {
                     public Object fromNative(Object value, FromNativeContext context) {
                         return new TestField();
@@ -1016,10 +1024,11 @@ public class StructureTest extends TestCase {
                         return value == null ? null : value.toString();
                     }
                 });
-                setTypeMapper(new DefaultTypeMapper());
+                setTypeMapper(m);
             }
         }
-        new TestStructure();
+        Structure s = new TestStructure();
+        assertEquals("Wrong type mapper: " + s, mapper, s.getTypeMapper());
     }
     
     public void testWriteWithNullBoxedPrimitives() {
@@ -1257,5 +1266,54 @@ public class StructureTest extends TestCase {
     public void testStructureSetIterator() {
         assertNotNull("Indirect test of StructureSet.Iterator",
                       Structure.busy().toString());
+    }
+
+    public void testFFITypeCalculationWithTypeMappedFields() {
+        final TypeMapper mapper = new TypeMapper() {
+            public FromNativeConverter getFromNativeConverter(Class cls) {
+                if (Boolean.class.equals(cls)
+                    || boolean.class.equals(cls)) {
+                    return new FromNativeConverter() {
+                        public Class nativeType() {
+                            return byte.class;
+                        }
+                        public Object fromNative(Object nativeValue, FromNativeContext context) {
+                            return nativeValue.equals((byte)0)
+                                ? Boolean.FALSE : Boolean.TRUE;
+                        }
+                    };
+                }
+                return null;
+            }
+            public ToNativeConverter getToNativeConverter(Class javaType) {
+                if (Boolean.class.equals(javaType)
+                    || boolean.class.equals(javaType)) {
+                    return new ToNativeConverter() {
+                        public Object toNative(Object value, ToNativeContext context) {
+                            return new Byte(Boolean.TRUE.equals(value) ? (byte)1 : (byte)0);
+                        }
+                        public Class nativeType() {
+                            return byte.class;
+                        }
+                    };
+                }
+                return null;
+            }
+        };
+        class TestStructure extends Structure {
+            public boolean b;
+            public short s;
+            // Ensure we're not stuffed into a register
+            public int p0,p1,p2,p3,p4,p5,p6,p7;
+            public TestStructure() {
+                setTypeMapper(mapper);
+            }
+        }
+        Structure s = new TestStructure();
+        assertEquals("Wrong type mapper for structure", mapper, s.getTypeMapper());
+
+        FFIType ffi_type = new FFIType(Structure.getTypeInfo(s));
+        assertEquals("Java Structure size does not match FFIType size",
+                     s.size(), ffi_type.size.intValue());
     }
 }
