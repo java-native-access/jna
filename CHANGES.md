@@ -7,6 +7,7 @@ Features
 * Allow override of default jnidispatch library name with `jna.boot.library.name` system property.
 * Throw an Error if a system install of JNA is incompatible or if JNA's JNI library does not match.
 * Disable automatic jnidispatch unpacking with jna.nounpack=true.
+* Automatically look up system error messages for LastErrorException.
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
 * linux/arm 32-bit support (hardware provided by Alex Lam).

@@ -986,7 +986,7 @@ public final class Native {
             return POINTER_SIZE;
         }
         if (Pointer.class.isAssignableFrom(cls)
-            || (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(cls))
+            || (Platform.HAS_BUFFERS && Buffers.isBuffer(cls))
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
             || WString.class == cls) {
@@ -1212,7 +1212,7 @@ public final class Native {
         if (WString.class.isAssignableFrom(type)) {
             return CVT_WSTRING;
         }
-        if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
+        if (Platform.HAS_BUFFERS && Buffers.isBuffer(type)) {
             return CVT_BUFFER;
         }
         if (Structure.class.isAssignableFrom(type)) {
@@ -1726,6 +1726,12 @@ public final class Native {
      */
     public static void detach(boolean detach) {
         setLastError(detach ? THREAD_DETACH : THREAD_LEAVE_ATTACHED);
+    }
+
+    private static class Buffers {
+        static boolean isBuffer(Class cls) {
+            return Buffer.class.isAssignableFrom(cls);
+        }
     }
 
     /** Provides separation of JAWT functionality for the sake of J2ME

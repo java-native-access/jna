@@ -49,7 +49,8 @@
 #define LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
 #endif
 #define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_OPTS) : GetModuleHandleW(NULL))
-#define LOAD_ERROR(BUF,LEN) w32_format_error(BUF, LEN)
+#define LOAD_ERROR(BUF,LEN) w32_format_error(GetLastError(), BUF, LEN)
+#define STR_ERROR(CODE,BUF,LEN) w32_format_error(CODE, BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
 #define FIND_ENTRY(HANDLE, NAME) w32_find_entry(env, HANDLE, NAME)
 #define GET_LAST_ERROR() GetLastError()
@@ -65,6 +66,7 @@
 #endif
 #define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)
+#define STR_ERROR(CODE,BUF,LEN) (strerror_r(CODE, BUF, LEN), BUF)
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
 #define FIND_ENTRY(HANDLE, NAME) dlsym(HANDLE, NAME)
 #define GET_LAST_ERROR() errno
@@ -101,11 +103,20 @@ extern "C"
 
 #ifdef _WIN32
 static char*
-w32_format_error(char* buf, int len) {
-  wchar_t* wbuf = (wchar_t*)alloca(len);
-  FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
-                 0, wbuf, len, NULL);
-  WideCharToMultiByte(CP_UTF8, 0, wbuf, (int)wcslen(wbuf), buf, len, NULL, NULL);
+w32_format_error(int error, char* buf, int len) {
+  wchar_t* wbuf = NULL;
+  int wlen =
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS|FORMAT_MESSAGE_ALLOCATE_BUFFER,
+                   NULL, error, 0, (LPWSTR)&wbuf, 0, NULL);
+  if (wlen > 0) {
+    WideCharToMultiByte(CP_UTF8, 0, wbuf, wlen+1, buf, len, NULL, NULL);
+  }
+  else {
+    *buf = 0;
+  }
+  if (wbuf) {
+    LocalFree(wbuf);
+  }
   return buf;
 }
 static HANDLE
@@ -552,7 +563,8 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     if (flags & THROW_LAST_ERROR) {
       int error = GET_LAST_ERROR();
       if (error) {
-        snprintf(msg, sizeof(msg), "%d", error);
+        char emsg[1024];
+        snprintf(msg, sizeof(msg), "[%d]%s", error, STR_ERROR(error, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }
@@ -1699,7 +1711,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     if (data->throw_last_error) {
       int error = GET_LAST_ERROR();
       if (error) {
-        snprintf(msg, sizeof(msg), "%d", error);
+        char emsg[1024];
+        snprintf(msg, sizeof(msg), "[%d]%s", error, STR_ERROR(error, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }

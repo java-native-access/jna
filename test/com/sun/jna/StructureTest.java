@@ -1278,7 +1278,7 @@ public class StructureTest extends TestCase {
                             return byte.class;
                         }
                         public Object fromNative(Object nativeValue, FromNativeContext context) {
-                            return nativeValue.equals((byte)0)
+                            return nativeValue.equals(new Byte((byte)0))
                                 ? Boolean.FALSE : Boolean.TRUE;
                         }
                     };
