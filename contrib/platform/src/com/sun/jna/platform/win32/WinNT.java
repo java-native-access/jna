@@ -480,7 +480,30 @@ public interface WinNT extends StdCallLibrary {
 	    public static final int SidTypeLabel = 10;
 	}	
 	
-    public static final int FILE_LIST_DIRECTORY = 0x00000001;
+  /* File access rights */
+  public static final int  FILE_READ_DATA              = 0x00000001;
+  public static final int  FILE_LIST_DIRECTORY         = 0x00000001;
+  public static final int  FILE_WRITE_DATA             = 0x00000002;
+  public static final int  FILE_ADD_FILE               = 0x00000002;
+  public static final int  FILE_APPEND_DATA            = 0x00000004;
+  public static final int  FILE_ADD_SUBDIRECTORY       = 0x00000004;
+  public static final int  FILE_CREATE_PIPE_INSTANCE   = 0x00000004;
+  public static final int  FILE_READ_EA                = 0x00000008;
+  public static final int  FILE_WRITE_EA               = 0x00000010;
+  public static final int  FILE_EXECUTE                = 0x00000020;
+  public static final int  FILE_TRAVERSE               = 0x00000020;
+  public static final int  FILE_DELETE_CHILD           = 0x00000040;
+  public static final int  FILE_READ_ATTRIBUTES        = 0x00000080;
+  public static final int  FILE_WRITE_ATTRIBUTES       = 0x00000100;
+  public static final int  FILE_ALL_ACCESS             = (STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x000001FF);
+  public static final int  FILE_GENERIC_READ           =
+      (STANDARD_RIGHTS_READ | SYNCHRONIZE | FILE_READ_DATA | FILE_READ_ATTRIBUTES | 
+      FILE_READ_EA);
+  public static final int  FILE_GENERIC_WRITE         =
+      (STANDARD_RIGHTS_WRITE | SYNCHRONIZE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | 
+      FILE_WRITE_EA | FILE_APPEND_DATA);
+  public static final int  FILE_GENERIC_EXECUTE      =
+      (STANDARD_RIGHTS_EXECUTE | SYNCHRONIZE | FILE_READ_ATTRIBUTES | FILE_EXECUTE);
 
     public static final int CREATE_NEW =         1;
     public static final int CREATE_ALWAYS =      2;
@@ -1653,6 +1676,277 @@ public interface WinNT extends StdCallLibrary {
 	public static final int SE_PRIVILEGE_REMOVED = 0X00000004;
 	public static final int SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
-    int PROCESS_TERMINATE = 0x00000001;
+	int PROCESS_TERMINATE = 0x00000001;
     int PROCESS_SYNCHRONIZE = 0x00100000;
+    
+	/* Security information types */
+	public static final int  OWNER_SECURITY_INFORMATION              = 0x00000001;
+	public static final int  GROUP_SECURITY_INFORMATION              = 0x00000002;
+	public static final int  DACL_SECURITY_INFORMATION               = 0x00000004;
+	public static final int  SACL_SECURITY_INFORMATION               = 0x00000008;
+	public static final int  LABEL_SECURITY_INFORMATION              = 0x00000010;
+	public static final int  PROTECTED_DACL_SECURITY_INFORMATION     = 0x80000000;
+	public static final int  PROTECTED_SACL_SECURITY_INFORMATION     = 0x40000000;
+	public static final int  UNPROTECTED_DACL_SECURITY_INFORMATION   = 0x20000000;
+	public static final int  UNPROTECTED_SACL_SECURITY_INFORMATION   = 0x10000000;
+
+	public static class SECURITY_DESCRIPTOR extends Structure {
+	  public static class ByReference extends SECURITY_DESCRIPTOR implements Structure.ByReference {
+	  }
+
+	  public SECURITY_DESCRIPTOR() {
+
+	  }
+
+	  public SECURITY_DESCRIPTOR(byte[] data) {
+	    super();
+	    Memory memory = new Memory(data.length);
+	    memory.write(0, data, 0, data.length);
+	    setPointer(memory);
+	  }
+
+	  public void setPointer(Pointer p) {
+	    useMemory(p);
+	    read();
+	  }
+
+	  public SECURITY_DESCRIPTOR(Pointer memory) {
+	    useMemory(memory);
+	    read();
+	  }
+
+	  public byte              Revision;
+	  public byte              Sbz1;
+	  public short             Control;
+	  public PSID.ByReference  Owner;
+	  public PSID.ByReference  Group;
+	  public PACL.ByReference  Sacl;
+	  public PACL.ByReference  Dacl;
+	};
+
+	public static class PACL extends Structure {
+	  public static class ByReference extends PACL implements Structure.ByReference {
+	  }
+
+	  public PACL() {
+	  }
+
+	  public PACL(byte[] data) {
+	    super();
+	    Memory memory = new Memory(data.length);
+	    memory.write(0, data, 0, data.length);
+	    setPointer(memory);
+	  }
+
+	  public PACL(int size) {
+	    super(new Memory(size));
+	  }
+
+	  public PACL(Pointer memory) {
+	    super(memory);
+	    read();
+	  }
+
+	  public void setPointer(Pointer p) {
+	    useMemory(p);
+	    read();
+	  }
+
+	  public byte[] getBytes() {
+	    int len = 0;
+	    return getPointer().getByteArray(0, len);
+	  }
+
+	  public Pointer acl;                
+	}    
+
+	public static class ACL extends Structure {
+
+	  public ACL(Pointer pointer) {
+	    useMemory(pointer);
+	    read();
+
+	    ACEs = new ACCESS_ACEStructure[AceCount];
+
+	    int cnt = 0;
+	    int offset = size();
+	    while ( cnt < AceCount ) {
+	      Pointer share = pointer.share(offset);
+	      // ACE_HEADER.AceType
+	      final byte aceType = share.getByte(0);
+	      ACCESS_ACEStructure ace = null;
+	      switch (aceType) {
+	        case ACCESS_ALLOWED_ACE_TYPE:
+	          ace = new ACCESS_ALLOWED_ACE(share);
+	          break;
+	        case ACCESS_DENIED_ACE_TYPE:
+	          ace = new ACCESS_DENIED_ACE(share);
+	          break;
+	        default:
+	          throw new IllegalArgumentException("Unknwon ACE type " + aceType);
+	      }
+        ACEs[cnt] = ace;
+	      offset += ace.AceSize;
+	      cnt++;
+	    }
+
+	  }
+	  public byte     AclRevision;
+	  public byte     Sbz1;
+	  public short    AclSize;
+	  public short    AceCount;
+	  public short    Sbz2;
+
+	  ACCESS_ACEStructure[] ACEs;
+
+	  public ACCESS_ACEStructure[] getACEStructures() {
+	    return ACEs;
+	  }
+
+	};
+
+	public static class SECURITY_DESCRIPTOR_RELATIVE extends Structure {
+	  public static class ByReference extends SECURITY_DESCRIPTOR_RELATIVE implements Structure.ByReference {
+	  }
+
+	  public SECURITY_DESCRIPTOR_RELATIVE() {
+
+	  }
+
+	  public SECURITY_DESCRIPTOR_RELATIVE(byte[] data) {
+	    super();
+	    Memory memory = new Memory(data.length);
+	    memory.write(0, data, 0, data.length);
+	    setMemory(memory);
+	  }
+
+	  public void setMemory(Memory p) {
+	    useMemory(p);
+	    read();
+	    if (Dacl != 0) {
+	      Pointer pointer = p.share(Dacl);
+	      DACL = new ACL(pointer);
+	    }
+	  }
+
+	  public SECURITY_DESCRIPTOR_RELATIVE(Memory memory) {
+	    setMemory(memory);
+	  }
+
+	  public byte     Revision;
+	  public byte     Sbz1;
+	  public short    Control;
+	  public int      Owner;
+	  public int      Group;
+	  public int      Sacl;
+	  public int      Dacl;
+	  
+	  ACL DACL;
+	  
+	  public ACL getDiscretionaryACL() {
+	    return DACL;
+	  }
+
+	} 
+
+	public static abstract class ACEStructure  extends Structure {
+	  public byte    AceType;
+	  public byte    AceFlags;
+	  public short   AceSize;
+
+	  PSID psid;
+
+	  public String getSidString() {
+	    return Advapi32Util.convertSidToStringSid(psid);
+	  }
+
+	  public PSID getSID() {
+	    return psid;
+	  }
+
+	}
+
+	/* ACE header */
+	public static class ACE_HEADER  extends ACEStructure {
+
+	  public ACE_HEADER(Pointer p) {
+	    useMemory(p);
+	    read();
+	  }
+	  // moved to super class ACEStructure
+	  //public byte    AceType;
+	  //public byte    AceFlags;
+	  //public short   AceSize;
+
+	} ;
+
+	/**
+	 * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE got the same structure layout
+	 */
+	public static abstract class ACCESS_ACEStructure  extends ACEStructure {
+	  public ACCESS_ACEStructure(Pointer p) {
+	    useMemory(p);
+	    read();
+	    // AceSize - size of public members of the structure + size of DWORD (SidStart)
+	    int sizeOfSID = super.AceSize - size() + 4;
+	    // ACE_HEADER + size of int (Mask)
+	    int offsetOfSID = 4 + 4;
+	    byte[] data = p.getByteArray(offsetOfSID, sizeOfSID);
+	    psid = new PSID(data);
+	  }
+
+	  // move to super class
+	  //public ACE_HEADER  Header;
+
+	  public int         Mask;
+
+	  // first 4 bytes of the SID
+	  public DWORD       SidStart;
+	  
+	};
+
+	/* Access allowed ACE */
+	public static class ACCESS_ALLOWED_ACE  extends ACCESS_ACEStructure {
+	  public ACCESS_ALLOWED_ACE(Pointer p) {
+	    super(p);
+	  }
+	} ;
+
+	/* Access denied ACE */
+	public static class ACCESS_DENIED_ACE  extends ACCESS_ACEStructure {
+	  public ACCESS_DENIED_ACE(Pointer p) {
+	    super(p);
+	  }
+	} ;
+
+
+	/* ACE types */
+	public static final byte ACCESS_ALLOWED_ACE_TYPE                 = 0x00;
+	public static final byte ACCESS_DENIED_ACE_TYPE                  = 0x01;
+	public static final byte SYSTEM_AUDIT_ACE_TYPE                   = 0x02;
+	public static final byte SYSTEM_ALARM_ACE_TYPE                   = 0x03;
+	public static final byte ACCESS_ALLOWED_COMPOUND_ACE_TYPE        = 0x04;
+	public static final byte ACCESS_ALLOWED_OBJECT_ACE_TYPE          = 0x05;
+	public static final byte ACCESS_DENIED_OBJECT_ACE_TYPE           = 0x06;
+	public static final byte SYSTEM_AUDIT_OBJECT_ACE_TYPE            = 0x07;
+	public static final byte SYSTEM_ALARM_OBJECT_ACE_TYPE            = 0x08;
+	public static final byte ACCESS_ALLOWED_CALLBACK_ACE_TYPE        = 0x09;
+	public static final byte ACCESS_DENIED_CALLBACK_ACE_TYPE         = 0x0A;
+	public static final byte ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE = 0x0B;
+	public static final byte ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE  = 0x0C;
+	public static final byte SYSTEM_AUDIT_CALLBACK_ACE_TYPE          = 0x0D;
+	public static final byte SYSTEM_ALARM_CALLBACK_ACE_TYPE          = 0x0E;
+	public static final byte SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE   = 0x0F;
+	public static final byte SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE   = 0x10;
+	public static final byte SYSTEM_MANDATORY_LABEL_ACE_TYPE         = 0x11;
+	
+	/* ACE inherit flags */
+	public static final byte  OBJECT_INHERIT_ACE          = 0x01;
+	public static final byte  CONTAINER_INHERIT_ACE       = 0x02;
+	public static final byte  NO_PROPAGATE_INHERIT_ACE    = 0x04;
+	public static final byte  INHERIT_ONLY_ACE            = 0x08;
+	public static final byte  INHERITED_ACE               = 0x10;
+	public static final byte  VALID_INHERIT_FLAGS         = 0x1F;
+
+
 }

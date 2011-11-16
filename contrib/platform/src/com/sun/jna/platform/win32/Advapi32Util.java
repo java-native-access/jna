@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,19 +22,21 @@ import java.util.TreeMap;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinNT.ACCESS_ACEStructure;
+import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * Advapi32 utility API.
@@ -1156,6 +1159,11 @@ public abstract class Advapi32Util {
 			byteData.write(0, data, 0, lpcbData.getValue());
         	
         	switch(lpType.getValue()) {
+        	case WinNT.REG_QWORD:
+        	{
+            	keyValues.put(nameString, byteData.getLong(0));
+        		break;
+        	}        		
         	case WinNT.REG_DWORD:
         	{
             	keyValues.put(nameString, byteData.getInt(0));
@@ -1479,5 +1487,63 @@ public abstract class Advapi32Util {
 		public void remove() {
 			
 		}
+	}
+	
+	public static ACCESS_ACEStructure[] getFileSecurity(String fileName, boolean compact) {
+	  int RequestedInformation = WinNT.DACL_SECURITY_INFORMATION;
+    int nLength = 1024;
+    boolean repeat = false;
+    Memory memory = null;
+    
+    do {
+      repeat = false;
+      memory = new Memory(nLength);
+      
+      IntByReference lpnLengthNeeded = new IntByReference();
+      boolean succeded = Advapi32.INSTANCE.GetFileSecurityW(
+          new WString(fileName), 
+          RequestedInformation, 
+          memory, 
+          nLength, 
+          lpnLengthNeeded);
+      if (!succeded) {
+        int lastError = Kernel32.INSTANCE.GetLastError();
+        memory.clear();
+        if (W32Errors.ERROR_INSUFFICIENT_BUFFER != lastError)
+          throw new Win32Exception(lastError);
+      }
+      int lengthNeeded = lpnLengthNeeded.getValue();
+      if (nLength < lengthNeeded) {
+        repeat = true;
+        nLength = lengthNeeded;
+        memory.clear();
+      }
+    } while (repeat);
+    
+    
+    SECURITY_DESCRIPTOR_RELATIVE securityDESCRIPTORRELATIVE = new WinNT.SECURITY_DESCRIPTOR_RELATIVE(memory);
+    memory.clear();
+    ACL dacl = securityDESCRIPTORRELATIVE.getDiscretionaryACL();
+    
+    ACCESS_ACEStructure[] aceStructures = dacl.getACEStructures();
+    
+    if (compact) {
+      Map<String, ACCESS_ACEStructure> aceMap = new HashMap<String, ACCESS_ACEStructure>();
+      for (ACCESS_ACEStructure aceStructure : aceStructures) {
+        boolean inherted = ((aceStructure.AceFlags & WinNT.VALID_INHERIT_FLAGS) != 0);
+        String key = aceStructure.getSidString() + "/" + inherted + "/" + aceStructure.getClass().getName();
+        ACCESS_ACEStructure aceStructure2 = aceMap.get(key);
+        if (aceStructure2 != null) {
+          int accessMask = aceStructure2.Mask;
+          accessMask = accessMask | aceStructure.Mask;
+          aceStructure2.Mask = accessMask;
+        } else {
+          aceMap.put(key, aceStructure);
+        }
+      }
+      return aceMap.values().toArray(new ACCESS_ACEStructure[aceMap.size()]);
+    }
+    return aceStructures;
+    
 	}
 }
