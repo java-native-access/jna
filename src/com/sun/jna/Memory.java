@@ -12,6 +12,7 @@ package com.sun.jna;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -38,9 +39,13 @@ import java.util.WeakHashMap;
  */
 public class Memory extends Pointer {
 
-    private static Map buffers = Collections.synchronizedMap(new WeakHashMap());
+    private static final Map buffers;
 
-    protected long size; // Size of the malloc'ed space
+    static {
+        buffers = Collections.synchronizedMap(Platform.HAS_BUFFERS
+                                              ? (Map)new WeakIdentityHashMap()
+                                              : (Map)new HashMap());
+    }
 
     /** Force cleanup of memory that has associated NIO Buffers which have
         been GC'd.
@@ -48,6 +53,8 @@ public class Memory extends Pointer {
     public static void purge() {
         buffers.size();
     }
+
+    protected long size; // Size of the malloc'ed space
 
     /** Provide a view into the original memory. */
     private class SharedMemory extends Memory {

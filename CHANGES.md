@@ -1,4 +1,4 @@
-Release 3.3.x
+Release 3.4.0
 =============
 
 Features
@@ -7,11 +7,12 @@ Features
 * Allow override of default jnidispatch library name with `jna.boot.library.name` system property.
 * Throw an Error if a system install of JNA is incompatible or if JNA's JNI library does not match.
 * Disable automatic jnidispatch unpacking with jna.nounpack=true.
+* Automatically look up system error messages for LastErrorException.
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
 * linux/arm 32-bit support (hardware provided by Alex Lam).
 * linux/ppc 32-bit support (hardware provided by Fritiof Hedman).
-* linux/ia64, linux/ppc64 support (thanks to GCC compile farm).
+* Preliminary linux/ia64, linux/ppc64 support (thanks to GCC compile farm).
 * Windows CE/Mobile support (w32ce-arm) (resources provided by andrea antonello).
 * linux multi-arch support (kohsuke).
 * Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
@@ -31,6 +32,8 @@ Bug Fixes
 * Fix structure alignment issues on linux/arm.
 * Account for NIO Buffer position (JIRA issue 185).
 * Avoid crash with very long Strings (> 150k in length).
+* Fix bug tracking Memory with an associated direct ByteBuffer.
+* Fix bug handling structs by value when type mappers are in effect (JIRA issue 188).
 
 Release 3.3.0
 =============

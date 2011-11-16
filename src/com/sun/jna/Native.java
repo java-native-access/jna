@@ -16,6 +16,10 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Window;
+
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileOutputStream;
@@ -32,8 +36,6 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -199,7 +201,7 @@ public final class Native {
      * NOTE: On platforms which support signals (non-Windows), JNA uses
      * signals to trap errors.  This may interfere with the JVM's own use of
      * signals.  When protected mode is enabled, you should make use of the
-     * jsig library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>).
+     * jsig library, if available (see <a href="http://download.oracle.com/javase/6/docs/technotes/guides/vm/signal-chaining.html">Signal Chaining</a>).
      * In short, set the environment variable <code>LD_PRELOAD</code> to the
      * path to <code>libjsig.so</code> in your JRE lib directory
      * (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your
@@ -237,7 +239,7 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static long getWindowID(Window w) throws HeadlessException {
-        return getComponentID(w);
+        return AWT.getWindowID(w);
     }
 
     /** Utility method to get the native window ID for a heavyweight Java 
@@ -247,25 +249,7 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static long getComponentID(Component c) throws HeadlessException {
-        if (GraphicsEnvironment.isHeadless()) {
-            throw new HeadlessException("No native windows when headless");
-        }
-        if (c.isLightweight()) {
-            throw new IllegalArgumentException("Component must be heavyweight");
-        }
-        if (!c.isDisplayable()) 
-            throw new IllegalStateException("Component must be displayable");
-        // On X11 VMs prior to 1.5, the window must be visible
-        if (Platform.isX11()
-            && System.getProperty("java.version").startsWith("1.4")) {
-            if (!c.isVisible()) {
-                throw new IllegalStateException("Component must be visible");
-            }
-        }
-        // By this point, we're certain that Toolkit.loadLibraries() has
-        // been called, thus avoiding AWT/JAWT link errors
-        // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
-        return getWindowHandle0(c);
+        return AWT.getComponentID(c);
     }
     
     /** Utility method to get the native window pointer for a Java 
@@ -275,7 +259,7 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static Pointer getWindowPointer(Window w) throws HeadlessException {
-        return getComponentPointer(w);
+        return new Pointer(AWT.getWindowID(w));
     }
     
     /** Utility method to get the native window pointer for a heavyweight Java 
@@ -285,10 +269,10 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static Pointer getComponentPointer(Component c) throws HeadlessException {
-        return new Pointer(getComponentID(c));
+        return new Pointer(AWT.getComponentID(c));
     }
     
-    private static native long getWindowHandle0(Component c);
+    static native long getWindowHandle0(Component c);
 
     /** Convert a direct {@link Buffer} into a {@link Pointer}. 
      * @throws IllegalArgumentException if the buffer is not direct.
@@ -1002,7 +986,7 @@ public final class Native {
             return POINTER_SIZE;
         }
         if (Pointer.class.isAssignableFrom(cls)
-            || (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(cls))
+            || (Platform.HAS_BUFFERS && Buffers.isBuffer(cls))
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
             || WString.class == cls) {
@@ -1228,7 +1212,7 @@ public final class Native {
         if (WString.class.isAssignableFrom(type)) {
             return CVT_WSTRING;
         }
-        if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
+        if (Platform.HAS_BUFFERS && Buffers.isBuffer(type)) {
             return CVT_BUFFER;
         }
         if (Structure.class.isAssignableFrom(type)) {
@@ -1474,7 +1458,9 @@ public final class Native {
         return cvt.fromNative(o, new FromNativeContext(cls));
     }
 
+    /** Create a new cif structure. */
     public static native long ffi_prep_cif(int abi, int nargs, long ffi_return_type, long ffi_types);
+    /** Make an FFI function call. */
     public static native void ffi_call(long cif, long fptr, long resp, long args);
     public static native long ffi_prep_closure(long cif, ffi_callback cb);
     public static native void ffi_free_closure(long closure);
@@ -1721,7 +1707,7 @@ public final class Native {
      * Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
      * This method calls through to the JNA NewDirectByteBuffer method.
      *
-     * @param addr byte offset from pointer to start the buffer
+     * @param addr base address of the JNA-originated memory
      * @param length Length of ByteBuffer
      * @return a direct ByteBuffer that accesses the memory being pointed to, 
      */
@@ -1740,5 +1726,44 @@ public final class Native {
      */
     public static void detach(boolean detach) {
         setLastError(detach ? THREAD_DETACH : THREAD_LEAVE_ATTACHED);
+    }
+
+    private static class Buffers {
+        static boolean isBuffer(Class cls) {
+            return Buffer.class.isAssignableFrom(cls);
+        }
+    }
+
+    /** Provides separation of JAWT functionality for the sake of J2ME
+     * ports which do not include AWT support.
+     */
+    private static class AWT {
+        static long getWindowID(Window w) throws HeadlessException {
+            return getComponentID(w);
+        }
+        // Declaring the argument as Object rather than Component avoids class not
+        // found errors on phoneME foundation profile.
+        static long getComponentID(Object o) throws HeadlessException {
+            if (GraphicsEnvironment.isHeadless()) {
+                throw new HeadlessException("No native windows when headless");
+            }
+            Component c = (Component)o;
+            if (c.isLightweight()) {
+                throw new IllegalArgumentException("Component must be heavyweight");
+            }
+            if (!c.isDisplayable()) 
+                throw new IllegalStateException("Component must be displayable");
+            // On X11 VMs prior to 1.5, the window must be visible
+            if (Platform.isX11()
+                && System.getProperty("java.version").startsWith("1.4")) {
+                if (!c.isVisible()) {
+                    throw new IllegalStateException("Component must be visible");
+                }
+            }
+            // By this point, we're certain that Toolkit.loadLibraries() has
+            // been called, thus avoiding AWT/JAWT link errors
+            // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
+            return Native.getWindowHandle0(c);
+        }
     }
 }

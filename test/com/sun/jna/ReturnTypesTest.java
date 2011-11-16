@@ -227,8 +227,7 @@ public class ReturnTypesTest extends TestCase {
         assertNull("Expect null structure return", s);
     }
     
-    // w32ce crash
-    public void XFAIL_WCE_testReturnSmallStructureByValue() {
+    public void testReturnSmallStructureByValue() {
         TestSmallStructure s = lib.returnSmallStructureByValue();
         assertNotNull("Returned structure must not be null", s);
         assertEquals("Wrong char field value (1)", 1, s.c1);

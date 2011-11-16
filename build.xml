@@ -102,9 +102,10 @@
         <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
         <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
         <os arch="x86_64"/>
-        <os arch="ppc64"/>
-        <os arch="sparcv9"/>
         <os arch="amd64"/>
+        <os arch="sparcv9"/>
+        <os arch="ppc64"/>
+        <os arch="ia64"/>
       </or>
     </condition>
     <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">

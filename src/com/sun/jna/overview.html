@@ -698,7 +698,7 @@ The method {@link com.sun.jna.NativeLibrary#getGlobalVariableAddress} may be use
 <a name="crash-protection"></a>
 <h2>VM Crash Protection</h2>
 It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call {@link com.sun.jna.Native#setProtected Native.setProtected(true)}</code>.  Not all platforms support this protection; if not, the value of {@link com.sun.jna.Native#isProtected} will remain <code>false</code>.<p>
-NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://download.oracle.com/javase/6/docs/technotes/guides//vm/signal-chaining.htmld">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
+NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://download.oracle.com/javase/6/docs/technotes/guides/vm/signal-chaining.html">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
  
 
 <p>
