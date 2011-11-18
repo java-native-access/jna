@@ -1177,7 +1177,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *   otherwise, none of the descriptor is returned.
 	 * @return
 	 */
-	public boolean GetFileSecurityW(
+	public boolean GetFileSecurity(
 	    WString lpFileName,
 	    int RequestedInformation,
 	    Pointer pointer,
