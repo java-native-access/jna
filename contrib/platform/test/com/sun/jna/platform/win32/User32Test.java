@@ -37,7 +37,7 @@ public class User32Test extends TestCase {
         int vk = KeyEvent.VK_D;
         int id = 1;
 
-        assertTrue(INSTANCE.RegisterHotKey(null, id, WinUser.MOD_CONTROL | WinUser.MOD_ALT, vk));
+        assertTrue("RegisterHotKey failed", INSTANCE.RegisterHotKey(null, id, WinUser.MOD_CONTROL | WinUser.MOD_ALT, vk));
 
         Robot robot = null;
         try {

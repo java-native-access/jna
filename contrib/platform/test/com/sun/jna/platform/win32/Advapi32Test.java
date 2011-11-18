@@ -46,6 +46,9 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class Advapi32Test extends TestCase {
 
+    private static final String EVERYONE = "S-1-1-0";
+    private static final String NOBODY = "S-1-0-0";
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Advapi32Test.class);
     }
@@ -79,25 +82,25 @@ public class Advapi32Test extends TestCase {
     }
     
     public void testIsValidSid() {
-    	String sidString = "S-1-1-0"; // Everyone
+    	String sidString = EVERYONE;
     	PSIDByReference sid = new PSIDByReference();
-    	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
-    	assertTrue(Advapi32.INSTANCE.IsValidSid(sid.getValue()));
+    	assertTrue("SID conversion failed", Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
+    	assertTrue("Converted SID not valid: " + sid.getValue(), Advapi32.INSTANCE.IsValidSid(sid.getValue()));
     	int sidLength = Advapi32.INSTANCE.GetLengthSid(sid.getValue());
     	assertTrue(sidLength > 0);
     	assertTrue(Advapi32.INSTANCE.IsValidSid(sid.getValue()));
     }
 
     public void testGetSidLength() {
-    	String sidString = "S-1-1-0"; // Everyone
+    	String sidString = EVERYONE;
     	PSIDByReference sid = new PSIDByReference();
-    	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
-    	assertTrue(12 == Advapi32.INSTANCE.GetLengthSid(sid.getValue()));
+    	assertTrue("SID conversion failed", Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
+    	assertEquals("Wrong SID lenght", 12, Advapi32.INSTANCE.GetLengthSid(sid.getValue()));
     }
     
     public void testLookupAccountSid() {
     	// get SID bytes
-    	String sidString = "S-1-1-0"; // Everyone
+    	String sidString = EVERYONE;
     	PSIDByReference sid = new PSIDByReference();
     	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
     	int sidLength = Advapi32.INSTANCE.GetLengthSid(sid.getValue());
@@ -125,7 +128,7 @@ public class Advapi32Test extends TestCase {
     }
     
     public void testConvertSid() {
-    	String sidString = "S-1-1-0"; // Everyone
+    	String sidString = EVERYONE;
     	PSIDByReference sid = new PSIDByReference();
     	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(
     			sidString, sid));
@@ -472,7 +475,7 @@ public class Advapi32Test extends TestCase {
     }
     
     public void testIsWellKnownSid() {
-    	String sidString = "S-1-1-0"; // Everyone
+    	String sidString = EVERYONE;
     	PSIDByReference sid = new PSIDByReference();
     	assertTrue(Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid));
     	assertTrue(Advapi32.INSTANCE.IsWellKnownSid(sid.getValue(), 
@@ -493,7 +496,7 @@ public class Advapi32Test extends TestCase {
     	assertTrue(Advapi32.INSTANCE.ConvertSidToStringSid(
     			pSid, convertedSidStringPtr));
     	String convertedSidString = convertedSidStringPtr.getValue().getString(0, true);
-    	assertEquals("S-1-1-0", convertedSidString);
+    	assertEquals(EVERYONE, convertedSidString);
     }
     
     public void testOpenEventLog() {
@@ -609,6 +612,7 @@ public class Advapi32Test extends TestCase {
                 rc = Kernel32.INSTANCE.GetLastError();
                 if (rc == W32Errors.ERROR_INSUFFICIENT_BUFFER) {
                     buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
+                    rc = 0;
                     continue;
                 }    			
                 break;
@@ -628,7 +632,8 @@ public class Advapi32Test extends TestCase {
                 pevlr = pevlr.share(record.Length.intValue());
             }
     	}
-        assertTrue("Unexpected error after reading event log: " + rc,
+        assertTrue("Unexpected error after reading event log: "
+                   + new Win32Exception(rc),
                    rc == W32Errors.ERROR_HANDLE_EOF || rc == 0);
         assertTrue("Error closing event log",
                    Advapi32.INSTANCE.CloseEventLog(h));    	
