@@ -400,4 +400,35 @@ public interface Netapi32 extends StdCallLibrary {
 	 */
 	public int DsEnumerateDomainTrusts(String serverName, NativeLong Flags, 
 			PDS_DOMAIN_TRUSTS.ByReference Domains, NativeLongByReference DomainCount);
+	
+	/**
+	 * The NetUserGetInfo function retrieves information about a particular user account on a server.
+	 * @param servername
+	 * A pointer to a constant string that specifies the DNS or NetBIOS name of the remote server on 
+	 * which the function is to execute. If this parameter is NULL, the local computer is used.
+	 * @param username
+	 * A pointer to a constant string that specifies the name of the user account for which to return information. 
+	 * For more information, see the following Remarks section.
+	 * @param level
+	 * The information level of the data. This parameter can be one of the following values.
+	 * Value Meaning
+	 * 0     Return the user account name. The bufptr parameter points to a USER_INFO_0 structure.
+	 * 1     Return detailed information about the user account. The bufptr parameter points to a USER_INFO_1 structure.
+	 * 2     Return detailed information and additional attributes about the user account. The bufptr parameter points to a USER_INFO_2 structure.
+	 * 3     Return detailed information and additional attributes about the user account. This level is valid only on servers. The bufptr parameter points to a USER_INFO_3 structure. Note that it is recommended that you use USER_INFO_4 instead.
+	 * 4     Return detailed information and additional attributes about the user account. This level is valid only on servers. The bufptr parameter points to a USER_INFO_4 structure. Windows 2000:  This level is not supported.
+	 * 10    Return user and account names and comments. The bufptr parameter points to a USER_INFO_10 structure.
+	 * 11    Return detailed information about the user account. The bufptr parameter points to a USER_INFO_11 structure.
+	 * 20    Return the user's name and identifier and various account attributes. The bufptr parameter points to a USER_INFO_20 structure. Note that on Windows XP and later, it is recommended that you use USER_INFO_23 instead.
+	 * 23    Return the user's name and identifier and various account attributes. The bufptr parameter points to a USER_INFO_23 structure.  Windows 2000:  This level is not supported.
+	 * @param bufptr
+	 * A pointer to the buffer that receives the data. 
+	 * The format of this data depends on the value of the level parameter. 
+	 * This buffer is allocated by the system and must be freed using the NetApiBufferFree function. 
+	 * For more information, see Network Management Function Buffers and Network Management Function Buffer Lengths.
+	 * @return
+	 *  If the function succeeds, the return value is NERR_Success.
+	 */
+	public int NetUserGetInfo( String servername, String username, int level, PointerByReference bufptr );
+	
 }

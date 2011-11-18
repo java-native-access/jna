@@ -23,6 +23,7 @@ import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.LMAccess.GROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_INFO_1;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_USERS_INFO_0;
+import com.sun.jna.platform.win32.LMAccess.USER_INFO_23;
 import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.ptr.IntByReference;
@@ -58,6 +59,26 @@ public abstract class Netapi32Util {
 		 */
 		public String comment;
 	}
+	
+	public static class UserInfo extends User {
+	  /**
+	   * The full name belonging to the user account
+	   */
+	  public String fullName;
+	  /**
+	   * The SID of the user account
+	   */
+	  public String sidString;
+      /**
+       * The SID of the user account
+       */
+      public PSID sid;
+	  /**
+	   * The flags of the user account
+	   */
+	  public int flags;
+	}
+	
 	/**
 	 * A local group.
 	 */
@@ -602,4 +623,34 @@ public abstract class Netapi32Util {
 	    	}
     	}
 	}
+	
+	public static UserInfo getUserInfo(String accountName) {
+	  return getUserInfo(accountName, Netapi32Util.getDCName());
+	}
+	
+	public static UserInfo getUserInfo(String accountName, String domainName) {
+    PointerByReference bufptr = new PointerByReference();
+    int rc = -1;
+    try {
+      rc = Netapi32.INSTANCE.NetUserGetInfo(Netapi32Util.getDCName(), accountName, (short)23, bufptr);
+      if (rc == LMErr.NERR_Success) {
+        USER_INFO_23 info_23 = new USER_INFO_23(bufptr.getValue());
+        UserInfo userInfo = new UserInfo();
+        userInfo.comment = info_23.usri23_comment.toString();
+        userInfo.flags = info_23.usri23_flags;
+        userInfo.fullName = info_23.usri23_full_name.toString();
+        userInfo.name = info_23.usri23_name.toString();
+        userInfo.sidString = Advapi32Util.convertSidToStringSid(info_23.usri23_user_sid);
+        userInfo.sid = info_23.usri23_user_sid;
+        return userInfo;
+      } else {
+        throw new Win32Exception(rc);
+      }
+    } finally {
+      if (bufptr.getValue() != Pointer.NULL) {
+        Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue());
+      }
+    }
+	}
+
 }
