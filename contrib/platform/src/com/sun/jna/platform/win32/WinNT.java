@@ -62,35 +62,43 @@ public interface WinNT extends StdCallLibrary {
      * task.
      */
     int TOKEN_ASSIGN_PRIMARY = 0x0001;
+
     /**
      * Required to duplicate an access token.
      */
     int TOKEN_DUPLICATE = 0x0002;
+
     /**
      * Required to attach an impersonation access token to a process.
      */
     int TOKEN_IMPERSONATE = 0x0004;
+
     /**
      * Required to query an access token.
      */
     int TOKEN_QUERY = 0x0008;
+
     /**
      * Required to query the source of an access token.
      */
     int TOKEN_QUERY_SOURCE = 0x0010;
+
     /**
      * Required to enable or disable the privileges in an access token.
      */
     int TOKEN_ADJUST_PRIVILEGES = 0x0020;
+
     /**
      * Required to adjust the attributes of the groups in an access token.
      */
     int TOKEN_ADJUST_GROUPS = 0x0040;
+
     /**
      * Required to change the default owner, primary group, or DACL of an access
      * token.
      */
     int TOKEN_ADJUST_DEFAULT = 0x0080;
+
     /**
      * Required to adjust the session ID of an access token. The SE_TCB_NAME
      * privilege is required.
@@ -156,6 +164,7 @@ public interface WinNT extends StdCallLibrary {
 	 * thus, by ANSI C rules, defaults to a value of zero. 
 	 */
 	public static final int SecurityAnonymous = 0;
+
 	/**
 	 * The server process can obtain information about the client, such as security 
 	 * identifiers and privileges, but it cannot impersonate the client. This is useful
@@ -165,11 +174,13 @@ public interface WinNT extends StdCallLibrary {
 	 * services that are using the client's security context. 
 	 */
 	public static final int SecurityIdentification = 1;
+
 	/**
 	 * The server process can impersonate the client's security context on its local system. 
 	 * The server cannot impersonate the client on remote systems. 
 	 */
 	public static final int SecurityImpersonation = 2;
+
 	/**
 	 * The server process can impersonate the client's security context on remote systems. 
 	 */
@@ -235,7 +246,7 @@ public interface WinNT extends StdCallLibrary {
 	 */
 	public DWORD Attributes;
 	
-	public LUID_AND_ATTRIBUTES() { }
+	public LUID_AND_ATTRIBUTES() {}
 	
 	public LUID_AND_ATTRIBUTES(LUID luid, DWORD attributes) {
 	    this.Luid = luid;
@@ -295,27 +306,23 @@ public interface WinNT extends StdCallLibrary {
     }
 
     public static class PSID extends Structure {
-	
 	public static class ByReference extends PSID implements Structure.ByReference {
-	    
 	}
-	
+
 	public PSID() {
 	    super();
 	}
-	
+
 	public PSID(byte[] data) {
-	    super();
-	    Memory memory = new Memory(data.length);
-	    memory.write(0, data, 0, data.length);
-	    useMemory(memory);
+	    super(new Memory(data.length));
+	    getPointer().write(0, data, 0, data.length);
 	    read();
 	}
-	
+
 	public PSID(int size) {
 	    super(new Memory(size));
 	}
-	
+
 	public PSID(Pointer memory) {
 	    super(memory);
 	}
@@ -324,28 +331,31 @@ public interface WinNT extends StdCallLibrary {
 	    int len = Advapi32.INSTANCE.GetLengthSid(this);
 	    return getPointer().getByteArray(0, len);
 	}
-	
-	public Pointer sid;		
+
+	public Pointer sid;
     }
-    
+
     public static class PSIDByReference extends ByReference {
 	public PSIDByReference() {
 	    this(null);
 	}
+
 	public PSIDByReference(PSID h) {
 	    super(Pointer.SIZE);
 	    setValue(h);
 	}
+
 	public void setValue(PSID h) {
 	    getPointer().setPointer(0, h != null ? h.getPointer() : null);
 	}
+
 	public PSID getValue() {
 	    Pointer p = getPointer().getPointer(0);
 	    if (p == null) {
 		return null;
+	    } else {
+		return new PSID(p);
 	    }
-	    PSID h = new PSID(p);
-	    return h;
 	}
     }    
     
@@ -415,13 +425,13 @@ public interface WinNT extends StdCallLibrary {
 	 * This must be set to the number of entries in the Privileges array.
 	 */
 	public DWORD PrivilegeCount;
-	
+
 	/**
 	 * Specifies an array of LUID_AND_ATTRIBUTES structures.
 	 * Each structure contains the LUID and attributes of a privilege.
 	 */
 	public LUID_AND_ATTRIBUTES Privileges[];
-	
+
 	/**
 	 * @param nbOfPrivileges Desired size of the Privileges array
 	 */
@@ -439,44 +449,53 @@ public interface WinNT extends StdCallLibrary {
 	 * Indicates a user SID. 
 	 */
 	public static final int SidTypeUser = 1;
+
 	/**
 	 * Indicates a group SID. 
 	 */
 	public static final int SidTypeGroup = 2;
+
 	/**
 	 * Indicates a domain SID. 
 	 */
 	public static final int SidTypeDomain = 3;
+
 	/**
 	 * Indicates an alias SID. 
 	 */
 	public static final int SidTypeAlias = 4;
+
 	/**
 	 * Indicates a SID for a well-known group. 
 	 */
 	public static final int SidTypeWellKnownGroup = 5;
+
 	/**
 	 * Indicates a SID for a deleted account. 
 	 */
 	public static final int SidTypeDeletedAccount = 6;
+
 	/**
 	 * Indicates an invalid SID. 
 	 */
 	public static final int SidTypeInvalid = 7;
+
 	/**
 	 * Indicates an unknown SID type. 
 	 */
 	public static final int SidTypeUnknown = 8;
+
 	/**
 	 * Indicates a SID for a computer. 
 	 */
 	public static final int SidTypeComputer = 9;
+
 	/**
 	 * ?
 	 */
 	public static final int SidTypeLabel = 10;
     }    
-    
+
     /* File access rights */
     int FILE_READ_DATA			= 0x00000001;
     int FILE_LIST_DIRECTORY		= 0x00000001;
@@ -701,22 +720,27 @@ public interface WinNT extends StdCallLibrary {
      * Parameter is reserved.
      */
     int REG_OPTION_RESERVED = 0x00000000;
+
     /**
      * Key is preserved when system is rebooted.
      */
-    int REG_OPTION_NON_VOLATILE = 0x00000000; 
+    int REG_OPTION_NON_VOLATILE = 0x00000000;
+ 
     /**
      * Key is not preserved when system is rebooted.
      */
     int REG_OPTION_VOLATILE = 0x00000001;
+
     /**
      * Created key is a symbolic link.
      */
     int REG_OPTION_CREATE_LINK = 0x00000002;
+
     /**
      * Open for backup or restore special access rules privilege required.
      */
     int REG_OPTION_BACKUP_RESTORE = 0x00000004;
+
     /**
      * Open symbolic link.
      */
@@ -737,6 +761,7 @@ public interface WinNT extends StdCallLibrary {
      * New Registry Key created.
      */
     int REG_CREATED_NEW_KEY = 0x00000001;
+
     /**
      * Existing Key opened.
      */
@@ -754,38 +779,47 @@ public interface WinNT extends StdCallLibrary {
      * Restore whole hive volatile.
      */
     int REG_WHOLE_HIVE_VOLATILE = 0x00000001;
+
     /**
      * Unwind changes to last flush.
      */
     int REG_REFRESH_HIVE = 0x00000002;
+
     /**
      * Never lazy flush this hive.
      */
     int REG_NO_LAZY_FLUSH = 0x00000004;
+
     /**
      * Force the restore process even when we have open handles on subkeys.
      */
     int REG_FORCE_RESTORE = 0x00000008;
+
     /**
      * Loads the hive visible to the calling process.
      */
     int REG_APP_HIVE = 0x00000010;
+
     /**
      * Hive cannot be mounted by any other process while in use.
      */
     int REG_PROCESS_PRIVATE = 0x00000020;
+
     /**
      * Starts Hive Journal.
      */
     int REG_START_JOURNAL = 0x00000040;
+
     /**
      * Grow hive file in exact 4k increments.
      */
     int REG_HIVE_EXACT_FILE_GROWTH = 0x00000080;
+
     /**
      * No RM is started for this hive = no transactions.
      */
     int REG_HIVE_NO_RM = 0x00000100;
+
     /**
      * Legacy single logging is used for this hive.
      */
@@ -818,55 +852,68 @@ public interface WinNT extends StdCallLibrary {
     /**
      * No value type.
      */
-    int REG_NONE = 0 ;
+    int REG_NONE = 0;
+
     /**
      * Unicode null-terminated string.
      */
     int REG_SZ = 1;
+
     /**
      * Unicode null-terminated string with environment variable references.
      */
     int REG_EXPAND_SZ = 2;
+
     /**
      * Free-formed binary.
      */
     int REG_BINARY = 3;
+
     /**
      * 32-bit number.
      */
     int REG_DWORD = 4;
+
     /**
      * 32-bit number, same as REG_DWORD.
      */
     int REG_DWORD_LITTLE_ENDIAN = 4;
+
     /**
      * 32-bit number.
      */
     int REG_DWORD_BIG_ENDIAN = 5;
+
     /**
      * Symbolic link (unicode).
      */
     int REG_LINK = 6;
+
     /**
      * Multiple unicode strings.
      */
     int REG_MULTI_SZ = 7;
+
     /**
      * Resource list in the resource map.
      */
     int REG_RESOURCE_LIST = 8;
+
     /**
      * Resource list in the hardware description.
      */
     int REG_FULL_RESOURCE_DESCRIPTOR = 9;
+
     /**
      * 
      */
     int REG_RESOURCE_REQUIREMENTS_LIST = 10 ;
+
     /**
      * 64-bit number.
      */
     int REG_QWORD = 11 ;
+
     /**
      * 64-bit number, same as REG_QWORD.
      */
@@ -887,21 +934,20 @@ public interface WinNT extends StdCallLibrary {
     public static class LARGE_INTEGER extends Structure {
 	public static class ByReference extends LARGE_INTEGER 
 	    implements Structure.ByReference {
-
 	}
 	
 	public static class LowHigh extends Structure {
 	    public DWORD LowPart;
 	    public DWORD HighPart;
 	}
-	
+
 	public static class UNION extends Union {
 	    public LowHigh lh;
 	    public long value;
 	}
-	
+
 	public UNION u;
-	
+
 	/**
 	 * Low DWORD.
 	 * @return
@@ -910,7 +956,7 @@ public interface WinNT extends StdCallLibrary {
 	public DWORD getLow() {
 	    return u.lh.LowPart;
 	}
-	
+
 	/**
 	 * High DWORD.
 	 * @return
@@ -935,7 +981,9 @@ public interface WinNT extends StdCallLibrary {
      */
     public static class HANDLE extends PointerType {
 	private boolean immutable;
+
 	public HANDLE() {}
+
 	public HANDLE(Pointer p) {
 	    setPointer(p);
 	    immutable = true;
@@ -1014,321 +1062,397 @@ public interface WinNT extends StdCallLibrary {
 	 * Indicates a null SID.
 	 */
 	public static final int WinNullSid = 0;
+
 	/**
 	 * Indicates a SID that matches everyone.
 	 */
 	public static final int WinWorldSid = 1;
+
 	/**
 	 * Indicates a local SID. 
 	 */
 	public static final int WinLocalSid = 2;
+
 	/**
 	 * Indicates a SID that matches the owner or creator of an object.
 	 */
 	public static final int WinCreatorOwnerSid = 3;
+
 	/**
 	 * Indicates a SID that matches the creator group of an object. 
 	 */
 	public static final int WinCreatorGroupSid = 4;
+
 	/**
 	 * Indicates a creator owner server SID.
 	 */
 	public static final int WinCreatorOwnerServerSid = 5;
+
 	/**
 	 * Indicates a creator group server SID. 
 	 */
 	public static final int WinCreatorGroupServerSid = 6;
+
 	/**
 	 * Indicates a SID for the Windows NT authority. 
 	 */
 	public static final int WinNtAuthoritySid = 7;
+
 	/**
 	 * Indicates a SID for a dial-up account.
 	 */
 	public static final int WinDialupSid = 8;
+
 	/**
 	 * Indicates a SID for a network account. This SID is added to the process of a token 
 	 * when it logs on across a network. The corresponding logon type is 
 	 * LOGON32_LOGON_NETWORK. 
 	 */
 	public static final int WinNetworkSid = 9;
+
 	/**
 	 * Indicates a SID for a batch process. This SID is added to the process of a token 
 	 * when it logs on as a batch job. The corresponding logon type is LOGON32_LOGON_BATCH. 
 	 */
 	public static final int WinBatchSid = 10;
+
 	/**
 	 * Indicates a SID for an interactive account. This SID is added to the process of a 
 	 * token when it logs on interactively. The corresponding logon type is
 	 * LOGON32_LOGON_INTERACTIVE. 
 	 */
 	public static final int WinInteractiveSid = 11;
+
 	/**
 	 * Indicates a SID for a service. This SID is added to the process of a token when it 
 	 * logs on as a service. The corresponding logon type is LOGON32_LOGON_bSERVICE.
 	 */
 	public static final int WinServiceSid = 12;
+
 	/**
 	 * Indicates a SID for the anonymous account. 
 	 */
 	public static final int WinAnonymousSid = 13;
+
 	/**
 	 * Indicates a proxy SID. 
 	 */
 	public static final int WinProxySid = 14;
+
 	/**
 	 * Indicates a SID for an enterprise controller. 
 	 */
 	public static final int WinEnterpriseControllersSid = 15;
+
 	/**
 	 * Indicates a SID for self.
 	 */
 	public static final int WinSelfSid = 16;
+
 	/**
 	 * Indicates a SID that matches any authenticated user. 
 	 */
 	public static final int WinAuthenticatedUserSid = 17;
+
 	/**
 	 * Indicates a SID for restricted code. 
 	 */
 	public static final int WinRestrictedCodeSid = 18;
+
 	/**
 	 * Indicates a SID that matches a terminal server account. 
 	 */
 	public static final int WinTerminalServerSid = 19;
+
 	/**
 	 * Indicates a SID that matches remote logons. 
 	 */
 	public static final int WinRemoteLogonIdSid = 20;
+
 	/**
 	 * Indicates a SID that matches logon IDs. 
 	 */
 	public static final int WinLogonIdsSid = 21;
+
 	/**
 	 * Indicates a SID that matches the local system. 
 	 */
 	public static final int WinLocalSystemSid = 22;
+
 	/**
 	 * Indicates a SID that matches a local service. 
 	 */
 	public static final int WinLocalServiceSid = 23;
+
 	/**
 	 * Indicates a SID that matches a network service. 
 	 */
 	public static final int WinNetworkServiceSid = 24;
+
 	/**
 	 * Indicates a SID that matches the domain account. 
 	 */
 	public static final int WinBuiltinDomainSid = 25;
+
 	/**
 	 * Indicates a SID that matches the administrator account. 
 	 */
 	public static final int WinBuiltinAdministratorsSid = 26;
+
 	/**
 	 * Indicates a SID that matches built-in user accounts. 
 	 */
 	public static final int WinBuiltinUsersSid = 27;
+
 	/**
 	 * Indicates a SID that matches the guest account. 
 	 */
 	public static final int WinBuiltinGuestsSid = 28;
+
 	/**
 	 * Indicates a SID that matches the power users group. 
 	 */
 	public static final int WinBuiltinPowerUsersSid = 29;
+
 	/**
 	 * Indicates a SID that matches the account operators account. 
 	 */
 	public static final int WinBuiltinAccountOperatorsSid = 30;
+
 	/**
 	 * Indicates a SID that matches the system operators group. 
 	 */
 	public static final int WinBuiltinSystemOperatorsSid = 31;
+
 	/**
 	 * Indicates a SID that matches the print operators group. 
 	 */
 	public static final int WinBuiltinPrintOperatorsSid = 32;
+
 	/**
 	 * Indicates a SID that matches the backup operators group. 
 	 */
 	public static final int WinBuiltinBackupOperatorsSid = 33;
+
 	/**
 	 * Indicates a SID that matches the replicator account. 
 	 */
 	public static final int WinBuiltinReplicatorSid = 34;
+
 	/**
 	 * Indicates a SID that matches pre-Windows 2000 compatible accounts. 
 	 */
 	public static final int WinBuiltinPreWindows2000CompatibleAccessSid = 35;
+
 	/**
 	 * Indicates a SID that matches remote desktop users. 
 	 */
 	public static final int WinBuiltinRemoteDesktopUsersSid = 36;
+
 	/**
 	 * Indicates a SID that matches the network operators group.
 	 */
 	public static final int WinBuiltinNetworkConfigurationOperatorsSid = 37;
+
 	/**
 	 * Indicates a SID that matches the account administrators group. 
 	 */
 	public static final int WinAccountAdministratorSid = 38;
+
 	/**
 	 * Indicates a SID that matches the account guest group. 
 	 */
 	public static final int WinAccountGuestSid = 39;
+
 	/**
 	 * Indicates a SID that matches account Kerberos target group. 
 	 */
 	public static final int WinAccountKrbtgtSid = 40;
+
 	/**
 	 * Indicates a SID that matches the account domain administrator group. 
 	 */
 	public static final int WinAccountDomainAdminsSid = 41;
+
 	/**
 	 * Indicates a SID that matches the account domain users group. 
 	 */
 	public static final int WinAccountDomainUsersSid = 42;
+
 	/**
 	 * Indicates a SID that matches the account domain guests group. 
 	 */
 	public static final int WinAccountDomainGuestsSid = 43;
+
 	/**
 	 * Indicates a SID that matches the account computer group. 
 	 */
 	public static final int WinAccountComputersSid = 44;
+
 	/**
 	 * Indicates a SID that matches the account controller group. 
 	 */
 	public static final int WinAccountControllersSid = 45;
+
 	/**
 	 * Indicates a SID that matches the certificate administrators group.
 	 */
 	public static final int WinAccountCertAdminsSid = 46;
+
 	/**
 	 * Indicates a SID that matches the schema administrators group. 
 	 */
 	public static final int WinAccountSchemaAdminsSid = 47;
+
 	/**
 	 * Indicates a SID that matches the enterprise administrators group. 
 	 */
 	public static final int WinAccountEnterpriseAdminsSid = 48;
+
 	/**
 	 * Indicates a SID that matches the policy administrators group. 
 	 */
 	public static final int WinAccountPolicyAdminsSid = 49;
+
 	/**
 	 * Indicates a SID that matches the RAS and IAS server account. 
 	 */
 	public static final int WinAccountRasAndIasServersSid = 50;
+
 	/**
 	 * Indicates a SID present when the Microsoft NTLM authentication package 
 	 * authenticated the client. 
 	 */
 	public static final int WinNTLMAuthenticationSid = 51;
+
 	/**
 	 * Indicates a SID present when the Microsoft Digest authentication package 
 	 * authenticated the client. 
 	 */
 	public static final int WinDigestAuthenticationSid = 52;
+
 	/**
 	 * Indicates a SID present when the Secure Channel (SSL/TLS) authentication 
 	 * package authenticated the client. 
 	 */
 	public static final int WinSChannelAuthenticationSid = 53;
+
 	/**
 	 * Indicates a SID present when the user authenticated from within the forest 
 	 * or across a trust that does not have the selective authentication option 
 	 * enabled. If this SID is present, then WinOtherOrganizationSid cannot be present. 
 	 */
 	public static final int WinThisOrganizationSid = 54;
+
 	/**
 	 * Indicates a SID present when the user authenticated across a forest with the
 	 * selective authentication option enabled. If this SID is present, then 
 	 * WinThisOrganizationSid cannot be present. 
 	 */
 	public static final int WinOtherOrganizationSid = 55;
+
 	/**
 	 * Indicates a SID that allows a user to create incoming forest trusts. It is added 
 	 * to the token of users who are a member of the Incoming Forest Trust Builders 
 	 * built-in group in the root domain of the forest. 
 	 */
 	public static final int WinBuiltinIncomingForestTrustBuildersSid = 56;
+
 	/**
 	 * Indicates a SID that matches the performance monitor user group. 
 	 */
 	public static final int WinBuiltinPerfMonitoringUsersSid = 57;
+
 	/**
 	 * Indicates a SID that matches the performance log user group. 
 	 */
 	public static final int WinBuiltinPerfLoggingUsersSid = 58;
+
 	/**
 	 * Indicates a SID that matches the Windows Authorization Access group.
 	 */
 	public static final int WinBuiltinAuthorizationAccessSid = 59;
+
 	/**
 	 * Indicates a SID is present in a server that can issue Terminal Server licenses. 
 	 */
 	public static final int WinBuiltinTerminalServerLicenseServersSid = 60;
+
 	/**
 	 * 
 	 */
 	public static final int WinBuiltinDCOMUsersSid = 61;
+
 	/**
 	 * 
 	 */
 	public static final int WinBuiltinIUsersSid = 62;
+
 	/**
 	 * 
 	 */
 	public static final int WinIUserSid = 63;
+
 	/**
 	 * 
 	 */
 	public static final int WinBuiltinCryptoOperatorsSid = 64;
+
 	/**
 	 * 
 	 */
 	public static final int WinUntrustedLabelSid = 65;
+
 	/**
 	 * 
 	 */
 	public static final int WinLowLabelSid = 66;
+
 	/**
 	 * 
 	 */
 	public static final int WinMediumLabelSid = 67;
+
 	/**
 	 * 
 	 */
 	public static final int WinHighLabelSid = 68;
+
 	/**
 	 * 
 	 */
 	public static final int WinSystemLabelSid = 69;
+
 	/**
 	 * 
 	 */
 	public static final int WinWriteRestrictedCodeSid = 70;
+
 	/**
 	 * 
 	 */
 	public static final int WinCreatorOwnerRightsSid = 71;
+
 	/**
 	 * 
 	 */
 	public static final int WinCacheablePrincipalsGroupSid = 72;
+
 	/**
 	 * 
 	 */
 	public static final int WinNonCacheablePrincipalsGroupSid = 73;
+
 	/**
 	 * 
 	 */
 	public static final int WinEnterpriseReadonlyControllersSid = 74;
+
 	/**
 	 * Indicates a SID that matches a read-only enterprise domain controller.
 	 */
 	public static final int WinAccountReadonlyControllersSid = 75;
+
 	/**
 	 * Indicates a SID that matches the built-in DCOM certification services access group.
 	 */
@@ -1359,23 +1483,28 @@ public interface WinNT extends StdCallLibrary {
 	 * Size of this data structure, in bytes. Set this member to sizeof(OSVERSIONINFO) 
 	 * before calling the GetVersionEx function.
 	 */
-	public DWORD dwOSVersionInfoSize;      
+	public DWORD dwOSVersionInfoSize;
+      
 	/**
 	 * Major version number of the operating system. 
 	 */
 	public DWORD dwMajorVersion;
+
 	/**
 	 * Minor version number of the operating system.
 	 */
 	public DWORD dwMinorVersion;
+
 	/**
 	 * Build number of the operating system.
 	 */
 	public DWORD dwBuildNumber;
+
 	/**
 	 * Operating system platform.
 	 */
 	public DWORD dwPlatformId;
+
 	/**
 	 * Pointer to a null-terminated string, such as "Service Pack 3", 
 	 * that indicates the latest Service Pack installed on the system.
@@ -1391,8 +1520,8 @@ public interface WinNT extends StdCallLibrary {
 	    useMemory(memory);
 	    read();
 	}
-    };
-    
+    }
+ 
     /**
      * Contains operating system version information. The information includes major and minor version numbers, 
      * a build number, a platform identifier, and information about product suites and the latest Service Pack 
@@ -1403,46 +1532,56 @@ public interface WinNT extends StdCallLibrary {
 	 * The size of this data structure, in bytes.
 	 */
 	public DWORD dwOSVersionInfoSize;
+
 	/**
 	 * The major version number of the operating system.
 	 */
 	public DWORD dwMajorVersion;
+
 	/**
 	 * The minor version number of the operating system.
 	 */
 	public DWORD dwMinorVersion;
+
 	/**
 	 * The build number of the operating system.
 	 */
 	public DWORD dwBuildNumber;
+
 	/**
 	 * The operating system platform. This member can be VER_PLATFORM_WIN32_NT.
 	 */
 	public DWORD dwPlatformId;
+
 	/**
 	 * A null-terminated string, such as "Service Pack 3", that indicates the latest Service Pack 
 	 * installed on the system. If no Service Pack has been installed, the string is empty.
 	 */
 	public char szCSDVersion[];
+
 	/**
 	 * The major version number of the latest Service Pack installed on the system. For example, for 
 	 * Service Pack 3, the major version number is 3. If no Service Pack has been installed, the value 
 	 * is zero.
 	 */
 	public WORD wServicePackMajor;
+
 	/**
 	 * The minor version number of the latest Service Pack installed on the system. For example, for 
 	 * Service Pack 3, the minor version number is 0.
 	 */
 	public WORD wServicePackMinor;
+
 	/**
 	 * A bit mask that identifies the product suites available on the system.
 	 */
 	public WORD wSuiteMask;
+
 	/**
 	 * Any additional information about the system. 
 	 */
 	public byte wProductType;
+
 	/**
 	 * Reserved for future use.
 	 */
@@ -1457,7 +1596,7 @@ public interface WinNT extends StdCallLibrary {
 	    useMemory(memory);
 	    read();
 	}
-    };
+    }
 
     int VER_EQUAL			= 1;
     int VER_GREATER			= 2;
@@ -1493,16 +1632,19 @@ public interface WinNT extends StdCallLibrary {
      * record is read first.
      */
     int EVENTLOG_SEQUENTIAL_READ = 0x0001;
+
     /**
      * Begin reading from the record specified in the dwRecordOffset parameter. 
      * This option may not work with large log files if the function cannot determine the log file's size. 
      * For details, see Knowledge Base article, 177199.
      */
     int EVENTLOG_SEEK_READ = 0x0002;
+
     /**
      * The log is read in chronological order (oldest to newest). The default.
      */
     int EVENTLOG_FORWARDS_READ = 0x0004;
+
     /**
      * The log is read in reverse chronological order (newest to oldest). 
      */
@@ -1512,22 +1654,27 @@ public interface WinNT extends StdCallLibrary {
      * Information event
      */
     int EVENTLOG_SUCCESS = 0x0000;
+
     /**
      * Error event
      */
     int EVENTLOG_ERROR_TYPE = 0x0001;
+
     /**
      * Warning event
      */
     int EVENTLOG_WARNING_TYPE = 0x0002;
+
     /**
      * Information event
      */
     int EVENTLOG_INFORMATION_TYPE = 0x0004;
+
     /**
      * Success Audit event
      */
     int EVENTLOG_AUDIT_SUCCESS = 0x0008;
+
     /**
      * Failure Audit event
      */
@@ -1544,69 +1691,84 @@ public interface WinNT extends StdCallLibrary {
 	 * any pad bytes inserted at the end of the record for DWORD alignment. 
 	 */
 	public DWORD Length;
+
 	/**
 	 * Reserved.
 	 */
 	public DWORD Reserved;
+
 	/**
 	 * Record number of the record. This value can be used with the EVENTLOG_SEEK_READ flag in
 	 * the ReadEventLog function to begin reading at a specified record.
 	 */
 	public DWORD RecordNumber;
+
 	/**
 	 * Time at which this entry was submitted. This time is measured in the number of seconds 
 	 * elapsed since 00:00:00 January 1, 1970, Universal Coordinated Time. 
 	 */
 	public DWORD TimeGenerated;
+
 	/**
 	 * Time at which this entry was received by the service to be written to the log. 
 	 * This time is measured in the number of seconds elapsed since 00:00:00 January 1,
 	 * 1970, Universal Coordinated Time. 
 	 */
 	public DWORD TimeWritten;
+
 	/**
 	 * Event identifier. The value is specific to the event source for the event, and is used
 	 * with source name to locate a description string in the message file for the event source. 
 	 */
 	public DWORD EventID;
+
 	/**
 	 * Type of event.
 	 */
 	public WORD EventType;
+
 	/**
 	 * Number of strings present in the log (at the position indicated by StringOffset). 
 	 * These strings are merged into the message before it is displayed to the user. 
 	 */
 	public WORD NumStrings;
+
 	/**
 	 * Category for this event. The meaning of this value depends on the event source.
 	 */
 	public WORD EventCategory;
+
 	/**
 	 * Reserved.
 	 */
 	public WORD ReservedFlags;
+
 	/**
 	 * Reserved.
 	 */
 	public DWORD ClosingRecordNumber;
+
 	/**
 	 * Offset of the description strings within this event log record. 
 	 */
 	public DWORD StringOffset;
+
 	/**
 	 * Size of the UserSid member, in bytes. This value can be zero if no security identifier was provided. 
 	 */
 	public DWORD UserSidLength;
+
 	/**
 	 * Offset of the security identifier (SID) within this event log record. 
 	 * To obtain the user name for this SID, use the LookupAccountSid function. 
 	 */
 	public DWORD UserSidOffset;
+
 	/**
 	 * Size of the event-specific data (at the position indicated by DataOffset), in bytes. 
 	 */
 	public DWORD DataLength;
+
 	/**
 	 * Offset of the event-specific information within this event log record, in bytes. 
 	 * This information could be something specific (a disk driver might log the number 
@@ -1616,14 +1778,13 @@ public interface WinNT extends StdCallLibrary {
 	public DWORD DataOffset;
 	
 	public EVENTLOGRECORD() {
-	    
 	}
 	
 	public EVENTLOGRECORD(Pointer p) {
 	    super(p);
 	    read();
 	}
-    };
+    }
     
     //
     // Service Types (Bit Mask)
@@ -1766,7 +1927,6 @@ public interface WinNT extends StdCallLibrary {
 		ACEs[i] = ace;
 		offset += ace.AceSize;
 	    }
-
 	}
 
 	public byte     AclRevision;
@@ -1786,49 +1946,52 @@ public interface WinNT extends StdCallLibrary {
 	public static class ByReference extends SECURITY_DESCRIPTOR_RELATIVE implements Structure.ByReference {
 	}
 
+	public	byte	Revision;
+	public	byte	Sbz1;
+	public	short	Control;
+	public	int	Owner;
+	public	int	Group;
+	public	int	Sacl;
+	public	int	Dacl;
+
+	private	ACL	DACL = null;
+
 	public SECURITY_DESCRIPTOR_RELATIVE() {
 	}
 
 	public SECURITY_DESCRIPTOR_RELATIVE(byte[] data) {
-	    super();
-	    Memory memory = new Memory(data.length);
-	    memory.write(0, data, 0, data.length);
-	    setMemory(memory);
+	    super(new Memory(data.length));
+	    getPointer().write(0, data, 0, data.length);
+	    setDacl();
 	}
 
 	public SECURITY_DESCRIPTOR_RELATIVE(Memory memory) {
-	    setMemory(memory);
+	    super(memory);
+	    setDacl();
 	}
-
-	public byte     Revision;
-	public byte     Sbz1;
-	public short    Control;
-	public int      Owner;
-	public int      Group;
-	public int      Sacl;
-	public int      Dacl;
-      
-	ACL DACL;
  
 	public ACL getDiscretionaryACL() {
 	    return DACL;
 	}
 
-	private final void setMemory(Memory p) {
-	    useMemory(p);
+	private final void setDacl() {
 	    read();
 	    if (Dacl != 0) {
-		DACL = new ACL(p.share(Dacl));
+		DACL = new ACL(getPointer().share(Dacl));
 	    }
 	}
     }
 
     public static abstract class ACEStructure extends Structure {
-	public byte    AceType;
-	public byte    AceFlags;
-	public short   AceSize;
+	public	byte	AceType;
+	public	byte	AceFlags;
+	public	short	AceSize;
 
-	PSID psid;
+	PSID	psid;
+
+	public ACEStructure(Pointer p) {
+	    super(p);
+	}
 
 	public String getSidString() {
 	    return Advapi32Util.convertSidToStringSid(psid);
@@ -1842,7 +2005,7 @@ public interface WinNT extends StdCallLibrary {
     /* ACE header */
     public static class ACE_HEADER extends ACEStructure {
 	public ACE_HEADER(Pointer p) {
-	    useMemory(p);
+	    super(p);
 	    read();
 	}
     }
@@ -1850,9 +2013,9 @@ public interface WinNT extends StdCallLibrary {
     /**
      * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE have the same structure layout
      */
-    public static abstract class ACCESS_ACEStructure  extends ACEStructure {
+    public static abstract class ACCESS_ACEStructure extends ACEStructure {
 	public ACCESS_ACEStructure(Pointer p) {
-	    useMemory(p);
+	    super(p);
 	    read();
 	    // AceSize - size of public members of the structure + size of DWORD (SidStart)
 	    int sizeOfSID = super.AceSize - size() + 4;

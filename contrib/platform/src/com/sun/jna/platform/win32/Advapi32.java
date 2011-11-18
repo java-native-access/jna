@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -468,6 +469,9 @@ public interface Advapi32 extends StdCallLibrary {
 
 	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
 			IntByReference lpType, IntByReference lpData, IntByReference lpcbData);
+
+	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
+			IntByReference lpType, LongByReference lpData, IntByReference lpcbData);
 
 	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
 			IntByReference lpType, Pointer lpData, IntByReference lpcbData);
