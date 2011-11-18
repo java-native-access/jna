@@ -325,6 +325,7 @@ public interface WinNT extends StdCallLibrary {
 
 	public PSID(Pointer memory) {
 	    super(memory);
+            read();
 	}
 
 	public byte[] getBytes() {
@@ -1872,40 +1873,10 @@ public interface WinNT extends StdCallLibrary {
 	public byte[] data;
     }
 
-    public static class PACL extends Structure {
-	public static class ByReference extends PACL implements Structure.ByReference {
-	}
-
-	public PACL() {
-	}
-
-	public PACL(byte[] data) {
-	    super();
-	    Memory memory = new Memory(data.length);
-	    memory.write(0, data, 0, data.length);
-	    useMemory(memory);
-	    read();
-	}
-
-	public PACL(int size) {
-	    super(new Memory(size));
-	}
-
-	public PACL(Pointer memory) {
-	    super(memory);
-	}
-
-	public byte[] getBytes() {
-	    int len = 0;
-	    return getPointer().getByteArray(0, len);
-	}
-
-	public Pointer acl;		
-    }
-
     public static class ACL extends Structure {
+        public ACL() { }
 	public ACL(Pointer pointer) {
-	    useMemory(pointer);
+	    super(pointer);
 	    read();
 	    ACEs = new ACCESS_ACEStructure[AceCount];
 	    int offset = size();

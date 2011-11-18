@@ -64,9 +64,8 @@ public abstract class Kernel32Util {
         	throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
         }	       
     	String s = buffer.getValue().getString(0, ! Boolean.getBoolean("w32.ascii"));
-    	s = s.replace(".\r",".").replace(".\n",".");
     	Kernel32.INSTANCE.LocalFree(buffer.getValue());
-    	return s;		
+    	return s.trim();		
 	}
 	
 	/**
