@@ -16,6 +16,7 @@ threads.
 * Preliminary linux/ia64, linux/ppc64 support (thanks to GCC compile farm).
 * Windows CE/Mobile support (w32ce-arm) (resources provided by andrea antonello).
 * linux multi-arch support (kohsuke).
+* Added REG_QWORD registry type support
 * Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
 * Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`.
 * Add to `platform.win32.Kernel32`: `CopyFile`, `MoveFile`, `MoveFileEx`, `CreateProcess`, `SetEnvironmentVariables`, `GetFileTime`, `SetFileTime`, `SetFileAttributes`, `DeviceIoControl`, `GetDiskFreeSpaceEx`, `CreateToolhelp32Snapshot`, `Process32First`, `Process32Next`.
@@ -25,6 +26,8 @@ threads.
 * Add `platform.win32.Shell32.ShellExecute`.
 * Add to `platform.win32.User32`: `SetParent`, `IsWindowVisible`, `MoveWindow`, `SetWindowPos`, `AttachInputThread`, `SetForegroundWindow`, `GetForegroundWindow`, `SetFocus`, `SendInput`, `WaitForInputIdle`, `InvalidateRect`, `RedrawWindow`, `GetWindow`, `UpdateWindow`, `ShowWindow`, `CloseWindow`.
 * Add to `platform.win32.Version`: `GetFileVersionInfoSize`, `GetFileVersionInfo`, `VerQueryValue`.
+* Add to platform.win32.Advapi32: 'GetFileSecurity', 'RegQueryValueEx(...Long...)'.
+* Add to platform.win32.Netapi32: 'NetUserGetInfo'.
 
 Bug Fixes
 --------
