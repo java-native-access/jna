@@ -21,41 +21,32 @@
 
 # TODO
 
-* dispose memory/callbacks in Native finalizer to ensure they run first
-  (use referencequeue to run them when they become unreachable)
-
-* fix setFieldOrder to *always* apply if used
-* cache structure information per-class
-
-* make direct calls call back *once* to Java where conversion is required,
-  and process all arguments from there (instead of potentially swapping back
-  and forth multipel times).  This also makes it easer to perform conversions
-  (no native changes required).  
-
-* direct/raw non-primitive array arguments (String[], Pointer[], NativeMapped[])
-
-* ppc64 direct/raw failures (multiple)
-
-* direct calls on ppc to varargs (callbacks) with FP args fail; avoid them for
-  now 
-
-* combine direct and interface mapping calling code where possible
-
 * make native dll extraction from jar public, to use with user dlls packaged
   in a jar
 
+* dispose memory/callbacks in Native finalizer to ensure they run first
+  (use referencequeue to run them when they become unreachable)
+
+* make direct calls call back *once* to Java where conversion is required,
+  and process all arguments from there (instead of potentially swapping back
+  and forth multiple times).  This also makes it easer to perform conversions
+  (no native changes required).  
+
+* use libffi java raw?
+
+* direct/raw non-primitive array arguments (String[], Pointer[], NativeMapped[])
+* ppc64 direct/raw failures (multiple)
+* direct calls on ppc to varargs (callbacks) with FP args fail; avoid them for
+  now 
+* combine direct and interface mapping calling code where possible
 * Callback.PostCallWrite.write() cf PostCallRead
-
 * GetPrimitiveArrayCritical: use this if flagged (by annotation? method name?)
-
 * MethodArgument/ReturnMapper: per method mapping of arguments/return type.
   Can use annotations as shorthand to initialize a map, but basically set up a
   per-NativeLibrary (or per-Function?) map of methods to mappers.
 
   Requires separate compilation of annotation handling.
-
 * ditch type conversion context (?)  
-
 * packaging: 'types', 'convert/marshal' subpackages?
   note: marshal/unmarshal vs to/fromnative: to/fromnative is more
   explicit, since marshal/unmarshal doesn't indicate src/dst.
@@ -103,6 +94,8 @@
 
 
 # DONE
+* cache structure information per-class
+* fix setFieldOrder to *always* apply if used
 * Make a separate jar file for all OS-specific headers
   Maybe make interfaces per-header file (winbase, winnt, stdlib, etc),
   aggregated per-library (interface CLibrary extends stdlib, stdio, etc)

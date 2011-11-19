@@ -10,6 +10,7 @@ Features
 * Automatically look up system error messages for LastErrorException.
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
+* Cache structure layout results, improving performance of structure creation.
 * linux/arm 32-bit support (hardware provided by Alex Lam).
 * linux/ppc 32-bit support (hardware provided by Fritiof Hedman).
 * Preliminary linux/ia64, linux/ppc64 support (thanks to GCC compile farm).

@@ -10,6 +10,9 @@
  */
 package com.sun.jna;
 
+// cache size, structfields, aligntype, alignment per class
+// size may be dynamic, but only array structfields have variable size
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -17,10 +20,8 @@ import java.nio.Buffer;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -85,7 +86,7 @@ public abstract class Structure {
             "first", "second", "middle", "penultimate", "last",
         };
         public int first;
-	public int second;
+        public int second;
         public int middle;
         public int penultimate;
         public int last;
@@ -138,13 +139,14 @@ public abstract class Structure {
         isSPARC || ((isPPC || isARM) && Platform.isLinux())
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
+    static final Map layoutInfo = new WeakHashMap();
 
     // This field is accessed by native code
     private Pointer memory;
     private int size = CALCULATE_SIZE;
     private int alignType;
     private int structAlignment;
-    private final Map structFields = new LinkedHashMap();
+    private Map structFields;
     // Keep track of java strings which have been converted to C strings
     private final Map nativeStrings = new HashMap();
     private TypeMapper typeMapper;
@@ -168,12 +170,12 @@ public abstract class Structure {
         this(p, ALIGN_DEFAULT);
     }
 
-    protected Structure(Pointer p, int alignment) {
-        this(p, alignment, null);
+    protected Structure(Pointer p, int alignType) {
+        this(p, alignType, null);
     }
 
-    protected Structure(Pointer p, int alignment, TypeMapper mapper) {
-        setAlignType(alignment);
+    protected Structure(Pointer p, int alignType, TypeMapper mapper) {
+        setAlignType(alignType);
         setTypeMapper(mapper);
         if (p != null) {
             useMemory(p);
@@ -183,8 +185,12 @@ public abstract class Structure {
         }
     }
 
-    /** Return all fields in this structure (ordered). */
+    /** Return all fields in this structure (ordered).  This represents the
+     * layout of the structure, and will be shared among Structures of the
+     * same class except when the Structure can have a variable size.
+     */
     Map fields() {
+        ensureAllocated();
         return structFields;
     }
 
@@ -259,7 +265,7 @@ public abstract class Structure {
         try {
             // Set the structure's memory field temporarily to avoid
             // auto-allocating memory in the call to size()
-            this.memory = m;
+            this.memory = m.share(offset);
             if (size == CALCULATE_SIZE) {
                 size = calculateSize(false);
             }
@@ -455,7 +461,7 @@ public abstract class Structure {
             reading().put(getPointer(), this);
         }
         try {
-            for (Iterator i=structFields.values().iterator();i.hasNext();) {
+            for (Iterator i=fields().values().iterator();i.hasNext();) {
                 readField((StructField)i.next());
             }
         }
@@ -470,7 +476,7 @@ public abstract class Structure {
     /** Returns the calculated offset of the given field. */
     protected int fieldOffset(String name) {
 	ensureAllocated();
-	StructField f = (StructField)structFields.get(name);
+	StructField f = (StructField)fields().get(name);
         if (f == null)
             throw new IllegalArgumentException("No such field: " + name);
 	return f.offset;
@@ -483,7 +489,7 @@ public abstract class Structure {
      */
     public Object readField(String name) {
         ensureAllocated();
-        StructField f = (StructField)structFields.get(name);
+        StructField f = (StructField)fields().get(name);
         if (f == null)
             throw new IllegalArgumentException("No such field: " + name);
         return readField(f);
@@ -609,7 +615,7 @@ public abstract class Structure {
         busy().add(this);
         try {
             // Write all fields, except those marked 'volatile'
-            for (Iterator i=structFields.values().iterator();i.hasNext();) {
+            for (Iterator i=fields().values().iterator();i.hasNext();) {
                 StructField sf = (StructField)i.next();
                 if (!sf.isVolatile) {
                     writeField(sf);
@@ -627,7 +633,7 @@ public abstract class Structure {
      */
     public void writeField(String name) {
         ensureAllocated();
-        StructField f = (StructField)structFields.get(name);
+        StructField f = (StructField)fields().get(name);
         if (f == null)
             throw new IllegalArgumentException("No such field: " + name);
         writeField(f);
@@ -640,7 +646,7 @@ public abstract class Structure {
      */
     public void writeField(String name, Object value) {
         ensureAllocated();
-        StructField f = (StructField)structFields.get(name);
+        StructField f = (StructField)fields().get(name);
         if (f == null)
             throw new IllegalArgumentException("No such field: " + name);
         setField(f, value);
@@ -718,7 +724,8 @@ public abstract class Structure {
      */
     protected void setFieldOrder(String[] fields) {
         getFieldOrder().addAll(Arrays.asList(fields));
-        // Force recalculation of size/field layout
+        // Force recalculation of size/field layout, since
+        // differing field order may result in different padding/alignment
         this.size = CALCULATE_SIZE;
         if (this.memory instanceof AutoAllocated) {
             this.memory = null;
@@ -772,6 +779,12 @@ public abstract class Structure {
         return flist;
     }
 
+    /** Compare this Structure's known field order against the given. */
+    private synchronized boolean fieldOrderMatch(List fieldOrder) {
+        return this.fieldOrder == fieldOrder
+            || (this.fieldOrder != null && this.fieldOrder.equals(fieldOrder));
+    }
+
     /** Calculate the amount of native memory required for this structure.
      * May return {@link #CALCULATE_SIZE} if the size can not yet be
      * determined (usually due to fields in the derived class not yet
@@ -783,20 +796,57 @@ public abstract class Structure {
      * @throws IllegalArgumentException when an unsupported field type is
      * encountered
      */
-    int calculateSize(boolean force) {
+    private int calculateSize(boolean force) {
         return calculateSize(force, false);
     }
 
-    private int calculateSize(boolean force, boolean avoidFFIType) {
-        // TODO: maybe cache this information on a per-class basis
-        // so that we don't have to re-analyze this static information each
-        // time a struct is allocated.
+    int calculateSize(boolean force, boolean avoidFFIType) {
+        LayoutInfo info;
+        synchronized(layoutInfo) {
+            info = (LayoutInfo)layoutInfo.get(getClass());
+        }
+        if (info == null
+            || this.alignType != info.alignType
+            || this.typeMapper != info.typeMapper
+            || !fieldOrderMatch(info.fieldOrder)) {
+            info = deriveLayout(force, avoidFFIType);
+        }
+        if (info != null) {
+            this.structAlignment = info.alignment;
+            this.structFields = info.fields;
+            info.alignType = this.alignType;
+            info.typeMapper = this.typeMapper;
+            info.fieldOrder = this.fieldOrder;
+            if (!info.variable) {
+                synchronized(layoutInfo) {
+                    layoutInfo.put(getClass(), info);
+                }
+            }
+            return info.size;
+        }
+        return CALCULATE_SIZE;
+    }
 
-        structAlignment = 1;
+    /** Keep track of structure layout information.  Alignment type, type
+        mapper, and explicit field order will affect this information. 
+    */
+    private class LayoutInfo {
+        int size = CALCULATE_SIZE;
+        int alignment = 1;
+        Map fields = Collections.synchronizedMap(new LinkedHashMap());
+        int alignType = ALIGN_DEFAULT;
+        TypeMapper typeMapper;
+        List fieldOrder;
+        boolean variable;
+    }
+
+    /** Calculates the size, alignment, and field layout of this structure. */
+    private LayoutInfo deriveLayout(boolean force, boolean avoidFFIType) {
+        LayoutInfo info = new LayoutInfo();
         int calculatedSize = 0;
         List fields = getFields(force);
         if (fields == null) {
-            return CALCULATE_SIZE;
+            return null;
         }
 
         boolean firstField = true;
@@ -805,6 +855,9 @@ public abstract class Structure {
             int modifiers = field.getModifiers();
 
             Class type = field.getType();
+            if (type.isArray()) {
+                info.variable = true;
+            }
             StructField structField = new StructField();
             structField.isVolatile = Modifier.isVolatile(modifiers);
             structField.isReadOnly = Modifier.isFinal(modifiers);
@@ -835,8 +888,9 @@ public abstract class Structure {
             }
 
             int fieldAlignment = 1;
-            if (!Modifier.isPublic(field.getModifiers()))
+            if (!Modifier.isPublic(field.getModifiers())) {
                 continue;
+            }
 
             Object value = getField(structField);
             if (value == null) {
@@ -857,7 +911,7 @@ public abstract class Structure {
                     if (force) {
                         throw new IllegalStateException("Array fields must be initialized");
                     }
-                    return CALCULATE_SIZE;
+                    return null;
                 }
             }
             Class nativeType = type;
@@ -895,14 +949,14 @@ public abstract class Structure {
             catch(IllegalArgumentException e) {
                 // Might simply not yet have a type mapper set yet
                 if (!force && typeMapper == null) {
-                    return CALCULATE_SIZE;
+                    return null;
                 }
                 String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "', " + structField.type + ": " + e.getMessage();
                 throw new IllegalArgumentException(msg);
             }
 
             // Align fields as appropriate
-            structAlignment = Math.max(structAlignment, fieldAlignment);
+            info.alignment = Math.max(info.alignment, fieldAlignment);
             if ((calculatedSize % fieldAlignment) != 0) {
                 calculatedSize += fieldAlignment - (calculatedSize % fieldAlignment);
             }
@@ -910,11 +964,11 @@ public abstract class Structure {
             calculatedSize += structField.size;
 
             // Save the field in our list
-            structFields.put(structField.name, structField);
+            info.fields.put(structField.name, structField);
         }
 
         if (calculatedSize > 0) {
-            int size = calculateAlignedSize(calculatedSize);
+            int size = calculateAlignedSize(calculatedSize, info.alignment);
             // Update native FFI type information, if needed
             if (this instanceof ByValue && !avoidFFIType) {
                 getTypeInfo();
@@ -924,7 +978,8 @@ public abstract class Structure {
                 // Ensure we've set bounds on the memory used
                 this.memory = this.memory.share(0, size);
             }
-            return size;
+            info.size = size;
+            return info;
         }
 
         throw new IllegalArgumentException("Structure " + getClass()
@@ -933,11 +988,15 @@ public abstract class Structure {
     }
 
     int calculateAlignedSize(int calculatedSize) {
+        return calculateAlignedSize(calculatedSize, structAlignment);
+    }
+
+    private int calculateAlignedSize(int calculatedSize, int alignment) {
         // Structure size must be an integral multiple of its alignment,
         // add padding if necessary.
         if (alignType != ALIGN_NONE) {
-            if ((calculatedSize % structAlignment) != 0) {
-                calculatedSize += structAlignment - (calculatedSize % structAlignment);
+            if ((calculatedSize % alignment) != 0) {
+                calculatedSize += alignment - (calculatedSize % alignment);
             }
         }
         return calculatedSize;
@@ -1037,7 +1096,7 @@ public abstract class Structure {
         if (!showContents) {
             contents = "...}";
         }
-        else for (Iterator i=structFields.values().iterator();i.hasNext();) {
+        else for (Iterator i=fields().values().iterator();i.hasNext();) {
             StructField sf = (StructField)i.next();
             Object value = getField(sf);
             String type = format(sf.type);
@@ -1284,6 +1343,9 @@ public abstract class Structure {
         public FromNativeConverter readConverter;
         public ToNativeConverter writeConverter;
         public FromNativeContext context;
+        public String toString() {
+            return name + "@" + offset + "[" + size + "] (" + type + ")";
+        }
     }
     /** This class auto-generates an ffi_type structure appropriate for a given
      * structure for use by libffi.  The lifecycle of this structure is easier

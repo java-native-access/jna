@@ -962,7 +962,7 @@ public class StructureTest extends TestCase {
 
     public void testExplicitStructureFieldOrder() {
         final String[] ORDER = new String[] { "one", "two", "three" };
-        final String[] ORDER2 = new String[] { "one", "two", "three", "four" };
+        final String[] ORDER2 = new String[] { "one", "two", "three", "four", "five" };
         class TestStructure extends Structure {
             public int one = 1;
             public int three = 3;
@@ -976,8 +976,9 @@ public class StructureTest extends TestCase {
         }
         class DerivedTestStructure extends TestStructure {
             public int four = 4;
+            public int five = 5;
             {
-                setFieldOrder(new String[] { "four" });
+                setFieldOrder(new String[] { "four", "five" });
             }
         }
         
@@ -1002,8 +1003,10 @@ public class StructureTest extends TestCase {
                      s2.two, s2.getPointer().getInt(4));
         assertEquals("Wrong third field: " + s2,
                      s2.three, s2.getPointer().getInt(8));
-        assertEquals("Wrong derived field: " + s2,
+        assertEquals("Wrong derived field (1): " + s2,
                      s2.four, s2.getPointer().getInt(12));
+        assertEquals("Wrong derived field (2): " + s2,
+                     s2.five, s2.getPointer().getInt(16));
     }
 
     public void testCustomTypeMapper() {
@@ -1256,11 +1259,95 @@ public class StructureTest extends TestCase {
     public void testEquals() {
         class TestStructure extends Structure {
             public int field;
+            public TestStructure() { }
+            public TestStructure(Pointer p) { super(p); read(); }
         }
         Structure s = new TestStructure();
         assertTrue("Should match self", s.equals(s));
         assertFalse("Not equal null", s.equals(null));
         assertFalse("Not equal some other object", s.equals(new Object()));
+        Structure s1 = new TestStructure(s.getPointer());
+        assertEquals("Same base address/type should be equal", s, s1);
+    }
+
+    public void testStructureLayoutCacheing() {
+        class TestStructure extends Structure {
+            public int field;
+        }
+        Structure ts = new TestStructure();
+        Structure ts2 = new TestStructure();
+
+        assertSame("Structure layout not cached", ts.fields(), ts2.fields());
+    }
+    
+    public void testStructureLayoutVariableNoCache() {
+        class TestStructure extends Structure {
+            public byte[] variable;
+            public TestStructure() {
+                this(16);
+            }
+            public TestStructure(int size) {
+                this.variable = new byte[size];
+            }
+        }
+        Structure ts = new TestStructure(8);
+        Structure ts2 = new TestStructure(16);
+
+        assertNotSame("Structure layout should not be cached", ts.fields(), ts2.fields());
+    }
+
+    public void testStructureLayoutCacheingWithTypeMapper() {
+        class TestStructure extends Structure {
+            public boolean field;
+            public TestStructure() {
+                DefaultTypeMapper m = new DefaultTypeMapper();
+                TypeConverter tc = new TypeConverter() {
+                    public Class nativeType() { return int.class; }
+                    public Object fromNative(Object nativeValue, FromNativeContext c) {
+                        return new Boolean(nativeValue.equals(new Integer(0)));
+                    }
+                    public Object toNative(Object value, ToNativeContext c) {
+                        return new Integer(Boolean.TRUE.equals(value) ? -1 : 0);
+                    }
+                };
+                m.addTypeConverter(boolean.class, tc);
+                m.addTypeConverter(Boolean.class, tc);
+                setTypeMapper(m);
+            }
+        }
+        Structure ts = new TestStructure();
+        Structure ts2 = new TestStructure();
+
+        assertNotSame("Structure layout should not be cached", ts.fields(), ts2.fields());
+    }
+
+    public void testStructureLayoutCacheingWithFieldOrder() {
+        class TestStructure extends Structure {
+            public int second;
+            public int third;
+            public int first;
+            public TestStructure() {
+                setFieldOrder(new String[] { "first", "second", "third" });
+            }
+        }
+        Structure ts = new TestStructure();
+        Structure ts2 = new TestStructure();
+
+        assertSame("Structure layout should be cached", ts.fields(), ts2.fields());
+    }
+
+    public void testStructureLayoutCacheingWithAlignment() {
+        class TestStructure extends Structure {
+            public byte first;
+            public int second;
+            public TestStructure() {
+                setAlignType(ALIGN_NONE);
+            }
+        }
+        Structure ts = new TestStructure();
+        Structure ts2 = new TestStructure();
+
+        assertSame("Structure layout should be cached", ts.fields(), ts2.fields());
     }
 
     public void testStructureSetIterator() {

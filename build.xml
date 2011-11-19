@@ -249,13 +249,20 @@
     </jar>
   </target>
 
-  <target name="contrib-jars" depends="jar" description="Build contrib jars">
+  <target name="platform-jar" depends="jar">
     <subant target="jar">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
-      <!-- platform.jar needs to be built first -->
       <fileset dir="${contrib}" includes="platform/build.xml" />
+    </subant>
+  </target>
+
+  <target name="contrib-jars" depends="platform-jar" description="Build contrib jars">
+    <subant target="jar">
+      <property name="file.reference.jna.build" location="${build}"/>
+      <property name="file.reference.jna.jar" location="${build}/${jar}"/>
+      <property name="libs.junit.classpath" location="lib/junit.jar"/>
       <fileset dir="${contrib}" includes="*/build.xml" excludes="platform/build.xml"/>
     </subant>
   </target>
@@ -577,7 +584,9 @@
 
   <target name="contrib-test" depends="contrib-jars,compile-tests">
     <subant target="test">
+      <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
+      <property name="libs.junit.classpath" location="lib/junit.jar"/>
       <fileset dir="${contrib}" includes="platform/build.xml"/>
     </subant>
   </target>
