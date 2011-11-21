@@ -244,7 +244,9 @@ public class StructureTest extends TestCase {
             public int after;
         }
         TestStructure s = new TestStructure();
+        TestStructure s2 = new TestStructure();
         assertNotNull("Inner structure should be initialized", s.s1);
+        assertNotNull("Inner structure should be initialized (cached)", s2.s1);
         assertEquals("Wrong aggregate size",
                      s.s1.size() + s.s2.size() + 4, s.size());
         s.write();
@@ -267,8 +269,11 @@ public class StructureTest extends TestCase {
             public byte[] buffer = new byte[1024];
         }
         TestStructure s = new TestStructure();
+        TestStructure s2 = new TestStructure();
         assertEquals("Wrong size for structure with nested array", 1024, s.size());
+        assertEquals("Wrong size for structure with nested array (cached)", 1024, s2.size());
         assertNotNull("Array should be initialized", s.buffer);
+        assertNotNull("Array should be initialized (cached)", s2.buffer);
         s.write();
         s.read();
     }
@@ -931,10 +936,12 @@ public class StructureTest extends TestCase {
             public NativeLong uninitialized;
         }
         TestStructure ts = new TestStructure();
+        TestStructure ts2 = new TestStructure();
         assertEquals("Wrong value in field", VALUE, ts.nl.longValue());
         assertSame("Initial value overwritten", INITIAL, ts.nl);
         assertEquals("Wrong field value before write", VALUE, ts.nl.longValue());
         assertNotNull("Uninitialized field should be initialized", ts.uninitialized);
+        assertNotNull("Uninitialized field should be initialized (cached)", ts2.uninitialized);
         assertEquals("Wrong initialized value", 0, ts.uninitialized.longValue());
         ts.write();
         assertEquals("Wrong field value written", VALUE, ts.getPointer().getNativeLong(0).longValue());
@@ -1293,14 +1300,14 @@ public class StructureTest extends TestCase {
         Structure ts = new TestStructure(8);
         Structure ts2 = new TestStructure(16);
 
+        // Ensure allocated
+        ts.size(); ts2.size();
         assertNotSame("Structure layout should not be cached", ts.fields(), ts2.fields());
     }
 
     public void testStructureLayoutCacheingWithTypeMapper() {
-        class TestStructure extends Structure {
-            public boolean field;
-            public TestStructure() {
-                DefaultTypeMapper m = new DefaultTypeMapper();
+        class TestTypeMapper extends DefaultTypeMapper {
+            {
                 TypeConverter tc = new TypeConverter() {
                     public Class nativeType() { return int.class; }
                     public Object fromNative(Object nativeValue, FromNativeContext c) {
@@ -1310,15 +1317,29 @@ public class StructureTest extends TestCase {
                         return new Integer(Boolean.TRUE.equals(value) ? -1 : 0);
                     }
                 };
-                m.addTypeConverter(boolean.class, tc);
-                m.addTypeConverter(Boolean.class, tc);
-                setTypeMapper(m);
+                addTypeConverter(boolean.class, tc);
+                addTypeConverter(Boolean.class, tc);
+            }
+        }
+        final TypeMapper m = new TestTypeMapper();
+        class TestStructure extends Structure {
+            public boolean field;
+            public TestStructure() {
+                this(false);
+            }
+            public TestStructure(boolean create) {
+                this(create ? new TestTypeMapper() : m);
+            }
+            public TestStructure(TypeMapper m) {
+                super(m);
             }
         }
         Structure ts = new TestStructure();
         Structure ts2 = new TestStructure();
 
-        assertNotSame("Structure layout should not be cached", ts.fields(), ts2.fields());
+        // ensure allocated
+        ts.size(); ts2.size();
+        assertSame("Structure layout should not be cached when type mapper is in use", ts.fields(), ts2.fields());
     }
 
     public void testStructureLayoutCacheingWithFieldOrder() {
@@ -1333,6 +1354,8 @@ public class StructureTest extends TestCase {
         Structure ts = new TestStructure();
         Structure ts2 = new TestStructure();
 
+        // Ensure fields set up before checking them
+        ts.size(); ts2.size();
         assertSame("Structure layout should be cached", ts.fields(), ts2.fields());
     }
 

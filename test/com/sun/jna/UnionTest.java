@@ -92,6 +92,7 @@ public class UnionTest extends TestCase {
         assertTrue("short field not read", u.shortField != 0);
         assertTrue("long field not read", u.longField != 0);
         assertNotNull("Unselected Pointer not read", u.pointer);
+        assertNotNull("Union struct field should be initialized", u.structField);
         assertNull("Unselected structure should not be read", u.structField.value);
         assertNull("Unselected String should be null", u.string);
         assertNull("Unselected WString should be null", u.wstring);

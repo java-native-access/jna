@@ -148,7 +148,6 @@ public abstract class Union extends Structure {
      * @return this Union object
      */
     public Object setTypedValue(Object object) {
-        ensureAllocated();
         StructField f = findField(object.getClass());
         if (f != null) {
             activeField = f;
@@ -164,6 +163,7 @@ public abstract class Union extends Structure {
      * @return StructField of matching type
      */
     private StructField findField(Class type) {
+        ensureAllocated();
         for (Iterator i=fields().values().iterator();i.hasNext();) {
             StructField f = (StructField)i.next();
             if (f.type.isAssignableFrom(type)) {
@@ -222,7 +222,7 @@ public abstract class Union extends Structure {
             size = calculateAlignedSize(fsize);
             if (size > 0) {
                 // Update native FFI type information, if needed
-                if (this instanceof ByValue) {
+                if (this instanceof ByValue && !avoidFFIType) {
                     getTypeInfo();
                 }
             }
