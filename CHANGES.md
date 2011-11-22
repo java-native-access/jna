@@ -3,10 +3,10 @@ Release 3.4.0
 
 Features
 --------
-* Use jna.nosys to avoid loading any system-provided JNA (useful for local build/development).
+* Provide `jna.nosys=true` to avoid loading any system-provided JNA (useful for local build/development).
 * Allow override of default jnidispatch library name with `jna.boot.library.name` system property.
 * Throw an Error if a system install of JNA is incompatible or if JNA's JNI library does not match.
-* Disable automatic jnidispatch unpacking with jna.nounpack=true.
+* Disable automatic jnidispatch unpacking with `jna.nounpack=true`.
 * Automatically look up system error messages for LastErrorException.
 * Improved callback thread-mapping support; re-use, rename, and group callback
 threads.
@@ -26,8 +26,8 @@ threads.
 * Add `platform.win32.Shell32.ShellExecute`.
 * Add to `platform.win32.User32`: `SetParent`, `IsWindowVisible`, `MoveWindow`, `SetWindowPos`, `AttachInputThread`, `SetForegroundWindow`, `GetForegroundWindow`, `SetFocus`, `SendInput`, `WaitForInputIdle`, `InvalidateRect`, `RedrawWindow`, `GetWindow`, `UpdateWindow`, `ShowWindow`, `CloseWindow`.
 * Add to `platform.win32.Version`: `GetFileVersionInfoSize`, `GetFileVersionInfo`, `VerQueryValue`.
-* Add to platform.win32.Advapi32: 'GetFileSecurity', 'RegQueryValueEx(...Long...)'.
-* Add to platform.win32.Netapi32: 'NetUserGetInfo'.
+* Add to `platform.win32.Advapi32`: `GetFileSecurity`, `RegQueryValueEx(...Long...)`.
+* Add to `platform.win32.Netapi32`: `NetUserGetInfo`.
 
 Bug Fixes
 --------
