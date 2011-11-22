@@ -143,9 +143,10 @@ ifeq ($(ARCH),amd64)
 WINDRES=/usr/local/mingw64-cross/bin/x86_64-pc-mingw32-windres
 
 # Uncomment to enable MINGW64 cross compiler
-# Should build properly as of 090601, but lacks SEH, so MSVC build is preferred
+# Should build properly as of 111121, but lacks SEH, so MSVC build is preferred
 #MINGW = x86_64-pc-mingw32-gcc
 ifneq ($(MINGW),)
+CDEFINES=-DPSAPI_VERSION=1
 CC = $(MINGW) -m64 -mno-cygwin
 LD = $(CC)
 LDFLAGS=-o $@ -shared
