@@ -19,20 +19,18 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
  * by NT, but exposed through the Win32 API.
- * Ported from WinNT.h.
+ * Ported from WinNT.h
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
-public interface WinNT extends StdCallLibrary {
+public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     //
     // The following are masks for the predefined standard access types
@@ -106,14 +104,14 @@ public interface WinNT extends StdCallLibrary {
     int TOKEN_ADJUST_SESSIONID = 0x0100;
 
     int TOKEN_ALL_ACCESS_P = STANDARD_RIGHTS_REQUIRED |
-	 TOKEN_ASSIGN_PRIMARY |
-	 TOKEN_DUPLICATE |
-	 TOKEN_IMPERSONATE |
-	 TOKEN_QUERY |
-	 TOKEN_QUERY_SOURCE |
-	 TOKEN_ADJUST_PRIVILEGES |
-	 TOKEN_ADJUST_GROUPS |
-	 TOKEN_ADJUST_DEFAULT;
+        TOKEN_ASSIGN_PRIMARY |
+        TOKEN_DUPLICATE |
+        TOKEN_IMPERSONATE |
+        TOKEN_QUERY |
+        TOKEN_QUERY_SOURCE |
+        TOKEN_ADJUST_PRIVILEGES |
+        TOKEN_ADJUST_GROUPS |
+        TOKEN_ADJUST_DEFAULT;
 
     /**
      * Combines all possible access rights for a token.
@@ -130,9 +128,9 @@ public interface WinNT extends StdCallLibrary {
      * TOKEN_ADJUST_GROUPS, and TOKEN_ADJUST_DEFAULT.
      */
     int TOKEN_WRITE = STANDARD_RIGHTS_WRITE |
-	 TOKEN_ADJUST_PRIVILEGES |
-	 TOKEN_ADJUST_GROUPS |
-	 TOKEN_ADJUST_DEFAULT;
+        TOKEN_ADJUST_PRIVILEGES |
+        TOKEN_ADJUST_GROUPS |
+        TOKEN_ADJUST_DEFAULT;
 
     /**
      * Combines STANDARD_RIGHTS_EXECUTE and TOKEN_IMPERSONATE.
@@ -227,8 +225,8 @@ public interface WinNT extends StdCallLibrary {
      * a primary token and an impersonation token.
      */
     public abstract class TOKEN_TYPE {
-	 public static final int TokenPrimary = 1;
-	 public static final int TokenImpersonation = 2;
+        public static final int TokenPrimary = 1;
+        public static final int TokenImpersonation = 2;
     }
     
     /**
@@ -514,26 +512,26 @@ public interface WinNT extends StdCallLibrary {
     int FILE_WRITE_ATTRIBUTES		= 0x00000100;
 
     int FILE_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED |
-	 SYNCHRONIZE |
-	 0x000001FF;
+        SYNCHRONIZE |
+        0x000001FF;
 
     int FILE_GENERIC_READ = STANDARD_RIGHTS_READ |
-	 SYNCHRONIZE |
-	 FILE_READ_DATA |
-	 FILE_READ_ATTRIBUTES |
-	 FILE_READ_EA;
+        SYNCHRONIZE |
+        FILE_READ_DATA |
+        FILE_READ_ATTRIBUTES |
+        FILE_READ_EA;
 
     int FILE_GENERIC_WRITE = STANDARD_RIGHTS_WRITE |
-	 SYNCHRONIZE |
-	 FILE_WRITE_DATA |
-	 FILE_WRITE_ATTRIBUTES |
-	 FILE_WRITE_EA |
-	 FILE_APPEND_DATA;
+        SYNCHRONIZE |
+        FILE_WRITE_DATA |
+        FILE_WRITE_ATTRIBUTES |
+        FILE_WRITE_EA |
+        FILE_APPEND_DATA;
 
     int FILE_GENERIC_EXECUTE = STANDARD_RIGHTS_EXECUTE |
-	 SYNCHRONIZE |
-	 FILE_READ_ATTRIBUTES |
-	 FILE_EXECUTE;
+        SYNCHRONIZE |
+        FILE_READ_ATTRIBUTES |
+        FILE_EXECUTE;
 
     int CREATE_NEW		= 1;
     int CREATE_ALWAYS		= 2;
@@ -691,27 +689,27 @@ public interface WinNT extends StdCallLibrary {
     int KEY_WOW64_RES		= 0x0300;
 
     int KEY_READ = STANDARD_RIGHTS_READ |
-	 KEY_QUERY_VALUE |
-	 KEY_ENUMERATE_SUB_KEYS |
-	 KEY_NOTIFY
-	 & (~SYNCHRONIZE);
+        KEY_QUERY_VALUE |
+        KEY_ENUMERATE_SUB_KEYS |
+        KEY_NOTIFY
+        & (~SYNCHRONIZE);
 
     int KEY_WRITE = STANDARD_RIGHTS_WRITE |
-	 KEY_SET_VALUE |
-	 KEY_CREATE_SUB_KEY
-	 & (~SYNCHRONIZE);    
+        KEY_SET_VALUE |
+        KEY_CREATE_SUB_KEY
+        & (~SYNCHRONIZE);    
 
     int KEY_EXECUTE = KEY_READ
-	 & (~SYNCHRONIZE);
+        & (~SYNCHRONIZE);
 
     int KEY_ALL_ACCESS = STANDARD_RIGHTS_ALL |
-	 KEY_QUERY_VALUE |
-	 KEY_SET_VALUE |
-	 KEY_CREATE_SUB_KEY |
-	 KEY_ENUMERATE_SUB_KEYS |
-	 KEY_NOTIFY |
-	 KEY_CREATE_LINK
-	 & (~SYNCHRONIZE);
+        KEY_QUERY_VALUE |
+        KEY_SET_VALUE |
+        KEY_CREATE_SUB_KEY |
+        KEY_ENUMERATE_SUB_KEYS |
+        KEY_NOTIFY |
+        KEY_CREATE_LINK
+        & (~SYNCHRONIZE);
 
     //
     // Open/Create Options
@@ -748,11 +746,11 @@ public interface WinNT extends StdCallLibrary {
     int REG_OPTION_OPEN_LINK = 0x00000008;
 
     int REG_LEGAL_OPTION = REG_OPTION_RESERVED |
-	 REG_OPTION_NON_VOLATILE |
-	 REG_OPTION_VOLATILE |
-	 REG_OPTION_CREATE_LINK |
-	 REG_OPTION_BACKUP_RESTORE |
-	 REG_OPTION_OPEN_LINK;
+        REG_OPTION_NON_VOLATILE |
+        REG_OPTION_VOLATILE |
+        REG_OPTION_CREATE_LINK |
+        REG_OPTION_BACKUP_RESTORE |
+        REG_OPTION_OPEN_LINK;
 
     //
     // Key creation/open disposition
@@ -842,9 +840,9 @@ public interface WinNT extends StdCallLibrary {
     int REG_NOTIFY_CHANGE_SECURITY	= 0x00000008;
 
     int REG_LEGAL_CHANGE_FILTER = REG_NOTIFY_CHANGE_NAME |
-	 REG_NOTIFY_CHANGE_ATTRIBUTES |
-	 REG_NOTIFY_CHANGE_LAST_SET |
-	 REG_NOTIFY_CHANGE_SECURITY;
+        REG_NOTIFY_CHANGE_ATTRIBUTES |
+        REG_NOTIFY_CHANGE_LAST_SET |
+        REG_NOTIFY_CHANGE_SECURITY;
 
     //
     // Predefined Value Types.
@@ -1635,7 +1633,7 @@ public interface WinNT extends StdCallLibrary {
     int EVENTLOG_SEQUENTIAL_READ = 0x0001;
 
     /**
-     * Begin reading from the record specified in the dwRecordOffset parameter. 
+     * Begin reading from the record specified in the dwRecordOffset parameter.  
      * This option may not work with large log files if the function cannot determine the log file's size. 
      * For details, see Knowledge Base article, 177199.
      */
@@ -1886,13 +1884,13 @@ public interface WinNT extends StdCallLibrary {
 		final byte aceType = share.getByte(0);
 		ACCESS_ACEStructure ace = null;
 		switch (aceType) {
-		  case ACCESS_ALLOWED_ACE_TYPE:
+                case ACCESS_ALLOWED_ACE_TYPE:
 		    ace = new ACCESS_ALLOWED_ACE(share);
 		    break;
-		  case ACCESS_DENIED_ACE_TYPE:
+                case ACCESS_DENIED_ACE_TYPE:
 		    ace = new ACCESS_DENIED_ACE(share);
 		    break;
-		  default:
+                default:
 		    throw new IllegalArgumentException("Unknwon ACE type " + aceType);
 		}
 		ACEs[i] = ace;

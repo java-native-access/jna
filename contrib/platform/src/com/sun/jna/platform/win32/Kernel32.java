@@ -12,14 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.nio.Buffer;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
-import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
@@ -32,8 +26,9 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-/** Definition (incomplete) of <code>kernel32.dll</code>. */
-public interface Kernel32 extends StdCallLibrary {
+/** Definition of <code>kernel32.dll</code>.
+ */
+public interface Kernel32 extends StdCallLibrary, WinBase {
 
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, 
     		W32APIOptions.UNICODE_OPTIONS);
@@ -206,7 +201,9 @@ public interface Kernel32 extends StdCallLibrary {
      *  Formatting options, and how to interpret the lpSource parameter. The low-order
      *  byte of dwFlags specifies how the function handles line breaks in the output 
      *  buffer. The low-order byte can also specify the maximum width of a formatted
-     *  output line. 
+     *  output line. <p/>
+     * This version of the function assumes FORMAT_MESSAGE_ALLOCATE_BUFFER is
+     *  <em>not</em> set.
      * @param lpSource
      *  Location of the message definition.
      * @param dwMessageId
@@ -217,10 +214,7 @@ public interface Kernel32 extends StdCallLibrary {
      *  Pointer to a buffer that receives the null-terminated string that specifies the 
      *  formatted message.
      * @param nSize
-     *  If the FORMAT_MESSAGE_ALLOCATE_BUFFER flag is not set, this parameter specifies
-     *  the size of the output buffer, in TCHARs. If FORMAT_MESSAGE_ALLOCATE_BUFFER is 
-     *  set, this parameter specifies the minimum number of TCHARs to allocate for an 
-     *  output buffer.
+     *  This this parameter specifies the size of the output buffer, in TCHARs. If FORMAT_MESSAGE_ALLOCATE_BUFFER is 
      * @param va_list
      *  Pointer to an array of values that are used as insert values in the formatted message.
      * @return
@@ -230,7 +224,7 @@ public interface Kernel32 extends StdCallLibrary {
      *  GetLastError.
      */
     int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId,
-                      int dwLanguageId, PointerByReference lpBuffer,
+                      int dwLanguageId, Pointer lpBuffer,
                       int nSize, Pointer va_list);
     
     /**
@@ -246,7 +240,9 @@ public interface Kernel32 extends StdCallLibrary {
      *  Formatting options, and how to interpret the lpSource parameter. The low-order
      *  byte of dwFlags specifies how the function handles line breaks in the output 
      *  buffer. The low-order byte can also specify the maximum width of a formatted
-     *  output line. 
+     *  output line. <p/>
+     * This version of the function assumes FORMAT_MESSAGE_ALLOCATE_BUFFER is
+     *  set.
      * @param lpSource
      *  Location of the message definition.
      * @param dwMessageId
@@ -254,12 +250,10 @@ public interface Kernel32 extends StdCallLibrary {
      * @param dwLanguageId
      *  Language identifier for the requested message.
      * @param lpBuffer
-     *  Pointer to a buffer that receives the null-terminated string that specifies the 
-     *  formatted message.
+     *  Pointer to a pointer that receives the allocated buffer in which the
+     *  null-terminated string that specifies the formatted message is written.
      * @param nSize
-     *  If the FORMAT_MESSAGE_ALLOCATE_BUFFER flag is not set, this parameter specifies
-     *  the size of the output buffer, in TCHARs. If FORMAT_MESSAGE_ALLOCATE_BUFFER is 
-     *  set, this parameter specifies the minimum number of TCHARs to allocate for an 
+     *  This parameter specifies the minimum number of TCHARs to allocate for an 
      *  output buffer.
      * @param va_list
      *  Pointer to an array of values that are used as insert values in the formatted message.
@@ -270,9 +264,9 @@ public interface Kernel32 extends StdCallLibrary {
      *  GetLastError.
      */
     int FormatMessage(int dwFlags, Pointer lpSource, int dwMessageId,
-                      int dwLanguageId, Buffer lpBuffer,
+                      int dwLanguageId, PointerByReference lpBuffer,
                       int nSize, Pointer va_list);
-
+    
     /**
      * The CreateFile function creates or opens a file, file stream, directory, physical
      * disk, volume, console buffer, tape drive, communications resource, mailslot, or 
@@ -446,7 +440,7 @@ public interface Kernel32 extends StdCallLibrary {
 	 */
     boolean ReadFile(
     		HANDLE hFile,
-    		Buffer lpBuffer,
+    		Pointer lpBuffer,
     		int nNumberOfBytesToRead,
     		IntByReference lpNumberOfBytesRead,
     		WinBase.OVERLAPPED lpOverlapped);

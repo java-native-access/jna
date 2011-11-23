@@ -37,7 +37,7 @@ public interface VerRsrc extends StdCallLibrary {
         }
 
         public VS_FIXEDFILEINFO(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
 

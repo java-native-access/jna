@@ -17,6 +17,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
+ * Based on basetsd.h (various types)
  * @author dblock[at]dblock[dot]org
  */
 @SuppressWarnings("serial")

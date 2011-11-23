@@ -17,7 +17,6 @@ import java.util.List;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -26,7 +25,7 @@ import com.sun.jna.ptr.PointerByReference;
  * Kernel32 utility API.
  * @author dblock[at]dblock.org
  */
-public abstract class Kernel32Util {
+public abstract class Kernel32Util implements WinDef {
 	
 	/**
 	 * Get current computer NetBIOS name.
@@ -34,7 +33,7 @@ public abstract class Kernel32Util {
 	 *  Netbios name.
 	 */
 	public static String getComputerName() {
-    	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH() + 1];
+    	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH + 1];
     	IntByReference lpnSize = new IntByReference(buffer.length);
     	if (! Kernel32.INSTANCE.GetComputerName(buffer, lpnSize)) {
     		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());

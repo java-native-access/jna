@@ -116,7 +116,7 @@ public class W32FileMonitor extends FileMonitor {
         klib.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, WinBase.INFINITE);
         
         synchronized (this) { 
-            return (FileInfo)handleMap.get(rkey.getValue());
+            return handleMap.get(rkey.getValue());
         }
     }
     
@@ -231,7 +231,7 @@ public class W32FileMonitor extends FileMonitor {
     }
 
     protected synchronized void unwatch(File file) {
-        FileInfo finfo = (FileInfo)fileMap.remove(file);
+        FileInfo finfo = fileMap.remove(file);
         if (finfo != null) {
             handleMap.remove(finfo.handle);
             Kernel32 klib = Kernel32.INSTANCE;

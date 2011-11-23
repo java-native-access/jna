@@ -14,14 +14,13 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from Guid.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface Guid extends StdCallLibrary {
+public interface Guid {
     
     public static class GUID extends Structure {
         
@@ -48,7 +47,7 @@ public interface Guid extends StdCallLibrary {
         }
             
         public GUID(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
 

@@ -29,8 +29,8 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Winspool extends StdCallLibrary {
 
-	Winspool INSTANCE = (Winspool) Native.loadLibrary("Winspool.drv", Winspool.class, 
-    		W32APIOptions.UNICODE_OPTIONS);
+    Winspool INSTANCE = (Winspool) Native.loadLibrary("Winspool.drv", Winspool.class, 
+                                                      W32APIOptions.UNICODE_OPTIONS);
 
     /**
      * The EnumPrinters function enumerates available printers, print servers, domains, or print providers.
@@ -79,58 +79,58 @@ public interface Winspool extends StdCallLibrary {
      *  If the function succeeds, the return value is a nonzero value.
      *  If the function fails, the return value is zero. 
      */
-    boolean EnumPrinters(int Flags, WString Name, int Level, Pointer pPrinterEnum,
-    		int cbBuf, IntByReference pcbNeeded, IntByReference pcReturned);
+    boolean EnumPrinters(int Flags, String Name, int Level, Pointer pPrinterEnum,
+                         int cbBuf, IntByReference pcbNeeded, IntByReference pcReturned);
 	
-	public static class PRINTER_INFO_1 extends Structure {
-	    public int Flags;
-	    public String pDescription;
-	    public String pName;
-	    public String pComment;
+    public static class PRINTER_INFO_1 extends Structure {
+        public int Flags;
+        public String pDescription;
+        public String pName;
+        public String pComment;
 	    
-	    public PRINTER_INFO_1() {
+        public PRINTER_INFO_1() {
 	    	
-	    }
+        }
 	    
-	    public PRINTER_INFO_1(int size) {
-	    	super(new Memory(size));
-	    }
-	}
+        public PRINTER_INFO_1(int size) {
+            super(new Memory(size));
+        }
+    }
 
-	public static class PRINTER_INFO_4 extends Structure {
-	    public String pPrinterName;
-	    public String pServerName;
-	    public DWORD Attributes;
+    public static class PRINTER_INFO_4 extends Structure {
+        public String pPrinterName;
+        public String pServerName;
+        public DWORD Attributes;
 	    
-	    public PRINTER_INFO_4() {
+        public PRINTER_INFO_4() {
 	    	
-	    }
+        }
 	    
-	    public PRINTER_INFO_4(int size) {
-	    	super(new Memory(size));
-	    }
-	}
+        public PRINTER_INFO_4(int size) {
+            super(new Memory(size));
+        }
+    }
 	
-	public static final int PRINTER_ENUM_DEFAULT = 0x00000001;
-	public static final int PRINTER_ENUM_LOCAL = 0x00000002;
-	public static final int PRINTER_ENUM_CONNECTIONS = 0x00000004;
-	public static final int PRINTER_ENUM_FAVORITE = 0x00000004;
-	public static final int PRINTER_ENUM_NAME = 0x00000008;
-	public static final int PRINTER_ENUM_REMOTE = 0x00000010;
-	public static final int PRINTER_ENUM_SHARED = 0x00000020;
-	public static final int PRINTER_ENUM_NETWORK = 0x00000040;
+    int PRINTER_ENUM_DEFAULT = 0x00000001;
+    int PRINTER_ENUM_LOCAL = 0x00000002;
+    int PRINTER_ENUM_CONNECTIONS = 0x00000004;
+    int PRINTER_ENUM_FAVORITE = 0x00000004;
+    int PRINTER_ENUM_NAME = 0x00000008;
+    int PRINTER_ENUM_REMOTE = 0x00000010;
+    int PRINTER_ENUM_SHARED = 0x00000020;
+    int PRINTER_ENUM_NETWORK = 0x00000040;
 
-	public static final int PRINTER_ENUM_EXPAND = 0x00004000;
-	public static final int PRINTER_ENUM_CONTAINER = 0x00008000;
+    int PRINTER_ENUM_EXPAND = 0x00004000;
+    int PRINTER_ENUM_CONTAINER = 0x00008000;
 
-	public static final int PRINTER_ENUM_ICONMASK = 0x00ff0000;
-	public static final int PRINTER_ENUM_ICON1 = 0x00010000;
-	public static final int PRINTER_ENUM_ICON2 = 0x00020000;
-	public static final int PRINTER_ENUM_ICON3 = 0x00040000;
-	public static final int PRINTER_ENUM_ICON4 = 0x00080000;
-	public static final int PRINTER_ENUM_ICON5 = 0x00100000;
-	public static final int PRINTER_ENUM_ICON6 = 0x00200000;
-	public static final int PRINTER_ENUM_ICON7 = 0x00400000;
-	public static final int PRINTER_ENUM_ICON8 = 0x00800000;
-	public static final int PRINTER_ENUM_HIDE = 0x01000000;
+    int PRINTER_ENUM_ICONMASK = 0x00ff0000;
+    int PRINTER_ENUM_ICON1 = 0x00010000;
+    int PRINTER_ENUM_ICON2 = 0x00020000;
+    int PRINTER_ENUM_ICON3 = 0x00040000;
+    int PRINTER_ENUM_ICON4 = 0x00080000;
+    int PRINTER_ENUM_ICON5 = 0x00100000;
+    int PRINTER_ENUM_ICON6 = 0x00200000;
+    int PRINTER_ENUM_ICON7 = 0x00400000;
+    int PRINTER_ENUM_ICON8 = 0x00800000;
+    int PRINTER_ENUM_HIDE = 0x01000000;
 }

@@ -18,6 +18,7 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -27,158 +28,153 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByteByReference;
 
 /**
- * Ported from Winbase.h.
+ * Ported from Winbase.h (kernel32.dll/kernel services).
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public abstract class WinBase {
+public interface WinBase extends StdCallLibrary, WinDef {
 
     /** Constant value representing an invalid HANDLE. */
-    public static HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.createConstant(
-    		Pointer.SIZE == 8 ? -1 : 0xFFFFFFFFL));
+    HANDLE INVALID_HANDLE_VALUE =
+        new HANDLE(Pointer.createConstant(Pointer.SIZE == 8
+                                          ? -1 : 0xFFFFFFFFL));
 
-	public static final int WAIT_FAILED = 0xFFFFFFFF;
-	public static final int WAIT_OBJECT_0 = ((NTStatus.STATUS_WAIT_0 ) + 0 );
-	public static final int WAIT_ABANDONED = ((NTStatus.STATUS_ABANDONED_WAIT_0 ) + 0 );
-	public static final int WAIT_ABANDONED_0 = ((NTStatus.STATUS_ABANDONED_WAIT_0 ) + 0 );
+    int WAIT_FAILED = 0xFFFFFFFF;
+    int WAIT_OBJECT_0 = ((NTStatus.STATUS_WAIT_0 ) + 0 );
+    int WAIT_ABANDONED = ((NTStatus.STATUS_ABANDONED_WAIT_0 ) + 0 );
+    int WAIT_ABANDONED_0 = ((NTStatus.STATUS_ABANDONED_WAIT_0 ) + 0 );
 	
-	/**
-	 * Maximum computer name length.
-	 * @return 15 on MAC, 31 on everything else.
-	 */
-	public static int MAX_COMPUTERNAME_LENGTH() {
-		if (Platform.isMac()) {
-			return 15;
-		} else {
-			return 31;			
-		}
-	}
+    /**
+     * Maximum computer name length.
+     * @return 15 on MAC, 31 on everything else.
+     */
+    int MAX_COMPUTERNAME_LENGTH = Platform.isMac() ? 15 : 31;
 	
-	/**
-	 * This logon type is intended for users who will be interactively using the computer, such 
-	 * as a user being logged on by a terminal server, remote shell, or similar process. This 
-	 * logon type has the additional expense of caching logon information for disconnected operations; 
-	 * therefore, it is inappropriate for some client/server applications, such as a mail server. 
-	 */
-	public static final int LOGON32_LOGON_INTERACTIVE = 2;
-	/**
-	 * This logon type is intended for high performance servers to authenticate plaintext passwords. 
-	 * The LogonUser function does not cache credentials for this logon type.
-	 */
-	public static final int LOGON32_LOGON_NETWORK = 3;
-	/**
-	 * This logon type is intended for batch servers, where processes may be executing on behalf 
-	 * of a user without their direct intervention. This type is also for higher performance servers 
-	 * that process many plaintext authentication attempts at a time, such as mail or Web servers. 
-	 * The LogonUser function does not cache credentials for this logon type.
-	 */
-	public static final int LOGON32_LOGON_BATCH = 4;
-	/**
-	 * Indicates a service-type logon. The account provided must have the service privilege enabled.
-	 */
-	public static final int LOGON32_LOGON_SERVICE = 5;
-	/**
-	 * This logon type is for GINA DLLs that log on users who will be interactively using the computer. 
-	 * This logon type can generate a unique audit record that shows when the workstation was unlocked.
-	 */
-	public static final int LOGON32_LOGON_UNLOCK = 7;
-	/**
-	 * This logon type preserves the name and password in the authentication package, which allows the 
-	 * server to make connections to other network servers while impersonating the client. A server can 
-	 * accept plaintext credentials from a client, call LogonUser, verify that the user can access the 
-	 * system across the network, and still communicate with other servers.
-	 */
-	public static final int LOGON32_LOGON_NETWORK_CLEARTEXT = 8;
-	/**
-	 * This logon type allows the caller to clone its current token and specify new credentials for 
-	 * outbound connections. The new logon session has the same local identifier but uses different 
-	 * credentials for other network connections. This logon type is supported only by the 
-	 * LOGON32_PROVIDER_WINNT50 logon provider.
-	 */
-	public static final int LOGON32_LOGON_NEW_CREDENTIALS = 9;
+    /**
+     * This logon type is intended for users who will be interactively using the computer, such 
+     * as a user being logged on by a terminal server, remote shell, or similar process. This 
+     * logon type has the additional expense of caching logon information for disconnected operations; 
+     * therefore, it is inappropriate for some client/server applications, such as a mail server. 
+     */
+    int LOGON32_LOGON_INTERACTIVE = 2;
+    /**
+     * This logon type is intended for high performance servers to authenticate plaintext passwords. 
+     * The LogonUser function does not cache credentials for this logon type.
+     */
+    int LOGON32_LOGON_NETWORK = 3;
+    /**
+     * This logon type is intended for batch servers, where processes may be executing on behalf 
+     * of a user without their direct intervention. This type is also for higher performance servers 
+     * that process many plaintext authentication attempts at a time, such as mail or Web servers. 
+     * The LogonUser function does not cache credentials for this logon type.
+     */
+    int LOGON32_LOGON_BATCH = 4;
+    /**
+     * Indicates a service-type logon. The account provided must have the service privilege enabled.
+     */
+    int LOGON32_LOGON_SERVICE = 5;
+    /**
+     * This logon type is for GINA DLLs that log on users who will be interactively using the computer. 
+     * This logon type can generate a unique audit record that shows when the workstation was unlocked.
+     */
+    int LOGON32_LOGON_UNLOCK = 7;
+    /**
+     * This logon type preserves the name and password in the authentication package, which allows the 
+     * server to make connections to other network servers while impersonating the client. A server can 
+     * accept plaintext credentials from a client, call LogonUser, verify that the user can access the 
+     * system across the network, and still communicate with other servers.
+     */
+    int LOGON32_LOGON_NETWORK_CLEARTEXT = 8;
+    /**
+     * This logon type allows the caller to clone its current token and specify new credentials for 
+     * outbound connections. The new logon session has the same local identifier but uses different 
+     * credentials for other network connections. This logon type is supported only by the 
+     * LOGON32_PROVIDER_WINNT50 logon provider.
+     */
+    int LOGON32_LOGON_NEW_CREDENTIALS = 9;
 
-	/**
-	 * Use the standard logon provider for the system. The default security provider is negotiate, 
-	 * unless you pass NULL for the domain name and the user name is not in UPN format. In this case, 
-	 * the default provider is NTLM. 
-	 */
-	public static final int LOGON32_PROVIDER_DEFAULT = 0;
+    /**
+     * Use the standard logon provider for the system. The default security provider is negotiate, 
+     * unless you pass NULL for the domain name and the user name is not in UPN format. In this case, 
+     * the default provider is NTLM. 
+     */
+    int LOGON32_PROVIDER_DEFAULT = 0;
 	
-	/**
-	 * Use the Windows NT 3.5 logon provider.
-	 */
-	public static final int LOGON32_PROVIDER_WINNT35 = 1;
-	/**
-	 * Use the NTLM logon provider.
-	 */
-	public static final int LOGON32_PROVIDER_WINNT40 = 2;
-	/**
-	 * Use the negotiate logon provider.
-	 */
-	public static final int LOGON32_PROVIDER_WINNT50 = 3;	
+    /**
+     * Use the Windows NT 3.5 logon provider.
+     */
+    int LOGON32_PROVIDER_WINNT35 = 1;
+    /**
+     * Use the NTLM logon provider.
+     */
+    int LOGON32_PROVIDER_WINNT40 = 2;
+    /**
+     * Use the negotiate logon provider.
+     */
+    int LOGON32_PROVIDER_WINNT50 = 3;	
 	
-	/**
-	 * If this flag is set, a child process created with the bInheritHandles parameter of
-	 * CreateProcess set to TRUE will inherit the object handle.
-	 */
-	public static final int HANDLE_FLAG_INHERIT = 1;
+    /**
+     * If this flag is set, a child process created with the bInheritHandles parameter of
+     * CreateProcess set to TRUE will inherit the object handle.
+     */
+    int HANDLE_FLAG_INHERIT = 1;
 	
-	/**
-	 * If this flag is set, calling the {@link Kernel32#CloseHandle} function will not
-	 * close the object handle.
-	 */
-	public static final int HANDLE_FLAG_PROTECT_FROM_CLOSE = 2;
+    /**
+     * If this flag is set, calling the {@link Kernel32#CloseHandle} function will not
+     * close the object handle.
+     */
+    int HANDLE_FLAG_PROTECT_FROM_CLOSE = 2;
 
-	// STARTUPINFO flags
-	public static final int STARTF_USESHOWWINDOW = 0x001;
-	public static final int STARTF_USESIZE = 0x002;
-	public static final int STARTF_USEPOSITION = 0x004;
-	public static final int STARTF_USECOUNTCHARS = 0x008;
-	public static final int STARTF_USEFILLATTRIBUTE = 0x010;
-	public static final int STARTF_RUNFULLSCREEN = 0x020;
-	public static final int STARTF_FORCEONFEEDBACK = 0x040;
-	public static final int STARTF_FORCEOFFFEEDBACK = 0x080;
-	public static final int STARTF_USESTDHANDLES = 0x100;
+    // STARTUPINFO flags
+    int STARTF_USESHOWWINDOW = 0x001;
+    int STARTF_USESIZE = 0x002;
+    int STARTF_USEPOSITION = 0x004;
+    int STARTF_USECOUNTCHARS = 0x008;
+    int STARTF_USEFILLATTRIBUTE = 0x010;
+    int STARTF_RUNFULLSCREEN = 0x020;
+    int STARTF_FORCEONFEEDBACK = 0x040;
+    int STARTF_FORCEOFFFEEDBACK = 0x080;
+    int STARTF_USESTDHANDLES = 0x100;
 	
-	// Process Creation flags
-	public static final int DEBUG_PROCESS = 0x00000001;
-	public static final int DEBUG_ONLY_THIS_PROCESS = 0x00000002;
-	public static final int CREATE_SUSPENDED = 0x00000004;
-	public static final int DETACHED_PROCESS = 0x00000008;
-	public static final int CREATE_NEW_CONSOLE = 0x00000010;
-	public static final int CREATE_NEW_PROCESS_GROUP = 0x00000200;
-	public static final int CREATE_UNICODE_ENVIRONMENT = 0x00000400;
-	public static final int CREATE_SEPARATE_WOW_VDM = 0x00000800;
-	public static final int CREATE_SHARED_WOW_VDM = 0x00001000;
-	public static final int CREATE_FORCEDOS = 0x00002000;
-	public static final int INHERIT_PARENT_AFFINITY = 0x00010000;
-	public static final int CREATE_PROTECTED_PROCESS = 0x00040000;
-	public static final int EXTENDED_STARTUPINFO_PRESENT = 0x00080000;
-	public static final int CREATE_BREAKAWAY_FROM_JOB = 0x01000000;
-	public static final int CREATE_PRESERVE_CODE_AUTHZ_LEVEL = 0x02000000;
-	public static final int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
-	public static final int CREATE_NO_WINDOW = 0x08000000;
+    // Process Creation flags
+    int DEBUG_PROCESS = 0x00000001;
+    int DEBUG_ONLY_THIS_PROCESS = 0x00000002;
+    int CREATE_SUSPENDED = 0x00000004;
+    int DETACHED_PROCESS = 0x00000008;
+    int CREATE_NEW_CONSOLE = 0x00000010;
+    int CREATE_NEW_PROCESS_GROUP = 0x00000200;
+    int CREATE_UNICODE_ENVIRONMENT = 0x00000400;
+    int CREATE_SEPARATE_WOW_VDM = 0x00000800;
+    int CREATE_SHARED_WOW_VDM = 0x00001000;
+    int CREATE_FORCEDOS = 0x00002000;
+    int INHERIT_PARENT_AFFINITY = 0x00010000;
+    int CREATE_PROTECTED_PROCESS = 0x00040000;
+    int EXTENDED_STARTUPINFO_PRESENT = 0x00080000;
+    int CREATE_BREAKAWAY_FROM_JOB = 0x01000000;
+    int CREATE_PRESERVE_CODE_AUTHZ_LEVEL = 0x02000000;
+    int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
+    int CREATE_NO_WINDOW = 0x08000000;
 
-	/* Invalid return values */
-	public static final int INVALID_FILE_SIZE           = 0xFFFFFFFF;
-	public static final int INVALID_SET_FILE_POINTER    = 0xFFFFFFFF;
-	public static final int INVALID_FILE_ATTRIBUTES     = 0xFFFFFFFF;
+    /* Invalid return values */
+    int INVALID_FILE_SIZE           = 0xFFFFFFFF;
+    int INVALID_SET_FILE_POINTER    = 0xFFFFFFFF;
+    int INVALID_FILE_ATTRIBUTES     = 0xFFFFFFFF;
 	
-	/**
-	 * Return code for a process still active.
-	 */
-	public static final int STILL_ACTIVE = WinNT.STATUS_PENDING;
+    /**
+     * Return code for a process still active.
+     */
+    int STILL_ACTIVE = WinNT.STATUS_PENDING;
 
 	
-	/**
-    * The FILETIME structure is a 64-bit value representing the number of 
-    * 100-nanosecond intervals since January 1, 1601 (UTC).
-    * Conversion code in this class Copyright 2002-2004 Apache Software Foundation.
-    * @author Rainer Klute (klute@rainer-klute.de) for the Apache Software Foundation (org.apache.poi.hpsf)
-    */
-	public static class FILETIME extends Structure {
-		public int dwLowDateTime;
-		public int dwHighDateTime;        
+    /**
+     * The FILETIME structure is a 64-bit value representing the number of 
+     * 100-nanosecond intervals since January 1, 1601 (UTC).
+     * Conversion code in this class Copyright 2002-2004 Apache Software Foundation.
+     * @author Rainer Klute (klute@rainer-klute.de) for the Apache Software Foundation (org.apache.poi.hpsf)
+     */
+    public static class FILETIME extends Structure {
+        public int dwLowDateTime;
+        public int dwHighDateTime;        
 
         public static class ByReference extends FILETIME implements Structure.ByReference {
             public ByReference() {
@@ -199,91 +195,91 @@ public abstract class WinBase {
         }
 
         public FILETIME(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
 
-		 /**
-		  * <p>The difference between the Windows epoch (1601-01-01
-		  * 00:00:00) and the Unix epoch (1970-01-01 00:00:00) in
-		  * milliseconds: 11644473600000L. (Use your favorite spreadsheet
-		  * program to verify the correctness of this value. By the way,
-		  * did you notice that you can tell from the epochs which
-		  * operating system is the modern one? :-))</p>
-		  */
-		 private static final long EPOCH_DIFF = 11644473600000L;
+        /**
+         * <p>The difference between the Windows epoch (1601-01-01
+         * 00:00:00) and the Unix epoch (1970-01-01 00:00:00) in
+         * milliseconds: 11644473600000L. (Use your favorite spreadsheet
+         * program to verify the correctness of this value. By the way,
+         * did you notice that you can tell from the epochs which
+         * operating system is the modern one? :-))</p>
+         */
+        private static final long EPOCH_DIFF = 11644473600000L;
 		
-		 /**
-		  * <p>Converts a Windows FILETIME into a {@link Date}. The Windows
-		  * FILETIME structure holds a date and time associated with a
-		  * file. The structure identifies a 64-bit integer specifying the
-		  * number of 100-nanosecond intervals which have passed since
-		  * January 1, 1601. This 64-bit value is split into the two double
-		  * words stored in the structure.</p>
-		  *
-		  * @param high The higher double word of the FILETIME structure.
-		  * @param low The lower double word of the FILETIME structure.
-		  * @return The Windows FILETIME as a {@link Date}.
-		  */
-		 public static Date filetimeToDate(final int high, final int low) {
-		   final long filetime = (long) high << 32 | low & 0xffffffffL;
-		   final long ms_since_16010101 = filetime / (1000 * 10);
-		   final long ms_since_19700101 = ms_since_16010101 - EPOCH_DIFF;
-		   return new Date(ms_since_19700101);
-		 }
+        /**
+         * <p>Converts a Windows FILETIME into a {@link Date}. The Windows
+         * FILETIME structure holds a date and time associated with a
+         * file. The structure identifies a 64-bit integer specifying the
+         * number of 100-nanosecond intervals which have passed since
+         * January 1, 1601. This 64-bit value is split into the two double
+         * words stored in the structure.</p>
+         *
+         * @param high The higher double word of the FILETIME structure.
+         * @param low The lower double word of the FILETIME structure.
+         * @return The Windows FILETIME as a {@link Date}.
+         */
+        public static Date filetimeToDate(final int high, final int low) {
+            final long filetime = (long) high << 32 | low & 0xffffffffL;
+            final long ms_since_16010101 = filetime / (1000 * 10);
+            final long ms_since_19700101 = ms_since_16010101 - EPOCH_DIFF;
+            return new Date(ms_since_19700101);
+        }
 		
-		 /**
-		  * <p>Converts a {@link Date} into a filetime.</p>
-		  *
-		  * @param date The date to be converted
-		  * @return The filetime
-		  *
-		  * @see #filetimeToDate
-		  */
-		 public static long dateToFileTime(final Date date) {
-		   final long ms_since_19700101 = date.getTime();
-		   final long ms_since_16010101 = ms_since_19700101 + EPOCH_DIFF;
-		   return ms_since_16010101 * 1000 * 10;
-		 }
+        /**
+         * <p>Converts a {@link Date} into a filetime.</p>
+         *
+         * @param date The date to be converted
+         * @return The filetime
+         *
+         * @see #filetimeToDate
+         */
+        public static long dateToFileTime(final Date date) {
+            final long ms_since_19700101 = date.getTime();
+            final long ms_since_16010101 = ms_since_19700101 + EPOCH_DIFF;
+            return ms_since_16010101 * 1000 * 10;
+        }
 		
-		 public Date toDate() {
-		   return filetimeToDate(dwHighDateTime, dwLowDateTime);
-		 }
+        public Date toDate() {
+            return filetimeToDate(dwHighDateTime, dwLowDateTime);
+        }
 		
-		 public long toLong() {
-		   return toDate().getTime();
-		 }
+        public long toLong() {
+            return toDate().getTime();
+        }
 		
-		 public String toString() {
-		   return super.toString() + ": " + toDate().toString(); //$NON-NLS-1$
-		 }
-	}
+        public String toString() {
+            return super.toString() + ": " + toDate().toString(); //$NON-NLS-1$
+        }
+    }
 	
-	/* Local Memory Flags */
-	public static final int  LMEM_FIXED = 0x0000;
-	public static final int  LMEM_MOVEABLE = 0x0002;
-	public static final int  LMEM_NOCOMPACT = 0x0010;
-	public static final int  LMEM_NODISCARD = 0x0020;
-	public static final int  LMEM_ZEROINIT = 0x0040;
-	public static final int  LMEM_MODIFY = 0x0080;
-	public static final int  LMEM_DISCARDABLE = 0x0F00;
-	public static final int  LMEM_VALID_FLAGS = 0x0F72;
-	public static final int  LMEM_INVALID_HANDLE = 0x8000;
+    /* Local Memory Flags */
+    int  LMEM_FIXED = 0x0000;
+    int  LMEM_MOVEABLE = 0x0002;
+    int  LMEM_NOCOMPACT = 0x0010;
+    int  LMEM_NODISCARD = 0x0020;
+    int  LMEM_ZEROINIT = 0x0040;
+    int  LMEM_MODIFY = 0x0080;
+    int  LMEM_DISCARDABLE = 0x0F00;
+    int  LMEM_VALID_FLAGS = 0x0F72;
+    int  LMEM_INVALID_HANDLE = 0x8000;
 
-	public static final int  LHND = (LMEM_MOVEABLE | LMEM_ZEROINIT);
-	public static final int  LPTR = (LMEM_FIXED | LMEM_ZEROINIT);
+    int  LHND = (LMEM_MOVEABLE | LMEM_ZEROINIT);
+    int  LPTR = (LMEM_FIXED | LMEM_ZEROINIT);
 
-	/* Flags returned by LocalFlags (in addition to LMEM_DISCARDABLE) */
-	public static final int  LMEM_DISCARDED = 0x4000;
-	public static final int  LMEM_LOCKCOUNT = 0x00FF;	
+    /* Flags returned by LocalFlags (in addition to LMEM_DISCARDABLE) */
+    int  LMEM_DISCARDED = 0x4000;
+    int  LMEM_LOCKCOUNT = 0x00FF;	
 	
-	/**
-	 * Specifies a date and time, using individual members for the month, 
-	 * day, year, weekday, hour, minute, second, and millisecond. The time 
-	 * is either in coordinated universal time (UTC) or local time, depending 
-	 * on the function that is being called.
-	 * http://msdn.microsoft.com/en-us/library/ms724950(VS.85).aspx
-	 */
+    /**
+     * Specifies a date and time, using individual members for the month, 
+     * day, year, weekday, hour, minute, second, and millisecond. The time 
+     * is either in coordinated universal time (UTC) or local time, depending 
+     * on the function that is being called.
+     * http://msdn.microsoft.com/en-us/library/ms724950(VS.85).aspx
+     */
     public static class SYSTEMTIME extends Structure {
     	// The year. The valid values for this member are 1601 through 30827.
         public short wYear;
@@ -311,27 +307,27 @@ public abstract class WinBase {
      * specified by lpBuffer. The caller should use the LocalFree function to free 
      * the buffer when it is no longer needed.
      */
-    public static final int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
+    int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
     /**
      * Insert sequences in the message definition are to be ignored and passed through
      * to the output buffer unchanged. This flag is useful for fetching a message for 
      * later formatting. If this flag is set, the Arguments parameter is ignored.
      */
-    public static final int FORMAT_MESSAGE_IGNORE_INSERTS  = 0x00000200;
+    int FORMAT_MESSAGE_IGNORE_INSERTS  = 0x00000200;
     /**
      * The lpSource parameter is a pointer to a null-terminated message definition.
      * The message definition may contain insert sequences, just as the message text 
      * in a message table resource may. Cannot be used with FORMAT_MESSAGE_FROM_HMODULE
      * or FORMAT_MESSAGE_FROM_SYSTEM.
      */
-    public static final int FORMAT_MESSAGE_FROM_STRING     = 0x00000400;
+    int FORMAT_MESSAGE_FROM_STRING     = 0x00000400;
     /**
      * The lpSource parameter is a module handle containing the message-table 
      * resource(s) to search. If this lpSource handle is NULL, the current process's
      * application image file will be searched. Cannot be used with 
      * FORMAT_MESSAGE_FROM_STRING.
      */
-    public static final int FORMAT_MESSAGE_FROM_HMODULE    = 0x00000800;
+    int FORMAT_MESSAGE_FROM_HMODULE    = 0x00000800;
     /**
      * The function should search the system message-table resource(s) for the 
      * requested message. If this flag is specified with FORMAT_MESSAGE_FROM_HMODULE,
@@ -340,44 +336,44 @@ public abstract class WinBase {
      * If this flag is specified, an application can pass the result of the 
      * GetLastError function to retrieve the message text for a system-defined error.
      */
-    public static final int FORMAT_MESSAGE_FROM_SYSTEM     = 0x00001000;
+    int FORMAT_MESSAGE_FROM_SYSTEM     = 0x00001000;
     /**
      * The Arguments parameter is not a va_list structure, but is a pointer to an array
      * of values that represent the arguments. This flag cannot be used with 64-bit 
      * argument values. If you are using 64-bit values, you must use the va_list 
      * structure.
      */
-    public static final int FORMAT_MESSAGE_ARGUMENT_ARRAY  = 0x00002000;
+    int FORMAT_MESSAGE_ARGUMENT_ARRAY  = 0x00002000;
 
     /**
      * The drive type cannot be determined.
      */
-    public static final int DRIVE_UNKNOWN = 0;
+    int DRIVE_UNKNOWN = 0;
     /**
      * The root path is invalid, for example, no volume is mounted at the path.
      */
-    public static final int DRIVE_NO_ROOT_DIR = 1;
+    int DRIVE_NO_ROOT_DIR = 1;
     /**
      * The drive is a type that has removable media, for example, a floppy drive 
      * or removable hard disk.
      */
-    public static final int DRIVE_REMOVABLE = 2;
+    int DRIVE_REMOVABLE = 2;
     /**
      * The drive is a type that cannot be removed, for example, a fixed hard drive.
      */
-    public static final int DRIVE_FIXED = 3;
+    int DRIVE_FIXED = 3;
     /**
      * The drive is a remote (network) drive.
      */
-    public static final int DRIVE_REMOTE = 4;
+    int DRIVE_REMOTE = 4;
     /**
      * The drive is a CD-ROM drive.
      */
-    public static final int DRIVE_CDROM = 5;
+    int DRIVE_CDROM = 5;
     /**
      * The drive is a RAM disk.
      */
-    public static final int DRIVE_RAMDISK = 6;    
+    int DRIVE_RAMDISK = 6;    
     
     /**
      * The OVERLAPPED structure contains information used in 
@@ -391,7 +387,7 @@ public abstract class WinBase {
         public HANDLE hEvent;
     }        
     
-    public static final int INFINITE = 0xFFFFFFFF;
+    int INFINITE = 0xFFFFFFFF;
 
     /**
      * Contains information about the current computer system. This includes the architecture and 
@@ -403,94 +399,94 @@ public abstract class WinBase {
         /** Unnamed inner structure. */
     	public static class PI extends Structure {
     		
-        	public static class ByReference extends PI implements Structure.ByReference {
+            public static class ByReference extends PI implements Structure.ByReference {
         		
-        	}
+            }
 
-    		/**
-    		 * System's processor architecture. 
-    		 * This value can be one of the following values:
-    		 *  
-    		 * 	PROCESSOR_ARCHITECTURE_UNKNOWN
-    		 * 	PROCESSOR_ARCHITECTURE_INTEL
-    		 * 	PROCESSOR_ARCHITECTURE_IA64
-    		 * 	PROCESSOR_ARCHITECTURE_AMD64
-    		 */
-    		public WORD wProcessorArchitecture;
-    		/**
-    		 * Reserved for future use.
-    		 */
-    		public WORD wReserved;
+            /**
+             * System's processor architecture. 
+             * This value can be one of the following values:
+             *  
+             * 	PROCESSOR_ARCHITECTURE_UNKNOWN
+             * 	PROCESSOR_ARCHITECTURE_INTEL
+             * 	PROCESSOR_ARCHITECTURE_IA64
+             * 	PROCESSOR_ARCHITECTURE_AMD64
+             */
+            public WORD wProcessorArchitecture;
+            /**
+             * Reserved for future use.
+             */
+            public WORD wReserved;
     	}
     	
         /** Unnamed inner union. */
-		public static class UNION extends Union {
+        public static class UNION extends Union {
 			
-	    	public static class ByReference extends UNION implements Structure.ByReference {
+            public static class ByReference extends UNION implements Structure.ByReference {
 	    		
-	    	}
+            }
 
-			/**
-			 * An obsolete member that is retained for compatibility with Windows NT 3.5 and earlier.
-			 * New applications should use the wProcessorArchitecture branch of the union.
-			 * Windows Me/98/95: The system always sets this member to zero, the value defined 
-			 * for PROCESSOR_ARCHITECTURE_INTEL.
-			 */
-			public DWORD dwOemID;
-			/**
-			 * Processor architecture (unnamed struct).
-			 */
-			public PI pi;
-		}
+            /**
+             * An obsolete member that is retained for compatibility with Windows NT 3.5 and earlier.
+             * New applications should use the wProcessorArchitecture branch of the union.
+             * Windows Me/98/95: The system always sets this member to zero, the value defined 
+             * for PROCESSOR_ARCHITECTURE_INTEL.
+             */
+            public DWORD dwOemID;
+            /**
+             * Processor architecture (unnamed struct).
+             */
+            public PI pi;
+        }
 		
-		/**
-		 * Processor architecture (unnamed union).
-		 */
-		public UNION processorArchitecture;
-		/**
-		 * Page size and the granularity of page protection and commitment.
-		 */
-		public DWORD dwPageSize;
-		/**
-		 * Pointer to the lowest memory address accessible to applications and dynamic-link libraries (DLLs). 
-		 */
-		public Pointer lpMinimumApplicationAddress;
-		/**
-		 * Pointer to the highest memory address accessible to applications and DLLs. 
-		 */
-		public Pointer lpMaximumApplicationAddress;
-		/**
-		 * Mask representing the set of processors configured into the system. Bit 0 is processor 0; bit 31 is processor 31. 
-		 */
-		public DWORD_PTR dwActiveProcessorMask;
-		/**
-		 * Number of processors in the system. 
-		 */
-		public DWORD dwNumberOfProcessors;
-		/**
-		 * An obsolete member that is retained for compatibility with Windows NT 3.5 and Windows Me/98/95. 
-		 * Use the wProcessorArchitecture, wProcessorLevel, and wProcessorRevision members to determine 
-		 * the type of processor. 
-		 * 	PROCESSOR_INTEL_386
-		 * 	PROCESSOR_INTEL_486
-		 * 	PROCESSOR_INTEL_PENTIUM
-		 */
-		public DWORD dwProcessorType; 
-		/**
-		 * Granularity for the starting address at which virtual memory can be allocated.
-		 */
-		public DWORD dwAllocationGranularity;
-		/**
-		 * System's architecture-dependent processor level. It should be used only for display purposes. 
-		 * To determine the feature set of a processor, use the IsProcessorFeaturePresent function.
-		 * If wProcessorArchitecture is PROCESSOR_ARCHITECTURE_INTEL, wProcessorLevel is defined by the CPU vendor.
-		 * If wProcessorArchitecture is PROCESSOR_ARCHITECTURE_IA64, wProcessorLevel is set to 1.
-		 */
-		public WORD wProcessorLevel;
-		/**
-		 * Architecture-dependent processor revision.
-		 */
-		public WORD wProcessorRevision;
+        /**
+         * Processor architecture (unnamed union).
+         */
+        public UNION processorArchitecture;
+        /**
+         * Page size and the granularity of page protection and commitment.
+         */
+        public DWORD dwPageSize;
+        /**
+         * Pointer to the lowest memory address accessible to applications and dynamic-link libraries (DLLs). 
+         */
+        public Pointer lpMinimumApplicationAddress;
+        /**
+         * Pointer to the highest memory address accessible to applications and DLLs. 
+         */
+        public Pointer lpMaximumApplicationAddress;
+        /**
+         * Mask representing the set of processors configured into the system. Bit 0 is processor 0; bit 31 is processor 31. 
+         */
+        public DWORD_PTR dwActiveProcessorMask;
+        /**
+         * Number of processors in the system. 
+         */
+        public DWORD dwNumberOfProcessors;
+        /**
+         * An obsolete member that is retained for compatibility with Windows NT 3.5 and Windows Me/98/95. 
+         * Use the wProcessorArchitecture, wProcessorLevel, and wProcessorRevision members to determine 
+         * the type of processor. 
+         * 	PROCESSOR_INTEL_386
+         * 	PROCESSOR_INTEL_486
+         * 	PROCESSOR_INTEL_PENTIUM
+         */
+        public DWORD dwProcessorType; 
+        /**
+         * Granularity for the starting address at which virtual memory can be allocated.
+         */
+        public DWORD dwAllocationGranularity;
+        /**
+         * System's architecture-dependent processor level. It should be used only for display purposes. 
+         * To determine the feature set of a processor, use the IsProcessorFeaturePresent function.
+         * If wProcessorArchitecture is PROCESSOR_ARCHITECTURE_INTEL, wProcessorLevel is defined by the CPU vendor.
+         * If wProcessorArchitecture is PROCESSOR_ARCHITECTURE_IA64, wProcessorLevel is set to 1.
+         */
+        public WORD wProcessorLevel;
+        /**
+         * Architecture-dependent processor revision.
+         */
+        public WORD wProcessorRevision;
     }
     
     /**
@@ -541,17 +537,17 @@ public abstract class WinBase {
         public DWORDLONG ullAvailExtendedVirtual;
         
         public MEMORYSTATUSEX() {
-        	dwLength = new DWORD(size());
+            dwLength = new DWORD(size());
         }
     };
     
-	/**
-	 * The SECURITY_ATTRIBUTES structure contains the security descriptor for an
-	 * object and specifies whether the handle retrieved by specifying this
-	 * structure is inheritable. This structure provides security settings for
-	 * objects created by various functions, such as {@link Kernel32#CreateFile},
-	 * {@link Kernel32#CreatePipe}, or {@link Advapi32#RegCreateKeyEx}.
-	 */
+    /**
+     * The SECURITY_ATTRIBUTES structure contains the security descriptor for an
+     * object and specifies whether the handle retrieved by specifying this
+     * structure is inheritable. This structure provides security settings for
+     * objects created by various functions, such as {@link Kernel32#CreateFile},
+     * {@link Kernel32#CreatePipe}, or {@link Advapi32#RegCreateKeyEx}.
+     */
     public static class SECURITY_ATTRIBUTES extends Structure {
     	/**
     	 * The size of the structure, in bytes.
@@ -570,8 +566,8 @@ public abstract class WinBase {
         public boolean bInheritHandle;
         
         public SECURITY_ATTRIBUTES() {
-			dwLength = new DWORD(size());
-		}
+            dwLength = new DWORD(size());
+        }
     }
     
     /**
@@ -579,209 +575,209 @@ public abstract class WinBase {
      * window for a process at creation time.
      */
     public static class STARTUPINFO extends Structure {
-		/**
-		 * The size of the structure, in bytes.
-		 */
+        /**
+         * The size of the structure, in bytes.
+         */
     	public DWORD cb;
     	
     	/**
     	 * Reserved; must be NULL.
     	 */
-		public String lpReserved;
+        public String lpReserved;
 		
-		/**
-		 * The name of the desktop, or the name of both the desktop and window station for this process.
-		 * A backslash in the string indicates that the string includes both the desktop and window
-		 * station names. For more information, see Thread Connection to a Desktop.
-		 */
-		public String lpDesktop;
+        /**
+         * The name of the desktop, or the name of both the desktop and window station for this process.
+         * A backslash in the string indicates that the string includes both the desktop and window
+         * station names. For more information, see Thread Connection to a Desktop.
+         */
+        public String lpDesktop;
 		
-		/**
-		 * For console processes, this is the title displayed in the title bar
-		 * if a new console window is created. If NULL, the name of the
-		 * executable file is used as the window title instead. This parameter
-		 * must be NULL for GUI or console processes that do not create a new
-		 * console window.
-		 */
-		public String lpTitle;
+        /**
+         * For console processes, this is the title displayed in the title bar
+         * if a new console window is created. If NULL, the name of the
+         * executable file is used as the window title instead. This parameter
+         * must be NULL for GUI or console processes that do not create a new
+         * console window.
+         */
+        public String lpTitle;
 		
-		/**
-		 * If dwFlags specifies STARTF_USEPOSITION, this member is the x offset
-		 * of the upper left corner of a window if a new window is created, in
-		 * pixels. Otherwise, this member is ignored.
-		 * 
-		 * The offset is from the upper left corner of the screen. For GUI
-		 * processes, the specified position is used the first time the new
-		 * process calls CreateWindow to create an overlapped window if the x
-		 * parameter of CreateWindow is CW_USEDEFAULT.
-		 */
-		public DWORD dwX;
+        /**
+         * If dwFlags specifies STARTF_USEPOSITION, this member is the x offset
+         * of the upper left corner of a window if a new window is created, in
+         * pixels. Otherwise, this member is ignored.
+         * 
+         * The offset is from the upper left corner of the screen. For GUI
+         * processes, the specified position is used the first time the new
+         * process calls CreateWindow to create an overlapped window if the x
+         * parameter of CreateWindow is CW_USEDEFAULT.
+         */
+        public DWORD dwX;
 
-		/**
-		 * If dwFlags specifies STARTF_USEPOSITION, this member is the y offset
-		 * of the upper left corner of a window if a new window is created, in
-		 * pixels. Otherwise, this member is ignored.
-		 * 
-		 * The offset is from the upper left corner of the screen. For GUI
-		 * processes, the specified position is used the first time the new
-		 * process calls CreateWindow to create an overlapped window if the y
-		 * parameter of CreateWindow is CW_USEDEFAULT.
-		 */
-		public DWORD dwY;
+        /**
+         * If dwFlags specifies STARTF_USEPOSITION, this member is the y offset
+         * of the upper left corner of a window if a new window is created, in
+         * pixels. Otherwise, this member is ignored.
+         * 
+         * The offset is from the upper left corner of the screen. For GUI
+         * processes, the specified position is used the first time the new
+         * process calls CreateWindow to create an overlapped window if the y
+         * parameter of CreateWindow is CW_USEDEFAULT.
+         */
+        public DWORD dwY;
 
-		/**
-		 * If dwFlags specifies STARTF_USESIZE, this member is the width of the
-		 * window if a new window is created, in pixels. Otherwise, this member
-		 * is ignored.
-		 * 
-		 * For GUI processes, this is used only the first time the new process
-		 * calls CreateWindow to create an overlapped window if the nWidth
-		 * parameter of CreateWindow is CW_USEDEFAULT.
-		 */
-		public DWORD dwXSize;
+        /**
+         * If dwFlags specifies STARTF_USESIZE, this member is the width of the
+         * window if a new window is created, in pixels. Otherwise, this member
+         * is ignored.
+         * 
+         * For GUI processes, this is used only the first time the new process
+         * calls CreateWindow to create an overlapped window if the nWidth
+         * parameter of CreateWindow is CW_USEDEFAULT.
+         */
+        public DWORD dwXSize;
 		
-		/**
-		 * If dwFlags specifies STARTF_USESIZE, this member is the height of the
-		 * window if a new window is created, in pixels. Otherwise, this member
-		 * is ignored.
-		 * 
-		 * For GUI processes, this is used only the first time the new process
-		 * calls CreateWindow to create an overlapped window if the nHeight
-		 * parameter of CreateWindow is CW_USEDEFAULT.
-		 */
-		public DWORD dwYSize;
+        /**
+         * If dwFlags specifies STARTF_USESIZE, this member is the height of the
+         * window if a new window is created, in pixels. Otherwise, this member
+         * is ignored.
+         * 
+         * For GUI processes, this is used only the first time the new process
+         * calls CreateWindow to create an overlapped window if the nHeight
+         * parameter of CreateWindow is CW_USEDEFAULT.
+         */
+        public DWORD dwYSize;
 
-		/**
-		 * If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
-		 * created in a console process, this member specifies the screen buffer
-		 * width, in character columns. Otherwise, this member is ignored.
-		 */
-		public DWORD dwXCountChars;
+        /**
+         * If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+         * created in a console process, this member specifies the screen buffer
+         * width, in character columns. Otherwise, this member is ignored.
+         */
+        public DWORD dwXCountChars;
 
-		/**
-		 * If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
-		 * created in a console process, this member specifies the screen buffer
-		 * height, in character rows. Otherwise, this member is ignored.
-		 */
-		public DWORD dwYCountChars;
+        /**
+         * If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window is
+         * created in a console process, this member specifies the screen buffer
+         * height, in character rows. Otherwise, this member is ignored.
+         */
+        public DWORD dwYCountChars;
 
-		/**
-		 * If dwFlags specifies STARTF_USEFILLATTRIBUTE, this member is the
-		 * initial text and background colors if a new console window is created
-		 * in a console application. Otherwise, this member is ignored.
-		 * 
-		 * This value can be any combination of the following values:
-		 * FOREGROUND_BLUE, FOREGROUND_GREEN, FOREGROUND_RED,
-		 * FOREGROUND_INTENSITY, BACKGROUND_BLUE, BACKGROUND_GREEN,
-		 * BACKGROUND_RED, and BACKGROUND_INTENSITY. For example, the following
-		 * combination of values produces red text on a white background:
-		 * 
-		 * FOREGROUND_RED| BACKGROUND_RED| BACKGROUND_GREEN| BACKGROUND_BLUE
-		 */
-		public DWORD dwFillAttribute;
+        /**
+         * If dwFlags specifies STARTF_USEFILLATTRIBUTE, this member is the
+         * initial text and background colors if a new console window is created
+         * in a console application. Otherwise, this member is ignored.
+         * 
+         * This value can be any combination of the following values:
+         * FOREGROUND_BLUE, FOREGROUND_GREEN, FOREGROUND_RED,
+         * FOREGROUND_INTENSITY, BACKGROUND_BLUE, BACKGROUND_GREEN,
+         * BACKGROUND_RED, and BACKGROUND_INTENSITY. For example, the following
+         * combination of values produces red text on a white background:
+         * 
+         * FOREGROUND_RED| BACKGROUND_RED| BACKGROUND_GREEN| BACKGROUND_BLUE
+         */
+        public DWORD dwFillAttribute;
 
-		/**
-		 * A bit field that determines whether certain STARTUPINFO members are
-		 * used when the process creates a window.
-		 */
-		public int dwFlags;
+        /**
+         * A bit field that determines whether certain STARTUPINFO members are
+         * used when the process creates a window.
+         */
+        public int dwFlags;
 
-		/**
-		 * If dwFlags specifies STARTF_USESHOWWINDOW, this member can be any of
-		 * the values that can be specified in the nCmdShow parameter for the
-		 * ShowWindow function, except for SW_SHOWDEFAULT. Otherwise, this
-		 * member is ignored.
-		 * 
-		 * For GUI processes, the first time ShowWindow is called, its nCmdShow
-		 * parameter is ignored wShowWindow specifies the default value. In
-		 * subsequent calls to ShowWindow, the wShowWindow member is used if the
-		 * nCmdShow parameter of ShowWindow is set to SW_SHOWDEFAULT.
-		 */
-		public WORD wShowWindow;
+        /**
+         * If dwFlags specifies STARTF_USESHOWWINDOW, this member can be any of
+         * the values that can be specified in the nCmdShow parameter for the
+         * ShowWindow function, except for SW_SHOWDEFAULT. Otherwise, this
+         * member is ignored.
+         * 
+         * For GUI processes, the first time ShowWindow is called, its nCmdShow
+         * parameter is ignored wShowWindow specifies the default value. In
+         * subsequent calls to ShowWindow, the wShowWindow member is used if the
+         * nCmdShow parameter of ShowWindow is set to SW_SHOWDEFAULT.
+         */
+        public WORD wShowWindow;
 
-		/**
-		 * Reserved for use by the C Run-time; must be zero.
-		 */
-		public WORD cbReserved2;
+        /**
+         * Reserved for use by the C Run-time; must be zero.
+         */
+        public WORD cbReserved2;
 
-		/**
-		 * Reserved for use by the C Run-time; must be NULL.
-		 */
-		public ByteByReference lpReserved2;
+        /**
+         * Reserved for use by the C Run-time; must be NULL.
+         */
+        public ByteByReference lpReserved2;
 
-		/**
-		 * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
-		 * standard input handle for the process. If STARTF_USESTDHANDLES is not
-		 * specified, the default for standard input is the keyboard buffer.
-		 * 
-		 * If dwFlags specifies STARTF_USEHOTKEY, this member specifies a hotkey
-		 * value that is sent as the wParam parameter of a WM_SETHOTKEY message
-		 * to the first eligible top-level window created by the application
-		 * that owns the process. If the window is created with the WS_POPUP
-		 * window style, it is not eligible unless the WS_EX_APPWINDOW extended
-		 * window style is also set. For more information, see CreateWindowEx.
-		 * 
-		 * Otherwise, this member is ignored.
-		 */
-		public HANDLE hStdInput;
+        /**
+         * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+         * standard input handle for the process. If STARTF_USESTDHANDLES is not
+         * specified, the default for standard input is the keyboard buffer.
+         * 
+         * If dwFlags specifies STARTF_USEHOTKEY, this member specifies a hotkey
+         * value that is sent as the wParam parameter of a WM_SETHOTKEY message
+         * to the first eligible top-level window created by the application
+         * that owns the process. If the window is created with the WS_POPUP
+         * window style, it is not eligible unless the WS_EX_APPWINDOW extended
+         * window style is also set. For more information, see CreateWindowEx.
+         * 
+         * Otherwise, this member is ignored.
+         */
+        public HANDLE hStdInput;
 
-		/**
-		 * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
-		 * standard output handle for the process. Otherwise, this member is
-		 * ignored and the default for standard output is the console window's
-		 * buffer.
-		 */
-		public HANDLE hStdOutput;
+        /**
+         * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+         * standard output handle for the process. Otherwise, this member is
+         * ignored and the default for standard output is the console window's
+         * buffer.
+         */
+        public HANDLE hStdOutput;
 
-		/**
-		 * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
-		 * standard error handle for the process. Otherwise, this member is
-		 * ignored and the default for standard error is the console window's
-		 * buffer.
-		 */
-		public HANDLE hStdError;
+        /**
+         * If dwFlags specifies STARTF_USESTDHANDLES, this member is the
+         * standard error handle for the process. Otherwise, this member is
+         * ignored and the default for standard error is the console window's
+         * buffer.
+         */
+        public HANDLE hStdError;
 		
-		public STARTUPINFO() {
-			cb = new DWORD(size());
-		}
+        public STARTUPINFO() {
+            cb = new DWORD(size());
+        }
     }
 
-	/**
-	 * Contains information about a newly created process and its primary
-	 * thread. It is used with the CreateProcess, CreateProcessAsUser,
-	 * CreateProcessWithLogonW, or CreateProcessWithTokenW function.
-	 */
+    /**
+     * Contains information about a newly created process and its primary
+     * thread. It is used with the CreateProcess, CreateProcessAsUser,
+     * CreateProcessWithLogonW, or CreateProcessWithTokenW function.
+     */
     public static class PROCESS_INFORMATION extends Structure {
 
     	/**
-		 * A handle to the newly created process. The handle is used to specify
-		 * the process in all functions that perform operations on the process
-		 * object.
-		 */
-		public HANDLE hProcess;
+         * A handle to the newly created process. The handle is used to specify
+         * the process in all functions that perform operations on the process
+         * object.
+         */
+        public HANDLE hProcess;
 		
-		/**
-		 * A handle to the primary thread of the newly created process. The
-		 * handle is used to specify the thread in all functions that perform
-		 * operations on the thread object.
-		 */
-		public HANDLE hThread;
+        /**
+         * A handle to the primary thread of the newly created process. The
+         * handle is used to specify the thread in all functions that perform
+         * operations on the thread object.
+         */
+        public HANDLE hThread;
 
-		/**
-		 * A value that can be used to identify a process. The value is valid
-		 * from the time the process is created until all handles to the process
-		 * are closed and the process object is freed; at this point, the
-		 * identifier may be reused.
-		 */
-		public DWORD dwProcessId;
+        /**
+         * A value that can be used to identify a process. The value is valid
+         * from the time the process is created until all handles to the process
+         * are closed and the process object is freed; at this point, the
+         * identifier may be reused.
+         */
+        public DWORD dwProcessId;
 
-		/**
-		 * A value that can be used to identify a thread. The value is valid
-		 * from the time the thread is created until all handles to the thread
-		 * are closed and the thread object is freed; at this point, the
-		 * identifier may be reused.
-		 */
-		public DWORD dwThreadId;
+        /**
+         * A value that can be used to identify a thread. The value is valid
+         * from the time the thread is created until all handles to the thread
+         * are closed and the thread object is freed; at this point, the
+         * identifier may be reused.
+         */
+        public DWORD dwThreadId;
 
         public static class ByReference extends PROCESS_INFORMATION implements Structure.ByReference {
             public ByReference() {
@@ -796,7 +792,7 @@ public abstract class WinBase {
         }
 
         public PROCESS_INFORMATION(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
     }
@@ -806,12 +802,12 @@ public abstract class WinBase {
      *
      * This value cannot be used with MOVEFILE_DELAY_UNTIL_REBOOT.
      */
-    public static final int MOVEFILE_COPY_ALLOWED = 0x2;
+    int MOVEFILE_COPY_ALLOWED = 0x2;
 
     /**
      * Reserved for future use.
      */
-    public static final int MOVEFILE_CREATE_HARDLINK = 0x10;
+    int MOVEFILE_CREATE_HARDLINK = 0x10;
 
     /**
      * The system does not move the file until the operating system is restarted. The system moves the file immediately
@@ -830,13 +826,13 @@ public abstract class WinBase {
      * Windows 2000:  If you specify the MOVEFILE_DELAY_UNTIL_REBOOT flag for dwFlags, you cannot also prepend the file
      * name that is specified by lpExistingFileName with "\\?".
      */
-    public static final int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
+    int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
 
     /**
      * The function fails if the source file is a link source, but the file cannot be tracked after the move. This
      * situation can occur if the destination is a volume formatted with the FAT file system.
      */
-    public static final int MOVEFILE_FAIL_IF_NOT_TRACKABLE = 0x20;
+    int MOVEFILE_FAIL_IF_NOT_TRACKABLE = 0x20;
 
     /**
      * If a file named lpNewFileName exists, the function replaces its contents with the contents of the
@@ -845,7 +841,7 @@ public abstract class WinBase {
      *
      * This value cannot be used if lpNewFileName or lpExistingFileName names a directory.
      */
-    public static final int MOVEFILE_REPLACE_EXISTING = 0x1;
+    int MOVEFILE_REPLACE_EXISTING = 0x1;
 
     /**
      * The function does not return until the file is actually moved on the disk.
@@ -855,5 +851,5 @@ public abstract class WinBase {
      *
      * This value has no effect if MOVEFILE_DELAY_UNTIL_REBOOT is set.
      */
-    public static final int MOVEFILE_WRITE_THROUGH = 0x8;
+    int MOVEFILE_WRITE_THROUGH = 0x8;
 }

@@ -78,7 +78,7 @@ public interface Tlhelp32 extends StdCallLibrary {
         }
 
         public PROCESSENTRY32(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
 

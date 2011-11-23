@@ -22,7 +22,7 @@ public interface Winioctl extends StdCallLibrary {
     /**
      * Retrieves the device type, device number, and, for a partitionable device, the partition number of a device.
      */
-    public static final int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
+    int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
 
     /**
      * Contains information about a device. This structure is used by the IOCTL_STORAGE_GET_DEVICE_NUMBER control code.
@@ -42,7 +42,7 @@ public interface Winioctl extends StdCallLibrary {
         }
 
         public STORAGE_DEVICE_NUMBER(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
 
