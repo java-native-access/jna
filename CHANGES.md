@@ -13,8 +13,8 @@ threads.
 * Cache structure layout results, improving performance of structure creation.
 * linux/arm 32-bit support (hardware provided by Alex Lam).
 * linux/ppc 32-bit support (hardware provided by Fritiof Hedman).
-* Preliminary linux/ia64, linux/ppc64 support (thanks to GCC compile farm).
-* Windows CE/Mobile support (w32ce-arm) (resources provided by andrea antonello).
+* Preliminary linux/ia64, linux/ppc64 support (thanks to Laurent Guerby and the GCC compile farm).
+* Windows CE/Mobile support (w32ce-arm) (resources provided by andrea antonello and Hydrologis SRL).  
 * linux multi-arch support (kohsuke).
 * Added REG_QWORD registry type support
 * Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.

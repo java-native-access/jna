@@ -19,7 +19,7 @@ import com.sun.jna.platform.win32.Kernel32;
 /** Definition <code>coredll.dll</code>.
     Add other win32 interface mappings as needed.
  */
-public interface CoreDLL extends Kernel32 {
+public interface CoreDLL extends WinBase, StdCallLibrary {
 
     CoreDLL INSTANCE = (CoreDLL)
         Native.loadLibrary("coredll", CoreDLL.class, 
