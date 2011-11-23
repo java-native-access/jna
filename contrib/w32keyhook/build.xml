@@ -51,14 +51,10 @@
             <fileset dir="${src}">
                 <exclude name="**/*.java"/>
             </fileset>
-        	<!-- platform -->
-            <fileset dir="../platform/build/classes">
-                <exclude name="**/*.java"/>
-            </fileset>
-        	<!-- jna -->
-            <fileset dir="${file.reference.jna.build}/classes/com">
-                <exclude name="**/*.java"/>
-            </fileset>
+            <!-- platform -->
+            <fileset dir="../platform/build/classes" />
+            <!-- jna -->
+            <fileset dir="${file.reference.jna.build}/classes" />
         </copy>
     </target>
 
