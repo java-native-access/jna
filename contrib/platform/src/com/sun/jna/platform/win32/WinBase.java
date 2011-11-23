@@ -400,6 +400,7 @@ public abstract class WinBase {
      */
     public static class SYSTEM_INFO extends Structure {
     	
+        /** Unnamed inner structure. */
     	public static class PI extends Structure {
     		
         	public static class ByReference extends PI implements Structure.ByReference {
@@ -422,6 +423,7 @@ public abstract class WinBase {
     		public WORD wReserved;
     	}
     	
+        /** Unnamed inner union. */
 		public static class UNION extends Union {
 			
 	    	public static class ByReference extends UNION implements Structure.ByReference {
@@ -436,15 +438,15 @@ public abstract class WinBase {
 			 */
 			public DWORD dwOemID;
 			/**
-			 * Processor architecture.
+			 * Processor architecture (unnamed struct).
 			 */
-			public PI.ByReference pi;
+			public PI pi;
 		}
 		
 		/**
-		 * Processor architecture.
+		 * Processor architecture (unnamed union).
 		 */
-		public UNION.ByReference processorArchitecture;
+		public UNION processorArchitecture;
 		/**
 		 * Page size and the granularity of page protection and commitment.
 		 */

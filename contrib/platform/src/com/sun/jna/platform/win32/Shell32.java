@@ -25,7 +25,7 @@ import com.sun.jna.win32.W32APIOptions;
 /** 
  * Shell32.dll Interface.
  */
-public interface Shell32 extends StdCallLibrary {
+public interface Shell32 extends ShellAPI, StdCallLibrary {
 	
     Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, 
     		W32APIOptions.UNICODE_OPTIONS);

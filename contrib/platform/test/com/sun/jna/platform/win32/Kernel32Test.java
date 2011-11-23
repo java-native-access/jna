@@ -203,8 +203,8 @@ public class Kernel32Test extends TestCase {
     
     public void testGetVersion() {
     	DWORD version = Kernel32.INSTANCE.GetVersion();
-    	assertTrue(version.getHigh().intValue() != 0);
-    	assertTrue(version.getLow().intValue() >= 0);
+    	assertTrue("Version high should be non-zero: 0x" + Integer.toHexString(version.getHigh().intValue()), version.getHigh().intValue() != 0);
+    	assertTrue("Version low should be >= 0: 0x" + Integer.toHexString(version.getLow().intValue()), version.getLow().intValue() >= 0);
     }
     
     public void testGetVersionEx_OSVERSIONINFO() {
