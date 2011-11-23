@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -25,7 +26,7 @@ import com.sun.jna.win32.StdCallLibrary;
  */
 public interface ShellAPI extends StdCallLibrary {
 
-    int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
+    int STRUCTURE_ALIGNMENT = Platform.is64Bit() ? Structure.ALIGN_DEFAULT : Structure.ALIGN_NONE;
 	
     int FO_MOVE = 0x0001;
     int FO_COPY = 0x0002;

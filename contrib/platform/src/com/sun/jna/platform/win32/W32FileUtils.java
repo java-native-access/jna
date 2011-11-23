@@ -36,7 +36,7 @@ public class W32FileUtils extends FileUtils {
         fileop.fFlags = ShellAPI.FOF_ALLOWUNDO|ShellAPI.FOF_NO_UI;
         int ret = shell.SHFileOperation(fileop);
         if (ret != 0) {
-            throw new IOException("Move to trash failed: " + 
+            throw new IOException("Move to trash failed: " + fileop.pFrom + ": " + 
                                   Kernel32Util.formatMessageFromLastErrorCode(ret));
         }
         if (fileop.fAnyOperationsAborted) {
