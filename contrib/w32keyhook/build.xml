@@ -2,7 +2,7 @@
 <project name="jnacontrib.w32keyhook" default="jar" basedir=".">
     <description>Builds, tests, and runs the project jnacontrib.w32keyhook.</description>
     <!-- Locations -->
-    <property name="src"                location="."/>
+    <property name="src"                location="src"/>
     <property name="build"              location="build"/>
     <property name="jna-dist"           location="../../dist"/>
 
@@ -44,9 +44,6 @@
             <classpath>
                 <path refid="classpath"/>
             </classpath>
-            <src>
-                <dirset dir="${src}"/>
-            </src>
         </javac>
 
         <!-- Copy all non-java files to classes. -->
