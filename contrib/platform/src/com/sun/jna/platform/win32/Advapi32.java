@@ -1179,7 +1179,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *   A pointer to the variable that receives the number of bytes necessary to store the complete security descriptor. 
 	 *   If the returned number of bytes is less than or equal to nLength, the entire security descriptor is returned in the output buffer; 
 	 *   otherwise, none of the descriptor is returned.
-	 * @return
+	 * @return whether the call succeeded
 	 */
 	public boolean GetFileSecurity(
 	    WString lpFileName,

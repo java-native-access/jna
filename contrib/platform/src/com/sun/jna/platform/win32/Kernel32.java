@@ -29,10 +29,10 @@ import com.sun.jna.win32.W32APIOptions;
 import java.nio.Buffer;
 
 /** Interface definitions for <code>kernel32.dll</code>.
- * Includes additional alternate mappings from {@link WinBase} which make use
+ * Includes additional alternate mappings from {@link WinNT} which make use
  * of NIO buffers.
  */
-public interface Kernel32 extends StdCallLibrary, WinBase {
+public interface Kernel32 extends WinNT {
 
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, 
     		W32APIOptions.UNICODE_OPTIONS);

@@ -84,7 +84,7 @@ public abstract class W32Errors implements WinError {
      * Map a WIN32 error value into a HRESULT
      * Note: This assumes that WIN32 errors fall in the range -32k to=32k.
      * @param x original w32 error code
-     * @return
+     * @return the converted value
      */
     public static final HRESULT HRESULT_FROM_WIN32(int x) {
         int f = FACILITY_WIN32;
