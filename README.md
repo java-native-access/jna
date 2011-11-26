@@ -18,8 +18,8 @@ Download
 
 Version 3.4.0
 
-* [jna.jar](downloads/twall/jna/jna.jar)
-* [platform.jar](downloads/twall/jna/platform.jar)
+* [jna.jar](/downloads/twall/jna/jna.jar)
+* [platform.jar](/downloads/twall/jna/platform.jar)
 
 Version 3.3.0
 
