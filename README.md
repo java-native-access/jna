@@ -16,6 +16,11 @@ JNA includes a platform library with many native functions already mapped as wel
 Download
 ========
 
+Version 3.4.0
+
+* [jna.jar](downloads/twall/jna/jna.jar)
+* [platform.jar](downloads/twall/jna/platform.jar)
+
 Version 3.3.0
 
 * [jna.jar](jna/raw/3.3.0/jnalib/dist/jna.jar)
@@ -80,7 +85,7 @@ Using the Library
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.3.0/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.0/javadoc/).
 
 Contributing 
 ============
