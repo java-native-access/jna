@@ -46,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.4.0</font></EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
 </TD>
 </TR>
 
@@ -262,9 +262,6 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#AnyPropertyType"><B>AnyPropertyType</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/unix/X11.XErrorHandler.html#apply(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.XErrorEvent)"><B>apply(X11.Display, X11.XErrorEvent)</B></A> - 
-Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix">X11.XErrorHandler</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XGCValues.html#arc_mode"><B>arc_mode</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XGCValues.html" title="class in com.sun.jna.platform.unix">X11.XGCValues</A>
@@ -705,9 +702,6 @@ Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix
 <DT><A HREF="./com/sun/jna/Function.html#C_CONVENTION"><B>C_CONVENTION</B></A> - 
 Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>Standard C calling convention.
-<DT><A HREF="./com/sun/jna/Platform.html#C_LIBRARY_NAME"><B>C_LIBRARY_NAME</B></A> - 
-Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
-<DD>Canonical name of this platform's C runtime library.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XColormapEvent.html#c_new"><B>c_new</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XColormapEvent.html" title="class in com.sun.jna.platform.unix">X11.XColormapEvent</A>
 <DD>&nbsp;
@@ -754,9 +748,6 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Union.html" title="class in c
 <DT><A HREF="./com/sun/jna/Callback.html" title="interface in com.sun.jna"><B>Callback</B></A> - Interface in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>All callback definitions must derive from this interface.<DT><A HREF="./com/sun/jna/CallbackProxy.html#callback(java.lang.Object[])"><B>callback(Object[])</B></A> - 
 Method in interface com.sun.jna.<A HREF="./com/sun/jna/CallbackProxy.html" title="interface in com.sun.jna">CallbackProxy</A>
 <DD>This is the callback method invoked from native code.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHandlerProcPtr.html#callback(com.sun.jna.Pointer, com.sun.jna.Pointer, com.sun.jna.Pointer)"><B>callback(Pointer, Pointer, Pointer)</B></A> - 
-Method in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventHandlerProcPtr.html" title="interface in com.sun.jna.platform.mac">Carbon.EventHandlerProcPtr</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html#callback(int, int, com.sun.jna.platform.win32.WinBase.OVERLAPPED)"><B>callback(int, int, WinBase.OVERLAPPED)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.OVERLAPPED_COMPLETION_ROUTINE.html" title="interface in com.sun.jna.platform.win32">Kernel32.OVERLAPPED_COMPLETION_ROUTINE</A>
 <DD>&nbsp;
@@ -774,30 +765,9 @@ Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackParameterContex
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/CallbackProxy.html" title="interface in com.sun.jna"><B>CallbackProxy</B></A> - Interface in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Placeholder proxy interface to allow an InvocationHandler to convert
  arguments/return values on callback methods.<DT><A HREF="./com/sun/jna/CallbackReference.html" title="class in com.sun.jna"><B>CallbackReference</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Provides a reference to an association between a native callback closure
- and a Java <A HREF="./com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> closure.<DT><A HREF="./com/sun/jna/CallbackReference.AttachOptions.html" title="class in com.sun.jna"><B>CallbackReference.AttachOptions</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/CallbackReference.AttachOptions.html#CallbackReference.AttachOptions()"><B>CallbackReference.AttachOptions()</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.AttachOptions.html" title="class in com.sun.jna">CallbackReference.AttachOptions</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/CallbackResultContext.html" title="class in com.sun.jna"><B>CallbackResultContext</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Conversion context from a Java <A HREF="./com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> result to a native value.<DT><A HREF="./com/sun/jna/CallbackResultContext.html#CallbackResultContext(java.lang.reflect.Method)"><B>CallbackResultContext(Method)</B></A> - 
+ and a Java <A HREF="./com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> closure.<DT><A HREF="./com/sun/jna/CallbackResultContext.html" title="class in com.sun.jna"><B>CallbackResultContext</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>Conversion context from a Java <A HREF="./com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A> result to a native value.<DT><A HREF="./com/sun/jna/CallbackResultContext.html#CallbackResultContext(java.lang.reflect.Method)"><B>CallbackResultContext(Method)</B></A> - 
 Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackResultContext.html" title="class in com.sun.jna">CallbackResultContext</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna"><B>CallbackThreadInitializer</B></A> - Class in <A HREF="./com/sun/jna/package-summary.html">com.sun.jna</A><DD>This class provides for customization of the mapping of native threads
- onto attached Java threads.<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#CallbackThreadInitializer()"><B>CallbackThreadInitializer()</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>The default initializer causes the callback thread to remain attached
-        as a daemon thread, using the default thread name and group.
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#CallbackThreadInitializer(boolean)"><B>CallbackThreadInitializer(boolean)</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Keep the callback thread attached, with the given daemon state, 
-        using the default thread name and group.
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#CallbackThreadInitializer(boolean, boolean)"><B>CallbackThreadInitializer(boolean, boolean)</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Uses the default thread name and group.
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#CallbackThreadInitializer(boolean, boolean, java.lang.String)"><B>CallbackThreadInitializer(boolean, boolean, String)</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Uses the default thread group.
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#CallbackThreadInitializer(boolean, boolean, java.lang.String, java.lang.ThreadGroup)"><B>CallbackThreadInitializer(boolean, boolean, String, ThreadGroup)</B></A> - 
-Constructor for class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Specify all aspects of how the callback thread should be initialized.
 <DT><A HREF="./com/sun/jna/Function.html#callFlags"><B>callFlags</B></A> - 
 Variable in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>&nbsp;
@@ -834,16 +804,6 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#CapRound"><B>CapRound</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac"><B>Carbon</B></A> - Interface in <A HREF="./com/sun/jna/platform/mac/package-summary.html">com.sun.jna.platform.mac</A><DD>Author: Denis Tulskiy
- Date: 7/25/11<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHandlerProcPtr.html" title="interface in com.sun.jna.platform.mac"><B>Carbon.EventHandlerProcPtr</B></A> - Interface in <A HREF="./com/sun/jna/platform/mac/package-summary.html">com.sun.jna.platform.mac</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.html" title="class in com.sun.jna.platform.mac"><B>Carbon.EventHotKeyID</B></A> - Class in <A HREF="./com/sun/jna/platform/mac/package-summary.html">com.sun.jna.platform.mac</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.html#Carbon.EventHotKeyID()"><B>Carbon.EventHotKeyID()</B></A> - 
-Constructor for class com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.html" title="class in com.sun.jna.platform.mac">Carbon.EventHotKeyID</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.ByValue.html" title="class in com.sun.jna.platform.mac"><B>Carbon.EventHotKeyID.ByValue</B></A> - Class in <A HREF="./com/sun/jna/platform/mac/package-summary.html">com.sun.jna.platform.mac</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.ByValue.html#Carbon.EventHotKeyID.ByValue()"><B>Carbon.EventHotKeyID.ByValue()</B></A> - 
-Constructor for class com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.ByValue.html" title="class in com.sun.jna.platform.mac">Carbon.EventHotKeyID.ByValue</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventTypeSpec.html" title="class in com.sun.jna.platform.mac"><B>Carbon.EventTypeSpec</B></A> - Class in <A HREF="./com/sun/jna/platform/mac/package-summary.html">com.sun.jna.platform.mac</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventTypeSpec.html#Carbon.EventTypeSpec()"><B>Carbon.EventTypeSpec()</B></A> - 
-Constructor for class com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventTypeSpec.html" title="class in com.sun.jna.platform.mac">Carbon.EventTypeSpec</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/W32Errors.html#CAT_E_CATIDNOEXIST"><B>CAT_E_CATIDNOEXIST</B></A> - 
 Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/W32Errors.html" title="class in com.sun.jna.platform.win32">W32Errors</A>
 <DD>&nbsp;
@@ -859,9 +819,6 @@ Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platf
 <DT><A HREF="./com/sun/jna/platform/win32/WinBase.STARTUPINFO.html#cb"><B>cb</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" title="class in com.sun.jna.platform.win32">WinBase.STARTUPINFO</A>
 <DD>The size of the structure, in bytes.
-<DT><A HREF="./com/sun/jna/Native.html#CB_HAS_INITIALIZER"><B>CB_HAS_INITIALIZER</B></A> - 
-Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
-<DD>Indicates whether the callback has an initializer.
 <DT><A HREF="./com/sun/jna/platform/win32/Sspi.SecBuffer.html#cbBuffer"><B>cbBuffer</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Sspi.SecBuffer.html" title="class in com.sun.jna.platform.win32">Sspi.SecBuffer</A>
 <DD>Specifies the size, in bytes, of the buffer pointed to by the pvBuffer member.
@@ -1287,9 +1244,6 @@ Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/p
 <DT><A HREF="./com/sun/jna/platform/win32/SetupApi.html#CM_DEVCAP_REMOVABLE"><B>CM_DEVCAP_REMOVABLE</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/SetupApi.html" title="interface in com.sun.jna.platform.win32">SetupApi</A>
 <DD>Removable.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#cmdKey"><B>cmdKey</B></A> - 
-Static variable in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.html#cntThreads"><B>cntThreads</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32</A>
 <DD>The number of execution threads started by the process.
@@ -1688,7 +1642,7 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/package-summary.html"><B>com.sun.jna</B></A> - package com.sun.jna<DD>Provides simplified native library access.<DT><A HREF="./com/sun/jna/platform/package-summary.html"><B>com.sun.jna.platform</B></A> - package com.sun.jna.platform<DD>Provides cross-platform utilities based on platform-specific libraries.<DT><A HREF="./com/sun/jna/platform/dnd/package-summary.html"><B>com.sun.jna.platform.dnd</B></A> - package com.sun.jna.platform.dnd<DD>Provides integrated, extended drag and drop functionality,
-allowing ghosted drag images to be used on all platforms.<DT><A HREF="./com/sun/jna/platform/mac/package-summary.html"><B>com.sun.jna.platform.mac</B></A> - package com.sun.jna.platform.mac<DD>Provides common library mappings for the OS X platform.<DT><A HREF="./com/sun/jna/platform/unix/package-summary.html"><B>com.sun.jna.platform.unix</B></A> - package com.sun.jna.platform.unix<DD>Provides common library mappings for Unix and X11-based platforms.<DT><A HREF="./com/sun/jna/platform/win32/package-summary.html"><B>com.sun.jna.platform.win32</B></A> - package com.sun.jna.platform.win32<DD>Provides common library mappings for the Windows platform.<DT><A HREF="./com/sun/jna/platform/wince/package-summary.html"><B>com.sun.jna.platform.wince</B></A> - package com.sun.jna.platform.wince<DD>&nbsp;<DT><A HREF="./com/sun/jna/ptr/package-summary.html"><B>com.sun.jna.ptr</B></A> - package com.sun.jna.ptr<DD>Provides various native pointer-to-type (<code>&lt;type&gt; *</code>)
+allowing ghosted drag images to be used on all platforms.<DT><A HREF="./com/sun/jna/platform/mac/package-summary.html"><B>com.sun.jna.platform.mac</B></A> - package com.sun.jna.platform.mac<DD>Provides common library mappings for the OS X platform.<DT><A HREF="./com/sun/jna/platform/unix/package-summary.html"><B>com.sun.jna.platform.unix</B></A> - package com.sun.jna.platform.unix<DD>Provides common library mappings for Unix and X11-based platforms.<DT><A HREF="./com/sun/jna/platform/win32/package-summary.html"><B>com.sun.jna.platform.win32</B></A> - package com.sun.jna.platform.win32<DD>Provides common library mappings for the Windows platform.<DT><A HREF="./com/sun/jna/ptr/package-summary.html"><B>com.sun.jna.ptr</B></A> - package com.sun.jna.ptr<DD>Provides various native pointer-to-type (<code>&lt;type&gt; *</code>)
 representations.<DT><A HREF="./com/sun/jna/win32/package-summary.html"><B>com.sun.jna.win32</B></A> - package com.sun.jna.win32<DD>Provides type and function mappers required for standard APIs on the Windows platform.<DT><A HREF="./com/sun/jna/platform/win32/W32Errors.html#COMADMIN_E_ALREADYINSTALLED"><B>COMADMIN_E_ALREADYINSTALLED</B></A> - 
 Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/W32Errors.html" title="class in com.sun.jna.platform.win32">W32Errors</A>
 <DD>&nbsp;
@@ -2122,9 +2076,6 @@ Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platf
 <DT><A HREF="./com/sun/jna/platform/win32/W32Service.html#continueService()"><B>continueService()</B></A> - 
 Method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/W32Service.html" title="class in com.sun.jna.platform.win32">W32Service</A>
 <DD>Continue service.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#controlKey"><B>controlKey</B></A> - 
-Static variable in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#ControlMapIndex"><B>ControlMapIndex</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
@@ -2196,7 +2147,7 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#COPY"><B>COPY</B></A> - 
 Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
-<DD>Convenience to reference <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_COPY" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_COPY</CODE></A>.
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_COPY" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_COPY</CODE></A>.
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#COPY_MASK"><B>COPY_MASK</B></A> - 
 Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
 <DD>Modifier mask for a user-requested copy.
@@ -2206,7 +2157,7 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#CopyFromParent"><B>CopyFromParent</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/wince/CoreDLL.html" title="interface in com.sun.jna.platform.wince"><B>CoreDLL</B></A> - Interface in <A HREF="./com/sun/jna/platform/wince/package-summary.html">com.sun.jna.platform.wince</A><DD>Definition <code>coredll.dll</code>.<DT><A HREF="./com/sun/jna/platform/win32/Ole32.html#CoUninitialize()"><B>CoUninitialize()</B></A> - 
+<DT><A HREF="./com/sun/jna/platform/win32/Ole32.html#CoUninitialize()"><B>CoUninitialize()</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Ole32.html" title="interface in com.sun.jna.platform.win32">Ole32</A>
 <DD>Closes the COM library on the current thread, unloads all DLLs loaded by
  the thread, frees any other resources that the thread maintains, and
@@ -2925,9 +2876,6 @@ Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win
 <A NAME="_D_"><!-- --></A><H2>
 <B>D</B></H2>
 <DL>
-<DT><A HREF="./com/sun/jna/CallbackReference.AttachOptions.html#daemon"><B>daemon</B></A> - 
-Variable in class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.AttachOptions.html" title="class in com.sun.jna">CallbackReference.AttachOptions</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XGCValues.html#dash_offset"><B>dash_offset</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XGCValues.html" title="class in com.sun.jna.platform.unix">X11.XGCValues</A>
 <DD>&nbsp;
@@ -2975,7 +2923,7 @@ Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win
 <DD>Offset of the event-specific information within this event log record, in bytes.
 <DT><A HREF="./com/sun/jna/platform/win32/WinBase.FILETIME.html#dateToFileTime(java.util.Date)"><B>dateToFileTime(Date)</B></A> - 
 Static method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>
-<DD>Converts a <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/util/Date.html?is-external=true" title="class or interface in java.util"><CODE>Date</CODE></A> into a filetime.
+<DD>Converts a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Date.html?is-external=true" title="class or interface in java.util"><CODE>Date</CODE></A> into a filetime.
 <DT><A HREF="./com/sun/jna/platform/win32/DsGetDC.PDOMAIN_CONTROLLER_INFO.html#dci"><B>dci</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/DsGetDC.PDOMAIN_CONTROLLER_INFO.html" title="class in com.sun.jna.platform.win32">DsGetDC.PDOMAIN_CONTROLLER_INFO</A>
 <DD>&nbsp;
@@ -3051,16 +2999,6 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#DestroyNotify"><B>DestroyNotify</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/CallbackReference.AttachOptions.html#detach"><B>detach</B></A> - 
-Variable in class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.AttachOptions.html" title="class in com.sun.jna">CallbackReference.AttachOptions</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#detach(com.sun.jna.Callback)"><B>detach(Callback)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Returns whether the Thread should be detached from the VM after the
-        callback exits, if the thread was not already attached to begin with.
-<DT><A HREF="./com/sun/jna/Native.html#detach(boolean)"><B>detach(boolean)</B></A> - 
-Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
-<DD>Indicate the desired attachment state for the current thread.
 <DT><A HREF="./com/sun/jna/platform/win32/WinBase.html#DETACHED_PROCESS"><B>DETACHED_PROCESS</B></A> - 
 Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinBase.html" title="class in com.sun.jna.platform.win32">WinBase</A>
 <DD>&nbsp;
@@ -3125,6 +3063,9 @@ Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platf
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.Xrender.XRenderPictFormat.html#direct"><B>direct</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.Xrender.XRenderPictFormat.html" title="class in com.sun.jna.platform.unix">X11.Xrender.XRenderPictFormat</A>
+<DD>&nbsp;
+<DT><A HREF="./com/sun/jna/CallbackReference.html#directCallbackMap"><B>directCallbackMap</B></A> - 
+Static variable in class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.html" title="class in com.sun.jna">CallbackReference</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#DirectColor"><B>DirectColor</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
@@ -4393,7 +4334,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/PointerType.html" title="clas
 <DT><A HREF="./com/sun/jna/Structure.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>This structure is equal to another based on the same data type
- and memory contents.
+ and visible data fields.
 <DT><A HREF="./com/sun/jna/WString.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>
 <DD>&nbsp;
@@ -11633,9 +11574,6 @@ Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix
 <DT><A HREF="./com/sun/jna/platform/win32/WinNT.EVENTLOGRECORD.html#EventCategory"><B>EventCategory</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinNT.EVENTLOGRECORD.html" title="class in com.sun.jna.platform.win32">WinNT.EVENTLOGRECORD</A>
 <DD>Category for this event.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventTypeSpec.html#eventClass"><B>eventClass</B></A> - 
-Variable in class com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventTypeSpec.html" title="class in com.sun.jna.platform.mac">Carbon.EventTypeSpec</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.TransparentContentPane.html#eventDispatched(java.awt.AWTEvent)"><B>eventDispatched(AWTEvent)</B></A> - 
 Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.TransparentContentPane.html" title="class in com.sun.jna.platform">WindowUtils.NativeWindowUtils.TransparentContentPane</A>
 <DD>&nbsp;
@@ -11645,9 +11583,6 @@ Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils
 <DT><A HREF="./com/sun/jna/platform/win32/WinNT.EVENTLOGRECORD.html#EventID"><B>EventID</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinNT.EVENTLOGRECORD.html" title="class in com.sun.jna.platform.win32">WinNT.EVENTLOGRECORD</A>
 <DD>Event identifier.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventTypeSpec.html#eventKind"><B>eventKind</B></A> - 
-Variable in class com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventTypeSpec.html" title="class in com.sun.jna.platform.mac">Carbon.EventTypeSpec</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/WinNT.html#EVENTLOG_AUDIT_FAILURE"><B>EVENTLOG_AUDIT_FAILURE</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinNT.html" title="interface in com.sun.jna.platform.win32">WinNT</A>
 <DD>Failure Audit event
@@ -11879,9 +11814,6 @@ Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win
 <DT><A HREF="./com/sun/jna/Structure.StructField.html#field"><B>field</B></A> - 
 Variable in class com.sun.jna.<A HREF="./com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/Structure.html#fieldOffset(java.lang.String)"><B>fieldOffset(String)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Returns the calculated offset of the given field.
 <DT><A HREF="./com/sun/jna/Structure.html#fields()"><B>fields()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>Return all fields in this structure (ordered).
@@ -12112,7 +12044,7 @@ Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/WinBase.FILETIME.html#filetimeToDate(int, int)"><B>filetimeToDate(int, int)</B></A> - 
 Static method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</A>
-<DD>Converts a Windows FILETIME into a <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/util/Date.html?is-external=true" title="class or interface in java.util"><CODE>Date</CODE></A>.
+<DD>Converts a Windows FILETIME into a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Date.html?is-external=true" title="class or interface in java.util"><CODE>Date</CODE></A>.
 <DT><A HREF="./com/sun/jna/platform/FileUtils.html" title="class in com.sun.jna.platform"><B>FileUtils</B></A> - Class in <A HREF="./com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A><DD>Miscellaneous file utils not provided for by Java.<DT><A HREF="./com/sun/jna/platform/FileUtils.html#FileUtils()"><B>FileUtils()</B></A> - 
 Constructor for class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/FileUtils.html" title="class in com.sun.jna.platform">FileUtils</A>
 <DD>&nbsp;
@@ -13087,7 +13019,7 @@ Static method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platfor
 <DD>Get an account name from a string SID.
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.html#getAlphaCompatibleGraphicsConfiguration()"><B>getAlphaCompatibleGraphicsConfiguration()</B></A> - 
 Static method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.html" title="class in com.sun.jna.platform">WindowUtils</A>
-<DD>Returns a <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/GraphicsConfiguration.html?is-external=true" title="class or interface in java.awt"><CODE>GraphicsConfiguration</CODE></A> comptible with alpha
+<DD>Returns a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/GraphicsConfiguration.html?is-external=true" title="class or interface in java.awt"><CODE>GraphicsConfiguration</CODE></A> comptible with alpha
  compositing.
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html#getAlphaCompatibleGraphicsConfiguration()"><B>getAlphaCompatibleGraphicsConfiguration()</B></A> - 
 Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html" title="class in com.sun.jna.platform">WindowUtils.NativeWindowUtils</A>
@@ -13125,8 +13057,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>Indirect the native pointer as a pointer to <code>byte</code>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getByteArray(long, int)"><B>getByteArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Read a native array of bytes of size <code>arraySize</code> from the
-        given <code>offset</code> from this <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Memory.html#getByteBuffer(long, long)"><B>getByteBuffer(long, long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
 <DD>Get a ByteBuffer mapped to a portion of this memory.
@@ -13177,19 +13108,18 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>Indirect the native pointer as a pointer to <code>wchar_t</code>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getCharArray(long, int)"><B>getCharArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Read a native array of wchar_t of size <code>arraySize</code> from the
-        given <code>offset</code> from this <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/User32.html#GetClassName(com.sun.jna.platform.win32.WinDef.HWND, char[], int)"><B>GetClassName(WinDef.HWND, char[], int)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A>
 <DD>This function retrieves the name of the class to which the specified window belongs.
 <DT><A HREF="./com/sun/jna/Native.html#getComponentID(java.awt.Component)"><B>getComponentID(Component)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Utility method to get the native window ID for a heavyweight Java 
- <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <code>long</code> value.
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <code>long</code> value.
 <DT><A HREF="./com/sun/jna/Native.html#getComponentPointer(java.awt.Component)"><B>getComponentPointer(Component)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Utility method to get the native window pointer for a heavyweight Java 
- <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><CODE>Component</CODE></A> as a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32.html#GetComputerName(char[], com.sun.jna.ptr.IntByReference)"><B>GetComputerName(char[], IntByReference)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>
 <DD>Retrieves only the NetBIOS name of the local computer.
@@ -13247,7 +13177,7 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
  format.
 <DT><A HREF="./com/sun/jna/Native.html#getDirectBufferPointer(java.nio.Buffer)"><B>getDirectBufferPointer(Buffer)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
-<DD>Convert a direct <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>Convert a direct <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> into a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
 <DT><A HREF="./com/sun/jna/Native.html#getDirectByteBuffer(long, long)"><B>getDirectByteBuffer(long, long)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
@@ -13283,8 +13213,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>Indirect the native pointer as a pointer to <code>double</code>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getDoubleArray(long, int)"><B>getDoubleArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Read a native array of double of size <code>arraySize</code> from the
-        given <code>offset</code> from this <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#getDragIcon(java.awt.dnd.DragGestureEvent, java.awt.Point)"><B>getDragIcon(DragGestureEvent, Point)</B></A> - 
 Method in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
 <DD>Override this to provide a custom image.
@@ -13317,15 +13246,9 @@ Static method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platfor
 <DT><A HREF="./com/sun/jna/LastErrorException.html#getErrorCode()"><B>getErrorCode()</B></A> - 
 Method in exception com.sun.jna.<A HREF="./com/sun/jna/LastErrorException.html" title="class in com.sun.jna">LastErrorException</A>
 <DD>Returns the error code of the error.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#GetEventDispatcherTarget()"><B>GetEventDispatcherTarget()</B></A> - 
-Method in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>Obtains the event target reference for the standard toolbox dispatcher
 <DT><A HREF="./com/sun/jna/platform/win32/Advapi32Util.EventLogRecord.html#getEventId()"><B>getEventId()</B></A> - 
 Method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Advapi32Util.EventLogRecord.html" title="class in com.sun.jna.platform.win32">Advapi32Util.EventLogRecord</A>
 <DD>Event Id.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#GetEventParameter(com.sun.jna.Pointer, int, int, com.sun.jna.Pointer, int, java.nio.IntBuffer, com.sun.jna.platform.mac.Carbon.EventHotKeyID)"><B>GetEventParameter(Pointer, int, int, Pointer, int, IntBuffer, Carbon.EventHotKeyID)</B></A> - 
-Method in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>Obtains a parameter from the specified event.
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32.html#GetExitCodeProcess(com.sun.jna.platform.win32.WinNT.HANDLE, com.sun.jna.ptr.IntByReference)"><B>GetExitCodeProcess(WinNT.HANDLE, IntByReference)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>
 <DD>Retrieves the termination status of the specified process.
@@ -13334,19 +13257,16 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class 
 <DD>Obtain the value currently in the Java field.
 <DT><A HREF="./com/sun/jna/StructureReadContext.html#getField()"><B>getField()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/StructureReadContext.html" title="class in com.sun.jna">StructureReadContext</A>
-<DD>Get the <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect"><CODE>Field</CODE></A> being read from native memory.
+<DD>Get the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect"><CODE>Field</CODE></A> being read from native memory.
 <DT><A HREF="./com/sun/jna/StructureWriteContext.html#getField()"><B>getField()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/StructureWriteContext.html" title="class in com.sun.jna">StructureWriteContext</A>
-<DD>Get the <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect"><CODE>Field</CODE></A> being written to native memory.
+<DD>Get the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/Field.html?is-external=true" title="class or interface in java.lang.reflect"><CODE>Field</CODE></A> being written to native memory.
 <DT><A HREF="./com/sun/jna/Structure.html#getFieldOrder()"><B>getFieldOrder()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Structure.html#getFields(boolean)"><B>getFields(boolean)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/Structure.html#getFieldTypeInfo(com.sun.jna.Structure.StructField)"><B>getFieldTypeInfo(Structure.StructField)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Override to supply native type information for the given field.
 <DT><A HREF="./com/sun/jna/NativeLibrary.html#getFile()"><B>getFile()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>
 <DD>Returns the file on disk corresponding to this NativeLibrary instance.
@@ -13383,8 +13303,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>Indirect the native pointer as a pointer to <code>float</code>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getFloatArray(long, int)"><B>getFloatArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Read a native array of float of size <code>arraySize</code> from the
-        given <code>offset</code> from this <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Shell32Util.html#getFolderPath(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.platform.win32.WinDef.DWORD)"><B>getFolderPath(WinDef.HWND, int, WinDef.DWORD)</B></A> - 
 Static method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Shell32Util.html" title="class in com.sun.jna.platform.win32">Shell32Util</A>
 <DD>Get a special folder path.
@@ -13513,14 +13432,13 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>Indirect the native pointer as a pointer to <code>int</code>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getIntArray(long, int)"><B>getIntArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Read a native array of int32 of size <code>arraySize</code> from the
-        given <code>offset</code> from this <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Library.Handler.html#getInterfaceClass()"><B>getInterfaceClass()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/InvocationMapper.html#getInvocationHandler(com.sun.jna.NativeLibrary, java.lang.reflect.Method)"><B>getInvocationHandler(NativeLibrary, Method)</B></A> - 
 Method in interface com.sun.jna.<A HREF="./com/sun/jna/InvocationMapper.html" title="interface in com.sun.jna">InvocationMapper</A>
-<DD>Return an <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/reflect/InvocationHandler.html?is-external=true" title="class or interface in java.lang.reflect"><CODE>InvocationHandler</CODE></A> responsible for handling the
+<DD>Return an <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/reflect/InvocationHandler.html?is-external=true" title="class or interface in java.lang.reflect"><CODE>InvocationHandler</CODE></A> responsible for handling the
  invocation of the given method, or <code>null</code> if the default
  handling should be used.
 <DT><A HREF="./com/sun/jna/platform/win32/Netapi32Util.html#getJoinStatus()"><B>getJoinStatus()</B></A> - 
@@ -13583,8 +13501,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>Indirect the native pointer as a pointer to <code>long</code>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getLongArray(long, int)"><B>getLongArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Read a native array of int64 of size <code>arraySize</code> from the
-        given <code>offset</code> from this <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/WinDef.DWORD.html#getLow()"><B>getLow()</B></A> - 
 Method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>
 <DD>Low WORD.
@@ -13614,9 +13531,6 @@ Static method in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>
 <DD>The GetModuleHandle function retrieves a module handle for the specified module 
  if the file has been mapped into the address space of the calling process.
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#getName(com.sun.jna.Callback)"><B>getName(Callback)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Returns the desired name for this thread, or null for the default.
 <DT><A HREF="./com/sun/jna/Function.html#getName()"><B>getName()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>&nbsp;
@@ -13640,8 +13554,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Library.Handler.html" title="
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Native.html#getNativeLibraryResourcePath(int, java.lang.String, java.lang.String)"><B>getNativeLibraryResourcePath(int, String, String)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
-<DD>Generate a canonical String prefix based on the given OS
-        type/arch/name.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Pointer.html#getNativeLong(long)"><B>getNativeLong(long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
 <DD>Indirect the native pointer as a pointer to <code>long</code>.
@@ -13651,9 +13564,6 @@ Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="cl
 <DT><A HREF="./com/sun/jna/Native.html#getNativeSize(java.lang.Class)"><B>getNativeSize(Class)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Returns the native size for a given Java class.
-<DT><A HREF="./com/sun/jna/Structure.html#getNativeSize(java.lang.Class, java.lang.Object)"><B>getNativeSize(Class, Object)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32.html#GetNativeSystemInfo(com.sun.jna.platform.win32.WinBase.SYSTEM_INFO)"><B>GetNativeSystemInfo(WinBase.SYSTEM_INFO)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>
 <DD>The GetNativeSystemInfo function retrieves information about the current system to an 
@@ -13760,8 +13670,7 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DD>Indirect the native pointer as a pointer to <code>short</code>.
 <DT><A HREF="./com/sun/jna/Pointer.html#getShortArray(long, int)"><B>getShortArray(long, int)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Read a native array of int16 of size <code>arraySize</code> from the
-        given <code>offset</code> from this <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A>.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32.html#GetShortPathName(java.lang.String, char[], int)"><B>GetShortPathName(String, char[], int)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>
 <DD>Retrieves the short path form of the specified path.
@@ -13852,9 +13761,6 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32Util.html#getTempPath()"><B>getTempPath()</B></A> - 
 Static method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32Util.html" title="class in com.sun.jna.platform.win32">Kernel32Util</A>
 <DD>Return the path designated for temporary files.
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#getThreadGroup(com.sun.jna.Callback)"><B>getThreadGroup(Callback)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Returns the desired ThreadGroup for thread, or null for the default.
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32.html#GetTickCount()"><B>GetTickCount()</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>
 <DD>The GetTickCount function retrieves the number of milliseconds that have elapsed since the system was started, up to 49.7 days.
@@ -13879,11 +13785,11 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.html" title
 <DD>Obtain a pointer to the native glue code for this callback.
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#getTransferable(java.awt.dnd.DropTargetEvent)"><B>getTransferable(DropTargetEvent)</B></A> - 
 Static method in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
-<DD>Used to communicate the current <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> during a drag, 
+<DD>Used to communicate the current <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> during a drag, 
  if available.
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#getTransferable(java.awt.dnd.DragGestureEvent)"><B>getTransferable(DragGestureEvent)</B></A> - 
 Method in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
-<DD>Override to provide an appropriate <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> representing
+<DD>Override to provide an appropriate <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> representing
  the data being dragged.
 <DT><A HREF="./com/sun/jna/platform/win32/DsGetDC.PDS_DOMAIN_TRUSTS.html#getTrusts(int)"><B>getTrusts(int)</B></A> - 
 Method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/DsGetDC.PDS_DOMAIN_TRUSTS.html" title="class in com.sun.jna.platform.win32">DsGetDC.PDS_DOMAIN_TRUSTS</A>
@@ -14011,12 +13917,9 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html#getWindow(java.awt.Component)"><B>getWindow(Component)</B></A> - 
 Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html" title="class in com.sun.jna.platform">WindowUtils.NativeWindowUtils</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/Native.html#getWindowHandle0(java.awt.Component)"><B>getWindowHandle0(Component)</B></A> - 
-Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Native.html#getWindowID(java.awt.Window)"><B>getWindowID(Window)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
-<DD>Utility method to get the native window ID for a Java <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A>
+<DD>Utility method to get the native window ID for a Java <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A>
  as a <code>long</code> value.
 <DT><A HREF="./com/sun/jna/platform/win32/User32.html#GetWindowInfo(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinUser.WINDOWINFO)"><B>GetWindowInfo(WinDef.HWND, WinUser.WINDOWINFO)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A>
@@ -14034,7 +13937,7 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DT><A HREF="./com/sun/jna/Native.html#getWindowPointer(java.awt.Window)"><B>getWindowPointer(Window)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Utility method to get the native window pointer for a Java 
- <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A> as a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A> as a <A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> value.
 <DT><A HREF="./com/sun/jna/platform/win32/User32.html#GetWindowRect(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.RECT)"><B>GetWindowRect(WinDef.HWND, WinDef.RECT)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A>
 <DD>This function retrieves the dimensions of the bounding rectangle of the specified window.
@@ -14050,7 +13953,7 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DD>This function retrieves the identifier of the thread that created the specified window and, optionally,
  the identifier of the process that created the window.
 <DT><A HREF="./com/sun/jna/platform/dnd/GhostedDragImage.html" title="class in com.sun.jna.platform.dnd"><B>GhostedDragImage</B></A> - Class in <A HREF="./com/sun/jna/platform/dnd/package-summary.html">com.sun.jna.platform.dnd</A><DD>Provide a ghosted drag image for use during drags where 
- <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/dnd/DragSource.html?is-external=true#isDragImageSupported()" title="class or interface in java.awt.dnd"><CODE>DragSource.isDragImageSupported()</CODE></A> returns false.<DT><A HREF="./com/sun/jna/platform/dnd/GhostedDragImage.html#GhostedDragImage(java.awt.Component, javax.swing.Icon, java.awt.Point, java.awt.Point)"><B>GhostedDragImage(Component, Icon, Point, Point)</B></A> - 
+ <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DragSource.html?is-external=true#isDragImageSupported()" title="class or interface in java.awt.dnd"><CODE>DragSource.isDragImageSupported()</CODE></A> returns false.<DT><A HREF="./com/sun/jna/platform/dnd/GhostedDragImage.html#GhostedDragImage(java.awt.Component, javax.swing.Icon, java.awt.Point, java.awt.Point)"><B>GhostedDragImage(Component, Icon, Point, Point)</B></A> - 
 Constructor for class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/GhostedDragImage.html" title="class in com.sun.jna.platform.dnd">GhostedDragImage</A>
 <DD>Create a ghosted drag image, using the given icon.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XKeyboardStateRef.html#global_auto_repeat"><B>global_auto_repeat</B></A> - 
@@ -14278,12 +14181,6 @@ Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platf
 Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinBase.html" title="class in com.sun.jna.platform.win32">WinBase</A>
 <DD>If this flag is set, calling the <A HREF="./com/sun/jna/platform/win32/Kernel32.html#CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)"><CODE>Kernel32.CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)</CODE></A> function will not
  close the object handle.
-<DT><A HREF="./com/sun/jna/Platform.html#HAS_AWT"><B>HAS_AWT</B></A> - 
-Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
-<DD>Whether this platform provides the AWT Component class.
-<DT><A HREF="./com/sun/jna/Platform.html#HAS_BUFFERS"><B>HAS_BUFFERS</B></A> - 
-Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
-<DD>Whether this platform provides NIO Buffers.
 <DT><A HREF="./com/sun/jna/Function.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>Provide a unique hash code for <A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A>s which are
@@ -14304,8 +14201,8 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/PointerType.html" title="clas
  its pointer.
 <DT><A HREF="./com/sun/jna/Structure.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Since <A HREF="./com/sun/jna/Structure.html#equals(java.lang.Object)"><CODE>Structure.equals(java.lang.Object)</CODE></A> depends on the contents of memory, use that
- as the basis for the hash code.
+<DD>Since <A HREF="./com/sun/jna/Structure.html#equals(java.lang.Object)"><CODE>Structure.equals(java.lang.Object)</CODE></A> depends on the native address, use that
+ as the hash code.
 <DT><A HREF="./com/sun/jna/WString.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>
 <DD>&nbsp;
@@ -14486,9 +14383,6 @@ Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XWMHints.html#icon_y"><B>icon_y</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XWMHints.html" title="class in com.sun.jna.platform.unix">X11.XWMHints</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.html#id"><B>id</B></A> - 
-Variable in class com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.html" title="class in com.sun.jna.platform.mac">Carbon.EventHotKeyID</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.Xrender.XRenderPictFormat.html#id"><B>id</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.Xrender.XRenderPictFormat.html" title="class in com.sun.jna.platform.unix">X11.Xrender.XRenderPictFormat</A>
 <DD>&nbsp;
@@ -14594,9 +14488,6 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#InputOutput"><B>InputOutput</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>WINDOW DEFINITIONS
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#InstallEventHandler(com.sun.jna.Pointer, com.sun.jna.platform.mac.Carbon.EventHandlerProcPtr, int, com.sun.jna.platform.mac.Carbon.EventTypeSpec[], com.sun.jna.Pointer, com.sun.jna.ptr.PointerByReference)"><B>InstallEventHandler(Pointer, Carbon.EventHandlerProcPtr, int, Carbon.EventTypeSpec[], Pointer, PointerByReference)</B></A> - 
-Method in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>Installs an event handler on a specified event target.
 <DT><A HREF="./com/sun/jna/platform/win32/Msi.html#INSTALLSTATE_ABSENT"><B>INSTALLSTATE_ABSENT</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Msi.html" title="interface in com.sun.jna.platform.win32">Msi</A>
 <DD>The feature was uninstalled.
@@ -14641,9 +14532,6 @@ Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/p
 <DD>An unrecognized product or feature was specified.
 <DT><A HREF="./com/sun/jna/platform/KeyboardUtils.html#INSTANCE"><B>INSTANCE</B></A> - 
 Static variable in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/KeyboardUtils.html" title="class in com.sun.jna.platform">KeyboardUtils</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#INSTANCE"><B>INSTANCE</B></A> - 
-Static variable in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#INSTANCE"><B>INSTANCE</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
@@ -14704,9 +14592,6 @@ Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/p
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Winspool.html#INSTANCE"><B>INSTANCE</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Winspool.html" title="interface in com.sun.jna.platform.win32">Winspool</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/wince/CoreDLL.html#INSTANCE"><B>INSTANCE</B></A> - 
-Static variable in interface com.sun.jna.platform.wince.<A HREF="./com/sun/jna/platform/wince/CoreDLL.html" title="interface in com.sun.jna.platform.wince">CoreDLL</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr"><B>IntByReference</B></A> - Class in <A HREF="./com/sun/jna/ptr/package-summary.html">com.sun.jna.ptr</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/ptr/IntByReference.html#IntByReference()"><B>IntByReference()</B></A> - 
 Constructor for class com.sun.jna.ptr.<A HREF="./com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>
@@ -14851,9 +14736,6 @@ Method in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/Dro
 <DT><A HREF="./com/sun/jna/Platform.html#isARM()"><B>isARM()</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/Structure.html#isARM"><B>isARM</B></A> - 
-Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Sspi.html#ISC_REQ_ALLOCATE_MEMORY"><B>ISC_REQ_ALLOCATE_MEMORY</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Sspi.html" title="interface in com.sun.jna.platform.win32">Sspi</A>
 <DD>The security package allocates output buffers for you.
@@ -14885,9 +14767,6 @@ Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/p
 <DT><A HREF="./com/sun/jna/platform/win32/Sspi.html#ISC_REQ_STREAM"><B>ISC_REQ_STREAM</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Sspi.html" title="interface in com.sun.jna.platform.win32">Sspi</A>
 <DD>Support a stream-oriented connection.
-<DT><A HREF="./com/sun/jna/CallbackThreadInitializer.html#isDaemon(com.sun.jna.Callback)"><B>isDaemon(Callback)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</A>
-<DD>Returns whether the callback thread should be a daemon thread.
 <DT><A HREF="./com/sun/jna/Platform.html#isFreeBSD()"><B>isFreeBSD()</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
 <DD>&nbsp;
@@ -15007,7 +14886,7 @@ Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils
 <DD>Default: no support.
 <DT><A HREF="./com/sun/jna/Platform.html#isWindows()"><B>isWindows()</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
-<DD>Returns true for any windows variant.
+<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Platform.html#isWindowsCE()"><B>isWindowsCE()</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
 <DD>&nbsp;
@@ -15289,7 +15168,7 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#LINK"><B>LINK</B></A> - 
 Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
-<DD>Convenience to reference <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_LINK" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_LINK</CODE></A>.
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_LINK" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_LINK</CODE></A>.
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#LINK_MASK"><B>LINK_MASK</B></A> - 
 Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
 <DD>Modifier mask for a user-requested link.
@@ -15684,9 +15563,6 @@ Static variable in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/Wi
 <DT><A HREF="./com/sun/jna/NativeLibrary.html#matchLibrary(java.lang.String, java.util.List)"><B>matchLibrary(String, List)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</A>
 <DD>matchLibrary() is very Linux specific.
-<DT><A HREF="./com/sun/jna/Platform.html#MATH_LIBRARY_NAME"><B>MATH_LIBRARY_NAME</B></A> - 
-Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
-<DD>Canonical name of this platform's math library.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XSizeHints.html#max_aspect"><B>max_aspect</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XSizeHints.html" title="class in com.sun.jna.platform.unix">X11.XSizeHints</A>
 <DD>&nbsp;
@@ -15893,21 +15769,6 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#Mod5Mask"><B>Mod5Mask</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/win32/WinUser.html#MOD_ALT"><B>MOD_ALT</B></A> - 
-Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/win32/WinUser.html#MOD_CONTROL"><B>MOD_CONTROL</B></A> - 
-Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/win32/WinUser.html#MOD_NOREPEAT"><B>MOD_NOREPEAT</B></A> - 
-Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/win32/WinUser.html#MOD_SHIFT"><B>MOD_SHIFT</B></A> - 
-Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/win32/WinUser.html#MOD_WIN"><B>MOD_WIN</B></A> - 
-Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XCrossingEvent.html#mode"><B>mode</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XCrossingEvent.html" title="class in com.sun.jna.platform.unix">X11.XCrossingEvent</A>
 <DD>&nbsp;
@@ -15929,7 +15790,7 @@ Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#MOVE"><B>MOVE</B></A> - 
 Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
-<DD>Convenience to reference <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_MOVE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_MOVE</CODE></A>.
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_MOVE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_MOVE</CODE></A>.
 <DT><A HREF="./com/sun/jna/platform/dnd/GhostedDragImage.html#move(java.awt.Point)"><B>move(Point)</B></A> - 
 Method in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/GhostedDragImage.html" title="class in com.sun.jna.platform.dnd">GhostedDragImage</A>
 <DD>Move the ghosted image to the requested location.
@@ -16063,9 +15924,6 @@ Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platf
 <A NAME="_N_"><!-- --></A><H2>
 <B>N</B></H2>
 <DL>
-<DT><A HREF="./com/sun/jna/CallbackReference.AttachOptions.html#name"><B>name</B></A> - 
-Variable in class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.AttachOptions.html" title="class in com.sun.jna">CallbackReference.AttachOptions</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/Advapi32Util.Account.html#name"><B>name</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Advapi32Util.Account.html" title="class in com.sun.jna.platform.win32">Advapi32Util.Account</A>
 <DD>Account name.
@@ -17228,7 +17086,7 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#NONE"><B>NONE</B></A> - 
 Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
-<DD>Convenience to reference <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A>.
+<DD>Convenience to reference <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/dnd/DnDConstants.html?is-external=true#ACTION_NONE" title="class or interface in java.awt.dnd"><CODE>DnDConstants.ACTION_NONE</CODE></A>.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.Atom.html#None"><B>None</B></A> - 
 Static variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.Atom.html" title="class in com.sun.jna.platform.unix">X11.Atom</A>
 <DD>&nbsp;
@@ -17724,14 +17582,11 @@ Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title
 <DD>For internal JNA use.
 <DT><A HREF="./com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT"><B>OPTION_STRUCTURE_ALIGNMENT</B></A> - 
 Static variable in interface com.sun.jna.<A HREF="./com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>
-<DD>Option key for structure alignment type (<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>), which should
+<DD>Option key for structure alignment type (<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang"><CODE>Integer</CODE></A>), which should
  be one of the predefined alignment types in <A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A>.
 <DT><A HREF="./com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><B>OPTION_TYPE_MAPPER</B></A> - 
 Static variable in interface com.sun.jna.<A HREF="./com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>
 <DD>Option key for a <A HREF="./com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><CODE>TypeMapper</CODE></A> for the library.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#optionKey"><B>optionKey</B></A> - 
-Static variable in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Function.html#options"><B>options</B></A> - 
 Variable in class com.sun.jna.<A HREF="./com/sun/jna/Function.html" title="class in com.sun.jna">Function</A>
 <DD>&nbsp;
@@ -18765,15 +18620,9 @@ Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="cl
 <DD>When called from a class static initializer, maps all native methods
  found within that class to native libraries via the JNA raw calling
  interface.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#RegisterEventHotKey(int, int, com.sun.jna.platform.mac.Carbon.EventHotKeyID.ByValue, com.sun.jna.Pointer, int, com.sun.jna.ptr.PointerByReference)"><B>RegisterEventHotKey(int, int, Carbon.EventHotKeyID.ByValue, Pointer, int, PointerByReference)</B></A> - 
-Method in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>Registers a global hot key.
 <DT><A HREF="./com/sun/jna/platform/win32/Advapi32.html#RegisterEventSource(java.lang.String, java.lang.String)"><B>RegisterEventSource(String, String)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Advapi32.html" title="interface in com.sun.jna.platform.win32">Advapi32</A>
 <DD>Retrieves a registered handle to the specified event log.
-<DT><A HREF="./com/sun/jna/platform/win32/User32.html#RegisterHotKey(com.sun.jna.platform.win32.WinDef.HWND, int, int, int)"><B>RegisterHotKey(WinDef.HWND, int, int, int)</B></A> - 
-Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A>
-<DD>Defines a system-wide hot key.
 <DT><A HREF="./com/sun/jna/platform/win32/Advapi32Util.html#registryCreateKey(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String)"><B>registryCreateKey(WinReg.HKEY, String)</B></A> - 
 Static method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Advapi32Util.html" title="class in com.sun.jna.platform.win32">Advapi32Util</A>
 <DD>Create a registry key.
@@ -18889,9 +18738,6 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DT><A HREF="./com/sun/jna/platform/win32/Advapi32Util.EventLogIterator.html#remove()"><B>remove()</B></A> - 
 Method in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Advapi32Util.EventLogIterator.html" title="class in com.sun.jna.platform.win32">Advapi32Util.EventLogIterator</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#RemoveEventHandler(com.sun.jna.Pointer)"><B>RemoveEventHandler(Pointer)</B></A> - 
-Method in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>Removes the specified event handler
 <DT><A HREF="./com/sun/jna/platform/FileMonitor.html#removeFileListener(com.sun.jna.platform.FileMonitor.FileListener)"><B>removeFileListener(FileMonitor.FileListener)</B></A> - 
 Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/FileMonitor.html" title="class in com.sun.jna.platform">FileMonitor</A>
 <DD>&nbsp;
@@ -19010,9 +18856,6 @@ Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/p
 <DT><A HREF="./com/sun/jna/platform/win32/WinDef.RECT.html#right"><B>right</B></A> - 
 Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/Platform.html#RO_FIELDS"><B>RO_FIELDS</B></A> - 
-Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
-<DD>Whether read-only (final) fields within Structures are supported.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XButtonEvent.html#root"><B>root</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XButtonEvent.html" title="class in com.sun.jna.platform.unix">X11.XButtonEvent</A>
 <DD>&nbsp;
@@ -20739,12 +20582,6 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Set the default handler invoked when a callback throws an uncaught
  exception.
-<DT><A HREF="./com/sun/jna/CallbackReference.html#setCallbackThreadInitializer(com.sun.jna.Callback, com.sun.jna.CallbackThreadInitializer)"><B>setCallbackThreadInitializer(Callback, CallbackThreadInitializer)</B></A> - 
-Static method in class com.sun.jna.<A HREF="./com/sun/jna/CallbackReference.html" title="class in com.sun.jna">CallbackReference</A>
-<DD>&nbsp;
-<DT><A HREF="./com/sun/jna/Native.html#setCallbackThreadInitializer(com.sun.jna.Callback, com.sun.jna.CallbackThreadInitializer)"><B>setCallbackThreadInitializer(Callback, CallbackThreadInitializer)</B></A> - 
-Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
-<DD>Set a thread initializer for the given callback.
 <DT><A HREF="./com/sun/jna/Memory.html#setChar(long, char)"><B>setChar(long, char)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
 <DD>Indirect the native pointer to <code>malloc</code> space, a la
@@ -20781,12 +20618,9 @@ Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/w
 <DT><A HREF="./com/sun/jna/Structure.html#setField(com.sun.jna.Structure.StructField, java.lang.Object)"><B>setField(Structure.StructField, Object)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/Structure.html#setField(com.sun.jna.Structure.StructField, java.lang.Object, boolean)"><B>setField(Structure.StructField, Object, boolean)</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])"><B>setFieldOrder(String[])</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
-<DD>Provided for VMs where the field order as returned by <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Class.html?is-external=true#getFields()" title="class or interface in java.lang"><CODE>Class.getFields()</CODE></A> is not predictable.
+<DD>Provided for VMs where the field order as returned by <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html?is-external=true#getFields()" title="class or interface in java.lang"><CODE>Class.getFields()</CODE></A> is not predictable.
 <DT><A HREF="./com/sun/jna/platform/win32/Kernel32.html#SetFileAttributes(java.lang.String, com.sun.jna.platform.win32.WinDef.DWORD)"><B>SetFileAttributes(String, WinDef.DWORD)</B></A> - 
 Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>
 <DD>Sets the attributes for a file or directory.
@@ -21049,7 +20883,7 @@ Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils
  be treated as a bitmap (zero/nonzero values only).
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html#setWindowMask(java.awt.Component, java.awt.Shape)"><B>setWindowMask(Component, Shape)</B></A> - 
 Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html" title="class in com.sun.jna.platform">WindowUtils.NativeWindowUtils</A>
-<DD>Set the window mask based on a <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><CODE>Shape</CODE></A>.
+<DD>Set the window mask based on a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><CODE>Shape</CODE></A>.
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html#setWindowMask(java.awt.Component, javax.swing.Icon)"><B>setWindowMask(Component, Icon)</B></A> - 
 Method in class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html" title="class in com.sun.jna.platform">WindowUtils.NativeWindowUtils</A>
 <DD>Set the window mask based on an Icon.
@@ -21140,9 +20974,6 @@ Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/p
 <DT><A HREF="./com/sun/jna/platform/win32/ShlObj.html#SHGFP_TYPE_DEFAULT"><B>SHGFP_TYPE_DEFAULT</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/ShlObj.html" title="interface in com.sun.jna.platform.win32">ShlObj</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#shiftKey"><B>shiftKey</B></A> - 
-Static variable in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#ShiftMapIndex"><B>ShiftMapIndex</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
@@ -21212,9 +21043,6 @@ Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platf
 <DT><A HREF="./com/sun/jna/platform/win32/WinNT.SID_NAME_USE.html#SidTypeWellKnownGroup"><B>SidTypeWellKnownGroup</B></A> - 
 Static variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinNT.SID_NAME_USE.html" title="class in com.sun.jna.platform.win32">WinNT.SID_NAME_USE</A>
 <DD>Indicates a SID for a well-known group.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.html#signature"><B>signature</B></A> - 
-Variable in class com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.EventHotKeyID.html" title="class in com.sun.jna.platform.mac">Carbon.EventHotKeyID</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/win32/WinGDI.html#SIMPLEREGION"><B>SIMPLEREGION</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinGDI.html" title="interface in com.sun.jna.platform.win32">WinGDI</A>
 <DD>&nbsp;
@@ -22897,9 +22725,6 @@ Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in
 <DT><A HREF="./com/sun/jna/PointerType.html#toString()"><B>toString()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/PointerType.html" title="class in com.sun.jna">PointerType</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/StringArray.html#toString()"><B>toString()</B></A> - 
-Method in class com.sun.jna.<A HREF="./com/sun/jna/StringArray.html" title="class in com.sun.jna">StringArray</A>
-<DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Structure.html#toString()"><B>toString()</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</A>
 <DD>&nbsp;
@@ -23669,7 +23494,7 @@ Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platfor
 <DT><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#UNKNOWN_TRANSFERABLE"><B>UNKNOWN_TRANSFERABLE</B></A> - 
 Static variable in class com.sun.jna.platform.dnd.<A HREF="./com/sun/jna/platform/dnd/DragHandler.html" title="class in com.sun.jna.platform.dnd">DragHandler</A>
 <DD><A HREF="./com/sun/jna/platform/dnd/DragHandler.html#getTransferable(java.awt.dnd.DropTargetEvent)"><CODE>DragHandler.getTransferable(java.awt.dnd.DropTargetEvent)</CODE></A> returns this value when 
- the current <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> is unknown.
+ the current <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer"><CODE>Transferable</CODE></A> is unknown.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#UnmapGravity"><B>UnmapGravity</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
@@ -23685,12 +23510,6 @@ Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="cl
 <DT><A HREF="./com/sun/jna/Native.html#unregister(java.lang.Class)"><B>unregister(Class)</B></A> - 
 Static method in class com.sun.jna.<A HREF="./com/sun/jna/Native.html" title="class in com.sun.jna">Native</A>
 <DD>Remove all native mappings for the given class.
-<DT><A HREF="./com/sun/jna/platform/mac/Carbon.html#UnregisterEventHotKey(com.sun.jna.Pointer)"><B>UnregisterEventHotKey(Pointer)</B></A> - 
-Method in interface com.sun.jna.platform.mac.<A HREF="./com/sun/jna/platform/mac/Carbon.html" title="interface in com.sun.jna.platform.mac">Carbon</A>
-<DD>Unregisters a global hot key.
-<DT><A HREF="./com/sun/jna/platform/win32/User32.html#UnregisterHotKey(com.sun.jna.Pointer, int)"><B>UnregisterHotKey(Pointer, int)</B></A> - 
-Method in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A>
-<DD>Frees a hot key previously registered by the calling thread.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#Unsorted"><B>Unsorted</B></A> - 
 Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
@@ -24621,7 +24440,7 @@ Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title
 <DT><A HREF="./com/sun/jna/Platform.html#WINDOWSCE"><B>WINDOWSCE</B></A> - 
 Static variable in class com.sun.jna.<A HREF="./com/sun/jna/Platform.html" title="class in com.sun.jna">Platform</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/WindowUtils.html" title="class in com.sun.jna.platform"><B>WindowUtils</B></A> - Class in <A HREF="./com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A><DD>Provides additional features on a Java <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A>.<DT><A HREF="./com/sun/jna/platform/WindowUtils.html#WindowUtils()"><B>WindowUtils()</B></A> - 
+<DT><A HREF="./com/sun/jna/platform/WindowUtils.html" title="class in com.sun.jna.platform"><B>WindowUtils</B></A> - Class in <A HREF="./com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A><DD>Provides additional features on a Java <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><CODE>Window</CODE></A>.<DT><A HREF="./com/sun/jna/platform/WindowUtils.html#WindowUtils()"><B>WindowUtils()</B></A> - 
 Constructor for class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.html" title="class in com.sun.jna.platform">WindowUtils</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html" title="class in com.sun.jna.platform"><B>WindowUtils.NativeWindowUtils</B></A> - Class in <A HREF="./com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A><DD>Window utilities with differing native implementations.<DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.html#WindowUtils.NativeWindowUtils()"><B>WindowUtils.NativeWindowUtils()</B></A> - 
@@ -24630,7 +24449,7 @@ Constructor for class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/Windo
 <DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.TransparentContentPane.html" title="class in com.sun.jna.platform"><B>WindowUtils.NativeWindowUtils.TransparentContentPane</B></A> - Class in <A HREF="./com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.TransparentContentPane.html#WindowUtils.NativeWindowUtils.TransparentContentPane(java.awt.Container)"><B>WindowUtils.NativeWindowUtils.TransparentContentPane(Container)</B></A> - 
 Constructor for class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.NativeWindowUtils.TransparentContentPane.html" title="class in com.sun.jna.platform">WindowUtils.NativeWindowUtils.TransparentContentPane</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/WindowUtils.RepaintTrigger.html" title="class in com.sun.jna.platform"><B>WindowUtils.RepaintTrigger</B></A> - Class in <A HREF="./com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A><DD>This can be installed over a <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/javax/swing/JLayeredPane.html?is-external=true" title="class or interface in javax.swing"><CODE>JLayeredPane</CODE></A> in order to
+<DT><A HREF="./com/sun/jna/platform/WindowUtils.RepaintTrigger.html" title="class in com.sun.jna.platform"><B>WindowUtils.RepaintTrigger</B></A> - Class in <A HREF="./com/sun/jna/platform/package-summary.html">com.sun.jna.platform</A><DD>This can be installed over a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/JLayeredPane.html?is-external=true" title="class or interface in javax.swing"><CODE>JLayeredPane</CODE></A> in order to
  listen for repaint requests.<DT><A HREF="./com/sun/jna/platform/WindowUtils.RepaintTrigger.html#WindowUtils.RepaintTrigger(javax.swing.JComponent)"><B>WindowUtils.RepaintTrigger(JComponent)</B></A> - 
 Constructor for class com.sun.jna.platform.<A HREF="./com/sun/jna/platform/WindowUtils.RepaintTrigger.html" title="class in com.sun.jna.platform">WindowUtils.RepaintTrigger</A>
 <DD>&nbsp;
@@ -25051,9 +24870,6 @@ Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/p
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
 <DD>Sent to the parent window of an owner-drawn button, combo box, list box, or menu when a visual aspect of the
  button, combo box, list box, or menu has changed.
-<DT><A HREF="./com/sun/jna/platform/win32/WinUser.html#WM_HOTKEY"><B>WM_HOTKEY</B></A> - 
-Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
-<DD>Posted when the user presses a hot key registered by the RegisterHotKey function.
 <DT><A HREF="./com/sun/jna/platform/win32/WinUser.html#WM_KEYDOWN"><B>WM_KEYDOWN</B></A> - 
 Static variable in interface com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A>
 <DD>Posted to the window with the keyboard focus when a nonsystem key is pressed.
@@ -25742,7 +25558,7 @@ Constructor for class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XErrorEvent.html" title="class in com.sun.jna.platform.unix"><B>X11.XErrorEvent</B></A> - Class in <A HREF="./com/sun/jna/platform/unix/package-summary.html">com.sun.jna.platform.unix</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/unix/X11.XErrorEvent.html#X11.XErrorEvent()"><B>X11.XErrorEvent()</B></A> - 
 Constructor for class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XErrorEvent.html" title="class in com.sun.jna.platform.unix">X11.XErrorEvent</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix"><B>X11.XErrorHandler</B></A> - Interface in <A HREF="./com/sun/jna/platform/unix/package-summary.html">com.sun.jna.platform.unix</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/unix/X11.XEvent.html" title="class in com.sun.jna.platform.unix"><B>X11.XEvent</B></A> - Class in <A HREF="./com/sun/jna/platform/unix/package-summary.html">com.sun.jna.platform.unix</A><DD>DEFINITIONS OF SPECIFIC EVENTS<DT><A HREF="./com/sun/jna/platform/unix/X11.XEvent.html#X11.XEvent()"><B>X11.XEvent()</B></A> - 
+<DT><A HREF="./com/sun/jna/platform/unix/X11.XEvent.html" title="class in com.sun.jna.platform.unix"><B>X11.XEvent</B></A> - Class in <A HREF="./com/sun/jna/platform/unix/package-summary.html">com.sun.jna.platform.unix</A><DD>DEFINITIONS OF SPECIFIC EVENTS<DT><A HREF="./com/sun/jna/platform/unix/X11.XEvent.html#X11.XEvent()"><B>X11.XEvent()</B></A> - 
 Constructor for class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XEvent.html" title="class in com.sun.jna.platform.unix">X11.XEvent</A>
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/platform/unix/X11.Xevie.html" title="interface in com.sun.jna.platform.unix"><B>X11.Xevie</B></A> - Interface in <A HREF="./com/sun/jna/platform/unix/package-summary.html">com.sun.jna.platform.unix</A><DD>Definition of the Xevie library.<DT><A HREF="./com/sun/jna/platform/unix/X11.XExposeEvent.html" title="class in com.sun.jna.platform.unix"><B>X11.XExposeEvent</B></A> - Class in <A HREF="./com/sun/jna/platform/unix/package-summary.html">com.sun.jna.platform.unix</A><DD>&nbsp;<DT><A HREF="./com/sun/jna/platform/unix/X11.XExposeEvent.html#X11.XExposeEvent()"><B>X11.XExposeEvent()</B></A> - 
@@ -26546,9 +26362,6 @@ Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/un
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#XGetWMName(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.Window, com.sun.jna.platform.unix.X11.XTextProperty)"><B>XGetWMName(X11.Display, X11.Window, X11.XTextProperty)</B></A> - 
 Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/unix/X11.html#XGrabKey(com.sun.jna.platform.unix.X11.Display, int, int, com.sun.jna.platform.unix.X11.Window, int, int, int)"><B>XGrabKey(X11.Display, int, int, X11.Window, int, int, int)</B></A> - 
-Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
-<DD>Establishes a passive grab on the keyboard
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XEvent.html#xgraphicsexpose"><B>xgraphicsexpose</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XEvent.html" title="class in com.sun.jna.platform.unix">X11.XEvent</A>
 <DD>&nbsp;
@@ -26711,9 +26524,6 @@ Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/un
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#XSetBackground(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.GC, com.sun.jna.NativeLong)"><B>XSetBackground(X11.Display, X11.GC, NativeLong)</B></A> - 
 Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/unix/X11.html#XSetErrorHandler(com.sun.jna.platform.unix.X11.XErrorHandler)"><B>XSetErrorHandler(X11.XErrorHandler)</B></A> - 
-Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
-<DD>Installs an error handler
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#XSetFillRule(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.GC, int)"><B>XSetFillRule(X11.Display, X11.GC, int)</B></A> - 
 Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
@@ -26780,9 +26590,6 @@ Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/un
 <DT><A HREF="./com/sun/jna/platform/unix/X11.html#XTranslateCoordinates(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.Window, com.sun.jna.platform.unix.X11.Window, int, int, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.unix.X11.WindowByReference)"><B>XTranslateCoordinates(X11.Display, X11.Window, X11.Window, int, int, IntByReference, IntByReference, X11.WindowByReference)</B></A> - 
 Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
 <DD>&nbsp;
-<DT><A HREF="./com/sun/jna/platform/unix/X11.html#XUngrabKey(com.sun.jna.platform.unix.X11.Display, int, int, com.sun.jna.platform.unix.X11.Window)"><B>XUngrabKey(X11.Display, int, int, X11.Window)</B></A> - 
-Method in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.html" title="interface in com.sun.jna.platform.unix">X11</A>
-<DD>The XUngrabKey() function releases the key combination on the specified window if it was grabbed by this client.
 <DT><A HREF="./com/sun/jna/platform/unix/X11.XEvent.html#xunmap"><B>xunmap</B></A> - 
 Variable in class com.sun.jna.platform.unix.<A HREF="./com/sun/jna/platform/unix/X11.XEvent.html" title="class in com.sun.jna.platform.unix">X11.XEvent</A>
 <DD>&nbsp;
@@ -26934,7 +26741,7 @@ Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.4.0</font></EM>
+<b>JNA API</><font size="-1"> 3.3.0</font></EM>
 </TD>
 </TR>
 
@@ -26964,6 +26771,6 @@ Variable in class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 
 <HR>
-<center><i>Copyright &copy; 2007-2011 Timothy Wall. All Rights Reserved.</i></center>
+<center><i>Copyright &copy; 2007-2010 Timothy Wall. All Rights Reserved.</i></center>
 </BODY>
 </HTML>
