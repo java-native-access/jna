@@ -64,7 +64,8 @@ import java.util.zip.Adler32;
  * <p>
  * NOTE: This class assumes that fields are returned in {@link Class#getFields}
  * in the same or reverse order as declared.  If your VM returns them in
- * no particular order, you're out of luck.
+ * no particular order, you need to explicitly indicate the order with {@link
+ * #setFieldOrder} in your subclass constructor.
  * <p/>
  * NOTE: In general, instances of this class are <em>not</em> synchronized.
  * <p/>
