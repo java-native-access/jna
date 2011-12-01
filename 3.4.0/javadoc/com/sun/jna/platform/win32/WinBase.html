@@ -46,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 
@@ -73,9 +73,9 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_top"></A>
@@ -87,18 +87,20 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 com.sun.jna.platform.win32</FONT>
 <BR>
-Class WinBase</H2>
-<PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.win32.WinBase</B>
-</PRE>
+Interface WinBase</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.html" title="interface in com.sun.jna.platform.win32">BaseTSD</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></DD>
+</DL>
+<DL>
+<DT><B>All Known Subinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/platform/wince/CoreDLL.html" title="interface in com.sun.jna.platform.wince">CoreDLL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32">Kernel32</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.html" title="interface in com.sun.jna.platform.win32">WinNT</A></DD>
+</DL>
 <HR>
 <DL>
-<DT><PRE>public abstract class <B>WinBase</B><DT>extends <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
+<DT><PRE>public interface <B>WinBase</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A>, <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.html" title="interface in com.sun.jna.platform.win32">BaseTSD</A></DL>
 </PRE>
 
 <P>
-Ported from Winbase.h.
+Ported from Winbase.h (kernel32.dll/kernel services).
  Microsoft Windows SDK 6.0A.
 <P>
 
@@ -191,7 +193,47 @@ Ported from Winbase.h.
  day, year, weekday, hour, minute, second, and millisecond.</TD>
 </TR>
 </TABLE>
-&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.platform.win32.WinDef"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORDLONG.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDLONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HBITMAP.html" title="class in com.sun.jna.platform.win32">WinDef.HBITMAP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HCURSOR.html" title="class in com.sun.jna.platform.win32">WinDef.HCURSOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HFONT.html" title="class in com.sun.jna.platform.win32">WinDef.HFONT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMENU.html" title="class in com.sun.jna.platform.win32">WinDef.HMENU</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMODULE.html" title="class in com.sun.jna.platform.win32">WinDef.HMODULE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPALETTE.html" title="class in com.sun.jna.platform.win32">WinDef.HPALETTE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPEN.html" title="class in com.sun.jna.platform.win32">WinDef.HPEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRSRC.html" title="class in com.sun.jna.platform.win32">WinDef.HRSRC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LONG.html" title="class in com.sun.jna.platform.win32">WinDef.LONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.UINT_PTR.html" title="class in com.sun.jna.platform.win32">WinDef.UINT_PTR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.ULONGLONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONGLONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.platform.win32.BaseTSD"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.html" title="interface in com.sun.jna.platform.win32">BaseTSD</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.DWORD_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.DWORD_PTR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.LONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.LONG_PTR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.SIZE_T.html" title="class in com.sun.jna.platform.win32">BaseTSD.SIZE_T</A>, <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.SSIZE_T.html" title="class in com.sun.jna.platform.win32">BaseTSD.SSIZE_T</A>, <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.ULONG_PTR.html" title="class in com.sun.jna.platform.win32">BaseTSD.ULONG_PTR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/BaseTSD.ULONG_PTRByReference.html" title="class in com.sun.jna.platform.win32">BaseTSD.ULONG_PTRByReference</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -453,7 +495,7 @@ Ported from Winbase.h.
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.html#HANDLE_FLAG_PROTECT_FROM_CLOSE">HANDLE_FLAG_PROTECT_FROM_CLOSE</A></B></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If this flag is set, calling the <A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)"><CODE>Kernel32.CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)</CODE></A> function will not
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If this flag is set, calling the <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.html#CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)"><CODE>WinNT.CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)</CODE></A> function will not
  close the object handle.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -703,6 +745,14 @@ Ported from Winbase.h.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.html#MAX_COMPUTERNAME_LENGTH">MAX_COMPUTERNAME_LENGTH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum computer name length.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.html#MOVEFILE_COPY_ALLOWED">MOVEFILE_COPY_ALLOWED</A></B></CODE>
 
 <BR>
@@ -862,47 +912,31 @@ Ported from Winbase.h.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
-&nbsp;
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-
-<A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.html#WinBase()">WinBase</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-</TABLE>
-&nbsp;
-<!-- ========== METHOD SUMMARY =========== -->
-
-<A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinBase.html#MAX_COMPUTERNAME_LENGTH()">MAX_COMPUTERNAME_LENGTH</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum computer name length.</TD>
-</TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.platform.win32.WinDef"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html#MAX_PATH">MAX_PATH</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -921,7 +955,7 @@ Ported from Winbase.h.
 <A NAME="INVALID_HANDLE_VALUE"><!-- --></A><H3>
 INVALID_HANDLE_VALUE</H3>
 <PRE>
-public static <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>INVALID_HANDLE_VALUE</B></PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>INVALID_HANDLE_VALUE</B></PRE>
 <DL>
 <DD>Constant value representing an invalid HANDLE.
 <P>
@@ -933,7 +967,7 @@ public static <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.ht
 <A NAME="WAIT_FAILED"><!-- --></A><H3>
 WAIT_FAILED</H3>
 <PRE>
-public static final int <B>WAIT_FAILED</B></PRE>
+static final int <B>WAIT_FAILED</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.WAIT_FAILED">Constant Field Values</A></DL>
@@ -943,7 +977,7 @@ public static final int <B>WAIT_FAILED</B></PRE>
 <A NAME="WAIT_OBJECT_0"><!-- --></A><H3>
 WAIT_OBJECT_0</H3>
 <PRE>
-public static final int <B>WAIT_OBJECT_0</B></PRE>
+static final int <B>WAIT_OBJECT_0</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.WAIT_OBJECT_0">Constant Field Values</A></DL>
@@ -953,7 +987,7 @@ public static final int <B>WAIT_OBJECT_0</B></PRE>
 <A NAME="WAIT_ABANDONED"><!-- --></A><H3>
 WAIT_ABANDONED</H3>
 <PRE>
-public static final int <B>WAIT_ABANDONED</B></PRE>
+static final int <B>WAIT_ABANDONED</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.WAIT_ABANDONED">Constant Field Values</A></DL>
@@ -963,17 +997,30 @@ public static final int <B>WAIT_ABANDONED</B></PRE>
 <A NAME="WAIT_ABANDONED_0"><!-- --></A><H3>
 WAIT_ABANDONED_0</H3>
 <PRE>
-public static final int <B>WAIT_ABANDONED_0</B></PRE>
+static final int <B>WAIT_ABANDONED_0</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.WAIT_ABANDONED_0">Constant Field Values</A></DL>
 </DL>
 <HR>
 
+<A NAME="MAX_COMPUTERNAME_LENGTH"><!-- --></A><H3>
+MAX_COMPUTERNAME_LENGTH</H3>
+<PRE>
+static final int <B>MAX_COMPUTERNAME_LENGTH</B></PRE>
+<DL>
+<DD>Maximum computer name length.
+ The value is 15 on Mac, 31 on everything else.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
 <A NAME="LOGON32_LOGON_INTERACTIVE"><!-- --></A><H3>
 LOGON32_LOGON_INTERACTIVE</H3>
 <PRE>
-public static final int <B>LOGON32_LOGON_INTERACTIVE</B></PRE>
+static final int <B>LOGON32_LOGON_INTERACTIVE</B></PRE>
 <DL>
 <DD>This logon type is intended for users who will be interactively using the computer, such 
  as a user being logged on by a terminal server, remote shell, or similar process. This 
@@ -988,7 +1035,7 @@ public static final int <B>LOGON32_LOGON_INTERACTIVE</B></PRE>
 <A NAME="LOGON32_LOGON_NETWORK"><!-- --></A><H3>
 LOGON32_LOGON_NETWORK</H3>
 <PRE>
-public static final int <B>LOGON32_LOGON_NETWORK</B></PRE>
+static final int <B>LOGON32_LOGON_NETWORK</B></PRE>
 <DL>
 <DD>This logon type is intended for high performance servers to authenticate plaintext passwords. 
  The LogonUser function does not cache credentials for this logon type.
@@ -1001,7 +1048,7 @@ public static final int <B>LOGON32_LOGON_NETWORK</B></PRE>
 <A NAME="LOGON32_LOGON_BATCH"><!-- --></A><H3>
 LOGON32_LOGON_BATCH</H3>
 <PRE>
-public static final int <B>LOGON32_LOGON_BATCH</B></PRE>
+static final int <B>LOGON32_LOGON_BATCH</B></PRE>
 <DL>
 <DD>This logon type is intended for batch servers, where processes may be executing on behalf 
  of a user without their direct intervention. This type is also for higher performance servers 
@@ -1016,7 +1063,7 @@ public static final int <B>LOGON32_LOGON_BATCH</B></PRE>
 <A NAME="LOGON32_LOGON_SERVICE"><!-- --></A><H3>
 LOGON32_LOGON_SERVICE</H3>
 <PRE>
-public static final int <B>LOGON32_LOGON_SERVICE</B></PRE>
+static final int <B>LOGON32_LOGON_SERVICE</B></PRE>
 <DL>
 <DD>Indicates a service-type logon. The account provided must have the service privilege enabled.
 <P>
@@ -1028,7 +1075,7 @@ public static final int <B>LOGON32_LOGON_SERVICE</B></PRE>
 <A NAME="LOGON32_LOGON_UNLOCK"><!-- --></A><H3>
 LOGON32_LOGON_UNLOCK</H3>
 <PRE>
-public static final int <B>LOGON32_LOGON_UNLOCK</B></PRE>
+static final int <B>LOGON32_LOGON_UNLOCK</B></PRE>
 <DL>
 <DD>This logon type is for GINA DLLs that log on users who will be interactively using the computer. 
  This logon type can generate a unique audit record that shows when the workstation was unlocked.
@@ -1041,7 +1088,7 @@ public static final int <B>LOGON32_LOGON_UNLOCK</B></PRE>
 <A NAME="LOGON32_LOGON_NETWORK_CLEARTEXT"><!-- --></A><H3>
 LOGON32_LOGON_NETWORK_CLEARTEXT</H3>
 <PRE>
-public static final int <B>LOGON32_LOGON_NETWORK_CLEARTEXT</B></PRE>
+static final int <B>LOGON32_LOGON_NETWORK_CLEARTEXT</B></PRE>
 <DL>
 <DD>This logon type preserves the name and password in the authentication package, which allows the 
  server to make connections to other network servers while impersonating the client. A server can 
@@ -1056,7 +1103,7 @@ public static final int <B>LOGON32_LOGON_NETWORK_CLEARTEXT</B></PRE>
 <A NAME="LOGON32_LOGON_NEW_CREDENTIALS"><!-- --></A><H3>
 LOGON32_LOGON_NEW_CREDENTIALS</H3>
 <PRE>
-public static final int <B>LOGON32_LOGON_NEW_CREDENTIALS</B></PRE>
+static final int <B>LOGON32_LOGON_NEW_CREDENTIALS</B></PRE>
 <DL>
 <DD>This logon type allows the caller to clone its current token and specify new credentials for 
  outbound connections. The new logon session has the same local identifier but uses different 
@@ -1071,7 +1118,7 @@ public static final int <B>LOGON32_LOGON_NEW_CREDENTIALS</B></PRE>
 <A NAME="LOGON32_PROVIDER_DEFAULT"><!-- --></A><H3>
 LOGON32_PROVIDER_DEFAULT</H3>
 <PRE>
-public static final int <B>LOGON32_PROVIDER_DEFAULT</B></PRE>
+static final int <B>LOGON32_PROVIDER_DEFAULT</B></PRE>
 <DL>
 <DD>Use the standard logon provider for the system. The default security provider is negotiate, 
  unless you pass NULL for the domain name and the user name is not in UPN format. In this case, 
@@ -1085,7 +1132,7 @@ public static final int <B>LOGON32_PROVIDER_DEFAULT</B></PRE>
 <A NAME="LOGON32_PROVIDER_WINNT35"><!-- --></A><H3>
 LOGON32_PROVIDER_WINNT35</H3>
 <PRE>
-public static final int <B>LOGON32_PROVIDER_WINNT35</B></PRE>
+static final int <B>LOGON32_PROVIDER_WINNT35</B></PRE>
 <DL>
 <DD>Use the Windows NT 3.5 logon provider.
 <P>
@@ -1097,7 +1144,7 @@ public static final int <B>LOGON32_PROVIDER_WINNT35</B></PRE>
 <A NAME="LOGON32_PROVIDER_WINNT40"><!-- --></A><H3>
 LOGON32_PROVIDER_WINNT40</H3>
 <PRE>
-public static final int <B>LOGON32_PROVIDER_WINNT40</B></PRE>
+static final int <B>LOGON32_PROVIDER_WINNT40</B></PRE>
 <DL>
 <DD>Use the NTLM logon provider.
 <P>
@@ -1109,7 +1156,7 @@ public static final int <B>LOGON32_PROVIDER_WINNT40</B></PRE>
 <A NAME="LOGON32_PROVIDER_WINNT50"><!-- --></A><H3>
 LOGON32_PROVIDER_WINNT50</H3>
 <PRE>
-public static final int <B>LOGON32_PROVIDER_WINNT50</B></PRE>
+static final int <B>LOGON32_PROVIDER_WINNT50</B></PRE>
 <DL>
 <DD>Use the negotiate logon provider.
 <P>
@@ -1121,7 +1168,7 @@ public static final int <B>LOGON32_PROVIDER_WINNT50</B></PRE>
 <A NAME="HANDLE_FLAG_INHERIT"><!-- --></A><H3>
 HANDLE_FLAG_INHERIT</H3>
 <PRE>
-public static final int <B>HANDLE_FLAG_INHERIT</B></PRE>
+static final int <B>HANDLE_FLAG_INHERIT</B></PRE>
 <DL>
 <DD>If this flag is set, a child process created with the bInheritHandles parameter of
  CreateProcess set to TRUE will inherit the object handle.
@@ -1134,9 +1181,9 @@ public static final int <B>HANDLE_FLAG_INHERIT</B></PRE>
 <A NAME="HANDLE_FLAG_PROTECT_FROM_CLOSE"><!-- --></A><H3>
 HANDLE_FLAG_PROTECT_FROM_CLOSE</H3>
 <PRE>
-public static final int <B>HANDLE_FLAG_PROTECT_FROM_CLOSE</B></PRE>
+static final int <B>HANDLE_FLAG_PROTECT_FROM_CLOSE</B></PRE>
 <DL>
-<DD>If this flag is set, calling the <A HREF="../../../../../com/sun/jna/platform/win32/Kernel32.html#CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)"><CODE>Kernel32.CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)</CODE></A> function will not
+<DD>If this flag is set, calling the <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.html#CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)"><CODE>WinNT.CloseHandle(com.sun.jna.platform.win32.WinNT.HANDLE)</CODE></A> function will not
  close the object handle.
 <P>
 <DL>
@@ -1147,7 +1194,7 @@ public static final int <B>HANDLE_FLAG_PROTECT_FROM_CLOSE</B></PRE>
 <A NAME="STARTF_USESHOWWINDOW"><!-- --></A><H3>
 STARTF_USESHOWWINDOW</H3>
 <PRE>
-public static final int <B>STARTF_USESHOWWINDOW</B></PRE>
+static final int <B>STARTF_USESHOWWINDOW</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_USESHOWWINDOW">Constant Field Values</A></DL>
@@ -1157,7 +1204,7 @@ public static final int <B>STARTF_USESHOWWINDOW</B></PRE>
 <A NAME="STARTF_USESIZE"><!-- --></A><H3>
 STARTF_USESIZE</H3>
 <PRE>
-public static final int <B>STARTF_USESIZE</B></PRE>
+static final int <B>STARTF_USESIZE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_USESIZE">Constant Field Values</A></DL>
@@ -1167,7 +1214,7 @@ public static final int <B>STARTF_USESIZE</B></PRE>
 <A NAME="STARTF_USEPOSITION"><!-- --></A><H3>
 STARTF_USEPOSITION</H3>
 <PRE>
-public static final int <B>STARTF_USEPOSITION</B></PRE>
+static final int <B>STARTF_USEPOSITION</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_USEPOSITION">Constant Field Values</A></DL>
@@ -1177,7 +1224,7 @@ public static final int <B>STARTF_USEPOSITION</B></PRE>
 <A NAME="STARTF_USECOUNTCHARS"><!-- --></A><H3>
 STARTF_USECOUNTCHARS</H3>
 <PRE>
-public static final int <B>STARTF_USECOUNTCHARS</B></PRE>
+static final int <B>STARTF_USECOUNTCHARS</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_USECOUNTCHARS">Constant Field Values</A></DL>
@@ -1187,7 +1234,7 @@ public static final int <B>STARTF_USECOUNTCHARS</B></PRE>
 <A NAME="STARTF_USEFILLATTRIBUTE"><!-- --></A><H3>
 STARTF_USEFILLATTRIBUTE</H3>
 <PRE>
-public static final int <B>STARTF_USEFILLATTRIBUTE</B></PRE>
+static final int <B>STARTF_USEFILLATTRIBUTE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_USEFILLATTRIBUTE">Constant Field Values</A></DL>
@@ -1197,7 +1244,7 @@ public static final int <B>STARTF_USEFILLATTRIBUTE</B></PRE>
 <A NAME="STARTF_RUNFULLSCREEN"><!-- --></A><H3>
 STARTF_RUNFULLSCREEN</H3>
 <PRE>
-public static final int <B>STARTF_RUNFULLSCREEN</B></PRE>
+static final int <B>STARTF_RUNFULLSCREEN</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_RUNFULLSCREEN">Constant Field Values</A></DL>
@@ -1207,7 +1254,7 @@ public static final int <B>STARTF_RUNFULLSCREEN</B></PRE>
 <A NAME="STARTF_FORCEONFEEDBACK"><!-- --></A><H3>
 STARTF_FORCEONFEEDBACK</H3>
 <PRE>
-public static final int <B>STARTF_FORCEONFEEDBACK</B></PRE>
+static final int <B>STARTF_FORCEONFEEDBACK</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_FORCEONFEEDBACK">Constant Field Values</A></DL>
@@ -1217,7 +1264,7 @@ public static final int <B>STARTF_FORCEONFEEDBACK</B></PRE>
 <A NAME="STARTF_FORCEOFFFEEDBACK"><!-- --></A><H3>
 STARTF_FORCEOFFFEEDBACK</H3>
 <PRE>
-public static final int <B>STARTF_FORCEOFFFEEDBACK</B></PRE>
+static final int <B>STARTF_FORCEOFFFEEDBACK</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_FORCEOFFFEEDBACK">Constant Field Values</A></DL>
@@ -1227,7 +1274,7 @@ public static final int <B>STARTF_FORCEOFFFEEDBACK</B></PRE>
 <A NAME="STARTF_USESTDHANDLES"><!-- --></A><H3>
 STARTF_USESTDHANDLES</H3>
 <PRE>
-public static final int <B>STARTF_USESTDHANDLES</B></PRE>
+static final int <B>STARTF_USESTDHANDLES</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.STARTF_USESTDHANDLES">Constant Field Values</A></DL>
@@ -1237,7 +1284,7 @@ public static final int <B>STARTF_USESTDHANDLES</B></PRE>
 <A NAME="DEBUG_PROCESS"><!-- --></A><H3>
 DEBUG_PROCESS</H3>
 <PRE>
-public static final int <B>DEBUG_PROCESS</B></PRE>
+static final int <B>DEBUG_PROCESS</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.DEBUG_PROCESS">Constant Field Values</A></DL>
@@ -1247,7 +1294,7 @@ public static final int <B>DEBUG_PROCESS</B></PRE>
 <A NAME="DEBUG_ONLY_THIS_PROCESS"><!-- --></A><H3>
 DEBUG_ONLY_THIS_PROCESS</H3>
 <PRE>
-public static final int <B>DEBUG_ONLY_THIS_PROCESS</B></PRE>
+static final int <B>DEBUG_ONLY_THIS_PROCESS</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.DEBUG_ONLY_THIS_PROCESS">Constant Field Values</A></DL>
@@ -1257,7 +1304,7 @@ public static final int <B>DEBUG_ONLY_THIS_PROCESS</B></PRE>
 <A NAME="CREATE_SUSPENDED"><!-- --></A><H3>
 CREATE_SUSPENDED</H3>
 <PRE>
-public static final int <B>CREATE_SUSPENDED</B></PRE>
+static final int <B>CREATE_SUSPENDED</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_SUSPENDED">Constant Field Values</A></DL>
@@ -1267,7 +1314,7 @@ public static final int <B>CREATE_SUSPENDED</B></PRE>
 <A NAME="DETACHED_PROCESS"><!-- --></A><H3>
 DETACHED_PROCESS</H3>
 <PRE>
-public static final int <B>DETACHED_PROCESS</B></PRE>
+static final int <B>DETACHED_PROCESS</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.DETACHED_PROCESS">Constant Field Values</A></DL>
@@ -1277,7 +1324,7 @@ public static final int <B>DETACHED_PROCESS</B></PRE>
 <A NAME="CREATE_NEW_CONSOLE"><!-- --></A><H3>
 CREATE_NEW_CONSOLE</H3>
 <PRE>
-public static final int <B>CREATE_NEW_CONSOLE</B></PRE>
+static final int <B>CREATE_NEW_CONSOLE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_NEW_CONSOLE">Constant Field Values</A></DL>
@@ -1287,7 +1334,7 @@ public static final int <B>CREATE_NEW_CONSOLE</B></PRE>
 <A NAME="CREATE_NEW_PROCESS_GROUP"><!-- --></A><H3>
 CREATE_NEW_PROCESS_GROUP</H3>
 <PRE>
-public static final int <B>CREATE_NEW_PROCESS_GROUP</B></PRE>
+static final int <B>CREATE_NEW_PROCESS_GROUP</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_NEW_PROCESS_GROUP">Constant Field Values</A></DL>
@@ -1297,7 +1344,7 @@ public static final int <B>CREATE_NEW_PROCESS_GROUP</B></PRE>
 <A NAME="CREATE_UNICODE_ENVIRONMENT"><!-- --></A><H3>
 CREATE_UNICODE_ENVIRONMENT</H3>
 <PRE>
-public static final int <B>CREATE_UNICODE_ENVIRONMENT</B></PRE>
+static final int <B>CREATE_UNICODE_ENVIRONMENT</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_UNICODE_ENVIRONMENT">Constant Field Values</A></DL>
@@ -1307,7 +1354,7 @@ public static final int <B>CREATE_UNICODE_ENVIRONMENT</B></PRE>
 <A NAME="CREATE_SEPARATE_WOW_VDM"><!-- --></A><H3>
 CREATE_SEPARATE_WOW_VDM</H3>
 <PRE>
-public static final int <B>CREATE_SEPARATE_WOW_VDM</B></PRE>
+static final int <B>CREATE_SEPARATE_WOW_VDM</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_SEPARATE_WOW_VDM">Constant Field Values</A></DL>
@@ -1317,7 +1364,7 @@ public static final int <B>CREATE_SEPARATE_WOW_VDM</B></PRE>
 <A NAME="CREATE_SHARED_WOW_VDM"><!-- --></A><H3>
 CREATE_SHARED_WOW_VDM</H3>
 <PRE>
-public static final int <B>CREATE_SHARED_WOW_VDM</B></PRE>
+static final int <B>CREATE_SHARED_WOW_VDM</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_SHARED_WOW_VDM">Constant Field Values</A></DL>
@@ -1327,7 +1374,7 @@ public static final int <B>CREATE_SHARED_WOW_VDM</B></PRE>
 <A NAME="CREATE_FORCEDOS"><!-- --></A><H3>
 CREATE_FORCEDOS</H3>
 <PRE>
-public static final int <B>CREATE_FORCEDOS</B></PRE>
+static final int <B>CREATE_FORCEDOS</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_FORCEDOS">Constant Field Values</A></DL>
@@ -1337,7 +1384,7 @@ public static final int <B>CREATE_FORCEDOS</B></PRE>
 <A NAME="INHERIT_PARENT_AFFINITY"><!-- --></A><H3>
 INHERIT_PARENT_AFFINITY</H3>
 <PRE>
-public static final int <B>INHERIT_PARENT_AFFINITY</B></PRE>
+static final int <B>INHERIT_PARENT_AFFINITY</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.INHERIT_PARENT_AFFINITY">Constant Field Values</A></DL>
@@ -1347,7 +1394,7 @@ public static final int <B>INHERIT_PARENT_AFFINITY</B></PRE>
 <A NAME="CREATE_PROTECTED_PROCESS"><!-- --></A><H3>
 CREATE_PROTECTED_PROCESS</H3>
 <PRE>
-public static final int <B>CREATE_PROTECTED_PROCESS</B></PRE>
+static final int <B>CREATE_PROTECTED_PROCESS</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_PROTECTED_PROCESS">Constant Field Values</A></DL>
@@ -1357,7 +1404,7 @@ public static final int <B>CREATE_PROTECTED_PROCESS</B></PRE>
 <A NAME="EXTENDED_STARTUPINFO_PRESENT"><!-- --></A><H3>
 EXTENDED_STARTUPINFO_PRESENT</H3>
 <PRE>
-public static final int <B>EXTENDED_STARTUPINFO_PRESENT</B></PRE>
+static final int <B>EXTENDED_STARTUPINFO_PRESENT</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.EXTENDED_STARTUPINFO_PRESENT">Constant Field Values</A></DL>
@@ -1367,7 +1414,7 @@ public static final int <B>EXTENDED_STARTUPINFO_PRESENT</B></PRE>
 <A NAME="CREATE_BREAKAWAY_FROM_JOB"><!-- --></A><H3>
 CREATE_BREAKAWAY_FROM_JOB</H3>
 <PRE>
-public static final int <B>CREATE_BREAKAWAY_FROM_JOB</B></PRE>
+static final int <B>CREATE_BREAKAWAY_FROM_JOB</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_BREAKAWAY_FROM_JOB">Constant Field Values</A></DL>
@@ -1377,7 +1424,7 @@ public static final int <B>CREATE_BREAKAWAY_FROM_JOB</B></PRE>
 <A NAME="CREATE_PRESERVE_CODE_AUTHZ_LEVEL"><!-- --></A><H3>
 CREATE_PRESERVE_CODE_AUTHZ_LEVEL</H3>
 <PRE>
-public static final int <B>CREATE_PRESERVE_CODE_AUTHZ_LEVEL</B></PRE>
+static final int <B>CREATE_PRESERVE_CODE_AUTHZ_LEVEL</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_PRESERVE_CODE_AUTHZ_LEVEL">Constant Field Values</A></DL>
@@ -1387,7 +1434,7 @@ public static final int <B>CREATE_PRESERVE_CODE_AUTHZ_LEVEL</B></PRE>
 <A NAME="CREATE_DEFAULT_ERROR_MODE"><!-- --></A><H3>
 CREATE_DEFAULT_ERROR_MODE</H3>
 <PRE>
-public static final int <B>CREATE_DEFAULT_ERROR_MODE</B></PRE>
+static final int <B>CREATE_DEFAULT_ERROR_MODE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_DEFAULT_ERROR_MODE">Constant Field Values</A></DL>
@@ -1397,7 +1444,7 @@ public static final int <B>CREATE_DEFAULT_ERROR_MODE</B></PRE>
 <A NAME="CREATE_NO_WINDOW"><!-- --></A><H3>
 CREATE_NO_WINDOW</H3>
 <PRE>
-public static final int <B>CREATE_NO_WINDOW</B></PRE>
+static final int <B>CREATE_NO_WINDOW</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.CREATE_NO_WINDOW">Constant Field Values</A></DL>
@@ -1407,7 +1454,7 @@ public static final int <B>CREATE_NO_WINDOW</B></PRE>
 <A NAME="INVALID_FILE_SIZE"><!-- --></A><H3>
 INVALID_FILE_SIZE</H3>
 <PRE>
-public static final int <B>INVALID_FILE_SIZE</B></PRE>
+static final int <B>INVALID_FILE_SIZE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.INVALID_FILE_SIZE">Constant Field Values</A></DL>
@@ -1417,7 +1464,7 @@ public static final int <B>INVALID_FILE_SIZE</B></PRE>
 <A NAME="INVALID_SET_FILE_POINTER"><!-- --></A><H3>
 INVALID_SET_FILE_POINTER</H3>
 <PRE>
-public static final int <B>INVALID_SET_FILE_POINTER</B></PRE>
+static final int <B>INVALID_SET_FILE_POINTER</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.INVALID_SET_FILE_POINTER">Constant Field Values</A></DL>
@@ -1427,7 +1474,7 @@ public static final int <B>INVALID_SET_FILE_POINTER</B></PRE>
 <A NAME="INVALID_FILE_ATTRIBUTES"><!-- --></A><H3>
 INVALID_FILE_ATTRIBUTES</H3>
 <PRE>
-public static final int <B>INVALID_FILE_ATTRIBUTES</B></PRE>
+static final int <B>INVALID_FILE_ATTRIBUTES</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.INVALID_FILE_ATTRIBUTES">Constant Field Values</A></DL>
@@ -1437,7 +1484,7 @@ public static final int <B>INVALID_FILE_ATTRIBUTES</B></PRE>
 <A NAME="STILL_ACTIVE"><!-- --></A><H3>
 STILL_ACTIVE</H3>
 <PRE>
-public static final int <B>STILL_ACTIVE</B></PRE>
+static final int <B>STILL_ACTIVE</B></PRE>
 <DL>
 <DD>Return code for a process still active.
 <P>
@@ -1449,7 +1496,7 @@ public static final int <B>STILL_ACTIVE</B></PRE>
 <A NAME="LMEM_FIXED"><!-- --></A><H3>
 LMEM_FIXED</H3>
 <PRE>
-public static final int <B>LMEM_FIXED</B></PRE>
+static final int <B>LMEM_FIXED</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_FIXED">Constant Field Values</A></DL>
@@ -1459,7 +1506,7 @@ public static final int <B>LMEM_FIXED</B></PRE>
 <A NAME="LMEM_MOVEABLE"><!-- --></A><H3>
 LMEM_MOVEABLE</H3>
 <PRE>
-public static final int <B>LMEM_MOVEABLE</B></PRE>
+static final int <B>LMEM_MOVEABLE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_MOVEABLE">Constant Field Values</A></DL>
@@ -1469,7 +1516,7 @@ public static final int <B>LMEM_MOVEABLE</B></PRE>
 <A NAME="LMEM_NOCOMPACT"><!-- --></A><H3>
 LMEM_NOCOMPACT</H3>
 <PRE>
-public static final int <B>LMEM_NOCOMPACT</B></PRE>
+static final int <B>LMEM_NOCOMPACT</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_NOCOMPACT">Constant Field Values</A></DL>
@@ -1479,7 +1526,7 @@ public static final int <B>LMEM_NOCOMPACT</B></PRE>
 <A NAME="LMEM_NODISCARD"><!-- --></A><H3>
 LMEM_NODISCARD</H3>
 <PRE>
-public static final int <B>LMEM_NODISCARD</B></PRE>
+static final int <B>LMEM_NODISCARD</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_NODISCARD">Constant Field Values</A></DL>
@@ -1489,7 +1536,7 @@ public static final int <B>LMEM_NODISCARD</B></PRE>
 <A NAME="LMEM_ZEROINIT"><!-- --></A><H3>
 LMEM_ZEROINIT</H3>
 <PRE>
-public static final int <B>LMEM_ZEROINIT</B></PRE>
+static final int <B>LMEM_ZEROINIT</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_ZEROINIT">Constant Field Values</A></DL>
@@ -1499,7 +1546,7 @@ public static final int <B>LMEM_ZEROINIT</B></PRE>
 <A NAME="LMEM_MODIFY"><!-- --></A><H3>
 LMEM_MODIFY</H3>
 <PRE>
-public static final int <B>LMEM_MODIFY</B></PRE>
+static final int <B>LMEM_MODIFY</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_MODIFY">Constant Field Values</A></DL>
@@ -1509,7 +1556,7 @@ public static final int <B>LMEM_MODIFY</B></PRE>
 <A NAME="LMEM_DISCARDABLE"><!-- --></A><H3>
 LMEM_DISCARDABLE</H3>
 <PRE>
-public static final int <B>LMEM_DISCARDABLE</B></PRE>
+static final int <B>LMEM_DISCARDABLE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_DISCARDABLE">Constant Field Values</A></DL>
@@ -1519,7 +1566,7 @@ public static final int <B>LMEM_DISCARDABLE</B></PRE>
 <A NAME="LMEM_VALID_FLAGS"><!-- --></A><H3>
 LMEM_VALID_FLAGS</H3>
 <PRE>
-public static final int <B>LMEM_VALID_FLAGS</B></PRE>
+static final int <B>LMEM_VALID_FLAGS</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_VALID_FLAGS">Constant Field Values</A></DL>
@@ -1529,7 +1576,7 @@ public static final int <B>LMEM_VALID_FLAGS</B></PRE>
 <A NAME="LMEM_INVALID_HANDLE"><!-- --></A><H3>
 LMEM_INVALID_HANDLE</H3>
 <PRE>
-public static final int <B>LMEM_INVALID_HANDLE</B></PRE>
+static final int <B>LMEM_INVALID_HANDLE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_INVALID_HANDLE">Constant Field Values</A></DL>
@@ -1539,7 +1586,7 @@ public static final int <B>LMEM_INVALID_HANDLE</B></PRE>
 <A NAME="LHND"><!-- --></A><H3>
 LHND</H3>
 <PRE>
-public static final int <B>LHND</B></PRE>
+static final int <B>LHND</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LHND">Constant Field Values</A></DL>
@@ -1549,7 +1596,7 @@ public static final int <B>LHND</B></PRE>
 <A NAME="LPTR"><!-- --></A><H3>
 LPTR</H3>
 <PRE>
-public static final int <B>LPTR</B></PRE>
+static final int <B>LPTR</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LPTR">Constant Field Values</A></DL>
@@ -1559,7 +1606,7 @@ public static final int <B>LPTR</B></PRE>
 <A NAME="LMEM_DISCARDED"><!-- --></A><H3>
 LMEM_DISCARDED</H3>
 <PRE>
-public static final int <B>LMEM_DISCARDED</B></PRE>
+static final int <B>LMEM_DISCARDED</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_DISCARDED">Constant Field Values</A></DL>
@@ -1569,7 +1616,7 @@ public static final int <B>LMEM_DISCARDED</B></PRE>
 <A NAME="LMEM_LOCKCOUNT"><!-- --></A><H3>
 LMEM_LOCKCOUNT</H3>
 <PRE>
-public static final int <B>LMEM_LOCKCOUNT</B></PRE>
+static final int <B>LMEM_LOCKCOUNT</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.LMEM_LOCKCOUNT">Constant Field Values</A></DL>
@@ -1579,7 +1626,7 @@ public static final int <B>LMEM_LOCKCOUNT</B></PRE>
 <A NAME="FORMAT_MESSAGE_ALLOCATE_BUFFER"><!-- --></A><H3>
 FORMAT_MESSAGE_ALLOCATE_BUFFER</H3>
 <PRE>
-public static final int <B>FORMAT_MESSAGE_ALLOCATE_BUFFER</B></PRE>
+static final int <B>FORMAT_MESSAGE_ALLOCATE_BUFFER</B></PRE>
 <DL>
 <DD>The lpBuffer parameter is a pointer to a PVOID pointer, and that the nSize 
  parameter specifies the minimum number of TCHARs to allocate for an output 
@@ -1596,7 +1643,7 @@ public static final int <B>FORMAT_MESSAGE_ALLOCATE_BUFFER</B></PRE>
 <A NAME="FORMAT_MESSAGE_IGNORE_INSERTS"><!-- --></A><H3>
 FORMAT_MESSAGE_IGNORE_INSERTS</H3>
 <PRE>
-public static final int <B>FORMAT_MESSAGE_IGNORE_INSERTS</B></PRE>
+static final int <B>FORMAT_MESSAGE_IGNORE_INSERTS</B></PRE>
 <DL>
 <DD>Insert sequences in the message definition are to be ignored and passed through
  to the output buffer unchanged. This flag is useful for fetching a message for 
@@ -1610,7 +1657,7 @@ public static final int <B>FORMAT_MESSAGE_IGNORE_INSERTS</B></PRE>
 <A NAME="FORMAT_MESSAGE_FROM_STRING"><!-- --></A><H3>
 FORMAT_MESSAGE_FROM_STRING</H3>
 <PRE>
-public static final int <B>FORMAT_MESSAGE_FROM_STRING</B></PRE>
+static final int <B>FORMAT_MESSAGE_FROM_STRING</B></PRE>
 <DL>
 <DD>The lpSource parameter is a pointer to a null-terminated message definition.
  The message definition may contain insert sequences, just as the message text 
@@ -1625,7 +1672,7 @@ public static final int <B>FORMAT_MESSAGE_FROM_STRING</B></PRE>
 <A NAME="FORMAT_MESSAGE_FROM_HMODULE"><!-- --></A><H3>
 FORMAT_MESSAGE_FROM_HMODULE</H3>
 <PRE>
-public static final int <B>FORMAT_MESSAGE_FROM_HMODULE</B></PRE>
+static final int <B>FORMAT_MESSAGE_FROM_HMODULE</B></PRE>
 <DL>
 <DD>The lpSource parameter is a module handle containing the message-table 
  resource(s) to search. If this lpSource handle is NULL, the current process's
@@ -1640,7 +1687,7 @@ public static final int <B>FORMAT_MESSAGE_FROM_HMODULE</B></PRE>
 <A NAME="FORMAT_MESSAGE_FROM_SYSTEM"><!-- --></A><H3>
 FORMAT_MESSAGE_FROM_SYSTEM</H3>
 <PRE>
-public static final int <B>FORMAT_MESSAGE_FROM_SYSTEM</B></PRE>
+static final int <B>FORMAT_MESSAGE_FROM_SYSTEM</B></PRE>
 <DL>
 <DD>The function should search the system message-table resource(s) for the 
  requested message. If this flag is specified with FORMAT_MESSAGE_FROM_HMODULE,
@@ -1657,7 +1704,7 @@ public static final int <B>FORMAT_MESSAGE_FROM_SYSTEM</B></PRE>
 <A NAME="FORMAT_MESSAGE_ARGUMENT_ARRAY"><!-- --></A><H3>
 FORMAT_MESSAGE_ARGUMENT_ARRAY</H3>
 <PRE>
-public static final int <B>FORMAT_MESSAGE_ARGUMENT_ARRAY</B></PRE>
+static final int <B>FORMAT_MESSAGE_ARGUMENT_ARRAY</B></PRE>
 <DL>
 <DD>The Arguments parameter is not a va_list structure, but is a pointer to an array
  of values that represent the arguments. This flag cannot be used with 64-bit 
@@ -1672,7 +1719,7 @@ public static final int <B>FORMAT_MESSAGE_ARGUMENT_ARRAY</B></PRE>
 <A NAME="DRIVE_UNKNOWN"><!-- --></A><H3>
 DRIVE_UNKNOWN</H3>
 <PRE>
-public static final int <B>DRIVE_UNKNOWN</B></PRE>
+static final int <B>DRIVE_UNKNOWN</B></PRE>
 <DL>
 <DD>The drive type cannot be determined.
 <P>
@@ -1684,7 +1731,7 @@ public static final int <B>DRIVE_UNKNOWN</B></PRE>
 <A NAME="DRIVE_NO_ROOT_DIR"><!-- --></A><H3>
 DRIVE_NO_ROOT_DIR</H3>
 <PRE>
-public static final int <B>DRIVE_NO_ROOT_DIR</B></PRE>
+static final int <B>DRIVE_NO_ROOT_DIR</B></PRE>
 <DL>
 <DD>The root path is invalid, for example, no volume is mounted at the path.
 <P>
@@ -1696,7 +1743,7 @@ public static final int <B>DRIVE_NO_ROOT_DIR</B></PRE>
 <A NAME="DRIVE_REMOVABLE"><!-- --></A><H3>
 DRIVE_REMOVABLE</H3>
 <PRE>
-public static final int <B>DRIVE_REMOVABLE</B></PRE>
+static final int <B>DRIVE_REMOVABLE</B></PRE>
 <DL>
 <DD>The drive is a type that has removable media, for example, a floppy drive 
  or removable hard disk.
@@ -1709,7 +1756,7 @@ public static final int <B>DRIVE_REMOVABLE</B></PRE>
 <A NAME="DRIVE_FIXED"><!-- --></A><H3>
 DRIVE_FIXED</H3>
 <PRE>
-public static final int <B>DRIVE_FIXED</B></PRE>
+static final int <B>DRIVE_FIXED</B></PRE>
 <DL>
 <DD>The drive is a type that cannot be removed, for example, a fixed hard drive.
 <P>
@@ -1721,7 +1768,7 @@ public static final int <B>DRIVE_FIXED</B></PRE>
 <A NAME="DRIVE_REMOTE"><!-- --></A><H3>
 DRIVE_REMOTE</H3>
 <PRE>
-public static final int <B>DRIVE_REMOTE</B></PRE>
+static final int <B>DRIVE_REMOTE</B></PRE>
 <DL>
 <DD>The drive is a remote (network) drive.
 <P>
@@ -1733,7 +1780,7 @@ public static final int <B>DRIVE_REMOTE</B></PRE>
 <A NAME="DRIVE_CDROM"><!-- --></A><H3>
 DRIVE_CDROM</H3>
 <PRE>
-public static final int <B>DRIVE_CDROM</B></PRE>
+static final int <B>DRIVE_CDROM</B></PRE>
 <DL>
 <DD>The drive is a CD-ROM drive.
 <P>
@@ -1745,7 +1792,7 @@ public static final int <B>DRIVE_CDROM</B></PRE>
 <A NAME="DRIVE_RAMDISK"><!-- --></A><H3>
 DRIVE_RAMDISK</H3>
 <PRE>
-public static final int <B>DRIVE_RAMDISK</B></PRE>
+static final int <B>DRIVE_RAMDISK</B></PRE>
 <DL>
 <DD>The drive is a RAM disk.
 <P>
@@ -1757,7 +1804,7 @@ public static final int <B>DRIVE_RAMDISK</B></PRE>
 <A NAME="INFINITE"><!-- --></A><H3>
 INFINITE</H3>
 <PRE>
-public static final int <B>INFINITE</B></PRE>
+static final int <B>INFINITE</B></PRE>
 <DL>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.INFINITE">Constant Field Values</A></DL>
@@ -1767,7 +1814,7 @@ public static final int <B>INFINITE</B></PRE>
 <A NAME="MOVEFILE_COPY_ALLOWED"><!-- --></A><H3>
 MOVEFILE_COPY_ALLOWED</H3>
 <PRE>
-public static final int <B>MOVEFILE_COPY_ALLOWED</B></PRE>
+static final int <B>MOVEFILE_COPY_ALLOWED</B></PRE>
 <DL>
 <DD>If the file is to be moved to a different volume, the function simulates the move by using the CopyFile and DeleteFile functions.
 
@@ -1781,7 +1828,7 @@ public static final int <B>MOVEFILE_COPY_ALLOWED</B></PRE>
 <A NAME="MOVEFILE_CREATE_HARDLINK"><!-- --></A><H3>
 MOVEFILE_CREATE_HARDLINK</H3>
 <PRE>
-public static final int <B>MOVEFILE_CREATE_HARDLINK</B></PRE>
+static final int <B>MOVEFILE_CREATE_HARDLINK</B></PRE>
 <DL>
 <DD>Reserved for future use.
 <P>
@@ -1793,7 +1840,7 @@ public static final int <B>MOVEFILE_CREATE_HARDLINK</B></PRE>
 <A NAME="MOVEFILE_DELAY_UNTIL_REBOOT"><!-- --></A><H3>
 MOVEFILE_DELAY_UNTIL_REBOOT</H3>
 <PRE>
-public static final int <B>MOVEFILE_DELAY_UNTIL_REBOOT</B></PRE>
+static final int <B>MOVEFILE_DELAY_UNTIL_REBOOT</B></PRE>
 <DL>
 <DD>The system does not move the file until the operating system is restarted. The system moves the file immediately
  after AUTOCHK is executed, but before creating any paging files. Consequently, this parameter enables the
@@ -1819,7 +1866,7 @@ public static final int <B>MOVEFILE_DELAY_UNTIL_REBOOT</B></PRE>
 <A NAME="MOVEFILE_FAIL_IF_NOT_TRACKABLE"><!-- --></A><H3>
 MOVEFILE_FAIL_IF_NOT_TRACKABLE</H3>
 <PRE>
-public static final int <B>MOVEFILE_FAIL_IF_NOT_TRACKABLE</B></PRE>
+static final int <B>MOVEFILE_FAIL_IF_NOT_TRACKABLE</B></PRE>
 <DL>
 <DD>The function fails if the source file is a link source, but the file cannot be tracked after the move. This
  situation can occur if the destination is a volume formatted with the FAT file system.
@@ -1832,7 +1879,7 @@ public static final int <B>MOVEFILE_FAIL_IF_NOT_TRACKABLE</B></PRE>
 <A NAME="MOVEFILE_REPLACE_EXISTING"><!-- --></A><H3>
 MOVEFILE_REPLACE_EXISTING</H3>
 <PRE>
-public static final int <B>MOVEFILE_REPLACE_EXISTING</B></PRE>
+static final int <B>MOVEFILE_REPLACE_EXISTING</B></PRE>
 <DL>
 <DD>If a file named lpNewFileName exists, the function replaces its contents with the contents of the
  lpExistingFileName file, provided that security requirements regarding access control lists (ACLs) are met. For
@@ -1848,7 +1895,7 @@ public static final int <B>MOVEFILE_REPLACE_EXISTING</B></PRE>
 <A NAME="MOVEFILE_WRITE_THROUGH"><!-- --></A><H3>
 MOVEFILE_WRITE_THROUGH</H3>
 <PRE>
-public static final int <B>MOVEFILE_WRITE_THROUGH</B></PRE>
+static final int <B>MOVEFILE_WRITE_THROUGH</B></PRE>
 <DL>
 <DD>The function does not return until the file is actually moved on the disk.
 
@@ -1859,46 +1906,6 @@ public static final int <B>MOVEFILE_WRITE_THROUGH</B></PRE>
 <P>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinBase.MOVEFILE_WRITE_THROUGH">Constant Field Values</A></DL>
-</DL>
-
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-
-<A NAME="constructor_detail"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Constructor Detail</B></FONT></TH>
-</TR>
-</TABLE>
-
-<A NAME="WinBase()"><!-- --></A><H3>
-WinBase</H3>
-<PRE>
-public <B>WinBase</B>()</PRE>
-<DL>
-</DL>
-
-<!-- ============ METHOD DETAIL ========== -->
-
-<A NAME="method_detail"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
-</TR>
-</TABLE>
-
-<A NAME="MAX_COMPUTERNAME_LENGTH()"><!-- --></A><H3>
-MAX_COMPUTERNAME_LENGTH</H3>
-<PRE>
-public static int <B>MAX_COMPUTERNAME_LENGTH</B>()</PRE>
-<DL>
-<DD>Maximum computer name length.
-<P>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>15 on MAC, 31 on everything else.</DL>
-</DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
@@ -1924,7 +1931,7 @@ public static int <B>MAX_COMPUTERNAME_LENGTH</B>()</PRE>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 
@@ -1951,9 +1958,9 @@ public static int <B>MAX_COMPUTERNAME_LENGTH</B>()</PRE>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_bottom"></A>

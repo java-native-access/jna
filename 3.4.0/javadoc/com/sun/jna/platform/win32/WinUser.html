@@ -46,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 
@@ -89,11 +89,14 @@ com.sun.jna.platform.win32</FONT>
 <BR>
 Interface WinUser</H2>
 <DL>
-<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></DD>
+</DL>
+<DL>
+<DT><B>All Known Subinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/platform/win32/User32.html" title="interface in com.sun.jna.platform.win32">User32</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public interface <B>WinUser</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+<DT><PRE>public interface <B>WinUser</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></DL>
 </PRE>
 
 <P>
@@ -246,7 +249,17 @@ Ported from WinUser.h Microsoft Windows SDK 6.0A.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
-&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.platform.win32.WinDef"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORDLONG.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDLONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HBITMAP.html" title="class in com.sun.jna.platform.win32">WinDef.HBITMAP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HCURSOR.html" title="class in com.sun.jna.platform.win32">WinDef.HCURSOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HFONT.html" title="class in com.sun.jna.platform.win32">WinDef.HFONT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMENU.html" title="class in com.sun.jna.platform.win32">WinDef.HMENU</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMODULE.html" title="class in com.sun.jna.platform.win32">WinDef.HMODULE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPALETTE.html" title="class in com.sun.jna.platform.win32">WinDef.HPALETTE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPEN.html" title="class in com.sun.jna.platform.win32">WinDef.HPEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRSRC.html" title="class in com.sun.jna.platform.win32">WinDef.HRSRC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LONG.html" title="class in com.sun.jna.platform.win32">WinDef.LONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.UINT_PTR.html" title="class in com.sun.jna.platform.win32">WinDef.UINT_PTR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.ULONGLONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONGLONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
 <TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
@@ -641,6 +654,46 @@ Ported from WinUser.h Microsoft Windows SDK 6.0A.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LWA_COLORKEY">LWA_COLORKEY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_ALT">MOD_ALT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_CONTROL">MOD_CONTROL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_NOREPEAT">MOD_NOREPEAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_SHIFT">MOD_SHIFT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_WIN">MOD_WIN</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -1810,6 +1863,14 @@ Ported from WinUser.h Microsoft Windows SDK 6.0A.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_HOTKEY">WM_HOTKEY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posted when the user presses a hot key registered by the RegisterHotKey function.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_KEYDOWN">WM_KEYDOWN</A></B></CODE>
 
 <BR>
@@ -1946,6 +2007,15 @@ Ported from WinUser.h Microsoft Windows SDK 6.0A.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.platform.win32.WinDef"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html#MAX_PATH">MAX_PATH</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
@@ -2569,6 +2639,56 @@ static final int <B>VK_RMENU</B></PRE>
 </DL>
 <HR>
 
+<A NAME="MOD_ALT"><!-- --></A><H3>
+MOD_ALT</H3>
+<PRE>
+static final int <B>MOD_ALT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_ALT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_CONTROL"><!-- --></A><H3>
+MOD_CONTROL</H3>
+<PRE>
+static final int <B>MOD_CONTROL</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_CONTROL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_NOREPEAT"><!-- --></A><H3>
+MOD_NOREPEAT</H3>
+<PRE>
+static final int <B>MOD_NOREPEAT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_NOREPEAT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_SHIFT"><!-- --></A><H3>
+MOD_SHIFT</H3>
+<PRE>
+static final int <B>MOD_SHIFT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_SHIFT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="MOD_WIN"><!-- --></A><H3>
+MOD_WIN</H3>
+<PRE>
+static final int <B>MOD_WIN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.MOD_WIN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
 <A NAME="WH_KEYBOARD"><!-- --></A><H3>
 WH_KEYBOARD</H3>
 <PRE>
@@ -2721,6 +2841,19 @@ static final int <B>WM_MDIMAXIMIZE</B></PRE>
 <P>
 <DL>
 <DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_MDIMAXIMIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="WM_HOTKEY"><!-- --></A><H3>
+WM_HOTKEY</H3>
+<PRE>
+static final int <B>WM_HOTKEY</B></PRE>
+<DL>
+<DD>Posted when the user presses a hot key registered by the RegisterHotKey function.
+ The message is placed at the top of the message queue associated with the thread that registered the hot key.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.WinUser.WM_HOTKEY">Constant Field Values</A></DL>
 </DL>
 <HR>
 
@@ -4147,7 +4280,7 @@ static final int <B>SC_MAXIMIZE</B></PRE>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 

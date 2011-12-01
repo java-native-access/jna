@@ -46,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 
@@ -82,7 +82,7 @@ JNA API Documentation
 </H1>
 </CENTER>
 This document is the API specification for the
-<a href=http://jna.dev.java.net>JNA</a>
+<a href=http://github.com/twall/jna>JNA</a>
 library for simplified native library access for Java.
 <P>
 <B>See:</B>
@@ -147,17 +147,21 @@ allowing ghosted drag images to be used on all platforms.</TD>
 <TD WIDTH="20%"><B><A HREF="com/sun/jna/platform/win32/package-summary.html">com.sun.jna.platform.win32</A></B></TD>
 <TD>Provides common library mappings for the Windows platform.</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="20%"><B><A HREF="com/sun/jna/platform/wince/package-summary.html">com.sun.jna.platform.wince</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
 </TABLE>
 
 <P>
 &nbsp;<A NAME="overview_description"><!-- --></A>
 <P>
 This document is the API specification for the
-<a href=http://jna.dev.java.net>JNA</a>
+<a href=http://github.com/twall/jna>JNA</a>
 library for simplified native library access for Java.
 <p>
 <a href=#navbar_top>Top</a>&nbsp;
-<a href=http://jna.dev.java.net>JNA Home</a>&nbsp;
+<a href=http://github.com/twall/jna>JNA Home</a>&nbsp;
 <a href=index.html target=_top>API w/FRAMES</a>&nbsp;
 <p>
 
@@ -170,6 +174,7 @@ additional JNI or native code.
 <a name="toc"></a>
 <h2>Table of Contents</h2>
 <ul>
+<li><a href="#loading">Loading JNA</a>
 <li><a href="#library-mapping">Library Mapping</a>
 <li><a href="#function-mapping">Function Mapping</a>
 <li><a href="#marshalling">Type Mapping</a>
@@ -194,6 +199,34 @@ additional JNI or native code.
 </ul>
 
 <p>
+<a href=#navbar_top>Top</a>
+<a name="loading"></a>
+<h2>Loading JNA</h2>
+JNA includes a small, platform-specific shared library which enables all
+native access.  When the <A HREF="com/sun/jna/Native.html" title="class in com.sun.jna"><CODE>Native</CODE></A> class is first accessed,
+JNA will first attempt to load this library from the directories specified
+in <code>jna.boot.library.path</code>.  If that fails, it will fall back to
+loading from the system library paths. Finally it will attempt to extract the
+stub library from from the JNA jar file, and load it. 
+<p/>
+The <code>jna.boot.library.path</code> property is mainly to support
+jna.jar being included in -Xbootclasspath, where
+<code>java.library.path</code> and LD_LIBRARY_PATH are ignored.  It is also
+useful for designating a version of the library to use in preference to any
+which may already be installed on the system.  
+<p/>
+Loading from the system may be disabled by <code>jna.nosys=true</code>,
+and unpacking from the jar file may be disabled by
+<code>jna.nounpack=true</code>. 
+<p/>
+The library name used to search for JNA's native library may be altered
+by setting <code>jna.boot.library.name</code>, which defaults to
+"jnidispatch".  It may be useful to set this value if your system
+requires unique names for shared libraries (rather than unique paths),
+or if your system must store different versions of the JNA shared
+library (e.g. for different architectures) in the same directory.
+<p/>
+
 <a href=#navbar_top>Top</a>
 <a name="library-mapping"></a>
 <h2>Library Mapping</h2>
@@ -260,10 +293,8 @@ public class CLibrary {
 }
 </pre></code></blockquote>
 
-If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry (<A HREF="com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><CODE>Library.OPTION_FUNCTION_MAPPER</CODE></A>/<A HREF="com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A>) in the options <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util"><CODE>Map</CODE></A> passed to <A HREF="com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary()</CODE></A> which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
+If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry (<A HREF="com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER"><CODE>Library.OPTION_FUNCTION_MAPPER</CODE></A>/<A HREF="com/sun/jna/FunctionMapper.html" title="interface in com.sun.jna"><CODE>FunctionMapper</CODE></A>) in the options <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util"><CODE>Map</CODE></A> passed to <A HREF="com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)"><CODE>Native.loadLibrary()</CODE></A> which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
 An instance of the <A HREF="com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> class is obtained through the <A HREF="com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><CODE>NativeLibrary</CODE></A> instance corresponding to the containing native library.  This <A HREF="com/sun/jna/Function.html" title="class in com.sun.jna"><CODE>Function</CODE></A> instance handles argument marshalling and delegation to the native function. 
-
-<!-- TODO: when to use primitive array vs NIO Buffer vs Memory -->
 
 <p>
 <a href="#toc">Table of Contents</a>
@@ -282,14 +313,14 @@ Java types must be chosen to match native types of the same size.  Following are
 <tr><td>long long, __int64</td><td>64-bit integer</td><td>long</td></tr>
 <tr><td>float</td><td>32-bit floating point</td><td>float</td></tr>
 <tr><td>double</td><td>64-bit floating point</td><td>double</td></tr>
-<tr><td>pointer (e.g. void*)</td><td>platform-dependent (32- or 64-bit pointer to memory)</td><td><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A><br>
+<tr><td>pointer (e.g. void*)</td><td>platform-dependent (32- or 64-bit pointer to memory)</td><td><A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A><br>
 <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A></td></tr>
 <tr><td>pointer (e.g. void*),<br>array</td><td>32- or 64-bit pointer to memory (argument/return)<br>contiguous memory (struct member)</td><td>&lt;P&gt;[] (array of primitive type)</td></tr>
 <tr><td colspan='3'  style='padding:20px 5px'>In addition to the above types, which are supported at the native layer, the JNA Java library automatically handles the following types.  All but <code>NativeMapped</code> and <code>NativeLong</code> are converted to <A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> before being passed to the native layer.</td></tr>
 <tr><td>long</td><td>platform-dependent (32- or 64-bit integer)</td><td><A HREF="com/sun/jna/NativeLong.html" title="class in com.sun.jna"><CODE>NativeLong</CODE></A></td></tr>
-<tr><td>const char*</td><td>NUL-terminated array (native encoding or <code>jna.encoding</code>)</td><td><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang"><CODE>String</CODE></A></td></tr>
+<tr><td>const char*</td><td>NUL-terminated array (native encoding or <code>jna.encoding</code>)</td><td><A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang"><CODE>String</CODE></A></td></tr>
 <tr><td>const wchar_t*</td><td>NUL-terminated array (unicode)</td><td><A HREF="com/sun/jna/WString.html" title="class in com.sun.jna"><CODE>WString</CODE></A></td></tr>
-<tr><td>char**</td><td>NULL-terminated array of C strings</td><td><A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang"><CODE>String[]</CODE></A></td></tr>
+<tr><td>char**</td><td>NULL-terminated array of C strings</td><td><A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang"><CODE>String[]</CODE></A></td></tr>
 <tr><td>wchar_t**</td><td>NULL-terminated array of wide C strings</td><td><A HREF="com/sun/jna/WString.html" title="class in com.sun.jna"><CODE>WString[]</CODE></A></td></tr>
 <tr><td>void**</td><td>NULL-terminated array of pointers</td><td><A HREF="com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer[]</CODE></A></td></tr>
 <tr><td>struct*<br>struct</td><td>pointer to struct (argument or return) (<A HREF="com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><CODE>or explicitly</CODE></A>)<br>struct by value (member of struct) (<A HREF="com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>or explicitly</CODE></A>)</td><td><A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A></td></tr>
@@ -306,11 +337,11 @@ Java types must be chosen to match native types of the same size.  Following are
 <ul>
 <li>Unsigned values may be passed by assigning the corresponding
   two's-complement representation to the signed type of the same size.  
-<li>Java arrays of primitive type may be wrapped by <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> in
+<li>Java arrays of primitive type may be wrapped by <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> in
   order to access a subset of the array (changing the effective size and/or
   offest).
 <li>Java arrays of primitive type are only valid for use within the scope of a
-  single call.  If the native code keeps a reference to the memory, use <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> instead.
+  single call.  If the native code keeps a reference to the memory, use <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> instead.
 <li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
 <li>Bitfields must be manually packed into an integer type.  
 <li>All other types must eventually be converted to one of the types in the this table.  Methods with arguments or return values of types other than these must either use types deriving from <A HREF="com/sun/jna/NativeMapped.html" title="interface in com.sun.jna"><CODE>NativeMapped</CODE></A> or supply type conversion information for the unsupported types.  
@@ -321,7 +352,7 @@ Java types must be chosen to match native types of the same size.  Following are
 
 <a name="arrays"></a>
 <h3>Primitive Arrays</h3>
-Java primitive arrays may be used wherever a native primitive array is used.  Any changes made by the native code to an array during a function call will be reflected in the Java array.  If the native code will use the array outside of the function call where the array is provided, <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> should be used instead (see <a href="#buffers">Buffers</a>).
+Java primitive arrays may be used wherever a native primitive array is used.  Any changes made by the native code to an array during a function call will be reflected in the Java array.  If the native code will use the array outside of the function call where the array is provided, <A HREF="com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> or <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> should be used instead (see <a href="#buffers">Buffers</a>).
 <p>
 To map a native multi-dimensional array, use a single-dimensional Java array with a number of elements equivalent to the full native array, e.g.<br>
 <blockquote><code><pre>
@@ -389,12 +420,12 @@ The <A HREF="com/sun/jna/WString.html" title="class in com.sun.jna"><CODE>WStrin
 <a name="buffers"></a>
 <h3>Buffers/Memory Blocks</h3>
 Use arrays to represent buffers of primitive types passed to a function for use only during the function invocation.  A native method cannot return a Java array, since there is no canonical way to indicate the intended length of the returned array.  Instead, use one of the array access methods in the Pointer class, supplying the length of the returned array.<p>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A>s may also be used as a memory buffer input
+<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A>s may also be used as a memory buffer input
 argument; direct byte buffers can often provide much improved performance over
-primitive arrays.  A pointer provided by native code may be converted to a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> by calling <A HREF="com/sun/jna/Pointer.html#getByteBuffer(long, long)"><CODE>Pointer.getByteBuffer(long, long)</CODE></A>.
+primitive arrays.  A pointer provided by native code may be converted to a <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> by calling <A HREF="com/sun/jna/Pointer.html#getByteBuffer(long, long)"><CODE>Pointer.getByteBuffer(long, long)</CODE></A>.
 <p>
 If you need to pass in a subset of a primitive array, you can do so by
-wrapping it in a <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> subclass, such as <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio"><CODE>ByteBuffer</CODE></A>, using the <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true#wrap(byte[], int, int)" title="class or interface in java.nio"><CODE>ByteBuffer.wrap(byte[],int,int)</CODE></A> method.  Wrapping an array in a
+wrapping it in a <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/Buffer.html?is-external=true" title="class or interface in java.nio"><CODE>Buffer</CODE></A> subclass, such as <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio"><CODE>ByteBuffer</CODE></A>, using the <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true#wrap(byte[], int, int)" title="class or interface in java.nio"><CODE>ByteBuffer.wrap(byte[],int,int)</CODE></A> method.  Wrapping an array in a
 buffer also allows you to pass only a subset of a Java array to the native
 function. 
 
@@ -406,15 +437,14 @@ a single <code>callback</code> method with a signature that matches the
 function pointer required by the native code.  The name of the method
 may be something other than "callback" only if there is only a single method
 in the interface which extends Callback or the class which implements
-<A HREF="com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A>.  The arguments and return value follow the same rules
-as for a 
-direct function invocation. 
+<A HREF="com/sun/jna/Callback.html" title="interface in com.sun.jna"><CODE>Callback</CODE></A>.  The arguments and return value follow the same
+rules as for a direct function invocation. 
 <p>
 If the callback returns a <code>String</code> or <code>String[]</code>, the
 returned memory will be valid until the returned object is GC'd.
 <p>
 If your native code initializes function pointers within a struct, JNA will
-automatically generate an <code>Callback</code> instance matching the declared
+automatically generate a <code>Callback</code> instance matching the declared
 type.  This enables you to easily call the function supplied by native code
 using proper Java syntax.
 <blockquote><code><pre>
@@ -457,6 +487,25 @@ public interface CLibrary extends Library {
 }
 </pre></code></blockquote>
 
+If you need control over the thread context in which a <code>Callback</code>
+operates, you can install a <A HREF="com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna"><CODE>CallbackThreadInitializer</CODE></A> for
+any given callback object.  The first time the callback is called on a thread
+that is not currently attached to the VM, the initializer will be queried to
+determine how the thread should be set up.  You can indicate the desired name,
+thread group, and daemon state for the thread, as well as indicating whether
+the thread should be left attached to the VM after callback exit.  The latter
+improves performance if you know you will be getting multiple callbacks on the
+same thread, avoiding the need for the VM to generate multiple Java Thread
+objects for the same native thread.  If you do leave the native thread
+attached, you should either ensure you detach it at some later point (by
+calling <A HREF="com/sun/jna/Native.html#detach(boolean)"><CODE>Native.detach(boolean)</CODE></A> from within the callback just prior
+to return) or return true from your
+<A HREF="com/sun/jna/CallbackThreadInitializer.html#isDaemon(com.sun.jna.Callback)"><CODE>CallbackThreadInitializer.isDaemon(Callback)</CODE></A> method so
+that the native thread will not prevent the VM from exiting.<p/>
+If you don't need to otherwise customize the callback thread, you can simply
+call <A HREF="com/sun/jna/Native.html#detach(boolean)"><CODE>Native.detach(boolean)</CODE></A> from within your callback to
+indicate whether the thread attachment should be maintained or not.<p/>
+
 <a name="varargs"></a>
 <h3>Varargs</h3>
 The C varargs function definition may be mapped to a Java varargs method definition.  For example,
@@ -474,6 +523,10 @@ interface CLibrary extends Library {
 <h3>Structures</h3>
 
 The Java <A HREF="com/sun/jna/Structure.html" title="class in com.sun.jna"><CODE>Structure</CODE></A> represents a native <code>struct</code>.  By default, this type is treated as a pointer to structure (<code>struct *</code>) on the native side when used as a parameter or return value.  When used as a structure field, the structure is interpreted as by value.  To force the complementary interpretation, the tagging interfaces <A HREF="com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><CODE>Structure.ByValue</CODE></A> and <A HREF="com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><CODE>Structure.ByReference</CODE></A> are provided.<p>
+
+The data within a Java <code>Structure</code> is automatically written to
+native memory just before a native function call with a struct parameter, and
+automatically read from native memory after the function returns.<p>
 
 <h4>Pointer-to-Structure Arguments</h4>
 To pass a pointer to a structure as an argument, simply use the Java structure
@@ -784,7 +837,7 @@ The method <A HREF="com/sun/jna/NativeLibrary.html#getGlobalVariableAddress(java
 <a name="crash-protection"></a>
 <h2>VM Crash Protection</h2>
 It is not uncommon when defining a new library and writing tests to encounter memory access errors which crash the VM.  These are often caused by improper mappings or invalid arguments passed to the native library.  To generate Java errors instead of crashing the VM, call <A HREF="com/sun/jna/Native.html#setProtected(boolean)"><CODE>Native.setProtected(true)</CODE></A></code>.  Not all platforms support this protection; if not, the value of <A HREF="com/sun/jna/Native.html#isProtected()"><CODE>Native.isProtected()</CODE></A> will remain <code>false</code>.<p>
-NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
+NOTE: When protected mode is enabled, you should make use of the jsig library, if available (see <a href="http://download.oracle.com/javase/6/docs/technotes/guides/vm/signal-chaining.html">Signal Chaining</a>) to avoid interfering with the JVM's use of signals.  In short, set the environment variable <code>LD_PRELOAD</code> (or <code>LD_PRELOAD_64</code>) to the path to <code>libjsig.so</code> in your JRE lib directory (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your Java application.
  
 
 <p>
@@ -812,7 +865,12 @@ auto-synch can be disabled by calling
 <A HREF="com/sun/jna/Structure.html#setAutoSynch(boolean)"><CODE>Structure.setAutoSynch(boolean)</CODE></A> with a <code>false</code> parameter.
 It is then up to you to use <A HREF="com/sun/jna/Structure.html#readField(java.lang.String)"><CODE>Structure.readField(String)</CODE></A>
 and <A HREF="com/sun/jna/Structure.html#writeField(java.lang.String)"><CODE>Structure.writeField(String)</CODE></A> or <A HREF="com/sun/jna/Structure.html#writeField(java.lang.String, java.lang.Object)"><CODE>Structure.writeField(String,Object)</CODE></A> to synch with just the fields
-of interest.
+of interest. 
+<h3>Throw exceptions on last error</h3>
+If you are interested in the value of errno/GetLastError(), declare your
+method to throw LastErrorException, and call
+<A HREF="com/sun/jna/Native.html#setPreserveLastError(boolean)"><CODE>setPreserveLastError(false)</CODE></A> or set
+the System property <code>jna.preserve_last_error=false</code>.
 <P>
 
 <P>
@@ -839,7 +897,7 @@ of interest.
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 

@@ -46,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 
@@ -89,11 +89,11 @@ com.sun.jna.platform.win32</FONT>
 <BR>
 Interface User32</H2>
 <DL>
-<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public interface <B>User32</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+<DT><PRE>public interface <B>User32</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A></DL>
 </PRE>
 
 <P>
@@ -118,7 +118,27 @@ Provides access to the w32 user32 library. Incomplete implementation to
 <B>Nested Class Summary</B></FONT></TH>
 </TR>
 </TABLE>
-&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.platform.win32.WinUser"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32">WinUser.BLENDFUNCTION</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.FLASHWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.FLASHWINFO</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.GUITHREADINFO.html" title="class in com.sun.jna.platform.win32">WinUser.GUITHREADINFO</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HARDWAREINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.HARDWAREINPUT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HHOOK.html" title="class in com.sun.jna.platform.win32">WinUser.HHOOK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.HOOKPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.HOOKPROC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.INPUT.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KBDLLHOOKSTRUCT.html" title="class in com.sun.jna.platform.win32">WinUser.KBDLLHOOKSTRUCT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.KEYBDINPUT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.LowLevelKeyboardProc.html" title="interface in com.sun.jna.platform.win32">WinUser.LowLevelKeyboardProc</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MOUSEINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.MOUSEINPUT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.SIZE.html" title="class in com.sun.jna.platform.win32">WinUser.SIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WINDOWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.WINDOWINFO</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.WNDENUMPROC.html" title="interface in com.sun.jna.platform.win32">WinUser.WNDENUMPROC</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.platform.win32.WinDef"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.DWORDLONG.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDLONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HBITMAP.html" title="class in com.sun.jna.platform.win32">WinDef.HBITMAP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HCURSOR.html" title="class in com.sun.jna.platform.win32">WinDef.HCURSOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HFONT.html" title="class in com.sun.jna.platform.win32">WinDef.HFONT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMENU.html" title="class in com.sun.jna.platform.win32">WinDef.HMENU</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HMODULE.html" title="class in com.sun.jna.platform.win32">WinDef.HMODULE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPALETTE.html" title="class in com.sun.jna.platform.win32">WinDef.HPALETTE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HPEN.html" title="class in com.sun.jna.platform.win32">WinDef.HPEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HRSRC.html" title="class in com.sun.jna.platform.win32">WinDef.HRSRC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LONG.html" title="class in com.sun.jna.platform.win32">WinDef.LONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.UINT_PTR.html" title="class in com.sun.jna.platform.win32">WinDef.UINT_PTR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.ULONGLONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONGLONG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
 <TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
@@ -153,6 +173,24 @@ Provides access to the w32 user32 library. Incomplete implementation to
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.platform.win32.WinUser"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html" title="interface in com.sun.jna.platform.win32">WinUser</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_ALPHA">AC_SRC_ALPHA</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_NO_ALPHA">AC_SRC_NO_ALPHA</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_NO_PREMULT_ALPHA">AC_SRC_NO_PREMULT_ALPHA</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#AC_SRC_OVER">AC_SRC_OVER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#DWL_DLGPROC">DWL_DLGPROC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#DWL_MSGRESULT">DWL_MSGRESULT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#DWL_USER">DWL_USER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_ALL">FLASHW_ALL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_CAPTION">FLASHW_CAPTION</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_STOP">FLASHW_STOP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_TIMER">FLASHW_TIMER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_TIMERNOFG">FLASHW_TIMERNOFG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#FLASHW_TRAY">FLASHW_TRAY</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_CHILD">GW_CHILD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_ENABLEDPOPUP">GW_ENABLEDPOPUP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDFIRST">GW_HWNDFIRST</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDLAST">GW_HWNDLAST</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDNEXT">GW_HWNDNEXT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_HWNDPREV">GW_HWNDPREV</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GW_OWNER">GW_OWNER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_EXSTYLE">GWL_EXSTYLE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_HINSTANCE">GWL_HINSTANCE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_ID">GWL_ID</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_STYLE">GWL_STYLE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_USERDATA">GWL_USERDATA</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#GWL_WNDPROC">GWL_WNDPROC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#HWND_BROADCAST">HWND_BROADCAST</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_BITMAP">IMAGE_BITMAP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_CURSOR">IMAGE_CURSOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_ENHMETAFILE">IMAGE_ENHMETAFILE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#IMAGE_ICON">IMAGE_ICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COLOR">LR_COLOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COPYDELETEORG">LR_COPYDELETEORG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COPYFROMRESOURCE">LR_COPYFROMRESOURCE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_COPYRETURNORG">LR_COPYRETURNORG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_CREATEDIBSECTION">LR_CREATEDIBSECTION</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_DEFAULTCOLOR">LR_DEFAULTCOLOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_DEFAULTSIZE">LR_DEFAULTSIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_LOADFROMFILE">LR_LOADFROMFILE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_LOADMAP3DCOLORS">LR_LOADMAP3DCOLORS</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_LOADTRANSPARENT">LR_LOADTRANSPARENT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_MONOCHROME">LR_MONOCHROME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_SHARED">LR_SHARED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LR_VGACOLOR">LR_VGACOLOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LWA_ALPHA">LWA_ALPHA</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#LWA_COLORKEY">LWA_COLORKEY</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_ALT">MOD_ALT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_CONTROL">MOD_CONTROL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_NOREPEAT">MOD_NOREPEAT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_SHIFT">MOD_SHIFT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_WIN">MOD_WIN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_ALLCHILDREN">RDW_ALLCHILDREN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_ERASE">RDW_ERASE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_ERASENOW">RDW_ERASENOW</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_FRAME">RDW_FRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_INTERNALPAINT">RDW_INTERNALPAINT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_INVALIDATE">RDW_INVALIDATE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOCHILDREN">RDW_NOCHILDREN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOERASE">RDW_NOERASE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOFRAME">RDW_NOFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_NOINTERNALPAINT">RDW_NOINTERNALPAINT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_UPDATENOW">RDW_UPDATENOW</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#RDW_VALIDATE">RDW_VALIDATE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SC_MAXIMIZE">SC_MAXIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SC_MINIMIZE">SC_MINIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_ARRANGE">SM_ARRANGE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CARETBLINKINGENABLED">SM_CARETBLINKINGENABLED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CLEANBOOT">SM_CLEANBOOT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CMONITORS">SM_CMONITORS</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CMOUSEBUTTONS">SM_CMOUSEBUTTONS</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXBORDER">SM_CXBORDER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXCURSOR">SM_CXCURSOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXDLGFRAME">SM_CXDLGFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXDOUBLECLK">SM_CXDOUBLECLK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXDRAG">SM_CXDRAG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXEDGE">SM_CXEDGE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFIXEDFRAME">SM_CXFIXEDFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFOCUSBORDER">SM_CXFOCUSBORDER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFRAME">SM_CXFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXFULLSCREEN">SM_CXFULLSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXHSCROLL">SM_CXHSCROLL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXHTHUMB">SM_CXHTHUMB</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXICON">SM_CXICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXICONSPACING">SM_CXICONSPACING</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMAXIMIZED">SM_CXMAXIMIZED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMAXTRACK">SM_CXMAXTRACK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMENUCHECK">SM_CXMENUCHECK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMENUSIZE">SM_CXMENUSIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMIN">SM_CXMIN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMINIMIZED">SM_CXMINIMIZED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMINSPACING">SM_CXMINSPACING</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXMINTRACK">SM_CXMINTRACK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXPADDEDBORDER">SM_CXPADDEDBORDER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSCREEN">SM_CXSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSIZE">SM_CXSIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSIZEFRAME">SM_CXSIZEFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSMICON">SM_CXSMICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXSMSIZE">SM_CXSMSIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXVIRTUALSCREEN">SM_CXVIRTUALSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CXVSCROLL">SM_CXVSCROLL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYBORDER">SM_CYBORDER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYCAPTION">SM_CYCAPTION</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYCURSOR">SM_CYCURSOR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYDLGFRAME">SM_CYDLGFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYDOUBLECLK">SM_CYDOUBLECLK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYDRAG">SM_CYDRAG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYEDGE">SM_CYEDGE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFIXEDFRAME">SM_CYFIXEDFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFOCUSBORDER">SM_CYFOCUSBORDER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFRAME">SM_CYFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYFULLSCREEN">SM_CYFULLSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYHSCROLL">SM_CYHSCROLL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYICON">SM_CYICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYICONSPACING">SM_CYICONSPACING</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYKANJIWINDOW">SM_CYKANJIWINDOW</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMAXIMIZED">SM_CYMAXIMIZED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMAXTRACK">SM_CYMAXTRACK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMENU">SM_CYMENU</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMENUCHECK">SM_CYMENUCHECK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMENUSIZE">SM_CYMENUSIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMIN">SM_CYMIN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMINIMIZED">SM_CYMINIMIZED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMINSPACING">SM_CYMINSPACING</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYMINTRACK">SM_CYMINTRACK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSCREEN">SM_CYSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSIZE">SM_CYSIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSIZEFRAME">SM_CYSIZEFRAME</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSMCAPTION">SM_CYSMCAPTION</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSMICON">SM_CYSMICON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYSMSIZE">SM_CYSMSIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYVIRTUALSCREEN">SM_CYVIRTUALSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYVSCROLL">SM_CYVSCROLL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_CYVTHUMB">SM_CYVTHUMB</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_DBCSENABLED">SM_DBCSENABLED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_DEBUG">SM_DEBUG</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_IMMENABLED">SM_IMMENABLED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MEDIACENTER">SM_MEDIACENTER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MENUDROPALIGNMENT">SM_MENUDROPALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MIDEASTENABLED">SM_MIDEASTENABLED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MOUSEHORIZONTALWHEELPRESENT">SM_MOUSEHORIZONTALWHEELPRESENT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MOUSEPRESENT">SM_MOUSEPRESENT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_MOUSEWHEELPRESENT">SM_MOUSEWHEELPRESENT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_NETWORK">SM_NETWORK</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_PENWINDOWS">SM_PENWINDOWS</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_REMOTECONTROL">SM_REMOTECONTROL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_REMOTESESSION">SM_REMOTESESSION</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED1">SM_RESERVED1</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED2">SM_RESERVED2</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED3">SM_RESERVED3</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_RESERVED4">SM_RESERVED4</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SAMEDISPLAYFORMAT">SM_SAMEDISPLAYFORMAT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SECURE">SM_SECURE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SERVERR2">SM_SERVERR2</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SHOWSOUNDS">SM_SHOWSOUNDS</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SHUTTINGDOWN">SM_SHUTTINGDOWN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SLOWMACHINE">SM_SLOWMACHINE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_STARTER">SM_STARTER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_SWAPBUTTON">SM_SWAPBUTTON</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_TABLETPC">SM_TABLETPC</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_XVIRTUALSCREEN">SM_XVIRTUALSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SM_YVIRTUALSCREEN">SM_YVIRTUALSCREEN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_FORCEMINIMIZE">SW_FORCEMINIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_HIDE">SW_HIDE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_MAX">SW_MAX</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_MAXIMIZE">SW_MAXIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_MINIMIZE">SW_MINIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_NORMAL">SW_NORMAL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_RESTORE">SW_RESTORE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOW">SW_SHOW</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWDEFAULT">SW_SHOWDEFAULT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWMAXIMIZED">SW_SHOWMAXIMIZED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWMINIMIZED">SW_SHOWMINIMIZED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWMINNOACTIVE">SW_SHOWMINNOACTIVE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWNA">SW_SHOWNA</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWNOACTIVATE">SW_SHOWNOACTIVATE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SW_SHOWNORMAL">SW_SHOWNORMAL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#SWP_NOZORDER">SWP_NOZORDER</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#ULW_ALPHA">ULW_ALPHA</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#ULW_COLORKEY">ULW_COLORKEY</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#ULW_OPAQUE">ULW_OPAQUE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_CONTROL">VK_CONTROL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_LCONTROL">VK_LCONTROL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_LMENU">VK_LMENU</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_LSHIFT">VK_LSHIFT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_MENU">VK_MENU</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_RCONTROL">VK_RCONTROL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_RMENU">VK_RMENU</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_RSHIFT">VK_RSHIFT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#VK_SHIFT">VK_SHIFT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_KEYBOARD">WH_KEYBOARD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_KEYBOARD_LL">WH_KEYBOARD_LL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_MOUSE">WH_MOUSE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WH_MOUSE_LL">WH_MOUSE_LL</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_CHAR">WM_CHAR</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_CLOSE">WM_CLOSE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_DRAWITEM">WM_DRAWITEM</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_HOTKEY">WM_HOTKEY</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_KEYDOWN">WM_KEYDOWN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_KEYUP">WM_KEYUP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_MDIMAXIMIZE">WM_MDIMAXIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_PAINT">WM_PAINT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_QUIT">WM_QUIT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SHOWWINDOW">WM_SHOWWINDOW</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SYSCOMMAND">WM_SYSCOMMAND</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SYSKEYDOWN">WM_SYSKEYDOWN</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_SYSKEYUP">WM_SYSKEYUP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_CHILD">WS_CHILD</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_EX_COMPOSITED">WS_EX_COMPOSITED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_EX_LAYERED">WS_EX_LAYERED</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_EX_TRANSPARENT">WS_EX_TRANSPARENT</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_MAXIMIZE">WS_MAXIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_MINIMIZE">WS_MINIMIZE</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_POPUP">WS_POPUP</A>, <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WS_VISIBLE">WS_VISIBLE</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.platform.win32.WinDef"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.platform.win32.<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/platform/win32/WinDef.html#MAX_PATH">MAX_PATH</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
@@ -275,8 +313,8 @@ Provides access to the w32 user32 library. Incomplete implementation to
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#FindWindow(java.lang.String, java.lang.String)">FindWindow</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClassName,
-           <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpWindowName)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#FindWindow(java.lang.String, java.lang.String)">FindWindow</A></B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClassName,
+           <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpWindowName)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function retrieves the handle to the top-level window whose class name and 
@@ -484,7 +522,7 @@ Provides access to the w32 user32 library. Incomplete implementation to
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#LoadIcon(com.sun.jna.platform.win32.WinDef.HINSTANCE, java.lang.String)">LoadIcon</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hInstance,
-         <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;iconName)</CODE>
+         <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;iconName)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function loads the specified icon resource from the executable (.exe) file associated with an 
@@ -494,7 +532,7 @@ Provides access to the w32 user32 library. Incomplete implementation to
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#LoadImage(com.sun.jna.platform.win32.WinDef.HINSTANCE, java.lang.String, int, int, int, int)">LoadImage</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hinst,
-          <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
+          <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
           int&nbsp;type,
           int&nbsp;xDesired,
           int&nbsp;yDesired,
@@ -560,6 +598,17 @@ Provides access to the w32 user32 library. Incomplete implementation to
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The RedrawWindow function updates the specified rectangle or region in a window's client area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#RegisterHotKey(com.sun.jna.platform.win32.WinDef.HWND, int, int, int)">RegisterHotKey</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+               int&nbsp;id,
+               int&nbsp;fsModifiers,
+               int&nbsp;vk)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines a system-wide hot key.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -721,6 +770,15 @@ Provides access to the w32 user32 library. Incomplete implementation to
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#UnregisterHotKey(com.sun.jna.Pointer, int)">UnregisterHotKey</A></B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;hWnd,
+                 int&nbsp;id)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frees a hot key previously registered by the calling thread.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/User32.html#UpdateLayeredWindow(com.sun.jna.platform.win32.WinDef.HWND, com.sun.jna.platform.win32.WinDef.HDC, com.sun.jna.platform.win32.WinUser.POINT, com.sun.jna.platform.win32.WinUser.SIZE, com.sun.jna.platform.win32.WinDef.HDC, com.sun.jna.platform.win32.WinUser.POINT, int, com.sun.jna.platform.win32.WinUser.BLENDFUNCTION, int)">UpdateLayeredWindow</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hwnd,
                     <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</A>&nbsp;hdcDst,
                     <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.POINT.html" title="class in com.sun.jna.platform.win32">WinUser.POINT</A>&nbsp;pptDst,
@@ -836,8 +894,8 @@ int <B>ReleaseDC</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.H
 <A NAME="FindWindow(java.lang.String, java.lang.String)"><!-- --></A><H3>
 FindWindow</H3>
 <PRE>
-<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>FindWindow</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClassName,
-                       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpWindowName)</PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A> <B>FindWindow</B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpClassName,
+                       <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;lpWindowName)</PRE>
 <DL>
 <DD>This function retrieves the handle to the top-level window whose class name and 
  window name match the specified strings. This function does not search child windows.
@@ -1120,7 +1178,7 @@ boolean <B>FlashWindowEx</B>(<A HREF="../../../../../com/sun/jna/platform/win32/
 LoadIcon</H3>
 <PRE>
 <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</A> <B>LoadIcon</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hInstance,
-                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;iconName)</PRE>
+                      <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;iconName)</PRE>
 <DL>
 <DD>This function loads the specified icon resource from the executable (.exe) file associated with an 
  application instance.
@@ -1143,7 +1201,7 @@ LoadIcon</H3>
 LoadImage</H3>
 <PRE>
 <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HANDLE.html" title="class in com.sun.jna.platform.win32">WinNT.HANDLE</A> <B>LoadImage</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</A>&nbsp;hinst,
-                       <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
+                       <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
                        int&nbsp;type,
                        int&nbsp;xDesired,
                        int&nbsp;yDesired,
@@ -2079,6 +2137,62 @@ boolean <B>CloseWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Wi
      If the function fails, the return value is zero. To get extended error information, call GetLastError.</DL>
 </DD>
 </DL>
+<HR>
+
+<A NAME="RegisterHotKey(com.sun.jna.platform.win32.WinDef.HWND, int, int, int)"><!-- --></A><H3>
+RegisterHotKey</H3>
+<PRE>
+boolean <B>RegisterHotKey</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</A>&nbsp;hWnd,
+                       int&nbsp;id,
+                       int&nbsp;fsModifiers,
+                       int&nbsp;vk)</PRE>
+<DL>
+<DD>Defines a system-wide hot key.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window that will receive <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_HOTKEY"><CODE>WinUser.WM_HOTKEY</CODE></A> messages generated by the hot key<DD><CODE>id</CODE> - The identifier of the hot key<DD><CODE>fsModifiers</CODE> - The keys that must be pressed in combination with the key specified by the
+      uVirtKey parameter in order to generate the <A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#WM_HOTKEY"><CODE>WinUser.WM_HOTKEY</CODE></A> message.<br/>
+      A combination of the following values
+      <ul>
+          <li><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_ALT"><CODE>WinUser.MOD_ALT</CODE></A> Either ALT key must be held down.</li>
+          <li><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_CONTROL"><CODE>WinUser.MOD_CONTROL</CODE></A> Either CTRL key must be held down.</li>
+          <li><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_NOREPEAT"><CODE>WinUser.MOD_NOREPEAT</CODE></A> Changes the hotkey behavior so that the keyboard
+          auto-repeat does not yield multiple hotkey notifications.
+          <b><br/>Windows Vista and Windows XP/2000:  This flag is not supported.</b></li>
+          <li><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_SHIFT"><CODE>WinUser.MOD_SHIFT</CODE></A> Either SHIFT key must be held down.</li>
+          <li><A HREF="../../../../../com/sun/jna/platform/win32/WinUser.html#MOD_WIN"><CODE>WinUser.MOD_WIN</CODE></A> Either WINDOWS key was held down.
+          These keys are labeled with the Windows logo.</li>
+      </ul><DD><CODE>vk</CODE> - The virtual-key code of the hot key
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+  If the function fails, the return value is zero.
+  To get extended error information, call <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.html#GetLastError()"><CODE>WinNT.GetLastError()</CODE></A>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="UnregisterHotKey(com.sun.jna.Pointer, int)"><!-- --></A><H3>
+UnregisterHotKey</H3>
+<PRE>
+boolean <B>UnregisterHotKey</B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;hWnd,
+                         int&nbsp;id)</PRE>
+<DL>
+<DD>Frees a hot key previously registered by the calling thread.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hWnd</CODE> - A handle to the window associated with the hot key to be freed. This parameter should be NULL if the hot key is not associated with a window.<DD><CODE>id</CODE> - The identifier of the hot key to be freed.
+<DT><B>Returns:</B><DD>If the function succeeds, the return value is nonzero.
+
+      If the function fails, the return value is zero.
+      To get extended error information, call <A HREF="../../../../../com/sun/jna/platform/win32/WinNT.html#GetLastError()"><CODE>WinNT.GetLastError()</CODE></A>.</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -2103,7 +2217,7 @@ boolean <B>CloseWindow</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Wi
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 

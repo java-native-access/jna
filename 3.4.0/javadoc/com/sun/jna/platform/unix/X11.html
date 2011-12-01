@@ -46,7 +46,7 @@ function windowTitle()
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 
@@ -356,6 +356,14 @@ Definition (incomplete) of the X library.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;class</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorEvent.html" title="class in com.sun.jna.platform.unix">X11.XErrorEvent</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;interface</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix">X11.XErrorHandler</A></B></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -4291,7 +4299,7 @@ Definition (incomplete) of the X library.
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XAllocNamedColor(com.sun.jna.platform.unix.X11.Display, int, java.lang.String, com.sun.jna.Pointer, com.sun.jna.Pointer)">XAllocNamedColor</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
                  int&nbsp;colormap,
-                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;color_name,
+                 <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;color_name,
                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;screen_def_return,
                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;exact_def_return)</CODE>
 
@@ -4781,7 +4789,7 @@ Definition (incomplete) of the X library.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XGetAtomName(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.Atom)">XGetAtomName</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
              <A HREF="../../../../../com/sun/jna/platform/unix/X11.Atom.html" title="class in com.sun.jna.platform.unix">X11.Atom</A>&nbsp;atom)</CODE>
 
@@ -4904,6 +4912,20 @@ Definition (incomplete) of the X library.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XGrabKey(com.sun.jna.platform.unix.X11.Display, int, int, com.sun.jna.platform.unix.X11.Window, int, int, int)">XGrabKey</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
+         int&nbsp;keyCode,
+         int&nbsp;modifiers,
+         <A HREF="../../../../../com/sun/jna/platform/unix/X11.Window.html" title="class in com.sun.jna.platform.unix">X11.Window</A>&nbsp;grab_window,
+         int&nbsp;ownerEvents,
+         int&nbsp;pointerMode,
+         int&nbsp;keyBoardMode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Establishes a passive grab on the keyboard</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/unix/X11.XModifierKeymapRef.html" title="class in com.sun.jna.platform.unix">X11.XModifierKeymapRef</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XInsertModifiermapEntry(com.sun.jna.platform.unix.X11.XModifierKeymapRef, byte, int)">XInsertModifiermapEntry</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.XModifierKeymapRef.html" title="class in com.sun.jna.platform.unix">X11.XModifierKeymapRef</A>&nbsp;modmap,
                         byte&nbsp;keycode_entry,
@@ -4916,7 +4938,7 @@ Definition (incomplete) of the X library.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/unix/X11.Atom.html" title="class in com.sun.jna.platform.unix">X11.Atom</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XInternAtom(com.sun.jna.platform.unix.X11.Display, java.lang.String, boolean)">XInternAtom</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
-            <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
+            <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
             boolean&nbsp;only_if_exists)</CODE>
 
 <BR>
@@ -4943,7 +4965,7 @@ Definition (incomplete) of the X library.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XKeysymToString(com.sun.jna.platform.unix.X11.KeySym)">XKeysymToString</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.KeySym.html" title="class in com.sun.jna.platform.unix">X11.KeySym</A>&nbsp;keysym)</CODE>
 
 <BR>
@@ -5006,7 +5028,7 @@ Definition (incomplete) of the X library.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XOpenDisplay(java.lang.String)">XOpenDisplay</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XOpenDisplay(java.lang.String)">XOpenDisplay</A></B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -5126,6 +5148,14 @@ Definition (incomplete) of the X library.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix">X11.XErrorHandler</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XSetErrorHandler(com.sun.jna.platform.unix.X11.XErrorHandler)">XSetErrorHandler</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix">X11.XErrorHandler</A>&nbsp;handler)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Installs an error handler</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XSetFillRule(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.GC, int)">XSetFillRule</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
              <A HREF="../../../../../com/sun/jna/platform/unix/X11.GC.html" title="class in com.sun.jna.platform.unix">X11.GC</A>&nbsp;gc,
@@ -5158,9 +5188,9 @@ Definition (incomplete) of the X library.
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XSetWMProperties(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.Window, java.lang.String, java.lang.String, java.lang.String[], int, com.sun.jna.platform.unix.X11.XSizeHints, com.sun.jna.Pointer, com.sun.jna.Pointer)">XSetWMProperties</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
                  <A HREF="../../../../../com/sun/jna/platform/unix/X11.Window.html" title="class in com.sun.jna.platform.unix">X11.Window</A>&nbsp;window,
-                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;window_name,
-                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;icon_name,
-                 <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;argv,
+                 <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;window_name,
+                 <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;icon_name,
+                 <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;argv,
                  int&nbsp;argc,
                  <A HREF="../../../../../com/sun/jna/platform/unix/X11.XSizeHints.html" title="class in com.sun.jna.platform.unix">X11.XSizeHints</A>&nbsp;normal_hints,
                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;wm_hints,
@@ -5172,7 +5202,7 @@ Definition (incomplete) of the X library.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/unix/X11.KeySym.html" title="class in com.sun.jna.platform.unix">X11.KeySym</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XStringToKeysym(java.lang.String)">XStringToKeysym</A></B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;string)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XStringToKeysym(java.lang.String)">XStringToKeysym</A></B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;string)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -5200,6 +5230,17 @@ Definition (incomplete) of the X library.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/unix/X11.html#XUngrabKey(com.sun.jna.platform.unix.X11.Display, int, int, com.sun.jna.platform.unix.X11.Window)">XUngrabKey</A></B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
+           int&nbsp;keyCode,
+           int&nbsp;modifiers,
+           <A HREF="../../../../../com/sun/jna/platform/unix/X11.Window.html" title="class in com.sun.jna.platform.unix">X11.Window</A>&nbsp;grab_window)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The XUngrabKey() function releases the key combination on the specified window if it was grabbed by this client.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -9691,7 +9732,7 @@ static final int <B>MSBFirst</B></PRE>
 <A NAME="XOpenDisplay(java.lang.String)"><!-- --></A><H3>
 XOpenDisplay</H3>
 <PRE>
-<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A> <B>XOpenDisplay</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</PRE>
+<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A> <B>XOpenDisplay</B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -9841,7 +9882,7 @@ XAllocNamedColor</H3>
 <PRE>
 int <B>XAllocNamedColor</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
                      int&nbsp;colormap,
-                     <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;color_name,
+                     <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;color_name,
                      <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;screen_def_return,
                      <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;exact_def_return)</PRE>
 <DL>
@@ -9873,9 +9914,9 @@ XSetWMProperties</H3>
 <PRE>
 void <B>XSetWMProperties</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
                       <A HREF="../../../../../com/sun/jna/platform/unix/X11.Window.html" title="class in com.sun.jna.platform.unix">X11.Window</A>&nbsp;window,
-                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;window_name,
-                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;icon_name,
-                      <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;argv,
+                      <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;window_name,
+                      <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;icon_name,
+                      <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>[]&nbsp;argv,
                       int&nbsp;argc,
                       <A HREF="../../../../../com/sun/jna/platform/unix/X11.XSizeHints.html" title="class in com.sun.jna.platform.unix">X11.XSizeHints</A>&nbsp;normal_hints,
                       <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;wm_hints,
@@ -10780,7 +10821,7 @@ int <B>XDeleteProperty</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11
 XInternAtom</H3>
 <PRE>
 <A HREF="../../../../../com/sun/jna/platform/unix/X11.Atom.html" title="class in com.sun.jna.platform.unix">X11.Atom</A> <B>XInternAtom</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
-                     <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
+                     <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;name,
                      boolean&nbsp;only_if_exists)</PRE>
 <DL>
 <DD><DL>
@@ -10795,7 +10836,7 @@ XInternAtom</H3>
 <A NAME="XGetAtomName(com.sun.jna.platform.unix.X11.Display, com.sun.jna.platform.unix.X11.Atom)"><!-- --></A><H3>
 XGetAtomName</H3>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>XGetAtomName</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
+<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>XGetAtomName</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
                     <A HREF="../../../../../com/sun/jna/platform/unix/X11.Atom.html" title="class in com.sun.jna.platform.unix">X11.Atom</A>&nbsp;atom)</PRE>
 <DL>
 <DD><DL>
@@ -10890,10 +10931,27 @@ int <B>XDestroyImage</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.X
 </DL>
 <HR>
 
+<A NAME="XSetErrorHandler(com.sun.jna.platform.unix.X11.XErrorHandler)"><!-- --></A><H3>
+XSetErrorHandler</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix">X11.XErrorHandler</A> <B>XSetErrorHandler</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.XErrorHandler.html" title="interface in com.sun.jna.platform.unix">X11.XErrorHandler</A>&nbsp;handler)</PRE>
+<DL>
+<DD>Installs an error handler
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>handler</CODE> - Specifies the program's supplied error handler
+<DT><B>Returns:</B><DD>The previous error handler</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="XKeysymToString(com.sun.jna.platform.unix.X11.KeySym)"><!-- --></A><H3>
 XKeysymToString</H3>
 <PRE>
-<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>XKeysymToString</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.KeySym.html" title="class in com.sun.jna.platform.unix">X11.KeySym</A>&nbsp;keysym)</PRE>
+<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A> <B>XKeysymToString</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.KeySym.html" title="class in com.sun.jna.platform.unix">X11.KeySym</A>&nbsp;keysym)</PRE>
 <DL>
 <DD>KeySyms, Keycodes, Keymaps
 <P>
@@ -10909,7 +10967,7 @@ XKeysymToString</H3>
 <A NAME="XStringToKeysym(java.lang.String)"><!-- --></A><H3>
 XStringToKeysym</H3>
 <PRE>
-<A HREF="../../../../../com/sun/jna/platform/unix/X11.KeySym.html" title="class in com.sun.jna.platform.unix">X11.KeySym</A> <B>XStringToKeysym</B>(<A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;string)</PRE>
+<A HREF="../../../../../com/sun/jna/platform/unix/X11.KeySym.html" title="class in com.sun.jna.platform.unix">X11.KeySym</A> <B>XStringToKeysym</B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;string)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -10947,6 +11005,51 @@ XKeycodeToKeysym</H3>
 </DD>
 <DD><DL>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="XGrabKey(com.sun.jna.platform.unix.X11.Display, int, int, com.sun.jna.platform.unix.X11.Window, int, int, int)"><!-- --></A><H3>
+XGrabKey</H3>
+<PRE>
+int <B>XGrabKey</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
+             int&nbsp;keyCode,
+             int&nbsp;modifiers,
+             <A HREF="../../../../../com/sun/jna/platform/unix/X11.Window.html" title="class in com.sun.jna.platform.unix">X11.Window</A>&nbsp;grab_window,
+             int&nbsp;ownerEvents,
+             int&nbsp;pointerMode,
+             int&nbsp;keyBoardMode)</PRE>
+<DL>
+<DD>Establishes a passive grab on the keyboard
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>display</CODE> - Specifies the connection to the X server.<DD><CODE>keyCode</CODE> - Specifies the KeyCode or <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#AnyKey"><CODE>AnyKey</CODE></A>.<DD><CODE>modifiers</CODE> - Specifies the set of keymasks or <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#AnyModifier"><CODE>AnyModifier</CODE></A>.
+      The mask is the bitwise inclusive OR of the valid keymask bits.<DD><CODE>grab_window</CODE> - Specifies the grab window.<DD><CODE>ownerEvents</CODE> - Specifies a Boolean value that indicates whether the keyboard events are to be reported as usual.<DD><CODE>pointerMode</CODE> - Specifies further processing of pointer events. You can pass <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#GrabModeSync"><CODE>GrabModeSync</CODE></A> or <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#GrabModeAsync"><CODE>GrabModeAsync</CODE></A>.<DD><CODE>keyBoardMode</CODE> - Specifies further processing of keyboard events. You can pass <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#GrabModeSync"><CODE>GrabModeSync</CODE></A> or <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#GrabModeAsync"><CODE>GrabModeAsync</CODE></A>.
+<DT><B>Returns:</B><DD>nothing</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="XUngrabKey(com.sun.jna.platform.unix.X11.Display, int, int, com.sun.jna.platform.unix.X11.Window)"><!-- --></A><H3>
+XUngrabKey</H3>
+<PRE>
+int <B>XUngrabKey</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Display.html" title="class in com.sun.jna.platform.unix">X11.Display</A>&nbsp;display,
+               int&nbsp;keyCode,
+               int&nbsp;modifiers,
+               <A HREF="../../../../../com/sun/jna/platform/unix/X11.Window.html" title="class in com.sun.jna.platform.unix">X11.Window</A>&nbsp;grab_window)</PRE>
+<DL>
+<DD>The XUngrabKey() function releases the key combination on the specified window if it was grabbed by this client.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>display</CODE> - Specifies the connection to the X server.<DD><CODE>keyCode</CODE> - Specifies the KeyCode or <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#AnyKey"><CODE>AnyKey</CODE></A>.<DD><CODE>modifiers</CODE> - Specifies the set of keymasks or <A HREF="../../../../../com/sun/jna/platform/unix/X11.html#AnyModifier"><CODE>AnyModifier</CODE></A>.
+      The mask is the bitwise inclusive OR of the valid keymask bits<DD><CODE>grab_window</CODE> - Specifies the grab window.
+<DT><B>Returns:</B><DD>nothing</DL>
 </DD>
 </DL>
 <HR>
@@ -11232,7 +11335,7 @@ int <B>XQueryKeymap</B>(<A HREF="../../../../../com/sun/jna/platform/unix/X11.Di
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<b>JNA API</><font size="-1"> 3.3.0</font></EM>
+<b>JNA API</><font size="-1"> 3.4.0</font></EM>
 </TD>
 </TR>
 
