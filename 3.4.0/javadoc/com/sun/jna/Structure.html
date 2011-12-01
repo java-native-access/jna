@@ -137,7 +137,8 @@ Represents a native structure with a Java peer class.  When used as a
  <p>
  NOTE: This class assumes that fields are returned in <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Class.html?is-external=true#getFields()" title="class or interface in java.lang"><CODE>Class.getFields()</CODE></A>
  in the same or reverse order as declared.  If your VM returns them in
- no particular order, you're out of luck.
+ no particular order, you need to call <a href="../../../com/sun/jna/STructure.html#setFieldOrder(java.lang.String[])"><code>setFieldOrder()</code></a> in your
+ subclass constructor to explicitly indicate the field order.
  <p/>
  NOTE: In general, instances of this class are <em>not</em> synchronized.
  <p/>
