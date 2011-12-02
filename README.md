@@ -56,6 +56,7 @@ Community and Support
 All questions should be posted ot the [jna-users Google group](http://groups.google.com/group/jna-users). Issues can be submitted [here on Github](https://github.com/twall/jna/issues).
 
 When posting to the mailing list, please include the following:
+
 * What OS/CPU/architecture you're using (e.g. Windows 7 64-bit)
 * Reference to your native interface definitions (i.e. C headers), if available
 * The JNA mapping you're trying to use
