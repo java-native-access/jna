@@ -26,11 +26,11 @@ import com.sun.jna.win32.StdCallLibrary;
  */
 public interface WinReg extends StdCallLibrary {
 	
-	public static class HKEY extends HANDLE {
+    public static class HKEY extends HANDLE {
         public HKEY() { }
         public HKEY(Pointer p) { super(p); }
         public HKEY(int value) { super(new Pointer(value)); }
-	}
+    }
 	
     public static class HKEYByReference extends ByReference {
         public HKEYByReference() {
@@ -58,13 +58,13 @@ public interface WinReg extends StdCallLibrary {
         }
     }
 	
-	public static final HKEY HKEY_CLASSES_ROOT = new HKEY(0x80000000);
-	public static final HKEY HKEY_CURRENT_USER = new HKEY(0x80000001);
-	public static final HKEY HKEY_LOCAL_MACHINE = new HKEY(0x80000002);
-	public static final HKEY HKEY_USERS = new HKEY(0x80000003);
-	public static final HKEY HKEY_PERFORMANCE_DATA= new HKEY(0x80000004);
-	public static final HKEY HKEY_PERFORMANCE_TEXT= new HKEY(0x80000050);
-	public static final HKEY HKEY_PERFORMANCE_NLSTEXT = new HKEY(0x80000060);
-	public static final HKEY HKEY_CURRENT_CONFIG  = new HKEY(0x80000005);
-	public static final HKEY HKEY_DYN_DATA = new HKEY(0x80000006);
+    HKEY HKEY_CLASSES_ROOT = new HKEY(0x80000000);
+    HKEY HKEY_CURRENT_USER = new HKEY(0x80000001);
+    HKEY HKEY_LOCAL_MACHINE = new HKEY(0x80000002);
+    HKEY HKEY_USERS = new HKEY(0x80000003);
+    HKEY HKEY_PERFORMANCE_DATA= new HKEY(0x80000004);
+    HKEY HKEY_PERFORMANCE_TEXT= new HKEY(0x80000050);
+    HKEY HKEY_PERFORMANCE_NLSTEXT = new HKEY(0x80000060);
+    HKEY HKEY_CURRENT_CONFIG  = new HKEY(0x80000005);
+    HKEY HKEY_DYN_DATA = new HKEY(0x80000006);
 }

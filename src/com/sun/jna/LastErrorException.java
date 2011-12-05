@@ -19,7 +19,7 @@ package com.sun.jna;
 */
 public class LastErrorException extends RuntimeException {
     
-	private int errorCode;
+    private int errorCode;
     
     private static String formatMessage(int code) {
         return Platform.isWindows()
@@ -37,8 +37,11 @@ public class LastErrorException extends RuntimeException {
     }
     
     public LastErrorException(String msg) {
-        super(parseMessage(msg));
+        super(parseMessage(msg.trim()));
         try {
+            if (msg.startsWith("[")) {
+                msg = msg.substring(1, msg.indexOf("]"));
+            }
             this.errorCode = Integer.parseInt(msg);
         }
         catch(NumberFormatException e) {

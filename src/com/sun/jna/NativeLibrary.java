@@ -130,6 +130,9 @@ public class NativeLibrary {
             if (handle == 0) {
                 libraryPath = findLibraryPath(libraryName, searchPath);
                 handle = Native.open(libraryPath);
+                if (handle == 0) {
+                    throw new UnsatisfiedLinkError("Failed to load library '" + libraryName + "'");
+                }
             }
         }
         catch(UnsatisfiedLinkError e) {
@@ -421,11 +424,11 @@ public class NativeLibrary {
     /** Close the native library we're mapped to. */
     public void dispose() {
         synchronized(libraries) {
-            libraries.remove(getName() + options);
-            File file = getFile();
-            if (file != null) {
-                libraries.remove(file.getAbsolutePath() + options);
-                libraries.remove(file.getName() + options);
+            for (Iterator i=libraries.values().iterator();i.hasNext();) {
+                Reference ref = (WeakReference)i.next();
+                if (ref.get() == this) {
+                    i.remove();
+                }
             }
         }
         synchronized(this) {

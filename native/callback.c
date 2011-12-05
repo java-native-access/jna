@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2011 Timothy Wall, All Rights Reserved
  * Copyright (c) 2007 Wayne Meissner, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   const char* throw_msg = NULL;
 
   if ((*env)->GetJavaVM(env, &vm) != JNI_OK) {
-    throwByName(env, EUnsatisfiedLink, "Can't get Java VM");
+    throwByName(env, EUnsatisfiedLink, "Can't get Java VM to create native callback");
     return NULL;
   }
   argc = (*env)->GetArrayLength(env, param_types);
@@ -62,6 +62,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
+
   cb->vm = vm;
   cb->arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
   cb->java_arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * (argc + 3));
@@ -83,7 +84,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 
     jtype = get_jtype(env, cls);
     if (jtype == -1) {
-      snprintf(msg, sizeof(msg), "Unsupported argument at index %d", i);
+      snprintf(msg, sizeof(msg), "Unsupported callback argument at index %d", i);
       throw_type = EIllegalArgument;
       throw_msg = msg;
       goto failure_cleanup;
@@ -97,7 +98,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       ncls = getNativeType(env, cls);
       jtype = get_jtype(env, ncls);
       if (jtype == -1) {
-        snprintf(msg, sizeof(msg), "Unsupported NativeMapped argument native type at argument %d", i);
+        snprintf(msg, sizeof(msg), "Unsupported NativeMapped callback argument native type at argument %d", i);
         throw_type = EIllegalArgument;
         throw_msg = msg;
         goto failure_cleanup;
@@ -133,7 +134,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }
@@ -143,13 +144,13 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   rtype = get_jtype(env, return_type);
   if (rtype == -1) {
     throw_type = EIllegalArgument;
-    throw_msg = "Unsupported return type";
+    throw_msg = "Unsupported callback return type";
     goto failure_cleanup;
   }
   ffi_rtype = get_ffi_rtype(env, return_type, (char)rtype);
   if (!ffi_rtype) {
     throw_type = EIllegalArgument;
-    throw_msg = "Error in return type";
+    throw_msg = "Error in callback return type";
     goto failure_cleanup;
   }
   status = ffi_prep_cif(&cb->cif, abi, argc, ffi_rtype, cb->arg_types);
@@ -187,7 +188,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
  failure_cleanup:
   free_callback(env, cb);
   if (throw_type) {
-    throwByName(env, throw_type, msg);
+    throwByName(env, throw_type, throw_msg);
   }
 
   return NULL;
@@ -250,8 +251,9 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   // Avoid calling back to a GC'd object
   if ((*env)->IsSameObject(env, self, NULL)) {
     fprintf(stderr, "JNA: callback object has been garbage collected\n");
-    if (cif->rtype->type != FFI_TYPE_VOID)
+    if (cif->rtype->type != FFI_TYPE_VOID) {
       memset(resp, 0, cif->rtype->size); 
+    }
   }
   else if (cb->direct) {
     unsigned int i;
@@ -391,29 +393,65 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
 
 static void
 callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
-  JavaVM* jvm = ((callback *)user_data)->vm;
+  callback* cb = ((callback *)user_data); 
+  JavaVM* jvm = cb->vm;
   JNIEnv* env;
-  int attached;
-  
-  attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
-  if (!attached) {
-    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach to current thread\n");
+  int was_attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
+  jboolean detach = was_attached ? JNI_FALSE : JNI_TRUE;
+
+  if (!was_attached) {
+    int attach_status = 0;
+    JavaVMAttachArgs args;
+    int daemon = JNI_FALSE;
+
+    args.version = JNI_VERSION_1_2;
+    args.name = NULL;
+    args.group = NULL;
+    if (cb->behavior_flags & CB_HAS_INITIALIZER) {
+      AttachOptions options;
+      options.daemon = JNI_FALSE; // default non-daemon
+      options.detach = JNI_TRUE; // default detach behavior
+      options.name = NULL;
+      args.group = initializeThread(cb, &options);
+      daemon = options.daemon ? JNI_TRUE : JNI_FALSE;
+      detach = options.detach ? JNI_TRUE : JNI_FALSE;
+      args.name = options.name;
+    }
+    if (daemon) {
+      attach_status = (*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args);
+    }
+    else {
+      attach_status = (*jvm)->AttachCurrentThread(jvm, (void *)&env, &args);
+    }
+    if (attach_status != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d\n", attach_status);
       return;
+    }
+    if (args.group) {
+      (*env)->DeleteWeakGlobalRef(env, args.group);
     }
   }
   
-  // Give the callback its own local frame to ensure all local references
+  // Give the callback glue its own local frame to ensure all local references
   // are properly disposed
   if ((*env)->PushLocalFrame(env, 16) < 0) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
   }
   else {
-    callback_invoke(env, (callback *)user_data, cif, resp, cbargs);
+    // Kind of a hack, use last error value rather than setting up our own TLS
+    setLastError(0);
+    callback_invoke(env, cb, cif, resp, cbargs);
+    // Must be invoked immediately after return to avoid anything
+    // stepping on errno/GetLastError
+    switch(lastError()) {
+    case THREAD_LEAVE_ATTACHED: detach = JNI_FALSE; break;
+    case THREAD_DETACH: detach = JNI_TRUE; break;
+    default: break; /* use default detach behavior */
+    }
     (*env)->PopLocalFrame(env, NULL);
   }
   
-  if (!attached) {
+  if (detach) {
     (*jvm)->DetachCurrentThread(jvm);
   }
 }

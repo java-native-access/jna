@@ -19,7 +19,9 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+#if !defined(_WIN32_WCE)
 #include <errno.h>
+#endif
 
 #ifdef _MSC_VER
 typedef signed char int8_t;
@@ -37,8 +39,22 @@ typedef __int64 int64_t;
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #define EXPORT __declspec(dllexport)
+#define SLEEP(MS) Sleep(MS)
+#define THREAD_T DWORD
+#define THREAD_CREATE(TP, FN, DATA) CreateThread(NULL, 0, FN, DATA, 0, TP)
+#define THREAD_EXIT() ExitThread(0)
+#define THREAD_FUNC(FN,ARG) DWORD WINAPI FN(LPVOID ARG)
+#define THREAD_CURRENT() GetCurrentThreadId()
 #else
 #define EXPORT
+#include <unistd.h>
+#include <pthread.h>
+#define SLEEP(MS) usleep(MS*1000)
+#define THREAD_T pthread_t
+#define THREAD_CREATE(TP, FN, DATA) pthread_create(TP, NULL, FN, DATA)
+#define THREAD_EXIT() pthread_exit(NULL)
+#define THREAD_FUNC(FN,ARG) void* FN(void *ARG)
+#define THREAD_CURRENT() pthread_self()
 #endif
 
 #ifdef _MSC_VER
@@ -72,6 +88,12 @@ struct CheckFieldAlignment {
 
 static int _callCount;
 
+EXPORT int
+callCount() {
+  return ++_callCount;
+}
+
+/** Simulate native code setting an arbitrary errno/LastError */
 EXPORT void
 setLastError(int err) {
 #ifdef _WIN32  
@@ -79,11 +101,6 @@ setLastError(int err) {
 #else
   errno = err;
 #endif
-}
-
-EXPORT int
-callCount() {
-  return ++_callCount;
 }
 
 EXPORT int  
@@ -373,9 +390,19 @@ setPointerByReferenceNull(void **arg) {
 
 EXPORT int64_t 
 checkInt64ArgumentAlignment(int32_t i, int64_t j, int32_t i2, int64_t j2) {
-  if (i != 0x10101010 || j != LONG(0x1111111111111111)
-      || i2 != 0x01010101 || j2 != LONG(0x2222222222222222))
+
+  if (i != 0x10101010) {
     return -1;
+  }
+  if (j != LONG(0x1111111111111111)) {
+    return -2;
+  }
+  if (i2 != 0x01010101) {
+    return -3;
+  }
+  if (j2 != LONG(0x2222222222222222)) {
+    return -4;
+  }
 
   return i + j + i2 + j2;
 }
@@ -384,8 +411,11 @@ EXPORT double
 checkDoubleArgumentAlignment(float f, double d, float f2, double d2) {
   // float:  1=3f800000 2=40000000 3=40400000 4=40800000
   // double: 1=3ff00... 2=40000... 3=40080... 4=40100...
-  if (f != 1 || d != 2 || f2 != 3 || d2 != 4)
-    return -1;
+
+  if (f != 1) return -1;
+  if (d != 2) return -2;
+  if (f2 != 3) return -3;
+  if (d2 != 4) return -4;
 
   return f + d + f2 + d2;
 }
@@ -395,10 +425,36 @@ testStructurePointerArgument(struct CheckFieldAlignment* arg) {
   return arg;
 }
 
-EXPORT double
+EXPORT int
 testStructureByValueArgument(struct CheckFieldAlignment arg) {
-  return arg.int8Field + arg.int16Field + arg.int32Field
-    + arg.int64Field + arg.floatField + arg.doubleField;
+  int offset;
+  struct CheckFieldAlignment *base = (struct CheckFieldAlignment *)0;
+#define FLAG(F) ((F)<<8)
+  offset = (int)((char *)&base->int8Field - (char*)base);
+  if (arg.int8Field != offset) {
+    return (int)offset | FLAG(1);
+  }
+  offset = (int)((char *)&base->int16Field - (char*)base);
+  if (arg.int16Field != offset) {
+    return (int)offset | FLAG(2);
+  }
+  offset = (int)((char *)&base->int32Field - (char*)base);
+  if (arg.int32Field != offset) {
+    return (int)offset | FLAG(3);
+  }
+  offset = (int)((char *)&base->int64Field - (char*)base);
+  if (arg.int64Field != offset) {
+    return (int)offset | FLAG(4);
+  }
+  offset = (int)((char *)&base->floatField - (char*)base);
+  if (arg.floatField != offset) {
+    return (int)offset | FLAG(5);
+  }
+  offset = (int)((char *)&base->doubleField - (char*)base);
+  if (arg.doubleField != offset) {
+    return (int)offset | FLAG(6);
+  }
+  return 0;
 }
 
 typedef struct ByValue8 { int8_t data; } ByValue8;
@@ -549,6 +605,34 @@ modifyStructureArray(struct CheckFieldAlignment arg[], int length) {
 EXPORT void
 callVoidCallback(void (*func)(void)) {
   (*func)();
+}
+
+typedef struct thread_data {
+  int repeat_count;
+  int sleep_time;
+  void (*func)(void);
+} thread_data;
+static THREAD_FUNC(thread_function, arg) {
+  // make a local copy
+  thread_data td = *(thread_data*)arg;
+  void (*func)(void) = td.func;
+  int i;
+
+  for (i=0;i < td.repeat_count;i++) {
+    func();
+    SLEEP(td.sleep_time);
+  }
+  THREAD_EXIT();
+}
+
+static thread_data data;
+EXPORT void
+callVoidCallbackThreaded(void (*func)(void), int n, int ms) {
+  THREAD_T thread;
+  data.repeat_count = n;
+  data.sleep_time = ms;
+  data.func = func;
+  THREAD_CREATE(&thread, &thread_function, &data);
 }
 
 EXPORT int 
@@ -786,7 +870,7 @@ returnStringVarArgs(const char *fmt, ...) {
   return cp;
 }
 
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
 ///////////////////////////////////////////////////////////////////////
 // stdcall tests
 ///////////////////////////////////////////////////////////////////////

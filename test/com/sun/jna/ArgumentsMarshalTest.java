@@ -12,13 +12,6 @@
  */
 package com.sun.jna;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
-import java.nio.ShortBuffer;
 import java.util.Arrays;
 
 import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
@@ -29,7 +22,7 @@ import junit.framework.TestCase;
  *
  * @author twall@users.sf.net
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class ArgumentsMarshalTest extends TestCase {
 
     public static interface TestLibrary extends Library {
@@ -40,12 +33,20 @@ public class ArgumentsMarshalTest extends TestCase {
             public static class ByReference extends CheckFieldAlignment
                 implements Structure.ByReference { }
         
-            public byte int8Field = 1;
-            public short int16Field = 2;
-            public int int32Field = 3;
-            public long int64Field = 4;
-            public float floatField = 5f;
-            public double doubleField = 6d;
+            public byte int8Field;
+            public short int16Field;
+            public int int32Field;
+            public long int64Field;
+            public float floatField;
+            public double doubleField;
+	    public CheckFieldAlignment() {
+		int8Field = (byte)fieldOffset("int8Field");
+		int16Field = (short)fieldOffset("int16Field");
+		int32Field = fieldOffset("int32Field");
+		int64Field = fieldOffset("int64Field");
+		floatField = fieldOffset("floatField");
+		doubleField = fieldOffset("doubleField");
+	    }
         }
 
         String returnStringArgument(Object arg);
@@ -76,7 +77,7 @@ public class ArgumentsMarshalTest extends TestCase {
         long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
         Pointer testStructurePointerArgument(CheckFieldAlignment p);
-        double testStructureByValueArgument(CheckFieldAlignment.ByValue p);
+        int testStructureByValueArgument(CheckFieldAlignment.ByValue p);
         int testStructureArrayInitialization(CheckFieldAlignment[] p, int len);
         void modifyStructureArray(CheckFieldAlignment[] p, int length);
         
@@ -86,21 +87,6 @@ public class ArgumentsMarshalTest extends TestCase {
         int fillInt64Buffer(long[] buf, int len, long value);
         int fillFloatBuffer(float[] buf, int len, float value);
         int fillDoubleBuffer(double[] buf, int len, double value);
-
-        // ByteBuffer alternative definitions
-        int fillInt8Buffer(ByteBuffer buf, int len, byte value);
-        int fillInt16Buffer(ByteBuffer buf, int len, short value);
-        int fillInt32Buffer(ByteBuffer buf, int len, int value);
-        int fillInt64Buffer(ByteBuffer buf, int len, long value);
-        int fillFloatBuffer(ByteBuffer buf, int len, float value);
-        int fillDoubleBuffer(ByteBuffer buf, int len, double value);
-        
-        // {Short|Int|Long|,Float|Double}Buffer alternative definitions
-        int fillInt16Buffer(ShortBuffer buf, int len, short value);
-        int fillInt32Buffer(IntBuffer buf, int len, int value);
-        int fillInt64Buffer(LongBuffer buf, int len, long value);
-        int fillFloatBuffer(FloatBuffer buf, int len, float value);
-        int fillDoubleBuffer(DoubleBuffer buf, int len, double value);
 
         // Nonexistent functions 
         boolean returnBooleanArgument(Object arg);
@@ -341,8 +327,8 @@ public class ArgumentsMarshalTest extends TestCase {
     public void testStructureByValueArgument() {
         TestLibrary.CheckFieldAlignment.ByValue struct = 
             new TestLibrary.CheckFieldAlignment.ByValue();
-        assertEquals("Wrong sum of fields for " + struct.toString(true),
-                     21d, lib.testStructureByValueArgument(struct));
+        assertEquals("Wrong alignment in " + struct.toString(true),
+                     "0", Integer.toHexString(lib.testStructureByValueArgument(struct)));
     }
     
     public void testStructureByValueTypeInfo() {
@@ -438,146 +424,13 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
-    public void testLongArrayArgument() {
+    public void testLongArrayArgument() { 
         long[] buf = new long[1024];
         final long MAGIC = 0x1234567887654321L;
         assertEquals("Wrong return value", buf.length, 
                      lib.fillInt64Buffer(buf, buf.length, MAGIC));
         for (int i=0;i < buf.length;i++) {
             assertEquals("Bad value at index " + i, MAGIC, buf[i]);
-        }
-    }
-    
-    public void testByteBufferArgument() {
-        ByteBuffer buf  = ByteBuffer.allocate(1024).order(ByteOrder.nativeOrder());
-        final byte MAGIC = (byte)0xED;
-        lib.fillInt8Buffer(buf, 1024, MAGIC);
-        for (int i=0;i < buf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, buf.get(i));
-        }
-    }
-    public void testShortBufferArgument() {
-        ShortBuffer buf  = ShortBuffer.allocate(1024);
-        final short MAGIC = (short)0xABED;
-        lib.fillInt16Buffer(buf, 1024, MAGIC);
-        for (int i=0;i < buf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, buf.get(i));
-        }
-    }
-    public void testIntBufferArgument() {
-        IntBuffer buf  = IntBuffer.allocate(1024);
-        final int MAGIC = 0xABEDCF23;
-        lib.fillInt32Buffer(buf, 1024, MAGIC);
-        for (int i=0;i < buf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, buf.get(i));
-        }
-    }
-    public void testLongBufferArgument() {
-        LongBuffer buf  = LongBuffer.allocate(1024);
-        final long MAGIC = 0x1234567887654321L;
-        lib.fillInt64Buffer(buf, 1024, MAGIC);
-        for (int i=0;i < buf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, buf.get(i));
-        }
-    }
-    
-    public void testDirectByteBufferArgument() {
-        ByteBuffer buf  = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder());
-        final byte MAGIC = (byte)0xED;
-        lib.fillInt8Buffer(buf, 1024, MAGIC);
-        for (int i=0;i < buf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, buf.get(i));
-        }
-    }
-    
-    public void testDirectShortBufferArgument() {
-        ByteBuffer buf  = ByteBuffer.allocateDirect(1024*2).order(ByteOrder.nativeOrder());
-        ShortBuffer shortBuf = buf.asShortBuffer();
-        final short MAGIC = (short)0xABED;
-        lib.fillInt16Buffer(shortBuf, 1024, MAGIC);
-        for (int i=0;i < shortBuf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, shortBuf.get(i));
-        }
-    }
-    
-    public void testDirectIntBufferArgument() {
-        ByteBuffer buf  = ByteBuffer.allocateDirect(1024*4).order(ByteOrder.nativeOrder());
-        IntBuffer intBuf = buf.asIntBuffer();
-        final int MAGIC = 0xABEDCF23;
-        lib.fillInt32Buffer(intBuf, 1024, MAGIC);
-        for (int i=0;i < intBuf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, intBuf.get(i));
-        }
-    }
-    
-    public void testDirectLongBufferArgument() {
-        ByteBuffer buf  = ByteBuffer.allocateDirect(1024*8).order(ByteOrder.nativeOrder());
-        LongBuffer longBuf = buf.asLongBuffer();
-        final long MAGIC = 0x1234567887654321L;
-        lib.fillInt64Buffer(longBuf, 1024, MAGIC);
-        for (int i=0;i < longBuf.capacity();i++) {
-            assertEquals("Bad value at index " + i, MAGIC, longBuf.get(i));
-        }
-    }
-    
-    public void testWrappedByteArrayArgument() {
-        byte[] array = new byte[1024];
-        ByteBuffer buf = ByteBuffer.wrap(array, 512, 512).slice();
-        final byte MAGIC = (byte)0xAB;
-        lib.fillInt8Buffer(buf, 512, MAGIC);
-        for (int i=0;i < array.length;i++) {
-            assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
-        }
-    }
-    public void testWrappedShortArrayArgument() {
-        short[] array = new short[1024];
-        ShortBuffer buf = ShortBuffer.wrap(array, 512, 512).slice();
-        final short MAGIC = (short)0xABED;
-        lib.fillInt16Buffer(buf, 512, MAGIC);
-        for (int i=0;i < array.length;i++) {
-            assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
-        }
-    }
-    public void testWrappedIntArrayArgument() {
-        int[] array = new int[1024];
-        IntBuffer buf  = IntBuffer.wrap(array, 512, 512).slice();
-        final int MAGIC = 0xABEDCF23;
-        lib.fillInt32Buffer(buf, 512, MAGIC);
-        for (int i=0;i < array.length;i++) {
-            assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
-        }
-    }
-    public void testWrappedLongArrayArguent() {
-        long[] array = new long[1024];
-        LongBuffer buf  = LongBuffer.wrap(array, 512, 512).slice();
-        final long MAGIC = 0x1234567887654321L;
-        lib.fillInt64Buffer(buf, 512, MAGIC);
-        for (int i=0;i < array.length;i++) {
-            assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
-        }
-    }
-    public void testWrappedFloatArrayArguent() {
-        float[] array = new float[1024];
-        FloatBuffer buf  = FloatBuffer.wrap(array, 512, 512).slice();
-        final float MAGIC = -118.625f;
-        lib.fillFloatBuffer(buf, 512, MAGIC);
-        for (int i=0;i < array.length;i++) {
-            assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
-        }
-    }
-    public void testWrappedDoubleArrayArguent() {
-        double[] array = new double[1024];
-        DoubleBuffer buf  = DoubleBuffer.wrap(array, 512, 512).slice();
-        final double MAGIC = -118.625;
-        lib.fillDoubleBuffer(buf, 512, MAGIC);
-        for (int i=0;i < array.length;i++) {
-            assertEquals("Bad value at index " + i,
-                         i < 512 ? 0 : MAGIC, array[i]);
         }
     }
     
@@ -692,7 +545,7 @@ public class ArgumentsMarshalTest extends TestCase {
         assertEquals("Auto read should be disabled", EXPECTED, s.field);
     }
 
-    public void testUnionByValueCallbackArgument() throws Exception{
+    public void testUnionByValueCallbackArgument() throws Exception{ 
         TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
         arg.setType(String.class);
         final String VALUE = getName();
@@ -700,14 +553,14 @@ public class ArgumentsMarshalTest extends TestCase {
         final boolean[] called = { false };
         final String[] cbvalue = { null };
         TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
-                public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
-                    called[0] = true;
-                    v.setType(String.class);
-                    v.read();
-                    cbvalue[0] = v.f1;
-                    return v;
-                }
-            }, arg);
+            public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
+                called[0] = true;
+                v.setType(String.class);
+                v.read();
+                cbvalue[0] = v.f1;
+                return v;
+            }
+        }, arg);
         assertTrue("Callback not called", called[0]);
         assertEquals("Incorrect callback union argument", VALUE, cbvalue[0]);
         assertEquals("Union value not propagated", VALUE, result.getTypedValue(String.class));

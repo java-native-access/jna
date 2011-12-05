@@ -1,13 +1,24 @@
-Release 3.3.x
+Release 3.4.0
 =============
 
 Features
 --------
-* Disable automatic jnidispatch unpacking with jna.nounpack=true (Ricq)
-* linux/ppc 32-bit support (Fritiof Hedman)
-* linux multi-arch support (kohsuke)
-* Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`
-* Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`
+* Provide `jna.nosys=true` to avoid loading any system-provided JNA (useful for local build/development).
+* Allow override of default jnidispatch library name with `jna.boot.library.name` system property.
+* Throw an Error if a system install of JNA is incompatible or if JNA's JNI library does not match.
+* Disable automatic jnidispatch unpacking with `jna.nounpack=true`.
+* Automatically look up system error messages for LastErrorException.
+* Improved callback thread-mapping support; re-use, rename, and group callback
+threads.
+* Cache structure layout results, improving performance of structure creation.
+* linux/arm 32-bit support (hardware provided by Alex Lam).
+* linux/ppc 32-bit support (hardware provided by Fritiof Hedman).
+* Preliminary linux/ia64, linux/ppc64 support (thanks to Laurent Guerby and the GCC compile farm).
+* Windows CE/Mobile support (w32ce-arm) (resources provided by andrea antonello and Hydrologis SRL).  
+* linux multi-arch support (kohsuke).
+* Added REG_QWORD registry type support
+* Add to `platform.unix.x11`: `XGrabKey`, `XUngrabKey`, `XSetErrorHandler`.
+* Add to `platform.mac.Carbon`: `GetEventDispatcherTarget`, `InstallEventHandler`, `RegisterEventHotKey`, `GetEventParameter`, `RemoveEventHandler`, `UnregisterEventHotKey`.
 * Add to `platform.win32.Kernel32`: `CopyFile`, `MoveFile`, `MoveFileEx`, `CreateProcess`, `SetEnvironmentVariables`, `GetFileTime`, `SetFileTime`, `SetFileAttributes`, `DeviceIoControl`, `GetDiskFreeSpaceEx`, `CreateToolhelp32Snapshot`, `Process32First`, `Process32Next`.
 * Add to `platform.win32.Msi`: `MsiGetComponentPath`, `MsiLocateComponent`, `MsiGetProductCode`, `MsiEnumComponents`.
 * Add to `platform.win32.User32`: `RegisterHotKey`, `UnregisterHotKey`
@@ -15,11 +26,18 @@ Features
 * Add `platform.win32.Shell32.ShellExecute`.
 * Add to `platform.win32.User32`: `SetParent`, `IsWindowVisible`, `MoveWindow`, `SetWindowPos`, `AttachInputThread`, `SetForegroundWindow`, `GetForegroundWindow`, `SetFocus`, `SendInput`, `WaitForInputIdle`, `InvalidateRect`, `RedrawWindow`, `GetWindow`, `UpdateWindow`, `ShowWindow`, `CloseWindow`.
 * Add to `platform.win32.Version`: `GetFileVersionInfoSize`, `GetFileVersionInfo`, `VerQueryValue`.
+* Add to `platform.win32.Advapi32`: `GetFileSecurity`, `RegQueryValueEx(...Long...)`.
+* Add to `platform.win32.Netapi32`: `NetUserGetInfo`.
 
 Bug Fixes
 --------
-* Revise cleanup of in-use temporary files on win32 (issue 6)
-* Fix structure alignment issues on linux/ppc
+* Revise cleanup of in-use temporary files on win32 (issue 6).
+* Fix structure alignment issues on linux/ppc.
+* Fix structure alignment issues on linux/arm.
+* Account for NIO Buffer position (JIRA issue 185).
+* Avoid crash with very long Strings (> 150k in length).
+* Fix bug tracking Memory with an associated direct ByteBuffer.
+* Fix bug handling structs by value when type mappers are in effect (JIRA issue 188).
 
 Release 3.3.0
 =============

@@ -34,7 +34,7 @@ public class FileUtilsTest extends TestCase {
             catch(IOException e) {
                 fail(e.toString());
             }
-            assertFalse("Failed to move " + file + " to trash", file.exists());
+            assertFalse("File still exists after move to trash: " + file, file.exists());
         }
         finally {
             if (file.exists()) {

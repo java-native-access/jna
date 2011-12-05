@@ -15,7 +15,6 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +28,7 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -100,7 +100,7 @@ public class Kernel32Test extends TestCase {
     	IntByReference lpnSize = new IntByReference(0);
     	assertFalse(Kernel32.INSTANCE.GetComputerName(null, lpnSize));
     	assertEquals(W32Errors.ERROR_BUFFER_OVERFLOW, Kernel32.INSTANCE.GetLastError());
-    	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH() + 1];
+    	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH + 1];
     	lpnSize.setValue(buffer.length);
     	assertTrue(Kernel32.INSTANCE.GetComputerName(buffer, lpnSize));
     }
@@ -203,8 +203,8 @@ public class Kernel32Test extends TestCase {
     
     public void testGetVersion() {
     	DWORD version = Kernel32.INSTANCE.GetVersion();
-    	assertTrue(version.getHigh().intValue() != 0);
-    	assertTrue(version.getLow().intValue() >= 0);
+    	assertTrue("Version high should be non-zero: 0x" + Integer.toHexString(version.getHigh().intValue()), version.getHigh().intValue() != 0);
+    	assertTrue("Version low should be >= 0: 0x" + Integer.toHexString(version.getLow().intValue()), version.getLow().intValue() >= 0);
     }
     
     public void testGetVersionEx_OSVERSIONINFO() {
@@ -303,11 +303,11 @@ public class Kernel32Test extends TestCase {
     			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
     	assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
     	
-    	ByteBuffer b = ByteBuffer.allocate(2048);
+    	Memory m = new Memory(2048);
     	IntByReference lpNumberOfBytesRead = new IntByReference(0);
-    	assertTrue(Kernel32.INSTANCE.ReadFile(hFile, b, b.capacity(), lpNumberOfBytesRead, null));
+    	assertTrue(Kernel32.INSTANCE.ReadFile(hFile, m, (int)m.size(), lpNumberOfBytesRead, null));
     	assertEquals(expected.length(), lpNumberOfBytesRead.getValue());
-    	assertEquals(expected, Native.toString(b.array()));
+    	assertEquals(expected, m.getString(0));
     	
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));    	
     }

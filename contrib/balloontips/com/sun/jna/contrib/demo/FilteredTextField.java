@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Popup;
@@ -398,7 +399,7 @@ public class FilteredTextField extends JTextField {
     catch (Exception e) {
       e.printStackTrace();
     }
-    JFrame jframe = new JFrame("FilteredTextField Test");
+    JFrame jframe = new JFrame("Balloon Tips on FilteredTextField");
     jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     jframe.setSize(400, 75);
     jframe.setLocation(400, 400);
@@ -414,6 +415,7 @@ public class FilteredTextField extends JTextField {
       "Only lower case letters, hyphens, underscores, and spaces allowed.");
     ftfield.setValidRegex("^a+[a-z-_ ]*");
     ftfield.setValidError("The string must begin with the letter 'a'.");
+    jpanel.add(new JLabel("Type some text into either field"), BorderLayout.NORTH);
     jpanel.add(ftfield, BorderLayout.CENTER);
     jpanel.add(new FilteredTextField(10), BorderLayout.SOUTH);
     jframe.getContentPane().add(jpanel);

@@ -78,7 +78,9 @@ class NativeString implements CharSequence, Comparable {
     }
 
     public String toString() {
-        return pointer.getString(0, wide);
+        String s = wide ? "const wchar_t*" : "const char*";
+        s += "(" + pointer.getString(0, wide) + ")";
+        return s;
     }
 
     public Pointer getPointer() {

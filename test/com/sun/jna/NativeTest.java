@@ -18,9 +18,24 @@ import java.util.Map;
 import java.util.Properties;
 import junit.framework.TestCase;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
     
+    public void testLongStringGeneration() {
+        StringBuffer buf = new StringBuffer();
+        final int MAX = Platform.isWindowsCE() ? 200000 : 2000000;
+        for (int i=0;i < MAX;i++) {
+            buf.append('a');
+        }
+        String s1 = buf.toString();
+        Memory m = new Memory((MAX + 1)*Native.WCHAR_SIZE);
+        m.setString(0, s1, true);
+        assertEquals("Missing terminator after write", 0, m.getChar(MAX*Native.WCHAR_SIZE));
+        String s2 = m.getString(0, true);
+        assertEquals("Wrong string read length", s1.length(), s2.length());
+        assertEquals("Improper wide string read", s1, s2);
+    }
+
     public void testDefaultStringEncoding() throws Exception {
         String encoding = System.getProperty("file.encoding");
         // Keep stuff within the extended ASCII range so we work with more
@@ -229,6 +244,9 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path Windows/i386", "/com/sun/jna/win32-x86",
                      Native.getNativeLibraryResourcePath(Platform.WINDOWS,
                                                          "i386", "Windows"));
+        assertEquals("Wrong resource path Windows CE/arm", "/com/sun/jna/w32ce-arm",
+                     Native.getNativeLibraryResourcePath(Platform.WINDOWSCE,
+                                                         "arm", "Windows CE"));
         assertEquals("Wrong resource path Mac/x86", "/com/sun/jna/darwin",
                      Native.getNativeLibraryResourcePath(Platform.MAC,
                                                          "x86", "Darwin"));
@@ -247,6 +265,9 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path Linux/x86", "/com/sun/jna/linux-i386",
                      Native.getNativeLibraryResourcePath(Platform.LINUX,
                                                          "x86", "Linux"));
+        assertEquals("Wrong resource path Linux/ppc", "/com/sun/jna/linux-ppc",
+                     Native.getNativeLibraryResourcePath(Platform.LINUX,
+                                                         "powerpc", "Linux"));
         assertEquals("Wrong resource path OpenBSD/x86", "/com/sun/jna/openbsd-i386",
                      Native.getNativeLibraryResourcePath(Platform.OPENBSD,
                                                          "x86", "OpenBSD"));
@@ -317,6 +338,49 @@ public class NativeTest extends TestCase {
     }
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(NativeTest.class);
+        if (args.length == 0) {
+            junit.textui.TestRunner.run(NativeTest.class);
+        }
+        else {
+            if (args.length == 1 && "all".equals(args[0])) {
+                args = new String[] {
+                    "com.sun.jna.NativeTest",
+                    "com.sun.jna.NativeLibraryTest",
+                    "com.sun.jna.PointerTest",
+                    "com.sun.jna.MemoryTest",
+                    "com.sun.jna.LibraryLoadTest", 
+                    "com.sun.jna.ArgumentsMarshalTest",
+                    "com.sun.jna.ReturnTypesTest",
+                    "com.sun.jna.TypeMapperTest", 
+                    "com.sun.jna.ByReferenceArgumentsTest",
+                    "com.sun.jna.LastErrorTest", 
+                    "com.sun.jna.StructureTest",// 1 wce failure (RO fields)
+                    "com.sun.jna.StructureByValueTest",
+                    "com.sun.jna.UnionTest",
+                    "com.sun.jna.IntegerTypeTest", 
+                    "com.sun.jna.VMCrashProtectionTest",
+                    "com.sun.jna.CallbacksTest", 
+                    "com.sun.jna.JNAUnloadTest",
+                    "com.sun.jna.DirectTest",
+                    "com.sun.jna.DirectArgumentsMarshalTest",
+                    "com.sun.jna.DirectByReferenceArgumentsTest",
+                    "com.sun.jna.DirectTypeMapperTest",
+                    "com.sun.jna.DirectReturnTypesTest",
+                    "com.sun.jna.DirectStructureByValueTest",
+                    "com.sun.jna.DirectCallbacksTest",
+                };
+            }
+            System.out.println("Test suites: " + args.length);
+            for (int i=0;i < args.length;i++) {
+                System.out.println("Running tests on class " + args[i]);
+                try {
+                    junit.textui.TestRunner.run(Class.forName(args[i]));
+                }
+                catch(Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+            try { Thread.sleep(300000); } catch(Exception e) { }
+        }
     }
 }

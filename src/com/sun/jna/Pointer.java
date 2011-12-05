@@ -430,7 +430,7 @@ public class Pointer {
                 result = cb;
             }
         }
-        else if (Buffer.class.isAssignableFrom(type)) {
+        else if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
             Pointer bp = getPointer(offset);
             if (bp == null) {
                 result = null;
@@ -697,42 +697,63 @@ v     * @param wide whether to convert from a wide or standard C string
         return getString(offset, false);
     }
 
+    /** Read a native array of bytes of size <code>arraySize</code> from the
+        given <code>offset</code> from this {@link Pointer}.
+    */
     public byte[] getByteArray(long offset, int arraySize) {
         byte[] buf = new byte[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
     
+    /** Read a native array of wchar_t of size <code>arraySize</code> from the
+        given <code>offset</code> from this {@link Pointer}.
+    */
     public char[] getCharArray(long offset, int arraySize) {
         char[] buf = new char[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
+    /** Read a native array of int16 of size <code>arraySize</code> from the
+        given <code>offset</code> from this {@link Pointer}.
+    */
     public short[] getShortArray(long offset, int arraySize) {
         short[] buf = new short[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
+    /** Read a native array of int32 of size <code>arraySize</code> from the
+        given <code>offset</code> from this {@link Pointer}.
+    */
     public int[] getIntArray(long offset, int arraySize) {
         int[] buf = new int[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
+    /** Read a native array of int64 of size <code>arraySize</code> from the
+        given <code>offset</code> from this {@link Pointer}.
+    */
     public long[] getLongArray(long offset, int arraySize) {
         long[] buf = new long[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
+    /** Read a native array of float of size <code>arraySize</code> from the
+        given <code>offset</code> from this {@link Pointer}.
+    */
     public float[] getFloatArray(long offset, int arraySize) {
         float[] buf = new float[arraySize];
         read(offset, buf, 0, arraySize);
         return buf;
     }
 
+    /** Read a native array of double of size <code>arraySize</code> from the
+        given <code>offset</code> from this {@link Pointer}.
+    */
     public double[] getDoubleArray(long offset, int arraySize) {
         double[] buf = new double[arraySize];
         read(offset, buf, 0, arraySize);
@@ -742,14 +763,14 @@ v     * @param wide whether to convert from a wide or standard C string
     /** Returns an array of {@link Pointer}.  The array length is
      * determined by a NULL-valued terminating element.
      */
-    public Pointer[] getPointerArray(long base) {
+    public Pointer[] getPointerArray(long offset) {
         List array = new ArrayList();
-        int offset = 0;
-        Pointer p = getPointer(base);
+        int addOffset = 0;
+        Pointer p = getPointer(offset);
         while (p != null) {
             array.add(p);
-            offset += Pointer.SIZE;
-            p = getPointer(base + offset);
+            addOffset += Pointer.SIZE;
+            p = getPointer(offset + addOffset);
         }
         return (Pointer[])array.toArray(new Pointer[array.size()]);
     }
@@ -765,15 +786,15 @@ v     * @param wide whether to convert from a wide or standard C string
      * of <code>char *</code>.  The array length is determined by a
      * NULL-valued terminating element. 
      */
-    public String[] getStringArray(long base) {
-        return getStringArray(base, -1, false);
+    public String[] getStringArray(long offset) {
+        return getStringArray(offset, -1, false);
     }
 
     /** Returns an array of <code>String</code> based on a native array
      * of <code>char *</code>, using the given array length. 
      */
-    public String[] getStringArray(long base, int length) {
-        return getStringArray(base, length, false);
+    public String[] getStringArray(long offset, int length) {
+        return getStringArray(offset, length, false);
     }
 
     /** Returns an array of <code>String</code> based on a native array
@@ -781,36 +802,36 @@ v     * @param wide whether to convert from a wide or standard C string
      * <code>wide</code> parameter.  The array length is determined by a
      * NULL-valued terminating element. 
      */
-    public String[] getStringArray(long base, boolean wide) {
-        return getStringArray(base, -1, wide);
+    public String[] getStringArray(long offset, boolean wide) {
+        return getStringArray(offset, -1, wide);
     }
 
     /** Returns an array of <code>String</code> based on a native array
      * of <code>char*</code> or <code>wchar_t*</code> based on the
      * <code>wide</code> parameter, using the given array length.
      */
-    public String[] getStringArray(long base, int length, boolean wide) {
+    public String[] getStringArray(long offset, int length, boolean wide) {
     
         List strings = new ArrayList();
         Pointer p;
-        int offset = 0;
+        int addOffset = 0;
         if (length != -1) {
-            p = getPointer(base + offset);
+            p = getPointer(offset + addOffset);
             int count = 0;
             while (count++ < length) {
                 String s = p == null ? null : p.getString(0, wide);
                 strings.add(s);
                 if (count < length) {
-                    offset += SIZE;
-                    p = getPointer(base + offset);
+                    addOffset += SIZE;
+                    p = getPointer(offset + addOffset);
                 }
             }
         }
         else {
-            while ((p = getPointer(base + offset)) != null) {
+            while ((p = getPointer(offset + addOffset)) != null) {
                 String s = p == null ? null : p.getString(0, wide);
                 strings.add(s);
-                offset += SIZE;
+                addOffset += SIZE;
             }
         }
         return (String[])strings.toArray(new String[strings.size()]);
@@ -872,7 +893,7 @@ v     * @param wide whether to convert from a wide or standard C string
         else if (Callback.class.isAssignableFrom(type)) {
             setPointer(offset, CallbackReference.getFunctionPointer((Callback)value));
         }
-        else if (Buffer.class.isAssignableFrom(type)) {
+        else if (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type)) {
             Pointer p = value == null ? null
                 : Native.getDirectBufferPointer((Buffer)value);
             setPointer(offset, p);

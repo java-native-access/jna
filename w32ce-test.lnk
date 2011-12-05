@@ -1,0 +1,1 @@
+255#"\storage card\phoneme\personal\bin\cvm.exe" -Djna.boot.library.path="\storage card" -Djna.library.path="\storage card" -cp "\storage card\test.jar;\storage card\junit.jar" com.sun.jna.NativeTest all

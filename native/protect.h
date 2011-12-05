@@ -77,7 +77,7 @@ _exc_handler(struct _EXCEPTION_RECORD* exception_record,
 #define PROTECTED_END(ONERR) } __except((PROTECT)?EXCEPTION_EXECUTE_HANDLER:EXCEPTION_CONTINUE_SEARCH) { ONERR; }
 #else
 #ifdef _WIN64
-#error "GCC does not implement SEh"
+#error "GCC does not implement SEH"
 #else
 #define SEH_TRY(ER) \
   __asm__ ("movl %%fs:0, %0" : "=r" ((ER).ex_reg.prev));  \

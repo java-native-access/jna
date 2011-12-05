@@ -48,7 +48,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Todd Fast, todd.fast@sun.com
  * @author twalljava@dev.java.net
  */
-public interface User32 extends StdCallLibrary {
+public interface User32 extends StdCallLibrary, WinUser {
 
 	User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class,
 			W32APIOptions.DEFAULT_OPTIONS);

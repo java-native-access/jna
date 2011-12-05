@@ -71,14 +71,14 @@ import com.sun.jna.platform.unix.X11.Xext;
 import com.sun.jna.platform.unix.X11.Xrender.XRenderPictFormat;
 import com.sun.jna.platform.win32.GDI32;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinGDI;
-import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HRGN;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinGDI;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.BLENDFUNCTION;
 import com.sun.jna.platform.win32.WinUser.POINT;
 import com.sun.jna.platform.win32.WinUser.SIZE;
@@ -898,14 +898,14 @@ public class WindowUtils {
                 pi.next();
             }
             POINT[] lppt = (POINT[])new POINT().toArray(points.size());
-            POINT[] pts = (POINT[])points.toArray(new POINT[points.size()]);
+            POINT[] pts = points.toArray(new POINT[points.size()]);
             for (int i=0;i < lppt.length;i++) {
                 lppt[i].x = pts[i].x;
                 lppt[i].y = pts[i].y;
             }
             int[] counts = new int[sizes.size()];
             for (int i=0;i < counts.length;i++) {
-                counts[i] = ((Integer)sizes.get(i)).intValue();
+                counts[i] = sizes.get(i).intValue();
             }
             HRGN hrgn = gdi.CreatePolyPolygonRgn(lppt, counts, counts.length, mode);
             setWindowRegion(w, hrgn);
@@ -1140,7 +1140,7 @@ public class WindowUtils {
                 X11.XRectangle[] rects = (X11.XRectangle[])
                     new X11.XRectangle().toArray(rlist.size());
                 for (int i=0;i < rects.length;i++) {
-                    Rectangle r = (Rectangle)rlist.get(i);
+                    Rectangle r = rlist.get(i);
                     rects[i].x = (short)r.x;
                     rects[i].y = (short)r.y;
                     rects[i].width = (short)r.width;
@@ -1363,7 +1363,7 @@ public class WindowUtils {
                 Raster raster = buf.getData();
                 int w = bounds.width;
                 int h = bounds.height;
-                if (buffer == null || buffer.getSize() != w*h*4) {
+                if (buffer == null || buffer.size() != w*h*4) {
                     buffer = new Memory(w*h*4);
                     pixels = new int[w*h];
                 }

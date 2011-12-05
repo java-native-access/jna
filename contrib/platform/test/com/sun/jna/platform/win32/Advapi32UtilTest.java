@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,6 +23,10 @@ import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
+import com.sun.jna.platform.win32.WinNT.ACCESS_ACEStructure;
+import com.sun.jna.platform.win32.WinNT.ACCESS_ALLOWED_ACE;
+import com.sun.jna.platform.win32.WinNT.ACCESS_DENIED_ACE;
+import com.sun.jna.platform.win32.WinNT.ACEStructure;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
@@ -108,8 +113,9 @@ public class Advapi32UtilTest extends TestCase {
     	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
 		try {
-	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
-	    			null, 1, userInfo, null));
+                    assertEquals("Error in NetUserAdd",
+                                 LMErr.NERR_Success,
+                                 Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null));
 			HANDLEByReference phUser = new HANDLEByReference();
 			try {
 				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
@@ -128,8 +134,9 @@ public class Advapi32UtilTest extends TestCase {
 				}				
 			}
 		} finally {
-	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
-	    			null, userInfo.usri1_name.toString()));			
+                    assertEquals("Error in NetUserDel",
+                                 LMErr.NERR_Success,
+                                 Netapi32.INSTANCE.NetUserDel(null, userInfo.usri1_name.toString()));			
 		}
 	}
 	
@@ -212,6 +219,15 @@ public class Advapi32UtilTest extends TestCase {
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
 	}
 	
+	public void testRegistrySetGetLongValue() {
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+		Advapi32Util.registrySetLongValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "LongValue", 1234L);
+		assertEquals(1234L, Advapi32Util.registryGetLongValue(WinReg.HKEY_CURRENT_USER, 
+				"Software\\JNA", "LongValue"));
+		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "LongValue"));
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+	}
+	
 	public void testRegistrySetGetStringValue() {
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
 		Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringValue", "Hello World");
@@ -270,7 +286,7 @@ public class Advapi32UtilTest extends TestCase {
 	}
 	
 	public void testRegistryGetValues() {
-		String uu = new String("A" + "\u00ea" + "\u00f1" + "\u00fc" + "C");
+		String uu = new String("A" + "\\u00ea" + "\\u00f1" + "\\u00fc" + "C");
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
 		Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "FourtyTwo" + uu, 42);
 		Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "42" + uu, "FourtyTwo" + uu);
@@ -372,18 +388,149 @@ public class Advapi32UtilTest extends TestCase {
 	
 	public void testGetEnvironmentBlock() {
 		String expected = "KEY=value\0"
-			+ "KEY_EMPTY=\0" 
-			+ "KEY_NUMBER=2\0"
-			+ "\0";
-		
+				+ "KEY_EMPTY=\0" 
+				+ "KEY_NUMBER=2\0"
+				+ "\0";
+
 		// Order is important to kept checking result simple
 		Map<String, String> mockEnvironment = new TreeMap<String, String>();
 		mockEnvironment.put("KEY", "value");
 		mockEnvironment.put("KEY_EMPTY", "");
 		mockEnvironment.put("KEY_NUMBER", "2");
 		mockEnvironment.put("KEY_NULL", null);		
-		
+
 		String block = Advapi32Util.getEnvironmentBlock(mockEnvironment);
-		assertEquals(expected, block);
+		assertEquals("Environment block must comprise key=value pairs separated by NUL characters", expected, block);
+	}
+	
+	public void testGetFileSecurity() {
+            //final String userUnderTest = "iFinder";
+            final String userUnderTest = Advapi32Util.getUserName();
+		final Account userUnderTestAccount = Advapi32Util.getAccountByName(userUnderTest);
+		final String userUnderTestSID = userUnderTestAccount.sidString; 
+		//final String groupUnderTest = "Sales";
+		final String groupUnderTest = "Everybody";
+		final Account groupUnderTestAccount = Advapi32Util.getAccountByName(groupUnderTest);
+		final String groupUnderTestSID = groupUnderTestAccount.sidString;
+
+		//final String testRootDir = "C:\\Projekte\\JNA-fileAccessRights\\";
+                final String testRootDir = System.getProperty("java.io.tmpdir");
+
+		// User rights "modify" (Um) - includes some others: read, execute, write
+		//   Traverse Folder/Execute File (WinNT.FILE_TRAVERSE, WinNT.FILE_READ_DATA)
+		//   List Folder/Read Data (WinNT.FILE_LIST_DIRECTORY, WinNT.FILE_READ_DATA)
+		//   Read Attributes (WinNT.FILE_READ_ATTRIBUTES)
+		//   Read Extended Attributes (WinNT.FILE_READ_EA)
+		//   Create Files/Write Data (WinNT.FILE_ADD_FILE, WinNT.FILE_WRITE_DATA)
+		//   Create Folders/Append Data (WinNT.FILE_ADD_SUBDIRECTORY, WinNT.FILE_APPEND_DATA)
+		//   Write Attributes (WinNT.FILE_WRITE_ATTRIBUTES)
+		//   Write Extended Attributes (WinNT.FILE_WRITE_EA)
+		//   Delete (WinNT.DELETE)
+		//   Read Permissions (WinNT.FILE_READ_ATTRIBUTES)
+		//   Synchronize (WinNT.SYNCHRONIZE)
+		// Group rights allowed:"read" denied:"write" (Gr-w)
+		//   List Folder/Read Data (WinNT.FILE_LIST_DIRECTORY, WinNT.FILE_READ_DATA)
+		//   Read Attributes (WinNT.FILE_READ_ATTRIBUTES)
+		//   Read Extended Attributes (WinNT.FILE_READ_EA)
+		//   Read Permissions (WinNT.FILE_READ_ATTRIBUTES)
+		ACCESS_ACEStructure[] fileSecurity_UmGr = Advapi32Util.getFileSecurity(testRootDir + "/UmGr-w.txt", false);
+		System.out.println("UmGr-w.txt");
+		checkFileSecurity(fileSecurity_UmGr, 
+				userUnderTestSID, 
+				new String[] {
+				"0 0 DELETE READ_CONTROL SYNCHRONIZE FILE_READ_DATA FILE_LIST_DIRECTORY FILE_WRITE_DATA FILE_ADD_FILE FILE_APPEND_DATA FILE_ADD_SUBDIRECTORY FILE_CREATE_PIPE_INSTANCE FILE_READ_EA FILE_WRITE_EA FILE_EXECUTE FILE_TRAVERSE FILE_READ_ATTRIBUTES FILE_WRITE_ATTRIBUTES"
+		},
+		groupUnderTestSID,
+		new String[] {
+				"0 1 FILE_WRITE_DATA FILE_ADD_FILE FILE_APPEND_DATA FILE_ADD_SUBDIRECTORY FILE_CREATE_PIPE_INSTANCE FILE_WRITE_EA FILE_WRITE_ATTRIBUTES"
+				, "0 0 READ_CONTROL SYNCHRONIZE FILE_READ_DATA FILE_LIST_DIRECTORY FILE_READ_EA FILE_READ_ATTRIBUTES"
+		});
+
+		// User full access
+		ACCESS_ACEStructure[] fileSecurity_Uf = Advapi32Util.getFileSecurity(testRootDir + "/Uf.txt", false);
+		//System.out.println("Uf.txt");
+		checkFileSecurity(fileSecurity_Uf, userUnderTestSID, 
+				new String[] {"0 0 DELETE READ_CONTROL WRITE_DAC WRITE_OWNER SYNCHRONIZE STANDARD_RIGHTS_REQUIRED STANDARD_RIGHTS_ALL FILE_READ_DATA FILE_LIST_DIRECTORY FILE_WRITE_DATA FILE_ADD_FILE FILE_APPEND_DATA FILE_ADD_SUBDIRECTORY FILE_CREATE_PIPE_INSTANCE FILE_READ_EA FILE_WRITE_EA FILE_EXECUTE FILE_TRAVERSE FILE_DELETE_CHILD FILE_READ_ATTRIBUTES FILE_WRITE_ATTRIBUTES"}, null, null);
+
+		// file in directory - access rights copied
+		ACCESS_ACEStructure[] fileSecurity_Grw_Cp = Advapi32Util.getFileSecurity(testRootDir + "/UrwGr.dir/Grw.txt", false);
+		//System.out.println("UrwGr.dir/Grw.txt");
+		checkFileSecurity(fileSecurity_Grw_Cp, null, null,
+				groupUnderTestSID,
+				new String[]{"16 0 READ_CONTROL SYNCHRONIZE FILE_READ_DATA FILE_LIST_DIRECTORY FILE_READ_EA FILE_READ_ATTRIBUTES"} 
+				);
+
+		/*
+    // User rights: read, execute, list folder, write
+    // Group rights: read
+    ACCESS_ACEStructure[] fileSecurity_UrwGr_Dir = Advapi32Util.getFileSecurity(testRootDir + "/UrwGr.dir/", false);
+    System.out.println("UrwGr.dir/");
+
+
+    // file in directory - access rights inherited
+    //  User rights: read, execute, write 
+    ACCESS_ACEStructure[] fileSecurity_UrI_Inh = Advapi32Util.getFileSecurity(testRootDir + "/UrwGr.dir/UrI.txt", false);
+    System.out.println("UrwGr.dir/UrI.txt");
+		 */
+
+	}
+
+	private void checkFileSecurity(ACCESS_ACEStructure[] fileSecurity, String userUnderTestSID, String[] expectedUsrMasks, String groupUnderTestSID, String[] expectedGrpMasks) {
+		int remainingUsr = userUnderTestSID == null ? 0 : expectedUsrMasks.length;
+		int remainingGrp = groupUnderTestSID == null ? 0 : expectedGrpMasks.length;
+		for (ACCESS_ACEStructure aces : fileSecurity) {
+			if (userUnderTestSID != null && aces.getSidString().equals(userUnderTestSID)) {
+				String start = (aces.AceFlags & WinNT.VALID_INHERIT_FLAGS) + " " + aces.AceType + " ";
+				for (String expected : expectedUsrMasks) {
+					if (expected.startsWith(start)) {
+						String gotMask = start + getFileSecurityAsString(aces.Mask);
+						System.out.println(expected);
+						remainingUsr--;
+						assertEquals(expected, gotMask);
+					}
+				}
+			}
+			if (groupUnderTestSID != null && aces.getSidString().equals(groupUnderTestSID)) {
+				String start = (aces.AceFlags & WinNT.VALID_INHERIT_FLAGS) + " " + aces.AceType + " ";
+				for (String expected : expectedGrpMasks) {
+					if (expected.startsWith(start)) {
+						String gotMask = start + getFileSecurityAsString(aces.Mask);
+						System.out.println(expected);
+						remainingGrp--;
+						assertEquals(expected, gotMask);
+					}
+				}
+			}
+		}
+		assertEquals("Not all ACLs found for user ", 0, remainingUsr);
+		assertEquals("Not all ACLs found for group ", 0, remainingGrp);
+	}
+
+	private String getFileSecurityAsString(int accessMask) {
+		final String[] FLAGS = {"DELETE", "READ_CONTROL", "WRITE_DAC", "WRITE_OWNER", "SYNCHRONIZE", 
+				"STANDARD_RIGHTS_REQUIRED", "STANDARD_RIGHTS_ALL", "SPECIFIC_RIGHTS_ALL",
+				"GENERIC_ALL", "GENERIC_EXECUTE", "GENERIC_WRITE", "GENERIC_READ",
+				"FILE_READ_DATA", "FILE_LIST_DIRECTORY", "FILE_WRITE_DATA", "FILE_ADD_FILE",
+				"FILE_APPEND_DATA", "FILE_ADD_SUBDIRECTORY", "FILE_CREATE_PIPE_INSTANCE",
+				"FILE_READ_EA", "FILE_WRITE_EA", "FILE_EXECUTE", "FILE_TRAVERSE",
+				"FILE_DELETE_CHILD", "FILE_READ_ATTRIBUTES", "FILE_WRITE_ATTRIBUTES"};
+
+		String asString = "";
+
+		for (String flag : FLAGS) {
+			try {
+				Field field = WinNT.class.getDeclaredField(flag);
+				int int1 = field.getInt(null);
+				if ((int1 & accessMask) == int1) {
+					asString += flag + " "; 
+				}
+			} catch (IllegalArgumentException e) {
+			} catch (IllegalAccessException e) {
+			} catch (SecurityException e) {
+			} catch (NoSuchFieldException e) {
+			}
+		}
+		return asString.trim();
 	}
 }
+

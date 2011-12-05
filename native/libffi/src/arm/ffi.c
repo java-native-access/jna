@@ -32,6 +32,11 @@
 
 #include <stdlib.h>
 
+#ifdef _WIN32_WCE
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 /* Forward declares. */
 static int vfp_type_p (ffi_type *);
 static void layout_vfp_args (ffi_cif *);
@@ -64,6 +69,7 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
        i--, p_arg++)
     {
       size_t z;
+      size_t alignment;
 
       /* Allocated in VFP registers. */
       if (ecif->cif->abi == FFI_VFP
@@ -81,8 +87,12 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
 	}
 
       /* Align if necessary */
-      if (((*p_arg)->alignment - 1) & (unsigned) argp) {
-	argp = (char *) ALIGN(argp, (*p_arg)->alignment);
+      alignment = (*p_arg)->alignment;
+#ifdef _WIN32_WCE
+      if (alignment > 4) alignment = 4;
+#endif
+      if ((alignment - 1) & (unsigned) argp) {
+	argp = (char *) ALIGN(argp, alignment);
       }
 
       if ((*p_arg)->type == FFI_TYPE_STRUCT)
@@ -320,6 +330,10 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
       alignment = (*p_arg)->alignment;
       if (alignment < 4)
 	alignment = 4;
+#ifdef _WIN32_WCE
+      if (alignment > 4) 
+        alignment = 4;
+#endif
       /* Align if necessary */
       if ((alignment - 1) & (unsigned) argp) {
 	argp = (char *) ALIGN(argp, alignment);
@@ -599,6 +613,11 @@ ffi_prep_closure_loc (ffi_closure* closure,
   closure->cif  = cif;
   closure->user_data = user_data;
   closure->fun  = fun;
+
+#ifdef _WIN32_WCE
+  /* This is important to allow calling the trampoline safely */
+  FlushInstructionCache(GetCurrentProcess(), 0, 0);
+#endif
 
   return FFI_OK;
 }

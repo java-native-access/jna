@@ -29,21 +29,26 @@ public class LibraryLoadTest extends TestCase {
                            + (Platform.is64Bit() ? "-d64" : ""));
 
     public void testLoadJNALibrary() {
-        assertTrue("Point size should never be zero", Pointer.SIZE > 0);
+        assertTrue("Pointer size should never be zero", Pointer.SIZE > 0);
     }
     
     public void testLoadJAWT() {
+        if (!Platform.HAS_AWT) return;
+
         if (GraphicsEnvironment.isHeadless()) return;
 
-        Frame f = new Frame(getName());
-        f.pack();
-        try {
-            // FIXME: this works as a test, but fails in ShapedWindowDemo
-            // if the JAWT load workaround is not used
-            Native.getWindowPointer(f);
-        }
-        finally {
-            f.dispose();
+        // Encapsulate in a separate class to avoid class loading issues where
+        // AWT is unavailable
+        AWT.loadJAWT(getName());
+    }
+    
+    public void testLoadAWTAfterJNA() {
+        if (!Platform.HAS_AWT) return;
+
+        if (GraphicsEnvironment.isHeadless()) return;
+
+        if (Pointer.SIZE > 0) {
+            Toolkit.getDefaultToolkit();
         }
     }
     
@@ -56,17 +61,8 @@ public class LibraryLoadTest extends TestCase {
         int geteuid();
     }
 
-    public void testLoadAWTAfterJNA() {
-        if (GraphicsEnvironment.isHeadless()) return;
-
-        if (Pointer.SIZE > 0) {
-            Toolkit.getDefaultToolkit();
-        }
-    }
-    
     private Object load() {
-        return Native.loadLibrary(System.getProperty("os.name").startsWith("Windows")
-                                  ? "msvcrt" : "c", CLibrary.class);
+        return Native.loadLibrary(Platform.C_LIBRARY_NAME, CLibrary.class);
     }
     
     public void testLoadCLibrary() {
@@ -94,6 +90,9 @@ public class LibraryLoadTest extends TestCase {
         String tmp = System.getProperty("java.io.tmpdir");
         String libName = System.mapLibraryName("jnidispatch");
         File src = new File(BUILDDIR + "/native", libName);
+        if (Platform.isWindowsCE()) {
+            src = new File("/Storage Card", libName);
+        }
         assertTrue("Expected JNA native library at " + src + " is missing", src.exists());
 
         String newLibName = UNICODE;
@@ -134,14 +133,17 @@ public class LibraryLoadTest extends TestCase {
     public interface TestLib2 extends Library {
         int dependentReturnFalse();
     }
-    public void testLoadDependentLibrary() {
+
+    // Only desktop windows provides an altered search path, looking for
+    // dependent libraries in the same directory as the original
+    public void testLoadDependentLibraryWithAlteredSearchPath() {
         try {
             TestLib2 lib = (TestLib2)Native.loadLibrary("testlib2", TestLib2.class);
             lib.dependentReturnFalse();
         }
         catch(UnsatisfiedLinkError e) {
             // failure expected on anything but windows
-            if (Platform.isWindows()) {
+            if (Platform.isWindows() && !Platform.isWindowsCE()) {
                 fail("Failed to load dependent libraries: " + e);
             }
         }
@@ -157,6 +159,21 @@ public class LibraryLoadTest extends TestCase {
                       lib.getpwuid(lib.geteuid()));
     }
     
+    private static class AWT {
+        public static void loadJAWT(String name) {
+            Frame f = new Frame(name);
+            f.pack();
+            try {
+                // FIXME: this works as a test, but fails in ShapedWindowDemo
+                // if the JAWT load workaround is not used
+                Native.getWindowPointer(f);
+            }
+            finally {
+                f.dispose();
+            }
+        }
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(LibraryLoadTest.class);
     }

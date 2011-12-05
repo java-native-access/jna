@@ -50,7 +50,7 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native long checkInt64ArgumentAlignment(int i, long j, int i2, long j2);
         public native double checkDoubleArgumentAlignment(float i, double j, float i2, double j2);
         public native Pointer testStructurePointerArgument(CheckFieldAlignment p);
-        public native double testStructureByValueArgument(CheckFieldAlignment.ByValue p);
+        public native int testStructureByValueArgument(CheckFieldAlignment.ByValue p);
         public int testStructureArrayInitialization(CheckFieldAlignment[] p, int len) {
             throw new UnsupportedOperationException();
         }
@@ -64,21 +64,6 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native int fillInt64Buffer(long[] buf, int len, long value);
         public native int fillFloatBuffer(float[] buf, int len, float value);
         public native int fillDoubleBuffer(double[] buf, int len, double value);
-
-        // ByteBuffer alternative definitions
-        public native int fillInt8Buffer(ByteBuffer buf, int len, byte value);
-        public native int fillInt16Buffer(ByteBuffer buf, int len, short value);
-        public native int fillInt32Buffer(ByteBuffer buf, int len, int value);
-        public native int fillInt64Buffer(ByteBuffer buf, int len, long value);
-        public native int fillFloatBuffer(ByteBuffer buf, int len, float value);
-        public native int fillDoubleBuffer(ByteBuffer buf, int len, double value);
-        
-        // {Short|Int|Long|Float|Double}Buffer alternative definitions        
-        public native int fillInt16Buffer(ShortBuffer buf, int len, short value);
-        public native int fillInt32Buffer(IntBuffer buf, int len, int value);
-        public native int fillInt64Buffer(LongBuffer buf, int len, long value);
-        public native int fillFloatBuffer(FloatBuffer buf, int len, float value);
-        public native int fillDoubleBuffer(DoubleBuffer buf, int len, double value);
 
         // dummy to avoid causing Native.register to fail
         public boolean returnBooleanArgument(Object arg) {throw new IllegalArgumentException();}

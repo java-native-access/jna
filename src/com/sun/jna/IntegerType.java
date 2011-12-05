@@ -22,8 +22,9 @@ package com.sun.jna;
 public abstract class IntegerType extends Number implements NativeMapped {
 
     private int size;
-    private long value;
     private Number number;
+    // Used by native code
+    private long value;
 
     /** Create a zero-valued IntegerType. */
     public IntegerType(int size) {

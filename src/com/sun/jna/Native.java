@@ -16,6 +16,10 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Window;
+
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileOutputStream;
@@ -32,8 +36,6 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.WeakHashMap;
 
 import com.sun.jna.Callback.UncaughtExceptionHandler;
@@ -59,14 +62,15 @@ import com.sun.jna.Structure.FFIType;
  * <a name=library_loading></a>
  * <h2>Library Loading</h2>
  * When JNA classes are loaded, the native shared library (jnidispatch) is
- * loaded as well.  An attempt is made to load it from the system library path
- * using {@link System#loadLibrary}.  If not found, the appropriate library
- * will be extracted from the class path into a temporary directory and
- * loaded from there.  If your system has additional security constraints
- * regarding execution or load of files (SELinux, for example), you should 
- * probably install the native library in an accessible location and configure 
- * your system accordingly, rather than relying on JNA to extract the library 
- * from its own jar file.<p/>
+ * loaded as well.  An attempt is made to load it from the any paths defined
+ * in <code>jna.boot.library.path</code> (if defined), then the system library
+ * path using {@link System#loadLibrary}, unless <code>jna.nosys=true</code>.
+ * If not found, the appropriate library will be extracted from the class path
+ * into a temporary directory and loaded from there.  If your system has
+ * additional security constraints regarding execution or load of files
+ * (SELinux, for example), you should  probably install the native library in
+ * an accessible location and configure  your system accordingly, rather than
+ * relying on JNA to extract the library  from its own jar file.<p/>
  * To avoid the automatic unpacking (in situations where you want to force a
  * failure if the JNA native library is not properly installed on the system),
  * set the system property <code>jna.nounpack=true</code>.
@@ -81,7 +85,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.3.0";
+    private static final String VERSION = "3.4.0";
+    private static final String VERSION_NATIVE = "3.4.0";
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -114,18 +119,34 @@ public final class Native {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
+    private static final int THREAD_NOCHANGE = 0;
+    private static final int THREAD_DETACH = -1;
+    private static final int THREAD_LEAVE_ATTACHED = -2;
+
     static {
         loadNativeLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
         SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
+
         // Perform initialization of other JNA classes until *after* 
         // initializing the above final fields
         initIDs();
         if (Boolean.getBoolean("jna.protected")) {
             setProtected(true);
         }
+        String version = getNativeVersion();
+        if (!VERSION_NATIVE.equals(version)) {
+            String LS = System.getProperty("line.separator");
+            throw new Error(LS + LS
+                            + "There is an incompatible JNA native library installed on this system." + LS
+                            + "To resolve this issue you may do one of the following:" + LS
+                            + " - remove or uninstall the offending library" + LS
+                            + " - set the system property jna.nosys=true" + LS
+                            + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
+        }
+        setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
     }
     
     /** Force a dispose when this class is GC'd. */
@@ -180,7 +201,7 @@ public final class Native {
      * NOTE: On platforms which support signals (non-Windows), JNA uses
      * signals to trap errors.  This may interfere with the JVM's own use of
      * signals.  When protected mode is enabled, you should make use of the
-     * jsig library, if available (see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/vm/signal-chaining.html">Signal Chaining</a>).
+     * jsig library, if available (see <a href="http://download.oracle.com/javase/6/docs/technotes/guides/vm/signal-chaining.html">Signal Chaining</a>).
      * In short, set the environment variable <code>LD_PRELOAD</code> to the
      * path to <code>libjsig.so</code> in your JRE lib directory
      * (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your
@@ -218,7 +239,7 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static long getWindowID(Window w) throws HeadlessException {
-        return getComponentID(w);
+        return AWT.getWindowID(w);
     }
 
     /** Utility method to get the native window ID for a heavyweight Java 
@@ -228,25 +249,7 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static long getComponentID(Component c) throws HeadlessException {
-        if (GraphicsEnvironment.isHeadless()) {
-            throw new HeadlessException("No native windows when headless");
-        }
-        if (c.isLightweight()) {
-            throw new IllegalArgumentException("Component must be heavyweight");
-        }
-        if (!c.isDisplayable()) 
-            throw new IllegalStateException("Component must be displayable");
-        // On X11 VMs prior to 1.5, the window must be visible
-        if (Platform.isX11()
-            && System.getProperty("java.version").startsWith("1.4")) {
-            if (!c.isVisible()) {
-                throw new IllegalStateException("Component must be visible");
-            }
-        }
-        // By this point, we're certain that Toolkit.loadLibraries() has
-        // been called, thus avoiding AWT/JAWT link errors
-        // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
-        return getWindowHandle0(c);
+        return AWT.getComponentID(c);
     }
     
     /** Utility method to get the native window pointer for a Java 
@@ -256,7 +259,7 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static Pointer getWindowPointer(Window w) throws HeadlessException {
-        return getComponentPointer(w);
+        return new Pointer(AWT.getWindowID(w));
     }
     
     /** Utility method to get the native window pointer for a heavyweight Java 
@@ -266,10 +269,10 @@ public final class Native {
      * @throws HeadlessException if the current VM is running headless 
      */
     public static Pointer getComponentPointer(Component c) throws HeadlessException {
-        return new Pointer(getComponentID(c));
+        return new Pointer(AWT.getComponentID(c));
     }
     
-    private static native long getWindowHandle0(Component c);
+    static native long getWindowHandle0(Component c);
 
     /** Convert a direct {@link Buffer} into a {@link Pointer}. 
      * @throws IllegalArgumentException if the buffer is not direct.
@@ -575,14 +578,26 @@ public final class Native {
         return buf;
     }
 
+    /** Generate a canonical String prefix based on the given OS
+        type/arch/name.
+    */
     static String getNativeLibraryResourcePath(int osType, String arch, String name) {
         String osPrefix;
         arch = arch.toLowerCase();
+        if ("powerpc".equals(arch)) {
+            arch = "ppc";
+        }
+        else if ("powerpc64".equals(arch)) {
+            arch = "ppc64";
+        }
         switch(osType) {
         case Platform.WINDOWS:
             if ("i386".equals(arch))
                 arch = "x86";
             osPrefix = "win32-" + arch;
+            break;
+        case Platform.WINDOWSCE:
+            osPrefix = "w32ce-" + arch;
             break;
         case Platform.MAC:
             osPrefix = "darwin";
@@ -607,9 +622,6 @@ public final class Native {
             if ("x86_64".equals(arch)) {
                 arch = "amd64";
             }
-            if ("powerpc".equals(arch)) {
-                arch = "ppc";
-            }
             int space = osPrefix.indexOf(" ");
             if (space != -1) {
                 osPrefix = osPrefix.substring(0, space);
@@ -621,30 +633,32 @@ public final class Native {
     }
 
     /**
-     * Loads the JNA stub library.  It will first attempt to load this library
-     * from the directories specified in jna.boot.library.path.  If that fails,
-     * it will fallback to loading from the system library paths. Finally it will
-     * attempt to extract the stub library from from the JNA jar file, and load it.
-     * <p>
-     * The jna.boot.library.path property is mainly to support jna.jar being
-     * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
-     * are ignored.  It might also be useful in other situations.
-     * </p>
+     * Loads the JNA stub library.
+     * First tries jna.boot.library.path, then the system path, then from the
+     * jar file.
      */
     private static void loadNativeLibrary() {
         removeTemporaryFiles();
 
-        String libName = "jnidispatch";
+        String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
         String bootPath = System.getProperty("jna.boot.library.path");
         if (bootPath != null) {
-            String[] dirs = bootPath.split(File.pathSeparator);
-            for (int i = 0; i < dirs.length; ++i) {
-                String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
-                try {
-                    System.load(path);
-                    nativeLibraryPath = path;
-                    return;
-                } catch (UnsatisfiedLinkError ex) {
+            // String.split not available in 1.4
+            StringTokenizer dirs = new StringTokenizer(bootPath, File.pathSeparator);
+            while (dirs.hasMoreTokens()) {
+                String dir = dirs.nextToken();
+                File file = new File(new File(dir), System.mapLibraryName(libName));
+                String path = file.getAbsolutePath();
+                if (file.exists()) {
+                    try {
+                        System.load(path);
+                        nativeLibraryPath = path;
+                        return;
+                    } catch (UnsatisfiedLinkError ex) {
+                        // Not a problem if already loaded in anoteher class loader
+                        // Unfortunately we can't distinguish the difference...
+                        //System.out.println("File found at " + file + " but not loadable: " + ex.getMessage());
+                    }
                 }
                 if (Platform.isMac()) {
                     String orig, ext;
@@ -655,25 +669,35 @@ public final class Native {
                         orig = "jnilib";
                         ext = "dylib";
                     }
-                    try {
-                        path = path.substring(0, path.lastIndexOf(orig)) + ext;
-                        System.load(path);
-                        nativeLibraryPath = path;
-                        return;
-                    } catch (UnsatisfiedLinkError ex) {
+                    path = path.substring(0, path.lastIndexOf(orig)) + ext;
+                    if (new File(path).exists()) {
+                        try {
+                            System.load(path);
+                            nativeLibraryPath = path;
+                            return;
+                        } catch (UnsatisfiedLinkError ex) {
+                            System.err.println("File found at " + path + " but not loadable: " + ex.getMessage());
+                        }
                     }
                 }
             }
         }
         try {
-            System.loadLibrary(libName);
+            if (!Boolean.getBoolean("jna.nosys")) {
+                System.loadLibrary(libName);
+                return;
+            }
         }
         catch(UnsatisfiedLinkError e) {
             if (Boolean.getBoolean("jna.nounpack")) {
                 throw e;
             }
-            loadNativeLibraryFromJar();
         }
+        if (!Boolean.getBoolean("jna.nounpack")) {
+            loadNativeLibraryFromJar();
+            return;
+        }
+        throw new UnsatisfiedLinkError("Native jnidispatch library not found");
     }
 
     /**
@@ -962,7 +986,7 @@ public final class Native {
             return POINTER_SIZE;
         }
         if (Pointer.class.isAssignableFrom(cls)
-            || Buffer.class.isAssignableFrom(cls)
+            || (Platform.HAS_BUFFERS && Buffers.isBuffer(cls))
             || Callback.class.isAssignableFrom(cls)
             || String.class == cls
             || WString.class == cls) {
@@ -1050,6 +1074,16 @@ public final class Native {
         return context[3];
     }
 
+    /** Set a thread initializer for the given callback.
+        The thread initializer indicates desired thread configuration when the
+        given Callback is invoked on a native thread not yet attached to the
+        VM. 
+     */
+    public static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
+        CallbackReference.setCallbackThreadInitializer(cb, initializer);
+    }
+
+
     private static Map registeredClasses = new HashMap();
     private static Map registeredLibraries = new HashMap();
     private static Object unloader = new Object() {
@@ -1125,6 +1159,9 @@ public final class Native {
         return buf.toString();
     }
 
+    /** Indicates whether the callback has an initializer. */
+    static final int CB_HAS_INITIALIZER = 1;
+
     private static final int CVT_UNSUPPORTED = -1;
     private static final int CVT_DEFAULT = 0;
     private static final int CVT_POINTER = 1;
@@ -1175,7 +1212,7 @@ public final class Native {
         if (WString.class.isAssignableFrom(type)) {
             return CVT_WSTRING;
         }
-        if (Buffer.class.isAssignableFrom(type)) {
+        if (Platform.HAS_BUFFERS && Buffers.isBuffer(type)) {
             return CVT_BUFFER;
         }
         if (Structure.class.isAssignableFrom(type)) {
@@ -1421,7 +1458,9 @@ public final class Native {
         return cvt.fromNative(o, new FromNativeContext(cls));
     }
 
+    /** Create a new cif structure. */
     public static native long ffi_prep_cif(int abi, int nargs, long ffi_return_type, long ffi_types);
+    /** Make an FFI function call. */
     public static native void ffi_call(long cif, long fptr, long resp, long args);
     public static native long ffi_prep_closure(long cif, ffi_callback cb);
     public static native void ffi_free_closure(long closure);
@@ -1668,9 +1707,63 @@ public final class Native {
      * Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
      * This method calls through to the JNA NewDirectByteBuffer method.
      *
-     * @param addr byte offset from pointer to start the buffer
+     * @param addr base address of the JNA-originated memory
      * @param length Length of ByteBuffer
      * @return a direct ByteBuffer that accesses the memory being pointed to, 
      */
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
+
+    /** Indicate the desired attachment state for the current thread.
+        This method should only be called from a callback context, and then
+        only just prior to returning to native code.  Executing Java or native
+        code after the invocation of this method may interfere with the
+        intended detach state.<p/>
+        Note: errno/SetLastError is used to signal the desired state; this is
+        a hack to make use of built-in thread-local storage to avoid having to
+        re-implement it on certain platforms.<p/>
+        Warning: avoid calling {@link #detach detach(true)} on a VM thread;
+        the resulting behavior is not defined.<p/>
+     */
+    public static void detach(boolean detach) {
+        setLastError(detach ? THREAD_DETACH : THREAD_LEAVE_ATTACHED);
+    }
+
+    private static class Buffers {
+        static boolean isBuffer(Class cls) {
+            return Buffer.class.isAssignableFrom(cls);
+        }
+    }
+
+    /** Provides separation of JAWT functionality for the sake of J2ME
+     * ports which do not include AWT support.
+     */
+    private static class AWT {
+        static long getWindowID(Window w) throws HeadlessException {
+            return getComponentID(w);
+        }
+        // Declaring the argument as Object rather than Component avoids class not
+        // found errors on phoneME foundation profile.
+        static long getComponentID(Object o) throws HeadlessException {
+            if (GraphicsEnvironment.isHeadless()) {
+                throw new HeadlessException("No native windows when headless");
+            }
+            Component c = (Component)o;
+            if (c.isLightweight()) {
+                throw new IllegalArgumentException("Component must be heavyweight");
+            }
+            if (!c.isDisplayable()) 
+                throw new IllegalStateException("Component must be displayable");
+            // On X11 VMs prior to 1.5, the window must be visible
+            if (Platform.isX11()
+                && System.getProperty("java.version").startsWith("1.4")) {
+                if (!c.isVisible()) {
+                    throw new IllegalStateException("Component must be visible");
+                }
+            }
+            // By this point, we're certain that Toolkit.loadLibraries() has
+            // been called, thus avoiding AWT/JAWT link errors
+            // (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705).
+            return Native.getWindowHandle0(c);
+        }
+    }
 }

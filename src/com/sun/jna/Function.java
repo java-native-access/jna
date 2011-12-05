@@ -739,7 +739,6 @@ public class Function extends Pointer {
         public NativeMappedArray(NativeMapped[] arg) {
             super(Native.getNativeSize(arg.getClass(), arg));
             this.original = arg;
-            Class nativeType = arg.getClass().getComponentType();
             setValue(0, original, original.getClass());
         }
         public void read() {

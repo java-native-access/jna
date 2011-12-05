@@ -32,7 +32,6 @@ import java.util.WeakHashMap;
 class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
-    static final Map directCallbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
     private static final Method PROXY_CALLBACK_METHOD;
     
@@ -45,6 +44,42 @@ class CallbackReference extends WeakReference {
         }
     }
 
+    private static final Map initializers = new WeakHashMap();
+    static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
+        synchronized(callbackMap) {
+            if (initializer != null) {
+                initializers.put(cb, initializer);
+            }
+            else {
+                initializers.remove(cb);
+            }
+        }
+    }
+
+    static class AttachOptions extends Structure {
+        public boolean daemon;
+        public boolean detach;
+        public String name;
+    }
+    /** Called from native code to initialize a callback thread. */
+    private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {
+        CallbackThreadInitializer init = null;
+        if (cb instanceof DefaultCallbackProxy) {
+            cb = ((DefaultCallbackProxy)cb).getCallback();
+        }
+        synchronized(initializers) {
+            init = (CallbackThreadInitializer)initializers.get(cb);
+        }
+        ThreadGroup group = null;
+        if (init != null) {
+            group = init.getThreadGroup(cb);
+            args.name = init.getName(cb);
+            args.daemon = init.isDaemon(cb);
+            args.detach = init.detach(cb);
+            args.write();
+        }
+        return group;
+    }
 
     /** Return a Callback associated with the given function pointer.
      * If the pointer refers to a Java callback trampoline, return the original
@@ -61,7 +96,7 @@ class CallbackReference extends WeakReference {
 
         if (!type.isInterface())
             throw new IllegalArgumentException("Callback type must be an interface");
-        Map map = direct ? directCallbackMap : callbackMap;
+        Map map = callbackMap;
         synchronized(map) {
             for (Iterator i=map.keySet().iterator();i.hasNext();) {
                 Callback cb = (Callback)i.next();
@@ -274,6 +309,11 @@ class CallbackReference extends WeakReference {
         throw new IllegalArgumentException(msg);
     }
     
+    /** Set the behavioral options for this callback. */
+    private void setCallbackOptions(int options) {
+        cbstruct.setInt(Pointer.SIZE, options);
+    }
+
     /** Obtain a pointer to the native glue code for this callback. */
     public Pointer getTrampoline() {
         return cbstruct.getPointer(0);
@@ -297,6 +337,9 @@ class CallbackReference extends WeakReference {
         return (Callback)get();
     }
 
+    /** If the callback is one we generated to wrap a native function pointer,
+        return that.  Otherwise return null.
+    */
     private static Pointer getNativeFunctionPointer(Callback cb) {
         if (Proxy.isProxyClass(cb.getClass())) {
             Object handler = Proxy.getInvocationHandler(cb);
@@ -314,7 +357,7 @@ class CallbackReference extends WeakReference {
         return getFunctionPointer(cb, false);
     }
 
-    /** Native code calls this with direct=true. */
+    /** Native code may call this method with direct=true. */
     private static Pointer getFunctionPointer(Callback cb, boolean direct) {
         Pointer fp = null;
         if (cb == null) {
@@ -325,12 +368,15 @@ class CallbackReference extends WeakReference {
         }
         int callingConvention = cb instanceof AltCallingConvention
             ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-        Map map = direct ? directCallbackMap : callbackMap;
+        Map map = callbackMap;
         synchronized(map) {
             CallbackReference cbref = (CallbackReference)map.get(cb);
             if (cbref == null) {
                 cbref = new CallbackReference(cb, callingConvention, direct);
                 map.put(cb, cbref);
+                if (initializers.containsKey(cb)) {
+                    cbref.setCallbackOptions(Native.CB_HAS_INITIALIZER);
+                }
             }
             return cbref.getTrampoline();
         }
@@ -369,6 +415,10 @@ class CallbackReference extends WeakReference {
             }
         }
         
+        public Callback getCallback() {
+            return CallbackReference.this.getCallback();
+        }
+
         private Object invokeCallback(Object[] args) {
             Class[] paramTypes = callbackMethod.getParameterTypes();
             Object[] callbackArgs = new Object[args.length];
@@ -388,7 +438,7 @@ class CallbackReference extends WeakReference {
             }
             
             Object result = null;
-            Callback cb = getCallback();
+            Callback cb = DefaultCallbackProxy.this.getCallback();
             if (cb != null) {
                 try {
                     result = convertResult(callbackMethod.invoke(cb, callbackArgs));
@@ -445,7 +495,7 @@ class CallbackReference extends WeakReference {
                     value = ((Pointer)value).getStringArray(0, dstType == WString[].class);
                 }
                 else if (Callback.class.isAssignableFrom(dstType)) {
-                    value = getCallback(dstType, (Pointer)value);
+                    value = CallbackReference.this.getCallback(dstType, (Pointer)value);
                 }
                 else if (Structure.class.isAssignableFrom(dstType)) {
                     Structure s = Structure.newInstance(dstType);

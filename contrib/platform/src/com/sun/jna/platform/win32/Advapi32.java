@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -26,6 +27,7 @@ import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -467,6 +469,9 @@ public interface Advapi32 extends StdCallLibrary {
 
 	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
 			IntByReference lpType, IntByReference lpData, IntByReference lpcbData);
+
+	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
+			IntByReference lpType, LongByReference lpData, IntByReference lpcbData);
 
 	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved, 
 			IntByReference lpType, Pointer lpData, IntByReference lpcbData);
@@ -1156,5 +1161,31 @@ public interface Advapi32 extends StdCallLibrary {
 		String lpSystemName,
 		String lpName,
 		WinNT.LUID lpLuid);
+	
+	/**
+	 * The function obtains specified information about the security of a file or directory. 
+	 * The information obtained is constrained by the caller's access rights and privileges.
+	 * @param lpFileName
+	 *   A pointer to a null-terminated string that specifies the file or directory for which security information is retrieved.
+	 * @param RequestedInformation
+	 *   A SECURITY_INFORMATION value that identifies the security information being requested. See WinNT *_SECURITY_INFORMATION
+	 * @param pointer
+	 *   A pointer to a buffer that receives a copy of the security descriptor of the object specified by the lpFileName parameter. 
+	 *   The calling process must have permission to view the specified aspects of the object's security status. 
+	 *   The SECURITY_DESCRIPTOR structure is returned in self-relative format.
+	 * @param nLength
+	 *   Specifies the size, in bytes, of the buffer pointed to by the pSecurityDescriptor parameter.
+	 * @param lpnLengthNeeded
+	 *   A pointer to the variable that receives the number of bytes necessary to store the complete security descriptor. 
+	 *   If the returned number of bytes is less than or equal to nLength, the entire security descriptor is returned in the output buffer; 
+	 *   otherwise, none of the descriptor is returned.
+	 * @return whether the call succeeded
+	 */
+	public boolean GetFileSecurity(
+	    WString lpFileName,
+	    int RequestedInformation,
+	    Pointer pointer,
+	    int nLength,
+	    IntByReference lpnLengthNeeded);
 	
 }

@@ -16,6 +16,11 @@ JNA includes a platform library with many native functions already mapped as wel
 Download
 ========
 
+Version 3.4.0
+
+* [jna.jar](/downloads/twall/jna/jna.jar)
+* [platform.jar](/downloads/twall/jna/platform.jar)
+
 Version 3.3.0
 
 * [jna.jar](jna/raw/3.3.0/jnalib/dist/jna.jar)
@@ -36,7 +41,7 @@ Features
 * Wide (wchar_t-based) strings
 * Native long support (32- or 64-bit as appropriate)
 * Demo applications
-* Supported on 1.4 or later JVMs (earlier VMs may work with stubbed NIO support)
+* Supported on 1.4 or later JVMs, including JavaME (earlier VMs may work with stubbed NIO support)
 * Customizable marshalling/unmarshalling (argument and return value conversions)
 * Customizable mapping from Java method to native function name, and customizable invocation to simulate C preprocessor function macros
 * Support for automatic Windows ASCII/UNICODE function mappings
@@ -45,10 +50,23 @@ Features
 * VM crash protection (optional)
 * Optimized direct mapping for high-performance applications.
 
-Community
-=========
+Community and Support
+=====================
 
 All questions should be posted ot the [jna-users Google group](http://groups.google.com/group/jna-users). Issues can be submitted [here on Github](https://github.com/twall/jna/issues).
+
+When posting to the mailing list, please include the following:
+
+* What OS/CPU/architecture you're using (e.g. Windows 7 64-bit)
+* Reference to your native interface definitions (i.e. C headers), if available
+* The JNA mapping you're trying to use
+* VM crash logs, if any
+* Example native usage, and your attempted Java usage
+
+It's nearly impossible to indicate proper Java usage when there's no native
+reference to work from.
+
+For commercial support, please contact twalljava [at] java [dot] net.
 
 Using the Library
 =================
@@ -65,10 +83,10 @@ Using the Library
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md)
 * [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
 
-JavaDoc
-=======
+Primary Documentation (JavaDoc)
+===============================
 
-A more detailed reference is available [here](http://twall.github.com/jna/3.3.0/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.0/javadoc/).
 
 Contributing 
 ============
@@ -82,7 +100,7 @@ If you are interested in paid support, feel free to say so on the [jna-users mai
 License
 =======
 
-This library is provided under the LGPL, version 2.1 or later.
+This library is provided under the LGPL, version 2.1 or later.  Alternative license arrangements are negotiable.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
 
