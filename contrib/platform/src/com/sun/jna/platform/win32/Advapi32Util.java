@@ -464,6 +464,7 @@ public abstract class Advapi32Util {
 		    phkKey.getValue(), value, 0, lpType, (char[]) null, lpcbData);
 	    switch(rc) {
 	    case W32Errors.ERROR_SUCCESS:
+	    case W32Errors.ERROR_MORE_DATA:
 	    case W32Errors.ERROR_INSUFFICIENT_BUFFER:
 		return true;
 	    case W32Errors.ERROR_FILE_NOT_FOUND:
