@@ -54,7 +54,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public DWORD(long value) {
-            super(4, value);
+            super(4, value, true);
         }
 		
         /**

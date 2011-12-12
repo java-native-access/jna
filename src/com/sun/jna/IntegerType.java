@@ -17,23 +17,41 @@ package com.sun.jna;
  * Represents a native integer value, which may have a platform-specific size
  * (e.g. <code>long</code> on unix-based platforms).
  * 
+ * May optionally indicate an unsigned attribute, such that when a value is
+ * extracted into a larger-sized container (e.g. <code>int</code> retrieved
+ * via {@link Number#longValue}, the value will be unsigned.  Default behavior
+ * is signed.
+ * 
  * @author wmeissner@gmail.com
+ * @author twalljava@java.net
  */
 public abstract class IntegerType extends Number implements NativeMapped {
 
     private int size;
     private Number number;
+    private boolean unsigned;
     // Used by native code
     private long value;
 
-    /** Create a zero-valued IntegerType. */
+    /** Create a zero-valued signed IntegerType. */
     public IntegerType(int size) {
-        this(size, 0);
+        this(size, 0, false);
     }
 
-    /** Create a IntegerType with the given value. */
+    /** Create a zero-valued optionally unsigned IntegerType. */
+    public IntegerType(int size, boolean unsigned) {
+        this(size, 0, unsigned);
+    }
+
+    /** Create a signed IntegerType with the given value. */
     public IntegerType(int size, long value) {
+        this(size, value, false);
+    }
+
+    /** Create an optionally signed IntegerType with the given value. */
+    public IntegerType(int size, long value, boolean unsigned) {
         this.size = size;
+        this.unsigned = unsigned;
         setValue(value);
     }
 
@@ -43,14 +61,17 @@ public abstract class IntegerType extends Number implements NativeMapped {
         this.value = value;
         switch (size) {
         case 1:
+            if (unsigned) this.value = value & 0xFFL;
             truncated = (byte) value;
             this.number = new Byte((byte) value);
             break;
         case 2:
+            if (unsigned) this.value = value & 0xFFFFL;
             truncated = (short) value;
             this.number = new Short((short) value);
             break;
         case 4:
+            if (unsigned) this.value = value & 0xFFFFFFFFL;
             truncated = (int) value;
             this.number = new Integer((int) value);
             break;
@@ -63,7 +84,7 @@ public abstract class IntegerType extends Number implements NativeMapped {
         if (size < 8) {
             long mask = ~((1L << (size*8)) - 1);
             if ((value < 0 && truncated != value)
-                    || (value >= 0 && (mask & value) != 0)) {
+                || (value >= 0 && (mask & value) != 0)) {
                 throw new IllegalArgumentException("Argument value 0x"
                         + Long.toHexString(value) + " exceeds native capacity ("
                         + size + " bytes) mask=0x" + Long.toHexString(mask));
@@ -99,11 +120,11 @@ public abstract class IntegerType extends Number implements NativeMapped {
     }
 
     public int intValue() {
-        return number.intValue();
+        return (int)value;
     }
 
     public long longValue() {
-        return number.longValue();
+        return value;
     }
 
     public float floatValue() {

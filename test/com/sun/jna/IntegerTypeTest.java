@@ -65,6 +65,56 @@ public class IntegerTypeTest extends TestCase {
         assertEquals("Wrong initial value", VALUE, nl.longValue());
     }
 
+    public void testValueBoundaries() {
+        class TestType extends IntegerType {
+            public TestType(int size, long value) {
+                super(size, value);
+            }
+        }
+        try {
+            new TestType(1, 0x100L);
+            fail("Exception should be thrown if byte value out of bounds");
+        }
+        catch(IllegalArgumentException e) {
+        }
+        try {
+            new TestType(2, 0x10000L);
+            fail("Exception should be thrown if short value out of bounds");
+        }
+        catch(IllegalArgumentException e) {
+        }
+        try {
+            new TestType(4, 0x100000000L);
+            fail("Exception should be thrown if int value out of bounds");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    public void testUnsignedValues() {
+        class TestType extends IntegerType {
+            public TestType(int size, long value) {
+                super(size, value);
+            }
+        }
+        long VALUE = 0xFF;
+        assertEquals("Wrong unsigned byte value", VALUE, new TestType(1, VALUE).longValue());
+        VALUE = 0xFFFF;
+        assertEquals("Wrong unsigned short value", VALUE, new TestType(2, VALUE).longValue());
+        VALUE = 0xFFFFFFFF;
+        assertEquals("Wrong unsigned int value", VALUE, new TestType(4, VALUE).longValue());
+
+        class UnsignedTestType extends IntegerType {
+            public UnsignedTestType(int size, long value) {
+                super(size, value, true);
+            }
+        }
+        UnsignedTestType tt = new UnsignedTestType(4, -1);
+        assertTrue("Expected an unsigned value (ctor): " + tt.longValue(), tt.longValue() > 0);
+        tt.setValue(-2);
+        assertTrue("Expected an unsigned value: " + tt.longValue(), tt.longValue() > 0);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(IntegerTypeTest.class);
     }

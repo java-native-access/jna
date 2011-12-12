@@ -269,12 +269,7 @@
 
   <target name="javah" depends="compile">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
-      <class name="com.sun.jna.Function"/>
-      <class name="com.sun.jna.Pointer"/>
-      <class name="com.sun.jna.Memory"/>
       <class name="com.sun.jna.Native"/>
-      <class name="com.sun.jna.NativeLibrary"/>
-      <class name="com.sun.jna.CallbackReference"/>
     </javah>
     <condition property="grep" value="/usr/sfw/bin/ggrep">
       <os name="SunOS"/>

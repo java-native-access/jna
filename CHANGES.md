@@ -1,3 +1,13 @@
+Release 3.x.x
+=============
+
+Features
+--------
+* Add 'unsigned' modifier to IntegerType
+
+Bug Fixes
+---------
+
 Release 3.4.0
 =============
 
