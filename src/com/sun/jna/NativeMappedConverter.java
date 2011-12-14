@@ -12,22 +12,25 @@
  */
 package com.sun.jna;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 /** Provides type conversion for instances of {@link NativeMapped}. */
 public class NativeMappedConverter implements TypeConverter {
-    private static Map converters = new WeakHashMap();
+    private static final Map/*<Class,Reference<NativeMappedConverter>>*/ converters = new WeakHashMap();
     private final Class type;
     private final Class nativeType;
     private final NativeMapped instance;
 
     public static NativeMappedConverter getInstance(Class cls) {
         synchronized(converters) {
-            NativeMappedConverter nmc = (NativeMappedConverter)converters.get(cls);
+            Reference r = (Reference)converters.get(cls);
+            NativeMappedConverter nmc = r != null ? (NativeMappedConverter)r.get() : null;
             if (nmc == null) {
                 nmc = new NativeMappedConverter(cls);
-                converters.put(cls, nmc);
+                converters.put(cls, new SoftReference(nmc));
             }
             return nmc;
         }
