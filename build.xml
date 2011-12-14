@@ -272,6 +272,7 @@
 
   <target name="javah" depends="compile">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
+      <class name="com.sun.jna.Function"/>
       <class name="com.sun.jna.Native"/>
     </javah>
     <condition property="grep" value="/usr/sfw/bin/ggrep">
@@ -281,12 +282,13 @@
       <os name="OpenBSD"/>
     </condition>
     <property name="grep" value="grep"/>
+    <!-- args are based on GNU grep, other versions may differ -->
     <apply dir="${build.native}" executable="${grep}" parallel="true"
            failonerror="true" relative="true" output="${md5.file}">
       <arg value="-A"/>
       <arg value="1"/>
       <arg value="JNIEXPORT"/>
-      <fileset dir="${build.native}" includes="*.h,dummy.txt"/>
+      <fileset dir="${build.native}" includes="*.h"/>
     </apply>
     <!-- Clean up gcj javah output to match that of Sun's javah -->
     <replaceregexp match="^((.*\.h):JNIEXPORT[^(]+)( +\(.*)"
