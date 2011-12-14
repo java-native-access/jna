@@ -65,6 +65,7 @@
 
   <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
   <property name="compatibility" value="1.4"/>
+  <property name="platform.compatibility" value="1.5"/>
   <condition property="test.compatibility" value="1.4">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
@@ -167,7 +168,7 @@
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/native"/>
-    <property name="md5.file" location="${build.native}/sig"/>
+    <property name="md5.file" location="${build.native}/jni.checksum"/>
 
     <mkdir dir="${build}"/>
     <mkdir dir="${build.native}"/>
@@ -250,16 +251,18 @@
   </target>
 
   <target name="platform-jar" depends="jar">
-    <subant target="jar">
+    <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="javac.source" value="${platform.compatibility}"/>
+      <property name="javac.target" value="${platform.compatibility}"/>
       <fileset dir="${contrib}" includes="platform/build.xml" />
     </subant>
   </target>
 
   <target name="contrib-jars" depends="platform-jar" description="Build contrib jars">
-    <subant target="jar">
+    <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
@@ -283,7 +286,7 @@
       <arg value="-A"/>
       <arg value="1"/>
       <arg value="JNIEXPORT"/>
-      <fileset dir="${build.native}" includes="*.h"/>
+      <fileset dir="${build.native}" includes="*.h,dummy.txt"/>
     </apply>
     <!-- Clean up gcj javah output to match that of Sun's javah -->
     <replaceregexp match="^((.*\.h):JNIEXPORT[^(]+)( +\(.*)"
@@ -331,7 +334,7 @@
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build.native}" includes="*.o,*jnidispatch*"/>
     </delete>
-    <fail>API for native code has changed.  Re-run this build after updating jni.version and jni.md5 in build.xml</fail>
+    <fail>API for native code has changed, or javah output is inconsistent.  Re-run this build after checking ${md5.file} or updating jni.version and jni.md5 in build.xml</fail>
   </target>
 
   <target name=":rsrc">
@@ -578,10 +581,12 @@
   </target>
 
   <target name="contrib-test" depends="contrib-jars,compile-tests">
-    <subant target="test">
+    <subant target="test" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="javac.source" value="${test.compatibility}"/>
+      <property name="javac.target" value="${test.compatibility}"/>
       <fileset dir="${contrib}" includes="platform/build.xml"/>
     </subant>
   </target>
@@ -829,7 +834,7 @@ osname=macos,
       <fileset dir="${javadoc}"/>
       <fileset dir="." includes="*~,**/*~"/>
     </delete>
-    <subant target="clean">
+    <subant target="clean" failonerror="true">
       <fileset dir="${contrib}" includes="*/build.xml"/>
     </subant>
   </target>
