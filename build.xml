@@ -692,7 +692,7 @@
     </javadoc>
   </target>
 
-  <target name="dist" depends="jar,contrib-jars,compile-tests,native,javadoc"
+  <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}">
       <fileset dir="${build}">
