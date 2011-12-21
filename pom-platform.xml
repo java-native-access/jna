@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.java.dev.jna</groupId>
+  <artifactId>platform</artifactId>
+  <packaging>jar</packaging>
+  <version>3.4.0</version>
+  <name>Java Native Access Platform</name>
+  <description>Java Native Access Platform</description>
+  <url>https://github.com/twall/jna</url>
+
+  <licenses>
+      <license>
+          <name>LGPL, version 2.1</name>
+          <url>http://creativecommons.org/licenses/LGPL/2.1/</url>
+          <distribution>repo</distribution>
+      </license>
+  </licenses>
+
+
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>java.net-m2-repository</id>
+      <url>java-net:/maven2-repository~svn/trunk/repository/</url>
+    </repository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:https://github.com/twall/jna</connection>
+    <developerConnection>scm:git:ssh://git@github.com/twall/jna.git</developerConnection>
+    <url>https://github.com/twall/jna</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>twall</id>
+      <name>Timotyh Wall</name>
+      <roles>
+        <role>Owner</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <build>
+    <plugins>
+      <!-- fake out maven and install the binary artifact -->
+      <plugin>
+        <groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
+        <artifactId>maven-antrun-extended-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <!--<ant dir="." target="dist" />-->
+                <attachArtifact file="dist/jna.jar"/>
+                <attachArtifact file="dist/platform.jar" classifier="platform" type="jar"/>
+                <attachArtifact file="dist/src-mvn.zip" classifier="sources" type="jar"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.jvnet.wagon-svn</groupId>
+        <artifactId>wagon-svn</artifactId>
+        <version>1.12</version>
+      </extension>
+    </extensions>
+  </build>
+</project>
