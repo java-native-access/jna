@@ -75,8 +75,6 @@
   <property name="test.compatibility" value="1.5"/>
 
   <!-- Maven -->
-  <property name="build" location="build" />
-
   <!-- define Maven coordinates -->
   <property name="groupId" value="net.java.dev.jna" />
   <property name="artifactId" value="jna" />
