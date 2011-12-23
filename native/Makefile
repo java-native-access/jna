@@ -134,8 +134,16 @@ LIBPFX=
 LIBSFX=.dll
 
 ifeq ($(CC),gcc)
-CC += -mno-cygwin
-LD += -mno-cygwin -Wl,--add-stdcall-alias
+# -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
+# installation
+GCC_VERSION = $(shell gcc --version | sed -n 's/.*\([34]\)[0-9.]*.*/\1/p')
+ifeq ($(GCC_VERSION),3)
+NOCYGWIN=-mno-cygwin
+else
+NOCYGWIN=
+endif
+CC += $(NOCYGWIN)
+LD += $(NOCYGWIN) -Wl,--add-stdcall-alias
 endif
 
 ifeq ($(ARCH),amd64)
