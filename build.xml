@@ -868,7 +868,6 @@ osname=macos,
     <subant target="clean" failonerror="true">
       <fileset dir="${contrib}" includes="*/build.xml"/>
     </subant>
-    <delete dir="${dist}" />
   </target>
 
   <target name="deploy" depends="dist,platform-jar" description="deploy snapshot version to Maven snapshot repository">
