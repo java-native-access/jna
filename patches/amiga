@@ -1,0 +1,44 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,5 +1,10 @@
+ 2012-01-23  Anthony Green  <green@moxielogic.com>
+-	    Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
++	    Chris Young  <cdyoung@ntlworld.com>
++
++	* configure.ac: Add Amiga support.
++	* configure: Rebuilt.
++
++2012-01-23  Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
+ 
+ 	* include/ffi_common.h (LIKELY, UNLIKELY): Fix definitions.
+ 
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -13128,6 +13128,9 @@ case "$host" in
+   powerpc*-*-linux* | powerpc-*-sysv*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;
++  powerpc-*-amigaos*)
++	TARGET=POWERPC; TARGETDIR=powerpc
++	;;
+   powerpc-*-beos*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -146,6 +146,9 @@ case "$host" in
+   powerpc*-*-linux* | powerpc-*-sysv*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;
++  powerpc-*-amigaos*)
++	TARGET=POWERPC; TARGETDIR=powerpc
++	;;
+   powerpc-*-beos*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;

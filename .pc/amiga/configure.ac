@@ -146,9 +146,6 @@ case "$host" in
   powerpc*-*-linux* | powerpc-*-sysv*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
-  powerpc-*-amigaos*)
-	TARGET=POWERPC; TARGETDIR=powerpc
-	;;
   powerpc-*-beos*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;

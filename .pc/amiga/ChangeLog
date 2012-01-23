@@ -1,10 +1,5 @@
 2012-01-23  Anthony Green  <green@moxielogic.com>
-	    Chris Young  <cdyoung@ntlworld.com>
-
-	* configure.ac: Add Amiga support.
-	* configure: Rebuilt.
-
-2012-01-23  Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
+	    Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
 
 	* include/ffi_common.h (LIKELY, UNLIKELY): Fix definitions.
 
