@@ -1,7 +1,11 @@
+2012-01-23  Andreas Schwab <schwab@linux-m68k.org>
+
+	* src/m68k/sysv.S (ffi_call_SYSV): Properly test for plain
+	mc68000.  Test for __HAVE_68881__ in addition to __MC68881__.
+
 2012-01-23  Alan Hourihane <alanh@fairlite.co.uk>
 
 	* src/m68k/ffi.c (ffi_prep_closure_loc): Fix ABI check.
-	* src/m68k/sysv.S: Support 68881.
 	* testsuite/libffi.call/return_sc.c (main): Fix test check.
 
 2012-01-19  Jakub Jelinek  <jakub@redhat.com>

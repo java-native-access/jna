@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------
 	
-   sysv.S - Copyright (c) 1998 Andreas Schwab
+   sysv.S - Copyright (c) 1998, 2012 Andreas Schwab
 	    Copyright (c) 2008 Red Hat, Inc. 
    
    m68k Foreign Function Interface 
@@ -87,7 +87,7 @@ ffi_call_SYSV:
 
 	| If the return value pointer is NULL, assume no return value.
 	| NOTE: On the mc68000, tst on an address register is not supported.
-#if defined(__mc68000__) && !defined(__mcoldfire__)
+#if !defined(__mc68020__) && !defined(__mc68030__) && !defined(__mc68040__) && !defined(__mc68060__) && !defined(__mcoldfire__)
 	cmp.w	#0, %a1
 #else
 	tst.l	%a1
