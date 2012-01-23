@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi_common.h - Copyright (C) 2011, 2012  Anthony Green
+   ffi_common.h - Copyright (C) 2011  Anthony Green
                   Copyright (C) 2007  Free Software Foundation, Inc
                   Copyright (c) 1996  Red Hat, Inc.
                   
@@ -118,8 +118,8 @@ typedef float FLOAT32;
 #ifndef __GNUC__
 #define __builtin_expect(x, expected_value) (x)
 #endif
-#define LIKELY(x)    __builtin_expect(!!(x),1)
-#define UNLIKELY(x)  __builtin_expect((x)!=0,0)
+#define LIKELY(x)    __builtin_expect((x),1)
+#define UNLIKELY(x)  __builtin_expect((x),1)
 
 #ifdef __cplusplus
 }
