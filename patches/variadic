@@ -572,7 +572,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,14 @@
+@@ -17,6 +17,17 @@
+ 
+ 	* configure: Regenerate.
+ 
 +2011-11-12  David Gilbert <david.gilbert@linaro.org>
 +
 +	* doc/libffi.texi, include/ffi.h.in, include/ffi_common.h,

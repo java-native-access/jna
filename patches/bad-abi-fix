@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -55,6 +55,23 @@
+@@ -69,6 +69,23 @@
  
  	* configure: Regenerate.
  
@@ -111,19 +111,15 @@ Index: libffi/src/ia64/ffi.c
 ===================================================================
 --- libffi.orig/src/ia64/ffi.c
 +++ libffi/src/ia64/ffi.c
-@@ -1,7 +1,8 @@
+@@ -1,6 +1,7 @@
  /* -----------------------------------------------------------------------
--   ffi.c - Copyright (c) 1998, 2007, 2008 Red Hat, Inc.
--	   Copyright (c) 2000 Hewlett Packard Company
--   
-+   ffi.c - Copyright (c) 2011 Anthony Green
-+           Copyright (c) 2000 Hewlett Packard Company
-+           Copyright (c) 1998, 2007, 2008 Red Hat, Inc.
-+	   
+    ffi.c - Copyright (c) 1998, 2007, 2008, 2012 Red Hat, Inc.
+ 	   Copyright (c) 2000 Hewlett Packard Company
++	   Copyright (c) 2011 Anthony Green
+    
     IA64 Foreign Function Interface 
  
-    Permission is hereby granted, free of charge, to any person obtaining
-@@ -425,7 +426,8 @@ ffi_prep_closure_loc (ffi_closure* closu
+@@ -429,7 +430,8 @@ ffi_prep_closure_loc (ffi_closure* closu
    struct ffi_ia64_trampoline_struct *tramp;
    struct ia64_fd *fd;
  

@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -22,6 +22,26 @@
+@@ -41,6 +41,26 @@
  	X 10.7.
  	* configure: Rebuilt.
  

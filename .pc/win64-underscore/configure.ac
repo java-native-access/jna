@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.63)
 
-AC_INIT([libffi], [3.0.11-rc2], [http://sourceware.org/libffi.html])
+AC_INIT([libffi], [3.0.11-rc2], [http://github.com/atgreen/libffi/issues])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -107,7 +107,7 @@ case "$host" in
 	TARGET=X86_64; TARGETDIR=x86
 	;;
   i?86-*-*)
-	TARGET=X86; TARGETDIR=x86
+	TARGET=X86_64; TARGETDIR=x86
 	;;
 
   ia64*-*-*)

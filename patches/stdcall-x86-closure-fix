@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -182,6 +182,14 @@
+@@ -201,6 +201,14 @@
  	* testsuite/libffi.call/cls_longdouble.c: Likewise.
  	* testsuite/libffi.call/huge_struct.c: Likewise.
  

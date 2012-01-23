@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -182,6 +182,13 @@
+@@ -201,6 +201,13 @@
  	* testsuite/libffi.call/cls_longdouble.c: Likewise.
  	* testsuite/libffi.call/huge_struct.c: Likewise.
  
@@ -78,7 +78,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -486,7 +491,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -489,7 +494,7 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_24) $(am__append_25) $(am__append_26)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
@@ -121,7 +121,7 @@ Index: libffi/configure
  
  
  
-@@ -13302,6 +13308,14 @@ $as_echo "#define FFI_DEBUG 1" >>confdef
+@@ -13335,6 +13341,14 @@ $as_echo "#define FFI_DEBUG 1" >>confdef
    fi
  fi
  
@@ -136,7 +136,7 @@ Index: libffi/configure
  
  # Check whether --enable-structs was given.
  if test "${enable_structs+set}" = set; then :
-@@ -13616,6 +13630,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+@@ -13649,6 +13663,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi
  

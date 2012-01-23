@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -50,6 +50,29 @@
+@@ -69,6 +69,29 @@
  
  	* configure: Regenerate.
  
@@ -137,7 +137,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -141,17 +142,18 @@ am_libffi_la_OBJECTS = src/debug.lo src/
+@@ -144,17 +145,18 @@ am_libffi_la_OBJECTS = src/debug.lo src/
  @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
  @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
  @ARM_TRUE@am__objects_16 = src/arm/sysv.lo src/arm/ffi.lo
@@ -166,7 +166,7 @@ Index: libffi/Makefile.in
  nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
  	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-@@ -160,17 +162,18 @@ nodist_libffi_la_OBJECTS = $(am__objects
+@@ -163,17 +165,18 @@ nodist_libffi_la_OBJECTS = $(am__objects
  	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
  	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
  	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
@@ -189,7 +189,7 @@ Index: libffi/Makefile.in
  	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
  	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
  	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
-@@ -178,8 +181,8 @@ am__objects_28 = $(am__objects_1) $(am__
+@@ -181,8 +184,8 @@ am__objects_28 = $(am__objects_1) $(am__
  	$(am__objects_16) $(am__objects_17) $(am__objects_18) \
  	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
  	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
@@ -200,7 +200,7 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -297,6 +300,7 @@ ECHO_N = @ECHO_N@
+@@ -300,6 +303,7 @@ ECHO_N = @ECHO_N@
  ECHO_T = @ECHO_T@
  EGREP = @EGREP@
  EXEEXT = @EXEEXT@
@@ -208,15 +208,7 @@ Index: libffi/Makefile.in
  FGREP = @FGREP@
  GREP = @GREP@
  HAVE_LONG_DOUBLE = @HAVE_LONG_DOUBLE@
-@@ -386,6 +390,7 @@ psdir = @psdir@
- sbindir = @sbindir@
- sharedstatedir = @sharedstatedir@
- srcdir = @srcdir@
-+sys_symbol_underscore = @sys_symbol_underscore@
- sysconfdir = @sysconfdir@
- target = @target@
- target_alias = @target_alias@
-@@ -405,31 +410,27 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -409,31 +413,27 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
  	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
  	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
@@ -267,7 +259,7 @@ Index: libffi/Makefile.in
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -488,10 +489,11 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -492,10 +492,11 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_15) $(am__append_16) $(am__append_17) \
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
@@ -281,7 +273,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
  AM_CCASFLAGS = $(AM_CPPFLAGS)
-@@ -727,6 +729,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
+@@ -731,6 +732,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
  	src/arm/$(DEPDIR)/$(am__dirstamp)
  src/arm/ffi.lo: src/arm/$(am__dirstamp) \
  	src/arm/$(DEPDIR)/$(am__dirstamp)
@@ -290,7 +282,7 @@ Index: libffi/Makefile.in
  src/avr32/$(am__dirstamp):
  	@$(MKDIR_P) src/avr32
  	@: > src/avr32/$(am__dirstamp)
-@@ -824,6 +828,8 @@ mostlyclean-compile:
+@@ -828,6 +831,8 @@ mostlyclean-compile:
  	-rm -f src/arm/ffi.lo
  	-rm -f src/arm/sysv.$(OBJEXT)
  	-rm -f src/arm/sysv.lo
@@ -299,7 +291,7 @@ Index: libffi/Makefile.in
  	-rm -f src/avr32/ffi.$(OBJEXT)
  	-rm -f src/avr32/ffi.lo
  	-rm -f src/avr32/sysv.$(OBJEXT)
-@@ -946,6 +952,7 @@ distclean-compile:
+@@ -950,6 +955,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@
@@ -307,7 +299,7 @@ Index: libffi/Makefile.in
  @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/sysv.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/ffi.Plo@am__quote@
-@@ -1813,6 +1820,7 @@ uninstall-am: uninstall-dvi-am uninstall
+@@ -1817,6 +1823,7 @@ uninstall-am: uninstall-dvi-am uninstall
  	uninstall-info-am uninstall-libLTLIBRARIES uninstall-pdf-am \
  	uninstall-pkgconfigDATA uninstall-ps-am
  

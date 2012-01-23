@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -794,6 +794,11 @@
+@@ -808,6 +808,11 @@
  	* man/Makefile.in: Regenerate.
  	* testsuite/Makefile.in: Regenerate.
  
