@@ -42,3 +42,27 @@ Index: libffi/configure.ac
    powerpc-*-beos*)
  	TARGET=POWERPC; TARGETDIR=powerpc
  	;;
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -63,6 +63,7 @@ tested:
+ | MIPS         | Linux            |
+ | MIPS         | RTEMS            |
+ | MIPS64       | Linux            |
++| PowerPC      | AMIGA            |
+ | PowerPC      | Linux            |
+ | PowerPC      | Mac OSX          |
+ | PowerPC      | FreeBSD          |
+@@ -145,7 +146,10 @@ History
+ See the ChangeLog files for details.
+ 
+ 3.0.11 MMM-DD-YY
+-        ??????????
++        Lots of build fixes.
++        Add Amiga newer MacOS support.
++	Fix Octeon and MC68881 support.
++	Fix code pessimizations.
+ 
+ 3.0.10 Aug-23-11
+         Add support for Apple's iOS.
