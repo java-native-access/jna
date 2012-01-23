@@ -1,8 +1,5 @@
-2012-01-23  Uros Bizjak  <ubizjak@gmail.com>
-
-	* src/alpha/ffi.c (ffi_prep_closure_loc): Check for bad ABI.
-
-2012-01-23  Chris Young  <cdyoung@ntlworld.com>
+2012-01-23  Anthony Green  <green@moxielogic.com>
+	    Chris Young  <cdyoung@ntlworld.com>
 
 	* configure.ac: Add Amiga support.
 	* configure: Rebuilt.
