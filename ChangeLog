@@ -1,3 +1,9 @@
+2012-01-23  Alan Hourihane <alanh@fairlite.co.uk>
+
+	* src/m68k/ffi.c (ffi_prep_closure_loc): Fix ABI check.
+	* src/m68k/sysv.S: Support 68881.
+	* testsuite/libffi.call/return_sc.c (main): Fix test check.
+
 2012-01-19  Jakub Jelinek  <jakub@redhat.com>
 
 	PR rtl-optimization/48496
