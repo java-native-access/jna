@@ -7,6 +7,8 @@ Features
 
 Bug Fixes
 ---------
+* Re-build linux-amd and linux-i386 against older versions of glibc (2.2.5 and
+2.1.3 respectively)
 
 Release 3.4.0
 =============

@@ -85,7 +85,7 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.4.0";
+    private static final String VERSION = "3.4.1";
     private static final String VERSION_NATIVE = "3.4.0";
 
     // Used by tests, do not remove
