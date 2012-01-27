@@ -372,8 +372,8 @@ public abstract class Structure {
     // Data synchronization methods
     //////////////////////////////////////////////////////////////////////////
 
-    // Keep track of ByReference reads to avoid creating multiple structures
-    // mapped to the same address
+    // Keep track of ByReference reads to avoid redundant reads of the same
+    // address 
     private static final ThreadLocal reads = new ThreadLocal() {
         protected synchronized Object initialValue() {
             return new HashMap();
