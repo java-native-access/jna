@@ -8,7 +8,8 @@ Features
 Bug Fixes
 ---------
 * Re-build linux-amd and linux-i386 against older versions of glibc (2.2.5 and
-2.1.3 respectively)
+2.1.3 respectively).
+* Properly initialize first printer info struct in winspool library.
 
 Release 3.4.0
 =============
