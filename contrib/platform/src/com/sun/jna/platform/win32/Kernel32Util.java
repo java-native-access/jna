@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,8 @@ import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -144,5 +148,52 @@ public abstract class Kernel32Util {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
 		return fileAttributes;
+	}
+
+	/**
+	 * Retrieves the result of GetFileType, provided the file exists.
+	 */
+	public static int getFileType(String fileName) throws FileNotFoundException {
+	    File f = new File(fileName);
+	    if (!f.exists()) {
+		throw new FileNotFoundException(fileName);
+	    }
+
+	    HANDLE hFile = null;
+	    try {
+		 hFile = Kernel32.INSTANCE.CreateFile(fileName,
+						      WinNT.GENERIC_READ,
+						      WinNT.FILE_SHARE_READ,
+						      new WinBase.SECURITY_ATTRIBUTES(),
+						      WinNT.OPEN_EXISTING,
+						      WinNT.FILE_ATTRIBUTE_NORMAL,
+						      new HANDLEByReference().getValue());
+
+		if (WinBase.INVALID_HANDLE_VALUE.equals(hFile)) {
+		    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+
+		int type = Kernel32.INSTANCE.GetFileType(hFile);
+		switch(type) {
+		  case WinNT.FILE_TYPE_UNKNOWN:
+		    int err = Kernel32.INSTANCE.GetLastError();
+		    switch(err) {
+		      case W32Errors.NO_ERROR:
+			break;
+		      default:
+			throw new Win32Exception(err);
+		    }
+		    // fall-thru
+
+		  default:
+		    return type;
+		}
+	    } finally {
+		if (hFile != null) {
+		    if (! Kernel32.INSTANCE.CloseHandle(hFile)) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		    }
+		}
+	    }
 	}
 }

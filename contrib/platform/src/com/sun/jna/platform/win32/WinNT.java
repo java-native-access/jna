@@ -582,6 +582,11 @@ public interface WinNT extends StdCallLibrary {
     int FILE_SHARE_READ				= 0x00000001;
     int FILE_SHARE_WRITE			= 0x00000002; 
     int FILE_SHARE_DELETE			= 0x00000004; 
+    int FILE_TYPE_CHAR				= 0x0002;
+    int FILE_TYPE_DISK				= 0x0001;
+    int FILE_TYPE_PIPE				= 0x0003;
+    int FILE_TYPE_REMOTE			= 0x8000;
+    int FILE_TYPE_UNKNOWN			= 0x0000;
     int FILE_ATTRIBUTE_READONLY			= 0x00000001; 
     int FILE_ATTRIBUTE_HIDDEN			= 0x00000002; 
     int FILE_ATTRIBUTE_SYSTEM			= 0x00000004; 
