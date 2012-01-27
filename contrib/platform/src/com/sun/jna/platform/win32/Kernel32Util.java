@@ -196,4 +196,11 @@ public abstract class Kernel32Util {
 		}
 	    }
 	}
+
+	/**
+	 * @returns One of the WinBase.DRIVE_* constants.
+	 */
+	public static int getDriveType(String rootName) {
+	    return Kernel32.INSTANCE.GetDriveType(rootName);
+	}
 }
