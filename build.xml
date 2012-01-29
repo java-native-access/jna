@@ -876,12 +876,12 @@ osname=macos,
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
-      <arg value="-DpomFile=pom.xml"/>
+      <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${maven-jar}"/>
     </artifact:mvn>
   </target>
 
-  <!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
+  <!-- before this, update project version (both build.xml and ${pom}) from SNAPSHOT to RELEASE -->
   <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the main artifact -->
     <artifact:mvn>
