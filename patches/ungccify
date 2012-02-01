@@ -31,7 +31,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -496,7 +494,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -495,7 +493,7 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_27)
  libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)

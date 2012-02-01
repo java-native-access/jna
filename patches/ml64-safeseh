@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -209,6 +209,10 @@
+@@ -233,6 +233,10 @@
  	* src/prep_cif.c: Push stack space computation into src/x86/ffi.c
  	for X86_ANY so return value space doesn't get added twice.
  

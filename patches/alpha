@@ -2,17 +2,17 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,5 +1,8 @@
--2012-01-23  Anthony Green  <green@moxielogic.com>
--	    Chris Young  <cdyoung@ntlworld.com>
+@@ -17,6 +17,10 @@
+ 	* testsuite/libffi.call/struct1_win32.c: New test.
+ 	* testsuite/libffi.call/struct2_win32.c: New test.
+ 
 +2012-01-23  Uros Bizjak  <ubizjak@gmail.com>
 +
 +	* src/alpha/ffi.c (ffi_prep_closure_loc): Check for bad ABI.
 +
-+2012-01-23  Chris Young  <cdyoung@ntlworld.com>
+ 2012-01-23  Anthony Green  <green@moxielogic.com>
+ 	    Chris Young  <cdyoung@ntlworld.com>
  
- 	* configure.ac: Add Amiga support.
- 	* configure: Rebuilt.
 Index: libffi/src/alpha/ffi.c
 ===================================================================
 --- libffi.orig/src/alpha/ffi.c

@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -76,6 +76,11 @@
+@@ -100,6 +100,11 @@
  	uintptr_t first.
  	* testsuite/libffi.call/cls_pointer_stack.c (main): Likewise.
  

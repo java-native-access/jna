@@ -2,7 +2,9 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,5 +1,10 @@
+@@ -18,7 +18,12 @@
+ 	* testsuite/libffi.call/struct2_win32.c: New test.
+ 
  2012-01-23  Anthony Green  <green@moxielogic.com>
 -	    Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
 +	    Chris Young  <cdyoung@ntlworld.com>
@@ -18,7 +20,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -13128,6 +13128,9 @@ case "$host" in
+@@ -12138,6 +12138,9 @@ case "$host" in
    powerpc*-*-linux* | powerpc-*-sysv*)
  	TARGET=POWERPC; TARGETDIR=powerpc
  	;;

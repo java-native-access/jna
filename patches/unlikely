@@ -2,13 +2,16 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,8 @@
+@@ -17,6 +17,11 @@
+ 	* testsuite/libffi.call/struct1_win32.c: New test.
+ 	* testsuite/libffi.call/struct2_win32.c: New test.
+ 
 +2012-01-23  Anthony Green  <green@moxielogic.com>
 +	    Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
 +
 +	* include/ffi_common.h (LIKELY, UNLIKELY): Fix definitions.
 +
- 2012-01-23  Andreas Schwab <schwab@linux-m68k.org>
+ 2012-01-23  Andreas Schwab  <schwab@linux-m68k.org>
  
  	* src/m68k/sysv.S (ffi_call_SYSV): Properly test for plain
 Index: libffi/include/ffi_common.h

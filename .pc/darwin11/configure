@@ -621,9 +621,6 @@ FFI_DEBUG_FALSE
 FFI_DEBUG_TRUE
 TARGETDIR
 TARGET
-FFI_EXEC_TRAMPOLINE_TABLE
-FFI_EXEC_TRAMPOLINE_TABLE_FALSE
-FFI_EXEC_TRAMPOLINE_TABLE_TRUE
 sys_symbol_underscore
 HAVE_LONG_DOUBLE
 ALLOCA
@@ -13290,30 +13287,13 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >>confdefs.h
     fi
 fi
 
-
-FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in
-     *arm*-apple-darwin*)
-       FFI_EXEC_TRAMPOLINE_TABLE=1
-
-$as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
-
-     ;;
      *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
 
 $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
 
      ;;
 esac
- if test x$FFI_EXEC_TRAMPOLINE_TABLE = x1; then
-  FFI_EXEC_TRAMPOLINE_TABLE_TRUE=
-  FFI_EXEC_TRAMPOLINE_TABLE_FALSE='#'
-else
-  FFI_EXEC_TRAMPOLINE_TABLE_TRUE='#'
-  FFI_EXEC_TRAMPOLINE_TABLE_FALSE=
-fi
-
-
 
 if test x$TARGET = xX86_64; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler supports unwind section type" >&5
@@ -13741,10 +13721,6 @@ if test -z "${PA64_HPUX_TRUE}" && test -z "${PA64_HPUX_FALSE}"; then
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
-if test -z "${FFI_EXEC_TRAMPOLINE_TABLE_TRUE}" && test -z "${FFI_EXEC_TRAMPOLINE_TABLE_FALSE}"; then
-  as_fn_error $? "conditional \"FFI_EXEC_TRAMPOLINE_TABLE\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${FFI_DEBUG_TRUE}" && test -z "${FFI_DEBUG_FALSE}"; then
   as_fn_error $? "conditional \"FFI_DEBUG\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5

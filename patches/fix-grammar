@@ -15,7 +15,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -78,6 +78,10 @@
+@@ -102,6 +102,10 @@
  	instructions.
  	* src/powerpc/aix_closure.S: Declare .ffi_closure_helper_DARWIN.
  
