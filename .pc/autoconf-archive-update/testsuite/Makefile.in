@@ -14,7 +14,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -35,18 +34,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-subdir = include
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/ffi.h.in
+subdir = testsuite
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
-	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
-	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
-	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
-	$(top_srcdir)/m4/ax_configure_args.m4 \
-	$(top_srcdir)/m4/ax_enable_builddir.m4 \
-	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
-	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
 	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
 	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
@@ -55,41 +46,18 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/fficonfig.h
-CONFIG_CLEAN_FILES = ffi.h ffitarget.h
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 SOURCES =
 DIST_SOURCES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(includesdir)"
-HEADERS = $(nodist_includes_HEADERS)
-ETAGS = etags
-CTAGS = ctags
+DEJATOOL = $(PACKAGE)
+RUNTESTDEFAULTFLAGS = --tool $$tool --srcdir $$srcdir
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 ALLOCA = @ALLOCA@
 AMTAR = @AMTAR@
 AM_LTLDFLAGS = @AM_LTLDFLAGS@
-AM_RUNTESTFLAGS = @AM_RUNTESTFLAGS@
+AM_RUNTESTFLAGS = 
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -149,7 +117,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PRTDIAG = @PRTDIAG@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -170,7 +137,6 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
-ax_enable_builddir_sed = @ax_enable_builddir_sed@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -218,11 +184,82 @@ toolexeclibdir = @toolexeclibdir@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AUTOMAKE_OPTIONS = foreign
-DISTCLEANFILES = ffitarget.h
-EXTRA_DIST = ffi.h.in ffi_common.h
-includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
-nodist_includes_HEADERS = ffi.h ffitarget.h
+AUTOMAKE_OPTIONS = foreign dejagnu
+
+# Setup the testing framework, if you have one
+EXPECT = `if [ -f $(top_builddir)/../expect/expect ] ; then \
+            echo $(top_builddir)/../expect/expect ; \
+          else echo expect ; fi`
+
+RUNTEST = `if [ -f $(top_srcdir)/../dejagnu/runtest ] ; then \
+	       echo $(top_srcdir)/../dejagnu/runtest ; \
+	    else echo runtest; fi`
+
+CLEANFILES = *.exe core* *.log *.sum
+EXTRA_DIST = libffi.special/special.exp	\
+libffi.special/unwindtest_ffi_call.cc libffi.special/unwindtest.cc \
+libffi.special/ffitestcxx.h config/default.exp lib/target-libpath.exp \
+lib/libffi.exp lib/wrapper.exp libffi.call/float.c \
+libffi.call/cls_multi_schar.c libffi.call/float3.c \
+libffi.call/cls_3_1byte.c libffi.call/stret_large2.c \
+libffi.call/cls_5_1_byte.c libffi.call/stret_medium.c \
+libffi.call/promotion.c libffi.call/cls_dbls_struct.c \
+libffi.call/nested_struct.c libffi.call/closure_fn1.c \
+libffi.call/cls_4_1byte.c libffi.call/cls_float.c \
+libffi.call/cls_2byte.c libffi.call/closure_fn4.c \
+libffi.call/return_fl2.c libffi.call/nested_struct7.c \
+libffi.call/cls_uint.c libffi.call/cls_align_sint64.c \
+libffi.call/float1.c libffi.call/cls_19byte.c \
+libffi.call/nested_struct1.c libffi.call/cls_4byte.c \
+libffi.call/return_fl1.c libffi.call/cls_align_pointer.c \
+libffi.call/nested_struct4.c libffi.call/nested_struct3.c \
+libffi.call/struct7.c libffi.call/nested_struct9.c \
+libffi.call/cls_sshort.c libffi.call/cls_ulonglong.c \
+libffi.call/cls_pointer_stack.c libffi.call/cls_multi_uchar.c \
+libffi.call/testclosure.c libffi.call/cls_3byte1.c \
+libffi.call/struct6.c libffi.call/return_uc.c libffi.call/return_ll1.c \
+libffi.call/cls_ushort.c libffi.call/stret_medium2.c \
+libffi.call/cls_multi_ushortchar.c libffi.call/return_dbl2.c \
+libffi.call/closure_loc_fn0.c libffi.call/return_sc.c \
+libffi.call/nested_struct8.c libffi.call/cls_7_1_byte.c	\
+libffi.call/return_ll.c libffi.call/cls_pointer.c \
+libffi.call/err_bad_abi.c libffi.call/return_dbl1.c \
+libffi.call/call.exp libffi.call/ffitest.h libffi.call/strlen.c	\
+libffi.call/return_sl.c libffi.call/cls_1_1byte.c \
+libffi.call/struct1.c libffi.call/cls_64byte.c libffi.call/return_ul.c \
+libffi.call/cls_double.c libffi.call/many_win32.c \
+libffi.call/cls_16byte.c libffi.call/cls_align_double.c	\
+libffi.call/cls_align_uint16.c libffi.call/cls_9byte1.c	\
+libffi.call/cls_multi_sshortchar.c libffi.call/cls_multi_ushort.c \
+libffi.call/closure_stdcall.c libffi.call/return_fl.c \
+libffi.call/strlen_win32.c libffi.call/return_ldl.c \
+libffi.call/cls_align_float.c libffi.call/struct3.c \
+libffi.call/cls_uchar.c libffi.call/cls_sint.c libffi.call/float2.c \
+libffi.call/cls_align_longdouble_split.c \
+libffi.call/cls_longdouble_va.c libffi.call/cls_multi_sshort.c \
+libffi.call/stret_large.c libffi.call/cls_align_sint16.c \
+libffi.call/nested_struct6.c libffi.call/cls_5byte.c \
+libffi.call/return_dbl.c libffi.call/cls_20byte.c \
+libffi.call/cls_8byte.c libffi.call/pyobjc-tc.c	\
+libffi.call/cls_24byte.c libffi.call/cls_align_longdouble_split2.c \
+libffi.call/cls_6_1_byte.c libffi.call/cls_schar.c \
+libffi.call/cls_18byte.c libffi.call/closure_fn3.c \
+libffi.call/err_bad_typedef.c libffi.call/closure_fn2.c	\
+libffi.call/struct2.c libffi.call/cls_3byte2.c \
+libffi.call/cls_align_longdouble.c libffi.call/cls_20byte1.c \
+libffi.call/return_fl3.c libffi.call/cls_align_uint32.c	\
+libffi.call/problem1.c libffi.call/float4.c \
+libffi.call/cls_align_uint64.c libffi.call/struct9.c \
+libffi.call/closure_fn5.c libffi.call/cls_align_sint32.c \
+libffi.call/closure_fn0.c libffi.call/closure_fn6.c \
+libffi.call/struct4.c libffi.call/nested_struct2.c \
+libffi.call/cls_6byte.c libffi.call/cls_7byte.c libffi.call/many.c \
+libffi.call/struct8.c libffi.call/negint.c libffi.call/struct5.c \
+libffi.call/cls_12byte.c libffi.call/cls_double_va.c \
+libffi.call/cls_longdouble.c libffi.call/cls_9byte2.c \
+libffi.call/nested_struct10.c libffi.call/nested_struct5.c \
+libffi.call/huge_struct.c
+
 all: all-am
 
 .SUFFIXES:
@@ -235,9 +272,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign include/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign testsuite/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign include/Makefile
+	  $(AUTOMAKE) --foreign testsuite/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -256,86 +293,56 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-ffi.h: $(top_builddir)/config.status $(srcdir)/ffi.h.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-nodist_includesHEADERS: $(nodist_includes_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(includesdir)" || $(MKDIR_P) "$(DESTDIR)$(includesdir)"
-	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includesdir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includesdir)" || exit $$?; \
-	done
-
-uninstall-nodist_includesHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(includesdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(includesdir)" && rm -f $$files
-
-ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	mkid -fID $$unique
 tags: TAGS
+TAGS:
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	set x; \
-	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	shift; \
-	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
-	  test -n "$$unique" || unique=$$empty_fix; \
-	  if test $$# -gt 0; then \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      "$$@" $$unique; \
-	  else \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      $$unique; \
-	  fi; \
-	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	test -z "$(CTAGS_ARGS)$$unique" \
-	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
-	     $$unique
+CTAGS:
 
-GTAGS:
-	here=`$(am__cd) $(top_builddir) && pwd` \
-	  && $(am__cd) $(top_srcdir) \
-	  && gtags -i $(GTAGS_ARGS) "$$here"
 
-distclean-tags:
-	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+check-DEJAGNU: site.exp
+	srcdir=`$(am__cd) $(srcdir) && pwd`; export srcdir; \
+	EXPECT=$(EXPECT); export EXPECT; \
+	runtest=$(RUNTEST); \
+	if $(SHELL) -c "$$runtest --version" > /dev/null 2>&1; then \
+	  exit_status=0; l='$(DEJATOOL)'; for tool in $$l; do \
+	    if $$runtest $(AM_RUNTESTFLAGS) $(RUNTESTDEFAULTFLAGS) $(RUNTESTFLAGS); \
+	    then :; else exit_status=1; fi; \
+	  done; \
+	else echo "WARNING: could not find \`runtest'" 1>&2; :;\
+	fi; \
+	exit $$exit_status
+site.exp: Makefile
+	@echo 'Making a new site.exp file...'
+	@echo '## these variables are automatically generated by make ##' >site.tmp
+	@echo '# Do not edit here.  If you wish to override these values' >>site.tmp
+	@echo '# edit the last section' >>site.tmp
+	@echo 'set srcdir $(srcdir)' >>site.tmp
+	@echo "set objdir `pwd`" >>site.tmp
+	@echo 'set build_alias "$(build_alias)"' >>site.tmp
+	@echo 'set build_triplet $(build_triplet)' >>site.tmp
+	@echo 'set host_alias "$(host_alias)"' >>site.tmp
+	@echo 'set host_triplet $(host_triplet)' >>site.tmp
+	@echo 'set target_alias "$(target_alias)"' >>site.tmp
+	@echo 'set target_triplet $(target_triplet)' >>site.tmp
+	@echo '## All variables above are generated by configure. Do Not Edit ##' >>site.tmp
+	@test ! -f site.exp || \
+	  sed '1,/^## All variables above are.*##/ d' site.exp >> site.tmp
+	@-rm -f site.bak
+	@test ! -f site.exp || mv site.exp site.bak
+	@mv site.tmp site.exp
+
+distclean-DEJAGNU:
+	-rm -f site.exp site.bak
+	-l='$(DEJATOOL)'; for tool in $$l; do \
+	  rm -f $$tool.sum $$tool.log; \
+	done
 
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -368,12 +375,10 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) check-DEJAGNU
 check: check-am
-all-am: Makefile $(HEADERS)
+all-am: Makefile
 installdirs:
-	for dir in "$(DESTDIR)$(includesdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -391,11 +396,11 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -406,7 +411,7 @@ clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-tags
+distclean-am: clean-am distclean-DEJAGNU distclean-generic
 
 dvi: dvi-am
 
@@ -420,7 +425,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nodist_includesHEADERS
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -464,22 +469,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-nodist_includesHEADERS
+uninstall-am:
 
-.MAKE: install-am install-strip
+.MAKE: check-am install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool ctags distclean distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-nodist_includesHEADERS \
+.PHONY: all all-am check check-DEJAGNU check-am clean clean-generic \
+	clean-libtool distclean distclean-DEJAGNU distclean-generic \
+	distclean-libtool distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-nodist_includesHEADERS
+	uninstall uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

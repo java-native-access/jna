@@ -21,7 +21,7 @@
 #   by the code (e.g. for gcc's -fstrict-aliasing), and that floating-point
 #   computations can be re-ordered as needed.
 #
-#   Requires macros: AX_CHECK_COMPILE_FLAG, AX_COMPILER_VENDOR,
+#   Requires macros: AX_CHECK_COMPILER_FLAGS, AX_COMPILER_VENDOR,
 #   AX_GCC_ARCHFLAG, AX_GCC_X86_CPUID.
 #
 # LICENSE
@@ -55,7 +55,7 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 12
+#serial 11
 
 AC_DEFUN([AX_CC_MAXOPT],
 [
@@ -90,7 +90,7 @@ if test "$ac_test_CFLAGS" != "set"; then
 	 else
            xlc_opt="-qtune=auto"
 	 fi
-         AX_CHECK_COMPILE_FLAG($xlc_opt,
+         AX_CHECK_COMPILER_FLAGS($xlc_opt,
 		CFLAGS="-O3 -qansialias -w $xlc_opt",
                [CFLAGS="-O3 -qansialias -w"
                 echo "******************************************************"
@@ -125,7 +125,7 @@ if test "$ac_test_CFLAGS" != "set"; then
           esac
           if test "x$icc_flags" != x; then
             for flag in $icc_flags; do
-              AX_CHECK_COMPILE_FLAG($flag, [icc_archflag=$flag; break])
+              AX_CHECK_COMPILER_FLAGS($flag, [icc_archflag=$flag; break])
             done
           fi
           AC_MSG_CHECKING([for icc architecture flag])
@@ -140,15 +140,11 @@ if test "$ac_test_CFLAGS" != "set"; then
      # default optimization flags for gcc on all systems
      CFLAGS="-O3 -fomit-frame-pointer"
 
-     # -malign-double for x86 systems
-     AX_CHECK_COMPILE_FLAG(-malign-double, CFLAGS="$CFLAGS -malign-double")
-
      #  -fstrict-aliasing for gcc-2.95+
-     AX_CHECK_COMPILE_FLAG(-fstrict-aliasing,
+     AX_CHECK_COMPILER_FLAGS(-fstrict-aliasing,
 	CFLAGS="$CFLAGS -fstrict-aliasing")
 
-     # note that we enable "unsafe" fp optimization with other compilers, too
-     AX_CHECK_COMPILE_FLAG(-ffast-math, CFLAGS="$CFLAGS -ffast-math")
+     AX_CHECK_COMPILER_FLAGS(-ffast-math, CFLAGS="$CFLAGS -ffast-math")
 
      AX_GCC_ARCHFLAG($acx_maxopt_portable)
      ;;
@@ -165,7 +161,7 @@ if test "$ac_test_CFLAGS" != "set"; then
         CFLAGS="-O3"
   fi
 
-  AX_CHECK_COMPILE_FLAG($CFLAGS, [], [
+  AX_CHECK_COMPILER_FLAGS($CFLAGS, [], [
 	echo ""
         echo "********************************************************"
         echo "* WARNING: The guessed CFLAGS don't seem to work with  *"

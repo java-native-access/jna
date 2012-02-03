@@ -1,17 +1,28 @@
 # ===========================================================================
-#    http://www.gnu.org/software/autoconf-archive/ax_compiler_vendor.html
+#     http://www.gnu.org/software/autoconf-archive/ax_gcc_x86_cpuid.html
 # ===========================================================================
 #
 # SYNOPSIS
 #
-#   AX_COMPILER_VENDOR
+#   AX_GCC_X86_CPUID(OP)
 #
 # DESCRIPTION
 #
-#   Determine the vendor of the C/C++ compiler, e.g., gnu, intel, ibm, sun,
-#   hp, borland, comeau, dec, cray, kai, lcc, metrowerks, sgi, microsoft,
-#   watcom, etc. The vendor is returned in the cache variable
-#   $ax_cv_c_compiler_vendor for C and $ax_cv_cxx_compiler_vendor for C++.
+#   On Pentium and later x86 processors, with gcc or a compiler that has a
+#   compatible syntax for inline assembly instructions, run a small program
+#   that executes the cpuid instruction with input OP. This can be used to
+#   detect the CPU type.
+#
+#   On output, the values of the eax, ebx, ecx, and edx registers are stored
+#   as hexadecimal strings as "eax:ebx:ecx:edx" in the cache variable
+#   ax_cv_gcc_x86_cpuid_OP.
+#
+#   If the cpuid instruction fails (because you are running a
+#   cross-compiler, or because you are not using gcc, or because you are on
+#   a processor that doesn't have this instruction), ax_cv_gcc_x86_cpuid_OP
+#   is set to the string "unknown".
+#
+#   This macro mainly exists to be used in AX_GCC_ARCHFLAG.
 #
 # LICENSE
 #
@@ -44,41 +55,25 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 11
+#serial 7
 
-AC_DEFUN([AX_COMPILER_VENDOR],
-[AC_CACHE_CHECK([for _AC_LANG compiler vendor], ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor,
-  [# note: don't check for gcc first since some other compilers define __GNUC__
-  vendors="intel:     __ICC,__ECC,__INTEL_COMPILER
-           ibm:       __xlc__,__xlC__,__IBMC__,__IBMCPP__
-           pathscale: __PATHCC__,__PATHSCALE__
-           clang:     __clang__
-           gnu:       __GNUC__
-           sun:       __SUNPRO_C,__SUNPRO_CC
-           hp:        __HP_cc,__HP_aCC
-           dec:       __DECC,__DECCXX,__DECC_VER,__DECCXX_VER
-           borland:   __BORLANDC__,__TURBOC__
-           comeau:    __COMO__
-           cray:      _CRAYC
-           kai:       __KCC
-           lcc:       __LCC__
-           sgi:       __sgi,sgi
-           microsoft: _MSC_VER
-           metrowerks: __MWERKS__
-           watcom:    __WATCOMC__
-           portland:  __PGI
-           unknown:   UNKNOWN"
-  for ventest in $vendors; do
-    case $ventest in
-      *:) vendor=$ventest; continue ;;
-      *)  vencpp="defined("`echo $ventest | sed 's/,/) || defined(/g'`")" ;;
-    esac
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[
-      #if !($vencpp)
-        thisisanerror;
-      #endif
-    ])], [break])
-  done
-  ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor=`echo $vendor | cut -d: -f1`
- ])
+AC_DEFUN([AX_GCC_X86_CPUID],
+[AC_REQUIRE([AC_PROG_CC])
+AC_LANG_PUSH([C])
+AC_CACHE_CHECK(for x86 cpuid $1 output, ax_cv_gcc_x86_cpuid_$1,
+ [AC_RUN_IFELSE([AC_LANG_PROGRAM([#include <stdio.h>], [
+     int op = $1, eax, ebx, ecx, edx;
+     FILE *f;
+      __asm__("cpuid"
+        : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
+        : "a" (op));
+     f = fopen("conftest_cpuid", "w"); if (!f) return 1;
+     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
+     fclose(f);
+     return 0;
+])],
+     [ax_cv_gcc_x86_cpuid_$1=`cat conftest_cpuid`; rm -f conftest_cpuid],
+     [ax_cv_gcc_x86_cpuid_$1=unknown; rm -f conftest_cpuid],
+     [ax_cv_gcc_x86_cpuid_$1=unknown])])
+AC_LANG_POP([C])
 ])
