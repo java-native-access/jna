@@ -640,4 +640,14 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.DWORD time;
         public BaseTSD.ULONG_PTR dwExtraInfo;
     }
+
+    /**
+     * Contains the time of the last input.
+     */
+    public static class LASTINPUTINFO extends Structure {
+        public int cbSize = 8;
+
+        // / Tick count of when the last input event was received.
+        public int dwTime;
+    }
 }
