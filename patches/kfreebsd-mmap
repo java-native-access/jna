@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -41,6 +41,11 @@
+@@ -59,6 +59,11 @@
  
  	* configure: Regenerate.
  
@@ -18,7 +18,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -339,7 +339,7 @@ case "$target" in
+@@ -348,7 +348,7 @@ case "$target" in
                   [Cannot use PROT_EXEC on this target, so, we revert to
                     alternative means])
       ;;

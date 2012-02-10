@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   prep_cif.c - Copyright (c) 2011  Anthony Green
+   prep_cif.c - Copyright (c) 2011, 2012  Anthony Green
                 Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -111,8 +111,13 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
   FFI_ASSERT((!isvariadic) || (nfixedargs >= 1));
   FFI_ASSERT(nfixedargs <= ntotalargs);
 
-  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI))
+#ifndef X86_WIN32
+  if ((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI))
     return FFI_BAD_ABI;
+#else
+  if (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI || abi == FFI_THISCALL)
+    return FFI_BAD_ABI;
+#endif
 
   cif->abi = abi;
   cif->arg_types = atypes;

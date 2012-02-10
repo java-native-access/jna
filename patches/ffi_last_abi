@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -225,6 +225,12 @@
+@@ -243,6 +243,12 @@
  	* testsuite/libffi.call/cls_longdouble.c: Likewise.
  	* testsuite/libffi.call/huge_struct.c: Likewise.
  
@@ -221,15 +221,23 @@ Index: libffi/src/prep_cif.c
 ===================================================================
 --- libffi.orig/src/prep_cif.c
 +++ libffi/src/prep_cif.c
-@@ -93,7 +93,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
-   ffi_type **ptr;
+@@ -1,5 +1,6 @@
+ /* -----------------------------------------------------------------------
+-   prep_cif.c - Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
++   prep_cif.c - Copyright (c) 2012  Anthony Green
++                Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
  
-   FFI_ASSERT(cif != NULL);
--  FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
-+  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI);
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+@@ -96,7 +97,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+ #ifndef X86_WIN32
+   FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
+ #else
+-  FFI_ASSERT(abi > FFI_FIRST_ABI && abi <= FFI_DEFAULT_ABI
++  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI
+ 	     || abi == FFI_THISCALL);
+ #endif
  
-   cif->abi = abi;
-   cif->arg_types = atypes;
 Index: libffi/src/s390/ffitarget.h
 ===================================================================
 --- libffi.orig/src/s390/ffitarget.h

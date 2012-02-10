@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -95,7 +95,12 @@
+@@ -113,7 +113,12 @@
  
  2011-02-09  Anthony Green <green@moxielogic.com>
  
@@ -16,7 +16,7 @@ Index: libffi/ChangeLog
  
  2011-02-09  Landon Fuller <landonf@macports.org>
  
-@@ -115,6 +120,7 @@
+@@ -133,6 +138,7 @@
  	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
  	* build-ios.sh: New file.
  	* fficonfig.h.in, configure, Makefile.in: Rebuilt.
@@ -28,15 +28,14 @@ Index: libffi/src/prep_cif.c
 ===================================================================
 --- libffi.orig/src/prep_cif.c
 +++ libffi/src/prep_cif.c
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,5 @@
  /* -----------------------------------------------------------------------
--   prep_cif.c - Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
-+   prep_cif.c - Copyright (c) 2011  Anthony Green
-+                Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
+-   prep_cif.c - Copyright (c) 2012  Anthony Green
++   prep_cif.c - Copyright (c) 2011, 2012  Anthony Green
+                 Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
  
     Permission is hereby granted, free of charge, to any person obtaining
-    a copy of this software and associated documentation files (the
-@@ -26,6 +27,12 @@
+@@ -27,6 +27,12 @@
  #include <ffi_common.h>
  #include <stdlib.h>
  
@@ -49,7 +48,7 @@ Index: libffi/src/prep_cif.c
  /* Round up to FFI_SIZEOF_ARG. */
  
  #define STACK_ARG_SIZE(x) ALIGN(x, FFI_SIZEOF_ARG)
-@@ -45,9 +52,13 @@ static ffi_status initialize_aggregate(f
+@@ -46,9 +52,13 @@ static ffi_status initialize_aggregate(f
  
    ptr = &(arg->elements[0]);
  
@@ -64,16 +63,21 @@ Index: libffi/src/prep_cif.c
  	return FFI_BAD_TYPEDEF;
  
        /* Perform a sanity check on the argument type */
-@@ -93,7 +104,8 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
-   ffi_type **ptr;
+@@ -95,10 +105,11 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
  
    FFI_ASSERT(cif != NULL);
--  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI);
-+  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI))
+ #ifndef X86_WIN32
+-  FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
++  if ((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI))
 +    return FFI_BAD_ABI;
+ #else
+-  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI
+-	     || abi == FFI_THISCALL);
++  if (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI || abi == FFI_THISCALL)
++    return FFI_BAD_ABI;
+ #endif
  
    cif->abi = abi;
-   cif->arg_types = atypes;
 Index: libffi/src/x86/ffi64.c
 ===================================================================
 --- libffi.orig/src/x86/ffi64.c

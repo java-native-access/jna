@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -41,6 +41,14 @@
+@@ -59,6 +59,14 @@
  
  	* configure: Regenerate.
  
@@ -80,7 +80,7 @@ Index: libffi/configure
  	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
  	;;
    powerpc64-*-freebsd*)
-@@ -13287,13 +13298,30 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
+@@ -13296,13 +13307,30 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
      fi
  fi
  
@@ -112,7 +112,7 @@ Index: libffi/configure
  
  if test x$TARGET = xX86_64; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler supports unwind section type" >&5
-@@ -13721,6 +13749,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+@@ -13730,6 +13758,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi
  
@@ -127,7 +127,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -339,7 +339,7 @@ case "$target" in
+@@ -348,7 +348,7 @@ case "$target" in
                   [Cannot use PROT_EXEC on this target, so, we revert to
                     alternative means])
       ;;

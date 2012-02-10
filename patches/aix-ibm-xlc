@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -93,6 +93,19 @@
+@@ -111,6 +111,19 @@
  
  	* configure: Regenerate.
  
@@ -22,7 +22,7 @@ Index: libffi/ChangeLog
  2011-02-09  Rainer Orth  <ro@CeBiTec.Uni-Bielefeld.DE>
  
  	PR libffi/46661
-@@ -103,7 +116,7 @@
+@@ -121,7 +134,7 @@
  2011-02-08  Rafael Avila de Espindola  <respindola@mozilla.com>
  
  	* configure.ac: Fix x86 test for pc related relocs.
@@ -178,7 +178,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -13318,67 +13318,69 @@ $as_echo "#define HAVE_AS_X86_64_UNWIND_
+@@ -13327,67 +13327,69 @@ $as_echo "#define HAVE_AS_X86_64_UNWIND_
      fi
  fi
  
@@ -277,7 +277,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -345,44 +345,46 @@ if test x$TARGET = xX86_64; then
+@@ -354,44 +354,46 @@ if test x$TARGET = xX86_64; then
      fi
  fi
  

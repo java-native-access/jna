@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -158,6 +158,13 @@
+@@ -176,6 +176,13 @@
  	(.eh_frame): Use FDE_ENCODING.
  	(.LASFDE1, .LASFDE2, LASFDE3): Simplify with FDE_ENCODE.
  
@@ -20,7 +20,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -315,6 +315,13 @@ if test x$TARGET = xX86 || test x$TARGET
+@@ -324,6 +324,13 @@ if test x$TARGET = xX86 || test x$TARGET
      fi
  fi
  
@@ -924,7 +924,7 @@ Index: libffi/configure
  HAVE_LONG_DOUBLE
  ALLOCA
  PA64_HPUX_FALSE
-@@ -13230,6 +13231,61 @@ $as_echo "#define HAVE_AS_STRING_PSEUDO_
+@@ -13239,6 +13240,61 @@ $as_echo "#define HAVE_AS_STRING_PSEUDO_
  
      fi
  fi

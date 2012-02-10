@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -17,6 +17,10 @@
+@@ -35,6 +35,10 @@
  	* testsuite/libffi.call/struct1_win32.c: New test.
  	* testsuite/libffi.call/struct2_win32.c: New test.
  

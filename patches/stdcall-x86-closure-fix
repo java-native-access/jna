@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -225,6 +225,14 @@
+@@ -243,6 +243,14 @@
  	* testsuite/libffi.call/cls_longdouble.c: Likewise.
  	* testsuite/libffi.call/huge_struct.c: Likewise.
  
@@ -21,7 +21,7 @@ Index: libffi/src/prep_cif.c
 ===================================================================
 --- libffi.orig/src/prep_cif.c
 +++ libffi/src/prep_cif.c
-@@ -110,7 +110,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+@@ -116,7 +116,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
    FFI_ASSERT_VALID_TYPE(cif->rtype);
  
    /* x86, x86-64 and s390 stack space allocation is handled in prep_machdep. */
@@ -30,7 +30,7 @@ Index: libffi/src/prep_cif.c
    /* Make space for the return structure pointer */
    if (cif->rtype->type == FFI_TYPE_STRUCT
  #ifdef SPARC
-@@ -131,7 +131,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+@@ -137,7 +137,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
  	 check after the initialization.  */
        FFI_ASSERT_VALID_TYPE(*ptr);
  

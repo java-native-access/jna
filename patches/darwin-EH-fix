@@ -28,7 +28,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -89,6 +89,11 @@
+@@ -107,6 +107,11 @@
  	Use them to handle ELF vs. ECOFF differences.
  	[__osf__] (_GLOBAL__F_ffi_call_osf): Define.
  

@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -93,6 +93,29 @@
+@@ -111,6 +111,29 @@
  
  	* configure: Regenerate.
  
@@ -311,7 +311,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -322,13 +322,23 @@ if test x$TARGET = xX86_WIN64; then
+@@ -331,13 +331,23 @@ if test x$TARGET = xX86_WIN64; then
      fi
  fi
  

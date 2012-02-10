@@ -2074,7 +2074,7 @@ Index: libffi/configure
  	TARGET=ALPHA; TARGETDIR=alpha;
  	# Support 128-bit long double, changeable via command-line switch.
  	HAVE_LONG_DOUBLE='defined(__LONG_DOUBLE_128__)'
-@@ -14358,6 +15434,14 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+@@ -14367,6 +15443,14 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
  #
  # INIT-COMMANDS
  #
@@ -2089,7 +2089,7 @@ Index: libffi/configure
  AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
  
  
-@@ -14647,6 +15731,7 @@ for ac_config_target in $ac_config_targe
+@@ -14656,6 +15740,7 @@ for ac_config_target in $ac_config_targe
  do
    case $ac_config_target in
      "fficonfig.h") CONFIG_HEADERS="$CONFIG_HEADERS fficonfig.h" ;;
@@ -2097,7 +2097,7 @@ Index: libffi/configure
      "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
      "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
      "include") CONFIG_COMMANDS="$CONFIG_COMMANDS include" ;;
-@@ -15285,6 +16370,150 @@ $as_echo "$as_me: executing $ac_file com
+@@ -15294,6 +16379,150 @@ $as_echo "$as_me: executing $ac_file com
  
  
    case $ac_file$ac_mode in
@@ -2266,7 +2266,7 @@ Index: libffi/include/Makefile.in
  	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
  	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
  	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
-@@ -142,6 +149,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+@@ -141,6 +148,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
  PACKAGE_URL = @PACKAGE_URL@
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
@@ -2274,7 +2274,7 @@ Index: libffi/include/Makefile.in
  RANLIB = @RANLIB@
  SED = @SED@
  SET_MAKE = @SET_MAKE@
-@@ -162,6 +170,7 @@ am__leading_dot = @am__leading_dot@
+@@ -161,6 +169,7 @@ am__leading_dot = @am__leading_dot@
  am__quote = @am__quote@
  am__tar = @am__tar@
  am__untar = @am__untar@
@@ -2300,7 +2300,7 @@ Index: libffi/man/Makefile.in
  	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
  	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
  	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
-@@ -140,6 +147,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+@@ -139,6 +146,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
  PACKAGE_URL = @PACKAGE_URL@
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
@@ -2308,7 +2308,7 @@ Index: libffi/man/Makefile.in
  RANLIB = @RANLIB@
  SED = @SED@
  SET_MAKE = @SET_MAKE@
-@@ -160,6 +168,7 @@ am__leading_dot = @am__leading_dot@
+@@ -159,6 +167,7 @@ am__leading_dot = @am__leading_dot@
  am__quote = @am__quote@
  am__tar = @am__tar@
  am__untar = @am__untar@
@@ -2334,7 +2334,7 @@ Index: libffi/testsuite/Makefile.in
  	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
  	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
  	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
-@@ -117,6 +124,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+@@ -116,6 +123,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
  PACKAGE_URL = @PACKAGE_URL@
  PACKAGE_VERSION = @PACKAGE_VERSION@
  PATH_SEPARATOR = @PATH_SEPARATOR@
@@ -2342,7 +2342,7 @@ Index: libffi/testsuite/Makefile.in
  RANLIB = @RANLIB@
  SED = @SED@
  SET_MAKE = @SET_MAKE@
-@@ -137,6 +145,7 @@ am__leading_dot = @am__leading_dot@
+@@ -136,6 +144,7 @@ am__leading_dot = @am__leading_dot@
  am__quote = @am__quote@
  am__tar = @am__tar@
  am__untar = @am__untar@

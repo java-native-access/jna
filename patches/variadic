@@ -265,7 +265,7 @@ Index: libffi/src/prep_cif.c
 ===================================================================
 --- libffi.orig/src/prep_cif.c
 +++ libffi/src/prep_cif.c
-@@ -90,20 +90,33 @@ static ffi_status initialize_aggregate(f
+@@ -90,14 +90,27 @@ static ffi_status initialize_aggregate(f
  /* Perform machine independent ffi_cif preparation, then call
     machine dependent routine. */
  
@@ -292,8 +292,10 @@ Index: libffi/src/prep_cif.c
 +  FFI_ASSERT((!isvariadic) || (nfixedargs >= 1));
 +  FFI_ASSERT(nfixedargs <= ntotalargs);
 +
-   if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI))
+ #ifndef X86_WIN32
+   if ((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI))
      return FFI_BAD_ABI;
+@@ -108,7 +121,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
  
    cif->abi = abi;
    cif->arg_types = atypes;
@@ -302,7 +304,7 @@ Index: libffi/src/prep_cif.c
    cif->rtype = rtype;
  
    cif->flags = 0;
-@@ -159,10 +172,31 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+@@ -164,10 +177,31 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
    cif->bytes = bytes;
  
    /* Perform machine dependent cif processing */
@@ -572,7 +574,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -41,6 +41,17 @@
+@@ -59,6 +59,17 @@
  
  	* configure: Regenerate.
  
