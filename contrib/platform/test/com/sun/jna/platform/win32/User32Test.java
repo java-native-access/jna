@@ -17,8 +17,6 @@ import junit.framework.TestCase;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
-
 import static com.sun.jna.platform.win32.User32.*;
 
 /**
