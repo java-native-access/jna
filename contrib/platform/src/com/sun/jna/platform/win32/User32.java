@@ -31,6 +31,7 @@ import com.sun.jna.platform.win32.WinUser.FLASHWINFO;
 import com.sun.jna.platform.win32.WinUser.GUITHREADINFO;
 import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.sun.jna.platform.win32.WinUser.HOOKPROC;
+import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MSG;
 import com.sun.jna.platform.win32.WinUser.POINT;
 import com.sun.jna.platform.win32.WinUser.SIZE;
@@ -1091,4 +1092,17 @@ public interface User32 extends StdCallLibrary, WinUser {
      *      To get extended error information, call {@link Kernel32#GetLastError}.
      */
     boolean UnregisterHotKey(Pointer hWnd, int id);
+
+    /**
+     * Retrieves the time of the last input event.
+     * 
+     * @param plii
+     *      structure that receives the time of the last input event
+     * @return
+     *      If the function succeeds, the return value is nonzero.
+     *
+     *      If the function fails, the return value is zero.
+     *      To get extended error information, call {@link Kernel32#GetLastError}.
+     */
+    boolean GetLastInputInfo(LASTINPUTINFO plii);
 }
