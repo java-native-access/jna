@@ -17,6 +17,8 @@ import junit.framework.TestCase;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
+
 import static com.sun.jna.platform.win32.User32.*;
 
 /**
@@ -92,5 +94,15 @@ public class User32Test extends TestCase {
         }
 
         return null;
+    }
+
+    public void testGetLastInputInfo() throws Exception {
+        LASTINPUTINFO plii = new LASTINPUTINFO();
+        assertEquals(plii.size(), plii.cbSize);
+
+        boolean flag = User32.INSTANCE.GetLastInputInfo(plii);
+        assertTrue(flag);
+        assertTrue(Kernel32.INSTANCE.GetTickCount() >= plii.dwTime);
+        assertTrue(plii.dwTime > 0);
     }
 }

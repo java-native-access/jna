@@ -647,7 +647,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
     public static class LASTINPUTINFO extends Structure {
         public int cbSize = size();
 
-        // / Tick count of when the last input event was received.
+        // Tick count of when the last input event was received.
         public int dwTime;
     }
 }
