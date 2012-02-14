@@ -98,8 +98,7 @@ public class User32Test extends TestCase {
         LASTINPUTINFO plii = new LASTINPUTINFO();
         assertEquals(plii.size(), plii.cbSize);
 
-        boolean flag = User32.INSTANCE.GetLastInputInfo(plii);
-        assertTrue(flag);
+        assertTrue(User32.INSTANCE.GetLastInputInfo(plii));
         assertTrue(Kernel32.INSTANCE.GetTickCount() >= plii.dwTime);
         assertTrue(plii.dwTime > 0);
     }
