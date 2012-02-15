@@ -68,12 +68,12 @@ Index: libffi/src/prep_cif.c
    FFI_ASSERT(cif != NULL);
  #ifndef X86_WIN32
 -  FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
-+  if ((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI))
++  if (! (abi > FFI_FIRST_ABI) && (abi <= FFI_LAST_ABI))
 +    return FFI_BAD_ABI;
  #else
 -  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI
 -	     || abi == FFI_THISCALL);
-+  if (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI || abi == FFI_THISCALL)
++  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI || abi == FFI_THISCALL))
 +    return FFI_BAD_ABI;
  #endif
  

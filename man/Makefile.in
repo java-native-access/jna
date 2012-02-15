@@ -112,7 +112,6 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FFI_EXEC_TRAMPOLINE_TABLE = @FFI_EXEC_TRAMPOLINE_TABLE@
 FGREP = @FGREP@
 GREP = @GREP@
 HAVE_LONG_DOUBLE = @HAVE_LONG_DOUBLE@
@@ -204,7 +203,6 @@ psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-sys_symbol_underscore = @sys_symbol_underscore@
 sysconfdir = @sysconfdir@
 target = @target@
 target_alias = @target_alias@
@@ -217,8 +215,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-EXTRA_DIST = ffi.3 ffi_call.3 ffi_prep_cif.3 ffi_prep_cif_var.3
-man_MANS = ffi.3 ffi_call.3 ffi_prep_cif.3 ffi_prep_cif_var.3
+EXTRA_DIST = ffi.3 ffi_call.3 ffi_prep_cif.3
+man_MANS = ffi.3 ffi_call.3 ffi_prep_cif.3
 all: all-am
 
 .SUFFIXES:
