@@ -12,7 +12,15 @@
  */
 package com.sun.jna.platform.unix;
 
-import com.sun.jna.*;
+import com.sun.jna.Callback;
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
+import com.sun.jna.Structure;
+import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
@@ -935,8 +943,8 @@ public interface X11 extends Library {
     int SyncBoth = 7;
 
     /* Used in SetInputFocus, GetInputFocus */
-    int RevertToNone = (int)None;
-    int RevertToPointerRoot = (int)PointerRoot;
+    int RevertToNone = None;
+    int RevertToPointerRoot = PointerRoot;
     int RevertToParent = 2;
 
     /*****************************************************************

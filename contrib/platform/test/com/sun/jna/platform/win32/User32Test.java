@@ -37,7 +37,7 @@ public class User32Test extends TestCase {
         int vk = KeyEvent.VK_D;
         int id = 1;
 
-        assertTrue(INSTANCE.RegisterHotKey(null, id, WinUser.MOD_CONTROL | WinUser.MOD_ALT, vk));
+        assertTrue("RegisterHotKey failed", INSTANCE.RegisterHotKey(null, id, WinUser.MOD_CONTROL | WinUser.MOD_ALT, vk));
 
         Robot robot = null;
         try {
@@ -92,5 +92,14 @@ public class User32Test extends TestCase {
         }
 
         return null;
+    }
+
+    public void testGetLastInputInfo() throws Exception {
+        LASTINPUTINFO plii = new LASTINPUTINFO();
+        assertEquals(plii.size(), plii.cbSize);
+
+        assertTrue(User32.INSTANCE.GetLastInputInfo(plii));
+        assertTrue(Kernel32.INSTANCE.GetTickCount() >= plii.dwTime);
+        assertTrue(plii.dwTime > 0);
     }
 }

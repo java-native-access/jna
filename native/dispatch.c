@@ -84,12 +84,6 @@
 #endif
 
 #include "dispatch.h"
-#include "com_sun_jna_Pointer.h"
-#include "com_sun_jna_Memory.h"
-#include "com_sun_jna_Function.h"
-#include "com_sun_jna_Native.h"
-#include "com_sun_jna_NativeLibrary.h"
-#include "com_sun_jna_CallbackReference.h"
 
 #ifdef HAVE_PROTECTION
 static int _protect;

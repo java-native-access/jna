@@ -85,7 +85,7 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.4.0";
+    private static final String VERSION = "3.4.1";
     private static final String VERSION_NATIVE = "3.4.0";
 
     // Used by tests, do not remove
@@ -1721,8 +1721,8 @@ public final class Native {
         Note: errno/SetLastError is used to signal the desired state; this is
         a hack to make use of built-in thread-local storage to avoid having to
         re-implement it on certain platforms.<p/>
-        Warning: avoid calling {@link #detach detach(true)} on a VM thread;
-        the resulting behavior is not defined.<p/>
+        Warning: avoid calling {@link #detach detach(true)} on threads
+        spawned by the JVM; the resulting behavior is not defined.<p/>
      */
     public static void detach(boolean detach) {
         setLastError(detach ? THREAD_DETACH : THREAD_LEAVE_ATTACHED);

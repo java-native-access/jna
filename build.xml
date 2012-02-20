@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JNA" default="default" basedir=".">
+<project name="JNA" default="default" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <description>Builds and tests JNA</description>
 
   <!-- Default build compiles all platform-independent stuff as well
@@ -41,12 +41,12 @@
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="vendor" value="JNA Development Team"/>
   <property name="copyright"
-            value="Copyright &amp;copy; 2007-2010 Timothy Wall. All Rights Reserved."/>
+            value="Copyright &amp;copy; 2007-2011 Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
   <!-- JNA library release version -->            
   <property name="jna.major" value="3"/>
   <property name="jna.minor" value="4"/>
-  <property name="jna.revision" value="0"/>
+  <property name="jna.revision" value="1"/>
   <property name="jna.build" value="${build.number}"/>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->
@@ -65,6 +65,7 @@
 
   <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
   <property name="compatibility" value="1.4"/>
+  <property name="platform.compatibility" value="1.5"/>
   <condition property="test.compatibility" value="1.4">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
@@ -72,6 +73,27 @@
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
   <property name="test.compatibility" value="1.5"/>
+
+  <!-- Maven -->
+  <!-- define Maven coordinates -->
+  <property name="groupId" value="net.java.dev.jna" />
+  <property name="artifactId" value="jna" />
+  <property name="version" value="${jna.major}.${jna.minor}.${jna.revision}" />
+
+  <property name="maven-jar" value="${dist}/jna.jar"/>
+  <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${version}-javadoc.jar" />
+  <property name="maven-sources-jar" value="${dist}/src-mvn.zip" />
+
+  <property name="platform-jar" value="${dist}/platform.jar"/>
+  <property name="platform-javadoc-jar" value="${dist}/platforms-javadoc.jar" />
+  <property name="platform-sources-jar" value="${dist}/platforms-sources.jar" />
+  <property name="pom" value="pom-jna.xml" />
+
+  <!-- defined maven snapshots and staging repository id and url -->
+  <property name="maven-snapshots-repository-id" value="snapshots.java.net" />
+  <property name="maven-snapshots-repository-url" value="https://maven.java.net/content/repositories/snapshots" />
+  <property name="maven-staging-repository-id" value="staging.java.net" />
+  <property name="maven-staging-repository-url" value="https://maven.java.net/service/local/staging/deploy/maven2" />
 
   <!-- Miscellaneous -->
   <property name="build.compiler.emacs" value="true"/>
@@ -86,7 +108,7 @@
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2" 
-                   file="pom-fake.xml"/>
+                   file="${pom}"/>
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
                    file="src/com/sun/jna/Native.java"/>
@@ -167,7 +189,7 @@
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/native"/>
-    <property name="md5.file" location="${build.native}/sig"/>
+    <property name="md5.file" location="${build.native}/jni.checksum"/>
 
     <mkdir dir="${build}"/>
     <mkdir dir="${build.native}"/>
@@ -249,13 +271,30 @@
     </jar>
   </target>
 
-  <target name="contrib-jars" depends="jar" description="Build contrib jars">
-    <subant target="jar">
+  <target name="platform-jar" depends="jar">
+    <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
-      <!-- platform.jar needs to be built first -->
+      <property name="javac.source" value="${platform.compatibility}"/>
+      <property name="javac.target" value="${platform.compatibility}"/>
       <fileset dir="${contrib}" includes="platform/build.xml" />
+    </subant>
+    <!-- Sources package as required by maven -->
+    <zip zipfile="${platform-sources-jar}">
+      <zipfileset dir="${src}" includes="**/*.java,**/*.html,**/*.png"/>
+      <zipfileset dir="${contrib}/platform" includes="**/*.java"/>
+    </zip>
+    <jar jarfile="${platform-javadoc-jar}">
+        <fileset dir="${javadoc}" />
+    </jar>
+  </target>
+
+  <target name="contrib-jars" depends="platform-jar" description="Build contrib jars">
+    <subant target="jar" failonerror="true">
+      <property name="file.reference.jna.build" location="${build}"/>
+      <property name="file.reference.jna.jar" location="${build}/${jar}"/>
+      <property name="libs.junit.classpath" location="lib/junit.jar"/>
       <fileset dir="${contrib}" includes="*/build.xml" excludes="platform/build.xml"/>
     </subant>
   </target>
@@ -263,11 +302,7 @@
   <target name="javah" depends="compile">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
       <class name="com.sun.jna.Function"/>
-      <class name="com.sun.jna.Pointer"/>
-      <class name="com.sun.jna.Memory"/>
       <class name="com.sun.jna.Native"/>
-      <class name="com.sun.jna.NativeLibrary"/>
-      <class name="com.sun.jna.CallbackReference"/>
     </javah>
     <condition property="grep" value="/usr/sfw/bin/ggrep">
       <os name="SunOS"/>
@@ -276,6 +311,7 @@
       <os name="OpenBSD"/>
     </condition>
     <property name="grep" value="grep"/>
+    <!-- args are based on GNU grep, other versions may differ -->
     <apply dir="${build.native}" executable="${grep}" parallel="true"
            failonerror="true" relative="true" output="${md5.file}">
       <arg value="-A"/>
@@ -329,7 +365,7 @@
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build.native}" includes="*.o,*jnidispatch*"/>
     </delete>
-    <fail>API for native code has changed.  Re-run this build after updating jni.version and jni.md5 in build.xml</fail>
+    <fail>API for native code has changed, or javah output is inconsistent.  Re-run this build after checking ${md5.file} or updating jni.version and jni.md5 in build.xml</fail>
   </target>
 
   <target name=":rsrc">
@@ -576,8 +612,12 @@
   </target>
 
   <target name="contrib-test" depends="contrib-jars,compile-tests">
-    <subant target="test">
+    <subant target="test" failonerror="true">
+      <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
+      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="javac.source" value="${test.compatibility}"/>
+      <property name="javac.target" value="${test.compatibility}"/>
       <fileset dir="${contrib}" includes="platform/build.xml"/>
     </subant>
   </target>
@@ -651,14 +691,14 @@
     </javadoc>
   </target>
 
-  <target name="dist" depends="jar,contrib-jars,compile-tests,native,javadoc"
+  <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}">
       <fileset dir="${build}">
         <include name="${native.jar}"/>
       </fileset>
     </copy>
-    <jar jarfile="${dist}/jna.jar" duplicate="preserve">
+    <jar jarfile="${maven-jar}" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
         <section name="com/sun/jna/">
@@ -791,12 +831,13 @@ osname=macos,
 	<include name="**/build/demo-*.jar" />
       </fileset>
     </copy>
-    <zip zipfile="${dist}/doc.zip">
-      <zipfileset dir="${javadoc}" prefix="javadoc"/>
-    </zip>
+    <jar jarfile="${maven-javadoc-jar}">
+        <fileset dir="${javadoc}" />
+    </jar>
+
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,pom-fake.xml,LICENSE.txt"/>
+      <zipfileset dir="." includes="build.xml,${pom},LICENSE.txt"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*,build,build/**/*" prefix="native"/>
@@ -810,7 +851,7 @@ osname=macos,
       <zipfileset dir="${native}" includes="libffi,libffi/**/*" prefix="native"/>
     </zip>
     <!-- Sources package as required by maven -->
-    <zip zipfile="${dist}/src-mvn.zip">
+    <zip zipfile="${maven-sources-jar}">
       <zipfileset dir="${src}" includes="**/*.java,**/*.html,**/*.png"/>
       <zipfileset dir="${contrib}/platform" includes="**/*.java"/>
     </zip>
@@ -825,11 +866,87 @@ osname=macos,
       <fileset dir="${javadoc}"/>
       <fileset dir="." includes="*~,**/*~"/>
     </delete>
-    <subant target="clean">
+    <subant target="clean" failonerror="true">
       <fileset dir="${contrib}" includes="*/build.xml"/>
     </subant>
   </target>
 
+  <target name="deploy" depends="dist,platform-jar" description="deploy snapshot version to Maven snapshot repository">
+    <artifact:mvn>
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${maven-jar}"/>
+    </artifact:mvn>
+  </target>
+
+  <!-- before this, update project version (both build.xml and ${pom}) from SNAPSHOT to RELEASE -->
+  <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
+    <!-- sign and deploy the main artifact -->
+    <artifact:mvn>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${maven-jar}"/>
+      <arg value="-Pgpg"/>
+    </artifact:mvn>
+
+    <!-- sign and deploy the sources artifact -->
+    <artifact:mvn>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${maven-sources-jar}"/>
+      <arg value="-Dclassifier=sources"/>
+      <arg value="-Pgpg"/>
+    </artifact:mvn>
+
+    <!-- sign and deploy the javadoc artifact -->
+    <artifact:mvn>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${maven-javadoc-jar}"/>
+      <arg value="-Dclassifier=javadoc"/>
+      <arg value="-Pgpg"/>
+    </artifact:mvn>
+
+    <artifact:mvn>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=pom-platform.xml"/>
+      <arg value="-Dfile=${platform-jar}"/>
+      <arg value="-Pgpg"/>
+    </artifact:mvn>
+
+    <!-- sign and deploy the sources artifact -->
+    <artifact:mvn>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=pom-platform.xml"/>
+      <arg value="-Dfile=${platform-sources-jar}"/>
+      <arg value="-Dclassifier=sources"/>
+      <arg value="-Pgpg"/>
+    </artifact:mvn>
+
+    <!-- sign and deploy the javadoc artifact -->
+    <artifact:mvn>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="-Durl=${maven-staging-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
+      <arg value="-DpomFile=pom-platform.xml"/>
+      <arg value="-Dfile=${platform-javadoc-jar}"/>
+      <arg value="-Dclassifier=javadoc"/>
+      <arg value="-Pgpg"/>
+    </artifact:mvn>
+
+  </target>
 </project>
 
 

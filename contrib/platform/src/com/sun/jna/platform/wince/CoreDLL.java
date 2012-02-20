@@ -14,12 +14,13 @@ package com.sun.jna.platform.wince;
 
 import com.sun.jna.Native;
 import com.sun.jna.win32.W32APIOptions;
-import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.platform.win32.WinNT;
 
 /** Definition <code>coredll.dll</code>.
     Add other win32 interface mappings as needed.
  */
-public interface CoreDLL extends Kernel32 {
+public interface CoreDLL extends WinNT {
 
     CoreDLL INSTANCE = (CoreDLL)
         Native.loadLibrary("coredll", CoreDLL.class, 

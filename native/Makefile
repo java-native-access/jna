@@ -134,8 +134,16 @@ LIBPFX=
 LIBSFX=.dll
 
 ifeq ($(CC),gcc)
-CC += -mno-cygwin
-LD += -mno-cygwin -Wl,--add-stdcall-alias
+# -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
+# installation
+GCC_VERSION = $(shell gcc --version | sed -n 's/.*\([34]\)[0-9.]*.*/\1/p')
+ifeq ($(GCC_VERSION),3)
+NOCYGWIN=-mno-cygwin
+else
+NOCYGWIN=
+endif
+CC += $(NOCYGWIN)
+LD += $(NOCYGWIN) -Wl,--add-stdcall-alias
 endif
 
 ifeq ($(ARCH),amd64)
@@ -143,9 +151,10 @@ ifeq ($(ARCH),amd64)
 WINDRES=/usr/local/mingw64-cross/bin/x86_64-pc-mingw32-windres
 
 # Uncomment to enable MINGW64 cross compiler
-# Should build properly as of 090601, but lacks SEH, so MSVC build is preferred
+# Should build properly as of 111121, but lacks SEH, so MSVC build is preferred
 #MINGW = x86_64-pc-mingw32-gcc
 ifneq ($(MINGW),)
+CDEFINES=-DPSAPI_VERSION=1
 CC = $(MINGW) -m64 -mno-cygwin
 LD = $(CC)
 LDFLAGS=-o $@ -shared

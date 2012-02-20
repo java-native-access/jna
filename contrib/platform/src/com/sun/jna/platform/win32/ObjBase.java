@@ -23,15 +23,15 @@ import com.sun.jna.platform.win32.WTypes;
  */
 public interface ObjBase {
 
-public static final int CLSCTX_INPROC = (WTypes.CLSCTX_INPROC_SERVER | WTypes.CLSCTX_INPROC_HANDLER);
+    int CLSCTX_INPROC = (WTypes.CLSCTX_INPROC_SERVER | WTypes.CLSCTX_INPROC_HANDLER);
+    
+    // With DCOM, CLSCTX_REMOTE_SERVER should be included
+    int CLSCTX_ALL = (WTypes.CLSCTX_INPROC_SERVER
+                      | WTypes.CLSCTX_INPROC_HANDLER
+                      | WTypes.CLSCTX_LOCAL_SERVER
+                      | WTypes.CLSCTX_REMOTE_SERVER);
 
-// With DCOM, CLSCTX_REMOTE_SERVER should be included
-public static final int CLSCTX_ALL = (WTypes.CLSCTX_INPROC_SERVER
-        | WTypes.CLSCTX_INPROC_HANDLER
-        | WTypes.CLSCTX_LOCAL_SERVER
-        | WTypes.CLSCTX_REMOTE_SERVER);
-
-public static final int CLSCTX_SERVER = (WTypes.CLSCTX_INPROC_SERVER
-        | WTypes.CLSCTX_LOCAL_SERVER
-        | WTypes.CLSCTX_REMOTE_SERVER);
+    int CLSCTX_SERVER = (WTypes.CLSCTX_INPROC_SERVER
+                         | WTypes.CLSCTX_LOCAL_SERVER
+                         | WTypes.CLSCTX_REMOTE_SERVER);
 }

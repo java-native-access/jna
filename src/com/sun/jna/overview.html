@@ -729,9 +729,11 @@ and {@link com.sun.jna.Structure#writeField(String)} or {@link
 com.sun.jna.Structure#writeField(String,Object)} to synch with just the fields
 of interest. 
 <h3>Throw exceptions on last error</h3>
-If you are interested in the value of errno/GetLastError(), declare your
-method to throw LastErrorException, and call
-{@link com.sun.jna.Native#setPreserveLastError setPreserveLastError(false)} or set
-the System property <code>jna.preserve_last_error=false</code>.
+To avoid the overhead of preserving the system last error information on every
+native call, invoke
+{@link com.sun.jna.Native#setPreserveLastError setPreserveLastError(false)} or
+set the System property <code>jna.preserve_last_error=false</code>.<p/>
+In those methods where you are interested in the value of errno/GetLastError(),
+declare your method to throw {@link com.sun.jna.LastErrorException}.
 </body>
 </html>

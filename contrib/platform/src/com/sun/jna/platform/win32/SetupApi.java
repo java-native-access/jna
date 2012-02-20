@@ -256,7 +256,7 @@ public interface SetupApi extends StdCallLibrary {
         }
 
         public SP_DEVICE_INTERFACE_DATA(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
 
@@ -303,7 +303,7 @@ public interface SetupApi extends StdCallLibrary {
         }
 
         public SP_DEVINFO_DATA(Pointer memory) {
-            useMemory(memory);
+            super(memory);
             read();
         }
 

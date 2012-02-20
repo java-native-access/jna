@@ -11,8 +11,8 @@ JNA supports a direct mapping method which can improve performance substantially
             Native.register(Platform.isWindows() ? "msvcrt" : "m");
         }
 
-        public static native double cos(double);
-        public static native double sin(double);
+        public static native double cos(double x);
+        public static native double sin(double x);
 
         public static void main(String[] args) {
             System.out.println("cos(0)=" + cos(0));
@@ -20,5 +20,5 @@ JNA supports a direct mapping method which can improve performance substantially
         }
     }
 
-Direct mapping supports the same type mappings as interface mapping, except for arrays of Pointer/String/WString/NativeMapped as function arguments. You can easily convert from interface mapping to direct mapping by creating a direct mapping class which implements your library interface, with all methods defined as native methods. Then your library instance variable can be assigned an instance of this new class instead of the object returned by `Native.loadLibrary()`.
+Direct mapping supports the same type mappings as interface mapping, except for arrays of Pointer/Structure/String/WString/NativeMapped as function arguments. You can easily convert from interface mapping to direct mapping by creating a direct mapping class which implements your library interface, with all methods defined as native methods. Then your library instance variable can be assigned an instance of this new class instead of the object returned by `Native.loadLibrary()`.
 
