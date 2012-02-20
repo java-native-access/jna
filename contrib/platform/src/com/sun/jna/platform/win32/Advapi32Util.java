@@ -608,7 +608,11 @@ public abstract class Advapi32Util {
 		String s = data.getString(offset, true);
 		offset += s.length() * Native.WCHAR_SIZE;
 		offset += Native.WCHAR_SIZE;
-		result.add(s);
+		if (s.length() == 0 && offset == stringData.size()) {
+		    // skip the final NULL
+		} else {
+		    result.add(s);
+		}
 	    }
 	    return result.toArray(new String[0]);
 	} finally {
