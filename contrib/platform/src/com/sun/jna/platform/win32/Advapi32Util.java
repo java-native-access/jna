@@ -1284,7 +1284,11 @@ public abstract class Advapi32Util {
 		    String s = stringData.getString(offset, true);
 		    offset += s.length() * Native.WCHAR_SIZE;
 		    offset += Native.WCHAR_SIZE;
-		    result.add(s);
+		    if (s.length() == 0 && offset == stringData.size()) {
+			// skip the final NULL
+		    } else {
+			result.add(s);
+		    }
 		}
 		keyValues.put(nameString, result.toArray(new String[0]));
 		break;
