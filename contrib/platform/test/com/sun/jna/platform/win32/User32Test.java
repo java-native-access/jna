@@ -93,4 +93,13 @@ public class User32Test extends TestCase {
 
         return null;
     }
+
+    public void testGetLastInputInfo() throws Exception {
+        LASTINPUTINFO plii = new LASTINPUTINFO();
+        assertEquals(plii.size(), plii.cbSize);
+
+        assertTrue(User32.INSTANCE.GetLastInputInfo(plii));
+        assertTrue(Kernel32.INSTANCE.GetTickCount() >= plii.dwTime);
+        assertTrue(plii.dwTime > 0);
+    }
 }

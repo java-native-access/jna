@@ -4,6 +4,7 @@ Release 3.4.1
 Features
 --------
 * Add 'unsigned' modifier to IntegerType
+* Add to `platform.win32.User32`: `GetLastInputInfo`
 
 Bug Fixes
 ---------
