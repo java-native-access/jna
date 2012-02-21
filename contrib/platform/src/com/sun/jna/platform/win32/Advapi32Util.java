@@ -608,7 +608,7 @@ public abstract class Advapi32Util {
 		String s = data.getString(offset, true);
 		offset += s.length() * Native.WCHAR_SIZE;
 		offset += Native.WCHAR_SIZE;
-		if (s.length() == 0 && offset == stringData.size()) {
+		if (s.length() == 0 && offset == data.size()) {
 		    // skip the final NULL
 		} else {
 		    result.add(s);
@@ -1008,7 +1008,8 @@ public abstract class Advapi32Util {
 	    size += s.length() * Native.WCHAR_SIZE;
 	    size += Native.WCHAR_SIZE;
 	}
-	
+	size += Native.WCHAR_SIZE;
+
 	int offset = 0;
 	Memory data = new Memory(size);
 	for(String s : arr) {
@@ -1016,10 +1017,13 @@ public abstract class Advapi32Util {
 	    offset += s.length() * Native.WCHAR_SIZE;
 	    offset += Native.WCHAR_SIZE;
 	}
-	
+	for (int i=0; i < Native.WCHAR_SIZE; i++) {
+	    data.setByte(offset++, (byte)0);
+	}
+
 	int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_MULTI_SZ, 
 		data.getByteArray(0, size), size);
-	
+
 	if (rc != W32Errors.ERROR_SUCCESS) {
 	    throw new Win32Exception(rc);
 	}    
