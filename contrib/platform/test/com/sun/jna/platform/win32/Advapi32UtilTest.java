@@ -256,9 +256,13 @@ public class Advapi32UtilTest extends TestCase {
 		for(int i = 0; i < dataRead.length; i++) {
 			assertEquals(dataWritten[i], dataRead[i]);
 		}
-		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");		
+		dataWritten = new String[0];
+		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "EmptyMultiString", dataWritten);
+		dataRead = Advapi32Util.registryGetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "EmptyMultiString");
+		assertEquals(0, dataRead.length);
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
 	}
-	
+
 	public void testRegistrySetGetBinaryValue() {
 		byte[] data = { 0x00, 0x01, 0x02 };
 		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
@@ -294,9 +298,11 @@ public class Advapi32UtilTest extends TestCase {
 		byte[] dataWritten = { 0xD, 0xE, 0xA, 0xD, 0xB, 0xE, 0xE, 0xF };		
 		Advapi32Util.registrySetBinaryValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "DeadBeef", dataWritten);
 		String[] stringsWritten = { "Hello", "World", "Hello World", uu };
-		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringArray", stringsWritten);		
+		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringArray", stringsWritten);
+		String[] emptyArray = new String[0];
+		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "EmptyStringArray", emptyArray);
 		TreeMap<String, Object> values = Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
-		assertEquals(5, values.keySet().size());
+		assertEquals(6, values.keySet().size());
 		assertEquals("FourtyTwo" + uu, values.get("42" + uu));
 		assertEquals(42, values.get("FourtyTwo" + uu));
 		assertEquals("%TEMP%", values.get("ExpandableString"));
@@ -310,6 +316,8 @@ public class Advapi32UtilTest extends TestCase {
 		for(int i = 0; i < stringsWritten.length; i++) {
 			assertEquals(stringsWritten[i], stringsRead[i]);
 		}
+		stringsRead = (String[]) values.get("EmptyStringArray");
+		assertEquals(0, stringsRead.length);
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");						
 	}
 	

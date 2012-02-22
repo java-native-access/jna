@@ -464,6 +464,7 @@ public abstract class Advapi32Util {
 		    phkKey.getValue(), value, 0, lpType, (char[]) null, lpcbData);
 	    switch(rc) {
 	    case W32Errors.ERROR_SUCCESS:
+	    case W32Errors.ERROR_MORE_DATA:
 	    case W32Errors.ERROR_INSUFFICIENT_BUFFER:
 		return true;
 	    case W32Errors.ERROR_FILE_NOT_FOUND:
@@ -607,7 +608,11 @@ public abstract class Advapi32Util {
 		String s = data.getString(offset, true);
 		offset += s.length() * Native.WCHAR_SIZE;
 		offset += Native.WCHAR_SIZE;
-		result.add(s);
+		if (s.length() == 0 && offset == data.size()) {
+		    // skip the final NULL
+		} else {
+		    result.add(s);
+		}
 	    }
 	    return result.toArray(new String[0]);
 	} finally {
@@ -1003,7 +1008,8 @@ public abstract class Advapi32Util {
 	    size += s.length() * Native.WCHAR_SIZE;
 	    size += Native.WCHAR_SIZE;
 	}
-	
+	size += Native.WCHAR_SIZE;
+
 	int offset = 0;
 	Memory data = new Memory(size);
 	for(String s : arr) {
@@ -1011,10 +1017,13 @@ public abstract class Advapi32Util {
 	    offset += s.length() * Native.WCHAR_SIZE;
 	    offset += Native.WCHAR_SIZE;
 	}
-	
+	for (int i=0; i < Native.WCHAR_SIZE; i++) {
+	    data.setByte(offset++, (byte)0);
+	}
+
 	int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_MULTI_SZ, 
 		data.getByteArray(0, size), size);
-	
+
 	if (rc != W32Errors.ERROR_SUCCESS) {
 	    throw new Win32Exception(rc);
 	}    
@@ -1283,7 +1292,11 @@ public abstract class Advapi32Util {
 		    String s = stringData.getString(offset, true);
 		    offset += s.length() * Native.WCHAR_SIZE;
 		    offset += Native.WCHAR_SIZE;
-		    result.add(s);
+		    if (s.length() == 0 && offset == stringData.size()) {
+			// skip the final NULL
+		    } else {
+			result.add(s);
+		    }
 		}
 		keyValues.put(nameString, result.toArray(new String[0]));
 		break;
