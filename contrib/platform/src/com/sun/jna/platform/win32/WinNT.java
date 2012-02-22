@@ -587,6 +587,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int FILE_SHARE_READ				= 0x00000001;
     int FILE_SHARE_WRITE			= 0x00000002; 
     int FILE_SHARE_DELETE			= 0x00000004; 
+    int FILE_TYPE_CHAR				= 0x0002;
+    int FILE_TYPE_DISK				= 0x0001;
+    int FILE_TYPE_PIPE				= 0x0003;
+    int FILE_TYPE_REMOTE			= 0x8000;
+    int FILE_TYPE_UNKNOWN			= 0x0000;
     int FILE_ATTRIBUTE_READONLY			= 0x00000001; 
     int FILE_ATTRIBUTE_HIDDEN			= 0x00000002; 
     int FILE_ATTRIBUTE_SYSTEM			= 0x00000004; 
@@ -3188,6 +3193,16 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * @return INVALID_FILE_ATTRIBUTES if the function fails, otherwise the file attributes WinNT.FILE_ATTRIBUTE_*
      */
     public int GetFileAttributes(String lpFileName);
+
+    /**
+     * Retrieves the file type of the specified file.
+     * @param hFile A handle to the file.
+     * @return FILE_TYPE_UNKNOWN if the function fails, or if the type is unknown.
+     *  You can distinguish between a "valid" return of FILE_TYPE_UNKNOWN and its return due to a calling error (for example,
+     *  passing an invalid handle to GetFileType) by calling GetLastError. If the function worked properly and
+     *  FILE_TYPE_UNKNOWN was returned, a call to GetLastError will return NO_ERROR.
+     */
+    public int GetFileType(HANDLE hFile);
 
     /**
      * Sends a control code directly to a specified device driver, causing the corresponding device to perform the
