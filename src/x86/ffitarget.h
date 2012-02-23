@@ -30,6 +30,10 @@
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
 
+#ifndef LIBFFI_H
+#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
+#endif
+
 /* ---- System specific configurations ----------------------------------- */
 
 /* For code common to all platforms on x86 and x86_64. */

@@ -1,6 +1,8 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 1996-2003  Red Hat, Inc.
-   Copyright (C) 2007, 2008, 2010 Free Software Foundation, Inc
+   ffitarget.h - Copyright (c) 2012  Anthony Green
+                 Copyright (C) 2007, 2008, 2010 Free Software Foundation, Inc
+                 Copyright (c) 1996-2003  Red Hat, Inc.
+
    Target configuration macros for PowerPC.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -27,6 +29,10 @@
 
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
+
+#ifndef LIBFFI_H
+#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
+#endif
 
 /* ---- System specific configurations ----------------------------------- */
 

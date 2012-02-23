@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 2009 Anthony Green
+   ffitarget.h - Copyright (c) 2012, 2009 Anthony Green
    Target configuration macros for Moxie
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -26,6 +26,10 @@
 
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
+
+#ifndef LIBFFI_H
+#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
+#endif
 
 /* ---- System specific configurations ----------------------------------- */
 
