@@ -427,7 +427,7 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   /* If the return value is passed in memory, add the pointer as the
      first integer argument.  */
   if (ret_in_memory)
-    reg_args->gpr[gprcount++] = (unsigned long) rvalue;
+    reg_args->gpr[gprcount++] = (long) rvalue;
 
   avn = cif->nargs;
   arg_types = cif->arg_types;
@@ -509,11 +509,9 @@ ffi_prep_closure_loc (ffi_closure* closure,
   tramp = (volatile unsigned short *) &closure->tramp[0];
 
   tramp[0] = 0xbb49;		/* mov <code>, %r11	*/
-  *((unsigned long long * volatile) &tramp[1])
-    = (unsigned long) ffi_closure_unix64;
+  *(void * volatile *) &tramp[1] = ffi_closure_unix64;
   tramp[5] = 0xba49;		/* mov <data>, %r10	*/
-  *((unsigned long long * volatile) &tramp[6])
-    = (unsigned long) codeloc;
+  *(void * volatile *) &tramp[6] = codeloc;
 
   /* Set the carry bit iff the function uses any sse registers.
      This is clc or stc, together with the first byte of the jmp.  */
@@ -552,7 +550,7 @@ ffi_closure_unix64_inner(ffi_closure *closure, void *rvalue,
 	{
 	  /* The return value goes in memory.  Arrange for the closure
 	     return value to go directly back to the original caller.  */
-	  rvalue = (void *) (unsigned long) reg_args->gpr[gprcount++];
+	  rvalue = (void *) reg_args->gpr[gprcount++];
 	  /* We don't have to do anything in asm for the return.  */
 	  ret = FFI_TYPE_VOID;
 	}

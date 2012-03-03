@@ -78,7 +78,6 @@ tested:
 | X86          | Interix          |
 | X86          | kFreeBSD         |
 | X86          | Linux            |
-| X86          | Linux/x32        |
 | X86          | Mac OSX          |
 | X86          | OpenBSD          |
 | X86          | OS/2             |
@@ -149,8 +148,6 @@ See the ChangeLog files for details.
 3.0.11 MMM-DD-YY
         Lots of build fixes.
         Add Amiga newer MacOS support.
-	Add Linux/x32 support.
-	Add thiscall and fastcall support on Windows.
 	Fix Octeon and MC68881 support.
 	Fix code pessimizations.
 

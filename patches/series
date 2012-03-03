@@ -44,3 +44,5 @@ alpha
 autoconf-archive-update
 ffitarget-include-fix
 no-undefined-fix
+x86_abi_check_fix
+x32-abi
