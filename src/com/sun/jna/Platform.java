@@ -1,5 +1,5 @@
 /*
- * This library is free software; you can redistribute it and/or modify it under 
+ * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
  * Free Software Foundation; either version 2.1 of the License, or (at
  * your option) any later version. This library is distributed in the
@@ -19,6 +19,7 @@ public final class Platform {
     public static final int FREEBSD = 4;
     public static final int OPENBSD = 5;
     public static final int WINDOWSCE = 6;
+    public static final int AIX = 7;
 
     /** Whether read-only (final) fields within Structures are supported. */
     public static final boolean RO_FIELDS;
@@ -32,12 +33,15 @@ public final class Platform {
     public static final String C_LIBRARY_NAME;
 
     private static final int osType;
-    
+
     static {
         String osName = System.getProperty("os.name");
         if (osName.startsWith("Linux")) {
             osType = LINUX;
-        } 
+        }
+        else if (osName.startsWith("AIX")) {
+            osType = AIX;
+        }
         else if (osName.startsWith("Mac") || osName.startsWith("Darwin")) {
             osType = MAC;
         }
@@ -88,6 +92,9 @@ public final class Platform {
     }
     public static final boolean isLinux() {
         return osType == LINUX;
+    }
+    public static final boolean isAix() {
+        return osType == AIX;
     }
     public static final boolean isWindowsCE() {
         return osType == WINDOWSCE;
