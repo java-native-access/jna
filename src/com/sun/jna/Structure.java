@@ -44,7 +44,7 @@ import java.util.zip.Adler32;
  * {@link Native#getStructureAlignment} and {@link Native#getTypeMapper}.
  * Alternatively you can explicitly provide alignment, field order, or type
  * mapping by calling the respective functions in your subclass's
- * constructor. 
+ * constructor.
  * <p>
  * Structure fields corresponding to native struct fields <em>must</em> be
  * public.  They may additionally have the following modifiers:<br>
@@ -74,7 +74,7 @@ import java.util.zip.Adler32;
  * @author twall@users.sf.net
  */
 public abstract class Structure {
-    
+
     /** Tagging interface to indicate the value of an instance of the
      * <code>Structure</code> type is to be used in function invocations rather
      * than its address.  The default behavior is to treat
@@ -137,14 +137,14 @@ public abstract class Structure {
     public static final int ALIGN_MSVC = 3;
 
     /** Align to a 2-byte boundary. */
-    //public static final int ALIGN_2 = 4; 
+    //public static final int ALIGN_2 = 4;
     /** Align to a 4-byte boundary. */
     //public static final int ALIGN_4 = 5;
     /** Align to an 8-byte boundary. */
     //public static final int ALIGN_8 = 6;
 
     static final int MAX_GNUC_ALIGNMENT =
-        isSPARC || ((isPPC || isARM) && Platform.isLinux())
+        isSPARC || ((isPPC || isARM) && Platform.isLinux()) || Platform.isAix()
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
@@ -197,7 +197,7 @@ public abstract class Structure {
      * layout of the structure, and will be shared among Structures of the
      * same class except when the Structure can have a variable size.
      * NOTE: {@link #ensureAllocated()} <em>must</em> be called prior to
-     * calling this method.  
+     * calling this method.
      */
     Map fields() {
         return structFields;
@@ -289,7 +289,7 @@ public abstract class Structure {
     }
 
     /** Ensure this memory has its size and layout calculated and its
-        memory allocated. */ 
+        memory allocated. */
     protected void ensureAllocated() {
         ensureAllocated(false);
     }
@@ -298,7 +298,7 @@ public abstract class Structure {
         memory allocated.
         @param avoidFFIType used when computing FFI type information
         to avoid recursion
-    */ 
+    */
     private void ensureAllocated(boolean avoidFFIType) {
         if (memory == null) {
             allocateMemory(avoidFFIType);
@@ -336,7 +336,7 @@ public abstract class Structure {
         // May need to defer size calculation if derived class not fully
         // initialized
         if (size != CALCULATE_SIZE) {
-            if (this.memory == null 
+            if (this.memory == null
                 || this.memory instanceof AutoAllocated) {
                 this.memory = autoAllocate(size);
             }
@@ -463,7 +463,7 @@ public abstract class Structure {
         // convenience: allocate memory and/or calculate size if it hasn't
         // been already; this allows structures to do field-based
         // initialization of arrays and not have to explicitly call
-        // allocateMemory in a ctor 
+        // allocateMemory in a ctor
         ensureAllocated();
 
         // Avoid redundant reads
@@ -536,7 +536,7 @@ public abstract class Structure {
             if (Modifier.isFinal(modifiers)) {
                 if (overrideFinal) {
                     // WARNING: setAccessible(true) on J2ME does *not* allow overwriting of
-                    // a final field.  
+                    // a final field.
                     throw new UnsupportedOperationException("This VM does not support Structures with final fields (field '" + structField.name + "' within " + getClass() + ")");
                 }
                 throw new UnsupportedOperationException("Attempt to write to read-only field '" + structField.name + "' within " + getClass());
@@ -669,7 +669,7 @@ public abstract class Structure {
 
     void writeField(StructField structField) {
 
-        if (structField.isReadOnly) 
+        if (structField.isReadOnly)
             return;
 
         // Get the offset of the field
@@ -847,7 +847,7 @@ public abstract class Structure {
     }
 
     /** Keep track of structure layout information.  Alignment type, type
-        mapper, and explicit field order will affect this information. 
+        mapper, and explicit field order will affect this information.
     */
     private class LayoutInfo {
         int size = CALCULATE_SIZE;
@@ -1056,7 +1056,7 @@ public abstract class Structure {
     protected int getNativeAlignment(Class type, Object value, boolean isFirstElement) {
         int alignment = 1;
         if (NativeMapped.class.isAssignableFrom(type)) {
-            NativeMappedConverter tc = NativeMappedConverter.getInstance(type); 
+            NativeMappedConverter tc = NativeMappedConverter.getInstance(type);
             type = tc.nativeType();
             value = tc.toNative(value, new ToNativeContext());
         }
@@ -1103,6 +1103,9 @@ public abstract class Structure {
             if (!isFirstElement || !(Platform.isMac() && isPPC)) {
                 alignment = Math.min(MAX_GNUC_ALIGNMENT, alignment);
             }
+            if (!isFirstElement && Platform.isAix() && (type.getName().equals("double"))) {
+                alignment = 4;
+			}
         }
         return alignment;
     }
@@ -1192,7 +1195,7 @@ public abstract class Structure {
      * Note that this <code>Structure</code> must have a public, no-arg
      * constructor.  If the structure is currently using auto-allocated
      * {@link Memory} backing, the memory will be resized to fit the entire
-     * array. 
+     * array.
      */
     public Structure[] toArray(Structure[] array) {
         ensureAllocated();
@@ -1224,7 +1227,7 @@ public abstract class Structure {
      * Note that this <code>Structure</code> must have a public, no-arg
      * constructor.  If the structure is currently using auto-allocated
      * {@link Memory} backing, the memory will be resized to fit the entire
-     * array. 
+     * array.
      */
     public Structure[] toArray(int size) {
         return toArray((Structure[])Array.newInstance(getClass(), size));
@@ -1337,7 +1340,7 @@ public abstract class Structure {
     }
 
     /** Returns whether the structure is written to native memory after a native
-        function call. 
+        function call.
     */
     public boolean getAutoWrite() {
         return this.autoWrite;
@@ -1542,7 +1545,7 @@ public abstract class Structure {
             }
         }
     }
-    
+
     private class AutoAllocated extends Memory {
         public AutoAllocated(int size) {
             super(size);
@@ -1557,7 +1560,7 @@ public abstract class Structure {
         for (int si=1;si < ss.length;si++) {
             if (ss[si].getPointer().peer != base.peer + size*si) {
                 String msg = "Structure array elements must use"
-                    + " contiguous memory (bad backing address at Structure array index " + si + ")";     
+                    + " contiguous memory (bad backing address at Structure array index " + si + ")";
                 throw new IllegalArgumentException(msg);
             }
         }

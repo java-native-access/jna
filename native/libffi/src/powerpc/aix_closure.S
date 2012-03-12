@@ -168,6 +168,7 @@ ffi_closure_ASM:
 	/* look up the proper starting point in table  */
 	/* by using return type as offset */
 	ld	r4, LC..60(2)	/* get address of jump table */
+	lhz     r3, 10(r3)
 	sldi	r3, r3, 4	/* now multiply return type by 16 */
 	ld	r0, 240+16(r1)	/* load return address */
 	add	r3, r3, r4	/* add contents of table to table address */
@@ -271,7 +272,7 @@ L..finish:
 	blr
 
 #else /* ! __64BIT__ */
-	
+
 	.long .ffi_closure_ASM, TOC[tc0], 0
 	.csect .text[PR]
 .ffi_closure_ASM:
@@ -340,6 +341,7 @@ L..finish:
 	/* look up the proper starting point in table  */
 	/* by using return type as offset */
 	lwz	r4, LC..60(2)	/* get address of jump table */
+	lhz     r3, 6(r3)
 	slwi	r3, r3, 4	/* now multiply return type by 4 */
 	lwz	r0, 176+8(r1)	/* load return address */
 	add	r3, r3, r4	/* add contents of table to table address */

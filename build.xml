@@ -4,21 +4,21 @@
 
   <!-- Default build compiles all platform-independent stuff as well
        as the JNI bits for the current platform, using the arch model
-       of the current Java VM to determine whether 32- or 64-bit 
-       binaries are built (ANT_OPTS=-d32/-d64 to switch on platforms that 
+       of the current Java VM to determine whether 32- or 64-bit
+       binaries are built (ANT_OPTS=-d32/-d64 to switch on platforms that
        support it).
 
-       Cross-compile by specifying -Dos.prefix={name-arch} to ant 
+       Cross-compile by specifying -Dos.prefix={name-arch} to ant
        (cross-compile currently only configured/tested on w32ce-arm)
     -->
 
-  <!--  
+  <!--
   Conventions (since ant can't easily specify arbitrary file dependencies):
   The uptodate property for a given target TARGET is "-TARGET"; the actual
   target to generate the uptodate property is named ":TARGET".
 
   Properties (except for uptodate properties) separate words by dots, targets
-  by dashes. 
+  by dashes.
   -->
 
   <!-- global properties -->
@@ -43,7 +43,7 @@
   <property name="copyright"
             value="Copyright &amp;copy; 2007-2011 Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
-  <!-- JNA library release version -->            
+  <!-- JNA library release version -->
   <property name="jna.major" value="3"/>
   <property name="jna.minor" value="4"/>
   <property name="jna.revision" value="1"/>
@@ -107,7 +107,7 @@
   <target name="-dynamic-properties">
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
-                   replace="\1${jna.version}\2" 
+                   replace="\1${jna.version}\2"
                    file="${pom}"/>
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
@@ -152,6 +152,9 @@
     <property name="jre.arch" value="${os.arch}"/>
     <condition property="os.prefix" value="linux-${jre.arch}">
       <os name="Linux"/>
+    </condition>
+    <condition property="os.prefix" value="aix-${jre.arch}">
+      <os name="AIX"/>
     </condition>
     <condition property="os.prefix" value="win32-${os.arch}">
       <os family="windows"/>
@@ -211,7 +214,7 @@
     <path id="compile-test.path">
       <path id="test.libs">
         <fileset dir="lib">
-          <include name="junit.jar"/>   
+          <include name="junit.jar"/>
         </fileset>
         <pathelement path="${classes}"/>
       </path>
@@ -233,7 +236,7 @@
     <javac classpathref="compile.path"
            source="${compatibility}"
            target="${compatibility}"
-           destdir="${classes}" 
+           destdir="${classes}"
            includeantruntime="false"
            deprecation="on" debug="${debug}">
       <src refid="src.path"/>
@@ -413,6 +416,12 @@
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
     </condition>
+    <condition property="ARCH" value="ppc">
+      <equals arg1="${os.prefix}" arg2="aix-ppc"/>
+    </condition>
+    <condition property="ARCH" value="ppc64">
+      <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
+    </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64 to build 64-bit if not the platform default -->
     <property name="ARCH" value="${os.arch}"/>
@@ -437,8 +446,8 @@
 	       value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
       <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
     </condition>
-    <!-- Windows' drive letters and spaces in absolute paths wreak havoc on 
-         make --> 
+    <!-- Windows' drive letters and spaces in absolute paths wreak havoc on
+         make -->
     <condition property="make.BUILD" value="BUILD=../${build}/native" else="BUILD=${build.native}">
       <os family="windows"/>
     </condition>
@@ -456,6 +465,7 @@
         <os name="FreeBSD"/>
         <os name="OpenBSD"/>
         <os name="SunOS"/>
+        <os name="AIX"/>
       </or>
     </condition>
 
@@ -499,12 +509,12 @@
     </jar>
   </target>
 
-  <target name="compile-tests" depends="compile,native,jar" 
+  <target name="compile-tests" depends="compile,native,jar"
   	description="Compile all test code">
     <javac classpathref="compile-test.path"
            source="${test.compatibility}"
            target="${test.compatibility}"
-           destdir="${test.classes}" 
+           destdir="${test.classes}"
            includeantruntime="false"
            excludes="${tests.exclude-patterns}"
            deprecation="on" debug="${debug}">
@@ -525,11 +535,11 @@
     <jar jarfile="${build}/jws/jnidispatch.jar">
       <fileset dir="${build.native}" includes="*jnidispatch.*"/>
     </jar>
-    <signjar alias="jna" keystore="jna.keystore" storepass="jnadev" lazy="true"> 
+    <signjar alias="jna" keystore="jna.keystore" storepass="jnadev" lazy="true">
       <fileset dir="${build}/jws" includes="jna.jar,jna-test.jar,junit.jar,jnidispatch.jar,clover.jar"/>
     </signjar>
   </target>
-	
+
   <target name="wince-test-setup" depends="compile-tests"
           description="Configure tests for running on a Windows Mobile device">
     <!-- 'shared' should be the path to a folder mounted as the mobile
@@ -686,7 +696,7 @@
       <group title="Java Native Access" packages="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.win32"/>
       <group title="Platform Utilities" packages="com.sun.jna.platform,com.sun.jna.platform.dnd"/>
       <group title="Platform Specific" packages="com.sun.jna.platform.*"/>
-    	
+
       <arg value="-notimestamp"/>
     </javadoc>
   </target>
@@ -742,6 +752,11 @@ processor=sparc;osname=sunos,
 com/sun/jna/sunos-sparcv9/libjnidispatch.so;
 processor=sparcv9;osname=sunos,
 
+com/sun/jna/aix-ppc/libjnidispatch.a;
+processor=ppc;osname=aix,
+com/sun/jna/aix-ppc64/libjnidispatch.a;
+processor=ppc64;osname=aix,
+
 com/sun/jna/linux-ppc/libjnidispatch.so;
 processor=ppc;osname=linux,
 com/sun/jna/linux-ppc64/libjnidispatch.so;
@@ -769,55 +784,61 @@ osname=macos,
         </section>
       </manifest>
       <zipfileset src="${build}/${jar}"/>
-      <zipfileset src="${dist}/win32-x86.jar" 
+      <zipfileset src="${dist}/win32-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-x86"/>
-      <zipfileset src="${dist}/darwin.jar" 
+      <zipfileset src="${dist}/aix-ppc.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/aix-ppc"/>
+      <zipfileset src="${dist}/aix-ppc64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/aix-ppc64"/>
+      <zipfileset src="${dist}/darwin.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/darwin"/>
-      <zipfileset src="${dist}/linux-i386.jar" 
+      <zipfileset src="${dist}/linux-i386.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-i386"/>
-      <zipfileset src="${dist}/linux-amd64.jar" 
+      <zipfileset src="${dist}/linux-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-amd64"/>
-      <zipfileset src="${dist}/linux-arm.jar" 
+      <zipfileset src="${dist}/linux-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-arm"/>
-      <zipfileset src="${dist}/linux-ia64.jar" 
+      <zipfileset src="${dist}/linux-ia64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ia64"/>
-      <zipfileset src="${dist}/linux-ppc.jar" 
+      <zipfileset src="${dist}/linux-ppc.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ppc"/>
-      <zipfileset src="${dist}/linux-ppc64.jar" 
+      <zipfileset src="${dist}/linux-ppc64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ppc64"/>
-      <zipfileset src="${dist}/sunos-x86.jar" 
+      <zipfileset src="${dist}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
-      <zipfileset src="${dist}/sunos-amd64.jar" 
+      <zipfileset src="${dist}/sunos-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-amd64"/>
-      <zipfileset src="${dist}/sunos-sparc.jar" 
+      <zipfileset src="${dist}/sunos-sparc.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparc"/>
-      <zipfileset src="${dist}/sunos-sparcv9.jar" 
+      <zipfileset src="${dist}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      <zipfileset src="${dist}/freebsd-i386.jar" 
+      <zipfileset src="${dist}/freebsd-i386.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-i386"/>
-      <zipfileset src="${dist}/freebsd-amd64.jar" 
+      <zipfileset src="${dist}/freebsd-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-amd64"/>
-      <zipfileset src="${dist}/openbsd-i386.jar" 
+      <zipfileset src="${dist}/openbsd-i386.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/openbsd-i386"/>
-      <zipfileset src="${dist}/win32-amd64.jar" 
+      <zipfileset src="${dist}/win32-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-amd64"/>
-      <zipfileset src="${dist}/w32ce-arm.jar" 
+      <zipfileset src="${dist}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
     </jar>
