@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 #ifndef DISPATCH_H
 #define DISPATCH_H
@@ -16,7 +16,7 @@
 #include "ffi.h"
 #include "com_sun_jna_Function.h"
 #include "com_sun_jna_Native.h"
-#ifdef sun
+#if defined(sun) || defined(_AIX)
 #  include <alloca.h>
 #endif
 #ifdef _WIN32
@@ -37,7 +37,7 @@
   #define UNUSED(x) UNUSED_ ## x __attribute__((unused))
  #elif defined(__LCLINT__)
   #define UNUSED(x) /*@unused@*/ x
- #else 
+ #else
   #define UNUSED(x) x
  #endif
 #endif /* !defined(UNUSED) */
@@ -166,7 +166,7 @@ extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
 extern const char* jnidispatch_callback_init(JNIEnv*);
 extern void jnidispatch_callback_dispose(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
-                                 jobjectArray, jclass, 
+                                 jobjectArray, jclass,
                                  callconv_t, jboolean);
 extern void free_callback(JNIEnv*, callback*);
 extern void extract_value(JNIEnv*, jobject, void*, size_t, jboolean);

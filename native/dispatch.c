@@ -1,6 +1,6 @@
 /*
  * @(#)dispatch.c       1.9 98/03/22
- * 
+ *
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
  * Copyright (c) 2007-2011 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
@@ -13,12 +13,12 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 
 /*
  * JNI native methods supporting the infrastructure for shared
- * dispatchers.  
+ * dispatchers.
  */
 
 #if defined(_WIN32)
@@ -34,11 +34,11 @@
 #define STRTYPE wchar_t*
 #define NAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
 /* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:
- * "Note that the standard search strategy and the alternate search strategy  
- * specified by LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH differ in    
- * just one way: The standard search begins in the calling application's      
- * directory, and the alternate search begins in the directory of the         
- * executable module that LoadLibraryEx is loading."                          
+ * "Note that the standard search strategy and the alternate search strategy
+ * specified by LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH differ in
+ * just one way: The standard search begins in the calling application's
+ * directory, and the alternate search begins in the directory of the
+ * executable module that LoadLibraryEx is loading."
  */
 #ifdef _WIN32_WCE
 #include <tlhelp32.h>
@@ -71,6 +71,12 @@
 #define FIND_ENTRY(HANDLE, NAME) dlsym(HANDLE, NAME)
 #define GET_LAST_ERROR() errno
 #define SET_LAST_ERROR(CODE) (errno = (CODE))
+#endif
+
+#ifdef _AIX
+#pragma alloca
+#undef LOAD_LIBRARY
+#define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_MEMBER| RTLD_LAZY | RTLD_GLOBAL)
 #endif
 
 #include <stdlib.h>
@@ -120,7 +126,7 @@ w32_find_entry(JNIEnv* env, HANDLE handle, const char* funname) {
     func = GetProcAddress(handle, funname);
   }
   else {
-#if defined(_WIN32_WCE) 
+#if defined(_WIN32_WCE)
     /* CE has no EnumProcessModules, have to use an alternate API */
     HANDLE snapshot;
     if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0)) != INVALID_HANDLE_VALUE) {
@@ -320,12 +326,12 @@ throwByName(JNIEnv *env, const char *name, const char *msg)
   jclass cls;
 
   (*env)->ExceptionClear(env);
-  
+
   cls = (*env)->FindClass(env, name);
-  
+
   if (cls != NULL) { /* Otherwise an exception has already been thrown */
     (*env)->ThrowNew(env, cls, msg);
-    
+
     /* It's a good practice to clean up the local references. */
     (*env)->DeleteLocalRef(env, cls);
   }
@@ -356,7 +362,7 @@ ffi_error(JNIEnv* env, const char* op, ffi_status status) {
 
 /* invoke the real native function */
 static void
-dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr, 
+dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
          ffi_type *ffi_return_type, void *resP)
 {
   int i, nargs;
@@ -377,7 +383,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   callconv_t callconv = flags & MASK_CC;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
-  
+
   nargs = (*env)->GetArrayLength(env, arr);
 
   if (nargs > MAX_NARGS) {
@@ -391,10 +397,10 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     alloca(nargs * sizeof(struct _array_elements));
   ffi_types = (ffi_type**)alloca(nargs * sizeof(ffi_type*));
   ffi_values = (void**)alloca(nargs * sizeof(void*));
-  
+
   for (i = 0; i < nargs; i++) {
     jobject arg = (*env)->GetObjectArrayElement(env, arr, i);
-    
+
     if (arg == NULL) {
       c_args[i].l = NULL;
       ffi_types[i] = &ffi_type_pointer;
@@ -524,7 +530,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
       ffi_values[i] = &c_args[i].l;
     }
   }
-  
+
   switch (callconv) {
   case CALLCONV_C:
     abi = FFI_DEFAULT_ABI;
@@ -540,7 +546,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     break;
 #endif // _WIN32
   default:
-    snprintf(msg, sizeof(msg), 
+    snprintf(msg, sizeof(msg),
             "Unrecognized calling convention: %d", (int)callconv);
     throw_type = EIllegalArgument;
     throw_msg = msg;
@@ -568,7 +574,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access";} while(0));
   }
-  
+
  cleanup:
 
   // Release array elements
@@ -646,7 +652,7 @@ setChars(JNIEnv* env, wchar_t* src, jcharArray chars, volatile jint off, volatil
   PEND();
 }
 
-/* Translates a Java string to a C string using the String.getBytes 
+/* Translates a Java string to a C string using the String.getBytes
  * method, which uses default platform encoding.
  */
 static char *
@@ -671,7 +677,7 @@ newCString(JNIEnv *env, jstring jstr)
     return result;
 }
 
-/* Translates a Java string to a C string using the String.getBytes("UTF8") 
+/* Translates a Java string to a C string using the String.getBytes("UTF8")
  * method, which uses UTF8 encoding.
  */
 static char *
@@ -753,10 +759,10 @@ newJavaWString(JNIEnv *env, const wchar_t* ptr) {
 
 /* Constructs a Java string from a char array (using the String(byte [])
  * constructor, which uses default local encoding) or a short array (using the
- * String(char[]) ctor, which uses the character values unmodified).  
+ * String(char[]) ctor, which uses the character values unmodified).
  */
 jstring
-newJavaString(JNIEnv *env, const char *ptr, jboolean wide) 
+newJavaString(JNIEnv *env, const char *ptr, jboolean wide)
 {
     volatile jstring result = 0;
     PSTART();
@@ -788,7 +794,7 @@ newJavaString(JNIEnv *env, const char *ptr, jboolean wide)
       else {
         jbyteArray bytes = 0;
         int len = (int)strlen(ptr);
-        
+
         bytes = (*env)->NewByteArray(env, len);
         if (bytes != 0) {
           (*env)->SetByteArrayRegion(env, bytes, 0, len, (jbyte *)ptr);
@@ -803,7 +809,7 @@ newJavaString(JNIEnv *env, const char *ptr, jboolean wide)
     return result;
 }
 
-jobject 
+jobject
 newJavaPointer(JNIEnv *env, void *p)
 {
     jobject obj = NULL;
@@ -814,7 +820,7 @@ newJavaPointer(JNIEnv *env, void *p)
 }
 
 jobject
-newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory) 
+newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory)
 {
   if (data != NULL) {
     volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
@@ -871,7 +877,7 @@ get_conversion_flag(JNIEnv* env, jclass cls) {
     }
     if ((*env)->IsAssignableFrom(env, cls, classStructure)) {
       return CVT_STRUCTURE;
-    }    
+    }
     if ((*env)->IsAssignableFrom(env, cls, classString)) {
       return CVT_STRING;
     }
@@ -899,7 +905,7 @@ get_jtype_from_ffi_type(ffi_type* type) {
   switch(type->type) {
     // FIXME aliases 'C' on *nix; this will cause problems if anyone
     // ever installs a type mapper for char/Character (not a common arg type)
-  case FFI_TYPE_UINT32: return 'Z'; 
+  case FFI_TYPE_UINT32: return 'Z';
   case FFI_TYPE_SINT8: return 'B';
   case FFI_TYPE_SINT16: return 'S';
   case FFI_TYPE_UINT16: return 'C';
@@ -1242,7 +1248,7 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_CREF(env, FloatBuffer, "java/nio/FloatBuffer")) return "java.nio.FloatBuffer";
   if (!LOAD_CREF(env, DoubleBuffer, "java/nio/DoubleBuffer")) return "java.nio.DoubleBuffer";
 #endif
-  
+
   if (!LOAD_PCREF(env, Void, "java/lang/Void")) return "java.lang.Void";
   if (!LOAD_PCREF(env, Boolean, "java/lang/Boolean")) return "java.lang.Boolean";
   if (!LOAD_PCREF(env, Byte, "java/lang/Byte")) return "java.lang.Byte";
@@ -1252,7 +1258,7 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_PCREF(env, Long, "java/lang/Long")) return "java.lang.Long";
   if (!LOAD_PCREF(env, Float, "java/lang/Float")) return "java.lang.Float";
   if (!LOAD_PCREF(env, Double, "java/lang/Double")) return "java.lang.Double";
-  
+
   if (!LOAD_MID(env, MID_Long_init, classLong,
                 "<init>", "(J)V"))
     return "java.lang.Long<init>(J)V";
@@ -1301,7 +1307,7 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_MID(env, MID_Method_getReturnType, classMethod,
                 "getReturnType", "()Ljava/lang/Class;"))
     return "Method.getReturnType()";
-  
+
 #ifndef NO_NIO_BUFFERS
   if (!LOAD_MID(env, MID_Buffer_position, classBuffer, "position", "()I"))
     return "Buffer.position";
@@ -1439,7 +1445,7 @@ new_object(JNIEnv* env, char jtype, void* valuep, jboolean promote) {
     switch(jtype) {
     case 's':
       return newJavaPointer(env, valuep);
-    case '*': 
+    case '*':
       return newJavaPointer(env, *(void**)valuep);
     case 'J':
       return (*env)->NewObject(env, classLong, MID_Long_init,
@@ -1486,7 +1492,7 @@ new_object(JNIEnv* env, char jtype, void* valuep, jboolean promote) {
 ffi_type*
 get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
   switch (jtype) {
-  case 'Z': 
+  case 'Z':
     return &ffi_type_uint32;
   case 'B':
     return &ffi_type_sint8;
@@ -1520,15 +1526,15 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
 ffi_type*
 get_ffi_rtype(JNIEnv* env, jclass cls, char jtype) {
   switch (jtype) {
-  case 'Z': 
-  case 'B': 
-  case 'C': 
-  case 'S':    
+  case 'Z':
+  case 'B':
+  case 'C':
+  case 'S':
   case 'I':
     /*
      * Always use a return type the size of a cpu register.  This fixes up
      * callbacks on big-endian 64bit machines, and does not break things on
-     * i386 or amd64. 
+     * i386 or amd64.
      */
     return &ffi_type_slong;
   default:
@@ -1551,7 +1557,7 @@ typedef struct _method_data {
 } method_data;
 
 /** Direct invocation glue.  VM vectors to this callback, which in turn calls
-    native code 
+    native code
 */
 static void
 method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
@@ -1712,7 +1718,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       }
     }
     else if (preserve_last_error) {
-      update_last_error(env, GET_LAST_ERROR()); 
+      update_last_error(env, GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
@@ -1814,8 +1820,8 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
     else {
       (*env)->CallVoidMethod(env, obj, MID_ffi_callback_invoke,
                              A2L(cif), A2L(resp), A2L(argp));
-    }    
-    
+    }
+
     (*env)->PopLocalFrame(env, NULL);
   }
 
@@ -1833,7 +1839,7 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
  * Method:    invokePointer
  * Signature: (JI[Ljava/lang/Object;)J;
  */
-JNIEXPORT jlong JNICALL 
+JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_invokePointer(JNIEnv *env, jclass UNUSED(cls),
                                       jlong fp, jint callconv, jobjectArray arr)
 {
@@ -1848,7 +1854,7 @@ Java_com_sun_jna_Native_invokePointer(JNIEnv *env, jclass UNUSED(cls),
  * Method:    invokeObject
  * Signature: (JI[Ljava/lang/Object;)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL 
+JNIEXPORT jobject JNICALL
 Java_com_sun_jna_Native_invokeObject(JNIEnv *env, jclass UNUSED(cls),
                                      jlong fp, jint callconv, jobjectArray arr)
 {
@@ -1863,7 +1869,7 @@ Java_com_sun_jna_Native_invokeObject(JNIEnv *env, jclass UNUSED(cls),
  * Method:    invokeStructure
  * Signature: (JI[Ljava/lang/Object;Lcom/sun/jna/Structure)LStructure;
  */
-JNIEXPORT void JNICALL 
+JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_invokeStructure(JNIEnv *env, jclass UNUSED(cls),
                                         jlong fp, jint callconv, jobjectArray arr,
                                         jlong memory, jlong type_info)
@@ -1882,7 +1888,7 @@ Java_com_sun_jna_Native_invokeStructure(JNIEnv *env, jclass UNUSED(cls),
  * Method:    invokeDouble
  * Signature: (JI[Ljava/lang/Object;)D
  */
-JNIEXPORT jdouble JNICALL 
+JNIEXPORT jdouble JNICALL
 Java_com_sun_jna_Native_invokeDouble(JNIEnv *env, jclass UNUSED(cls),
                                      jlong fp, jint callconv, jobjectArray arr)
 {
@@ -1925,7 +1931,7 @@ Java_com_sun_jna_Native_invokeInt(JNIEnv *env, jclass UNUSED(cls),
  * Signature: (JI[Ljava/lang/Object;)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_invokeLong(JNIEnv *env, jclass UNUSED(cls), 
+Java_com_sun_jna_Native_invokeLong(JNIEnv *env, jclass UNUSED(cls),
                                    jlong fp, jint callconv, jobjectArray arr)
 {
     jvalue result;
@@ -1939,7 +1945,7 @@ Java_com_sun_jna_Native_invokeLong(JNIEnv *env, jclass UNUSED(cls),
  * Signature: (JI[Ljava/lang/Object;)V
  */
 JNIEXPORT void JNICALL
-Java_com_sun_jna_Native_invokeVoid(JNIEnv *env, jclass UNUSED(cls), 
+Java_com_sun_jna_Native_invokeVoid(JNIEnv *env, jclass UNUSED(cls),
                                    jlong fp, jint callconv, jobjectArray arr)
 {
     jvalue result;
@@ -2136,7 +2142,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_indexOf__JB
   volatile jlong result = -1L;
   PSTART();
   while (i >= 0 && result == -1L) {
-    if (peer[i] == value) 
+    if (peer[i] == value)
       result = i;
     ++i;
   }
@@ -2518,7 +2524,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_free
  * Method:    sizeof
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL 
+JNIEXPORT jint JNICALL
 Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
 {
   switch(type) {
@@ -2539,7 +2545,7 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
 /** Initialize com.sun.jna classes separately from the library load to
  * avoid initialization inconsistencies.
  */
-JNIEXPORT void JNICALL 
+JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   preserve_last_error = JNI_TRUE;
   if (!LOAD_CREF(env, Pointer, "com/sun/jna/Pointer")) {
@@ -2717,17 +2723,17 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     jfieldID fid;
     unsigned i;
     const char* fields[] = {
-      "void", 
-      "float", "double", "longdouble", 
+      "void",
+      "float", "double", "longdouble",
       "uint8", "sint8", "uint16", "sint16",
       "uint32", "sint32", "uint64", "sint64",
       "pointer",
     };
     ffi_type* types[] = {
-      &ffi_type_void, 
+      &ffi_type_void,
       &ffi_type_float, &ffi_type_double, &ffi_type_longdouble,
-      &ffi_type_uint8, &ffi_type_sint8, &ffi_type_uint16, &ffi_type_sint16, 
-      &ffi_type_uint32, &ffi_type_sint32, &ffi_type_uint64, &ffi_type_sint64, 
+      &ffi_type_uint8, &ffi_type_sint8, &ffi_type_uint16, &ffi_type_sint16,
+      &ffi_type_uint32, &ffi_type_sint32, &ffi_type_uint64, &ffi_type_sint64,
       &ffi_type_pointer,
     };
     char field[32];
@@ -2746,7 +2752,7 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     }
   }
 }
-  
+
 #ifndef NO_JAWT
 #if !defined(__APPLE__)
 #define JAWT_HEADLESS_HACK
@@ -2775,7 +2781,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
   JAWT_DrawingSurfaceInfo* dsi;
   jint lock;
   JAWT awt;
-  
+
   // NOTE: AWT/JAWT must be loaded prior to this code's execution
   // See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6539705
   awt.version = JAWT_VERSION_1_4;
@@ -2784,14 +2790,14 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
   // Avoid the issue by dynamic linking
   if (!pJAWT_GetAWT) {
 #ifdef _WIN32
-    // Windows needs the full path to JAWT; calling System.loadLibrary("jawt") 
+    // Windows needs the full path to JAWT; calling System.loadLibrary("jawt")
     // from Java adds it to the path so that a simple LoadLibrary("jawt.dll")
-    // works, but may cause other attempts to load that library from Java to 
+    // works, but may cause other attempts to load that library from Java to
     // to get an UnsatisfiedLinkError, reporting that the library is already
     // loaded in a different class loader, since there is no way to force the
     // JAWT library by the system class loader.
     // Use Unicode strings in case the path to the library includes non-ASCII
-    // characters. 
+    // characters.
     wchar_t* path = L"jawt.dll";
     wchar_t* prop = (wchar_t*)get_system_property(env, "java.home", JNI_TRUE);
     if (prop != NULL) {
@@ -2845,7 +2851,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
     }
     else {
 #ifdef _WIN32
-      JAWT_Win32DrawingSurfaceInfo* wdsi = 
+      JAWT_Win32DrawingSurfaceInfo* wdsi =
         (JAWT_Win32DrawingSurfaceInfo*)dsi->platformInfo;
       if (wdsi != NULL) {
         // FIXME this kills the VM if the window is not realized;
@@ -2862,7 +2868,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
 #elif __APPLE__
       // WARNING: the view ref is not guaranteed to be stable except during
       // component paint (see jni_md.h)
-      JAWT_MacOSXDrawingSurfaceInfo* mdsi = 
+      JAWT_MacOSXDrawingSurfaceInfo* mdsi =
         (JAWT_MacOSXDrawingSurfaceInfo*)dsi->platformInfo;
       if (mdsi != NULL) {
         handle = (unsigned long)mdsi->cocoaViewRef;
@@ -2873,7 +2879,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
       else {
         throwByName(env, EError, "Can't get OS X platform info");
       }
-#else 
+#else
       JAWT_X11DrawingSurfaceInfo* xdsi =
         (JAWT_X11DrawingSurfaceInfo*)dsi->platformInfo;
       if (xdsi != NULL) {
@@ -2885,7 +2891,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
       else {
         throwByName(env, EError, "Can't get X11 platform info");
       }
-#endif        
+#endif
       ds->FreeDrawingSurfaceInfo(dsi);
     }
     ds->Unlock(ds);
@@ -2920,7 +2926,7 @@ Java_com_sun_jna_Native_setProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp),
 
 jboolean
 is_protected() {
-#ifdef HAVE_PROTECTION  
+#ifdef HAVE_PROTECTION
   if (_protect) return JNI_TRUE;
 #endif
   return JNI_FALSE;
@@ -2963,7 +2969,7 @@ Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass UNUSED(classp)) {
   return newJavaString(env, CHECKSUM, JNI_FALSE);
 }
 
-JNIEXPORT jint JNICALL 
+JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
   JNIEnv* env;
   int result = JNI_VERSION_1_4;
@@ -2992,11 +2998,11 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
   return result;
 }
 
-JNIEXPORT void JNICALL 
+JNIEXPORT void JNICALL
 JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
   jobject* refs[] = {
     &classObject, &classClass, &classMethod,
-    &classString, 
+    &classString,
 #ifndef NO_NIO_BUFFERS
     &classBuffer, &classByteBuffer, &classCharBuffer,
     &classShortBuffer, &classIntBuffer, &classLongBuffer,
@@ -3032,7 +3038,7 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
       *refs[i] = NULL;
     }
   }
-  
+
   jnidispatch_callback_dispose(env);
 
 #ifdef JAWT_HEADLESS_HACK
@@ -3074,7 +3080,7 @@ Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass UNUSED(ncls), jclass cls,
     free(md);
   }
   (*env)->ReleaseLongArrayElements(env, handles, data, 0);
-  
+
   // Not required, or recommended for normal code (see description in JNI docs)
   // see http://java.sun.com/j2se/1.4.2/docs/guide/jni/spec/functions.html
   // However, we're not "normal" code
@@ -3108,7 +3114,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   ffi_cif* closure_cif = &data->closure_cif;
   int status;
   int i;
-  int abi = FFI_DEFAULT_ABI; 
+  int abi = FFI_DEFAULT_ABI;
   ffi_type* rtype = (ffi_type*)L2A(return_type);
   ffi_type* closure_rtype = (ffi_type*)L2A(closure_return_type);
   jlong* types = atypes ? (*env)->GetLongArrayElements(env, atypes, NULL) : NULL;
@@ -3152,7 +3158,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   data->fptr = L2A(function);
   data->closure_rclass = (*env)->NewWeakGlobalRef(env, closure_rclass);
 
-  status = ffi_prep_cif(closure_cif, abi, argc+2, closure_rtype, data->closure_arg_types);  
+  status = ffi_prep_cif(closure_cif, abi, argc+2, closure_rtype, data->closure_arg_types);
   if (ffi_error(env, "Native method mapping", status)) {
     goto cleanup;
   }
@@ -3188,13 +3194,13 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
 }
 
 JNIEXPORT void JNICALL
-Java_com_sun_jna_Native_ffi_1call(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong cif, jlong fptr, jlong resp, jlong args) 
+Java_com_sun_jna_Native_ffi_1call(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong cif, jlong fptr, jlong resp, jlong args)
 {
   ffi_call(L2A(cif), FFI_FN(L2A(fptr)), L2A(resp), L2A(args));
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi, jint nargs, jlong ffi_return_type, jlong ffi_types) 
+Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi, jint nargs, jlong ffi_return_type, jlong ffi_types)
 {
   ffi_cif* cif = malloc(sizeof(ffi_cif));
   ffi_status s = ffi_prep_cif(L2A(cif), abi ? abi : FFI_DEFAULT_ABI, nargs, L2A(ffi_return_type), L2A(ffi_types));
@@ -3205,7 +3211,7 @@ Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_ffi_1prep_1closure(JNIEnv *env, jclass UNUSED(cls), jlong cif, jobject obj) 
+Java_com_sun_jna_Native_ffi_1prep_1closure(JNIEnv *env, jclass UNUSED(cls), jlong cif, jobject obj)
 {
   callback* cb = (callback *)malloc(sizeof(callback));
   ffi_status s;
@@ -3218,7 +3224,7 @@ Java_com_sun_jna_Native_ffi_1prep_1closure(JNIEnv *env, jclass UNUSED(cls), jlon
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), L2A(&cb->x_closure));
 
-  s = ffi_prep_closure_loc(cb->closure, L2A(cif), &closure_handler, 
+  s = ffi_prep_closure_loc(cb->closure, L2A(cif), &closure_handler,
                            cb, cb->x_closure);
   if (ffi_error(env, "ffi_prep_cif", s)) {
     return 0;
