@@ -908,7 +908,7 @@ public final class Native {
 
     static File getTempDir() {
         File tmp = new File(System.getProperty("java.io.tmpdir"));
-        File jnatmp = new File(tmp, "jna");
+        File jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
         jnatmp.mkdirs();
         return jnatmp.exists() ? jnatmp : tmp;
     }
