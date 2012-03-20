@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 2012, 2009 Anthony Green
+   ffitarget.h - Copyright (c) 2009 Anthony Green
    Target configuration macros for Moxie
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -27,10 +27,6 @@
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
 
-#ifndef LIBFFI_H
-#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
-#endif
-
 /* ---- System specific configurations ----------------------------------- */
 
 #ifndef LIBFFI_ASM
@@ -39,9 +35,13 @@ typedef signed long            ffi_sarg;
 
 typedef enum ffi_abi {
   FFI_FIRST_ABI = 0,
+
+#ifdef MOXIE
   FFI_EABI,
-  FFI_LAST_ABI,
-  FFI_DEFAULT_ABI = FFI_EABI
+  FFI_DEFAULT_ABI = FFI_EABI,
+#endif
+
+  FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
 } ffi_abi;
 #endif
 

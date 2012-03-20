@@ -1,6 +1,6 @@
 dnl Process this with autoconf to create configure
 
-AC_PREREQ(2.63)
+AC_PREREQ(2.64)
 
 AC_INIT([libffi], [3.0.11-rc2], [http://github.com/atgreen/libffi/issues])
 AC_CONFIG_HEADERS([fficonfig.h])
@@ -98,6 +98,15 @@ case "$host" in
 	;;
   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2* | i?86-*-interix*)
 	TARGET=X86_WIN32; TARGETDIR=x86
+	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+	# We must also check with_cross_host to decide if this is a native
+	# or cross-build and select where to install dlls appropriately.
+	if test -n "$with_cross_host" &&
+	   test x"$with_cross_host" != x"no"; then
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
+	else
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+	fi
 	;;
   i?86-*-darwin*)
 	TARGET=X86_DARWIN; TARGETDIR=x86
@@ -180,15 +189,6 @@ case "$host" in
 
   x86_64-*-cygwin* | x86_64-*-mingw*)
 	TARGET=X86_WIN64; TARGETDIR=x86
-	;;
-
-  x86_64-*-*)
-	TARGET=X86_64; TARGETDIR=x86
-	;;
-esac
-
-case "$host" in
-     *-win32* | *-*-cygwin* | *-*-mingw* | *-*-os2* | *-*-interix*)
 	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
 	# We must also check with_cross_host to decide if this is a native
 	# or cross-build and select where to install dlls appropriately.
@@ -198,6 +198,10 @@ case "$host" in
 	else
 	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
 	fi
+	;;
+
+  x86_64-*-*)
+	TARGET=X86_64; TARGETDIR=x86
 	;;
 esac
 
@@ -293,10 +297,10 @@ fi
 if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64; then
     AC_CACHE_CHECK([assembler supports pc related relocs],
 	libffi_cv_as_x86_pcrel, [
-	libffi_cv_as_x86_pcrel=no
+	libffi_cv_as_x86_pcrel=yes
 	echo '.text; foo: nop; .data; .long foo-.; .text' > conftest.s
-	if $CC $CFLAGS -c conftest.s > /dev/null; then
-	   libffi_cv_as_x86_pcrel=yes
+	if $CC $CFLAGS -c conftest.s 2>&1 | $EGREP -i 'illegal|warning' > /dev/null; then
+	    libffi_cv_as_x86_pcrel=no
 	fi
 	])
     if test "x$libffi_cv_as_x86_pcrel" = xyes; then
