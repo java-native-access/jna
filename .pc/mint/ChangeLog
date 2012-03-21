@@ -1,21 +1,3 @@
-2012-03-21  Peter Rosin  <peda@lysator.liu.se>
-
-	* testsuite/lib/target-libpath.exp [*-*-cygwin*, *-*-mingw*]
-	(set_ld_library_path_env_vars): Add the library search dir to PATH
-	(and save PATH for later).
-	(restore_ld_library_path_env_vars): Restore PATH.
-
-2012-03-20  Peter Rosin  <peda@lysator.liu.se>
-
-	* testsuite/libffi.call/strlen2_win32.c (main): Remove bug.
-	* src/x86/win32.S [MSVC] (ffi_closure_SYSV): Make the 'stub' label
-	visible outside the PROC, so that ffi_closure_THISCALL can see it.
-
-2012-03-19  Alan Hourihane  <alanh@fairlite.co.uk>
-
-	* src/m68k/ffi.c: Add MINT support.
-	* src/m68k/sysv.S: Ditto.
-
 2012-03-19  chennam  <csit@axway.com>
 
 	* src/powerpc/ffi_darwin.c (ffi_prep_closure_loc): Fix AIX closure

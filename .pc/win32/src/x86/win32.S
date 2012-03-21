@@ -187,7 +187,7 @@ ffi_closure_SYSV PROC NEAR FORCEFRAME
         lea  edx, [ebp - 24]
         mov  [ebp - 12], edx         ;; resp
         lea  edx, [ebp + 8]
-stub::
+stub:
         mov  [esp + 8], edx          ;; args
         lea  edx, [ebp - 12]
         mov  [esp + 4], edx          ;; &resp

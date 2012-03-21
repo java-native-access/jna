@@ -13,6 +13,7 @@ static size_t __attribute__((fastcall)) my_fastcall_strlen(char *s)
   return (strlen(s));
 }
 
+int d
 int main (void)
 {
   ffi_cif cif;

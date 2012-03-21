@@ -1065,10 +1065,10 @@ ffi_prep_closure_loc (ffi_closure* closure,
       closure->cif = cif;
       closure->fun = fun;
       closure->user_data = user_data;
-      break;
 
     default:
-      return FFI_BAD_ABI;
+
+      FFI_ASSERT(0);
       break;
     }
   return FFI_OK;

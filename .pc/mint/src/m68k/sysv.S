@@ -1,7 +1,6 @@
 /* -----------------------------------------------------------------------
 	
-   sysv.S - Copyright (c) 2012 Alan Hourihane
-	    Copyright (c) 1998, 2012 Andreas Schwab
+   sysv.S - Copyright (c) 1998, 2012 Andreas Schwab
 	    Copyright (c) 2008 Red Hat, Inc. 
    
    m68k Foreign Function Interface 
@@ -43,19 +42,13 @@
 #define CFI_ENDPROC()
 #endif
 
-#ifdef __MINT__
-#define CALLFUNC(funcname) _ ## funcname
-#else
-#define CALLFUNC(funcname) funcname
-#endif
-
 	.text
 
-	.globl	CALLFUNC(ffi_call_SYSV)
-	.type	CALLFUNC(ffi_call_SYSV),@function
+	.globl	ffi_call_SYSV
+	.type	ffi_call_SYSV,@function
 	.align	4
 
-CALLFUNC(ffi_call_SYSV):
+ffi_call_SYSV:
 	CFI_STARTPROC()
 	link	%fp,#0
 	CFI_OFFSET(14,-8)
@@ -70,18 +63,14 @@ CALLFUNC(ffi_call_SYSV):
 	move.l	8(%fp),-(%sp)
 	pea	4(%sp)
 #if !defined __PIC__
-	jsr	CALLFUNC(ffi_prep_args)
+	jsr	ffi_prep_args
 #else
-	bsr.l	CALLFUNC(ffi_prep_args@PLTPC)
+	bsr.l	ffi_prep_args@PLTPC
 #endif
 	addq.l	#8,%sp	
 
 	| Pass pointer to struct value, if any
-#ifdef __MINT__
-	move.l	%d0,%a1
-#else
 	move.l	%a0,%a1
-#endif
 
 	| Call the function
 	move.l	24(%fp),%a0
@@ -153,11 +142,7 @@ retlongdouble:
 retpointer:
 	btst	#5,%d2
 	jbeq	retstruct1
-#ifdef __MINT__
-	move.l	%d0,(%a1)
-#else
 	move.l	%a0,(%a1)
-#endif
 	jbra	epilogue
 
 retstruct1:
@@ -177,13 +162,13 @@ epilogue:
 	unlk	%fp
 	rts
 	CFI_ENDPROC()
-	.size	CALLFUNC(ffi_call_SYSV),.-CALLFUNC(ffi_call_SYSV)
+	.size	ffi_call_SYSV,.-ffi_call_SYSV
 
-	.globl	CALLFUNC(ffi_closure_SYSV)
-	.type	CALLFUNC(ffi_closure_SYSV), @function
+	.globl	ffi_closure_SYSV
+	.type	ffi_closure_SYSV, @function
 	.align	4
 
-CALLFUNC(ffi_closure_SYSV):
+ffi_closure_SYSV:
 	CFI_STARTPROC()
 	link	%fp,#-12
 	CFI_OFFSET(14,-8)
@@ -193,9 +178,9 @@ CALLFUNC(ffi_closure_SYSV):
 	pea	-12(%fp)
 	move.l	%a0,-(%sp)
 #if !defined __PIC__
-	jsr	CALLFUNC(ffi_closure_SYSV_inner)
+	jsr	ffi_closure_SYSV_inner
 #else
-	bsr.l	CALLFUNC(ffi_closure_SYSV_inner@PLTPC)
+	bsr.l	ffi_closure_SYSV_inner@PLTPC
 #endif
 
 	lsr.l	#1,%d0
@@ -255,13 +240,13 @@ CALLFUNC(ffi_closure_SYSV):
 	jra	.Lcls_epilogue
 	CFI_ENDPROC()
 
-	.size	CALLFUNC(ffi_closure_SYSV),.-CALLFUNC(ffi_closure_SYSV)
+	.size	ffi_closure_SYSV,.-ffi_closure_SYSV
 
-	.globl	CALLFUNC(ffi_closure_struct_SYSV)
-	.type	CALLFUNC(ffi_closure_struct_SYSV), @function
+	.globl	ffi_closure_struct_SYSV
+	.type	ffi_closure_struct_SYSV, @function
 	.align	4
 
-CALLFUNC(ffi_closure_struct_SYSV):
+ffi_closure_struct_SYSV:
 	CFI_STARTPROC()
 	link	%fp,#0
 	CFI_OFFSET(14,-8)
@@ -271,14 +256,14 @@ CALLFUNC(ffi_closure_struct_SYSV):
 	move.l	%a1,-(%sp)
 	move.l	%a0,-(%sp)
 #if !defined __PIC__
-	jsr	CALLFUNC(ffi_closure_SYSV_inner)
+	jsr	ffi_closure_SYSV_inner
 #else
-	bsr.l	CALLFUNC(ffi_closure_SYSV_inner@PLTPC)
+	bsr.l	ffi_closure_SYSV_inner@PLTPC
 #endif
 	unlk	%fp
 	rts
 	CFI_ENDPROC()
-	.size	CALLFUNC(ffi_closure_struct_SYSV),.-CALLFUNC(ffi_closure_struct_SYSV)
+	.size	ffi_closure_struct_SYSV,.-ffi_closure_struct_SYSV
 
 #if defined __ELF__ && defined __linux__
 	.section	.note.GNU-stack,"",@progbits

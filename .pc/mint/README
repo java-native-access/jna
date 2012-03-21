@@ -58,7 +58,6 @@ tested:
 | AVR32        | Linux            |
 | HPPA         | HPUX             |
 | IA-64        | Linux            |
-| M68K         | FreeMiNT         |
 | M68K         | RTEMS            |
 | MIPS         | IRIX             |
 | MIPS         | Linux            |
@@ -151,7 +150,6 @@ See the ChangeLog files for details.
         Lots of build fixes.
         Add Amiga newer MacOS support.
 	Add Linux/x32 support.
-	Add m68k FreeMiNT support.
 	Add thiscall and fastcall support on Windows.
 	Fix Octeon and MC68881 support.
 	Fix code pessimizations.
