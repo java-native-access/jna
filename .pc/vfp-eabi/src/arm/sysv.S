@@ -334,9 +334,7 @@ ARM_FUNC_START ffi_closure_SYSV
 
 
 /* Below are VFP hard-float ABI call and closure implementations.
-   Add VFP FPU directive here. This is only compiled into the library
-   under EABI.  */
-#ifdef __ARM_EABI__
+   Add VFP FPU directive here. */
 	.fpu	vfp
 
 	@ r0:   fn
@@ -493,7 +491,6 @@ ARM_FUNC_START ffi_closure_VFP
 .ffi_closure_VFP_end:
 	UNWIND .fnend
         .size    CNAME(ffi_closure_VFP),.ffi_closure_VFP_end-CNAME(ffi_closure_VFP)
-#endif
 
 ENTRY(ffi_arm_trampoline)
 	stmfd sp!, {r0-r3}

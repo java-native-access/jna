@@ -1,11 +1,3 @@
-2012-03-30  Chung-Lin Tang  <cltang@codesourcery.com>
-
-	* src/arm/ffi.c (ffi_call): Add __ARM_EABI__ guard around call to
-	ffi_call_VFP().
-	(ffi_prep_closure_loc): Add __ARM_EABI__ guard around use of
-	ffi_closure_VFP.
-	* src/arm/sysv.S: Add __ARM_EABI__ guard around VFP code.
-
 2012-03-21  Peter Rosin	 <peda@lysator.liu.se>
 
 	* testsuite/libffi.call/float_va.c (float_va_fn): Use %f when
