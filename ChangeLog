@@ -1,4 +1,141 @@
-2012-03-30  Chung-Lin Tang  <cltang@codesourcery.com>
+2012-03-29  Peter Rosin  <peda@lysator.liu.se>
+
+	* src/x86/win32.S (ffi_closure_raw_THISCALL): Unify the frame
+	generation, fix the ENDP label and remove the surplus third arg
+	from the 'lea' insn.
+
+2012-03-29  Peter Rosin  <peda@lysator.liu.se>
+
+	* src/x86/win32.S (ffi_closure_raw_SYSV): Make the 'stubraw' label
+	visible outside the PROC, so that ffi_closure_raw_THISCALL can see
+	it.  Also instruct the assembler to add a frame to the function.
+
+2012-03-23  Peter Rosin  <peda@lysator.liu.se>
+
+	* Makefile.am (AM_CPPFLAGS): Add -DFFI_BUILDING.
+	* Makefile.in: Rebuilt.
+	* include/ffi.h.in [MSVC]: Add __declspec(dllimport) decorations
+	to all data exports, when compiling libffi clients using MSVC.
+
+2012-03-29  Peter Rosin  <peda@lysator.liu.se>
+
+	* src/x86/ffitarget.h (ffi_abi): Add new ABI FFI_MS_CDECL and
+	make it the default for MSVC.
+	(FFI_TYPE_MS_STRUCT): New structure return convention.
+	* src/x86/ffi.c (ffi_prep_cif_machdep): Tweak the structure
+	return convention for FFI_MS_CDECL to be FFI_TYPE_MS_STRUCT
+	instead of an ordinary FFI_TYPE_STRUCT.
+	(ffi_prep_args): Treat FFI_TYPE_MS_STRUCT as FFI_TYPE_STRUCT.
+	(ffi_call): Likewise.
+	(ffi_prep_incoming_args_SYSV): Likewise.
+	(ffi_raw_call): Likewise.
+	(ffi_prep_closure_loc): Treat FFI_MS_CDECL as FFI_SYSV.
+	* src/x86/win32.S (ffi_closure_SYSV): For FFI_TYPE_MS_STRUCT,
+	return a pointer to the result structure in eax and don't pop
+	that pointer from the stack, the caller takes care of it.
+	(ffi_call_win32): Treat FFI_TYPE_MS_STRUCT as FFI_TYPE_STRUCT.
+	(ffi_closure_raw_SYSV): Likewise.
+
+2012-03-22  Peter Rosin  <peda@lysator.liu.se>
+
+	* testsuite/libffi.call/closure_stdcall.c [MSVC]: Add inline
+	assembly version with Intel syntax.
+	* testsuite/libffi.call/closure_thiscall.c [MSVC]: Likewise.
+
+2012-03-23  Peter Rosin  <peda@lysator.liu.se>
+
+	* testsuite/libffi.call/ffitest.h: Provide abstration of
+	__attribute__((fastcall)) in the form of a __FASTCALL__
+	define.  Define it to __fastcall for MSVC.
+	* testsuite/libffi.call/fastthis1_win32.c: Use the above.
+	* testsuite/libffi.call/fastthis2_win32.c: Likewise.
+	* testsuite/libffi.call/fastthis3_win32.c: Likewise.
+	* testsuite/libffi.call/strlen2_win32.c: Likewise.
+	* testsuite/libffi.call/struct1_win32.c: Likewise.
+	* testsuite/libffi.call/struct2_win32.c: Likewise.
+
+2012-03-22  Peter Rosin  <peda@lysator.liu.se>
+
+	* src/x86/win32.S [MSVC] (ffi_closure_THISCALL): Remove the manual
+	frame on function entry, MASM adds one automatically.
+
+2012-03-22  Peter Rosin  <peda@lysator.liu.se>
+
+	* testsuite/libffi.call/ffitest.h [MSVC]: Add kludge for missing
+	bits in the MSVC headers.
+
+2012-03-22  Peter Rosin  <peda@lysator.liu.se>
+
+	* testsuite/libffi.call/cls_12byte.c: Adjust to the C89 style
+	with no declarations after statements.
+	* testsuite/libffi.call/cls_16byte.c: Likewise.
+	* testsuite/libffi.call/cls_18byte.c: Likewise.
+	* testsuite/libffi.call/cls_19byte.c: Likewise.
+	* testsuite/libffi.call/cls_1_1byte.c: Likewise.
+	* testsuite/libffi.call/cls_20byte.c: Likewise.
+	* testsuite/libffi.call/cls_20byte1.c: Likewise.
+	* testsuite/libffi.call/cls_24byte.c: Likewise.
+	* testsuite/libffi.call/cls_2byte.c: Likewise.
+	* testsuite/libffi.call/cls_3_1byte.c: Likewise.
+	* testsuite/libffi.call/cls_3byte1.c: Likewise.
+	* testsuite/libffi.call/cls_3byte2.c: Likewise.
+	* testsuite/libffi.call/cls_4_1byte.c: Likewise.
+	* testsuite/libffi.call/cls_4byte.c: Likewise.
+	* testsuite/libffi.call/cls_5_1_byte.c: Likewise.
+	* testsuite/libffi.call/cls_5byte.c: Likewise.
+	* testsuite/libffi.call/cls_64byte.c: Likewise.
+	* testsuite/libffi.call/cls_6_1_byte.c: Likewise.
+	* testsuite/libffi.call/cls_6byte.c: Likewise.
+	* testsuite/libffi.call/cls_7_1_byte.c: Likewise.
+	* testsuite/libffi.call/cls_7byte.c: Likewise.
+	* testsuite/libffi.call/cls_8byte.c: Likewise.
+	* testsuite/libffi.call/cls_9byte1.c: Likewise.
+	* testsuite/libffi.call/cls_9byte2.c: Likewise.
+	* testsuite/libffi.call/cls_align_double.c: Likewise.
+	* testsuite/libffi.call/cls_align_float.c: Likewise.
+	* testsuite/libffi.call/cls_align_longdouble.c: Likewise.
+	* testsuite/libffi.call/cls_align_longdouble_split.c: Likewise.
+	* testsuite/libffi.call/cls_align_longdouble_split2.c: Likewise.
+	* testsuite/libffi.call/cls_align_pointer.c: Likewise.
+	* testsuite/libffi.call/cls_align_sint16.c: Likewise.
+	* testsuite/libffi.call/cls_align_sint32.c: Likewise.
+	* testsuite/libffi.call/cls_align_sint64.c: Likewise.
+	* testsuite/libffi.call/cls_align_uint16.c: Likewise.
+	* testsuite/libffi.call/cls_align_uint32.c: Likewise.
+	* testsuite/libffi.call/cls_align_uint64.c: Likewise.
+	* testsuite/libffi.call/cls_dbls_struct.c: Likewise.
+	* testsuite/libffi.call/cls_pointer_stack.c: Likewise.
+	* testsuite/libffi.call/err_bad_typedef.c: Likewise.
+	* testsuite/libffi.call/huge_struct.c: Likewise.
+	* testsuite/libffi.call/nested_struct.c: Likewise.
+	* testsuite/libffi.call/nested_struct1.c: Likewise.
+	* testsuite/libffi.call/nested_struct10.c: Likewise.
+	* testsuite/libffi.call/nested_struct2.c: Likewise.
+	* testsuite/libffi.call/nested_struct3.c: Likewise.
+	* testsuite/libffi.call/nested_struct4.c: Likewise.
+	* testsuite/libffi.call/nested_struct5.c: Likewise.
+	* testsuite/libffi.call/nested_struct6.c: Likewise.
+	* testsuite/libffi.call/nested_struct7.c: Likewise.
+	* testsuite/libffi.call/nested_struct8.c: Likewise.
+	* testsuite/libffi.call/nested_struct9.c: Likewise.
+	* testsuite/libffi.call/stret_large.c: Likewise.
+	* testsuite/libffi.call/stret_large2.c: Likewise.
+	* testsuite/libffi.call/stret_medium.c: Likewise.
+	* testsuite/libffi.call/stret_medium2.c: Likewise.
+	* testsuite/libffi.call/struct1.c: Likewise.
+	* testsuite/libffi.call/struct1_win32.c: Likewise.
+	* testsuite/libffi.call/struct2.c: Likewise.
+	* testsuite/libffi.call/struct2_win32.c: Likewise.
+	* testsuite/libffi.call/struct3.c: Likewise.
+	* testsuite/libffi.call/struct4.c: Likewise.
+	* testsuite/libffi.call/struct5.c: Likewise.
+	* testsuite/libffi.call/struct6.c: Likewise.
+	* testsuite/libffi.call/struct7.c: Likewise.
+	* testsuite/libffi.call/struct8.c: Likewise.
+	* testsuite/libffi.call/struct9.c: Likewise.
+	* testsuite/libffi.call/testclosure.c: Likewise.
+
+2012-03-06  Chung-Lin Tang  <cltang@codesourcery.com>
 
 	* src/arm/ffi.c (ffi_call): Add __ARM_EABI__ guard around call to
 	ffi_call_VFP().

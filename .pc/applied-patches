@@ -5,3 +5,4 @@ win32
 win32_tests
 vararg_float_test_fix
 vfp-eabi
+msvc-changes
