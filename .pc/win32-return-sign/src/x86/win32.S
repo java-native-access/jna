@@ -108,37 +108,32 @@ ca_jumpdata:
         dd offset ca_retfloat       ;; FFI_TYPE_FLOAT
         dd offset ca_retdouble      ;; FFI_TYPE_DOUBLE
         dd offset ca_retlongdouble  ;; FFI_TYPE_LONGDOUBLE
-        dd offset ca_retuint8       ;; FFI_TYPE_UINT8
-        dd offset ca_retsint8       ;; FFI_TYPE_SINT8
-        dd offset ca_retuint16      ;; FFI_TYPE_UINT16
-        dd offset ca_retsint16      ;; FFI_TYPE_SINT16
+        dd offset ca_retint8        ;; FFI_TYPE_UINT8
+        dd offset ca_retint8        ;; FFI_TYPE_SINT8
+        dd offset ca_retint16       ;; FFI_TYPE_UINT16
+        dd offset ca_retint16       ;; FFI_TYPE_SINT16
         dd offset ca_retint         ;; FFI_TYPE_UINT32
         dd offset ca_retint         ;; FFI_TYPE_SINT32
         dd offset ca_retint64       ;; FFI_TYPE_UINT64
         dd offset ca_retint64       ;; FFI_TYPE_SINT64
         dd offset ca_epilogue       ;; FFI_TYPE_STRUCT
         dd offset ca_retint         ;; FFI_TYPE_POINTER
-        dd offset ca_retstruct1b    ;; FFI_TYPE_SMALL_STRUCT_1B
-        dd offset ca_retstruct2b    ;; FFI_TYPE_SMALL_STRUCT_2B
+        dd offset ca_retint8        ;; FFI_TYPE_SMALL_STRUCT_1B
+        dd offset ca_retint16       ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset ca_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
         dd offset ca_epilogue       ;; FFI_TYPE_MS_STRUCT
 
-        /* Sign/zero extend as appropriate.  */
-ca_retuint8:
-        movzx eax, al
-        jmp   ca_retint
+ca_retint8:
+        ;; Load %ecx with the pointer to storage for the return value
+        mov   ecx, rvalue
+        mov   [ecx + 0], al
+        jmp   ca_epilogue
 
-ca_retsint8:
-        movsx eax, al
-        jmp   ca_retint
-
-ca_retuint16:
-        movzx eax, ax
-        jmp   ca_retint
-
-ca_retsint16:
-        movsx eax, ax
-        jmp   ca_retint
+ca_retint16:
+        ;; Load %ecx with the pointer to storage for the return value
+        mov   ecx, rvalue
+        mov   [ecx + 0], ax
+        jmp   ca_epilogue
 
 ca_retint:
         ;; Load %ecx with the pointer to storage for the return value
@@ -169,18 +164,6 @@ ca_retlongdouble:
         ;; Load %ecx with the pointer to storage for the return value
         mov   ecx, rvalue
         fstp  TBYTE PTR [ecx]
-        jmp   ca_epilogue
-
-ca_retstruct1b:
-        ;; Load %ecx with the pointer to storage for the return value
-        mov   ecx, rvalue
-        mov   [ecx + 0], al
-        jmp   ca_epilogue
-
-ca_retstruct2b:
-        ;; Load %ecx with the pointer to storage for the return value
-        mov   ecx, rvalue
-        mov   [ecx + 0], ax
         jmp   ca_epilogue
 
 ca_epilogue:
@@ -220,35 +203,27 @@ cs_jumpdata:
         dd offset cs_retfloat       ;; FFI_TYPE_FLOAT
         dd offset cs_retdouble      ;; FFI_TYPE_DOUBLE
         dd offset cs_retlongdouble  ;; FFI_TYPE_LONGDOUBLE
-        dd offset cs_retuint8       ;; FFI_TYPE_UINT8
-        dd offset cs_retsint8       ;; FFI_TYPE_SINT8
-        dd offset cs_retuint16      ;; FFI_TYPE_UINT16
-        dd offset cs_retsint16      ;; FFI_TYPE_SINT16
+        dd offset cs_retint8        ;; FFI_TYPE_UINT8
+        dd offset cs_retint8        ;; FFI_TYPE_SINT8
+        dd offset cs_retint16       ;; FFI_TYPE_UINT16
+        dd offset cs_retint16       ;; FFI_TYPE_SINT16
         dd offset cs_retint         ;; FFI_TYPE_UINT32
         dd offset cs_retint         ;; FFI_TYPE_SINT32
         dd offset cs_retint64       ;; FFI_TYPE_UINT64
         dd offset cs_retint64       ;; FFI_TYPE_SINT64
         dd offset cs_retstruct      ;; FFI_TYPE_STRUCT
         dd offset cs_retint         ;; FFI_TYPE_POINTER
-        dd offset cs_retsint8       ;; FFI_TYPE_SMALL_STRUCT_1B
-        dd offset cs_retsint16      ;; FFI_TYPE_SMALL_STRUCT_2B
+        dd offset cs_retint8        ;; FFI_TYPE_SMALL_STRUCT_1B
+        dd offset cs_retint16       ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset cs_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
         dd offset cs_retmsstruct    ;; FFI_TYPE_MS_STRUCT
 
-cs_retuint8:
-        movzx eax, BYTE PTR [ecx]
+cs_retint8:
+        mov   al, [ecx]
         jmp   cs_epilogue
 
-cs_retsint8:
-        movsx eax, BYTE PTR [ecx]
-        jmp   cs_epilogue
-
-cs_retuint16:
-        movzx eax, WORD PTR [ecx]
-        jmp   cs_epilogue
-
-cs_retsint16:
-        movsx eax, WORD PTR [ecx]
+cs_retint16:
+        mov   ax, [ecx]
         jmp   cs_epilogue
 
 cs_retint:
@@ -330,35 +305,27 @@ cr_jumpdata:
         dd offset cr_retfloat       ;; FFI_TYPE_FLOAT
         dd offset cr_retdouble      ;; FFI_TYPE_DOUBLE
         dd offset cr_retlongdouble  ;; FFI_TYPE_LONGDOUBLE
-        dd offset cr_retuint8       ;; FFI_TYPE_UINT8
-        dd offset cr_retsint8       ;; FFI_TYPE_SINT8
-        dd offset cr_retuint16      ;; FFI_TYPE_UINT16
-        dd offset cr_retsint16      ;; FFI_TYPE_SINT16
+        dd offset cr_retint8        ;; FFI_TYPE_UINT8
+        dd offset cr_retint8        ;; FFI_TYPE_SINT8
+        dd offset cr_retint16       ;; FFI_TYPE_UINT16
+        dd offset cr_retint16       ;; FFI_TYPE_SINT16
         dd offset cr_retint         ;; FFI_TYPE_UINT32
         dd offset cr_retint         ;; FFI_TYPE_SINT32
         dd offset cr_retint64       ;; FFI_TYPE_UINT64
         dd offset cr_retint64       ;; FFI_TYPE_SINT64
         dd offset cr_epilogue       ;; FFI_TYPE_STRUCT
         dd offset cr_retint         ;; FFI_TYPE_POINTER
-        dd offset cr_retsint8       ;; FFI_TYPE_SMALL_STRUCT_1B
-        dd offset cr_retsint16      ;; FFI_TYPE_SMALL_STRUCT_2B
+        dd offset cr_retint8        ;; FFI_TYPE_SMALL_STRUCT_1B
+        dd offset cr_retint16       ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset cr_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
         dd offset cr_epilogue       ;; FFI_TYPE_MS_STRUCT
 
-cr_retuint8:
-        movzx eax, BYTE PTR [ecx]
+cr_retint8:
+        mov   al, [ecx]
         jmp   cr_epilogue
 
-cr_retsint8:
-        movsx eax, BYTE PTR [ecx]
-        jmp   cr_epilogue
-
-cr_retuint16:
-        movzx eax, WORD PTR [ecx]
-        jmp   cr_epilogue
-
-cr_retsint16:
-        movsx eax, WORD PTR [ecx]
+cr_retint16:
+        mov   ax, [ecx]
         jmp   cr_epilogue
 
 cr_retint:
@@ -412,34 +379,26 @@ cd_jumpdata:
         dd offset cd_retfloat       ;; FFI_TYPE_FLOAT
         dd offset cd_retdouble      ;; FFI_TYPE_DOUBLE
         dd offset cd_retlongdouble  ;; FFI_TYPE_LONGDOUBLE
-        dd offset cd_retuint8       ;; FFI_TYPE_UINT8
-        dd offset cd_retsint8       ;; FFI_TYPE_SINT8
-        dd offset cd_retuint16      ;; FFI_TYPE_UINT16
-        dd offset cd_retsint16      ;; FFI_TYPE_SINT16
+        dd offset cd_retint8        ;; FFI_TYPE_UINT8
+        dd offset cd_retint8        ;; FFI_TYPE_SINT8
+        dd offset cd_retint16       ;; FFI_TYPE_UINT16
+        dd offset cd_retint16       ;; FFI_TYPE_SINT16
         dd offset cd_retint         ;; FFI_TYPE_UINT32
         dd offset cd_retint         ;; FFI_TYPE_SINT32
         dd offset cd_retint64       ;; FFI_TYPE_UINT64
         dd offset cd_retint64       ;; FFI_TYPE_SINT64
         dd offset cd_epilogue       ;; FFI_TYPE_STRUCT
         dd offset cd_retint         ;; FFI_TYPE_POINTER
-        dd offset cd_retsint8       ;; FFI_TYPE_SMALL_STRUCT_1B
-        dd offset cd_retsint16      ;; FFI_TYPE_SMALL_STRUCT_2B
+        dd offset cd_retint8        ;; FFI_TYPE_SMALL_STRUCT_1B
+        dd offset cd_retint16       ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset cd_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
 
-cd_retuint8:
-        movzx eax, BYTE PTR [ecx]
+cd_retint8:
+        mov   al, [ecx]
         jmp   cd_epilogue
 
-cd_retsint8:
-        movsx eax, BYTE PTR [ecx]
-        jmp   cd_epilogue
-
-cd_retuint16:
-        movzx eax, WORD PTR [ecx]
-        jmp   cd_epilogue
-
-cd_retsint16:
-        movsx eax, WORD PTR [ecx]
+cd_retint16:
+        mov   ax, [ecx]
         jmp   cd_epilogue
 
 cd_retint:
