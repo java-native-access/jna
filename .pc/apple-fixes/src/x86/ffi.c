@@ -280,11 +280,9 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
       else
 #endif
         {
-#ifdef X86_WIN32
           if (cif->abi == FFI_MS_CDECL)
             cif->flags = FFI_TYPE_MS_STRUCT;
           else
-#endif
             cif->flags = FFI_TYPE_STRUCT;
           /* allocate space for return value pointer */
           cif->bytes += ALIGN(sizeof(void*), FFI_SIZEOF_ARG);

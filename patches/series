@@ -8,3 +8,4 @@ vararg_float_test_fix
 vfp-eabi
 msvc-changes
 win32-return-sign
+apple-fixes
