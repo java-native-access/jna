@@ -9,7 +9,6 @@
 static int promotion(signed char sc, signed short ss,
 		     unsigned char uc, unsigned short us)
 {
-  printf ("%d + %d + %d + %d\n", (int) sc, (int) ss, (int) uc, (int) us);
   int r = (int) sc + (int) ss + (int) uc + (int) us;
 
   return r;
@@ -51,7 +50,6 @@ int main (void)
 	for (us = 0; us <= 60000; us += 10000)
 	  {
 	    ul++;
-  printf ("%d + %d + %d + %d\n", (int) sc, (int) ss, (int) uc, (int) us);
 	    ffi_call(&cif, FFI_FN(promotion), &rint, values);
 	    CHECK((int)rint == (signed char) sc + (signed short) ss +
 		  (unsigned char) uc + (unsigned short) us);
