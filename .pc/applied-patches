@@ -9,3 +9,5 @@ msvc-changes
 win32-return-sign
 apple-fixes
 dist-tests
+icc128
+x32libtool
