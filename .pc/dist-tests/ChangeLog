@@ -1,8 +1,3 @@
-2012-04-06  Anthony Green  <green@moxielogic.com>
-
-	* testsuite/Makefile.am (EXTRA_DIST): Add missing test cases.
-	* testsuite/Makefile.in: Rebuilt.
-
 2012-04-05  Zachary Waldowski  <zwaldowski@gmail.com>
 
 	* include/ffi.h.in: Add missing trampoline table fields.

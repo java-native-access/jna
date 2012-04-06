@@ -352,11 +352,11 @@ Index: libffi/README
  | M68K         | RTEMS            |
  | MIPS         | IRIX             |
  | MIPS         | Linux            |
-@@ -150,6 +151,7 @@ See the ChangeLog files for details.
-         Lots of build fixes.
-         Add Amiga newer MacOS support.
- 	Add Linux/x32 support.
-+	Add m68k FreeMiNT support.
- 	Add thiscall and fastcall support on Windows.
+@@ -152,6 +153,7 @@ See the ChangeLog files for details.
+ 	Add thiscall, fastcall and MSVC cdecl support on Windows.
+         Add Amiga and newer MacOS support.
  	Fix Octeon and MC68881 support.
++	Add m68k FreeMiNT support.
  	Fix code pessimizations.
+         Lots of build fixes.
+ 

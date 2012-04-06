@@ -9,3 +9,4 @@ vfp-eabi
 msvc-changes
 win32-return-sign
 apple-fixes
+dist-tests
