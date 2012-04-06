@@ -50,3 +50,23 @@ Index: libffi/configure
  	    ;;
  	  ppc64-*linux*|powerpc64-*linux*)
  	    LD="${LD-ld} -m elf32ppclinux"
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -79,7 +79,6 @@ tested:
+ | X86          | Interix          |
+ | X86          | kFreeBSD         |
+ | X86          | Linux            |
+-| X86          | Linux/x32        |
+ | X86          | Mac OSX          |
+ | X86          | OpenBSD          |
+ | X86          | OS/2             |
+@@ -88,6 +87,7 @@ tested:
+ | X86          | Windows/MingW    |
+ | X86-64       | FreeBSD          |
+ | X86-64       | Linux            |
++| X86-64       | Linux/x32        |
+ | X86-64       | OpenBSD          |
+ | X86-64       | Windows/MingW    |
+ |--------------+------------------|
