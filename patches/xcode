@@ -602,7 +602,12 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,10 @@
+@@ -1,3 +1,15 @@
++2012-04-06  Anthony Green  <green@moxielogic.com>
++
++	* Makefile.am (EXTRA_DIST): Add new iOS/xcode files.
++	* Makefile.in: Rebuilt.
++
 +2012-04-06  Mike Lewis  <mikelikespie@gmail.com>
 +
 +	* generate-ios-source-and-headers.py: New file.
@@ -613,3 +618,42 @@ Index: libffi/ChangeLog
  2012-04-06  H.J. Lu  <hongjiu.lu@intel.com>
  
  	* m4/libtool.m4 (_LT_ENABLE_LOCK): Support x32.
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -30,10 +30,11 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+-	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 build-ios.sh \
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c \
+-	msvcc.sh
+-
++	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
++	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
++	msvcc.sh generate-ios-source-and-headers.py \
++        libffi.xcodeproj/project.pbxproj \
++	src/arm/trampoline.S
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -443,9 +443,11 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+-	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 build-ios.sh \
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c \
+-	msvcc.sh
++	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
++	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
++	msvcc.sh generate-ios-source-and-headers.py \
++        libffi.xcodeproj/project.pbxproj \
++	src/arm/trampoline.S
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 

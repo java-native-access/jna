@@ -30,11 +30,10 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
-	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
-	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
-	msvcc.sh generate-ios-source-and-headers.py \
-        libffi.xcodeproj/project.pbxproj \
-	src/arm/trampoline.S
+	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 build-ios.sh \
+	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c \
+	msvcc.sh
+
 
 info_TEXINFOS = doc/libffi.texi
 

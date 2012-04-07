@@ -1,3 +1,8 @@
+2012-04-06  Anthony Green  <green@moxielogic.com>
+
+	* Makefile.am (EXTRA_DIST): Add new iOS/xcode files.
+	* Makefile.in: Rebuilt.
+
 2012-04-06  Mike Lewis  <mikelikespie@gmail.com>
 
 	* generate-ios-source-and-headers.py: New file.
