@@ -12,3 +12,4 @@ dist-tests
 icc128
 x32libtool
 arm-test-fix
+xcode

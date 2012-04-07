@@ -129,8 +129,7 @@ under a MingW environment, you may need to remove the line in configure
 that sets 'fix_srcfile_path' to a 'cygpath' command. ('cygpath' is not
 present in MingW, and is not required when using MingW-style paths.)
 
-For iOS builds, run generate-ios-source-and-headers.py and then
-libffi.xcodeproj should work.
+For iOS builds, refer to the build-ios.sh script for guidance.
 
 Configure has many other options. Use "configure --help" to see them all.
 
@@ -153,9 +152,8 @@ See the ChangeLog files for details.
 	Add Linux/x32 support.
 	Add thiscall, fastcall and MSVC cdecl support on Windows.
         Add Amiga and newer MacOS support.
-	Add m68k FreeMiNT support.
-	Integration with iOS' xcode build tools.
 	Fix Octeon and MC68881 support.
+	Add m68k FreeMiNT support.
 	Fix code pessimizations.
         Lots of build fixes.
 
