@@ -14,3 +14,4 @@ icc128
 x32libtool
 arm-test-fix
 xcode
+darwin-missing-semi
