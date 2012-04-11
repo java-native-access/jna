@@ -910,7 +910,7 @@ public final class Native {
         File tmp = new File(System.getProperty("java.io.tmpdir"));
         File jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
         jnatmp.mkdirs();
-        return jnatmp.exists() ? jnatmp : tmp;
+        return (jnatmp.exists() && jnatmp.canWrite()) ? jnatmp : tmp;
     }
 
     /** Remove all marked temporary files in the given directory. */
