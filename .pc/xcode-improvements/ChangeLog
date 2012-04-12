@@ -1,11 +1,3 @@
-2012-04-11  Zachary Waldowski  <zwaldowski@gmail.com>
-
-	* generate-ios-source-and-headers.py,
-	libffi.xcodeproj/project.pbxproj: Support a Mac static library via
-	Xcode. Set iOS compatibility to 4.0.  Move iOS trampoline
-	generation into an Xcode "run script" phase.  Include both as
-	Xcode build scripts. Don't always regenerate config files.
-
 2012-04-10  Anthony Green  <green@moxielogic.com>
 
 	* src/powerpc/ffi_darwin.c (ffi_prep_args): Add missing semicolon.
