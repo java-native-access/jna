@@ -3388,7 +3388,7 @@ static void add_segment(mstate m, char* tbase, size_t tsize, flag_t mmapped) {
   *ss = m->seg; /* Push current record */
   m->seg.base = tbase;
   m->seg.size = tsize;
-  set_segment_flags(&m->seg, mmapped);
+  (void)set_segment_flags(&m->seg, mmapped);
   m->seg.next = ss;
 
   /* Insert trailing fenceposts */
@@ -3548,7 +3548,7 @@ static void* sys_alloc(mstate m, size_t nb) {
     if (!is_initialized(m)) { /* first-time initialization */
       m->seg.base = m->least_addr = tbase;
       m->seg.size = tsize;
-      set_segment_flags(&m->seg, mmap_flag);
+      (void)set_segment_flags(&m->seg, mmap_flag);
       m->magic = mparams.magic;
       init_bins(m);
       if (is_global(m)) 
