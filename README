@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.11 was released on *****************. Check the libffi web
+libffi-3.0.11 was released on April 11, 2012.  Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -148,7 +148,7 @@ History
 
 See the ChangeLog files for details.
 
-3.0.11 MMM-DD-YY
+3.0.11 Apr-11-12
         Add support for variadic functions (ffi_prep_cif_var).
 	Add Linux/x32 support.
 	Add thiscall, fastcall and MSVC cdecl support on Windows.
@@ -301,7 +301,7 @@ See the ChangeLog files for details.
 Authors & Credits
 =================
 
-libffi was originally written by Anthony Green <green@redhat.com>.
+libffi was originally written by Anthony Green <green@moxielogic.com>.
 
 The developers of the GNU Compiler Collection project have made
 innumerable valuable contributions.  See the ChangeLog file for
