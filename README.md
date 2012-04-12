@@ -13,6 +13,8 @@ While some attention is paid to performance, correctness and ease of use take pr
 
 JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.
 
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.4.0/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).
+
 Download
 ========
 
