@@ -1285,7 +1285,7 @@ public abstract class Structure {
     }
 
     /** Override to supply native type information for the given field. */
-    protected Pointer getFieldTypeInfo(StructField f) {
+    Pointer getFieldTypeInfo(StructField f) {
         Class type = f.type;
         Object value = getField(f);
         if (typeMapper != null) {
