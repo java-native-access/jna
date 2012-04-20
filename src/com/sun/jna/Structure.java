@@ -1375,7 +1375,7 @@ public abstract class Structure {
         }
     }
 
-    class StructField extends Object {
+    static class StructField extends Object {
         public String name;
         public Class type;
         public Field field;
