@@ -147,20 +147,12 @@ _L__\name:
 .endm
 #endif
 
-.macro	RETLDM	regs=, cond=, dirn=ia
+.macro	RETLDM
 #if defined (__INTERWORKING__)
-	.ifc "\regs",""
-	ldr\cond	lr, [sp], #4
-	.else
-	ldm\cond\dirn	sp!, {\regs, lr}
-	.endif
-	bx\cond	lr
+	ldr	lr, [sp], #4
+	bx	lr
 #else
-	.ifc "\regs",""
-	ldr\cond	pc, [sp], #4
-	.else
-	ldm\cond\dirn	sp!, {\regs, pc}
-	.endif
+	ldr	pc, [sp], #4
 #endif
 .endm
 
