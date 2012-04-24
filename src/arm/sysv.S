@@ -1,8 +1,8 @@
 /* -----------------------------------------------------------------------
    sysv.S - Copyright (c) 1998, 2008, 2011 Red Hat, Inc.
 	    Copyright (c) 2011 Plausible Labs Cooperative, Inc.
-   
-   ARM Foreign Function Interface 
+
+   ARM Foreign Function Interface
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -25,7 +25,7 @@
    DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
 
-#define LIBFFI_ASM	
+#define LIBFFI_ASM
 #include <fficonfig.h>
 #include <ffi.h>
 #ifdef HAVE_MACHINE_ASM_H
@@ -59,7 +59,7 @@
 #define __SOFTFP__
 #endif
 
-/* We need a better way of testing for this, but for now, this is all 
+/* We need a better way of testing for this, but for now, this is all
    we can do.  */
 @ This selects the minimum architecture level required.
 #define __ARM_ARCH__ 3
@@ -68,7 +68,7 @@
 # undef __ARM_ARCH__
 # define __ARM_ARCH__ 4
 #endif
-        
+
 #if defined(__ARM_ARCH_5__) || defined(__ARM_ARCH_5T__) \
 	|| defined(__ARM_ARCH_5E__) || defined(__ARM_ARCH_5TE__) \
 	|| defined(__ARM_ARCH_5TEJ__)
@@ -107,44 +107,29 @@
 #define UNWIND
 #else
 #define UNWIND @
-#endif	
+#endif
 
-	
+.syntax unified
+
 #if defined(__thumb__) && !defined(__THUMB_INTERWORK__)
-.macro	ARM_FUNC_START name
-	.text
-	.align 0
-	.thumb
-	.thumb_func
-#ifdef __APPLE__
-	ENTRY($0)
+#define ARM_FUNC_START(name) \
+	.text; \
+	.align 2; \
+	.thumb; \
+	.thumb_func; \
+	ENTRY(name); \
+	bx pc; \
+	nop; \
+	.arm; \
+	UNWIND .fnstart; \
+_L__##name:
 #else
-	ENTRY(\name)
-#endif
-	bx	pc
-	nop
-	.arm
+#define ARM_FUNC_START(name) \
+	.text; \
+	.align 2; \
+	.arm; \
+	ENTRY(name); \
 	UNWIND .fnstart
-/* A hook to tell gdb that we've switched to ARM mode.  Also used to call
-   directly from other local arm routines.  */
-#ifdef __APPLE__
-_L__$0:
-#else
-_L__\name:
-#endif
-.endm
-#else
-.macro	ARM_FUNC_START name
-	.text
-	.align 0
-	.arm
-#ifdef __APPLE__
-	ENTRY($0)
-#else
-	ENTRY(\name)
-#endif
-	UNWIND .fnstart
-.endm
 #endif
 
 .macro	RETLDM
@@ -163,7 +148,7 @@ _L__\name:
 	@ sp+0: ecif.rvalue
 
 	@ This assumes we are using gas.
-ARM_FUNC_START ffi_call_SYSV
+ARM_FUNC_START(ffi_call_SYSV)
 	@ Save registers
         stmfd	sp!, {r0-r3, fp, lr}
 	UNWIND .save	{r0-r3, fp, lr}
@@ -193,14 +178,14 @@ ARM_FUNC_START ffi_call_SYSV
 
 	@ call (fn) (...)
 	call_reg(ip)
-	
+
 	@ Remove the space we pushed for the args
 	mov	sp, fp
 
 	@ Load r2 with the pointer to storage for the return value
 	ldr	r2, [sp, #24]
 
-	@ Load r3 with the return type code 
+	@ Load r3 with the return type code
 	ldr	r3, [sp, #12]
 
 	@ If the return value pointer is NULL, assume no return value.
@@ -220,7 +205,7 @@ ARM_FUNC_START ffi_call_SYSV
 #if defined(__SOFTFP__) || defined(__ARM_EABI__)
 	cmpne	r3, #FFI_TYPE_DOUBLE
 #endif
-	stmeqia	r2, {r0, r1}
+	stmiaeq	r2, {r0, r1}
 
 #if !defined(__SOFTFP__) && !defined(__ARM_EABI__)
 	beq	LSYM(Lepilogue)
@@ -258,7 +243,7 @@ LSYM(Lepilogue):
   	     void *args;
 */
 
-ARM_FUNC_START ffi_closure_SYSV
+ARM_FUNC_START(ffi_closure_SYSV)
 	UNWIND .pad #16
 	add	ip, sp, #16
 	stmfd	sp!, {ip, lr}
@@ -337,7 +322,7 @@ ARM_FUNC_START ffi_closure_SYSV
 	@ r3:   fig->flags
 	@ sp+0: ecif.rvalue
 
-ARM_FUNC_START ffi_call_VFP
+ARM_FUNC_START(ffi_call_VFP)
 	@ Save registers
         stmfd	sp!, {r0-r3, fp, lr}
 	UNWIND .save	{r0-r3, fp, lr}
@@ -389,7 +374,7 @@ LSYM(Lbase_args):
 	@ the return value
 	ldr	r2, [sp, #24]
 
-	@ Load r3 with the return type code 
+	@ Load r3 with the return type code
 	ldr	r3, [sp, #12]
 
 	@ If the return value pointer is NULL,
@@ -408,7 +393,7 @@ LSYM(Lbase_args):
 	cmp	r3, #FFI_TYPE_FLOAT
 	fstseq	s0, [r2]
 	beq	LSYM(Lepilogue_vfp)
-	
+
 	cmp	r3, #FFI_TYPE_DOUBLE
 	fstdeq	d0, [r2]
 	beq	LSYM(Lepilogue_vfp)
@@ -425,7 +410,7 @@ LSYM(Lepilogue_vfp):
         .size    CNAME(ffi_call_VFP),.ffi_call_VFP_end-CNAME(ffi_call_VFP)
 
 
-ARM_FUNC_START ffi_closure_VFP
+ARM_FUNC_START(ffi_closure_VFP)
 	fstmfdd	sp!, {d0-d7}
 	@ r0-r3, then d0-d7
 	UNWIND .pad #80
@@ -458,7 +443,7 @@ ARM_FUNC_START ffi_closure_VFP
 
 	cmp	r0, #FFI_TYPE_STRUCT_VFP_DOUBLE
 	beq	.Lretdouble_struct_vfp
-	
+
 .Lclosure_epilogue_vfp:
 	add	sp, sp, #72
 	ldmfd	sp, {sp, pc}
