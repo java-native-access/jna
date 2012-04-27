@@ -27,7 +27,6 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
 	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
 	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
 	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
-	src/bfin/ffi.c src/bfin/ffitarget.h src/bfin/sysv.S \
 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
@@ -105,9 +104,6 @@ endif
 
 if MIPS
 nodist_libffi_la_SOURCES += src/mips/ffi.c src/mips/o32.S src/mips/n32.S
-endif
-if BFIN
-nodist_libffi_la_SOURCES += src/bfin/ffi.c src/bfin/sysv.S
 endif
 if X86
 nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/sysv.S

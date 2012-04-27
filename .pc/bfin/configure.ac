@@ -75,10 +75,6 @@ case "$host" in
 	TARGET=AVR32; TARGETDIR=avr32
 	;;
 
-  bfin*)
-  	TARGET=BFIN; TARGETDIR=bfin
-  	;;
-
   cris-*-*)
 	TARGET=LIBFFI_CRIS; TARGETDIR=cris
 	;;
@@ -217,7 +213,6 @@ if test $TARGETDIR = unknown; then
 fi
 
 AM_CONDITIONAL(MIPS, test x$TARGET = xMIPS)
-AM_CONDITIONAL(BFIN, test x$TARGET = xBFIN)
 AM_CONDITIONAL(SPARC, test x$TARGET = xSPARC)
 AM_CONDITIONAL(X86, test x$TARGET = xX86)
 AM_CONDITIONAL(X86_FREEBSD, test x$TARGET = xX86_FREEBSD)
