@@ -200,6 +200,11 @@ extern jobject initializeThread(callback*,AttachOptions*);
 extern int lastError();
 extern void setLastError(int err);
 
+#ifdef NO_WEAK_GLOBALS
+#define NewWeakGlobalRef NewGlobalRef
+#define DeleteWeakGlobalRef DeleteGlobalRef
+#endif
+
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION
 #define PROTECT is_protected()

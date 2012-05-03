@@ -1,3 +1,12 @@
+Release 3.4.x
+=============
+Features
+--------
+* Add android-arm target (thanks to ochafik for initial work)
+
+Bug Fixes
+---------
+
 Release 3.4.1
 =============
 

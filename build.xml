@@ -9,7 +9,8 @@
        support it).
 
        Cross-compile by specifying -Dos.prefix={name-arch} to ant
-       (cross-compile currently only configured/tested on w32ce-arm)
+       (cross-compile currently only configured/tested on w32ce-arm and
+       android-arm) 
     -->
 
   <!--
@@ -120,15 +121,18 @@
       <isset property="omit-jnilib"/>
     </condition>
     <condition property="vm.arch" value="-d64" else="">
-      <or>
-        <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
-        <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
-        <os arch="x86_64"/>
-        <os arch="amd64"/>
-        <os arch="sparcv9"/>
-        <os arch="ppc64"/>
-        <os arch="ia64"/>
-      </or>
+      <and>
+        <not><equals arg1="${os.prefix}" arg2="android-arm" trim="true"/></not>
+        <or>
+          <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
+          <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
+          <os arch="x86_64"/>
+          <os arch="amd64"/>
+          <os arch="sparcv9"/>
+          <os arch="ppc64"/>
+          <os arch="ia64"/>
+        </or>
+      </and>
     </condition>
     <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
       <and>
@@ -207,6 +211,7 @@
     <echo>java.home=${java.home}</echo>
     <echo>java.library.path=${java.library.path}</echo>
     <echo>os.prefix=${os.prefix}</echo>
+    <echo>build=${build}</echo>
 
   </target>
 
@@ -365,6 +370,7 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparcv9.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/android-arm.jar" overwrite="true"/>
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build.native}" includes="*.o,*jnidispatch*"/>
     </delete>
@@ -410,11 +416,19 @@
                    replace="CHECKSUM=${jni.md5} ${comment}"
                    file="native/Makefile" byline="true"/>
     <!-- Handle cross-compilation -->
-    <condition property="make.OS" value="OS=w32ce" else="IGNORE=">
+    <condition property="make.OS" value="OS=w32ce">
+      <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+    </condition>
+    <condition property="make.OS" value="OS=android">
+      <equals arg1="${os.prefix}" arg2="android-arm"/>
+    </condition>
+    <property name="make.OS" value="IGNORE="/>
+    <!-- Ensure Makefile ARCH property properly set -->
+    <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
     </condition>
     <condition property="ARCH" value="arm">
-      <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+      <equals arg1="${os.prefix}" arg2="android-arm"/>
     </condition>
     <condition property="ARCH" value="ppc">
       <equals arg1="${os.prefix}" arg2="aix-ppc"/>
@@ -436,15 +450,24 @@
     </condition>
     <condition property="make.SDKROOT"
 	       value="SDKROOT=/Developer/SDKs/MacOSX10.6.sdk">
-      <available file="/Developer/SDKs/MacOSX10.6.sdk"/>
+      <and>
+        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+        <available file="/Developer/SDKs/MacOSX10.6.sdk"/>
+      </and>
     </condition>
     <condition property="make.SDKROOT"
 	       value="SDKROOT=/Developer/SDKs/MacOSX10.5.sdk">
-      <available file="/Developer/SDKs/MacOSX10.5.sdk"/>
+      <and>
+        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+        <available file="/Developer/SDKs/MacOSX10.5.sdk"/>
+      </and>
     </condition>
     <condition property="make.SDKROOT"
 	       value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
-      <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
+      <and>
+        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+        <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
+      </and>
     </condition>
     <!-- Windows' drive letters and spaces in absolute paths wreak havoc on
          make -->
@@ -540,8 +563,15 @@
     </signjar>
   </target>
 
+  <target name="android-test-setup" depends="compile-tests"
+          description="Configure tests for running on an Android emulator">
+    <!-- 'shared' should be the path to a folder mounted as the mobile
+         device/simulator storage card. -->
+    <property name="shared" value="shared"/>
+  </target>
+
   <target name="wince-test-setup" depends="compile-tests"
-          description="Configure tests for running on a Windows Mobile device">
+          description="Configure tests for running on the WM emulator">
     <!-- 'shared' should be the path to a folder mounted as the mobile
          device/simulator storage card. -->
     <property name="shared" value="shared"/>
@@ -777,6 +807,9 @@ processor=x86;osname=freebsd,
 com/sun/jna/freebsd-amd64/libjnidispatch.so;
 processor=x86-64;osname=freebsd,
 
+com/sun/jna/android-arm/libjnidispatch.so;
+processor=arm;osname=android,
+
 com/sun/jna/darwin/libjnidispatch.jnilib;
 osname=macos,
                             "/>
@@ -841,6 +874,9 @@ osname=macos,
       <zipfileset src="${dist}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
+      <zipfileset src="${dist}/android-arm.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/android-arm"/>
     </jar>
     <copy todir="${dist}">
       <fileset dir="${contrib}/platform/dist">

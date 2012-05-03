@@ -15,6 +15,7 @@
 #   Linux (i386/amd64/ppc/arm)
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
+#   Android (arm)
 #
 # Built, but with outstanding bugs (not necessarily within JNA):
 #
@@ -27,8 +28,13 @@
 # the windres binary from MINGW).
 #
 # The w32ce build requires cegcc and phoneME for cross-compilation; if these
-# tools are available on the path than "ant -Dos.prefix=w32ce-arm" should
+# tools are available on the path then "ant -Dos.prefix=w32ce-arm" should
 # result in a proper build.
+#
+# The android build requires the android SDK+NDK for cross-compilation;
+# make the tools available on the path and compile with
+# "ant -Dos.prefix=android".
+#
 
 # Systems which support POSIX signals may be able to support VM crash
 # protection simply by defining HAVE_PROTECTION.  This option has been only
@@ -100,6 +106,24 @@ endif
 #LIBS=-L"$(LIBDIR)" -ljawt
 STRIP=strip -x
 # end defaults
+
+# Android build (cross-compile) requires the android SDK+NDK.
+# Ensure the following tools are in your path and adjust ANDROID_HOME as needed
+ifeq ($(OS),android)
+CC=arm-linux-androideabi-gcc
+CPP=arm-linux-androideabi-cpp
+LD=arm-linux-androideabi-gcc
+RANLIB=arm-linux-androideabi-ranlib
+CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS
+COPT+=-fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -march=armv5te -mtune=xscale -msoft-float
+ANDROID_HOME=/Developer/Applications/android-ndk-r7c/platforms/android-14/arch-arm
+JAVA_INCLUDES=
+CINCLUDES+=-I"$(ANDROID_HOME)/usr/include" # -I/usr/include
+LIBS=-nostdlib -L"$(ANDROID_HOME)/usr/lib/" -lgcc -lc -ldl -lm
+LDFLAGS+=-Wl,-shared,-Bsymbolic
+FFI_ENV=CPP="$(CPP)" CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) $(CINCLUDES)" CPPFLAGS="$(CDEFINES) $(CINCLUDES)" LIBS="$(LIBS)" RANLIB="$(RANLIB)"
+FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=arm-linux-eabi
+endif
 
 # W32CE build requires cegcc cross-compiler and phoneME JavaME implementation
 # cegcc: http://sf.net/projects/cegcc
@@ -322,7 +346,7 @@ else
 TESTDEP=$(TESTLIB)
 endif
 $(TESTLIB2): $(BUILD)/testlib2.o
-	$(LD) $(LDFLAGS) $< $(TESTDEP)
+	$(LD) $(LDFLAGS) $< $(TESTDEP) $(LIBS)
 
 ifneq ($(DYNAMIC_LIBFFI),true)
 $(FFI_LIB):
