@@ -849,7 +849,7 @@ public abstract class Structure {
     /** Keep track of structure layout information.  Alignment type, type
         mapper, and explicit field order will affect this information.
     */
-    private class LayoutInfo {
+    private static class LayoutInfo {
         int size = CALCULATE_SIZE;
         int alignment = 1;
         Map fields = Collections.synchronizedMap(new LinkedHashMap());
@@ -1546,7 +1546,7 @@ public abstract class Structure {
         }
     }
 
-    private class AutoAllocated extends Memory {
+    private static class AutoAllocated extends Memory {
         public AutoAllocated(int size) {
             super(size);
             // Always clear new structure memory
