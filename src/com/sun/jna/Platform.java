@@ -20,6 +20,7 @@ public final class Platform {
     public static final int OPENBSD = 5;
     public static final int WINDOWSCE = 6;
     public static final int AIX = 7;
+    public static final int ANDROID = 8;
 
     /** Whether read-only (final) fields within Structures are supported. */
     public static final boolean RO_FIELDS;
@@ -37,7 +38,12 @@ public final class Platform {
     static {
         String osName = System.getProperty("os.name");
         if (osName.startsWith("Linux")) {
-            osType = LINUX;
+            if ("dalvik".equals(System.getProperty("java.vm.name").toLowerCase())) {
+                osType = ANDROID;
+            }
+            else {
+                osType = LINUX;
+            }
         }
         else if (osName.startsWith("AIX")) {
             osType = AIX;
@@ -89,6 +95,9 @@ public final class Platform {
     }
     public static final boolean isMac() {
         return osType == MAC;
+    }
+    public static final boolean isAndroid() {
+        return osType == ANDROID;
     }
     public static final boolean isLinux() {
         return osType == LINUX;
@@ -146,9 +155,8 @@ public final class Platform {
             || arch.equals("x86_64")
             || arch.equals("amd64")) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public static final boolean isPPC() {
@@ -159,18 +167,13 @@ public final class Platform {
             || arch.equals("powerpc")
             || arch.equals("powerpc64")) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public static final boolean isARM() {
         String arch =
             System.getProperty("os.arch").toLowerCase().trim();
-        if (arch.equals("arm"))  {
-            return true;
-        } else {
-            return false;
-        }
+        return arch.startsWith("arm");
     }
 }

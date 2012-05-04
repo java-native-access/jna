@@ -33,7 +33,8 @@
 #
 # The android build requires the android SDK+NDK for cross-compilation;
 # make the tools available on the path and compile with
-# "ant -Dos.prefix=android".
+# "ant -Dos.prefix=android-arm".  Put the NDK tools in the path and adjust
+# ANDROID_HOME below.
 #
 
 # Systems which support POSIX signals may be able to support VM crash

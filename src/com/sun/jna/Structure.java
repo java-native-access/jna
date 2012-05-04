@@ -124,7 +124,7 @@ public abstract class Structure {
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
-	isARM = "arm".equals(arch);
+	isARM = arch.startsWith("arm");
     }
 
     /** Use the platform default alignment. */
@@ -144,7 +144,10 @@ public abstract class Structure {
     //public static final int ALIGN_8 = 6;
 
     static final int MAX_GNUC_ALIGNMENT =
-        isSPARC || ((isPPC || isARM) && Platform.isLinux()) || Platform.isAix()
+        isSPARC
+        || ((isPPC || isARM)
+            && (Platform.isLinux() || Platform.isAndroid()))
+        || Platform.isAix()
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
@@ -740,9 +743,11 @@ public abstract class Structure {
         getFieldOrder().addAll(Arrays.asList(fields));
         // Force recalculation of size/field layout, since
         // differing field order may result in different padding/alignment
-        this.size = CALCULATE_SIZE;
-        if (this.memory instanceof AutoAllocated) {
-            this.memory = null;
+        if (this.size != CALCULATE_SIZE) {
+            this.size = CALCULATE_SIZE;
+            if (this.memory instanceof AutoAllocated) {
+                this.memory = null;
+            }
         }
     }
 
@@ -780,7 +785,8 @@ public abstract class Structure {
             }
             flist.addAll(0, classFields);
         }
-        if (REQUIRES_FIELD_ORDER || hasFieldOrder()) {
+        if ((REQUIRES_FIELD_ORDER || hasFieldOrder())
+            && flist.size() > 1 && !(this instanceof Union)){
             List fieldOrder = getFieldOrder();
             if (fieldOrder.size() < flist.size()) {
                 if (force) {
@@ -1450,6 +1456,7 @@ public abstract class Structure {
         // From ffi.h
         private static final int FFI_TYPE_STRUCT = 13;
         // Structure fields
+        { setFieldOrder(new String[] { "size", "alignment", "type", "elements" }); }
         public size_t size;
         public short alignment;
         public short type = FFI_TYPE_STRUCT;
