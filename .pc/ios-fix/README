@@ -130,7 +130,8 @@ under a MingW environment, you may need to remove the line in configure
 that sets 'fix_srcfile_path' to a 'cygpath' command. ('cygpath' is not
 present in MingW, and is not required when using MingW-style paths.)
 
-For iOS builds, the 'libffi.xcodeproj' Xcode project is available.
+For iOS builds, run generate-ios-source-and-headers.py and then
+libffi.xcodeproj should work.
 
 Configure has many other options. Use "configure --help" to see them all.
 

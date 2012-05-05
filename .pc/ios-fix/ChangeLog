@@ -1,8 +1,3 @@
-2012-05-05  Nicolas Lelong
-
-	* libffi.xcodeproj/project.pbxproj: Fixes.
-	* README: Update for iOS builds.
-
 2012-04-23  Alexandre Keunecke I. de Mendonca <alexandre.keunecke@gmail.com>
 
 	* configure.ac: Add Blackfin/sysv support
