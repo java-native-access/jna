@@ -161,17 +161,17 @@ public interface LMAccess extends StdCallLibrary {
          * A pointer to a Unicode string that specifies the name of the user account. 
          * Calls to the NetUserSetInfo function ignore this member.
          */
-        WString usri23_name;
+        public WString usri23_name;
         /** 
          * A pointer to a Unicode string that contains the full name of the user. 
          * This string can be a null string, or it can have any number of characters before the terminating null character.
          */
-        WString usri23_full_name;
+        public WString usri23_full_name;
         /** 
          * A pointer to a Unicode string that contains a comment associated with the user account. 
          * This string can be a null string, or it can have any number of characters before the terminating null character.
          */
-        WString usri23_comment;
+        public WString usri23_comment;
         /** 
          * This member can be one or more of the following values. 
          * Note that setting user account control flags may require certain privileges and control access rights. 
@@ -201,12 +201,12 @@ public interface LMAccess extends StdCallLibrary {
          * UF_SERVER_TRUST_ACCOUNT This is a computer account for a backup domain controller that is a member of this domain.
          * UF_INTERDOMAIN_TRUST_ACCOUNT This is a permit to trust account for a domain that trusts other domains.
          */
-        int  usri23_flags;
+        public int  usri23_flags;
         /** 
          * A pointer to a SID structure that contains the security identifier (SID) 
          * that uniquely identifies the user. The NetUserAdd and NetUserSetInfo functions ignore this member.
          */
-        PSID   usri23_user_sid;		
+        public PSID   usri23_user_sid;		
     }	
 	
     /**
