@@ -206,7 +206,7 @@ public interface LMAccess extends StdCallLibrary {
          * A pointer to a SID structure that contains the security identifier (SID) 
          * that uniquely identifies the user. The NetUserAdd and NetUserSetInfo functions ignore this member.
          */
-        public PSID   usri23_user_sid;		
+        public PSID.ByReference   usri23_user_sid;		
     }	
 	
     /**
@@ -362,7 +362,7 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a SID structure that contains the security identifier (SID) that 
          * uniquely identifies the global group.
          */
-        public PSID grpi3_group_sid;
+        public PSID.ByReference grpi3_group_sid;
         /**
          * These attributes are hard-coded to SE_GROUP_MANDATORY, SE_GROUP_ENABLED, and 
          * SE_GROUP_ENABLED_BY_DEFAULT.
