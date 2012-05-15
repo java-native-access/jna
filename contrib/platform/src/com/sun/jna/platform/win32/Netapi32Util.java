@@ -632,7 +632,7 @@ public abstract class Netapi32Util {
         PointerByReference bufptr = new PointerByReference();
         int rc = -1;
         try {
-            rc = Netapi32.INSTANCE.NetUserGetInfo(Netapi32Util.getDCName(), accountName, (short)23, bufptr);
+            rc = Netapi32.INSTANCE.NetUserGetInfo(domainName, accountName, (short)23, bufptr);
             if (rc == LMErr.NERR_Success) {
                 USER_INFO_23 info_23 = new USER_INFO_23(bufptr.getValue());
                 UserInfo userInfo = new UserInfo();
