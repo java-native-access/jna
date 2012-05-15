@@ -3,17 +3,19 @@ Release 3.4.1
 
 Features
 --------
-* Add 'unsigned' modifier to IntegerType
-* Add to `platform.win32.User32`: `GetLastInputInfo`
-* Add `platform.win32.WinNT.GetFileType` and `platform.win32.Kernel32Util.getFileType`
-* Add to `platform.win32.Kernel32Util`: `getFileType`
+* Add 'unsigned' modifier to IntegerType.
+* Add to `platform.win32.User32`: `GetLastInputInfo`.
+* Add `platform.win32.WinNT.GetFileType` and `platform.win32.Kernel32Util.getFileType`.
+* Add to `platform.win32.Kernel32Util`: `getFileType`.
 
 Bug Fixes
 ---------
 * Re-build linux-amd and linux-i386 against older versions of glibc (2.2.5 and
 2.1.3 respectively).
 * Properly initialize first printer info struct in winspool library.
-* Properly support getting and setting zero-array-length REG_MULTI_SZ values on Win32
+* Properly support getting and setting zero-array-length `REG_MULTI_SZ` values on Win32.
+* Fixed SID in Win32 `USER_INFO_23` and `GROUP_INFO_3`.
+* Fixed passing domain name into Win32 `Netapi32Util.getUserInfo`.
 
 Release 3.4.0
 =============
