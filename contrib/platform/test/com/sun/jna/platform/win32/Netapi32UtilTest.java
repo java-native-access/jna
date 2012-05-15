@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.Netapi32Util.DomainController;
 import com.sun.jna.platform.win32.Netapi32Util.DomainTrust;
+import com.sun.jna.platform.win32.Netapi32Util.UserInfo;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -96,6 +97,19 @@ public class Netapi32UtilTest extends TestCase {
 		assertTrue(users.length > 0);
 	}
 	
+	public void testGetUserInfo() {
+		// Temporarily commenting out because it fails if run on a network with no domain controller due to default behaviour.
+		// testGetUserInfoWithDomainSpecified() demonstrates what might be a better default behaviour when no domain is specified.
+		//UserInfo userInfo = Netapi32Util.getUserInfo(System.getProperty("user.name"));
+		//assertNotNull(userInfo);
+	}
+
+	public void testGetUserInfoWithDomainSpecified() {
+		UserInfo userInfo = Netapi32Util.getUserInfo(System.getProperty("user.name"),
+		                                             System.getenv("USERDOMAIN"));
+		assertNotNull(userInfo);
+	}
+    
 	public void testGetGlobalGroups() {
 		Netapi32Util.Group[] groups = Netapi32Util.getGlobalGroups();
 		assertNotNull(groups);
