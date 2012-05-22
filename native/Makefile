@@ -115,7 +115,7 @@ CC=arm-linux-androideabi-gcc
 CPP=arm-linux-androideabi-cpp
 LD=arm-linux-androideabi-gcc
 RANLIB=arm-linux-androideabi-ranlib
-CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS
+CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
 COPT+=-fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -march=armv5te -mtune=xscale -msoft-float
 ANDROID_HOME=/Developer/Applications/android-ndk-r7c/platforms/android-14/arch-arm
 JAVA_INCLUDES=
