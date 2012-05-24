@@ -9,4 +9,4 @@ If a function requires an array of struct (allocated contiguously in memory), a 
 
 Unions are generally interchangeable with Structures, but require that you indicate which union field is active with the `setType` method before it can be properly passed to a function call.
 
-
+If you have particularly long or complicated structures, you might consider using the [JNAerator](http://code.google.com/p/jnaerator/) tool written by Olivier Chafik which can generate JNA mappings for you.
