@@ -3,7 +3,7 @@ Frequently Asked Questions
 
 I'm having trouble generating correct library mappings
 ------------------------------------------------------
-Make sure you've read [this page](https://github.com/twall/jna/blob/master/jna/tree/master/www/Mappings.md) and [this one](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).  Try [JNAerator](http://code.google.com/p/jnaerator/).  If you find its output too verbose, delete the mappings you don't need, or copy out the ones you do need.
+Make sure you've read [this page](https://github.com/twall/jna/tree/master/www/Mappings.md) and [this one](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).  Try [JNAerator](http://code.google.com/p/jnaerator/).  If you find its output too verbose, delete the mappings you don't need, or copy out the ones you do need.
 
 When should I use Structure.ByReference? Structure.ByValue? Structure[]?
 ------------------------------------------------------------------------
