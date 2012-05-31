@@ -3,6 +3,8 @@
 Java Native Access (JNA)
 ========================
 
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.4.0/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).
+
 JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code—no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.
 
 JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like it does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
@@ -12,8 +14,6 @@ The JNA library uses a small native library stub to dynamically invoke native co
 While some attention is paid to performance, correctness and ease of use take priority.
 
 JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.
-
-The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.4.0/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).
 
 Download
 ========
