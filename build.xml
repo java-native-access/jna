@@ -41,7 +41,7 @@
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="vendor" value="JNA Development Team"/>
   <property name="copyright"
-            value="Copyright &amp;copy; 2007-2011 Timothy Wall. All Rights Reserved."/>
+            value="Copyright &amp;copy; 2007-2012 Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
   <!-- JNA library release version -->
   <property name="jna.major" value="3"/>

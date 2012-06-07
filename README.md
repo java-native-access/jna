@@ -18,15 +18,15 @@ JNA includes a platform library with many native functions already mapped as wel
 Download
 ========
 
+Version 3.4.1
+
+* [jna.jar](jna/blob/3.4.1/dist/jna.jar)
+* [platform.jar](jna/blob/3.4.1/dist/platform.jar)
+
 Version 3.4.0
 
-* [jna.jar](/downloads/twall/jna/jna.jar)
-* [platform.jar](/downloads/twall/jna/platform.jar)
-
-Version 3.3.0
-
-* [jna.jar](jna/raw/3.3.0/jnalib/dist/jna.jar)
-* [platform.jar](jna/raw/3.3.0/jnalib/dist/platform.jar)
+* [jna.jar](jna/blob/3.4.0/dist/jna.jar)
+* [platform.jar](jna/blob/3.4.0/dist/platform.jar)
 
 Features
 ========
