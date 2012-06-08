@@ -1,3 +1,13 @@
+Release 3.4.x
+=============
+
+Features
+--------
+
+Bug Fixes
+---------
+* Fix OSGI entries in manifest (issue 71/issue 63)
+
 Release 3.4.1
 =============
 

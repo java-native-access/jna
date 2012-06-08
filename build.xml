@@ -73,6 +73,7 @@
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
   <property name="test.compatibility" value="1.5"/>
+  <property name="dist-jar" value="${dist}/jna.jar"/>
 
   <!-- Maven -->
   <!-- define Maven coordinates -->
@@ -80,7 +81,6 @@
   <property name="artifactId" value="jna" />
   <property name="version" value="${jna.major}.${jna.minor}.${jna.revision}" />
 
-  <property name="maven-jar" value="${dist}/jna.jar"/>
   <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${version}-javadoc.jar" />
   <property name="maven-sources-jar" value="${dist}/src-mvn.zip" />
 
@@ -708,34 +708,37 @@
         <include name="${native.jar}"/>
       </fileset>
     </copy>
-    <jar jarfile="${maven-jar}" duplicate="preserve">
+    <jar jarfile="${dist-jar}" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
         <section name="com/sun/jna/">
+          <attribute name="Manifest-Version" value="1.0"/>
           <attribute name="Implementation-Title" value="${impl.title}"/>
           <attribute name="Implementation-Vendor" value="${vendor}"/>
           <attribute name="Implementation-Version" value="${impl.version}"/>
           <attribute name="Specification-Title" value="${spec.title}"/>
           <attribute name="Specification-Vendor" value="${spec.vendor}"/>
           <attribute name="Specification-Version" value="${spec.version}"/>
-          <!--
-              OSGi Bundle attributes
-              see http://www.osgi.org/Specifications/Reference
-            -->
-          <attribute name="Bundle-ManifestVersion" value="2"/>
-          <attribute name="Bundle-Name" value="jna"/>
-          <attribute name="Bundle-Description" value="JNA Library"/>
-          <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
-          <attribute name="Bundle-Version" value="${spec.version}"/>
-          <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
-          <attribute name="Bundle-Vendor" value="${vendor}"/>
-          <attribute name="Bundle-ActivationPolicy" value="lazy"/>
-          <attribute name="Export-Package" value="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
-          <!-- Note that no terminal "*" is included in this list,
-               which will force failure on unsupported platforms.
-            -->
-          <attribute name="Bundle-NativeCode"
-                     value="
+        </section>
+        <!--
+            OSGi Bundle attributes
+            See http://www.osgi.org/Specifications/Reference
+          -->
+        <attribute name="Bundle-Category" value="jni"/>
+        <attribute name="Bundle-ManifestVersion" value="2"/>
+        <attribute name="Bundle-Name" value="jna"/>
+        <attribute name="Bundle-Description" value="JNA Library"/>
+        <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
+        <attribute name="Bundle-Version" value="${spec.version}"/>
+        <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
+        <attribute name="Bundle-Vendor" value="${vendor}"/>
+        <attribute name="Bundle-ActivationPolicy" value="lazy"/>
+        <attribute name="Export-Package" value="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
+        <!-- Note that no terminal "*" is included in this list,
+             which will force failure on unsupported platforms.
+          -->
+        <attribute name="Bundle-NativeCode"
+                   value="
 com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win32,
 com/sun/jna/win32-amd64/jnidispatch.dll;
@@ -778,10 +781,8 @@ com/sun/jna/freebsd-amd64/libjnidispatch.so;
 processor=x86-64;osname=freebsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
-osname=macos,
-                            "/>
-
-        </section>
+osname=macos
+"/>
       </manifest>
       <zipfileset src="${build}/${jar}"/>
       <zipfileset src="${dist}/win32-x86.jar"
@@ -898,7 +899,7 @@ osname=macos,
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
-      <arg value="-Dfile=${maven-jar}"/>
+      <arg value="-Dfile=${dist-jar}"/>
     </artifact:mvn>
   </target>
 
@@ -910,7 +911,7 @@ osname=macos,
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
-      <arg value="-Dfile=${maven-jar}"/>
+      <arg value="-Dfile=${dist-jar}"/>
       <arg value="-Pgpg"/>
     </artifact:mvn>
 
