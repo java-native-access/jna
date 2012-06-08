@@ -196,7 +196,7 @@ public abstract class Kernel32Util implements WinDef {
 	}
 
 	/**
-	 * @returns One of the WinBase.DRIVE_* constants.
+	 * @return One of the WinBase.DRIVE_* constants.
 	 */
 	public static int getDriveType(String rootName) {
 	    return Kernel32.INSTANCE.GetDriveType(rootName);
