@@ -209,8 +209,12 @@ public abstract class Netapi32Util {
             ArrayList<LocalGroup> result = new ArrayList<LocalGroup>(); 
             for(LOCALGROUP_INFO_1 lgpi : groups) {
                 LocalGroup lgp = new LocalGroup();
-                lgp.name = lgpi.lgrui1_name.toString();			
-                lgp.comment = lgpi.lgrui1_comment.toString();;
+                if (lgpi.lgrui1_name != null) {
+                	lgp.name = lgpi.lgrui1_name.toString();
+                }
+                if (lgpi.lgrui1_comment != null) {
+                	lgp.comment = lgpi.lgrui1_comment.toString();
+                }
                 result.add(lgp);
             }
             return result.toArray(new LocalGroup[0]);
@@ -254,8 +258,12 @@ public abstract class Netapi32Util {
             ArrayList<LocalGroup> result = new ArrayList<LocalGroup>(); 
             for(LMAccess.GROUP_INFO_1 lgpi : groups) {
                 LocalGroup lgp = new LocalGroup();
-                lgp.name = lgpi.grpi1_name.toString();			
-                lgp.comment = lgpi.grpi1_comment.toString();;
+                if (lgpi.grpi1_name != null) {
+                	lgp.name = lgpi.grpi1_name.toString();
+                }
+                if (lgpi.grpi1_comment != null) {
+                	lgp.comment = lgpi.grpi1_comment.toString();
+                }
                 result.add(lgp);
             }
             return result.toArray(new LocalGroup[0]);
@@ -287,19 +295,21 @@ public abstract class Netapi32Util {
         IntByReference entriesRead = new IntByReference();
         IntByReference totalEntries = new IntByReference();		
         try {
-            int rc = Netapi32.INSTANCE.NetUserEnum(serverName, 1, 0, bufptr, 
-                                                   LMCons.MAX_PREFERRED_LENGTH, entriesRead, 
-                                                   totalEntries, null);
+            int rc = Netapi32.INSTANCE.NetUserEnum(
+            		serverName, 1, 0, bufptr, 
+                    LMCons.MAX_PREFERRED_LENGTH, entriesRead, 
+                    totalEntries, null);
             if (LMErr.NERR_Success != rc || bufptr.getValue() == Pointer.NULL) {
                 throw new Win32Exception(rc);
             }
             LMAccess.USER_INFO_1 user = new LMAccess.USER_INFO_1(bufptr.getValue());
             LMAccess.USER_INFO_1[] users = (LMAccess.USER_INFO_1[]) user.toArray(entriesRead.getValue());
-			
             ArrayList<User> result = new ArrayList<User>(); 
             for(LMAccess.USER_INFO_1 lu : users) {
                 User auser = new User();
-                auser.name = lu.usri1_name.toString();
+                if (lu.usri1_name != null) {
+                	auser.name = lu.usri1_name.toString();
+                }
                 result.add(auser);
             }
             return result.toArray(new User[0]);
@@ -318,8 +328,7 @@ public abstract class Netapi32Util {
      * @return Local groups.
      */
     public static Group[] getCurrentUserLocalGroups() {
-        return getUserLocalGroups(Secur32Util.getUserNameEx(
-                                                            EXTENDED_NAME_FORMAT.NameSamCompatible));
+        return getUserLocalGroups(Secur32Util.getUserNameEx(EXTENDED_NAME_FORMAT.NameSamCompatible));
     }
 	
     /**
@@ -342,8 +351,9 @@ public abstract class Netapi32Util {
     	IntByReference entriesread = new IntByReference();
     	IntByReference totalentries = new IntByReference();
     	try {
-            int rc = Netapi32.INSTANCE.NetUserGetLocalGroups(serverName, userName, 
-                                                             0, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries);
+            int rc = Netapi32.INSTANCE.NetUserGetLocalGroups(
+            		serverName, userName, 
+                    0, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries);
             if (rc != LMErr.NERR_Success) {
                 throw new Win32Exception(rc);
             }
@@ -352,7 +362,9 @@ public abstract class Netapi32Util {
             ArrayList<Group> result = new ArrayList<Group>(); 
             for (LOCALGROUP_USERS_INFO_0 lgpi : lgroups) {
                 LocalGroup lgp = new LocalGroup();
-                lgp.name = lgpi.lgrui0_name.toString();
+                if (lgpi.lgrui0_name != null) {
+                	lgp.name = lgpi.lgrui0_name.toString();
+                }
                 result.add(lgp);
             }
             return result.toArray(new Group[0]);
@@ -386,8 +398,9 @@ public abstract class Netapi32Util {
     	IntByReference entriesread = new IntByReference();
     	IntByReference totalentries = new IntByReference();
     	try {
-            int rc = Netapi32.INSTANCE.NetUserGetGroups(serverName, userName, 
-                                                        0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries);
+            int rc = Netapi32.INSTANCE.NetUserGetGroups(
+            		serverName, userName, 
+                    0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries);
             if (rc != LMErr.NERR_Success) {
                 throw new Win32Exception(rc);
             }
@@ -396,7 +409,9 @@ public abstract class Netapi32Util {
             ArrayList<Group> result = new ArrayList<Group>(); 
             for (GROUP_USERS_INFO_0 lgpi : lgroups) {
                 Group lgp = new Group();
-                lgp.name = lgpi.grui0_name.toString();
+                if (lgpi.grui0_name != null) {
+                	lgp.name = lgpi.grui0_name.toString();
+                }
                 result.add(lgp);
             }
             return result.toArray(new Group[0]);
@@ -462,14 +477,24 @@ public abstract class Netapi32Util {
             throw new Win32Exception(rc);
     	}
     	DomainController dc = new DomainController();
-    	dc.address = pdci.dci.DomainControllerAddress.toString();
+    	if (pdci.dci.DomainControllerAddress != null) {
+    		dc.address = pdci.dci.DomainControllerAddress.toString();
+    	}
     	dc.addressType = pdci.dci.DomainControllerAddressType;
-    	dc.clientSiteName = pdci.dci.ClientSiteName.toString();
-    	dc.dnsForestName = pdci.dci.DnsForestName.toString();
+    	if (pdci.dci.ClientSiteName != null) {
+    		dc.clientSiteName = pdci.dci.ClientSiteName.toString();
+    	}
+    	if (pdci.dci.DnsForestName != null) {
+    		dc.dnsForestName = pdci.dci.DnsForestName.toString();
+    	}
     	dc.domainGuid = pdci.dci.DomainGuid;
-    	dc.domainName = pdci.dci.DomainName.toString();
+    	if (pdci.dci.DomainName != null) {
+    		dc.domainName = pdci.dci.DomainName.toString();
+    	}
     	dc.flags = pdci.dci.Flags;
-    	dc.name = pdci.dci.DomainControllerName.toString();
+    	if (pdci.dci.DomainControllerName != null) {
+    		dc.name = pdci.dci.DomainControllerName.toString();
+    	}
         rc = Netapi32.INSTANCE.NetApiBufferFree(pdci.dci.getPointer());
         if (LMErr.NERR_Success != rc) {
             throw new Win32Exception(rc);
@@ -596,8 +621,8 @@ public abstract class Netapi32Util {
     public static DomainTrust[] getDomainTrusts(String serverName) {
     	NativeLongByReference domainCount = new NativeLongByReference();
     	PDS_DOMAIN_TRUSTS.ByReference domains = new PDS_DOMAIN_TRUSTS.ByReference();
-    	int rc = Netapi32.INSTANCE.DsEnumerateDomainTrusts(
-                                                           serverName, new NativeLong(DsGetDC.DS_DOMAIN_VALID_FLAGS), domains, domainCount);
+    	int rc = Netapi32.INSTANCE.DsEnumerateDomainTrusts(serverName, 
+    			new NativeLong(DsGetDC.DS_DOMAIN_VALID_FLAGS), domains, domainCount);
     	if(W32Errors.NO_ERROR != rc) {
             throw new Win32Exception(rc);
     	}
@@ -606,13 +631,23 @@ public abstract class Netapi32Util {
             ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainCountValue);
             for(DS_DOMAIN_TRUSTS trust : domains.getTrusts(domainCountValue)) {
                 DomainTrust t = new DomainTrust();
-                t.DnsDomainName = trust.DnsDomainName.toString();
-                t.NetbiosDomainName = trust.NetbiosDomainName.toString();
+                if (trust.DnsDomainName != null) {
+                	t.DnsDomainName = trust.DnsDomainName.toString();
+                }
+                if (trust.NetbiosDomainName != null) {
+                	t.NetbiosDomainName = trust.NetbiosDomainName.toString();
+                }
                 t.DomainSid = trust.DomainSid;
-                t.DomainSidString = Advapi32Util.convertSidToStringSid(trust.DomainSid);
+                if (trust.DomainSid != null) {
+                	t.DomainSidString = Advapi32Util.convertSidToStringSid(trust.DomainSid);
+                }
                 t.DomainGuid = trust.DomainGuid;
-                t.DomainGuidString = Ole32Util.getStringFromGUID(trust.DomainGuid);
-                t.flags = trust.Flags.intValue();
+                if (trust.DomainGuid != null) {
+                	t.DomainGuidString = Ole32Util.getStringFromGUID(trust.DomainGuid);
+                }
+                if (trust.Flags != null) {
+                	t.flags = trust.Flags.intValue();
+                }
                 trusts.add(t);
             }
             return trusts.toArray(new DomainTrust[0]);
@@ -636,11 +671,19 @@ public abstract class Netapi32Util {
             if (rc == LMErr.NERR_Success) {
                 USER_INFO_23 info_23 = new USER_INFO_23(bufptr.getValue());
                 UserInfo userInfo = new UserInfo();
-                userInfo.comment = info_23.usri23_comment.toString();
+                if (info_23.usri23_comment != null) {
+                	userInfo.comment = info_23.usri23_comment.toString();
+                }
                 userInfo.flags = info_23.usri23_flags;
-                userInfo.fullName = info_23.usri23_full_name.toString();
-                userInfo.name = info_23.usri23_name.toString();
-                userInfo.sidString = Advapi32Util.convertSidToStringSid(info_23.usri23_user_sid);
+                if (info_23.usri23_full_name != null) {
+                	userInfo.fullName = info_23.usri23_full_name.toString();
+                }
+                if (info_23.usri23_name != null) {
+                	userInfo.name = info_23.usri23_name.toString();
+                }
+                if (info_23.usri23_user_sid != null) {
+                	userInfo.sidString = Advapi32Util.convertSidToStringSid(info_23.usri23_user_sid);
+                }
                 userInfo.sid = info_23.usri23_user_sid;
                 return userInfo;
             } else {
