@@ -7,7 +7,7 @@ Features
 Bug Fixes
 ---------
 * [#71](https://github.com/twall/jna/issues/71), [#73](https://github.com/twall/jna/issues/73): Fix OSGI entries in manifest - [twall](https://github.com/twall).
-* [#78](https://github.com/twall/jna/issues/78): Fix NPE platform.win32.Netapi32Util.getDomainTrusts - [dblock](https://github.com/dblock).
+* [#78](https://github.com/twall/jna/issues/78): Fix NPE in `platform.win32.Netapi32Util.getDomainTrusts` - [dblock](https://github.com/dblock).
 
 Release 3.4.1
 =============
