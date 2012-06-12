@@ -84,7 +84,7 @@ Using the Library
 * [Platform Library](jna/tree/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](jna/3.4.1/javadoc/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://twall.github.com/jna/3.4.1/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
