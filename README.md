@@ -78,12 +78,13 @@ Using the Library
 * [Using Pointers and Arrays](jna/tree/master/www/PointersAndArrays.md)
 * [Using Structures and Unions](jna/tree/master/www/StructuresAndUnions.md)
 * [Using By-Reference Arguments](jna/tree/master/www/ByRefArguments.md)
-* [Customization](jna/tree/master/www/CustomMappings.md)
+* [Customization of Type Mapping](jna/tree/master/www/CustomMappings.md)
 * [Callbacks/Function Pointers/Closures](jna/tree/master/www/CallbacksAndClosures.md)
 * [Dynamically Typed Languages (JRuby/Jython)](jna/tree/master/www/DynamicallyTypedLanguages.md)
 * [Platform Library](jna/tree/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
+* [Avoiding Crashes](jna/3.4.1/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
