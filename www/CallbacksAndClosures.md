@@ -1,5 +1,5 @@
-Callbacks and Closures
-======================
+Callbacks, Function Pointers and Closures
+=========================================
 
 Callback declarations consist of a simple interface that extends the Callback interface and implements a callback method (or defines a single method of arbitrary name). Callbacks are implemented by wrapping a Java object method in a little bit of C glue code. The simplest usage resembles using anonymous inner classes to register event listeners. Following is an example of callback usage:
 
