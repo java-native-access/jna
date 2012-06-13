@@ -20,13 +20,13 @@ Download
 
 Version 3.4.1
 
-* [jna.jar](blob/3.4.1/dist/jna.jar?raw=true)
-* [platform.jar](blob/3.4.1/dist/platform.jar?raw=true)
+* [jna.jar](jna/blob/3.4.1/dist/jna.jar?raw=true)
+* [platform.jar](jna/blob/3.4.1/dist/platform.jar?raw=true)
 
 Version 3.4.0
 
-* [jna.jar](blob/3.4.0/dist/jna.jar?raw=true)
-* [platform.jar](blob/3.4.0/dist/platform.jar?raw=true)
+* [jna.jar](jna/blob/3.4.0/dist/jna.jar?raw=true)
+* [platform.jar](jna/blob/3.4.0/dist/platform.jar?raw=true)
 
 Features
 ========
