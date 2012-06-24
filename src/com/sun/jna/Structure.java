@@ -1555,6 +1555,9 @@ public abstract class Structure {
     }
 
     private static void structureArrayCheck(Structure[] ss) {
+        if (Structure.ByReference[].class.isAssignableFrom(ss.getClass())) {
+            return;
+        }
         Pointer base = ss[0].getPointer();
         int size = ss[0].size();
         for (int si=1;si < ss.length;si++) {
@@ -1573,7 +1576,9 @@ public abstract class Structure {
         }
         else {
             for (int si=0;si < ss.length;si++) {
-                ss[si].autoRead();
+                if (ss[si] != null) {
+                    ss[si].autoRead();
+                }
             }
         }
     }
@@ -1596,7 +1601,9 @@ public abstract class Structure {
         }
         else {
             for (int si=0;si < ss.length;si++) {
-                ss[si].autoWrite();
+                if (ss[si] != null) {
+                    ss[si].autoWrite();
+                }
             }
         }
     }

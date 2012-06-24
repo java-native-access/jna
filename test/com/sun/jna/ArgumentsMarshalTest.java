@@ -79,7 +79,9 @@ public class ArgumentsMarshalTest extends TestCase {
         Pointer testStructurePointerArgument(CheckFieldAlignment p);
         int testStructureByValueArgument(CheckFieldAlignment.ByValue p);
         int testStructureArrayInitialization(CheckFieldAlignment[] p, int len);
+        int testStructureByReferenceArrayInitialization(CheckFieldAlignment.ByReference[] p, int len);
         void modifyStructureArray(CheckFieldAlignment[] p, int length);
+        void modifyStructureByReferenceArray(CheckFieldAlignment.ByReference[] p, int length);
         
         int fillInt8Buffer(byte[] buf, int len, byte value);
         int fillInt16Buffer(short[] buf, int len, short value);
@@ -394,6 +396,40 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
+    public void testWriteStructureByReferenceArrayArgumentMemory() {
+        TestLibrary.CheckFieldAlignment.ByReference[] array = {
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+        };
+        for (int i=0;i < array.length;i++) {
+            array[i].int32Field = i;
+        }
+        assertEquals("Structure.ByReference array memory not properly initialized",
+                     -1, lib.testStructureByReferenceArrayInitialization(array, array.length));
+    }
+
+    public void testReadStructureByReferenceArrayArgumentMemory() {
+        TestLibrary.CheckFieldAlignment.ByReference[] array = {
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+        };
+        lib.modifyStructureByReferenceArray(array, array.length);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Wrong value for int32 field of structure at " + i,
+                         i, array[i].int32Field);
+            assertEquals("Wrong value for int64 field of structure at " + i,
+                         i + 1, array[i].int64Field);
+            assertEquals("Wrong value for float field of structure at " + i,
+                         i + 2, array[i].floatField, 0);
+            assertEquals("Wrong value for double field of structure at " + i,
+                         i + 3, array[i].doubleField, 0);
+        }
+    }
+
     public void testByteArrayArgument() {
         byte[] buf = new byte[1024];
         final byte MAGIC = (byte)0xED;

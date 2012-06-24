@@ -602,6 +602,28 @@ modifyStructureArray(struct CheckFieldAlignment arg[], int length) {
 }
 
 
+EXPORT int32_t
+testStructureByReferenceArrayInitialization(struct CheckFieldAlignment** arg, int len) {
+  int i;
+  for (i=0;i < len;i++) {
+    if (arg[i]->int32Field != i)
+      return i;
+  }
+  return -1;
+}
+
+EXPORT void
+modifyStructureByReferenceArray(struct CheckFieldAlignment** arg, int length) {
+  int i;
+  for (i=0;i < length;i++) {
+    arg[i]->int32Field = i;
+    arg[i]->int64Field = i+1;
+    arg[i]->floatField = (float)i+2;
+    arg[i]->doubleField = (double)i+3;
+  }
+}
+
+
 EXPORT void
 callVoidCallback(void (*func)(void)) {
   (*func)();

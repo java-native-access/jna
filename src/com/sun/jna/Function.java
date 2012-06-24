@@ -528,6 +528,7 @@ public class Function extends Pointer {
             Class type = argClass.getComponentType();
             boolean byRef = Structure.ByReference.class.isAssignableFrom(type);
             if (byRef) {
+                Structure.autoWrite(ss);
                 Pointer[] pointers = new Pointer[ss.length + 1];
                 for (int i=0;i < ss.length;i++) {
                     pointers[i] = ss[i] != null ? ss[i].getPointer() : null;
