@@ -711,15 +711,13 @@
     <jar jarfile="${dist-jar}" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
-        <section name="com/sun/jna/">
-          <attribute name="Manifest-Version" value="1.0"/>
-          <attribute name="Implementation-Title" value="${impl.title}"/>
-          <attribute name="Implementation-Vendor" value="${vendor}"/>
-          <attribute name="Implementation-Version" value="${impl.version}"/>
-          <attribute name="Specification-Title" value="${spec.title}"/>
-          <attribute name="Specification-Vendor" value="${spec.vendor}"/>
-          <attribute name="Specification-Version" value="${spec.version}"/>
-        </section>
+        <attribute name="Manifest-Version" value="1.0"/>
+        <attribute name="Implementation-Title" value="${impl.title}"/>
+        <attribute name="Implementation-Vendor" value="${vendor}"/>
+        <attribute name="Implementation-Version" value="${impl.version}"/>
+        <attribute name="Specification-Title" value="${spec.title}"/>
+        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+        <attribute name="Specification-Version" value="${spec.version}"/>
         <!--
             OSGi Bundle attributes
             See http://www.osgi.org/Specifications/Reference
