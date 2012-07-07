@@ -752,7 +752,7 @@ public final class Native {
                 // Suffix is required on windows, or library fails to load
                 // Let Java pick the suffix, except on windows, to avoid
                 // problems with Web Start.
-                File dir = getTempDir();
+                File dir = getUnpackDir();
                 lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
@@ -909,6 +909,13 @@ public final class Native {
             marker.createNewFile();
         }
         catch(IOException e) { e.printStackTrace(); }
+    }
+    
+    private static File getUnpackDir() {
+    	String result = System.getProperty("jna.unpack.path");
+    	if (result != null)
+    		return new File(result);
+    	return getTempDir();
     }
 
     static File getTempDir() {
