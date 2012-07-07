@@ -707,6 +707,11 @@ public final class Native {
     private static void loadNativeLibraryFromJar() {
         String libname = System.mapLibraryName("jnidispatch");
         String arch = System.getProperty("os.arch");
+        if (Platform.isAndroid() && arch.startsWith("arm"))
+        {
+        	// Android binaries are compatible regardless of the architecture version
+        	arch = "arm";
+        }
         String name = System.getProperty("os.name");
         String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
         URL url = Native.class.getResource(resourceName);
