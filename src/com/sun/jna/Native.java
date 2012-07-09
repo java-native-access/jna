@@ -913,11 +913,30 @@ public final class Native {
         catch(IOException e) { e.printStackTrace(); }
     }
 
+    /** Obtain a directory suitable for writing JNA-specific temporary files. 
+        Override with <code>jna.tmpdir</code>
+    */
     static File getTempDir() {
-        File tmp = new File(System.getProperty("java.io.tmpdir"));
-        File jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
-        jnatmp.mkdirs();
-        return jnatmp.exists() ? jnatmp : tmp;
+        File jnatmp;
+        String prop = System.getProperty("jna.tmpdir");
+        if (prop != null) {
+            jnatmp = new File(prop);
+        }
+        else {
+            File tmp = new File(System.getProperty("java.io.tmpdir"));
+            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
+            jnatmp.mkdirs();
+            if (!jnatmp.exists() || !jnatmp.canWrite()) {
+                jnatmp = tmp;
+            }
+        }
+        if (!jnatmp.exists()) {
+            throw new Error("JNA temporary directory " + jnatmp + " does not exist");
+        }
+        if (!jnatmp.canWrite()) {
+            throw new Error("JNA temporary directory " + jnatmp + " is not writable");
+        }
+        return jnatmp;
     }
 
     /** Remove all marked temporary files in the given directory. */
