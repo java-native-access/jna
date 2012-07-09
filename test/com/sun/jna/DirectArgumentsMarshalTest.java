@@ -19,6 +19,8 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 
+import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment.ByReference;
+
 /** Exercise a range of native methods.
  *
  * @author twall@users.sf.net
@@ -76,6 +78,16 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         static {
             Native.register("testlib");
         }
+
+		public int testStructureByReferenceArrayInitialization(ByReference[] p,
+				int len) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+		public void modifyStructureByReferenceArray(ByReference[] p, int length) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     /* Override original. */

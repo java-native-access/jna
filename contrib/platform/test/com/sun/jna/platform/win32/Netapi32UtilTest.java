@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 import com.sun.jna.platform.win32.Netapi32Util.DomainController;
 import com.sun.jna.platform.win32.Netapi32Util.DomainTrust;
 import com.sun.jna.platform.win32.Netapi32Util.UserInfo;
-import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 
 /**
  * @author dblock[at]dblock[dot]org

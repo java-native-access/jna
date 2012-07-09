@@ -12,21 +12,12 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.nio.Buffer;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
-import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
-import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
-import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
-import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
-
-import java.nio.Buffer;
 
 /** Interface definitions for <code>kernel32.dll</code>.
  * Includes additional alternate mappings from {@link WinNT} which make use

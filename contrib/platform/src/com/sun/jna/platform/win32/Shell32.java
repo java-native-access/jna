@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.ShellAPI.SHFILEOPSTRUCT;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
