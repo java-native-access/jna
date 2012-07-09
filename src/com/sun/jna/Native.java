@@ -591,9 +591,16 @@ public final class Native {
             arch = "ppc64";
         }
         switch(osType) {
+        case Platform.ANDROID:
+            if (arch.startsWith("arm")) {
+                arch = "arm";
+            }
+            osPrefix = "android-" + arch;
+            break;
         case Platform.WINDOWS:
-            if ("i386".equals(arch))
+            if ("i386".equals(arch)) {
                 arch = "x86";
+            }
             osPrefix = "win32-" + arch;
             break;
         case Platform.WINDOWSCE:
