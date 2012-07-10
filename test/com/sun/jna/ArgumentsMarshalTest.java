@@ -396,6 +396,8 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
+    /** When passing an array of <code>struct*</code> to native, be sure to
+        invoke <code>Structure.write()</code> on each of the elements. */
     public void testWriteStructureByReferenceArrayArgumentMemory() {
         TestLibrary.CheckFieldAlignment.ByReference[] array = {
             new TestLibrary.CheckFieldAlignment.ByReference(),
