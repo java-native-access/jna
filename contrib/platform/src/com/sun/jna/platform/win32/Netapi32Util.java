@@ -652,7 +652,7 @@ public abstract class Netapi32Util {
             }
             return trusts.toArray(new DomainTrust[0]);
     	} finally {
-            rc = Netapi32.INSTANCE.NetApiBufferFree(domains.getPointer());   	    	
+            rc = Netapi32.INSTANCE.NetApiBufferFree(domains.getPointer().getPointer(0));   	    	
             if(W32Errors.NO_ERROR != rc) {
                 throw new Win32Exception(rc);
             }
