@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.DsGetDC.DS_DOMAIN_TRUSTS;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
@@ -27,7 +26,6 @@ import com.sun.jna.platform.win32.LMAccess.USER_INFO_23;
 import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -619,15 +617,15 @@ public abstract class Netapi32Util {
      *  An array of domain trusts.
      */
     public static DomainTrust[] getDomainTrusts(String serverName) {
-    	NativeLongByReference domainCount = new NativeLongByReference();
+    	IntByReference domainCount = new IntByReference();
     	PDS_DOMAIN_TRUSTS.ByReference domains = new PDS_DOMAIN_TRUSTS.ByReference();
     	int rc = Netapi32.INSTANCE.DsEnumerateDomainTrusts(serverName, 
-    			new NativeLong(DsGetDC.DS_DOMAIN_VALID_FLAGS), domains, domainCount);
+    			DsGetDC.DS_DOMAIN_VALID_FLAGS, domains, domainCount);
     	if(W32Errors.NO_ERROR != rc) {
             throw new Win32Exception(rc);
     	}
     	try {
-            int domainCountValue = domainCount.getValue().intValue();
+            int domainCountValue = domainCount.getValue();
             ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainCountValue);
             for(DS_DOMAIN_TRUSTS trust : domains.getTrusts(domainCountValue)) {
                 DomainTrust t = new DomainTrust();
@@ -652,7 +650,7 @@ public abstract class Netapi32Util {
             }
             return trusts.toArray(new DomainTrust[0]);
     	} finally {
-            rc = Netapi32.INSTANCE.NetApiBufferFree(domains.getPointer().getPointer(0));   	    	
+            rc = Netapi32.INSTANCE.NetApiBufferFree(domains.getPointer());   	    	
             if(W32Errors.NO_ERROR != rc) {
                 throw new Win32Exception(rc);
             }
