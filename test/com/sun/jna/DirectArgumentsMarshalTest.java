@@ -56,7 +56,13 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public int testStructureArrayInitialization(CheckFieldAlignment[] p, int len) {
             throw new UnsupportedOperationException();
         }
+        public int testStructureByReferenceArrayInitialization(CheckFieldAlignment.ByReference[] p, int len) {
+            throw new UnsupportedOperationException();
+        }
         public void modifyStructureArray(CheckFieldAlignment[] p, int length) {
+            throw new UnsupportedOperationException(); 
+        }
+        public void modifyStructureByReferenceArray(CheckFieldAlignment.ByReference[] p, int length) {
             throw new UnsupportedOperationException(); 
         }
             
@@ -78,16 +84,6 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         static {
             Native.register("testlib");
         }
-
-		public int testStructureByReferenceArrayInitialization(ByReference[] p,
-				int len) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-		public void modifyStructureByReferenceArray(ByReference[] p, int length) {
-			// TODO Auto-generated method stub
-			
-		}
     }
 
     /* Override original. */
@@ -124,7 +120,7 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         super.testWStringArgumentReturn();
     }
 
-    // Override tests not yet supported
+    // Override tests not yet supported in direct mode
     public void testStringArrayArgument() { }
     public void testWriteStructureArrayArgumentMemory() { }
     public void testUninitializedStructureArrayArgument() { }
@@ -133,6 +129,8 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
     public void testPointerArrayArgument() { }
     public void testNativeMappedArrayArgument() { }
     public void testStructureByReferenceArrayArgument() { }
+    public void testWriteStructureByReferenceArrayArgumentMemory() { }
+    public void testReadStructureByReferenceArrayArgumentMemory() { }
     public void testModifiedCharArrayArgument() { }
 
     public static void main(java.lang.String[] argList) {

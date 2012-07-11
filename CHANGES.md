@@ -6,11 +6,13 @@ Features
 
 Bug Fixes
 ---------
-
 * [#71](https://github.com/twall/jna/issues/71), [#73](https://github.com/twall/jna/issues/73): Fix OSGI entries in manifest - [@twall](https://github.com/twall).
 * [#78](https://github.com/twall/jna/issues/78): Fix NPE in `platform.win32.Netapi32Util.getDomainTrusts` - [@dblock](https://github.com/dblock).
 * Auto-sync memory for `struct**` arguments (array of struct pointers) - [@twall](https://github.com/twall).
 * Fix: `platform.win32.Secur32.AcquireCredentialsHandle`, `InitializeSecurityContext` and `AcceptSecurityContext` on Win32 64-bit - [@dblock](https://github.com/dblock).
+* Auto-sync memory for struct** arguments (array of struct pointers).
+* Avoid overwriting native `char *` or `wchar_t*` fields within structures
+when unmodified (similar to current operation with pointers).
 
 Release 3.4.1
 =============

@@ -603,7 +603,13 @@ public abstract class Structure {
             result = readConverter.fromNative(result, structField.context);
         }
 
-        // Update the value on the field
+        if (fieldType.equals(String.class)
+            || fieldType.equals(WString.class)) {
+            nativeStrings.put(structField.name + ".ptr", memory.getPointer(offset));
+            nativeStrings.put(structField.name + ".val", result);
+        }
+
+        // Update the value on the Java field
         setField(structField, result, true);
         return result;
     }
@@ -689,10 +695,13 @@ public abstract class Structure {
         // Java strings get converted to C strings, where a Pointer is used
         if (String.class == fieldType
             || WString.class == fieldType) {
-
             // Allocate a new string in memory
             boolean wide = fieldType == WString.class;
             if (value != null) {
+                if (nativeStrings.containsKey(structField.name + ".ptr") 
+                    && value.equals(nativeStrings.get(structField.name + ".val"))) {
+                    return;
+                }
                 NativeString nativeString = new NativeString(value.toString(), wide);
                 // Keep track of allocated C strings to avoid
                 // premature garbage collection of the memory.
@@ -700,9 +709,10 @@ public abstract class Structure {
                 value = nativeString.getPointer();
             }
             else {
-                value = null;
                 nativeStrings.remove(structField.name);
             }
+            nativeStrings.remove(structField.name + ".ptr");
+            nativeStrings.remove(structField.name + ".val");
         }
 
         try {

@@ -664,6 +664,26 @@ public class StructureTest extends TestCase {
         assertSame("Should preserve Pointer references if peer unchanged", p, s.p);
     }
 
+    public void testPreserveStringFields() {
+        class TestStructure extends Structure {
+            public String s;
+            public WString ws;
+        }
+        TestStructure s = new TestStructure();
+        Memory m = new Memory(getName().length()+1);
+        m.setString(0, getName());
+        Memory m2 = new Memory((getName().length()+1)*Native.WCHAR_SIZE);
+        m2.setString(0, getName(), true);
+        s.getPointer().setPointer(0, m);
+        s.getPointer().setPointer(Pointer.SIZE, m2);
+        s.read();
+        assertEquals("Wrong String field value", getName(), s.s);
+        assertEquals("Wrong WString field value", new WString(getName()), s.ws);
+        s.write();
+        assertEquals("String field should not be overwritten", m, s.getPointer().getPointer(0));
+        assertEquals("String field should not be overwritten", m2, s.getPointer().getPointer(Pointer.SIZE));
+    }
+
     public void testOverwriteStructureByReferenceFieldOnRead() {
         StructureWithPointers s = new StructureWithPointers();
         PublicTestStructure.ByReference inner =
