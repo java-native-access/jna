@@ -305,9 +305,10 @@ public class Kernel32Test extends TestCase {
     	
     	Memory m = new Memory(2048);
     	IntByReference lpNumberOfBytesRead = new IntByReference(0);
-    	assertTrue(Kernel32.INSTANCE.ReadFile(hFile, m, (int)m.size(), lpNumberOfBytesRead, null));
-    	assertEquals(expected.length(), lpNumberOfBytesRead.getValue());
-    	assertEquals(expected, m.getString(0));
+    	assertTrue(Kernel32.INSTANCE.ReadFile(hFile, m, (int) m.size(), lpNumberOfBytesRead, null));
+    	int read = lpNumberOfBytesRead.getValue();
+    	assertEquals(expected.length(), read);
+    	assertEquals(expected, new String(m.getByteArray(0, read)));
     	
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));    	
     }
@@ -409,8 +410,7 @@ public class Kernel32Test extends TestCase {
     public void testSetEnvironmentVariable() {
         int value = new Random().nextInt();
         Kernel32.INSTANCE.SetEnvironmentVariable("jna-setenvironment-test", Integer.toString(value));
-
-        assertEquals(System.getenv("jna-setenvironment-test"), Integer.toString(value));
+        assertEquals(Integer.toString(value), System.getenv("jna-setenvironment-test"));
     }
 
     public void testGetSetFileTime() throws IOException {
