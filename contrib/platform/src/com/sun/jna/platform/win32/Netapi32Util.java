@@ -643,9 +643,7 @@ public abstract class Netapi32Util {
                 if (trust.DomainGuid != null) {
                 	t.DomainGuidString = Ole32Util.getStringFromGUID(trust.DomainGuid);
                 }
-                if (trust.Flags != null) {
-                	t.flags = trust.Flags.intValue();
-                }
+                t.flags = trust.Flags;
                 trusts.add(t);
             }
             return trusts.toArray(new DomainTrust[0]);
