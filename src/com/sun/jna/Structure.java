@@ -1012,17 +1012,10 @@ public abstract class Structure {
     private void initializeFields() {
         for (Iterator i = fields().values().iterator(); i.hasNext();) {
             StructField f = (StructField) i.next();
-            try {
-                Object o = f.field.get(this);
-                if (o == null) {
-                    initializeField(f, f.type);
-                }
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            Object o = this.getField(f);
+            if (o == null) {
+                initializeField(f, f.type);
             }
-
         }
     }
 
