@@ -19,9 +19,9 @@ import java.util.List;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -201,4 +201,28 @@ public abstract class Kernel32Util implements WinDef {
 	public static int getDriveType(String rootName) {
 	    return Kernel32.INSTANCE.GetDriveType(rootName);
 	}
+	
+	/**
+	 * Get the value of an environment variable.
+	 * @name
+	 * 	Name of the environment variable.
+	 * @return 
+	 *  Value of an environment variable.
+	 */
+	public static String getEnvironmentVariable(String name) {
+		// obtain the buffer size
+		int size = Kernel32.INSTANCE.GetEnvironmentVariable(name, null, 0);
+		if (size == 0) {
+			return null;
+		} else if (size < 0) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+		// obtain the value
+		char[] buffer = new char[size];
+		size = Kernel32.INSTANCE.GetEnvironmentVariable(name, buffer, buffer.length);
+		if (size <= 0) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+    	return Native.toString(buffer);
+	}	
 }

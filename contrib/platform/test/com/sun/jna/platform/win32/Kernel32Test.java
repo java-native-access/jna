@@ -406,11 +406,20 @@ public class Kernel32Test extends TestCase {
         assertTrue(status);
         assertTrue(processInformation.dwProcessId.longValue() > 0);
     }
+    
+    public void testGetEnvironmentVariable() {
+    	assertTrue(Kernel32.INSTANCE.SetEnvironmentVariable("jna-getenvironment-test", "42"));
+    	int size = Kernel32.INSTANCE.GetEnvironmentVariable("jna-getenvironment-test", null, 0);
+    	assertTrue(size == 3);
+    	char[] data = new char[size];
+    	assertEquals(size - 1, Kernel32.INSTANCE.GetEnvironmentVariable("jna-getenvironment-test", data, size));
+    	assertEquals(size - 1, Native.toString(data).length());
+    }
 
     public void testSetEnvironmentVariable() {
         int value = new Random().nextInt();
         Kernel32.INSTANCE.SetEnvironmentVariable("jna-setenvironment-test", Integer.toString(value));
-        assertEquals(Integer.toString(value), System.getenv("jna-setenvironment-test"));
+        assertEquals(Integer.toString(value), Kernel32Util.getEnvironmentVariable("jna-setenvironment-test"));
     }
 
     public void testGetSetFileTime() throws IOException {

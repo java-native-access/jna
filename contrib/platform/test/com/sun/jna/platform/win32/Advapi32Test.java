@@ -47,8 +47,7 @@ import com.sun.jna.ptr.PointerByReference;
 public class Advapi32Test extends TestCase {
 
     private static final String EVERYONE = "S-1-1-0";
-    private static final String NOBODY = "S-1-0-0";
-
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Advapi32Test.class);
     }
