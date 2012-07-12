@@ -175,20 +175,20 @@ public interface DsGetDC extends StdCallLibrary {
         /**
          * Contains a set of flags that specify more data about the domain trust.
          */	    
-        public NativeLong Flags;
+        public int Flags;
         /**
          * Contains the index in the Domains array returned by the DsEnumerateDomainTrusts function that 
          * corresponds to the parent domain of the domain represented by this structure.
          */
-        public NativeLong ParentIndex;
+        public int ParentIndex;
         /**
          * Contains a value that indicates the type of trust represented by this structure.
          */
-        public NativeLong TrustType;	    
+        public int TrustType;	    
         /**
          * Contains a value that indicates the attributes of the trust represented by this structure.
          */
-        public NativeLong TrustAttributes;
+        public int TrustAttributes;
 	    
         /**
          * Contains the security identifier of the domain represented by this structure.
