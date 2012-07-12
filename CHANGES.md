@@ -10,9 +10,9 @@ Bug Fixes
 * [#78](https://github.com/twall/jna/issues/78): Fix NPE in `platform.win32.Netapi32Util.getDomainTrusts` - [@dblock](https://github.com/dblock).
 * Auto-sync memory for `struct**` arguments (array of struct pointers) - [@twall](https://github.com/twall).
 * Fix: `platform.win32.Secur32.AcquireCredentialsHandle`, `InitializeSecurityContext` and `AcceptSecurityContext` on Win32 64-bit - [@dblock](https://github.com/dblock).
-* Auto-sync memory for struct** arguments (array of struct pointers).
-* Avoid overwriting native `char *` or `wchar_t*` fields within structures
-when unmodified (similar to current operation with pointers).
+* Avoid overwriting native `char *` or `wchar_t *` fields within structures when unmodified (similar to current operation with pointers) - [@twall](https://github.com/twall).
+* Fix: `platform.win32.DsGetDC.DS_DOMAIN_TRUSTS` and `DsEnumerateDomainTrusts` on Win32 64-bit - [@trejkaz](https://github.com/trejkaz).
+* Fix: Crash freeing the wrong pointer in `Netapi32Util.getDomainTrusts` - [@trejkaz](https://github.com/trejkaz).
 
 Release 3.4.1
 =============
