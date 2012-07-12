@@ -318,6 +318,23 @@ public interface WinDef extends StdCallLibrary {
     }
     
     /**
+     * 32-bit unsigned integer.
+     */
+    public static class ULONG extends IntegerType {
+        public ULONG() {
+            this(0);
+        }
+
+        public ULONG(long value) {
+            super(Native.LONG_SIZE, value, true);
+        }
+        
+        public static class ByReference implements Structure.ByReference {
+        	
+        }
+    }
+
+    /**
      * 64-bit unsigned integer.
      */
     public static class ULONGLONG extends IntegerType {

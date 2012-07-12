@@ -335,31 +335,9 @@ public class Secur32Test extends TestCase {
     public void testCreateEmptyToken() {
         SecBufferDesc token = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
         assertEquals(1, token.pBuffers.length);
-        assertEquals(1, token.cBuffers);
-        assertEquals(Sspi.SECBUFFER_TOKEN, token.pBuffers[0].BufferType);
-        assertEquals(Sspi.MAX_TOKEN_SIZE, token.pBuffers[0].cbBuffer);
+        assertEquals(1, token.cBuffers.intValue());
+        assertEquals(Sspi.SECBUFFER_TOKEN, token.pBuffers[0].BufferType.intValue());
+        assertEquals(Sspi.MAX_TOKEN_SIZE, token.pBuffers[0].cbBuffer.intValue());
         assertEquals(token.getBytes().length, token.pBuffers[0].getBytes().length);
-    }
-    
-    public void testEstablishSecurityContext() {
-        byte[] clientToken = new byte[0];
-        byte[] serverToken = new byte[0];
-        // generate client token
-        clientToken = SSPIClientUtil.getInstance().getClientToken();
-        assertTrue(clientToken.length > 0);
-        // send client token to the server and get a new server token
-        serverToken = SSPIServerUtil.getInstance().setClientToken(clientToken);
-        assertTrue(serverToken.length > 0);
-        // send server token to the client and get a new client token
-        clientToken = SSPIClientUtil.getInstance().setServerToken(serverToken);
-        assertTrue(clientToken.length > 0);
-        // send client token to the server and get a new server token
-        serverToken = SSPIServerUtil.getInstance().setClientToken(clientToken);
-        // test if security context is established on the client and the server
-        assertTrue(SSPIClientUtil.getInstance().isSecContextEstablished());
-        assertTrue(SSPIServerUtil.getInstance().isSecContextEstablished());
-        // free resources
-        SSPIServerUtil.getInstance().disposeContext();
-        SSPIClientUtil.getInstance().disposeContext();
     }
 }

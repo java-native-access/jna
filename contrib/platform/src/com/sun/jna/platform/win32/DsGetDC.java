@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;

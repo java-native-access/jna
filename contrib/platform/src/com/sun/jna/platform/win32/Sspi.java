@@ -241,12 +241,12 @@ public interface Sspi extends StdCallLibrary {
         /**
          * Specifies the size, in bytes, of the buffer pointed to by the pvBuffer member.
          */
-        public int cbBuffer;
+        public NativeLong cbBuffer;
         /**
          * Bit flags that indicate the type of buffer. Must be one of the values of 
          * the SecBufferType enumeration.
          */
-        public int BufferType;
+        public NativeLong BufferType;
         /**
          * A pointer to a buffer.
          */
@@ -256,9 +256,9 @@ public interface Sspi extends StdCallLibrary {
          * Create a new SECBUFFER_EMPTY buffer.
          */
         public SecBuffer() {
-            cbBuffer = 0;
+            cbBuffer = new NativeLong(0);
             pvBuffer = null;
-            BufferType = SECBUFFER_EMPTY;
+            BufferType = new NativeLong(SECBUFFER_EMPTY);
         }
 	    
         /**
@@ -269,9 +269,9 @@ public interface Sspi extends StdCallLibrary {
          *  Buffer size, eg. MAX_TOKEN_SIZE.
          */
         public SecBuffer(int type, int size) {
-            cbBuffer = size;	    	
+            cbBuffer = new NativeLong(size);	    	
             pvBuffer = new Memory(size);
-            BufferType = type;
+            BufferType = new NativeLong(type);
             allocateMemory();
         }
 	    
@@ -283,10 +283,10 @@ public interface Sspi extends StdCallLibrary {
          *  Existing token.
          */
         public SecBuffer(int type, byte[] token) {
-            cbBuffer = token.length;	    	
+            cbBuffer = new NativeLong(token.length);	    	
             pvBuffer = new Memory(token.length);
             pvBuffer.write(0, token, 0, token.length);
-            BufferType = type;
+            BufferType = new NativeLong(type);
             allocateMemory();
         }
 	    
@@ -296,7 +296,7 @@ public interface Sspi extends StdCallLibrary {
          *  Raw buffer bytes.
          */
         public byte[] getBytes() {
-            return pvBuffer.getByteArray(0, cbBuffer);
+            return pvBuffer.getByteArray(0, cbBuffer.intValue());
         }
     }
 
@@ -305,11 +305,11 @@ public interface Sspi extends StdCallLibrary {
         /**
          * Version number.
          */
-        public int ulVersion;
+        public NativeLong ulVersion;
         /**
          * Number of buffers.
          */
-        public int cBuffers;
+        public NativeLong cBuffers;
         /**
          * Pointer to array of buffers.
          */
@@ -319,8 +319,8 @@ public interface Sspi extends StdCallLibrary {
          * Create a new SecBufferDesc with one SECBUFFER_EMPTY buffer.
          */
         public SecBufferDesc() {
-            ulVersion = SECBUFFER_VERSION;
-            cBuffers = 1;
+            ulVersion = new NativeLong(SECBUFFER_VERSION);
+            cBuffers = new NativeLong(1);
             SecBuffer.ByReference secBuffer = new SecBuffer.ByReference();
             pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
             allocateMemory();
@@ -334,8 +334,8 @@ public interface Sspi extends StdCallLibrary {
          *  Initial token data.
          */
         public SecBufferDesc(int type, byte[] token) {
-            ulVersion = SECBUFFER_VERSION;
-            cBuffers = 1;
+            ulVersion = new NativeLong(SECBUFFER_VERSION);
+            cBuffers = new NativeLong(1);
             SecBuffer.ByReference secBuffer = new SecBuffer.ByReference(type, token);
             pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
             allocateMemory();	    	
@@ -347,18 +347,18 @@ public interface Sspi extends StdCallLibrary {
          * @param tokenSize
          */
         public SecBufferDesc(int type, int tokenSize) {
-            ulVersion = SECBUFFER_VERSION;
-            cBuffers = 1;
+            ulVersion = new NativeLong(SECBUFFER_VERSION);
+            cBuffers = new NativeLong(1);
             SecBuffer.ByReference secBuffer = new SecBuffer.ByReference(type, tokenSize);
             pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
             allocateMemory();
         }	    	
 	    
         public byte[] getBytes() {
-            if (pBuffers == null) {
+            if (pBuffers == null || cBuffers == null) {
                 throw new RuntimeException("pBuffers | cBuffers");
             }
-            if (cBuffers == 1) {
+            if (cBuffers.intValue() == 1) {
                 return pBuffers[0].getBytes();
             }	    	
             throw new RuntimeException("cBuffers > 1");

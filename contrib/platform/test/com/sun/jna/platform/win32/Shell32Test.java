@@ -25,7 +25,7 @@ public class Shell32Test extends TestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Shell32Test.class);
     }
-    
+
     public void testSHGetFolderPath() {
     	char[] pszPath = new char[WinDef.MAX_PATH];
     	assertEquals(W32Errors.S_OK, Shell32.INSTANCE.SHGetFolderPath(null, 
