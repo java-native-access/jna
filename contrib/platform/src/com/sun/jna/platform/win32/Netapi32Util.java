@@ -618,13 +618,14 @@ public abstract class Netapi32Util {
      */
     public static DomainTrust[] getDomainTrusts(String serverName) {
     	IntByReference domainCount = new IntByReference();
-    	PDS_DOMAIN_TRUSTS.ByReference domains = new PDS_DOMAIN_TRUSTS.ByReference();
-    	int rc = Netapi32.INSTANCE.DsEnumerateDomainTrusts(serverName, 
-    			DsGetDC.DS_DOMAIN_VALID_FLAGS, domains, domainCount);
+        PointerByReference domainsPointerRef = new PointerByReference();
+        int rc = Netapi32.INSTANCE.DsEnumerateDomainTrusts(serverName, 
+                DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainCount);
     	if(W32Errors.NO_ERROR != rc) {
             throw new Win32Exception(rc);
     	}
     	try {
+            PDS_DOMAIN_TRUSTS domains = new PDS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
             int domainCountValue = domainCount.getValue();
             ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainCountValue);
             for(DS_DOMAIN_TRUSTS trust : domains.getTrusts(domainCountValue)) {
@@ -648,7 +649,7 @@ public abstract class Netapi32Util {
             }
             return trusts.toArray(new DomainTrust[0]);
     	} finally {
-            rc = Netapi32.INSTANCE.NetApiBufferFree(domains.getPointer().getPointer(0));   	    	
+            rc = Netapi32.INSTANCE.NetApiBufferFree(domainsPointerRef.getValue());
             if(W32Errors.NO_ERROR != rc) {
                 throw new Win32Exception(rc);
             }

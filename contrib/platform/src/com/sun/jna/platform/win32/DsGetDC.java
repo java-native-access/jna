@@ -209,7 +209,14 @@ public interface DsGetDC extends StdCallLibrary {
         }
 		
         public DS_DOMAIN_TRUSTS.ByReference t;
-		
+
+        public PDS_DOMAIN_TRUSTS() {
+        }
+
+        public PDS_DOMAIN_TRUSTS(Pointer p) {
+            super(p);
+        }
+
         /**
          * Returns domain trusts.
          * @param count
