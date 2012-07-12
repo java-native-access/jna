@@ -1005,12 +1005,17 @@ public abstract class Structure {
                                            + "all fields are public)");
     }
 
-    /** Initialize any null-valued fields that should have a non-null default
-        value. */
+    /**
+     * Initialize any null-valued fields that should have a non-null default
+     * value.
+     */
     private void initializeFields() {
-        for (Iterator i=fields().values().iterator();i.hasNext();) {
-            StructField f = (StructField)i.next();
-            initializeField(f, f.type);
+        for (Iterator i = fields().values().iterator(); i.hasNext();) {
+            StructField f = (StructField) i.next();
+            Object o = this.getField(f);
+            if (o == null) {
+                initializeField(f, f.type);
+            }
         }
     }
 
