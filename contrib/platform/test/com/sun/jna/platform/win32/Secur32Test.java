@@ -335,9 +335,9 @@ public class Secur32Test extends TestCase {
     public void testCreateEmptyToken() {
         SecBufferDesc token = new SecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
         assertEquals(1, token.pBuffers.length);
-        assertEquals(1, token.cBuffers.intValue());
-        assertEquals(Sspi.SECBUFFER_TOKEN, token.pBuffers[0].BufferType.intValue());
-        assertEquals(Sspi.MAX_TOKEN_SIZE, token.pBuffers[0].cbBuffer.intValue());
+        assertEquals(1, token.cBuffers);
+        assertEquals(Sspi.SECBUFFER_TOKEN, token.pBuffers[0].BufferType);
+        assertEquals(Sspi.MAX_TOKEN_SIZE, token.pBuffers[0].cbBuffer);
         assertEquals(token.getBytes().length, token.pBuffers[0].getBytes().length);
     }
 }

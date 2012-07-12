@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
@@ -101,7 +100,7 @@ public interface NTSecApi extends StdCallLibrary {
     }
 	
     public static class LSA_FOREST_TRUST_BINARY_DATA extends Structure {
-        public NativeLong Length;
+        public int Length;
         public Pointer Buffer;
     }
 	
@@ -124,7 +123,7 @@ public interface NTSecApi extends StdCallLibrary {
         /**
          * Flags that control the behavior of the operation.
          */
-        public NativeLong Flags;
+        public int Flags;
 		
         /**
          * LSA_FOREST_TRUST_RECORD_TYPE enumeration that indicates the type of the record. 
@@ -184,7 +183,7 @@ public interface NTSecApi extends StdCallLibrary {
          * Number of LSA_FOREST_TRUST_RECORD structures in the array pointed to by the 
          * Entries member.
          */
-        public NativeLong RecordCount;
+        public int RecordCount;
         /**
          * Pointer to a pointer to an array of LSA_FOREST_TRUST_RECORD structures, 
          * each of which contains one piece of forest trust information.
@@ -197,7 +196,7 @@ public interface NTSecApi extends StdCallLibrary {
          *  An array of forest trust records.
          */
         public PLSA_FOREST_TRUST_RECORD[] getEntries() {
-            return (PLSA_FOREST_TRUST_RECORD[]) Entries.toArray(RecordCount.intValue());
+            return (PLSA_FOREST_TRUST_RECORD[]) Entries.toArray(RecordCount);
         }
     }
     /**

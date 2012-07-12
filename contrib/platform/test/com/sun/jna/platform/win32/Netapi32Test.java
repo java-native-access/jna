@@ -198,7 +198,7 @@ public class Netapi32Test extends TestCase {
     	assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsGetForestTrustInformation(
     			domainController, null, 0, pfti));
     	
-    	assertTrue(pfti.fti.RecordCount.intValue() >= 0);
+    	assertTrue(pfti.fti.RecordCount >= 0);
     	
     	for (PLSA_FOREST_TRUST_RECORD precord : pfti.fti.getEntries()) {
     		LSA_FOREST_TRUST_RECORD.UNION data = precord.tr.u;
