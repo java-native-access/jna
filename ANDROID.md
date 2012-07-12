@@ -1,8 +1,6 @@
-* Add Android SDK/NDK tools into PATH
-* Set ANDROID_HOME
-* Tests must be run on the target platform
-* Before running, if you don't pre-install libjnidispatch.so where JNA can
-  load it from the system path, you need to adjust where JNA unpacks it:
-  PackageManager pm = context.getPackageManager();
-  String dataDir = pm.getApplicationInfo(context.getPackageName(), 0).dataDir;
-  System.setProperty("jna.unpack.path", dataDir);
+* Add Android SDK/NDK tools into PATH (used by native/Makefile)
+* Set ANDROID_HOME (used by native/Makefile)
+* Tests must be run on the target platform, not the build platform
+* libjnidispatch.so must be preinstalled; you cannot rely on JNA to unpack it
+  from its jar file for you.  Follow the Android NDK directions.
+
