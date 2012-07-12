@@ -398,8 +398,8 @@ public interface Netapi32 extends StdCallLibrary {
 	 * @return
 	 *  Returns ERROR_SUCCESS if successful or a Win32 error code otherwise.
 	 */
-	public int DsEnumerateDomainTrusts(String serverName, NativeLong Flags, 
-			PDS_DOMAIN_TRUSTS.ByReference Domains, NativeLongByReference DomainCount);
+	public int DsEnumerateDomainTrusts(String serverName, int Flags, 
+			PDS_DOMAIN_TRUSTS.ByReference Domains, IntByReference DomainCount);
 	
 	/**
 	 * The NetUserGetInfo function retrieves information about a particular user account on a server.
