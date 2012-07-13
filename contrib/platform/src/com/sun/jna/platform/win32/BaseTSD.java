@@ -59,7 +59,7 @@ public interface BaseTSD extends StdCallLibrary {
         }
 
         public ULONG_PTR(long value) {
-            super(Pointer.SIZE, value);
+            super(Pointer.SIZE, value, true);
         }
     }
 
