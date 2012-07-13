@@ -17,7 +17,7 @@ Bug Fixes
 * Fix: avoid overwriting native `char *` or `wchar_t *` fields within structures when unmodified (similar to current operation with pointers) - [@twall](https://github.com/twall).
 * Fix: `platform.win32.DsGetDC.DS_DOMAIN_TRUSTS` and `DsEnumerateDomainTrusts` on Win32 64-bit - [@trejkaz](https://github.com/trejkaz).
 * Fix: Crash freeing the wrong pointer in `Netapi32Util.getDomainTrusts` - [@trejkaz](https://github.com/trejkaz).
-* [#100](https://github.com/twall/jna/issues/100): Fix W32FileMonitor - [@dblock](https://github.com/dblock).
+* [#100](https://github.com/twall/jna/issues/100): Fix `platform.win32.W32FileMonitor` - [@dblock](https://github.com/dblock).
  
 Release 3.4.1
 =============
