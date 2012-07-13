@@ -41,7 +41,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public WORD(long value) {
-            super(2, value);
+            super(2, value, true);
         }
     }
 
@@ -272,6 +272,21 @@ public interface WinDef extends StdCallLibrary {
         }
     }
 
+    /** Integer type big enough for a pointer. */
+    public static class INT_PTR extends IntegerType {
+        public INT_PTR() {
+            super(Pointer.SIZE);
+        }
+
+        public INT_PTR(long value) {
+            super(Pointer.SIZE, value);
+        }
+
+        public Pointer toPointer() {
+            return Pointer.createConstant(longValue());
+        }
+    }
+
     /**
      * Unsigned INT_PTR.
      */
@@ -281,7 +296,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public UINT_PTR(long value) {
-            super(Pointer.SIZE, value);
+            super(Pointer.SIZE, value, true);
         }
 
         public Pointer toPointer() {
@@ -343,7 +358,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public ULONGLONG(long value) {
-            super(8, value);
+            super(8, value, true);
         }
     }
 	
@@ -356,7 +371,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public DWORDLONG(long value) {
-            super(8, value);
+            super(8, value, true);
         }
     }
 }
