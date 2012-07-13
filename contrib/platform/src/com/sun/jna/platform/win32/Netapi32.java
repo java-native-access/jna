@@ -388,7 +388,7 @@ public interface Netapi32 extends StdCallLibrary {
 	 * @param Flags
 	 *  Contains a set of flags that determines which domain trusts to enumerate.
 	 * @param Domains
-	 *  Pointer to a PDS_DOMAIN_TRUSTS value that receives an array of DS_DOMAIN_TRUSTS structures. 
+	 *  Receives a pointer which points to an array of DS_DOMAIN_TRUSTS structures. 
 	 *  Each structure in this array contains trust data about a domain. The caller must free this 
 	 *  memory when it is no longer required by calling NetApiBufferFree.
 	 * @param DomainCount
@@ -397,7 +397,7 @@ public interface Netapi32 extends StdCallLibrary {
 	 *  Returns ERROR_SUCCESS if successful or a Win32 error code otherwise.
 	 */
 	public int DsEnumerateDomainTrusts(String serverName, int Flags, 
-			PDS_DOMAIN_TRUSTS.ByReference Domains, IntByReference DomainCount);
+			PointerByReference Domains, IntByReference DomainCount);
 	
 	/**
 	 * The NetUserGetInfo function retrieves information about a particular user account on a server.

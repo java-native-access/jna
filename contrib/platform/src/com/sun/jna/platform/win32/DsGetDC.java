@@ -198,6 +198,13 @@ public interface DsGetDC extends StdCallLibrary {
          * Contains the GUID of the domain represented by this structure.
          */
         public GUID DomainGuid;
+
+        public DS_DOMAIN_TRUSTS() {
+        }
+
+        public DS_DOMAIN_TRUSTS(Pointer p) {
+            super(p);
+        }
     };
 	
     /**
@@ -209,7 +216,7 @@ public interface DsGetDC extends StdCallLibrary {
         }
 		
         public DS_DOMAIN_TRUSTS.ByReference t;
-		
+
         /**
          * Returns domain trusts.
          * @param count
