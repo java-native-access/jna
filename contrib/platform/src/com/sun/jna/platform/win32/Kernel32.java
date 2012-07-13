@@ -561,7 +561,7 @@ public interface Kernel32 extends WinNT {
      */
     boolean GetQueuedCompletionStatus(HANDLE CompletionPort, 
                                       IntByReference lpNumberOfBytes,
-                                      ULONG_PTRByReference lpCompletionKey, 
+                                      HANDLEByReference lpCompletionKey, 
                                       PointerByReference lpOverlapped,
                                       int dwMilliseconds);
 
