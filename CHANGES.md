@@ -5,11 +5,11 @@ Features
 --------
 * Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVaraible` - [@dblock](https://github.com/dblock).
 * Moved `Kernel32.dll` function definitions from `WinNT.java` into `Kernel32.java` - [@dblock](https://github.com/dblock).
-* Provide `toPointer()` methods on all `_PTR` types (platform win32) [@twall](https://github.com/twall).
+* Provide `toPointer()` methods on all `_PTR` types (platform win32) - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
-* Ensure platform w32 classes use unsigned where appropriate (ULONG_PTR, UINT_PTR, ULONGLONG, WORD, DWORDLONG)  [@twall](https://github.com/twall).
+* Ensure platform w32 classes use unsigned where appropriate (ULONG_PTR, UINT_PTR, ULONGLONG, WORD, DWORDLONG) - [@twall](https://github.com/twall).
 * [#71](https://github.com/twall/jna/issues/71), [#73](https://github.com/twall/jna/issues/73): Fix OSGI entries in manifest - [@twall](https://github.com/twall).
 * [#78](https://github.com/twall/jna/issues/78): Fix NPE in `platform.win32.Netapi32Util.getDomainTrusts` - [@dblock](https://github.com/dblock).
 * Fix: auto-sync memory for `struct**` arguments (array of struct pointers) - [@twall](https://github.com/twall).
@@ -17,6 +17,7 @@ Bug Fixes
 * Fix: avoid overwriting native `char *` or `wchar_t *` fields within structures when unmodified (similar to current operation with pointers) - [@twall](https://github.com/twall).
 * Fix: `platform.win32.DsGetDC.DS_DOMAIN_TRUSTS` and `DsEnumerateDomainTrusts` on Win32 64-bit - [@trejkaz](https://github.com/trejkaz).
 * Fix: Crash freeing the wrong pointer in `Netapi32Util.getDomainTrusts` - [@trejkaz](https://github.com/trejkaz).
+* [#100](https://github.com/twall/jna/issues/100): Fix W32FileMonitor - [@dblock](https://github.com/dblock).
  
 Release 3.4.1
 =============
