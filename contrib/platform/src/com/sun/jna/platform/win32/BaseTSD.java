@@ -65,7 +65,7 @@ public interface BaseTSD extends StdCallLibrary {
         public ULONG_PTR(long value) {
             super(Pointer.SIZE, value, true);
         }
-
+        
         public Pointer toPointer() {
             return Pointer.createConstant(longValue());
         }
@@ -75,13 +75,16 @@ public interface BaseTSD extends StdCallLibrary {
      * PULONG_PTR
      */
     public static class ULONG_PTRByReference extends ByReference {
-        public ULONG_PTRByReference() {
+        
+    	public ULONG_PTRByReference() {
             this(new ULONG_PTR(0));
         }
+        
         public ULONG_PTRByReference(ULONG_PTR value) {
             super(Pointer.SIZE);
             setValue(value);
         }
+        
         public void setValue(ULONG_PTR value) {
             if (Pointer.SIZE == 4) {
                 getPointer().setInt(0, value.intValue());
@@ -90,6 +93,7 @@ public interface BaseTSD extends StdCallLibrary {
                 getPointer().setLong(0, value.longValue());
             }
         }
+        
         public ULONG_PTR getValue() {
             return new ULONG_PTR(Pointer.SIZE == 4
                                  ? getPointer().getInt(0)
@@ -108,6 +112,10 @@ public interface BaseTSD extends StdCallLibrary {
 
         public DWORD_PTR(long value) {
             super(Pointer.SIZE, value);
+        }
+        
+        public Pointer toPointer() {
+            return Pointer.createConstant(longValue());
         }
     }
 
