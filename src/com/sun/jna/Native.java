@@ -714,6 +714,11 @@ public final class Native {
     private static void loadNativeLibraryFromJar() {
         String libname = System.mapLibraryName("jnidispatch");
         String arch = System.getProperty("os.arch");
+        if (Platform.isAndroid() && arch.startsWith("arm"))
+        {
+        	// Android binaries are compatible regardless of the architecture version
+        	arch = "arm";
+        }
         String name = System.getProperty("os.name");
         String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
         URL url = Native.class.getResource(resourceName);
@@ -754,7 +759,7 @@ public final class Native {
                 // Suffix is required on windows, or library fails to load
                 // Let Java pick the suffix, except on windows, to avoid
                 // problems with Web Start.
-                File dir = getTempDir();
+                File dir = getUnpackDir();
                 lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
@@ -911,6 +916,13 @@ public final class Native {
             marker.createNewFile();
         }
         catch(IOException e) { e.printStackTrace(); }
+    }
+    
+    private static File getUnpackDir() {
+    	String result = System.getProperty("jna.unpack.path");
+    	if (result != null)
+    		return new File(result);
+    	return getTempDir();
     }
 
     /** Obtain a directory suitable for writing JNA-specific temporary files. 
