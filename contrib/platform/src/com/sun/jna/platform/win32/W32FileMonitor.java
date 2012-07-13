@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.FileMonitor;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
 import com.sun.jna.platform.win32.WinBase.OVERLAPPED;
@@ -117,7 +116,7 @@ public class W32FileMonitor extends FileMonitor {
         	return null;
         
         synchronized (this) { 
-        	return handleMap.get(new HANDLE(new Pointer(rkey.getValue().longValue())));
+        	return handleMap.get(new HANDLE(rkey.getValue().toPointer()));
 	    }
     }
     
