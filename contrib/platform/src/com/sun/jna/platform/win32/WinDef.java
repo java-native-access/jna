@@ -41,7 +41,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public WORD(long value) {
-            super(2, value);
+            super(2, value, true);
         }
     }
 
@@ -371,7 +371,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public DWORDLONG(long value) {
-            super(8, value);
+            super(8, value, true);
         }
     }
 }
