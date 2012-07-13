@@ -859,7 +859,7 @@ public abstract class Structure {
     /** Keep track of structure layout information.  Alignment type, type
         mapper, and explicit field order will affect this information.
     */
-    private class LayoutInfo {
+    private static class LayoutInfo {
         int size = CALCULATE_SIZE;
         int alignment = 1;
         Map fields = Collections.synchronizedMap(new LinkedHashMap());
@@ -1300,7 +1300,7 @@ public abstract class Structure {
     }
 
     /** Override to supply native type information for the given field. */
-    protected Pointer getFieldTypeInfo(StructField f) {
+    Pointer getFieldTypeInfo(StructField f) {
         Class type = f.type;
         Object value = getField(f);
         if (typeMapper != null) {
@@ -1390,7 +1390,7 @@ public abstract class Structure {
         }
     }
 
-    class StructField extends Object {
+    static class StructField extends Object {
         public String name;
         public Class type;
         public Field field;
@@ -1561,7 +1561,7 @@ public abstract class Structure {
         }
     }
 
-    private class AutoAllocated extends Memory {
+    private static class AutoAllocated extends Memory {
         public AutoAllocated(int size) {
             super(size);
             // Always clear new structure memory
