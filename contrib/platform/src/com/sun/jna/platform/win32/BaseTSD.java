@@ -68,24 +68,30 @@ public interface BaseTSD extends StdCallLibrary {
      */
     public static class ULONG_PTRByReference extends ByReference {
         public ULONG_PTRByReference() {
-            this(new ULONG_PTR(0));
+            this(null);
         }
         public ULONG_PTRByReference(ULONG_PTR value) {
             super(Pointer.SIZE);
             setValue(value);
         }
         public void setValue(ULONG_PTR value) {
-            if (Pointer.SIZE == 4) {
-                getPointer().setInt(0, value.intValue());
-            }
-            else {
-                getPointer().setLong(0, value.longValue());
-            }
+        	if (value != null) {
+        		if (Pointer.SIZE == 4) {
+        			getPointer().setInt(0, value.intValue());
+        		} else {
+        			getPointer().setLong(0, value.longValue());
+        		}
+        	}
         }
         public ULONG_PTR getValue() {
-            return new ULONG_PTR(Pointer.SIZE == 4
-                                 ? getPointer().getInt(0)
-                                 : getPointer().getLong(0));
+        	Pointer p = getPointer().getPointer(0);
+        	if (p == null) {
+        		return null;
+        	}
+            return new ULONG_PTR(
+            		Pointer.SIZE == 4
+            			? getPointer().getInt(0)
+                        : getPointer().getLong(0));
         }
     }
 
