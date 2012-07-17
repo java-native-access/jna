@@ -3,4 +3,4 @@
 * Tests must be run on the target platform, not the build platform
 * libjnidispatch.so must be preinstalled; you cannot rely on JNA to unpack it
   from its jar file for you.  Follow the Android NDK directions.
-
+* http://developer.android.com/guide/practices/jni.html
