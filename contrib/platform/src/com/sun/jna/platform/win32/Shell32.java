@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.INT_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
@@ -127,6 +128,9 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *   that indicates the cause of the failure. The return value is cast as an HINSTANCE for backward compatibility
      *   with 16-bit Windows applications. It is not a true HINSTANCE, however. It can be cast only to an int and
      *   compared to either 32 or the following error codes below.
+     * <p/>
+     * NOTE: {@link WinDef.INT_PTR} is used instead of HINSTANCE here, since
+     *   the former fits the reutrn type's actual usage more closely.
      *
      *   0 The operating system is out of memory or resources.
      *   ERROR_FILE_NOT_FOUND The specified file was not found.
@@ -145,6 +149,6 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *   SE_ERR_PNF The specified path was not found.
      *   SE_ERR_SHARE A sharing violation occurred.
      */
-    WinDef.HINSTANCE ShellExecute(HWND hwnd, String lpOperation, String lpFile, String lpParameters, String lpDirectory,
+    INT_PTR ShellExecute(HWND hwnd, String lpOperation, String lpFile, String lpParameters, String lpDirectory,
                                   int nShowCmd);
 }
