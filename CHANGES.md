@@ -18,6 +18,8 @@ Bug Fixes
 * Fix: `platform.win32.DsGetDC.DS_DOMAIN_TRUSTS` and `DsEnumerateDomainTrusts` on Win32 64-bit - [@trejkaz](https://github.com/trejkaz).
 * Fix: Crash freeing the wrong pointer in `Netapi32Util.getDomainTrusts` - [@trejkaz](https://github.com/trejkaz).
 * [#100](https://github.com/twall/jna/issues/100): Fix `platform.win32.W32FileMonitor` - [@dblock](https://github.com/dblock).
+* Return INT_PTR from `platform.win32.Shell32.ShellExecute`, since returning
+`HINSTANCE` is useless.
  
 Release 3.4.1
 =============
