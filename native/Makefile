@@ -149,27 +149,29 @@ endif
 
 ifeq ($(ARCH),amd64)
 
-WINDRES=/usr/local/mingw64-cross/bin/x86_64-pc-mingw32-windres
-
-# Uncomment to enable MINGW64 cross compiler
+# Uncomment to enable MINGW64 cross compiler; ensure mingw32-gcc is in PATH
 # Should build properly as of 111121, but lacks SEH, so MSVC build is preferred
-#MINGW = x86_64-pc-mingw32-gcc
+#MINGW=x86_64-w64-mingw32-gcc 
+# Still need windres from mingw distribution
+WINDRES=x86_64-w64-mingw32-windres
+
 ifneq ($(MINGW),)
 CDEFINES=-DPSAPI_VERSION=1
-CC = $(MINGW) -m64 -mno-cygwin
+CC = $(MINGW)
 LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
-FFI_CONFIG += --host=x86_64-pc-mingw32
+FFI_CONFIG += --host=x86_64-w64-mingw32
 else
 # MSVC (wrapper scripts)
 CC=$(FFI_SRC)/../cc.sh -m64
+CPP=$(FFI_SRC)/../cc.sh -m64 -E
 LD=$(FFI_SRC)/../ld.sh -m64
 COPT=
 LIBS=psapi.lib
 ARSFX=.lib
 FFI_CONFIG+=--host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV+=LD="$(LD)" CPP=cpp
+FFI_ENV+=LD="$(LD) cpp=$(CPP)"
 endif
 endif
 endif

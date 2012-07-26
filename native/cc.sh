@@ -2,15 +2,19 @@
 #
 # GCC-compatible wrapper for cl.exe
 #
-MSVC="/c/Program Files (x86)/Microsoft Visual Studio 9.0/vc/bin"
+# Assumes CL.EXE and ML.EXE are in PATH and INCLUDE/LIB appropriately set
+#
+
 nowarn="/wd4127 /wd4820 /wd4706 /wd4100 /wd4255 /wd4668"
 args="/nologo /EHac /W3 /LD $nowarn" # /WX
-# FIXME is this equivalent to --static-libgcc? links to msvcrt.lib
-# I've forgotten why it was originally added
-# /MD causes link problems
-#md=/MD
-cl="$MSVC/cl"
-ml="$MSVC/ml"
+
+cl="cl"
+ml="ml"
+
+if [ -z "$INCLUDE" -o -z "$LIB" ]; then
+    exit "INCLUDE and LIB must be set for CL.EXE to function properly"
+fi
+
 output=
 while [ $# -gt 0 ]
 do
@@ -31,13 +35,19 @@ do
       shift 1
     ;;
     -m32)
-      cl="$MSVC/cl"
-      ml="$MSVC/ml"
+      if echo $PATH | grep x64_amd64; then
+          echo "Wrong CL.EXE in path; use 32-bit version"
+          exit 1
+      fi
+      ml=ml
       shift 1
     ;;
     -m64)
-      cl="$MSVC/x86_amd64/cl"
-      ml="$MSVC/x86_amd64/ml64"
+      if ! echo $PATH | grep x64_amd64; then
+          echo "Wrong CL.EXE in path; use 64-bit version"
+          exit 1
+      fi
+      ml=ml64
       shift 1
     ;;
     -O*)
@@ -66,6 +76,10 @@ do
     -D*)
       args="$args $1"
       defines="$defines $1"
+      shift 1
+    ;;
+    -E)
+      args="$args /E"
       shift 1
     ;;
     -I)
@@ -134,6 +148,11 @@ do
       args="$args \"$(echo $file|sed -e 's%\\%/%g')\""
       shift 1
     ;;
+    -print-multi-os-directory)
+      # Ignore this when called by accident
+      echo ""
+      exit 0
+    ;;
     *)
       echo "Unsupported argument '$1'"
       exit 1
@@ -142,7 +161,7 @@ do
 done
 
 args="$md $args"
-echo "$cl $args"
+echo "$cl $args (INCLUDE=$INCLUDE LIB=$LIB)"
 eval "\"$cl\" $args"
 result=$?
 # @#!%@!# ml64 broken output
