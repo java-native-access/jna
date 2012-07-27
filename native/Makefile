@@ -1,6 +1,6 @@
 #
 # Makefile for JNA native bits
-# Copyright (c) 2007-2010 Timothy Wall All Rights Reserved
+# Copyright (c) 2007-2012 Timothy Wall All Rights Reserved
 #
 # You may need to run 'ant javah' at the root before performing a build from
 # this directory.
@@ -14,17 +14,12 @@
 #   Darwin/OS X (i386/x86_64/ppc)
 #   Linux (i386/amd64/ppc/arm)
 #   Solaris (i386/amd64/sparc/sparcv9)
+#   AIX (ppc/ppc64)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
 #
 # Built, but with outstanding bugs (not necessarily within JNA):
 #
 #   Linux (ppc64/ia64)
-#
-# If you want to do a Win64 build, you'll need to manually install things or
-# tweak paths appropriately, since there is no "standard" distribution of the
-# toolchain, which includes both MSVC and MINGW tools.  Things should generally
-# work if either toolchain is available on the path (MSVC builds require
-# the windres binary from MINGW).
 #
 # The w32ce build requires cegcc and phoneME for cross-compilation; if these
 # tools are available on the path than "ant -Dos.prefix=w32ce-arm" should
