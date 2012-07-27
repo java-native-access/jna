@@ -9,12 +9,12 @@ To build on Win64, you'll need either mingw64 (available with cygwin),
 or the free MS Visual Studio C++ Express compiler.  The MS compiler is
 preferred, since it provides structured event handling (SEH), which allows
 JNA to trap native faults when run in protected mode.  To build with the
-mingw64, uncomment the MINGW line below.  For the MS compiler (recommended),
+mingw64, uncomment the MINGW line in native/Makefile.  For the MS compiler,
 ensure that the 64-bit versions of cl.exe/ml64.exe/link.exe are in your
 PATH and that the INCLUDE and LIB environment variables are set properly.
-You should also install mingw64 for its "windres" resource compiler
-(JNA will still build if it is missing, the resulting DLL will simply lack 
-versioning info).
+Even if compiling with the MS compiler, you should also install mingw64 for 
+its "windres" resource compiler (JNA will still build if it is missing, the
+resulting DLL will simply lack versioning info).
 
 Sample minimal INCLUDE/LIB setup:
 
