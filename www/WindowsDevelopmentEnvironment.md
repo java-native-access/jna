@@ -16,13 +16,15 @@ Even if compiling with the MS compiler, you should also install mingw64 for
 its "windres" resource compiler (JNA will still build if it is missing, the
 resulting DLL will simply lack versioning info).
 
-Sample minimal INCLUDE/LIB setup (for 64-bit target):
-
+Sample configuration, setting up INCLUDE/LIB:
 ``` shell
 export MSVC="/c/Program Files (x86)/Microsoft Visual Studio 10.0/vc"
 export WSDK="/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A"
 export WSDK_64="/c/Program Files/Microsoft SDKs/Windows/v7.1"
 
 export INCLUDE="$(cygpath -m "$MSVC")/include;$(cygpath -m "$WSDK")/include"
+# for 64-bit target
 export LIB="$(cygpath -m "$MSVC")/lib/amd64;$(cygpath -m "$WSDK_64")/lib/x64"
+# for 32-bit target
+export LIB="$(cygpath -m "$MSVC")/lib;$(cygpath -m "$WSDK")/lib"
 ```
