@@ -16,7 +16,7 @@ Even if compiling with the MS compiler, you should also install mingw64 for
 its "windres" resource compiler (JNA will still build if it is missing, the
 resulting DLL will simply lack versioning info).
 
-Sample minimal INCLUDE/LIB setup:
+Sample minimal INCLUDE/LIB setup (for 64-bit target):
 
 ``` shell
 export MSVC="/c/Program Files (x86)/Microsoft Visual Studio 10.0/vc"
