@@ -33,14 +33,10 @@ public interface DsGetDC extends StdCallLibrary {
      */
     public static class DOMAIN_CONTROLLER_INFO extends Structure {
 	    
-        public static class ByReference extends DOMAIN_CONTROLLER_INFO implements Structure.ByReference {
+        public static class ByReference extends DOMAIN_CONTROLLER_INFO implements Structure.ByReference { }
+		
+        public DOMAIN_CONTROLLER_INFO() { }
 
-        }
-		
-        public DOMAIN_CONTROLLER_INFO() {
-			
-        }
-		
         public DOMAIN_CONTROLLER_INFO(Pointer memory) {
             super(memory);
             read();

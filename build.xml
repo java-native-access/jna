@@ -589,6 +589,8 @@
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
     <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
+      <!-- run headless -->
+      <!--<sysproperty key="java.awt.headless" value="true"/>-->
       <!-- avoid VM conflicts with JNA protected mode -->
       <env key="${ld.preload.name}" file="${libjsig}"/>
       <sysproperty key="jna.library.path" file="${build.native}"/>

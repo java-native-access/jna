@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2012 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,7 +12,10 @@
  */
 package com.sun.jna;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.lang.reflect.Field;
 
 /** Represents a native union.  When writing to native memory, the field
  * corresponding to the type passed to {@link #setType} will be written
@@ -47,6 +50,25 @@ public abstract class Union extends Structure {
     protected Union(Pointer p, int alignType, TypeMapper mapper) {
         super(p, alignType, mapper);
     }
+
+    /** Invalid operation on unions. */
+    protected void setFieldOrder(String[] fields) {
+        throw new RuntimeException("Unions do not need to specify field order");
+    }
+
+    /** Unions do not need a field order, so automatically provide a value to
+     * satisfy checking in the Structure superclass.
+     */
+    protected List getFieldOrder() {
+        List flist = getFieldList();
+        ArrayList list = new ArrayList();
+        for (Iterator i=flist.iterator();i.hasNext();) {
+            Field f = (Field)i.next();
+            list.add(f.getName());
+        }
+        return list;
+    }
+
     /** Indicates by type which field will be used to write to native memory.  
      * If there are multiple fields of the same type, use {@link
      * #setType(String)} instead with the field name.
@@ -131,7 +153,7 @@ public abstract class Union extends Structure {
             if (f.type == type) {
                 activeField = f;
                 read();
-                return getField(activeField);
+                return getFieldValue(activeField.field);
             }
         }
         throw new IllegalArgumentException("No field of type " + type + " in " + this);
@@ -151,7 +173,7 @@ public abstract class Union extends Structure {
         StructField f = findField(object.getClass());
         if (f != null) {
             activeField = f;
-            setField(f, object);
+            setFieldValue(f.field, object);
             return this;
         }
         throw new IllegalArgumentException("No field of type " + object.getClass() + " in " + this);

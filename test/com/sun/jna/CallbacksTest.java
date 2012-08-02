@@ -50,6 +50,7 @@ public class CallbacksTest extends TestCase {
         public int i;
         public long j;
         public SmallTestStructure inner;
+        { setFieldOrder(new String[] { "c", "s", "i", "j", "inner" }); }
     }
     public static interface TestLibrary extends Library {
         interface NoMethodCallback extends Callback {

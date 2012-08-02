@@ -38,6 +38,7 @@ public class StructureBufferFieldTest extends TestCase {
     static class BufferStructure extends Structure {
         public Buffer buffer;
         public DoubleBuffer dbuffer;
+        { setFieldOrder(new String[] { "buffer", "dbuffer" }); }
     }
     public void testBufferFieldWriteNULL() {
         if (!Platform.HAS_BUFFERS) return;

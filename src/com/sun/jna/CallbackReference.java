@@ -60,6 +60,7 @@ class CallbackReference extends WeakReference {
         public boolean daemon;
         public boolean detach;
         public String name;
+        { setFieldOrder(new String[] { "daemon", "detach", "name" }); }
     }
     /** Called from native code to initialize a callback thread. */
     private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {

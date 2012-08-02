@@ -48,6 +48,12 @@ public class MemoryTest extends TestCase {
         assertNull("Memory not GC'd", ref.get());
     }
 
+    public void testShareMemory() {
+        Memory base = new Memory(8);
+        Pointer shared = base.share(0);
+        assertNotSame("Memory share should return a different object", base, shared);
+    }
+
     public void testSharedMemoryBounds() {
         Memory base = new Memory(16);
         Pointer shared = base.share(4, 4);

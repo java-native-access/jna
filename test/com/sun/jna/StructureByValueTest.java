@@ -66,6 +66,7 @@ public class StructureByValueTest extends TestCase {
     }
     public static class ByValue128 extends ByValueStruct {
         public long data, data1;
+        { setFieldOrder(new String[] { "data", "data1" }); }
     }
     final long MAGIC = 0x0123456789ABCDEFL;
     public void testStructureArgByValue8() {

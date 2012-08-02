@@ -56,14 +56,18 @@ public class Memory extends Pointer {
 
     protected long size; // Size of the malloc'ed space
 
-    /** Provide a view into the original memory. */
+    /** Provide a view into the original memory.  Keeps an implicit reference
+     * to the original to prevent GC.
+     */
     private class SharedMemory extends Memory {
-        public SharedMemory(long offset) {
-            this.size = Memory.this.size - offset;
+        public SharedMemory(long offset, long size) {
+            this.size = size;
             this.peer = Memory.this.peer + offset;
         }
         /** No need to free memory. */
-        protected void finalize() { } 
+        protected void dispose() {
+            this.peer = 0;
+        } 
         /** Pass bounds check to parent. */
         protected void boundsCheck(long off, long sz) {
             Memory.this.boundsCheck(this.peer - Memory.this.peer + off, sz);
@@ -105,10 +109,8 @@ public class Memory extends Pointer {
      * the allocated bounds. 
      */
     public Pointer share(long offset, long sz) {
-        if (offset == 0 && sz == getSize())
-            return this;
         boundsCheck(offset, sz);
-        return new SharedMemory(offset);
+        return new SharedMemory(offset, sz);
     }
     
     /** Provide a view onto this structure with the given alignment. 
@@ -147,7 +149,7 @@ public class Memory extends Pointer {
     }
 
     /** Free the native memory and set peer to zero */
-    protected synchronized void dispose() {
+    protected void dispose() {
         free(peer);
         peer = 0;
     }

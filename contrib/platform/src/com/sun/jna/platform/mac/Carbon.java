@@ -70,15 +70,15 @@ public interface Carbon {
     public class EventTypeSpec extends Structure {
         public int eventClass;
         public int eventKind;
+        { setFieldOrder(new String[] { "eventClass", "eventKind" }); }
     }
 
     public static class EventHotKeyID extends Structure {
         public int signature;
         public int id;
 
-        public static class ByValue extends EventHotKeyID implements Structure.ByValue {
-
-        }
+        public static class ByValue extends EventHotKeyID implements Structure.ByValue { }
+        { setFieldOrder(new String[] { "signature", "id" }); }
     }
 
     public static interface EventHandlerProcPtr extends Callback {

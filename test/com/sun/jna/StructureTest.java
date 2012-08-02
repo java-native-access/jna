@@ -40,12 +40,35 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong size", 4, s.size());
     }
 
+    public void testInitializeFromPointer() {
+        class TestStructureX extends Structure {
+            public int field1, field2;
+            public TestStructureX() {
+                setFieldOrder(new String[] { "field1", "field2" });
+            }
+            public TestStructureX(Pointer p) {
+                super(p);
+                setFieldOrder(new String[] { "field1", "field2" });
+            }
+        }
+        Structure s = new TestStructureX();
+        Pointer p = s.getPointer();
+        Structure s1 = new TestStructureX(p);
+        Pointer p1 = s1.getPointer();
+
+        assertEquals("Constructor address not used", p, p1);
+        assertFalse("Pointer should not be auto-allocated", p.getClass().equals(p1.getClass()));
+        assertNotSame("Initial pointer should not be used directly: " + p, p, p1);
+    }
+
+
     // must be public to populate array
     public static class TestAllocStructure extends Structure {
         public int f0;
         public int f1;
         public int f2;
         public int f3;
+        { setFieldOrder(new String[] { "f0", "f1", "f2", "f3" }); }
     }
 
 
@@ -102,6 +125,7 @@ public class StructureTest extends TestCase {
             public long l;
             public float f;
             public double d;
+            { setFieldOrder(new String[] { "b", "s", "i", "l", "f", "d" }); }
         }
         TestStructure s = new TestStructure();
         s.setAlignType(Structure.ALIGN_GNUC);
@@ -118,6 +142,7 @@ public class StructureTest extends TestCase {
             public long l;
             public float f;
             public double d;
+            { setFieldOrder(new String[] { "b", "s", "i", "l", "f", "d" }); }
         }
         TestStructure s = new TestStructure();
         s.setAlignType(Structure.ALIGN_MSVC);
@@ -125,9 +150,14 @@ public class StructureTest extends TestCase {
     }
 
     public static class FilledStructure extends Structure {
-        public FilledStructure() {
-            for (int i=0;i < size();i++) {
-                getPointer().setByte(i, (byte)0xFF);
+        private boolean initialized;
+        protected void ensureAllocated() {
+            super.ensureAllocated();
+            if (!initialized) {
+                initialized = true;
+                for (int i=0;i < size();i++) {
+                    getPointer().setByte(i, (byte)0xFF);
+                }
             }
         }
     }
@@ -135,29 +165,35 @@ public class StructureTest extends TestCase {
     public static class TestStructure0 extends FilledStructure {
         public byte field0 = 0x01;
         public short field1 = 0x0202;
+        { setFieldOrder(new String[] { "field0", "field1" }); }
     }
     public static class TestStructure1 extends FilledStructure {
         public byte field0 = 0x01;
         public int field1 = 0x02020202;
+        { setFieldOrder(new String[] { "field0", "field1" }); }
     }
     public static class TestStructure2 extends FilledStructure {
         public short field0 = 0x0101;
         public int field1 = 0x02020202;
+        { setFieldOrder(new String[] { "field0", "field1" }); }
     }
     public static class TestStructure3 extends FilledStructure {
         public int field0 = 0x01010101;
         public short field1 = 0x0202;
         public int field2 = 0x03030303;
+        { setFieldOrder(new String[] { "field0", "field1", "field2" }); }
     }
     public static class TestStructure4 extends FilledStructure {
         public int field0 = 0x01010101;
         public long field1 = 0x0202020202020202L;
         public int field2 = 0x03030303;
         public long field3 = 0x0404040404040404L;
+        { setFieldOrder(new String[] { "field0", "field1", "field2", "field3" }); }
     }
     public static class TestStructure5 extends FilledStructure {
         public long field0 = 0x0101010101010101L;
         public byte field1 = 0x02;
+        { setFieldOrder(new String[] { "field0", "field1" }); }
     }
     public interface SizeTest extends Library {
         int getStructureSize(int type);
@@ -237,11 +273,13 @@ public class StructureTest extends TestCase {
     public static class PublicTestStructure extends Structure {
         public static class ByReference extends PublicTestStructure implements Structure.ByReference { }
         public int x, y;
+        { setFieldOrder(new String[] { "x", "y" }); }
     }
     public void testStructureField() {
         class TestStructure extends Structure {
             public PublicTestStructure s1, s2;
             public int after;
+            { setFieldOrder(new String[] { "s1", "s2", "after" }); }
         }
         TestStructure s = new TestStructure();
         TestStructure s2 = new TestStructure();
@@ -283,6 +321,7 @@ public class StructureTest extends TestCase {
             public PublicTestStructure[] inner = new PublicTestStructure[2];
             public PublicTestStructure[] inner2 = (PublicTestStructure[])
                 new PublicTestStructure().toArray(2);
+            { setFieldOrder(new String[] { "inner", "inner2" }); }
         }
         TestStructure s = new TestStructure();
         int innerSize = new PublicTestStructure().size();
@@ -356,6 +395,7 @@ public class StructureTest extends TestCase {
             public float[] fa = new float[3];
             public double[] da = new double[3];
             public PublicTestStructure nested;
+            { setFieldOrder(new String[] { "z", "b", "c", "s", "i", "l", "f", "d", "ba", "ca", "sa", "ia", "la", "fa", "da", "nested" }); }
         }
         TestStructure s = new TestStructure();
         // set content of the structure
@@ -422,6 +462,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int i;
             public NativeLong l;
+            { setFieldOrder(new String[] { "i", "l" }); }
         }
         TestStructure s = new TestStructure();
         if (NativeLong.SIZE == 8) {
@@ -442,6 +483,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int i;
             public NativeLong l;
+            { setFieldOrder(new String[] { "i", "l" }); }
         }
         TestStructure s = new TestStructure();
         if (NativeLong.SIZE == 8) {
@@ -602,6 +644,7 @@ public class StructureTest extends TestCase {
         class VolatileStructure extends Structure {
             public volatile int counter;
             public int value;
+            { setFieldOrder(new String[] { "counter", "value" }); }
         }
         VolatileStructure s = new VolatileStructure();
         s.counter = 1;
@@ -616,6 +659,7 @@ public class StructureTest extends TestCase {
     public static class StructureWithPointers extends Structure {
         public PublicTestStructure.ByReference s1;
         public PublicTestStructure.ByReference s2;
+        { setFieldOrder(new String[] { "s1", "s2" }); }
     }
     public void testStructureByReferenceField() {
         StructureWithPointers s = new StructureWithPointers();
@@ -656,6 +700,7 @@ public class StructureTest extends TestCase {
             public TestPointer p2 = new TestPointer() {
                     { setPointer(new Memory(256)); }
                 };
+            { setFieldOrder(new String[] { "p", "p2" }); }
         }
         TestStructure s = new TestStructure();
         final Pointer p = s.p;
@@ -668,6 +713,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public String s;
             public WString ws;
+            { setFieldOrder(new String[] { "s", "ws" }); }
         }
         TestStructure s = new TestStructure();
         Memory m = new Memory(getName().length()+1);
@@ -759,30 +805,41 @@ public class StructureTest extends TestCase {
         }
         public Inner inner;
         public int dummy;
+        { setFieldOrder(new String[] { "inner", "dummy" }); }
     }
     public static class size_t extends IntegerType {
         public size_t() { this(0); }
         public size_t(long value) { super(Native.POINTER_SIZE, value); }
     }
-    class FFIType extends Structure {
-        public FFIType(Pointer p) {
-            super(p); 
-            // Must explicitly calculate our size field
-            Native.initialize_ffi_type(p.peer); 
-            read();
-        }
-        // NOTE: this field is never initialized by libffi
+    /** Same structure as the internal representation, to be initialized from
+     * the internal FFIType native data.
+     */
+    class TestFFIType extends Structure {
+        // NOTE: this field is not normally initialized by libffi
+        // We force initialize by calling initialize_ffi_type
         public size_t size;
         public short alignment;
         public short type;
         public Pointer elements;
+        public TestFFIType(Pointer p) {
+            super(p); 
+            setFieldOrder(new String[] { "size", "alignment", "type", "elements" });
+            read();
+            assertTrue("Test FFIType type not initialized: " + this, this.type != 0);
+
+            // Force libffi to explicitly calculate the size field of
+            // this FFIType object
+            int size = Native.initialize_ffi_type(p.peer); 
+            read();
+            assertEquals("Test FFIType size improperly initialized: " + TestFFIType.this, size, TestFFIType.this.size.intValue());
+        }
     }
     public void testNestedStructureTypeInfo() {
         NestedTypeInfoStructure s = new NestedTypeInfoStructure();
         Pointer p = s.getTypeInfo();
         assertNotNull("Type info should not be null", p);
-        FFIType ffi_type = new FFIType(p);
-        assertEquals("FFIType size mismatch", s.size(), ffi_type.size.intValue());
+        TestFFIType ffi_type = new TestFFIType(p);
+        assertEquals("FFIType size mismatch: " + ffi_type, s.size(), ffi_type.size.intValue());
         Pointer els = ffi_type.elements;
         Pointer inner = s.inner.getTypeInfo();
         assertEquals("Wrong type information for 'inner' field",
@@ -798,10 +855,10 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int[] inner = new int[5];
         }
-        TestStructure s = new TestStructure();
+        Structure s = new TestStructure();
         Pointer p = s.getTypeInfo();
         assertNotNull("Type info should not be null", p);
-        FFIType ffi_type = new FFIType(p);
+        TestFFIType ffi_type = new TestFFIType(p);
         assertEquals("Wrong structure size", 20, s.size());
         assertEquals("FFIType info size mismatch", s.size(), ffi_type.size.intValue());
     }
@@ -819,6 +876,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int intField;
             public PublicTestStructure inner;
+            { setFieldOrder(new String[] { "intField", "inner" }); }
         }
         TestStructure s = new TestStructure();
         final String LS = System.getProperty("line.separator");
@@ -954,6 +1012,7 @@ public class StructureTest extends TestCase {
             { setAlignType(ALIGN_NONE); }
             public NativeLong nl = INITIAL;
             public NativeLong uninitialized;
+            { setFieldOrder(new String[] { "nl", "uninitialized" }); }
         }
         TestStructure ts = new TestStructure();
         TestStructure ts2 = new TestStructure();
@@ -971,12 +1030,39 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong field value (2)", 0, ts.uninitialized.longValue());
     }
 
+    public void testThrowErrorOnMissingFieldOrder() {
+        class TestStructure extends Structure {
+            public int f1, f2;
+        }
+        try {
+            new TestStructure();
+            fail("Expected an error when creating a structure without an explicit call to setFieldOrder()");
+        }
+        catch(Error e) {
+        }
+    }
+
+    public void testBypassErrorOnMissingFieldOrder() {
+        class TestStructure extends Structure {
+            public int f1, f2;
+        }
+        System.setProperty("jna.predictable_field_order", "true");
+        try {
+            new TestStructure();
+        }
+        finally {
+            System.setProperty("jna.predictable_field_order", "false");
+        }
+    }
+
     public void testInheritedStructureFieldOrder() {
         class TestStructure extends Structure {
             public int first = 1;
+            { setFieldOrder(new String[] { "first" }); }
         }
         class TestStructureSub extends TestStructure {
             public int second = 2;
+            { setFieldOrder(new String[] { "second" }); }
         }
         TestStructureSub s = new TestStructureSub();
         assertEquals("Wrong size", 8, s.size());
@@ -1065,6 +1151,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public Boolean zfield;
             public Integer field;
+            { setFieldOrder(new String[] { "zfield", "field" }); }
         }
         TestStructure s = new TestStructure();
         s.write();
@@ -1077,11 +1164,13 @@ public class StructureTest extends TestCase {
             public int first;
             public int[] second = new int[4];
             public Pointer[] third = new Pointer[4];
+            { setFieldOrder(new String[] { "first", "second", "third" }); }
         }
         class TestStructure extends Structure {
             public int first;
             public int[] second = new int[4];
             public Pointer[] third = new Pointer[4];
+            { setFieldOrder(new String[] { "first", "second", "third" }); }
         }
         OtherStructure s0 = new OtherStructure();
         TestStructure s1 = new TestStructure();
@@ -1107,6 +1196,7 @@ public class StructureTest extends TestCase {
             public int first;
             public int[] second = new int[4];
             public Pointer[] third = new Pointer[4];
+            { setFieldOrder(new String[] { "first", "second", "third" }); }
         }
         class ByReference extends TestStructure implements Structure.ByReference { }
         class ByValue extends TestStructure implements Structure.ByValue { }
@@ -1140,6 +1230,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public byte first;
             public int second;
+            { setFieldOrder(new String[] { "first", "second" }); }
         }
         TestStructure s1 = new TestStructure();
         TestStructure s2 = new TestStructure();
@@ -1156,6 +1247,7 @@ public class StructureTest extends TestCase {
             public TestStructureByRef() { }
             public int unique;
             public TestStructureByRef s;
+            { setFieldOrder(new String[] { "unique", "s" }); }
         }
         TestStructureByRef s = new TestStructureByRef();
         s.s = new TestStructureByRef();
@@ -1229,6 +1321,7 @@ public class StructureTest extends TestCase {
                 super(p);
                 read(); // Important!
             }
+            { setFieldOrder(new String[] { "intField", "arrayField" }); }
         }
         Memory p = new Memory(260);
         p.setInt(0, 1);
@@ -1262,6 +1355,7 @@ public class StructureTest extends TestCase {
         public int value1;
         public ByReference[] array = new ByReference[13];
         public int value2;
+        { setFieldOrder(new String[] { "value1", "array", "value2" }); }
 
         public static class ByReference extends TestByReferenceArrayField implements Structure.ByReference { }
     }
@@ -1385,6 +1479,7 @@ public class StructureTest extends TestCase {
             public int second;
             public TestStructure() {
                 setAlignType(ALIGN_NONE);
+                setFieldOrder(new String[] { "first", "second" });
             }
         }
         Structure ts = new TestStructure();
@@ -1438,11 +1533,12 @@ public class StructureTest extends TestCase {
             public TestStructure() {
                 setTypeMapper(mapper);
             }
+            { setFieldOrder(new String[] { "b", "s", "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7" }); }
         }
         Structure s = new TestStructure();
         assertEquals("Wrong type mapper for structure", mapper, s.getTypeMapper());
 
-        FFIType ffi_type = new FFIType(Structure.getTypeInfo(s));
+        TestFFIType ffi_type = new TestFFIType(Structure.getTypeInfo(s));
         assertEquals("Java Structure size does not match FFIType size",
                      s.size(), ffi_type.size.intValue());
     }
