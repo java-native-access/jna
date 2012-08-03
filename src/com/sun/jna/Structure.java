@@ -286,15 +286,15 @@ public abstract class Structure {
     }
 
     /** Set the memory used by this structure.  This method is used to
-     * indicate the given structure is nested within another or otherwise
-     * overlaid on some other memory block and thus does not own its own
-     * memory.
+     * indicate the given structure is based on natively-allocated data,
+     * nested within another, or otherwise overlaid on existing memory and
+     * thus does not own its own memory allocation.
      */
     protected void useMemory(Pointer m, int offset) {
-        // Invoking calculateSize() here is important when this method is
-        // invoked from the ctor, to ensure fields are properly scanned and
-        // allocated 
         try {
+            // Ensure our memory pointer is initialized, even if we can't
+            // yet figure out a proper size/layout
+            this.memory = m.share(offset);
             if (size == CALCULATE_SIZE) {
                 size = calculateSize(false);
             }
@@ -923,7 +923,8 @@ public abstract class Structure {
                     throw new IllegalArgumentException("This VM does not support read-only fields (field '"
                                                        + field.getName() + "' within " + getClass() + ")");
                 }
-                // In J2SE VMs, this allows overriding the value of final fields
+                // In J2SE VMs, this allows overriding the value of final
+                // fields
                 field.setAccessible(true);
             }
             structField.field = field;
