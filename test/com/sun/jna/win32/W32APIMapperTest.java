@@ -12,6 +12,9 @@
  */
 package com.sun.jna.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import com.sun.jna.Library;
@@ -33,6 +36,9 @@ public class W32APIMapperTest extends TestCase {
             public String string2;
             public boolean bool;
             public boolean bool2;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "string", "stirng2", "bool", "bool2" }); 
+            }
         }
         String returnWStringArgument(String arg);
         boolean returnInt32Argument(boolean arg);
@@ -44,6 +50,9 @@ public class W32APIMapperTest extends TestCase {
             public String string2;
             public boolean bool;
             public boolean bool2;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "string", "string2", "bool", "bool2" }); 
+            }
         }
         String returnStringArgument(String arg);
         boolean returnInt32Argument(boolean arg);

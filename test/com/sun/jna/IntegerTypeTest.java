@@ -1,5 +1,8 @@
 package com.sun.jna;
 
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 public class IntegerTypeTest extends TestCase {
@@ -12,6 +15,9 @@ public class IntegerTypeTest extends TestCase {
     public void testWriteNull() {
         class NTStruct extends Structure {
             public Sized field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
         }
         NTStruct s = new NTStruct();
         assertNotNull("Field not initialized", s.field);
@@ -19,6 +25,9 @@ public class IntegerTypeTest extends TestCase {
     public void testReadNull() {
         class NTStruct extends Structure {
             public Sized field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
         }
         NTStruct s = new NTStruct();
         s.read();

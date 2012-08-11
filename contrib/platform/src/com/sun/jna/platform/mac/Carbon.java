@@ -17,13 +17,15 @@
 
 package com.sun.jna.platform.mac;
 
+import java.nio.IntBuffer;
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Callback;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
-
-import java.nio.IntBuffer;
 
 /**
  * Author: Denis Tulskiy
@@ -70,7 +72,8 @@ public interface Carbon {
     public class EventTypeSpec extends Structure {
         public int eventClass;
         public int eventKind;
-        { setFieldOrder(new String[] { "eventClass", "eventKind" }); }
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "eventClass", "eventKind" }); }
     }
 
     public static class EventHotKeyID extends Structure {
@@ -78,7 +81,8 @@ public interface Carbon {
         public int id;
 
         public static class ByValue extends EventHotKeyID implements Structure.ByValue { }
-        { setFieldOrder(new String[] { "signature", "id" }); }
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "signature", "id" }); }
     }
 
     public static interface EventHandlerProcPtr extends Callback {

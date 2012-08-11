@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -52,6 +55,10 @@ public interface NTSecApi extends StdCallLibrary {
          */
         public Pointer Buffer;
 		
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Length", "MaximumLength", "Buffer" });
+        }
+        
         /**
          * String representation of the buffer.
          * @return
@@ -97,11 +104,18 @@ public interface NTSecApi extends StdCallLibrary {
         public PSID.ByReference Sid;
         public LSA_UNICODE_STRING DnsName;
         public LSA_UNICODE_STRING NetbiosName;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Sid", "DnsName", "NetbiosName" });
+        }
     }
 	
     public static class LSA_FOREST_TRUST_BINARY_DATA extends Structure {
         public int Length;
         public Pointer Buffer;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Length", "Buffer" });
+        }
     }
 	
     public static class LSA_FOREST_TRUST_RECORD extends Structure {    
@@ -145,6 +159,10 @@ public interface NTSecApi extends StdCallLibrary {
          */
         public UNION u;
 		
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Flags", "ForestTrustType", "Time", "u" });
+        }
+        
         public void read() {
             super.read();
 			
@@ -170,7 +188,11 @@ public interface NTSecApi extends StdCallLibrary {
 			
         }
 		
-        public LSA_FOREST_TRUST_RECORD.ByReference tr;	
+        public LSA_FOREST_TRUST_RECORD.ByReference tr;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "tr" });
+        }
     }
 	
     public static class LSA_FOREST_TRUST_INFORMATION extends Structure {
@@ -190,6 +212,10 @@ public interface NTSecApi extends StdCallLibrary {
          */
         public PLSA_FOREST_TRUST_RECORD.ByReference Entries;
 
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "RecordCount", "Entries" });
+        }
+        
         /**
          * Get an array of LSA_FOREST_TRUST_RECORD entries.
          * @return
@@ -209,6 +235,10 @@ public interface NTSecApi extends StdCallLibrary {
 			
         }
 
-        public LSA_FOREST_TRUST_INFORMATION.ByReference fti;		
+        public LSA_FOREST_TRUST_INFORMATION.ByReference fti;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "fti" });
+        }
     }
 }

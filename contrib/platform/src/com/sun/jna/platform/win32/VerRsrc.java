@@ -10,6 +10,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.win32.StdCallLibrary;
@@ -113,5 +116,9 @@ public interface VerRsrc extends StdCallLibrary {
          * The least significant 32 bits of the file's 64-bit binary creation date and time stamp.
          */
         public WinDef.DWORD dwFileDateLS;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dwSignature", "dwStrucVersion", "dwFileVersionMS", "dwFileVersionLS", "dwProductVersionMS", "dwProductVersionLS", "dwFielFlagsMask", "dwFileFlags", "dwFileOS", "dwFileType", "dwFileSubtype", "dwFileDateMS", "dwFileDateLS" });
+        }
     }
 }

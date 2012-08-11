@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -59,6 +62,9 @@ public interface WinCrypt extends StdCallLibrary {
          */
         public Pointer pbData;
         
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbData", "pbData" });
+        }
         /**
          * Get byte data.
          * @return
@@ -100,6 +106,10 @@ public interface WinCrypt extends StdCallLibrary {
          * A string containing the text of a prompt to be displayed. 
          */
         public String szPrompt;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbSize", "dwPromptFlags", "hwndApp", "szPrompt" });
+        }
     }
 	
     //

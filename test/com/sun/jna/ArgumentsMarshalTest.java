@@ -13,10 +13,11 @@
 package com.sun.jna;
 
 import java.util.Arrays;
-
-import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
+import java.util.List;
 
 import junit.framework.TestCase;
+
+import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
 
 /** Exercise a range of native methods.
  *
@@ -39,15 +40,18 @@ public class ArgumentsMarshalTest extends TestCase {
             public long int64Field;
             public float floatField;
             public double doubleField;
-	    public CheckFieldAlignment() {
-                setFieldOrder(new String[] { "int8Field", "int16Field", "int32Field", "int64Field", "floatField", "doubleField" });
-		int8Field = (byte)fieldOffset("int8Field");
-		int16Field = (short)fieldOffset("int16Field");
-		int32Field = fieldOffset("int32Field");
-		int64Field = fieldOffset("int64Field");
-		floatField = fieldOffset("floatField");
-		doubleField = fieldOffset("doubleField");
-	    }
+            
+            public List getFieldOrder() {
+                return Arrays.asList(new String[] { "int8Field", "int16Field", "int32Field", "int64Field", "floatField", "doubleField" });
+            }
+            public CheckFieldAlignment() {
+                int8Field = (byte)fieldOffset("int8Field");
+                int16Field = (short)fieldOffset("int16Field");
+                int32Field = fieldOffset("int32Field");
+                int64Field = fieldOffset("int64Field");
+                floatField = fieldOffset("floatField");
+                doubleField = fieldOffset("doubleField");
+            }
         }
 
         String returnStringArgument(Object arg);
@@ -97,17 +101,22 @@ public class ArgumentsMarshalTest extends TestCase {
         // Structure
         class MinTestStructure extends Structure {
             public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
         }
         Pointer testStructurePointerArgument(MinTestStructure s);
 
         class VariableSizedStructure extends Structure {
             public int length;
             public byte[] buffer;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "length", "buffer" });
+            }
             public VariableSizedStructure(String arg) {
                 length = arg.length() + 1;
                 buffer = new byte[length];
                 System.arraycopy(arg.getBytes(), 0, buffer, 0, arg.length());
-                setFieldOrder(new String[] { "length", "buffer" });
             }
         }
         String returnStringFromVariableSizedStructure(VariableSizedStructure s);
@@ -116,6 +125,9 @@ public class ArgumentsMarshalTest extends TestCase {
                 int callback(int arg1, int arg2);
             }
             public TestCallback cb;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "cb" });
+            }
         }
         void setCallbackInStruct(CbStruct cbstruct);
 
@@ -346,7 +358,9 @@ public class ArgumentsMarshalTest extends TestCase {
             public double d;
             public Pointer[] parray = new Pointer[2];
             public byte[] barray = new byte[2];
-            { setFieldOrder(new String[] { "b", "c", "s", "i", "j", "f", "d", "parray", "barray" }); }
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "b", "c", "s", "i", "j", "f", "d", "parray", "barray" });
+            }
         }
         Structure s = new TestStructure();
         // Force generation of type info
