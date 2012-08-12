@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DsGetDC.DS_DOMAIN_TRUSTS;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
-import com.sun.jna.platform.win32.DsGetDC.PDS_DOMAIN_TRUSTS;
 import com.sun.jna.platform.win32.LMAccess.GROUP_INFO_2;
 import com.sun.jna.platform.win32.LMAccess.GROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_USERS_INFO_0;
@@ -235,22 +234,24 @@ public class Netapi32Test extends TestCase {
     		return;
 
     	IntByReference domainCount = new IntByReference();
-    	PDS_DOMAIN_TRUSTS.ByReference domains = new PDS_DOMAIN_TRUSTS.ByReference();
+    	PointerByReference domains = new PointerByReference();
     	assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(
     			null, DsGetDC.DS_DOMAIN_VALID_FLAGS, domains, domainCount));
-    	
-    	assertTrue(domainCount.getValue() >= 0);
-    	
-    	DS_DOMAIN_TRUSTS[] trusts = domains.getTrusts(domainCount.getValue());
-    	for(DS_DOMAIN_TRUSTS trust : trusts) {
-			assertTrue(trust.NetbiosDomainName.length() > 0);
-			assertTrue(trust.DnsDomainName.length() > 0);
-			assertTrue(Advapi32.INSTANCE.IsValidSid(trust.DomainSid));
-			assertTrue(Advapi32Util.convertSidToStringSid(trust.DomainSid).startsWith("S-"));
-			assertTrue(Ole32Util.getStringFromGUID(trust.DomainGuid).startsWith("{"));
+    	try {
+    	    
+    	    assertTrue(domainCount.getValue() >= 0);
+    	    
+    	    DS_DOMAIN_TRUSTS[] trusts = (DS_DOMAIN_TRUSTS[])new DS_DOMAIN_TRUSTS(domains.getValue()).toArray(domainCount.getValue());
+    	    for(DS_DOMAIN_TRUSTS trust : trusts) {
+    	        assertTrue(trust.NetbiosDomainName.length() > 0);
+    	        assertTrue(trust.DnsDomainName.length() > 0);
+    	        assertTrue(Advapi32.INSTANCE.IsValidSid(trust.DomainSid));
+    	        assertTrue(Advapi32Util.convertSidToStringSid(trust.DomainSid).startsWith("S-"));
+    	        assertTrue(Ole32Util.getStringFromGUID(trust.DomainGuid).startsWith("{"));
+    	    }
     	}
-    	
-    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
-    			domains.getPointer()));   	    	
+    	finally {
+    	    Netapi32.INSTANCE.NetApiBufferFree(domains.getValue());
+    	}
     }
 }
