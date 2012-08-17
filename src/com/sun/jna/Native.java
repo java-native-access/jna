@@ -689,6 +689,10 @@ public final class Native {
                 }
             }
         }
+        if (Platform.isAndroid()) {
+            // Native libraries must be bundled with the APK
+            System.setProperty("jna.nounpack", "true");
+        }
         try {
             if (!Boolean.getBoolean("jna.nosys")) {
                 System.loadLibrary(libName);
@@ -917,18 +921,11 @@ public final class Native {
         Override with <code>jna.tmpdir</code>
     */
     static File getTempDir() {
-        File jnatmp;
-        String prop = System.getProperty("jna.tmpdir");
-        if (prop != null) {
-            jnatmp = new File(prop);
-        }
-        else {
-            File tmp = new File(System.getProperty("java.io.tmpdir"));
-            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
-            jnatmp.mkdirs();
-            if (!jnatmp.exists() || !jnatmp.canWrite()) {
-                jnatmp = tmp;
-            }
+        File tmp = new File(System.getProperty("java.io.tmpdir"));
+        File jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
+        jnatmp.mkdirs();
+        if (!jnatmp.exists() || !jnatmp.canWrite()) {
+            jnatmp = tmp;
         }
         if (!jnatmp.exists()) {
             throw new Error("JNA temporary directory " + jnatmp + " does not exist");

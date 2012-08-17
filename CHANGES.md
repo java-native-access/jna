@@ -3,7 +3,6 @@ Release 3.4.x
 Features
 --------
 * Add android-arm target (thanks to ochafik for initial work)
-* Add `jna.tmpdir` to override temporary JNA storage location
 
 Bug Fixes
 ---------

@@ -252,6 +252,7 @@
     <uptodate property="-jar" targetfile="${build}/${jar}">
       <srcfiles dir="${classes}">
         <patternset id="jar-compiled">
+          <include name="lib/armeabi/*"/>
           <include name="com/sun/jna/*"/>
           <include name="com/sun/jna/**/*"/>
         </patternset>
@@ -492,6 +493,16 @@
       </or>
     </condition>
 
+    <!-- Android-specific paths -->
+    <condition property="native.path"
+	       value="lib/armeabi">
+        <equals arg1="${os.prefix}" arg2="android-arm"/>
+    </condition>
+    <condition property="native.path"
+	       value="com/sun/jna/${os.prefix}">
+	<not><equals arg1="${os.prefix}" arg2="android-arm"/></not>
+    </condition>
+
     <!-- Default make program -->
     <property name="make" value="make"/>
 
@@ -510,8 +521,8 @@
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
-    <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
-    <copy todir="${classes}/com/sun/jna/${os.prefix}">
+    <mkdir dir="${classes}/${native.path}"/>
+    <copy todir="${classes}/${native.path}">
       <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
@@ -591,7 +602,7 @@
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
   <target name="test" depends="jar,compile-tests"
-          description="Run all unit tests">
+          description="Run all unit tests" unless="os.prefix">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>
     <property name="results.junit" location="${build}/junit-results"/>
@@ -874,9 +885,6 @@ osname=macos,
       <zipfileset src="${dist}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
-      <zipfileset src="${dist}/android-arm.jar"
-                  includes="*jnidispatch*"
-                  prefix="com/sun/jna/android-arm"/>
     </jar>
     <copy todir="${dist}">
       <fileset dir="${contrib}/platform/dist">
