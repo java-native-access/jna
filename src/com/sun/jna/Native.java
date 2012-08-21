@@ -85,8 +85,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.4.2";
-    private static final String VERSION_NATIVE = "3.4.0";
+    private static final String VERSION = "3.5.0";
+    private static final String VERSION_NATIVE = "3.5.0";
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -1498,13 +1498,19 @@ public final class Native {
     /** Free the given callback trampoline. */
     static synchronized native void freeNativeCallback(long ptr);
 
+    /** Use direct mapping for callback. */
+    static final int CB_OPTION_DIRECT = 1;
+    /** Return a DLL-resident fucntion pointer. */
+    static final int CB_OPTION_IN_DLL = 2;
+
     /** Create a native trampoline to delegate execution to the Java callback. 
      */
     static synchronized native long createNativeCallback(Callback callback, 
                                                          Method method, 
                                                          Class[] parameterTypes,
                                                          Class returnType,
-                                                         int callingConvention, boolean direct);
+                                                         int callingConvention,
+                                                         int flags);
     
     /**
      * Call the native function being represented by this object
@@ -1609,8 +1615,17 @@ public final class Native {
      */
     static native Object invokeObject(long fp, int callFlags, Object[] args);
 
-    static native long open(String name);
+    /** Open the requested native library with default options. */
+    static long open(String name) {
+        return open(name, -1);
+    }
 
+    /** Open the requested native library with the specified platform-specific
+     * otions.
+     */ 
+    static native long open(String name, int flags);
+
+    /** Close the given native library. */
     static native void close(long handle);
 
     static native long findSymbol(long handle, String name);

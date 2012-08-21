@@ -45,17 +45,17 @@
   <buildnumber/>
   <!-- JNA library release version -->
   <property name="jna.major" value="3"/>
-  <property name="jna.minor" value="4"/>
-  <property name="jna.revision" value="2"/>
+  <property name="jna.minor" value="5"/>
+  <property name="jna.revision" value="0"/>
   <property name="jna.build" value="${build.number}"/>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="3"/>
-  <property name="jni.minor" value="4"/>
+  <property name="jni.minor" value="5"/>
   <property name="jni.revision" value="0"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="4c69bcf40b30785215211b5a5dad211e"/>
+  <property name="jni.md5" value="60417f69d77e4d8d693b43391a4a5b91"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
@@ -304,6 +304,7 @@
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
       <class name="com.sun.jna.Function"/>
       <class name="com.sun.jna.Native"/>
+      <class name="com.sun.jna.win32.DLLCallback"/>
     </javah>
     <condition property="grep" value="/usr/sfw/bin/ggrep">
       <os name="SunOS"/>

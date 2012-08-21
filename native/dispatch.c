@@ -42,13 +42,13 @@
  */
 #ifdef _WIN32_WCE
 #include <tlhelp32.h>
-#define LOAD_OPTS 0 /* altered search path unsupported on CE */
+#define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
 #undef GetProcAddress
 #define GetProcAddress GetProcAddressA
 #else
-#define LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
+#define DEFAULT_LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
 #endif
-#define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_OPTS) : GetModuleHandleW(NULL))
+#define LOAD_LIBRARY(NAME,OPTS) (NAME ? LoadLibraryExW(NAME, NULL, OPTS) : GetModuleHandleW(NULL))
 #define LOAD_ERROR(BUF,LEN) w32_format_error(GetLastError(), BUF, LEN)
 #define STR_ERROR(CODE,BUF,LEN) w32_format_error(CODE, BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
@@ -64,7 +64,8 @@
 #else
 #define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
 #endif
-#define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_LAZY|RTLD_GLOBAL)
+#define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
+#define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 #define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)
 #define STR_ERROR(CODE,BUF,LEN) (strerror_r(CODE, BUF, LEN), BUF)
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
@@ -76,7 +77,8 @@
 #ifdef _AIX
 #pragma alloca
 #undef LOAD_LIBRARY
-#define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_MEMBER| RTLD_LAZY | RTLD_GLOBAL)
+#define DEFAULT_LOAD_OPTS (RTLD_MEMBER| RTLD_LAZY | RTLD_GLOBAL)
+#define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 #endif
 
 #include <stdlib.h>
@@ -98,7 +100,7 @@ static int _protect;
 #endif
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
 
 #ifdef _WIN32
@@ -1960,9 +1962,10 @@ Java_com_sun_jna_Native_createNativeCallback(JNIEnv *env,
                                              jobjectArray param_types,
                                              jclass return_type,
                                              jint call_conv,
-                                             jboolean direct) {
+                                             jint options) {
   callback* cb =
-    create_callback(env, obj, method, param_types, return_type, call_conv, direct);
+    create_callback(env, obj, method, param_types, return_type,
+                    call_conv, options);
 
   return A2L(cb);
 }
@@ -1977,10 +1980,10 @@ Java_com_sun_jna_Native_freeNativeCallback(JNIEnv *env,
 /*
  * Class:     Native
  * Method:    open
- * Signature: (Ljava/lang/String;)J
+ * Signature: (Ljava/lang/String;I)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
+Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib, jint flags){
     /* dlopen on Unix allows NULL to mean "current process" */
     const STRTYPE libname = NULL;
     void *handle = NULL;
@@ -1991,7 +1994,7 @@ Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
       }
     }
 
-    handle = (void *)LOAD_LIBRARY(libname);
+    handle = (void *)LOAD_LIBRARY(libname, flags != -1 ? flags : DEFAULT_LOAD_OPTS);
     if (!handle) {
       char buf[1024];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
@@ -2814,7 +2817,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
 #undef JAWT_NAME
 #define JAWT_NAME path
 #endif
-    if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME)) == NULL) {
+    if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME, DEFAULT_LOAD_OPTS)) == NULL) {
       char msg[1024];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
       return -1;

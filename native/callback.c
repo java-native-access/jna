@@ -30,14 +30,52 @@
 extern "C" {
 #endif
 
-static void callback_dispatch(ffi_cif*, void*, void**, void*);
+#ifdef _WIN32
+#include "com_sun_jna_win32_DLLCallback.h"
+#ifdef __x86_64
+#ifdef _MSC_VER
+#error MSVC does not support inline asm for amd64
+#else
+#define ASMFN(X)extern void asmfn ## X (); asm(".globl asmfn" #X "\n\
+asmfn" #X ":\n\
+ jmp *fn+8*" #X "(%rip)")
+#endif
+#else /* __x86_64 */
+#ifdef _MSC_VER
+// FIXME is "PROC NEAR" correct?
+#define ASMFN(X) extern void asmfn ## X(); \
+__asm asmfn ## X PROC NEAR \
+__asm jmp fn[X]
+#else
+#define ASMFN(X) extern void asmfn ## X (); asm(".globl _asmfn" #X "\n\
+_asmfn" #X ":\n\
+ jmp *(_fn+4*" #X ")")
+#endif
+#endif /* __x86_64 */
 
+// Allocatable trampoline targets
+#define DLL_FPTRS com_sun_jna_win32_DLLCallback_DLL_FPTRS
+static void (*fn[DLL_FPTRS])();
+
+ASMFN(0);ASMFN(1);ASMFN(2);ASMFN(3);ASMFN(4);ASMFN(5);ASMFN(6);ASMFN(7);
+ASMFN(8);ASMFN(9);ASMFN(10);ASMFN(11);ASMFN(12);ASMFN(13);ASMFN(14);ASMFN(15);
+
+static void *dll_fptrs[] = {
+  &asmfn0, &asmfn1, &asmfn2, &asmfn3, &asmfn4, &asmfn5, &asmfn6, &asmfn7,
+  &asmfn8, &asmfn9, &asmfn10, &asmfn11, &asmfn12, &asmfn13, &asmfn14, &asmfn15,
+};
+
+#endif /* _WIN32 */
+
+static void callback_dispatch(ffi_cif*, void*, void**, void*);
 static jclass classObject;
 
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention, jboolean direct) {
+                callconv_t calling_convention, jint options) {
+  jboolean direct = options & CB_OPTION_DIRECT;
+  jboolean in_dll = options & CB_OPTION_IN_DLL;
   callback* cb;
   ffi_abi abi = FFI_DEFAULT_ABI;
   ffi_abi java_abi = FFI_DEFAULT_ABI;
@@ -60,6 +98,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 
   cb = (callback *)malloc(sizeof(callback));
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
+  cb->saved_x_closure = cb->x_closure;
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
 
@@ -181,6 +220,24 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     if (!ffi_error(env, "callback setup (2)", status)) {
       ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
                            cb->x_closure);
+#ifdef DLL_FPTRS
+      // Find an available function pointer and assign it
+      if (in_dll) {
+        jboolean found = JNI_FALSE;
+        for (i=0;i < DLL_FPTRS && !found;i++) {
+          if (fn[i] == NULL) {
+            fn[i] = cb->x_closure;
+            cb->x_closure = dll_fptrs[i];
+            found = JNI_TRUE;
+          }
+        }
+        if (!found) {
+          throw_type = EOutOfMemory;
+          throw_msg = "All DLL callbacks have been allocated";
+          goto failure_cleanup;
+        }
+      }
+#endif
       return cb;
     }
   }
@@ -195,6 +252,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 }
 void 
 free_callback(JNIEnv* env, callback *cb) {
+  int i;
+
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   ffi_closure_free(cb->closure);
   free(cb->arg_types);
@@ -209,6 +268,13 @@ free_callback(JNIEnv* env, callback *cb) {
   if (cb->flags)
     free(cb->flags);
   free(cb->arg_jtypes);
+#ifdef DLL_FPTRS
+  for (i=0;i < DLL_FPTRS;i++) {
+    if (fn[i] == cb->saved_x_closure) {
+      fn[i] = NULL;
+    }
+  }
+#endif
   free(cb);
 }
 

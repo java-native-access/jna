@@ -31,6 +31,8 @@ public final class Platform {
     public static final String MATH_LIBRARY_NAME;
     /** Canonical name of this platform's C runtime library. */
     public static final String C_LIBRARY_NAME;
+    /** Whether in-DLL callbacks are supported. */
+    public static final boolean HAS_DLL_CALLBACKS;
 
     private static final int osType;
 
@@ -82,6 +84,7 @@ public final class Platform {
         RO_FIELDS = osType != WINDOWSCE;
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
+        HAS_DLL_CALLBACKS = osType == WINDOWS;
     }
     private Platform() { }
     public static final int getOSType() {

@@ -46,6 +46,9 @@
 extern "C" {
 #endif
 
+#define CB_OPTION_DIRECT com_sun_jna_Native_CB_OPTION_DIRECT
+#define CB_OPTION_IN_DLL com_sun_jna_Native_CB_OPTION_IN_DLL
+
 /* These are the calling conventions an invocation can handle. */
 typedef enum _callconv {
     CALLCONV_C = com_sun_jna_Function_C_CONVENTION,
@@ -108,6 +111,7 @@ typedef struct _callback {
   char* arg_jtypes;
   jboolean direct;
   void* fptr;
+  void* saved_x_closure;
 } callback;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
@@ -167,7 +171,7 @@ extern const char* jnidispatch_callback_init(JNIEnv*);
 extern void jnidispatch_callback_dispose(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
-                                 callconv_t, jboolean);
+                                 callconv_t, jint);
 extern void free_callback(JNIEnv*, callback*);
 extern void extract_value(JNIEnv*, jobject, void*, size_t, jboolean);
 extern jobject new_object(JNIEnv*, char, void*, jboolean);
