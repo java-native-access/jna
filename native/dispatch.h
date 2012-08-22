@@ -107,7 +107,7 @@ typedef struct _callback {
   jmethodID methodID;
   char* arg_jtypes;
   jboolean direct;
-  void* fptr;
+  size_t fptr_offset;
 } callback;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
