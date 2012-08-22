@@ -1456,7 +1456,6 @@ public abstract class Structure {
         // From ffi.h
         private static final int FFI_TYPE_STRUCT = 13;
         // Structure fields
-        { setFieldOrder(new String[] { "size", "alignment", "type", "elements" }); }
         public size_t size;
         public short alignment;
         public short type = FFI_TYPE_STRUCT;
@@ -1464,7 +1463,6 @@ public abstract class Structure {
 
         private FFIType(Structure ref) {
             Pointer[] els;
-
             ref.ensureAllocated(true);
 
             if (ref instanceof Union) {
@@ -1494,6 +1492,7 @@ public abstract class Structure {
             init(els);
         }
         private void init(Pointer[] els) {
+            setFieldOrder(new String[] { "size", "alignment", "type", "elements" });
             elements = new Memory(Pointer.SIZE * els.length);
             elements.write(0, els, 0, els.length);
             write();

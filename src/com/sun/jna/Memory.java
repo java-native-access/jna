@@ -105,8 +105,6 @@ public class Memory extends Pointer {
      * the allocated bounds. 
      */
     public Pointer share(long offset, long sz) {
-        if (offset == 0 && sz == getSize())
-            return this;
         boundsCheck(offset, sz);
         return new SharedMemory(offset);
     }

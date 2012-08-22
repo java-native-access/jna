@@ -761,12 +761,12 @@ public class StructureTest extends TestCase {
     class FFIType extends Structure {
         public FFIType(Pointer p) {
             super(p); 
+            setFieldOrder(new String[] { "size", "alignment", "type", "elements" });
             // Must explicitly calculate our size field
             Native.initialize_ffi_type(p.peer); 
             read();
         }
-        { setFieldOrder(new String[] { "size", "alignment", "type", "elements" }); }
-        // NOTE: this field is never initialized by libffi
+        // NOTE: this field is not normally initialized by libffi
         public size_t size;
         public short alignment;
         public short type;
