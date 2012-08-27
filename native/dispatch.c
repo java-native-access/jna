@@ -2527,7 +2527,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_free
 JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_memmove
 (JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong dest, jlong src, jlong n)
 {
-    return A2L(memove(L2A(dest), L2A(src), (size_t)n));
+    return A2L(memmove(L2A(dest), L2A(src), (size_t)n));
 }
 
 
