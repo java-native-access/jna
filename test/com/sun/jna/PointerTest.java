@@ -163,6 +163,15 @@ public class PointerTest extends TestCase {
         assertNull("Array element should be null", arr[0]);
     }
 
+    public void testCopy() {
+        Memory m = new Memory(3);
+        m.write(0, new byte[]{1, 2, 3}, 0, 3);
+        m.copy(1, m, 0, 2);
+        assertEquals("Wrong value at 0", (byte) 1, m.getByte(0));
+        assertEquals("Wrong value at 1", (byte) 1, m.getByte(1));
+        assertEquals("Wrong value at 2", (byte) 2, m.getByte(2));
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(PointerTest.class);
     }
