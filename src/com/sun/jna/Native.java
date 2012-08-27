@@ -1704,6 +1704,15 @@ public final class Native {
     public static native void free(long ptr);
 
     /**
+     * Call the real native memmove
+     * @param dest native address of destination
+     * @param src native address of source
+     * @param n length to copy
+     * @return native address of destination
+     */
+    public static native long memmove(long dest, long src, long n);
+
+    /**
      * Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
      * This method calls through to the JNA NewDirectByteBuffer method.
      *

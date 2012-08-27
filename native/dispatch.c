@@ -2521,6 +2521,18 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_free
 
 /*
  * Class:     Native
+ * Method:    memmove
+ * Signature: (JJJ)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_memmove
+(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong dest, jlong src, jlong n)
+{
+    return A2L(memove(L2A(dest), L2A(src), (size_t)n));
+}
+
+
+/*
+ * Class:     Native
  * Method:    sizeof
  * Signature: (I)I
  */
