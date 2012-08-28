@@ -374,6 +374,7 @@ public abstract class Structure {
     }
 
     public void clear() {
+        ensureAllocated();
         memory.clear(size());
     }
 
