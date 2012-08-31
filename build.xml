@@ -172,6 +172,9 @@
     <condition property="os.prefix" value="freebsd-${os.arch}">
       <os name="FreeBSD"/>
     </condition>
+    <condition property="os.prefix" value="linux-${jre.arch}">
+      <os name="GNU/kFreeBSD"/>
+    </condition>
     <condition property="os.prefix" value="openbsd-${os.arch}">
       <os name="OpenBSD"/>
     </condition>

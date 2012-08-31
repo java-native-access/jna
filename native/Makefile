@@ -33,6 +33,7 @@ OS=$(shell uname | sed -e 's/CYGWIN.*/win32/g' \
 	                -e 's/MINGW32.*/win32/g' \
                         -e 's/SunOS.*/solaris/g' \
                         -e 's/NetBSD/netbsd/g' \
+                        -e 's/GNU\/kFreeBSD/linux/g' \
                         -e 's/FreeBSD/freebsd/g' \
                         -e 's/OpenBSD/openbsd/g' \
                         -e 's/Darwin.*/darwin/g' \
