@@ -563,7 +563,7 @@ public interface X11 extends Library {
     }
     class XPoint extends Structure {
         public short x, y;
-        public XPoint() { this(0, 0); }
+        public XPoint() { this((short)0, (short)0); }
         public XPoint(short x, short y) {
             this.x = x;
             this.y = y;
@@ -573,7 +573,7 @@ public interface X11 extends Library {
     class XRectangle extends Structure {
         public short x, y;
         public short width, height;
-        public XRectangle() { this(0, 0, 0, 0); }
+        public XRectangle() { this((short)0, (short)0, (short)0, (short)0); }
         public XRectangle(short x, short y, short width, short height) {
             this.x = x; this.y = y;
             this.width = width; this.height = height;
