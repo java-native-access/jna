@@ -1,4 +1,4 @@
-Release 3.4.x
+Release 3.4.2
 =============
 
 Features
@@ -6,6 +6,9 @@ Features
 * Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVaraible` - [@dblock](https://github.com/dblock).
 * Moved `Kernel32.dll` function definitions from `WinNT.java` into `Kernel32.java` - [@dblock](https://github.com/dblock).
 * Provide `toPointer()` methods on all `_PTR` types (platform win32) - [@twall](https://github.com/twall).
+* Provide ant -Dskip-native to skip platform native build.
+* Provide ant -Dheadless=true to run unit tests headless.
+* Added windows dev environment instructions.
 
 Bug Fixes
 ---------
@@ -20,6 +23,9 @@ Bug Fixes
 * [#100](https://github.com/twall/jna/issues/100): Fix `platform.win32.W32FileMonitor` - [@dblock](https://github.com/dblock).
 * Return INT_PTR from `platform.win32.Shell32.ShellExecute`, since returning
 `HINSTANCE` is useless.
+* Fix runtime error in some instances where Structure.setFieldOrder is used (never return self when sharing AutoAllocated memory).
+* [#107](https://github.com/twall/jna/issues/107): `Structure.clear()` always calls `ensureAllocated()` to avoid NPE.
+* Ensure internal memory pointer is *always* allocated when calling `Structure.useMemory()`, even if layout is not yet determined.
  
 Release 3.4.1
 =============
