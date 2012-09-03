@@ -94,9 +94,9 @@ public class Memory extends Pointer {
 
     protected Memory() { }
 
-    /** Provide a view onto this structure from the given offset.  The
-     * returned {@link Pointer} will have the same size as the original,
-     * reduced by the offset.
+    /** Provide a view of this memory using the given offset as the base address.  The
+     * returned {@link Pointer} will have a size equal to that of the original
+     * minus the offset.
      * @throws IndexOutOfBoundsException if the requested memory is outside
      * the allocated bounds. 
      */
@@ -104,7 +104,10 @@ public class Memory extends Pointer {
         return share(offset, getSize() - offset);
     }
     
-    /** Provide a view onto this structure from the given offset. 
+    /** Provide a view of this memory using the given offset as the base
+     * address, bounds-limited with the given size.  Maintains a reference to 
+     * the original {@link Memory} object to avoid GC as long as the shared
+     * memory is referenced.
      * @throws IndexOutOfBoundsException if the requested memory is outside
      * the allocated bounds. 
      */
