@@ -38,6 +38,7 @@
   <property name="platform.src" location="contrib/platform/src"/>
   <property name="contrib" location="contrib"/>
   <property name="dist" location="dist"/>
+  <property name="lib.native" location="lib/native"/>
   <property name="test.src" location="test"/>
   <property name="doc" location="doc"/>
   <property name="javadoc" location="${doc}/javadoc"/>
@@ -349,23 +350,23 @@
   <!-- Invalidate native libraries when native API changes -->
   <target name="-native-api-check" depends="javah" unless="jni.valid">
     <echo>Invalidating native code, new checksum is ${md5}</echo>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/darwin.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-x86.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/win32-amd64.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/w32ce-arm.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-i386.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-amd64.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-arm.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ia64.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ppc.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ppc64.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-amd64.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/openbsd-i386.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-x86.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-amd64.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparc.jar" overwrite="true"/>
-    <copy file="${dist}/out-of-date.jar" tofile="${dist}/sunos-sparcv9.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/darwin.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/w32ce-arm.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-i386.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-arm.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-i386.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-i386.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparcv9.jar" overwrite="true"/>
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build.native}" includes="*.o,*jnidispatch*"/>
     </delete>
@@ -508,6 +509,9 @@
         <attribute name="Specification-Version" value="${jni.version}"/>
       </manifest>
     </jar>
+    <copy todir="${lib.native}">
+      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
+    </copy>
   </target>
 
   <target name="compile-tests" depends="compile,native,jar"
@@ -711,6 +715,9 @@
       <fileset dir="${build}">
         <include name="${native.jar}"/>
       </fileset>
+      <fileset dir="${lib.native}">
+        <include name="*.jar"/>
+      </fileset>
     </copy>
     <jar jarfile="${dist-jar}" duplicate="preserve">
       <manifest>
@@ -787,61 +794,61 @@ osname=macos
 "/>
       </manifest>
       <zipfileset src="${build}/${jar}"/>
-      <zipfileset src="${dist}/win32-x86.jar"
+      <zipfileset src="${lib.native}/win32-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-x86"/>
-      <zipfileset src="${dist}/aix-ppc.jar"
+      <zipfileset src="${lib.native}/aix-ppc.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/aix-ppc"/>
-      <zipfileset src="${dist}/aix-ppc64.jar"
+      <zipfileset src="${lib.native}/aix-ppc64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/aix-ppc64"/>
-      <zipfileset src="${dist}/darwin.jar"
+      <zipfileset src="${lib.native}/darwin.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/darwin"/>
-      <zipfileset src="${dist}/linux-i386.jar"
+      <zipfileset src="${lib.native}/linux-i386.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-i386"/>
-      <zipfileset src="${dist}/linux-amd64.jar"
+      <zipfileset src="${lib.native}/linux-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-amd64"/>
-      <zipfileset src="${dist}/linux-arm.jar"
+      <zipfileset src="${lib.native}/linux-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-arm"/>
-      <zipfileset src="${dist}/linux-ia64.jar"
+      <zipfileset src="${lib.native}/linux-ia64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ia64"/>
-      <zipfileset src="${dist}/linux-ppc.jar"
+      <zipfileset src="${lib.native}/linux-ppc.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ppc"/>
-      <zipfileset src="${dist}/linux-ppc64.jar"
+      <zipfileset src="${lib.native}/linux-ppc64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ppc64"/>
-      <zipfileset src="${dist}/sunos-x86.jar"
+      <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
-      <zipfileset src="${dist}/sunos-amd64.jar"
+      <zipfileset src="${lib.native}/sunos-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-amd64"/>
-      <zipfileset src="${dist}/sunos-sparc.jar"
+      <zipfileset src="${lib.native}/sunos-sparc.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparc"/>
-      <zipfileset src="${dist}/sunos-sparcv9.jar"
+      <zipfileset src="${lib.native}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      <zipfileset src="${dist}/freebsd-i386.jar"
+      <zipfileset src="${lib.native}/freebsd-i386.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-i386"/>
-      <zipfileset src="${dist}/freebsd-amd64.jar"
+      <zipfileset src="${lib.native}/freebsd-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/freebsd-amd64"/>
-      <zipfileset src="${dist}/openbsd-i386.jar"
+      <zipfileset src="${lib.native}/openbsd-i386.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/openbsd-i386"/>
-      <zipfileset src="${dist}/win32-amd64.jar"
+      <zipfileset src="${lib.native}/win32-amd64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-amd64"/>
-      <zipfileset src="${dist}/w32ce-arm.jar"
+      <zipfileset src="${lib.native}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
     </jar>
@@ -859,6 +866,10 @@ osname=macos
         <fileset dir="${javadoc}" />
     </jar>
 
+    <zip zipfile="${dist}/doc.zip">
+      <zipfileset dir="${javadoc}" prefix="javadoc"/>
+    </zip>
+    <!-- Javadoc -->
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
       <zipfileset dir="." includes="build.xml,${pom},LICENSE.txt"/>
