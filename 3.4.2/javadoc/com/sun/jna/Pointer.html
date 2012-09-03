@@ -710,7 +710,7 @@ An abstraction for a native pointer data type.  A Pointer instance
 <TD><CODE><B><A HREF="../../../com/sun/jna/Pointer.html#share(long)">share</A></B>(long&nbsp;offset)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view of this memory using the given offset to calculate a new base address.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -719,7 +719,8 @@ An abstraction for a native pointer data type.  A Pointer instance
       long&nbsp;sz)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view of this pointer with a different peer base.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view of this memory using the given offset to calculate a
+ new base address, bounds-limiting the memory with the given size.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -955,6 +956,8 @@ share</H3>
 <PRE>
 public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset)</PRE>
 <DL>
+<DD>Provide a view of this memory using the given offset to calculate a new base address.
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -967,7 +970,8 @@ share</H3>
 public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset,
                      long&nbsp;sz)</PRE>
 <DL>
-<DD>Provide a view of this pointer with a different peer base.
+<DD>Provide a view of this memory using the given offset to calculate a
+ new base address, bounds-limiting the memory with the given size.
 <P>
 <DD><DL>
 </DL>

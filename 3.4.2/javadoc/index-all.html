@@ -21488,16 +21488,18 @@ Static variable in interface com.sun.jna.platform.unix.<A HREF="./com/sun/jna/pl
 <DD>&nbsp;
 <DT><A HREF="./com/sun/jna/Memory.html#share(long)"><B>share(long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
-<DD>Provide a view onto this structure from the given offset.
+<DD>Provide a view of this memory using the given offset as the base address.
 <DT><A HREF="./com/sun/jna/Memory.html#share(long, long)"><B>share(long, long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</A>
-<DD>Provide a view onto this structure from the given offset.
+<DD>Provide a view of this memory using the given offset as the base
+ address, bounds-limited with the given size.
 <DT><A HREF="./com/sun/jna/Pointer.html#share(long)"><B>share(long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>&nbsp;
+<DD>Provide a view of this memory using the given offset to calculate a new base address.
 <DT><A HREF="./com/sun/jna/Pointer.html#share(long, long)"><B>share(long, long)</B></A> - 
 Method in class com.sun.jna.<A HREF="./com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>
-<DD>Provide a view of this pointer with a different peer base.
+<DD>Provide a view of this memory using the given offset to calculate a
+ new base address, bounds-limiting the memory with the given size.
 <DT><A HREF="./com/sun/jna/platform/win32/Shell32.html" title="interface in com.sun.jna.platform.win32"><B>Shell32</B></A> - Interface in <A HREF="./com/sun/jna/platform/win32/package-summary.html">com.sun.jna.platform.win32</A><DD>Shell32.dll Interface.<DT><A HREF="./com/sun/jna/platform/win32/Shell32Util.html" title="class in com.sun.jna.platform.win32"><B>Shell32Util</B></A> - Class in <A HREF="./com/sun/jna/platform/win32/package-summary.html">com.sun.jna.platform.win32</A><DD>Shell32 Utility API.<DT><A HREF="./com/sun/jna/platform/win32/Shell32Util.html#Shell32Util()"><B>Shell32Util()</B></A> - 
 Constructor for class com.sun.jna.platform.win32.<A HREF="./com/sun/jna/platform/win32/Shell32Util.html" title="class in com.sun.jna.platform.win32">Shell32Util</A>
 <DD>&nbsp;

@@ -542,7 +542,7 @@ A <code>Pointer</code> to memory obtained from the native heap via a
 <TD><CODE><B><A HREF="../../../com/sun/jna/Memory.html#share(long)">share</A></B>(long&nbsp;offset)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view onto this structure from the given offset.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view of this memory using the given offset as the base address.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -551,7 +551,8 @@ A <code>Pointer</code> to memory obtained from the native heap via a
       long&nbsp;sz)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view onto this structure from the given offset.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Provide a view of this memory using the given offset as the base
+ address, bounds-limited with the given size.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -760,9 +761,9 @@ share</H3>
 <PRE>
 public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset)</PRE>
 <DL>
-<DD>Provide a view onto this structure from the given offset.  The
- returned <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> will have the same size as the original,
- reduced by the offset.
+<DD>Provide a view of this memory using the given offset as the base address.  The
+ returned <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><CODE>Pointer</CODE></A> will have a size equal to that of the original
+ minus the offset.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#share(long)">share</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
@@ -782,7 +783,10 @@ share</H3>
 public <A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A> <B>share</B>(long&nbsp;offset,
                      long&nbsp;sz)</PRE>
 <DL>
-<DD>Provide a view onto this structure from the given offset.
+<DD>Provide a view of this memory using the given offset as the base
+ address, bounds-limited with the given size.  Maintains a reference to 
+ the original <A HREF="../../../com/sun/jna/Memory.html" title="class in com.sun.jna"><CODE>Memory</CODE></A> object to avoid GC as long as the shared
+ memory is referenced.
 <P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE><A HREF="../../../com/sun/jna/Pointer.html#share(long, long)">share</A></CODE> in class <CODE><A HREF="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A></CODE></DL>
