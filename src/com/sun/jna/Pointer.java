@@ -1154,6 +1154,18 @@ v     * @param wide whether to convert from a wide or standard C string
         setByte(offset + data.length, (byte)0);
     }
     
+    /**
+     * Copy source memory to this pointer location.
+     *
+     * @param dstOffset byte offset from pointer copied to
+     * @param src source pointer
+     * @param srcOffset byte offset from source pointer
+     * @param length copied length
+     */
+    public void copy(long dstOffset, Pointer src, long srcOffset, int length) {
+        Native.memmove(peer + dstOffset, src.peer + srcOffset, length);
+    }
+    
     public String toString() {
         return "native@0x" + Long.toHexString(peer);
     }
