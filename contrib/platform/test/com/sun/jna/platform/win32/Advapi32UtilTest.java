@@ -296,8 +296,16 @@ public class Advapi32UtilTest extends TestCase {
 		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "StringArray", stringsWritten);
 		String[] emptyArray = new String[0];
 		Advapi32Util.registrySetStringArray(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "EmptyStringArray", emptyArray);
-		TreeMap<String, Object> values = Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
-		assertEquals(6, values.keySet().size());
+                Advapi32Util.registrySetBinaryValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "EmptyBinary", new byte[0]);
+                
+                TreeMap<String, Object> values = new TreeMap<String, Object>();
+                try {
+                    values = Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, "Software\\JNA");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+		assertEquals(7, values.keySet().size());
 		assertEquals("FourtyTwo" + uu, values.get("42" + uu));
 		assertEquals(42, values.get("FourtyTwo" + uu));
 		assertEquals("%TEMP%", values.get("ExpandableString"));
