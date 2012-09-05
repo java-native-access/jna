@@ -33,7 +33,7 @@ OS=$(shell uname | sed -e 's/CYGWIN.*/win32/g' \
 	                -e 's/MINGW32.*/win32/g' \
                         -e 's/SunOS.*/solaris/g' \
                         -e 's/NetBSD/netbsd/g' \
-                        -e 's/GNU\/kFreeBSD/linux/g' \
+                        -e 's/GNU\/kFreeBSD/kfreebsd/g' \
                         -e 's/FreeBSD/freebsd/g' \
                         -e 's/OpenBSD/openbsd/g' \
                         -e 's/Darwin.*/darwin/g' \
@@ -182,9 +182,14 @@ endif
 ifneq (,$(findstring bsd,$(OS)))
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
+ifeq ($(OS),kfreebsd)
+CDEFINES+=-DHAVE_PROTECTION
+LDFLAGS+=-Wl,-soname,$@
+else
 CINCLUDES+=-I/usr/X11R6/include
 LDFLAGS=-o $@ -shared
 CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT
+endif
 endif
 
 ifeq ($(OS),solaris)

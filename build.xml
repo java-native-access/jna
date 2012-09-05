@@ -172,7 +172,7 @@
     <condition property="os.prefix" value="freebsd-${os.arch}">
       <os name="FreeBSD"/>
     </condition>
-    <condition property="os.prefix" value="linux-${jre.arch}">
+    <condition property="os.prefix" value="kfreebsd-${jre.arch}">
       <os name="GNU/kFreeBSD"/>
     </condition>
     <condition property="os.prefix" value="openbsd-${os.arch}">
@@ -362,6 +362,8 @@
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ia64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ppc.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/linux-ppc64.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/kfreebsd-i386.jar" overwrite="true"/>
+    <copy file="${dist}/out-of-date.jar" tofile="${dist}/kfreebsd-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-i386.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/freebsd-amd64.jar" overwrite="true"/>
     <copy file="${dist}/out-of-date.jar" tofile="${dist}/openbsd-i386.jar" overwrite="true"/>
@@ -778,6 +780,11 @@ processor=arm;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
+com/sun/jna/kfreebsd-i386/libjnidispatch.so;
+processor=x86;osname=kfreebsd,
+com/sun/jna/kfreebsd-amd64/libjnidispatch.so;
+processor=x86-64;osname=kfreebsd,
+
 com/sun/jna/openbsd-i386/libjnidispatch.so;
 processor=x86;osname=openbsd,
 com/sun/jna/freebsd-i386/libjnidispatch.so;
@@ -820,6 +827,12 @@ osname=macos
       <zipfileset src="${dist}/linux-ppc64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ppc64"/>
+      <zipfileset src="${dist}/kfreebsd-i386.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/kfreebsd-i386"/>
+      <zipfileset src="${dist}/kfreebsd-amd64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/kfreebsd-amd64"/>
       <zipfileset src="${dist}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
