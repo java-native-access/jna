@@ -510,7 +510,7 @@
       </manifest>
     </jar>
     <copy todir="${lib.native}">
-      <fileset dir="${build.native}" includes="jnidispatch.dll,libjnidispatch.*"/>
+      <fileset dir="${build}" includes="${native.jar}"/>
     </copy>
   </target>
 
