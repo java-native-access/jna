@@ -3,7 +3,7 @@
 Java Native Access (JNA)
 ========================
 
-The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.4.1/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.4.1/javadoc/overview-summary.html#overview_description).
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.4.2/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.4.2/javadoc/overview-summary.html#overview_description).
 
 JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code—no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.
 
@@ -18,15 +18,15 @@ JNA includes a platform library with many native functions already mapped as wel
 Download
 ========
 
+Version 3.4.2
+
+* [jna.jar](jna/blob/3.4.2/dist/jna.jar?raw=true)
+* [platform.jar](jna/blob/3.4.2/dist/platform.jar?raw=true)
+
 Version 3.4.1
 
 * [jna.jar](jna/blob/3.4.1/dist/jna.jar?raw=true)
 * [platform.jar](jna/blob/3.4.1/dist/platform.jar?raw=true)
-
-Version 3.4.0
-
-* [jna.jar](jna/blob/3.4.0/dist/jna.jar?raw=true)
-* [platform.jar](jna/blob/3.4.0/dist/platform.jar?raw=true)
 
 Features
 ========
@@ -85,12 +85,12 @@ Using the Library
 * [Direct Method Mapping](jna/tree/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
 * [Setting up a Windows Development Environment](jna/tree/master/www/WindowsDevelopmentEnvironment.md)
-* [Avoiding Crashes](http://twall.github.com/jna/3.4.1/javadoc/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://twall.github.com/jna/3.4.2/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.1/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.2/javadoc/).
 
 Contributing 
 ============
