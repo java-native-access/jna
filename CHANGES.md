@@ -1,3 +1,13 @@
+Release 3.4.3
+=============
+
+Features
+--------
+
+Bug Fixes
+---------
+* Fix: Advapi32Util.registryGetValues() tried to allocate memory for a zero-length REG_BINARY value
+
 Release 3.4.2
 =============
 
