@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
 import com.sun.jna.WString;
@@ -25,6 +27,7 @@ import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.NTSecApi.LSA_FOREST_TRUST_RECORD;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_RECORD;
+import com.sun.jna.platform.win32.Netapi32Util.DomainTrust;
 import com.sun.jna.platform.win32.Netapi32Util.User;
 import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 import com.sun.jna.ptr.IntByReference;
@@ -235,13 +238,14 @@ public class Netapi32Test extends TestCase {
     		return;
 
     	IntByReference domainCount = new IntByReference();
-    	PDS_DOMAIN_TRUSTS.ByReference domains = new PDS_DOMAIN_TRUSTS.ByReference();
+    	PointerByReference domainsPointerRef = new PointerByReference();
     	assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(
-    			null, DsGetDC.DS_DOMAIN_VALID_FLAGS, domains, domainCount));
+    			null, DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainCount));
     	
     	assertTrue(domainCount.getValue() >= 0);
     	
-    	DS_DOMAIN_TRUSTS[] trusts = domains.getTrusts(domainCount.getValue());
+    	DS_DOMAIN_TRUSTS domains = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
+    	DS_DOMAIN_TRUSTS trusts[] = (DS_DOMAIN_TRUSTS[]) domains.toArray(new DS_DOMAIN_TRUSTS[domainCount.getValue()]);
     	for(DS_DOMAIN_TRUSTS trust : trusts) {
 			assertTrue(trust.NetbiosDomainName.length() > 0);
 			assertTrue(trust.DnsDomainName.length() > 0);
@@ -251,6 +255,6 @@ public class Netapi32Test extends TestCase {
     	}
     	
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
-    			domains.getPointer()));   	    	
+    			domainsPointerRef.getValue()));   	    	
     }
 }

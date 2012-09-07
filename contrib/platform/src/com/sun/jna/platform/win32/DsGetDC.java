@@ -100,6 +100,8 @@ public interface DsGetDC extends StdCallLibrary {
          * subnet that the computer is in with a valid site.
          */
         public WString ClientSiteName;
+        
+        { setFieldOrder(new String[] { "DomainControllerName", "DomainControllerAddress", "DomainControllerAddressType", "DomainGuid", "DomainName", "DnsForestName", "Flags", "DcSiteName", "ClientSiteName" }); }
     }	
 	
     /**
@@ -112,6 +114,8 @@ public interface DsGetDC extends StdCallLibrary {
         }
 
         public DOMAIN_CONTROLLER_INFO.ByReference dci;
+        
+        { setFieldOrder(new String[] { "dci" }); }
     }
 	
     /**
@@ -195,6 +199,8 @@ public interface DsGetDC extends StdCallLibrary {
          */
         public GUID DomainGuid;
 
+        { setFieldOrder(new String[] { "NetbiosDomainName", "DnsDomainName", "Flags", "ParentIndex", "TrustType", "TrustAttributes", "DomainSid", "DomainGuid" }); }
+        
         public DS_DOMAIN_TRUSTS() {
         }
 
@@ -212,6 +218,8 @@ public interface DsGetDC extends StdCallLibrary {
         }
 		
         public DS_DOMAIN_TRUSTS.ByReference t;
+        
+        { setFieldOrder(new String[] { "t" }); }
 
         /**
          * Returns domain trusts.

@@ -136,6 +136,8 @@ public interface Sspi extends StdCallLibrary {
     public static class SecHandle extends Structure {		
         public Pointer dwLower;
         public Pointer dwUpper;
+        
+        { setFieldOrder(new String[] { "dwLower", "dwUpper" }); }        
 
         public static class ByReference extends SecHandle implements Structure.ByReference {
 
@@ -172,6 +174,8 @@ public interface Sspi extends StdCallLibrary {
          * The first entry in an array of SecPkgInfo structures.
          */
         public SecHandle.ByReference secHandle;
+        
+        { setFieldOrder(new String[] { "secHandle" }); }        
 		
         public PSecHandle() {
 			
@@ -251,6 +255,8 @@ public interface Sspi extends StdCallLibrary {
          */
         public Pointer pvBuffer;
 	    
+        { setFieldOrder(new String[] { "cbBuffer", "BufferType", "pvBuffer" }); }        
+        
         /**
          * Create a new SECBUFFER_EMPTY buffer.
          */
@@ -313,6 +319,8 @@ public interface Sspi extends StdCallLibrary {
          * Pointer to array of buffers.
          */
         public SecBuffer.ByReference[] pBuffers;
+
+        { setFieldOrder(new String[] { "ulVersion", "cBuffers", "pBuffers" }); }
 
         /**
          * Create a new SecBufferDesc with one SECBUFFER_EMPTY buffer.
@@ -378,6 +386,8 @@ public interface Sspi extends StdCallLibrary {
             dwLower = 0;
             dwUpper = 0;
         }
+        
+        { setFieldOrder(new String[] { "dwLower", "dwUpper" }); }        
     }
 	
     /**
@@ -411,6 +421,8 @@ public interface Sspi extends StdCallLibrary {
         public SecPkgInfo.ByReference[] toArray(int size) {
             return (SecPkgInfo.ByReference[]) pPkgInfo.toArray(size);
         }
+        
+        { setFieldOrder(new String[] { "poPkgInfo" }); }        
     }
 	
     /**
@@ -462,5 +474,7 @@ public interface Sspi extends StdCallLibrary {
             wRPCID = 0;
             cbMaxToken = 0;
         }
+        
+        { setFieldOrder(new String[] { "fCapabilities", "wVersion", "wRPCID", "cbMaxToken", "Name", "Comment" }); }        
     }
 }

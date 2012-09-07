@@ -33,6 +33,7 @@ public class W32APIMapperTest extends TestCase {
             public String string2;
             public boolean bool;
             public boolean bool2;
+            { setFieldOrder(new String[] { "string", "string2", "bool", "bool2" }); }
         }
         String returnWStringArgument(String arg);
         boolean returnInt32Argument(boolean arg);
@@ -44,6 +45,7 @@ public class W32APIMapperTest extends TestCase {
             public String string2;
             public boolean bool;
             public boolean bool2;
+            { setFieldOrder(new String[] { "string", "string2", "bool", "bool2" }); }
         }
         String returnStringArgument(String arg);
         boolean returnInt32Argument(boolean arg);

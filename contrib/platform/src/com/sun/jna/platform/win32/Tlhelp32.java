@@ -135,5 +135,7 @@ public interface Tlhelp32 extends StdCallLibrary {
          * retrieve the full path of the executable file for a 64-bit process.
          */
         public char[] szExeFile = new char[WinDef.MAX_PATH];
+        
+        { setFieldOrder(new String[] { "dwSize", "cntUsage", "th32ProcessID", "th32DefaultHeapID", "th32ModuleID", "cntThreads", "th32ParentProcessID", "pcPriClassBase", "dwFlags", "szExeFile" }); }                
     }
 }

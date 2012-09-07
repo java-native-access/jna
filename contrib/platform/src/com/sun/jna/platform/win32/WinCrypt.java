@@ -58,6 +58,8 @@ public interface WinCrypt extends StdCallLibrary {
          * A pointer to a block of data bytes. 
          */
         public Pointer pbData;
+
+        { setFieldOrder(new String[] { "cbData", "pbData" }); }                
         
         /**
          * Get byte data.
@@ -100,6 +102,8 @@ public interface WinCrypt extends StdCallLibrary {
          * A string containing the text of a prompt to be displayed. 
          */
         public String szPrompt;
+        
+        { setFieldOrder(new String[] { "cbSize", "dwPromptFlags", "hwndApp", "szPrompt" }); }                
     }
 	
     //

@@ -108,5 +108,7 @@ public interface ShellAPI extends StdCallLibrary {
             }
             return encoded + "\0";
         }
+        
+        { setFieldOrder(new String[] { "hwnd", "wFunc", "pFrom", "pTo", "fFlags", "fAnyOperationsAborted", "pNameMappings", "lpszProgressTitle" }); }
     }
 }

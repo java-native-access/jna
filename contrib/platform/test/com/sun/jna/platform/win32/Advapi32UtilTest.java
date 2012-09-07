@@ -173,9 +173,9 @@ public class Advapi32UtilTest extends TestCase {
 	
 	public void testRegistryValueExists() {
 		assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, 
-				"Software\\Microsoft", ""));
+				"Software\\JavaSoft", ""));
 		assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, 
-				"Software\\Microsoft", "KeyDoesNotExist"));
+				"Software\\JavaSoft", "KeyDoesNotExist"));
 		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, 
 				"SYSTEM\\CurrentControlSet\\Control", "SystemBootDevice"));
 	}	

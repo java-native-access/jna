@@ -113,5 +113,7 @@ public interface VerRsrc extends StdCallLibrary {
          * The least significant 32 bits of the file's 64-bit binary creation date and time stamp.
          */
         public WinDef.DWORD dwFileDateLS;
+        
+        { setFieldOrder(new String[] { "dwSignature", "dwStrucVersion", "dwFileVersionMS", "dwFileVersionLS", "dwProductVersionMS", "dwProductVersionLS", "dwFileFlagsMask", "dwFileFlags", "dwFileOS", "dwFileType", "dwFileSubtype", "dwFileDateMS", "dwFileDateLS" }); }
     }
 }

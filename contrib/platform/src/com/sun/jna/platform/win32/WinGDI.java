@@ -30,6 +30,8 @@ public interface WinGDI extends StdCallLibrary {
         public int nCount;
         public int nRgnSize;
         public RECT rcBound;
+        
+        { setFieldOrder(new String[] { "dwSize", "iType", "nCount", "nRgnSize", "rcBound" }); }
     }
     
     public class RGNDATA extends Structure {
@@ -39,6 +41,8 @@ public interface WinGDI extends StdCallLibrary {
             Buffer = new byte[bufferSize];
             allocateMemory();
         }
+        
+        { setFieldOrder(new String[] { "rdh", "Buffer" }); }
     }
 
     public int RGN_AND = 1;
@@ -63,6 +67,8 @@ public interface WinGDI extends StdCallLibrary {
     public int BI_PNG = 5;
     
     public class BITMAPINFOHEADER extends Structure {
+        { setFieldOrder(new String[] { "biSize", "biWidth", "biHeight", "biPlanes", "biBitCount", "biCompression", "biSizeImage", "biXPelsPerMeter", "biYPelsPerMeter", "biClrUsed", "biClrImportant" }); }        
+
         public int biSize = size();
         public int biWidth;
         public int biHeight;
@@ -81,11 +87,16 @@ public interface WinGDI extends StdCallLibrary {
         public byte rgbGreen;
         public byte rgbRed;
         public byte rgbReserved = 0;
+        
+        { setFieldOrder(new String[] { "rgbBlue", "rgbGreen", "rgbRed", "rgbReserved" }); }        
     }
     
     public class BITMAPINFO extends Structure {
         public BITMAPINFOHEADER bmiHeader = new BITMAPINFOHEADER();
         public RGBQUAD[] bmiColors = new RGBQUAD[1];
+
+        { setFieldOrder(new String[] { "bmiHeader", "bmiColors" }); }        
+        
         public BITMAPINFO() { this(1); }
         public BITMAPINFO(int size) {
             bmiColors = new RGBQUAD[size];
