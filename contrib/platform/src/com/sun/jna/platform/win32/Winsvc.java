@@ -101,6 +101,7 @@ public interface Winsvc extends StdCallLibrary {
             super();
         }
 
+        { setFieldOrder(new String[] { "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint" }); }
     }
 
     /**
@@ -180,8 +181,11 @@ public interface Winsvc extends StdCallLibrary {
          * This member can be one of the following values: 0, or SERVICE_RUNS_IN_SYSTEM_PROCESS
          */
         public int   dwServiceFlags;
+        
+        { setFieldOrder(new String[] { "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint", "dwProcessId", "dwServiceFlags" }); }
 		
         public SERVICE_STATUS_PROCESS() {
+        	
         }
 		
         public SERVICE_STATUS_PROCESS(int size) {

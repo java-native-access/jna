@@ -52,6 +52,8 @@ public interface NTSecApi extends StdCallLibrary {
          */
         public Pointer Buffer;
 		
+        { setFieldOrder(new String[] { "Length", "MaximumLength", "Buffer" }); }
+
         /**
          * String representation of the buffer.
          * @return
@@ -97,11 +99,15 @@ public interface NTSecApi extends StdCallLibrary {
         public PSID.ByReference Sid;
         public LSA_UNICODE_STRING DnsName;
         public LSA_UNICODE_STRING NetbiosName;
+        
+        { setFieldOrder(new String[] { "Sid", "DnsName", "NetbiosName" }); }
     }
 	
     public static class LSA_FOREST_TRUST_BINARY_DATA extends Structure {
         public int Length;
         public Pointer Buffer;
+        
+        { setFieldOrder(new String[] { "Length", "Buffer" }); }
     }
 	
     public static class LSA_FOREST_TRUST_RECORD extends Structure {    
@@ -144,7 +150,9 @@ public interface NTSecApi extends StdCallLibrary {
          * Data type depending on ForestTrustType. 
          */
         public UNION u;
-		
+
+        { setFieldOrder(new String[] { "Flags", "ForestTrustType", "Time", "u" }); }
+
         public void read() {
             super.read();
 			
@@ -171,6 +179,8 @@ public interface NTSecApi extends StdCallLibrary {
         }
 		
         public LSA_FOREST_TRUST_RECORD.ByReference tr;	
+        
+        { setFieldOrder(new String[] { "tr" }); }
     }
 	
     public static class LSA_FOREST_TRUST_INFORMATION extends Structure {
@@ -198,6 +208,8 @@ public interface NTSecApi extends StdCallLibrary {
         public PLSA_FOREST_TRUST_RECORD[] getEntries() {
             return (PLSA_FOREST_TRUST_RECORD[]) Entries.toArray(RecordCount);
         }
+        
+        { setFieldOrder(new String[] { "RecordCount" }); }
     }
     /**
      * The LSA_FOREST_TRUST_INFORMATION structure contains Local Security Authority 
@@ -209,6 +221,8 @@ public interface NTSecApi extends StdCallLibrary {
 			
         }
 
-        public LSA_FOREST_TRUST_INFORMATION.ByReference fti;		
+        public LSA_FOREST_TRUST_INFORMATION.ByReference fti;
+        
+        { setFieldOrder(new String[] { "fti" }); }
     }
 }

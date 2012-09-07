@@ -63,6 +63,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public HWND hwndMoveSize;
         public HWND hwndCaret;
         public RECT rcCaret;
+        
+        { setFieldOrder(new String[] { "cbSize", "flags", "hwndActive", "hwndFocus", "hwndCapture", "hwndMenuOwner", "hwndMoveSize", "hwndCaret", "rcCaret" }); }                        
     }
 
     public class WINDOWINFO extends Structure {
@@ -76,6 +78,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int cyWindowBorders;
         public short atomWindowType;
         public short wCreatorVersion;
+
+        { setFieldOrder(new String[] { "cbSize", "rcWindow", "rcClient", "dwStyle", "dwExStyle", "dwWindowStatus", "cxWindowBorders", "cyWindowBorders", "atomWindowType", "wCreatorVersion" }); }
     }
 
     int GWL_EXSTYLE = -20;
@@ -112,6 +116,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
             this.x = x; 
             this.y = y; 
         }
+
+        { setFieldOrder(new String[] { "x", "y" }); }
     }
     
     public class MSG extends Structure {
@@ -121,6 +127,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public LPARAM lParam;
         public int time;
         public POINT pt;
+        
+        { setFieldOrder(new String[] { "hWnd", "message", "wParam", "lParam", "time", "pt" }); }        
     }
 
     public class FLASHWINFO extends Structure {
@@ -129,6 +137,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int dwFlags;
         public int uCount;
         public int dwTimeout;
+        
+        { setFieldOrder(new String[] { "cbSize", "hWnd", "dwFlags", "uCount", "dwTimeout" }); }                
     }
 
     public interface WNDENUMPROC extends StdCallCallback {
@@ -148,6 +158,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
             this.cx = w; 
             this.cy = h; 
         }
+        
+        { setFieldOrder(new String[] { "cx", "cy" }); }                        
     }
     
     int AC_SRC_OVER = 0x00;
@@ -160,6 +172,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public byte BlendFlags = 0; // only valid value
         public byte SourceConstantAlpha;
         public byte AlphaFormat;
+        
+        { setFieldOrder(new String[] { "BlendOp", "BlendFlags", "SourceConstantAlpha", "AlphaFormat" }); }                
     }
 
     int VK_SHIFT = 16;
@@ -259,6 +273,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int flags;
         public int time;
         public ULONG_PTR dwExtraInfo;
+        
+        { setFieldOrder(new String[] { "vkCode", "scanCode", "flags", "time", "dwExtraInfo" }); }                
     }
 
     int SM_CXSCREEN = 0;
@@ -485,6 +501,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.DWORD uMsg;
         public WinDef.WORD wParamL;
         public WinDef.WORD wParamH;
+        
+        { setFieldOrder(new String[] { "uMsg", "wParamL", "wParamH" }); }                
     }
 
     /**
@@ -516,6 +534,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
         public WinDef.DWORD type;
         public INPUT_UNION input = new INPUT_UNION();
+
+        { setFieldOrder(new String[] { "type", "input" }); }                
 
         public static class INPUT_UNION extends Union {
 
@@ -604,6 +624,8 @@ public interface WinUser extends StdCallLibrary, WinDef {
          * information.
          */
         public BaseTSD.ULONG_PTR dwExtraInfo;
+        
+        { setFieldOrder(new String[] { "wVk", "wScan", "dwFlags", "time", "dwExtraInfo" }); }                
     }
 
     /**
@@ -634,12 +656,16 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.DWORD dwFlags;
         public WinDef.DWORD time;
         public BaseTSD.ULONG_PTR dwExtraInfo;
+
+        { setFieldOrder(new String[] { "dx", "dy", "mouseData", "dwFlags", "time", "dwExtraInfo" }); }                
     }
 
     /**
      * Contains the time of the last input.
      */
     public static class LASTINPUTINFO extends Structure {
+        { setFieldOrder(new String[] { "cbSize", "dwTime" }); }                
+
         public int cbSize = size();
 
         // Tick count of when the last input event was received.

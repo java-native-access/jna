@@ -323,6 +323,8 @@ public interface WinDef extends StdCallLibrary {
         public int right;
         public int bottom;
         
+        { setFieldOrder(new String[] { "left", "top", "right", "bottom" }); }
+        
         public Rectangle toRectangle() {
             return new Rectangle(left, top, right-left, bottom-top);
         }

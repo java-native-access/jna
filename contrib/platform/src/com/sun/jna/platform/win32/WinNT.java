@@ -234,23 +234,25 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * The LUID_AND_ATTRIBUTES structure represents a locally unique identifier (LUID) and its attributes.
      */
     public static class LUID_AND_ATTRIBUTES extends Structure {
-	/**
-	 * Specifies an LUID value.
-	 */
-	public LUID  Luid;
-	
-	/**
-	 * Specifies attributes of the LUID. This value contains up to 32 one-bit flags.
-	 * Its meaning is dependent on the definition and use of the LUID.
-	 */
-	public DWORD Attributes;
-	
-	public LUID_AND_ATTRIBUTES() {}
-	
-	public LUID_AND_ATTRIBUTES(LUID luid, DWORD attributes) {
-	    this.Luid = luid;
-	    this.Attributes = attributes;
-	}
+		/**
+		 * Specifies an LUID value.
+		 */
+		public LUID  Luid;
+		
+		/**
+		 * Specifies attributes of the LUID. This value contains up to 32 one-bit flags.
+		 * Its meaning is dependent on the definition and use of the LUID.
+		 */
+		public DWORD Attributes;
+		
+		public LUID_AND_ATTRIBUTES() {}
+		
+		public LUID_AND_ATTRIBUTES(LUID luid, DWORD attributes) {
+		    this.Luid = luid;
+		    this.Attributes = attributes;
+		}
+		
+		{ setFieldOrder(new String[] { "Luid", "Attributes" }); }
     }
     
     /**
@@ -258,24 +260,26 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * attributes. SIDs are used to uniquely identify users or groups.
      */
     public static class SID_AND_ATTRIBUTES extends Structure {
-	public SID_AND_ATTRIBUTES() {
-	    super();
-	}
-	
-	public SID_AND_ATTRIBUTES(Pointer memory) {
-	    super(memory);
-	}
-	
-	/**
-	 * Pointer to a SID structure. 
-	 */
-	public PSID.ByReference Sid;
-	
-	/**
-	 * Specifies attributes of the SID. This value contains up to 32 one-bit flags.
-	 * Its meaning depends on the definition and use of the SID. 
-	 */
-	public int Attributes;
+		public SID_AND_ATTRIBUTES() {
+		    super();
+		}
+		
+		public SID_AND_ATTRIBUTES(Pointer memory) {
+		    super(memory);
+		}
+		
+		/**
+		 * Pointer to a SID structure. 
+		 */
+		public PSID.ByReference Sid;
+		
+		/**
+		 * Specifies attributes of the SID. This value contains up to 32 one-bit flags.
+		 * Its meaning depends on the definition and use of the SID. 
+		 */
+		public int Attributes;
+		
+		{ setFieldOrder(new String[] { "Sid", "Attributes" }); }
     }
     
     /**
@@ -283,105 +287,114 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * security identifier (SID) that will be applied to newly created objects.
      */
     public static class TOKEN_OWNER extends Structure {
-	public TOKEN_OWNER() {
-	    super();
+		public TOKEN_OWNER() {
+		    super();
+		}
+		
+		public TOKEN_OWNER(int size) {
+		    super(new Memory(size));
+		}
+		
+		public TOKEN_OWNER(Pointer memory) {
+		    super(memory);
+		    read();
+		}
+		
+		/**
+		 * Pointer to a SID structure representing a user who will become the owner of any 
+		 * objects created by a process using this access token. The SID must be one of the 
+		 * user or group SIDs already in the token. 
+		 */
+		public PSID.ByReference Owner; // PSID
+		
+		{ setFieldOrder(new String[] { "Owner" }); }		
 	}
-	
-	public TOKEN_OWNER(int size) {
-	    super(new Memory(size));
+		
+	public static class PSID extends Structure {
+		
+		public static class ByReference extends PSID implements Structure.ByReference {
+		
+		}
+		
+		public PSID() {
+		    super();
+		}
+		
+		public PSID(byte[] data) {
+		    super(new Memory(data.length));
+		    getPointer().write(0, data, 0, data.length);
+		    read();
+		}
+		
+		public PSID(int size) {
+		    super(new Memory(size));
+		}
+		
+		public PSID(Pointer memory) {
+		    super(memory);
+		        read();
+		}
+		
+		public byte[] getBytes() {
+		    int len = Advapi32.INSTANCE.GetLengthSid(this);
+		    return getPointer().getByteArray(0, len);
+		}
+		
+		public Pointer sid;
+		
+		{ setFieldOrder(new String[] { "sid" }); }		
 	}
-
-	public TOKEN_OWNER(Pointer memory) {
-	    super(memory);
-	    read();
-	}
-
-	/**
-	 * Pointer to a SID structure representing a user who will become the owner of any 
-	 * objects created by a process using this access token. The SID must be one of the 
-	 * user or group SIDs already in the token. 
-	 */
-	public PSID.ByReference Owner; // PSID
-    }
-
-    public static class PSID extends Structure {
-	public static class ByReference extends PSID implements Structure.ByReference {
-	}
-
-	public PSID() {
-	    super();
-	}
-
-	public PSID(byte[] data) {
-	    super(new Memory(data.length));
-	    getPointer().write(0, data, 0, data.length);
-	    read();
-	}
-
-	public PSID(int size) {
-	    super(new Memory(size));
-	}
-
-	public PSID(Pointer memory) {
-	    super(memory);
-            read();
-	}
-
-	public byte[] getBytes() {
-	    int len = Advapi32.INSTANCE.GetLengthSid(this);
-	    return getPointer().getByteArray(0, len);
-	}
-
-	public Pointer sid;
-    }
-
-    public static class PSIDByReference extends ByReference {
-	public PSIDByReference() {
-	    this(null);
-	}
-
-	public PSIDByReference(PSID h) {
-	    super(Pointer.SIZE);
-	    setValue(h);
-	}
-
-	public void setValue(PSID h) {
-	    getPointer().setPointer(0, h != null ? h.getPointer() : null);
-	}
-
-	public PSID getValue() {
-	    Pointer p = getPointer().getPointer(0);
-	    if (p == null) {
-		return null;
-	    } else {
-		return new PSID(p);
-	    }
-	}
+		
+	public static class PSIDByReference extends ByReference {
+		
+		public PSIDByReference() {
+		    this(null);
+		}
+		
+		public PSIDByReference(PSID h) {
+		    super(Pointer.SIZE);
+		    setValue(h);
+		}
+		
+		public void setValue(PSID h) {
+		    getPointer().setPointer(0, h != null ? h.getPointer() : null);
+		}
+		
+		public PSID getValue() {
+		    Pointer p = getPointer().getPointer(0);
+		    if (p == null) {
+		    	return null;
+		    } else {
+		    	return new PSID(p);
+		    }
+		}
     }    
     
     /**
      * The TOKEN_USER structure identifies the user associated with an access token.
      */
     public static class TOKEN_USER extends Structure {
-	public TOKEN_USER() {
-	    super();
-	}
+		public TOKEN_USER() {
+		    super();
+		}
+		
+		public TOKEN_USER(Pointer memory) {
+		    super(memory);
+		    read();
+		}
+		
+		public TOKEN_USER(int size) {
+		    super(new Memory(size));
+		}
 	
-	public TOKEN_USER(Pointer memory) {
-	    super(memory);
-	    read();
-	}
-	
-	public TOKEN_USER(int size) {
-	    super(new Memory(size));
-	}
-
-	/**
-	 * Specifies a SID_AND_ATTRIBUTES structure representing the user associated with 
-	 * the access token. There are currently no attributes defined for user security 
-	 * identifiers (SIDs). 
-	 */
-	public SID_AND_ATTRIBUTES User;
+		/**
+		 * Specifies a SID_AND_ATTRIBUTES structure representing the user associated with 
+		 * the access token. There are currently no attributes defined for user security 
+		 * identifiers (SIDs). 
+		 */
+		public SID_AND_ATTRIBUTES User;
+		
+		{ setFieldOrder(new String[] { "User" }); }
     }
     
     /**
@@ -389,56 +402,60 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * (SIDs) in an access token.
      */
     public static class TOKEN_GROUPS extends Structure {
-	public TOKEN_GROUPS() {
-	    super();
-	}
+		public TOKEN_GROUPS() {
+		    super();
+		}
+		
+		public TOKEN_GROUPS(Pointer memory) {
+		    super(memory);
+		    read();
+		}
+		
+		public TOKEN_GROUPS(int size) {
+		    super(new Memory(size));
+		}
 	
-	public TOKEN_GROUPS(Pointer memory) {
-	    super(memory);
-	    read();
-	}
-	
-	public TOKEN_GROUPS(int size) {
-	    super(new Memory(size));
-	}
-
-	/**
-	 * Specifies the number of groups in the access token. 
-	 */
-	public int GroupCount;
-	public SID_AND_ATTRIBUTES Group0;
-	
-	/**
-	 * Specifies an array of SID_AND_ATTRIBUTES structures that contain a set of SIDs 
-	 * and corresponding attributes. 
-	 */
-	public SID_AND_ATTRIBUTES[] getGroups() {
-	    return (SID_AND_ATTRIBUTES[]) Group0.toArray(GroupCount);
-	}
+		/**
+		 * Specifies the number of groups in the access token. 
+		 */
+		public int GroupCount;
+		public SID_AND_ATTRIBUTES Group0;
+		
+		/**
+		 * Specifies an array of SID_AND_ATTRIBUTES structures that contain a set of SIDs 
+		 * and corresponding attributes. 
+		 */
+		public SID_AND_ATTRIBUTES[] getGroups() {
+		    return (SID_AND_ATTRIBUTES[]) Group0.toArray(GroupCount);
+		}
+		
+		{ setFieldOrder(new String[] { "GroupCount", "Group0" }); }
     }
     
     /**
      * The TOKEN_PRIVILEGES structure contains information about a set of privileges for an access token.
      */
     public static class TOKEN_PRIVILEGES extends Structure {
-	/**
-	 * This must be set to the number of entries in the Privileges array.
-	 */
-	public DWORD PrivilegeCount;
-
-	/**
-	 * Specifies an array of LUID_AND_ATTRIBUTES structures.
-	 * Each structure contains the LUID and attributes of a privilege.
-	 */
-	public LUID_AND_ATTRIBUTES Privileges[];
-
-	/**
-	 * @param nbOfPrivileges Desired size of the Privileges array
-	 */
-	public TOKEN_PRIVILEGES(int nbOfPrivileges) {
-	    PrivilegeCount = new DWORD(nbOfPrivileges);
-	    Privileges = new LUID_AND_ATTRIBUTES[nbOfPrivileges];
-	}
+		/**
+		 * This must be set to the number of entries in the Privileges array.
+		 */
+		public DWORD PrivilegeCount;
+		
+		/**
+		 * Specifies an array of LUID_AND_ATTRIBUTES structures.
+		 * Each structure contains the LUID and attributes of a privilege.
+		 */
+		public LUID_AND_ATTRIBUTES Privileges[];
+		
+		/**
+		 * @param nbOfPrivileges Desired size of the Privileges array
+		 */
+		public TOKEN_PRIVILEGES(int nbOfPrivileges) {
+		    PrivilegeCount = new DWORD(nbOfPrivileges);
+		    Privileges = new LUID_AND_ATTRIBUTES[nbOfPrivileges];
+		}
+		
+		{ setFieldOrder(new String[] { "PrivilegeCount", "Privileges" }); }		
     }
 
     /**
@@ -642,43 +659,46 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * for input.
      */
     public static class FILE_NOTIFY_INFORMATION extends Structure {
-	public int NextEntryOffset;
-	public int Action;
-	public int FileNameLength;
-	// filename is not nul-terminated, so we can't use a String/WString
-	public char[] FileName = new char[1];
-	
-	private FILE_NOTIFY_INFORMATION() { 
-	}
-	
-	public FILE_NOTIFY_INFORMATION(int size) {
-	    if (size < size()) {
-	        throw new IllegalArgumentException("Size must greater than " + size() + ", requested " + size);
-	    }
-	    allocateMemory(size);
-	}
-       
-	/** WARNING: this filename may be either the short or long form of the filename. */
-	public String getFilename() {
-	    return new String(FileName, 0, FileNameLength/2);
-	}
-	
-	public void read() {
-	    // avoid reading filename until we know how long it is
-	    FileName = new char[0];
-	    super.read();
-	    FileName = getPointer().getCharArray(12, FileNameLength/2);
-	}
-	
-	public FILE_NOTIFY_INFORMATION next() {
-	    if (NextEntryOffset == 0) {
-		return null;
-	    }
-	    FILE_NOTIFY_INFORMATION next = new FILE_NOTIFY_INFORMATION();
-	    next.useMemory(getPointer(), NextEntryOffset);
-	    next.read();
-	    return next;
-	}
+		public int NextEntryOffset;
+		public int Action;
+		public int FileNameLength;
+		// filename is not nul-terminated, so we can't use a String/WString
+		public char[] FileName = new char[1];
+		
+		{ setFieldOrder(new String[] { "NextEntryOffset", "Action", "FileNameLength", "FileName" }); }		
+
+		private FILE_NOTIFY_INFORMATION() { 
+
+		}
+		
+		public FILE_NOTIFY_INFORMATION(int size) {
+		    if (size < size()) {
+		        throw new IllegalArgumentException("Size must greater than " + size() + ", requested " + size);
+		    }
+		    allocateMemory(size);
+		}
+	       
+		/** WARNING: this filename may be either the short or long form of the filename. */
+		public String getFilename() {
+		    return new String(FileName, 0, FileNameLength/2);
+		}
+		
+		public void read() {
+		    // avoid reading filename until we know how long it is
+		    FileName = new char[0];
+		    super.read();
+		    FileName = getPointer().getCharArray(12, FileNameLength/2);
+		}
+		
+		public FILE_NOTIFY_INFORMATION next() {
+		    if (NextEntryOffset == 0) {
+		    	return null;
+		    }
+		    FILE_NOTIFY_INFORMATION next = new FILE_NOTIFY_INFORMATION();
+		    next.useMemory(getPointer(), NextEntryOffset);
+		    next.read();
+		    return next;
+		}
     }    
     
     /**
@@ -929,118 +949,123 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * that generated it until the system is restarted. 
      */
     public static class LUID extends Structure {
-	public int LowPart;
-	public int HighPart;
+		public int LowPart;
+		public int HighPart;
+		
+		{ setFieldOrder(new String[] { "LowPart", "HighPart" }); }		
     }
     
     /**
      * A 64-bit integer;
      */
     public static class LARGE_INTEGER extends Structure {
-	public static class ByReference extends LARGE_INTEGER 
-	    implements Structure.ByReference {
-	}
+		public static class ByReference extends LARGE_INTEGER implements Structure.ByReference {
+			
+		}
+		
+		public static class LowHigh extends Structure {
+		    public DWORD LowPart;
+		    public DWORD HighPart;
+			{ setFieldOrder(new String[] { "LowPart", "HighPart" }); }		
+		}
 	
-	public static class LowHigh extends Structure {
-	    public DWORD LowPart;
-	    public DWORD HighPart;
-	}
+		public static class UNION extends Union {
+		    public LowHigh lh;
+		    public long value;
+		}
+	
+		public UNION u;
 
-	public static class UNION extends Union {
-	    public LowHigh lh;
-	    public long value;
-	}
-
-	public UNION u;
-
-	/**
-	 * Low DWORD.
-	 * @return
-	 *  DWORD.
-	 */
-	public DWORD getLow() {
-	    return u.lh.LowPart;
-	}
-
-	/**
-	 * High DWORD.
-	 * @return
-	 *  DWORD.
-	 */
-	public DWORD getHigh() {
-	    return u.lh.HighPart;
-	}
-
-	/**
-	 * 64-bit value.
-	 * @return
-	 *  64-bit value.
-	 */
-	public long getValue() {
-	    return u.value;
-	}
+		{ setFieldOrder(new String[] { "u" }); }		
+		
+		/**
+		 * Low DWORD.
+		 * @return
+		 *  DWORD.
+		 */
+		public DWORD getLow() {
+		    return u.lh.LowPart;
+		}
+	
+		/**
+		 * High DWORD.
+		 * @return
+		 *  DWORD.
+		 */
+		public DWORD getHigh() {
+		    return u.lh.HighPart;
+		}
+	
+		/**
+		 * 64-bit value.
+		 * @return
+		 *  64-bit value.
+		 */
+		public long getValue() {
+		    return u.value;
+		}
     }
     
     /**
      * Handle to an object.
      */
     public static class HANDLE extends PointerType {
-	private boolean immutable;
-
-	public HANDLE() {}
-
-	public HANDLE(Pointer p) {
-	    setPointer(p);
-	    immutable = true;
-	}
-	
-	/** Override to the appropriate object for INVALID_HANDLE_VALUE. */
-	public Object fromNative(Object nativeValue, FromNativeContext context) {
-	    Object o = super.fromNative(nativeValue, context);
-	    if (WinBase.INVALID_HANDLE_VALUE.equals(o)) {
-		return WinBase.INVALID_HANDLE_VALUE;
-	    }
-	    return o;
-	}
-	
-	public void setPointer(Pointer p) {
-	    if (immutable) {
-		throw new UnsupportedOperationException("immutable reference");
-	    }
- 
-	    super.setPointer(p);
-	}
+		private boolean immutable;
+		
+		public HANDLE() {}
+		
+		public HANDLE(Pointer p) {
+		    setPointer(p);
+		    immutable = true;
+		}
+		
+		/** Override to the appropriate object for INVALID_HANDLE_VALUE. */
+		public Object fromNative(Object nativeValue, FromNativeContext context) {
+		    Object o = super.fromNative(nativeValue, context);
+		    if (WinBase.INVALID_HANDLE_VALUE.equals(o)) {
+		    	return WinBase.INVALID_HANDLE_VALUE;
+		    }
+		    return o;
+		}
+		
+		public void setPointer(Pointer p) {
+		    if (immutable) {
+		    	throw new UnsupportedOperationException("immutable reference");
+			}
+		 
+			super.setPointer(p);
+		}
     }
 
     /**
      * LPHANDLE
      */
     public static class HANDLEByReference extends ByReference {
-	public HANDLEByReference() {
-	    this(null);
-	}
-	
-	public HANDLEByReference(HANDLE h) {
-	    super(Pointer.SIZE);
-	    setValue(h);
-	}
-	
-	public void setValue(HANDLE h) {
-	    getPointer().setPointer(0, h != null ? h.getPointer() : null);
-	}
-	
-	public HANDLE getValue() {
-	    Pointer p = getPointer().getPointer(0);
-	    if (p == null) {
-		return null;
-	    }
-	    if (WinBase.INVALID_HANDLE_VALUE.getPointer().equals(p)) {
-		return WinBase.INVALID_HANDLE_VALUE;
-	    }
-	    HANDLE h = new HANDLE();
-	    h.setPointer(p);
-	    return h;
-	}
+		public HANDLEByReference() {
+		    this(null);
+		}
+		
+		public HANDLEByReference(HANDLE h) {
+		    super(Pointer.SIZE);
+		    setValue(h);
+		}
+		
+		public void setValue(HANDLE h) {
+		    getPointer().setPointer(0, h != null ? h.getPointer() : null);
+		}
+		
+		public HANDLE getValue() {
+		    Pointer p = getPointer().getPointer(0);
+		    if (p == null) {
+		    	return null;
+		    }
+		    if (WinBase.INVALID_HANDLE_VALUE.getPointer().equals(p)) {
+		    	return WinBase.INVALID_HANDLE_VALUE;
+		    }
+		    HANDLE h = new HANDLE();
+		    h.setPointer(p);
+		    return h;
+		}
     }
     
 
@@ -1049,12 +1074,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * nonzero to represent an error code or status information. 
      */
     class HRESULT extends NativeLong {
-	public HRESULT() {
-	}
-	
-	public HRESULT(int value) {
-	    super(value);
-	}
+		public HRESULT() {
+		}
+		
+		public HRESULT(int value) {
+		    super(value);
+		}
     }
     
     /**
@@ -1063,405 +1088,405 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * from this list.
      */
     public abstract class WELL_KNOWN_SID_TYPE {
-	/**
-	 * Indicates a null SID.
-	 */
-	public static final int WinNullSid = 0;
-
-	/**
-	 * Indicates a SID that matches everyone.
-	 */
-	public static final int WinWorldSid = 1;
-
-	/**
-	 * Indicates a local SID. 
-	 */
-	public static final int WinLocalSid = 2;
-
-	/**
-	 * Indicates a SID that matches the owner or creator of an object.
-	 */
-	public static final int WinCreatorOwnerSid = 3;
-
-	/**
-	 * Indicates a SID that matches the creator group of an object. 
-	 */
-	public static final int WinCreatorGroupSid = 4;
-
-	/**
-	 * Indicates a creator owner server SID.
-	 */
-	public static final int WinCreatorOwnerServerSid = 5;
-
-	/**
-	 * Indicates a creator group server SID. 
-	 */
-	public static final int WinCreatorGroupServerSid = 6;
-
-	/**
-	 * Indicates a SID for the Windows NT authority. 
-	 */
-	public static final int WinNtAuthoritySid = 7;
-
-	/**
-	 * Indicates a SID for a dial-up account.
-	 */
-	public static final int WinDialupSid = 8;
-
-	/**
-	 * Indicates a SID for a network account. This SID is added to the process of a token 
-	 * when it logs on across a network. The corresponding logon type is 
-	 * LOGON32_LOGON_NETWORK. 
-	 */
-	public static final int WinNetworkSid = 9;
-
-	/**
-	 * Indicates a SID for a batch process. This SID is added to the process of a token 
-	 * when it logs on as a batch job. The corresponding logon type is LOGON32_LOGON_BATCH. 
-	 */
-	public static final int WinBatchSid = 10;
-
-	/**
-	 * Indicates a SID for an interactive account. This SID is added to the process of a 
-	 * token when it logs on interactively. The corresponding logon type is
-	 * LOGON32_LOGON_INTERACTIVE. 
-	 */
-	public static final int WinInteractiveSid = 11;
-
-	/**
-	 * Indicates a SID for a service. This SID is added to the process of a token when it 
-	 * logs on as a service. The corresponding logon type is LOGON32_LOGON_bSERVICE.
-	 */
-	public static final int WinServiceSid = 12;
-
-	/**
-	 * Indicates a SID for the anonymous account. 
-	 */
-	public static final int WinAnonymousSid = 13;
-
-	/**
-	 * Indicates a proxy SID. 
-	 */
-	public static final int WinProxySid = 14;
-
-	/**
-	 * Indicates a SID for an enterprise controller. 
-	 */
-	public static final int WinEnterpriseControllersSid = 15;
-
-	/**
-	 * Indicates a SID for self.
-	 */
-	public static final int WinSelfSid = 16;
-
-	/**
-	 * Indicates a SID that matches any authenticated user. 
-	 */
-	public static final int WinAuthenticatedUserSid = 17;
-
-	/**
-	 * Indicates a SID for restricted code. 
-	 */
-	public static final int WinRestrictedCodeSid = 18;
-
-	/**
-	 * Indicates a SID that matches a terminal server account. 
-	 */
-	public static final int WinTerminalServerSid = 19;
-
-	/**
-	 * Indicates a SID that matches remote logons. 
-	 */
-	public static final int WinRemoteLogonIdSid = 20;
-
-	/**
-	 * Indicates a SID that matches logon IDs. 
-	 */
-	public static final int WinLogonIdsSid = 21;
-
-	/**
-	 * Indicates a SID that matches the local system. 
-	 */
-	public static final int WinLocalSystemSid = 22;
-
-	/**
-	 * Indicates a SID that matches a local service. 
-	 */
-	public static final int WinLocalServiceSid = 23;
-
-	/**
-	 * Indicates a SID that matches a network service. 
-	 */
-	public static final int WinNetworkServiceSid = 24;
-
-	/**
-	 * Indicates a SID that matches the domain account. 
-	 */
-	public static final int WinBuiltinDomainSid = 25;
-
-	/**
-	 * Indicates a SID that matches the administrator account. 
-	 */
-	public static final int WinBuiltinAdministratorsSid = 26;
-
-	/**
-	 * Indicates a SID that matches built-in user accounts. 
-	 */
-	public static final int WinBuiltinUsersSid = 27;
-
-	/**
-	 * Indicates a SID that matches the guest account. 
-	 */
-	public static final int WinBuiltinGuestsSid = 28;
-
-	/**
-	 * Indicates a SID that matches the power users group. 
-	 */
-	public static final int WinBuiltinPowerUsersSid = 29;
-
-	/**
-	 * Indicates a SID that matches the account operators account. 
-	 */
-	public static final int WinBuiltinAccountOperatorsSid = 30;
-
-	/**
-	 * Indicates a SID that matches the system operators group. 
-	 */
-	public static final int WinBuiltinSystemOperatorsSid = 31;
-
-	/**
-	 * Indicates a SID that matches the print operators group. 
-	 */
-	public static final int WinBuiltinPrintOperatorsSid = 32;
-
-	/**
-	 * Indicates a SID that matches the backup operators group. 
-	 */
-	public static final int WinBuiltinBackupOperatorsSid = 33;
-
-	/**
-	 * Indicates a SID that matches the replicator account. 
-	 */
-	public static final int WinBuiltinReplicatorSid = 34;
-
-	/**
-	 * Indicates a SID that matches pre-Windows 2000 compatible accounts. 
-	 */
-	public static final int WinBuiltinPreWindows2000CompatibleAccessSid = 35;
-
-	/**
-	 * Indicates a SID that matches remote desktop users. 
-	 */
-	public static final int WinBuiltinRemoteDesktopUsersSid = 36;
-
-	/**
-	 * Indicates a SID that matches the network operators group.
-	 */
-	public static final int WinBuiltinNetworkConfigurationOperatorsSid = 37;
-
-	/**
-	 * Indicates a SID that matches the account administrators group. 
-	 */
-	public static final int WinAccountAdministratorSid = 38;
-
-	/**
-	 * Indicates a SID that matches the account guest group. 
-	 */
-	public static final int WinAccountGuestSid = 39;
-
-	/**
-	 * Indicates a SID that matches account Kerberos target group. 
-	 */
-	public static final int WinAccountKrbtgtSid = 40;
-
-	/**
-	 * Indicates a SID that matches the account domain administrator group. 
-	 */
-	public static final int WinAccountDomainAdminsSid = 41;
-
-	/**
-	 * Indicates a SID that matches the account domain users group. 
-	 */
-	public static final int WinAccountDomainUsersSid = 42;
-
-	/**
-	 * Indicates a SID that matches the account domain guests group. 
-	 */
-	public static final int WinAccountDomainGuestsSid = 43;
-
-	/**
-	 * Indicates a SID that matches the account computer group. 
-	 */
-	public static final int WinAccountComputersSid = 44;
-
-	/**
-	 * Indicates a SID that matches the account controller group. 
-	 */
-	public static final int WinAccountControllersSid = 45;
-
-	/**
-	 * Indicates a SID that matches the certificate administrators group.
-	 */
-	public static final int WinAccountCertAdminsSid = 46;
-
-	/**
-	 * Indicates a SID that matches the schema administrators group. 
-	 */
-	public static final int WinAccountSchemaAdminsSid = 47;
-
-	/**
-	 * Indicates a SID that matches the enterprise administrators group. 
-	 */
-	public static final int WinAccountEnterpriseAdminsSid = 48;
-
-	/**
-	 * Indicates a SID that matches the policy administrators group. 
-	 */
-	public static final int WinAccountPolicyAdminsSid = 49;
-
-	/**
-	 * Indicates a SID that matches the RAS and IAS server account. 
-	 */
-	public static final int WinAccountRasAndIasServersSid = 50;
-
-	/**
-	 * Indicates a SID present when the Microsoft NTLM authentication package 
-	 * authenticated the client. 
-	 */
-	public static final int WinNTLMAuthenticationSid = 51;
-
-	/**
-	 * Indicates a SID present when the Microsoft Digest authentication package 
-	 * authenticated the client. 
-	 */
-	public static final int WinDigestAuthenticationSid = 52;
-
-	/**
-	 * Indicates a SID present when the Secure Channel (SSL/TLS) authentication 
-	 * package authenticated the client. 
-	 */
-	public static final int WinSChannelAuthenticationSid = 53;
-
-	/**
-	 * Indicates a SID present when the user authenticated from within the forest 
-	 * or across a trust that does not have the selective authentication option 
-	 * enabled. If this SID is present, then WinOtherOrganizationSid cannot be present. 
-	 */
-	public static final int WinThisOrganizationSid = 54;
-
-	/**
-	 * Indicates a SID present when the user authenticated across a forest with the
-	 * selective authentication option enabled. If this SID is present, then 
-	 * WinThisOrganizationSid cannot be present. 
-	 */
-	public static final int WinOtherOrganizationSid = 55;
-
-	/**
-	 * Indicates a SID that allows a user to create incoming forest trusts. It is added 
-	 * to the token of users who are a member of the Incoming Forest Trust Builders 
-	 * built-in group in the root domain of the forest. 
-	 */
-	public static final int WinBuiltinIncomingForestTrustBuildersSid = 56;
-
-	/**
-	 * Indicates a SID that matches the performance monitor user group. 
-	 */
-	public static final int WinBuiltinPerfMonitoringUsersSid = 57;
-
-	/**
-	 * Indicates a SID that matches the performance log user group. 
-	 */
-	public static final int WinBuiltinPerfLoggingUsersSid = 58;
-
-	/**
-	 * Indicates a SID that matches the Windows Authorization Access group.
-	 */
-	public static final int WinBuiltinAuthorizationAccessSid = 59;
-
-	/**
-	 * Indicates a SID is present in a server that can issue Terminal Server licenses. 
-	 */
-	public static final int WinBuiltinTerminalServerLicenseServersSid = 60;
-
-	/**
-	 * 
-	 */
-	public static final int WinBuiltinDCOMUsersSid = 61;
-
-	/**
-	 * 
-	 */
-	public static final int WinBuiltinIUsersSid = 62;
-
-	/**
-	 * 
-	 */
-	public static final int WinIUserSid = 63;
-
-	/**
-	 * 
-	 */
-	public static final int WinBuiltinCryptoOperatorsSid = 64;
-
-	/**
-	 * 
-	 */
-	public static final int WinUntrustedLabelSid = 65;
-
-	/**
-	 * 
-	 */
-	public static final int WinLowLabelSid = 66;
-
-	/**
-	 * 
-	 */
-	public static final int WinMediumLabelSid = 67;
-
-	/**
-	 * 
-	 */
-	public static final int WinHighLabelSid = 68;
-
-	/**
-	 * 
-	 */
-	public static final int WinSystemLabelSid = 69;
-
-	/**
-	 * 
-	 */
-	public static final int WinWriteRestrictedCodeSid = 70;
-
-	/**
-	 * 
-	 */
-	public static final int WinCreatorOwnerRightsSid = 71;
-
-	/**
-	 * 
-	 */
-	public static final int WinCacheablePrincipalsGroupSid = 72;
-
-	/**
-	 * 
-	 */
-	public static final int WinNonCacheablePrincipalsGroupSid = 73;
-
-	/**
-	 * 
-	 */
-	public static final int WinEnterpriseReadonlyControllersSid = 74;
-
-	/**
-	 * Indicates a SID that matches a read-only enterprise domain controller.
-	 */
-	public static final int WinAccountReadonlyControllersSid = 75;
-
-	/**
-	 * Indicates a SID that matches the built-in DCOM certification services access group.
-	 */
-	public static final int WinBuiltinEventLogReadersGroup = 76;
+		/**
+		 * Indicates a null SID.
+		 */
+		public static final int WinNullSid = 0;
+	
+		/**
+		 * Indicates a SID that matches everyone.
+		 */
+		public static final int WinWorldSid = 1;
+	
+		/**
+		 * Indicates a local SID. 
+		 */
+		public static final int WinLocalSid = 2;
+	
+		/**
+		 * Indicates a SID that matches the owner or creator of an object.
+		 */
+		public static final int WinCreatorOwnerSid = 3;
+	
+		/**
+		 * Indicates a SID that matches the creator group of an object. 
+		 */
+		public static final int WinCreatorGroupSid = 4;
+	
+		/**
+		 * Indicates a creator owner server SID.
+		 */
+		public static final int WinCreatorOwnerServerSid = 5;
+	
+		/**
+		 * Indicates a creator group server SID. 
+		 */
+		public static final int WinCreatorGroupServerSid = 6;
+	
+		/**
+		 * Indicates a SID for the Windows NT authority. 
+		 */
+		public static final int WinNtAuthoritySid = 7;
+	
+		/**
+		 * Indicates a SID for a dial-up account.
+		 */
+		public static final int WinDialupSid = 8;
+	
+		/**
+		 * Indicates a SID for a network account. This SID is added to the process of a token 
+		 * when it logs on across a network. The corresponding logon type is 
+		 * LOGON32_LOGON_NETWORK. 
+		 */
+		public static final int WinNetworkSid = 9;
+	
+		/**
+		 * Indicates a SID for a batch process. This SID is added to the process of a token 
+		 * when it logs on as a batch job. The corresponding logon type is LOGON32_LOGON_BATCH. 
+		 */
+		public static final int WinBatchSid = 10;
+	
+		/**
+		 * Indicates a SID for an interactive account. This SID is added to the process of a 
+		 * token when it logs on interactively. The corresponding logon type is
+		 * LOGON32_LOGON_INTERACTIVE. 
+		 */
+		public static final int WinInteractiveSid = 11;
+	
+		/**
+		 * Indicates a SID for a service. This SID is added to the process of a token when it 
+		 * logs on as a service. The corresponding logon type is LOGON32_LOGON_bSERVICE.
+		 */
+		public static final int WinServiceSid = 12;
+	
+		/**
+		 * Indicates a SID for the anonymous account. 
+		 */
+		public static final int WinAnonymousSid = 13;
+	
+		/**
+		 * Indicates a proxy SID. 
+		 */
+		public static final int WinProxySid = 14;
+	
+		/**
+		 * Indicates a SID for an enterprise controller. 
+		 */
+		public static final int WinEnterpriseControllersSid = 15;
+	
+		/**
+		 * Indicates a SID for self.
+		 */
+		public static final int WinSelfSid = 16;
+	
+		/**
+		 * Indicates a SID that matches any authenticated user. 
+		 */
+		public static final int WinAuthenticatedUserSid = 17;
+	
+		/**
+		 * Indicates a SID for restricted code. 
+		 */
+		public static final int WinRestrictedCodeSid = 18;
+	
+		/**
+		 * Indicates a SID that matches a terminal server account. 
+		 */
+		public static final int WinTerminalServerSid = 19;
+	
+		/**
+		 * Indicates a SID that matches remote logons. 
+		 */
+		public static final int WinRemoteLogonIdSid = 20;
+	
+		/**
+		 * Indicates a SID that matches logon IDs. 
+		 */
+		public static final int WinLogonIdsSid = 21;
+	
+		/**
+		 * Indicates a SID that matches the local system. 
+		 */
+		public static final int WinLocalSystemSid = 22;
+	
+		/**
+		 * Indicates a SID that matches a local service. 
+		 */
+		public static final int WinLocalServiceSid = 23;
+	
+		/**
+		 * Indicates a SID that matches a network service. 
+		 */
+		public static final int WinNetworkServiceSid = 24;
+	
+		/**
+		 * Indicates a SID that matches the domain account. 
+		 */
+		public static final int WinBuiltinDomainSid = 25;
+	
+		/**
+		 * Indicates a SID that matches the administrator account. 
+		 */
+		public static final int WinBuiltinAdministratorsSid = 26;
+	
+		/**
+		 * Indicates a SID that matches built-in user accounts. 
+		 */
+		public static final int WinBuiltinUsersSid = 27;
+	
+		/**
+		 * Indicates a SID that matches the guest account. 
+		 */
+		public static final int WinBuiltinGuestsSid = 28;
+	
+		/**
+		 * Indicates a SID that matches the power users group. 
+		 */
+		public static final int WinBuiltinPowerUsersSid = 29;
+	
+		/**
+		 * Indicates a SID that matches the account operators account. 
+		 */
+		public static final int WinBuiltinAccountOperatorsSid = 30;
+	
+		/**
+		 * Indicates a SID that matches the system operators group. 
+		 */
+		public static final int WinBuiltinSystemOperatorsSid = 31;
+	
+		/**
+		 * Indicates a SID that matches the print operators group. 
+		 */
+		public static final int WinBuiltinPrintOperatorsSid = 32;
+	
+		/**
+		 * Indicates a SID that matches the backup operators group. 
+		 */
+		public static final int WinBuiltinBackupOperatorsSid = 33;
+	
+		/**
+		 * Indicates a SID that matches the replicator account. 
+		 */
+		public static final int WinBuiltinReplicatorSid = 34;
+	
+		/**
+		 * Indicates a SID that matches pre-Windows 2000 compatible accounts. 
+		 */
+		public static final int WinBuiltinPreWindows2000CompatibleAccessSid = 35;
+	
+		/**
+		 * Indicates a SID that matches remote desktop users. 
+		 */
+		public static final int WinBuiltinRemoteDesktopUsersSid = 36;
+	
+		/**
+		 * Indicates a SID that matches the network operators group.
+		 */
+		public static final int WinBuiltinNetworkConfigurationOperatorsSid = 37;
+	
+		/**
+		 * Indicates a SID that matches the account administrators group. 
+		 */
+		public static final int WinAccountAdministratorSid = 38;
+	
+		/**
+		 * Indicates a SID that matches the account guest group. 
+		 */
+		public static final int WinAccountGuestSid = 39;
+	
+		/**
+		 * Indicates a SID that matches account Kerberos target group. 
+		 */
+		public static final int WinAccountKrbtgtSid = 40;
+	
+		/**
+		 * Indicates a SID that matches the account domain administrator group. 
+		 */
+		public static final int WinAccountDomainAdminsSid = 41;
+	
+		/**
+		 * Indicates a SID that matches the account domain users group. 
+		 */
+		public static final int WinAccountDomainUsersSid = 42;
+	
+		/**
+		 * Indicates a SID that matches the account domain guests group. 
+		 */
+		public static final int WinAccountDomainGuestsSid = 43;
+	
+		/**
+		 * Indicates a SID that matches the account computer group. 
+		 */
+		public static final int WinAccountComputersSid = 44;
+	
+		/**
+		 * Indicates a SID that matches the account controller group. 
+		 */
+		public static final int WinAccountControllersSid = 45;
+	
+		/**
+		 * Indicates a SID that matches the certificate administrators group.
+		 */
+		public static final int WinAccountCertAdminsSid = 46;
+	
+		/**
+		 * Indicates a SID that matches the schema administrators group. 
+		 */
+		public static final int WinAccountSchemaAdminsSid = 47;
+	
+		/**
+		 * Indicates a SID that matches the enterprise administrators group. 
+		 */
+		public static final int WinAccountEnterpriseAdminsSid = 48;
+	
+		/**
+		 * Indicates a SID that matches the policy administrators group. 
+		 */
+		public static final int WinAccountPolicyAdminsSid = 49;
+	
+		/**
+		 * Indicates a SID that matches the RAS and IAS server account. 
+		 */
+		public static final int WinAccountRasAndIasServersSid = 50;
+	
+		/**
+		 * Indicates a SID present when the Microsoft NTLM authentication package 
+		 * authenticated the client. 
+		 */
+		public static final int WinNTLMAuthenticationSid = 51;
+	
+		/**
+		 * Indicates a SID present when the Microsoft Digest authentication package 
+		 * authenticated the client. 
+		 */
+		public static final int WinDigestAuthenticationSid = 52;
+	
+		/**
+		 * Indicates a SID present when the Secure Channel (SSL/TLS) authentication 
+		 * package authenticated the client. 
+		 */
+		public static final int WinSChannelAuthenticationSid = 53;
+	
+		/**
+		 * Indicates a SID present when the user authenticated from within the forest 
+		 * or across a trust that does not have the selective authentication option 
+		 * enabled. If this SID is present, then WinOtherOrganizationSid cannot be present. 
+		 */
+		public static final int WinThisOrganizationSid = 54;
+	
+		/**
+		 * Indicates a SID present when the user authenticated across a forest with the
+		 * selective authentication option enabled. If this SID is present, then 
+		 * WinThisOrganizationSid cannot be present. 
+		 */
+		public static final int WinOtherOrganizationSid = 55;
+	
+		/**
+		 * Indicates a SID that allows a user to create incoming forest trusts. It is added 
+		 * to the token of users who are a member of the Incoming Forest Trust Builders 
+		 * built-in group in the root domain of the forest. 
+		 */
+		public static final int WinBuiltinIncomingForestTrustBuildersSid = 56;
+	
+		/**
+		 * Indicates a SID that matches the performance monitor user group. 
+		 */
+		public static final int WinBuiltinPerfMonitoringUsersSid = 57;
+	
+		/**
+		 * Indicates a SID that matches the performance log user group. 
+		 */
+		public static final int WinBuiltinPerfLoggingUsersSid = 58;
+	
+		/**
+		 * Indicates a SID that matches the Windows Authorization Access group.
+		 */
+		public static final int WinBuiltinAuthorizationAccessSid = 59;
+	
+		/**
+		 * Indicates a SID is present in a server that can issue Terminal Server licenses. 
+		 */
+		public static final int WinBuiltinTerminalServerLicenseServersSid = 60;
+	
+		/**
+		 * 
+		 */
+		public static final int WinBuiltinDCOMUsersSid = 61;
+	
+		/**
+		 * 
+		 */
+		public static final int WinBuiltinIUsersSid = 62;
+	
+		/**
+		 * 
+		 */
+		public static final int WinIUserSid = 63;
+	
+		/**
+		 * 
+		 */
+		public static final int WinBuiltinCryptoOperatorsSid = 64;
+	
+		/**
+		 * 
+		 */
+		public static final int WinUntrustedLabelSid = 65;
+	
+		/**
+		 * 
+		 */
+		public static final int WinLowLabelSid = 66;
+	
+		/**
+		 * 
+		 */
+		public static final int WinMediumLabelSid = 67;
+	
+		/**
+		 * 
+		 */
+		public static final int WinHighLabelSid = 68;
+	
+		/**
+		 * 
+		 */
+		public static final int WinSystemLabelSid = 69;
+	
+		/**
+		 * 
+		 */
+		public static final int WinWriteRestrictedCodeSid = 70;
+	
+		/**
+		 * 
+		 */
+		public static final int WinCreatorOwnerRightsSid = 71;
+	
+		/**
+		 * 
+		 */
+		public static final int WinCacheablePrincipalsGroupSid = 72;
+	
+		/**
+		 * 
+		 */
+		public static final int WinNonCacheablePrincipalsGroupSid = 73;
+	
+		/**
+		 * 
+		 */
+		public static final int WinEnterpriseReadonlyControllersSid = 74;
+	
+		/**
+		 * Indicates a SID that matches a read-only enterprise domain controller.
+		 */
+		public static final int WinAccountReadonlyControllersSid = 75;
+	
+		/**
+		 * Indicates a SID that matches the built-in DCOM certification services access group.
+		 */
+		public static final int WinBuiltinEventLogReadersGroup = 76;
     }
     
     /**
@@ -1484,47 +1509,49 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * is used with the GetVersionEx function.
      */
     public static class OSVERSIONINFO extends Structure {
-	/**
-	 * Size of this data structure, in bytes. Set this member to sizeof(OSVERSIONINFO) 
-	 * before calling the GetVersionEx function.
-	 */
-	public DWORD dwOSVersionInfoSize;
-      
-	/**
-	 * Major version number of the operating system. 
-	 */
-	public DWORD dwMajorVersion;
-
-	/**
-	 * Minor version number of the operating system.
-	 */
-	public DWORD dwMinorVersion;
-
-	/**
-	 * Build number of the operating system.
-	 */
-	public DWORD dwBuildNumber;
-
-	/**
-	 * Operating system platform.
-	 */
-	public DWORD dwPlatformId;
-
-	/**
-	 * Pointer to a null-terminated string, such as "Service Pack 3", 
-	 * that indicates the latest Service Pack installed on the system.
-	 */
-	public char szCSDVersion[];
+		/**
+		 * Size of this data structure, in bytes. Set this member to sizeof(OSVERSIONINFO) 
+		 * before calling the GetVersionEx function.
+		 */
+		public DWORD dwOSVersionInfoSize;
+	      
+		/**
+		 * Major version number of the operating system. 
+		 */
+		public DWORD dwMajorVersion;
 	
-	public OSVERSIONINFO() {
-	    szCSDVersion = new char[128];
-	    dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFO)
-	}
-
-	public OSVERSIONINFO(Pointer memory) {
-	    useMemory(memory);
-	    read();
-	}
+		/**
+		 * Minor version number of the operating system.
+		 */
+		public DWORD dwMinorVersion;
+	
+		/**
+		 * Build number of the operating system.
+		 */
+		public DWORD dwBuildNumber;
+	
+		/**
+		 * Operating system platform.
+		 */
+		public DWORD dwPlatformId;
+		
+		/**
+		 * Pointer to a null-terminated string, such as "Service Pack 3", 
+		 * that indicates the latest Service Pack installed on the system.
+		 */
+		public char szCSDVersion[];
+		
+		{ setFieldOrder(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion" }); }		
+		
+		public OSVERSIONINFO() {
+		    szCSDVersion = new char[128];
+		    dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFO)
+		}
+	
+		public OSVERSIONINFO(Pointer memory) {
+		    useMemory(memory);
+		    read();
+		}
     }
  
     /**
@@ -1533,74 +1560,76 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * installed on the system.
      */
     public static class OSVERSIONINFOEX extends Structure {
-	/**
-	 * The size of this data structure, in bytes.
-	 */
-	public DWORD dwOSVersionInfoSize;
-
-	/**
-	 * The major version number of the operating system.
-	 */
-	public DWORD dwMajorVersion;
-
-	/**
-	 * The minor version number of the operating system.
-	 */
-	public DWORD dwMinorVersion;
-
-	/**
-	 * The build number of the operating system.
-	 */
-	public DWORD dwBuildNumber;
-
-	/**
-	 * The operating system platform. This member can be VER_PLATFORM_WIN32_NT.
-	 */
-	public DWORD dwPlatformId;
-
-	/**
-	 * A null-terminated string, such as "Service Pack 3", that indicates the latest Service Pack 
-	 * installed on the system. If no Service Pack has been installed, the string is empty.
-	 */
-	public char szCSDVersion[];
-
-	/**
-	 * The major version number of the latest Service Pack installed on the system. For example, for 
-	 * Service Pack 3, the major version number is 3. If no Service Pack has been installed, the value 
-	 * is zero.
-	 */
-	public WORD wServicePackMajor;
-
-	/**
-	 * The minor version number of the latest Service Pack installed on the system. For example, for 
-	 * Service Pack 3, the minor version number is 0.
-	 */
-	public WORD wServicePackMinor;
-
-	/**
-	 * A bit mask that identifies the product suites available on the system.
-	 */
-	public WORD wSuiteMask;
-
-	/**
-	 * Any additional information about the system. 
-	 */
-	public byte wProductType;
-
-	/**
-	 * Reserved for future use.
-	 */
-	public byte wReserved;
+		/**
+		 * The size of this data structure, in bytes.
+		 */
+		public DWORD dwOSVersionInfoSize;
 	
-	public OSVERSIONINFOEX() {
-	    szCSDVersion = new char[128];
-	    dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFOEX)
-	}
-
-	public OSVERSIONINFOEX(Pointer memory) {
-	    useMemory(memory);
-	    read();
-	}
+		/**
+		 * The major version number of the operating system.
+		 */
+		public DWORD dwMajorVersion;
+	
+		/**
+		 * The minor version number of the operating system.
+		 */
+		public DWORD dwMinorVersion;
+	
+		/**
+		 * The build number of the operating system.
+		 */
+		public DWORD dwBuildNumber;
+	
+		/**
+		 * The operating system platform. This member can be VER_PLATFORM_WIN32_NT.
+		 */
+		public DWORD dwPlatformId;
+	
+		/**
+		 * A null-terminated string, such as "Service Pack 3", that indicates the latest Service Pack 
+		 * installed on the system. If no Service Pack has been installed, the string is empty.
+		 */
+		public char szCSDVersion[];
+	
+		/**
+		 * The major version number of the latest Service Pack installed on the system. For example, for 
+		 * Service Pack 3, the major version number is 3. If no Service Pack has been installed, the value 
+		 * is zero.
+		 */
+		public WORD wServicePackMajor;
+	
+		/**
+		 * The minor version number of the latest Service Pack installed on the system. For example, for 
+		 * Service Pack 3, the minor version number is 0.
+		 */
+		public WORD wServicePackMinor;
+	
+		/**
+		 * A bit mask that identifies the product suites available on the system.
+		 */
+		public WORD wSuiteMask;
+	
+		/**
+		 * Any additional information about the system. 
+		 */
+		public byte wProductType;
+	
+		/**
+		 * Reserved for future use.
+		 */
+		public byte wReserved;
+		
+		{ setFieldOrder(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion", "wServicePackMajor", "wServicePackMinor", "wSuiteMask", "wProductType", "wReserved" }); }		
+		
+		public OSVERSIONINFOEX() {
+		    szCSDVersion = new char[128];
+		    dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFOEX)
+		}
+	
+		public OSVERSIONINFOEX(Pointer memory) {
+		    useMemory(memory);
+		    read();
+		}
     }
 
     int VER_EQUAL			= 1;
@@ -1690,105 +1719,108 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * ReadEventLog function.
      */
     public static class EVENTLOGRECORD extends Structure {
-	/**
-	 * Size of this event record, in bytes. Note that this value is stored at both ends
-	 * of the entry to ease moving forward or backward through the log. The length includes 
-	 * any pad bytes inserted at the end of the record for DWORD alignment. 
-	 */
-	public DWORD Length;
-
-	/**
-	 * Reserved.
-	 */
-	public DWORD Reserved;
-
-	/**
-	 * Record number of the record. This value can be used with the EVENTLOG_SEEK_READ flag in
-	 * the ReadEventLog function to begin reading at a specified record.
-	 */
-	public DWORD RecordNumber;
-
-	/**
-	 * Time at which this entry was submitted. This time is measured in the number of seconds 
-	 * elapsed since 00:00:00 January 1, 1970, Universal Coordinated Time. 
-	 */
-	public DWORD TimeGenerated;
-
-	/**
-	 * Time at which this entry was received by the service to be written to the log. 
-	 * This time is measured in the number of seconds elapsed since 00:00:00 January 1,
-	 * 1970, Universal Coordinated Time. 
-	 */
-	public DWORD TimeWritten;
-
-	/**
-	 * Event identifier. The value is specific to the event source for the event, and is used
-	 * with source name to locate a description string in the message file for the event source. 
-	 */
-	public DWORD EventID;
-
-	/**
-	 * Type of event.
-	 */
-	public WORD EventType;
-
-	/**
-	 * Number of strings present in the log (at the position indicated by StringOffset). 
-	 * These strings are merged into the message before it is displayed to the user. 
-	 */
-	public WORD NumStrings;
-
-	/**
-	 * Category for this event. The meaning of this value depends on the event source.
-	 */
-	public WORD EventCategory;
-
-	/**
-	 * Reserved.
-	 */
-	public WORD ReservedFlags;
-
-	/**
-	 * Reserved.
-	 */
-	public DWORD ClosingRecordNumber;
-
-	/**
-	 * Offset of the description strings within this event log record. 
-	 */
-	public DWORD StringOffset;
-
-	/**
-	 * Size of the UserSid member, in bytes. This value can be zero if no security identifier was provided. 
-	 */
-	public DWORD UserSidLength;
-
-	/**
-	 * Offset of the security identifier (SID) within this event log record. 
-	 * To obtain the user name for this SID, use the LookupAccountSid function. 
-	 */
-	public DWORD UserSidOffset;
-
-	/**
-	 * Size of the event-specific data (at the position indicated by DataOffset), in bytes. 
-	 */
-	public DWORD DataLength;
-
-	/**
-	 * Offset of the event-specific information within this event log record, in bytes. 
-	 * This information could be something specific (a disk driver might log the number 
-	 * of retries, for example), followed by binary information specific to the event 
-	 * being logged and to the source that generated the entry. 
-	 */
-	public DWORD DataOffset;
+		/**
+		 * Size of this event record, in bytes. Note that this value is stored at both ends
+		 * of the entry to ease moving forward or backward through the log. The length includes 
+		 * any pad bytes inserted at the end of the record for DWORD alignment. 
+		 */
+		public DWORD Length;
 	
-	public EVENTLOGRECORD() {
-	}
+		/**
+		 * Reserved.
+		 */
+		public DWORD Reserved;
 	
-	public EVENTLOGRECORD(Pointer p) {
-	    super(p);
-	    read();
-	}
+		/**
+		 * Record number of the record. This value can be used with the EVENTLOG_SEEK_READ flag in
+		 * the ReadEventLog function to begin reading at a specified record.
+		 */
+		public DWORD RecordNumber;
+	
+		/**
+		 * Time at which this entry was submitted. This time is measured in the number of seconds 
+		 * elapsed since 00:00:00 January 1, 1970, Universal Coordinated Time. 
+		 */
+		public DWORD TimeGenerated;
+	
+		/**
+		 * Time at which this entry was received by the service to be written to the log. 
+		 * This time is measured in the number of seconds elapsed since 00:00:00 January 1,
+		 * 1970, Universal Coordinated Time. 
+		 */
+		public DWORD TimeWritten;
+	
+		/**
+		 * Event identifier. The value is specific to the event source for the event, and is used
+		 * with source name to locate a description string in the message file for the event source. 
+		 */
+		public DWORD EventID;
+	
+		/**
+		 * Type of event.
+		 */
+		public WORD EventType;
+	
+		/**
+		 * Number of strings present in the log (at the position indicated by StringOffset). 
+		 * These strings are merged into the message before it is displayed to the user. 
+		 */
+		public WORD NumStrings;
+	
+		/**
+		 * Category for this event. The meaning of this value depends on the event source.
+		 */
+		public WORD EventCategory;
+	
+		/**
+		 * Reserved.
+		 */
+		public WORD ReservedFlags;
+	
+		/**
+		 * Reserved.
+		 */
+		public DWORD ClosingRecordNumber;
+	
+		/**
+		 * Offset of the description strings within this event log record. 
+		 */
+		public DWORD StringOffset;
+	
+		/**
+		 * Size of the UserSid member, in bytes. This value can be zero if no security identifier was provided. 
+		 */
+		public DWORD UserSidLength;
+	
+		/**
+		 * Offset of the security identifier (SID) within this event log record. 
+		 * To obtain the user name for this SID, use the LookupAccountSid function. 
+		 */
+		public DWORD UserSidOffset;
+	
+		/**
+		 * Size of the event-specific data (at the position indicated by DataOffset), in bytes. 
+		 */
+		public DWORD DataLength;
+	
+		/**
+		 * Offset of the event-specific information within this event log record, in bytes. 
+		 * This information could be something specific (a disk driver might log the number 
+		 * of retries, for example), followed by binary information specific to the event 
+		 * being logged and to the source that generated the entry. 
+		 */
+		public DWORD DataOffset;
+		
+		{ setFieldOrder(new String[] { "Length", "Reserved", "RecordNumber", "TimeGenerated", "TimeWritten", "EventID", "EventType", "NumStrings", "EventCategory", "ReservedFlags", "ClosingRecordNumber", "StringOffset", "UserSidLength", "UserSidOffset", "DataLength", "DataOffset" }); }		
+
+		public EVENTLOGRECORD() {
+			
+		}
+		
+		public EVENTLOGRECORD(Pointer p) {
+		    super(p);
+		    read();
+		}
     }
     
     //
@@ -1858,168 +1890,185 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int UNPROTECTED_SACL_SECURITY_INFORMATION	= 0x10000000;
 
     public static class SECURITY_DESCRIPTOR extends Structure {
-	public static class ByReference extends SECURITY_DESCRIPTOR implements Structure.ByReference {
+		public static class ByReference extends SECURITY_DESCRIPTOR implements Structure.ByReference {
+			
+		}
+	
+		public SECURITY_DESCRIPTOR() {
+			
+		}
+	
+		public SECURITY_DESCRIPTOR(byte[] data) {
+		    super();
+		    this.data = data;
+		    useMemory(new Memory(data.length));
+		}
+	
+		public SECURITY_DESCRIPTOR(Pointer memory) {
+		    super(memory);
+		}
+	
+		public byte[] data;
+		
+		{ setFieldOrder(new String[] { "data" }); }
 	}
-
-	public SECURITY_DESCRIPTOR() {
-	}
-
-	public SECURITY_DESCRIPTOR(byte[] data) {
-	    super();
-	    this.data = data;
-	    useMemory(new Memory(data.length));
-	}
-
-	public SECURITY_DESCRIPTOR(Pointer memory) {
-	    super(memory);
-	}
-
-	public byte[] data;
-    }
 
     public static class ACL extends Structure {
-        public ACL() { }
-	public ACL(Pointer pointer) {
-	    super(pointer);
-	    read();
-	    ACEs = new ACCESS_ACEStructure[AceCount];
-	    int offset = size();
-	    for (int i=0; i < AceCount; i++) {
-		Pointer share = pointer.share(offset);
-		// ACE_HEADER.AceType
-		final byte aceType = share.getByte(0);
-		ACCESS_ACEStructure ace = null;
-		switch (aceType) {
-                case ACCESS_ALLOWED_ACE_TYPE:
-		    ace = new ACCESS_ALLOWED_ACE(share);
-		    break;
-                case ACCESS_DENIED_ACE_TYPE:
-		    ace = new ACCESS_DENIED_ACE(share);
-		    break;
-                default:
-		    throw new IllegalArgumentException("Unknwon ACE type " + aceType);
+        public ACL() { 
+        	
+        }
+        
+		public ACL(Pointer pointer) {
+		    super(pointer);
+		    read();
+		    ACEs = new ACCESS_ACEStructure[AceCount];
+		    int offset = size();
+		    for (int i=0; i < AceCount; i++) {
+			Pointer share = pointer.share(offset);
+			// ACE_HEADER.AceType
+			final byte aceType = share.getByte(0);
+			ACCESS_ACEStructure ace = null;
+			switch (aceType) {
+	                case ACCESS_ALLOWED_ACE_TYPE:
+			    ace = new ACCESS_ALLOWED_ACE(share);
+			    break;
+	                case ACCESS_DENIED_ACE_TYPE:
+			    ace = new ACCESS_DENIED_ACE(share);
+			    break;
+	                default:
+			    throw new IllegalArgumentException("Unknwon ACE type " + aceType);
+			}
+			ACEs[i] = ace;
+			offset += ace.AceSize;
+		    }
 		}
-		ACEs[i] = ace;
-		offset += ace.AceSize;
-	    }
-	}
 
-	public byte     AclRevision;
-	public byte     Sbz1;
-	public short    AclSize;
-	public short    AceCount;
-	public short    Sbz2;
+		public byte     AclRevision;
+		public byte     Sbz1;
+		public short    AclSize;
+		public short    AceCount;
+		public short    Sbz2;
 
-	ACCESS_ACEStructure[] ACEs;
+		ACCESS_ACEStructure[] ACEs;
+		
+		{ setFieldOrder(new String[] { "AclRevision", "Sbz1", "AclSize", "AceCount", "Sbz2" }); }
 
-	public ACCESS_ACEStructure[] getACEStructures() {
-	    return ACEs;
-	}
+		public ACCESS_ACEStructure[] getACEStructures() {
+		    return ACEs;
+		}
     }
 
     public static class SECURITY_DESCRIPTOR_RELATIVE extends Structure {
-	public static class ByReference extends SECURITY_DESCRIPTOR_RELATIVE implements Structure.ByReference {
-	}
+		public static class ByReference extends SECURITY_DESCRIPTOR_RELATIVE implements Structure.ByReference {
+			
+		}
 
-	public	byte	Revision;
-	public	byte	Sbz1;
-	public	short	Control;
-	public	int	Owner;
-	public	int	Group;
-	public	int	Sacl;
-	public	int	Dacl;
+		public	byte Revision;
+		public	byte Sbz1;
+		public	short Control;
+		public	int	Owner;
+		public	int	Group;
+		public	int	Sacl;
+		public	int	Dacl;
+	
+		private	ACL	DACL = null;
 
-	private	ACL	DACL = null;
-
-	public SECURITY_DESCRIPTOR_RELATIVE() {
-	}
-
-	public SECURITY_DESCRIPTOR_RELATIVE(byte[] data) {
-	    super(new Memory(data.length));
-	    getPointer().write(0, data, 0, data.length);
-	    setDacl();
-	}
-
-	public SECURITY_DESCRIPTOR_RELATIVE(Memory memory) {
-	    super(memory);
-	    setDacl();
-	}
- 
-	public ACL getDiscretionaryACL() {
-	    return DACL;
-	}
-
-	private final void setDacl() {
-	    read();
-	    if (Dacl != 0) {
-		DACL = new ACL(getPointer().share(Dacl));
-	    }
-	}
+		{ setFieldOrder(new String[] { "Revision", "Sbz1", "Control", "Owner", "Group", "Sacl", "Dacl" }); }
+		
+		public SECURITY_DESCRIPTOR_RELATIVE() {
+			
+		}
+	
+		public SECURITY_DESCRIPTOR_RELATIVE(byte[] data) {
+		    super(new Memory(data.length));
+		    getPointer().write(0, data, 0, data.length);
+		    setDacl();
+		}
+	
+		public SECURITY_DESCRIPTOR_RELATIVE(Memory memory) {
+		    super(memory);
+		    setDacl();
+		}
+	 
+		public ACL getDiscretionaryACL() {
+		    return DACL;
+		}
+	
+		private final void setDacl() {
+		    read();
+		    if (Dacl != 0) {
+		    	DACL = new ACL(getPointer().share(Dacl));
+		    }
+		}
     }
 
     public static abstract class ACEStructure extends Structure {
-	public	byte	AceType;
-	public	byte	AceFlags;
-	public	short	AceSize;
+		public	byte	AceType;
+		public	byte	AceFlags;
+		public	short	AceSize;
+			
+		PSID	psid;
+	
+		{ setFieldOrder(new String[] { "AceType", "AceFlags", "AceSize", "psid" }); }
 
-	PSID	psid;
-
-	public ACEStructure(Pointer p) {
-	    super(p);
-	}
-
-	public String getSidString() {
-	    return Advapi32Util.convertSidToStringSid(psid);
-	}
-
-	public PSID getSID() {
-	    return psid;
-	}
+		public ACEStructure(Pointer p) {
+		    super(p);
+		}
+	
+		public String getSidString() {
+		    return Advapi32Util.convertSidToStringSid(psid);
+		}
+	
+		public PSID getSID() {
+		    return psid;
+		}
     }
 
     /* ACE header */
     public static class ACE_HEADER extends ACEStructure {
-	public ACE_HEADER(Pointer p) {
-	    super(p);
-	    read();
-	}
+		public ACE_HEADER(Pointer p) {
+		    super(p);
+		    read();
+		}
     }
 
     /**
      * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE have the same structure layout
      */
     public static abstract class ACCESS_ACEStructure extends ACEStructure {
-	public ACCESS_ACEStructure(Pointer p) {
-	    super(p);
-	    read();
-	    // AceSize - size of public members of the structure + size of DWORD (SidStart)
-	    int sizeOfSID = super.AceSize - size() + 4;
-	    // ACE_HEADER + size of int (Mask)
-	    int offsetOfSID = 4 + 4;
-	    byte[] data = p.getByteArray(offsetOfSID, sizeOfSID);
-	    psid = new PSID(data);
-	}
-
-	public int Mask;
-
-	/**
-         * first 4 bytes of the SID
-	 */
-	public DWORD SidStart;
+		public ACCESS_ACEStructure(Pointer p) {
+		    super(p);
+		    read();
+		    // AceSize - size of public members of the structure + size of DWORD (SidStart)
+		    int sizeOfSID = super.AceSize - size() + 4;
+		    // ACE_HEADER + size of int (Mask)
+		    int offsetOfSID = 4 + 4;
+		    byte[] data = p.getByteArray(offsetOfSID, sizeOfSID);
+		    psid = new PSID(data);
+		}
+	
+		public int Mask;
+	
+		/**
+	         * first 4 bytes of the SID
+		 */
+		public DWORD SidStart;
+		
+		{ setFieldOrder(new String[] { "Mask", "SidStart" }); }
     }
 
     /* Access allowed ACE */
     public static class ACCESS_ALLOWED_ACE  extends ACCESS_ACEStructure {
-	public ACCESS_ALLOWED_ACE(Pointer p) {
-	    super(p);
+		public ACCESS_ALLOWED_ACE(Pointer p) {
+		    super(p);
+		}
 	}
-    }
-
+	
     /* Access denied ACE */
     public static class ACCESS_DENIED_ACE  extends ACCESS_ACEStructure {
-	public ACCESS_DENIED_ACE(Pointer p) {
-  	    super(p);
-	}
+		public ACCESS_DENIED_ACE(Pointer p) {
+	  	    super(p);
+		}
     }
 
     /* ACE types */

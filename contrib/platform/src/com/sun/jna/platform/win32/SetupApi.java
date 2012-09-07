@@ -282,6 +282,8 @@ public interface SetupApi extends StdCallLibrary {
          * Reserved. Do not use.
          */
         public Pointer Reserved;
+        
+        { setFieldOrder(new String[] { "cbSize", "InterfaceClassGuid", "Flags", "Reserved" }); }
     }
 
     /**
@@ -330,5 +332,7 @@ public interface SetupApi extends StdCallLibrary {
          * Reserved. For internal use only.
          */
         public Pointer Reserved;
+        
+        { setFieldOrder(new String[] { "cbSize", "InterfaceClassGuid", "DevInst", "Reserved" }); }
     }
 }

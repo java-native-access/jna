@@ -63,6 +63,8 @@ public interface Wdm extends StdCallLibrary {
         public char[] Name;
         /**
          * Name of the key.
+         * Name of the key.
+         * Name of the key.
          * @return String.
          */
         public String getName() {
@@ -74,6 +76,8 @@ public interface Wdm extends StdCallLibrary {
             Name = new char[NameLength / 2];
             readField("Name");			
         }
+        
+        { setFieldOrder(new String[] { "LastWriteTime", "TitleIndex", "NameLength", "Name" }); }
     }
 	
     /**

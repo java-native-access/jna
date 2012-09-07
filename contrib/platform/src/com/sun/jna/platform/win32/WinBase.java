@@ -169,7 +169,9 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
      */
     public static class FILETIME extends Structure {
         public int dwLowDateTime;
-        public int dwHighDateTime;        
+        public int dwHighDateTime;   
+        
+        { setFieldOrder(new String[] { "dwLowDateTime", "dwHighDateTime" }); }        
 
         public static class ByReference extends FILETIME implements Structure.ByReference {
             public ByReference() {
@@ -292,6 +294,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         public short wSecond;
         // The millisecond. The valid values for this member are 0 through 999.
         public short wMilliseconds;
+        
+        { setFieldOrder(new String[] { "wYear", "wMonth", "wDayOfWeek", "wDay", "wHour", "wMinute", "wSecond", "wMilliseconds" }); }
     }
     
     /**
@@ -380,6 +384,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         public int Offset;
         public int OffsetHigh;
         public HANDLE hEvent;
+        
+        { setFieldOrder(new String[] { "Internal", "InternalHigh", "Offset", "OffsetHigh", "hEvent" }); }
     }        
     
     int INFINITE = 0xFFFFFFFF;
@@ -412,6 +418,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
              * Reserved for future use.
              */
             public WORD wReserved;
+            
+            { setFieldOrder(new String[] { "wProcessorArchitecture", "wReserved" }); }
     	}
     	
         /** Unnamed inner union. */
@@ -482,6 +490,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
          * Architecture-dependent processor revision.
          */
         public WORD wProcessorRevision;
+        
+        { setFieldOrder(new String[] { "processorArchitecture", "dwPageSize", "lpMinimumApplicationAddress", "lpMaximumApplicationAddress", "dwActiveProcessorMask", "dwNumberOfProcessors", "dwProcessorType", "dwAllocationGranularity", "wProcessorLevel", "wProcessorRevision" }); }        
     }
     
     /**
@@ -534,6 +544,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         public MEMORYSTATUSEX() {
             dwLength = new DWORD(size());
         }
+        
+        { setFieldOrder(new String[] { "dwLength", "dwMemoryLoad", "ullTotalPhys", "ullAvailPhys", "ullTotalPageFile", "ullAvailPageFile", "ullTotalVirtual", "ullAvailVirtual", "ullAvailExtendedVirtual" }); } 
     };
     
     /**
@@ -563,6 +575,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         public SECURITY_ATTRIBUTES() {
             dwLength = new DWORD(size());
         }
+        
+        { setFieldOrder(new String[] { "dwLength", "lpSecurityDescriptor", "bInheritHandle" }); }
     }
     
     /**
@@ -735,6 +749,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         public STARTUPINFO() {
             cb = new DWORD(size());
         }
+        
+        { setFieldOrder(new String[] { "cb", "lpReserved", "lpDesktop", "lpTitle", "dwX", "dwY", "dwXSize", "dwYSize", "dwXCountChars", "dwYCountChars", "dwFillAttribute", "dwFlags", "wShowWindow", "cbReserved2", "lpReserved2", "hStdInput", "hStdOutput", "hStdError" }); }
     }
 
     /**
@@ -774,6 +790,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
          */
         public DWORD dwThreadId;
 
+        { setFieldOrder(new String[] { "hProcess", "hThread", "dwProcessId", "dwThreadId" }); }
+        
         public static class ByReference extends PROCESS_INFORMATION implements Structure.ByReference {
             public ByReference() {
             }

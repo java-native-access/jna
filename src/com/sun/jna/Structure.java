@@ -136,7 +136,7 @@ public abstract class Structure {
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
-	isARM = "arm".equals(arch);
+        isARM = "arm".equals(arch);
     }
 
     /** Use the platform default alignment. */
@@ -821,15 +821,16 @@ public abstract class Structure {
         List flist = getFieldList();
         List fieldOrder = getFieldOrder();
         if (fieldOrder.size() < flist.size() && flist.size() > 1) {
+        	boolean predictableFieldOrder = Boolean.getBoolean("jna.predictable_field_order");
             if (force) {
-                if (!Boolean.getBoolean("jna.predictable_field_order")) {
+                if (! predictableFieldOrder) {
                     throw new Error("You must call Structure.setFieldOrder() in the base constructor for " + getClass() + " to ensure that JNA can accurately determine your Structure's memory layout.  To avoid this message, either call Structure.setFieldOrder() in your Structures constructor, or set jna.predictable_field_order=true if you are certain the VM you are using provides fields in a predictable order.");
                 }
                 if (REQUIRES_FIELD_ORDER) {
                     throw new Error("This VM does not store fields in a predictable order; you must use Structure.setFieldOrder on " + getClass() + " to explicitly indicate the field order: " + System.getProperty("java.vendor") + ", " + System.getProperty("java.version"));
                 }
             }
-            if (!Boolean.getBoolean("jna.predictable_field_order")) {
+            if (! predictableFieldOrder) {
                 return null;
             }
         }

@@ -86,7 +86,9 @@ public interface Winspool extends StdCallLibrary {
         public String pDescription;
         public String pName;
         public String pComment;
-	    
+
+        { setFieldOrder(new String[] { "Flags", "pDescription", "pName", "pComment" }); }                
+
         public PRINTER_INFO_1() {
 	    	
         }
@@ -100,6 +102,8 @@ public interface Winspool extends StdCallLibrary {
         public String pPrinterName;
         public String pServerName;
         public DWORD Attributes;
+        
+        { setFieldOrder(new String[] { "pPrinterName", "pServerName", "Attributes" }); }                
 	    
         public PRINTER_INFO_4() {
 	    	
