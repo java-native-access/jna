@@ -202,26 +202,4 @@ public interface DsGetDC extends StdCallLibrary {
             super(p);
         }
     };
-	
-    /**
-     * A pointer to an array of DS_DOMAIN_TRUSTS.
-     */
-    public static class PDS_DOMAIN_TRUSTS extends Structure {
-        public static class ByReference extends PDS_DOMAIN_TRUSTS implements Structure.ByReference {
-
-        }
-		
-        public DS_DOMAIN_TRUSTS.ByReference t;
-
-        /**
-         * Returns domain trusts.
-         * @param count
-         *  Number of domain trusts.
-         * @return
-         *  An array of domain trusts.
-         */
-        public DS_DOMAIN_TRUSTS[] getTrusts(int count) {
-            return (DS_DOMAIN_TRUSTS[]) t.toArray(count);
-        }
-    }
 }
