@@ -227,8 +227,8 @@ public abstract class Structure {
      * to be resized and any existing memory to be reallocated.
      * If <code>null</code>, the default mapper for the
      * defining class will be used.
-     * @deprecated You should use one of {@link Structure(TypeMapper)}
-     * or {@link Structure(Pointer,int,TypeMapper)} constructors instead.
+     * @deprecated You should use one of {@link #Structure(TypeMapper)}
+     * or {@link #Structure(Pointer,int,TypeMapper)} constructors instead.
      */
     protected void setTypeMapper(TypeMapper mapper) {
         if (mapper == null) {
@@ -823,10 +823,10 @@ public abstract class Structure {
 
 
     /** Returns all field names (sorted) provided so far by 
-        {@link setFieldOrder}
+        {@link #setFieldOrder}
         @param force set if results are required immediately
         @return null if not yet able to provide fields, and force is false.
-        @throw Error if force is true and field order data not yet specified
+        @throws Error if force is true and field order data not yet specified
         and can't be generated automatically.
     **/
     protected List getFields(boolean force) {
