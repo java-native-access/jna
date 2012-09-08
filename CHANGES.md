@@ -1,3 +1,13 @@
+Release 3.4.3
+=============
+
+Bug Fixes
+---------
+* Remove inadvertent, forced `setFieldOrder()` in `Structure`.  Invoking
+`setFieldOrder` will be required in a subsequent release.
+* [#116](https://github.com/twall/jna/issues/116): Fix error in
+`platform.win32.Advapi32Util.registryGetValues` w/ empty REG_BINARY values [@phailwhale22](https://github.com/phailwhale22).
+
 Release 3.4.2
 =============
 

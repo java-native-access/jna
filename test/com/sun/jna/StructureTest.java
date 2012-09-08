@@ -77,7 +77,7 @@ public class StructureTest extends TestCase {
             public TestStructure() { }
             public TestStructure(Pointer p) { super(p); }
             public int field;
-            public int fieldCount() { return fields().size(); }
+            public int fieldCount() { ensureAllocated(); return fields().size(); }
         }
         TestStructure s = new TestStructure();
         assertEquals("Wrong number of fields (default)", 1, s.fieldCount());
@@ -87,15 +87,15 @@ public class StructureTest extends TestCase {
     }
 
     public void testProvidedMemoryTooSmall() {
-        class TestStructure extends Structure {
-            public TestStructure() { }
-            public TestStructure(Pointer p) { super(p); }
-            public int field;
-            public int fieldCount() { return fields().size(); }
+        class TestStructureLazy extends Structure {
+            public TestStructureLazy(Pointer p) { super(p); }
+            public int field1;
+            public int fieldCount() { ensureAllocated(); return fields().size(); }
         }
         try {
-            TestStructure s = new TestStructure(new Memory(2));
-            fail("Expect exception if provided memory is insufficient");
+            TestStructureLazy lazy = new TestStructureLazy(new Memory(2));
+            lazy.ensureAllocated();
+            fail("Exception should be thrown if provided memory is insufficiently large");
         }
         catch(IllegalArgumentException e) {
         }
@@ -522,15 +522,15 @@ public class StructureTest extends TestCase {
             public BadFieldStructure badStruct = new BadFieldStructure();
         }
         try {
-            new BadFieldStructure().size();
+            new BadFieldStructure();
             fail("Should throw IllegalArgumentException on bad field");
         }
         catch(IllegalArgumentException e) {
-            assertTrue("Exception should include field name",
+            assertTrue("Exception should include field name: " + e,
                        e.getMessage().indexOf("badField") != -1);
         }
         try {
-            new BadNestedStructure().size();
+            new BadNestedStructure();
             fail("Should throw IllegalArgumentException on bad field");
         }
         catch(IllegalArgumentException e) {
@@ -610,18 +610,18 @@ public class StructureTest extends TestCase {
         }
     }
 
-    public static class ArrayOfStructure extends Structure {
+    public static class StructureWithArrayOfStructureField extends Structure {
         public Structure[] array;
     }
     public void testPlainStructureArrayField() {
         try {
-            new ArrayOfStructure();
-            fail("Structure[] not allowed as a field of Structure");
+            new StructureWithArrayOfStructureField();
+            fail("Structure[] should not be allowed as a field of Structure");
         }
         catch(IllegalArgumentException e) {
         }
         catch(Exception e) {
-            fail("Wrong exception thrown on Structure[] field in Structure: " + e);
+            fail("Wrong exception thrown when Structure[] field encountered in a Structure: " + e);
         }
     }
 
@@ -1030,28 +1030,28 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong field value (2)", 0, ts.uninitialized.longValue());
     }
 
-    public void testThrowErrorOnMissingFieldOrder() {
+    public void testFieldOrderNotRequired() {
         class TestStructure extends Structure {
             public int f1, f2;
+        }
+        try {
+            new TestStructure();
+        }
+        catch(Error e) {
+            fail("Field order should be optional");
+        }
+    }
+
+    public void testThrowErrorOnIncorrectFieldOrder() {
+        class TestStructure extends Structure {
+            public int f1, f2;
+            { setFieldOrder(new String[] { "F1", "F2" }); }
         }
         try {
             new TestStructure();
             fail("Expected an error when creating a structure without an explicit call to setFieldOrder()");
         }
         catch(Error e) {
-        }
-    }
-
-    public void testBypassErrorOnMissingFieldOrder() {
-        class TestStructure extends Structure {
-            public int f1, f2;
-        }
-        System.setProperty("jna.predictable_field_order", "true");
-        try {
-            new TestStructure();
-        }
-        finally {
-            System.setProperty("jna.predictable_field_order", "false");
         }
     }
 
@@ -1123,13 +1123,10 @@ public class StructureTest extends TestCase {
     }
 
     public void testCustomTypeMapper() {
-        final DefaultTypeMapper mapper = new DefaultTypeMapper();
         class TestField { }
-        class TestStructure extends Structure {
-            public TestField field;
-            public TestStructure() {
-                DefaultTypeMapper m = mapper;
-                m.addTypeConverter(TestField.class, new TypeConverter() {
+        final DefaultTypeMapper mapper = new DefaultTypeMapper() {
+            {
+                addTypeConverter(TestField.class, new TypeConverter() {
                     public Object fromNative(Object value, FromNativeContext context) {
                         return new TestField();
                     }
@@ -1140,7 +1137,12 @@ public class StructureTest extends TestCase {
                         return value == null ? null : value.toString();
                     }
                 });
-                setTypeMapper(m);
+            }
+        };
+        class TestStructure extends Structure {
+            public TestField field;
+            public TestStructure() {
+                super(mapper);
             }
         }
         Structure s = new TestStructure();
@@ -1395,8 +1397,8 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int field;
         }
-        Structure ts = new TestStructure();
-        Structure ts2 = new TestStructure();
+        Structure ts = new TestStructure(); ts.ensureAllocated();
+        Structure ts2 = new TestStructure(); ts2.ensureAllocated();
 
         assertSame("Structure layout not cached", ts.fields(), ts2.fields());
     }
@@ -1415,7 +1417,7 @@ public class StructureTest extends TestCase {
         Structure ts2 = new TestStructure(16);
 
         // Ensure allocated
-        ts.size(); ts2.size();
+        ts.ensureAllocated(); ts2.ensureAllocated();
         assertNotSame("Structure layout should not be cached", ts.fields(), ts2.fields());
     }
 
@@ -1452,7 +1454,7 @@ public class StructureTest extends TestCase {
         Structure ts2 = new TestStructure();
 
         // ensure allocated
-        ts.size(); ts2.size();
+        ts.ensureAllocated(); ts2.ensureAllocated();
         assertSame("Structure layout should not be cached when type mapper is in use", ts.fields(), ts2.fields());
     }
 
@@ -1469,7 +1471,7 @@ public class StructureTest extends TestCase {
         Structure ts2 = new TestStructure();
 
         // Ensure fields set up before checking them
-        ts.size(); ts2.size();
+        ts.ensureAllocated(); ts2.ensureAllocated();
         assertSame("Structure layout should be cached", ts.fields(), ts2.fields());
     }
 
@@ -1485,6 +1487,7 @@ public class StructureTest extends TestCase {
         Structure ts = new TestStructure();
         Structure ts2 = new TestStructure();
 
+        ts.ensureAllocated(); ts2.ensureAllocated();
         assertSame("Structure layout should be cached", ts.fields(), ts2.fields());
     }
 
