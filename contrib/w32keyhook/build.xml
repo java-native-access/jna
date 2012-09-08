@@ -2,9 +2,9 @@
 <project name="jnacontrib.w32keyhook" default="jar" basedir=".">
     <description>Builds, tests, and runs the project jnacontrib.w32keyhook.</description>
     <!-- Locations -->
-    <property name="src"                location="src"/>
+    <property name="src"                location="."/>
     <property name="build"              location="build"/>
-    <property name="jna-dist"           location="../../dist"/>
+    <property name="jna-dist"           location="../../../dist"/>
 
     <property name="classes"       location="${build}/classes"/>
     <property name="jar"           location="${build}/demo-w32keyhook.jar"/>
