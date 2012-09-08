@@ -6,14 +6,14 @@ Features
 
 Bug Fixes
 ---------
-* Fix: Advapi32Util.registryGetValues() tried to allocate memory for a zero-length REG_BINARY value
+* Fix: `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22). 
 
 Release 3.4.2
 =============
 
 Features
 --------
-* Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVaraible` - [@dblock](https://github.com/dblock).
+* Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVariable` - [@dblock](https://github.com/dblock).
 * Moved `Kernel32.dll` function definitions from `WinNT.java` into `Kernel32.java` - [@dblock](https://github.com/dblock).
 * Provide `toPointer()` methods on all `_PTR` types (platform win32) - [@twall](https://github.com/twall).
 * Provide ant -Dskip-native to skip platform native build.
