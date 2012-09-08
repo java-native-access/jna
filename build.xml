@@ -595,10 +595,15 @@
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
-    <property name="headless" value="false"/>
+    <condition property="java.awt.headless" value="true">
+      <isset property="headless"/>
+    </condition>
+    <propertyset id="headless">
+      <propertyref prefix="java.awt.headless"/>
+    </propertyset>
     <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
       <!-- optionally run headless -->
-      <sysproperty key="java.awt.headless" value="${headless}"/>
+      <syspropertyset refid="headless"/>
       <!-- avoid VM conflicts with JNA protected mode -->
       <env key="${ld.preload.name}" file="${libjsig}"/>
       <sysproperty key="jna.library.path" file="${build.native}"/>

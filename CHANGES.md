@@ -1,12 +1,10 @@
 Release 3.4.3
 =============
 
-Features
---------
-
 Bug Fixes
 ---------
-* Fix: `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22). 
+* Remove inadvertent, forced `setFieldOrder()` in `Structure`. Invoking `setFieldOrder` will be required in a subsequent release - [@twall](https://github.com/twall).
+* Fix `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22). 
 
 Release 3.4.2
 =============

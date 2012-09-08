@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -113,7 +114,7 @@ public abstract class Structure {
     }
 
     private static final boolean REVERSE_FIELDS;
-    private static final boolean REQUIRES_FIELD_ORDER;
+    private static final boolean REQUIRES_EXPLICIT_FIELD_ORDER;
 
     static final boolean isPPC;
     static final boolean isSPARC;
@@ -132,7 +133,7 @@ public abstract class Structure {
         Collections.reverse(reversed);
 
         REVERSE_FIELDS = names.equals(reversed);
-        REQUIRES_FIELD_ORDER = !(names.equals(expected) || REVERSE_FIELDS);
+        REQUIRES_EXPLICIT_FIELD_ORDER = !(names.equals(expected) || REVERSE_FIELDS);
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
@@ -226,6 +227,8 @@ public abstract class Structure {
      * to be resized and any existing memory to be reallocated.
      * If <code>null</code>, the default mapper for the
      * defining class will be used.
+     * @deprecated You should use one of {@link #Structure(TypeMapper)}
+     * or {@link #Structure(Pointer,int,TypeMapper)} constructors instead.
      */
     protected void setTypeMapper(TypeMapper mapper) {
         if (mapper == null) {
@@ -327,7 +330,12 @@ public abstract class Structure {
             this.size = calculateSize(true, avoidFFIType);
             if (!(this.memory instanceof AutoAllocated)) {
                 // Ensure we've set bounds on the shared memory used
-                this.memory = this.memory.share(0, this.size);
+                try {
+                    this.memory = this.memory.share(0, this.size);
+                }
+                catch(IndexOutOfBoundsException e) {
+                    throw new IllegalArgumentException("Structure exceeds provided memory bounds");
+                }
             }
         }
     }
@@ -763,11 +771,10 @@ public abstract class Structure {
 
     /** Recommended to be called in your Structure constructor, since the
      * field order as returned by {@link Class#getFields()} is not
-     * guaranted to be predictable.  If you know you can rely on the field
-     * order provided by your VM, you may set
-     * <code>jna.predictable_field_order=true</code> to avoid having to call
-     * this method.   Otherwise an Error will be thrown when the JNA attempts
-     * to determine the structure layout.
+     * guaranteed to be predictable.
+     * If this method is <em>not</em> called, and the VM does not have a
+     * predictable order , an Error will be thrown when JNA attempts to
+     * determine the structure layout. 
      */
     protected void setFieldOrder(String[] fields) {
         getFieldOrder().addAll(Arrays.asList(fields));
@@ -815,24 +822,41 @@ public abstract class Structure {
     }
 
 
-    /** @return null if not yet able to provide fields. **/
+    /** Returns all field names (sorted) provided so far by 
+        {@link #setFieldOrder}
+        @param force set if results are required immediately
+        @return null if not yet able to provide fields, and force is false.
+        @throws Error if force is true and field order data not yet specified
+        and can't be generated automatically.
+    **/
     protected List getFields(boolean force) {
-        // Restrict to valid fields
         List flist = getFieldList();
+        Set names = new HashSet();
+        for (Iterator i=flist.iterator();i.hasNext();) {
+            names.add(((Field)i.next()).getName());
+        }
         List fieldOrder = getFieldOrder();
-        if (fieldOrder.size() < flist.size() && flist.size() > 1) {
+
+        if (fieldOrder.size() < flist.size()) {
             if (force) {
-                if (!Boolean.getBoolean("jna.predictable_field_order")) {
-                    throw new Error("You must call Structure.setFieldOrder() in the base constructor for " + getClass() + " to ensure that JNA can accurately determine your Structure's memory layout.  To avoid this message, either call Structure.setFieldOrder() in your Structures constructor, or set jna.predictable_field_order=true if you are certain the VM you are using provides fields in a predictable order.");
-                }
-                if (REQUIRES_FIELD_ORDER) {
+                if (REQUIRES_EXPLICIT_FIELD_ORDER) {
                     throw new Error("This VM does not store fields in a predictable order; you must use Structure.setFieldOrder on " + getClass() + " to explicitly indicate the field order: " + System.getProperty("java.vendor") + ", " + System.getProperty("java.version"));
                 }
+                // Generate a default order from what the VM provided
+                fieldOrder = new ArrayList(names);
             }
-            if (!Boolean.getBoolean("jna.predictable_field_order")) {
+            else {
                 return null;
             }
         }
+
+        Set orderedNames = new HashSet(fieldOrder);
+        if (!orderedNames.equals(names)) {
+            throw new Error("The names declared in setFieldOrder (" + orderedNames 
+                            + ") in " + getClass() + " do not match declared field names ("
+                            + names + ")");
+        }
+
         sortFields(flist, fieldOrder);
 
         return flist;
@@ -895,6 +919,37 @@ public abstract class Structure {
         boolean variable;
     }
 
+    private void validateField(String name, Class type) {
+        if (typeMapper != null) {
+            ToNativeConverter toNative = typeMapper.getToNativeConverter(type);
+            if (toNative != null) {
+                validateField(name, toNative.nativeType());
+                return;
+            }
+        }
+        if (type.isArray()) {
+            validateField(name, type.getComponentType());
+        }
+        else {
+            try {
+                getNativeSize(type);
+            }
+            catch(IllegalArgumentException e) {
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + name + "' (" + type + "): " + e.getMessage();
+                throw new IllegalArgumentException(msg);
+            }
+        }
+    }
+
+    /** ensure all fields are of valid type. */
+    private void validateFields() {
+        List fields = getFieldList();
+        for (Iterator i=fields.iterator();i.hasNext();) {
+            Field f = (Field)i.next();
+            validateField(f.getName(), f.getType());
+        }
+    }
+
     /** Calculates the size, alignment, and field layout of this structure.
         Also initializes any null-valued Structure or NativeMapped
         members. 
@@ -904,6 +959,7 @@ public abstract class Structure {
         int calculatedSize = 0;
         List fields = getFields(force);
         if (fields == null) {
+            validateFields();
             return null;
         }
 
@@ -997,7 +1053,7 @@ public abstract class Structure {
                 if (!force && typeMapper == null) {
                     return null;
                 }
-                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "', " + structField.type + ": " + e.getMessage();
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "' (" + structField.type + "): " + e.getMessage();
                 throw new IllegalArgumentException(msg);
             }
 
@@ -1675,6 +1731,16 @@ public abstract class Structure {
         }
     }
 
+    /** Return the native size of the given Java type, from the perspective of
+        this Structure.
+    */
+    protected int getNativeSize(Class nativeType) {
+        return getNativeSize(nativeType, null);
+    }
+
+    /** Return the native size of the given Java type, from the perspective of
+        this Structure.
+    */
     protected int getNativeSize(Class nativeType, Object value) {
         return Native.getNativeSize(nativeType, value);
     }
