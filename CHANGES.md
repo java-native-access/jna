@@ -5,8 +5,7 @@ Bug Fixes
 ---------
 * Remove inadvertent, forced `setFieldOrder()` in `Structure`.  Invoking
 `setFieldOrder` will be required in a subsequent release.
-* [#116](https://github.com/twall/jna/issues/116): Fix error in
-`platform.win32.Advapi32Util.registryGetValues` w/ empty REG_BINARY values [@phailwhale22](https://github.com/phailwhale22).
+* Fix: Advapi32Util.registryGetValues() tried to allocate memory for a zero-length REG_BINARY value
 
 Release 3.4.2
 =============
