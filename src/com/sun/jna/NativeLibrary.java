@@ -15,7 +15,10 @@
 package com.sun.jna;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
 import java.lang.reflect.Method;
@@ -165,12 +168,79 @@ public class NativeLibrary {
                 try { handle = Native.open(libraryPath); }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
             }
+            // As a last resort, try to extract the library from the JAR
+            if (handle == 0) {
+                final String embeddedLib = getEmbeddedLibraryPathFromJar(mapLibraryName(libraryName));
+                if (embeddedLib != null)
+                {
+                    try {
+                        handle = Native.open(embeddedLib);
+                    }
+                    catch (UnsatisfiedLinkError e2) { e = e2; }
+                }
+            }
             if (handle == 0) {
                 throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "': "
                                                + e.getMessage());
             }
         }
         return new NativeLibrary(libraryName, libraryPath, handle, options);
+    }
+    
+    private static String getEmbeddedLibraryPathFromJar(String libraryName)
+    {
+        // Do not extract the library from JAR if jna.nounpack=true
+        if (Boolean.getBoolean("jna.nounpack")) {
+            return null;
+        }
+        final String libraryPath = System.getProperty("os.name") + "-" + System.getProperty("os.arch") + "/";
+        File libFile;
+        try
+        {
+            libFile = extractEmbeddedLibraryResource(libraryPath, libraryName);
+        }
+        catch (IOException e)
+        {
+            return null;
+        }
+        if (libFile == null)
+        {
+            return null;
+        }
+        else
+        {
+            return libFile.getAbsolutePath();
+        }
+    }
+    
+    private static File extractEmbeddedLibraryResource(String libraryPath, String libraryName) throws IOException {
+        final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(libraryPath + libraryName);
+        if (is == null) {
+            return null;
+        }
+        FileOutputStream fos = null;
+        File lib = null;
+        try {
+            // Suffix is required on windows, or library fails to load
+            // Let Java pick the suffix, except on windows, to avoid
+            // problems with Web Start.
+            File dir = Native.getTempDir();
+            lib = File.createTempFile(libraryName, Platform.isWindows()?".dll":null, dir);
+            lib.deleteOnExit();
+            fos = new FileOutputStream(lib);
+            int count;
+            byte[] buf = new byte[1024];
+            while ((count = is.read(buf, 0, buf.length)) > 0) {
+                fos.write(buf, 0, count);
+            }
+        }
+        finally {
+            try { is.close(); } catch(IOException e) { }
+            if (fos != null) {
+                try { fos.close(); } catch(IOException e) { }
+            }
+        }
+        return lib;
     }
 
     private String getLibraryName(String libraryName) {
