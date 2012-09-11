@@ -17,6 +17,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class NativeLibraryTest extends TestCase {
@@ -189,6 +190,18 @@ public class NativeLibraryTest extends TestCase {
         NativeLibrary process = NativeLibrary.getProcess();
         // Access a common C library function
         process.getFunction("printf");
+    }
+    
+    public static interface TestLibraryInJar extends Library {
+        int test();
+    }
+    
+    /**
+     * Tests that we can load a library which is embedded in the test JAR.
+     */
+    public void testEmbeddedLibrary() {
+        TestLibraryInJar lib = (TestLibraryInJar)Native.loadLibrary("testlibjar", TestLibraryInJar.class);
+        Assert.assertEquals(0, lib.test());
     }
 
     public static void main(String[] args) {

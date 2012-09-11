@@ -60,6 +60,7 @@ endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
 TESTLIB2=$(BUILD)/$(LIBPFX)testlib2$(LIBSFX)
+TESTLIBJAR=$(BUILD)/$(LIBPFX)testlibjar$(LIBSFX)
 
 # Reasonable defaults based on GCC
 LIBPFX=lib
@@ -296,7 +297,7 @@ else
 	$(CC) $(CFLAGS) -c $< $(COUT)
 endif
 
-all: $(LIBRARY) $(TESTLIB) $(TESTLIB2)
+all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIBJAR)
 
 install:
 	mkdir $(INSTALLDIR)
@@ -320,6 +321,9 @@ TESTDEP=$(TESTLIB)
 endif
 $(TESTLIB2): $(BUILD)/testlib2.o
 	$(LD) $(LDFLAGS) $< $(TESTDEP)
+
+$(TESTLIBJAR): $(BUILD)/testlibjar.o
+	$(LD) $(LDFLAGS) $< $(LIBS)
 
 ifneq ($(DYNAMIC_LIBFFI),true)
 $(FFI_LIB):
