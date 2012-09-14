@@ -15,6 +15,7 @@ package com.sun.jna;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
@@ -133,7 +134,7 @@ public class TypeMapperTest extends TestCase {
     public static interface StructureTestLibrary extends Library {
         public static class TestStructure extends Structure {
             public TestStructure(TypeMapper mapper) {
-                setTypeMapper(mapper);
+                super(mapper);
             }
             public boolean data;
         }

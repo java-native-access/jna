@@ -198,7 +198,7 @@ public abstract class Structure {
 
     protected Structure(Pointer p, int alignType, TypeMapper mapper) {
         setAlignType(alignType);
-        setTypeMapper(mapper);
+        initializeTypeMapper(mapper);
         if (p != null) {
             useMemory(p);
         }
@@ -231,6 +231,14 @@ public abstract class Structure {
      * or {@link #Structure(Pointer,int,TypeMapper)} constructors instead.
      */
     protected void setTypeMapper(TypeMapper mapper) {
+        initializeTypeMapper(mapper);
+    }
+    
+    /** Initialize the type mapper for this structure.  
+     * If <code>null</code>, the default mapper for the
+     * defining class will be used.
+     */
+    private void initializeTypeMapper(TypeMapper mapper) {
         if (mapper == null) {
             Class declaring = getClass().getDeclaringClass();
             if (declaring != null) {
