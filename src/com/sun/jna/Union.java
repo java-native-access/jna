@@ -12,10 +12,10 @@
  */
 package com.sun.jna;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.lang.reflect.Field;
 
 /** Represents a native union.  When writing to native memory, the field
  * corresponding to the type passed to {@link #setType} will be written
@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
 public abstract class Union extends Structure {
     private StructField activeField;
     StructField biggestField;
+    
     /** Create a Union whose size and alignment will be calculated 
      * automatically.
      */
@@ -49,11 +50,6 @@ public abstract class Union extends Structure {
     /** Create a Union of the given size and alignment type. */
     protected Union(Pointer p, int alignType, TypeMapper mapper) {
         super(p, alignType, mapper);
-    }
-
-    /** Invalid operation on unions. */
-    protected void setFieldOrder(String[] fields) {
-        throw new RuntimeException("Unions do not need to specify field order");
     }
 
     /** Unions do not need a field order, so automatically provide a value to

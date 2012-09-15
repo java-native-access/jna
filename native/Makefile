@@ -132,7 +132,7 @@ LIBSFX=.dll
 ifeq ($(CC),gcc)
 # -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
 # installation
-GCC_VERSION = $(shell gcc --version | sed -n 's/.*\([34]\)[0-9.]*.*/\1/p')
+GCC_VERSION = $(shell gcc --version | sed -n 's/.*(GCC) \([0-9]\)\.[0-9.]*.*/\1/p')
 ifeq ($(GCC_VERSION),3)
 NOCYGWIN=-mno-cygwin
 else

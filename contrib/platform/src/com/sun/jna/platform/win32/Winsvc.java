@@ -13,6 +13,9 @@
 package com.sun.jna.platform.win32;
 
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -97,6 +100,10 @@ public interface Winsvc extends StdCallLibrary {
          */
         public int dwWaitHint;
 
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint" });
+        }
+        
         public SERVICE_STATUS() {
             super();
         }
@@ -181,6 +188,10 @@ public interface Winsvc extends StdCallLibrary {
          */
         public int   dwServiceFlags;
 		
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint", "dwProcessId", "dwServiceFlags" });
+        }
+        
         public SERVICE_STATUS_PROCESS() {
         }
 		

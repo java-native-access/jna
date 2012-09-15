@@ -12,14 +12,21 @@
  */
 package com.sun.jna;
 
-import com.sun.jna.VarArgsTest.TestLibrary.TestStructure;
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.TestCase;
+
+import com.sun.jna.VarArgsTest.TestLibrary.TestStructure;
 
 public class VarArgsTest extends TestCase {
     final int MAGIC32 = 0x12345678;
     public static interface TestLibrary extends Library {
         public static class TestStructure extends Structure {
             public int magic = 0;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "magic" }); 
+            }
         }
         public int addInt32VarArgs(String fmt, Number... args);
         public String returnStringVarArgs(String fmt, Object... args);

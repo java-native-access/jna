@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -98,6 +101,10 @@ public interface ShellAPI extends StdCallLibrary {
          * A pointer to the title of a progress dialog box. This is a null-terminated string. 
          */
         public WString lpszProgressTitle;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "hwnd", "wFunc", "pFrom", "pTo", "fFlags", "fAnyOperationsAborted", "pNameMappings", "lpszProgressTitle" });
+        }
 
         /** Use this to encode <code>pFrom/pTo</code> paths. */
         public String encodePaths(String[] paths) {

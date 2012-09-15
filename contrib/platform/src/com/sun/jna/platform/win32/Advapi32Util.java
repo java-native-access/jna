@@ -1261,7 +1261,12 @@ public abstract class Advapi32Util {
 	    }
 	    
 	    String nameString = Native.toString(name);
-	    
+
+	    if(lpcbData.getValue() == 0 && lpType.getValue() == WinNT.REG_BINARY) {
+	        keyValues.put(nameString, new byte[0]);
+	        continue;
+	    }
+
 	    Memory byteData = new Memory(lpcbData.getValue());
 	    byteData.write(0, data, 0, lpcbData.getValue());
 	    

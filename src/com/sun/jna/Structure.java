@@ -1,5 +1,5 @@
 /* Copyright (c) 2007-2012 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,8 +19,10 @@ import java.nio.Buffer;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,21 +47,19 @@ import java.util.zip.Adler32;
  * enclosing interface definition (if any) by using
  * {@link Native#getStructureAlignment} and {@link Native#getTypeMapper}.
  * Alternatively you can explicitly provide alignment, field order, or type
- * mapping by calling the respective functions in your subclass's
+ * mapping by calling the respective Structure functions in your subclass's
  * constructor.
  * <p/>
  * Structure fields corresponding to native struct fields <em>must</em> be
- * public.  You <em>must</em> call {@link #setFieldOrder} with an array of
- * Strings indicating the proper order of the fields.  When dealing with
- * multiple subclasses of Structure, you need only call {@link #setFieldOrder}
- * with the fields defined in the current class; JNA handles aggregating all
- * the fields in the class hierarchy in the proper order.  In the past, most
- * VMs would return them in a predictable order, but the JVM spec does not
- * require it, so it's recommended to ensure JNA knows the proper order).
- * If you are bundling a specific VM with your application, and you know that
- * it has a predictable field order, you can set the property
- * <code>jna.predictable_field_order=true</code> to avoid an automatic error
- * when field order is not defined within a {@link Structure} class.
+ * public.  You <em>must</em> define {@link #getFieldOrder} to return a List of
+ * field names (Strings) indicating the proper order of the fields.  When
+ * dealing with multiple levels of subclasses of Structure, you must add to
+ * the list provided by the superclass {@link #getFieldOrder}
+ * the fields defined in the current class.
+ * <p/>
+ * In the past, most VMs would return them in a predictable order, but the JVM
+ * spec does not require it, so {@link #getFieldOrder} is now required to
+ * ensure JNA knows the proper order).
  * <p/>
  * Structure fields may additionally have the following modifiers:<br>
  * <ul>
@@ -101,42 +101,15 @@ public abstract class Structure {
      */
     public interface ByReference { }
 
-    private static class MemberOrder {
-        private static final String[] FIELDS = {
-            "first", "second", "middle", "penultimate", "last",
-        };
-        public int first;
-        public int second;
-        public int middle;
-        public int penultimate;
-        public int last;
-    }
-
-    private static final boolean REVERSE_FIELDS;
-    private static final boolean REQUIRES_FIELD_ORDER;
-
     static final boolean isPPC;
     static final boolean isSPARC;
     static final boolean isARM;
 
     static {
-        // Check for predictable field order; IBM and JRockit store fields in
-        // reverse order; Excelsior JET requires explicit order
-        Field[] fields = MemberOrder.class.getFields();
-        List names = new ArrayList();
-        for(int i=0;i < fields.length;i++) {
-            names.add(fields[i].getName());
-        }
-        List expected = Arrays.asList(MemberOrder.FIELDS);
-        List reversed = new ArrayList(expected);
-        Collections.reverse(reversed);
-
-        REVERSE_FIELDS = names.equals(reversed);
-        REQUIRES_FIELD_ORDER = !(names.equals(expected) || REVERSE_FIELDS);
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
-	isARM = "arm".equals(arch);
+        isARM = "arm".equals(arch);
     }
 
     /** Use the platform default alignment. */
@@ -160,11 +133,13 @@ public abstract class Structure {
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
+    static final Map fieldOrder = new WeakHashMap();
 
     // This field is accessed by native code
     private Pointer memory;
     private int size = CALCULATE_SIZE;
     private int alignType;
+    private int actualAlignType;
     private int structAlignment;
     private Map structFields;
     // Keep track of java strings which have been converted to C strings
@@ -172,21 +147,28 @@ public abstract class Structure {
     private TypeMapper typeMapper;
     // This field is accessed by native code
     private long typeInfo;
-    private List fieldOrder;
 
     private boolean autoRead = true;
     private boolean autoWrite = true;
     private Structure[] array;
 
     protected Structure() {
-        this((Pointer)null);
+        this(ALIGN_DEFAULT);
     }
 
     protected Structure(TypeMapper mapper) {
-        this((Pointer)null, ALIGN_DEFAULT, mapper);
+        this(null, ALIGN_DEFAULT, mapper);
     }
 
-    /** Create a structure cast onto preallocated memory. */
+    protected Structure(int alignType) {
+        this(null, alignType);
+    }
+
+    protected Structure(int alignType, TypeMapper mapper) {
+        this(null, alignType, mapper);
+    }
+
+    /** Create a structure cast onto pre-allocated memory. */
     protected Structure(Pointer p) {
         this(p, ALIGN_DEFAULT);
     }
@@ -197,7 +179,8 @@ public abstract class Structure {
 
     protected Structure(Pointer p, int alignType, TypeMapper mapper) {
         setAlignType(alignType);
-        setTypeMapper(mapper);
+        initializeTypeMapper(mapper);
+        validateFields();
         if (p != null) {
             useMemory(p);
         }
@@ -226,8 +209,18 @@ public abstract class Structure {
      * to be resized and any existing memory to be reallocated.
      * If <code>null</code>, the default mapper for the
      * defining class will be used.
+     * @deprecated You should use one of {@link #Structure(TypeMapper)}
+     * or {@link #Structure(Pointer,int,TypeMapper)} constructors instead.
      */
     protected void setTypeMapper(TypeMapper mapper) {
+        initializeTypeMapper(mapper);
+    }
+    
+    /** Initialize the type mapper for this structure.  
+     * If <code>null</code>, the default mapper for the
+     * defining class will be used.
+     */
+    private void initializeTypeMapper(TypeMapper mapper) {
         if (mapper == null) {
             Class declaring = getClass().getDeclaringClass();
             if (declaring != null) {
@@ -257,6 +250,7 @@ public abstract class Structure {
      * alignment for the defining class will be used.
      */
     protected void setAlignType(int alignType) {
+        this.alignType = alignType;
         if (alignType == ALIGN_DEFAULT) {
             Class declaring = getClass().getDeclaringClass();
             if (declaring != null)
@@ -268,7 +262,7 @@ public abstract class Structure {
                     alignType = ALIGN_GNUC;
             }
         }
-        this.alignType = alignType;
+        this.actualAlignType = alignType;
         layoutChanged();
     }
 
@@ -327,7 +321,12 @@ public abstract class Structure {
             this.size = calculateSize(true, avoidFFIType);
             if (!(this.memory instanceof AutoAllocated)) {
                 // Ensure we've set bounds on the shared memory used
-                this.memory = this.memory.share(0, this.size);
+                try {
+                    this.memory = this.memory.share(0, this.size);
+                }
+                catch(IndexOutOfBoundsException e) {
+                    throw new IllegalArgumentException("Structure exceeds provided memory bounds");
+                }
             }
         }
     }
@@ -374,6 +373,7 @@ public abstract class Structure {
     }
 
     public void clear() {
+        ensureAllocated();
         memory.clear(size());
     }
 
@@ -394,7 +394,7 @@ public abstract class Structure {
     //////////////////////////////////////////////////////////////////////////
 
     // Keep track of ByReference reads to avoid redundant reads of the same
-    // address 
+    // address
     private static final ThreadLocal reads = new ThreadLocal() {
         protected synchronized Object initialValue() {
             return new HashMap();
@@ -720,7 +720,7 @@ public abstract class Structure {
             // Allocate a new string in memory
             boolean wide = fieldType == WString.class;
             if (value != null) {
-                if (nativeStrings.containsKey(structField.name + ".ptr") 
+                if (nativeStrings.containsKey(structField.name + ".ptr")
                     && value.equals(nativeStrings.get(structField.name + ".val"))) {
                     return;
                 }
@@ -750,30 +750,37 @@ public abstract class Structure {
         }
     }
 
-    /** Retrieve the field order for this Structure instance's class. */
-    protected List getFieldOrder() {
-        synchronized(this) {
-            if (fieldOrder == null) {
-                fieldOrder = new ArrayList();
-            }
-            return fieldOrder;
-        }
-    }
-
-    /** Recommended to be called in your Structure constructor, since the
+    /** Return this Structure's field names in their proper order.  For
+     * example,
+     * <pre><code>
+     * protected List getFieldOrder() {
+     *     return Arrays.asList(new String[] { ... });
+     * }
+     * </code></pre>
+     * <strong>IMPORTANT</strong>
+     * When deriving from an existing Structure subclass, ensure that
+     * you augment the list provided by the superclass, e.g.
+     * <pre><code>
+     * protected List getFieldOrder() {
+     *     List fields = new ArrayList(super.getFieldOrder());
+     *     fields.addAll(Arrays.asList(new String[] { ... }));
+     *     return fields;
+     * }
+     * </code></pre>
+     *
+     * Field order must be explicitly indicated, since the
      * field order as returned by {@link Class#getFields()} is not
-     * guaranted to be predictable.  If you know you can rely on the field
-     * order provided by your VM, you may set
-     * <code>jna.predictable_field_order=true</code> to avoid having to call
-     * this method.   Otherwise an Error will be thrown when the JNA attempts
-     * to determine the structure layout.
+     * guaranteed to be predictable.
      */
-    protected void setFieldOrder(String[] fields) {
-        getFieldOrder().addAll(Arrays.asList(fields));
-        // Force recalculation of size/field layout, since
-        // differing field order may result in different
-        // padding/alignment 
-        layoutChanged();
+    protected abstract List getFieldOrder();
+
+    /**
+     * Force a compile-time error on the old method of field definition
+     * @deprecated Use the required method getFieldOrder() instead to
+     * indicate the order of fields in this structure.
+     */
+    protected final void setFieldOrder(String[] fields) {
+        throw new Error("This method is obsolete, use getFieldOrder() instead");
     }
 
     /** Sort the structure fields according to the given array of names. */
@@ -805,33 +812,64 @@ public abstract class Structure {
                     continue;
                 classFields.add(fields[i]);
             }
-            if (REVERSE_FIELDS) {
-                Collections.reverse(classFields);
-            }
             flist.addAll(0, classFields);
         }
         return flist;
     }
 
-
-    /** @return null if not yet able to provide fields. **/
-    protected List getFields(boolean force) {
-        // Restrict to valid fields
-        List flist = getFieldList();
-        List fieldOrder = getFieldOrder();
-        if (fieldOrder.size() < flist.size() && flist.size() > 1) {
-            if (force) {
-                if (!Boolean.getBoolean("jna.predictable_field_order")) {
-                    throw new Error("You must call Structure.setFieldOrder() in the base constructor for " + getClass() + " to ensure that JNA can accurately determine your Structure's memory layout.  To avoid this message, either call Structure.setFieldOrder() in your Structures constructor, or set jna.predictable_field_order=true if you are certain the VM you are using provides fields in a predictable order.");
-                }
-                if (REQUIRES_FIELD_ORDER) {
-                    throw new Error("This VM does not store fields in a predictable order; you must use Structure.setFieldOrder on " + getClass() + " to explicitly indicate the field order: " + System.getProperty("java.vendor") + ", " + System.getProperty("java.version"));
-                }
+    /** Cache field order per-class. */
+    private List fieldOrder() {
+        synchronized(fieldOrder) {
+            List list = (List)fieldOrder.get(getClass());
+            if (list == null) {
+                list = getFieldOrder();
+                fieldOrder.put(getClass(), list);
             }
-            if (!Boolean.getBoolean("jna.predictable_field_order")) {
-                return null;
-            }
+            return list;
         }
+    }
+
+    private List sort(Collection c) {
+        List list = new ArrayList(c);
+        Collections.sort(list);
+        return list;
+    }
+
+    /** Returns all field names (sorted) provided so far by 
+        {@link #setFieldOrder}
+        @param force set if results are required immediately
+        @return null if not yet able to provide fields, and force is false.
+        @throws Error if force is true and field order data not yet specified
+        and can't be generated automatically.
+    **/
+    protected List getFields(boolean force) {
+        List flist = getFieldList();
+        Set names = new HashSet();
+        for (Iterator i=flist.iterator();i.hasNext();) {
+            names.add(((Field)i.next()).getName());
+        }
+        List fieldOrder = fieldOrder();
+        if (fieldOrder.size() != flist.size() && flist.size() > 1) {
+            if (force) {
+                throw new Error("Structure.getFieldOrder() on " + getClass()
+                                + " does not provide enough names ("
+                                + sort(fieldOrder)
+                                + ") to match declared fields ("
+                                + sort(names)
+                                + ")");
+            }
+            return null;
+        }
+
+        Set orderedNames = new HashSet(fieldOrder);
+        if (!orderedNames.equals(names)) {
+            throw new Error("Structure.getFieldOrder() on " + getClass() 
+                            + " returns names ("
+                            + sort(fieldOrder)
+                            + ") which do not match declared field names ("
+                            + sort(names) + ")");
+        }
+
         sortFields(flist, fieldOrder);
 
         return flist;
@@ -860,20 +898,25 @@ public abstract class Structure {
         }
         if (info == null
             || this.alignType != info.alignType
-            || this.typeMapper != info.typeMapper
-            || (this.fieldOrder != null
-                && !this.fieldOrder.equals(info.fieldOrder))) {
+            || this.typeMapper != info.typeMapper) {
             info = deriveLayout(force, avoidFFIType);
         }
         if (info != null) {
             this.structAlignment = info.alignment;
             this.structFields = info.fields;
-            info.alignType = this.alignType;
-            info.typeMapper = this.typeMapper;
-            info.fieldOrder = this.fieldOrder;
+
             if (!info.variable) {
                 synchronized(layoutInfo) {
-                    layoutInfo.put(getClass(), info);
+                    // If we've already cached it, only override layout if
+                    // we're using non-default values for alignment and/or
+                    // type mapper; this way we don't override the cache
+                    // prematurely when processing subclasses that call
+                    // setAlignType() or setTypeMapper() in the constructor
+                    if (!layoutInfo.containsKey(getClass())
+                        || this.alignType != ALIGN_DEFAULT
+                        || this.typeMapper != null) {
+                        layoutInfo.put(getClass(), info);
+                    }
                 }
             }
             size = info.size;
@@ -885,26 +928,60 @@ public abstract class Structure {
         mapper, and explicit field order will affect this information.
     */
     private static class LayoutInfo {
-        int size = CALCULATE_SIZE;
-        int alignment = 1;
-        Map fields = Collections.synchronizedMap(new LinkedHashMap());
-        int alignType = ALIGN_DEFAULT;
-        TypeMapper typeMapper;
-        List fieldOrder;
-        boolean variable;
+        private int size = CALCULATE_SIZE;
+        private int alignment = 1;
+        private final Map fields = Collections.synchronizedMap(new LinkedHashMap());
+        private int alignType = ALIGN_DEFAULT;
+        private TypeMapper typeMapper;
+        private boolean variable;
+    }
+
+    private void validateField(String name, Class type) {
+        if (typeMapper != null) {
+            ToNativeConverter toNative = typeMapper.getToNativeConverter(type);
+            if (toNative != null) {
+                validateField(name, toNative.nativeType());
+                return;
+            }
+        }
+        if (type.isArray()) {
+            validateField(name, type.getComponentType());
+        }
+        else {
+            try {
+                getNativeSize(type);
+            }
+            catch(IllegalArgumentException e) {
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + name + "' (" + type + "): " + e.getMessage();
+                throw new IllegalArgumentException(msg);
+            }
+        }
+    }
+
+    /** ensure all fields are of valid type. */
+    private void validateFields() {
+        List fields = getFieldList();
+        for (Iterator i=fields.iterator();i.hasNext();) {
+            Field f = (Field)i.next();
+            validateField(f.getName(), f.getType());
+        }
     }
 
     /** Calculates the size, alignment, and field layout of this structure.
         Also initializes any null-valued Structure or NativeMapped
-        members. 
+        members.
      */
     private LayoutInfo deriveLayout(boolean force, boolean avoidFFIType) {
-        LayoutInfo info = new LayoutInfo();
+
         int calculatedSize = 0;
         List fields = getFields(force);
         if (fields == null) {
             return null;
         }
+
+        LayoutInfo info = new LayoutInfo();
+        info.alignType = this.alignType;
+        info.typeMapper = this.typeMapper;
 
         boolean firstField = true;
         for (Iterator i=fields.iterator();i.hasNext();firstField=false) {
@@ -996,7 +1073,7 @@ public abstract class Structure {
                 if (!force && typeMapper == null) {
                     return null;
                 }
-                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "', " + structField.type + ": " + e.getMessage();
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "' (" + structField.type + "): " + e.getMessage();
                 throw new IllegalArgumentException(msg);
             }
 
@@ -1043,7 +1120,7 @@ public abstract class Structure {
                 }
             }
             catch (Exception e) {
-                throw new Error("Exception reading field '" 
+                throw new Error("Exception reading field '"
                                 + f.getName() + "' in " + getClass()
                                 + ": " + e);
             }
@@ -1079,7 +1156,7 @@ public abstract class Structure {
     private int calculateAlignedSize(int calculatedSize, int alignment) {
         // Structure size must be an integral multiple of its alignment,
         // add padding if necessary.
-        if (alignType != ALIGN_NONE) {
+        if (actualAlignType != ALIGN_NONE) {
             if ((calculatedSize % alignment) != 0) {
                 calculatedSize += alignment - (calculatedSize % alignment);
             }
@@ -1137,13 +1214,13 @@ public abstract class Structure {
             throw new IllegalArgumentException("Type " + type + " has unknown "
                                                + "native alignment");
         }
-        if (alignType == ALIGN_NONE) {
+        if (actualAlignType == ALIGN_NONE) {
             alignment = 1;
         }
-        else if (alignType == ALIGN_MSVC) {
+        else if (actualAlignType == ALIGN_MSVC) {
             alignment = Math.min(8, alignment);
         }
-        else if (alignType == ALIGN_GNUC) {
+        else if (actualAlignType == ALIGN_GNUC) {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
             if (!isFirstElement || !(Platform.isMac() && isPPC)) {
@@ -1503,7 +1580,6 @@ public abstract class Structure {
         public Pointer elements;
 
         private FFIType(Structure ref) {
-            initFieldOrder();
             Pointer[] els;
             ref.ensureAllocated(true);
 
@@ -1526,7 +1602,6 @@ public abstract class Structure {
         }
         // Represent fixed-size arrays as structures of N identical elements
         private FFIType(Object array, Class type) {
-            initFieldOrder();
             int length = Array.getLength(array);
             Pointer[] els = new Pointer[length+1];
             Pointer p = get(null, type.getComponentType());
@@ -1535,8 +1610,8 @@ public abstract class Structure {
             }
             init(els);
         }
-        private void initFieldOrder() {
-            setFieldOrder(new String[] { "size", "alignment", "type", "elements" });
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "size", "alignment", "type", "elements" });
         }
         private void init(Pointer[] els) {
             elements = new Memory(Pointer.SIZE * els.length);
@@ -1674,6 +1749,16 @@ public abstract class Structure {
         }
     }
 
+    /** Return the native size of the given Java type, from the perspective of
+        this Structure.
+    */
+    protected int getNativeSize(Class nativeType) {
+        return getNativeSize(nativeType, null);
+    }
+
+    /** Return the native size of the given Java type, from the perspective of
+        this Structure.
+    */
     protected int getNativeSize(Class nativeType, Object value) {
         return Native.getNativeSize(nativeType, value);
     }

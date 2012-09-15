@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -62,7 +63,9 @@ class CallbackReference extends WeakReference {
         public boolean daemon;
         public boolean detach;
         public String name;
-        { setFieldOrder(new String[] { "daemon", "detach", "name" }); }
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "daemon", "detach", "name" });
+        }
     }
     /** Called from native code to initialize a callback thread. */
     private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {

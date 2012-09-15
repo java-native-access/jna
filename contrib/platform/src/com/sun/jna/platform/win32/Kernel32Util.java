@@ -204,7 +204,7 @@ public abstract class Kernel32Util implements WinDef {
 	
 	/**
 	 * Get the value of an environment variable.
-	 * @name
+	 * @param name
 	 * 	Name of the environment variable.
 	 * @return 
 	 *  Value of an environment variable.
