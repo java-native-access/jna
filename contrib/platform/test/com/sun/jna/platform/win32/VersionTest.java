@@ -25,9 +25,12 @@ public class VersionTest extends TestCase {
 
     public void testGetFileVersion() {
         String systemRoot = System.getenv("SystemRoot");
-        File notepad = new File(systemRoot + "\\write.exe");
+        File file = new File(systemRoot + "\\regedit.exe");
+        if (!file.exists()) {
+            fail("Can't obtain file version, file " + file + " is missing");
+        }
 
-        int size = Version.INSTANCE.GetFileVersionInfoSize(notepad.getAbsolutePath(), null);
+        int size = Version.INSTANCE.GetFileVersionInfoSize(file.getAbsolutePath(), null);
         assertTrue(size > 0);
 
         Pointer buffer = Kernel32.INSTANCE.LocalAlloc(WinBase.LMEM_ZEROINIT, size);
@@ -35,7 +38,7 @@ public class VersionTest extends TestCase {
 
         try
         {
-            assertTrue(Version.INSTANCE.GetFileVersionInfo(notepad.getAbsolutePath(), 0, size, buffer));
+            assertTrue(Version.INSTANCE.GetFileVersionInfo(file.getAbsolutePath(), 0, size, buffer));
 
             IntByReference outputSize = new IntByReference();
             PointerByReference pointer = new PointerByReference();

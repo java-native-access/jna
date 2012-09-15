@@ -1,10 +1,13 @@
-Release 3.4.3
+Release 3.5.0
 =============
+
+Features
+--------
+* `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is
+now required.
 
 Bug Fixes
 ---------
-* Remove inadvertent, forced `setFieldOrder()` in `Structure`.  Invoking
-`setFieldOrder` will be required in a subsequent release.
 * Fix: Advapi32Util.registryGetValues() tried to allocate memory for a zero-length REG_BINARY value
 
 Release 3.4.2

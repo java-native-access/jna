@@ -732,7 +732,10 @@ public class Advapi32Test extends TestCase {
     	assertTrue(Advapi32.INSTANCE.CloseServiceHandle(handle));
     	
     	assertNull(Advapi32.INSTANCE.OpenSCManager("invalidMachineName", null, Winsvc.SC_MANAGER_CONNECT));
-    	assertEquals(W32Errors.RPC_S_SERVER_UNAVAILABLE, Kernel32.INSTANCE.GetLastError());
+        int err = Kernel32.INSTANCE.GetLastError();
+    	assertTrue("Unexpected error in OpenSCManager: " + err,
+                   err == W32Errors.RPC_S_SERVER_UNAVAILABLE
+                   || err == W32Errors.RPC_S_INVALID_NET_ADDR);
 
     	assertNull(Advapi32.INSTANCE.OpenSCManager(null, "invalidDatabase", Winsvc.SC_MANAGER_CONNECT));
     	assertEquals(W32Errors.ERROR_INVALID_NAME, Kernel32.INSTANCE.GetLastError());

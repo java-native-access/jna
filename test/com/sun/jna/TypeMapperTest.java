@@ -13,7 +13,9 @@
 
 package com.sun.jna;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -137,6 +139,9 @@ public class TypeMapperTest extends TestCase {
                 super(mapper);
             }
             public boolean data;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "data" }); 
+            }
         }
     }
     public void testStructureConversion() throws Exception {
