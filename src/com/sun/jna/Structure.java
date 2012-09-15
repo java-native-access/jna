@@ -199,6 +199,7 @@ public abstract class Structure {
     protected Structure(Pointer p, int alignType, TypeMapper mapper) {
         setAlignType(alignType);
         initializeTypeMapper(mapper);
+        validateFields();
         if (p != null) {
             useMemory(p);
         }
@@ -967,10 +968,8 @@ public abstract class Structure {
         int calculatedSize = 0;
         List fields = getFields(force);
         if (fields == null) {
-            validateFields();
             return null;
         }
-
         boolean firstField = true;
         for (Iterator i=fields.iterator();i.hasNext();firstField=false) {
             Field field = (Field)i.next();
