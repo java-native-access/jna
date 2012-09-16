@@ -17,9 +17,9 @@ Features
 * Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVariable` - [@dblock](https://github.com/dblock).
 * Moved `Kernel32.dll` function definitions from `WinNT.java` into `Kernel32.java` - [@dblock](https://github.com/dblock).
 * Provide `toPointer()` methods on all `_PTR` types (platform win32) - [@twall](https://github.com/twall).
-* Provide ant -Dskip-native to skip platform native build.
-* Provide ant -Dheadless=true to run unit tests headless.
-* Added windows dev environment instructions.
+* Provide `ant -Dskip-native` to skip platform native build - [@twall](https://github.com/twall).
+* Provide `ant -Dheadless=true` to run unit tests headless - [@twall](https://github.com/twall).
+* Added Windows dev environment instructions - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
