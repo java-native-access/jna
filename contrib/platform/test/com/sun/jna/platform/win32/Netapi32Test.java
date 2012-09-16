@@ -233,7 +233,6 @@ public class Netapi32Test extends TestCase {
     	if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
     		return;
 
-    	IntByReference domainTrustCount = new IntByReference();
         PointerByReference domainsPointerRef = new PointerByReference();
         assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(null, 
                 DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainTrustCount));
@@ -243,14 +242,14 @@ public class Netapi32Test extends TestCase {
         DS_DOMAIN_TRUSTS[] domainTrusts = (DS_DOMAIN_TRUSTS[]) domainTrustRefs.toArray(new DS_DOMAIN_TRUSTS[domainTrustCount.getValue()]);
 
     	for(DS_DOMAIN_TRUSTS trust : domainTrusts) {
-			assertTrue(trust.NetbiosDomainName.length() > 0);
 			assertTrue(trust.DnsDomainName.length() > 0);
 			assertTrue(Advapi32.INSTANCE.IsValidSid(trust.DomainSid));
 			assertTrue(Advapi32Util.convertSidToStringSid(trust.DomainSid).startsWith("S-"));
 			assertTrue(Ole32Util.getStringFromGUID(trust.DomainGuid).startsWith("{"));
     	}
     	
-    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
-    			domainTrustRefs.getPointer()));   	    	
+
+    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(domainTrustRefs.getPointer()));   	    	
     }
+
 }

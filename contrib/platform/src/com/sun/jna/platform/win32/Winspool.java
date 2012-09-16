@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -86,9 +89,12 @@ public interface Winspool extends StdCallLibrary {
         public String pDescription;
         public String pName;
         public String pComment;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Flags", "pDescription", "pName", "pComment" });
+        }
 	    
         public PRINTER_INFO_1() {
-	    	
         }
 	    
         public PRINTER_INFO_1(int size) {
@@ -100,9 +106,12 @@ public interface Winspool extends StdCallLibrary {
         public String pPrinterName;
         public String pServerName;
         public DWORD Attributes;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "pPrinterName", "pServerName", "Attributes" });
+        }
 	    
         public PRINTER_INFO_4() {
-	    	
         }
 	    
         public PRINTER_INFO_4(int size) {

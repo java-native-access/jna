@@ -12,14 +12,16 @@
  */
 package com.sun.jna;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
 import com.sun.jna.ReturnTypesTest.TestLibrary.SimpleStructure;
-import com.sun.jna.ReturnTypesTest.TestLibrary.TestStructure;
 import com.sun.jna.ReturnTypesTest.TestLibrary.TestSmallStructure;
+import com.sun.jna.ReturnTypesTest.TestLibrary.TestStructure;
 
 /** Exercise a range of native methods.
  *
@@ -34,6 +36,9 @@ public class ReturnTypesTest extends TestCase {
         
         public static class SimpleStructure extends Structure {
             public double value;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "value" });
+            }
         }
         
         public static class TestSmallStructure extends Structure {
@@ -42,7 +47,9 @@ public class ReturnTypesTest extends TestCase {
             public byte c1;
             public byte c2;
             public short s;
-            { setFieldOrder(new String[] { "c1", "c2", "s" }); }
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "c1", "c2", "s" });
+            }
         }
 
         public static class TestStructure extends Structure {
@@ -53,7 +60,9 @@ public class ReturnTypesTest extends TestCase {
             public int i;
             public long j;
             public SimpleStructure inner;
-            { setFieldOrder(new String[] { "c", "s", "i", "j", "inner" }); }
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" });
+            }
         }
         
         class CheckFieldAlignment extends Structure {
@@ -61,7 +70,9 @@ public class ReturnTypesTest extends TestCase {
             public long int64Field = 2;
             public float floatField = 3f;
             public double doubleField = 4d;
-            { setFieldOrder(new String[] { "int32Field", "int64Field", "floatField", "doubleField" }); }
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "int32Field", "int64Field", "floatField", "doubleField" }); 
+            }
         }
 
         class TestObject { }

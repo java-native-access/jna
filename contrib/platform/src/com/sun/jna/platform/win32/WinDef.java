@@ -13,6 +13,8 @@
 package com.sun.jna.platform.win32;
 
 import java.awt.Rectangle;
+import java.util.Arrays;
+import java.util.List;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
@@ -322,6 +324,10 @@ public interface WinDef extends StdCallLibrary {
         public int top;
         public int right;
         public int bottom;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "left", "top", "right", "bottom" });
+        }
         
         public Rectangle toRectangle() {
             return new Rectangle(left, top, right-left, bottom-top);

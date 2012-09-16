@@ -13,7 +13,9 @@
 package com.sun.jna.win32;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -31,6 +33,9 @@ public class W32StdCallTest extends TestCase {
     public static interface TestLibrary extends StdCallLibrary {
         public static class Inner extends Structure {
             public double value;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "value" }); 
+            }
         }
         public static class TestStructure extends Structure {
             public static class ByValue extends TestStructure implements Structure.ByValue { }
@@ -39,6 +44,9 @@ public class W32StdCallTest extends TestCase {
             public int i;
             public long j;
             public Inner inner;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" }); 
+            }
         }
         int returnInt32ArgumentStdCall(int arg);
         TestStructure.ByValue returnStructureByValueArgumentStdCall(TestStructure.ByValue arg);

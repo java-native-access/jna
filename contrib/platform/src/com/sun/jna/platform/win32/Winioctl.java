@@ -10,6 +10,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.win32.StdCallLibrary;
@@ -61,5 +64,9 @@ public interface Winioctl extends StdCallLibrary {
          * The partition number of the device, if the device can be partitioned. Otherwise, this member is -1.
          */
         public int PartitionNumber;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "DeviceType", "DeviceNumber", "PartitionNumber" });
+        }
     }
 }
