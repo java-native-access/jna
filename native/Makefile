@@ -50,6 +50,7 @@ JAVAH=$(BUILD)
 INSTALLDIR=../build/$(OS)
 JNIDISPATCH_OBJS=$(BUILD)/dispatch.o $(BUILD)/callback.o $(EXTRAOBJS)
 RSRC=$(BUILD)/rsrc.o
+DLLCB=$(BUILD)/dll-callback.o
 ifneq ($(DYNAMIC_LIBFFI),true)
 FFI_SRC=$(shell pwd)/libffi
 FFI_BUILD=$(BUILD)/libffi
@@ -129,6 +130,7 @@ STRIP=@echo
 LIBPFX=
 LIBSFX=.dll
 
+ifneq ($(ARCH),amd64)
 ifeq ($(CC),gcc)
 # -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
 # installation
@@ -142,17 +144,18 @@ CC += $(NOCYGWIN)
 LD += $(NOCYGWIN) -Wl,--add-stdcall-alias
 endif
 
-ifeq ($(ARCH),amd64)
+else 
 
-# Uncomment to enable MINGW64 cross compiler; ensure mingw32-gcc is in PATH
-# Should build properly as of 111121, but lacks SEH, so MSVC build is preferred
+# Set CC to $(MINGW) to enable mingw64 cross compiler; ensure $(MINGW) is in
+# PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
+# preferred
 MINGW=x86_64-w64-mingw32-gcc 
 # Still need windres from mingw distribution
 WINDRES=x86_64-w64-mingw32-windres
 
-ifneq ($(MINGW),)
+ifeq ($(CC),$(MINGW))
+# No SEH under mingw64
 CDEFINES=-DPSAPI_VERSION=1
-CC = $(MINGW)
 LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
@@ -167,6 +170,7 @@ LIBS=psapi.lib
 ARSFX=.lib
 FFI_CONFIG+=--host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
 FFI_ENV+=LD="$(LD) cpp=$(CPP)"
+EXTRAOBJS+=$(DLLCB)
 endif
 endif
 endif
@@ -301,6 +305,9 @@ all: $(LIBRARY) $(TESTLIB) $(TESTLIB2)
 install:
 	mkdir $(INSTALLDIR)
 	cp $(LIBRARY) $(INSTALLDIR)
+
+$(DLLCB): dll-callback.S 
+	$(CC) $(CFLAGS) -c $< $(COUT)
 
 $(RSRC): $(BUILD)/jnidispatch.rc
 	$(WINDRES) -i $< -o $@ \

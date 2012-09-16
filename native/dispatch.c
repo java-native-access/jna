@@ -93,6 +93,15 @@
 
 #include "dispatch.h"
 
+/* Native memory fault protection */
+#ifdef HAVE_PROTECTION
+#define PROTECT is_protected()
+#endif
+#include "protect.h"
+#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
+#define PSTART() PROTECTED_START()
+#define PEND() PROTECTED_END(ON_ERROR())
+
 #ifdef HAVE_PROTECTION
 static int _protect;
 #undef PROTECT

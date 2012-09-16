@@ -32,11 +32,12 @@ extern "C" {
 
 #ifdef _WIN32
 #include "com_sun_jna_win32_DLLCallback.h"
-#ifdef __x86_64
+#ifndef __x86_64
 #ifdef _MSC_VER
-#error MSVC does not support inline asm for amd64
+/* See dll-callback.S for actual definitions; no inline asm support. */
+#define ASMFN(X) extern void asmfn ## X ()
 #else
-#define ASMFN(X)extern void asmfn ## X (); asm(".globl asmfn" #X "\n\
+#define ASMFN(X) extern void asmfn ## X (); asm(".globl asmfn" #X "\n\
 asmfn" #X ":\n\
  jmp *fn+8*" #X "(%rip)")
 #endif

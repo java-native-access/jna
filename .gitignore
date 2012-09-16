@@ -8,3 +8,5 @@ bin
 contrib/ntservice/dist
 contrib/platform/dist
 doc
+*~
+**/*~
