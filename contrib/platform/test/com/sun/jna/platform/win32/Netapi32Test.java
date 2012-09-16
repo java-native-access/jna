@@ -233,6 +233,7 @@ public class Netapi32Test extends TestCase {
     	if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
     		return;
 
+    	IntByReference domainTrustCount = new IntByReference();
         PointerByReference domainsPointerRef = new PointerByReference();
         assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(null, 
                 DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainTrustCount));
