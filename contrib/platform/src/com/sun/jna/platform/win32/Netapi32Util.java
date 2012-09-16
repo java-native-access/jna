@@ -616,34 +616,34 @@ public abstract class Netapi32Util {
      *  An array of domain trusts.
      */
     public static DomainTrust[] getDomainTrusts(String serverName) {
-    	IntByReference domainCount = new IntByReference();
+    	IntByReference domainTrustCount = new IntByReference();
         PointerByReference domainsPointerRef = new PointerByReference();
         int rc = Netapi32.INSTANCE.DsEnumerateDomainTrusts(serverName, 
-                DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainCount);
+                DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainTrustCount);
     	if(W32Errors.NO_ERROR != rc) {
             throw new Win32Exception(rc);
     	}
     	try {
-            DS_DOMAIN_TRUSTS domains = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
-            int domainCountValue = domainCount.getValue();
-            ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainCountValue);
-            for(DS_DOMAIN_TRUSTS trust : (DS_DOMAIN_TRUSTS[]) domains.toArray(new DS_DOMAIN_TRUSTS[domainCountValue])) {
+            DS_DOMAIN_TRUSTS domainTrustRefs = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
+            DS_DOMAIN_TRUSTS[] domainTrusts = (DS_DOMAIN_TRUSTS[]) domainTrustRefs.toArray(new DS_DOMAIN_TRUSTS[domainTrustCount.getValue()]);
+            ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainTrustCount.getValue());
+            for(DS_DOMAIN_TRUSTS domainTrust : domainTrusts) {
                 DomainTrust t = new DomainTrust();
-                if (trust.DnsDomainName != null) {
-                	t.DnsDomainName = trust.DnsDomainName.toString();
+                if (domainTrust.DnsDomainName != null) {
+                	t.DnsDomainName = domainTrust.DnsDomainName.toString();
                 }
-                if (trust.NetbiosDomainName != null) {
-                	t.NetbiosDomainName = trust.NetbiosDomainName.toString();
+                if (domainTrust.NetbiosDomainName != null) {
+                	t.NetbiosDomainName = domainTrust.NetbiosDomainName.toString();
                 }
-                t.DomainSid = trust.DomainSid;
-                if (trust.DomainSid != null) {
-                	t.DomainSidString = Advapi32Util.convertSidToStringSid(trust.DomainSid);
+                t.DomainSid = domainTrust.DomainSid;
+                if (domainTrust.DomainSid != null) {
+                	t.DomainSidString = Advapi32Util.convertSidToStringSid(domainTrust.DomainSid);
                 }
-                t.DomainGuid = trust.DomainGuid;
-                if (trust.DomainGuid != null) {
-                	t.DomainGuidString = Ole32Util.getStringFromGUID(trust.DomainGuid);
+                t.DomainGuid = domainTrust.DomainGuid;
+                if (domainTrust.DomainGuid != null) {
+                	t.DomainGuidString = Ole32Util.getStringFromGUID(domainTrust.DomainGuid);
                 }
-                t.flags = trust.Flags;
+                t.flags = domainTrust.Flags;
                 trusts.add(t);
             }
             return trusts.toArray(new DomainTrust[0]);
