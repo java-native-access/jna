@@ -149,9 +149,13 @@ else
 # Set CC to $(MINGW) to enable mingw64 cross compiler; ensure $(MINGW) is in
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
-MINGW=x86_64-w64-mingw32-gcc 
+MINGW_PREFIX=x86_64-w64-mingw32-
+MINGW_PREFIX=x86_64-pc-mingw32-
+MINGW=$(MINGW_PREFIX)gcc 
 # Still need windres from mingw distribution
-WINDRES=x86_64-w64-mingw32-windres
+WINDRES=$(MINGW_PREFIX)windres
+# To build entirely with mingw64, uncomment this line
+#CC=$(MINGW)
 
 ifeq ($(CC),$(MINGW))
 # No SEH under mingw64
@@ -306,8 +310,8 @@ install:
 	mkdir $(INSTALLDIR)
 	cp $(LIBRARY) $(INSTALLDIR)
 
-$(DLLCB): dll-callback.S 
-	$(CC) $(CFLAGS) -c $< $(COUT)
+$(DLLCB): dll-callback.c 
+	$(MINGW) -DDEFINE_CALLBACKS -c $< $(COUT)
 
 $(RSRC): $(BUILD)/jnidispatch.rc
 	$(WINDRES) -i $< -o $@ \

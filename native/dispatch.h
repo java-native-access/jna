@@ -13,6 +13,8 @@
 #ifndef DISPATCH_H
 #define DISPATCH_H
 
+/* Avoid undefined 'abort' errors from libffi/src/dlmalloc.c */
+#define PROCEED_ON_ERROR
 #include "ffi.h"
 #include "com_sun_jna_Function.h"
 #include "com_sun_jna_Native.h"

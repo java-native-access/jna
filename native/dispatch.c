@@ -635,7 +635,6 @@ getChars(JNIEnv* env, wchar_t* volatile dst, jcharArray chars, volatile jint off
 static void
 setChars(JNIEnv* env, wchar_t* src, jcharArray chars, volatile jint off, volatile jint len) {
   jchar* buf = (jchar*)src;
-  int malloced = 0;
   PSTART();
 
   if (sizeof(jchar) == sizeof(wchar_t)) {

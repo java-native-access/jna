@@ -37,9 +37,7 @@ extern "C" {
 /* See dll-callback.S for actual definitions; no inline asm support. */
 #define ASMFN(X) extern void asmfn ## X ()
 #else
-#define ASMFN(X) extern void asmfn ## X (); asm(".globl asmfn" #X "\n\
-asmfn" #X ":\n\
- jmp *fn+8*" #X "(%rip)")
+#include "dll-callback.c"
 #endif
 #else /* __x86_64 */
 #ifdef _MSC_VER
@@ -56,7 +54,7 @@ _asmfn" #X ":\n\
 
 // Allocatable trampoline targets
 #define DLL_FPTRS com_sun_jna_win32_DLLCallback_DLL_FPTRS
-static void (*fn[DLL_FPTRS])();
+void (*fn[DLL_FPTRS])();
 
 ASMFN(0);ASMFN(1);ASMFN(2);ASMFN(3);ASMFN(4);ASMFN(5);ASMFN(6);ASMFN(7);
 ASMFN(8);ASMFN(9);ASMFN(10);ASMFN(11);ASMFN(12);ASMFN(13);ASMFN(14);ASMFN(15);
