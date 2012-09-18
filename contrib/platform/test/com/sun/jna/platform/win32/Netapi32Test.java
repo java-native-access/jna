@@ -233,22 +233,24 @@ public class Netapi32Test extends TestCase {
     	if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
     		return;
 
-    	IntByReference domainCount = new IntByReference();
-    	PointerByReference pdomains = new PointerByReference();
-    	assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(
-    			null, DsGetDC.DS_DOMAIN_VALID_FLAGS, pdomains, domainCount));
-
-    	assertTrue(domainCount.getValue() >= 0);
+    	IntByReference domainTrustCount = new IntByReference();
+        PointerByReference domainsPointerRef = new PointerByReference();
+        assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(null, 
+                DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainTrustCount));
+    	assertTrue(domainTrustCount.getValue() >= 0);
     	
-    	DS_DOMAIN_TRUSTS[] trusts = (DS_DOMAIN_TRUSTS[])new DS_DOMAIN_TRUSTS(pdomains.getValue()).toArray(domainCount.getValue());
-    	for(DS_DOMAIN_TRUSTS trust : trusts) {
-			assertTrue(trust.NetbiosDomainName.length() > 0);
+        DS_DOMAIN_TRUSTS domainTrustRefs = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
+        DS_DOMAIN_TRUSTS[] domainTrusts = (DS_DOMAIN_TRUSTS[]) domainTrustRefs.toArray(new DS_DOMAIN_TRUSTS[domainTrustCount.getValue()]);
+
+    	for(DS_DOMAIN_TRUSTS trust : domainTrusts) {
 			assertTrue(trust.DnsDomainName.length() > 0);
 			assertTrue(Advapi32.INSTANCE.IsValidSid(trust.DomainSid));
 			assertTrue(Advapi32Util.convertSidToStringSid(trust.DomainSid).startsWith("S-"));
 			assertTrue(Ole32Util.getStringFromGUID(trust.DomainGuid).startsWith("{"));
     	}
     	
-    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(pdomains.getValue()));
+
+    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(domainTrustRefs.getPointer()));   	    	
     }
+
 }
