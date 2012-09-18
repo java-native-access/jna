@@ -25,6 +25,14 @@
 #define __UNUSED__
 #endif
 
+/* Define __FASTCALL__ so that other compilers than gcc can run the tests.  */
+#undef __FASTCALL__
+#if defined _MSC_VER
+#define __FASTCALL__ __fastcall
+#else
+#define __FASTCALL__ __attribute__((fastcall))
+#endif
+
 /* Prefer MAP_ANON(YMOUS) to /dev/zero, since we don't need to keep a
    file open.  */
 #ifdef HAVE_MMAP_ANON
@@ -67,6 +75,8 @@
 #define PRIdLL "ld"
 #undef PRIuLL
 #define PRIuLL "lu"
+#define PRId8 "hd"
+#define PRIu8 "hu"
 #define PRId64 "ld"
 #define PRIu64 "lu"
 #define PRIuPTR "lu"
@@ -81,6 +91,8 @@
 #if defined(__sgi)
 /* IRIX 6.5 <inttypes.h> provides all definitions, but only for C99
    compilations.  */
+#define PRId8 "hhd"
+#define PRIu8 "hhu"
 #if (_MIPS_SZLONG == 32)
 #define PRId64 "lld"
 #define PRIu64 "llu"
@@ -104,6 +116,15 @@
 #else
 #define PRIuPTR "u"
 #endif
+#endif
+
+/* MSVC kludge.  */
+#if defined _MSC_VER
+#define PRIuPTR "lu"
+#define PRIu8 "u"
+#define PRId8 "d"
+#define PRIu64 "I64u"
+#define PRId64 "I64d"
 #endif
 
 #ifdef USING_MMAP

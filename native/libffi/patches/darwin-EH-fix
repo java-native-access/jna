@@ -1,0 +1,42 @@
+Index: libffi/src/powerpc/darwin.S
+===================================================================
+--- libffi.orig/src/powerpc/darwin.S
++++ libffi/src/powerpc/darwin.S
+@@ -335,7 +335,7 @@ LSCIE1:
+ 	.byte	EH_DATA_ALIGN_FACT ; sleb128 -4; CIE Data Alignment Factor
+ 	.byte	0x41	; CIE RA Column
+ 	.byte	0x1	; uleb128 0x1; Augmentation size
+-	.byte	0x90	; FDE Encoding (indirect pcrel)
++	.byte	0x10	; FDE Encoding (indirect pcrel)
+ 	.byte	0xc	; DW_CFA_def_cfa
+ 	.byte	0x1	; uleb128 0x1
+ 	.byte	0x0	; uleb128 0x0
+Index: libffi/src/powerpc/darwin_closure.S
+===================================================================
+--- libffi.orig/src/powerpc/darwin_closure.S
++++ libffi/src/powerpc/darwin_closure.S
+@@ -484,7 +484,7 @@ LSCIE1:
+ 	.byte	EH_DATA_ALIGN_FACT ; sleb128 -4; CIE Data Alignment Factor
+ 	.byte	0x41	; CIE RA Column
+ 	.byte	0x1	; uleb128 0x1; Augmentation size
+-	.byte	0x90	; FDE Encoding (indirect pcrel)
++	.byte	0x10	; FDE Encoding (indirect pcrel)
+ 	.byte	0xc	; DW_CFA_def_cfa
+ 	.byte	0x1	; uleb128 0x1
+ 	.byte	0x0	; uleb128 0x0
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -107,6 +107,11 @@
+ 	Use them to handle ELF vs. ECOFF differences.
+ 	[__osf__] (_GLOBAL__F_ffi_call_osf): Define.
+ 
++2011-03-30  Timothy Wall  <twall@users.sf.net>
++
++	* src/powerpc/darwin.S: Fix unknown FDE encoding.
++	* src/powerpc/darwin_closure.S: ditto.
++
+ 2011-02-25  Anthony Green  <green@moxielogic.com>
+ 
+ 	* src/powerpc/ffi.c (ffi_prep_closure_loc): Allow for more

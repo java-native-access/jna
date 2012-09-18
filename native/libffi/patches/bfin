@@ -1,0 +1,1007 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,11 @@
++2012-04-23  Alexandre Keunecke I. de Mendonca <alexandre.keunecke@gmail.com>
++
++	* configure.ac: Add Blackfin/sysv support
++	* Makefile.am: Add Blackfin/sysv support
++	* src/bfin/ffi.c:  Add Blackfin/sysv support
++	* src/bfin/ffitarget.h: Add Blackfin/sysv support
++	* src/bfin/sysv.S: Add Blackfin/sysv support
++
+ 2012-04-11  Anthony Green  <green@moxielogic.com>
+ 
+ 	* Makefile.am (EXTRA_DIST): Add new script.
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -27,6 +27,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
+ 	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
+ 	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
++	src/bfin/ffi.c src/bfin/ffitarget.h src/bfin/sysv.S \
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+@@ -105,6 +106,9 @@ endif
+ if MIPS
+ nodist_libffi_la_SOURCES += src/mips/ffi.c src/mips/o32.S src/mips/n32.S
+ endif
++if BFIN
++nodist_libffi_la_SOURCES += src/bfin/ffi.c src/bfin/sysv.S
++endif
+ if X86
+ nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/sysv.S
+ endif
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -38,35 +38,36 @@ host_triplet = @host@
+ target_triplet = @target@
+ @FFI_DEBUG_TRUE@am__append_1 = src/debug.c
+ @MIPS_TRUE@am__append_2 = src/mips/ffi.c src/mips/o32.S src/mips/n32.S
+-@X86_TRUE@am__append_3 = src/x86/ffi.c src/x86/sysv.S
+-@X86_FREEBSD_TRUE@am__append_4 = src/x86/ffi.c src/x86/freebsd.S
+-@X86_WIN32_TRUE@am__append_5 = src/x86/ffi.c src/x86/win32.S
+-@X86_WIN64_TRUE@am__append_6 = src/x86/ffi.c src/x86/win64.S
+-@X86_DARWIN_TRUE@am__append_7 = src/x86/ffi.c src/x86/darwin.S src/x86/ffi64.c src/x86/darwin64.S
+-@SPARC_TRUE@am__append_8 = src/sparc/ffi.c src/sparc/v8.S src/sparc/v9.S
+-@ALPHA_TRUE@am__append_9 = src/alpha/ffi.c src/alpha/osf.S
+-@IA64_TRUE@am__append_10 = src/ia64/ffi.c src/ia64/unix.S
+-@M32R_TRUE@am__append_11 = src/m32r/sysv.S src/m32r/ffi.c
+-@M68K_TRUE@am__append_12 = src/m68k/ffi.c src/m68k/sysv.S
+-@POWERPC_TRUE@am__append_13 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S src/powerpc/linux64.S src/powerpc/linux64_closure.S
+-@POWERPC_AIX_TRUE@am__append_14 = src/powerpc/ffi_darwin.c src/powerpc/aix.S src/powerpc/aix_closure.S
+-@POWERPC_DARWIN_TRUE@am__append_15 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
+-@POWERPC_FREEBSD_TRUE@am__append_16 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
+-@ARM_TRUE@am__append_17 = src/arm/sysv.S src/arm/ffi.c
+-@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__append_18 = src/arm/trampoline.S
+-@AVR32_TRUE@am__append_19 = src/avr32/sysv.S src/avr32/ffi.c
+-@LIBFFI_CRIS_TRUE@am__append_20 = src/cris/sysv.S src/cris/ffi.c
+-@FRV_TRUE@am__append_21 = src/frv/eabi.S src/frv/ffi.c
+-@MOXIE_TRUE@am__append_22 = src/moxie/eabi.S src/moxie/ffi.c
+-@S390_TRUE@am__append_23 = src/s390/sysv.S src/s390/ffi.c
+-@X86_64_TRUE@am__append_24 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
+-@SH_TRUE@am__append_25 = src/sh/sysv.S src/sh/ffi.c
+-@SH64_TRUE@am__append_26 = src/sh64/sysv.S src/sh64/ffi.c
+-@PA_LINUX_TRUE@am__append_27 = src/pa/linux.S src/pa/ffi.c
+-@PA_HPUX_TRUE@am__append_28 = src/pa/hpux32.S src/pa/ffi.c
++@BFIN_TRUE@am__append_3 = src/bfin/ffi.c src/bfin/sysv.S
++@X86_TRUE@am__append_4 = src/x86/ffi.c src/x86/sysv.S
++@X86_FREEBSD_TRUE@am__append_5 = src/x86/ffi.c src/x86/freebsd.S
++@X86_WIN32_TRUE@am__append_6 = src/x86/ffi.c src/x86/win32.S
++@X86_WIN64_TRUE@am__append_7 = src/x86/ffi.c src/x86/win64.S
++@X86_DARWIN_TRUE@am__append_8 = src/x86/ffi.c src/x86/darwin.S src/x86/ffi64.c src/x86/darwin64.S
++@SPARC_TRUE@am__append_9 = src/sparc/ffi.c src/sparc/v8.S src/sparc/v9.S
++@ALPHA_TRUE@am__append_10 = src/alpha/ffi.c src/alpha/osf.S
++@IA64_TRUE@am__append_11 = src/ia64/ffi.c src/ia64/unix.S
++@M32R_TRUE@am__append_12 = src/m32r/sysv.S src/m32r/ffi.c
++@M68K_TRUE@am__append_13 = src/m68k/ffi.c src/m68k/sysv.S
++@POWERPC_TRUE@am__append_14 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S src/powerpc/linux64.S src/powerpc/linux64_closure.S
++@POWERPC_AIX_TRUE@am__append_15 = src/powerpc/ffi_darwin.c src/powerpc/aix.S src/powerpc/aix_closure.S
++@POWERPC_DARWIN_TRUE@am__append_16 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
++@POWERPC_FREEBSD_TRUE@am__append_17 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
++@ARM_TRUE@am__append_18 = src/arm/sysv.S src/arm/ffi.c
++@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__append_19 = src/arm/trampoline.S
++@AVR32_TRUE@am__append_20 = src/avr32/sysv.S src/avr32/ffi.c
++@LIBFFI_CRIS_TRUE@am__append_21 = src/cris/sysv.S src/cris/ffi.c
++@FRV_TRUE@am__append_22 = src/frv/eabi.S src/frv/ffi.c
++@MOXIE_TRUE@am__append_23 = src/moxie/eabi.S src/moxie/ffi.c
++@S390_TRUE@am__append_24 = src/s390/sysv.S src/s390/ffi.c
++@X86_64_TRUE@am__append_25 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
++@SH_TRUE@am__append_26 = src/sh/sysv.S src/sh/ffi.c
++@SH64_TRUE@am__append_27 = src/sh64/sysv.S src/sh64/ffi.c
++@PA_LINUX_TRUE@am__append_28 = src/pa/linux.S src/pa/ffi.c
++@PA_HPUX_TRUE@am__append_29 = src/pa/hpux32.S src/pa/ffi.c
+ # Build debug. Define FFI_DEBUG on the commandline so that, when building with
+ # MSVC, it can link against the debug CRT.
+-@FFI_DEBUG_TRUE@am__append_29 = -DFFI_DEBUG
++@FFI_DEBUG_TRUE@am__append_30 = -DFFI_DEBUG
+ subdir = .
+ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
+@@ -75,17 +76,7 @@ DIST_COMMON = README $(am__configure_dep
+ 	compile config.guess config.sub depcomp install-sh ltmain.sh \
+ 	mdate-sh missing texinfo.tex
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+-am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
+-	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
+-	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
+-	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
+-	$(top_srcdir)/m4/ax_configure_args.m4 \
+-	$(top_srcdir)/m4/ax_enable_builddir.m4 \
+-	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
+-	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
+-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
++am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+ 	$(top_srcdir)/configure.ac
+ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
+ 	$(ACLOCAL_M4)
+@@ -126,44 +117,45 @@ am_libffi_la_OBJECTS = src/prep_cif.lo s
+ @FFI_DEBUG_TRUE@am__objects_1 = src/debug.lo
+ @MIPS_TRUE@am__objects_2 = src/mips/ffi.lo src/mips/o32.lo \
+ @MIPS_TRUE@	src/mips/n32.lo
+-@X86_TRUE@am__objects_3 = src/x86/ffi.lo src/x86/sysv.lo
+-@X86_FREEBSD_TRUE@am__objects_4 = src/x86/ffi.lo src/x86/freebsd.lo
+-@X86_WIN32_TRUE@am__objects_5 = src/x86/ffi.lo src/x86/win32.lo
+-@X86_WIN64_TRUE@am__objects_6 = src/x86/ffi.lo src/x86/win64.lo
+-@X86_DARWIN_TRUE@am__objects_7 = src/x86/ffi.lo src/x86/darwin.lo \
++@BFIN_TRUE@am__objects_3 = src/bfin/ffi.lo src/bfin/sysv.lo
++@X86_TRUE@am__objects_4 = src/x86/ffi.lo src/x86/sysv.lo
++@X86_FREEBSD_TRUE@am__objects_5 = src/x86/ffi.lo src/x86/freebsd.lo
++@X86_WIN32_TRUE@am__objects_6 = src/x86/ffi.lo src/x86/win32.lo
++@X86_WIN64_TRUE@am__objects_7 = src/x86/ffi.lo src/x86/win64.lo
++@X86_DARWIN_TRUE@am__objects_8 = src/x86/ffi.lo src/x86/darwin.lo \
+ @X86_DARWIN_TRUE@	src/x86/ffi64.lo src/x86/darwin64.lo
+-@SPARC_TRUE@am__objects_8 = src/sparc/ffi.lo src/sparc/v8.lo \
++@SPARC_TRUE@am__objects_9 = src/sparc/ffi.lo src/sparc/v8.lo \
+ @SPARC_TRUE@	src/sparc/v9.lo
+-@ALPHA_TRUE@am__objects_9 = src/alpha/ffi.lo src/alpha/osf.lo
+-@IA64_TRUE@am__objects_10 = src/ia64/ffi.lo src/ia64/unix.lo
+-@M32R_TRUE@am__objects_11 = src/m32r/sysv.lo src/m32r/ffi.lo
+-@M68K_TRUE@am__objects_12 = src/m68k/ffi.lo src/m68k/sysv.lo
+-@POWERPC_TRUE@am__objects_13 = src/powerpc/ffi.lo src/powerpc/sysv.lo \
++@ALPHA_TRUE@am__objects_10 = src/alpha/ffi.lo src/alpha/osf.lo
++@IA64_TRUE@am__objects_11 = src/ia64/ffi.lo src/ia64/unix.lo
++@M32R_TRUE@am__objects_12 = src/m32r/sysv.lo src/m32r/ffi.lo
++@M68K_TRUE@am__objects_13 = src/m68k/ffi.lo src/m68k/sysv.lo
++@POWERPC_TRUE@am__objects_14 = src/powerpc/ffi.lo src/powerpc/sysv.lo \
+ @POWERPC_TRUE@	src/powerpc/ppc_closure.lo \
+ @POWERPC_TRUE@	src/powerpc/linux64.lo \
+ @POWERPC_TRUE@	src/powerpc/linux64_closure.lo
+-@POWERPC_AIX_TRUE@am__objects_14 = src/powerpc/ffi_darwin.lo \
++@POWERPC_AIX_TRUE@am__objects_15 = src/powerpc/ffi_darwin.lo \
+ @POWERPC_AIX_TRUE@	src/powerpc/aix.lo \
+ @POWERPC_AIX_TRUE@	src/powerpc/aix_closure.lo
+-@POWERPC_DARWIN_TRUE@am__objects_15 = src/powerpc/ffi_darwin.lo \
++@POWERPC_DARWIN_TRUE@am__objects_16 = src/powerpc/ffi_darwin.lo \
+ @POWERPC_DARWIN_TRUE@	src/powerpc/darwin.lo \
+ @POWERPC_DARWIN_TRUE@	src/powerpc/darwin_closure.lo
+-@POWERPC_FREEBSD_TRUE@am__objects_16 = src/powerpc/ffi.lo \
++@POWERPC_FREEBSD_TRUE@am__objects_17 = src/powerpc/ffi.lo \
+ @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
+ @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
+-@ARM_TRUE@am__objects_17 = src/arm/sysv.lo src/arm/ffi.lo
+-@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__objects_18 = src/arm/trampoline.lo
+-@AVR32_TRUE@am__objects_19 = src/avr32/sysv.lo src/avr32/ffi.lo
+-@LIBFFI_CRIS_TRUE@am__objects_20 = src/cris/sysv.lo src/cris/ffi.lo
+-@FRV_TRUE@am__objects_21 = src/frv/eabi.lo src/frv/ffi.lo
+-@MOXIE_TRUE@am__objects_22 = src/moxie/eabi.lo src/moxie/ffi.lo
+-@S390_TRUE@am__objects_23 = src/s390/sysv.lo src/s390/ffi.lo
+-@X86_64_TRUE@am__objects_24 = src/x86/ffi64.lo src/x86/unix64.lo \
++@ARM_TRUE@am__objects_18 = src/arm/sysv.lo src/arm/ffi.lo
++@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__objects_19 = src/arm/trampoline.lo
++@AVR32_TRUE@am__objects_20 = src/avr32/sysv.lo src/avr32/ffi.lo
++@LIBFFI_CRIS_TRUE@am__objects_21 = src/cris/sysv.lo src/cris/ffi.lo
++@FRV_TRUE@am__objects_22 = src/frv/eabi.lo src/frv/ffi.lo
++@MOXIE_TRUE@am__objects_23 = src/moxie/eabi.lo src/moxie/ffi.lo
++@S390_TRUE@am__objects_24 = src/s390/sysv.lo src/s390/ffi.lo
++@X86_64_TRUE@am__objects_25 = src/x86/ffi64.lo src/x86/unix64.lo \
+ @X86_64_TRUE@	src/x86/ffi.lo src/x86/sysv.lo
+-@SH_TRUE@am__objects_25 = src/sh/sysv.lo src/sh/ffi.lo
+-@SH64_TRUE@am__objects_26 = src/sh64/sysv.lo src/sh64/ffi.lo
+-@PA_LINUX_TRUE@am__objects_27 = src/pa/linux.lo src/pa/ffi.lo
+-@PA_HPUX_TRUE@am__objects_28 = src/pa/hpux32.lo src/pa/ffi.lo
++@SH_TRUE@am__objects_26 = src/sh/sysv.lo src/sh/ffi.lo
++@SH64_TRUE@am__objects_27 = src/sh64/sysv.lo src/sh64/ffi.lo
++@PA_LINUX_TRUE@am__objects_28 = src/pa/linux.lo src/pa/ffi.lo
++@PA_HPUX_TRUE@am__objects_29 = src/pa/hpux32.lo src/pa/ffi.lo
+ nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
+ 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
+ 	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
+@@ -173,17 +165,17 @@ nodist_libffi_la_OBJECTS = $(am__objects
+ 	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
+ 	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
+ 	$(am__objects_24) $(am__objects_25) $(am__objects_26) \
+-	$(am__objects_27) $(am__objects_28)
++	$(am__objects_27) $(am__objects_28) $(am__objects_29)
+ libffi_la_OBJECTS = $(am_libffi_la_OBJECTS) \
+ 	$(nodist_libffi_la_OBJECTS)
+ libffi_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+ 	$(libffi_la_LDFLAGS) $(LDFLAGS) -o $@
+ libffi_convenience_la_LIBADD =
+-am__objects_29 = src/prep_cif.lo src/types.lo src/raw_api.lo \
++am__objects_30 = src/prep_cif.lo src/types.lo src/raw_api.lo \
+ 	src/java_raw_api.lo src/closures.lo
+-am_libffi_convenience_la_OBJECTS = $(am__objects_29)
+-am__objects_30 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
++am_libffi_convenience_la_OBJECTS = $(am__objects_30)
++am__objects_31 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+ 	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
+ 	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
+ 	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
+@@ -192,8 +184,8 @@ am__objects_30 = $(am__objects_1) $(am__
+ 	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
+ 	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
+ 	$(am__objects_25) $(am__objects_26) $(am__objects_27) \
+-	$(am__objects_28)
+-nodist_libffi_convenience_la_OBJECTS = $(am__objects_30)
++	$(am__objects_28) $(am__objects_29)
++nodist_libffi_convenience_la_OBJECTS = $(am__objects_31)
+ libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
+ 	$(nodist_libffi_convenience_la_OBJECTS)
+ DEFAULT_INCLUDES = -I.@am__isrc@
+@@ -440,6 +432,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
+ 	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
+ 	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
++	src/bfin/ffi.c src/bfin/ffitarget.h src/bfin/sysv.S \
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+@@ -508,10 +501,10 @@ nodist_libffi_la_SOURCES = $(am__append_
+ 	$(am__append_18) $(am__append_19) $(am__append_20) \
+ 	$(am__append_21) $(am__append_22) $(am__append_23) \
+ 	$(am__append_24) $(am__append_25) $(am__append_26) \
+-	$(am__append_27) $(am__append_28)
++	$(am__append_27) $(am__append_28) $(am__append_29)
+ libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+-AM_CFLAGS = -g $(am__append_29)
++AM_CFLAGS = -g $(am__append_30)
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
+ AM_CCASFLAGS = $(AM_CPPFLAGS) -g
+@@ -637,6 +630,16 @@ src/mips/o32.lo: src/mips/$(am__dirstamp
+ 	src/mips/$(DEPDIR)/$(am__dirstamp)
+ src/mips/n32.lo: src/mips/$(am__dirstamp) \
+ 	src/mips/$(DEPDIR)/$(am__dirstamp)
++src/bfin/$(am__dirstamp):
++	@$(MKDIR_P) src/bfin
++	@: > src/bfin/$(am__dirstamp)
++src/bfin/$(DEPDIR)/$(am__dirstamp):
++	@$(MKDIR_P) src/bfin/$(DEPDIR)
++	@: > src/bfin/$(DEPDIR)/$(am__dirstamp)
++src/bfin/ffi.lo: src/bfin/$(am__dirstamp) \
++	src/bfin/$(DEPDIR)/$(am__dirstamp)
++src/bfin/sysv.lo: src/bfin/$(am__dirstamp) \
++	src/bfin/$(DEPDIR)/$(am__dirstamp)
+ src/x86/$(am__dirstamp):
+ 	@$(MKDIR_P) src/x86
+ 	@: > src/x86/$(am__dirstamp)
+@@ -852,6 +855,10 @@ mostlyclean-compile:
+ 	-rm -f src/avr32/ffi.lo
+ 	-rm -f src/avr32/sysv.$(OBJEXT)
+ 	-rm -f src/avr32/sysv.lo
++	-rm -f src/bfin/ffi.$(OBJEXT)
++	-rm -f src/bfin/ffi.lo
++	-rm -f src/bfin/sysv.$(OBJEXT)
++	-rm -f src/bfin/sysv.lo
+ 	-rm -f src/closures.$(OBJEXT)
+ 	-rm -f src/closures.lo
+ 	-rm -f src/cris/ffi.$(OBJEXT)
+@@ -973,6 +980,8 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/trampoline.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/ffi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/sysv.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@src/bfin/$(DEPDIR)/ffi.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@src/bfin/$(DEPDIR)/sysv.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/ffi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/sysv.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/frv/$(DEPDIR)/eabi.Plo@am__quote@
+@@ -1077,6 +1086,7 @@ clean-libtool:
+ 	-rm -rf src/alpha/.libs src/alpha/_libs
+ 	-rm -rf src/arm/.libs src/arm/_libs
+ 	-rm -rf src/avr32/.libs src/avr32/_libs
++	-rm -rf src/bfin/.libs src/bfin/_libs
+ 	-rm -rf src/cris/.libs src/cris/_libs
+ 	-rm -rf src/frv/.libs src/frv/_libs
+ 	-rm -rf src/ia64/.libs src/ia64/_libs
+@@ -1631,6 +1641,8 @@ distclean-generic:
+ 	-rm -f src/arm/$(am__dirstamp)
+ 	-rm -f src/avr32/$(DEPDIR)/$(am__dirstamp)
+ 	-rm -f src/avr32/$(am__dirstamp)
++	-rm -f src/bfin/$(DEPDIR)/$(am__dirstamp)
++	-rm -f src/bfin/$(am__dirstamp)
+ 	-rm -f src/cris/$(DEPDIR)/$(am__dirstamp)
+ 	-rm -f src/cris/$(am__dirstamp)
+ 	-rm -f src/frv/$(DEPDIR)/$(am__dirstamp)
+@@ -1670,7 +1682,7 @@ clean-am: clean-aminfo clean-generic cle
+ 
+ distclean: distclean-recursive
+ 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
+-	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/moxie/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
++	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/bfin/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/moxie/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
+ 	-rm -f Makefile
+ distclean-am: clean-am distclean-compile distclean-generic \
+ 	distclean-hdr distclean-libtool distclean-tags
+@@ -1790,7 +1802,7 @@ installcheck-am:
+ maintainer-clean: maintainer-clean-recursive
+ 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
+ 	-rm -rf $(top_srcdir)/autom4te.cache
+-	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/moxie/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
++	-rm -rf src/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/bfin/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/moxie/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/x86/$(DEPDIR)
+ 	-rm -f Makefile
+ maintainer-clean-am: distclean-am maintainer-clean-aminfo \
+ 	maintainer-clean-generic maintainer-clean-vti
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -679,6 +679,8 @@ X86_FALSE
+ X86_TRUE
+ SPARC_FALSE
+ SPARC_TRUE
++BFIN_FALSE
++BFIN_TRUE
+ MIPS_FALSE
+ MIPS_TRUE
+ AM_LTLDFLAGS
+@@ -6840,14 +6842,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
+ 	    LD="${LD-ld} -m elf_i386_fbsd"
+ 	    ;;
+ 	  x86_64-*linux*)
+-	    case `/usr/bin/file conftest.o` in
+-	      *x86-64*)
+-	         LD="${LD-ld} -m elf32_x86_64"
+-	         ;;
+-	      *)
+-	         LD="${LD-ld} -m elf_i386"
+-	         ;;
+-	    esac
++	    LD="${LD-ld} -m elf_i386"
+ 	    ;;
+ 	  ppc64-*linux*|powerpc64-*linux*)
+ 	    LD="${LD-ld} -m elf32ppclinux"
+@@ -8418,10 +8413,6 @@ _lt_linker_boilerplate=`cat conftest.err
+ $RM -r conftest*
+ 
+ 
+-## CAVEAT EMPTOR:
+-## There is no encapsulation within the following macros, do not change
+-## the running order or otherwise move them around unless you know exactly
+-## what you are doing...
+ if test -n "$compiler"; then
+ 
+ lt_prog_compiler_no_builtin_flag=
+@@ -10972,10 +10963,14 @@ fi
+   # before this can be enabled.
+   hardcode_into_libs=yes
+ 
++  # Add ABI-specific directories to the system library path.
++  sys_lib_dlsearch_path_spec="/lib64 /usr/lib64 /lib /usr/lib"
++
+   # Append ld.so.conf contents to the search path
+   if test -f /etc/ld.so.conf; then
+     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s 2>/dev/null", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;/^[	 ]*hwcap[	 ]/d;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;s/"//g;/^$/d' | tr '\n' ' '`
+-    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
++    sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec $lt_ld_extra"
++
+   fi
+ 
+   # We used to test for /lib/ld.so.1 and disable shared libraries on
+@@ -12419,7 +12414,7 @@ if test "x$ax_gcc_arch" = xyes; then
+ ax_gcc_arch=""
+ if test "$cross_compiling" = no; then
+ case $host_cpu in
+-  i[3456]86*|x86_64*) # use cpuid codes, in part from x86info-1.7 by D. Jones
++  i[3456]86*|x86_64*) # use cpuid codes
+ 
+ ac_ext=c
+ ac_cpp='$CPP $CPPFLAGS'
+@@ -12535,18 +12530,24 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+           case $ax_cv_gcc_x86_cpuid_1 in
+ 	    *5[48]?:*:*:*) ax_gcc_arch="pentium-mmx pentium" ;;
+ 	    *5??:*:*:*) ax_gcc_arch=pentium ;;
+-	    *6[3456]?:*:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
+-	    *6a?:*[01]:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
+-	    *6a?:*[234]:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
+-	    *6[9d]?:*:*:*) ax_gcc_arch="pentium-m pentium3 pentiumpro" ;;
+-	    *6[78b]?:*:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
+-	    *6??:*:*:*) ax_gcc_arch=pentiumpro ;;
+-            *f3[347]:*:*:*|*f41347:*:*:*)
++	    *0?6[3456]?:*:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
++	    *0?6a?:*[01]:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
++	    *0?6a?:*[234]:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
++	    *0?6[9de]?:*:*:*) ax_gcc_arch="pentium-m pentium3 pentiumpro" ;;
++	    *0?6[78b]?:*:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
++	    *0?6f?:*:*:*|*1?66?:*:*:*) ax_gcc_arch="core2 pentium-m pentium3 pentiumpro" ;;
++	    *1?6[7d]?:*:*:*) ax_gcc_arch="penryn core2 pentium-m pentium3 pentiumpro" ;;
++	    *1?6[aef]?:*:*:*|*2?6[5cef]?:*:*:*) ax_gcc_arch="corei7 core2 pentium-m pentium3 pentiumpro" ;;
++	    *1?6c?:*:*:*|*[23]?66?:*:*:*) ax_gcc_arch="atom core2 pentium-m pentium3 pentiumpro" ;;
++	    *2?6[ad]?:*:*:*) ax_gcc_arch="corei7-avx corei7 core2 pentium-m pentium3 pentiumpro" ;;
++	    *0?6??:*:*:*) ax_gcc_arch=pentiumpro ;;
++	    *6??:*:*:*) ax_gcc_arch="core2 pentiumpro" ;;
++	    ?000?f3[347]:*:*:*|?000?f41347:*:*:*|?000?f6?:*:*:*)
+ 		case $host_cpu in
+-                  x86_64*) ax_gcc_arch="nocona pentium4 pentiumpro" ;;
+-                  *) ax_gcc_arch="prescott pentium4 pentiumpro" ;;
+-                esac ;;
+-            *f??:*:*:*) ax_gcc_arch="pentium4 pentiumpro";;
++	          x86_64*) ax_gcc_arch="nocona pentium4 pentiumpro" ;;
++	          *) ax_gcc_arch="prescott pentium4 pentiumpro" ;;
++	        esac ;;
++	    ?000?f??:*:*:*) ax_gcc_arch="pentium4 pentiumpro";;
+           esac ;;
+        *:68747541:*:*) # AMD
+           case $ax_cv_gcc_x86_cpuid_1 in
+@@ -12618,10 +12619,13 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 			ax_gcc_arch="athlon-xp athlon-4 athlon k7" ;;
+                  *) ax_gcc_arch="athlon-4 athlon k7" ;;
+ 	       esac ;;
+-	    *f[4cef8b]?:*:*:*) ax_gcc_arch="athlon64 k8" ;;
+-	    *f5?:*:*:*) ax_gcc_arch="opteron k8" ;;
+-	    *f7?:*:*:*) ax_gcc_arch="athlon-fx opteron k8" ;;
+-	    *f??:*:*:*) ax_gcc_arch="k8" ;;
++	    ?00??f[4cef8b]?:*:*:*) ax_gcc_arch="athlon64 k8" ;;
++	    ?00??f5?:*:*:*) ax_gcc_arch="opteron k8" ;;
++	    ?00??f7?:*:*:*) ax_gcc_arch="athlon-fx opteron k8" ;;
++	    ?00??f??:*:*:*) ax_gcc_arch="k8" ;;
++	    ?05??f??:*:*:*) ax_gcc_arch="btver1 amdfam10 k8" ;;
++	    ?06??f??:*:*:*) ax_gcc_arch="bdver1 amdfam10 k8" ;;
++	    *f??:*:*:*) ax_gcc_arch="amdfam10 k8" ;;
+           esac ;;
+ 	*:746e6543:*:*) # IDT
+ 	   case $ax_cv_gcc_x86_cpuid_1 in
+@@ -13150,6 +13154,10 @@ case "$host" in
+ 	TARGET=AVR32; TARGETDIR=avr32
+ 	;;
+ 
++  bfin*)
++  	TARGET=BFIN; TARGETDIR=bfin
++  	;;
++
+   cris-*-*)
+ 	TARGET=LIBFFI_CRIS; TARGETDIR=cris
+ 	;;
+@@ -13295,6 +13303,14 @@ else
+   MIPS_FALSE=
+ fi
+ 
++ if test x$TARGET = xBFIN; then
++  BFIN_TRUE=
++  BFIN_FALSE='#'
++else
++  BFIN_TRUE='#'
++  BFIN_FALSE=
++fi
++
+  if test x$TARGET = xSPARC; then
+   SPARC_TRUE=
+   SPARC_FALSE='#'
+@@ -14134,40 +14150,7 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUI
+  esac
+ 
+ 
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler .cfi pseudo-op support" >&5
+-$as_echo_n "checking assembler .cfi pseudo-op support... " >&6; }
+-if ${gcc_cv_as_cfi_pseudo_op+:} false; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-
+-    gcc_cv_as_cfi_pseudo_op=unknown
+-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-asm (".cfi_startproc\n\t.cfi_endproc");
+-int
+-main ()
+-{
+-
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-if ac_fn_c_try_compile "$LINENO"; then :
+-  gcc_cv_as_cfi_pseudo_op=yes
+-else
+-  gcc_cv_as_cfi_pseudo_op=no
+-fi
+-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+-
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $gcc_cv_as_cfi_pseudo_op" >&5
+-$as_echo "$gcc_cv_as_cfi_pseudo_op" >&6; }
+- if test "x$gcc_cv_as_cfi_pseudo_op" = xyes; then
+-
+-$as_echo "#define HAVE_AS_CFI_PSEUDO_OP 1" >>confdefs.h
+-
+- fi
+-
++GCC_AS_CFI_PSEUDO_OP
+ 
+ if test x$TARGET = xSPARC; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler and linker support unaligned pc related relocs" >&5
+@@ -14739,6 +14722,10 @@ if test -z "${MIPS_TRUE}" && test -z "${
+   as_fn_error $? "conditional \"MIPS\" was never defined.
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+ fi
++if test -z "${BFIN_TRUE}" && test -z "${BFIN_FALSE}"; then
++  as_fn_error $? "conditional \"BFIN\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ if test -z "${SPARC_TRUE}" && test -z "${SPARC_FALSE}"; then
+   as_fn_error $? "conditional \"SPARC\" was never defined.
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -75,6 +75,10 @@ case "$host" in
+ 	TARGET=AVR32; TARGETDIR=avr32
+ 	;;
+ 
++  bfin*)
++  	TARGET=BFIN; TARGETDIR=bfin
++  	;;
++
+   cris-*-*)
+ 	TARGET=LIBFFI_CRIS; TARGETDIR=cris
+ 	;;
+@@ -213,6 +217,7 @@ if test $TARGETDIR = unknown; then
+ fi
+ 
+ AM_CONDITIONAL(MIPS, test x$TARGET = xMIPS)
++AM_CONDITIONAL(BFIN, test x$TARGET = xBFIN)
+ AM_CONDITIONAL(SPARC, test x$TARGET = xSPARC)
+ AM_CONDITIONAL(X86, test x$TARGET = xX86)
+ AM_CONDITIONAL(X86_FREEBSD, test x$TARGET = xX86_FREEBSD)
+Index: libffi/src/bfin/ffi.c
+===================================================================
+--- /dev/null
++++ libffi/src/bfin/ffi.c
+@@ -0,0 +1,195 @@
++/* -----------------------------------------------------------------------
++   ffi.c - Copyright (c) 2012  Alexandre K. I. de Mendonca <alexandre.keunecke@gmail.com>
++
++   Blackfin Foreign Function Interface
++
++   Permission is hereby granted, free of charge, to any person obtaining
++   a copy of this software and associated documentation files (the
++   ``Software''), to deal in the Software without restriction, including
++   without limitation the rights to use, copy, modify, merge, publish,
++   distribute, sublicense, and/or sell copies of the Software, and to
++   permit persons to whom the Software is furnished to do so, subject to
++   the following conditions:
++
++   The above copyright notice and this permission notice shall be included
++   in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++   DEALINGS IN THE SOFTWARE.
++   ----------------------------------------------------------------------- */
++#include <ffi.h>
++#include <ffi_common.h>
++
++#include <stdlib.h>
++#include <stdio.h>
++
++/* Maximum number of GPRs available for argument passing.  */
++#define MAX_GPRARGS 3
++
++/*
++ * Return types
++ */
++#define FFIBFIN_RET_VOID 0
++#define FFIBFIN_RET_BYTE 1
++#define FFIBFIN_RET_HALFWORD 2
++#define FFIBFIN_RET_INT64 3
++#define FFIBFIN_RET_INT32 4
++
++/*====================================================================*/
++/*                          PROTOTYPE          *
++ /*====================================================================*/
++void ffi_prep_args(unsigned char *, extended_cif *);
++
++/*====================================================================*/
++/*                          Externals                                 */
++/*                          (Assembly)                                */
++/*====================================================================*/
++
++extern void ffi_call_SYSV(unsigned, extended_cif *, void(*)(unsigned char *, extended_cif *), unsigned, void *, void(*fn)(void));
++
++/*====================================================================*/
++/*                          Implementation                            */
++/*                                                            */
++/*====================================================================*/
++
++
++/*
++ * This function calculates the return type (size) based on type.
++ */
++
++ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
++{
++   /* --------------------------------------*
++    *   Return handling                *
++    * --------------------------------------*/
++   switch (cif->rtype->type) {
++      case FFI_TYPE_VOID:
++         cif->flags = FFIBFIN_RET_VOID;
++         break;
++      case FFI_TYPE_UINT16:
++      case FFI_TYPE_SINT16:
++         cif->flags = FFIBFIN_RET_HALFWORD;
++         break;
++      case FFI_TYPE_UINT8:
++         cif->flags = FFIBFIN_RET_BYTE;
++         break;
++      case FFI_TYPE_INT:
++      case FFI_TYPE_UINT32:
++      case FFI_TYPE_SINT32:
++      case FFI_TYPE_FLOAT:
++      case FFI_TYPE_POINTER:
++      case FFI_TYPE_SINT8:
++         cif->flags = FFIBFIN_RET_INT32;
++         break;
++      case FFI_TYPE_SINT64:
++      case FFI_TYPE_UINT64:
++      case FFI_TYPE_DOUBLE:
++          cif->flags = FFIBFIN_RET_INT64;
++          break;
++      case FFI_TYPE_STRUCT:
++         if (cif->rtype->size <= 4){
++        	 cif->flags = FFIBFIN_RET_INT32;
++         }else if (cif->rtype->size == 8){
++        	 cif->flags = FFIBFIN_RET_INT64;
++         }else{
++        	 //it will return via a hidden pointer in P0
++        	 cif->flags = FFIBFIN_RET_VOID;
++         }
++         break;
++      default:
++         FFI_ASSERT(0);
++         break;
++   }
++   return FFI_OK;
++}
++
++/*
++ * This will prepare the arguments and will call the assembly routine
++ * cif = the call interface
++ * fn = the function to be called
++ * rvalue = the return value
++ * avalue = the arguments
++ */
++void ffi_call(ffi_cif *cif, void(*fn)(void), void *rvalue, void **avalue)
++{
++   int ret_type = cif->flags;
++   extended_cif ecif;
++   ecif.cif = cif;
++   ecif.avalue = avalue;
++   ecif.rvalue = rvalue;
++
++   switch (cif->abi) {
++      case FFI_SYSV:
++         ffi_call_SYSV(cif->bytes, &ecif, ffi_prep_args, ret_type, ecif.rvalue, fn);
++         break;
++      default:
++         FFI_ASSERT(0);
++         break;
++   }
++}
++
++
++/*
++* This function prepares the parameters (copies them from the ecif to the stack)
++*  to call the function (ffi_prep_args is called by the assembly routine in file
++*  sysv.S, which also calls the actual function)
++*/
++void ffi_prep_args(unsigned char *stack, extended_cif *ecif)
++{
++   register unsigned int i = 0;
++   void **p_argv;
++   unsigned char *argp;
++   ffi_type **p_arg;
++   argp = stack;
++   p_argv = ecif->avalue;
++   for (i = ecif->cif->nargs, p_arg = ecif->cif->arg_types;
++        (i != 0);
++        i--, p_arg++) {
++      size_t z;
++      z = (*p_arg)->size;
++      if (z < sizeof(int)) {
++         z = sizeof(int);
++         switch ((*p_arg)->type) {
++            case FFI_TYPE_SINT8: {
++                  signed char v = *(SINT8 *)(* p_argv);
++                  signed int t = v;
++                  *(signed int *) argp = t;
++               }
++               break;
++            case FFI_TYPE_UINT8: {
++                  unsigned char v = *(UINT8 *)(* p_argv);
++                  unsigned int t = v;
++                  *(unsigned int *) argp = t;
++               }
++               break;
++            case FFI_TYPE_SINT16:
++               *(signed int *) argp = (signed int) * (SINT16 *)(* p_argv);
++               break;
++            case FFI_TYPE_UINT16:
++               *(unsigned int *) argp = (unsigned int) * (UINT16 *)(* p_argv);
++               break;
++            case FFI_TYPE_STRUCT:
++               memcpy(argp, *p_argv, (*p_arg)->size);
++               break;
++            default:
++               FFI_ASSERT(0);
++               break;
++         }
++      } else if (z == sizeof(int)) {
++         *(unsigned int *) argp = (unsigned int) * (UINT32 *)(* p_argv);
++      } else {
++         memcpy(argp, *p_argv, z);
++      }
++      p_argv++;
++      argp += z;
++   }
++}
++
++
++
+Index: libffi/src/bfin/ffitarget.h
+===================================================================
+--- /dev/null
++++ libffi/src/bfin/ffitarget.h
+@@ -0,0 +1,43 @@
++/* -----------------------------------------------------------------------
++   ffitarget.h - Copyright (c) 2012  Alexandre K. I. de Mendonca <alexandre.keunecke@gmail.com>
++
++   Blackfin Foreign Function Interface
++
++   Permission is hereby granted, free of charge, to any person obtaining
++   a copy of this software and associated documentation files (the
++   ``Software''), to deal in the Software without restriction, including
++   without limitation the rights to use, copy, modify, merge, publish,
++   distribute, sublicense, and/or sell copies of the Software, and to
++   permit persons to whom the Software is furnished to do so, subject to
++   the following conditions:
++
++   The above copyright notice and this permission notice shall be included
++   in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++   DEALINGS IN THE SOFTWARE.
++   ----------------------------------------------------------------------- */
++
++#ifndef LIBFFI_TARGET_H
++#define LIBFFI_TARGET_H
++
++#ifndef LIBFFI_ASM
++typedef unsigned long          ffi_arg;
++typedef signed 	 long          ffi_sarg;
++
++typedef enum ffi_abi {
++  FFI_FIRST_ABI = 0,
++  FFI_SYSV,
++  FFI_LAST_ABI,
++  FFI_DEFAULT_ABI = FFI_SYSV
++} ffi_abi;
++#endif
++
++#endif
++
+Index: libffi/src/bfin/sysv.S
+===================================================================
+--- /dev/null
++++ libffi/src/bfin/sysv.S
+@@ -0,0 +1,177 @@
++/* -----------------------------------------------------------------------
++   sysv.S - Copyright (c) 2012  Alexandre K. I. de Mendonca <alexandre.keunecke@gmail.com>
++
++   Blackfin Foreign Function Interface
++
++   Permission is hereby granted, free of charge, to any person obtaining
++   a copy of this software and associated documentation files (the
++   ``Software''), to deal in the Software without restriction, including
++   without limitation the rights to use, copy, modify, merge, publish,
++   distribute, sublicense, and/or sell copies of the Software, and to
++   permit persons to whom the Software is furnished to do so, subject to
++   the following conditions:
++
++   The above copyright notice and this permission notice shall be included
++   in all copies or substantial portions of the Software.
++
++   THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
++   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++   NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++   DEALINGS IN THE SOFTWARE.
++   ----------------------------------------------------------------------- */
++
++#define LIBFFI_ASM
++#include <fficonfig.h>
++#include <ffi.h>
++
++.text
++.align 4
++
++	/*
++	 There is a "feature" in the bfin toolchain that it puts a _ before funcion names
++	 that's why the function here it's called _ffi_call_SYSV and not ffi_call_SYSV
++	 */
++	.global _ffi_call_SYSV;
++	.type _ffi_call_SYSV, STT_FUNC;
++	.func ffi_call_SYSV
++
++	/*
++	cif->bytes  	= R0	(fp+8)
++	&ecif			= R1	(fp+12)
++	ffi_prep_args	= R2	(fp+16)
++	ret_type		= stack (fp+20)
++	ecif.rvalue		= stack (fp+24)
++	fn				= stack	(fp+28)
++					  got	(fp+32)
++    There is room for improvement here (we can use temporary registers
++        instead of saving the values in the memory)
++	REGS:
++		P5 => Stack pointer (function arguments)
++		R5 => cif->bytes
++		R4 => ret->type
++
++		FP-20 = P3
++		FP-16 = SP (parameters area)
++		FP-12 = SP (temp)
++		FP-08 = function return part 1 [R0]
++		FP-04 = function return part 2 [R1]
++	*/
++
++_ffi_call_SYSV:
++.prologue:
++	LINK 20;
++	[FP-20] = P3;
++	[FP+8] = R0;
++	[FP+12] = R1;
++	[FP+16] = R2;
++
++.allocate_stack:
++	//alocate cif->bytes into the stack
++	R1 = [FP+8];
++	R0 = SP;
++	R0 = R0 - R1;
++	R1 = 4;
++	R0 = R0 - R1;
++	[FP-12] = SP;
++	SP = R0;
++	[FP-16] = SP;
++
++.call_prep_args:
++	//get the addr of prep_args
++	P0 = [P3 + _ffi_prep_args@FUNCDESC_GOT17M4];
++	P1 = [P0];
++	P3 = [P0+4];
++	R0 = [FP-16];//SP (parameter area)
++	R1 = [FP+12];//ecif
++	call (P1);
++
++.call_user_function:
++	//ajust SP so as to allow the user function access the parameters on the stack
++	SP = [FP-16]; //point to function parameters
++	R0 = [SP];
++	R1 = [SP+4];
++	R2 = [SP+8];
++	//load user function address
++	P0 = FP;
++	P0 +=28;
++	P1 = [P0];
++	P1 = [P1];
++	P3 = [P0+4];
++	/*
++		For functions returning aggregate values (struct) occupying more than 8 bytes,
++		the caller allocates the return value object on the stack and the address
++		of this object is passed to the callee as a hidden argument in register P0.
++	*/
++	P0 = [FP+24];
++
++	call (P1);
++	SP = [FP-12];
++.compute_return:
++	P2 = [FP-20];
++	[FP-8] = R0;
++	[FP-4] = R1;
++
++	R0 = [FP+20];
++	R1 = R0 << 2;
++
++	R0 = [P2+.rettable@GOT17M4];
++	R0 = R1 + R0;
++	P2 = R0;
++	R1 = [P2];
++
++	P2 = [FP+-20];
++	R0 = [P2+.rettable@GOT17M4];
++	R0 = R1 + R0;
++	P2 = R0;
++	R0 = [FP-8];
++	R1 = [FP-4];
++	jump (P2);
++
++/*
++#define FFIBFIN_RET_VOID 0
++#define FFIBFIN_RET_BYTE 1
++#define FFIBFIN_RET_HALFWORD 2
++#define FFIBFIN_RET_INT64 3
++#define FFIBFIN_RET_INT32 4
++*/
++.align 4
++.align 4
++.rettable:
++	.dd .epilogue - .rettable
++	.dd	.rbyte - .rettable;
++	.dd	.rhalfword - .rettable;
++	.dd	.rint64 - .rettable;
++	.dd	.rint32 - .rettable;
++
++.rbyte:
++	P0 = [FP+24];
++	R0 = R0.B (Z);
++	[P0] = R0;
++	JUMP .epilogue
++.rhalfword:
++	P0 = [FP+24];
++	R0 = R0.L;
++	[P0] = R0;
++	JUMP .epilogue
++.rint64:
++	P0 = [FP+24];// &rvalue
++	[P0] = R0;
++	[P0+4] = R1;
++	JUMP .epilogue
++.rint32:
++	P0 = [FP+24];
++	[P0] = R0;
++.epilogue:
++	R0 = [FP+8];
++	R1 = [FP+12];
++	R2 = [FP+16];
++	P3 = [FP-20];
++	UNLINK;
++	RTS;
++
++.size _ffi_call_SYSV,.-_ffi_call_SYSV;
++.endfunc
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -1,8 +1,8 @@
+ Status
+ ======
+ 
+-libffi-3.0.11 was released on April 11, 2012.  Check the libffi web
+-page for updates: <URL:http://sourceware.org/libffi/>.
++libffi-3.0.XX was released on XXXXXXX.  Check the libffi web page for
++updates: <URL:http://sourceware.org/libffi/>.
+ 
+ 
+ What is libffi?
+@@ -56,6 +56,7 @@ tested:
+ | ARM          | Linux            |
+ | ARM          | iOS              |
+ | AVR32        | Linux            |
++| Blackfin     | uClinux          |
+ | HPPA         | HPUX             |
+ | IA-64        | Linux            |
+ | M68K         | FreeMiNT         |
+@@ -148,6 +149,9 @@ History
+ 
+ See the ChangeLog files for details.
+ 
++3.0.12 XXX-XX-XX
++        Add Blackfin support.
++
+ 3.0.11 Apr-11-12
+         Add support for variadic functions (ffi_prep_cif_var).
+ 	Add Linux/x32 support.
