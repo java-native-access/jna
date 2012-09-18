@@ -124,6 +124,12 @@ public class NativeLibrary {
         }
         catch(UnsatisfiedLinkError e) {
             // Add the system paths back for all fallback searching
+            if (Platform.isMac() && libraryName.contains(".framework/")) {
+                // Add standard dyld fallback paths
+                searchPath.add(System.getProperty("user.home")+"/Library/Frameworks/");
+                searchPath.add("/Library/Frameworks/");
+                searchPath.add("/System/Library/Frameworks/");
+            }
             searchPath.addAll(librarySearchPath);
         }
         try {
@@ -498,6 +504,10 @@ public class NativeLibrary {
     private static String mapLibraryName(String libName) {
 
         if (Platform.isMac()) {
+            if (libName.contains(".framework/")) {
+                // Leave name unchanged if specified as a framework
+                return libName;
+            }
             if (libName.startsWith("lib")
                 && (libName.endsWith(".dylib")
                     || libName.endsWith(".jnilib"))) {
