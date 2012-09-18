@@ -191,6 +191,20 @@ public class NativeLibraryTest extends TestCase {
         process.getFunction("printf");
     }
 
+    public void testMatchFramework() {
+        if (!Platform.isMac()) {
+            return;
+        }
+        final String[][] MAPPINGS = {
+            { "QtCore", "/Library/Frameworks/QtCore.framework/QtCore" },
+            { "QuickTime", "/System/Library/Frameworks/QuickTime.framework/QuickTime" },
+            { "QuickTime.framework/Versions/Current/QuickTime", "/System/Library/Frameworks/QuickTime.framework/Versions/Current/QuickTime" },
+        };
+        for (int i=0;i < MAPPINGS.length;i++) {
+            assertEquals("Wrong framework mapping", MAPPINGS[i][1], NativeLibrary.matchFramework(MAPPINGS[i][0]));
+        }
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeLibraryTest.class);
     }

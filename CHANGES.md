@@ -4,6 +4,7 @@ Release 3.5.0
 Features
 --------
 * `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
+* Search ~/Library/Frameworks and /Library/Frameworks on OSX [@shaneholloway](https://github.com/shaneholloway).
 
 Bug Fixes
 ---------
