@@ -862,7 +862,7 @@ osname=macos
   	<include name="platform.jar" />
       </fileset>
     </copy>
-    <copy todir="${dist}/jnacontrib" flatten="true">
+    <copy todir="${dist}" flatten="true">
       <fileset dir="${contrib}">
 	<include name="**/build/demo-*.jar" />
       </fileset>
