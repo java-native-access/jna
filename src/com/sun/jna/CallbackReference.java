@@ -58,7 +58,6 @@ class CallbackReference extends WeakReference {
     }
 
     static class AttachOptions extends Structure {
-        { setFieldOrder(new String[] { "daemon", "detach", "name" }); }
         public boolean daemon;
         public boolean detach;
         public String name;

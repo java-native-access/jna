@@ -28,7 +28,6 @@ public class UnionTest extends TestCase {
     }
     
     public static class BigTestStructure extends Structure {
-        { setFieldOrder(new String[] { "field1", "field2" }); }
         public long field1;
         public long field2;
         protected List getFieldOrder() {

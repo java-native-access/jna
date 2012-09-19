@@ -50,7 +50,6 @@ public class CallbacksTest extends TestCase {
         public static interface TestCallback extends Callback {
             TestStructure.ByValue callback(TestStructure.ByValue s);
         }
-        { setFieldOrder(new String[] { "c", "s", "i", "j", "inner" }); }
         public byte c;
         public short s;
         public int i;

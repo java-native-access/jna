@@ -839,7 +839,7 @@ public abstract class Structure {
     }
 
     /** Returns all field names (sorted) provided so far by 
-        {@link #setFieldOrder}
+        {@link #getFieldOrder}
         @param force set if results are required immediately
         @return null if not yet able to provide fields, and force is false.
         @throws Error if force is true and field order data not yet specified
@@ -1617,7 +1617,6 @@ public abstract class Structure {
             return Arrays.asList(new String[] { "size", "alignment", "type", "elements" });
         }
         private void init(Pointer[] els) {
-            setFieldOrder(new String[] { "size", "alignment", "type", "elements" });
             elements = new Memory(Pointer.SIZE * els.length);
             elements.write(0, els, 0, els.length);
             write();

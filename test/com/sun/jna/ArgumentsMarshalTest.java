@@ -34,7 +34,6 @@ public class ArgumentsMarshalTest extends TestCase {
             public static class ByReference extends CheckFieldAlignment
                 implements Structure.ByReference { }
         
-            { setFieldOrder(new String[] { "int8Field", "int16Field", "int32Field", "int64Field", "floatField", "doubleField" }); }
             public byte int8Field;
             public short int16Field;
             public int int32Field;
@@ -109,7 +108,6 @@ public class ArgumentsMarshalTest extends TestCase {
         Pointer testStructurePointerArgument(MinTestStructure s);
 
         class VariableSizedStructure extends Structure {
-            { setFieldOrder(new String[] { "length", "buffer" }); }
             public int length;
             public byte[] buffer;
             protected List getFieldOrder() {
@@ -351,7 +349,6 @@ public class ArgumentsMarshalTest extends TestCase {
     
     public void testStructureByValueTypeInfo() {
         class TestStructure extends Structure implements Structure.ByValue {
-            { setFieldOrder(new String[] { "b", "c", "s", "i", "j", "f", "d", "parray", "barray" }); }
             public byte b;
             public char c;
             public short s;

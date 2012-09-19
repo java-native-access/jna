@@ -31,7 +31,6 @@ public class StructureBufferFieldTest extends TestCase {
     }
 
     static class BufferStructure extends Structure {
-        { setFieldOrder(new String[] { "buffer", "dbuffer" }); }
         public Buffer buffer;
         public DoubleBuffer dbuffer;
         protected List getFieldOrder() {

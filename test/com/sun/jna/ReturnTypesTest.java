@@ -43,7 +43,6 @@ public class ReturnTypesTest extends TestCase {
         
         public static class TestSmallStructure extends Structure {
             public static class ByValue extends TestSmallStructure implements Structure.ByValue { }
-            { setFieldOrder(new String[] { "c1", "c2", "s" }); }
             public byte c1;
             public byte c2;
             public short s;
@@ -54,7 +53,6 @@ public class ReturnTypesTest extends TestCase {
 
         public static class TestStructure extends Structure {
             public static class ByValue extends TestStructure implements Structure.ByValue { }
-            { setFieldOrder(new String[] { "c", "s", "i", "j", "inner" }); }
             public byte c;
             public short s;
             public int i;
@@ -66,7 +64,6 @@ public class ReturnTypesTest extends TestCase {
         }
         
         class CheckFieldAlignment extends Structure {
-            { setFieldOrder(new String[] { "int32Field", "int64Field", "floatField", "doubleField" }); }
             public int int32Field = 1;
             public long int64Field = 2;
             public float floatField = 3f;
