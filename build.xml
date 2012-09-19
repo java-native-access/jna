@@ -845,8 +845,8 @@ osname=macos
       </fileset>
     </copy>
     <copy todir="${dist}">
-      <include name="${build}/${jar}"/>
-      <include name="${contrib}/platform/dist/platform.jar"/>
+      <fileset dir="${build}" includes="${jar}"/>
+      <fileset dir="${contrib}/platform/dist" includes="platform.jar"/>
     </copy>
     <copy todir="${dist}/jnacontrib" flatten="true">
       <fileset dir="${contrib}">
