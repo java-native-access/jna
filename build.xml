@@ -198,8 +198,12 @@
     <condition property="ld.preload.name" value="${ld.preload}" else="IGNORE">
       <not><equals arg1="${libjsig}" arg2=""/></not>
     </condition>
+    <!-- Keep cross-compiled natives separate from normal builds -->
     <property name="native.jar" value="${os.prefix}.jar"/>
-    <property name="build.native" location="${build}/native"/>
+    <condition property="native.subdir" value="native-${os.prefix}" else="native">
+      <isset property="os.prefix"/>
+    </condition>
+    <property name="build.native" location="${build}/${native.subdir}"/>
     <property name="md5.file" location="${build.native}/jni.checksum"/>
 
     <mkdir dir="${build}"/>
@@ -216,6 +220,7 @@
     <echo>java.library.path=${java.library.path}</echo>
     <echo>os.prefix=${os.prefix}</echo>
     <echo>build=${build}</echo>
+    <echo>build.native=${build.native}</echo>
 
   </target>
 
@@ -596,7 +601,7 @@ osname=macos
     </condition>
     <!-- Windows' drive letters and spaces in absolute paths wreak havoc on
          make -->
-    <condition property="make.BUILD" value="BUILD=../${build}/native" else="BUILD=${build.native}">
+    <condition property="make.BUILD" value="BUILD=../${build}/${native.subdir}" else="BUILD=${build.native}">
       <os family="windows"/>
     </condition>
     <condition property="make.PATH" value="PATH=/opt/csw/bin:/usr/sfw/bin:/usr/bin:/usr/ccs/bin" else="IGNORE=">
@@ -709,9 +714,9 @@ osname=macos
       <zipfileset src="${build}/jna-test.jar"/>
     </jar>
     <copy todir="${shared}" file="${build}/jna.jar"/>
-    <copy todir="${shared}" file="${build}/native/jnidispatch.dll"/>
-    <copy todir="${shared}" file="${build}/native/testlib.dll"/>
-    <copy todir="${shared}" file="${build}/native/testlib2.dll"/>
+    <copy todir="${shared}" file="${build.native}/jnidispatch.dll"/>
+    <copy todir="${shared}" file="${build.native}/testlib.dll"/>
+    <copy todir="${shared}" file="${build.native}/testlib2.dll"/>
     <copy todir="${shared}" file="w32ce-test.lnk"/>
     <chmod file="${shared}/*.dll" perm="+x"/>
   </target>

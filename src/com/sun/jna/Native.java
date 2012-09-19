@@ -727,7 +727,7 @@ public final class Native {
             url = Native.class.getResource(resourceName);
         }
         if (url == null) {
-            throw new UnsatisfiedLinkError("jnidispatch (" + resourceName 
+            throw new UnsatisfiedLinkError("JNA native support (" + resourceName 
                                            + ") not found in resource path");
         }
     
