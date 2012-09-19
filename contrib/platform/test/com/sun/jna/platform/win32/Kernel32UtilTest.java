@@ -123,4 +123,10 @@ public class Kernel32UtilTest extends TestCase {
 		tempFile.delete();
 		assertEquals(0, fileAttributes2 & WinNT.FILE_ATTRIBUTE_DIRECTORY);
 	}
+	
+    public void testGetEnvironmentVariable() {
+    	assertEquals(null, Kernel32Util.getEnvironmentVariable("jna-getenvironment-test"));
+    	Kernel32.INSTANCE.SetEnvironmentVariable("jna-getenvironment-test", "42");
+    	assertEquals("42", Kernel32Util.getEnvironmentVariable("jna-getenvironment-test"));
+    }
 }

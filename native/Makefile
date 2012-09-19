@@ -1,6 +1,6 @@
 #
 # Makefile for JNA native bits
-# Copyright (c) 2007-2010 Timothy Wall All Rights Reserved
+# Copyright (c) 2007-2012 Timothy Wall All Rights Reserved
 #
 # You may need to run 'ant javah' at the root before performing a build from
 # this directory.
@@ -14,18 +14,13 @@
 #   Darwin/OS X (i386/x86_64/ppc)
 #   Linux (i386/amd64/ppc/arm)
 #   Solaris (i386/amd64/sparc/sparcv9)
+#   AIX (ppc/ppc64)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
 #   Android (arm)
 #
 # Built, but with outstanding bugs (not necessarily within JNA):
 #
 #   Linux (ppc64/ia64)
-#
-# If you want to do a Win64 build, you'll need to manually install things or
-# tweak paths appropriately, since there is no "standard" distribution of the
-# toolchain, which includes both MSVC and MINGW tools.  Things should generally
-# work if either toolchain is available on the path (MSVC builds require
-# the windres binary from MINGW).
 #
 # The w32ce build requires cegcc and phoneME for cross-compilation; if these
 # tools are available on the path then "ant -Dos.prefix=w32ce-arm" should
@@ -163,7 +158,7 @@ LIBSFX=.dll
 ifeq ($(CC),gcc)
 # -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
 # installation
-GCC_VERSION = $(shell gcc --version | sed -n 's/.*\([34]\)[0-9.]*.*/\1/p')
+GCC_VERSION = $(shell gcc --version | sed -n 's/.*(GCC) \([0-9]\)\.[0-9.]*.*/\1/p')
 ifeq ($(GCC_VERSION),3)
 NOCYGWIN=-mno-cygwin
 else
@@ -175,27 +170,29 @@ endif
 
 ifeq ($(ARCH),amd64)
 
-WINDRES=/usr/local/mingw64-cross/bin/x86_64-pc-mingw32-windres
-
-# Uncomment to enable MINGW64 cross compiler
+# Uncomment to enable MINGW64 cross compiler; ensure mingw32-gcc is in PATH
 # Should build properly as of 111121, but lacks SEH, so MSVC build is preferred
-#MINGW = x86_64-pc-mingw32-gcc
+#MINGW=x86_64-w64-mingw32-gcc 
+# Still need windres from mingw distribution
+WINDRES=x86_64-w64-mingw32-windres
+
 ifneq ($(MINGW),)
 CDEFINES=-DPSAPI_VERSION=1
-CC = $(MINGW) -m64 -mno-cygwin
+CC = $(MINGW)
 LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
-FFI_CONFIG += --host=x86_64-pc-mingw32
+FFI_CONFIG += --host=x86_64-w64-mingw32
 else
 # MSVC (wrapper scripts)
 CC=$(FFI_SRC)/../cc.sh -m64
+CPP=$(FFI_SRC)/../cc.sh -m64 -E
 LD=$(FFI_SRC)/../ld.sh -m64
 COPT=
 LIBS=psapi.lib
 ARSFX=.lib
 FFI_CONFIG+=--host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV+=LD="$(LD)" CPP=cpp
+FFI_ENV+=LD="$(LD) cpp=$(CPP)"
 endif
 endif
 endif

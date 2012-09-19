@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -36,6 +39,10 @@ public interface LMAccess extends StdCallLibrary {
         }
                     
         public WString lgrui0_name;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "lgrui0_name" });
+        }
     }
 
     public static class LOCALGROUP_INFO_1 extends Structure {
@@ -50,6 +57,9 @@ public interface LMAccess extends StdCallLibrary {
 
         public WString lgrui1_name;
         public WString lgrui1_comment;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "lgrui1_name", "lgrui1_comment" });
+        }
     }
 	
     //
@@ -80,6 +90,9 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a Unicode string that specifies the name of the user account. 
          */
         public WString usri0_name;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "usri0_name" });
+        }
     }
 	
     /**
@@ -136,6 +149,10 @@ public interface LMAccess extends StdCallLibrary {
          * logon script file. 
          */
         public WString usri1_script_path;
+
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "usri1_name", "usri1_password", "usri1_password_age", "usri1_priv", "usri1_home_dir", "usri1_comment", "usri1_flags", "usri1_script_path" });
+        }
     }
 	
     /**
@@ -161,17 +178,17 @@ public interface LMAccess extends StdCallLibrary {
          * A pointer to a Unicode string that specifies the name of the user account. 
          * Calls to the NetUserSetInfo function ignore this member.
          */
-        WString usri23_name;
+        public WString usri23_name;
         /** 
          * A pointer to a Unicode string that contains the full name of the user. 
          * This string can be a null string, or it can have any number of characters before the terminating null character.
          */
-        WString usri23_full_name;
+        public WString usri23_full_name;
         /** 
          * A pointer to a Unicode string that contains a comment associated with the user account. 
          * This string can be a null string, or it can have any number of characters before the terminating null character.
          */
-        WString usri23_comment;
+        public WString usri23_comment;
         /** 
          * This member can be one or more of the following values. 
          * Note that setting user account control flags may require certain privileges and control access rights. 
@@ -201,12 +218,16 @@ public interface LMAccess extends StdCallLibrary {
          * UF_SERVER_TRUST_ACCOUNT This is a computer account for a backup domain controller that is a member of this domain.
          * UF_INTERDOMAIN_TRUST_ACCOUNT This is a permit to trust account for a domain that trusts other domains.
          */
-        int  usri23_flags;
+        public int  usri23_flags;
         /** 
          * A pointer to a SID structure that contains the security identifier (SID) 
          * that uniquely identifies the user. The NetUserAdd and NetUserSetInfo functions ignore this member.
          */
-        PSID   usri23_user_sid;		
+        public PSID.ByReference   usri23_user_sid;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "usri23_name", "usri23_full_name", "usri23_comment", "usri23_flags", "usri23_user_sid" });
+        }
     }	
 	
     /**
@@ -226,6 +247,10 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a null-terminated Unicode character string that specifies a name. 
          */
         public WString grui0_name;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "grui0_name" });
+        }
     }
 	
     /**
@@ -245,6 +270,10 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a Unicode string specifying the name of a local group to which the user belongs. 
          */
         public WString lgrui0_name;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "lgrui0_name" });
+        }
     }
 	
     /**
@@ -267,6 +296,10 @@ public interface LMAccess extends StdCallLibrary {
          * the name of the global group.
          */
         public WString grpi0_name;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "grpi0_name" });
+        }
     }
 
     /**
@@ -294,6 +327,10 @@ public interface LMAccess extends StdCallLibrary {
          * string. The comment can contain MAXCOMMENTSZ characters. 
          */
         public WString grpi1_comment;
+
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "grpi1_name", "grpi1_comment" });
+        }
     }
 
     /**
@@ -331,6 +368,10 @@ public interface LMAccess extends StdCallLibrary {
          * and SE_GROUP_ENABLED_BY_DEFAULT. 
          */
         public int grpi2_attributes;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "grpi2_name", "grpi2_comment", "grpi2_group_id", "grpi2_attributes" });
+        }
     }
 
     /**
@@ -362,12 +403,16 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a SID structure that contains the security identifier (SID) that 
          * uniquely identifies the global group.
          */
-        public PSID grpi3_group_sid;
+        public PSID.ByReference grpi3_group_sid;
         /**
          * These attributes are hard-coded to SE_GROUP_MANDATORY, SE_GROUP_ENABLED, and 
          * SE_GROUP_ENABLED_BY_DEFAULT.
          */
         public int grpi3_attributes;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "grpi3_name", "grpi3_comment", "grpi3_group_id", "grpi3_attributes" });
+        }
     }
 	
     //

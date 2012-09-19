@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -61,6 +64,10 @@ public interface Wdm extends StdCallLibrary {
          * The string is not null-terminated.
          */
         public char[] Name;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "LastWriteTime", "TitleIndex", "NameLength", "Name" });
+        }
         /**
          * Name of the key.
          * @return String.

@@ -1,0 +1,40 @@
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -30,8 +30,10 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+-	m4/ltoptions.m4 m4/ltsugar.m4
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
++	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 build-ios.sh \
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c \
++	msvcc.sh
++
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -430,7 +430,9 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+-	m4/ltoptions.m4 m4/ltsugar.m4
++	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 build-ios.sh \
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c \
++	msvcc.sh
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+@@ -1820,7 +1822,6 @@ uninstall-am: uninstall-dvi-am uninstall
+ 	uninstall-info-am uninstall-libLTLIBRARIES uninstall-pdf-am \
+ 	uninstall-pkgconfigDATA uninstall-ps-am
+ 
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
+ 
+ # No install-html or install-pdf support in automake yet
+ .PHONY: install-html install-pdf

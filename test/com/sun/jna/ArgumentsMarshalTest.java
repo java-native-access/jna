@@ -13,10 +13,11 @@
 package com.sun.jna;
 
 import java.util.Arrays;
-
-import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
+import java.util.List;
 
 import junit.framework.TestCase;
+
+import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
 
 /** Exercise a range of native methods.
  *
@@ -40,14 +41,18 @@ public class ArgumentsMarshalTest extends TestCase {
             public long int64Field;
             public float floatField;
             public double doubleField;
-	    public CheckFieldAlignment() {
-		int8Field = (byte)fieldOffset("int8Field");
-		int16Field = (short)fieldOffset("int16Field");
-		int32Field = fieldOffset("int32Field");
-		int64Field = fieldOffset("int64Field");
-		floatField = fieldOffset("floatField");
-		doubleField = fieldOffset("doubleField");
-	    }
+            
+            public List getFieldOrder() {
+                return Arrays.asList(new String[] { "int8Field", "int16Field", "int32Field", "int64Field", "floatField", "doubleField" });
+            }
+            public CheckFieldAlignment() {
+                int8Field = (byte)fieldOffset("int8Field");
+                int16Field = (short)fieldOffset("int16Field");
+                int32Field = fieldOffset("int32Field");
+                int64Field = fieldOffset("int64Field");
+                floatField = fieldOffset("floatField");
+                doubleField = fieldOffset("doubleField");
+            }
         }
 
         String returnStringArgument(Object arg);
@@ -80,7 +85,9 @@ public class ArgumentsMarshalTest extends TestCase {
         Pointer testStructurePointerArgument(CheckFieldAlignment p);
         int testStructureByValueArgument(CheckFieldAlignment.ByValue p);
         int testStructureArrayInitialization(CheckFieldAlignment[] p, int len);
+        int testStructureByReferenceArrayInitialization(CheckFieldAlignment.ByReference[] p, int len);
         void modifyStructureArray(CheckFieldAlignment[] p, int length);
+        void modifyStructureByReferenceArray(CheckFieldAlignment.ByReference[] p, int length);
         
         int fillInt8Buffer(byte[] buf, int len, byte value);
         int fillInt16Buffer(short[] buf, int len, short value);
@@ -95,6 +102,9 @@ public class ArgumentsMarshalTest extends TestCase {
         // Structure
         class MinTestStructure extends Structure {
             public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
         }
         Pointer testStructurePointerArgument(MinTestStructure s);
 
@@ -102,6 +112,9 @@ public class ArgumentsMarshalTest extends TestCase {
             { setFieldOrder(new String[] { "length", "buffer" }); }
             public int length;
             public byte[] buffer;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "length", "buffer" });
+            }
             public VariableSizedStructure(String arg) {
                 length = arg.length() + 1;
                 buffer = new byte[length];
@@ -114,6 +127,9 @@ public class ArgumentsMarshalTest extends TestCase {
                 int callback(int arg1, int arg2);
             }
             public TestCallback cb;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "cb" });
+            }
         }
         void setCallbackInStruct(CbStruct cbstruct);
 
@@ -345,6 +361,9 @@ public class ArgumentsMarshalTest extends TestCase {
             public double d;
             public Pointer[] parray = new Pointer[2];
             public byte[] barray = new byte[2];
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "b", "c", "s", "i", "j", "f", "d", "parray", "barray" });
+            }
         }
         Structure s = new TestStructure();
         // Force generation of type info
@@ -397,6 +416,42 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
+    /** When passing an array of <code>struct*</code> to native, be sure to
+        invoke <code>Structure.write()</code> on each of the elements. */
+    public void testWriteStructureByReferenceArrayArgumentMemory() {
+        TestLibrary.CheckFieldAlignment.ByReference[] array = {
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+        };
+        for (int i=0;i < array.length;i++) {
+            array[i].int32Field = i;
+        }
+        assertEquals("Structure.ByReference array memory not properly initialized",
+                     -1, lib.testStructureByReferenceArrayInitialization(array, array.length));
+    }
+
+    public void testReadStructureByReferenceArrayArgumentMemory() {
+        TestLibrary.CheckFieldAlignment.ByReference[] array = {
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+            new TestLibrary.CheckFieldAlignment.ByReference(),
+        };
+        lib.modifyStructureByReferenceArray(array, array.length);
+        for (int i=0;i < array.length;i++) {
+            assertEquals("Wrong value for int32 field of structure at " + i,
+                         i, array[i].int32Field);
+            assertEquals("Wrong value for int64 field of structure at " + i,
+                         i + 1, array[i].int64Field);
+            assertEquals("Wrong value for float field of structure at " + i,
+                         i + 2, array[i].floatField, 0);
+            assertEquals("Wrong value for double field of structure at " + i,
+                         i + 3, array[i].doubleField, 0);
+        }
+    }
+
     public void testByteArrayArgument() {
         byte[] buf = new byte[1024];
         final byte MAGIC = (byte)0xED;

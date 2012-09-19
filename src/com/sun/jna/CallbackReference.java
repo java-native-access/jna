@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -61,6 +62,9 @@ class CallbackReference extends WeakReference {
         public boolean daemon;
         public boolean detach;
         public String name;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "daemon", "detach", "name" });
+        }
     }
     /** Called from native code to initialize a callback thread. */
     private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {
@@ -384,9 +388,9 @@ class CallbackReference extends WeakReference {
     }
 
     private class DefaultCallbackProxy implements CallbackProxy {
-        private Method callbackMethod;
+        private final Method callbackMethod;
         private ToNativeConverter toNative;
-        private FromNativeConverter[] fromNative;
+        private final FromNativeConverter[] fromNative;
         public DefaultCallbackProxy(Method callbackMethod, TypeMapper mapper) {
             this.callbackMethod = callbackMethod;
             Class[] argTypes = callbackMethod.getParameterTypes();
@@ -567,8 +571,8 @@ class CallbackReference extends WeakReference {
      * Cf. Library.Handler
      */
     private static class NativeFunctionHandler implements InvocationHandler {
-        private Function function;
-        private Map options;
+        private final Function function;
+        private final Map options;
         
         public NativeFunctionHandler(Pointer address, int callingConvention, Map options) {
             this.function = new Function(address, callingConvention);

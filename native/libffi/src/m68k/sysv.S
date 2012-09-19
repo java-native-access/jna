@@ -1,6 +1,7 @@
 /* -----------------------------------------------------------------------
 	
-   sysv.S - Copyright (c) 1998 Andreas Schwab
+   sysv.S - Copyright (c) 2012 Alan Hourihane
+	    Copyright (c) 1998, 2012 Andreas Schwab
 	    Copyright (c) 2008 Red Hat, Inc. 
    
    m68k Foreign Function Interface 
@@ -42,13 +43,19 @@
 #define CFI_ENDPROC()
 #endif
 
+#ifdef __MINT__
+#define CALLFUNC(funcname) _ ## funcname
+#else
+#define CALLFUNC(funcname) funcname
+#endif
+
 	.text
 
-	.globl	ffi_call_SYSV
-	.type	ffi_call_SYSV,@function
+	.globl	CALLFUNC(ffi_call_SYSV)
+	.type	CALLFUNC(ffi_call_SYSV),@function
 	.align	4
 
-ffi_call_SYSV:
+CALLFUNC(ffi_call_SYSV):
 	CFI_STARTPROC()
 	link	%fp,#0
 	CFI_OFFSET(14,-8)
@@ -63,14 +70,18 @@ ffi_call_SYSV:
 	move.l	8(%fp),-(%sp)
 	pea	4(%sp)
 #if !defined __PIC__
-	jsr	ffi_prep_args
+	jsr	CALLFUNC(ffi_prep_args)
 #else
-	bsr.l	ffi_prep_args@PLTPC
+	bsr.l	CALLFUNC(ffi_prep_args@PLTPC)
 #endif
 	addq.l	#8,%sp	
 
 	| Pass pointer to struct value, if any
+#ifdef __MINT__
+	move.l	%d0,%a1
+#else
 	move.l	%a0,%a1
+#endif
 
 	| Call the function
 	move.l	24(%fp),%a0
@@ -87,7 +98,7 @@ ffi_call_SYSV:
 
 	| If the return value pointer is NULL, assume no return value.
 	| NOTE: On the mc68000, tst on an address register is not supported.
-#if defined(__mc68000__) && !defined(__mcoldfire__)
+#if !defined(__mc68020__) && !defined(__mc68030__) && !defined(__mc68040__) && !defined(__mc68060__) && !defined(__mcoldfire__)
 	cmp.w	#0, %a1
 #else
 	tst.l	%a1
@@ -109,7 +120,7 @@ retlongint:
 retfloat:
 	btst	#2,%d2
 	jbeq	retdouble
-#if defined(__MC68881__)
+#if defined(__MC68881__) || defined(__HAVE_68881__)
 	fmove.s	%fp0,(%a1)
 #else
 	move.l	%d0,(%a1)
@@ -119,7 +130,7 @@ retfloat:
 retdouble:
 	btst	#3,%d2
 	jbeq	retlongdouble
-#if defined(__MC68881__)
+#if defined(__MC68881__) || defined(__HAVE_68881__)
 	fmove.d	%fp0,(%a1)
 #else
 	move.l	%d0,(%a1)+
@@ -130,7 +141,7 @@ retdouble:
 retlongdouble:
 	btst	#4,%d2
 	jbeq	retpointer
-#if defined(__MC68881__)
+#if defined(__MC68881__) || defined(__HAVE_68881__)
 	fmove.x	%fp0,(%a1)
 #else
 	move.l	%d0,(%a1)+
@@ -142,7 +153,11 @@ retlongdouble:
 retpointer:
 	btst	#5,%d2
 	jbeq	retstruct1
+#ifdef __MINT__
+	move.l	%d0,(%a1)
+#else
 	move.l	%a0,(%a1)
+#endif
 	jbra	epilogue
 
 retstruct1:
@@ -162,13 +177,13 @@ epilogue:
 	unlk	%fp
 	rts
 	CFI_ENDPROC()
-	.size	ffi_call_SYSV,.-ffi_call_SYSV
+	.size	CALLFUNC(ffi_call_SYSV),.-CALLFUNC(ffi_call_SYSV)
 
-	.globl	ffi_closure_SYSV
-	.type	ffi_closure_SYSV, @function
+	.globl	CALLFUNC(ffi_closure_SYSV)
+	.type	CALLFUNC(ffi_closure_SYSV), @function
 	.align	4
 
-ffi_closure_SYSV:
+CALLFUNC(ffi_closure_SYSV):
 	CFI_STARTPROC()
 	link	%fp,#-12
 	CFI_OFFSET(14,-8)
@@ -178,9 +193,9 @@ ffi_closure_SYSV:
 	pea	-12(%fp)
 	move.l	%a0,-(%sp)
 #if !defined __PIC__
-	jsr	ffi_closure_SYSV_inner
+	jsr	CALLFUNC(ffi_closure_SYSV_inner)
 #else
-	bsr.l	ffi_closure_SYSV_inner@PLTPC
+	bsr.l	CALLFUNC(ffi_closure_SYSV_inner@PLTPC)
 #endif
 
 	lsr.l	#1,%d0
@@ -199,7 +214,7 @@ ffi_closure_SYSV:
 	move.l	(%a0),%d1
 	jra	.Lcls_epilogue
 .Lcls_ret_float:
-#if defined(__MC68881__)
+#if defined(__MC68881__) || defined(__HAVE_68881__)
 	fmove.s	(%a0),%fp0
 #else
 	move.l	(%a0),%d0
@@ -209,7 +224,7 @@ ffi_closure_SYSV:
 	lsr.l	#2,%d0
 	jne	1f
 	jcs	.Lcls_ret_ldouble
-#if defined(__MC68881__)
+#if defined(__MC68881__) || defined(__HAVE_68881__)
 	fmove.d	(%a0),%fp0
 #else
 	move.l	(%a0)+,%d0
@@ -217,7 +232,7 @@ ffi_closure_SYSV:
 #endif
 	jra	.Lcls_epilogue
 .Lcls_ret_ldouble:
-#if defined(__MC68881__)
+#if defined(__MC68881__) || defined(__HAVE_68881__)
 	fmove.x	(%a0),%fp0
 #else
 	move.l	(%a0)+,%d0
@@ -240,13 +255,13 @@ ffi_closure_SYSV:
 	jra	.Lcls_epilogue
 	CFI_ENDPROC()
 
-	.size	ffi_closure_SYSV,.-ffi_closure_SYSV
+	.size	CALLFUNC(ffi_closure_SYSV),.-CALLFUNC(ffi_closure_SYSV)
 
-	.globl	ffi_closure_struct_SYSV
-	.type	ffi_closure_struct_SYSV, @function
+	.globl	CALLFUNC(ffi_closure_struct_SYSV)
+	.type	CALLFUNC(ffi_closure_struct_SYSV), @function
 	.align	4
 
-ffi_closure_struct_SYSV:
+CALLFUNC(ffi_closure_struct_SYSV):
 	CFI_STARTPROC()
 	link	%fp,#0
 	CFI_OFFSET(14,-8)
@@ -256,14 +271,14 @@ ffi_closure_struct_SYSV:
 	move.l	%a1,-(%sp)
 	move.l	%a0,-(%sp)
 #if !defined __PIC__
-	jsr	ffi_closure_SYSV_inner
+	jsr	CALLFUNC(ffi_closure_SYSV_inner)
 #else
-	bsr.l	ffi_closure_SYSV_inner@PLTPC
+	bsr.l	CALLFUNC(ffi_closure_SYSV_inner@PLTPC)
 #endif
 	unlk	%fp
 	rts
 	CFI_ENDPROC()
-	.size	ffi_closure_struct_SYSV,.-ffi_closure_struct_SYSV
+	.size	CALLFUNC(ffi_closure_struct_SYSV),.-CALLFUNC(ffi_closure_struct_SYSV)
 
 #if defined __ELF__ && defined __linux__
 	.section	.note.GNU-stack,"",@progbits

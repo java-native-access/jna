@@ -19,11 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.jna.platform.FileMonitor;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
 import com.sun.jna.platform.win32.WinBase.OVERLAPPED;
 import com.sun.jna.platform.win32.WinNT.FILE_NOTIFY_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
-import com.sun.jna.platform.win32.BaseTSD.ULONG_PTRByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -110,14 +109,14 @@ public class W32FileMonitor extends FileMonitor {
     }
     
     private FileInfo waitForChange() {
-        Kernel32 klib = Kernel32.INSTANCE;
         IntByReference rcount = new IntByReference();
         ULONG_PTRByReference rkey = new ULONG_PTRByReference();
         PointerByReference roverlap = new PointerByReference();
-        klib.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, WinBase.INFINITE);
-        
+        if (! Kernel32.INSTANCE.GetQueuedCompletionStatus(port, rcount, rkey, roverlap, WinBase.INFINITE)) {
+            return null;
+        }
         synchronized (this) { 
-            return handleMap.get(rkey.getValue());
+            return handleMap.get(new HANDLE(rkey.getValue().toPointer()));
         }
     }
     

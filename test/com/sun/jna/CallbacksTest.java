@@ -15,8 +15,10 @@ package com.sun.jna;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -39,6 +41,9 @@ public class CallbacksTest extends TestCase {
 
     public static class SmallTestStructure extends Structure {
         public double value;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "value" });
+        }
     }
     public static class TestStructure extends Structure {
         public static class ByValue extends TestStructure implements Structure.ByValue { }
@@ -51,6 +56,9 @@ public class CallbacksTest extends TestCase {
         public int i;
         public long j;
         public SmallTestStructure inner;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" }); 
+        }
     }
     public static interface TestLibrary extends Library {
         interface NoMethodCallback extends Callback {
@@ -150,6 +158,9 @@ public class CallbacksTest extends TestCase {
 
         class CbStruct extends Structure {
             public Callback cb;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "cb" });
+            }
         }
         void callCallbackInStruct(CbStruct cbstruct);
     }

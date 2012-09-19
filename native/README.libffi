@@ -1,3 +1,13 @@
 --- libffi notes ---
-All JNA customizations to date have been merged to upstream libffi.  This
-source tree has been synched to http://github.com/atgreen/libffi.
+The libffi subdirectory is managed as a subtree.  Use subtree merging
+to update from upstream, e.g.
+
+$ git pull -s subtree libffi master (or other branch, if necessary)
+
+The libffi subdirectory was originally mapped as follows:
+
+$ git remote add -f libffi git@github.com:atgreen/libffi.git
+$ git merge -s ours --no-commit libffi/master
+$ git read-tree --prefix=native/libffi -u libffi/master
+$ git commit -m "Merge libffi as subtree"
+

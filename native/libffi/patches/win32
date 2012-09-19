@@ -1,0 +1,39 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,9 @@
++2012-03-20  Peter Rosin  <peda@lysator.liu.se>
++
++	* testsuite/libffi.call/strlen2_win32.c (main): Remove bug.
++	* src/x86/win32.S [MSVC] (ffi_closure_SYSV): Make the 'stub' label
++	visible outside the PROC, so that ffi_closure_THISCALL can see it.
++
+ 2012-03-19  Alan Hourihane  <alanh@fairlite.co.uk>
+ 
+ 	* src/m68k/ffi.c: Add MINT support.
+Index: libffi/testsuite/libffi.call/strlen2_win32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/strlen2_win32.c
++++ libffi/testsuite/libffi.call/strlen2_win32.c
+@@ -13,7 +13,6 @@ static size_t __attribute__((fastcall))
+   return (strlen(s));
+ }
+ 
+-int d
+ int main (void)
+ {
+   ffi_cif cif;
+Index: libffi/src/x86/win32.S
+===================================================================
+--- libffi.orig/src/x86/win32.S
++++ libffi/src/x86/win32.S
+@@ -187,7 +187,7 @@ ffi_closure_SYSV PROC NEAR FORCEFRAME
+         lea  edx, [ebp - 24]
+         mov  [ebp - 12], edx         ;; resp
+         lea  edx, [ebp + 8]
+-stub:
++stub::
+         mov  [esp + 8], edx          ;; args
+         lea  edx, [ebp - 12]
+         mov  [esp + 4], edx          ;; &resp

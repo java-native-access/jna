@@ -3,6 +3,8 @@
 Java Native Access (JNA)
 ========================
 
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.4.1/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.4.1/javadoc/overview-summary.html#overview_description).
+
 JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code—no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.
 
 JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like it does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
@@ -16,15 +18,10 @@ JNA includes a platform library with many native functions already mapped as wel
 Download
 ========
 
-Version 3.4.0
+Version 3.4.1
 
-* [jna.jar](/downloads/twall/jna/jna.jar)
-* [platform.jar](/downloads/twall/jna/platform.jar)
-
-Version 3.3.0
-
-* [jna.jar](jna/raw/3.3.0/jnalib/dist/jna.jar)
-* [platform.jar](jna/raw/3.3.0/jnalib/dist/platform.jar)
+* [jna.jar](jna/blob/3.4.1/dist/jna.jar?raw=true)
+* [platform.jar](jna/blob/3.4.1/dist/platform.jar?raw=true)
 
 Features
 ========
@@ -76,17 +73,19 @@ Using the Library
 * [Using Pointers and Arrays](jna/tree/master/www/PointersAndArrays.md)
 * [Using Structures and Unions](jna/tree/master/www/StructuresAndUnions.md)
 * [Using By-Reference Arguments](jna/tree/master/www/ByRefArguments.md)
-* [Customization](jna/tree/master/www/CustomMappings.md)
-* [Callbacks/Closures](jna/tree/master/www/CallbacksAndClosures.md)
+* [Customization of Type Mapping](jna/tree/master/www/CustomMappings.md)
+* [Callbacks/Function Pointers/Closures](jna/tree/master/www/CallbacksAndClosures.md)
 * [Dynamically Typed Languages (JRuby/Jython)](jna/tree/master/www/DynamicallyTypedLanguages.md)
 * [Platform Library](jna/tree/master/www/PlatformLibrary.md)
-* [Direct Method Mapping](jna/tree/master/www/DirectMapping.md)
+* [Direct Method Mapping](jna/tree/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
+* [Setting up a Windows Development Environment](jna/tree/master/www/WindowsDevelopmentEnvironment.md)
+* [Avoiding Crashes](http://twall.github.com/jna/3.4.1/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.0/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.1/javadoc/).
 
 Contributing 
 ============

@@ -3,7 +3,11 @@ build-d64
 build.eclipse
 build.number
 .metadata
+.DS_Store
 bin
 contrib/ntservice/dist
 contrib/platform/dist
 doc
+dist/jna-*-javadoc.jar
+dist/src-mvn.zip
+dist/out-of-date.jar

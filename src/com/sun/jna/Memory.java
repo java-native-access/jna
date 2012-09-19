@@ -56,14 +56,18 @@ public class Memory extends Pointer {
 
     protected long size; // Size of the malloc'ed space
 
-    /** Provide a view into the original memory. */
+    /** Provide a view into the original memory.  Keeps an implicit reference
+     * to the original to prevent GC.
+     */
     private class SharedMemory extends Memory {
-        public SharedMemory(long offset) {
-            this.size = Memory.this.size - offset;
+        public SharedMemory(long offset, long size) {
+            this.size = size;
             this.peer = Memory.this.peer + offset;
         }
         /** No need to free memory. */
-        protected void finalize() { } 
+        protected void dispose() {
+            this.peer = 0;
+        } 
         /** Pass bounds check to parent. */
         protected void boundsCheck(long off, long sz) {
             Memory.this.boundsCheck(this.peer - Memory.this.peer + off, sz);
@@ -90,9 +94,9 @@ public class Memory extends Pointer {
 
     protected Memory() { }
 
-    /** Provide a view onto this structure from the given offset.  The
-     * returned {@link Pointer} will have the same size as the original,
-     * reduced by the offset.
+    /** Provide a view of this memory using the given offset as the base address.  The
+     * returned {@link Pointer} will have a size equal to that of the original
+     * minus the offset.
      * @throws IndexOutOfBoundsException if the requested memory is outside
      * the allocated bounds. 
      */
@@ -100,13 +104,16 @@ public class Memory extends Pointer {
         return share(offset, getSize() - offset);
     }
     
-    /** Provide a view onto this structure from the given offset. 
+    /** Provide a view of this memory using the given offset as the base
+     * address, bounds-limited with the given size.  Maintains a reference to 
+     * the original {@link Memory} object to avoid GC as long as the shared
+     * memory is referenced.
      * @throws IndexOutOfBoundsException if the requested memory is outside
      * the allocated bounds. 
      */
     public Pointer share(long offset, long sz) {
         boundsCheck(offset, sz);
-        return new SharedMemory(offset);
+        return new SharedMemory(offset, sz);
     }
     
     /** Provide a view onto this structure with the given alignment. 
@@ -145,7 +152,7 @@ public class Memory extends Pointer {
     }
 
     /** Free the native memory and set peer to zero */
-    protected synchronized void dispose() {
+    protected void dispose() {
         free(peer);
         peer = 0;
     }

@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.Netapi32Util.DomainController;
 import com.sun.jna.platform.win32.Netapi32Util.DomainTrust;
+import com.sun.jna.platform.win32.Netapi32Util.UserInfo;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -96,6 +97,19 @@ public class Netapi32UtilTest extends TestCase {
 		assertTrue(users.length > 0);
 	}
 	
+	public void testGetUserInfo() {
+		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
+			return;
+		assertNotNull(Netapi32Util.getUserInfo(Advapi32Util.getUserName()));
+	}
+
+	public void testGetUserInfoWithDomainSpecified() {
+		UserInfo userInfo = Netapi32Util.getUserInfo(Advapi32Util.getUserName(), 
+				System.getenv("USERDOMAIN"));
+		assertNotNull(userInfo);
+		assertTrue(Advapi32.INSTANCE.IsValidSid(userInfo.sid));
+	}
+    
 	public void testGetGlobalGroups() {
 		Netapi32Util.Group[] groups = Netapi32Util.getGlobalGroups();
 		assertNotNull(groups);

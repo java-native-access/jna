@@ -1,0 +1,776 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -111,6 +111,29 @@
+ 
+ 	* configure: Regenerate.
+ 
++2011-02-09  Anthony Green <green@moxielogic.com>
++
++	* README: Mention ARM iOS.
++
++2011-02-09  Landon Fuller <landonf@macports.org>
++
++	* Makefile.am (EXTRA_DIST): Add build-ios.sh, src/arm/gentramp.sh,
++	src/arm/trampoline.S.
++	(nodist_libffi_la_SOURCES): Add src/arc/trampoline.S.
++	* configure.ac (FFI_EXEC_TRAMPOLINE_TABLE): Define.
++	* src/arm/ffi.c (ffi_trampoline_table)
++	(ffi_closure_trampoline_table_page, ffi_trampoline_table_entry)
++	(FFI_TRAMPOLINE_CODELOC_CONFIG, FFI_TRAMPOLINE_CONFIG_PAGE_OFFSET)
++	(FFI_TRAMPOLINE_COUNT, ffi_trampoline_lock, ffi_trampoline_tables)
++	(ffi_trampoline_table_alloc, ffi_closure_alloc, ffi_closure_free):
++	Define for FFI_EXEC_TRAMPOLINE_TABLE case (iOS).
++	(ffi_prep_closure_loc): Handl FFI_EXEC_TRAMPOLINE_TABLE case
++	separately.
++	* src/arm/sysv.S: Handle Apple iOS host.
++	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
++	* build-ios.sh: New file.
++	* fficonfig.h.in, configure, Makefile.in: Rebuilt.
++
+ 2011-02-08  Oren Held  <orenhe@il.ibm.com>
+ 
+ 	* src/dlmalloc.c (_STRUCT_MALLINFO): Define in order to avoid
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -10,31 +10,28 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
+ 	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
+ 	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
+-	src/ia64/unix.S \
+-	src/mips/ffi.c src/mips/n32.S src/mips/o32.S \
+-	src/mips/ffitarget.h \
+-	src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h \
+-	src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h \
+-	src/powerpc/ffi.c src/powerpc/sysv.S \
++	src/ia64/unix.S src/mips/ffi.c src/mips/n32.S src/mips/o32.S \
++	src/mips/ffitarget.h src/m32r/ffi.c src/m32r/sysv.S \
++	src/m32r/ffitarget.h src/m68k/ffi.c src/m68k/sysv.S \
++	src/m68k/ffitarget.h src/powerpc/ffi.c src/powerpc/sysv.S \
+ 	src/powerpc/linux64.S src/powerpc/linux64_closure.S \
+-	src/powerpc/ppc_closure.S src/powerpc/asm.h \
+-	src/powerpc/aix.S src/powerpc/darwin.S \
+-	src/powerpc/aix_closure.S src/powerpc/darwin_closure.S \
+-	src/powerpc/ffi_darwin.c src/powerpc/ffitarget.h \
+-	src/s390/ffi.c src/s390/sysv.S src/s390/ffitarget.h \
+-	src/sh/ffi.c src/sh/sysv.S src/sh/ffitarget.h \
+-	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
+-	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
+-	src/sparc/ffi.c src/x86/darwin64.S \
++	src/powerpc/ppc_closure.S src/powerpc/asm.h src/powerpc/aix.S \
++	src/powerpc/darwin.S src/powerpc/aix_closure.S \
++	src/powerpc/darwin_closure.S src/powerpc/ffi_darwin.c \
++	src/powerpc/ffitarget.h src/s390/ffi.c src/s390/sysv.S \
++	src/s390/ffitarget.h src/sh/ffi.c src/sh/sysv.S	\
++	src/sh/ffitarget.h src/sh64/ffi.c src/sh64/sysv.S \
++	src/sh64/ffitarget.h src/sparc/v8.S src/sparc/v9.S \
++	src/sparc/ffitarget.h src/sparc/ffi.c src/x86/darwin64.S \
+ 	src/x86/ffi.c src/x86/sysv.S src/x86/win32.S src/x86/darwin.S \
+-	src/x86/win64.S src/x86/freebsd.S \
+-	src/x86/ffi64.c src/x86/unix64.S src/x86/ffitarget.h \
+-	src/pa/ffitarget.h src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S \
+-	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h \
+-	src/dlmalloc.c \
+-	src/moxie/ffi.c src/moxie/eabi.S \
+-	libtool-version ChangeLog.libffi m4/libtool.m4 \
+-	m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4
++	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
++	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
++	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
++	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
++	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
++	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
++	m4/ltoptions.m4 m4/ltsugar.m4
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+@@ -144,6 +141,9 @@ nodist_libffi_la_SOURCES += src/powerpc/
+ endif
+ if ARM
+ nodist_libffi_la_SOURCES += src/arm/sysv.S src/arm/ffi.c
++if FFI_EXEC_TRAMPOLINE_TABLE
++nodist_libffi_la_SOURCES += src/arm/trampoline.S
++endif
+ endif
+ if AVR32
+ nodist_libffi_la_SOURCES += src/avr32/sysv.S src/avr32/ffi.c
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -52,21 +52,22 @@ target_triplet = @target@
+ @POWERPC_DARWIN_TRUE@am__append_14 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
+ @POWERPC_FREEBSD_TRUE@am__append_15 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
+ @ARM_TRUE@am__append_16 = src/arm/sysv.S src/arm/ffi.c
+-@AVR32_TRUE@am__append_17 = src/avr32/sysv.S src/avr32/ffi.c
+-@LIBFFI_CRIS_TRUE@am__append_18 = src/cris/sysv.S src/cris/ffi.c
+-@FRV_TRUE@am__append_19 = src/frv/eabi.S src/frv/ffi.c
+-@MOXIE_TRUE@am__append_20 = src/moxie/eabi.S src/moxie/ffi.c
+-@S390_TRUE@am__append_21 = src/s390/sysv.S src/s390/ffi.c
+-@X86_64_TRUE@am__append_22 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
+-@SH_TRUE@am__append_23 = src/sh/sysv.S src/sh/ffi.c
+-@SH64_TRUE@am__append_24 = src/sh64/sysv.S src/sh64/ffi.c
+-@PA_LINUX_TRUE@am__append_25 = src/pa/linux.S src/pa/ffi.c
+-@PA_HPUX_TRUE@am__append_26 = src/pa/hpux32.S src/pa/ffi.c
++@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__append_17 = src/arm/trampoline.S
++@AVR32_TRUE@am__append_18 = src/avr32/sysv.S src/avr32/ffi.c
++@LIBFFI_CRIS_TRUE@am__append_19 = src/cris/sysv.S src/cris/ffi.c
++@FRV_TRUE@am__append_20 = src/frv/eabi.S src/frv/ffi.c
++@MOXIE_TRUE@am__append_21 = src/moxie/eabi.S src/moxie/ffi.c
++@S390_TRUE@am__append_22 = src/s390/sysv.S src/s390/ffi.c
++@X86_64_TRUE@am__append_23 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
++@SH_TRUE@am__append_24 = src/sh/sysv.S src/sh/ffi.c
++@SH64_TRUE@am__append_25 = src/sh64/sysv.S src/sh64/ffi.c
++@PA_LINUX_TRUE@am__append_26 = src/pa/linux.S src/pa/ffi.c
++@PA_HPUX_TRUE@am__append_27 = src/pa/hpux32.S src/pa/ffi.c
+ # Build debug. Define FFI_DEBUG on the commandline so that, when building with
+ # MSVC, it can link against the debug CRT.
+-@FFI_DEBUG_TRUE@am__append_27 = -DFFI_DEBUG
++@FFI_DEBUG_TRUE@am__append_28 = -DFFI_DEBUG
+ # Build opt.
+-@FFI_DEBUG_FALSE@am__append_28 = -O2
++@FFI_DEBUG_FALSE@am__append_29 = -O2
+ subdir = .
+ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
+@@ -144,17 +145,18 @@ am_libffi_la_OBJECTS = src/debug.lo src/
+ @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
+ @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
+ @ARM_TRUE@am__objects_16 = src/arm/sysv.lo src/arm/ffi.lo
+-@AVR32_TRUE@am__objects_17 = src/avr32/sysv.lo src/avr32/ffi.lo
+-@LIBFFI_CRIS_TRUE@am__objects_18 = src/cris/sysv.lo src/cris/ffi.lo
+-@FRV_TRUE@am__objects_19 = src/frv/eabi.lo src/frv/ffi.lo
+-@MOXIE_TRUE@am__objects_20 = src/moxie/eabi.lo src/moxie/ffi.lo
+-@S390_TRUE@am__objects_21 = src/s390/sysv.lo src/s390/ffi.lo
+-@X86_64_TRUE@am__objects_22 = src/x86/ffi64.lo src/x86/unix64.lo \
++@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__objects_17 = src/arm/trampoline.lo
++@AVR32_TRUE@am__objects_18 = src/avr32/sysv.lo src/avr32/ffi.lo
++@LIBFFI_CRIS_TRUE@am__objects_19 = src/cris/sysv.lo src/cris/ffi.lo
++@FRV_TRUE@am__objects_20 = src/frv/eabi.lo src/frv/ffi.lo
++@MOXIE_TRUE@am__objects_21 = src/moxie/eabi.lo src/moxie/ffi.lo
++@S390_TRUE@am__objects_22 = src/s390/sysv.lo src/s390/ffi.lo
++@X86_64_TRUE@am__objects_23 = src/x86/ffi64.lo src/x86/unix64.lo \
+ @X86_64_TRUE@	src/x86/ffi.lo src/x86/sysv.lo
+-@SH_TRUE@am__objects_23 = src/sh/sysv.lo src/sh/ffi.lo
+-@SH64_TRUE@am__objects_24 = src/sh64/sysv.lo src/sh64/ffi.lo
+-@PA_LINUX_TRUE@am__objects_25 = src/pa/linux.lo src/pa/ffi.lo
+-@PA_HPUX_TRUE@am__objects_26 = src/pa/hpux32.lo src/pa/ffi.lo
++@SH_TRUE@am__objects_24 = src/sh/sysv.lo src/sh/ffi.lo
++@SH64_TRUE@am__objects_25 = src/sh64/sysv.lo src/sh64/ffi.lo
++@PA_LINUX_TRUE@am__objects_26 = src/pa/linux.lo src/pa/ffi.lo
++@PA_HPUX_TRUE@am__objects_27 = src/pa/hpux32.lo src/pa/ffi.lo
+ nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
+ 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
+ 	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
+@@ -163,17 +165,18 @@ nodist_libffi_la_OBJECTS = $(am__objects
+ 	$(am__objects_15) $(am__objects_16) $(am__objects_17) \
+ 	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
+ 	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
+-	$(am__objects_24) $(am__objects_25) $(am__objects_26)
++	$(am__objects_24) $(am__objects_25) $(am__objects_26) \
++	$(am__objects_27)
+ libffi_la_OBJECTS = $(am_libffi_la_OBJECTS) \
+ 	$(nodist_libffi_la_OBJECTS)
+ libffi_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+ 	$(libffi_la_LDFLAGS) $(LDFLAGS) -o $@
+ libffi_convenience_la_LIBADD =
+-am__objects_27 = src/debug.lo src/prep_cif.lo src/types.lo \
++am__objects_28 = src/debug.lo src/prep_cif.lo src/types.lo \
+ 	src/raw_api.lo src/java_raw_api.lo src/closures.lo
+-am_libffi_convenience_la_OBJECTS = $(am__objects_27)
+-am__objects_28 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
++am_libffi_convenience_la_OBJECTS = $(am__objects_28)
++am__objects_29 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+ 	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
+ 	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
+ 	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
+@@ -181,8 +184,8 @@ am__objects_28 = $(am__objects_1) $(am__
+ 	$(am__objects_16) $(am__objects_17) $(am__objects_18) \
+ 	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
+ 	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
+-	$(am__objects_25) $(am__objects_26)
+-nodist_libffi_convenience_la_OBJECTS = $(am__objects_28)
++	$(am__objects_25) $(am__objects_26) $(am__objects_27)
++nodist_libffi_convenience_la_OBJECTS = $(am__objects_29)
+ libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
+ 	$(nodist_libffi_convenience_la_OBJECTS)
+ DEFAULT_INCLUDES = -I.@am__isrc@
+@@ -300,6 +303,7 @@ ECHO_N = @ECHO_N@
+ ECHO_T = @ECHO_T@
+ EGREP = @EGREP@
+ EXEEXT = @EXEEXT@
++FFI_EXEC_TRAMPOLINE_TABLE = @FFI_EXEC_TRAMPOLINE_TABLE@
+ FGREP = @FGREP@
+ GREP = @GREP@
+ HAVE_LONG_DOUBLE = @HAVE_LONG_DOUBLE@
+@@ -408,31 +412,27 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
+ 	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
+ 	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
+-	src/ia64/unix.S \
+-	src/mips/ffi.c src/mips/n32.S src/mips/o32.S \
+-	src/mips/ffitarget.h \
+-	src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h \
+-	src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h \
+-	src/powerpc/ffi.c src/powerpc/sysv.S \
++	src/ia64/unix.S src/mips/ffi.c src/mips/n32.S src/mips/o32.S \
++	src/mips/ffitarget.h src/m32r/ffi.c src/m32r/sysv.S \
++	src/m32r/ffitarget.h src/m68k/ffi.c src/m68k/sysv.S \
++	src/m68k/ffitarget.h src/powerpc/ffi.c src/powerpc/sysv.S \
+ 	src/powerpc/linux64.S src/powerpc/linux64_closure.S \
+-	src/powerpc/ppc_closure.S src/powerpc/asm.h \
+-	src/powerpc/aix.S src/powerpc/darwin.S \
+-	src/powerpc/aix_closure.S src/powerpc/darwin_closure.S \
+-	src/powerpc/ffi_darwin.c src/powerpc/ffitarget.h \
+-	src/s390/ffi.c src/s390/sysv.S src/s390/ffitarget.h \
+-	src/sh/ffi.c src/sh/sysv.S src/sh/ffitarget.h \
+-	src/sh64/ffi.c src/sh64/sysv.S src/sh64/ffitarget.h \
+-	src/sparc/v8.S src/sparc/v9.S src/sparc/ffitarget.h \
+-	src/sparc/ffi.c src/x86/darwin64.S \
++	src/powerpc/ppc_closure.S src/powerpc/asm.h src/powerpc/aix.S \
++	src/powerpc/darwin.S src/powerpc/aix_closure.S \
++	src/powerpc/darwin_closure.S src/powerpc/ffi_darwin.c \
++	src/powerpc/ffitarget.h src/s390/ffi.c src/s390/sysv.S \
++	src/s390/ffitarget.h src/sh/ffi.c src/sh/sysv.S	\
++	src/sh/ffitarget.h src/sh64/ffi.c src/sh64/sysv.S \
++	src/sh64/ffitarget.h src/sparc/v8.S src/sparc/v9.S \
++	src/sparc/ffitarget.h src/sparc/ffi.c src/x86/darwin64.S \
+ 	src/x86/ffi.c src/x86/sysv.S src/x86/win32.S src/x86/darwin.S \
+-	src/x86/win64.S src/x86/freebsd.S \
+-	src/x86/ffi64.c src/x86/unix64.S src/x86/ffitarget.h \
+-	src/pa/ffitarget.h src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S \
+-	src/frv/ffi.c src/frv/eabi.S src/frv/ffitarget.h \
+-	src/dlmalloc.c \
+-	src/moxie/ffi.c src/moxie/eabi.S \
+-	libtool-version ChangeLog.libffi m4/libtool.m4 \
+-	m4/lt~obsolete.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4
++	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
++	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
++	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
++	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
++	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
++	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
++	m4/ltoptions.m4 m4/ltsugar.m4
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+@@ -491,10 +491,11 @@ nodist_libffi_la_SOURCES = $(am__append_
+ 	$(am__append_15) $(am__append_16) $(am__append_17) \
+ 	$(am__append_18) $(am__append_19) $(am__append_20) \
+ 	$(am__append_21) $(am__append_22) $(am__append_23) \
+-	$(am__append_24) $(am__append_25) $(am__append_26)
++	$(am__append_24) $(am__append_25) $(am__append_26) \
++	$(am__append_27)
+ libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+-AM_CFLAGS = -Wall -g -fexceptions $(am__append_27) $(am__append_28)
++AM_CFLAGS = -Wall -g -fexceptions $(am__append_28) $(am__append_29)
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+ AM_CCASFLAGS = $(AM_CPPFLAGS)
+@@ -730,6 +731,8 @@ src/arm/sysv.lo: src/arm/$(am__dirstamp)
+ 	src/arm/$(DEPDIR)/$(am__dirstamp)
+ src/arm/ffi.lo: src/arm/$(am__dirstamp) \
+ 	src/arm/$(DEPDIR)/$(am__dirstamp)
++src/arm/trampoline.lo: src/arm/$(am__dirstamp) \
++	src/arm/$(DEPDIR)/$(am__dirstamp)
+ src/avr32/$(am__dirstamp):
+ 	@$(MKDIR_P) src/avr32
+ 	@: > src/avr32/$(am__dirstamp)
+@@ -827,6 +830,8 @@ mostlyclean-compile:
+ 	-rm -f src/arm/ffi.lo
+ 	-rm -f src/arm/sysv.$(OBJEXT)
+ 	-rm -f src/arm/sysv.lo
++	-rm -f src/arm/trampoline.$(OBJEXT)
++	-rm -f src/arm/trampoline.lo
+ 	-rm -f src/avr32/ffi.$(OBJEXT)
+ 	-rm -f src/avr32/ffi.lo
+ 	-rm -f src/avr32/sysv.$(OBJEXT)
+@@ -949,6 +954,7 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/trampoline.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/ffi.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/sysv.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/ffi.Plo@am__quote@
+@@ -1816,6 +1822,7 @@ uninstall-am: uninstall-dvi-am uninstall
+ 	uninstall-info-am uninstall-libLTLIBRARIES uninstall-pdf-am \
+ 	uninstall-pkgconfigDATA uninstall-ps-am
+ 
++	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh
+ 
+ # No install-html or install-pdf support in automake yet
+ .PHONY: install-html install-pdf
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -331,13 +331,23 @@ if test x$TARGET = xX86_WIN64; then
+     fi
+ fi
+ 
++
++FFI_EXEC_TRAMPOLINE_TABLE=0
+ case "$target" in
++     *arm*-apple-darwin*)
++       FFI_EXEC_TRAMPOLINE_TABLE=1
++       AC_DEFINE(FFI_EXEC_TRAMPOLINE_TABLE, 1,
++                 [Cannot use PROT_EXEC on this target, so, we revert to
++                   alternative means])
++     ;;
+      *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
+        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
+                  [Cannot use malloc on this target, so, we revert to
+                    alternative means])
+      ;;
+ esac
++AM_CONDITIONAL(FFI_EXEC_TRAMPOLINE_TABLE, test x$FFI_EXEC_TRAMPOLINE_TABLE = x1)
++AC_SUBST(FFI_EXEC_TRAMPOLINE_TABLE)
+ 
+ if test x$TARGET = xX86_64; then
+     AC_CACHE_CHECK([assembler supports unwind section type],
+Index: libffi/fficonfig.h.in
+===================================================================
+--- libffi.orig/fficonfig.h.in
++++ libffi/fficonfig.h.in
+@@ -17,6 +17,9 @@
+ /* Define this if you want extra debugging. */
+ #undef FFI_DEBUG
+ 
++/* Cannot use PROT_EXEC on this target, so, we revert to alternative means */
++#undef FFI_EXEC_TRAMPOLINE_TABLE
++
+ /* Cannot use malloc on this target, so, we revert to alternative means */
+ #undef FFI_MMAP_EXEC_WRIT
+ 
+Index: libffi/src/arm/ffi.c
+===================================================================
+--- libffi.orig/src/arm/ffi.c
++++ libffi/src/arm/ffi.c
+@@ -1,5 +1,6 @@
+ /* -----------------------------------------------------------------------
+-   ffi.c - Copyright (c) 1998, 2008  Red Hat, Inc.
++   ffi.c - Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
++	   Copyright (c) 2011 Plausible Labs Cooperative, Inc.
+    
+    ARM Foreign Function Interface 
+ 
+@@ -339,6 +340,220 @@ ffi_prep_incoming_args_SYSV(char *stack,
+ 
+ extern unsigned int ffi_arm_trampoline[3];
+ 
++#if FFI_EXEC_TRAMPOLINE_TABLE
++
++#include <mach/mach.h>
++#include <pthread.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++extern void *ffi_closure_trampoline_table_page;
++
++typedef struct ffi_trampoline_table ffi_trampoline_table;
++typedef struct ffi_trampoline_table_entry ffi_trampoline_table_entry;
++
++struct ffi_trampoline_table {
++  /* contigious writable and executable pages */
++  vm_address_t config_page;
++  vm_address_t trampoline_page;
++
++  /* free list tracking */
++  uint16_t free_count;
++  ffi_trampoline_table_entry *free_list;
++  ffi_trampoline_table_entry *free_list_pool;
++
++  ffi_trampoline_table *prev;
++  ffi_trampoline_table *next;
++};
++
++struct ffi_trampoline_table_entry {
++  void *(*trampoline)();
++  ffi_trampoline_table_entry *next;
++};
++
++/* Override the standard architecture trampoline size */
++// XXX TODO - Fix
++#undef FFI_TRAMPOLINE_SIZE
++#define FFI_TRAMPOLINE_SIZE 12
++
++/* The trampoline configuration is placed at 4080 bytes prior to the trampoline's entry point */
++#define FFI_TRAMPOLINE_CODELOC_CONFIG(codeloc) ((void **) (((uint8_t *) codeloc) - 4080));
++
++/* The first 16 bytes of the config page are unused, as they are unaddressable from the trampoline page. */
++#define FFI_TRAMPOLINE_CONFIG_PAGE_OFFSET 16
++
++/* Total number of trampolines that fit in one trampoline table */
++#define FFI_TRAMPOLINE_COUNT ((PAGE_SIZE - FFI_TRAMPOLINE_CONFIG_PAGE_OFFSET) / FFI_TRAMPOLINE_SIZE)
++
++static pthread_mutex_t ffi_trampoline_lock = PTHREAD_MUTEX_INITIALIZER;
++static ffi_trampoline_table *ffi_trampoline_tables = NULL;
++
++static ffi_trampoline_table *
++ffi_trampoline_table_alloc ()
++{
++  ffi_trampoline_table *table = NULL;
++
++  /* Loop until we can allocate two contigious pages */
++  while (table == NULL) {
++    vm_address_t config_page = 0x0;
++    kern_return_t kt;
++
++    /* Try to allocate two pages */
++    kt = vm_allocate (mach_task_self (), &config_page, PAGE_SIZE*2, VM_FLAGS_ANYWHERE);
++    if (kt != KERN_SUCCESS) {
++      fprintf(stderr, "vm_allocate() failure: %d at %s:%d\n", kt, __FILE__, __LINE__);
++      break;
++    }
++
++    /* Now drop the second half of the allocation to make room for the trampoline table */
++    vm_address_t trampoline_page = config_page+PAGE_SIZE;
++    kt = vm_deallocate (mach_task_self (), trampoline_page, PAGE_SIZE);
++    if (kt != KERN_SUCCESS) {
++      fprintf(stderr, "vm_deallocate() failure: %d at %s:%d\n", kt, __FILE__, __LINE__);
++      break;
++    }
++
++    /* Remap the trampoline table to directly follow the config page */
++    vm_prot_t cur_prot;
++    vm_prot_t max_prot;
++
++    kt = vm_remap (mach_task_self (), &trampoline_page, PAGE_SIZE, 0x0, FALSE, mach_task_self (), (vm_address_t) &ffi_closure_trampoline_table_page, FALSE, &cur_prot, &max_prot, VM_INHERIT_SHARE);
++
++    /* If we lost access to the destination trampoline page, drop our config allocation mapping and retry */
++    if (kt != KERN_SUCCESS) {
++      /* Log unexpected failures */
++      if (kt != KERN_NO_SPACE) {
++        fprintf(stderr, "vm_remap() failure: %d at %s:%d\n", kt, __FILE__, __LINE__);
++      }
++
++      vm_deallocate (mach_task_self (), config_page, PAGE_SIZE);
++      continue;
++    }
++
++    /* We have valid trampoline and config pages */
++    table = calloc (1, sizeof(ffi_trampoline_table));
++    table->free_count = FFI_TRAMPOLINE_COUNT;
++    table->config_page = config_page;
++    table->trampoline_page = trampoline_page;
++
++    /* Create and initialize the free list */
++    table->free_list_pool = calloc(FFI_TRAMPOLINE_COUNT, sizeof(ffi_trampoline_table_entry));
++
++    uint16_t i;
++    for (i = 0; i < table->free_count; i++) {
++      ffi_trampoline_table_entry *entry = &table->free_list_pool[i];
++      entry->trampoline = (void *) (table->trampoline_page + (i * FFI_TRAMPOLINE_SIZE));
++
++      if (i < table->free_count - 1)
++        entry->next = &table->free_list_pool[i+1];
++    }
++
++    table->free_list = table->free_list_pool;
++  }
++
++  return table;
++}
++
++void *
++ffi_closure_alloc (size_t size, void **code)
++{
++  /* Create the closure */
++  ffi_closure *closure = malloc(size);
++  if (closure == NULL)
++    return NULL;
++
++  pthread_mutex_lock(&ffi_trampoline_lock);
++
++  /* Check for an active trampoline table with available entries. */
++  ffi_trampoline_table *table = ffi_trampoline_tables;
++  if (table == NULL || table->free_list == NULL) {
++    table = ffi_trampoline_table_alloc ();
++    if (table == NULL) {
++      free(closure);
++      return NULL;
++    }
++
++    /* Insert the new table at the top of the list */
++    table->next = ffi_trampoline_tables;
++    if (table->next != NULL)
++        table->next->prev = table;
++
++    ffi_trampoline_tables = table;
++  }
++
++  /* Claim the free entry */
++  ffi_trampoline_table_entry *entry = ffi_trampoline_tables->free_list;
++  ffi_trampoline_tables->free_list = entry->next;
++  ffi_trampoline_tables->free_count--;
++  entry->next = NULL;
++
++  pthread_mutex_unlock(&ffi_trampoline_lock);
++
++  /* Initialize the return values */
++  *code = entry->trampoline;
++  closure->trampoline_table = table;
++  closure->trampoline_table_entry = entry;
++
++  return closure;
++}
++
++void
++ffi_closure_free (void *ptr)
++{
++  ffi_closure *closure = ptr;
++
++  pthread_mutex_lock(&ffi_trampoline_lock);
++
++  /* Fetch the table and entry references */
++  ffi_trampoline_table *table = closure->trampoline_table;
++  ffi_trampoline_table_entry *entry = closure->trampoline_table_entry;
++
++  /* Return the entry to the free list */
++  entry->next = table->free_list;
++  table->free_list = entry;
++  table->free_count++;
++
++  /* If all trampolines within this table are free, and at least one other table exists, deallocate
++   * the table */
++  if (table->free_count == FFI_TRAMPOLINE_COUNT && ffi_trampoline_tables != table) {
++    /* Remove from the list */
++    if (table->prev != NULL)
++      table->prev->next = table->next;
++
++    if (table->next != NULL)
++      table->next->prev = table->prev;
++
++    /* Deallocate pages */
++    kern_return_t kt;
++    kt = vm_deallocate (mach_task_self (), table->config_page, PAGE_SIZE);
++    if (kt != KERN_SUCCESS)
++      fprintf(stderr, "vm_deallocate() failure: %d at %s:%d\n", kt, __FILE__, __LINE__);
++
++    kt = vm_deallocate (mach_task_self (), table->trampoline_page, PAGE_SIZE);
++    if (kt != KERN_SUCCESS)
++      fprintf(stderr, "vm_deallocate() failure: %d at %s:%d\n", kt, __FILE__, __LINE__);
++
++    /* Deallocate free list */
++    free (table->free_list_pool);
++    free (table);
++  } else if (ffi_trampoline_tables != table) {
++    /* Otherwise, bump this table to the top of the list */
++    table->prev = NULL;
++    table->next = ffi_trampoline_tables;
++    if (ffi_trampoline_tables != NULL)
++      ffi_trampoline_tables->prev = table;
++
++    ffi_trampoline_tables = table;
++  }
++
++  pthread_mutex_unlock (&ffi_trampoline_lock);
++
++  /* Free the closure */
++  free (closure);
++}
++
++#else
++
+ #define FFI_INIT_TRAMPOLINE(TRAMP,FUN,CTX)				\
+ ({ unsigned char *__tramp = (unsigned char*)(TRAMP);			\
+    unsigned int  __fun = (unsigned int)(FUN);				\
+@@ -353,6 +568,7 @@ extern unsigned int ffi_arm_trampoline[3
+                                                     mapping.  */        \
+  })
+ 
++#endif
+ 
+ /* the cif must already be prep'ed */
+ 
+@@ -372,10 +588,16 @@ ffi_prep_closure_loc (ffi_closure* closu
+   else
+     FFI_ASSERT (0);
+     
++#if FFI_EXEC_TRAMPOLINE_TABLE
++  void **config = FFI_TRAMPOLINE_CODELOC_CONFIG(codeloc);
++  config[0] = closure;
++  config[1] = closure_func;
++#else
+   FFI_INIT_TRAMPOLINE (&closure->tramp[0], \
+ 		       closure_func,  \
+ 		       codeloc);
+-    
++#endif
++
+   closure->cif  = cif;
+   closure->user_data = user_data;
+   closure->fun  = fun;
+Index: libffi/src/arm/sysv.S
+===================================================================
+--- libffi.orig/src/arm/sysv.S
++++ libffi/src/arm/sysv.S
+@@ -1,5 +1,6 @@
+ /* -----------------------------------------------------------------------
+-   sysv.S - Copyright (c) 1998, 2008 Red Hat, Inc.
++   sysv.S - Copyright (c) 1998, 2008, 2011 Red Hat, Inc.
++	    Copyright (c) 2011 Plausible Labs Cooperative, Inc.
+    
+    ARM Foreign Function Interface 
+ 
+@@ -39,7 +40,11 @@
+ #else
+ #define CNAME(x) x
+ #endif
++#ifdef __APPLE__
++#define ENTRY(x) .globl CNAME(x); CNAME(x):
++#else
+ #define ENTRY(x) .globl CNAME(x); .type CNAME(x),%function; CNAME(x):
++#endif /* __APPLE__ */
+ #endif
+ 
+ #ifdef __ELF__
+@@ -48,6 +53,12 @@
+ #define LSYM(x) x
+ #endif
+ 
++/* Use the SOFTFP return value ABI on Mac OS X, as per the iOS ABI
++  Function Call Guide */
++#ifdef __APPLE__
++#define __SOFTFP__
++#endif
++
+ /* We need a better way of testing for this, but for now, this is all 
+    we can do.  */
+ @ This selects the minimum architecture level required.
+@@ -105,21 +116,33 @@
+ 	.align 0
+ 	.thumb
+ 	.thumb_func
++#ifdef __APPLE__
++	ENTRY($0)
++#else
+ 	ENTRY(\name)
++#endif
+ 	bx	pc
+ 	nop
+ 	.arm
+ 	UNWIND .fnstart
+ /* A hook to tell gdb that we've switched to ARM mode.  Also used to call
+    directly from other local arm routines.  */
+-_L__\name:		
++#ifdef __APPLE__
++_L__$0:
++#else
++_L__\name:
++#endif
+ .endm
+ #else
+ .macro	ARM_FUNC_START name
+ 	.text
+ 	.align 0
+ 	.arm
++#ifdef __APPLE__
++	ENTRY($0)
++#else
+ 	ENTRY(\name)
++#endif
+ 	UNWIND .fnstart
+ .endm
+ #endif
+@@ -141,8 +164,7 @@ _L__\name:
+ #endif
+ .endm
+ 
+-
+-	@ r0:   fn
++	@ r0:   ffi_prep_args
+ 	@ r1:   &ecif
+ 	@ r2:   cif->bytes
+ 	@ r3:   fig->flags
+@@ -222,11 +244,18 @@ ARM_FUNC_START ffi_call_SYSV
+ #endif
+ 
+ LSYM(Lepilogue):
+-	RETLDM	"r0-r3,fp"
++#if defined (__INTERWORKING__)
++	ldmia   sp!, {r0-r3,fp, lr}
++	bx	lr
++#else
++	ldmia   sp!, {r0-r3,fp, pc}
++#endif
+ 
+ .ffi_call_SYSV_end:
+ 	UNWIND .fnend
++#ifdef __ELF__
+         .size    CNAME(ffi_call_SYSV),.ffi_call_SYSV_end-CNAME(ffi_call_SYSV)
++#endif
+ 
+ 
+ /*
+@@ -247,7 +276,7 @@ ARM_FUNC_START ffi_closure_SYSV
+ 	sub	sp, sp, #16
+ 	str	sp, [sp, #8]
+ 	add	r1, sp, #8
+-	bl	ffi_closure_SYSV_inner
++	bl	CNAME(ffi_closure_SYSV_inner)
+ 	cmp	r0, #FFI_TYPE_INT
+ 	beq	.Lretint
+ 
+@@ -299,7 +328,9 @@ ARM_FUNC_START ffi_closure_SYSV
+ 
+ .ffi_closure_SYSV_end:
+ 	UNWIND .fnend
++#ifdef __ELF__
+         .size    CNAME(ffi_closure_SYSV),.ffi_closure_SYSV_end-CNAME(ffi_closure_SYSV)
++#endif
+ 
+ 
+ /* Below are VFP hard-float ABI call and closure implementations.
+@@ -371,7 +402,7 @@ LSYM(Lbase_args):
+ 	@ assume no return value.
+ 	cmp	r2, #0
+ 	beq	LSYM(Lepilogue_vfp)
+-	
++
+ 	cmp	r3, #FFI_TYPE_INT
+ 	streq	r0, [r2]
+ 	beq	LSYM(Lepilogue_vfp)
+Index: libffi/src/closures.c
+===================================================================
+--- libffi.orig/src/closures.c
++++ libffi/src/closures.c
+@@ -1,6 +1,7 @@
+ /* -----------------------------------------------------------------------
+-   closures.c - Copyright (c) 2007  Red Hat, Inc.
+-   Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc
++   closures.c - Copyright (c) 2007, 2009, 2010  Red Hat, Inc.
++                Copyright (C) 2007, 2009, 2010 Free Software Foundation, Inc
++                Copyright (c) 2011 Plausible Labs Cooperative, Inc.
+ 
+    Code to allocate and deallocate memory for closures.
+ 
+@@ -32,7 +33,7 @@
+ #include <ffi.h>
+ #include <ffi_common.h>
+ 
+-#ifndef FFI_MMAP_EXEC_WRIT
++#if !FFI_MMAP_EXEC_WRIT && !FFI_EXEC_TRAMPOLINE_TABLE
+ # if __gnu_linux__
+ /* This macro indicates it may be forbidden to map anonymous memory
+    with both write and execute permission.  Code compiled when this
+@@ -63,7 +64,11 @@
+ 
+ #if FFI_CLOSURES
+ 
+-# if FFI_MMAP_EXEC_WRIT
++# if FFI_EXEC_TRAMPOLINE_TABLE
++
++// Per-target implementation; It's unclear what can reasonable be shared between two OS/architecture implementations.
++
++# elif FFI_MMAP_EXEC_WRIT /* !FFI_EXEC_TRAMPOLINE_TABLE */
+ 
+ #define USE_LOCKS 1
+ #define USE_DL_PREFIX 1

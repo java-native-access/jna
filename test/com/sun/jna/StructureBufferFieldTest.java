@@ -17,13 +17,8 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.TestCase;
-
-import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
 
 /** TODO: need more alignment tests, especially platform-specific behavior
  * @author twall@users.sf.net
@@ -39,6 +34,9 @@ public class StructureBufferFieldTest extends TestCase {
         { setFieldOrder(new String[] { "buffer", "dbuffer" }); }
         public Buffer buffer;
         public DoubleBuffer dbuffer;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "buffer", "dbuffer" }); 
+        }
     }
     public void testBufferFieldWriteNULL() {
         if (!Platform.HAS_BUFFERS) return;

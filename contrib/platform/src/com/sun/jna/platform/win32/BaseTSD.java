@@ -35,6 +35,10 @@ public interface BaseTSD extends StdCallLibrary {
         public LONG_PTR(long value) {
             super(Pointer.SIZE, value);
         }
+
+        public Pointer toPointer() {
+            return Pointer.createConstant(longValue());
+        }
     }
 	
     /**
@@ -59,7 +63,11 @@ public interface BaseTSD extends StdCallLibrary {
         }
 
         public ULONG_PTR(long value) {
-            super(Pointer.SIZE, value);
+            super(Pointer.SIZE, value, true);
+        }
+
+        public Pointer toPointer() {
+            return Pointer.createConstant(longValue());
         }
     }
 

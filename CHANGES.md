@@ -1,29 +1,65 @@
-Release 3.4.x
+Release 3.5.0
 =============
+
 Features
 --------
+* `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
+* Search ~/Library/Frameworks and /Library/Frameworks on OSX - [@shaneholloway](https://github.com/shaneholloway).
 * Add android-arm target (thanks to ochafik for initial work)
 * Add `jna.tmpdir` to override temporary JNA storage location
 
 Bug Fixes
 ---------
+* Fix `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22).
+* Fix crash in direct mode callbacks with certain type conversions - [@twall](https://github.com/twall).
 
+Release 3.4.2
+=============
+
+Features
+--------
+* Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVariable` - [@dblock](https://github.com/dblock).
+* Moved `Kernel32.dll` function definitions from `WinNT.java` into `Kernel32.java` - [@dblock](https://github.com/dblock).
+* Provide `toPointer()` methods on all `_PTR` types (platform win32) - [@twall](https://github.com/twall).
+* Provide `ant -Dskip-native` to skip platform native build - [@twall](https://github.com/twall).
+* Provide `ant -Dheadless=true` to run unit tests headless - [@twall](https://github.com/twall).
+* Added Windows dev environment instructions - [@twall](https://github.com/twall).
+
+Bug Fixes
+---------
+* Ensure platform win32 classes use unsigned where appropriate (`ULONG_PTR`, `UINT_PTR`, `ULONGLONG`, `WORD`, `DWORDLONG`) - [@twall](https://github.com/twall).
+* [#71](https://github.com/twall/jna/issues/71), [#73](https://github.com/twall/jna/issues/73): Fix OSGI entries in manifest - [@twall](https://github.com/twall).
+* [#78](https://github.com/twall/jna/issues/78): Fix NPE in `platform.win32.Netapi32Util.getDomainTrusts` - [@dblock](https://github.com/dblock).
+* Fix: auto-sync memory for `struct**` arguments (array of struct pointers) - [@twall](https://github.com/twall).
+* Fix: `platform.win32.Secur32.AcquireCredentialsHandle`, `InitializeSecurityContext` and `AcceptSecurityContext` on Win32 64-bit - [@dblock](https://github.com/dblock).
+* Fix: avoid overwriting native `char *` or `wchar_t *` fields within structures when unmodified (similar to current operation with pointers) - [@twall](https://github.com/twall).
+* Fix: `platform.win32.DsGetDC.DS_DOMAIN_TRUSTS` and `DsEnumerateDomainTrusts` on Win32 64-bit - [@trejkaz](https://github.com/trejkaz).
+* Fix: Crash freeing the wrong pointer in `Netapi32Util.getDomainTrusts` - [@trejkaz](https://github.com/trejkaz).
+* [#100](https://github.com/twall/jna/issues/100): Fix `platform.win32.W32FileMonitor` - [@dblock](https://github.com/dblock).
+* Return INT_PTR from `platform.win32.Shell32.ShellExecute`, since returning
+`HINSTANCE` is useless.
+* Fix runtime error in some instances where Structure.setFieldOrder is used (never return self when sharing AutoAllocated memory).
+* [#107](https://github.com/twall/jna/issues/107): `Structure.clear()` always calls `ensureAllocated()` to avoid NPE.
+* Ensure internal memory pointer is *always* allocated when calling `Structure.useMemory()`, even if layout is not yet determined.
+ 
 Release 3.4.1
 =============
 
 Features
 --------
-* Add 'unsigned' modifier to IntegerType
-* Add to `platform.win32.User32`: `GetLastInputInfo`
-* Add `platform.win32.WinNT.GetFileType` and `platform.win32.Kernel32Util.getFileType`
-* Add to `platform.win32.Kernel32Util`: `getFileType`
+* Add 'unsigned' modifier to IntegerType.
+* Add to `platform.win32.User32`: `GetLastInputInfo`.
+* Add `platform.win32.WinNT.GetFileType` and `platform.win32.Kernel32Util.getFileType`.
+* Add to `platform.win32.Kernel32Util`: `getFileType`.
 
 Bug Fixes
 ---------
 * Re-build linux-amd and linux-i386 against older versions of glibc (2.2.5 and
 2.1.3 respectively).
 * Properly initialize first printer info struct in winspool library.
-* Properly support getting and setting zero-array-length REG_MULTI_SZ values on Win32
+* Properly support getting and setting zero-array-length `REG_MULTI_SZ` values on Win32.
+* Fixed SID in Win32 `USER_INFO_23` and `GROUP_INFO_3`.
+* Fixed passing domain name into Win32 `Netapi32Util.getUserInfo`.
 
 Release 3.4.0
 =============

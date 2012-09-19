@@ -1,0 +1,2352 @@
+Index: libffi/m4/ax_cc_maxopt.m4
+===================================================================
+--- libffi.orig/m4/ax_cc_maxopt.m4
++++ libffi/m4/ax_cc_maxopt.m4
+@@ -21,7 +21,7 @@
+ #   by the code (e.g. for gcc's -fstrict-aliasing), and that floating-point
+ #   computations can be re-ordered as needed.
+ #
+-#   Requires macros: AX_CHECK_COMPILER_FLAGS, AX_COMPILER_VENDOR,
++#   Requires macros: AX_CHECK_COMPILE_FLAG, AX_COMPILER_VENDOR,
+ #   AX_GCC_ARCHFLAG, AX_GCC_X86_CPUID.
+ #
+ # LICENSE
+@@ -55,7 +55,7 @@
+ #   modified version of the Autoconf Macro, you may extend this special
+ #   exception to the GPL to apply to your modified version as well.
+ 
+-#serial 11
++#serial 12
+ 
+ AC_DEFUN([AX_CC_MAXOPT],
+ [
+@@ -90,7 +90,7 @@ if test "$ac_test_CFLAGS" != "set"; then
+ 	 else
+            xlc_opt="-qtune=auto"
+ 	 fi
+-         AX_CHECK_COMPILER_FLAGS($xlc_opt,
++         AX_CHECK_COMPILE_FLAG($xlc_opt,
+ 		CFLAGS="-O3 -qansialias -w $xlc_opt",
+                [CFLAGS="-O3 -qansialias -w"
+                 echo "******************************************************"
+@@ -125,7 +125,7 @@ if test "$ac_test_CFLAGS" != "set"; then
+           esac
+           if test "x$icc_flags" != x; then
+             for flag in $icc_flags; do
+-              AX_CHECK_COMPILER_FLAGS($flag, [icc_archflag=$flag; break])
++              AX_CHECK_COMPILE_FLAG($flag, [icc_archflag=$flag; break])
+             done
+           fi
+           AC_MSG_CHECKING([for icc architecture flag])
+@@ -140,11 +140,15 @@ if test "$ac_test_CFLAGS" != "set"; then
+      # default optimization flags for gcc on all systems
+      CFLAGS="-O3 -fomit-frame-pointer"
+ 
++     # -malign-double for x86 systems
++     AX_CHECK_COMPILE_FLAG(-malign-double, CFLAGS="$CFLAGS -malign-double")
++
+      #  -fstrict-aliasing for gcc-2.95+
+-     AX_CHECK_COMPILER_FLAGS(-fstrict-aliasing,
++     AX_CHECK_COMPILE_FLAG(-fstrict-aliasing,
+ 	CFLAGS="$CFLAGS -fstrict-aliasing")
+ 
+-     AX_CHECK_COMPILER_FLAGS(-ffast-math, CFLAGS="$CFLAGS -ffast-math")
++     # note that we enable "unsafe" fp optimization with other compilers, too
++     AX_CHECK_COMPILE_FLAG(-ffast-math, CFLAGS="$CFLAGS -ffast-math")
+ 
+      AX_GCC_ARCHFLAG($acx_maxopt_portable)
+      ;;
+@@ -161,7 +165,7 @@ if test "$ac_test_CFLAGS" != "set"; then
+         CFLAGS="-O3"
+   fi
+ 
+-  AX_CHECK_COMPILER_FLAGS($CFLAGS, [], [
++  AX_CHECK_COMPILE_FLAG($CFLAGS, [], [
+ 	echo ""
+         echo "********************************************************"
+         echo "* WARNING: The guessed CFLAGS don't seem to work with  *"
+Index: libffi/m4/ax_cflags_warn_all.m4
+===================================================================
+--- libffi.orig/m4/ax_cflags_warn_all.m4
++++ libffi/m4/ax_cflags_warn_all.m4
+@@ -25,6 +25,8 @@
+ #    - $3 action-if-found : add value to shellvariable
+ #    - $4 action-if-not-found : nothing
+ #
++#   NOTE: These macros depend on AX_APPEND_FLAG.
++#
+ # LICENSE
+ #
+ #   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
+@@ -56,99 +58,14 @@
+ #   modified version of the Autoconf Macro, you may extend this special
+ #   exception to the GPL to apply to your modified version as well.
+ 
+-#serial 10
++#serial 13
+ 
+-AC_DEFUN([AX_CFLAGS_WARN_ALL],[dnl
+-AS_VAR_PUSHDEF([FLAGS],[CFLAGS])dnl
+-AS_VAR_PUSHDEF([VAR],[ac_cv_cflags_warn_all])dnl
++AC_DEFUN([AX_FLAGS_WARN_ALL],[dnl
++AS_VAR_PUSHDEF([FLAGS],[_AC_LANG_PREFIX[]FLAGS])dnl
++AS_VAR_PUSHDEF([VAR],[ac_cv_[]_AC_LANG_ABBREV[]flags_warn_all])dnl
+ AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for maximum warnings],
+ VAR,[VAR="no, unknown"
+- AC_LANG_PUSH([C])
+- ac_save_[]FLAGS="$[]FLAGS"
+-for ac_arg dnl
+-in "-pedantic  % -Wall"       dnl   GCC
+-   "-xstrconst % -v"          dnl Solaris C
+-   "-std1      % -verbose -w0 -warnprotos" dnl Digital Unix
+-   "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd" dnl AIX
+-   "-ansi -ansiE % -fullwarn" dnl IRIX
+-   "+ESlit     % +w1"         dnl HP-UX C
+-   "-Xc        % -pvctl[,]fullmsg" dnl NEC SX-5 (Super-UX 10)
+-   "-h conform % -h msglevel 2" dnl Cray C (Unicos)
+-   #
+-do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
+-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
+-                     [VAR=`echo $ac_arg | sed -e 's,.*% *,,'` ; break])
+-done
+- FLAGS="$ac_save_[]FLAGS"
+- AC_LANG_POP([C])
+-])
+-case ".$VAR" in
+-     .ok|.ok,*) m4_ifvaln($3,$3) ;;
+-   .|.no|.no,*) m4_ifvaln($4,$4,[m4_ifval($2,[
+-        AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])
+-                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])]) ;;
+-   *) m4_ifvaln($3,$3,[
+-   if echo " $[]m4_ifval($1,$1,FLAGS) " | grep " $VAR " 2>&1 >/dev/null
+-   then AC_RUN_LOG([: m4_ifval($1,$1,FLAGS) does contain $VAR])
+-   else AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"])
+-                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"
+-   fi ]) ;;
+-esac
+-AS_VAR_POPDEF([VAR])dnl
+-AS_VAR_POPDEF([FLAGS])dnl
+-])
+-
+-dnl the only difference - the LANG selection... and the default FLAGS
+-
+-AC_DEFUN([AX_CXXFLAGS_WARN_ALL],[dnl
+-AS_VAR_PUSHDEF([FLAGS],[CXXFLAGS])dnl
+-AS_VAR_PUSHDEF([VAR],[ax_cv_cxxflags_warn_all])dnl
+-AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for maximum warnings],
+-VAR,[VAR="no, unknown"
+- AC_LANG_PUSH([C++])
+- ac_save_[]FLAGS="$[]FLAGS"
+-for ac_arg dnl
+-in "-pedantic  % -Wall"       dnl   GCC
+-   "-xstrconst % -v"          dnl Solaris C
+-   "-std1      % -verbose -w0 -warnprotos" dnl Digital Unix
+-   "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd" dnl AIX
+-   "-ansi -ansiE % -fullwarn" dnl IRIX
+-   "+ESlit     % +w1"         dnl HP-UX C
+-   "-Xc        % -pvctl[,]fullmsg" dnl NEC SX-5 (Super-UX 10)
+-   "-h conform % -h msglevel 2" dnl Cray C (Unicos)
+-   #
+-do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
+-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
+-                     [VAR=`echo $ac_arg | sed -e 's,.*% *,,'` ; break])
+-done
+- FLAGS="$ac_save_[]FLAGS"
+- AC_LANG_POP([C++])
+-])
+-case ".$VAR" in
+-     .ok|.ok,*) m4_ifvaln($3,$3) ;;
+-   .|.no|.no,*) m4_ifvaln($4,$4,[m4_ifval($2,[
+-        AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])
+-                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])]) ;;
+-   *) m4_ifvaln($3,$3,[
+-   if echo " $[]m4_ifval($1,$1,FLAGS) " | grep " $VAR " 2>&1 >/dev/null
+-   then AC_RUN_LOG([: m4_ifval($1,$1,FLAGS) does contain $VAR])
+-   else AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"])
+-                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"
+-   fi ]) ;;
+-esac
+-AS_VAR_POPDEF([VAR])dnl
+-AS_VAR_POPDEF([FLAGS])dnl
+-])
+-
+-dnl the only difference - the LANG selection... and the default FLAGS
+-
+-AC_DEFUN([AX_FCFLAGS_WARN_ALL],[dnl
+-AS_VAR_PUSHDEF([FLAGS],[FCFLAGS])dnl
+-AS_VAR_PUSHDEF([VAR],[ax_cv_fcflags_warn_all])dnl
+-AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for maximum warnings],
+-VAR,[VAR="no, unknown"
+- AC_LANG_PUSH([Fortran])
+- ac_save_[]FLAGS="$[]FLAGS"
++ac_save_[]FLAGS="$[]FLAGS"
+ for ac_arg dnl
+ in "-warn all  % -warn all"   dnl Intel
+    "-pedantic  % -Wall"       dnl GCC
+@@ -164,25 +81,16 @@ do FLAGS="$ac_save_[]FLAGS "`echo $ac_ar
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
+                      [VAR=`echo $ac_arg | sed -e 's,.*% *,,'` ; break])
+ done
+- FLAGS="$ac_save_[]FLAGS"
+- AC_LANG_POP([Fortran])
++FLAGS="$ac_save_[]FLAGS"
+ ])
++AS_VAR_POPDEF([FLAGS])dnl
+ case ".$VAR" in
+      .ok|.ok,*) m4_ifvaln($3,$3) ;;
+-   .|.no|.no,*) m4_ifvaln($4,$4,[m4_ifval($2,[
+-        AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])
+-                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])]) ;;
+-   *) m4_ifvaln($3,$3,[
+-   if echo " $[]m4_ifval($1,$1,FLAGS) " | grep " $VAR " 2>&1 >/dev/null
+-   then AC_RUN_LOG([: m4_ifval($1,$1,FLAGS) does contain $VAR])
+-   else AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"])
+-                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"
+-   fi ]) ;;
++   .|.no|.no,*) m4_default($4,[m4_ifval($2,[AX_APPEND_FLAG([$2], [$1])])]) ;;
++   *) m4_default($3,[AX_APPEND_FLAG([$VAR], [$1])]) ;;
+ esac
+ AS_VAR_POPDEF([VAR])dnl
+-AS_VAR_POPDEF([FLAGS])dnl
+-])
+-
++])dnl AX_FLAGS_WARN_ALL
+ dnl  implementation tactics:
+ dnl   the for-argument contains a list of options. The first part of
+ dnl   these does only exist to detect the compiler - usually it is
+@@ -193,3 +101,21 @@ dnl   like -Woption or -Xoption as they
+ dnl   to later compile stages or something. The "%" is used as a
+ dnl   delimiter. A non-option comment can be given after "%%" marks
+ dnl   which will be shown but not added to the respective C/CXXFLAGS.
++
++AC_DEFUN([AX_CFLAGS_WARN_ALL],[dnl
++AC_LANG_PUSH([C])
++AX_FLAGS_WARN_ALL([$1], [$2], [$3], [$4])
++AC_LANG_POP([C])
++])
++
++AC_DEFUN([AX_CXXFLAGS_WARN_ALL],[dnl
++AC_LANG_PUSH([C++])
++AX_FLAGS_WARN_ALL([$1], [$2], [$3], [$4])
++AC_LANG_POP([C++])
++])
++
++AC_DEFUN([AX_FCFLAGS_WARN_ALL],[dnl
++AC_LANG_PUSH([Fortran])
++AX_FLAGS_WARN_ALL([$1], [$2], [$3], [$4])
++AC_LANG_POP([Fortran])
++])
+Index: libffi/m4/ax_compiler_vendor.m4
+===================================================================
+--- libffi.orig/m4/ax_compiler_vendor.m4
++++ libffi/m4/ax_compiler_vendor.m4
+@@ -44,20 +44,41 @@
+ #   modified version of the Autoconf Macro, you may extend this special
+ #   exception to the GPL to apply to your modified version as well.
+ 
+-#serial 9
++#serial 11
+ 
+ AC_DEFUN([AX_COMPILER_VENDOR],
+-[
+-AC_CACHE_CHECK([for _AC_LANG compiler vendor], ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor,
+- [ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor=unknown
+-  # note: don't check for gcc first since some other compilers define __GNUC__
+-  for ventest in intel:__ICC,__ECC,__INTEL_COMPILER ibm:__xlc__,__xlC__,__IBMC__,__IBMCPP__ pathscale:__PATHCC__,__PATHSCALE__ clang:__clang__ gnu:__GNUC__ sun:__SUNPRO_C,__SUNPRO_CC hp:__HP_cc,__HP_aCC dec:__DECC,__DECCXX,__DECC_VER,__DECCXX_VER borland:__BORLANDC__,__TURBOC__ comeau:__COMO__ cray:_CRAYC kai:__KCC lcc:__LCC__ metrowerks:__MWERKS__ sgi:__sgi,sgi microsoft:_MSC_VER watcom:__WATCOMC__ portland:__PGI; do
+-    vencpp="defined("`echo $ventest | cut -d: -f2 | sed 's/,/) || defined(/g'`")"
++[AC_CACHE_CHECK([for _AC_LANG compiler vendor], ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor,
++  [# note: don't check for gcc first since some other compilers define __GNUC__
++  vendors="intel:     __ICC,__ECC,__INTEL_COMPILER
++           ibm:       __xlc__,__xlC__,__IBMC__,__IBMCPP__
++           pathscale: __PATHCC__,__PATHSCALE__
++           clang:     __clang__
++           gnu:       __GNUC__
++           sun:       __SUNPRO_C,__SUNPRO_CC
++           hp:        __HP_cc,__HP_aCC
++           dec:       __DECC,__DECCXX,__DECC_VER,__DECCXX_VER
++           borland:   __BORLANDC__,__TURBOC__
++           comeau:    __COMO__
++           cray:      _CRAYC
++           kai:       __KCC
++           lcc:       __LCC__
++           sgi:       __sgi,sgi
++           microsoft: _MSC_VER
++           metrowerks: __MWERKS__
++           watcom:    __WATCOMC__
++           portland:  __PGI
++           unknown:   UNKNOWN"
++  for ventest in $vendors; do
++    case $ventest in
++      *:) vendor=$ventest; continue ;;
++      *)  vencpp="defined("`echo $ventest | sed 's/,/) || defined(/g'`")" ;;
++    esac
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[
+-#if !($vencpp)
+-      thisisanerror;
+-#endif
+-])], [ax_cv_]_AC_LANG_ABBREV[_compiler_vendor=`echo $ventest | cut -d: -f1`; break])
++      #if !($vencpp)
++        thisisanerror;
++      #endif
++    ])], [break])
+   done
++  ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor=`echo $vendor | cut -d: -f1`
+  ])
+ ])
+Index: libffi/m4/ax_enable_builddir.m4
+===================================================================
+--- libffi.orig/m4/ax_enable_builddir.m4
++++ libffi/m4/ax_enable_builddir.m4
+@@ -79,7 +79,7 @@
+ #   modified version of the Autoconf Macro, you may extend this special
+ #   exception to the GPL to apply to your modified version as well.
+ 
+-#serial 22
++#serial 23
+ 
+ AC_DEFUN([AX_ENABLE_BUILDDIR],[
+ AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+Index: libffi/m4/ax_gcc_archflag.m4
+===================================================================
+--- libffi.orig/m4/ax_gcc_archflag.m4
++++ libffi/m4/ax_gcc_archflag.m4
+@@ -11,7 +11,7 @@
+ #   This macro tries to guess the "native" arch corresponding to the target
+ #   architecture for use with gcc's -march=arch or -mtune=arch flags. If
+ #   found, the cache variable $ax_cv_gcc_archflag is set to this flag and
+-#   ACTION-SUCCESS is executed; otherwise $ax_cv_gcc_archflag is is set to
++#   ACTION-SUCCESS is executed; otherwise $ax_cv_gcc_archflag is set to
+ #   "unknown" and ACTION-FAILURE is executed. The default ACTION-SUCCESS is
+ #   to add $ax_cv_gcc_archflag to the end of $CFLAGS.
+ #
+@@ -27,7 +27,7 @@
+ #   When cross-compiling, or if $CC is not gcc, then ACTION-FAILURE is
+ #   called unless the user specified --with-gcc-arch manually.
+ #
+-#   Requires macros: AX_CHECK_COMPILER_FLAGS, AX_GCC_X86_CPUID
++#   Requires macros: AX_CHECK_COMPILE_FLAG, AX_GCC_X86_CPUID
+ #
+ #   (The main emphasis here is on recent CPUs, on the principle that doing
+ #   high-performance computing on old hardware is uncommon.)
+@@ -63,7 +63,7 @@
+ #   modified version of the Autoconf Macro, you may extend this special
+ #   exception to the GPL to apply to your modified version as well.
+ 
+-#serial 8
++#serial 10
+ 
+ AC_DEFUN([AX_GCC_ARCHFLAG],
+ [AC_REQUIRE([AC_PROG_CC])
+@@ -197,7 +197,7 @@ for arch in $ax_gcc_arch; do
+     flags="-march=$arch -mcpu=$arch -m$arch"
+   fi
+   for flag in $flags; do
+-    AX_CHECK_COMPILER_FLAGS($flag, [ax_cv_gcc_archflag=$flag; break])
++    AX_CHECK_COMPILE_FLAG($flag, [ax_cv_gcc_archflag=$flag; break])
+   done
+   test "x$ax_cv_gcc_archflag" = xunknown || break
+ done
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -76,6 +76,13 @@ DIST_COMMON = README $(am__configure_dep
+ 	mdate-sh missing texinfo.tex
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
++	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
++	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
++	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
++	$(top_srcdir)/m4/ax_configure_args.m4 \
++	$(top_srcdir)/m4/ax_enable_builddir.m4 \
++	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
++	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
+ 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+ 	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+ 	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
+@@ -339,6 +346,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+ PACKAGE_URL = @PACKAGE_URL@
+ PACKAGE_VERSION = @PACKAGE_VERSION@
+ PATH_SEPARATOR = @PATH_SEPARATOR@
++PRTDIAG = @PRTDIAG@
+ RANLIB = @RANLIB@
+ SED = @SED@
+ SET_MAKE = @SET_MAKE@
+@@ -359,6 +367,7 @@ am__leading_dot = @am__leading_dot@
+ am__quote = @am__quote@
+ am__tar = @am__tar@
+ am__untar = @am__untar@
++ax_enable_builddir_sed = @ax_enable_builddir_sed@
+ bindir = @bindir@
+ build = @build@
+ build_alias = @build_alias@
+Index: libffi/aclocal.m4
+===================================================================
+--- libffi.orig/aclocal.m4
++++ libffi/aclocal.m4
+@@ -19,6 +19,149 @@ You have another version of autoconf.  I
+ If you have problems, you may need to regenerate the build system entirely.
+ To do so, use the procedure documented by the package, typically `autoreconf'.])])
+ 
++# ===========================================================================
++#      http://www.gnu.org/software/autoconf-archive/ax_append_flag.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_APPEND_FLAG(FLAG, [FLAGS-VARIABLE])
++#
++# DESCRIPTION
++#
++#   FLAG is appended to the FLAGS-VARIABLE shell variable, with a space
++#   added in between.
++#
++#   If FLAGS-VARIABLE is not specified, the current language's flags (e.g.
++#   CFLAGS) is used.  FLAGS-VARIABLE is not changed if it already contains
++#   FLAG.  If FLAGS-VARIABLE is unset in the shell, it is set to exactly
++#   FLAG.
++#
++#   NOTE: Implementation based on AX_CFLAGS_GCC_OPTION.
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
++#   Copyright (c) 2011 Maarten Bosmans <mkbosmans@gmail.com>
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 2
++
++AC_DEFUN([AX_APPEND_FLAG],
++[AC_PREREQ(2.59)dnl for _AC_LANG_PREFIX
++AS_VAR_PUSHDEF([FLAGS], [m4_default($2,_AC_LANG_PREFIX[FLAGS])])dnl
++AS_VAR_SET_IF(FLAGS,
++  [case " AS_VAR_GET(FLAGS) " in
++    *" $1 "*)
++      AC_RUN_LOG([: FLAGS already contains $1])
++      ;;
++    *)
++      AC_RUN_LOG([: FLAGS="$FLAGS $1"])
++      AS_VAR_SET(FLAGS, ["AS_VAR_GET(FLAGS) $1"])
++      ;;
++   esac],
++  [AS_VAR_SET(FLAGS,["$1"])])
++AS_VAR_POPDEF([FLAGS])dnl
++])dnl AX_APPEND_FLAG
++
++# ===========================================================================
++#   http://www.gnu.org/software/autoconf-archive/ax_check_compile_flag.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_CHECK_COMPILE_FLAG(FLAG, [ACTION-SUCCESS], [ACTION-FAILURE], [EXTRA-FLAGS])
++#
++# DESCRIPTION
++#
++#   Check whether the given FLAG works with the current language's compiler
++#   or gives an error.  (Warnings, however, are ignored)
++#
++#   ACTION-SUCCESS/ACTION-FAILURE are shell commands to execute on
++#   success/failure.
++#
++#   If EXTRA-FLAGS is defined, it is added to the current language's default
++#   flags (e.g. CFLAGS) when the check is done.  The check is thus made with
++#   the flags: "CFLAGS EXTRA-FLAGS FLAG".  This can for example be used to
++#   force the compiler to issue an error when a bad flag is given.
++#
++#   NOTE: Implementation based on AX_CFLAGS_GCC_OPTION. Please keep this
++#   macro in sync with AX_CHECK_{PREPROC,LINK}_FLAG.
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
++#   Copyright (c) 2011 Maarten Bosmans <mkbosmans@gmail.com>
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 2
++
++AC_DEFUN([AX_CHECK_COMPILE_FLAG],
++[AC_PREREQ(2.59)dnl for _AC_LANG_PREFIX
++AS_VAR_PUSHDEF([CACHEVAR],[ax_cv_check_[]_AC_LANG_ABBREV[]flags_$4_$1])dnl
++AC_CACHE_CHECK([whether _AC_LANG compiler accepts $1], CACHEVAR, [
++  ax_check_save_flags=$[]_AC_LANG_PREFIX[]FLAGS
++  _AC_LANG_PREFIX[]FLAGS="$[]_AC_LANG_PREFIX[]FLAGS $4 $1"
++  AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
++    [AS_VAR_SET(CACHEVAR,[yes])],
++    [AS_VAR_SET(CACHEVAR,[no])])
++  _AC_LANG_PREFIX[]FLAGS=$ax_check_save_flags])
++AS_IF([test x"AS_VAR_GET(CACHEVAR)" = xyes],
++  [m4_default([$2], :)],
++  [m4_default([$3], :)])
++AS_VAR_POPDEF([CACHEVAR])dnl
++])dnl AX_CHECK_COMPILE_FLAGS
++
+ # ltdl.m4 - Configure ltdl for the target system. -*-Autoconf-*-
+ #
+ #   Copyright (C) 1999-2006, 2007, 2008 Free Software Foundation, Inc.
+@@ -1858,6 +2001,13 @@ AC_SUBST([am__untar])
+ ]) # _AM_PROG_TAR
+ 
+ m4_include([m4/asmcfi.m4])
++m4_include([m4/ax_cc_maxopt.m4])
++m4_include([m4/ax_cflags_warn_all.m4])
++m4_include([m4/ax_compiler_vendor.m4])
++m4_include([m4/ax_configure_args.m4])
++m4_include([m4/ax_enable_builddir.m4])
++m4_include([m4/ax_gcc_archflag.m4])
++m4_include([m4/ax_gcc_x86_cpuid.m4])
+ m4_include([m4/libtool.m4])
+ m4_include([m4/ltoptions.m4])
+ m4_include([m4/ltsugar.m4])
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -688,6 +688,7 @@ TESTSUBDIR_TRUE
+ MAINT
+ MAINTAINER_MODE_FALSE
+ MAINTAINER_MODE_TRUE
++PRTDIAG
+ CPP
+ OTOOL64
+ OTOOL
+@@ -754,6 +755,7 @@ am__isrc
+ INSTALL_DATA
+ INSTALL_SCRIPT
+ INSTALL_PROGRAM
++ax_enable_builddir_sed
+ target_os
+ target_vendor
+ target_cpu
+@@ -807,6 +809,7 @@ SHELL'
+ ac_subst_files=''
+ ac_user_opts='
+ enable_option_checking
++enable_builddir
+ enable_dependency_tracking
+ enable_shared
+ enable_static
+@@ -815,6 +818,8 @@ enable_fast_install
+ with_gnu_ld
+ with_sysroot
+ enable_libtool_lock
++enable_portable_binary
++with_gcc_arch
+ enable_maintainer_mode
+ enable_debug
+ enable_structs
+@@ -1449,6 +1454,8 @@ Optional Features:
+   --disable-option-checking  ignore unrecognized --enable/--with options
+   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
++  --disable-builddir      disable automatic build in subdir of sources
++
+   --disable-dependency-tracking  speeds up one-time build
+   --enable-dependency-tracking   do not reject slow dependency extractors
+   --enable-shared[=PKGS]  build shared libraries [default=yes]
+@@ -1456,6 +1463,9 @@ Optional Features:
+   --enable-fast-install[=PKGS]
+                           optimize for fast installation [default=yes]
+   --disable-libtool-lock  avoid locking (might break parallel builds)
++  --enable-portable-binary
++                          disable compiler optimizations that would produce
++                          unportable binaries
+   --enable-maintainer-mode  enable make rules and dependencies not useful
+ 			  (and sometimes confusing) to the casual installer
+   --enable-debug          debugging mode
+@@ -1471,6 +1481,8 @@ Optional Packages:
+   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
+   --with-sysroot=DIR Search for dependent libraries within DIR
+                         (or the compiler's sysroot if not specified).
++  --with-gcc-arch=<arch>  use architecture <arch> for gcc -march/-mtune,
++                          instead of guessing
+ 
+ Some influential environment variables:
+   CC          C compiler command
+@@ -2646,7 +2658,109 @@ target_alias=${target_alias-$host_alias}
+ 
+ . ${srcdir}/configure.host
+ 
+-AX_ENABLE_BUILDDIR
++
++   # [$]@ is unsable in 2.60+ but earlier autoconf had no ac_configure_args
++   if test "${ac_configure_args+set}" != "set" ; then
++      ac_configure_args=
++      for ac_arg in ${1+"$@"}; do
++         ac_configure_args="$ac_configure_args '$ac_arg'"
++      done
++   fi
++
++# expand $ac_aux_dir to an absolute path
++am_aux_dir=`cd $ac_aux_dir && pwd`
++
++
++ax_enable_builddir="."
++# Check whether --enable-builddir was given.
++if test "${enable_builddir+set}" = set; then :
++  enableval=$enable_builddir; ax_enable_builddir="$enableval"
++else
++  ax_enable_builddir="auto"
++fi
++
++if test ".$ac_srcdir_defaulted" != ".no" ; then
++if test ".$srcdir" = ".." ; then
++  if test -f config.status ; then
++    { $as_echo "$as_me:${as_lineno-$LINENO}: toplevel srcdir already configured... skipping subdir build" >&5
++$as_echo "$as_me: toplevel srcdir already configured... skipping subdir build" >&6;}
++  else
++    test ".$ax_enable_builddir" = "."  && ax_enable_builddir="."
++    test ".$ax_enable_builddir" = ".no"  && ax_enable_builddir="."
++    test ".$TARGET" = "." && TARGET="$target"
++    test ".$ax_enable_builddir" = ".auto" && ax_enable_builddir="$TARGET"
++    if test ".$ax_enable_builddir" != ".." ; then    # we know where to go and
++      as_dir=$ax_enable_builddir; as_fn_mkdir_p
++      echo __.$ax_enable_builddir.__ > $ax_enable_builddir/conftest.tmp
++      cd $ax_enable_builddir
++      if grep __.$ax_enable_builddir.__ conftest.tmp >/dev/null 2>/dev/null ; then
++        rm conftest.tmp
++        { $as_echo "$as_me:${as_lineno-$LINENO}: result: continue configure in default builddir \"./$ax_enable_builddir\"" >&5
++$as_echo "continue configure in default builddir \"./$ax_enable_builddir\"" >&6; }
++      else
++        as_fn_error $? "could not change to default builddir \"./$ax_enable_builddir\"" "$LINENO" 5
++      fi
++      srcdir=`echo "$ax_enable_builddir" |
++              sed -e 's,^\./,,;s,[^/]$,&/,;s,[^/]*/,../,g;s,[/]$,,;'`
++      # going to restart from subdirectory location
++      test -f $srcdir/config.log   && mv $srcdir/config.log   .
++      test -f $srcdir/confdefs.h   && mv $srcdir/confdefs.h   .
++      test -f $srcdir/conftest.log && mv $srcdir/conftest.log .
++      test -f $srcdir/$cache_file  && mv $srcdir/$cache_file  .
++      { $as_echo "$as_me:${as_lineno-$LINENO}: result: ....exec $SHELL $srcdir/$0 \"--srcdir=$srcdir\" \"--enable-builddir=$ax_enable_builddir\" ${1+\"$@\"}" >&5
++$as_echo "....exec $SHELL $srcdir/$0 \"--srcdir=$srcdir\" \"--enable-builddir=$ax_enable_builddir\" ${1+\"$@\"}" >&6; }
++      case "$0" in # restart
++       /\\*) eval $SHELL "'$0'" "'--srcdir=$srcdir'" "'--enable-builddir=$ax_enable_builddir'" $ac_configure_args ;;
++       *) eval $SHELL "'$srcdir/$0'" "'--srcdir=$srcdir'" "'--enable-builddir=$ax_enable_builddir'" $ac_configure_args ;;
++      esac ; exit $?
++    fi
++  fi
++fi fi
++test ".$ax_enable_builddir" = ".auto" && ax_enable_builddir="."
++# Extract the first word of "gsed sed", so it can be a program name with args.
++set dummy gsed sed; ac_word=$2
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
++$as_echo_n "checking for $ac_word... " >&6; }
++if ${ac_cv_path_ax_enable_builddir_sed+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  case $ax_enable_builddir_sed in
++  [\\/]* | ?:[\\/]*)
++  ac_cv_path_ax_enable_builddir_sed="$ax_enable_builddir_sed" # Let the user override the test with a path.
++  ;;
++  *)
++  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
++for as_dir in $PATH
++do
++  IFS=$as_save_IFS
++  test -z "$as_dir" && as_dir=.
++    for ac_exec_ext in '' $ac_executable_extensions; do
++  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
++    ac_cv_path_ax_enable_builddir_sed="$as_dir/$ac_word$ac_exec_ext"
++    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
++    break 2
++  fi
++done
++  done
++IFS=$as_save_IFS
++
++  test -z "$ac_cv_path_ax_enable_builddir_sed" && ac_cv_path_ax_enable_builddir_sed="sed"
++  ;;
++esac
++fi
++ax_enable_builddir_sed=$ac_cv_path_ax_enable_builddir_sed
++if test -n "$ax_enable_builddir_sed"; then
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_enable_builddir_sed" >&5
++$as_echo "$ax_enable_builddir_sed" >&6; }
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++
++
++ax_enable_builddir_auxdir="$am_aux_dir"
++ac_config_commands="$ac_config_commands buildir"
++
+ 
+ am__api_version='1.11'
+ 
+@@ -2805,9 +2919,6 @@ test "$program_suffix" != NONE &&
+ ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
+ program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
+ 
+-# expand $ac_aux_dir to an absolute path
+-am_aux_dir=`cd $ac_aux_dir && pwd`
+-
+ if test x"${MISSING+set}" != xset; then
+   case $am_aux_dir in
+   *\ * | *\	*)
+@@ -11839,213 +11950,1178 @@ CC="$lt_save_CC"
+ 
+ 
+ 
+-AX_CC_MAXOPT
+-AX_CFLAGS_WARN_ALL
+-if test "x$GCC" = "xyes"; then
+-  CFLAGS="$CFLAGS -fexceptions"
+-fi
+-
+-
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
+-$as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
+-    # Check whether --enable-maintainer-mode was given.
+-if test "${enable_maintainer_mode+set}" = set; then :
+-  enableval=$enable_maintainer_mode; USE_MAINTAINER_MODE=$enableval
+-else
+-  USE_MAINTAINER_MODE=no
+-fi
+-
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $USE_MAINTAINER_MODE" >&5
+-$as_echo "$USE_MAINTAINER_MODE" >&6; }
+-   if test $USE_MAINTAINER_MODE = yes; then
+-  MAINTAINER_MODE_TRUE=
+-  MAINTAINER_MODE_FALSE='#'
+-else
+-  MAINTAINER_MODE_TRUE='#'
+-  MAINTAINER_MODE_FALSE=
+-fi
+-
+-  MAINT=$MAINTAINER_MODE_TRUE
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for C compiler vendor" >&5
++$as_echo_n "checking for C compiler vendor... " >&6; }
++if ${ax_cv_c_compiler_vendor+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  # note: don't check for gcc first since some other compilers define __GNUC__
++  vendors="intel:     __ICC,__ECC,__INTEL_COMPILER
++           ibm:       __xlc__,__xlC__,__IBMC__,__IBMCPP__
++           pathscale: __PATHCC__,__PATHSCALE__
++           clang:     __clang__
++           gnu:       __GNUC__
++           sun:       __SUNPRO_C,__SUNPRO_CC
++           hp:        __HP_cc,__HP_aCC
++           dec:       __DECC,__DECCXX,__DECC_VER,__DECCXX_VER
++           borland:   __BORLANDC__,__TURBOC__
++           comeau:    __COMO__
++           cray:      _CRAYC
++           kai:       __KCC
++           lcc:       __LCC__
++           sgi:       __sgi,sgi
++           microsoft: _MSC_VER
++           metrowerks: __MWERKS__
++           watcom:    __WATCOMC__
++           portland:  __PGI
++           unknown:   UNKNOWN"
++  for ventest in $vendors; do
++    case $ventest in
++      *:) vendor=$ventest; continue ;;
++      *)  vencpp="defined("`echo $ventest | sed 's/,/) || defined(/g'`")" ;;
++    esac
++    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
+ 
++int
++main ()
++{
+ 
++      #if !($vencpp)
++        thisisanerror;
++      #endif
+ 
+-for ac_header in sys/mman.h
+-do :
+-  ac_fn_c_check_header_mongrel "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
+-if test "x$ac_cv_header_sys_mman_h" = xyes; then :
+-  cat >>confdefs.h <<_ACEOF
+-#define HAVE_SYS_MMAN_H 1
++  ;
++  return 0;
++}
+ _ACEOF
+-
++if ac_fn_c_try_compile "$LINENO"; then :
++  break
+ fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  done
++  ax_cv_c_compiler_vendor=`echo $vendor | cut -d: -f1`
+ 
+-done
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_c_compiler_vendor" >&5
++$as_echo "$ax_cv_c_compiler_vendor" >&6; }
+ 
+-for ac_func in mmap
+-do :
+-  ac_fn_c_check_func "$LINENO" "mmap" "ac_cv_func_mmap"
+-if test "x$ac_cv_func_mmap" = xyes; then :
+-  cat >>confdefs.h <<_ACEOF
+-#define HAVE_MMAP 1
+-_ACEOF
+ 
+-fi
+-done
+ 
+ 
+-ac_fn_c_check_header_mongrel "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
+-if test "x$ac_cv_header_sys_mman_h" = xyes; then :
+-  libffi_header_sys_mman_h=yes
+-else
+-  libffi_header_sys_mman_h=no
+-fi
+ 
+ 
+-ac_fn_c_check_func "$LINENO" "mmap" "ac_cv_func_mmap"
+-if test "x$ac_cv_func_mmap" = xyes; then :
+-  libffi_func_mmap=yes
++# Check whether --enable-portable-binary was given.
++if test "${enable_portable_binary+set}" = set; then :
++  enableval=$enable_portable_binary; acx_maxopt_portable=$withval
+ else
+-  libffi_func_mmap=no
++  acx_maxopt_portable=no
+ fi
+ 
+-if test "$libffi_header_sys_mman_h" != yes \
+- || test "$libffi_func_mmap" != yes; then
+-   ac_cv_func_mmap_file=no
+-   ac_cv_func_mmap_dev_zero=no
+-   ac_cv_func_mmap_anon=no
+-else
+-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether read-only mmap of a plain file works" >&5
+-$as_echo_n "checking whether read-only mmap of a plain file works... " >&6; }
+-if ${ac_cv_func_mmap_file+:} false; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-  # Add a system to this blacklist if
+-   # mmap(0, stat_size, PROT_READ, MAP_PRIVATE, fd, 0) doesn't return a
+-   # memory area containing the same data that you'd get if you applied
+-   # read() to the same fd.  The only system known to have a problem here
+-   # is VMS, where text files have record structure.
+-   case "$host_os" in
+-     vms* | ultrix*)
+-	ac_cv_func_mmap_file=no ;;
+-     *)
+-	ac_cv_func_mmap_file=yes;;
+-   esac
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_file" >&5
+-$as_echo "$ac_cv_func_mmap_file" >&6; }
+-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether mmap from /dev/zero works" >&5
+-$as_echo_n "checking whether mmap from /dev/zero works... " >&6; }
+-if ${ac_cv_func_mmap_dev_zero+:} false; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-  # Add a system to this blacklist if it has mmap() but /dev/zero
+-   # does not exist, or if mmapping /dev/zero does not give anonymous
+-   # zeroed pages with both the following properties:
+-   # 1. If you map N consecutive pages in with one call, and then
+-   #    unmap any subset of those pages, the pages that were not
+-   #    explicitly unmapped remain accessible.
+-   # 2. If you map two adjacent blocks of memory and then unmap them
+-   #    both at once, they must both go away.
+-   # Systems known to be in this category are Windows (all variants),
+-   # VMS, and Darwin.
+-   case "$host_os" in
+-     vms* | cygwin* | pe | mingw* | darwin* | ultrix* | hpux10* | hpux11.00)
+-	ac_cv_func_mmap_dev_zero=no ;;
+-     *)
+-	ac_cv_func_mmap_dev_zero=yes;;
+-   esac
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_dev_zero" >&5
+-$as_echo "$ac_cv_func_mmap_dev_zero" >&6; }
+ 
+-   # Unlike /dev/zero, the MAP_ANON(YMOUS) defines can be probed for.
+-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for MAP_ANON(YMOUS)" >&5
+-$as_echo_n "checking for MAP_ANON(YMOUS)... " >&6; }
+-if ${ac_cv_decl_map_anon+:} false; then :
++# Try to determine "good" native compiler flags if none specified via CFLAGS
++if test "$ac_test_CFLAGS" != "set"; then
++  CFLAGS=""
++  case $ax_cv_c_compiler_vendor in
++    dec) CFLAGS="-newc -w0 -O5 -ansi_alias -ansi_args -fp_reorder -tune host"
++	 if test "x$acx_maxopt_portable" = xno; then
++           CFLAGS="$CFLAGS -arch host"
++         fi;;
++
++    sun) CFLAGS="-native -fast -xO5 -dalign"
++	 if test "x$acx_maxopt_portable" = xyes; then
++	   CFLAGS="$CFLAGS -xarch=generic"
++         fi;;
++
++    hp)  CFLAGS="+Oall +Optrs_ansi +DSnative"
++	 if test "x$acx_maxopt_portable" = xyes; then
++	   CFLAGS="$CFLAGS +DAportable"
++	 fi;;
++
++    ibm) if test "x$acx_maxopt_portable" = xno; then
++           xlc_opt="-qarch=auto -qtune=auto"
++	 else
++           xlc_opt="-qtune=auto"
++	 fi
++         as_CACHEVAR=`$as_echo "ax_cv_check_cflags__$xlc_opt" | $as_tr_sh`
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $xlc_opt" >&5
++$as_echo_n "checking whether C compiler accepts $xlc_opt... " >&6; }
++if eval \${$as_CACHEVAR+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
++
++  ax_check_save_flags=$CFLAGS
++  CFLAGS="$CFLAGS  $xlc_opt"
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+-#include <sys/types.h>
+-#include <sys/mman.h>
+-#include <unistd.h>
+-
+-#ifndef MAP_ANONYMOUS
+-#define MAP_ANONYMOUS MAP_ANON
+-#endif
+ 
+ int
+ main ()
+ {
+-int n = MAP_ANONYMOUS;
++
+   ;
+   return 0;
+ }
+ _ACEOF
+ if ac_fn_c_try_compile "$LINENO"; then :
+-  ac_cv_decl_map_anon=yes
++  eval "$as_CACHEVAR=yes"
+ else
+-  ac_cv_decl_map_anon=no
++  eval "$as_CACHEVAR=no"
+ fi
+ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS=$ax_check_save_flags
+ fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_decl_map_anon" >&5
+-$as_echo "$ac_cv_decl_map_anon" >&6; }
++eval ac_res=\$$as_CACHEVAR
++	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
++$as_echo "$ac_res" >&6; }
++if test x"`eval 'as_val=${'$as_CACHEVAR'};$as_echo "$as_val"'`" = xyes; then :
++  CFLAGS="-O3 -qansialias -w $xlc_opt"
++else
++  CFLAGS="-O3 -qansialias -w"
++                echo "******************************************************"
++                echo "*  You seem to have the IBM  C compiler.  It is      *"
++                echo "*  recommended for best performance that you use:    *"
++                echo "*                                                    *"
++                echo "*    CFLAGS=-O3 -qarch=xxx -qtune=xxx -qansialias -w *"
++                echo "*                      ^^^        ^^^                *"
++                echo "*  where xxx is pwr2, pwr3, 604, or whatever kind of *"
++                echo "*  CPU you have.  (Set the CFLAGS environment var.   *"
++                echo "*  and re-run configure.)  For more info, man cc.    *"
++                echo "******************************************************"
++fi
++
++         ;;
++
++    intel) CFLAGS="-O3 -ansi_alias"
++	if test "x$acx_maxopt_portable" = xno; then
++	  icc_archflag=unknown
++	  icc_flags=""
++	  case $host_cpu in
++	    i686*|x86_64*)
++              # icc accepts gcc assembly syntax, so these should work:
+ 
+-   if test $ac_cv_decl_map_anon = no; then
+-     ac_cv_func_mmap_anon=no
+-   else
+-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether mmap with MAP_ANON(YMOUS) works" >&5
+-$as_echo_n "checking whether mmap with MAP_ANON(YMOUS) works... " >&6; }
+-if ${ac_cv_func_mmap_anon+:} false; then :
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for x86 cpuid 0 output" >&5
++$as_echo_n "checking for x86 cpuid 0 output... " >&6; }
++if ${ax_cv_gcc_x86_cpuid_0+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+-  # Add a system to this blacklist if it has mmap() and MAP_ANON or
+-   # MAP_ANONYMOUS, but using mmap(..., MAP_PRIVATE|MAP_ANONYMOUS, -1, 0)
+-   # doesn't give anonymous zeroed pages with the same properties listed
+-   # above for use of /dev/zero.
+-   # Systems known to be in this category are Windows, VMS, and SCO Unix.
+-   case "$host_os" in
+-     vms* | cygwin* | pe | mingw* | sco* | udk* )
+-	ac_cv_func_mmap_anon=no ;;
+-     *)
+-	ac_cv_func_mmap_anon=yes;;
+-   esac
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_anon" >&5
+-$as_echo "$ac_cv_func_mmap_anon" >&6; }
+-   fi
+-fi
+-
+-if test $ac_cv_func_mmap_file = yes; then
++  if test "$cross_compiling" = yes; then :
++  ax_cv_gcc_x86_cpuid_0=unknown
++else
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <stdio.h>
++int
++main ()
++{
+ 
+-$as_echo "#define HAVE_MMAP_FILE 1" >>confdefs.h
++     int op = 0, eax, ebx, ecx, edx;
++     FILE *f;
++      __asm__("cpuid"
++        : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
++        : "a" (op));
++     f = fopen("conftest_cpuid", "w"); if (!f) return 1;
++     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
++     fclose(f);
++     return 0;
+ 
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_run "$LINENO"; then :
++  ax_cv_gcc_x86_cpuid_0=`cat conftest_cpuid`; rm -f conftest_cpuid
++else
++  ax_cv_gcc_x86_cpuid_0=unknown; rm -f conftest_cpuid
+ fi
+-if test $ac_cv_func_mmap_dev_zero = yes; then
+-
+-$as_echo "#define HAVE_MMAP_DEV_ZERO 1" >>confdefs.h
+-
++rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
++  conftest.$ac_objext conftest.beam conftest.$ac_ext
+ fi
+-if test $ac_cv_func_mmap_anon = yes; then
+-
+-$as_echo "#define HAVE_MMAP_ANON 1" >>confdefs.h
+ 
+ fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_gcc_x86_cpuid_0" >&5
++$as_echo "$ax_cv_gcc_x86_cpuid_0" >&6; }
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 
+ 
+- if test -d $srcdir/testsuite; then
+-  TESTSUBDIR_TRUE=
+-  TESTSUBDIR_FALSE='#'
+-else
+-  TESTSUBDIR_TRUE='#'
+-  TESTSUBDIR_FALSE=
+-fi
+ 
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 
+-TARGETDIR="unknown"
+-case "$host" in
+-  alpha*-*-*)
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for x86 cpuid 1 output" >&5
++$as_echo_n "checking for x86 cpuid 1 output... " >&6; }
++if ${ax_cv_gcc_x86_cpuid_1+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  if test "$cross_compiling" = yes; then :
++  ax_cv_gcc_x86_cpuid_1=unknown
++else
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <stdio.h>
++int
++main ()
++{
++
++     int op = 1, eax, ebx, ecx, edx;
++     FILE *f;
++      __asm__("cpuid"
++        : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
++        : "a" (op));
++     f = fopen("conftest_cpuid", "w"); if (!f) return 1;
++     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
++     fclose(f);
++     return 0;
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_run "$LINENO"; then :
++  ax_cv_gcc_x86_cpuid_1=`cat conftest_cpuid`; rm -f conftest_cpuid
++else
++  ax_cv_gcc_x86_cpuid_1=unknown; rm -f conftest_cpuid
++fi
++rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
++  conftest.$ac_objext conftest.beam conftest.$ac_ext
++fi
++
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_gcc_x86_cpuid_1" >&5
++$as_echo "$ax_cv_gcc_x86_cpuid_1" >&6; }
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++
++	      case $ax_cv_gcc_x86_cpuid_0 in # see AX_GCC_ARCHFLAG
++                *:756e6547:*:*) # Intel
++                  case $ax_cv_gcc_x86_cpuid_1 in
++                    *6a?:*[234]:*:*|*6[789b]?:*:*:*) icc_flags="-xK";;
++                    *f3[347]:*:*:*|*f41347:*:*:*) icc_flags="-xP -xN -xW -xK";;
++                    *f??:*:*:*) icc_flags="-xN -xW -xK";;
++                  esac ;;
++              esac ;;
++          esac
++          if test "x$icc_flags" != x; then
++            for flag in $icc_flags; do
++              as_CACHEVAR=`$as_echo "ax_cv_check_cflags__$flag" | $as_tr_sh`
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $flag" >&5
++$as_echo_n "checking whether C compiler accepts $flag... " >&6; }
++if eval \${$as_CACHEVAR+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++
++  ax_check_save_flags=$CFLAGS
++  CFLAGS="$CFLAGS  $flag"
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  eval "$as_CACHEVAR=yes"
++else
++  eval "$as_CACHEVAR=no"
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS=$ax_check_save_flags
++fi
++eval ac_res=\$$as_CACHEVAR
++	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
++$as_echo "$ac_res" >&6; }
++if test x"`eval 'as_val=${'$as_CACHEVAR'};$as_echo "$as_val"'`" = xyes; then :
++  icc_archflag=$flag; break
++else
++  :
++fi
++
++            done
++          fi
++          { $as_echo "$as_me:${as_lineno-$LINENO}: checking for icc architecture flag" >&5
++$as_echo_n "checking for icc architecture flag... " >&6; }
++	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $icc_archflag" >&5
++$as_echo "$icc_archflag" >&6; }
++          if test "x$icc_archflag" != xunknown; then
++            CFLAGS="$CFLAGS $icc_archflag"
++          fi
++        fi
++	;;
++
++    gnu)
++     # default optimization flags for gcc on all systems
++     CFLAGS="-O3 -fomit-frame-pointer"
++
++     # -malign-double for x86 systems
++     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -malign-double" >&5
++$as_echo_n "checking whether C compiler accepts -malign-double... " >&6; }
++if ${ax_cv_check_cflags___malign_double+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++
++  ax_check_save_flags=$CFLAGS
++  CFLAGS="$CFLAGS  -malign-double"
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  ax_cv_check_cflags___malign_double=yes
++else
++  ax_cv_check_cflags___malign_double=no
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS=$ax_check_save_flags
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_check_cflags___malign_double" >&5
++$as_echo "$ax_cv_check_cflags___malign_double" >&6; }
++if test x"$ax_cv_check_cflags___malign_double" = xyes; then :
++  CFLAGS="$CFLAGS -malign-double"
++else
++  :
++fi
++
++
++     #  -fstrict-aliasing for gcc-2.95+
++     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -fstrict-aliasing" >&5
++$as_echo_n "checking whether C compiler accepts -fstrict-aliasing... " >&6; }
++if ${ax_cv_check_cflags___fstrict_aliasing+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++
++  ax_check_save_flags=$CFLAGS
++  CFLAGS="$CFLAGS  -fstrict-aliasing"
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  ax_cv_check_cflags___fstrict_aliasing=yes
++else
++  ax_cv_check_cflags___fstrict_aliasing=no
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS=$ax_check_save_flags
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_check_cflags___fstrict_aliasing" >&5
++$as_echo "$ax_cv_check_cflags___fstrict_aliasing" >&6; }
++if test x"$ax_cv_check_cflags___fstrict_aliasing" = xyes; then :
++  CFLAGS="$CFLAGS -fstrict-aliasing"
++else
++  :
++fi
++
++
++     # note that we enable "unsafe" fp optimization with other compilers, too
++     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -ffast-math" >&5
++$as_echo_n "checking whether C compiler accepts -ffast-math... " >&6; }
++if ${ax_cv_check_cflags___ffast_math+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++
++  ax_check_save_flags=$CFLAGS
++  CFLAGS="$CFLAGS  -ffast-math"
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  ax_cv_check_cflags___ffast_math=yes
++else
++  ax_cv_check_cflags___ffast_math=no
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS=$ax_check_save_flags
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_check_cflags___ffast_math" >&5
++$as_echo "$ax_cv_check_cflags___ffast_math" >&6; }
++if test x"$ax_cv_check_cflags___ffast_math" = xyes; then :
++  CFLAGS="$CFLAGS -ffast-math"
++else
++  :
++fi
++
++
++
++
++
++
++# Check whether --with-gcc-arch was given.
++if test "${with_gcc_arch+set}" = set; then :
++  withval=$with_gcc_arch; ax_gcc_arch=$withval
++else
++  ax_gcc_arch=yes
++fi
++
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gcc architecture flag" >&5
++$as_echo_n "checking for gcc architecture flag... " >&6; }
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: " >&5
++$as_echo "" >&6; }
++if ${ax_cv_gcc_archflag+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++
++ax_cv_gcc_archflag="unknown"
++
++if test "$GCC" = yes; then
++
++if test "x$ax_gcc_arch" = xyes; then
++ax_gcc_arch=""
++if test "$cross_compiling" = no; then
++case $host_cpu in
++  i[3456]86*|x86_64*) # use cpuid codes, in part from x86info-1.7 by D. Jones
++
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for x86 cpuid 0 output" >&5
++$as_echo_n "checking for x86 cpuid 0 output... " >&6; }
++if ${ax_cv_gcc_x86_cpuid_0+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  if test "$cross_compiling" = yes; then :
++  ax_cv_gcc_x86_cpuid_0=unknown
++else
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <stdio.h>
++int
++main ()
++{
++
++     int op = 0, eax, ebx, ecx, edx;
++     FILE *f;
++      __asm__("cpuid"
++        : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
++        : "a" (op));
++     f = fopen("conftest_cpuid", "w"); if (!f) return 1;
++     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
++     fclose(f);
++     return 0;
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_run "$LINENO"; then :
++  ax_cv_gcc_x86_cpuid_0=`cat conftest_cpuid`; rm -f conftest_cpuid
++else
++  ax_cv_gcc_x86_cpuid_0=unknown; rm -f conftest_cpuid
++fi
++rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
++  conftest.$ac_objext conftest.beam conftest.$ac_ext
++fi
++
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_gcc_x86_cpuid_0" >&5
++$as_echo "$ax_cv_gcc_x86_cpuid_0" >&6; }
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++
++
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for x86 cpuid 1 output" >&5
++$as_echo_n "checking for x86 cpuid 1 output... " >&6; }
++if ${ax_cv_gcc_x86_cpuid_1+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  if test "$cross_compiling" = yes; then :
++  ax_cv_gcc_x86_cpuid_1=unknown
++else
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <stdio.h>
++int
++main ()
++{
++
++     int op = 1, eax, ebx, ecx, edx;
++     FILE *f;
++      __asm__("cpuid"
++        : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
++        : "a" (op));
++     f = fopen("conftest_cpuid", "w"); if (!f) return 1;
++     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
++     fclose(f);
++     return 0;
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_run "$LINENO"; then :
++  ax_cv_gcc_x86_cpuid_1=`cat conftest_cpuid`; rm -f conftest_cpuid
++else
++  ax_cv_gcc_x86_cpuid_1=unknown; rm -f conftest_cpuid
++fi
++rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
++  conftest.$ac_objext conftest.beam conftest.$ac_ext
++fi
++
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_gcc_x86_cpuid_1" >&5
++$as_echo "$ax_cv_gcc_x86_cpuid_1" >&6; }
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++
++     case $ax_cv_gcc_x86_cpuid_0 in
++       *:756e6547:*:*) # Intel
++          case $ax_cv_gcc_x86_cpuid_1 in
++	    *5[48]?:*:*:*) ax_gcc_arch="pentium-mmx pentium" ;;
++	    *5??:*:*:*) ax_gcc_arch=pentium ;;
++	    *6[3456]?:*:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
++	    *6a?:*[01]:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
++	    *6a?:*[234]:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
++	    *6[9d]?:*:*:*) ax_gcc_arch="pentium-m pentium3 pentiumpro" ;;
++	    *6[78b]?:*:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
++	    *6??:*:*:*) ax_gcc_arch=pentiumpro ;;
++            *f3[347]:*:*:*|*f41347:*:*:*)
++		case $host_cpu in
++                  x86_64*) ax_gcc_arch="nocona pentium4 pentiumpro" ;;
++                  *) ax_gcc_arch="prescott pentium4 pentiumpro" ;;
++                esac ;;
++            *f??:*:*:*) ax_gcc_arch="pentium4 pentiumpro";;
++          esac ;;
++       *:68747541:*:*) # AMD
++          case $ax_cv_gcc_x86_cpuid_1 in
++	    *5[67]?:*:*:*) ax_gcc_arch=k6 ;;
++	    *5[8d]?:*:*:*) ax_gcc_arch="k6-2 k6" ;;
++	    *5[9]?:*:*:*) ax_gcc_arch="k6-3 k6" ;;
++	    *60?:*:*:*) ax_gcc_arch=k7 ;;
++	    *6[12]?:*:*:*) ax_gcc_arch="athlon k7" ;;
++	    *6[34]?:*:*:*) ax_gcc_arch="athlon-tbird k7" ;;
++	    *67?:*:*:*) ax_gcc_arch="athlon-4 athlon k7" ;;
++	    *6[68a]?:*:*:*)
++
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for x86 cpuid 0x80000006 output" >&5
++$as_echo_n "checking for x86 cpuid 0x80000006 output... " >&6; }
++if ${ax_cv_gcc_x86_cpuid_0x80000006+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  if test "$cross_compiling" = yes; then :
++  ax_cv_gcc_x86_cpuid_0x80000006=unknown
++else
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <stdio.h>
++int
++main ()
++{
++
++     int op = 0x80000006, eax, ebx, ecx, edx;
++     FILE *f;
++      __asm__("cpuid"
++        : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
++        : "a" (op));
++     f = fopen("conftest_cpuid", "w"); if (!f) return 1;
++     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
++     fclose(f);
++     return 0;
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_run "$LINENO"; then :
++  ax_cv_gcc_x86_cpuid_0x80000006=`cat conftest_cpuid`; rm -f conftest_cpuid
++else
++  ax_cv_gcc_x86_cpuid_0x80000006=unknown; rm -f conftest_cpuid
++fi
++rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
++  conftest.$ac_objext conftest.beam conftest.$ac_ext
++fi
++
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_gcc_x86_cpuid_0x80000006" >&5
++$as_echo "$ax_cv_gcc_x86_cpuid_0x80000006" >&6; }
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++ # L2 cache size
++	       case $ax_cv_gcc_x86_cpuid_0x80000006 in
++                 *:*:*[1-9a-f]??????:*) # (L2 = ecx >> 16) >= 256
++			ax_gcc_arch="athlon-xp athlon-4 athlon k7" ;;
++                 *) ax_gcc_arch="athlon-4 athlon k7" ;;
++	       esac ;;
++	    *f[4cef8b]?:*:*:*) ax_gcc_arch="athlon64 k8" ;;
++	    *f5?:*:*:*) ax_gcc_arch="opteron k8" ;;
++	    *f7?:*:*:*) ax_gcc_arch="athlon-fx opteron k8" ;;
++	    *f??:*:*:*) ax_gcc_arch="k8" ;;
++          esac ;;
++	*:746e6543:*:*) # IDT
++	   case $ax_cv_gcc_x86_cpuid_1 in
++	     *54?:*:*:*) ax_gcc_arch=winchip-c6 ;;
++	     *58?:*:*:*) ax_gcc_arch=winchip2 ;;
++	     *6[78]?:*:*:*) ax_gcc_arch=c3 ;;
++	     *69?:*:*:*) ax_gcc_arch="c3-2 c3" ;;
++	   esac ;;
++     esac
++     if test x"$ax_gcc_arch" = x; then # fallback
++	case $host_cpu in
++	  i586*) ax_gcc_arch=pentium ;;
++	  i686*) ax_gcc_arch=pentiumpro ;;
++        esac
++     fi
++     ;;
++
++  sparc*)
++     # Extract the first word of "prtdiag", so it can be a program name with args.
++set dummy prtdiag; ac_word=$2
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
++$as_echo_n "checking for $ac_word... " >&6; }
++if ${ac_cv_path_PRTDIAG+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  case $PRTDIAG in
++  [\\/]* | ?:[\\/]*)
++  ac_cv_path_PRTDIAG="$PRTDIAG" # Let the user override the test with a path.
++  ;;
++  *)
++  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
++as_dummy="$PATH:/usr/platform/`uname -i`/sbin/:/usr/platform/`uname -m`/sbin/"
++for as_dir in $as_dummy
++do
++  IFS=$as_save_IFS
++  test -z "$as_dir" && as_dir=.
++    for ac_exec_ext in '' $ac_executable_extensions; do
++  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
++    ac_cv_path_PRTDIAG="$as_dir/$ac_word$ac_exec_ext"
++    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
++    break 2
++  fi
++done
++  done
++IFS=$as_save_IFS
++
++  test -z "$ac_cv_path_PRTDIAG" && ac_cv_path_PRTDIAG="prtdiag"
++  ;;
++esac
++fi
++PRTDIAG=$ac_cv_path_PRTDIAG
++if test -n "$PRTDIAG"; then
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PRTDIAG" >&5
++$as_echo "$PRTDIAG" >&6; }
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++
++
++     cputype=`(((grep cpu /proc/cpuinfo | cut -d: -f2) ; ($PRTDIAG -v |grep -i sparc) ; grep -i cpu /var/run/dmesg.boot ) | head -n 1) 2> /dev/null`
++     cputype=`echo "$cputype" | tr -d ' -' |tr $as_cr_LETTERS $as_cr_letters`
++     case $cputype in
++         *ultrasparciv*) ax_gcc_arch="ultrasparc4 ultrasparc3 ultrasparc v9" ;;
++         *ultrasparciii*) ax_gcc_arch="ultrasparc3 ultrasparc v9" ;;
++         *ultrasparc*) ax_gcc_arch="ultrasparc v9" ;;
++         *supersparc*|*tms390z5[05]*) ax_gcc_arch="supersparc v8" ;;
++         *hypersparc*|*rt62[056]*) ax_gcc_arch="hypersparc v8" ;;
++         *cypress*) ax_gcc_arch=cypress ;;
++     esac ;;
++
++  alphaev5) ax_gcc_arch=ev5 ;;
++  alphaev56) ax_gcc_arch=ev56 ;;
++  alphapca56) ax_gcc_arch="pca56 ev56" ;;
++  alphapca57) ax_gcc_arch="pca57 pca56 ev56" ;;
++  alphaev6) ax_gcc_arch=ev6 ;;
++  alphaev67) ax_gcc_arch=ev67 ;;
++  alphaev68) ax_gcc_arch="ev68 ev67" ;;
++  alphaev69) ax_gcc_arch="ev69 ev68 ev67" ;;
++  alphaev7) ax_gcc_arch="ev7 ev69 ev68 ev67" ;;
++  alphaev79) ax_gcc_arch="ev79 ev7 ev69 ev68 ev67" ;;
++
++  powerpc*)
++     cputype=`((grep cpu /proc/cpuinfo | head -n 1 | cut -d: -f2 | cut -d, -f1 | sed 's/ //g') ; /usr/bin/machine ; /bin/machine; grep CPU /var/run/dmesg.boot | head -n 1 | cut -d" " -f2) 2> /dev/null`
++     cputype=`echo $cputype | sed -e 's/ppc//g;s/ *//g'`
++     case $cputype in
++       *750*) ax_gcc_arch="750 G3" ;;
++       *740[0-9]*) ax_gcc_arch="$cputype 7400 G4" ;;
++       *74[4-5][0-9]*) ax_gcc_arch="$cputype 7450 G4" ;;
++       *74[0-9][0-9]*) ax_gcc_arch="$cputype G4" ;;
++       *970*) ax_gcc_arch="970 G5 power4";;
++       *POWER4*|*power4*|*gq*) ax_gcc_arch="power4 970";;
++       *POWER5*|*power5*|*gr*|*gs*) ax_gcc_arch="power5 power4 970";;
++       603ev|8240) ax_gcc_arch="$cputype 603e 603";;
++       *) ax_gcc_arch=$cputype ;;
++     esac
++     ax_gcc_arch="$ax_gcc_arch powerpc"
++     ;;
++esac
++fi # not cross-compiling
++fi # guess arch
++
++if test "x$ax_gcc_arch" != x -a "x$ax_gcc_arch" != xno; then
++for arch in $ax_gcc_arch; do
++  if test "x$acx_maxopt_portable" = xyes; then # if we require portable code
++    flags="-mtune=$arch"
++    # -mcpu=$arch and m$arch generate nonportable code on every arch except
++    # x86.  And some other arches (e.g. Alpha) don't accept -mtune.  Grrr.
++    case $host_cpu in i*86|x86_64*) flags="$flags -mcpu=$arch -m$arch";; esac
++  else
++    flags="-march=$arch -mcpu=$arch -m$arch"
++  fi
++  for flag in $flags; do
++    as_CACHEVAR=`$as_echo "ax_cv_check_cflags__$flag" | $as_tr_sh`
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $flag" >&5
++$as_echo_n "checking whether C compiler accepts $flag... " >&6; }
++if eval \${$as_CACHEVAR+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++
++  ax_check_save_flags=$CFLAGS
++  CFLAGS="$CFLAGS  $flag"
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  eval "$as_CACHEVAR=yes"
++else
++  eval "$as_CACHEVAR=no"
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS=$ax_check_save_flags
++fi
++eval ac_res=\$$as_CACHEVAR
++	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
++$as_echo "$ac_res" >&6; }
++if test x"`eval 'as_val=${'$as_CACHEVAR'};$as_echo "$as_val"'`" = xyes; then :
++  ax_cv_gcc_archflag=$flag; break
++else
++  :
++fi
++
++  done
++  test "x$ax_cv_gcc_archflag" = xunknown || break
++done
++fi
++
++fi # $GCC=yes
++
++fi
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gcc architecture flag" >&5
++$as_echo_n "checking for gcc architecture flag... " >&6; }
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_gcc_archflag" >&5
++$as_echo "$ax_cv_gcc_archflag" >&6; }
++if test "x$ax_cv_gcc_archflag" = xunknown; then
++  :
++else
++  CFLAGS="$CFLAGS $ax_cv_gcc_archflag"
++fi
++
++     ;;
++  esac
++
++  if test -z "$CFLAGS"; then
++	echo ""
++	echo "********************************************************"
++        echo "* WARNING: Don't know the best CFLAGS for this system  *"
++        echo "* Use ./configure CFLAGS=... to specify your own flags *"
++	echo "* (otherwise, a default of CFLAGS=-O3 will be used)    *"
++	echo "********************************************************"
++	echo ""
++        CFLAGS="-O3"
++  fi
++
++  as_CACHEVAR=`$as_echo "ax_cv_check_cflags__$CFLAGS" | $as_tr_sh`
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $CFLAGS" >&5
++$as_echo_n "checking whether C compiler accepts $CFLAGS... " >&6; }
++if eval \${$as_CACHEVAR+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++
++  ax_check_save_flags=$CFLAGS
++  CFLAGS="$CFLAGS  $CFLAGS"
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  eval "$as_CACHEVAR=yes"
++else
++  eval "$as_CACHEVAR=no"
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS=$ax_check_save_flags
++fi
++eval ac_res=\$$as_CACHEVAR
++	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
++$as_echo "$ac_res" >&6; }
++if test x"`eval 'as_val=${'$as_CACHEVAR'};$as_echo "$as_val"'`" = xyes; then :
++  :
++else
++
++	echo ""
++        echo "********************************************************"
++        echo "* WARNING: The guessed CFLAGS don't seem to work with  *"
++        echo "* your compiler.                                       *"
++        echo "* Use ./configure CFLAGS=... to specify your own flags *"
++        echo "********************************************************"
++        echo ""
++        CFLAGS=""
++
++fi
++
++
++fi
++
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for maximum warnings" >&5
++$as_echo_n "checking CFLAGS for maximum warnings... " >&6; }
++if ${ac_cv_cflags_warn_all+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_cv_cflags_warn_all="no, unknown"
++ac_save_CFLAGS="$CFLAGS"
++for ac_arg in "-warn all  % -warn all"      "-pedantic  % -Wall"          "-xstrconst % -v"             "-std1      % -verbose -w0 -warnprotos"    "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd"    "-ansi -ansiE % -fullwarn"    "+ESlit     % +w1"            "-Xc        % -pvctl,fullmsg"    "-h conform % -h msglevel 2"    #
++do CFLAGS="$ac_save_CFLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
++   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  ac_cv_cflags_warn_all=`echo $ac_arg | sed -e 's,.*% *,,'` ; break
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++done
++CFLAGS="$ac_save_CFLAGS"
++
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_cflags_warn_all" >&5
++$as_echo "$ac_cv_cflags_warn_all" >&6; }
++case ".$ac_cv_cflags_warn_all" in
++     .ok|.ok,*)  ;;
++   .|.no|.no,*)  ;;
++   *) if ${CFLAGS+:} false; then :
++  case " $CFLAGS " in
++    *" $ac_cv_cflags_warn_all "*)
++      { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS already contains \$ac_cv_cflags_warn_all"; } >&5
++  (: CFLAGS already contains $ac_cv_cflags_warn_all) 2>&5
++  ac_status=$?
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; }
++      ;;
++    *)
++      { { $as_echo "$as_me:${as_lineno-$LINENO}: : CFLAGS=\"\$CFLAGS \$ac_cv_cflags_warn_all\""; } >&5
++  (: CFLAGS="$CFLAGS $ac_cv_cflags_warn_all") 2>&5
++  ac_status=$?
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; }
++      CFLAGS="$CFLAGS $ac_cv_cflags_warn_all"
++      ;;
++   esac
++else
++  CFLAGS="$ac_cv_cflags_warn_all"
++fi
++ ;;
++esac
++
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++
++if test "x$GCC" = "xyes"; then
++  CFLAGS="$CFLAGS -fexceptions"
++fi
++
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
++$as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
++    # Check whether --enable-maintainer-mode was given.
++if test "${enable_maintainer_mode+set}" = set; then :
++  enableval=$enable_maintainer_mode; USE_MAINTAINER_MODE=$enableval
++else
++  USE_MAINTAINER_MODE=no
++fi
++
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $USE_MAINTAINER_MODE" >&5
++$as_echo "$USE_MAINTAINER_MODE" >&6; }
++   if test $USE_MAINTAINER_MODE = yes; then
++  MAINTAINER_MODE_TRUE=
++  MAINTAINER_MODE_FALSE='#'
++else
++  MAINTAINER_MODE_TRUE='#'
++  MAINTAINER_MODE_FALSE=
++fi
++
++  MAINT=$MAINTAINER_MODE_TRUE
++
++
++
++for ac_header in sys/mman.h
++do :
++  ac_fn_c_check_header_mongrel "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
++if test "x$ac_cv_header_sys_mman_h" = xyes; then :
++  cat >>confdefs.h <<_ACEOF
++#define HAVE_SYS_MMAN_H 1
++_ACEOF
++
++fi
++
++done
++
++for ac_func in mmap
++do :
++  ac_fn_c_check_func "$LINENO" "mmap" "ac_cv_func_mmap"
++if test "x$ac_cv_func_mmap" = xyes; then :
++  cat >>confdefs.h <<_ACEOF
++#define HAVE_MMAP 1
++_ACEOF
++
++fi
++done
++
++
++ac_fn_c_check_header_mongrel "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
++if test "x$ac_cv_header_sys_mman_h" = xyes; then :
++  libffi_header_sys_mman_h=yes
++else
++  libffi_header_sys_mman_h=no
++fi
++
++
++ac_fn_c_check_func "$LINENO" "mmap" "ac_cv_func_mmap"
++if test "x$ac_cv_func_mmap" = xyes; then :
++  libffi_func_mmap=yes
++else
++  libffi_func_mmap=no
++fi
++
++if test "$libffi_header_sys_mman_h" != yes \
++ || test "$libffi_func_mmap" != yes; then
++   ac_cv_func_mmap_file=no
++   ac_cv_func_mmap_dev_zero=no
++   ac_cv_func_mmap_anon=no
++else
++   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether read-only mmap of a plain file works" >&5
++$as_echo_n "checking whether read-only mmap of a plain file works... " >&6; }
++if ${ac_cv_func_mmap_file+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  # Add a system to this blacklist if
++   # mmap(0, stat_size, PROT_READ, MAP_PRIVATE, fd, 0) doesn't return a
++   # memory area containing the same data that you'd get if you applied
++   # read() to the same fd.  The only system known to have a problem here
++   # is VMS, where text files have record structure.
++   case "$host_os" in
++     vms* | ultrix*)
++	ac_cv_func_mmap_file=no ;;
++     *)
++	ac_cv_func_mmap_file=yes;;
++   esac
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_file" >&5
++$as_echo "$ac_cv_func_mmap_file" >&6; }
++   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether mmap from /dev/zero works" >&5
++$as_echo_n "checking whether mmap from /dev/zero works... " >&6; }
++if ${ac_cv_func_mmap_dev_zero+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  # Add a system to this blacklist if it has mmap() but /dev/zero
++   # does not exist, or if mmapping /dev/zero does not give anonymous
++   # zeroed pages with both the following properties:
++   # 1. If you map N consecutive pages in with one call, and then
++   #    unmap any subset of those pages, the pages that were not
++   #    explicitly unmapped remain accessible.
++   # 2. If you map two adjacent blocks of memory and then unmap them
++   #    both at once, they must both go away.
++   # Systems known to be in this category are Windows (all variants),
++   # VMS, and Darwin.
++   case "$host_os" in
++     vms* | cygwin* | pe | mingw* | darwin* | ultrix* | hpux10* | hpux11.00)
++	ac_cv_func_mmap_dev_zero=no ;;
++     *)
++	ac_cv_func_mmap_dev_zero=yes;;
++   esac
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_dev_zero" >&5
++$as_echo "$ac_cv_func_mmap_dev_zero" >&6; }
++
++   # Unlike /dev/zero, the MAP_ANON(YMOUS) defines can be probed for.
++   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for MAP_ANON(YMOUS)" >&5
++$as_echo_n "checking for MAP_ANON(YMOUS)... " >&6; }
++if ${ac_cv_decl_map_anon+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <sys/types.h>
++#include <sys/mman.h>
++#include <unistd.h>
++
++#ifndef MAP_ANONYMOUS
++#define MAP_ANONYMOUS MAP_ANON
++#endif
++
++int
++main ()
++{
++int n = MAP_ANONYMOUS;
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  ac_cv_decl_map_anon=yes
++else
++  ac_cv_decl_map_anon=no
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_decl_map_anon" >&5
++$as_echo "$ac_cv_decl_map_anon" >&6; }
++
++   if test $ac_cv_decl_map_anon = no; then
++     ac_cv_func_mmap_anon=no
++   else
++     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether mmap with MAP_ANON(YMOUS) works" >&5
++$as_echo_n "checking whether mmap with MAP_ANON(YMOUS) works... " >&6; }
++if ${ac_cv_func_mmap_anon+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  # Add a system to this blacklist if it has mmap() and MAP_ANON or
++   # MAP_ANONYMOUS, but using mmap(..., MAP_PRIVATE|MAP_ANONYMOUS, -1, 0)
++   # doesn't give anonymous zeroed pages with the same properties listed
++   # above for use of /dev/zero.
++   # Systems known to be in this category are Windows, VMS, and SCO Unix.
++   case "$host_os" in
++     vms* | cygwin* | pe | mingw* | sco* | udk* )
++	ac_cv_func_mmap_anon=no ;;
++     *)
++	ac_cv_func_mmap_anon=yes;;
++   esac
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_mmap_anon" >&5
++$as_echo "$ac_cv_func_mmap_anon" >&6; }
++   fi
++fi
++
++if test $ac_cv_func_mmap_file = yes; then
++
++$as_echo "#define HAVE_MMAP_FILE 1" >>confdefs.h
++
++fi
++if test $ac_cv_func_mmap_dev_zero = yes; then
++
++$as_echo "#define HAVE_MMAP_DEV_ZERO 1" >>confdefs.h
++
++fi
++if test $ac_cv_func_mmap_anon = yes; then
++
++$as_echo "#define HAVE_MMAP_ANON 1" >>confdefs.h
++
++fi
++
++
++ if test -d $srcdir/testsuite; then
++  TESTSUBDIR_TRUE=
++  TESTSUBDIR_FALSE='#'
++else
++  TESTSUBDIR_TRUE='#'
++  TESTSUBDIR_FALSE=
++fi
++
++
++TARGETDIR="unknown"
++case "$host" in
++  alpha*-*-*)
+ 	TARGET=ALPHA; TARGETDIR=alpha;
+ 	# Support 128-bit long double, changeable via command-line switch.
+ 	HAVE_LONG_DOUBLE='defined(__LONG_DOUBLE_128__)'
+@@ -14367,6 +15443,14 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+ #
+ # INIT-COMMANDS
+ #
++ax_enable_builddir_srcdir="$srcdir"                    # $srcdir
++ax_enable_builddir_host="$HOST"                        # $HOST / $host
++ax_enable_builddir_version="$VERSION"                  # $VERSION
++ax_enable_builddir_package="$PACKAGE"                  # $PACKAGE
++ax_enable_builddir_auxdir="$ax_enable_builddir_auxdir" # $AUX
++ax_enable_builddir_sed="$ax_enable_builddir_sed"       # $SED
++ax_enable_builddir="$ax_enable_builddir"               # $SUB
++
+ AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
+ 
+ 
+@@ -14656,6 +15740,7 @@ for ac_config_target in $ac_config_targe
+ do
+   case $ac_config_target in
+     "fficonfig.h") CONFIG_HEADERS="$CONFIG_HEADERS fficonfig.h" ;;
++    "buildir") CONFIG_COMMANDS="$CONFIG_COMMANDS buildir" ;;
+     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
+     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
+     "include") CONFIG_COMMANDS="$CONFIG_COMMANDS include" ;;
+@@ -15294,6 +16379,150 @@ $as_echo "$as_me: executing $ac_file com
+ 
+ 
+   case $ac_file$ac_mode in
++    "buildir":C)   ac_top_srcdir="$ax_enable_builddir_srcdir"
++  if test ".$ax_enable_builddir" = ".." ; then
++    if test -f "$top_srcdir/Makefile" ; then
++      { $as_echo "$as_me:${as_lineno-$LINENO}: skipping top_srcdir/Makefile - left untouched" >&5
++$as_echo "$as_me: skipping top_srcdir/Makefile - left untouched" >&6;}
++    else
++      { $as_echo "$as_me:${as_lineno-$LINENO}: skipping top_srcdir/Makefile - not created" >&5
++$as_echo "$as_me: skipping top_srcdir/Makefile - not created" >&6;}
++    fi
++  else
++    if test -f "$ac_top_srcdir/Makefile" ; then
++      a=`grep "^VERSION " "$ac_top_srcdir/Makefile"` ; b=`grep "^VERSION " Makefile`
++      test "$a" != "$b" && rm "$ac_top_srcdir/Makefile"
++    fi
++    if test -f "$ac_top_srcdir/Makefile" ; then
++	echo "$ac_top_srcdir/Makefile : $ac_top_srcdir/Makefile.in" > $tmp/conftemp.mk
++	echo "	@ echo 'REMOVED,,,' >\$@" >> $tmp/conftemp.mk
++      eval "${MAKE-make} -f $tmp/conftemp.mk 2>/dev/null >/dev/null"
++      if grep '^REMOVED,,,' "$ac_top_srcdir/Makefile" >/dev/null
++      then rm $ac_top_srcdir/Makefile ; fi
++      cp $tmp/conftemp.mk $ac_top_srcdir/makefiles.mk~      ## DEBUGGING
++    fi
++    if test ! -f "$ac_top_srcdir/Makefile" ; then
++      { $as_echo "$as_me:${as_lineno-$LINENO}: create top_srcdir/Makefile guessed from local Makefile" >&5
++$as_echo "$as_me: create top_srcdir/Makefile guessed from local Makefile" >&6;}
++      x='`' ; cat >$tmp/conftemp.sed <<_EOF
++/^\$/n
++x
++/^\$/bS
++x
++/\\\\\$/{H;d;}
++{H;s/.*//;x;}
++bM
++:S
++x
++/\\\\\$/{h;d;}
++{h;s/.*//;x;}
++:M
++s/\\(\\n\\)	/\\1 /g
++/^	/d
++/^[	 ]*[\\#]/d
++/^VPATH *=/d
++s/^srcdir *=.*/srcdir = ./
++s/^top_srcdir *=.*/top_srcdir = ./
++/[:=]/!d
++/^\\./d
++/ = /b
++/ .= /b
++/:/!b
++s/:.*/:/
++s/ /  /g
++s/ \\([a-z][a-z-]*[a-zA-Z0-9]\\)\\([ :]\\)/ \\1 \\1-all\\2/g
++s/^\\([a-z][a-z-]*[a-zA-Z0-9]\\)\\([ :]\\)/\\1 \\1-all\\2/
++s/  / /g
++/^all all-all[ :]/i\\
++all-configured : all-all
++s/ [a-zA-Z0-9-]*-all [a-zA-Z0-9-]*-all-all//g
++/-all-all/d
++a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh $ax_enable_builddir_auxdir/config.guess $x \\\\\\
++	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
++	; use=$x basename "\$\@" -all $x; n=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" -eq "0" ; then : \\\\\\
++	; BUILD=$x grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' $x ; fi \\\\\\
++	; test ".\$\$BUILD" = "." && BUILD="." \\\\\\
++	; test "\$\$use" = "\$\@" && BUILD=$x echo "\$\$BUILD" | tail -1 $x \\\\\\
++	; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; (cd "\$\$i" && test ! -f configure && \$(MAKE) \$\$use) || exit; done
++/dist-all *:/a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh $ax_enable_builddir_auxdir/config.guess $x \\\\\\
++	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
++	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).tar.*" \\\\\\
++	; if test "\$\$found" -eq "0" ; then : \\\\\\
++	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
++	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).tar.* \\\\\\
++	; do test -f "\$\$f" && mv "\$\$f" \$(PUB). ; done ; break ; done
++/dist-[a-zA-Z0-9]*-all *:/a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh ./config.guess $x \\\\\\
++	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
++	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).*" \\\\\\
++	; if test "\$\$found" -eq "0" ; then : \\\\\\
++	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
++	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).* \\\\\\
++	; do test -f "\$\$f" && mv "\$\$f" \$(PUB). ; done ; break ; done
++/distclean-all *:/a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh $ax_enable_builddir_auxdir/config.guess $x \\\\\\
++	; BUILD=$x grep "^#### .*|" Makefile | sed -e 's/.*|//' $x \\\\\\
++	; use=$x basename "\$\@" -all $x; n=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$n * \$\@ (all local builds)" \\\\\\
++	; test ".\$\$BUILD" = "." && BUILD="." \\\\\\
++	; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; echo "# rm -r \$\$i"; done ; echo "# (sleep 3)" ; sleep 3 \\\\\\
++	; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; echo "\$\$i" | grep "^/" > /dev/null && continue \\\\\\
++	; echo "\$\$i" | grep "^../" > /dev/null && continue \\\\\\
++	; echo "rm -r \$\$i"; (rm -r "\$\$i") ; done ; rm Makefile
++_EOF
++      cp "$tmp/conftemp.sed" "$ac_top_srcdir/makefile.sed~"            ## DEBUGGING
++      $ax_enable_builddir_sed -f $tmp/conftemp.sed Makefile >$ac_top_srcdir/Makefile
++      if test -f "$ac_top_srcdir/Makefile.mk" ; then
++        { $as_echo "$as_me:${as_lineno-$LINENO}: extend top_srcdir/Makefile with top_srcdir/Makefile.mk" >&5
++$as_echo "$as_me: extend top_srcdir/Makefile with top_srcdir/Makefile.mk" >&6;}
++        cat $ac_top_srcdir/Makefile.mk >>$ac_top_srcdir/Makefile
++      fi ; xxxx="####"
++      echo "$xxxx CONFIGURATIONS FOR TOPLEVEL MAKEFILE: " >>$ac_top_srcdir/Makefile
++      # sanity check
++      if grep '^; echo "MAKE ' $ac_top_srcdir/Makefile >/dev/null ; then
++        { $as_echo "$as_me:${as_lineno-$LINENO}: buggy sed found - it deletes tab in \"a\" text parts" >&5
++$as_echo "$as_me: buggy sed found - it deletes tab in \"a\" text parts" >&6;}
++        $ax_enable_builddir_sed -e '/^@ HOST=/s/^/	/' -e '/^; /s/^/	/' $ac_top_srcdir/Makefile \
++          >$ac_top_srcdir/Makefile~
++        (test -s $ac_top_srcdir/Makefile~ && mv $ac_top_srcdir/Makefile~ $ac_top_srcdir/Makefile) 2>/dev/null
++      fi
++    else
++      xxxx="\\#\\#\\#\\#"
++      # echo "/^$xxxx *$ax_enable_builddir_host /d" >$tmp/conftemp.sed
++      echo "s!^$xxxx [^|]* | *$ax_enable_builddir *\$!$xxxx ...... $ax_enable_builddir!" >$tmp/conftemp.sed
++      $ax_enable_builddir_sed -f "$tmp/conftemp.sed" "$ac_top_srcdir/Makefile" >$tmp/mkfile.tmp
++        cp "$tmp/conftemp.sed" "$ac_top_srcdir/makefiles.sed~"         ## DEBUGGING
++        cp "$tmp/mkfile.tmp"   "$ac_top_srcdir/makefiles.out~"         ## DEBUGGING
++      if cmp -s "$ac_top_srcdir/Makefile" "$tmp/mkfile.tmp" 2>/dev/null ; then
++        { $as_echo "$as_me:${as_lineno-$LINENO}: keeping top_srcdir/Makefile from earlier configure" >&5
++$as_echo "$as_me: keeping top_srcdir/Makefile from earlier configure" >&6;}
++        rm "$tmp/mkfile.tmp"
++      else
++        { $as_echo "$as_me:${as_lineno-$LINENO}: reusing top_srcdir/Makefile from earlier configure" >&5
++$as_echo "$as_me: reusing top_srcdir/Makefile from earlier configure" >&6;}
++        mv "$tmp/mkfile.tmp" "$ac_top_srcdir/Makefile"
++      fi
++    fi
++    { $as_echo "$as_me:${as_lineno-$LINENO}: build in $ax_enable_builddir (HOST=$ax_enable_builddir_host)" >&5
++$as_echo "$as_me: build in $ax_enable_builddir (HOST=$ax_enable_builddir_host)" >&6;}
++    xxxx="####"
++    echo "$xxxx" "$ax_enable_builddir_host" "|$ax_enable_builddir" >>$ac_top_srcdir/Makefile
++  fi
++ ;;
+     "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
+   # Autoconf 2.62 quotes --file arguments for eval, but not when files
+   # are listed without --file.  Let's play safe and only enable the eval
+Index: libffi/include/Makefile.in
+===================================================================
+--- libffi.orig/include/Makefile.in
++++ libffi/include/Makefile.in
+@@ -40,6 +40,13 @@ DIST_COMMON = $(srcdir)/Makefile.am $(sr
+ 	$(srcdir)/ffi.h.in
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
++	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
++	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
++	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
++	$(top_srcdir)/m4/ax_configure_args.m4 \
++	$(top_srcdir)/m4/ax_enable_builddir.m4 \
++	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
++	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
+ 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+ 	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+ 	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
+@@ -141,6 +148,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+ PACKAGE_URL = @PACKAGE_URL@
+ PACKAGE_VERSION = @PACKAGE_VERSION@
+ PATH_SEPARATOR = @PATH_SEPARATOR@
++PRTDIAG = @PRTDIAG@
+ RANLIB = @RANLIB@
+ SED = @SED@
+ SET_MAKE = @SET_MAKE@
+@@ -161,6 +169,7 @@ am__leading_dot = @am__leading_dot@
+ am__quote = @am__quote@
+ am__tar = @am__tar@
+ am__untar = @am__untar@
++ax_enable_builddir_sed = @ax_enable_builddir_sed@
+ bindir = @bindir@
+ build = @build@
+ build_alias = @build_alias@
+Index: libffi/man/Makefile.in
+===================================================================
+--- libffi.orig/man/Makefile.in
++++ libffi/man/Makefile.in
+@@ -38,6 +38,13 @@ subdir = man
+ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
++	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
++	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
++	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
++	$(top_srcdir)/m4/ax_configure_args.m4 \
++	$(top_srcdir)/m4/ax_enable_builddir.m4 \
++	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
++	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
+ 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+ 	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+ 	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
+@@ -139,6 +146,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+ PACKAGE_URL = @PACKAGE_URL@
+ PACKAGE_VERSION = @PACKAGE_VERSION@
+ PATH_SEPARATOR = @PATH_SEPARATOR@
++PRTDIAG = @PRTDIAG@
+ RANLIB = @RANLIB@
+ SED = @SED@
+ SET_MAKE = @SET_MAKE@
+@@ -159,6 +167,7 @@ am__leading_dot = @am__leading_dot@
+ am__quote = @am__quote@
+ am__tar = @am__tar@
+ am__untar = @am__untar@
++ax_enable_builddir_sed = @ax_enable_builddir_sed@
+ bindir = @bindir@
+ build = @build@
+ build_alias = @build_alias@
+Index: libffi/testsuite/Makefile.in
+===================================================================
+--- libffi.orig/testsuite/Makefile.in
++++ libffi/testsuite/Makefile.in
+@@ -38,6 +38,13 @@ subdir = testsuite
+ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
++	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
++	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
++	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
++	$(top_srcdir)/m4/ax_configure_args.m4 \
++	$(top_srcdir)/m4/ax_enable_builddir.m4 \
++	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
++	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
+ 	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+ 	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+ 	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
+@@ -116,6 +123,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
+ PACKAGE_URL = @PACKAGE_URL@
+ PACKAGE_VERSION = @PACKAGE_VERSION@
+ PATH_SEPARATOR = @PATH_SEPARATOR@
++PRTDIAG = @PRTDIAG@
+ RANLIB = @RANLIB@
+ SED = @SED@
+ SET_MAKE = @SET_MAKE@
+@@ -136,6 +144,7 @@ am__leading_dot = @am__leading_dot@
+ am__quote = @am__quote@
+ am__tar = @am__tar@
+ am__untar = @am__untar@
++ax_enable_builddir_sed = @ax_enable_builddir_sed@
+ bindir = @bindir@
+ build = @build@
+ build_alias = @build_alias@

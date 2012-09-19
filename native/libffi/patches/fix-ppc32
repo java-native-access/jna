@@ -1,0 +1,32 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -107,6 +107,11 @@
+ 	Use them to handle ELF vs. ECOFF differences.
+ 	[__osf__] (_GLOBAL__F_ffi_call_osf): Define.
+ 
++2011-02-25  Anthony Green  <green@moxielogic.com>
++
++	* src/powerpc/ffi.c (ffi_prep_closure_loc): Allow for more
++	32-bit ABIs.
++
+ 2011-02-15  Anthony Green  <green@moxielogic.com>
+ 
+ 	* m4/ax_cc_maxopt.m4: Don't -malign-double or use -ffast-math.
+Index: libffi/src/powerpc/ffi.c
+===================================================================
+--- libffi.orig/src/powerpc/ffi.c
++++ libffi/src/powerpc/ffi.c
+@@ -958,7 +958,10 @@ ffi_prep_closure_loc (ffi_closure *closu
+ #else
+   unsigned int *tramp;
+ 
+-  if (! (cif->abi == FFI_GCC_SYSV || cif->abi == FFI_SYSV))
++  if (! (cif->abi == FFI_GCC_SYSV 
++	 || cif->abi == FFI_SYSV
++	 || cif->abi == FFI_LINUX
++	 || cif->abi == FFI_LINUX_SOFT_FLOAT))
+     return FFI_BAD_ABI;
+ 
+   tramp = (unsigned int *) &closure->tramp[0];
