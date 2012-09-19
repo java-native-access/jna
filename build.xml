@@ -837,11 +837,9 @@ osname=macos
   <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}">
-      <fileset dir="${build}">
-        <include name="${native.jar}"/>
-      </fileset>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
+        <exclude name="out-of-date.jar"/>
       </fileset>
     </copy>
     <copy todir="${dist}">
