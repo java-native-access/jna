@@ -25,6 +25,7 @@
 #  include <sys/param.h>
 #endif
 #include "dispatch.h"
+#include "thread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -388,6 +389,13 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   }
 }
 
+#ifdef THREAD_EXIT_CLEANUP
+static void 
+detach_thread(void* data) {
+  THREAD_EXIT_CLEANUP(data);
+}
+#endif
+
 static void
 callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   callback* cb = ((callback *)user_data); 
@@ -450,6 +458,11 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   
   if (detach) {
     (*jvm)->DetachCurrentThread(jvm);
+  }
+  else if (!was_attached) {
+#ifdef ON_THREAD_EXIT
+    ON_THREAD_EXIT(detach_thread, jvm);
+#endif
   }
 }
 

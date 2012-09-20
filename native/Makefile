@@ -284,7 +284,7 @@ endif
 # Unfortunately, we have to use different libffi include files depending on
 # the target, so we can't do a simple universal build on darwin.  Do
 # separate builds, then merge the results.
-$(BUILD)/%.o : %.c dispatch.h $(FFI_LIB)
+$(BUILD)/%.o : %.c dispatch.h thread.h protect.h $(FFI_LIB)
 	@mkdir -p $(BUILD)
 ifneq ($(SDKROOT),)
 	$(CC) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)

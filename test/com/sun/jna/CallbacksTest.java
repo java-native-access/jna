@@ -1025,6 +1025,33 @@ public class CallbacksTest extends TestCase {
                      1, threads.size());
     }
 
+    public void testAttachedThreadCleanupOnExit() throws Exception {
+        if (!Platform.isMac()) return;
+
+        final Set threads = new HashSet();
+        final int[] called = { 0 };
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                threads.add(new WeakReference(Thread.currentThread()));
+                ++called[0];
+                Native.detach(false);
+            }
+        };
+        callThreadedCallback(cb, null, 1, 0, called);
+        while (threads.size() == 0) {
+            Thread.sleep(10);
+        }
+        long start = System.currentTimeMillis();
+        WeakReference ref = (WeakReference)threads.iterator().next();
+        while (ref.get() != null) {
+            System.gc();
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > 5000) {
+                fail("Timed out waiting for attached thread to be detached on exit and disposed: " + ref.get());
+            }
+        }
+    }
+
     // Callback indicates detach preference; thread is non-daemon (default),
     // but callback explicitly detaches it on final invocation.
     public void testDynamicCallbackThreadPersistence() throws Exception {
