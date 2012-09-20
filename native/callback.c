@@ -388,15 +388,45 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   }
 }
 
-#ifndef _WIN32
+#ifdef _WIN32
+static DWORD dwTlsIndex;
+BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
+  switch (fdwReason) {
+  case DLL_PROCESS_ATTACH:
+    if ((dwTlsIndex == TlsAlloc()) == TLS_OUT_OF_INDEXES) {
+      return FALSE;
+    }
+    break;
+  case DLL_PROCESS_DETACH:
+    TlsFree(dwTlsIndex);
+    break;
+  case DLL_THREAD_ATTACH:
+    break;
+  case DLL_THREAD_DETACH: {
+    JavaVM* jvm = (JavaVM*)TlsGetValue(dwTlsIndex);
+    if (jvm != NULL) {
+      fprintf(stderr, "detach defunct native thread\n");
+      (*jvm)->DetachCurrentThread(jvm);
+    }
+    break;
+  }
+  default:
+    break;
+  }
+  return TRUE;
+}
+
+#else
 #include <pthread.h>
 
 static pthread_key_t key;
 static pthread_once_t key_once = PTHREAD_ONCE_INIT;
 
 static void detach_thread(void *data) {
-  JavaVM* jvm = (JavaVM*)data;
-  (*jvm)->DetachCurrentThread(jvm);
+  if (data != NULL) {
+    JavaVM* jvm = (JavaVM*)data;
+    (*jvm)->DetachCurrentThread(jvm);
+  }
 }
 
 static void make_key() {
@@ -466,9 +496,19 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   
   if (detach) {
     (*jvm)->DetachCurrentThread(jvm);
+#ifdef _WIN32
+    TlsSetValue(dwTlsIndex, NULL);
+#else
+    pthread_once(&key_once, make_key);
+    if (pthread_getspecific(key) != NULL) {
+      pthread_setspecific(key, NULL);
+    }
+#endif
   }
   else if (!was_attached) {
-#ifndef _WIN32
+#ifdef _WIN32
+    TlsSetValue(dwTlsIndex, jvm);
+#else
     pthread_once(&key_once, make_key);
     if (pthread_getspecific(key) == NULL) {
       pthread_setspecific(key, jvm);

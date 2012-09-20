@@ -1021,13 +1021,11 @@ public class CallbacksTest extends TestCase {
         };
         callThreadedCallback(cb, init, COUNT, 100, called);
 
-        assertEquals("Native thread mapping not preserved: " + threads,
+        assertEquals("Multiple callbacks on a given native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
     }
 
     public void testAttachedThreadCleanupOnExit() throws Exception {
-        if (!Platform.isMac()) return;
-
         final Set threads = new HashSet();
         final int[] called = { 0 };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
@@ -1074,7 +1072,7 @@ public class CallbacksTest extends TestCase {
         };
         callThreadedCallback(cb, null, COUNT, 100, called);
 
-        assertEquals("Native thread mapping not preserved: " + threads,
+        assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
         Thread thread = (Thread)threads.iterator().next();
         long start = System.currentTimeMillis();
