@@ -5,6 +5,7 @@ Features
 --------
 * `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
 * Search ~/Library/Frameworks and /Library/Frameworks on OSX - [@shaneholloway](https://github.com/shaneholloway).
+* Automatic cleanup of native threads (based on suggestions from neil smith) - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
