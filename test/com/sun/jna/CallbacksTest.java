@@ -1050,9 +1050,10 @@ public class CallbacksTest extends TestCase {
         }
     }
 
-    // Callback indicates detach preference; thread is non-daemon (default),
+    // Callback indicates detach preference (instead of
+    // CallbackThreadInitializer); thread is non-daemon (default), 
     // but callback explicitly detaches it on final invocation.
-    public void testDynamicCallbackThreadPersistence() throws Exception {
+    public void testCallbackIndicatedThreadDetach() throws Exception {
     	final int[] called = {0};
         final Set threads = new HashSet();
         final int COUNT = 5;

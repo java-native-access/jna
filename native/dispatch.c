@@ -2949,8 +2949,8 @@ Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass UNUSED(classp), jint code) {
-  SET_LAST_ERROR(code);
   update_last_error(env, code);
+  SET_LAST_ERROR(code);
 }
 
 JNIEXPORT jstring JNICALL

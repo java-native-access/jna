@@ -814,6 +814,8 @@ public final class Native {
     public static native void setLastError(int code);
 
     /** Update the last error value (called from native code). */
+    // This has to be called immediately after a native call to ensure that
+    // subsequent VM operations don't overwrite the last error value
     static void updateLastError(int e) {
         lastError.set(new Integer(e));
     }
