@@ -124,6 +124,13 @@
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
     </condition>
+    <condition property="cross-compile" value="true">
+      <isset property="os.prefix"/>
+    </condition>
+    <!-- Keep cross-compiled natives separate from normal builds -->
+    <condition property="native.subdir" value="native-${os.prefix}" else="native">
+      <isset property="cross-compile"/>
+    </condition>
     <condition property="vm.arch" value="-d64" else="">
       <and>
         <not><equals arg1="${os.prefix}" arg2="android-arm" trim="true"/></not>
@@ -198,11 +205,7 @@
     <condition property="ld.preload.name" value="${ld.preload}" else="IGNORE">
       <not><equals arg1="${libjsig}" arg2=""/></not>
     </condition>
-    <!-- Keep cross-compiled natives separate from normal builds -->
     <property name="native.jar" value="${os.prefix}.jar"/>
-    <condition property="native.subdir" value="native-${os.prefix}" else="native">
-      <isset property="os.prefix"/>
-    </condition>
     <property name="build.native" location="${build}/${native.subdir}"/>
     <property name="md5.file" location="${build.native}/jni.checksum"/>
 
@@ -261,6 +264,7 @@
     <uptodate property="-jar" targetfile="${build}/${jar}">
       <srcfiles dir="${classes}">
         <patternset id="jar-compiled">
+          <include name="lib/armeabi/*"/>
           <include name="com/sun/jna/*"/>
           <include name="com/sun/jna/**/*"/>
         </patternset>
@@ -403,9 +407,6 @@ osname=macos
       <zipfileset src="${lib.native}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
-      <zipfileset src="${lib.native}/android-arm.jar"
-                  includes="*jnidispatch*"
-                  prefix="com/sun/jna/android-arm"/>
     </jar>
   </target>
 
@@ -621,6 +622,10 @@ osname=macos
         <os name="AIX"/>
       </or>
     </condition>
+    <!-- Native resource path within jna.jar -->
+    <condition property="native.path" value="lib/armeabi" else="com/sun/jna/${os.prefix}">
+      <equals arg1="${os.prefix}" arg2="android-arm"/>
+    </condition>
 
     <!-- Default make program -->
     <property name="make" value="make"/>
@@ -640,13 +645,13 @@ osname=macos
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
-    <mkdir dir="${classes}/com/sun/jna/${os.prefix}"/>
-    <copy todir="${classes}/com/sun/jna/${os.prefix}">
+    <mkdir dir="${classes}/${native.path}"/>
+    <copy todir="${classes}/${native.path}">
       <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
     </copy>
-    <mkdir dir="${eclipse.classes}/com/sun/jna/${os.prefix}"/>
-    <copy todir="${eclipse.classes}/com/sun/jna/${os.prefix}"
+    <mkdir dir="${eclipse.classes}/${native.path}"/>
+    <copy todir="${eclipse.classes}/${native.path}"
           failonerror="false">
       <fileset dir="${build.native}"
                includes="jnidispatch.dll,libjnidispatch.*"/>
@@ -723,7 +728,7 @@ osname=macos
 
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="jar,compile-tests"
+  <target name="test" depends="jar,compile-tests" unless="cross-compile"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>

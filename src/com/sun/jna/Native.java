@@ -689,6 +689,10 @@ public final class Native {
                 }
             }
         }
+        if (Platform.isAndroid()) {
+            // Native libraries on android must be bundled with the APK
+            System.setProperty("jna.nounpack", "true");
+        }
         try {
             if (!Boolean.getBoolean("jna.nosys")) {
                 System.loadLibrary(libName);
