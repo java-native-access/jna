@@ -29,7 +29,7 @@
 # The android build requires the android SDK+NDK for cross-compilation;
 # make the tools available on the path and compile with
 # "ant -Dos.prefix=android-arm".  Put the NDK tools in the path and adjust
-# ANDROID_HOME below.
+# NDK_PLATFORM below.
 #
 
 # Systems which support POSIX signals may be able to support VM crash
@@ -104,7 +104,7 @@ STRIP=strip -x
 # end defaults
 
 # Android build (cross-compile) requires the android SDK+NDK.
-# Ensure the following tools are in your path and adjust ANDROID_HOME as needed
+# Ensure the following tools are in your path and adjust NDK_PLATFORM as needed
 ifeq ($(OS),android)
 CC=arm-linux-androideabi-gcc
 CPP=arm-linux-androideabi-cpp
@@ -113,10 +113,10 @@ RANLIB=arm-linux-androideabi-ranlib
 STRIP=arm-linux-androideabi-strip -x
 CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
 COPT+=-fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -march=armv5te -mtune=xscale -msoft-float
-ANDROID_HOME=/Developer/Applications/android-ndk-r7c/platforms/android-14/arch-arm
+NDK_PLATFORM=/Developer/Applications/android-ndk-r7c/platforms/android-14
 JAVA_INCLUDES=
-CINCLUDES+=-I"$(ANDROID_HOME)/usr/include" # -I/usr/include
-LIBS=-nostdlib -L"$(ANDROID_HOME)/usr/lib/" -lgcc -lc -ldl -lm
+CINCLUDES+=-I"$(NDK_PLATFORM)/arch-arm/usr/include" # -I/usr/include
+LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-arm/usr/lib/" -lgcc -lc -ldl -lm
 LDFLAGS+=-Wl,-shared,-Bsymbolic
 FFI_ENV=CPP="$(CPP)" CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) $(CINCLUDES)" CPPFLAGS="$(CDEFINES) $(CINCLUDES)" LIBS="$(LIBS)" RANLIB="$(RANLIB)"
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=arm-linux-eabi
