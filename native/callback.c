@@ -134,12 +134,12 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
+#ifdef FFI_STDCALL
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }
   java_abi = FFI_STDCALL;
-#endif // _WIN32
+#endif // FFI_STDCALL
 
   rtype = get_jtype(env, return_type);
   if (rtype == -1) {
@@ -388,7 +388,16 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   }
 }
 
+// Handle automatic thread cleanup
+static void detach_thread(void* data) {
+  if (data != NULL) {
+    JavaVM* jvm = (JavaVM *)data;
+    (*jvm)->DetachCurrentThread(jvm);
+  }
+}
+
 #ifdef _WIN32
+
 static DWORD dwTlsIndex;
 BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
   switch (fdwReason) {
@@ -404,10 +413,7 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
   case DLL_THREAD_ATTACH:
     break;
   case DLL_THREAD_DETACH: {
-    JavaVM* jvm = (JavaVM*)TlsGetValue(dwTlsIndex);
-    if (jvm != NULL) {
-      (*jvm)->DetachCurrentThread(jvm);
-    }
+    detach_thread(TlsGetValue(dwTlsIndex));
     break;
   }
   default:
@@ -417,28 +423,25 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
 }
 
 #else
+
 #include <pthread.h>
 
 static pthread_key_t key;
-static pthread_once_t key_once = PTHREAD_ONCE_INIT;
-
-static void detach_thread(void *data) {
-  if (data != NULL) {
-    JavaVM* jvm = (JavaVM*)data;
-    (*jvm)->DetachCurrentThread(jvm);
-  }
-}
-
 static void make_key() {
   pthread_key_create(&key, detach_thread);
 }
+
 #endif
 
+/** Set up to detach the thread when it exits, or clear any handlers if the
+    argument is NULL.
+*/
 static void 
-set_detach_on_exit(JavaVM* jvm) {
+jvm_detach_on_exit(JavaVM* jvm) {
 #ifdef _WIN32
     TlsSetValue(dwTlsIndex, jvm);
 #else
+    static pthread_once_t key_once = PTHREAD_ONCE_INIT;
     pthread_once(&key_once, make_key);
     if (!jvm || pthread_getspecific(key) == NULL) {
       pthread_setspecific(key, jvm);
@@ -508,10 +511,10 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   
   if (detach) {
     (*jvm)->DetachCurrentThread(jvm);
-    set_detach_on_exit(NULL);
+    jvm_detach_on_exit(NULL);
   }
   else if (!was_attached) {
-    set_detach_on_exit(jvm);
+    jvm_detach_on_exit(jvm);
   }
 }
 
