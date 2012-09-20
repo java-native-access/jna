@@ -25,7 +25,6 @@
 #  include <sys/param.h>
 #endif
 #include "dispatch.h"
-#include "thread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -389,10 +388,19 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   }
 }
 
-#ifdef THREAD_EXIT_CLEANUP
-static void 
-detach_thread(void* data) {
-  THREAD_EXIT_CLEANUP(data);
+#ifndef _WIN32
+#include <pthread.h>
+
+static pthread_key_t key;
+static pthread_once_t key_once = PTHREAD_ONCE_INIT;
+
+static void detach_thread(void *data) {
+  JavaVM* jvm = (JavaVM*)data;
+  (*jvm)->DetachCurrentThread(jvm);
+}
+
+static void make_key() {
+  pthread_key_create(&key, detach_thread);
 }
 #endif
 
@@ -460,8 +468,11 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     (*jvm)->DetachCurrentThread(jvm);
   }
   else if (!was_attached) {
-#ifdef ON_THREAD_EXIT
-    ON_THREAD_EXIT(detach_thread, jvm);
+#ifndef _WIN32
+    pthread_once(&key_once, make_key);
+    if (pthread_getspecific(key) == NULL) {
+      pthread_setspecific(key, jvm);
+    }
 #endif
   }
 }
