@@ -77,7 +77,7 @@
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
   <property name="test.compatibility" value="1.5"/>
-  <property name="dist-jar" value="${dist}/jna.jar"/>
+  <property name="dist-jar" value="${dist}/${jar}"/>
 
   <!-- Maven -->
   <!-- define Maven coordinates -->
@@ -661,7 +661,7 @@ osname=macos
       <fileset dir="${build.native}" includes="*jnidispatch.*"/>
     </jar>
     <signjar alias="jna" keystore="jna.keystore" storepass="jnadev" lazy="true">
-      <fileset dir="${build}/jws" includes="jna.jar,jna-test.jar,junit.jar,jnidispatch.jar,clover.jar"/>
+      <fileset dir="${build}/jws" includes="${jar},${testjar},junit.jar,jnidispatch.jar,clover.jar"/>
     </signjar>
   </target>
 
@@ -672,10 +672,10 @@ osname=macos
     <property name="shared" value="shared"/>
     <!-- w32ce arm testing -->
     <jar jarfile="${shared}/test.jar">
-      <zipfileset src="${build}/jna.jar"/>
-      <zipfileset src="${build}/jna-test.jar"/>
+      <zipfileset src="${build}/${jar}"/>
+      <zipfileset src="${build}/${testjar}"/>
     </jar>
-    <copy todir="${shared}" file="${build}/jna.jar"/>
+    <copy todir="${shared}" file="${build}/${jar}"/>
     <copy todir="${shared}" file="${build}/native/jnidispatch.dll"/>
     <copy todir="${shared}" file="${build}/native/testlib.dll"/>
     <copy todir="${shared}" file="${build}/native/testlib2.dll"/>
