@@ -984,11 +984,7 @@ getIntegerTypeValue(JNIEnv* env, jobject obj) {
 
 void*
 getPointerTypeAddress(JNIEnv* env, jobject obj) {
-  void *obj = (*env)->GetObjectField(env, obj, FID_PointerType_pointer);
-  if (!(*env)->ExceptionCheck(env)) {
-    return getNativeAddress(env, obj);
-  }
-  return NULL;
+  return getNativeAddress(env, (*env)->GetObjectField(env, obj, FID_PointerType_pointer));
 }
 
 void *
