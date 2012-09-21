@@ -870,7 +870,9 @@ getNativeString(JNIEnv* env, jstring s, jboolean wide) {
     jobject ptr = (*env)->CallStaticObjectMethod(env, classCallbackReference,
                                                  MID_CallbackReference_getNativeString,
                                                  s, wide);
-    return getNativeAddress(env, ptr);
+    if (!(*env)->ExceptionCheck(env)) {
+      return getNativeAddress(env, ptr);
+    }
   }
   return NULL;
 }
@@ -978,14 +980,20 @@ getIntegerTypeValue(JNIEnv* env, jobject obj) {
 
 void*
 getPointerTypeAddress(JNIEnv* env, jobject obj) {
-  return getNativeAddress(env, (*env)->GetObjectField(env, obj, FID_PointerType_pointer));
+  void *obj = (*env)->GetObjectField(env, obj, FID_PointerType_pointer);
+  if (!(*env)->ExceptionCheck(env)) {
+    return getNativeAddress(env, obj);
+  }
+  return NULL;
 }
 
 void *
 getStructureAddress(JNIEnv *env, jobject obj) {
   if (obj != NULL) {
     jobject ptr = (*env)->GetObjectField(env, obj, FID_Structure_memory);
-    return getNativeAddress(env, ptr);
+    if (!(*env)->ExceptionCheck(env)) {
+      return getNativeAddress(env, ptr);
+    }
   }
   return NULL;
 }
@@ -1001,7 +1009,9 @@ void *
 getCallbackAddress(JNIEnv *env, jobject obj) {
   if (obj != NULL) {
     jobject ptr = (*env)->CallStaticObjectMethod(env, classCallbackReference, MID_CallbackReference_getFunctionPointer, obj, JNI_TRUE);
-    return getNativeAddress(env, ptr);
+    if (!(*env)->ExceptionCheck(env)) {
+      return getNativeAddress(env, ptr);
+    }
   }
   return NULL;
 }
@@ -1695,6 +1705,9 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       default:
         break;
       }
+    }
+    if ((*env)->ExceptionCheck(env)) {
+      goto cleanup;
     }
   }
 
