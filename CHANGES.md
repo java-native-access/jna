@@ -8,6 +8,7 @@ Features
 Bug Fixes
 ---------
 * Fix `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22).
+* More thoroughly propagate unexpected exceptions generated in jnidispatch - [@twall](https://github.com/twall).
 
 Release 3.4.2
 =============
