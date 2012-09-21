@@ -132,6 +132,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
     cb->arg_jtypes[i] = (char)jtype;
     cb->java_arg_types[i+3] = cb->arg_types[i] = get_ffi_type(env, cls, cb->arg_jtypes[i]);
+    if (!cb->java_arg_types[i+3]) {
+      goto failure_cleanup;
+    }
     if (cb->flags[i] == CVT_NATIVE_MAPPED
         || cb->flags[i] == CVT_POINTER_TYPE
         || cb->flags[i] == CVT_INTEGER_TYPE) {
@@ -147,6 +150,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       cb->arg_jtypes[i] = (char)jtype;
       cb->java_arg_types[i+3] = &ffi_type_pointer;
       cb->arg_types[i] = get_ffi_type(env, ncls, cb->arg_jtypes[i]);
+      if (!cb->arg_types[i]) {
+        goto failure_cleanup;
+      }
     }
 
     if (cb->arg_types[i]->type == FFI_TYPE_FLOAT) {

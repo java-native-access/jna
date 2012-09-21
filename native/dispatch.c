@@ -836,13 +836,17 @@ newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory)
     volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
     if (obj != NULL) {
       ffi_type* rtype = getStructureType(env, obj);
-      if (new_memory) {
-        MEMCPY(getStructureAddress(env, obj), data, rtype->size);
+      if (rtype) {
+        if (new_memory) {
+          MEMCPY(getStructureAddress(env, obj), data, rtype->size);
+        }
+        else {
+          (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
+        }
+        if (!(*env)->ExceptionCheck(env)) {
+          (*env)->CallVoidMethod(env, obj, MID_Structure_read);
+        }
       }
-      else {
-        (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
-      }
-      (*env)->CallVoidMethod(env, obj, MID_Structure_read);
     }
     else {
       fprintf(stderr, "JNA: failed to create structure\n");
@@ -1061,7 +1065,9 @@ void
 toNative(JNIEnv* env, jobject obj, void* valuep, size_t size, jboolean promote) {
   if (obj != NULL) {
     jobject arg = (*env)->CallObjectMethod(env, obj, MID_NativeMapped_toNative);
-    extract_value(env, arg, valuep, size, promote);
+    if (!(*env)->ExceptionCheck(env)) {
+      extract_value(env, arg, valuep, size, promote);
+    }
   }
   else {
     MEMSET(valuep, 0, size);
@@ -1072,7 +1078,9 @@ static void
 toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject to_native) {
   if (obj != NULL) {
     jobject arg = (*env)->CallStaticObjectMethod(env, classNative, MID_Native_toNativeTypeMapped, to_native, obj);
-    extract_value(env, arg, valuep, size, JNI_FALSE);
+    if (!(*env)->ExceptionCheck(env)) {
+      extract_value(env, arg, valuep, size, JNI_FALSE);
+    }
   }
   else {
     MEMSET(valuep, 0, size);
@@ -1083,12 +1091,16 @@ static void
 fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* type, jclass javaClass, void* result) {
   int jtype = get_jtype_from_ffi_type(type);
   jobject value = new_object(env, (char)jtype, resp, JNI_TRUE);
-  jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
-                                               MID_Native_fromNativeTypeMapped,
-                                               from_native, value, javaClass);
-  // Must extract primitive types
-  if (type->type != FFI_TYPE_POINTER) {
-    extract_value(env, obj, result, type->size, JNI_TRUE);
+  if (!(*env)->ExceptionCheck(env)) {
+    jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
+                                                 MID_Native_fromNativeTypeMapped,
+                                                 from_native, value, javaClass);
+    if (!(*env)->ExceptionCheck(env)) {
+      // Must extract primitive types
+      if (type->type != FFI_TYPE_POINTER) {
+        extract_value(env, obj, result, type->size, JNI_TRUE);
+      }
+    }
   }
 }
 
@@ -1096,9 +1108,12 @@ jobject
 fromNative(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote) {
   int jtype = get_jtype_from_ffi_type(type);
   jobject value = new_object(env, (char)jtype, resp, promote);
-  return (*env)->CallStaticObjectMethod(env, classNative,
-                                        MID_Native_fromNative,
-                                        javaClass, value);
+  if (!(*env)->ExceptionCheck(env)) {
+    return (*env)->CallStaticObjectMethod(env, classNative,
+                                          MID_Native_fromNative,
+                                          javaClass, value);
+  }
+  return NULL;
 }
 
 
@@ -1107,7 +1122,9 @@ getStructureType(JNIEnv *env, jobject obj) {
   jlong typeInfo = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
   if (!typeInfo) {
     (*env)->CallObjectMethod(env, obj, MID_Structure_getTypeInfo);
-    typeInfo = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
+    if (!(*env)->ExceptionCheck(env)) {
+      typeInfo = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
+    }
   }
   return (ffi_type*)L2A(typeInfo);
 }
@@ -1533,7 +1550,10 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
   case 's': {
     jobject s = (*env)->CallStaticObjectMethod(env, classStructure,
                                                MID_Structure_newInstance, cls);
-    return getStructureType(env, s);
+    if (s) {
+      return getStructureType(env, s);
+    }
+    return NULL;
   }
   case '*':
   default:
@@ -1782,7 +1802,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     for (i=0;i < data->cif.nargs;i++) {
       switch(data->flags[i]) {
       case CVT_STRUCTURE:
-        if (objects[i]) {
+        if (objects[i] && !(*env)->ExceptionCheck(env)) {
           (*env)->CallVoidMethod(env, objects[i], MID_Structure_read);
         }
         break;
