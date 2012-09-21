@@ -4,10 +4,12 @@ Release 3.5.0
 Features
 --------
 * `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
+* Search ~/Library/Frameworks and /Library/Frameworks on OSX - [@shaneholloway](https://github.com/shaneholloway).
 
 Bug Fixes
 ---------
 * Fix `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22).
+* Fix crash in direct mode callbacks with certain type conversions - [@twall](https://github.com/twall).
 
 Release 3.4.2
 =============

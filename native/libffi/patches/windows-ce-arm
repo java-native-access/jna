@@ -1,0 +1,64 @@
+Index: libffi/src/arm/ffi.c
+===================================================================
+--- libffi.orig/src/arm/ffi.c
++++ libffi/src/arm/ffi.c
+@@ -1,5 +1,6 @@
+ /* -----------------------------------------------------------------------
+-   ffi.c - Copyright (c) 2011 Plausible Labs Cooperative, Inc.
++   ffi.c - Copyright (c) 2011 Timothy Wall
++           Copyright (c) 2011 Plausible Labs Cooperative, Inc.
+            Copyright (c) 2011 Anthony Green
+ 	   Copyright (c) 2011 Free Software Foundation
+            Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
+@@ -64,6 +65,7 @@ int ffi_prep_args(char *stack, extended_
+        i--, p_arg++)
+     {
+       size_t z;
++      size_t alignment;
+ 
+       /* Allocated in VFP registers. */
+       if (ecif->cif->abi == FFI_VFP
+@@ -81,8 +83,13 @@ int ffi_prep_args(char *stack, extended_
+ 	}
+ 
+       /* Align if necessary */
+-      if (((*p_arg)->alignment - 1) & (unsigned) argp) {
+-	argp = (char *) ALIGN(argp, (*p_arg)->alignment);
++      alignment = (*p_arg)->alignment;
++#ifdef _WIN32_WCE
++      if (alignment > 4)
++	alignment = 4;
++#endif
++      if ((alignment - 1) & (unsigned) argp) {
++	argp = (char *) ALIGN(argp, alignment);
+       }
+ 
+       if ((*p_arg)->type == FFI_TYPE_STRUCT)
+@@ -320,6 +327,11 @@ ffi_prep_incoming_args_SYSV(char *stack,
+       alignment = (*p_arg)->alignment;
+       if (alignment < 4)
+ 	alignment = 4;
++#ifdef _WIN32_WCE
++      else
++	if (alignment > 4)
++	  alignment = 4;
++#endif
+       /* Align if necessary */
+       if ((alignment - 1) & (unsigned) argp) {
+ 	argp = (char *) ALIGN(argp, alignment);
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -59,6 +59,11 @@
+ 
+ 	* configure: Regenerate.
+ 
++2011-11-12  Timothy Wall  <twall@users.sf.net>
++
++	* src/arm/ffi.c (ffi_prep_args, ffi_prep_incoming_args_SYSV): Max
++	alignment of 4 for wince on ARM.
++
+ 2011-11-12  Kyle Moffett <Kyle.D.Moffett@boeing.com>
+ 	    Anthony Green <green@moxielogic.com>
+ 

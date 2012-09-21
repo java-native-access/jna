@@ -1,0 +1,25 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,7 @@
++2012-03-03  H.J. Lu  <hongjiu.lu@intel.com>
++
++	* src/prep_cif.c (ffi_prep_cif_core): Properly check bad ABI.
++
+ 2012-03-03  Andoni Morales Alastruey  <ylatuya@gmail.com>
+ 
+ 	* configure.ac: Add -no-undefined for both 32- and 64-bit x86
+Index: libffi/src/prep_cif.c
+===================================================================
+--- libffi.orig/src/prep_cif.c
++++ libffi/src/prep_cif.c
+@@ -112,7 +112,7 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(
+   FFI_ASSERT(nfixedargs <= ntotalargs);
+ 
+ #ifndef X86_WIN32
+-  if (! (abi > FFI_FIRST_ABI) && (abi <= FFI_LAST_ABI))
++  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI))
+     return FFI_BAD_ABI;
+ #else
+   if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI || abi == FFI_THISCALL))

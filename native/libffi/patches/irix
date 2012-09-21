@@ -1,0 +1,78 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -111,6 +111,14 @@
+ 
+ 	* configure: Regenerate.
+ 
++2011-02-09  Stuart Shelton  <srcshelton@gmail.com>
++
++	http://bugs.gentoo.org/show_bug.cgi?id=286911
++	* src/mips/ffitarget.h: Clean up error messages.
++	* src/java_raw_api.c (ffi_java_translate_args): Cast raw arg to
++	ffi_raw*.
++	* include/ffi.h.in: Add pragma for SGI compiler.
++
+ 2011-02-09  Anthony Green  <green@moxielogic.com>
+ 
+ 	* configure.ac: Add powerpc64-*-darwin* support.
+Index: libffi/include/ffi.h.in
+===================================================================
+--- libffi.orig/include/ffi.h.in
++++ libffi/include/ffi.h.in
+@@ -282,6 +282,9 @@ typedef struct {
+ } ffi_closure __attribute__((aligned (8)));
+ #else
+ } ffi_closure;
++# ifdef __sgi
++#  pragma pack 0
++# endif
+ #endif
+ 
+ void *ffi_closure_alloc (size_t size, void **code);
+@@ -300,6 +303,9 @@ ffi_prep_closure_loc (ffi_closure*,
+ 		      void *user_data,
+ 		      void*codeloc);
+ 
++#ifdef __sgi
++# pragma pack 8
++#endif
+ typedef struct {
+   char tramp[FFI_TRAMPOLINE_SIZE];
+ 
+Index: libffi/src/java_raw_api.c
+===================================================================
+--- libffi.orig/src/java_raw_api.c
++++ libffi/src/java_raw_api.c
+@@ -311,7 +311,7 @@ ffi_java_translate_args (ffi_cif *cif, v
+   ffi_raw_closure *cl = (ffi_raw_closure*)user_data;
+ 
+   ffi_java_ptrarray_to_raw (cif, avalue, raw);
+-  (*cl->fun) (cif, rvalue, raw, cl->user_data);
++  (*cl->fun) (cif, rvalue, (ffi_raw*)raw, cl->user_data);
+   ffi_java_raw_to_rvalue (cif, rvalue);
+ }
+ 
+Index: libffi/src/mips/ffitarget.h
+===================================================================
+--- libffi.orig/src/mips/ffitarget.h
++++ libffi/src/mips/ffitarget.h
+@@ -51,7 +51,7 @@
+ #  endif
+ 
+ #if !defined(_MIPS_SIM)
+--- something is very wrong --
++# error -- something is very wrong --
+ #else
+ #  if (_MIPS_SIM==_ABIN32 && defined(_ABIN32)) || (_MIPS_SIM==_ABI64 && defined(_ABI64))
+ #    define FFI_MIPS_N32
+@@ -59,7 +59,7 @@
+ #    if (_MIPS_SIM==_ABIO32 && defined(_ABIO32))
+ #      define FFI_MIPS_O32
+ #    else
+--- this is an unsupported platform --
++#     error -- this is an unsupported platform --
+ #    endif
+ #  endif
+ #endif

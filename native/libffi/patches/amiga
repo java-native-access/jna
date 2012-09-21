@@ -1,0 +1,70 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -36,7 +36,12 @@
+ 	* testsuite/libffi.call/struct2_win32.c: New test.
+ 
+ 2012-01-23  Anthony Green  <green@moxielogic.com>
+-	    Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
++	    Chris Young  <cdyoung@ntlworld.com>
++
++	* configure.ac: Add Amiga support.
++	* configure: Rebuilt.
++
++2012-01-23  Dmitry Nadezhin  <dmitry.nadezhin@gmail.com>
+ 
+ 	* include/ffi_common.h (LIKELY, UNLIKELY): Fix definitions.
+ 
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -12138,6 +12138,9 @@ case "$host" in
+   powerpc*-*-linux* | powerpc-*-sysv*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;
++  powerpc-*-amigaos*)
++	TARGET=POWERPC; TARGETDIR=powerpc
++	;;
+   powerpc-*-beos*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -146,6 +146,9 @@ case "$host" in
+   powerpc*-*-linux* | powerpc-*-sysv*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;
++  powerpc-*-amigaos*)
++	TARGET=POWERPC; TARGETDIR=powerpc
++	;;
+   powerpc-*-beos*)
+ 	TARGET=POWERPC; TARGETDIR=powerpc
+ 	;;
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -63,6 +63,7 @@ tested:
+ | MIPS         | Linux            |
+ | MIPS         | RTEMS            |
+ | MIPS64       | Linux            |
++| PowerPC      | AMIGA            |
+ | PowerPC      | Linux            |
+ | PowerPC      | Mac OSX          |
+ | PowerPC      | FreeBSD          |
+@@ -145,7 +146,10 @@ History
+ See the ChangeLog files for details.
+ 
+ 3.0.11 MMM-DD-YY
+-        ??????????
++        Lots of build fixes.
++        Add Amiga newer MacOS support.
++	Fix Octeon and MC68881 support.
++	Fix code pessimizations.
+ 
+ 3.0.10 Aug-23-11
+         Add support for Apple's iOS.

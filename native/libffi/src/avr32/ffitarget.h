@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
+   ffitarget.h - Copyright (c) 2012  Anthony Green
+                 Copyright (c) 2009  Bradley Smith <brad@brad-smith.co.uk>
    Target configuration macros for AVR32.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -26,6 +27,10 @@
 
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
+
+#ifndef LIBFFI_H
+#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
+#endif
 
 #ifndef LIBFFI_ASM
 typedef unsigned long          ffi_arg;

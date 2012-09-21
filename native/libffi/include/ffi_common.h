@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi_common.h - Copyright (C) 2011  Anthony Green
+   ffi_common.h - Copyright (C) 2011, 2012  Anthony Green
                   Copyright (C) 2007  Free Software Foundation, Inc
                   Copyright (c) 1996  Red Hat, Inc.
                   
@@ -75,6 +75,8 @@ void ffi_type_test(ffi_type *a, char *file, int line);
 
 /* Perform machine dependent cif processing */
 ffi_status ffi_prep_cif_machdep(ffi_cif *cif);
+ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
+	 unsigned int nfixedargs, unsigned int ntotalargs);
 
 /* Extended cif, used in callback from assembly routine */
 typedef struct
@@ -116,8 +118,8 @@ typedef float FLOAT32;
 #ifndef __GNUC__
 #define __builtin_expect(x, expected_value) (x)
 #endif
-#define LIKELY(x)    __builtin_expect((x),1)
-#define UNLIKELY(x)  __builtin_expect((x),1)
+#define LIKELY(x)    __builtin_expect(!!(x),1)
+#define UNLIKELY(x)  __builtin_expect((x)!=0,0)
 
 #ifdef __cplusplus
 }

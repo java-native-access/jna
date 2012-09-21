@@ -344,36 +344,32 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
         case CVT_INTEGER_TYPE:
         case CVT_POINTER_TYPE:
         case CVT_NATIVE_MAPPED:
-          *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], args[i+3], JNI_FALSE);
+	  // Make sure we have space enough for the new argument
+	  args[i+3] = alloca(sizeof(void *));
+	  *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE);
           break;
         case CVT_POINTER:
-          *((void **)args[i+3]) = newJavaPointer(env, *(void **)args[i+3]);
+          *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
           break;
         case CVT_STRING:
-          *((void **)args[i+3]) = newJavaString(env, *(void **)args[i+3], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], JNI_FALSE);
           break;
         case CVT_WSTRING:
-          *((void **)args[i+3]) = newJavaWString(env, *(void **)args[i+3]);
+          *((void **)args[i+3]) = newJavaWString(env, *(void **)cbargs[i]);
           break;
         case CVT_STRUCTURE:
-          *((void **)args[i+3]) = newJavaStructure(env, *(void **)args[i+3], cb->arg_classes[i], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaStructure(env, *(void **)cbargs[i], cb->arg_classes[i], JNI_FALSE);
           break;
         case CVT_STRUCTURE_BYVAL:
-          { 
-            void *ptr = args[i+3];
-            args[i+3] = alloca(sizeof(void *));
-            *((void **)args[i+3]) = newJavaStructure(env, ptr, cb->arg_classes[i], JNI_TRUE);
-          }
+	  args[i+3] = alloca(sizeof(void *));
+	  *((void **)args[i+3]) = newJavaStructure(env, cbargs[i], cb->arg_classes[i], JNI_TRUE);
           break;
         case CVT_CALLBACK:
-          *((void **)args[i+3]) = newJavaCallback(env, *(void **)args[i+3], cb->arg_classes[i]);
+          *((void **)args[i+3]) = newJavaCallback(env, *(void **)cbargs[i], cb->arg_classes[i]);
           break;
         case CVT_FLOAT:
-          {
-            void *ptr = alloca(sizeof(double));
-            *(double *)ptr = *(float*)args[i+3];
-            args[i+3] = ptr;
-          }
+	  args[i+3] = alloca(sizeof(double));
+	  *((double *)args[i+3]) = *(float*)cbargs[i];
           break;
         }
       }
@@ -392,8 +388,9 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
       if (!handle_exception(env, self, throwable)) {
         fprintf(stderr, "JNA: error handling callback exception, continuing\n");
       }
-      if (cif->rtype->type != FFI_TYPE_VOID)
+      if (cif->rtype->type != FFI_TYPE_VOID) {
         memset(oldresp, 0, cif->rtype->size);
+      }
     }
     else switch(cb->rflag) {
     case CVT_INTEGER_TYPE:
@@ -435,7 +432,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     if (cb->flags) {
       for (i=0;i < cif->nargs;i++) {
         if (cb->flags[i] == CVT_STRUCTURE) {
-          writeStructure(env, *(void **)args[i+3]);
+          writeStructure(env, *(void **)cbargs[i]);
         }
       }
     }

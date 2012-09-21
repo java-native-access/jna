@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (c) 2011 Plausible Labs Cooperative, Inc.
+   ffi.c - Copyright (c) 2011 Timothy Wall
+           Copyright (c) 2011 Plausible Labs Cooperative, Inc.
            Copyright (c) 2011 Anthony Green
 	   Copyright (c) 2011 Free Software Foundation
            Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
@@ -31,11 +32,6 @@
 #include <ffi_common.h>
 
 #include <stdlib.h>
-
-#ifdef _WIN32_WCE
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 
 /* Forward declares. */
 static int vfp_type_p (ffi_type *);
@@ -89,7 +85,8 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
       /* Align if necessary */
       alignment = (*p_arg)->alignment;
 #ifdef _WIN32_WCE
-      if (alignment > 4) alignment = 4;
+      if (alignment > 4)
+	alignment = 4;
 #endif
       if ((alignment - 1) & (unsigned) argp) {
 	argp = (char *) ALIGN(argp, alignment);
@@ -199,6 +196,18 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
   return FFI_OK;
 }
 
+/* Perform machine dependent cif processing for variadic calls */
+ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
+				    unsigned int nfixedargs,
+				    unsigned int ntotalargs)
+{
+  /* VFP variadic calls actually use the SYSV ABI */
+  if (cif->abi == FFI_VFP)
+	cif->abi = FFI_SYSV;
+
+  return ffi_prep_cif_machdep(cif);
+}
+
 /* Prototypes for assembly functions, in sysv.S */
 extern void ffi_call_SYSV (void (*fn)(void), extended_cif *, unsigned, unsigned, unsigned *);
 extern void ffi_call_VFP (void (*fn)(void), extended_cif *, unsigned, unsigned, unsigned *);
@@ -242,8 +251,10 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
       break;
 
     case FFI_VFP:
+#ifdef __ARM_EABI__
       ffi_call_VFP (fn, &ecif, cif->bytes, cif->flags, ecif.rvalue);
       break;
+#endif
 
     default:
       FFI_ASSERT(0);
@@ -331,8 +342,9 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
       if (alignment < 4)
 	alignment = 4;
 #ifdef _WIN32_WCE
-      if (alignment > 4) 
-        alignment = 4;
+      else
+	if (alignment > 4)
+	  alignment = 4;
 #endif
       /* Align if necessary */
       if ((alignment - 1) & (unsigned) argp) {
@@ -353,6 +365,8 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
 }
 
 /* How to make a trampoline.  */
+
+extern unsigned int ffi_arm_trampoline[3];
 
 #if FFI_EXEC_TRAMPOLINE_TABLE
 
@@ -572,12 +586,14 @@ ffi_closure_free (void *ptr)
 ({ unsigned char *__tramp = (unsigned char*)(TRAMP);			\
    unsigned int  __fun = (unsigned int)(FUN);				\
    unsigned int  __ctx = (unsigned int)(CTX);				\
-   *(unsigned int*) &__tramp[0] = 0xe92d000f; /* stmfd sp!, {r0-r3} */	\
-   *(unsigned int*) &__tramp[4] = 0xe59f0000; /* ldr r0, [pc] */	\
-   *(unsigned int*) &__tramp[8] = 0xe59ff000; /* ldr pc, [pc] */	\
+   unsigned char *insns = (unsigned char *)(CTX);                       \
+   memcpy (__tramp, ffi_arm_trampoline, sizeof ffi_arm_trampoline);     \
    *(unsigned int*) &__tramp[12] = __ctx;				\
    *(unsigned int*) &__tramp[16] = __fun;				\
-   __clear_cache((&__tramp[0]), (&__tramp[19]));			\
+   __clear_cache((&__tramp[0]), (&__tramp[19])); /* Clear data mapping.  */ \
+   __clear_cache(insns, insns + 3 * sizeof (unsigned int));             \
+                                                 /* Clear instruction   \
+                                                    mapping.  */        \
  })
 
 #endif
@@ -595,8 +611,10 @@ ffi_prep_closure_loc (ffi_closure* closure,
 
   if (cif->abi == FFI_SYSV)
     closure_func = &ffi_closure_SYSV;
+#ifdef __ARM_EABI__
   else if (cif->abi == FFI_VFP)
     closure_func = &ffi_closure_VFP;
+#endif
   else
     return FFI_BAD_ABI;
     
@@ -613,11 +631,6 @@ ffi_prep_closure_loc (ffi_closure* closure,
   closure->cif  = cif;
   closure->user_data = user_data;
   closure->fun  = fun;
-
-#ifdef _WIN32_WCE
-  /* This is important to allow calling the trampoline safely */
-  FlushInstructionCache(GetCurrentProcess(), 0, 0);
-#endif
 
   return FFI_OK;
 }

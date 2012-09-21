@@ -1,7 +1,0 @@
-* These libffi sources most recently copied from libffi-3.0.10-rc8 here:
-  http://sourceware.org/libffi
-  http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.10
-
-* To run the testsuite on win64, make your mingw compiler available in the path
-as "gcc".  This could probably be avoided via additional dejagnu configuration,
-but I haven't figured out how.

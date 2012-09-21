@@ -1,0 +1,99 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,5 +1,17 @@
+ 2012-03-03  H.J. Lu  <hongjiu.lu@intel.com>
+ 
++	* src/x86/ffi64.c (ffi_call): Cast the return value to unsigned
++	long.
++	(ffi_prep_closure_loc): Cast to 64bit address in trampoline.
++	(ffi_closure_unix64_inner): Cast return pointer to unsigned long
++	first.
++
++	* src/x86/ffitarget.h (FFI_SIZEOF_ARG): Defined to 8 for x32.
++	(ffi_arg): Set to unsigned long long for x32.
++	(ffi_sarg): Set to long long for x32.
++
++2012-03-03  H.J. Lu  <hongjiu.lu@intel.com>
++
+ 	* src/prep_cif.c (ffi_prep_cif_core): Properly check bad ABI.
+ 
+ 2012-03-03  Andoni Morales Alastruey  <ylatuya@gmail.com>
+Index: libffi/src/x86/ffi64.c
+===================================================================
+--- libffi.orig/src/x86/ffi64.c
++++ libffi/src/x86/ffi64.c
+@@ -427,7 +427,7 @@ ffi_call (ffi_cif *cif, void (*fn)(void)
+   /* If the return value is passed in memory, add the pointer as the
+      first integer argument.  */
+   if (ret_in_memory)
+-    reg_args->gpr[gprcount++] = (long) rvalue;
++    reg_args->gpr[gprcount++] = (unsigned long) rvalue;
+ 
+   avn = cif->nargs;
+   arg_types = cif->arg_types;
+@@ -509,9 +509,11 @@ ffi_prep_closure_loc (ffi_closure* closu
+   tramp = (volatile unsigned short *) &closure->tramp[0];
+ 
+   tramp[0] = 0xbb49;		/* mov <code>, %r11	*/
+-  *(void * volatile *) &tramp[1] = ffi_closure_unix64;
++  *((unsigned long long * volatile) &tramp[1])
++    = (unsigned long) ffi_closure_unix64;
+   tramp[5] = 0xba49;		/* mov <data>, %r10	*/
+-  *(void * volatile *) &tramp[6] = codeloc;
++  *((unsigned long long * volatile) &tramp[6])
++    = (unsigned long) codeloc;
+ 
+   /* Set the carry bit iff the function uses any sse registers.
+      This is clc or stc, together with the first byte of the jmp.  */
+@@ -550,7 +552,7 @@ ffi_closure_unix64_inner(ffi_closure *cl
+ 	{
+ 	  /* The return value goes in memory.  Arrange for the closure
+ 	     return value to go directly back to the original caller.  */
+-	  rvalue = (void *) reg_args->gpr[gprcount++];
++	  rvalue = (void *) (unsigned long) reg_args->gpr[gprcount++];
+ 	  /* We don't have to do anything in asm for the return.  */
+ 	  ret = FFI_TYPE_VOID;
+ 	}
+Index: libffi/src/x86/ffitarget.h
+===================================================================
+--- libffi.orig/src/x86/ffitarget.h
++++ libffi/src/x86/ffitarget.h
+@@ -61,9 +61,15 @@ typedef unsigned long long     ffi_arg;
+ typedef long long              ffi_sarg;
+ #endif
+ #else
++#if defined __x86_64__ && !defined __LP64__
++#define FFI_SIZEOF_ARG 8
++typedef unsigned long long     ffi_arg;
++typedef long long              ffi_sarg;
++#else
+ typedef unsigned long          ffi_arg;
+ typedef signed long            ffi_sarg;
+ #endif
++#endif
+ 
+ typedef enum ffi_abi {
+   FFI_FIRST_ABI = 0,
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -78,6 +78,7 @@ tested:
+ | X86          | Interix          |
+ | X86          | kFreeBSD         |
+ | X86          | Linux            |
++| X86          | Linux/x32        |
+ | X86          | Mac OSX          |
+ | X86          | OpenBSD          |
+ | X86          | OS/2             |
+@@ -148,6 +149,8 @@ See the ChangeLog files for details.
+ 3.0.11 MMM-DD-YY
+         Lots of build fixes.
+         Add Amiga newer MacOS support.
++	Add Linux/x32 support.
++	Add thiscall and fastcall support on Windows.
+ 	Fix Octeon and MC68881 support.
+ 	Fix code pessimizations.
+ 

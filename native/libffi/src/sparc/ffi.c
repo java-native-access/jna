@@ -432,6 +432,10 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 		call_struct[5] = 0x01000000;	     	 /* nop			 */
 	      call_struct[6] = 0x81c7e008;		 /* ret			 */
 	      call_struct[7] = 0xbe100017;		 /* mov   %l7, %i7	 */
+	      asm volatile ("iflush %0; iflush %0+8; iflush %0+16; iflush %0+24" : :
+			    "r" (call_struct) : "memory");
+	      /* SPARC v8 requires 5 instructions for flush to be visible */
+	      asm volatile ("nop; nop; nop; nop; nop");
 	      ffi_call_v8(ffi_prep_args_v8, &ecif, cif->bytes,
 			  cif->flags, rvalue, call_struct);
 	      ffi_closure_free(call_struct);
@@ -464,7 +468,6 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
       FFI_ASSERT(0);
       break;
     }
-
 }
 
 
@@ -509,13 +512,13 @@ ffi_prep_closure_loc (ffi_closure* closure,
   closure->fun = fun;
   closure->user_data = user_data;
 
-  /* Flush the Icache.  FIXME: alignment isn't certain, assume 8 bytes */
+  /* Flush the Icache.  closure is 8 bytes aligned.  */
 #ifdef SPARC64
-  asm volatile ("flush	%0" : : "r" (closure) : "memory");
-  asm volatile ("flush	%0" : : "r" (((char *) closure) + 8) : "memory");
+  asm volatile ("flush	%0; flush %0+8" : : "r" (closure) : "memory");
 #else
-  asm volatile ("iflush	%0" : : "r" (closure) : "memory");
-  asm volatile ("iflush	%0" : : "r" (((char *) closure) + 8) : "memory");
+  asm volatile ("iflush	%0; iflush %0+8" : : "r" (closure) : "memory");
+  /* SPARC v8 requires 5 instructions for flush to be visible */
+  asm volatile ("nop; nop; nop; nop; nop");
 #endif
 
   return FFI_OK;

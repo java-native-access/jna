@@ -1,0 +1,52 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -118,6 +118,11 @@
+ 	uintptr_t first.
+ 	* testsuite/libffi.call/cls_pointer_stack.c (main): Likewise.
+ 
++2011-02-08  Rafael Avila de Espindola  <respindola@mozilla.com>
++
++	* configure.ac: Fix x86 test for pc related relocs.
++	* confifure: Rebuilt.
++
+ 2011-02-07  Joel Sherrill <joel.sherrill@oarcorp.com>
+ 
+ 	* libffi/src/m68k/ffi.c: Add RTEMS support for cache flushing.
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -13155,10 +13155,10 @@ if ${libffi_cv_as_x86_pcrel+:} false; th
+   $as_echo_n "(cached) " >&6
+ else
+ 
+-	libffi_cv_as_x86_pcrel=yes
++	libffi_cv_as_x86_pcrel=no
+ 	echo '.text; foo: nop; .data; .long foo-.; .text' > conftest.s
+-	if $CC $CFLAGS -c conftest.s 2>&1 | $EGREP -i 'illegal|warning' > /dev/null; then
+-	    libffi_cv_as_x86_pcrel=no
++	if $CC $CFLAGS -c conftest.s > /dev/null; then
++	   libffi_cv_as_x86_pcrel=yes
+ 	fi
+ 
+ fi
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -286,10 +286,10 @@ fi
+ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64; then
+     AC_CACHE_CHECK([assembler supports pc related relocs],
+ 	libffi_cv_as_x86_pcrel, [
+-	libffi_cv_as_x86_pcrel=yes
++	libffi_cv_as_x86_pcrel=no
+ 	echo '.text; foo: nop; .data; .long foo-.; .text' > conftest.s
+-	if $CC $CFLAGS -c conftest.s 2>&1 | $EGREP -i 'illegal|warning' > /dev/null; then
+-	    libffi_cv_as_x86_pcrel=no
++	if $CC $CFLAGS -c conftest.s > /dev/null; then
++	   libffi_cv_as_x86_pcrel=yes
+ 	fi
+ 	])
+     if test "x$libffi_cv_as_x86_pcrel" = xyes; then

@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 2004  Renesas Technology.
+   ffitarget.h - Copyright (c) 2012  Anthony Green
+                 Copyright (c) 2004  Renesas Technology.
    Target configuration macros for M32R.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -25,6 +26,10 @@
 
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
+
+#ifndef LIBFFI_H
+#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
+#endif
 
 /* ---- Generic type definitions ----------------------------------------- */
 
