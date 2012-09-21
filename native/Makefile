@@ -122,7 +122,7 @@ endif
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1
+CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DPROCEED_ON_ERROR
 LIBS=-lpsapi
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
@@ -150,7 +150,7 @@ else
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
 MINGW_PREFIX=x86_64-w64-mingw32-
-MINGW_PREFIX=x86_64-pc-mingw32-
+#MINGW_PREFIX=x86_64-pc-mingw32-
 MINGW=$(MINGW_PREFIX)gcc 
 # Still need windres from mingw distribution
 WINDRES=$(MINGW_PREFIX)windres
@@ -159,7 +159,7 @@ WINDRES=$(MINGW_PREFIX)windres
 
 ifeq ($(CC),$(MINGW))
 # No SEH under mingw64
-CDEFINES=-DPSAPI_VERSION=1
+CDEFINES=-DPSAPI_VERSION=1 -DPROCEED_ON_ERROR
 LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
@@ -173,7 +173,7 @@ COPT=
 LIBS=psapi.lib
 ARSFX=.lib
 FFI_CONFIG+=--host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV+=LD="$(LD) cpp=$(CPP)"
+FFI_ENV+=LD="$(LD)" CPP="$(CPP)" CFLAGS="$(CDEFINES)"
 EXTRAOBJS+=$(DLLCB)
 endif
 endif

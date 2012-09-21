@@ -1133,6 +1133,19 @@ public class CallbacksTest extends TestCase {
 
         assertTrue("Callback not called", called[0]);
         assertEquals("Same (in-DLL) address should be re-used for DLL callbacks", first_fptr, cbstruct.getPointer(0));
+    }
+
+    public void testThrowOutOfMemoryWhenDLLCallbacksExhausted() throws Exception {
+        if (!Platform.HAS_DLL_CALLBACKS) {
+            return;
+        }
+
+        final boolean[] called = { false };
+        class TestCallback implements TestLibrary.VoidCallback, com.sun.jna.win32.DLLCallback {
+            public void callback() {
+                called[0] = true;
+            }
+        }
 
         // Exceeding allocations should result in OOM error
         try {

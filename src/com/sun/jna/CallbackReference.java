@@ -226,7 +226,6 @@ class CallbackReference extends WeakReference {
                                                     callingConvention, flags);
             cbstruct = peer != 0 ? new Pointer(peer) : null;
         }
-
     }
     
     private Class getNativeType(Class cls) {

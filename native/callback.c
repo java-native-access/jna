@@ -59,7 +59,7 @@ void (*fn[DLL_FPTRS])();
 ASMFN(0);ASMFN(1);ASMFN(2);ASMFN(3);ASMFN(4);ASMFN(5);ASMFN(6);ASMFN(7);
 ASMFN(8);ASMFN(9);ASMFN(10);ASMFN(11);ASMFN(12);ASMFN(13);ASMFN(14);ASMFN(15);
 
-static void *dll_fptrs[] = {
+static void * const dll_fptrs[] = {
   &asmfn0, &asmfn1, &asmfn2, &asmfn3, &asmfn4, &asmfn5, &asmfn6, &asmfn7,
   &asmfn8, &asmfn9, &asmfn10, &asmfn11, &asmfn12, &asmfn13, &asmfn14, &asmfn15,
 };
@@ -118,6 +118,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     if ((cb->flags[i] = get_conversion_flag(env, cls)) != CVT_DEFAULT) {
       cb->arg_classes[i] = (*env)->NewWeakGlobalRef(env, cls);
       cvt = 1;
+    }
+    else {
+      cb->arg_classes[i] = NULL;
     }
 
     jtype = get_jtype(env, cls);
@@ -222,17 +225,16 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 #ifdef DLL_FPTRS
       // Find an available function pointer and assign it
       if (in_dll) {
-        jboolean found = JNI_FALSE;
-        for (i=0;i < DLL_FPTRS && !found;i++) {
+        for (i=0;i < DLL_FPTRS;i++) {
           if (fn[i] == NULL) {
             fn[i] = cb->x_closure;
             cb->x_closure = dll_fptrs[i];
-            found = JNI_TRUE;
+            break;
           }
         }
-        if (!found) {
+        if (i == DLL_FPTRS) {
           throw_type = EOutOfMemory;
-          throw_msg = "All DLL callbacks have been allocated";
+          throw_msg = "No more DLL callback slots available";
           goto failure_cleanup;
         }
       }
@@ -252,20 +254,22 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 void 
 free_callback(JNIEnv* env, callback *cb) {
   int i;
-
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   ffi_closure_free(cb->closure);
   free(cb->arg_types);
   if (cb->arg_classes) {
     unsigned i;
     for (i=0;i < cb->cif.nargs;i++) {
-      (*env)->DeleteWeakGlobalRef(env, cb->arg_classes[i]);
+      if (cb->arg_classes[i]) {
+        (*env)->DeleteWeakGlobalRef(env, cb->arg_classes[i]);
+      }
     }
     free(cb->arg_classes);
   }
   free(cb->java_arg_types);
-  if (cb->flags)
+  if (cb->flags) {
     free(cb->flags);
+  }
   free(cb->arg_jtypes);
 #ifdef DLL_FPTRS
   for (i=0;i < DLL_FPTRS;i++) {
