@@ -87,6 +87,17 @@ Primary Documentation (JavaDoc)
 
 The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.1/javadoc/).
 
+Publishing to maven central
+==========================
+One time: Set up your gpg keys as described here https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
+One time: Make sure you have a settings.xml as described at the bottom of 7a1 at https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.1.POMandsettingsconfig
+
+Every time:
+maybe update version numbers in pom.xml
+ant stage # Uploads current checkout to maven central
+Follow steps from "release it" at https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt
+
+
 Contributing 
 ============
 
