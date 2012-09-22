@@ -622,6 +622,10 @@ osname=macos
         <os name="AIX"/>
       </or>
     </condition>
+    <!-- Allow explicit override of make variables -->
+    <condition property="make.OPTS" value="${EXTRA_MAKE_OPTS}" else="IGNORE=">
+      <isset property="EXTRA_MAKE_OPTS"/>
+    </condition>
     <!-- Native resource path within jna.jar -->
     <condition property="native.path" value="lib/armeabi" else="com/sun/jna/${os.prefix}">
       <equals arg1="${os.prefix}" arg2="android-arm"/>
@@ -642,6 +646,7 @@ osname=macos
       <arg value="${make.ARCH}"/>
       <arg value="${make.PATH}"/>
       <arg value="${make.OS}"/>
+      <arg line="${make.OPTS}"/>
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>

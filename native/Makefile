@@ -29,7 +29,7 @@
 # The android build requires the android SDK+NDK for cross-compilation;
 # make the tools available on the path and compile with
 # "ant -Dos.prefix=android-arm".  Put the NDK tools in the path and adjust
-# NDK_PLATFORM below.
+# NDK_PLATFORM below or set it in your environment.
 #
 
 # Systems which support POSIX signals may be able to support VM crash
@@ -113,7 +113,7 @@ RANLIB=arm-linux-androideabi-ranlib
 STRIP=arm-linux-androideabi-strip -x
 CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
 COPT+=-fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -march=armv5te -mtune=xscale -msoft-float
-NDK_PLATFORM=/Developer/Applications/android-ndk-r7c/platforms/android-14
+NDK_PLATFORM?=/Developer/Applications/android-ndk-r7c/platforms/android-14
 JAVA_INCLUDES=
 CINCLUDES+=-I"$(NDK_PLATFORM)/arch-arm/usr/include" # -I/usr/include
 LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-arm/usr/lib/" -lgcc -lc -ldl -lm

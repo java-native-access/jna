@@ -8,6 +8,7 @@ Features
 * Automatic cleanup of native threads (based on suggestions from neil smith) - [@twall](https://github.com/twall).
 * Add android-arm target (thanks to ochafik for initial work).
 * Add `jna.tmpdir` to override temporary JNA storage location - [@twall](https://github.com/twall).
+* Add EXTRA_MAKE_OPTS ant property to override make variables - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
