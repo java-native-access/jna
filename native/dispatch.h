@@ -107,7 +107,7 @@ typedef struct _callback {
   jmethodID methodID;
   char* arg_jtypes;
   jboolean direct;
-  void* fptr;
+  size_t fptr_offset;
 } callback;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
@@ -199,6 +199,11 @@ typedef struct _AttachOptions {
 extern jobject initializeThread(callback*,AttachOptions*);
 extern int lastError();
 extern void setLastError(int err);
+
+#ifdef NO_WEAK_GLOBALS
+#define NewWeakGlobalRef NewGlobalRef
+#define DeleteWeakGlobalRef DeleteGlobalRef
+#endif
 
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION

@@ -12,6 +12,7 @@
  * Lesser General Public License for more details.  
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -166,16 +167,17 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       rtype = '*';
     }
     switch(rtype) {
-    case 'V': cb->fptr = (*env)->CallVoidMethod; break;
-    case 'Z': cb->fptr = (*env)->CallBooleanMethod; break;
-    case 'B': cb->fptr = (*env)->CallByteMethod; break;
-    case 'S': cb->fptr = (*env)->CallShortMethod; break;
-    case 'C': cb->fptr = (*env)->CallCharMethod; break;
-    case 'I': cb->fptr = (*env)->CallIntMethod; break;
-    case 'J': cb->fptr = (*env)->CallLongMethod; break;
-    case 'F': cb->fptr = (*env)->CallFloatMethod; break;
-    case 'D': cb->fptr = (*env)->CallDoubleMethod; break;
-    default: cb->fptr = (*env)->CallObjectMethod; break;
+#define OFFSETOF(ENV,METHOD) ((size_t)((char *)&(*(ENV))->METHOD - (char *)(*(ENV))))
+    case 'V': cb->fptr_offset = OFFSETOF(env, CallVoidMethod); break;
+    case 'Z': cb->fptr_offset = OFFSETOF(env, CallBooleanMethod); break;
+    case 'B': cb->fptr_offset = OFFSETOF(env, CallByteMethod); break;
+    case 'S': cb->fptr_offset = OFFSETOF(env, CallShortMethod); break;
+    case 'C': cb->fptr_offset = OFFSETOF(env, CallCharMethod); break;
+    case 'I': cb->fptr_offset = OFFSETOF(env, CallIntMethod); break;
+    case 'J': cb->fptr_offset = OFFSETOF(env, CallLongMethod); break;
+    case 'F': cb->fptr_offset = OFFSETOF(env, CallFloatMethod); break;
+    case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
+    default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
     status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, java_ffi_rtype, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
@@ -306,7 +308,9 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     else if (cb->cif.rtype->size > cif->rtype->size) {
       resp = alloca(cb->cif.rtype->size);
     }
-    ffi_call(&cb->java_cif, FFI_FN(cb->fptr), resp, args);
+#define FPTR(ENV,OFFSET) (*(void **)((char *)(*(ENV)) + OFFSET))
+#define JNI_FN(X) ((void (JNICALL *)(void))(X))
+    ffi_call(&cb->java_cif, JNI_FN(FPTR(env, cb->fptr_offset)), resp, args);
     if ((*env)->ExceptionCheck(env)) {
       jthrowable throwable = (*env)->ExceptionOccurred(env);
       (*env)->ExceptionClear(env);

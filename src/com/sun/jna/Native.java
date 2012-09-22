@@ -591,9 +591,16 @@ public final class Native {
             arch = "ppc64";
         }
         switch(osType) {
+        case Platform.ANDROID:
+            if (arch.startsWith("arm")) {
+                arch = "arm";
+            }
+            osPrefix = "android-" + arch;
+            break;
         case Platform.WINDOWS:
-            if ("i386".equals(arch))
+            if ("i386".equals(arch)) {
                 arch = "x86";
+            }
             osPrefix = "win32-" + arch;
             break;
         case Platform.WINDOWSCE:
@@ -682,6 +689,10 @@ public final class Native {
                 }
             }
         }
+        if (Platform.isAndroid()) {
+            // Native libraries on android must be bundled with the APK
+            System.setProperty("jna.nounpack", "true");
+        }
         try {
             if (!Boolean.getBoolean("jna.nosys")) {
                 System.loadLibrary(libName);
@@ -720,7 +731,7 @@ public final class Native {
             url = Native.class.getResource(resourceName);
         }
         if (url == null) {
-            throw new UnsatisfiedLinkError("jnidispatch (" + resourceName 
+            throw new UnsatisfiedLinkError("JNA native support (" + resourceName 
                                            + ") not found in resource path");
         }
     
@@ -908,11 +919,30 @@ public final class Native {
         catch(IOException e) { e.printStackTrace(); }
     }
 
+    /** Obtain a directory suitable for writing JNA-specific temporary files. 
+        Override with <code>jna.tmpdir</code>
+    */
     static File getTempDir() {
-        File tmp = new File(System.getProperty("java.io.tmpdir"));
-        File jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
-        jnatmp.mkdirs();
-        return jnatmp.exists() ? jnatmp : tmp;
+        File jnatmp;
+        String prop = System.getProperty("jna.tmpdir");
+        if (prop != null) {
+            jnatmp = new File(prop);
+        }
+        else {
+            File tmp = new File(System.getProperty("java.io.tmpdir"));
+            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
+            jnatmp.mkdirs();
+            if (!jnatmp.exists() || !jnatmp.canWrite()) {
+                jnatmp = tmp;
+            }
+        }
+        if (!jnatmp.exists()) {
+            throw new Error("JNA temporary directory " + jnatmp + " does not exist");
+        }
+        if (!jnatmp.canWrite()) {
+            throw new Error("JNA temporary directory " + jnatmp + " is not writable");
+        }
+        return jnatmp;
     }
 
     /** Remove all marked temporary files in the given directory. */

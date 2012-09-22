@@ -1521,7 +1521,6 @@ public class StructureTest extends TestCase {
             super(m);
             read(); // Important!
         }
-
         public int value1;
         public ByReference[] array = new ByReference[13];
         public int value2;
