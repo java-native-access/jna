@@ -32,14 +32,17 @@ extern "C" {
 
 #ifdef _WIN32
 #include "com_sun_jna_win32_DLLCallback.h"
-#ifndef __x86_64
+#ifdef _WIN64
 #ifdef _MSC_VER
-/* See dll-callback.S for actual definitions; no inline asm support. */
+/* See dll-callback.c (compiled with mingw64) for actual definitions; no
+   inline asm support for MSVC and no RIP-relative instructions allowed in
+   ML64. 
+*/ 
 #define ASMFN(X) extern void asmfn ## X ()
 #else
 #include "dll-callback.c"
 #endif
-#else /* __x86_64 */
+#else /* _WIN64 */
 #ifdef _MSC_VER
 // FIXME is "PROC NEAR" correct?
 #define ASMFN(X) extern void asmfn ## X(); \
@@ -50,7 +53,7 @@ __asm jmp fn[X]
 _asmfn" #X ":\n\
  jmp *(_fn+4*" #X ")")
 #endif
-#endif /* __x86_64 */
+#endif /* _WIN64 */
 
 // Allocatable trampoline targets
 #define DLL_FPTRS com_sun_jna_win32_DLLCallback_DLL_FPTRS
