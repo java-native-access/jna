@@ -191,7 +191,7 @@ endif
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 
-AM_CFLAGS = -g
+AM_CFLAGS = 
 if FFI_DEBUG
 # Build debug. Define FFI_DEBUG on the commandline so that, when building with
 # MSVC, it can link against the debug CRT.
@@ -201,7 +201,7 @@ endif
 libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
 
 AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
-AM_CCASFLAGS = $(AM_CPPFLAGS) -g
+AM_CCASFLAGS = $(AM_CPPFLAGS) 
 
 # No install-html or install-pdf support in automake yet
 .PHONY: install-html install-pdf

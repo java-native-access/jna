@@ -7,7 +7,7 @@
 
 nowarn="/wd4127 /wd4820 /wd4706 /wd4100 /wd4255 /wd4668"
 args="/nologo /EHac /W3 $nowarn" # /WX
-md="/MD"
+#md="/MD"
 
 cl="cl"
 ml="ml"
@@ -66,7 +66,7 @@ do
     -g)
       # using /RTC1 instead of /GZ
       args="$args /Od /D_DEBUG /RTC1 /Zi"
-      md=/MDd
+#      md=/MDd
       shift 1
     ;;
     -c)
