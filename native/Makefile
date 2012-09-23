@@ -148,7 +148,7 @@ endif
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DPROCEED_ON_ERROR
+CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1
 LIBS=-lpsapi
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
@@ -175,8 +175,7 @@ else
 # Set CC to $(MINGW) to enable mingw64 cross compiler; ensure $(MINGW) is in
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
-MINGW_PREFIX=x86_64-w64-mingw32-
-#MINGW_PREFIX=x86_64-pc-mingw32-
+MINGW_PREFIX?=x86_64-w64-mingw32-
 MINGW=$(MINGW_PREFIX)gcc 
 # Still need windres from mingw distribution
 WINDRES=$(MINGW_PREFIX)windres
@@ -185,7 +184,7 @@ WINDRES=$(MINGW_PREFIX)windres
 
 ifeq ($(CC),$(MINGW))
 # No SEH under mingw64
-CDEFINES=-DPSAPI_VERSION=1 -DPROCEED_ON_ERROR
+CDEFINES=-DPSAPI_VERSION=1 
 LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt

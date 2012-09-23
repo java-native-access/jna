@@ -388,7 +388,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
       resp = alloca(cb->cif.rtype->size);
     }
 #define FPTR(ENV,OFFSET) (*(void **)((char *)(*(ENV)) + OFFSET))
-#define JNI_FN(X) ((void (JNICALL *)(void))(X))
+#define JNI_FN(X) ((void (*)(void))(X))
     ffi_call(&cb->java_cif, JNI_FN(FPTR(env, cb->fptr_offset)), resp, args);
     if ((*env)->ExceptionCheck(env)) {
       jthrowable throwable = (*env)->ExceptionOccurred(env);
