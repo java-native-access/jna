@@ -4,11 +4,11 @@ Release 3.5.0
 Features
 --------
 * `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
-* Search ~/Library/Frameworks and /Library/Frameworks on OSX - [@shaneholloway](https://github.com/shaneholloway).
+* Search `~/Library/Frameworks` and `/Library/Frameworks` on OSX - [@shaneholloway](https://github.com/shaneholloway).
 * Automatic cleanup of native threads (based on suggestions from neil smith) - [@twall](https://github.com/twall).
-* Add android-arm target (thanks to ochafik for initial work).
+* Add `android-arm` target - [@ochafik](https://github.com/ochafik), [@twall](https://github.com/twall).
 * Add `jna.tmpdir` to override temporary JNA storage location - [@twall](https://github.com/twall).
-* Add EXTRA_MAKE_OPTS ant property to override make variables - [@twall](https://github.com/twall).
+* Add `EXTRA_MAKE_OPTS` ant property to override make variables - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
