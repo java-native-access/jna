@@ -7,6 +7,7 @@
 
 nowarn="/wd4127 /wd4820 /wd4706 /wd4100 /wd4255 /wd4668"
 args="/nologo /EHac /W3 $nowarn" # /WX
+md="/MD"
 
 cl="cl"
 ml="ml"
@@ -176,13 +177,11 @@ do
 done
 
 args="$md $args"
-echo "Compiling..."
-echo "$cl $args (INCLUDE=$INCLUDE LIB=$LIB)"
+echo "$cl $args"
 eval "$cl $args"
 result=$?
 # @#!%@!# ml64 broken output
 if [ -n "$assembly" ]; then
-    echo "Currently in $(pwd)"
     mv $src $outdir
     mv *.obj $target
 fi

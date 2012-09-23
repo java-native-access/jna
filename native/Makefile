@@ -148,7 +148,7 @@ endif
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1
+CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING
 LIBS=-lpsapi
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
@@ -184,7 +184,7 @@ WINDRES=$(MINGW_PREFIX)windres
 
 ifeq ($(CC),$(MINGW))
 # No SEH under mingw64
-CDEFINES=-DPSAPI_VERSION=1 
+CDEFINES=-DPSAPI_VERSION=1
 LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
@@ -197,8 +197,8 @@ LD=$(FFI_SRC)/../ld.sh -m64
 COPT=
 LIBS=psapi.lib
 ARSFX=.lib
-FFI_CONFIG+=--host=x86_64-pc-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV+=LD="$(LD)" CPP="$(CPP)" CFLAGS="$(CDEFINES)"
+FFI_CONFIG+=--host=x86_64-w64-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
+FFI_ENV+=LD="$(LD)" CPP="$(CPP)" 
 EXTRAOBJS+=$(DLLCB)
 endif
 endif
@@ -239,7 +239,7 @@ ifeq ($(OS),aix)
 LIBSFX=.a
 PCFLAGS+=-fPIC
 CDEFINES+=-DHAVE_PROTECTION -DNO_JAWT -Wall -D_AIX -DPOWERPC_AIX
-COPT+=-D_AIX -DPOWERPC_AIX -mxl-compat -g
+COPT+=-D_AIX -DPOWERPC_AIX -mxl-compat
 LDFLAGS+=-Wl,-lc128,-lc,-lm,-lpthread
 FFI_ENV+=AR_FLAGS="-X32_64 cru"
 STRIP=echo strip -X32_64
@@ -358,7 +358,7 @@ $(TESTLIB2): $(BUILD)/testlib2.o
 	$(LD) $(LDFLAGS) $< $(TESTDEP) $(LIBS)
 
 ifneq ($(DYNAMIC_LIBFFI),true)
-$(FFI_LIB):
+$(FFI_LIB): 
 	@mkdir -p $(FFI_BUILD)
 	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
 	  echo "Configuring libffi ($(ARCH))"; \

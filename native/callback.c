@@ -522,13 +522,13 @@ static void make_key() {
 static void 
 jvm_detach_on_exit(JavaVM* jvm) {
 #ifdef _WIN32
-    TlsSetValue(dwTlsIndex, jvm);
+  TlsSetValue(dwTlsIndex, (void *)jvm);
 #else
-    static pthread_once_t key_once = PTHREAD_ONCE_INIT;
-    pthread_once(&key_once, make_key);
-    if (!jvm || pthread_getspecific(key) == NULL) {
-      pthread_setspecific(key, jvm);
-    }
+  static pthread_once_t key_once = PTHREAD_ONCE_INIT;
+  pthread_once(&key_once, make_key);
+  if (!jvm || pthread_getspecific(key) == NULL) {
+    pthread_setspecific(key, jvm);
+  }
 #endif
 }
 
