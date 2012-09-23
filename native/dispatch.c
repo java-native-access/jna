@@ -2,7 +2,7 @@
  * @(#)dispatch.c       1.9 98/03/22
  *
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
- * Copyright (c) 2007-2011 Timothy Wall. All Rights Reserved.
+ * Copyright (c) 2007-2012 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -14,11 +14,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- */
-
-/*
- * JNI native methods supporting the infrastructure for shared
- * dispatchers.
  */
 
 #if defined(_WIN32)
@@ -2989,8 +2984,8 @@ Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass UNUSED(classp), jint code) {
-  SET_LAST_ERROR(code);
   update_last_error(env, code);
+  SET_LAST_ERROR(code);
 }
 
 JNIEXPORT jstring JNICALL

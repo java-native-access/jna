@@ -1032,13 +1032,39 @@ public class CallbacksTest extends TestCase {
         };
         callThreadedCallback(cb, init, COUNT, 100, called);
 
-        assertEquals("Native thread mapping not preserved: " + threads,
+        assertEquals("Multiple callbacks on a given native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
     }
 
-    // Callback indicates detach preference; thread is non-daemon (default),
+    public void testAttachedThreadCleanupOnExit() throws Exception {
+        final Set threads = new HashSet();
+        final int[] called = { 0 };
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                threads.add(new WeakReference(Thread.currentThread()));
+                ++called[0];
+                Native.detach(false);
+            }
+        };
+        callThreadedCallback(cb, null, 1, 0, called);
+        while (threads.size() == 0) {
+            Thread.sleep(10);
+        }
+        long start = System.currentTimeMillis();
+        WeakReference ref = (WeakReference)threads.iterator().next();
+        while (ref.get() != null) {
+            System.gc();
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > 5000) {
+                fail("Timed out waiting for attached thread to be detached on exit and disposed: " + ref.get());
+            }
+        }
+    }
+
+    // Callback indicates detach preference (instead of
+    // CallbackThreadInitializer); thread is non-daemon (default), 
     // but callback explicitly detaches it on final invocation.
-    public void testDynamicCallbackThreadPersistence() throws Exception {
+    public void testCallbackIndicatedThreadDetach() throws Exception {
     	final int[] called = {0};
         final Set threads = new HashSet();
         final int COUNT = 5;
@@ -1058,7 +1084,7 @@ public class CallbacksTest extends TestCase {
         };
         callThreadedCallback(cb, null, COUNT, 100, called);
 
-        assertEquals("Native thread mapping not preserved: " + threads,
+        assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
         Thread thread = (Thread)threads.iterator().next();
         long start = System.currentTimeMillis();

@@ -12,6 +12,7 @@
  * Lesser General Public License for more details.  
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -188,6 +189,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }
+  // Calling into Java on win32 *always* uses stdcall
   java_abi = FFI_STDCALL;
 #endif // _WIN32
 
@@ -216,16 +218,17 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       rtype = '*';
     }
     switch(rtype) {
-    case 'V': cb->fptr = (*env)->CallVoidMethod; break;
-    case 'Z': cb->fptr = (*env)->CallBooleanMethod; break;
-    case 'B': cb->fptr = (*env)->CallByteMethod; break;
-    case 'S': cb->fptr = (*env)->CallShortMethod; break;
-    case 'C': cb->fptr = (*env)->CallCharMethod; break;
-    case 'I': cb->fptr = (*env)->CallIntMethod; break;
-    case 'J': cb->fptr = (*env)->CallLongMethod; break;
-    case 'F': cb->fptr = (*env)->CallFloatMethod; break;
-    case 'D': cb->fptr = (*env)->CallDoubleMethod; break;
-    default: cb->fptr = (*env)->CallObjectMethod; break;
+#define OFFSETOF(ENV,METHOD) ((size_t)((char *)&(*(ENV))->METHOD - (char *)(*(ENV))))
+    case 'V': cb->fptr_offset = OFFSETOF(env, CallVoidMethod); break;
+    case 'Z': cb->fptr_offset = OFFSETOF(env, CallBooleanMethod); break;
+    case 'B': cb->fptr_offset = OFFSETOF(env, CallByteMethod); break;
+    case 'S': cb->fptr_offset = OFFSETOF(env, CallShortMethod); break;
+    case 'C': cb->fptr_offset = OFFSETOF(env, CallCharMethod); break;
+    case 'I': cb->fptr_offset = OFFSETOF(env, CallIntMethod); break;
+    case 'J': cb->fptr_offset = OFFSETOF(env, CallLongMethod); break;
+    case 'F': cb->fptr_offset = OFFSETOF(env, CallFloatMethod); break;
+    case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
+    default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
     status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, java_ffi_rtype, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
@@ -384,7 +387,9 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     else if (cb->cif.rtype->size > cif->rtype->size) {
       resp = alloca(cb->cif.rtype->size);
     }
-    ffi_call(&cb->java_cif, FFI_FN(cb->fptr), resp, args);
+#define FPTR(ENV,OFFSET) (*(void **)((char *)(*(ENV)) + OFFSET))
+#define JNI_FN(X) ((void (JNICALL *)(void))(X))
+    ffi_call(&cb->java_cif, JNI_FN(FPTR(env, cb->fptr_offset)), resp, args);
     if ((*env)->ExceptionCheck(env)) {
       jthrowable throwable = (*env)->ExceptionOccurred(env);
       (*env)->ExceptionClear(env);
@@ -466,6 +471,67 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   }
 }
 
+// Handle automatic thread cleanup
+static void detach_thread(void* data) {
+  if (data != NULL) {
+    JavaVM* jvm = (JavaVM *)data;
+    (*jvm)->DetachCurrentThread(jvm);
+  }
+}
+
+#ifdef _WIN32
+
+static DWORD dwTlsIndex;
+BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
+  switch (fdwReason) {
+  case DLL_PROCESS_ATTACH:
+    dwTlsIndex = TlsAlloc();
+    if (dwTlsIndex == TLS_OUT_OF_INDEXES) {
+      return FALSE;
+    }
+    break;
+  case DLL_PROCESS_DETACH:
+    TlsFree(dwTlsIndex);
+    break;
+  case DLL_THREAD_ATTACH:
+    break;
+  case DLL_THREAD_DETACH: {
+    detach_thread(TlsGetValue(dwTlsIndex));
+    break;
+  }
+  default:
+    break;
+  }
+  return TRUE;
+}
+
+#else
+
+#include <pthread.h>
+
+static pthread_key_t key;
+static void make_key() {
+  pthread_key_create(&key, detach_thread);
+}
+
+#endif
+
+/** Set up to detach the thread when it exits, or clear any handlers if the
+    argument is NULL.
+*/
+static void 
+jvm_detach_on_exit(JavaVM* jvm) {
+#ifdef _WIN32
+    TlsSetValue(dwTlsIndex, jvm);
+#else
+    static pthread_once_t key_once = PTHREAD_ONCE_INIT;
+    pthread_once(&key_once, make_key);
+    if (!jvm || pthread_getspecific(key) == NULL) {
+      pthread_setspecific(key, jvm);
+    }
+#endif
+}
+
 static void
 callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   callback* cb = ((callback *)user_data); 
@@ -528,6 +594,10 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   
   if (detach) {
     (*jvm)->DetachCurrentThread(jvm);
+    jvm_detach_on_exit(NULL);
+  }
+  else if (!was_attached) {
+    jvm_detach_on_exit(jvm);
   }
 }
 

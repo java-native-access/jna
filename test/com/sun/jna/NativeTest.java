@@ -281,6 +281,10 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path FreeBSD/x86", "/com/sun/jna/freebsd-i386",
                      Native.getNativeLibraryResourcePath(Platform.FREEBSD,
                                                          "x86", "FreeBSD"));
+        assertEquals("Wrong resource path Linux/armv7l (android)", "/com/sun/jna/android-arm",
+                     Native.getNativeLibraryResourcePath(Platform.ANDROID,
+                                                         "armv7l", "Linux"));
+
         assertEquals("Wrong resource path other/other", "/com/sun/jna/name-ppc",
                      Native.getNativeLibraryResourcePath(Platform.UNSPECIFIED,
                                                          "PowerPC", "Name Of System"));

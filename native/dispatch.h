@@ -110,7 +110,7 @@ typedef struct _callback {
   jmethodID methodID;
   char* arg_jtypes;
   jboolean direct;
-  void* fptr;
+  size_t fptr_offset;
   void* saved_x_closure;
 } callback;
 
@@ -203,6 +203,20 @@ typedef struct _AttachOptions {
 extern jobject initializeThread(callback*,AttachOptions*);
 extern int lastError();
 extern void setLastError(int err);
+
+#ifdef NO_WEAK_GLOBALS
+#define NewWeakGlobalRef NewGlobalRef
+#define DeleteWeakGlobalRef DeleteGlobalRef
+#endif
+
+/* Native memory fault protection */
+#ifdef HAVE_PROTECTION
+#define PROTECT is_protected()
+#endif
+#include "protect.h"
+#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
+#define PSTART() PROTECTED_START()
+#define PEND() PROTECTED_END(ON_ERROR())
 
 #ifdef __cplusplus
 }

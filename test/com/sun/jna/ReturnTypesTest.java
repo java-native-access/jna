@@ -43,7 +43,6 @@ public class ReturnTypesTest extends TestCase {
         
         public static class TestSmallStructure extends Structure {
             public static class ByValue extends TestSmallStructure implements Structure.ByValue { }
-            
             public byte c1;
             public byte c2;
             public short s;
@@ -54,7 +53,6 @@ public class ReturnTypesTest extends TestCase {
 
         public static class TestStructure extends Structure {
             public static class ByValue extends TestStructure implements Structure.ByValue { }
-            
             public byte c;
             public short s;
             public int i;

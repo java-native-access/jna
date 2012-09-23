@@ -109,7 +109,7 @@ public abstract class Structure {
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
-        isARM = "arm".equals(arch);
+	isARM = arch.startsWith("arm");
     }
 
     /** Use the platform default alignment. */
@@ -129,7 +129,10 @@ public abstract class Structure {
     //public static final int ALIGN_8 = 6;
 
     static final int MAX_GNUC_ALIGNMENT =
-        isSPARC || ((isPPC || isARM) && Platform.isLinux()) || Platform.isAix()
+        isSPARC
+        || ((isPPC || isARM)
+            && (Platform.isLinux() || Platform.isAndroid()))
+        || Platform.isAix()
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
@@ -836,7 +839,7 @@ public abstract class Structure {
     }
 
     /** Returns all field names (sorted) provided so far by 
-        {@link #setFieldOrder}
+        {@link #getFieldOrder}
         @param force set if results are required immediately
         @return null if not yet able to provide fields, and force is false.
         @throws Error if force is true and field order data not yet specified
