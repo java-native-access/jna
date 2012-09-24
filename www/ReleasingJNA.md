@@ -1,4 +1,5 @@
-JNA release process (does not yet include maven deployment)
+JNA Release Process
+===================
 
 * Bump version in CHANGES.md and build.xml.  Change JNI version in build.xml *only* if
   JNA's native API has been changed (i.e. md5 changed).  Bump JNA minor version if its Java API
@@ -18,3 +19,5 @@ JNA release process (does not yet include maven deployment)
   * javadoc links
 
 * Tag as <version>, push new tag to origin
+
+* [Release to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)

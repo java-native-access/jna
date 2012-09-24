@@ -68,18 +68,17 @@ For commercial support, please contact twalljava [at] java [dot] net.
 Using the Library
 =================
 
-* [Getting Started](jna/tree/master/www/GettingStarted.md)
-* [Mapping between Java and Native](jna/tree/master/www/Mappings.md)
-* [Using Pointers and Arrays](jna/tree/master/www/PointersAndArrays.md)
-* [Using Structures and Unions](jna/tree/master/www/StructuresAndUnions.md)
-* [Using By-Reference Arguments](jna/tree/master/www/ByRefArguments.md)
-* [Customization of Type Mapping](jna/tree/master/www/CustomMappings.md)
-* [Callbacks/Function Pointers/Closures](jna/tree/master/www/CallbacksAndClosures.md)
-* [Dynamically Typed Languages (JRuby/Jython)](jna/tree/master/www/DynamicallyTypedLanguages.md)
-* [Platform Library](jna/tree/master/www/PlatformLibrary.md)
-* [Direct Method Mapping](jna/tree/master/www/DirectMapping.md) (Optimization)
-* [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
-* [Setting up a Windows Development Environment](jna/tree/master/www/WindowsDevelopmentEnvironment.md)
+* [Getting Started](https://github.com/twall/jna/blob/master/www/GettingStarted.md)
+* [Mapping between Java and Native](https://github.com/twall/jna/blob/master/www/Mappings.md)
+* [Using Pointers and Arrays](https://github.com/twall/jna/blob/master/www/PointersAndArrays.md)
+* [Using Structures and Unions](https://github.com/twall/jna/blob/master/www/StructuresAndUnions.md)
+* [Using By-Reference Arguments](https://github.com/twall/jna/blob/master/www/ByRefArguments.md)
+* [Customization of Type Mapping](https://github.com/twall/jna/blob/master/www/CustomMappings.md)
+* [Callbacks/Function Pointers/Closures](https://github.com/twall/jna/blob/master/www/CallbacksAndClosures.md)
+* [Dynamically Typed Languages (JRuby/Jython)](https://github.com/twall/jna/blob/master/www/DynamicallyTypedLanguages.md)
+* [Platform Library](https://github.com/twall/jna/blob/master/www/PlatformLibrary.md)
+* [Direct Method Mapping](https://github.com/twall/jna/blob/master/www/DirectMapping.md) (Optimization)
+* [Frequently Asked Questions (FAQ)](https://github.com/twall/jna/blob/master/www/FrequentlyAskedQuestions.md)
 * [Avoiding Crashes](http://twall.github.com/jna/3.4.1/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
@@ -87,23 +86,21 @@ Primary Documentation (JavaDoc)
 
 The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.1/javadoc/).
 
-Publishing to maven central
-==========================
-One time: Set up your gpg keys as described here https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
-One time: Make sure you have a settings.xml as described at the bottom of 7a1 at https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.1.POMandsettingsconfig
+Developers
+==========
 
-Every time:
-maybe update version numbers in pom.xml
-ant stage # Uploads current checkout to maven central
-Follow steps from "release it" at https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt
-
+* [Contributing to JNA](https://github.com/twall/jna/blob/master/www/Contributing.md).
+* [Setting up a Windows Development Environment](https://github.com/twall/jna/blob/master/www/WindowsDevelopmentEnvironment.md)
+* [Setting up an Android Development Environment](https://github.com/twall/jna/blob/master/www/AndroidDevelopmentEnvironment.md)
+* [Releasing JNA](https://github.com/twall/jna/blob/master/www/ReleasingJNA.md)
+* [Publishing to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)
 
 Contributing 
 ============
 
-You're encouraged to contribute to JNA. Fork the code from [github.com/twall/jna](https://github.com/twall/jna) and submit pull requests.
+You're encouraged to contribute to JNA. Fork the code from [https://github.com/twall/jna](https://github.com/twall/jna) and submit pull requests.
 
-For more informationon setting up a development environment see [Contributing to JNA](jna/tree/master/www/Contributing.md).
+For more informationon setting up a development environment see [Contributing to JNA](https://github.com/twall/jna/blob/master/www/Contributing.md).
 
 If you are interested in paid support, feel free to say so on the [jna-users mailing list](http://groups.google.com/group/jna-users). Most simple questions will be answered on the list, but more complicated work, new features or target platforms can be negotiated with any of the JNA developers (this is how several of JNA's features came into being). You may even encounter other users with the same need and be able to cost share the new development.
 
@@ -113,4 +110,3 @@ License
 This library is provided under the LGPL, version 2.1 or later.  Alternative license arrangements are negotiable.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
-
