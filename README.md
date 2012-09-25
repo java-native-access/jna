@@ -37,7 +37,7 @@ Features
 * Nested structures and arrays
 * Wide (wchar_t-based) strings
 * Native long support (32- or 64-bit as appropriate)
-* Demo applications
+* [Demo applications/examples](https://github.com/twall/jna/tree/master/contrib)
 * Supported on 1.4 or later JVMs, including JavaME (earlier VMs may work with stubbed NIO support)
 * Customizable marshalling/unmarshalling (argument and return value conversions)
 * Customizable mapping from Java method to native function name, and customizable invocation to simulate C preprocessor function macros
