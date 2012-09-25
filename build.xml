@@ -87,11 +87,11 @@
   <property name="version" value="${jna.major}.${jna.minor}.${jna.revision}" />
 
   <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${version}-javadoc.jar" />
-  <property name="maven-sources-jar" value="${dist}/src-mvn.zip" />
+  <property name="maven-sources-jar" value="${dist}/${artifactId}-${version}-sources.jar" />
 
   <property name="platform-jar" value="${dist}/platform.jar"/>
-  <property name="platform-javadoc-jar" value="${dist}/platforms-javadoc.jar" />
-  <property name="platform-sources-jar" value="${dist}/platforms-sources.jar" />
+  <property name="platform-javadoc-jar" value="${dist}/platform-${version}-javadoc.jar" />
+  <property name="platform-sources-jar" value="${dist}/platform-${version}-sources.jar" />
   <property name="pom" value="pom-jna.xml" />
 
   <!-- defined maven snapshots and staging repository id and url -->
@@ -421,8 +421,7 @@ osname=macos
     </subant>
     <!-- Sources package as required by maven -->
     <zip zipfile="${platform-sources-jar}">
-      <zipfileset dir="${src}" includes="**/*.java,**/*.html,**/*.png"/>
-      <zipfileset dir="${contrib}/platform" includes="**/*.java"/>
+      <zipfileset dir="${contrib}/platform/src" />
     </zip>
     <jar jarfile="${platform-javadoc-jar}">
         <fileset dir="${javadoc}" />
@@ -923,8 +922,7 @@ osname=macos
     </zip>
     <!-- Sources package as required by maven -->
     <zip zipfile="${maven-sources-jar}">
-      <zipfileset dir="${src}" includes="**/*.java,**/*.html,**/*.png"/>
-      <zipfileset dir="${contrib}/platform" includes="**/*.java"/>
+      <zipfileset dir="${src}" />
     </zip>
   </target>
 
@@ -949,7 +947,7 @@ osname=macos
            classpathref="maven-ant-tasks.classpath" />
 
   <!-- Note: Assumes jars in 'dist' folder are current. -->
-  <target name="deploy" description="deploy snapshot version to Maven snapshot repository">
+  <target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
     <artifact:mvn>
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
@@ -961,7 +959,7 @@ osname=macos
 
   <!-- before this, update project version (both build.xml and ${pom}) from SNAPSHOT to RELEASE -->
   <!-- Note: Assumes jars in 'dist' folder are current. -->
-  <target name="stage" description="deploy release version to Maven staging repository">
+  <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the main artifact -->
     <artifact:mvn>
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
