@@ -90,6 +90,8 @@ You can now invoke methods on the library instance just like any other Java clas
     lib.GetSystemTime(time);
 
     System.out.println("Today's integer value is " + time.wDay);
+    
+Several [example applications](https://github.com/twall/jna/tree/master/contrib) are available, as well as [platform-specific mappings](https://github.com/twall/jna/tree/master/contrib/platform).
 
 Optimized Direct Mapping
 ------------------------
