@@ -95,10 +95,10 @@
   <property name="pom" value="pom-jna.xml" />
 
   <!-- defined maven snapshots and staging repository id and url -->
-  <property name="maven-snapshots-repository-id" value="snapshots.java.net" />
-  <property name="maven-snapshots-repository-url" value="https://maven.java.net/content/repositories/snapshots" />
-  <property name="maven-staging-repository-id" value="staging.java.net" />
-  <property name="maven-staging-repository-url" value="https://maven.java.net/service/local/staging/deploy/maven2" />
+  <property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
+  <property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
+  <property name="maven-staging-repository-id" value="sonatype-nexus-staging" />
+  <property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
 
   <!-- Miscellaneous -->
   <property name="build.compiler.emacs" value="true"/>
@@ -942,7 +942,14 @@ osname=macos
     </subant>
   </target>
 
-  <target name="deploy" depends="dist,platform-jar" description="deploy snapshot version to Maven snapshot repository">
+
+  <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+           uri="antlib:org.apache.maven.artifact.ant"
+           classpathref="maven-ant-tasks.classpath" />
+
+  <!-- Note: Assumes jars in 'dist' folder are current. -->
+  <target name="deploy" description="deploy snapshot version to Maven snapshot repository">
     <artifact:mvn>
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
@@ -953,7 +960,8 @@ osname=macos
   </target>
 
   <!-- before this, update project version (both build.xml and ${pom}) from SNAPSHOT to RELEASE -->
-  <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
+  <!-- Note: Assumes jars in 'dist' folder are current. -->
+  <target name="stage" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the main artifact -->
     <artifact:mvn>
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
