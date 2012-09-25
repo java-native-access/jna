@@ -6,7 +6,7 @@
   <groupId>net.java.dev.jna</groupId>
   <artifactId>platform</artifactId>
   <packaging>jar</packaging>
-  <version>3.4.0</version>
+  <version>3.4.1</version>
   <name>Java Native Access Platform</name>
   <description>Java Native Access Platform</description>
   <url>https://github.com/twall/jna</url>
