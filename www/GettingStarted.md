@@ -91,7 +91,10 @@ You can now invoke methods on the library instance just like any other Java clas
 
     System.out.println("Today's integer value is " + time.wDay);
 
-Alternatively, you may declare a class to hold your native methods, declare any number of methods with the `native` qualifier, and invoke `Native.register(String)` in the class static initializer with your library's name. See [JNA Direct Mapping](DirectMapping.md) for an example.
+Optimized Direct Mapping
+------------------------
+
+JNA provides an additional method of mapping native methods, should you need extra performance.  You may declare a class to hold your native methods, declare any number of methods with the `native` qualifier, and invoke `Native.register(String)` in the class static initializer with your library's name. See [JNA Direct Mapping](DirectMapping.md) for an example, as well as any of the [`DirectXXXTest`](https://github.com/twall/jna/tree/master/test/com/sun/jna) unit tests.
 
 If the C header files for your library are available, you can auto-generate a library mapping by using Olivier Chafik's excellent [JNAerator](http://jnaerator.googlecode.com/) utility. This is especially useful if your library uses long or complicated structures where translating by hand can be error-prone.
 
