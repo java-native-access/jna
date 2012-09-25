@@ -12,15 +12,13 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.LPARAM;
-import com.sun.jna.platform.win32.WinDef.LRESULT;
-import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
@@ -68,6 +66,10 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public HWND hwndMoveSize;
         public HWND hwndCaret;
         public RECT rcCaret;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbSize", "flags", "hwndActive", "hwndFocus", "hwndCapture", "hwndMenuOwner", "hwndMoveSize", "hwndCaret", "rcCaret" }); 
+        }
     }
 
     public class WINDOWINFO extends Structure {
@@ -81,6 +83,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int cyWindowBorders;
         public short atomWindowType;
         public short wCreatorVersion;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbSize", "rcWindow", "rcClient", "dwStyle", "dwExStyle", "dwWindowStatus", "cxWindowBorders", "cyWindowBorders", "atomWindowType", "wCreatorVersion" });
+        }
     }
 
     int GWL_EXSTYLE = -20;
@@ -117,6 +122,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
             this.x = x; 
             this.y = y; 
         }
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "x", "y" });
+        }
     }
     
     public class MSG extends Structure {
@@ -126,6 +134,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public LPARAM lParam;
         public int time;
         public POINT pt;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "hWnd", "message", "wParam", "lParam", "time", "pt" });
+        }
     }
 
     public class FLASHWINFO extends Structure {
@@ -134,6 +145,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int dwFlags;
         public int uCount;
         public int dwTimeout;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbSize", "hWnd", "dwFlags", "uCount", "dwTimeout" });
+        }
     }
 
     public interface WNDENUMPROC extends StdCallCallback {
@@ -153,6 +167,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
             this.cx = w; 
             this.cy = h; 
         }
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cx", "cy" });
+        }
     }
     
     int AC_SRC_OVER = 0x00;
@@ -165,6 +182,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public byte BlendFlags = 0; // only valid value
         public byte SourceConstantAlpha;
         public byte AlphaFormat;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "BlendOp", "BlendFlags", "SourceConstantAlpha", "AlphaFormat"});
+        }
     }
 
     int VK_SHIFT = 16;
@@ -264,6 +284,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int flags;
         public int time;
         public ULONG_PTR dwExtraInfo;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "vkCode", "scanCode", "flags", "time", "dwExtraInfo" });
+        }
     }
 
     int SM_CXSCREEN = 0;
@@ -490,6 +513,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.DWORD uMsg;
         public WinDef.WORD wParamL;
         public WinDef.WORD wParamH;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "uMsg", "wParamL", "wParamH" });
+        }
     }
 
     /**
@@ -521,7 +547,10 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
         public WinDef.DWORD type;
         public INPUT_UNION input = new INPUT_UNION();
-
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "type", "input" });
+        }
+        
         public static class INPUT_UNION extends Union {
 
             public INPUT_UNION() {
@@ -609,6 +638,10 @@ public interface WinUser extends StdCallLibrary, WinDef {
          * information.
          */
         public BaseTSD.ULONG_PTR dwExtraInfo;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "wVk", "wScan", "dwFlags", "time", "dwExtraInfo" });
+        }
     }
 
     /**
@@ -639,6 +672,10 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.DWORD dwFlags;
         public WinDef.DWORD time;
         public BaseTSD.ULONG_PTR dwExtraInfo;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dx", "dy", "mouseData", "dwFlags", "time", "dwExtraInfo" });
+        }
     }
 
     /**
@@ -649,5 +686,9 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
         // Tick count of when the last input event was received.
         public int dwTime;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbSize", "dwTime" });
+        }
     }
 }

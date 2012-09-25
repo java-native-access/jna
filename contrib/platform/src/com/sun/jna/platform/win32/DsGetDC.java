@@ -12,7 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.NativeLong;
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -34,14 +36,10 @@ public interface DsGetDC extends StdCallLibrary {
      */
     public static class DOMAIN_CONTROLLER_INFO extends Structure {
 	    
-        public static class ByReference extends DOMAIN_CONTROLLER_INFO implements Structure.ByReference {
+        public static class ByReference extends DOMAIN_CONTROLLER_INFO implements Structure.ByReference { }
+		
+        public DOMAIN_CONTROLLER_INFO() { }
 
-        }
-		
-        public DOMAIN_CONTROLLER_INFO() {
-			
-        }
-		
         public DOMAIN_CONTROLLER_INFO(Pointer memory) {
             super(memory);
             read();
@@ -105,6 +103,10 @@ public interface DsGetDC extends StdCallLibrary {
          * subnet that the computer is in with a valid site.
          */
         public WString ClientSiteName;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "DomainControllerName", "DomainControllerAddress", "DomainGuid", "DomainName", "DnsForestName", "Flags", "DcSiteName", "ClientSiteName"});
+        }
     }	
 	
     /**
@@ -117,6 +119,10 @@ public interface DsGetDC extends StdCallLibrary {
         }
 
         public DOMAIN_CONTROLLER_INFO.ByReference dci;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dci" });
+        }
     }
 	
     /**
@@ -161,7 +167,6 @@ public interface DsGetDC extends StdCallLibrary {
     public static class DS_DOMAIN_TRUSTS extends Structure {
 			
         public static class ByReference extends DS_DOMAIN_TRUSTS implements Structure.ByReference {
-
         }
 		
         /**
@@ -175,20 +180,20 @@ public interface DsGetDC extends StdCallLibrary {
         /**
          * Contains a set of flags that specify more data about the domain trust.
          */	    
-        public NativeLong Flags;
+        public int Flags;
         /**
          * Contains the index in the Domains array returned by the DsEnumerateDomainTrusts function that 
          * corresponds to the parent domain of the domain represented by this structure.
          */
-        public NativeLong ParentIndex;
+        public int ParentIndex;
         /**
          * Contains a value that indicates the type of trust represented by this structure.
          */
-        public NativeLong TrustType;	    
+        public int TrustType;	    
         /**
          * Contains a value that indicates the attributes of the trust represented by this structure.
          */
-        public NativeLong TrustAttributes;
+        public int TrustAttributes;
 	    
         /**
          * Contains the security identifier of the domain represented by this structure.
@@ -199,27 +204,16 @@ public interface DsGetDC extends StdCallLibrary {
          * Contains the GUID of the domain represented by this structure.
          */
         public GUID DomainGuid;
-    };
-	
-    /**
-     * A pointer to an array of DS_DOMAIN_TRUSTS.
-     */
-    public static class PDS_DOMAIN_TRUSTS extends Structure {
-        public static class ByReference extends PDS_DOMAIN_TRUSTS implements Structure.ByReference {
+        
+        protected List getFieldOrder() { 
+            return Arrays.asList(new String[] { "NetbiosDomainName", "DnsDomainName", "Flags", "ParentIndex", "TrustType", "TrustAttributes", "DomainSid", "DomainGuid" });
+        }
 
+        public DS_DOMAIN_TRUSTS() {
         }
-		
-        public DS_DOMAIN_TRUSTS.ByReference t;
-		
-        /**
-         * Returns domain trusts.
-         * @param count
-         *  Number of domain trusts.
-         * @return
-         *  An array of domain trusts.
-         */
-        public DS_DOMAIN_TRUSTS[] getTrusts(int count) {
-            return (DS_DOMAIN_TRUSTS[]) t.toArray(count);
+
+        public DS_DOMAIN_TRUSTS(Pointer p) {
+            super(p);
         }
-    }
+    };
 }

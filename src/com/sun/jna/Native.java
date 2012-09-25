@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, 2008, 2009 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2012 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -85,8 +85,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.4.1";
-    private static final String VERSION_NATIVE = "3.4.0";
+    private static final String VERSION = "3.5.0";
+    private static final String VERSION_NATIVE = "3.5.0";
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -591,9 +591,16 @@ public final class Native {
             arch = "ppc64";
         }
         switch(osType) {
+        case Platform.ANDROID:
+            if (arch.startsWith("arm")) {
+                arch = "arm";
+            }
+            osPrefix = "android-" + arch;
+            break;
         case Platform.WINDOWS:
-            if ("i386".equals(arch))
+            if ("i386".equals(arch)) {
                 arch = "x86";
+            }
             osPrefix = "win32-" + arch;
             break;
         case Platform.WINDOWSCE:
@@ -682,6 +689,10 @@ public final class Native {
                 }
             }
         }
+        if (Platform.isAndroid()) {
+            // Native libraries on android must be bundled with the APK
+            System.setProperty("jna.nounpack", "true");
+        }
         try {
             if (!Boolean.getBoolean("jna.nosys")) {
                 System.loadLibrary(libName);
@@ -720,7 +731,7 @@ public final class Native {
             url = Native.class.getResource(resourceName);
         }
         if (url == null) {
-            throw new UnsatisfiedLinkError("jnidispatch (" + resourceName 
+            throw new UnsatisfiedLinkError("JNA native support (" + resourceName 
                                            + ") not found in resource path");
         }
     
@@ -814,6 +825,8 @@ public final class Native {
     public static native void setLastError(int code);
 
     /** Update the last error value (called from native code). */
+    // This has to be called immediately after a native call to ensure that
+    // subsequent VM operations don't overwrite the last error value
     static void updateLastError(int e) {
         lastError.set(new Integer(e));
     }
@@ -906,11 +919,30 @@ public final class Native {
         catch(IOException e) { e.printStackTrace(); }
     }
 
+    /** Obtain a directory suitable for writing JNA-specific temporary files. 
+        Override with <code>jna.tmpdir</code>
+    */
     static File getTempDir() {
-        File tmp = new File(System.getProperty("java.io.tmpdir"));
-        File jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
-        jnatmp.mkdirs();
-        return jnatmp.exists() ? jnatmp : tmp;
+        File jnatmp;
+        String prop = System.getProperty("jna.tmpdir");
+        if (prop != null) {
+            jnatmp = new File(prop);
+        }
+        else {
+            File tmp = new File(System.getProperty("java.io.tmpdir"));
+            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
+            jnatmp.mkdirs();
+            if (!jnatmp.exists() || !jnatmp.canWrite()) {
+                jnatmp = tmp;
+            }
+        }
+        if (!jnatmp.exists()) {
+            throw new Error("JNA temporary directory " + jnatmp + " does not exist");
+        }
+        if (!jnatmp.canWrite()) {
+            throw new Error("JNA temporary directory " + jnatmp + " is not writable");
+        }
+        return jnatmp;
     }
 
     /** Remove all marked temporary files in the given directory. */
@@ -1498,13 +1530,19 @@ public final class Native {
     /** Free the given callback trampoline. */
     static synchronized native void freeNativeCallback(long ptr);
 
+    /** Use direct mapping for callback. */
+    static final int CB_OPTION_DIRECT = 1;
+    /** Return a DLL-resident fucntion pointer. */
+    static final int CB_OPTION_IN_DLL = 2;
+
     /** Create a native trampoline to delegate execution to the Java callback. 
      */
     static synchronized native long createNativeCallback(Callback callback, 
                                                          Method method, 
                                                          Class[] parameterTypes,
                                                          Class returnType,
-                                                         int callingConvention, boolean direct);
+                                                         int callingConvention,
+                                                         int flags);
     
     /**
      * Call the native function being represented by this object
@@ -1609,8 +1647,17 @@ public final class Native {
      */
     static native Object invokeObject(long fp, int callFlags, Object[] args);
 
-    static native long open(String name);
+    /** Open the requested native library with default options. */
+    static long open(String name) {
+        return open(name, -1);
+    }
 
+    /** Open the requested native library with the specified platform-specific
+     * otions.
+     */ 
+    static native long open(String name, int flags);
+
+    /** Close the given native library. */
     static native void close(long handle);
 
     static native long findSymbol(long handle, String name);

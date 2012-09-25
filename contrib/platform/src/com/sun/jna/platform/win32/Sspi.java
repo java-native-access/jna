@@ -12,8 +12,10 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Memory;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -137,17 +139,18 @@ public interface Sspi extends StdCallLibrary {
     public static class SecHandle extends Structure {		
         public Pointer dwLower;
         public Pointer dwUpper;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dwLower", "dwUpper" });
+        }
 
         public static class ByReference extends SecHandle implements Structure.ByReference {
-
         }
 		
         /**
          * An empty SecHandle.
          */
         public SecHandle() {
-            dwLower = null;
-            dwUpper = null;
         }
 		
         /**
@@ -166,16 +169,18 @@ public interface Sspi extends StdCallLibrary {
     public static class PSecHandle extends Structure {
 
         public static class ByReference extends PSecHandle implements Structure.ByReference {
-
         }
 		
         /**
          * The first entry in an array of SecPkgInfo structures.
          */
         public SecHandle.ByReference secHandle;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "secHandle" });
+        }
 		
         public PSecHandle() {
-			
         }
 
         public PSecHandle(SecHandle h) {
@@ -210,7 +215,6 @@ public interface Sspi extends StdCallLibrary {
              * Create a SECBUFFER_EMPTY SecBuffer.
              */
             public ByReference() {
-    			
             }
     		
             /**
@@ -241,24 +245,25 @@ public interface Sspi extends StdCallLibrary {
         /**
          * Specifies the size, in bytes, of the buffer pointed to by the pvBuffer member.
          */
-        public NativeLong cbBuffer;
+        public int cbBuffer;
         /**
          * Bit flags that indicate the type of buffer. Must be one of the values of 
          * the SecBufferType enumeration.
          */
-        public NativeLong BufferType;
+        public int BufferType = SECBUFFER_EMPTY;
         /**
          * A pointer to a buffer.
          */
         public Pointer pvBuffer;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbBuffer", "BufferType", "pvBuffer" });
+        }
 	    
         /**
          * Create a new SECBUFFER_EMPTY buffer.
          */
         public SecBuffer() {
-            cbBuffer = new NativeLong(0);
-            pvBuffer = null;
-            BufferType = new NativeLong(SECBUFFER_EMPTY);
         }
 	    
         /**
@@ -269,10 +274,9 @@ public interface Sspi extends StdCallLibrary {
          *  Buffer size, eg. MAX_TOKEN_SIZE.
          */
         public SecBuffer(int type, int size) {
-            cbBuffer = new NativeLong(size);	    	
+            cbBuffer = size;	    	
             pvBuffer = new Memory(size);
-            BufferType = new NativeLong(type);
-            allocateMemory();
+            BufferType = type;
         }
 	    
         /**
@@ -283,11 +287,10 @@ public interface Sspi extends StdCallLibrary {
          *  Existing token.
          */
         public SecBuffer(int type, byte[] token) {
-            cbBuffer = new NativeLong(token.length);	    	
+            cbBuffer = token.length;	    	
             pvBuffer = new Memory(token.length);
             pvBuffer.write(0, token, 0, token.length);
-            BufferType = new NativeLong(type);
-            allocateMemory();
+            BufferType = type;
         }
 	    
         /**
@@ -296,7 +299,7 @@ public interface Sspi extends StdCallLibrary {
          *  Raw buffer bytes.
          */
         public byte[] getBytes() {
-            return pvBuffer.getByteArray(0, cbBuffer.intValue());
+            return pvBuffer == null ? null : pvBuffer.getByteArray(0, cbBuffer);
         }
     }
 
@@ -305,22 +308,26 @@ public interface Sspi extends StdCallLibrary {
         /**
          * Version number.
          */
-        public NativeLong ulVersion;
+        public int ulVersion;
         /**
          * Number of buffers.
          */
-        public NativeLong cBuffers;
+        public int cBuffers;
         /**
          * Pointer to array of buffers.
          */
         public SecBuffer.ByReference[] pBuffers;
 
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "ulVersion", "cBuffers", "pBuffers" });
+        }
+        
         /**
          * Create a new SecBufferDesc with one SECBUFFER_EMPTY buffer.
          */
         public SecBufferDesc() {
-            ulVersion = new NativeLong(SECBUFFER_VERSION);
-            cBuffers = new NativeLong(1);
+            ulVersion = SECBUFFER_VERSION;
+            cBuffers = 1;
             SecBuffer.ByReference secBuffer = new SecBuffer.ByReference();
             pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
             allocateMemory();
@@ -334,8 +341,8 @@ public interface Sspi extends StdCallLibrary {
          *  Initial token data.
          */
         public SecBufferDesc(int type, byte[] token) {
-            ulVersion = new NativeLong(SECBUFFER_VERSION);
-            cBuffers = new NativeLong(1);
+            ulVersion = SECBUFFER_VERSION;
+            cBuffers = 1;
             SecBuffer.ByReference secBuffer = new SecBuffer.ByReference(type, token);
             pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
             allocateMemory();	    	
@@ -347,18 +354,18 @@ public interface Sspi extends StdCallLibrary {
          * @param tokenSize
          */
         public SecBufferDesc(int type, int tokenSize) {
-            ulVersion = new NativeLong(SECBUFFER_VERSION);
-            cBuffers = new NativeLong(1);
+            ulVersion = SECBUFFER_VERSION;
+            cBuffers = 1;
             SecBuffer.ByReference secBuffer = new SecBuffer.ByReference(type, tokenSize);
             pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
             allocateMemory();
         }	    	
 	    
         public byte[] getBytes() {
-            if (pBuffers == null || cBuffers == null) {
+            if (pBuffers == null || cBuffers == 0) {
                 throw new RuntimeException("pBuffers | cBuffers");
             }
-            if (cBuffers.intValue() == 1) {
+            if (cBuffers == 1) {
                 return pBuffers[0].getBytes();
             }	    	
             throw new RuntimeException("cBuffers > 1");
@@ -369,15 +376,17 @@ public interface Sspi extends StdCallLibrary {
      * A security integer.
      */
     public static class SECURITY_INTEGER extends Structure {
-        public NativeLong dwLower;
-        public NativeLong dwUpper;
+        public int dwLower;
+        public int dwUpper;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dwLower", "dwUpper" }); 
+        }
 
         /**
          * An security integer of 0.
          */
         public SECURITY_INTEGER() {
-            dwLower = new NativeLong(0);
-            dwUpper = new NativeLong(0);
         }
     }
 	
@@ -385,7 +394,6 @@ public interface Sspi extends StdCallLibrary {
      * A timestamp.
      */
     public static class TimeStamp extends SECURITY_INTEGER {
-		
     }
 	
     /**
@@ -402,8 +410,11 @@ public interface Sspi extends StdCallLibrary {
          */
         public SecPkgInfo.ByReference pPkgInfo;
 		
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "pPkgInfo" }); 
+        }
+        
         public PSecPkgInfo() {
-			
         }
 		
         /**
@@ -424,17 +435,16 @@ public interface Sspi extends StdCallLibrary {
          * A reference pointer to a SecPkgInfo structure.
          */
         public static class ByReference extends SecPkgInfo implements Structure.ByReference { 
-			
         }
     	
         /**
          * Set of bit flags that describes the capabilities of the security package.
          */
-        public NativeLong fCapabilities;  
+        public int fCapabilities;  
         /**
          * Specifies the version of the package protocol. Must be 1. 
          */
-        public short wVersion;
+        public short wVersion = 1;
         /**
          * Specifies a DCE RPC identifier, if appropriate. If the package does not implement one of 
          * the DCE registered security systems, the reserved value SECPKG_ID_NONE is used. 
@@ -443,7 +453,7 @@ public interface Sspi extends StdCallLibrary {
         /**
          * Specifies the maximum size, in bytes, of the token. 
          */
-        public NativeLong cbMaxToken;
+        public int cbMaxToken;
         /**
          * Pointer to a null-terminated string that contains the name of the security package.
          */
@@ -454,14 +464,14 @@ public interface Sspi extends StdCallLibrary {
          */
         public WString Comment;
 		
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "fCapabilities", "wVersion", "wRPCID", "cbMaxToken", "Name", "Comment" }); 
+        }
+
         /**
          * Create a new package info.
          */
         public SecPkgInfo() {
-            fCapabilities = new NativeLong(0);
-            wVersion = 1;
-            wRPCID = 0;
-            cbMaxToken = new NativeLong(0);
         }
     }
 }

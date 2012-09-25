@@ -10,6 +10,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -282,6 +285,10 @@ public interface SetupApi extends StdCallLibrary {
          * Reserved. Do not use.
          */
         public Pointer Reserved;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbSize", "InterfaceClassGuid", "Flags", "Reserved" });
+        }
     }
 
     /**
@@ -330,5 +337,9 @@ public interface SetupApi extends StdCallLibrary {
          * Reserved. For internal use only.
          */
         public Pointer Reserved;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "cbSize", "InterfaceClassGuid", "DevInst", "Reserved" });
+        }
     }
 }

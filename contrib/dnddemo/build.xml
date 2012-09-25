@@ -8,7 +8,6 @@
 
     <property name="classes"       location="${build}/classes"/>
     <property name="jar"           location="${build}/demo-dnd.jar"/>
-    <property name="file.reference.jna.build" location="../../build"/>
     <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
     <property name="main-class"			value="com.sun.jna.contrib.demo.GhostedDragImageDemo" />
 
@@ -37,7 +36,6 @@
     <!-- Compile all classes. -->
     <target name="compile">
         <mkdir dir="${classes}"/>
-
         <!-- Compile the project. -->
         <javac srcdir="${src}" destdir="${classes}" target="1.5" source="1.5"
                encoding="UTF-8" debug="on" includeantruntime="false">
@@ -45,29 +43,26 @@
                 <path refid="classpath"/>
             </classpath>
         </javac>
+    </target>
+
+    <!-- Create jar-file. -->
+    <target name="jar" depends="compile">
 
         <!-- Copy all non-java files to classes. -->
         <copy todir="${classes}/com">
             <fileset dir="${src}/com">
                 <exclude name="**/*.java"/>
             </fileset>
-        	<!-- platform -->
-            <fileset dir="../platform/build/classes/com">
-                <exclude name="**/*.java"/>
-            </fileset>
-        	<!-- jna -->
-            <fileset dir="${file.reference.jna.build}/classes/com">
-                <exclude name="**/*.java"/>
-            </fileset>
         </copy>
-    </target>
 
-    <!-- Create jar-file. -->
-    <target name="jar" depends="compile">
         <jar jarfile="${jar}" basedir="${classes}">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
+            <!-- platform -->
+            <fileset dir="../platform/build/classes/com"/>
+            <!-- jna -->
+            <zipfileset src="${file.reference.jna.jar}"/>
         </jar>
     </target>
 </project>

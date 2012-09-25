@@ -41,8 +41,13 @@ import java.util.StringTokenizer;
  * <ol>
  * <li><code>jna.library.path</code> User-customizable path
  * <li><code>jna.platform.library.path</code> Platform-specific paths
+ * <li>On OSX, <code>~/Library/Frameworks</code>,
+ * <code>/Library/Frameworks</code>, and
+ * <code>/System/Library/Frameworks</code> will be searched for a framework
+ * with a name corresponding to that requested.
  * </ol>
  * @author Wayne Meissner, split library loading from Function.java
+ * @author twall
  */
 public class NativeLibrary {
 
@@ -136,7 +141,17 @@ public class NativeLibrary {
             }
         }
         catch(UnsatisfiedLinkError e) {
-            if (Platform.isLinux()) {
+            // For android, try to "preload" the library using 
+            // System.loadLibrary(), which looks into the private /data/data
+            // path, not found in any properties
+            if (Platform.isAndroid()) {
+                try {
+                    System.loadLibrary(libraryName);
+                    handle = Native.open(libraryPath);
+                }
+                catch(UnsatisfiedLinkError e2) { e = e2; }
+            }
+            else if (Platform.isLinux()) {
                 //
                 // Failed to load the library normally - try to match libfoo.so.*
                 //
@@ -150,9 +165,8 @@ public class NativeLibrary {
             }
             // Search framework libraries on OS X
             else if (Platform.isMac() && !libraryName.endsWith(".dylib")) {
-                libraryPath = "/System/Library/Frameworks/" + libraryName
-                    + ".framework/" + libraryName;
-                if (new File(libraryPath).exists()) {
+                libraryPath = matchFramework(libraryName);
+                if (libraryPath != null) {
                     try {
                         handle = Native.open(libraryPath);
                     }
@@ -171,6 +185,20 @@ public class NativeLibrary {
             }
         }
         return new NativeLibrary(libraryName, libraryPath, handle, options);
+    }
+
+    /** Look for a matching framework (OSX) */
+    static String matchFramework(String libraryName) {
+        final String[] PREFIXES = { System.getProperty("user.home"), "", "/System" };
+        String suffix = libraryName.indexOf(".framework") == -1
+            ? libraryName + ".framework/" + libraryName : libraryName;
+        for (int i=0;i < PREFIXES.length;i++) {
+            String libraryPath = PREFIXES[i] + "/Library/Frameworks/" + suffix;
+            if (new File(libraryPath).exists()) {
+                return libraryPath;
+            }
+        }
+        return null;
     }
 
     private String getLibraryName(String libraryName) {
@@ -214,8 +242,9 @@ public class NativeLibrary {
      *
      * @param libraryName The library name to load.
      *      This can be short form (e.g. "c"),
-     *      an explicit version (e.g. "libc.so.6"), or
-     *      the full path to the library (e.g. "/lib/libc.so.6").
+     *      an explicit version (e.g. "libc.so.6" or
+     *      "QuickTime.framework/Versions/Current/QuickTime"), or 
+     *      the full (absolute) path to the library (e.g. "/lib/libc.so.6"). 
      * @param options native library options for the given library (see {@link
      * Library}).
      */
@@ -522,14 +551,11 @@ public class NativeLibrary {
             if (libName.startsWith("lib")) {
                 return libName;
             }
-			else {
-				return System.mapLibraryName(libName);
-			}
         }
         else if (Platform.isWindows()) {
-        	if (libName.endsWith(".drv") || libName.endsWith(".dll")) {
-        		return libName;
-        	}
+            if (libName.endsWith(".drv") || libName.endsWith(".dll")) {
+                return libName;
+            }
         }
 
         return System.mapLibraryName(libName);

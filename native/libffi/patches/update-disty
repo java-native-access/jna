@@ -1,0 +1,37 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,8 @@
++2012-04-11  Anthony Green  <green@moxielogic.com>
++
++	* Makefile.am (EXTRA_DIST): Add new script.
++	* Makefile.in: Rebuilt.
++
+ 2012-04-11  Zachary Waldowski  <zwaldowski@gmail.com>
+ 
+ 	* generate-ios-source-and-headers.py,
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -33,6 +33,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
+ 	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
+ 	msvcc.sh generate-ios-source-and-headers.py \
++	generate-osx-source-and-headers.py \
+         libffi.xcodeproj/project.pbxproj \
+ 	src/arm/trampoline.S
+ 
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -446,6 +446,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
+ 	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
+ 	msvcc.sh generate-ios-source-and-headers.py \
++	generate-osx-source-and-headers.py \
+         libffi.xcodeproj/project.pbxproj \
+ 	src/arm/trampoline.S
+ 

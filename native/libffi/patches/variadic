@@ -1,0 +1,594 @@
+Index: libffi/include/ffi.h.in
+===================================================================
+--- libffi.orig/include/ffi.h.in
++++ libffi/include/ffi.h.in
+@@ -207,6 +207,15 @@ typedef struct {
+ #endif
+ } ffi_cif;
+ 
++/* Used internally, but overridden by some architectures */
++ffi_status ffi_prep_cif_core(ffi_cif *cif,
++			     ffi_abi abi,
++			     unsigned int isvariadic,
++			     unsigned int nfixedargs,
++			     unsigned int ntotalargs,
++			     ffi_type *rtype,
++			     ffi_type **atypes);
++
+ /* ---- Definitions for the raw API -------------------------------------- */
+ 
+ #ifndef FFI_SIZEOF_ARG
+@@ -384,6 +393,13 @@ ffi_status ffi_prep_cif(ffi_cif *cif,
+ 			ffi_type *rtype,
+ 			ffi_type **atypes);
+ 
++ffi_status ffi_prep_cif_var(ffi_cif *cif,
++			    ffi_abi abi,
++			    unsigned int nfixedargs,
++			    unsigned int ntotalargs,
++			    ffi_type *rtype,
++			    ffi_type **atypes);
++
+ void ffi_call(ffi_cif *cif,
+ 	      void (*fn)(void),
+ 	      void *rvalue,
+Index: libffi/include/ffi_common.h
+===================================================================
+--- libffi.orig/include/ffi_common.h
++++ libffi/include/ffi_common.h
+@@ -75,6 +75,8 @@ void ffi_type_test(ffi_type *a, char *fi
+ 
+ /* Perform machine dependent cif processing */
+ ffi_status ffi_prep_cif_machdep(ffi_cif *cif);
++ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
++	 unsigned int nfixedargs, unsigned int ntotalargs);
+ 
+ /* Extended cif, used in callback from assembly routine */
+ typedef struct
+Index: libffi/man/Makefile.am
+===================================================================
+--- libffi.orig/man/Makefile.am
++++ libffi/man/Makefile.am
+@@ -2,7 +2,7 @@
+ 
+ AUTOMAKE_OPTIONS=foreign
+ 
+-EXTRA_DIST = ffi.3 ffi_call.3 ffi_prep_cif.3
++EXTRA_DIST = ffi.3 ffi_call.3 ffi_prep_cif.3 ffi_prep_cif_var.3
+ 
+-man_MANS = ffi.3 ffi_call.3 ffi_prep_cif.3
++man_MANS = ffi.3 ffi_call.3 ffi_prep_cif.3 ffi_prep_cif_var.3
+ 
+Index: libffi/man/ffi.3
+===================================================================
+--- libffi.orig/man/ffi.3
++++ libffi/man/ffi.3
+@@ -16,6 +16,15 @@ libffi, -lffi
+ .Fa "ffi_type **atypes"
+ .Fc
+ .Ft void
++.Fo ffi_prep_cif_var
++.Fa "ffi_cif *cif"
++.Fa "ffi_abi abi"
++.Fa "unsigned int nfixedargs"
++.Fa "unsigned int ntotalargs"
++.Fa "ffi_type *rtype"
++.Fa "ffi_type **atypes"
++.Fc
++.Ft void
+ .Fo ffi_call
+ .Fa "ffi_cif *cif"
+ .Fa "void (*fn)(void)"
+@@ -28,4 +37,5 @@ generate a call to another function at r
+ the called function's interface at compile time.
+ .Sh SEE ALSO
+ .Xr ffi_prep_cif 3 ,
++.Xr ffi_prep_cif_var 3 ,
+ .Xr ffi_call 3
+Index: libffi/man/ffi_prep_cif.3
+===================================================================
+--- libffi.orig/man/ffi_prep_cif.3
++++ libffi/man/ffi_prep_cif.3
+@@ -37,7 +37,9 @@ structs that describe the data type, siz
+ points to an
+ .Nm ffi_type
+ that describes the data type, size and alignment of the
+-return value.
++return value. Note that to call a variadic function
++.Nm ffi_prep_cif_var
++must be used instead.
+ .Sh RETURN VALUES
+ Upon successful completion,
+ .Nm ffi_prep_cif
+@@ -63,4 +65,6 @@ defined in
+ .
+ .Sh SEE ALSO
+ .Xr ffi 3 ,
+-.Xr ffi_call 3 
++.Xr ffi_call 3 ,
++.Xr ffi_prep_cif_var 3
++
+Index: libffi/man/ffi_prep_cif_var.3
+===================================================================
+--- /dev/null
++++ libffi/man/ffi_prep_cif_var.3
+@@ -0,0 +1,73 @@
++.Dd January 25, 2011
++.Dt ffi_prep_cif_var 3
++.Sh NAME
++.Nm ffi_prep_cif_var
++.Nd Prepare a
++.Nm ffi_cif
++structure for use with
++.Nm ffi_call
++for variadic functions.
++.Sh SYNOPSIS
++.In ffi.h
++.Ft ffi_status
++.Fo ffi_prep_cif_var
++.Fa "ffi_cif *cif"
++.Fa "ffi_abi abi"
++.Fa "unsigned int nfixedargs"
++.Fa "unsigned int ntotalargs"
++.Fa "ffi_type *rtype"
++.Fa "ffi_type **atypes"
++.Fc
++.Sh DESCRIPTION
++The
++.Nm ffi_prep_cif_var
++function prepares a
++.Nm ffi_cif
++structure for use with
++.Nm ffi_call
++for variadic functions.
++.Fa abi
++specifies a set of calling conventions to use.
++.Fa atypes
++is an array of
++.Fa ntotalargs
++pointers to
++.Nm ffi_type
++structs that describe the data type, size and alignment of each argument.
++.Fa rtype
++points to an
++.Nm ffi_type
++that describes the data type, size and alignment of the
++return value.
++.Fa nfixedargs
++must contain the number of fixed (non-variadic) arguments.
++Note that to call a non-variadic function
++.Nm ffi_prep_cif
++must be used.
++.Sh RETURN VALUES
++Upon successful completion,
++.Nm ffi_prep_cif_var
++returns
++.Nm FFI_OK .
++It will return
++.Nm FFI_BAD_TYPEDEF
++if
++.Fa cif
++is
++.Nm NULL
++or
++.Fa atypes
++or
++.Fa rtype
++is malformed. If
++.Fa abi
++does not refer to a valid ABI,
++.Nm FFI_BAD_ABI
++will be returned. Available ABIs are
++defined in
++.Nm <ffitarget.h>
++.
++.Sh SEE ALSO
++.Xr ffi 3 ,
++.Xr ffi_call 3 ,
++.Xr ffi_prep_cif 3
+Index: libffi/src/arm/ffi.c
+===================================================================
+--- libffi.orig/src/arm/ffi.c
++++ libffi/src/arm/ffi.c
+@@ -196,6 +196,18 @@ ffi_status ffi_prep_cif_machdep(ffi_cif
+   return FFI_OK;
+ }
+ 
++/* Perform machine dependent cif processing for variadic calls */
++ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
++				    unsigned int nfixedargs,
++				    unsigned int ntotalargs)
++{
++  /* VFP variadic calls actually use the SYSV ABI */
++  if (cif->abi == FFI_VFP)
++	cif->abi = FFI_SYSV;
++
++  return ffi_prep_cif_machdep(cif);
++}
++
+ /* Prototypes for assembly functions, in sysv.S */
+ extern void ffi_call_SYSV (void (*fn)(void), extended_cif *, unsigned, unsigned, unsigned *);
+ extern void ffi_call_VFP (void (*fn)(void), extended_cif *, unsigned, unsigned, unsigned *);
+Index: libffi/src/arm/ffitarget.h
+===================================================================
+--- libffi.orig/src/arm/ffitarget.h
++++ libffi/src/arm/ffitarget.h
+@@ -55,6 +55,8 @@ typedef enum ffi_abi {
+ #define FFI_TYPE_STRUCT_VFP_FLOAT  (FFI_TYPE_LAST + 1)
+ #define FFI_TYPE_STRUCT_VFP_DOUBLE (FFI_TYPE_LAST + 2)
+ 
++#define FFI_TARGET_SPECIFIC_VARIADIC
++
+ /* ---- Definitions for closures ----------------------------------------- */
+ 
+ #define FFI_CLOSURES 1
+@@ -62,4 +64,3 @@ typedef enum ffi_abi {
+ #define FFI_NATIVE_RAW_API 0
+ 
+ #endif
+-
+Index: libffi/src/cris/ffi.c
+===================================================================
+--- libffi.orig/src/cris/ffi.c
++++ libffi/src/cris/ffi.c
+@@ -153,21 +153,24 @@ ffi_prep_args (char *stack, extended_cif
+   return (struct_count);
+ }
+ 
+-ffi_status
+-ffi_prep_cif (ffi_cif * cif,
+-	      ffi_abi abi, unsigned int nargs,
+-	      ffi_type * rtype, ffi_type ** atypes)
++ffi_status FFI_HIDDEN
++ffi_prep_cif_core (ffi_cif * cif,
++	           ffi_abi abi, unsigned int isvariadic,
++		   unsigned int nfixedargs, unsigned int ntotalargs,
++	           ffi_type * rtype, ffi_type ** atypes)
+ {
+   unsigned bytes = 0;
+   unsigned int i;
+   ffi_type **ptr;
+ 
+   FFI_ASSERT (cif != NULL);
++  FFI_ASSERT((!isvariadic) || (nfixedargs >= 1));
++  FFI_ASSERT(nfixedargs <= ntotalargs);
+   FFI_ASSERT (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI);
+ 
+   cif->abi = abi;
+   cif->arg_types = atypes;
+-  cif->nargs = nargs;
++  cif->nargs = ntotalargs;
+   cif->rtype = rtype;
+ 
+   cif->flags = 0;
+Index: libffi/src/prep_cif.c
+===================================================================
+--- libffi.orig/src/prep_cif.c
++++ libffi/src/prep_cif.c
+@@ -90,14 +90,27 @@ static ffi_status initialize_aggregate(f
+ /* Perform machine independent ffi_cif preparation, then call
+    machine dependent routine. */
+ 
+-ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
+-			ffi_type *rtype, ffi_type **atypes)
++/* For non variadic functions isvariadic should be 0 and
++   nfixedargs==ntotalargs.
++
++   For variadic calls, isvariadic should be 1 and nfixedargs
++   and ntotalargs set as appropriate. nfixedargs must always be >=1 */
++
++
++ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
++			     unsigned int isvariadic,
++                             unsigned int nfixedargs,
++                             unsigned int ntotalargs,
++			     ffi_type *rtype, ffi_type **atypes)
+ {
+   unsigned bytes = 0;
+   unsigned int i;
+   ffi_type **ptr;
+ 
+   FFI_ASSERT(cif != NULL);
++  FFI_ASSERT((!isvariadic) || (nfixedargs >= 1));
++  FFI_ASSERT(nfixedargs <= ntotalargs);
++
+ #ifndef X86_WIN32
+   if ((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI))
+     return FFI_BAD_ABI;
+@@ -108,7 +121,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+ 
+   cif->abi = abi;
+   cif->arg_types = atypes;
+-  cif->nargs = nargs;
++  cif->nargs = ntotalargs;
+   cif->rtype = rtype;
+ 
+   cif->flags = 0;
+@@ -164,10 +177,31 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+   cif->bytes = bytes;
+ 
+   /* Perform machine dependent cif processing */
++#ifdef FFI_TARGET_SPECIFIC_VARIADIC
++  if (isvariadic)
++	return ffi_prep_cif_machdep_var(cif, nfixedargs, ntotalargs);
++#endif
++
+   return ffi_prep_cif_machdep(cif);
+ }
+ #endif /* not __CRIS__ */
+ 
++ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
++			     ffi_type *rtype, ffi_type **atypes)
++{
++  return ffi_prep_cif_core(cif, abi, 0, nargs, nargs, rtype, atypes);
++}
++
++ffi_status ffi_prep_cif_var(ffi_cif *cif,
++                            ffi_abi abi,
++                            unsigned int nfixedargs,
++                            unsigned int ntotalargs,
++                            ffi_type *rtype,
++                            ffi_type **atypes)
++{
++  return ffi_prep_cif_core(cif, abi, 1, nfixedargs, ntotalargs, rtype, atypes);
++}
++
+ #if FFI_CLOSURES
+ 
+ ffi_status
+Index: libffi/testsuite/libffi.call/cls_double_va.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_double_va.c
++++ libffi/testsuite/libffi.call/cls_double_va.c
+@@ -37,7 +37,8 @@ int main (void)
+ 	arg_types[1] = &ffi_type_double;
+ 	arg_types[2] = NULL;
+ 
+-	CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_sint,
++	/* This printf call is variadic */
++	CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 2, &ffi_type_sint,
+ 		arg_types) == FFI_OK);
+ 
+ 	args[0] = &format;
+@@ -49,6 +50,9 @@ int main (void)
+ 	printf("res: %d\n", (int) res);
+ 	// { dg-output "\nres: 4" }
+ 
++	/* The call to cls_double_va_fn is static, so have to use a normal prep_cif */
++	CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_sint, arg_types) == FFI_OK);
++
+ 	CHECK(ffi_prep_closure_loc(pcl, &cif, cls_double_va_fn, NULL, code) == FFI_OK);
+ 
+ 	res	= ((int(*)(char*, double))(code))(format, doubleArg);
+Index: libffi/testsuite/libffi.call/cls_longdouble_va.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_longdouble_va.c
++++ libffi/testsuite/libffi.call/cls_longdouble_va.c
+@@ -37,7 +37,8 @@ int main (void)
+ 	arg_types[1] = &ffi_type_longdouble;
+ 	arg_types[2] = NULL;
+ 
+-	CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_sint,
++	/* This printf call is variadic */
++	CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 2, &ffi_type_sint,
+ 		arg_types) == FFI_OK);
+ 
+ 	args[0] = &format;
+@@ -49,6 +50,10 @@ int main (void)
+ 	printf("res: %d\n", (int) res);
+ 	// { dg-output "\nres: 4" }
+ 
++	/* The call to cls_longdouble_va_fn is static, so have to use a normal prep_cif */
++	CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_sint,
++		arg_types) == FFI_OK);
++
+ 	CHECK(ffi_prep_closure_loc(pcl, &cif, cls_longdouble_va_fn, NULL, code) == FFI_OK);
+ 
+ 	res	= ((int(*)(char*, long double))(code))(format, ldArg);
+Index: libffi/testsuite/libffi.call/float_va.c
+===================================================================
+--- /dev/null
++++ libffi/testsuite/libffi.call/float_va.c
+@@ -0,0 +1,107 @@
++/* Area:        fp and variadics
++   Purpose:     check fp inputs and returns work on variadics, even the fixed params
++   Limitations: None
++   PR:          none
++   Originator:  <david.gilbert@linaro.org> 2011-01-25
++
++   Intended to stress the difference in ABI on ARM vfp
++*/
++
++/* { dg-do run } */
++
++#include <stdarg.h>
++
++#include "ffitest.h"
++
++/* prints out all the parameters, and returns the sum of them all.
++ * 'x' is the number of variadic parameters all of which are double in this test
++ */
++double float_va_fn(unsigned int x, double y,...)
++{
++  double total=0.0;
++  va_list ap;
++  unsigned int i;
++
++  total+=(double)x;
++  total+=y;
++
++  printf("%u: %.1lf :", x, y);
++
++  va_start(ap, y);
++  for(i=0;i<x;i++)
++  {
++    double arg=va_arg(ap, double);
++    total+=arg;
++    printf(" %d:%.1lf ", i, arg);
++  }
++  va_end(ap);
++
++  printf(" total: %.1lf\n", total);
++
++  return total;
++}
++
++int main (void)
++{
++  ffi_cif    cif;
++
++  ffi_type    *arg_types[5];
++  void        *values[5];
++  double        doubles[5];
++  unsigned int firstarg;
++  double        resfp;
++
++  /* First test, pass float_va_fn(0,2.0) - note there are no actual
++   * variadic parameters, but it's declared variadic so the ABI may be
++   * different. */
++  /* Call it statically and then via ffi */
++  resfp=float_va_fn(0,2.0);
++  // { dg-output "0: 2.0 : total: 2.0" }
++  printf("compiled: %.1lf\n", resfp);
++  // { dg-output "\ncompiled: 2.0" }
++
++  arg_types[0] = &ffi_type_uint;
++  arg_types[1] = &ffi_type_double;
++  arg_types[2] = NULL;
++  CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 2, 2,
++        &ffi_type_double, arg_types) == FFI_OK);
++
++  firstarg = 0;
++  doubles[0] = 2.0;
++  values[0] = &firstarg;
++  values[1] = &doubles[0];
++  ffi_call(&cif, FFI_FN(float_va_fn), &resfp, values);
++  // { dg-output "\n0: 2.0 : total: 2.0" }
++  printf("ffi: %.1lf\n", resfp);
++  // { dg-output "\nffi: 2.0" }
++
++  /* Second test, float_va_fn(2,2.0,3.0,4.0), now with variadic params */
++  /* Call it statically and then via ffi */
++  resfp=float_va_fn(2,2.0,3.0,4.0);
++  // { dg-output "\n2: 2.0 : 0:3.0  1:4.0  total: 11.0" }
++  printf("compiled: %.1lf\n", resfp);
++  // { dg-output "\ncompiled: 11.0" }
++
++  arg_types[0] = &ffi_type_uint;
++  arg_types[1] = &ffi_type_double;
++  arg_types[2] = &ffi_type_double;
++  arg_types[3] = &ffi_type_double;
++  arg_types[4] = NULL;
++  CHECK(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 2, 4,
++        &ffi_type_double, arg_types) == FFI_OK);
++
++  firstarg = 2;
++  doubles[0] = 2.0;
++  doubles[1] = 3.0;
++  doubles[2] = 4.0;
++  values[0] = &firstarg;
++  values[1] = &doubles[0];
++  values[2] = &doubles[1];
++  values[3] = &doubles[2];
++  ffi_call(&cif, FFI_FN(float_va_fn), &resfp, values);
++  // { dg-output "\n2: 2.0 : 0:3.0  1:4.0  total: 11.0" }
++  printf("ffi: %.1lf\n", resfp);
++  // { dg-output "\nffi: 11.0" }
++
++  exit(0);
++}
+Index: libffi/doc/libffi.texi
+===================================================================
+--- libffi.orig/doc/libffi.texi
++++ libffi/doc/libffi.texi
+@@ -19,7 +19,7 @@
+ This manual is for Libffi, a portable foreign-function interface
+ library.
+ 
+-Copyright @copyright{} 2008, 2010 Red Hat, Inc.
++Copyright @copyright{} 2008, 2010, 2011 Red Hat, Inc.
+ 
+ @quotation
+ Permission is granted to copy, distribute and/or modify this document
+@@ -133,8 +133,6 @@ This initializes @var{cif} according to
+ you want.  @ref{Multiple ABIs} for more information.
+ 
+ @var{nargs} is the number of arguments that this function accepts.
+-@samp{libffi} does not yet handle varargs functions; see @ref{Missing
+-Features} for more information.
+ 
+ @var{rtype} is a pointer to an @code{ffi_type} structure that
+ describes the return type of the function.  @xref{Types}.
+@@ -150,6 +148,30 @@ objects is incorrect; or @code{FFI_BAD_A
+ is invalid.
+ @end defun
+ 
++If the function being called is variadic (varargs) then
++@code{ffi_prep_cif_var} must be used instead of @code{ffi_prep_cif}.
++
++@findex ffi_prep_cif_var
++@defun ffi_status ffi_prep_cif_var (ffi_cif *@var{cif}, ffi_abi var{abi}, unsigned int @var{nfixedargs}, unsigned int var{ntotalargs}, ffi_type *@var{rtype}, ffi_type **@var{argtypes})
++This initializes @var{cif} according to the given parameters for
++a call to a variadic function.  In general it's operation is the
++same as for @code{ffi_prep_cif} except that:
++
++@var{nfixedargs} is the number of fixed arguments, prior to any
++variadic arguments.  It must be greater than zero.
++
++@var{ntotalargs} the total number of arguments, including variadic
++and fixed arguments.
++
++Note that, different cif's must be prepped for calls to the same
++function when different numbers of arguments are passed.
++
++Also note that a call to @code{ffi_prep_cif_var} with
++@var{nfixedargs}=@var{nototalargs} is NOT equivalent to a call to
++@code{ffi_prep_cif}.
++
++@end defun
++
+ 
+ To call a function using an initialized @code{ffi_cif}, use the
+ @code{ffi_call} function:
+@@ -572,9 +594,7 @@ support for these.
+ 
+ @itemize @bullet
+ @item
+-There is no support for calling varargs functions.  This may work on
+-some platforms, depending on how the ABI is defined, but it is not
+-reliable.
++Variadic closures.
+ 
+ @item
+ There is no support for bit fields in structures.
+@@ -591,6 +611,8 @@ The ``raw'' API is undocumented.
+ @c anything else?
+ @end itemize
+ 
++Note that variadic support is very new and tested on a relatively
++small number of platforms.
+ 
+ @node Index
+ @unnumbered Index
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -59,6 +59,17 @@
+ 
+ 	* configure: Regenerate.
+ 
++2011-11-12  David Gilbert <david.gilbert@linaro.org>
++
++	* doc/libffi.texi, include/ffi.h.in, include/ffi_common.h,
++	man/Makefile.am, man/ffi.3, man/ffi_prep_cif.3,
++	man/ffi_prep_cif_var.3, src/arm/ffi.c, src/arm/ffitarget.h,
++	src/cris/ffi.c, src/prep_cif.c,
++	testsuite/libffi.call/cls_double_va.c,
++	testsuite/libffi.call/cls_longdouble_va.c,
++	testsuite/libffi.call/float_va.c: Many changes to support variadic
++	function calls.
++
+ 2011-11-12  Kyle Moffett <Kyle.D.Moffett@boeing.com>
+ 
+ 	* src/powerpc/ffi.c, src/powerpc/ffitarget.h,

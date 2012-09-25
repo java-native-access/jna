@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2009-2012 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -308,23 +308,24 @@ public class WebStartTest extends TestCase {
             FolderInfo info = (FolderInfo)
                 Native.loadLibrary("shell32", FolderInfo.class);
             char[] buf = new char[FolderInfo.MAX_PATH];
-            //int result =
-                    info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
-                                               null, 0, buf);
+            info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
+                                  null, 0, buf);
             path = Native.toString(buf);
 
-            // NOTE: works for Sun and IBM, may not work for others
+            // NOTE: works for Sun(Oracle) and IBM, may not work for others
             String vendor = System.getProperty("java.vm.vendor");
             if (vendor.indexOf(" ") != -1) {
                 vendor = vendor.substring(0, vendor.indexOf(" "));
             }
+            if ("Oracle".equals(vendor)) {
+                vendor = "Sun";
+            }
             deployment = new File(path + "/" + vendor + "/Java/Deployment");
-            if (!deployment.exists()
-                && deployment.getAbsolutePath().indexOf("Roaming") != -1) {
-                deployment = new File(deployment.getAbsolutePath().replace("Roaming", "LocalLow"));
-                if (!deployment.exists()) {
-                    deployment = new File(deployment.getAbsolutePath().replace("LocalLow", "Local"));
-                }
+            if (!deployment.exists()) {
+                // Vista and later puts WebStart into LocalLow instead of Local,
+                // and sometimes returns Roaming instead of Local
+                // TODO: Use SHGetKnownFolderPath to look it up
+                deployment = new File(deployment.getAbsolutePath().replace("Local", "LocalLow").replace("Roaming", "LocalLow"));
             }
 
         }
@@ -347,9 +348,6 @@ public class WebStartTest extends TestCase {
     public void runBare() throws Throwable {
         if (runningWebStart()) {
             super.runBare();
-        }
-        else if (Platform.isWindows() && Platform.is64Bit()) {
-            throw new Error("Web start launch not supported");
         }
         else if (!GraphicsEnvironment.isHeadless()) {
             File policy = File.createTempFile(getName(), ".policy");

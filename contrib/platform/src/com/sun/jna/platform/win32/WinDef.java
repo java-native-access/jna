@@ -13,6 +13,8 @@
 package com.sun.jna.platform.win32;
 
 import java.awt.Rectangle;
+import java.util.Arrays;
+import java.util.List;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Native;
@@ -41,7 +43,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public WORD(long value) {
-            super(2, value);
+            super(2, value, true);
         }
     }
 
@@ -272,6 +274,21 @@ public interface WinDef extends StdCallLibrary {
         }
     }
 
+    /** Integer type big enough for a pointer. */
+    public static class INT_PTR extends IntegerType {
+        public INT_PTR() {
+            super(Pointer.SIZE);
+        }
+
+        public INT_PTR(long value) {
+            super(Pointer.SIZE, value);
+        }
+
+        public Pointer toPointer() {
+            return Pointer.createConstant(longValue());
+        }
+    }
+
     /**
      * Unsigned INT_PTR.
      */
@@ -281,7 +298,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public UINT_PTR(long value) {
-            super(Pointer.SIZE, value);
+            super(Pointer.SIZE, value, true);
         }
 
         public Pointer toPointer() {
@@ -308,6 +325,10 @@ public interface WinDef extends StdCallLibrary {
         public int right;
         public int bottom;
         
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "left", "top", "right", "bottom" });
+        }
+        
         public Rectangle toRectangle() {
             return new Rectangle(left, top, right-left, bottom-top);
         }
@@ -318,6 +339,23 @@ public interface WinDef extends StdCallLibrary {
     }
     
     /**
+     * 32-bit unsigned integer.
+     */
+    public static class ULONG extends IntegerType {
+        public ULONG() {
+            this(0);
+        }
+
+        public ULONG(long value) {
+            super(Native.LONG_SIZE, value, true);
+        }
+        
+        public static class ByReference implements Structure.ByReference {
+        	
+        }
+    }
+
+    /**
      * 64-bit unsigned integer.
      */
     public static class ULONGLONG extends IntegerType {
@@ -326,7 +364,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public ULONGLONG(long value) {
-            super(8, value);
+            super(8, value, true);
         }
     }
 	
@@ -339,7 +377,7 @@ public interface WinDef extends StdCallLibrary {
         }
 
         public DWORDLONG(long value) {
-            super(8, value);
+            super(8, value, true);
         }
     }
 }

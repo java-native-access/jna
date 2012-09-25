@@ -2,7 +2,7 @@
  * @(#)dispatch.c       1.9 98/03/22
  *
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
- * Copyright (c) 2007-2011 Timothy Wall. All Rights Reserved.
+ * Copyright (c) 2007-2012 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -14,11 +14,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- */
-
-/*
- * JNI native methods supporting the infrastructure for shared
- * dispatchers.
  */
 
 #if defined(_WIN32)
@@ -42,13 +37,13 @@
  */
 #ifdef _WIN32_WCE
 #include <tlhelp32.h>
-#define LOAD_OPTS 0 /* altered search path unsupported on CE */
+#define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
 #undef GetProcAddress
 #define GetProcAddress GetProcAddressA
 #else
-#define LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
+#define DEFAULT_LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
 #endif
-#define LOAD_LIBRARY(NAME) (NAME ? LoadLibraryExW(NAME, NULL, LOAD_OPTS) : GetModuleHandleW(NULL))
+#define LOAD_LIBRARY(NAME,OPTS) (NAME ? LoadLibraryExW(NAME, NULL, OPTS) : GetModuleHandleW(NULL))
 #define LOAD_ERROR(BUF,LEN) w32_format_error(GetLastError(), BUF, LEN)
 #define STR_ERROR(CODE,BUF,LEN) w32_format_error(CODE, BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
@@ -64,7 +59,8 @@
 #else
 #define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
 #endif
-#define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_LAZY|RTLD_GLOBAL)
+#define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
+#define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 #define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)
 #define STR_ERROR(CODE,BUF,LEN) (strerror_r(CODE, BUF, LEN), BUF)
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
@@ -76,7 +72,8 @@
 #ifdef _AIX
 #pragma alloca
 #undef LOAD_LIBRARY
-#define LOAD_LIBRARY(NAME) dlopen(NAME, RTLD_MEMBER| RTLD_LAZY | RTLD_GLOBAL)
+#define DEFAULT_LOAD_OPTS (RTLD_MEMBER| RTLD_LAZY | RTLD_GLOBAL)
+#define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 #endif
 
 #include <stdlib.h>
@@ -91,6 +88,15 @@
 
 #include "dispatch.h"
 
+/* Native memory fault protection */
+#ifdef HAVE_PROTECTION
+#define PROTECT is_protected()
+#endif
+#include "protect.h"
+#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
+#define PSTART() PROTECTED_START()
+#define PEND() PROTECTED_END(ON_ERROR())
+
 #ifdef HAVE_PROTECTION
 static int _protect;
 #undef PROTECT
@@ -98,7 +104,7 @@ static int _protect;
 #endif
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
 
 #ifdef _WIN32
@@ -624,7 +630,6 @@ getChars(JNIEnv* env, wchar_t* volatile dst, jcharArray chars, volatile jint off
 static void
 setChars(JNIEnv* env, wchar_t* src, jcharArray chars, volatile jint off, volatile jint len) {
   jchar* buf = (jchar*)src;
-  int malloced = 0;
   PSTART();
 
   if (sizeof(jchar) == sizeof(wchar_t)) {
@@ -826,13 +831,17 @@ newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory)
     volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
     if (obj != NULL) {
       ffi_type* rtype = getStructureType(env, obj);
-      if (new_memory) {
-        MEMCPY(getStructureAddress(env, obj), data, rtype->size);
+      if (rtype) {
+        if (new_memory) {
+          MEMCPY(getStructureAddress(env, obj), data, rtype->size);
+        }
+        else {
+          (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
+        }
+        if (!(*env)->ExceptionCheck(env)) {
+          (*env)->CallVoidMethod(env, obj, MID_Structure_read);
+        }
       }
-      else {
-        (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
-      }
-      (*env)->CallVoidMethod(env, obj, MID_Structure_read);
     }
     else {
       fprintf(stderr, "JNA: failed to create structure\n");
@@ -860,7 +869,9 @@ getNativeString(JNIEnv* env, jstring s, jboolean wide) {
     jobject ptr = (*env)->CallStaticObjectMethod(env, classCallbackReference,
                                                  MID_CallbackReference_getNativeString,
                                                  s, wide);
-    return getNativeAddress(env, ptr);
+    if (!(*env)->ExceptionCheck(env)) {
+      return getNativeAddress(env, ptr);
+    }
   }
   return NULL;
 }
@@ -975,7 +986,9 @@ void *
 getStructureAddress(JNIEnv *env, jobject obj) {
   if (obj != NULL) {
     jobject ptr = (*env)->GetObjectField(env, obj, FID_Structure_memory);
-    return getNativeAddress(env, ptr);
+    if (!(*env)->ExceptionCheck(env)) {
+      return getNativeAddress(env, ptr);
+    }
   }
   return NULL;
 }
@@ -991,7 +1004,9 @@ void *
 getCallbackAddress(JNIEnv *env, jobject obj) {
   if (obj != NULL) {
     jobject ptr = (*env)->CallStaticObjectMethod(env, classCallbackReference, MID_CallbackReference_getFunctionPointer, obj, JNI_TRUE);
-    return getNativeAddress(env, ptr);
+    if (!(*env)->ExceptionCheck(env)) {
+      return getNativeAddress(env, ptr);
+    }
   }
   return NULL;
 }
@@ -1041,7 +1056,9 @@ void
 toNative(JNIEnv* env, jobject obj, void* valuep, size_t size, jboolean promote) {
   if (obj != NULL) {
     jobject arg = (*env)->CallObjectMethod(env, obj, MID_NativeMapped_toNative);
-    extract_value(env, arg, valuep, size, promote);
+    if (!(*env)->ExceptionCheck(env)) {
+      extract_value(env, arg, valuep, size, promote);
+    }
   }
   else {
     MEMSET(valuep, 0, size);
@@ -1052,7 +1069,9 @@ static void
 toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject to_native) {
   if (obj != NULL) {
     jobject arg = (*env)->CallStaticObjectMethod(env, classNative, MID_Native_toNativeTypeMapped, to_native, obj);
-    extract_value(env, arg, valuep, size, JNI_FALSE);
+    if (!(*env)->ExceptionCheck(env)) {
+      extract_value(env, arg, valuep, size, JNI_FALSE);
+    }
   }
   else {
     MEMSET(valuep, 0, size);
@@ -1063,12 +1082,16 @@ static void
 fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* type, jclass javaClass, void* result) {
   int jtype = get_jtype_from_ffi_type(type);
   jobject value = new_object(env, (char)jtype, resp, JNI_TRUE);
-  jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
-                                               MID_Native_fromNativeTypeMapped,
-                                               from_native, value, javaClass);
-  // Must extract primitive types
-  if (type->type != FFI_TYPE_POINTER) {
-    extract_value(env, obj, result, type->size, JNI_TRUE);
+  if (!(*env)->ExceptionCheck(env)) {
+    jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
+                                                 MID_Native_fromNativeTypeMapped,
+                                                 from_native, value, javaClass);
+    if (!(*env)->ExceptionCheck(env)) {
+      // Must extract primitive types
+      if (type->type != FFI_TYPE_POINTER) {
+        extract_value(env, obj, result, type->size, JNI_TRUE);
+      }
+    }
   }
 }
 
@@ -1076,9 +1099,12 @@ jobject
 fromNative(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote) {
   int jtype = get_jtype_from_ffi_type(type);
   jobject value = new_object(env, (char)jtype, resp, promote);
-  return (*env)->CallStaticObjectMethod(env, classNative,
-                                        MID_Native_fromNative,
-                                        javaClass, value);
+  if (!(*env)->ExceptionCheck(env)) {
+    return (*env)->CallStaticObjectMethod(env, classNative,
+                                          MID_Native_fromNative,
+                                          javaClass, value);
+  }
+  return NULL;
 }
 
 
@@ -1087,7 +1113,9 @@ getStructureType(JNIEnv *env, jobject obj) {
   jlong typeInfo = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
   if (!typeInfo) {
     (*env)->CallObjectMethod(env, obj, MID_Structure_getTypeInfo);
-    typeInfo = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
+    if (!(*env)->ExceptionCheck(env)) {
+      typeInfo = (*env)->GetLongField(env, obj, FID_Structure_typeInfo);
+    }
   }
   return (ffi_type*)L2A(typeInfo);
 }
@@ -1513,7 +1541,10 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
   case 's': {
     jobject s = (*env)->CallStaticObjectMethod(env, classStructure,
                                                MID_Structure_newInstance, cls);
-    return getStructureType(env, s);
+    if (s) {
+      return getStructureType(env, s);
+    }
+    return NULL;
   }
   case '*':
   default:
@@ -1686,6 +1717,9 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         break;
       }
     }
+    if ((*env)->ExceptionCheck(env)) {
+      goto cleanup;
+    }
   }
 
   if (data->rflag == CVT_NATIVE_MAPPED) {
@@ -1759,7 +1793,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     for (i=0;i < data->cif.nargs;i++) {
       switch(data->flags[i]) {
       case CVT_STRUCTURE:
-        if (objects[i]) {
+        if (objects[i] && !(*env)->ExceptionCheck(env)) {
           (*env)->CallVoidMethod(env, objects[i], MID_Structure_read);
         }
         break;
@@ -1960,9 +1994,10 @@ Java_com_sun_jna_Native_createNativeCallback(JNIEnv *env,
                                              jobjectArray param_types,
                                              jclass return_type,
                                              jint call_conv,
-                                             jboolean direct) {
+                                             jint options) {
   callback* cb =
-    create_callback(env, obj, method, param_types, return_type, call_conv, direct);
+    create_callback(env, obj, method, param_types, return_type,
+                    call_conv, options);
 
   return A2L(cb);
 }
@@ -1977,10 +2012,10 @@ Java_com_sun_jna_Native_freeNativeCallback(JNIEnv *env,
 /*
  * Class:     Native
  * Method:    open
- * Signature: (Ljava/lang/String;)J
+ * Signature: (Ljava/lang/String;I)J
  */
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
+Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib, jint flags){
     /* dlopen on Unix allows NULL to mean "current process" */
     const STRTYPE libname = NULL;
     void *handle = NULL;
@@ -1991,7 +2026,7 @@ Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib){
       }
     }
 
-    handle = (void *)LOAD_LIBRARY(libname);
+    handle = (void *)LOAD_LIBRARY(libname, flags != -1 ? flags : DEFAULT_LOAD_OPTS);
     if (!handle) {
       char buf[1024];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
@@ -2814,7 +2849,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
 #undef JAWT_NAME
 #define JAWT_NAME path
 #endif
-    if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME)) == NULL) {
+    if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME, DEFAULT_LOAD_OPTS)) == NULL) {
       char msg[1024];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
       return -1;
@@ -2949,8 +2984,8 @@ Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass UNUSED(classp), jint code) {
-  SET_LAST_ERROR(code);
   update_last_error(env, code);
+  SET_LAST_ERROR(code);
 }
 
 JNIEXPORT jstring JNICALL

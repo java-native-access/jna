@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
@@ -23,7 +22,6 @@ import com.sun.jna.platform.win32.Sspi.TimeStamp;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LUID;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -97,7 +95,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, the function returns one of the SEC_E_ error codes.
      */
     public int AcquireCredentialsHandle(String pszPrincipal, String pszPackage,
-                                        NativeLong fCredentialUse, LUID pvLogonID,
+                                        int fCredentialUse, LUID pvLogonID,
                                         Pointer pAuthData, Pointer pGetKeyFn, // TODO: SEC_GET_KEY_FN
                                         Pointer pvGetKeyArgument, CredHandle phCredential, 
                                         TimeStamp ptsExpiry);
@@ -164,9 +162,9 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, the function returns one of the SEC_E_ error codes.
      */
     public int InitializeSecurityContext(CredHandle phCredential, CtxtHandle phContext,
-                                         String pszTargetName, NativeLong fContextReq, NativeLong Reserved1,
-                                         NativeLong TargetDataRep, SecBufferDesc pInput, NativeLong Reserved2,
-                                         CtxtHandle phNewContext, SecBufferDesc pOutput, NativeLongByReference pfContextAttr,
+                                         String pszTargetName, int fContextReq, int Reserved1,
+                                         int TargetDataRep, SecBufferDesc pInput, int Reserved2,
+                                         CtxtHandle phNewContext, SecBufferDesc pOutput, IntByReference pfContextAttr,
                                          TimeStamp ptsExpiry);
 	
     /**
@@ -238,15 +236,15 @@ public interface Secur32 extends StdCallLibrary {
      *  This function returns one of SEC_* values.
      */
     public int AcceptSecurityContext(CredHandle phCredential, CtxtHandle phContext,
-                                     SecBufferDesc pInput, NativeLong fContextReq, NativeLong TargetDataRep,
-                                     CtxtHandle phNewContext, SecBufferDesc pOutput, NativeLongByReference pfContextAttr,
+                                     SecBufferDesc pInput, int fContextReq, int TargetDataRep,
+                                     CtxtHandle phNewContext, SecBufferDesc pOutput, IntByReference pfContextAttr,
                                      TimeStamp ptsTimeStamp);
 
     /**
      * The EnumerateSecurityPackages function returns an array of SecPkgInfo structures that 
      * describe the security packages available to the client.
      * @param pcPackages
-     *  A pointer to a ULONG variable that receives the number of packages returned.
+     *  A pointer to a int variable that receives the number of packages returned.
      * @param ppPackageInfo
      *  A pointer to a variable that receives a pointer to an array of SecPkgInfo structures. 
      *  Each structure contains information from the security support provider (SSP) that 

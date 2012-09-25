@@ -13,9 +13,8 @@
 package com.sun.jna.platform.wince;
 
 import com.sun.jna.Native;
-import com.sun.jna.win32.W32APIOptions;
-import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.win32.W32APIOptions;
 
 /** Definition <code>coredll.dll</code>.
     Add other win32 interface mappings as needed.

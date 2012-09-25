@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="contrib/ntservice/src"/>
+	<classpathentry kind="src" output="jna/build.eclipse/test-classes" path="contrib/platform/test"/>
 	<classpathentry kind="src" path="contrib/platform/src"/>
-	<classpathentry kind="src" path="contrib/x11/src"/>
-	<classpathentry excluding="build*" kind="src" path="contrib/balloontips"/>
-	<classpathentry excluding="build*" kind="src" path="contrib/shapedwindowdemo"/>
-	<classpathentry excluding="build*" kind="src" path="contrib/dnddemo"/>
-	<classpathentry excluding="build*" kind="src" path="contrib/w32keyhook"/>
-	<classpathentry excluding="build*" kind="src" path="contrib/alphamaskdemo"/>
-	<classpathentry excluding="build*" kind="src" path="contrib/balloonmanagerdemo"/>
 	<classpathentry kind="src" output="build.eclipse/test-classes" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>

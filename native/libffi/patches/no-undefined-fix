@@ -1,0 +1,117 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,9 @@
++2012-03-03  Andoni Morales Alastruey  <ylatuya@gmail.com>
++
++	* configure.ac: Add -no-undefined for both 32- and 64-bit x86
++	windows-like hosts.
++	* configure: Rebuilt.
++
+ 2012-02-23  Anthony Green  <green@moxielogic.com>
+ 
+ 	* src/*/ffitarget.h: Ensure that users never include ffitarget.h
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -13166,15 +13166,6 @@ case "$host" in
+ 	;;
+   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2* | i?86-*-interix*)
+ 	TARGET=X86_WIN32; TARGETDIR=x86
+-	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+-	# We must also check with_cross_host to decide if this is a native
+-	# or cross-build and select where to install dlls appropriately.
+-	if test -n "$with_cross_host" &&
+-	   test x"$with_cross_host" != x"no"; then
+-	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
+-	else
+-	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+-	fi
+ 	;;
+   i?86-*-darwin*)
+ 	TARGET=X86_DARWIN; TARGETDIR=x86
+@@ -13257,6 +13248,15 @@ case "$host" in
+ 
+   x86_64-*-cygwin* | x86_64-*-mingw*)
+ 	TARGET=X86_WIN64; TARGETDIR=x86
++	;;
++
++  x86_64-*-*)
++	TARGET=X86_64; TARGETDIR=x86
++	;;
++esac
++
++case "$host" in
++     *-win32* | *-*-cygwin* | *-*-mingw* | *-*-os2* | *-*-interix*)
+ 	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+ 	# We must also check with_cross_host to decide if this is a native
+ 	# or cross-build and select where to install dlls appropriately.
+@@ -13267,10 +13267,6 @@ case "$host" in
+ 	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+ 	fi
+ 	;;
+-
+-  x86_64-*-*)
+-	TARGET=X86_64; TARGETDIR=x86
+-	;;
+ esac
+ 
+ 
+@@ -14395,7 +14391,7 @@ case "$target" in
+ $as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
+ 
+      ;;
+-     *-apple-darwin1[10]* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
++     *-apple-darwin1[10]* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+ 
+ $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
+ 
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -98,15 +98,6 @@ case "$host" in
+ 	;;
+   i?86-win32* | i?86-*-cygwin* | i?86-*-mingw* | i?86-*-os2* | i?86-*-interix*)
+ 	TARGET=X86_WIN32; TARGETDIR=x86
+-	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+-	# We must also check with_cross_host to decide if this is a native
+-	# or cross-build and select where to install dlls appropriately.
+-	if test -n "$with_cross_host" &&
+-	   test x"$with_cross_host" != x"no"; then
+-	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
+-	else
+-	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+-	fi
+ 	;;
+   i?86-*-darwin*)
+ 	TARGET=X86_DARWIN; TARGETDIR=x86
+@@ -189,6 +180,15 @@ case "$host" in
+ 
+   x86_64-*-cygwin* | x86_64-*-mingw*)
+ 	TARGET=X86_WIN64; TARGETDIR=x86
++	;;
++
++  x86_64-*-*)
++	TARGET=X86_64; TARGETDIR=x86
++	;;
++esac
++
++case "$host" in
++     *-win32* | *-*-cygwin* | *-*-mingw* | *-*-os2* | *-*-interix*)
+ 	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+ 	# We must also check with_cross_host to decide if this is a native
+ 	# or cross-build and select where to install dlls appropriately.
+@@ -199,10 +199,6 @@ case "$host" in
+ 	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+ 	fi
+ 	;;
+-
+-  x86_64-*-*)
+-	TARGET=X86_64; TARGETDIR=x86
+-	;;
+ esac
+ 
+ AC_SUBST(AM_RUNTESTFLAGS)

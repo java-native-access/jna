@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
@@ -89,5 +92,9 @@ public interface Guid {
         public short Data2;
         public short Data3;
         public byte[] Data4 = new byte[8];
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Data1", "Data2", "Data3", "Data4" });
+        }
     }    
 }

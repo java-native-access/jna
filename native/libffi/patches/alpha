@@ -1,0 +1,37 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -35,6 +35,10 @@
+ 	* testsuite/libffi.call/struct1_win32.c: New test.
+ 	* testsuite/libffi.call/struct2_win32.c: New test.
+ 
++2012-01-23  Uros Bizjak  <ubizjak@gmail.com>
++
++	* src/alpha/ffi.c (ffi_prep_closure_loc): Check for bad ABI.
++
+ 2012-01-23  Anthony Green  <green@moxielogic.com>
+ 	    Chris Young  <cdyoung@ntlworld.com>
+ 
+Index: libffi/src/alpha/ffi.c
+===================================================================
+--- libffi.orig/src/alpha/ffi.c
++++ libffi/src/alpha/ffi.c
+@@ -1,5 +1,6 @@
+ /* -----------------------------------------------------------------------
+-   ffi.c - Copyright (c) 1998, 2001, 2007, 2008  Red Hat, Inc.
++   ffi.c - Copyright (c) 2012  Anthony Green
++           Copyright (c) 1998, 2001, 2007, 2008  Red Hat, Inc.
+    
+    Alpha Foreign Function Interface 
+ 
+@@ -178,6 +179,9 @@ ffi_prep_closure_loc (ffi_closure* closu
+ {
+   unsigned int *tramp;
+ 
++  if (cif->abi != FFI_OSF)
++    return FFI_BAD_ABI;
++
+   tramp = (unsigned int *) &closure->tramp[0];
+   tramp[0] = 0x47fb0401;	/* mov $27,$1		*/
+   tramp[1] = 0xa77b0010;	/* ldq $27,16($27)	*/

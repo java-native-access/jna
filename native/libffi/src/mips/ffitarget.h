@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 1996-2003  Red Hat, Inc.
+   ffitarget.h - Copyright (c) 2012  Anthony Green
+                 Copyright (c) 1996-2003  Red Hat, Inc.
    Target configuration macros for MIPS.
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -27,6 +28,10 @@
 #ifndef LIBFFI_TARGET_H
 #define LIBFFI_TARGET_H
 
+#ifndef LIBFFI_H
+#error "Please do not include ffitarget.h directly into your source.  Use ffi.h instead."
+#endif
+
 #ifdef linux
 # include <asm/sgidefs.h>
 #elif defined(__rtems__)
@@ -36,7 +41,7 @@
 #define _MIPS_SIM_ABI32		1
 #define _MIPS_SIM_NABI32	2
 #define _MIPS_SIM_ABI64		3
-#else
+#elif !defined(__OpenBSD__)
 # include <sgidefs.h>
 #endif
 

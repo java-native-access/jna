@@ -19,6 +19,8 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 
+import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment.ByReference;
+
 /** Exercise a range of native methods.
  *
  * @author twall@users.sf.net
@@ -54,7 +56,13 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public int testStructureArrayInitialization(CheckFieldAlignment[] p, int len) {
             throw new UnsupportedOperationException();
         }
+        public int testStructureByReferenceArrayInitialization(CheckFieldAlignment.ByReference[] p, int len) {
+            throw new UnsupportedOperationException();
+        }
         public void modifyStructureArray(CheckFieldAlignment[] p, int length) {
+            throw new UnsupportedOperationException(); 
+        }
+        public void modifyStructureByReferenceArray(CheckFieldAlignment.ByReference[] p, int length) {
             throw new UnsupportedOperationException(); 
         }
             
@@ -112,7 +120,7 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         super.testWStringArgumentReturn();
     }
 
-    // Override tests not yet supported
+    // Override tests not yet supported in direct mode
     public void testStringArrayArgument() { }
     public void testWriteStructureArrayArgumentMemory() { }
     public void testUninitializedStructureArrayArgument() { }
@@ -121,6 +129,8 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
     public void testPointerArrayArgument() { }
     public void testNativeMappedArrayArgument() { }
     public void testStructureByReferenceArrayArgument() { }
+    public void testWriteStructureByReferenceArrayArgumentMemory() { }
+    public void testReadStructureByReferenceArrayArgumentMemory() { }
     public void testModifiedCharArrayArgument() { }
 
     public static void main(java.lang.String[] argList) {

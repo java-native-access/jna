@@ -45,6 +45,7 @@ typedef __int64 int64_t;
 #define THREAD_EXIT() ExitThread(0)
 #define THREAD_FUNC(FN,ARG) DWORD WINAPI FN(LPVOID ARG)
 #define THREAD_CURRENT() GetCurrentThreadId()
+#define THREAD_RETURN return 0
 #else
 #define EXPORT
 #include <unistd.h>
@@ -54,6 +55,7 @@ typedef __int64 int64_t;
 #define THREAD_CREATE(TP, FN, DATA) pthread_create(TP, NULL, FN, DATA)
 #define THREAD_EXIT() pthread_exit(NULL)
 #define THREAD_FUNC(FN,ARG) void* FN(void *ARG)
+#define THREAD_RETURN return NULL
 #define THREAD_CURRENT() pthread_self()
 #endif
 
@@ -602,6 +604,28 @@ modifyStructureArray(struct CheckFieldAlignment arg[], int length) {
 }
 
 
+EXPORT int32_t
+testStructureByReferenceArrayInitialization(struct CheckFieldAlignment** arg, int len) {
+  int i;
+  for (i=0;i < len;i++) {
+    if (arg[i]->int32Field != i)
+      return i;
+  }
+  return -1;
+}
+
+EXPORT void
+modifyStructureByReferenceArray(struct CheckFieldAlignment** arg, int length) {
+  int i;
+  for (i=0;i < length;i++) {
+    arg[i]->int32Field = i;
+    arg[i]->int64Field = i+1;
+    arg[i]->floatField = (float)i+2;
+    arg[i]->doubleField = (double)i+3;
+  }
+}
+
+
 EXPORT void
 callVoidCallback(void (*func)(void)) {
   (*func)();
@@ -623,6 +647,7 @@ static THREAD_FUNC(thread_function, arg) {
     SLEEP(td.sleep_time);
   }
   THREAD_EXIT();
+  THREAD_RETURN;
 }
 
 static thread_data data;

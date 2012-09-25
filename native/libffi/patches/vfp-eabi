@@ -1,0 +1,65 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,11 @@
++2012-03-06  Chung-Lin Tang  <cltang@codesourcery.com>
++
++	* src/arm/ffi.c (ffi_call): Add __ARM_EABI__ guard around call to
++	ffi_call_VFP().
++	(ffi_prep_closure_loc): Add __ARM_EABI__ guard around use of
++	ffi_closure_VFP.
++	* src/arm/sysv.S: Add __ARM_EABI__ guard around VFP code.
++
+ 2012-03-21  Peter Rosin	 <peda@lysator.liu.se>
+ 
+ 	* testsuite/libffi.call/float_va.c (float_va_fn): Use %f when
+Index: libffi/src/arm/ffi.c
+===================================================================
+--- libffi.orig/src/arm/ffi.c
++++ libffi/src/arm/ffi.c
+@@ -251,8 +251,10 @@ void ffi_call(ffi_cif *cif, void (*fn)(v
+       break;
+ 
+     case FFI_VFP:
++#ifdef __ARM_EABI__
+       ffi_call_VFP (fn, &ecif, cif->bytes, cif->flags, ecif.rvalue);
+       break;
++#endif
+ 
+     default:
+       FFI_ASSERT(0);
+@@ -609,8 +611,10 @@ ffi_prep_closure_loc (ffi_closure* closu
+ 
+   if (cif->abi == FFI_SYSV)
+     closure_func = &ffi_closure_SYSV;
++#ifdef __ARM_EABI__
+   else if (cif->abi == FFI_VFP)
+     closure_func = &ffi_closure_VFP;
++#endif
+   else
+     return FFI_BAD_ABI;
+     
+Index: libffi/src/arm/sysv.S
+===================================================================
+--- libffi.orig/src/arm/sysv.S
++++ libffi/src/arm/sysv.S
+@@ -334,7 +334,9 @@ ARM_FUNC_START ffi_closure_SYSV
+ 
+ 
+ /* Below are VFP hard-float ABI call and closure implementations.
+-   Add VFP FPU directive here. */
++   Add VFP FPU directive here. This is only compiled into the library
++   under EABI.  */
++#ifdef __ARM_EABI__
+ 	.fpu	vfp
+ 
+ 	@ r0:   fn
+@@ -491,6 +493,7 @@ ARM_FUNC_START ffi_closure_VFP
+ .ffi_closure_VFP_end:
+ 	UNWIND .fnend
+         .size    CNAME(ffi_closure_VFP),.ffi_closure_VFP_end-CNAME(ffi_closure_VFP)
++#endif
+ 
+ ENTRY(ffi_arm_trampoline)
+ 	stmfd sp!, {r0-r3}

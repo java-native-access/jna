@@ -1,8 +1,8 @@
 Status
 ======
 
-libffi-3.0.10 was released on XXXXXXXXXX, 2011. Check the libffi web
-page for updates: <URL:http://sourceware.org/libffi/>.
+libffi-3.0.XX was released on XXXXXXX.  Check the libffi web page for
+updates: <URL:http://sourceware.org/libffi/>.
 
 
 What is libffi?
@@ -43,7 +43,7 @@ Libffi has been ported to many different platforms.
 For specific configuration details and testing status, please
 refer to the wiki page here:
 
- http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.10
+ http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.11
 
 At the time of release, the following basic configurations have been
 tested:
@@ -56,13 +56,16 @@ tested:
 | ARM          | Linux            |
 | ARM          | iOS              |
 | AVR32        | Linux            |
+| Blackfin     | uClinux          |
 | HPPA         | HPUX             |
 | IA-64        | Linux            |
+| M68K         | FreeMiNT         |
 | M68K         | RTEMS            |
 | MIPS         | IRIX             |
 | MIPS         | Linux            |
 | MIPS         | RTEMS            |
 | MIPS64       | Linux            |
+| PowerPC      | AMIGA            |
 | PowerPC      | Linux            |
 | PowerPC      | Mac OSX          |
 | PowerPC      | FreeBSD          |
@@ -85,6 +88,7 @@ tested:
 | X86          | Windows/MingW    |
 | X86-64       | FreeBSD          |
 | X86-64       | Linux            |
+| X86-64       | Linux/x32        |
 | X86-64       | OpenBSD          |
 | X86-64       | Windows/MingW    |
 |--------------+------------------|
@@ -126,7 +130,7 @@ under a MingW environment, you may need to remove the line in configure
 that sets 'fix_srcfile_path' to a 'cygpath' command. ('cygpath' is not
 present in MingW, and is not required when using MingW-style paths.)
 
-For iOS builds, refer to the build-ios.sh script for guidance.
+For iOS builds, the 'libffi.xcodeproj' Xcode project is available.
 
 Configure has many other options. Use "configure --help" to see them all.
 
@@ -144,16 +148,33 @@ History
 
 See the ChangeLog files for details.
 
-3.0.10 ???-??-??
+3.0.12 XXX-XX-XX
+        Add Blackfin support.
+
+3.0.11 Apr-11-12
+        Add support for variadic functions (ffi_prep_cif_var).
+	Add Linux/x32 support.
+	Add thiscall, fastcall and MSVC cdecl support on Windows.
+        Add Amiga and newer MacOS support.
+	Add m68k FreeMiNT support.
+	Integration with iOS' xcode build tools.
+	Fix Octeon and MC68881 support.
+	Fix code pessimizations.
+        Lots of build fixes.
+
+3.0.10 Aug-23-11
         Add support for Apple's iOS.
 	Add support for ARM VFP ABI.
         Add RTEMS support for MIPS and M68K.
+	Fix instruction cache clearing problems on
+	  ARM and SPARC.
 	Fix the N64 build on mips-sgi-irix6.5.
 	Enable builds with Microsoft's compiler.
 	Enable x86 builds with Oracle's Solaris compiler.
 	Fix support for calling code compiled with Oracle's Sparc
 	  Solaris compiler.
 	Testsuite fixes for Tru64 Unix.
+	Additional platform support.
 
 3.0.9 Dec-31-09
         Add AVR32 and win64 ports.  Add ARM softfp support.
@@ -283,7 +304,7 @@ See the ChangeLog files for details.
 Authors & Credits
 =================
 
-libffi was originally written by Anthony Green <green@redhat.com>.
+libffi was originally written by Anthony Green <green@moxielogic.com>.
 
 The developers of the GNU Compiler Collection project have made
 innumerable valuable contributions.  See the ChangeLog file for

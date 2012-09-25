@@ -3,21 +3,37 @@
 # ld-compatible wrapper for link.exe
 #
 #args="/pdbtype:sept"
-MSVC="/c/Program Files (x86)/Microsoft Visual Studio 9.0/vc/bin"
 args="/nologo /opt:REF /incremental:no /subsystem:console /nodefaultlib:msvcrtd"
-link="$MSVC/link"
+
+if [ -z "$LIB" -a "$Lib" ]; then
+    exit "LIB must be set for LINK.EXE to function properly"
+fi
+
+link=link
 while [ $# -gt 0 ]
 do
   case $1
   in
     -m32)
-      link="$MSVC/link"
-      args="$args /machine:X86"
+      if echo $PATH | grep amd64; then
+          echo "Wrong LINK.EXE in path; use 32-bit version"
+          exit 1
+      fi
+      if echo $LIB | grep amd64; then
+          echo "Wrong paths in LIB; use 32-bit version"
+          exit 1
+      fi
       shift 1
     ;;
     -m64)
-      link="$MSVC/x86_amd64/link"
-      args="$args /machine:X64"
+      if ! echo $PATH | grep amd64; then
+          echo "Wrong LINK.EXE in path; use 64-bit version"
+          exit 1
+      fi
+      if ! echo $LIB | grep amd64; then
+          echo "Wrong paths in LIB; use 64-bit version"
+          exit 1
+      fi
       shift 1
     ;;
     -g)
@@ -55,5 +71,5 @@ do
   esac
 done
 
-echo "\"$link\" $args"
+echo "\"$link\" $args (LIB=$LIB)"
 eval "\"$link\" $args"

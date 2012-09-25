@@ -1,0 +1,138 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -59,6 +59,14 @@
+ 
+ 	* configure: Regenerate.
+ 
++2011-11-12  Kimura Wataru  <kimuraw@i.nifty.jp>
++
++	* m4/ax_enable_builddir: Change from string comparison to numeric
++	comparison for wc output.
++	* configure.ac: Enable FFI_MMAP_EXEC_WRIT for darwin11 aka Mac OS
++	X 10.7.
++	* configure: Rebuilt.
++
+ 2011-11-10  Richard Henderson  <rth@redhat.com>
+ 
+ 	* configure.ac (GCC_AS_CFI_PSEUDO_OP): Use it instead of inline check.
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -621,6 +621,9 @@ FFI_DEBUG_FALSE
+ FFI_DEBUG_TRUE
+ TARGETDIR
+ TARGET
++FFI_EXEC_TRAMPOLINE_TABLE
++FFI_EXEC_TRAMPOLINE_TABLE_FALSE
++FFI_EXEC_TRAMPOLINE_TABLE_TRUE
+ sys_symbol_underscore
+ HAVE_LONG_DOUBLE
+ ALLOCA
+@@ -2643,6 +2646,8 @@ target_alias=${target_alias-$host_alias}
+ 
+ . ${srcdir}/configure.host
+ 
++AX_ENABLE_BUILDDIR
++
+ am__api_version='1.11'
+ 
+ # Find a good install program.  We prefer a C program (faster),
+@@ -11834,6 +11839,12 @@ CC="$lt_save_CC"
+ 
+ 
+ 
++AX_CC_MAXOPT
++AX_CFLAGS_WARN_ALL
++if test "x$GCC" = "xyes"; then
++  CFLAGS="$CFLAGS -fexceptions"
++fi
++
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
+ $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
+@@ -12064,7 +12075,7 @@ case "$host" in
+ 	TARGET=FRV; TARGETDIR=frv
+ 	;;
+ 
+-  hppa*-*-linux* | parisc*-*-linux*)
++  hppa*-*-linux* | parisc*-*-linux* | hppa*-*-openbsd*)
+ 	TARGET=PA_LINUX; TARGETDIR=pa
+ 	;;
+   hppa*64-*-hpux*)
+@@ -12114,7 +12125,7 @@ case "$host" in
+   mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)
+ 	TARGET=MIPS; TARGETDIR=mips
+ 	;;
+-  mips*-*-linux*)
++  mips*-*-linux* | mips*-*-openbsd*)
+ 	# Support 128-bit long double for NewABI.
+ 	HAVE_LONG_DOUBLE='defined(__mips64)'
+ 	TARGET=MIPS; TARGETDIR=mips
+@@ -12136,7 +12147,7 @@ case "$host" in
+   powerpc-*-aix* | rs6000-*-aix*)
+ 	TARGET=POWERPC_AIX; TARGETDIR=powerpc
+ 	;;
+-  powerpc-*-freebsd*)
++  powerpc-*-freebsd* | powerpc-*-openbsd*)
+ 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
+ 	;;
+   powerpc64-*-freebsd*)
+@@ -13296,13 +13307,30 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
+     fi
+ fi
+ 
++
++FFI_EXEC_TRAMPOLINE_TABLE=0
+ case "$target" in
+-     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
++     *arm*-apple-darwin*)
++       FFI_EXEC_TRAMPOLINE_TABLE=1
++
++$as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
++
++     ;;
++     *-apple-darwin1[10]* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
+ 
+ $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
+ 
+      ;;
+ esac
++ if test x$FFI_EXEC_TRAMPOLINE_TABLE = x1; then
++  FFI_EXEC_TRAMPOLINE_TABLE_TRUE=
++  FFI_EXEC_TRAMPOLINE_TABLE_FALSE='#'
++else
++  FFI_EXEC_TRAMPOLINE_TABLE_TRUE='#'
++  FFI_EXEC_TRAMPOLINE_TABLE_FALSE=
++fi
++
++
+ 
+ if test x$TARGET = xX86_64; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler supports unwind section type" >&5
+@@ -13730,6 +13758,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+ fi
+ 
++if test -z "${FFI_EXEC_TRAMPOLINE_TABLE_TRUE}" && test -z "${FFI_EXEC_TRAMPOLINE_TABLE_FALSE}"; then
++  as_fn_error $? "conditional \"FFI_EXEC_TRAMPOLINE_TABLE\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ if test -z "${FFI_DEBUG_TRUE}" && test -z "${FFI_DEBUG_FALSE}"; then
+   as_fn_error $? "conditional \"FFI_DEBUG\" was never defined.
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -348,7 +348,7 @@ case "$target" in
+                  [Cannot use PROT_EXEC on this target, so, we revert to
+                    alternative means])
+      ;;
+-     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
++     *-apple-darwin1[[10]]* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
+        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
+                  [Cannot use malloc on this target, so, we revert to
+                    alternative means])

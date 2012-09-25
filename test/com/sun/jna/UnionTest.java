@@ -12,6 +12,9 @@
  */
 package com.sun.jna;
 
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
@@ -19,15 +22,24 @@ public class UnionTest extends TestCase {
 
     public static class TestStructure extends Structure {
         public String value;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "value" }); 
+        }
     }
     
     public static class BigTestStructure extends Structure {
         public long field1;
         public long field2;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "field1", "field2" }); 
+        }
     }
     
     public static class IntStructure extends Structure {
         public int value;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "value" }); 
+        }
     }
 
     public static class SubIntStructure extends IntStructure {}

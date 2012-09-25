@@ -1,0 +1,2376 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,140 @@
++2012-03-29  Peter Rosin  <peda@lysator.liu.se>
++
++	* src/x86/win32.S (ffi_closure_raw_THISCALL): Unify the frame
++	generation, fix the ENDP label and remove the surplus third arg
++	from the 'lea' insn.
++
++2012-03-29  Peter Rosin  <peda@lysator.liu.se>
++
++	* src/x86/win32.S (ffi_closure_raw_SYSV): Make the 'stubraw' label
++	visible outside the PROC, so that ffi_closure_raw_THISCALL can see
++	it.  Also instruct the assembler to add a frame to the function.
++
++2012-03-23  Peter Rosin  <peda@lysator.liu.se>
++
++	* Makefile.am (AM_CPPFLAGS): Add -DFFI_BUILDING.
++	* Makefile.in: Rebuilt.
++	* include/ffi.h.in [MSVC]: Add __declspec(dllimport) decorations
++	to all data exports, when compiling libffi clients using MSVC.
++
++2012-03-29  Peter Rosin  <peda@lysator.liu.se>
++
++	* src/x86/ffitarget.h (ffi_abi): Add new ABI FFI_MS_CDECL and
++	make it the default for MSVC.
++	(FFI_TYPE_MS_STRUCT): New structure return convention.
++	* src/x86/ffi.c (ffi_prep_cif_machdep): Tweak the structure
++	return convention for FFI_MS_CDECL to be FFI_TYPE_MS_STRUCT
++	instead of an ordinary FFI_TYPE_STRUCT.
++	(ffi_prep_args): Treat FFI_TYPE_MS_STRUCT as FFI_TYPE_STRUCT.
++	(ffi_call): Likewise.
++	(ffi_prep_incoming_args_SYSV): Likewise.
++	(ffi_raw_call): Likewise.
++	(ffi_prep_closure_loc): Treat FFI_MS_CDECL as FFI_SYSV.
++	* src/x86/win32.S (ffi_closure_SYSV): For FFI_TYPE_MS_STRUCT,
++	return a pointer to the result structure in eax and don't pop
++	that pointer from the stack, the caller takes care of it.
++	(ffi_call_win32): Treat FFI_TYPE_MS_STRUCT as FFI_TYPE_STRUCT.
++	(ffi_closure_raw_SYSV): Likewise.
++
++2012-03-22  Peter Rosin  <peda@lysator.liu.se>
++
++	* testsuite/libffi.call/closure_stdcall.c [MSVC]: Add inline
++	assembly version with Intel syntax.
++	* testsuite/libffi.call/closure_thiscall.c [MSVC]: Likewise.
++
++2012-03-23  Peter Rosin  <peda@lysator.liu.se>
++
++	* testsuite/libffi.call/ffitest.h: Provide abstration of
++	__attribute__((fastcall)) in the form of a __FASTCALL__
++	define.  Define it to __fastcall for MSVC.
++	* testsuite/libffi.call/fastthis1_win32.c: Use the above.
++	* testsuite/libffi.call/fastthis2_win32.c: Likewise.
++	* testsuite/libffi.call/fastthis3_win32.c: Likewise.
++	* testsuite/libffi.call/strlen2_win32.c: Likewise.
++	* testsuite/libffi.call/struct1_win32.c: Likewise.
++	* testsuite/libffi.call/struct2_win32.c: Likewise.
++
++2012-03-22  Peter Rosin  <peda@lysator.liu.se>
++
++	* src/x86/win32.S [MSVC] (ffi_closure_THISCALL): Remove the manual
++	frame on function entry, MASM adds one automatically.
++
++2012-03-22  Peter Rosin  <peda@lysator.liu.se>
++
++	* testsuite/libffi.call/ffitest.h [MSVC]: Add kludge for missing
++	bits in the MSVC headers.
++
++2012-03-22  Peter Rosin  <peda@lysator.liu.se>
++
++	* testsuite/libffi.call/cls_12byte.c: Adjust to the C89 style
++	with no declarations after statements.
++	* testsuite/libffi.call/cls_16byte.c: Likewise.
++	* testsuite/libffi.call/cls_18byte.c: Likewise.
++	* testsuite/libffi.call/cls_19byte.c: Likewise.
++	* testsuite/libffi.call/cls_1_1byte.c: Likewise.
++	* testsuite/libffi.call/cls_20byte.c: Likewise.
++	* testsuite/libffi.call/cls_20byte1.c: Likewise.
++	* testsuite/libffi.call/cls_24byte.c: Likewise.
++	* testsuite/libffi.call/cls_2byte.c: Likewise.
++	* testsuite/libffi.call/cls_3_1byte.c: Likewise.
++	* testsuite/libffi.call/cls_3byte1.c: Likewise.
++	* testsuite/libffi.call/cls_3byte2.c: Likewise.
++	* testsuite/libffi.call/cls_4_1byte.c: Likewise.
++	* testsuite/libffi.call/cls_4byte.c: Likewise.
++	* testsuite/libffi.call/cls_5_1_byte.c: Likewise.
++	* testsuite/libffi.call/cls_5byte.c: Likewise.
++	* testsuite/libffi.call/cls_64byte.c: Likewise.
++	* testsuite/libffi.call/cls_6_1_byte.c: Likewise.
++	* testsuite/libffi.call/cls_6byte.c: Likewise.
++	* testsuite/libffi.call/cls_7_1_byte.c: Likewise.
++	* testsuite/libffi.call/cls_7byte.c: Likewise.
++	* testsuite/libffi.call/cls_8byte.c: Likewise.
++	* testsuite/libffi.call/cls_9byte1.c: Likewise.
++	* testsuite/libffi.call/cls_9byte2.c: Likewise.
++	* testsuite/libffi.call/cls_align_double.c: Likewise.
++	* testsuite/libffi.call/cls_align_float.c: Likewise.
++	* testsuite/libffi.call/cls_align_longdouble.c: Likewise.
++	* testsuite/libffi.call/cls_align_longdouble_split.c: Likewise.
++	* testsuite/libffi.call/cls_align_longdouble_split2.c: Likewise.
++	* testsuite/libffi.call/cls_align_pointer.c: Likewise.
++	* testsuite/libffi.call/cls_align_sint16.c: Likewise.
++	* testsuite/libffi.call/cls_align_sint32.c: Likewise.
++	* testsuite/libffi.call/cls_align_sint64.c: Likewise.
++	* testsuite/libffi.call/cls_align_uint16.c: Likewise.
++	* testsuite/libffi.call/cls_align_uint32.c: Likewise.
++	* testsuite/libffi.call/cls_align_uint64.c: Likewise.
++	* testsuite/libffi.call/cls_dbls_struct.c: Likewise.
++	* testsuite/libffi.call/cls_pointer_stack.c: Likewise.
++	* testsuite/libffi.call/err_bad_typedef.c: Likewise.
++	* testsuite/libffi.call/huge_struct.c: Likewise.
++	* testsuite/libffi.call/nested_struct.c: Likewise.
++	* testsuite/libffi.call/nested_struct1.c: Likewise.
++	* testsuite/libffi.call/nested_struct10.c: Likewise.
++	* testsuite/libffi.call/nested_struct2.c: Likewise.
++	* testsuite/libffi.call/nested_struct3.c: Likewise.
++	* testsuite/libffi.call/nested_struct4.c: Likewise.
++	* testsuite/libffi.call/nested_struct5.c: Likewise.
++	* testsuite/libffi.call/nested_struct6.c: Likewise.
++	* testsuite/libffi.call/nested_struct7.c: Likewise.
++	* testsuite/libffi.call/nested_struct8.c: Likewise.
++	* testsuite/libffi.call/nested_struct9.c: Likewise.
++	* testsuite/libffi.call/stret_large.c: Likewise.
++	* testsuite/libffi.call/stret_large2.c: Likewise.
++	* testsuite/libffi.call/stret_medium.c: Likewise.
++	* testsuite/libffi.call/stret_medium2.c: Likewise.
++	* testsuite/libffi.call/struct1.c: Likewise.
++	* testsuite/libffi.call/struct1_win32.c: Likewise.
++	* testsuite/libffi.call/struct2.c: Likewise.
++	* testsuite/libffi.call/struct2_win32.c: Likewise.
++	* testsuite/libffi.call/struct3.c: Likewise.
++	* testsuite/libffi.call/struct4.c: Likewise.
++	* testsuite/libffi.call/struct5.c: Likewise.
++	* testsuite/libffi.call/struct6.c: Likewise.
++	* testsuite/libffi.call/struct7.c: Likewise.
++	* testsuite/libffi.call/struct8.c: Likewise.
++	* testsuite/libffi.call/struct9.c: Likewise.
++	* testsuite/libffi.call/testclosure.c: Likewise.
++
+ 2012-03-06  Chung-Lin Tang  <cltang@codesourcery.com>
+ 
+ 	* src/arm/ffi.c (ffi_call): Add __ARM_EABI__ guard around call to
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -194,7 +194,7 @@ endif
+ 
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+ 
+-AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
++AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
+ AM_CCASFLAGS = $(AM_CPPFLAGS) -g
+ 
+ # No install-html or install-pdf support in automake yet
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -510,7 +510,7 @@ libffi_convenience_la_SOURCES = $(libffi
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+ AM_CFLAGS = -g $(am__append_29)
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+-AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
++AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
+ AM_CCASFLAGS = $(AM_CPPFLAGS) -g
+ all: fficonfig.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+Index: libffi/include/ffi.h.in
+===================================================================
+--- libffi.orig/include/ffi.h.in
++++ libffi/include/ffi.h.in
+@@ -166,22 +166,36 @@ typedef struct _ffi_type
+  #error "long size not supported"
+ #endif
+ 
++/* Need minimal decorations for DLLs to works on Windows. */
++/* GCC has autoimport and autoexport.  Rely on Libtool to */
++/* help MSVC export from a DLL, but always declare data   */
++/* to be imported for MSVC clients.  This costs an extra  */
++/* indirection for MSVC clients using the static version  */
++/* of the library, but don't worry about that.  Besides,  */
++/* as a workaround, they can define FFI_BUILDING if they  */
++/* *know* they are going to link with the static library. */
++#if defined _MSC_VER && !defined FFI_BUILDING
++#define FFI_EXTERN extern __declspec(dllimport)
++#else
++#define FFI_EXTERN extern
++#endif
++
+ /* These are defined in types.c */
+-extern ffi_type ffi_type_void;
+-extern ffi_type ffi_type_uint8;
+-extern ffi_type ffi_type_sint8;
+-extern ffi_type ffi_type_uint16;
+-extern ffi_type ffi_type_sint16;
+-extern ffi_type ffi_type_uint32;
+-extern ffi_type ffi_type_sint32;
+-extern ffi_type ffi_type_uint64;
+-extern ffi_type ffi_type_sint64;
+-extern ffi_type ffi_type_float;
+-extern ffi_type ffi_type_double;
+-extern ffi_type ffi_type_pointer;
++FFI_EXTERN ffi_type ffi_type_void;
++FFI_EXTERN ffi_type ffi_type_uint8;
++FFI_EXTERN ffi_type ffi_type_sint8;
++FFI_EXTERN ffi_type ffi_type_uint16;
++FFI_EXTERN ffi_type ffi_type_sint16;
++FFI_EXTERN ffi_type ffi_type_uint32;
++FFI_EXTERN ffi_type ffi_type_sint32;
++FFI_EXTERN ffi_type ffi_type_uint64;
++FFI_EXTERN ffi_type ffi_type_sint64;
++FFI_EXTERN ffi_type ffi_type_float;
++FFI_EXTERN ffi_type ffi_type_double;
++FFI_EXTERN ffi_type ffi_type_pointer;
+ 
+ #if @HAVE_LONG_DOUBLE@
+-extern ffi_type ffi_type_longdouble;
++FFI_EXTERN ffi_type ffi_type_longdouble;
+ #else
+ #define ffi_type_longdouble ffi_type_double
+ #endif
+Index: libffi/src/x86/ffi.c
+===================================================================
+--- libffi.orig/src/x86/ffi.c
++++ libffi/src/x86/ffi.c
+@@ -58,7 +58,8 @@ void ffi_prep_args(char *stack, extended
+ 
+   argp = stack;
+ 
+-  if (ecif->cif->flags == FFI_TYPE_STRUCT
++  if ((ecif->cif->flags == FFI_TYPE_STRUCT
++       || ecif->cif->flags == FFI_TYPE_MS_STRUCT)
+ #ifdef X86_WIN64
+       && (ecif->cif->rtype->size != 1 && ecif->cif->rtype->size != 2
+           && ecif->cif->rtype->size != 4 && ecif->cif->rtype->size != 8)
+@@ -279,7 +280,10 @@ ffi_status ffi_prep_cif_machdep(ffi_cif
+       else
+ #endif
+         {
+-          cif->flags = FFI_TYPE_STRUCT;
++          if (cif->abi == FFI_MS_CDECL)
++            cif->flags = FFI_TYPE_MS_STRUCT;
++          else
++            cif->flags = FFI_TYPE_STRUCT;
+           /* allocate space for return value pointer */
+           cif->bytes += ALIGN(sizeof(void*), FFI_SIZEOF_ARG);
+         }
+@@ -349,7 +353,8 @@ void ffi_call(ffi_cif *cif, void (*fn)(v
+     }
+ #else
+   if (rvalue == NULL
+-      && cif->flags == FFI_TYPE_STRUCT)
++      && (cif->flags == FFI_TYPE_STRUCT
++          || cif->flags == FFI_TYPE_MS_STRUCT))
+     {
+       ecif.rvalue = alloca(cif->rtype->size);
+     }
+@@ -368,6 +373,7 @@ void ffi_call(ffi_cif *cif, void (*fn)(v
+ #elif defined(X86_WIN32)
+     case FFI_SYSV:
+     case FFI_STDCALL:
++    case FFI_MS_CDECL:
+       ffi_call_win32(ffi_prep_args, &ecif, cif->abi, cif->bytes, cif->flags,
+ 		     ecif.rvalue, fn);
+       break;
+@@ -513,7 +519,8 @@ ffi_prep_incoming_args_SYSV(char *stack,
+     argp += sizeof(void *);
+   }
+ #else
+-  if ( cif->flags == FFI_TYPE_STRUCT ) {
++  if ( cif->flags == FFI_TYPE_STRUCT
++       || cif->flags == FFI_TYPE_MS_STRUCT ) {
+     *rvalue = *(void **) argp;
+     argp += sizeof(void *);
+   }
+@@ -673,6 +680,12 @@ ffi_prep_closure_loc (ffi_closure* closu
+                                    &ffi_closure_STDCALL,
+                                    (void*)codeloc, cif->bytes);
+     }
++  else if (cif->abi == FFI_MS_CDECL)
++    {
++      FFI_INIT_TRAMPOLINE (&closure->tramp[0],
++                           &ffi_closure_SYSV,
++                           (void*)codeloc);
++    }
+ #endif /* X86_WIN32 */
+ #endif /* !X86_WIN64 */
+   else
+@@ -762,8 +775,9 @@ ffi_raw_call(ffi_cif *cif, void (*fn)(vo
+   /* If the return value is a struct and we don't have a return */
+   /* value address then we need to make one                     */
+ 
+-  if ((rvalue == NULL) && 
+-      (cif->rtype->type == FFI_TYPE_STRUCT))
++  if (rvalue == NULL
++      && (cif->flags == FFI_TYPE_STRUCT
++          || cif->flags == FFI_TYPE_MS_STRUCT))
+     {
+       ecif.rvalue = alloca(cif->rtype->size);
+     }
+@@ -776,6 +790,7 @@ ffi_raw_call(ffi_cif *cif, void (*fn)(vo
+ #ifdef X86_WIN32
+     case FFI_SYSV:
+     case FFI_STDCALL:
++    case FFI_MS_CDECL:
+       ffi_call_win32(ffi_prep_args_raw, &ecif, cif->abi, cif->bytes, cif->flags,
+ 		     ecif.rvalue, fn);
+       break;
+Index: libffi/src/x86/ffitarget.h
+===================================================================
+--- libffi.orig/src/x86/ffitarget.h
++++ libffi/src/x86/ffitarget.h
+@@ -80,9 +80,13 @@ typedef enum ffi_abi {
+   FFI_STDCALL,
+   FFI_THISCALL,
+   FFI_FASTCALL,
++  FFI_MS_CDECL,
+   FFI_LAST_ABI,
+-  /* TODO: Add fastcall support for the sake of completeness */
++#ifdef _MSC_VER
++  FFI_DEFAULT_ABI = FFI_MS_CDECL
++#else
+   FFI_DEFAULT_ABI = FFI_SYSV
++#endif
+ 
+ #elif defined(X86_WIN64)
+   FFI_WIN64,
+@@ -109,6 +113,7 @@ typedef enum ffi_abi {
+ #define FFI_TYPE_SMALL_STRUCT_1B (FFI_TYPE_LAST + 1)
+ #define FFI_TYPE_SMALL_STRUCT_2B (FFI_TYPE_LAST + 2)
+ #define FFI_TYPE_SMALL_STRUCT_4B (FFI_TYPE_LAST + 3)
++#define FFI_TYPE_MS_STRUCT       (FFI_TYPE_LAST + 4)
+ 
+ #if defined (X86_64) || (defined (__x86_64__) && defined (X86_DARWIN))
+ #define FFI_TRAMPOLINE_SIZE 24
+Index: libffi/src/x86/win32.S
+===================================================================
+--- libffi.orig/src/x86/win32.S
++++ libffi/src/x86/win32.S
+@@ -121,6 +121,7 @@ ca_jumpdata:
+         dd offset ca_retint8        ;; FFI_TYPE_SMALL_STRUCT_1B
+         dd offset ca_retint16       ;; FFI_TYPE_SMALL_STRUCT_2B
+         dd offset ca_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
++        dd offset ca_epilogue       ;; FFI_TYPE_MS_STRUCT
+ 
+ ca_retint8:
+         ;; Load %ecx with the pointer to storage for the return value
+@@ -171,8 +172,6 @@ ca_epilogue:
+ ffi_call_win32 ENDP
+ 
+ ffi_closure_THISCALL PROC NEAR FORCEFRAME
+-	push	ebp
+-	mov	ebp, esp
+ 	sub	esp, 40
+ 	lea	edx, [ebp -24]
+ 	mov	[ebp - 12], edx	/* resp */
+@@ -217,6 +216,7 @@ cs_jumpdata:
+         dd offset cs_retint8        ;; FFI_TYPE_SMALL_STRUCT_1B
+         dd offset cs_retint16       ;; FFI_TYPE_SMALL_STRUCT_2B
+         dd offset cs_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
++        dd offset cs_retmsstruct    ;; FFI_TYPE_MS_STRUCT
+ 
+ cs_retint8:
+         mov   al, [ecx]
+@@ -252,6 +252,12 @@ cs_retstruct:
+         ;; Epilogue code is autogenerated.
+         ret	4
+ 
++cs_retmsstruct:
++        ;; Caller expects us to return a pointer to the real return value.
++        mov   eax, ecx
++        ;; Caller doesn't expects us to pop struct return value pointer hidden arg.
++        jmp   cs_epilogue
++
+ cs_epilogue:
+         ;; Epilogue code is autogenerated.
+         ret
+@@ -264,19 +270,16 @@ ffi_closure_SYSV ENDP
+ #define RAW_CLOSURE_USER_DATA_OFFSET (RAW_CLOSURE_FUN_OFFSET + 4)
+ #define CIF_FLAGS_OFFSET 20
+ 
+-ffi_closure_raw_THISCALL PROC NEAR
+-	push ebp
+-	mov  ebp, esp
+-	push esi
++ffi_closure_raw_THISCALL PROC NEAR USES esi FORCEFRAME
+ 	sub esp, 36
+ 	mov  esi, [eax + RAW_CLOSURE_CIF_OFFSET]        ;; closure->cif
+ 	mov  edx, [eax + RAW_CLOSURE_USER_DATA_OFFSET]  ;; closure->user_data
+ 	mov [esp + 12], edx
+-	lea edx, [ebp + 12], edx
++	lea edx, [ebp + 12]
+ 	jmp stubraw
+-ffi_closure_raw_SYSV ENDP
++ffi_closure_raw_THISCALL ENDP
+ 
+-ffi_closure_raw_SYSV PROC NEAR USES esi
++ffi_closure_raw_SYSV PROC NEAR USES esi FORCEFRAME
+     ;; the ffi_closure ctx is passed in eax by the trampoline.
+ 
+         sub  esp, 40
+@@ -284,7 +287,7 @@ ffi_closure_raw_SYSV PROC NEAR USES esi
+         mov  edx, [eax + RAW_CLOSURE_USER_DATA_OFFSET]  ;; closure->user_data
+         mov  [esp + 12], edx                            ;; user_data
+         lea  edx, [ebp + 8]
+-stubraw:
++stubraw::
+         mov  [esp + 8], edx                             ;; raw_args
+         lea  edx, [ebp - 24]
+         mov  [esp + 4], edx                             ;; &res
+@@ -315,6 +318,7 @@ cr_jumpdata:
+         dd offset cr_retint8        ;; FFI_TYPE_SMALL_STRUCT_1B
+         dd offset cr_retint16       ;; FFI_TYPE_SMALL_STRUCT_2B
+         dd offset cr_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
++        dd offset cr_epilogue       ;; FFI_TYPE_MS_STRUCT
+ 
+ cr_retint8:
+         mov   al, [ecx]
+@@ -515,6 +519,7 @@ _ffi_call_win32:
+ 	.long	.Lretstruct1b		/* FFI_TYPE_SMALL_STRUCT_1B */
+ 	.long	.Lretstruct2b		/* FFI_TYPE_SMALL_STRUCT_2B */
+ 	.long	.Lretstruct4b		/* FFI_TYPE_SMALL_STRUCT_4B */
++	.long	.Lretstruct		/* FFI_TYPE_MS_STRUCT */
+ 1:
+ 	add	%ecx, %ecx
+ 	add	%ecx, %ecx
+@@ -657,6 +662,7 @@ _ffi_closure_SYSV:
+ 	.long	.Lcls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
+ 	.long	.Lcls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
+ 	.long	.Lcls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
++	.long	.Lcls_retmsstruct	/* FFI_TYPE_MS_STRUCT */
+ 
+ 1:
+ 	add	%eax, %eax
+@@ -721,6 +727,12 @@ _ffi_closure_SYSV:
+ 	popl	%ebp
+ 	ret	$0x4
+ 
++.Lcls_retmsstruct:
++	# Caller expects us to return a pointer to the real return value.
++	mov	%ecx, %eax
++	# Caller doesn't expects us to pop struct return value pointer hidden arg.
++	jmp	.Lcls_epilogue
++
+ .Lcls_noretval:
+ .Lcls_epilogue:
+ 	movl	%ebp, %esp
+@@ -798,6 +810,7 @@ _ffi_closure_raw_SYSV:
+ 	.long	.Lrcls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
+ 	.long	.Lrcls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
+ 	.long	.Lrcls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
++	.long	.Lrcls_retstruct	/* FFI_TYPE_MS_STRUCT */
+ 1:
+ 	add	%eax, %eax
+ 	add	%eax, %eax
+Index: libffi/testsuite/libffi.call/closure_stdcall.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/closure_stdcall.c
++++ libffi/testsuite/libffi.call/closure_stdcall.c
+@@ -49,9 +49,17 @@ int main (void)
+   CHECK(ffi_prep_closure_loc(pcl, &cif, closure_test_stdcall,
+                              (void *) 3 /* userdata */, code) == FFI_OK);
+ 
++#ifdef _MSC_VER
++  __asm { mov sp_pre, esp }
++#else
+   asm volatile (" movl %%esp,%0" : "=g" (sp_pre));
++#endif
+   res = (*(closure_test_type0)code)(0, 1, 2, 3);
++#ifdef _MSC_VER
++  __asm { mov sp_post, esp }
++#else
+   asm volatile (" movl %%esp,%0" : "=g" (sp_post));
++#endif
+   /* { dg-output "0 1 2 3: 9" } */
+ 
+   printf("res: %d\n",res);
+Index: libffi/testsuite/libffi.call/closure_thiscall.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/closure_thiscall.c
++++ libffi/testsuite/libffi.call/closure_thiscall.c
+@@ -49,9 +49,17 @@ int main (void)
+   CHECK(ffi_prep_closure_loc(pcl, &cif, closure_test_thiscall,
+                              (void *) 3 /* userdata */, code) == FFI_OK);
+ 
++#ifdef _MSC_VER
++  __asm { mov sp_pre, esp }
++#else
+   asm volatile (" movl %%esp,%0" : "=g" (sp_pre));
++#endif
+   res = (*(closure_test_type0)code)(0, 1, 2, 3);
++#ifdef _MSC_VER
++  __asm { mov sp_post, esp }
++#else
+   asm volatile (" movl %%esp,%0" : "=g" (sp_post));
++#endif
+   /* { dg-output "0 1 2 3: 9" } */
+ 
+   printf("res: %d\n",res);
+Index: libffi/testsuite/libffi.call/cls_12byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_12byte.c
++++ libffi/testsuite/libffi.call/cls_12byte.c
+@@ -49,15 +49,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_12byte h_dbl = { 7, 4, 9 };
++  struct cls_struct_12byte j_dbl = { 1, 5, 3 };
++  struct cls_struct_12byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_12byte h_dbl = { 7, 4, 9 };
+-  struct cls_struct_12byte j_dbl = { 1, 5, 3 };
+-  struct cls_struct_12byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_sint;
+   cls_struct_fields[1] = &ffi_type_sint;
+   cls_struct_fields[2] = &ffi_type_sint;
+Index: libffi/testsuite/libffi.call/cls_16byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_16byte.c
++++ libffi/testsuite/libffi.call/cls_16byte.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_16byte h_dbl = { 7, 8.0, 9 };
++  struct cls_struct_16byte j_dbl = { 1, 9.0, 3 };
++  struct cls_struct_16byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_16byte h_dbl = { 7, 8.0, 9 };
+-  struct cls_struct_16byte j_dbl = { 1, 9.0, 3 };
+-  struct cls_struct_16byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_sint;
+   cls_struct_fields[1] = &ffi_type_double;
+   cls_struct_fields[2] = &ffi_type_sint;
+Index: libffi/testsuite/libffi.call/cls_18byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_18byte.c
++++ libffi/testsuite/libffi.call/cls_18byte.c
+@@ -54,15 +54,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct cls_struct_18byte g_dbl = { 1.0, 127, 126, 3.0 };
++  struct cls_struct_18byte f_dbl = { 4.0, 125, 124, 5.0 };
++  struct cls_struct_18byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_18byte g_dbl = { 1.0, 127, 126, 3.0 };
+-  struct cls_struct_18byte f_dbl = { 4.0, 125, 124, 5.0 };
+-  struct cls_struct_18byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_19byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_19byte.c
++++ libffi/testsuite/libffi.call/cls_19byte.c
+@@ -57,15 +57,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct cls_struct_19byte g_dbl = { 1.0, 127, 126, 3.0, 120 };
++  struct cls_struct_19byte f_dbl = { 4.0, 125, 124, 5.0, 119 };
++  struct cls_struct_19byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_19byte g_dbl = { 1.0, 127, 126, 3.0, 120 };
+-  struct cls_struct_19byte f_dbl = { 4.0, 125, 124, 5.0, 119 };
+-  struct cls_struct_19byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_1_1byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_1_1byte.c
++++ libffi/testsuite/libffi.call/cls_1_1byte.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_1_1byte g_dbl = { 12 };
++  struct cls_struct_1_1byte f_dbl = { 178 };
++  struct cls_struct_1_1byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_1_1byte g_dbl = { 12 };
+-  struct cls_struct_1_1byte f_dbl = { 178 };
+-  struct cls_struct_1_1byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = NULL;
+ 
+Index: libffi/testsuite/libffi.call/cls_20byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_20byte.c
++++ libffi/testsuite/libffi.call/cls_20byte.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_20byte g_dbl = { 1.0, 2.0, 3 };
++  struct cls_struct_20byte f_dbl = { 4.0, 5.0, 7 };
++  struct cls_struct_20byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_20byte g_dbl = { 1.0, 2.0, 3 };
+-  struct cls_struct_20byte f_dbl = { 4.0, 5.0, 7 };
+-  struct cls_struct_20byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_double;
+   cls_struct_fields[2] = &ffi_type_sint;
+Index: libffi/testsuite/libffi.call/cls_20byte1.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_20byte1.c
++++ libffi/testsuite/libffi.call/cls_20byte1.c
+@@ -52,15 +52,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct cls_struct_20byte g_dbl = { 1, 2.0, 3.0 };
++  struct cls_struct_20byte f_dbl = { 4, 5.0, 7.0 };
++  struct cls_struct_20byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_20byte g_dbl = { 1, 2.0, 3.0 };
+-  struct cls_struct_20byte f_dbl = { 4, 5.0, 7.0 };
+-  struct cls_struct_20byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_sint;
+   cls_struct_fields[1] = &ffi_type_double;
+   cls_struct_fields[2] = &ffi_type_double;
+Index: libffi/testsuite/libffi.call/cls_24byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_24byte.c
++++ libffi/testsuite/libffi.call/cls_24byte.c
+@@ -61,17 +61,17 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
+-  cls_struct_type.size = 0;
+-  cls_struct_type.alignment = 0;
+-  cls_struct_type.type = FFI_TYPE_STRUCT;
+-  cls_struct_type.elements = cls_struct_fields;
+-
+   struct cls_struct_24byte e_dbl = { 9.0, 2.0, 6, 5.0 };
+   struct cls_struct_24byte f_dbl = { 1.0, 2.0, 3, 7.0 };
+   struct cls_struct_24byte g_dbl = { 4.0, 5.0, 7, 9.0 };
+   struct cls_struct_24byte h_dbl = { 8.0, 6.0, 1, 4.0 };
+   struct cls_struct_24byte res_dbl;
+ 
++  cls_struct_type.size = 0;
++  cls_struct_type.alignment = 0;
++  cls_struct_type.type = FFI_TYPE_STRUCT;
++  cls_struct_type.elements = cls_struct_fields;
++
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_double;
+   cls_struct_fields[2] = &ffi_type_sint;
+Index: libffi/testsuite/libffi.call/cls_2byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_2byte.c
++++ libffi/testsuite/libffi.call/cls_2byte.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_2byte g_dbl = { 12, 127 };
++  struct cls_struct_2byte f_dbl = { 1, 13 };
++  struct cls_struct_2byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_2byte g_dbl = { 12, 127 };
+-  struct cls_struct_2byte f_dbl = { 1, 13 };
+-  struct cls_struct_2byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/cls_3_1byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_3_1byte.c
++++ libffi/testsuite/libffi.call/cls_3_1byte.c
+@@ -54,15 +54,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_3_1byte g_dbl = { 12, 13, 14 };
++  struct cls_struct_3_1byte f_dbl = { 178, 179, 180 };
++  struct cls_struct_3_1byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_3_1byte g_dbl = { 12, 13, 14 };
+-  struct cls_struct_3_1byte f_dbl = { 178, 179, 180 };
+-  struct cls_struct_3_1byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_3byte1.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_3byte1.c
++++ libffi/testsuite/libffi.call/cls_3byte1.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_3byte g_dbl = { 12, 119 };
++  struct cls_struct_3byte f_dbl = { 1, 15 };
++  struct cls_struct_3byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_3byte g_dbl = { 12, 119 };
+-  struct cls_struct_3byte f_dbl = { 1, 15 };
+-  struct cls_struct_3byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_ushort;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/cls_3byte2.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_3byte2.c
++++ libffi/testsuite/libffi.call/cls_3byte2.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_3byte_1 g_dbl = { 15, 125 };
++  struct cls_struct_3byte_1 f_dbl = { 9, 19 };
++  struct cls_struct_3byte_1 res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_3byte_1 g_dbl = { 15, 125 };
+-  struct cls_struct_3byte_1 f_dbl = { 9, 19 };
+-  struct cls_struct_3byte_1 res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_ushort;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/cls_4_1byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_4_1byte.c
++++ libffi/testsuite/libffi.call/cls_4_1byte.c
+@@ -56,15 +56,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_4_1byte g_dbl = { 12, 13, 14, 15 };
++  struct cls_struct_4_1byte f_dbl = { 178, 179, 180, 181 };
++  struct cls_struct_4_1byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_4_1byte g_dbl = { 12, 13, 14, 15 };
+-  struct cls_struct_4_1byte f_dbl = { 178, 179, 180, 181 };
+-  struct cls_struct_4_1byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_4byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_4byte.c
++++ libffi/testsuite/libffi.call/cls_4byte.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_4byte g_dbl = { 127, 120 };
++  struct cls_struct_4byte f_dbl = { 12, 128 };
++  struct cls_struct_4byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_4byte g_dbl = { 127, 120 };
+-  struct cls_struct_4byte f_dbl = { 12, 128 };
+-  struct cls_struct_4byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_ushort;
+   cls_struct_fields[1] = &ffi_type_ushort;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/cls_5_1_byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_5_1_byte.c
++++ libffi/testsuite/libffi.call/cls_5_1_byte.c
+@@ -58,15 +58,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_5byte g_dbl = { 127, 120, 1, 3, 4 };
++  struct cls_struct_5byte f_dbl = { 12, 128, 9, 3, 4 };
++  struct cls_struct_5byte res_dbl = { 0, 0, 0, 0, 0 };
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_5byte g_dbl = { 127, 120, 1, 3, 4 };
+-  struct cls_struct_5byte f_dbl = { 12, 128, 9, 3, 4 };
+-  struct cls_struct_5byte res_dbl = { 0, 0, 0, 0, 0 };
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_5byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_5byte.c
++++ libffi/testsuite/libffi.call/cls_5byte.c
+@@ -53,15 +53,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_5byte g_dbl = { 127, 120, 1 };
++  struct cls_struct_5byte f_dbl = { 12, 128, 9 };
++  struct cls_struct_5byte res_dbl = { 0, 0, 0 };
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_5byte g_dbl = { 127, 120, 1 };
+-  struct cls_struct_5byte f_dbl = { 12, 128, 9 };
+-  struct cls_struct_5byte res_dbl = { 0, 0, 0 };
+-
+   cls_struct_fields[0] = &ffi_type_ushort;
+   cls_struct_fields[1] = &ffi_type_ushort;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_64byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_64byte.c
++++ libffi/testsuite/libffi.call/cls_64byte.c
+@@ -66,17 +66,17 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
+-  cls_struct_type.size = 0;
+-  cls_struct_type.alignment = 0;
+-  cls_struct_type.type = FFI_TYPE_STRUCT;
+-  cls_struct_type.elements = cls_struct_fields;
+-
+   struct cls_struct_64byte e_dbl = { 9.0, 2.0, 6.0, 5.0, 3.0, 4.0, 8.0, 1.0 };
+   struct cls_struct_64byte f_dbl = { 1.0, 2.0, 3.0, 7.0, 2.0, 5.0, 6.0, 7.0 };
+   struct cls_struct_64byte g_dbl = { 4.0, 5.0, 7.0, 9.0, 1.0, 1.0, 2.0, 9.0 };
+   struct cls_struct_64byte h_dbl = { 8.0, 6.0, 1.0, 4.0, 0.0, 3.0, 3.0, 1.0 };
+   struct cls_struct_64byte res_dbl;
+ 
++  cls_struct_type.size = 0;
++  cls_struct_type.alignment = 0;
++  cls_struct_type.type = FFI_TYPE_STRUCT;
++  cls_struct_type.elements = cls_struct_fields;
++
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_double;
+   cls_struct_fields[2] = &ffi_type_double;
+Index: libffi/testsuite/libffi.call/cls_6_1_byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_6_1_byte.c
++++ libffi/testsuite/libffi.call/cls_6_1_byte.c
+@@ -60,15 +60,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_6byte g_dbl = { 127, 120, 1, 3, 4, 5 };
++  struct cls_struct_6byte f_dbl = { 12, 128, 9, 3, 4, 5 };
++  struct cls_struct_6byte res_dbl = { 0, 0, 0, 0, 0, 0 };
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_6byte g_dbl = { 127, 120, 1, 3, 4, 5 };
+-  struct cls_struct_6byte f_dbl = { 12, 128, 9, 3, 4, 5 };
+-  struct cls_struct_6byte res_dbl = { 0, 0, 0, 0, 0, 0 };
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_6byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_6byte.c
++++ libffi/testsuite/libffi.call/cls_6byte.c
+@@ -56,15 +56,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_6byte g_dbl = { 127, 120, 1, 128 };
++  struct cls_struct_6byte f_dbl = { 12, 128, 9, 127 };
++  struct cls_struct_6byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_6byte g_dbl = { 127, 120, 1, 128 };
+-  struct cls_struct_6byte f_dbl = { 12, 128, 9, 127 };
+-  struct cls_struct_6byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_ushort;
+   cls_struct_fields[1] = &ffi_type_ushort;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_7_1_byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_7_1_byte.c
++++ libffi/testsuite/libffi.call/cls_7_1_byte.c
+@@ -62,15 +62,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_7byte g_dbl = { 127, 120, 1, 3, 4, 5, 6 };
++  struct cls_struct_7byte f_dbl = { 12, 128, 9, 3, 4, 5, 6 };
++  struct cls_struct_7byte res_dbl = { 0, 0, 0, 0, 0, 0, 0 };
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_7byte g_dbl = { 127, 120, 1, 3, 4, 5, 6 };
+-  struct cls_struct_7byte f_dbl = { 12, 128, 9, 3, 4, 5, 6 };
+-  struct cls_struct_7byte res_dbl = { 0, 0, 0, 0, 0, 0, 0 };
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_7byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_7byte.c
++++ libffi/testsuite/libffi.call/cls_7byte.c
+@@ -55,15 +55,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_7byte g_dbl = { 127, 120, 1, 254 };
++  struct cls_struct_7byte f_dbl = { 12, 128, 9, 255 };
++  struct cls_struct_7byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_7byte g_dbl = { 127, 120, 1, 254 };
+-  struct cls_struct_7byte f_dbl = { 12, 128, 9, 255 };
+-  struct cls_struct_7byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_ushort;
+   cls_struct_fields[1] = &ffi_type_ushort;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_8byte.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_8byte.c
++++ libffi/testsuite/libffi.call/cls_8byte.c
+@@ -49,15 +49,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_8byte g_dbl = { 1, 2.0 };
++  struct cls_struct_8byte f_dbl = { 4, 5.0 };
++  struct cls_struct_8byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_8byte g_dbl = { 1, 2.0 };
+-  struct cls_struct_8byte f_dbl = { 4, 5.0 };
+-  struct cls_struct_8byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_sint;
+   cls_struct_fields[1] = &ffi_type_float;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/cls_9byte1.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_9byte1.c
++++ libffi/testsuite/libffi.call/cls_9byte1.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct cls_struct_9byte h_dbl = { 7, 8.0};
++  struct cls_struct_9byte j_dbl = { 1, 9.0};
++  struct cls_struct_9byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_9byte h_dbl = { 7, 8.0};
+-  struct cls_struct_9byte j_dbl = { 1, 9.0};
+-  struct cls_struct_9byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_sint;
+   cls_struct_fields[1] = &ffi_type_double;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/cls_9byte2.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_9byte2.c
++++ libffi/testsuite/libffi.call/cls_9byte2.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct cls_struct_9byte h_dbl = { 7.0, 8};
++  struct cls_struct_9byte j_dbl = { 1.0, 9};
++  struct cls_struct_9byte res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_9byte h_dbl = { 7.0, 8};
+-  struct cls_struct_9byte j_dbl = { 1.0, 9};
+-  struct cls_struct_9byte res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_sint;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/cls_align_double.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_double.c
++++ libffi/testsuite/libffi.call/cls_align_double.c
+@@ -52,15 +52,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_double;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_float.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_float.c
++++ libffi/testsuite/libffi.call/cls_align_float.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_float;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_longdouble.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_longdouble.c
++++ libffi/testsuite/libffi.call/cls_align_longdouble.c
+@@ -51,15 +51,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_longdouble;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_longdouble_split.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_longdouble_split.c
++++ libffi/testsuite/libffi.call/cls_align_longdouble_split.c
+@@ -87,15 +87,15 @@ int main (void)
+ 	ffi_type cls_struct_type;
+ 	ffi_type* dbl_arg_types[3];
+ 
++	struct cls_struct_align g_dbl = { 1, 2, 3, 4, 5, 6, 7 };
++	struct cls_struct_align f_dbl = { 8, 9, 10, 11, 12, 13, 14 };
++	struct cls_struct_align res_dbl;
++
+ 	cls_struct_type.size = 0;
+ 	cls_struct_type.alignment = 0;
+ 	cls_struct_type.type = FFI_TYPE_STRUCT;
+ 	cls_struct_type.elements = cls_struct_fields;
+ 
+-	struct cls_struct_align g_dbl = { 1, 2, 3, 4, 5, 6, 7 };
+-	struct cls_struct_align f_dbl = { 8, 9, 10, 11, 12, 13, 14 };
+-	struct cls_struct_align res_dbl;
+-
+ 	cls_struct_fields[0] = &ffi_type_longdouble;
+ 	cls_struct_fields[1] = &ffi_type_longdouble;
+ 	cls_struct_fields[2] = &ffi_type_longdouble;
+Index: libffi/testsuite/libffi.call/cls_align_longdouble_split2.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_longdouble_split2.c
++++ libffi/testsuite/libffi.call/cls_align_longdouble_split2.c
+@@ -67,15 +67,15 @@ int main (void)
+ 	ffi_type cls_struct_type;
+ 	ffi_type* dbl_arg_types[3];
+ 
++	struct cls_struct_align g_dbl = { 1, 2, 3, 4, 5, 6, 7 };
++	struct cls_struct_align f_dbl = { 8, 9, 10, 11, 12, 13, 14 };
++	struct cls_struct_align res_dbl;
++
+ 	cls_struct_type.size = 0;
+ 	cls_struct_type.alignment = 0;
+ 	cls_struct_type.type = FFI_TYPE_STRUCT;
+ 	cls_struct_type.elements = cls_struct_fields;
+ 
+-	struct cls_struct_align g_dbl = { 1, 2, 3, 4, 5, 6, 7 };
+-	struct cls_struct_align f_dbl = { 8, 9, 10, 11, 12, 13, 14 };
+-	struct cls_struct_align res_dbl;
+-
+ 	cls_struct_fields[0] = &ffi_type_longdouble;
+ 	cls_struct_fields[1] = &ffi_type_longdouble;
+ 	cls_struct_fields[2] = &ffi_type_longdouble;
+Index: libffi/testsuite/libffi.call/cls_align_pointer.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_pointer.c
++++ libffi/testsuite/libffi.call/cls_align_pointer.c
+@@ -54,15 +54,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, (void *)4951, 127 };
++  struct cls_struct_align f_dbl = { 1, (void *)9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, (void *)4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, (void *)9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_pointer;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_sint16.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_sint16.c
++++ libffi/testsuite/libffi.call/cls_align_sint16.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_sshort;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_sint32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_sint32.c
++++ libffi/testsuite/libffi.call/cls_align_sint32.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_sint;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_sint64.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_sint64.c
++++ libffi/testsuite/libffi.call/cls_align_sint64.c
+@@ -51,15 +51,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_sint64;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_uint16.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_uint16.c
++++ libffi/testsuite/libffi.call/cls_align_uint16.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_ushort;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_uint32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_uint32.c
++++ libffi/testsuite/libffi.call/cls_align_uint32.c
+@@ -50,15 +50,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uint;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_align_uint64.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_align_uint64.c
++++ libffi/testsuite/libffi.call/cls_align_uint64.c
+@@ -52,15 +52,15 @@ int main (void)
+   ffi_type cls_struct_type;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_align g_dbl = { 12, 4951, 127 };
++  struct cls_struct_align f_dbl = { 1, 9320, 13 };
++  struct cls_struct_align res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+   cls_struct_type.elements = cls_struct_fields;
+ 
+-  struct cls_struct_align g_dbl = { 12, 4951, 127 };
+-  struct cls_struct_align f_dbl = { 1, 9320, 13 };
+-  struct cls_struct_align res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uint64;
+   cls_struct_fields[2] = &ffi_type_uchar;
+Index: libffi/testsuite/libffi.call/cls_dbls_struct.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_dbls_struct.c
++++ libffi/testsuite/libffi.call/cls_dbls_struct.c
+@@ -37,6 +37,8 @@ int main(int argc __UNUSED__, char** arg
+ 	ffi_type	ts1_type;
+ 	ffi_type*	ts1_type_elements[4];
+ 
++	Dbls arg = { 1.0, 2.0 };
++
+ 	ts1_type.size = 0;
+ 	ts1_type.alignment = 0;
+ 	ts1_type.type = FFI_TYPE_STRUCT;
+@@ -48,8 +50,6 @@ int main(int argc __UNUSED__, char** arg
+ 
+ 	cl_arg_types[0] = &ts1_type;
+ 
+-	Dbls arg = { 1.0, 2.0 };
+-
+ 	/* Initialize the cif */
+ 	CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
+ 				 &ffi_type_void, cl_arg_types) == FFI_OK);
+Index: libffi/testsuite/libffi.call/cls_pointer_stack.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/cls_pointer_stack.c
++++ libffi/testsuite/libffi.call/cls_pointer_stack.c
+@@ -28,11 +28,12 @@ void* cls_pointer_fn2(void* a1, void* a2
+ 	char		trample6	= trample4 + ((char*)&a2)[1];
+ 	long double	trample7	= (intptr_t)trample5 + (intptr_t)trample1;
+ 	char		trample8	= trample6 + trample2;
++	void*		result;
+ 
+ 	dummyVar	= dummy_func(trample1, trample2, trample3, trample4,
+ 		trample5, trample6, trample7, trample8);
+ 
+-	void*	result	= (void*)((intptr_t)a1 + (intptr_t)a2);
++	result	= (void*)((intptr_t)a1 + (intptr_t)a2);
+ 
+ 	printf("0x%08x 0x%08x: 0x%08x\n", 
+ 	       (unsigned int)(uintptr_t) a1,
+@@ -52,11 +53,12 @@ void* cls_pointer_fn1(void* a1, void* a2
+ 	char		trample6	= trample4 + ((char*)&a2)[1];
+ 	long double	trample7	= (intptr_t)trample5 + (intptr_t)trample1;
+ 	char		trample8	= trample6 + trample2;
++	void*		result;
+ 
+ 	dummyVar	= dummy_func(trample1, trample2, trample3, trample4,
+ 		trample5, trample6, trample7, trample8);
+ 
+-	void*	result	= (void*)((intptr_t)a1 + (intptr_t)a2);
++	result	= (void*)((intptr_t)a1 + (intptr_t)a2);
+ 
+ 	printf("0x%08x 0x%08x: 0x%08x\n",
+                (unsigned int)(intptr_t) a1,
+Index: libffi/testsuite/libffi.call/err_bad_typedef.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/err_bad_typedef.c
++++ libffi/testsuite/libffi.call/err_bad_typedef.c
+@@ -13,10 +13,10 @@ int main (void)
+ 	ffi_cif cif;
+ 	ffi_type* arg_types[1];
+ 
+-	arg_types[0] = NULL;
+-
+ 	ffi_type	badType	= ffi_type_void;
+ 
++	arg_types[0] = NULL;
++
+ 	badType.size = 0;
+ 
+ 	CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 0, &badType,
+Index: libffi/testsuite/libffi.call/fastthis1_win32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/fastthis1_win32.c
++++ libffi/testsuite/libffi.call/fastthis1_win32.c
+@@ -8,7 +8,7 @@
+ 
+ #include "ffitest.h"
+ 
+-static size_t __attribute__((fastcall)) my_fastcall_f(char *s, float a)
++static size_t __FASTCALL__ my_fastcall_f(char *s, float a)
+ {
+   return (size_t) ((int) strlen(s) + (int) a);
+ }
+Index: libffi/testsuite/libffi.call/fastthis2_win32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/fastthis2_win32.c
++++ libffi/testsuite/libffi.call/fastthis2_win32.c
+@@ -8,7 +8,7 @@
+ 
+ #include "ffitest.h"
+ 
+-static size_t __attribute__((fastcall)) my_fastcall_f(float a, char *s)
++static size_t __FASTCALL__ my_fastcall_f(float a, char *s)
+ {
+   return (size_t) ((int) strlen(s) + (int) a);
+ }
+Index: libffi/testsuite/libffi.call/fastthis3_win32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/fastthis3_win32.c
++++ libffi/testsuite/libffi.call/fastthis3_win32.c
+@@ -8,7 +8,7 @@
+ 
+ #include "ffitest.h"
+ 
+-static size_t __attribute__((fastcall)) my_fastcall_f(float a, char *s, int i)
++static size_t __FASTCALL__ my_fastcall_f(float a, char *s, int i)
+ {
+   return (size_t) ((int) strlen(s) + (int) a + i);
+ }
+Index: libffi/testsuite/libffi.call/ffitest.h
+===================================================================
+--- libffi.orig/testsuite/libffi.call/ffitest.h
++++ libffi/testsuite/libffi.call/ffitest.h
+@@ -25,6 +25,14 @@
+ #define __UNUSED__
+ #endif
+ 
++/* Define __FASTCALL__ so that other compilers than gcc can run the tests.  */
++#undef __FASTCALL__
++#if defined _MSC_VER
++#define __FASTCALL__ __fastcall
++#else
++#define __FASTCALL__ __attribute__((fastcall))
++#endif
++
+ /* Prefer MAP_ANON(YMOUS) to /dev/zero, since we don't need to keep a
+    file open.  */
+ #ifdef HAVE_MMAP_ANON
+@@ -110,6 +118,15 @@
+ #endif
+ #endif
+ 
++/* MSVC kludge.  */
++#if defined _MSC_VER
++#define PRIuPTR "lu"
++#define PRIu8 "u"
++#define PRId8 "d"
++#define PRIu64 "I64u"
++#define PRId64 "I64d"
++#endif
++
+ #ifdef USING_MMAP
+ static inline void *
+ allocate_mmap (size_t size)
+Index: libffi/testsuite/libffi.call/huge_struct.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/huge_struct.c
++++ libffi/testsuite/libffi.call/huge_struct.c
+@@ -229,6 +229,19 @@ main(int argc __UNUSED__, const char** a
+ 	ffi_type*	st_fields[51];
+ 	BigStruct	retVal;
+ 
++	uint8_t		ui8		= 1;
++	int8_t		si8		= 2;
++	uint16_t	ui16	= 3;
++	int16_t		si16	= 4;
++	uint32_t	ui32	= 5;
++	int32_t		si32	= 6;
++	uint64_t	ui64	= 7;
++	int64_t		si64	= 8;
++	float		f		= 9;
++	double		d		= 10;
++	long double	ld		= 11;
++	char*		p		= (char*)0x12345678;
++
+ 	memset (&retVal, 0, sizeof(retVal));
+ 
+ 	ret_struct_type.size = 0;
+@@ -251,19 +264,6 @@ main(int argc __UNUSED__, const char** a
+ 
+ 	st_fields[50] = NULL;
+ 
+-	uint8_t		ui8		= 1;
+-	int8_t		si8		= 2;
+-	uint16_t	ui16	= 3;
+-	int16_t		si16	= 4;
+-	uint32_t	ui32	= 5;
+-	int32_t		si32	= 6;
+-	uint64_t	ui64	= 7;
+-	int64_t		si64	= 8;
+-	float		f		= 9;
+-	double		d		= 10;
+-	long double	ld		= 11;
+-	char*		p		= (char*)0x12345678;
+-
+ 	argTypes[0]		= argTypes[12]	= argTypes[24]	= argTypes[36]	= argTypes[48]	= &ffi_type_uint8;
+ 	argValues[0]	= argValues[12]	= argValues[24]	= argValues[36]	= argValues[48]	= &ui8;
+ 	argTypes[1]		= argTypes[13]	= argTypes[25]	= argTypes[37]	= argTypes[49]	= &ffi_type_sint8;
+Index: libffi/testsuite/libffi.call/nested_struct.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct.c
++++ libffi/testsuite/libffi.call/nested_struct.c
+@@ -77,6 +77,12 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1, cls_struct_type2;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_16byte1 e_dbl = { 9.0, 2.0, 6};
++  struct cls_struct_16byte2 f_dbl = { 1, 2.0, 3.0};
++  struct cls_struct_combined g_dbl = {{4.0, 5.0, 6},
++				      {3, 1.0, 8.0}};
++  struct cls_struct_combined res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -92,12 +98,6 @@ int main (void)
+   cls_struct_type2.type = FFI_TYPE_STRUCT;
+   cls_struct_type2.elements = cls_struct_fields2;
+ 
+-  struct cls_struct_16byte1 e_dbl = { 9.0, 2.0, 6};
+-  struct cls_struct_16byte2 f_dbl = { 1, 2.0, 3.0};
+-  struct cls_struct_combined g_dbl = {{4.0, 5.0, 6},
+-				      {3, 1.0, 8.0}};
+-  struct cls_struct_combined res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_float;
+   cls_struct_fields[2] = &ffi_type_sint;
+Index: libffi/testsuite/libffi.call/nested_struct1.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct1.c
++++ libffi/testsuite/libffi.call/nested_struct1.c
+@@ -81,6 +81,13 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1, cls_struct_type2;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_16byte1 e_dbl = { 9.0, 2.0, 6};
++  struct cls_struct_16byte2 f_dbl = { 1, 2.0, 3.0};
++  struct cls_struct_combined g_dbl = {{4.0, 5.0, 6},
++				      {3, 1.0, 8.0}};
++  struct cls_struct_16byte1 h_dbl = { 3.0, 2.0, 4};
++  struct cls_struct_combined res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -96,13 +103,6 @@ int main (void)
+   cls_struct_type2.type = FFI_TYPE_STRUCT;
+   cls_struct_type2.elements = cls_struct_fields2;
+ 
+-  struct cls_struct_16byte1 e_dbl = { 9.0, 2.0, 6};
+-  struct cls_struct_16byte2 f_dbl = { 1, 2.0, 3.0};
+-  struct cls_struct_combined g_dbl = {{4.0, 5.0, 6},
+-				      {3, 1.0, 8.0}};
+-  struct cls_struct_16byte1 h_dbl = { 3.0, 2.0, 4};
+-  struct cls_struct_combined res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_float;
+   cls_struct_fields[2] = &ffi_type_sint;
+Index: libffi/testsuite/libffi.call/nested_struct10.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct10.c
++++ libffi/testsuite/libffi.call/nested_struct10.c
+@@ -67,6 +67,12 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1, cls_struct_type2;
+   ffi_type* dbl_arg_types[4];
+ 
++  struct A e_dbl = { 1LL, 7};
++  struct B f_dbl = { 99, {12LL , 127}, 255};
++  struct C g_dbl = { 2LL, 9};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -82,12 +88,6 @@ int main (void)
+   cls_struct_type2.type = FFI_TYPE_STRUCT;
+   cls_struct_type2.elements = cls_struct_fields2;
+ 
+-  struct A e_dbl = { 1LL, 7};
+-  struct B f_dbl = { 99, {12LL , 127}, 255};
+-  struct C g_dbl = { 2LL, 9};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uint64;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct2.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct2.c
++++ libffi/testsuite/libffi.call/nested_struct2.c
+@@ -57,6 +57,11 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct A e_dbl = { 1, 7};
++  struct B f_dbl = {{12 , 127}, 99};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -67,11 +72,6 @@ int main (void)
+   cls_struct_type1.type = FFI_TYPE_STRUCT;
+   cls_struct_type1.elements = cls_struct_fields1;
+ 
+-  struct A e_dbl = { 1, 7};
+-  struct B f_dbl = {{12 , 127}, 99};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_ulong;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct3.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct3.c
++++ libffi/testsuite/libffi.call/nested_struct3.c
+@@ -58,6 +58,11 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct A e_dbl = { 1LL, 7};
++  struct B f_dbl = {{12LL , 127}, 99};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -68,11 +73,6 @@ int main (void)
+   cls_struct_type1.type = FFI_TYPE_STRUCT;
+   cls_struct_type1.elements = cls_struct_fields1;
+ 
+-  struct A e_dbl = { 1LL, 7};
+-  struct B f_dbl = {{12LL , 127}, 99};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uint64;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct4.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct4.c
++++ libffi/testsuite/libffi.call/nested_struct4.c
+@@ -58,6 +58,11 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct A e_dbl = { 1.0, 7};
++  struct B f_dbl = {{12.0 , 127}, 99};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -68,11 +73,6 @@ int main (void)
+   cls_struct_type1.type = FFI_TYPE_STRUCT;
+   cls_struct_type1.elements = cls_struct_fields1;
+ 
+-  struct A e_dbl = { 1.0, 7};
+-  struct B f_dbl = {{12.0 , 127}, 99};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct5.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct5.c
++++ libffi/testsuite/libffi.call/nested_struct5.c
+@@ -58,6 +58,11 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct A e_dbl = { 1.0, 7};
++  struct B f_dbl = {{12.0 , 127}, 99};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -68,11 +73,6 @@ int main (void)
+   cls_struct_type1.type = FFI_TYPE_STRUCT;
+   cls_struct_type1.elements = cls_struct_fields1;
+ 
+-  struct A e_dbl = { 1.0, 7};
+-  struct B f_dbl = {{12.0 , 127}, 99};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_longdouble;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct6.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct6.c
++++ libffi/testsuite/libffi.call/nested_struct6.c
+@@ -66,6 +66,12 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1, cls_struct_type2;
+   ffi_type* dbl_arg_types[4];
+ 
++  struct A e_dbl = { 1.0, 7};
++  struct B f_dbl = {{12.0 , 127}, 99};
++  struct C g_dbl = { 2, 9};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -81,12 +87,6 @@ int main (void)
+   cls_struct_type2.type = FFI_TYPE_STRUCT;
+   cls_struct_type2.elements = cls_struct_fields2;
+ 
+-  struct A e_dbl = { 1.0, 7};
+-  struct B f_dbl = {{12.0 , 127}, 99};
+-  struct C g_dbl = { 2, 9};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_double;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct7.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct7.c
++++ libffi/testsuite/libffi.call/nested_struct7.c
+@@ -58,6 +58,11 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1;
+   ffi_type* dbl_arg_types[3];
+ 
++  struct A e_dbl = { 1LL, 7};
++  struct B f_dbl = {{12.0 , 127}, 99};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -68,11 +73,6 @@ int main (void)
+   cls_struct_type1.type = FFI_TYPE_STRUCT;
+   cls_struct_type1.elements = cls_struct_fields1;
+ 
+-  struct A e_dbl = { 1LL, 7};
+-  struct B f_dbl = {{12.0 , 127}, 99};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uint64;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct8.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct8.c
++++ libffi/testsuite/libffi.call/nested_struct8.c
+@@ -66,6 +66,12 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1, cls_struct_type2;
+   ffi_type* dbl_arg_types[4];
+ 
++  struct A e_dbl = { 1LL, 7};
++  struct B f_dbl = {{12LL , 127}, 99};
++  struct C g_dbl = { 2LL, 9};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -81,12 +87,6 @@ int main (void)
+   cls_struct_type2.type = FFI_TYPE_STRUCT;
+   cls_struct_type2.elements = cls_struct_fields2;
+ 
+-  struct A e_dbl = { 1LL, 7};
+-  struct B f_dbl = {{12LL , 127}, 99};
+-  struct C g_dbl = { 2LL, 9};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uint64;
+   cls_struct_fields[1] = &ffi_type_uchar;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/nested_struct9.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/nested_struct9.c
++++ libffi/testsuite/libffi.call/nested_struct9.c
+@@ -66,6 +66,12 @@ int main (void)
+   ffi_type cls_struct_type, cls_struct_type1, cls_struct_type2;
+   ffi_type* dbl_arg_types[4];
+ 
++  struct A e_dbl = { 1, 7LL};
++  struct B f_dbl = {{12.0 , 127}, 99};
++  struct C g_dbl = { 2, 9};
++
++  struct B res_dbl;
++
+   cls_struct_type.size = 0;
+   cls_struct_type.alignment = 0;
+   cls_struct_type.type = FFI_TYPE_STRUCT;
+@@ -81,12 +87,6 @@ int main (void)
+   cls_struct_type2.type = FFI_TYPE_STRUCT;
+   cls_struct_type2.elements = cls_struct_fields2;
+ 
+-  struct A e_dbl = { 1, 7LL};
+-  struct B f_dbl = {{12.0 , 127}, 99};
+-  struct C g_dbl = { 2, 9};
+-
+-  struct B res_dbl;
+-
+   cls_struct_fields[0] = &ffi_type_uchar;
+   cls_struct_fields[1] = &ffi_type_uint64;
+   cls_struct_fields[2] = NULL;
+Index: libffi/testsuite/libffi.call/stret_large.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/stret_large.c
++++ libffi/testsuite/libffi.call/stret_large.c
+@@ -82,17 +82,17 @@ int main (void)
+ 	ffi_type cls_struct_type;
+ 	ffi_type* dbl_arg_types[5];
+ 
+-	cls_struct_type.size = 0;
+-	cls_struct_type.alignment = 0;
+-	cls_struct_type.type = FFI_TYPE_STRUCT;
+-	cls_struct_type.elements = cls_struct_fields;
+-
+ 	struct_108byte e_dbl = { 9.0, 2.0, 6.0, 5.0, 3.0, 4.0, 8.0, 1.0, 1.0, 2.0, 3.0, 7.0, 2.0, 7 };
+ 	struct_108byte f_dbl = { 1.0, 2.0, 3.0, 7.0, 2.0, 5.0, 6.0, 7.0, 4.0, 5.0, 7.0, 9.0, 1.0, 4 };
+ 	struct_108byte g_dbl = { 4.0, 5.0, 7.0, 9.0, 1.0, 1.0, 2.0, 9.0, 8.0, 6.0, 1.0, 4.0, 0.0, 3 };
+ 	struct_108byte h_dbl = { 8.0, 6.0, 1.0, 4.0, 0.0, 3.0, 3.0, 1.0, 9.0, 2.0, 6.0, 5.0, 3.0, 2 };
+ 	struct_108byte res_dbl;
+ 
++	cls_struct_type.size = 0;
++	cls_struct_type.alignment = 0;
++	cls_struct_type.type = FFI_TYPE_STRUCT;
++	cls_struct_type.elements = cls_struct_fields;
++
+ 	cls_struct_fields[0] = &ffi_type_double;
+ 	cls_struct_fields[1] = &ffi_type_double;
+ 	cls_struct_fields[2] = &ffi_type_double;
+Index: libffi/testsuite/libffi.call/stret_large2.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/stret_large2.c
++++ libffi/testsuite/libffi.call/stret_large2.c
+@@ -84,17 +84,17 @@ int main (void)
+ 	ffi_type cls_struct_type;
+ 	ffi_type* dbl_arg_types[5];
+ 
+-	cls_struct_type.size = 0;
+-	cls_struct_type.alignment = 0;
+-	cls_struct_type.type = FFI_TYPE_STRUCT;
+-	cls_struct_type.elements = cls_struct_fields;
+-
+ 	struct_116byte e_dbl = { 9.0, 2.0, 6.0, 5.0, 3.0, 4.0, 8.0, 1.0, 1.0, 2.0, 3.0, 7.0, 2.0, 5.0, 7 };
+ 	struct_116byte f_dbl = { 1.0, 2.0, 3.0, 7.0, 2.0, 5.0, 6.0, 7.0, 4.0, 5.0, 7.0, 9.0, 1.0, 6.0, 4 };
+ 	struct_116byte g_dbl = { 4.0, 5.0, 7.0, 9.0, 1.0, 1.0, 2.0, 9.0, 8.0, 6.0, 1.0, 4.0, 0.0, 7.0, 3 };
+ 	struct_116byte h_dbl = { 8.0, 6.0, 1.0, 4.0, 0.0, 3.0, 3.0, 1.0, 9.0, 2.0, 6.0, 5.0, 3.0, 8.0, 2 };
+ 	struct_116byte res_dbl;
+ 
++	cls_struct_type.size = 0;
++	cls_struct_type.alignment = 0;
++	cls_struct_type.type = FFI_TYPE_STRUCT;
++	cls_struct_type.elements = cls_struct_fields;
++
+ 	cls_struct_fields[0] = &ffi_type_double;
+ 	cls_struct_fields[1] = &ffi_type_double;
+ 	cls_struct_fields[2] = &ffi_type_double;
+Index: libffi/testsuite/libffi.call/stret_medium.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/stret_medium.c
++++ libffi/testsuite/libffi.call/stret_medium.c
+@@ -68,17 +68,17 @@ int main (void)
+ 	ffi_type cls_struct_type;
+ 	ffi_type* dbl_arg_types[5];
+ 
+-	cls_struct_type.size = 0;
+-	cls_struct_type.alignment = 0;
+-	cls_struct_type.type = FFI_TYPE_STRUCT;
+-	cls_struct_type.elements = cls_struct_fields;
+-
+ 	struct_72byte e_dbl = { 9.0, 2.0, 6.0, 5.0, 3.0, 4.0, 8.0, 1.0, 7.0 };
+ 	struct_72byte f_dbl = { 1.0, 2.0, 3.0, 7.0, 2.0, 5.0, 6.0, 7.0, 4.0 };
+ 	struct_72byte g_dbl = { 4.0, 5.0, 7.0, 9.0, 1.0, 1.0, 2.0, 9.0, 3.0 };
+ 	struct_72byte h_dbl = { 8.0, 6.0, 1.0, 4.0, 0.0, 3.0, 3.0, 1.0, 2.0 };
+ 	struct_72byte res_dbl;
+ 
++	cls_struct_type.size = 0;
++	cls_struct_type.alignment = 0;
++	cls_struct_type.type = FFI_TYPE_STRUCT;
++	cls_struct_type.elements = cls_struct_fields;
++
+ 	cls_struct_fields[0] = &ffi_type_double;
+ 	cls_struct_fields[1] = &ffi_type_double;
+ 	cls_struct_fields[2] = &ffi_type_double;
+Index: libffi/testsuite/libffi.call/stret_medium2.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/stret_medium2.c
++++ libffi/testsuite/libffi.call/stret_medium2.c
+@@ -69,17 +69,17 @@ int main (void)
+ 	ffi_type cls_struct_type;
+ 	ffi_type* dbl_arg_types[5];
+ 
+-	cls_struct_type.size = 0;
+-	cls_struct_type.alignment = 0;
+-	cls_struct_type.type = FFI_TYPE_STRUCT;
+-	cls_struct_type.elements = cls_struct_fields;
+-
+ 	struct_72byte e_dbl = { 9.0, 2.0, 6.0, 5.0, 3.0, 4.0, 8.0, 1.0, 7 };
+ 	struct_72byte f_dbl = { 1.0, 2.0, 3.0, 7.0, 2.0, 5.0, 6.0, 7.0, 4 };
+ 	struct_72byte g_dbl = { 4.0, 5.0, 7.0, 9.0, 1.0, 1.0, 2.0, 9.0, 3 };
+ 	struct_72byte h_dbl = { 8.0, 6.0, 1.0, 4.0, 0.0, 3.0, 3.0, 1.0, 2 };
+ 	struct_72byte res_dbl;
+ 
++	cls_struct_type.size = 0;
++	cls_struct_type.alignment = 0;
++	cls_struct_type.type = FFI_TYPE_STRUCT;
++	cls_struct_type.elements = cls_struct_fields;
++
+ 	cls_struct_fields[0] = &ffi_type_double;
+ 	cls_struct_fields[1] = &ffi_type_double;
+ 	cls_struct_fields[2] = &ffi_type_double;
+Index: libffi/testsuite/libffi.call/strlen2_win32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/strlen2_win32.c
++++ libffi/testsuite/libffi.call/strlen2_win32.c
+@@ -8,7 +8,7 @@
+ 
+ #include "ffitest.h"
+ 
+-static size_t __attribute__((fastcall)) my_fastcall_strlen(char *s)
++static size_t __FASTCALL__ my_fastcall_strlen(char *s)
+ {
+   return (strlen(s));
+ }
+Index: libffi/testsuite/libffi.call/struct1.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct1.c
++++ libffi/testsuite/libffi.call/struct1.c
+@@ -30,6 +30,13 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts1_type;
+   ffi_type *ts1_type_elements[4];
++
++  test_structure_1 ts1_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
+   ts1_type.size = 0;
+   ts1_type.alignment = 0;
+   ts1_type.type = FFI_TYPE_STRUCT;
+@@ -39,11 +46,6 @@ int main (void)
+   ts1_type_elements[2] = &ffi_type_uint;
+   ts1_type_elements[3] = NULL;
+   
+-  test_structure_1 ts1_arg;
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_1 *ts1_result = 
+-    (test_structure_1 *) malloc (sizeof(test_structure_1));
+-  
+   args[0] = &ts1_type;
+   values[0] = &ts1_arg;
+   
+Index: libffi/testsuite/libffi.call/struct1_win32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct1_win32.c
++++ libffi/testsuite/libffi.call/struct1_win32.c
+@@ -14,7 +14,7 @@ typedef struct
+   unsigned int ui;
+ } test_structure_1;
+ 
+-static __attribute__ ((fastcall)) test_structure_1 struct1(test_structure_1 ts)
++static test_structure_1 __FASTCALL__ struct1(test_structure_1 ts)
+ {
+   ts.uc++;
+   ts.d--;
+@@ -30,6 +30,13 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts1_type;
+   ffi_type *ts1_type_elements[4];
++
++  test_structure_1 ts1_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_1 *ts1_result =
++    (test_structure_1 *) malloc (sizeof(test_structure_1));
++
+   ts1_type.size = 0;
+   ts1_type.alignment = 0;
+   ts1_type.type = FFI_TYPE_STRUCT;
+@@ -39,11 +46,6 @@ int main (void)
+   ts1_type_elements[2] = &ffi_type_uint;
+   ts1_type_elements[3] = NULL;
+   
+-  test_structure_1 ts1_arg;
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_1 *ts1_result = 
+-    (test_structure_1 *) malloc (sizeof(test_structure_1));
+-  
+   args[0] = &ts1_type;
+   values[0] = &ts1_arg;
+   
+Index: libffi/testsuite/libffi.call/struct2.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct2.c
++++ libffi/testsuite/libffi.call/struct2.c
+@@ -29,6 +29,11 @@ int main (void)
+   test_structure_2 ts2_arg;
+   ffi_type ts2_type;
+   ffi_type *ts2_type_elements[3];
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_2 *ts2_result =
++    (test_structure_2 *) malloc (sizeof(test_structure_2));
++
+   ts2_type.size = 0;
+   ts2_type.alignment = 0;
+   ts2_type.type = FFI_TYPE_STRUCT;
+@@ -37,11 +42,6 @@ int main (void)
+   ts2_type_elements[1] = &ffi_type_double;
+   ts2_type_elements[2] = NULL;
+ 
+-  
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_2 *ts2_result = 
+-    (test_structure_2 *) malloc (sizeof(test_structure_2));
+-  
+   args[0] = &ts2_type;
+   values[0] = &ts2_arg;
+   
+Index: libffi/testsuite/libffi.call/struct2_win32.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct2_win32.c
++++ libffi/testsuite/libffi.call/struct2_win32.c
+@@ -13,7 +13,7 @@ typedef struct
+   double d2;
+ } test_structure_2;
+ 
+-static test_structure_2 __attribute__ ((fastcall)) struct2(test_structure_2 ts)
++static test_structure_2 __FASTCALL__ struct2(test_structure_2 ts)
+ {
+   ts.d1--;
+   ts.d2--;
+@@ -29,6 +29,11 @@ int main (void)
+   test_structure_2 ts2_arg;
+   ffi_type ts2_type;
+   ffi_type *ts2_type_elements[3];
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_2 *ts2_result =
++    (test_structure_2 *) malloc (sizeof(test_structure_2));
++
+   ts2_type.size = 0;
+   ts2_type.alignment = 0;
+   ts2_type.type = FFI_TYPE_STRUCT;
+@@ -37,11 +42,6 @@ int main (void)
+   ts2_type_elements[1] = &ffi_type_double;
+   ts2_type_elements[2] = NULL;
+ 
+-  
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_2 *ts2_result = 
+-    (test_structure_2 *) malloc (sizeof(test_structure_2));
+-  
+   args[0] = &ts2_type;
+   values[0] = &ts2_arg;
+   
+Index: libffi/testsuite/libffi.call/struct3.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct3.c
++++ libffi/testsuite/libffi.call/struct3.c
+@@ -27,6 +27,11 @@ int main (void)
+   int compare_value;
+   ffi_type ts3_type;
+   ffi_type *ts3_type_elements[2];
++
++  test_structure_3 ts3_arg;
++  test_structure_3 *ts3_result =
++    (test_structure_3 *) malloc (sizeof(test_structure_3));
++
+   ts3_type.size = 0;
+   ts3_type.alignment = 0;
+   ts3_type.type = FFI_TYPE_STRUCT;
+@@ -34,10 +39,6 @@ int main (void)
+   ts3_type_elements[0] = &ffi_type_sint;
+   ts3_type_elements[1] = NULL;
+ 
+-  test_structure_3 ts3_arg;
+-  test_structure_3 *ts3_result = 
+-    (test_structure_3 *) malloc (sizeof(test_structure_3));
+-  
+   args[0] = &ts3_type;
+   values[0] = &ts3_arg;
+   
+Index: libffi/testsuite/libffi.call/struct4.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct4.c
++++ libffi/testsuite/libffi.call/struct4.c
+@@ -28,21 +28,22 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts4_type;
+   ffi_type *ts4_type_elements[4];  
++
++  test_structure_4 ts4_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_4 *ts4_result =
++    (test_structure_4 *) malloc (sizeof(test_structure_4));
++
+   ts4_type.size = 0;
+   ts4_type.alignment = 0;
+   ts4_type.type = FFI_TYPE_STRUCT;
+-  test_structure_4 ts4_arg;
+   ts4_type.elements = ts4_type_elements;
+   ts4_type_elements[0] = &ffi_type_uint;
+   ts4_type_elements[1] = &ffi_type_uint;
+   ts4_type_elements[2] = &ffi_type_uint;
+   ts4_type_elements[3] = NULL;
+ 
+-  
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_4 *ts4_result = 
+-    (test_structure_4 *) malloc (sizeof(test_structure_4));
+-  
+   args[0] = &ts4_type;
+   values[0] = &ts4_arg;
+   
+Index: libffi/testsuite/libffi.call/struct5.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct5.c
++++ libffi/testsuite/libffi.call/struct5.c
+@@ -27,6 +27,13 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts5_type;
+   ffi_type *ts5_type_elements[3];
++
++  test_structure_5 ts5_arg1, ts5_arg2;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_5 *ts5_result =
++    (test_structure_5 *) malloc (sizeof(test_structure_5));
++
+   ts5_type.size = 0;
+   ts5_type.alignment = 0;
+   ts5_type.type = FFI_TYPE_STRUCT;
+@@ -35,12 +42,6 @@ int main (void)
+   ts5_type_elements[1] = &ffi_type_schar;
+   ts5_type_elements[2] = NULL;
+ 
+-  test_structure_5 ts5_arg1, ts5_arg2;
+-  
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_5 *ts5_result = 
+-    (test_structure_5 *) malloc (sizeof(test_structure_5));
+-  
+   args[0] = &ts5_type;
+   args[1] = &ts5_type;
+   values[0] = &ts5_arg1;
+Index: libffi/testsuite/libffi.call/struct6.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct6.c
++++ libffi/testsuite/libffi.call/struct6.c
+@@ -27,6 +27,13 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts6_type;
+   ffi_type *ts6_type_elements[3];
++
++  test_structure_6 ts6_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_6 *ts6_result =
++    (test_structure_6 *) malloc (sizeof(test_structure_6));
++
+   ts6_type.size = 0;
+   ts6_type.alignment = 0;
+   ts6_type.type = FFI_TYPE_STRUCT;
+@@ -35,13 +42,6 @@ int main (void)
+   ts6_type_elements[1] = &ffi_type_double;
+   ts6_type_elements[2] = NULL;
+ 
+-
+-  test_structure_6 ts6_arg;
+-
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_6 *ts6_result = 
+-    (test_structure_6 *) malloc (sizeof(test_structure_6));
+-  
+   args[0] = &ts6_type;
+   values[0] = &ts6_arg;
+ 
+Index: libffi/testsuite/libffi.call/struct7.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct7.c
++++ libffi/testsuite/libffi.call/struct7.c
+@@ -29,6 +29,13 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts7_type;
+   ffi_type *ts7_type_elements[4];
++
++  test_structure_7 ts7_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_7 *ts7_result =
++    (test_structure_7 *) malloc (sizeof(test_structure_7));
++
+   ts7_type.size = 0;
+   ts7_type.alignment = 0;
+   ts7_type.type = FFI_TYPE_STRUCT;
+@@ -38,13 +45,6 @@ int main (void)
+   ts7_type_elements[2] = &ffi_type_double;
+   ts7_type_elements[3] = NULL;
+ 
+-
+-  test_structure_7 ts7_arg;
+-  
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_7 *ts7_result = 
+-    (test_structure_7 *) malloc (sizeof(test_structure_7));
+-  
+   args[0] = &ts7_type;
+   values[0] = &ts7_arg;
+   
+Index: libffi/testsuite/libffi.call/struct8.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct8.c
++++ libffi/testsuite/libffi.call/struct8.c
+@@ -31,6 +31,13 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts8_type;
+   ffi_type *ts8_type_elements[5];
++
++  test_structure_8 ts8_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_8 *ts8_result =
++    (test_structure_8 *) malloc (sizeof(test_structure_8));
++
+   ts8_type.size = 0;
+   ts8_type.alignment = 0;
+   ts8_type.type = FFI_TYPE_STRUCT;
+@@ -41,12 +48,6 @@ int main (void)
+   ts8_type_elements[3] = &ffi_type_float;
+   ts8_type_elements[4] = NULL;
+ 
+-  test_structure_8 ts8_arg;
+-  
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_8 *ts8_result = 
+-    (test_structure_8 *) malloc (sizeof(test_structure_8));
+-  
+   args[0] = &ts8_type;
+   values[0] = &ts8_arg;
+   
+Index: libffi/testsuite/libffi.call/struct9.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/struct9.c
++++ libffi/testsuite/libffi.call/struct9.c
+@@ -28,6 +28,13 @@ int main (void)
+   void *values[MAX_ARGS];
+   ffi_type ts9_type;
+   ffi_type *ts9_type_elements[3];
++
++  test_structure_9 ts9_arg;
++
++  /* This is a hack to get a properly aligned result buffer */
++  test_structure_9 *ts9_result =
++    (test_structure_9 *) malloc (sizeof(test_structure_9));
++
+   ts9_type.size = 0;
+   ts9_type.alignment = 0;
+   ts9_type.type = FFI_TYPE_STRUCT;
+@@ -36,12 +43,6 @@ int main (void)
+   ts9_type_elements[1] = &ffi_type_sint;
+   ts9_type_elements[2] = NULL;
+ 
+-  test_structure_9 ts9_arg;
+-  
+-  /* This is a hack to get a properly aligned result buffer */
+-  test_structure_9 *ts9_result = 
+-    (test_structure_9 *) malloc (sizeof(test_structure_9));
+-  
+   args[0] = &ts9_type;
+   values[0] = &ts9_arg;
+   
+Index: libffi/testsuite/libffi.call/testclosure.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/testclosure.c
++++ libffi/testsuite/libffi.call/testclosure.c
+@@ -43,13 +43,13 @@ int main (void)
+   ffi_type cls_struct_type0;
+   ffi_type* dbl_arg_types[5];
+ 
++  struct cls_struct_combined g_dbl = {4.0, 5.0, 1.0, 8.0};
++
+   cls_struct_type0.size = 0;
+   cls_struct_type0.alignment = 0;
+   cls_struct_type0.type = FFI_TYPE_STRUCT;
+   cls_struct_type0.elements = cls_struct_fields0;
+ 
+-  struct cls_struct_combined g_dbl = {4.0, 5.0, 1.0, 8.0};
+-
+   cls_struct_fields0[0] = &ffi_type_float;
+   cls_struct_fields0[1] = &ffi_type_float;
+   cls_struct_fields0[2] = &ffi_type_float;

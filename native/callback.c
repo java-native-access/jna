@@ -12,6 +12,7 @@
  * Lesser General Public License for more details.  
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -30,14 +31,54 @@
 extern "C" {
 #endif
 
-static void callback_dispatch(ffi_cif*, void*, void**, void*);
+#ifdef _WIN32
+#include "com_sun_jna_win32_DLLCallback.h"
+#ifdef _WIN64
+#ifdef _MSC_VER
+/* See dll-callback.c (compiled with mingw64) for actual definitions; no
+   inline asm support for MSVC and no RIP-relative instructions allowed in
+   ML64. 
+*/ 
+#define ASMFN(X) extern void asmfn ## X ()
+#else
+#include "dll-callback.c"
+#endif
+#else /* _WIN64 */
+#ifdef _MSC_VER
+// FIXME is "PROC NEAR" correct?
+#define ASMFN(X) extern void asmfn ## X(); \
+__asm asmfn ## X PROC NEAR \
+__asm jmp fn[X]
+#else
+#define ASMFN(X) extern void asmfn ## X (); asm(".globl _asmfn" #X "\n\
+_asmfn" #X ":\n\
+ jmp *(_fn+4*" #X ")")
+#endif
+#endif /* _WIN64 */
 
+// Allocatable trampoline targets
+#define DLL_FPTRS com_sun_jna_win32_DLLCallback_DLL_FPTRS
+void (*fn[DLL_FPTRS])();
+
+ASMFN(0);ASMFN(1);ASMFN(2);ASMFN(3);ASMFN(4);ASMFN(5);ASMFN(6);ASMFN(7);
+ASMFN(8);ASMFN(9);ASMFN(10);ASMFN(11);ASMFN(12);ASMFN(13);ASMFN(14);ASMFN(15);
+
+static void * const dll_fptrs[] = {
+  &asmfn0, &asmfn1, &asmfn2, &asmfn3, &asmfn4, &asmfn5, &asmfn6, &asmfn7,
+  &asmfn8, &asmfn9, &asmfn10, &asmfn11, &asmfn12, &asmfn13, &asmfn14, &asmfn15,
+};
+
+#endif /* _WIN32 */
+
+static void callback_dispatch(ffi_cif*, void*, void**, void*);
 static jclass classObject;
 
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention, jboolean direct) {
+                callconv_t calling_convention, jint options) {
+  jboolean direct = options & CB_OPTION_DIRECT;
+  jboolean in_dll = options & CB_OPTION_IN_DLL;
   callback* cb;
   ffi_abi abi = FFI_DEFAULT_ABI;
   ffi_abi java_abi = FFI_DEFAULT_ABI;
@@ -60,6 +101,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 
   cb = (callback *)malloc(sizeof(callback));
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
+  cb->saved_x_closure = cb->x_closure;
   cb->object = (*env)->NewWeakGlobalRef(env, obj);
   cb->methodID = (*env)->FromReflectedMethod(env, method);
 
@@ -81,6 +123,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       cb->arg_classes[i] = (*env)->NewWeakGlobalRef(env, cls);
       cvt = 1;
     }
+    else {
+      cb->arg_classes[i] = NULL;
+    }
 
     jtype = get_jtype(env, cls);
     if (jtype == -1) {
@@ -91,6 +136,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
     cb->arg_jtypes[i] = (char)jtype;
     cb->java_arg_types[i+3] = cb->arg_types[i] = get_ffi_type(env, cls, cb->arg_jtypes[i]);
+    if (!cb->java_arg_types[i+3]) {
+      goto failure_cleanup;
+    }
     if (cb->flags[i] == CVT_NATIVE_MAPPED
         || cb->flags[i] == CVT_POINTER_TYPE
         || cb->flags[i] == CVT_INTEGER_TYPE) {
@@ -106,6 +154,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       cb->arg_jtypes[i] = (char)jtype;
       cb->java_arg_types[i+3] = &ffi_type_pointer;
       cb->arg_types[i] = get_ffi_type(env, ncls, cb->arg_jtypes[i]);
+      if (!cb->arg_types[i]) {
+        goto failure_cleanup;
+      }
     }
 
     if (cb->arg_types[i]->type == FFI_TYPE_FLOAT) {
@@ -138,6 +189,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }
+  // Calling into Java on win32 *always* uses stdcall
   java_abi = FFI_STDCALL;
 #endif // _WIN32
 
@@ -166,21 +218,39 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       rtype = '*';
     }
     switch(rtype) {
-    case 'V': cb->fptr = (*env)->CallVoidMethod; break;
-    case 'Z': cb->fptr = (*env)->CallBooleanMethod; break;
-    case 'B': cb->fptr = (*env)->CallByteMethod; break;
-    case 'S': cb->fptr = (*env)->CallShortMethod; break;
-    case 'C': cb->fptr = (*env)->CallCharMethod; break;
-    case 'I': cb->fptr = (*env)->CallIntMethod; break;
-    case 'J': cb->fptr = (*env)->CallLongMethod; break;
-    case 'F': cb->fptr = (*env)->CallFloatMethod; break;
-    case 'D': cb->fptr = (*env)->CallDoubleMethod; break;
-    default: cb->fptr = (*env)->CallObjectMethod; break;
+#define OFFSETOF(ENV,METHOD) ((size_t)((char *)&(*(ENV))->METHOD - (char *)(*(ENV))))
+    case 'V': cb->fptr_offset = OFFSETOF(env, CallVoidMethod); break;
+    case 'Z': cb->fptr_offset = OFFSETOF(env, CallBooleanMethod); break;
+    case 'B': cb->fptr_offset = OFFSETOF(env, CallByteMethod); break;
+    case 'S': cb->fptr_offset = OFFSETOF(env, CallShortMethod); break;
+    case 'C': cb->fptr_offset = OFFSETOF(env, CallCharMethod); break;
+    case 'I': cb->fptr_offset = OFFSETOF(env, CallIntMethod); break;
+    case 'J': cb->fptr_offset = OFFSETOF(env, CallLongMethod); break;
+    case 'F': cb->fptr_offset = OFFSETOF(env, CallFloatMethod); break;
+    case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
+    default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
     status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, java_ffi_rtype, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
       ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
                            cb->x_closure);
+#ifdef DLL_FPTRS
+      // Find an available function pointer and assign it
+      if (in_dll) {
+        for (i=0;i < DLL_FPTRS;i++) {
+          if (fn[i] == NULL) {
+            fn[i] = cb->x_closure;
+            cb->x_closure = dll_fptrs[i];
+            break;
+          }
+        }
+        if (i == DLL_FPTRS) {
+          throw_type = EOutOfMemory;
+          throw_msg = "No more DLL callback slots available";
+          goto failure_cleanup;
+        }
+      }
+#endif
       return cb;
     }
   }
@@ -195,20 +265,31 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 }
 void 
 free_callback(JNIEnv* env, callback *cb) {
+  int i;
   (*env)->DeleteWeakGlobalRef(env, cb->object);
   ffi_closure_free(cb->closure);
   free(cb->arg_types);
   if (cb->arg_classes) {
     unsigned i;
     for (i=0;i < cb->cif.nargs;i++) {
-      (*env)->DeleteWeakGlobalRef(env, cb->arg_classes[i]);
+      if (cb->arg_classes[i]) {
+        (*env)->DeleteWeakGlobalRef(env, cb->arg_classes[i]);
+      }
     }
     free(cb->arg_classes);
   }
   free(cb->java_arg_types);
-  if (cb->flags)
+  if (cb->flags) {
     free(cb->flags);
+  }
   free(cb->arg_jtypes);
+#ifdef DLL_FPTRS
+  for (i=0;i < DLL_FPTRS;i++) {
+    if (fn[i] == cb->saved_x_closure) {
+      fn[i] = NULL;
+    }
+  }
+#endif
   free(cb);
 }
 
@@ -269,36 +350,32 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
         case CVT_INTEGER_TYPE:
         case CVT_POINTER_TYPE:
         case CVT_NATIVE_MAPPED:
-          *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], args[i+3], JNI_FALSE);
+	  // Make sure we have space enough for the new argument
+	  args[i+3] = alloca(sizeof(void *));
+	  *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE);
           break;
         case CVT_POINTER:
-          *((void **)args[i+3]) = newJavaPointer(env, *(void **)args[i+3]);
+          *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
           break;
         case CVT_STRING:
-          *((void **)args[i+3]) = newJavaString(env, *(void **)args[i+3], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], JNI_FALSE);
           break;
         case CVT_WSTRING:
-          *((void **)args[i+3]) = newJavaWString(env, *(void **)args[i+3]);
+          *((void **)args[i+3]) = newJavaWString(env, *(void **)cbargs[i]);
           break;
         case CVT_STRUCTURE:
-          *((void **)args[i+3]) = newJavaStructure(env, *(void **)args[i+3], cb->arg_classes[i], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaStructure(env, *(void **)cbargs[i], cb->arg_classes[i], JNI_FALSE);
           break;
         case CVT_STRUCTURE_BYVAL:
-          { 
-            void *ptr = args[i+3];
-            args[i+3] = alloca(sizeof(void *));
-            *((void **)args[i+3]) = newJavaStructure(env, ptr, cb->arg_classes[i], JNI_TRUE);
-          }
+	  args[i+3] = alloca(sizeof(void *));
+	  *((void **)args[i+3]) = newJavaStructure(env, cbargs[i], cb->arg_classes[i], JNI_TRUE);
           break;
         case CVT_CALLBACK:
-          *((void **)args[i+3]) = newJavaCallback(env, *(void **)args[i+3], cb->arg_classes[i]);
+          *((void **)args[i+3]) = newJavaCallback(env, *(void **)cbargs[i], cb->arg_classes[i]);
           break;
         case CVT_FLOAT:
-          {
-            void *ptr = alloca(sizeof(double));
-            *(double *)ptr = *(float*)args[i+3];
-            args[i+3] = ptr;
-          }
+	  args[i+3] = alloca(sizeof(double));
+	  *((double *)args[i+3]) = *(float*)cbargs[i];
           break;
         }
       }
@@ -310,15 +387,18 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     else if (cb->cif.rtype->size > cif->rtype->size) {
       resp = alloca(cb->cif.rtype->size);
     }
-    ffi_call(&cb->java_cif, FFI_FN(cb->fptr), resp, args);
+#define FPTR(ENV,OFFSET) (*(void **)((char *)(*(ENV)) + OFFSET))
+#define JNI_FN(X) ((void (*)(void))(X))
+    ffi_call(&cb->java_cif, JNI_FN(FPTR(env, cb->fptr_offset)), resp, args);
     if ((*env)->ExceptionCheck(env)) {
       jthrowable throwable = (*env)->ExceptionOccurred(env);
       (*env)->ExceptionClear(env);
       if (!handle_exception(env, self, throwable)) {
         fprintf(stderr, "JNA: error handling callback exception, continuing\n");
       }
-      if (cif->rtype->type != FFI_TYPE_VOID)
+      if (cif->rtype->type != FFI_TYPE_VOID) {
         memset(oldresp, 0, cif->rtype->size);
+      }
     }
     else switch(cb->rflag) {
     case CVT_INTEGER_TYPE:
@@ -360,7 +440,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     if (cb->flags) {
       for (i=0;i < cif->nargs;i++) {
         if (cb->flags[i] == CVT_STRUCTURE) {
-          writeStructure(env, *(void **)args[i+3]);
+          writeStructure(env, *(void **)cbargs[i]);
         }
       }
     }
@@ -389,6 +469,67 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
       extract_value(env, result, resp, cif->rtype->size, JNI_TRUE);
     }
   }
+}
+
+// Handle automatic thread cleanup
+static void detach_thread(void* data) {
+  if (data != NULL) {
+    JavaVM* jvm = (JavaVM *)data;
+    (*jvm)->DetachCurrentThread(jvm);
+  }
+}
+
+#ifdef _WIN32
+
+static DWORD dwTlsIndex;
+BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
+  switch (fdwReason) {
+  case DLL_PROCESS_ATTACH:
+    dwTlsIndex = TlsAlloc();
+    if (dwTlsIndex == TLS_OUT_OF_INDEXES) {
+      return FALSE;
+    }
+    break;
+  case DLL_PROCESS_DETACH:
+    TlsFree(dwTlsIndex);
+    break;
+  case DLL_THREAD_ATTACH:
+    break;
+  case DLL_THREAD_DETACH: {
+    detach_thread(TlsGetValue(dwTlsIndex));
+    break;
+  }
+  default:
+    break;
+  }
+  return TRUE;
+}
+
+#else
+
+#include <pthread.h>
+
+static pthread_key_t key;
+static void make_key() {
+  pthread_key_create(&key, detach_thread);
+}
+
+#endif
+
+/** Set up to detach the thread when it exits, or clear any handlers if the
+    argument is NULL.
+*/
+static void 
+jvm_detach_on_exit(JavaVM* jvm) {
+#ifdef _WIN32
+  TlsSetValue(dwTlsIndex, (void *)jvm);
+#else
+  static pthread_once_t key_once = PTHREAD_ONCE_INIT;
+  pthread_once(&key_once, make_key);
+  if (!jvm || pthread_getspecific(key) == NULL) {
+    pthread_setspecific(key, jvm);
+  }
+#endif
 }
 
 static void
@@ -453,6 +594,10 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   
   if (detach) {
     (*jvm)->DetachCurrentThread(jvm);
+    jvm_detach_on_exit(NULL);
+  }
+  else if (!was_attached) {
+    jvm_detach_on_exit(jvm);
   }
 }
 
