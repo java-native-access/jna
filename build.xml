@@ -959,7 +959,6 @@ osname=macos
 
   <property name="version-maven-gpg-plugin" value="1.4"/>
 
-  <!-- before this, update project version (both build.xml and ${pom}) from SNAPSHOT to RELEASE -->
   <!-- WARNING: Failures in these 'mvn' calls do NOT cause the ant build to fail, so watch out for messages like this:
 [artifact:mvn] [ERROR] BUILD ERROR
 [artifact:mvn] [INFO] ...
