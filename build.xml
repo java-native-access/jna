@@ -957,70 +957,73 @@ osname=macos
     </artifact:mvn>
   </target>
 
+
+  <property name="version-maven-gpg-plugin" value="1.4"/>
+
   <!-- before this, update project version (both build.xml and ${pom}) from SNAPSHOT to RELEASE -->
   <!-- Note: Assumes jars in 'dist' folder are current. -->
   <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the main artifact -->
     <artifact:mvn>
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
-      <arg value="-Pgpg"/>
+      <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
     <!-- sign and deploy the sources artifact -->
     <artifact:mvn>
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${maven-sources-jar}"/>
       <arg value="-Dclassifier=sources"/>
-      <arg value="-Pgpg"/>
+      <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
     <!-- sign and deploy the javadoc artifact -->
     <artifact:mvn>
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${maven-javadoc-jar}"/>
       <arg value="-Dclassifier=javadoc"/>
-      <arg value="-Pgpg"/>
+      <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
     <artifact:mvn>
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=pom-platform.xml"/>
       <arg value="-Dfile=${platform-jar}"/>
-      <arg value="-Pgpg"/>
+      <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
     <!-- sign and deploy the sources artifact -->
     <artifact:mvn>
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=pom-platform.xml"/>
       <arg value="-Dfile=${platform-sources-jar}"/>
       <arg value="-Dclassifier=sources"/>
-      <arg value="-Pgpg"/>
+      <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
     <!-- sign and deploy the javadoc artifact -->
     <artifact:mvn>
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file"/>
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=pom-platform.xml"/>
       <arg value="-Dfile=${platform-javadoc-jar}"/>
       <arg value="-Dclassifier=javadoc"/>
-      <arg value="-Pgpg"/>
+      <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
   </target>
