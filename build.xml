@@ -946,7 +946,6 @@ osname=macos
            uri="antlib:org.apache.maven.artifact.ant"
            classpathref="maven-ant-tasks.classpath" />
 
-  <!-- Note: Assumes jars in 'dist' folder are current. -->
   <target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
     <artifact:mvn>
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
@@ -961,7 +960,11 @@ osname=macos
   <property name="version-maven-gpg-plugin" value="1.4"/>
 
   <!-- before this, update project version (both build.xml and ${pom}) from SNAPSHOT to RELEASE -->
-  <!-- Note: Assumes jars in 'dist' folder are current. -->
+  <!-- WARNING: Failures in these 'mvn' calls do NOT cause the ant build to fail, so watch out for message like this:
+[artifact:mvn] [ERROR] BUILD ERROR
+[artifact:mvn] [INFO] ------------------------------------------------------------------------
+[artifact:mvn] [INFO] Exit code: 2
+   -->
   <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the main artifact -->
     <artifact:mvn>
