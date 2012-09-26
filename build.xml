@@ -947,7 +947,7 @@ osname=macos
            classpathref="maven-ant-tasks.classpath" />
 
   <target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
-    <artifact:mvn>
+    <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
@@ -959,14 +959,9 @@ osname=macos
 
   <property name="version-maven-gpg-plugin" value="1.4"/>
 
-  <!-- WARNING: Failures in these 'mvn' calls do NOT cause the ant build to fail, so watch out for messages like this:
-[artifact:mvn] [ERROR] BUILD ERROR
-[artifact:mvn] [INFO] ...
-[artifact:mvn] [INFO] Exit code: 2
-   -->
   <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
     <!-- sign and deploy the jna artifact -->
-    <artifact:mvn>
+    <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -976,7 +971,7 @@ osname=macos
     </artifact:mvn>
 
     <!-- sign and deploy the jna sources artifact -->
-    <artifact:mvn>
+    <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -987,7 +982,7 @@ osname=macos
     </artifact:mvn>
 
     <!-- sign and deploy the jna javadoc artifact -->
-    <artifact:mvn>
+    <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -999,7 +994,7 @@ osname=macos
 
 
     <!-- sign and deploy the platform artifact -->
-    <artifact:mvn>
+    <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -1009,7 +1004,7 @@ osname=macos
     </artifact:mvn>
 
       <!-- sign and deploy the platform sources artifact -->
-    <artifact:mvn>
+    <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
@@ -1020,7 +1015,7 @@ osname=macos
     </artifact:mvn>
 
     <!-- sign and deploy the platform javadoc artifact -->
-    <artifact:mvn>
+    <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
