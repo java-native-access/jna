@@ -5,7 +5,20 @@ One Time
 --------
 
 * Set up your gpg keys as described [here](https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven).
-* Make sure you have a settings.xml as described at the bottom of 7a1 [here](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.1.POMandsettingsconfig).
+* Make sure you have a settings.xml as described at the bottom of 7a1 [here](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.1.POMandsettingsconfig). For example:
+
+        <!-- java.net repos for sync to maven central -->
+        <server>
+            <id>snapshots.java.net</id>
+            <username>myjavanetuser</username>
+            <password>myjavanetpwd</password>
+        </server>
+        <server>
+            <id>staging.java.net</id>
+            <username>myjavanetuser</username>
+            <password>myjavanetpwd</password>
+        </server>
+
 
 Every Time
 ----------

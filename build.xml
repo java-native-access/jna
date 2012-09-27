@@ -95,10 +95,10 @@
   <property name="pom" value="pom-jna.xml" />
 
   <!-- defined maven snapshots and staging repository id and url -->
-  <property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
-  <property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
-  <property name="maven-staging-repository-id" value="sonatype-nexus-staging" />
-  <property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+  <property name="maven-snapshots-repository-id" value="snapshots.java.net" />
+  <property name="maven-snapshots-repository-url" value="https://maven.java.net/content/repositories/snapshots" />
+  <property name="maven-staging-repository-id" value="staging.java.net" />
+  <property name="maven-staging-repository-url" value="https://maven.java.net/service/local/staging/deploy/maven2" />
 
   <!-- Miscellaneous -->
   <property name="build.compiler.emacs" value="true"/>
