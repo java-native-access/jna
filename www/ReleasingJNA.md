@@ -18,6 +18,6 @@ JNA Release Process
   * download links
   * javadoc links
 
-* Tag as <version>, push new tag to origin
+* Tag as &lt;version>, push new tag to origin
 
 * [Release to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)
