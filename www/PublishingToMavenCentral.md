@@ -27,6 +27,7 @@ One Time
         ...
         <settings>
 
+  Because we are still deploying to maven repositories via java.net, so see [Java.net Maven Repository Usage Guide](http://java.net/projects/maven2-repository/pages/MigrationAndCleanupRelatedDocumentation).
 
 Every Time
 ----------
