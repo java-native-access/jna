@@ -84,15 +84,16 @@
   <!-- define Maven coordinates -->
   <property name="groupId" value="net.java.dev.jna" />
   <property name="artifactId" value="jna" />
-  <property name="version" value="${jna.major}.${jna.minor}.${jna.revision}" />
 
-  <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${version}-javadoc.jar" />
-  <property name="maven-sources-jar" value="${dist}/${artifactId}-${version}-sources.jar" />
+  <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${jna.version}-javadoc.jar" />
+  <property name="maven-sources-jar" value="${dist}/${artifactId}-${jna.version}-sources.jar" />
 
   <property name="platform-jar" value="${dist}/platform.jar"/>
-  <property name="platform-javadoc-jar" value="${dist}/platform-${version}-javadoc.jar" />
-  <property name="platform-sources-jar" value="${dist}/platform-${version}-sources.jar" />
+  <property name="platform-javadoc-jar" value="${dist}/platform-${jna.version}-javadoc.jar" />
+  <property name="platform-sources-jar" value="${dist}/platform-${jna.version}-sources.jar" />
+
   <property name="pom" value="pom-jna.xml" />
+  <property name="pom-platform" value="pom-platform.xml" />
 
   <!-- defined maven snapshots and staging repository id and url -->
   <property name="maven-snapshots-repository-id" value="snapshots.java.net" />
@@ -114,6 +115,11 @@
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2"
                    file="${pom}"/>
+
+    <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
+                   replace="\1${jna.version}\2"
+                   file="${pom-platform}"/>
+
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
                    file="src/com/sun/jna/Native.java"/>
@@ -946,6 +952,7 @@ osname=macos
            uri="antlib:org.apache.maven.artifact.ant"
            classpathref="maven-ant-tasks.classpath" />
 
+  <!-- NOTE: The 'deploy' target works only if the version (jna.version in build.xml) ends in '-SNAPSHOT'. -->
   <target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
@@ -959,7 +966,7 @@ osname=macos
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
-      <arg value="-DpomFile=${pom-platform.xml}"/>
+      <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
     </artifact:mvn>
   </target>
@@ -1006,7 +1013,7 @@ osname=macos
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-      <arg value="-DpomFile=pom-platform.xml"/>
+      <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
@@ -1016,7 +1023,7 @@ osname=macos
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-      <arg value="-DpomFile=pom-platform.xml"/>
+      <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-sources-jar}"/>
       <arg value="-Dclassifier=sources"/>
       <arg value="-Dgpg.useagent=true"/>
@@ -1027,7 +1034,7 @@ osname=macos
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-      <arg value="-DpomFile=pom-platform.xml"/>
+      <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-javadoc-jar}"/>
       <arg value="-Dclassifier=javadoc"/>
       <arg value="-Dgpg.useagent=true"/>

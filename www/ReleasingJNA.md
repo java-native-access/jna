@@ -5,8 +5,6 @@ JNA Release Process
   JNA's native API has been changed (i.e. md5 changed).  Bump JNA minor version if its Java API
   has changed significantly or incompatibly.
 
-  Change the &lt;version> tags in pom-jna.xml and pom-platform.xml to match the version (jna.version) in build.xml.
-
 * If native changes have been made, run `ant dist` target on each target
   platform, pushing the resulting target-specific jar file to master.
 

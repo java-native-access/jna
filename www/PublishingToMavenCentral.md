@@ -32,9 +32,7 @@ One Time
 Every Time
 ----------
 
-* Update version numbers in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml), if needed.
-  This should already be done as per [Releasing JNA](https://github.com/twall/jna/blob/master/www/ReleasingJNA.md).
-  The &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml)
+* Verify the &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml)
   should match the version (jna.version) in [build.xml](https://github.com/twall/jna/blob/master/build.xml).
 * Run `ant stage`. This uploads current checkout to maven central.
 * Follow steps from [release it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt)
