@@ -27,12 +27,14 @@ One Time
         ...
         <settings>
 
-  Because we are still deploying to maven repositories via java.net, so see [Java.net Maven Repository Usage Guide](http://java.net/projects/maven2-repository/pages/MigrationAndCleanupRelatedDocumentation).
+  Because we are still deploying to maven repositories via java.net, see [Java.net Maven Repository Usage Guide](http://java.net/projects/maven2-repository/pages/MigrationAndCleanupRelatedDocumentation) for more info.
 
 Every Time
 ----------
 
 * Update version numbers in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml), if needed.
+  This should already be done as per [Releasing JNA](https://github.com/twall/jna/blob/master/www/ReleasingJNA.md).
+  The &lt;version> tags in pom-jna.xml and pom-platform.xml should match the version (jna.version) in build.xml.
 * Run `ant stage`. This uploads current checkout to maven central.
 * Follow steps from [release it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt)
 
