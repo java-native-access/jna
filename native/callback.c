@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
 #include "com_sun_jna_win32_DLLCallback.h"
 #ifdef _WIN64
 #ifdef _MSC_VER
@@ -68,7 +68,7 @@ static void * const dll_fptrs[] = {
   &asmfn8, &asmfn9, &asmfn10, &asmfn11, &asmfn12, &asmfn13, &asmfn14, &asmfn15,
 };
 
-#endif /* _WIN32 */
+#endif /* _WIN32 && !_WIN32_WCE */
 
 static void callback_dispatch(ffi_cif*, void*, void**, void*);
 static jclass classObject;
