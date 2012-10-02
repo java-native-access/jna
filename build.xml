@@ -1007,7 +1007,6 @@ osname=macos
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
-
     <!-- sign and deploy the platform artifact -->
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>

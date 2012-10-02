@@ -76,7 +76,8 @@ public final class Platform {
             Class.forName("java.awt.Component");
             hasAWT = true;
         }
-        catch(ClassNotFoundException e) {
+        catch(Throwable t) {
+            // Don't care why
         }
         HAS_AWT = hasAWT;
         boolean hasBuffers = false;
