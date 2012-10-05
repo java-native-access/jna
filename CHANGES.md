@@ -9,6 +9,7 @@ Features
 * Add `android-arm` target - [@ochafik](https://github.com/ochafik), [@twall](https://github.com/twall).
 * Add `jna.tmpdir` to override temporary JNA storage location - [@twall](https://github.com/twall).
 * Add `EXTRA_MAKE_OPTS` ant property to override make variables - [@twall](https://github.com/twall).
+* Add `Library.OPTION_OPEN_FLAGS` to customize dlopen behavior - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
