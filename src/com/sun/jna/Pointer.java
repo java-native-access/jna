@@ -452,6 +452,9 @@ public class Pointer {
             if (nm != null) {
                 Object value = getValue(offset, nm.nativeType(), null);
                 result = nm.fromNative(value, new FromNativeContext(type));
+                if (nm.equals(result)) {
+                    result = nm;
+                }
             }
             else {
                 NativeMappedConverter tc = NativeMappedConverter.getInstance(type);

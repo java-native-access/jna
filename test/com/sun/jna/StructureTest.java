@@ -553,6 +553,16 @@ public class StructureTest extends TestCase {
         }
     }
 
+    public void testMemoryField() {
+        class MemoryFieldStructure extends Structure {
+            public Memory m;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "m" });
+            }
+        }
+        new MemoryFieldStructure().size();
+    }
+
     public void testDisallowFunctionPointerAsField() {
         class BadFieldStructure extends Structure {
             public Function cb;
@@ -785,9 +795,11 @@ public class StructureTest extends TestCase {
         }
         TestStructure s = new TestStructure();
         final Pointer p = s.p;
+        final TestPointer p2 = s.p2;
         s.write();
         s.read();
         assertSame("Should preserve Pointer references if peer unchanged", p, s.p);
+        assertSame("Should preserve PointerType references if peer unchanged", p2, s.p2);
     }
 
     public void testPreserveStringFields() {

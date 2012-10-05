@@ -626,6 +626,9 @@ public abstract class Structure {
         Object result = memory.getValue(offset, fieldType, currentValue);
         if (readConverter != null) {
             result = readConverter.fromNative(result, structField.context);
+            if (currentValue != null && currentValue.equals(result)) {
+                result = currentValue;
+            }
         }
 
         if (fieldType.equals(String.class)
@@ -1193,7 +1196,7 @@ public abstract class Structure {
             || Float.class == type || Double.class == type) {
             alignment = size;
         }
-        else if (Pointer.class == type
+        else if ((Pointer.class.isAssignableFrom(type) && !Function.class.isAssignableFrom(type))
                  || (Platform.HAS_BUFFERS && Buffer.class.isAssignableFrom(type))
                  || Callback.class.isAssignableFrom(type)
                  || WString.class == type

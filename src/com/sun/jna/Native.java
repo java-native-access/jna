@@ -1025,7 +1025,7 @@ public final class Native {
             return POINTER_SIZE;
         }
         throw new IllegalArgumentException("Native size for type \"" + cls.getName() 
-        								   + "\" is unknown");
+                                           + "\" is unknown");
     }
 
     /** Indicate whether the given class is supported as a native argument
