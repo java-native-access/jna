@@ -20,6 +20,7 @@ public final class Platform {
     public static final int OPENBSD = 5;
     public static final int WINDOWSCE = 6;
     public static final int AIX = 7;
+    public static final int ANDROID = 8;
 
     /** Whether read-only (final) fields within Structures are supported. */
     public static final boolean RO_FIELDS;
@@ -31,13 +32,20 @@ public final class Platform {
     public static final String MATH_LIBRARY_NAME;
     /** Canonical name of this platform's C runtime library. */
     public static final String C_LIBRARY_NAME;
+    /** Whether in-DLL callbacks are supported. */
+    public static final boolean HAS_DLL_CALLBACKS;
 
     private static final int osType;
 
     static {
         String osName = System.getProperty("os.name");
         if (osName.startsWith("Linux")) {
-            osType = LINUX;
+            if ("dalvik".equals(System.getProperty("java.vm.name").toLowerCase())) {
+                osType = ANDROID;
+            }
+            else {
+                osType = LINUX;
+            }
         }
         else if (osName.startsWith("AIX")) {
             osType = AIX;
@@ -68,7 +76,8 @@ public final class Platform {
             Class.forName("java.awt.Component");
             hasAWT = true;
         }
-        catch(ClassNotFoundException e) {
+        catch(Throwable t) {
+            // Don't care why
         }
         HAS_AWT = hasAWT;
         boolean hasBuffers = false;
@@ -82,6 +91,7 @@ public final class Platform {
         RO_FIELDS = osType != WINDOWSCE;
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
+        HAS_DLL_CALLBACKS = osType == WINDOWS;
     }
     private Platform() { }
     public static final int getOSType() {
@@ -89,6 +99,9 @@ public final class Platform {
     }
     public static final boolean isMac() {
         return osType == MAC;
+    }
+    public static final boolean isAndroid() {
+        return osType == ANDROID;
     }
     public static final boolean isLinux() {
         return osType == LINUX;
@@ -146,9 +159,8 @@ public final class Platform {
             || arch.equals("x86_64")
             || arch.equals("amd64")) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public static final boolean isPPC() {
@@ -159,18 +171,13 @@ public final class Platform {
             || arch.equals("powerpc")
             || arch.equals("powerpc64")) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public static final boolean isARM() {
         String arch =
             System.getProperty("os.arch").toLowerCase().trim();
-        if (arch.equals("arm"))  {
-            return true;
-        } else {
-            return false;
-        }
+        return arch.startsWith("arm");
     }
 }

@@ -12,10 +12,14 @@
  */
 package com.sun.jna;
 
-import java.io.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
@@ -134,6 +138,9 @@ public class NativeTest extends TestCase {
         static class InnerTestClass extends Structure {
             interface TestCallback extends Callback { }
             static class InnerSubclass extends InnerTestClass implements Structure.ByReference { }
+            protected List getFieldOrder() { 
+                return Collections.EMPTY_LIST;
+            }
         }
     }
     
@@ -274,6 +281,10 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path FreeBSD/x86", "/com/sun/jna/freebsd-i386",
                      Native.getNativeLibraryResourcePath(Platform.FREEBSD,
                                                          "x86", "FreeBSD"));
+        assertEquals("Wrong resource path Linux/armv7l (android)", "/com/sun/jna/android-arm",
+                     Native.getNativeLibraryResourcePath(Platform.ANDROID,
+                                                         "armv7l", "Linux"));
+
         assertEquals("Wrong resource path other/other", "/com/sun/jna/name-ppc",
                      Native.getNativeLibraryResourcePath(Platform.UNSPECIFIED,
                                                          "PowerPC", "Name Of System"));
@@ -283,6 +294,9 @@ public class NativeTest extends TestCase {
     public static class DirectMapping {
         public static class DirectStructure extends Structure {
             public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
         }
         public static interface DirectCallback extends Callback {
             void invoke();

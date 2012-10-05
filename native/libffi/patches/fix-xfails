@@ -1,0 +1,139 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -113,7 +113,12 @@
+ 
+ 2011-02-09  Anthony Green <green@moxielogic.com>
+ 
+-	* README: Mention ARM iOS.
++	* testsuite/libffi.call/err_bad_typedef.c: Remove xfail.
++	* testsuite/libffi.call/err_bad_abi.c: Remove xfail.
++	* src/x86/ffi64.c (UNLIKELY, LIKELY): Define.
++	(ffi_prep_closure_loc): Check for bad ABI.
++	* src/prep_cif.c (UNLIKELY, LIKELY): Define.
++	(initialize_aggregate): Check for bad types.
+ 
+ 2011-02-09  Landon Fuller <landonf@macports.org>
+ 
+@@ -133,6 +138,7 @@
+ 	* src/closures.c: Handle FFI_EXEC_TRAMPOLINE_TABLE case.
+ 	* build-ios.sh: New file.
+ 	* fficonfig.h.in, configure, Makefile.in: Rebuilt.
++	* README: Mention ARM iOS.
+ 
+ 2011-02-08  Oren Held  <orenhe@il.ibm.com>
+ 
+Index: libffi/src/prep_cif.c
+===================================================================
+--- libffi.orig/src/prep_cif.c
++++ libffi/src/prep_cif.c
+@@ -1,5 +1,5 @@
+ /* -----------------------------------------------------------------------
+-   prep_cif.c - Copyright (c) 2012  Anthony Green
++   prep_cif.c - Copyright (c) 2011, 2012  Anthony Green
+                 Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
+ 
+    Permission is hereby granted, free of charge, to any person obtaining
+@@ -27,6 +27,12 @@
+ #include <ffi_common.h>
+ #include <stdlib.h>
+ 
++#ifndef __GNUC__
++#define __builtin_expect(x, expected_value) (x)
++#endif
++#define LIKELY(x)    __builtin_expect((x),1)
++#define UNLIKELY(x)  __builtin_expect((x),1)
++
+ /* Round up to FFI_SIZEOF_ARG. */
+ 
+ #define STACK_ARG_SIZE(x) ALIGN(x, FFI_SIZEOF_ARG)
+@@ -46,9 +52,13 @@ static ffi_status initialize_aggregate(f
+ 
+   ptr = &(arg->elements[0]);
+ 
++  if (UNLIKELY(ptr == 0))
++    return FFI_BAD_TYPEDEF;
++
+   while ((*ptr) != NULL)
+     {
+-      if (((*ptr)->size == 0) && (initialize_aggregate((*ptr)) != FFI_OK))
++      if (UNLIKELY(((*ptr)->size == 0)
++		    && (initialize_aggregate((*ptr)) != FFI_OK)))
+ 	return FFI_BAD_TYPEDEF;
+ 
+       /* Perform a sanity check on the argument type */
+@@ -95,10 +105,11 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ff
+ 
+   FFI_ASSERT(cif != NULL);
+ #ifndef X86_WIN32
+-  FFI_ASSERT((abi > FFI_FIRST_ABI) && (abi <= FFI_DEFAULT_ABI));
++  if (! (abi > FFI_FIRST_ABI) && (abi <= FFI_LAST_ABI))
++    return FFI_BAD_ABI;
+ #else
+-  FFI_ASSERT(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI
+-	     || abi == FFI_THISCALL);
++  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI || abi == FFI_THISCALL))
++    return FFI_BAD_ABI;
+ #endif
+ 
+   cif->abi = abi;
+Index: libffi/src/x86/ffi64.c
+===================================================================
+--- libffi.orig/src/x86/ffi64.c
++++ libffi/src/x86/ffi64.c
+@@ -28,6 +28,12 @@
+ #include <ffi.h>
+ #include <ffi_common.h>
+ 
++#ifndef __GNUC__
++#define __builtin_expect(x, expected_value) (x)
++#endif
++#define LIKELY(x)    __builtin_expect((x),1)
++#define UNLIKELY(x)  __builtin_expect((x),1)
++
+ #include <stdlib.h>
+ #include <stdarg.h>
+ 
+@@ -498,6 +504,13 @@ ffi_prep_closure_loc (ffi_closure* closu
+ {
+   volatile unsigned short *tramp;
+ 
++  /* Sanity check on the cif ABI.  */
++  {
++    int abi = cif->abi;
++    if (UNLIKELY (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)))
++      return FFI_BAD_ABI;
++  }
++
+   tramp = (volatile unsigned short *) &closure->tramp[0];
+ 
+   tramp[0] = 0xbb49;		/* mov <code>, %r11	*/
+Index: libffi/testsuite/libffi.call/err_bad_abi.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/err_bad_abi.c
++++ libffi/testsuite/libffi.call/err_bad_abi.c
+@@ -4,7 +4,8 @@
+    PR:			none.
+    Originator:	Blake Chaffin 6/6/2007	 */
+ 
+-/* { dg-do run { xfail *-*-* } } */
++/* { dg-do run } */
++
+ #include "ffitest.h"
+ 
+ static void
+Index: libffi/testsuite/libffi.call/err_bad_typedef.c
+===================================================================
+--- libffi.orig/testsuite/libffi.call/err_bad_typedef.c
++++ libffi/testsuite/libffi.call/err_bad_typedef.c
+@@ -4,7 +4,8 @@
+    PR:			none.
+    Originator:	Blake Chaffin 6/6/2007	 */
+ 
+-/* { dg-do run { xfail *-*-* } } */
++/* { dg-do run } */
++
+ #include "ffitest.h"
+ 
+ int main (void)

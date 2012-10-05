@@ -74,11 +74,14 @@ public class Pointer {
         this.peer = peer;
     }
 
+    /** Provide a view of this memory using the given offset to calculate a new base address. */
     public Pointer share(long offset) {
         return share(offset, 0);
     }
     
-    /** Provide a view of this pointer with a different peer base. */
+    /** Provide a view of this memory using the given offset to calculate a
+     * new base address, bounds-limiting the memory with the given size.
+     */
     public Pointer share(long offset, long sz) {
         if (offset == 0) return this;
         return new Pointer(peer + offset);
@@ -449,6 +452,9 @@ public class Pointer {
             if (nm != null) {
                 Object value = getValue(offset, nm.nativeType(), null);
                 result = nm.fromNative(value, new FromNativeContext(type));
+                if (nm.equals(result)) {
+                    result = nm;
+                }
             }
             else {
                 NativeMappedConverter tc = NativeMappedConverter.getInstance(type);

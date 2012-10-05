@@ -1,14 +1,36 @@
+Release 3.5.0
+=============
+
+Features
+--------
+* `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
+* Search `~/Library/Frameworks` and `/Library/Frameworks` on OSX - [@shaneholloway](https://github.com/shaneholloway).
+* Automatic cleanup of native threads (based on suggestions from neil smith) - [@twall](https://github.com/twall).
+* Add `android-arm` target - [@ochafik](https://github.com/ochafik), [@twall](https://github.com/twall).
+* Add `jna.tmpdir` to override temporary JNA storage location - [@twall](https://github.com/twall).
+* Add `EXTRA_MAKE_OPTS` ant property to override make variables - [@twall](https://github.com/twall).
+* Add `Library.OPTION_OPEN_FLAGS` to customize dlopen behavior - [@twall](https://github.com/twall).
+
+Bug Fixes
+---------
+* Fix `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22).
+* Fix crash in direct mode callbacks with certain type conversions - [@twall](https://github.com/twall).
+* More thoroughly propagate unexpected exceptions generated in jnidispatch - [@twall](https://github.com/twall).
+* Cleanup maven poms and publishing to central repo - [@bhamail](https://github.com/bhamail).
+* [#129](https://github.com/twall/jna/issues/129): Allow `Memory` field in structure - [@twall](https://github.com/twall).
+* Preserve `PointerType` fields on `Structure.read()` if unchanged - [@twall](https://github.com/twall).
+
 Release 3.4.2
 =============
 
 Features
 --------
-* Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVaraible` - [@dblock](https://github.com/dblock).
+* Add `platform.win32.Kernel32.GetEnvironmentVariable` and `platform.win32.Kernel32Util.getEnvironmentVariable` - [@dblock](https://github.com/dblock).
 * Moved `Kernel32.dll` function definitions from `WinNT.java` into `Kernel32.java` - [@dblock](https://github.com/dblock).
 * Provide `toPointer()` methods on all `_PTR` types (platform win32) - [@twall](https://github.com/twall).
-* Provide ant -Dskip-native to skip platform native build.
-* Provide ant -Dheadless=true to run unit tests headless.
-* Added windows dev environment instructions.
+* Provide `ant -Dskip-native` to skip platform native build - [@twall](https://github.com/twall).
+* Provide `ant -Dheadless=true` to run unit tests headless - [@twall](https://github.com/twall).
+* Added Windows dev environment instructions - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------

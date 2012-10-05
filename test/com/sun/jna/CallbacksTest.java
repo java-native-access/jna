@@ -15,8 +15,10 @@ package com.sun.jna;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -39,6 +41,9 @@ public class CallbacksTest extends TestCase {
 
     public static class SmallTestStructure extends Structure {
         public double value;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "value" });
+        }
     }
     public static class TestStructure extends Structure {
         public static class ByValue extends TestStructure implements Structure.ByValue { }
@@ -50,7 +55,9 @@ public class CallbacksTest extends TestCase {
         public int i;
         public long j;
         public SmallTestStructure inner;
-        { setFieldOrder(new String[] { "c", "s", "i", "j", "inner" }); }
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" }); 
+        }
     }
     public static interface TestLibrary extends Library {
         interface NoMethodCallback extends Callback {
@@ -150,6 +157,9 @@ public class CallbacksTest extends TestCase {
 
         class CbStruct extends Structure {
             public Callback cb;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "cb" });
+            }
         }
         void callCallbackInStruct(CbStruct cbstruct);
     }
@@ -293,6 +303,17 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong callback interface",
                      TestLibrary.Int32Callback.class,
                      CallbackReference.findCallbackClass(cb.getClass()));
+    }
+
+    public void testCallVoidCallback() {
+        final boolean[] called = { false };
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                called[0] = true;
+            }
+        };
+        lib.callVoidCallback(cb);
+        assertTrue("Callback not called", called[0]);
     }
 
     public void testCallInt32Callback() {
@@ -1011,13 +1032,39 @@ public class CallbacksTest extends TestCase {
         };
         callThreadedCallback(cb, init, COUNT, 100, called);
 
-        assertEquals("Native thread mapping not preserved: " + threads,
+        assertEquals("Multiple callbacks on a given native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
     }
 
-    // Callback indicates detach preference; thread is non-daemon (default),
+    public void testAttachedThreadCleanupOnExit() throws Exception {
+        final Set threads = new HashSet();
+        final int[] called = { 0 };
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                threads.add(new WeakReference(Thread.currentThread()));
+                ++called[0];
+                Native.detach(false);
+            }
+        };
+        callThreadedCallback(cb, null, 1, 0, called);
+        while (threads.size() == 0) {
+            Thread.sleep(10);
+        }
+        long start = System.currentTimeMillis();
+        WeakReference ref = (WeakReference)threads.iterator().next();
+        while (ref.get() != null) {
+            System.gc();
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > 5000) {
+                fail("Timed out waiting for attached thread to be detached on exit and disposed: " + ref.get());
+            }
+        }
+    }
+
+    // Callback indicates detach preference (instead of
+    // CallbackThreadInitializer); thread is non-daemon (default), 
     // but callback explicitly detaches it on final invocation.
-    public void testDynamicCallbackThreadPersistence() throws Exception {
+    public void testCallbackIndicatedThreadDetach() throws Exception {
     	final int[] called = {0};
         final Set threads = new HashSet();
         final int COUNT = 5;
@@ -1037,7 +1084,7 @@ public class CallbacksTest extends TestCase {
         };
         callThreadedCallback(cb, null, COUNT, 100, called);
 
-        assertEquals("Native thread mapping not preserved: " + threads,
+        assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
         Thread thread = (Thread)threads.iterator().next();
         long start = System.currentTimeMillis();
@@ -1057,6 +1104,83 @@ public class CallbacksTest extends TestCase {
                 }
                 fail("Timed out waiting for callback thread " + thread + " to die: " + s);
             }
+        }
+    }
+
+    public void testDLLCallback() throws Exception {
+        if (!Platform.HAS_DLL_CALLBACKS) {
+            return;
+        }
+
+        final boolean[] called = { false };
+        class TestCallback implements TestLibrary.VoidCallback, com.sun.jna.win32.DLLCallback {
+            public void callback() {
+                called[0] = true;
+            }
+        }
+
+        TestCallback cb = new TestCallback();
+        lib.callVoidCallback(cb);
+        assertTrue("Callback not called", called[0]);
+
+        Map refs = new WeakHashMap(CallbackReference.callbackMap);
+        assertTrue("Callback not cached", refs.containsKey(cb));
+        CallbackReference ref = (CallbackReference)refs.get(cb);
+        refs = CallbackReference.callbackMap;
+        Pointer cbstruct = ref.cbstruct;
+        Pointer first_fptr = cbstruct.getPointer(0);
+        
+        cb = null;
+        System.gc();
+        for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
+            Thread.sleep(10); // Give the GC a chance to run
+            System.gc();
+        }
+        assertNull("Callback not GC'd", ref.get());
+        assertFalse("Callback still in map", refs.containsValue(ref));
+        
+        ref = null;
+        System.gc();
+        for (int i = 0; i < 100 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
+            // Flush weak hash map
+            refs.size();
+            Thread.sleep(10); // Give the GC a chance to run
+            System.gc();
+        }
+        assertEquals("Callback trampoline not freed", 0, cbstruct.peer);
+
+        // Next allocation should be at same place
+        called[0] = false;
+        cb = new TestCallback();
+
+        lib.callVoidCallback(cb);
+        ref = (CallbackReference)refs.get(cb);
+        cbstruct = ref.cbstruct;
+
+        assertTrue("Callback not called", called[0]);
+        assertEquals("Same (in-DLL) address should be re-used for DLL callbacks", first_fptr, cbstruct.getPointer(0));
+    }
+
+    public void testThrowOutOfMemoryWhenDLLCallbacksExhausted() throws Exception {
+        if (!Platform.HAS_DLL_CALLBACKS) {
+            return;
+        }
+
+        final boolean[] called = { false };
+        class TestCallback implements TestLibrary.VoidCallback, com.sun.jna.win32.DLLCallback {
+            public void callback() {
+                called[0] = true;
+            }
+        }
+
+        // Exceeding allocations should result in OOM error
+        try {
+            for (int i=0;i <= TestCallback.DLL_FPTRS;i++) {
+                lib.callVoidCallback(new TestCallback());
+            }
+            fail("Expected out of memory error when all DLL callbacks used");
+        }
+        catch(OutOfMemoryError e) {
         }
     }
 

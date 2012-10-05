@@ -1,0 +1,1286 @@
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -179,14 +179,11 @@ endif
+ libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+ 
+-AM_CFLAGS = -Wall -g -fexceptions
++AM_CFLAGS = -g
+ if FFI_DEBUG
+ # Build debug. Define FFI_DEBUG on the commandline so that, when building with
+ # MSVC, it can link against the debug CRT.
+ AM_CFLAGS += -DFFI_DEBUG
+-else
+-# Build opt.
+-AM_CFLAGS += -O2
+ endif
+ 
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -66,8 +66,6 @@ target_triplet = @target@
+ # Build debug. Define FFI_DEBUG on the commandline so that, when building with
+ # MSVC, it can link against the debug CRT.
+ @FFI_DEBUG_TRUE@am__append_28 = -DFFI_DEBUG
+-# Build opt.
+-@FFI_DEBUG_FALSE@am__append_29 = -O2
+ subdir = .
+ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
+@@ -495,7 +493,7 @@ nodist_libffi_la_SOURCES = $(am__append_
+ 	$(am__append_27)
+ libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
+ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
+-AM_CFLAGS = -Wall -g -fexceptions $(am__append_28) $(am__append_29)
++AM_CFLAGS = -g $(am__append_28)
+ libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
+ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+ AM_CCASFLAGS = $(AM_CPPFLAGS)
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -10,6 +10,8 @@ target_alias=${target_alias-$host_alias}
+ 
+ . ${srcdir}/configure.host
+ 
++AX_ENABLE_BUILDDIR
++
+ AM_INIT_AUTOMAKE
+ 
+ # The same as in boehm-gc and libstdc++. Have to borrow it from there.
+@@ -34,6 +36,12 @@ AM_PROG_CC_C_O
+ AC_PROG_LIBTOOL
+ AC_CONFIG_MACRO_DIR([m4])
+ 
++AX_CC_MAXOPT
++AX_CFLAGS_WARN_ALL
++if test "x$GCC" = "xyes"; then
++  CFLAGS="$CFLAGS -fexceptions"
++fi
++
+ AM_MAINTAINER_MODE
+ 
+ AC_CHECK_HEADERS(sys/mman.h)
+Index: libffi/m4/ax_cc_maxopt.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_cc_maxopt.m4
+@@ -0,0 +1,180 @@
++# ===========================================================================
++#       http://www.gnu.org/software/autoconf-archive/ax_cc_maxopt.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_CC_MAXOPT
++#
++# DESCRIPTION
++#
++#   Try to turn on "good" C optimization flags for various compilers and
++#   architectures, for some definition of "good". (In our case, good for
++#   FFTW and hopefully for other scientific codes. Modify as needed.)
++#
++#   The user can override the flags by setting the CFLAGS environment
++#   variable. The user can also specify --enable-portable-binary in order to
++#   disable any optimization flags that might result in a binary that only
++#   runs on the host architecture.
++#
++#   Note also that the flags assume that ANSI C aliasing rules are followed
++#   by the code (e.g. for gcc's -fstrict-aliasing), and that floating-point
++#   computations can be re-ordered as needed.
++#
++#   Requires macros: AX_CHECK_COMPILER_FLAGS, AX_COMPILER_VENDOR,
++#   AX_GCC_ARCHFLAG, AX_GCC_X86_CPUID.
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
++#   Copyright (c) 2008 Matteo Frigo
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 11
++
++AC_DEFUN([AX_CC_MAXOPT],
++[
++AC_REQUIRE([AC_PROG_CC])
++AC_REQUIRE([AX_COMPILER_VENDOR])
++AC_REQUIRE([AC_CANONICAL_HOST])
++
++AC_ARG_ENABLE(portable-binary, [AS_HELP_STRING([--enable-portable-binary], [disable compiler optimizations that would produce unportable binaries])],
++	acx_maxopt_portable=$withval, acx_maxopt_portable=no)
++
++# Try to determine "good" native compiler flags if none specified via CFLAGS
++if test "$ac_test_CFLAGS" != "set"; then
++  CFLAGS=""
++  case $ax_cv_c_compiler_vendor in
++    dec) CFLAGS="-newc -w0 -O5 -ansi_alias -ansi_args -fp_reorder -tune host"
++	 if test "x$acx_maxopt_portable" = xno; then
++           CFLAGS="$CFLAGS -arch host"
++         fi;;
++
++    sun) CFLAGS="-native -fast -xO5 -dalign"
++	 if test "x$acx_maxopt_portable" = xyes; then
++	   CFLAGS="$CFLAGS -xarch=generic"
++         fi;;
++
++    hp)  CFLAGS="+Oall +Optrs_ansi +DSnative"
++	 if test "x$acx_maxopt_portable" = xyes; then
++	   CFLAGS="$CFLAGS +DAportable"
++	 fi;;
++
++    ibm) if test "x$acx_maxopt_portable" = xno; then
++           xlc_opt="-qarch=auto -qtune=auto"
++	 else
++           xlc_opt="-qtune=auto"
++	 fi
++         AX_CHECK_COMPILER_FLAGS($xlc_opt,
++		CFLAGS="-O3 -qansialias -w $xlc_opt",
++               [CFLAGS="-O3 -qansialias -w"
++                echo "******************************************************"
++                echo "*  You seem to have the IBM  C compiler.  It is      *"
++                echo "*  recommended for best performance that you use:    *"
++                echo "*                                                    *"
++                echo "*    CFLAGS=-O3 -qarch=xxx -qtune=xxx -qansialias -w *"
++                echo "*                      ^^^        ^^^                *"
++                echo "*  where xxx is pwr2, pwr3, 604, or whatever kind of *"
++                echo "*  CPU you have.  (Set the CFLAGS environment var.   *"
++                echo "*  and re-run configure.)  For more info, man cc.    *"
++                echo "******************************************************"])
++         ;;
++
++    intel) CFLAGS="-O3 -ansi_alias"
++	if test "x$acx_maxopt_portable" = xno; then
++	  icc_archflag=unknown
++	  icc_flags=""
++	  case $host_cpu in
++	    i686*|x86_64*)
++              # icc accepts gcc assembly syntax, so these should work:
++	      AX_GCC_X86_CPUID(0)
++              AX_GCC_X86_CPUID(1)
++	      case $ax_cv_gcc_x86_cpuid_0 in # see AX_GCC_ARCHFLAG
++                *:756e6547:*:*) # Intel
++                  case $ax_cv_gcc_x86_cpuid_1 in
++                    *6a?:*[[234]]:*:*|*6[[789b]]?:*:*:*) icc_flags="-xK";;
++                    *f3[[347]]:*:*:*|*f4[1347]:*:*:*) icc_flags="-xP -xN -xW -xK";;
++                    *f??:*:*:*) icc_flags="-xN -xW -xK";;
++                  esac ;;
++              esac ;;
++          esac
++          if test "x$icc_flags" != x; then
++            for flag in $icc_flags; do
++              AX_CHECK_COMPILER_FLAGS($flag, [icc_archflag=$flag; break])
++            done
++          fi
++          AC_MSG_CHECKING([for icc architecture flag])
++	  AC_MSG_RESULT($icc_archflag)
++          if test "x$icc_archflag" != xunknown; then
++            CFLAGS="$CFLAGS $icc_archflag"
++          fi
++        fi
++	;;
++
++    gnu)
++     # default optimization flags for gcc on all systems
++     CFLAGS="-O3 -fomit-frame-pointer"
++
++     # -malign-double for x86 systems
++     AX_CHECK_COMPILER_FLAGS(-malign-double, CFLAGS="$CFLAGS -malign-double")
++
++     #  -fstrict-aliasing for gcc-2.95+
++     AX_CHECK_COMPILER_FLAGS(-fstrict-aliasing,
++	CFLAGS="$CFLAGS -fstrict-aliasing")
++
++     # note that we enable "unsafe" fp optimization with other compilers, too
++     AX_CHECK_COMPILER_FLAGS(-ffast-math, CFLAGS="$CFLAGS -ffast-math")
++
++     AX_GCC_ARCHFLAG($acx_maxopt_portable)
++     ;;
++  esac
++
++  if test -z "$CFLAGS"; then
++	echo ""
++	echo "********************************************************"
++        echo "* WARNING: Don't know the best CFLAGS for this system  *"
++        echo "* Use ./configure CFLAGS=... to specify your own flags *"
++	echo "* (otherwise, a default of CFLAGS=-O3 will be used)    *"
++	echo "********************************************************"
++	echo ""
++        CFLAGS="-O3"
++  fi
++
++  AX_CHECK_COMPILER_FLAGS($CFLAGS, [], [
++	echo ""
++        echo "********************************************************"
++        echo "* WARNING: The guessed CFLAGS don't seem to work with  *"
++        echo "* your compiler.                                       *"
++        echo "* Use ./configure CFLAGS=... to specify your own flags *"
++        echo "********************************************************"
++        echo ""
++        CFLAGS=""
++  ])
++
++fi
++])
+Index: libffi/m4/ax_cflags_warn_all.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_cflags_warn_all.m4
+@@ -0,0 +1,195 @@
++# ===========================================================================
++#    http://www.gnu.org/software/autoconf-archive/ax_cflags_warn_all.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_CFLAGS_WARN_ALL   [(shellvar [,default, [A/NA]])]
++#   AX_CXXFLAGS_WARN_ALL [(shellvar [,default, [A/NA]])]
++#   AX_FCFLAGS_WARN_ALL  [(shellvar [,default, [A/NA]])]
++#
++# DESCRIPTION
++#
++#   Try to find a compiler option that enables most reasonable warnings.
++#
++#   For the GNU compiler it will be -Wall (and -ansi -pedantic) The result
++#   is added to the shellvar being CFLAGS, CXXFLAGS, or FCFLAGS by default.
++#
++#   Currently this macro knows about the GCC, Solaris, Digital Unix, AIX,
++#   HP-UX, IRIX, NEC SX-5 (Super-UX 10), Cray J90 (Unicos 10.0.0.8), and
++#   Intel compilers.  For a given compiler, the Fortran flags are much more
++#   experimental than their C equivalents.
++#
++#    - $1 shell-variable-to-add-to : CFLAGS, CXXFLAGS, or FCFLAGS
++#    - $2 add-value-if-not-found : nothing
++#    - $3 action-if-found : add value to shellvariable
++#    - $4 action-if-not-found : nothing
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
++#   Copyright (c) 2010 Rhys Ulerich <rhys.ulerich@gmail.com>
++#
++#   This program is free software; you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation; either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 10
++
++AC_DEFUN([AX_CFLAGS_WARN_ALL],[dnl
++AS_VAR_PUSHDEF([FLAGS],[CFLAGS])dnl
++AS_VAR_PUSHDEF([VAR],[ac_cv_cflags_warn_all])dnl
++AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for maximum warnings],
++VAR,[VAR="no, unknown"
++ AC_LANG_PUSH([C])
++ ac_save_[]FLAGS="$[]FLAGS"
++for ac_arg dnl
++in "-pedantic  % -Wall"       dnl   GCC
++   "-xstrconst % -v"          dnl Solaris C
++   "-std1      % -verbose -w0 -warnprotos" dnl Digital Unix
++   "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd" dnl AIX
++   "-ansi -ansiE % -fullwarn" dnl IRIX
++   "+ESlit     % +w1"         dnl HP-UX C
++   "-Xc        % -pvctl[,]fullmsg" dnl NEC SX-5 (Super-UX 10)
++   "-h conform % -h msglevel 2" dnl Cray C (Unicos)
++   #
++do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
++   AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
++                     [VAR=`echo $ac_arg | sed -e 's,.*% *,,'` ; break])
++done
++ FLAGS="$ac_save_[]FLAGS"
++ AC_LANG_POP([C])
++])
++case ".$VAR" in
++     .ok|.ok,*) m4_ifvaln($3,$3) ;;
++   .|.no|.no,*) m4_ifvaln($4,$4,[m4_ifval($2,[
++        AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])
++                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])]) ;;
++   *) m4_ifvaln($3,$3,[
++   if echo " $[]m4_ifval($1,$1,FLAGS) " | grep " $VAR " 2>&1 >/dev/null
++   then AC_RUN_LOG([: m4_ifval($1,$1,FLAGS) does contain $VAR])
++   else AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"])
++                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"
++   fi ]) ;;
++esac
++AS_VAR_POPDEF([VAR])dnl
++AS_VAR_POPDEF([FLAGS])dnl
++])
++
++dnl the only difference - the LANG selection... and the default FLAGS
++
++AC_DEFUN([AX_CXXFLAGS_WARN_ALL],[dnl
++AS_VAR_PUSHDEF([FLAGS],[CXXFLAGS])dnl
++AS_VAR_PUSHDEF([VAR],[ax_cv_cxxflags_warn_all])dnl
++AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for maximum warnings],
++VAR,[VAR="no, unknown"
++ AC_LANG_PUSH([C++])
++ ac_save_[]FLAGS="$[]FLAGS"
++for ac_arg dnl
++in "-pedantic  % -Wall"       dnl   GCC
++   "-xstrconst % -v"          dnl Solaris C
++   "-std1      % -verbose -w0 -warnprotos" dnl Digital Unix
++   "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd" dnl AIX
++   "-ansi -ansiE % -fullwarn" dnl IRIX
++   "+ESlit     % +w1"         dnl HP-UX C
++   "-Xc        % -pvctl[,]fullmsg" dnl NEC SX-5 (Super-UX 10)
++   "-h conform % -h msglevel 2" dnl Cray C (Unicos)
++   #
++do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
++   AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
++                     [VAR=`echo $ac_arg | sed -e 's,.*% *,,'` ; break])
++done
++ FLAGS="$ac_save_[]FLAGS"
++ AC_LANG_POP([C++])
++])
++case ".$VAR" in
++     .ok|.ok,*) m4_ifvaln($3,$3) ;;
++   .|.no|.no,*) m4_ifvaln($4,$4,[m4_ifval($2,[
++        AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])
++                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])]) ;;
++   *) m4_ifvaln($3,$3,[
++   if echo " $[]m4_ifval($1,$1,FLAGS) " | grep " $VAR " 2>&1 >/dev/null
++   then AC_RUN_LOG([: m4_ifval($1,$1,FLAGS) does contain $VAR])
++   else AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"])
++                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"
++   fi ]) ;;
++esac
++AS_VAR_POPDEF([VAR])dnl
++AS_VAR_POPDEF([FLAGS])dnl
++])
++
++dnl the only difference - the LANG selection... and the default FLAGS
++
++AC_DEFUN([AX_FCFLAGS_WARN_ALL],[dnl
++AS_VAR_PUSHDEF([FLAGS],[FCFLAGS])dnl
++AS_VAR_PUSHDEF([VAR],[ax_cv_fcflags_warn_all])dnl
++AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for maximum warnings],
++VAR,[VAR="no, unknown"
++ AC_LANG_PUSH([Fortran])
++ ac_save_[]FLAGS="$[]FLAGS"
++for ac_arg dnl
++in "-warn all  % -warn all"   dnl Intel
++   "-pedantic  % -Wall"       dnl GCC
++   "-xstrconst % -v"          dnl Solaris C
++   "-std1      % -verbose -w0 -warnprotos" dnl Digital Unix
++   "-qlanglvl=ansi % -qsrcmsg -qinfo=all:noppt:noppc:noobs:nocnd" dnl AIX
++   "-ansi -ansiE % -fullwarn" dnl IRIX
++   "+ESlit     % +w1"         dnl HP-UX C
++   "-Xc        % -pvctl[,]fullmsg" dnl NEC SX-5 (Super-UX 10)
++   "-h conform % -h msglevel 2" dnl Cray C (Unicos)
++   #
++do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
++   AC_COMPILE_IFELSE([AC_LANG_PROGRAM],
++                     [VAR=`echo $ac_arg | sed -e 's,.*% *,,'` ; break])
++done
++ FLAGS="$ac_save_[]FLAGS"
++ AC_LANG_POP([Fortran])
++])
++case ".$VAR" in
++     .ok|.ok,*) m4_ifvaln($3,$3) ;;
++   .|.no|.no,*) m4_ifvaln($4,$4,[m4_ifval($2,[
++        AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])
++                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $2"])]) ;;
++   *) m4_ifvaln($3,$3,[
++   if echo " $[]m4_ifval($1,$1,FLAGS) " | grep " $VAR " 2>&1 >/dev/null
++   then AC_RUN_LOG([: m4_ifval($1,$1,FLAGS) does contain $VAR])
++   else AC_RUN_LOG([: m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"])
++                      m4_ifval($1,$1,FLAGS)="$m4_ifval($1,$1,FLAGS) $VAR"
++   fi ]) ;;
++esac
++AS_VAR_POPDEF([VAR])dnl
++AS_VAR_POPDEF([FLAGS])dnl
++])
++
++dnl  implementation tactics:
++dnl   the for-argument contains a list of options. The first part of
++dnl   these does only exist to detect the compiler - usually it is
++dnl   a global option to enable -ansi or -extrawarnings. All other
++dnl   compilers will fail about it. That was needed since a lot of
++dnl   compilers will give false positives for some option-syntax
++dnl   like -Woption or -Xoption as they think of it is a pass-through
++dnl   to later compile stages or something. The "%" is used as a
++dnl   delimiter. A non-option comment can be given after "%%" marks
++dnl   which will be shown but not added to the respective C/CXXFLAGS.
+Index: libffi/m4/ax_check_compiler_flags.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_check_compiler_flags.m4
+@@ -0,0 +1,76 @@
++# ===========================================================================
++#  http://www.gnu.org/software/autoconf-archive/ax_check_compiler_flags.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_CHECK_COMPILER_FLAGS(FLAGS, [ACTION-SUCCESS], [ACTION-FAILURE])
++#
++# DESCRIPTION
++#
++#   Check whether the given compiler FLAGS work with the current language's
++#   compiler, or whether they give an error. (Warnings, however, are
++#   ignored.)
++#
++#   ACTION-SUCCESS/ACTION-FAILURE are shell commands to execute on
++#   success/failure.
++#
++# LICENSE
++#
++#   Copyright (c) 2009 Steven G. Johnson <stevenj@alum.mit.edu>
++#   Copyright (c) 2009 Matteo Frigo
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 9
++
++AC_DEFUN([AX_CHECK_COMPILER_FLAGS],
++[AC_PREREQ(2.59) dnl for _AC_LANG_PREFIX
++AC_MSG_CHECKING([whether _AC_LANG compiler accepts $1])
++dnl Some hackery here since AC_CACHE_VAL can't handle a non-literal varname:
++AS_LITERAL_IF([$1],
++  [AC_CACHE_VAL(AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1]), [
++      ax_save_FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
++      _AC_LANG_PREFIX[]FLAGS="$1"
++      AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
++        AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=yes,
++        AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=no)
++      _AC_LANG_PREFIX[]FLAGS=$ax_save_FLAGS])],
++  [ax_save_FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
++   _AC_LANG_PREFIX[]FLAGS="$1"
++   AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
++     eval AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=yes,
++     eval AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=no)
++   _AC_LANG_PREFIX[]FLAGS=$ax_save_FLAGS])
++eval ax_check_compiler_flags=$AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])
++AC_MSG_RESULT($ax_check_compiler_flags)
++if test "x$ax_check_compiler_flags" = xyes; then
++	m4_default([$2], :)
++else
++	m4_default([$3], :)
++fi
++])dnl AX_CHECK_COMPILER_FLAGS
+Index: libffi/m4/ax_compiler_vendor.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_compiler_vendor.m4
+@@ -0,0 +1,63 @@
++# ===========================================================================
++#    http://www.gnu.org/software/autoconf-archive/ax_compiler_vendor.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_COMPILER_VENDOR
++#
++# DESCRIPTION
++#
++#   Determine the vendor of the C/C++ compiler, e.g., gnu, intel, ibm, sun,
++#   hp, borland, comeau, dec, cray, kai, lcc, metrowerks, sgi, microsoft,
++#   watcom, etc. The vendor is returned in the cache variable
++#   $ax_cv_c_compiler_vendor for C and $ax_cv_cxx_compiler_vendor for C++.
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
++#   Copyright (c) 2008 Matteo Frigo
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 9
++
++AC_DEFUN([AX_COMPILER_VENDOR],
++[
++AC_CACHE_CHECK([for _AC_LANG compiler vendor], ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor,
++ [ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor=unknown
++  # note: don't check for gcc first since some other compilers define __GNUC__
++  for ventest in intel:__ICC,__ECC,__INTEL_COMPILER ibm:__xlc__,__xlC__,__IBMC__,__IBMCPP__ pathscale:__PATHCC__,__PATHSCALE__ clang:__clang__ gnu:__GNUC__ sun:__SUNPRO_C,__SUNPRO_CC hp:__HP_cc,__HP_aCC dec:__DECC,__DECCXX,__DECC_VER,__DECCXX_VER borland:__BORLANDC__,__TURBOC__ comeau:__COMO__ cray:_CRAYC kai:__KCC lcc:__LCC__ metrowerks:__MWERKS__ sgi:__sgi,sgi microsoft:_MSC_VER watcom:__WATCOMC__ portland:__PGI; do
++    vencpp="defined("`echo $ventest | cut -d: -f2 | sed 's/,/) || defined(/g'`")"
++    AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[
++#if !($vencpp)
++      thisisanerror;
++#endif
++])], [ax_cv_]_AC_LANG_ABBREV[_compiler_vendor=`echo $ventest | cut -d: -f1`; break])
++  done
++ ])
++])
+Index: libffi/m4/ax_configure_args.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_configure_args.m4
+@@ -0,0 +1,70 @@
++# ===========================================================================
++#     http://www.gnu.org/software/autoconf-archive/ax_configure_args.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_CONFIGURE_ARGS
++#
++# DESCRIPTION
++#
++#   Helper macro for AX_ENABLE_BUILDDIR.
++#
++#   The traditional way of starting a subdir-configure is running the script
++#   with ${1+"$@"} but since autoconf 2.60 this is broken. Instead we have
++#   to rely on eval'ing $ac_configure_args however some old autoconf
++#   versions do not provide that. To ensure maximum portability of autoconf
++#   extension macros this helper can be AC_REQUIRE'd so that
++#   $ac_configure_args will alsways be present.
++#
++#   Sadly, the traditional "exec $SHELL" of the enable_builddir macros is
++#   spoiled now and must be replaced by "eval + exit $?".
++#
++#   Example:
++#
++#     AC_DEFUN([AX_ENABLE_SUBDIR],[dnl
++#       AC_REQUIRE([AX_CONFIGURE_ARGS])dnl
++#       eval $SHELL $ac_configure_args || exit $?
++#       ...])
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
++#
++#   This program is free software; you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation; either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 9
++
++AC_DEFUN([AX_CONFIGURE_ARGS],[
++   # [$]@ is unsable in 2.60+ but earlier autoconf had no ac_configure_args
++   if test "${ac_configure_args+set}" != "set" ; then
++      ac_configure_args=
++      for ac_arg in ${1+"[$]@"}; do
++         ac_configure_args="$ac_configure_args '$ac_arg'"
++      done
++   fi
++])
+Index: libffi/m4/ax_enable_builddir.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_enable_builddir.m4
+@@ -0,0 +1,300 @@
++# ===========================================================================
++#    http://www.gnu.org/software/autoconf-archive/ax_enable_builddir.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_ENABLE_BUILDDIR [(dirstring-or-command [,Makefile.mk [,-all]])]
++#
++# DESCRIPTION
++#
++#   If the current configure was run within the srcdir then we move all
++#   configure-files into a subdir and let the configure steps continue
++#   there. We provide an option --disable-builddir to suppress the move into
++#   a separate builddir.
++#
++#   Defaults:
++#
++#     $1 = $host (overridden with $HOST)
++#     $2 = Makefile.mk
++#     $3 = -all
++#
++#   This macro must be called before AM_INIT_AUTOMAKE. It creates a default
++#   toplevel srcdir Makefile from the information found in the created
++#   toplevel builddir Makefile. It just copies the variables and
++#   rule-targets, each extended with a default rule-execution that recurses
++#   into the build directory of the current "HOST". You can override the
++#   auto-dection through `config.guess` and build-time of course, as in
++#
++#     make HOST=i386-mingw-cross
++#
++#   which can of course set at configure time as well using
++#
++#     configure --host=i386-mingw-cross
++#
++#   After the default has been created, additional rules can be appended
++#   that will not just recurse into the subdirectories and only ever exist
++#   in the srcdir toplevel makefile - these parts are read from the $2 =
++#   Makefile.mk file
++#
++#   The automatic rules are usually scanning the toplevel Makefile for lines
++#   like '#### $host |$builddir' to recognize the place where to recurse
++#   into. Usually, the last one is the only one used. However, almost all
++#   targets have an additional "*-all" rule which makes the script to
++#   recurse into _all_ variants of the current HOST (!!) setting. The "-all"
++#   suffix can be overriden for the macro as well.
++#
++#   a special rule is only given for things like "dist" that will copy the
++#   tarball from the builddir to the sourcedir (or $(PUB)) for reason of
++#   convenience.
++#
++# LICENSE
++#
++#   Copyright (c) 2009 Guido U. Draheim <guidod@gmx.de>
++#   Copyright (c) 2009 Alan Jenkins <alan-jenkins@tuffmail.co.uk>
++#
++#   This program is free software; you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation; either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 22
++
++AC_DEFUN([AX_ENABLE_BUILDDIR],[
++AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
++AC_REQUIRE([AX_CONFIGURE_ARGS])[]dnl
++AC_REQUIRE([AM_AUX_DIR_EXPAND])[]dnl
++AC_BEFORE([$0],[AM_INIT_AUTOMAKE])dnl
++AS_VAR_PUSHDEF([SUB],[ax_enable_builddir])dnl
++AS_VAR_PUSHDEF([AUX],[ax_enable_builddir_auxdir])dnl
++AS_VAR_PUSHDEF([SED],[ax_enable_builddir_sed])dnl
++SUB="."
++AC_ARG_ENABLE([builddir], AS_HELP_STRING(
++  [--disable-builddir],[disable automatic build in subdir of sources])
++  ,[SUB="$enableval"], [SUB="auto"])
++if test ".$ac_srcdir_defaulted" != ".no" ; then
++if test ".$srcdir" = ".." ; then
++  if test -f config.status ; then
++    AC_MSG_NOTICE(toplevel srcdir already configured... skipping subdir build)
++  else
++    test ".$SUB" = "."  && SUB="."
++    test ".$SUB" = ".no"  && SUB="."
++    test ".$TARGET" = "." && TARGET="$target"
++    test ".$SUB" = ".auto" && SUB="m4_ifval([$1], [$1],[$TARGET])"
++    if test ".$SUB" != ".." ; then    # we know where to go and
++      AS_MKDIR_P([$SUB])
++      echo __.$SUB.__ > $SUB/conftest.tmp
++      cd $SUB
++      if grep __.$SUB.__ conftest.tmp >/dev/null 2>/dev/null ; then
++        rm conftest.tmp
++        AC_MSG_RESULT([continue configure in default builddir "./$SUB"])
++      else
++        AC_MSG_ERROR([could not change to default builddir "./$SUB"])
++      fi
++      srcdir=`echo "$SUB" |
++              sed -e 's,^\./,,;s,[[^/]]$,&/,;s,[[^/]]*/,../,g;s,[[/]]$,,;'`
++      # going to restart from subdirectory location
++      test -f $srcdir/config.log   && mv $srcdir/config.log   .
++      test -f $srcdir/confdefs.h   && mv $srcdir/confdefs.h   .
++      test -f $srcdir/conftest.log && mv $srcdir/conftest.log .
++      test -f $srcdir/$cache_file  && mv $srcdir/$cache_file  .
++      AC_MSG_RESULT(....exec $SHELL $srcdir/[$]0 "--srcdir=$srcdir" "--enable-builddir=$SUB" ${1+"[$]@"})
++      case "[$]0" in # restart
++       [/\\]*) eval $SHELL "'[$]0'" "'--srcdir=$srcdir'" "'--enable-builddir=$SUB'" $ac_configure_args ;;
++       *) eval $SHELL "'$srcdir/[$]0'" "'--srcdir=$srcdir'" "'--enable-builddir=$SUB'" $ac_configure_args ;;
++      esac ; exit $?
++    fi
++  fi
++fi fi
++test ".$SUB" = ".auto" && SUB="."
++dnl ac_path_prog uses "set dummy" to override $@ which would defeat the "exec"
++AC_PATH_PROG(SED,gsed sed, sed)
++AUX="$am_aux_dir"
++AS_VAR_POPDEF([SED])dnl
++AS_VAR_POPDEF([AUX])dnl
++AS_VAR_POPDEF([SUB])dnl
++AC_CONFIG_COMMANDS([buildir],[dnl .............. config.status ..............
++AS_VAR_PUSHDEF([SUB],[ax_enable_builddir])dnl
++AS_VAR_PUSHDEF([TOP],[top_srcdir])dnl
++AS_VAR_PUSHDEF([SRC],[ac_top_srcdir])dnl
++AS_VAR_PUSHDEF([AUX],[ax_enable_builddir_auxdir])dnl
++AS_VAR_PUSHDEF([SED],[ax_enable_builddir_sed])dnl
++pushdef([END],[Makefile.mk])dnl
++pushdef([_ALL],[ifelse([$3],,[-all],[$3])])dnl
++  SRC="$ax_enable_builddir_srcdir"
++  if test ".$SUB" = ".." ; then
++    if test -f "$TOP/Makefile" ; then
++      AC_MSG_NOTICE([skipping TOP/Makefile - left untouched])
++    else
++      AC_MSG_NOTICE([skipping TOP/Makefile - not created])
++    fi
++  else
++    if test -f "$SRC/Makefile" ; then
++      a=`grep "^VERSION " "$SRC/Makefile"` ; b=`grep "^VERSION " Makefile`
++      test "$a" != "$b" && rm "$SRC/Makefile"
++    fi
++    if test -f "$SRC/Makefile" ; then
++	echo "$SRC/Makefile : $SRC/Makefile.in" > $tmp/conftemp.mk
++	echo "	[]@ echo 'REMOVED,,,' >\$[]@" >> $tmp/conftemp.mk
++      eval "${MAKE-make} -f $tmp/conftemp.mk 2>/dev/null >/dev/null"
++      if grep '^REMOVED,,,' "$SRC/Makefile" >/dev/null
++      then rm $SRC/Makefile ; fi
++      cp $tmp/conftemp.mk $SRC/makefiles.mk~      ## DEBUGGING
++    fi
++    if test ! -f "$SRC/Makefile" ; then
++      AC_MSG_NOTICE([create TOP/Makefile guessed from local Makefile])
++      x='`' ; cat >$tmp/conftemp.sed <<_EOF
++/^\$/n
++x
++/^\$/bS
++x
++/\\\\\$/{H;d;}
++{H;s/.*//;x;}
++bM
++:S
++x
++/\\\\\$/{h;d;}
++{h;s/.*//;x;}
++:M
++s/\\(\\n\\)	/\\1 /g
++/^	/d
++/^[[	 ]]*[[\\#]]/d
++/^VPATH *=/d
++s/^srcdir *=.*/srcdir = ./
++s/^top_srcdir *=.*/top_srcdir = ./
++/[[:=]]/!d
++/^\\./d
++dnl Now handle rules (i.e. lines containing ":" but not " = ").
++/ = /b
++/ .= /b
++/:/!b
++s/:.*/:/
++s/ /  /g
++s/ \\([[a-z]][[a-z-]]*[[a-zA-Z0-9]]\\)\\([[ :]]\\)/ \\1 \\1[]_ALL\\2/g
++s/^\\([[a-z]][[a-z-]]*[[a-zA-Z0-9]]\\)\\([[ :]]\\)/\\1 \\1[]_ALL\\2/
++s/  / /g
++/^all all[]_ALL[[ :]]/i\\
++all-configured : all[]_ALL
++dnl dist-all exists... and would make for dist-all-all
++s/ [[a-zA-Z0-9-]]*[]_ALL [[a-zA-Z0-9-]]*[]_ALL[]_ALL//g
++/[]_ALL[]_ALL/d
++a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh $AUX/config.guess $x \\\\\\
++	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
++	; use=$x basename "\$\@" _ALL $x; n=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$n * \$\@"; if test "\$\$n" -eq "0" ; then : \\\\\\
++	; BUILD=$x grep "^####.*|" Makefile |tail -1| sed -e 's/.*|//' $x ; fi \\\\\\
++	; test ".\$\$BUILD" = "." && BUILD="." \\\\\\
++	; test "\$\$use" = "\$\@" && BUILD=$x echo "\$\$BUILD" | tail -1 $x \\\\\\
++	; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; (cd "\$\$i" && test ! -f configure && \$(MAKE) \$\$use) || exit; done
++dnl special rule add-on: "dist" copies the tarball to $(PUB). (source tree)
++/dist[]_ALL *:/a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh $AUX/config.guess $x \\\\\\
++	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
++	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).tar.*" \\\\\\
++	; if test "\$\$found" -eq "0" ; then : \\\\\\
++	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
++	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).tar.* \\\\\\
++	; do test -f "\$\$f" && mv "\$\$f" \$(PUB). ; done ; break ; done
++dnl special rule add-on: "dist-foo" copies all the archives to $(PUB). (source tree)
++/dist-[[a-zA-Z0-9]]*[]_ALL *:/a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh ./config.guess $x \\\\\\
++	; BUILD=$x grep "^#### \$\$HOST " Makefile | sed -e 's/.*|//' $x \\\\\\
++	; found=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$found \$(PACKAGE)-\$(VERSION).*" \\\\\\
++	; if test "\$\$found" -eq "0" ; then : \\\\\\
++	; BUILD=$x grep "^#### .*|" Makefile |tail -1| sed -e 's/.*|//' $x \\\\\\
++	; fi ; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; for f in \$\$i/\$(PACKAGE)-\$(VERSION).* \\\\\\
++	; do test -f "\$\$f" && mv "\$\$f" \$(PUB). ; done ; break ; done
++dnl special rule add-on: "distclean" removes all local builddirs completely
++/distclean[]_ALL *:/a\\
++	@ HOST="\$(HOST)\" \\\\\\
++	; test ".\$\$HOST" = "." && HOST=$x sh $AUX/config.guess $x \\\\\\
++	; BUILD=$x grep "^#### .*|" Makefile | sed -e 's/.*|//' $x \\\\\\
++	; use=$x basename "\$\@" _ALL $x; n=$x echo \$\$BUILD | wc -w $x \\\\\\
++	; echo "MAKE \$\$HOST : \$\$n * \$\@ (all local builds)" \\\\\\
++	; test ".\$\$BUILD" = "." && BUILD="." \\\\\\
++	; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; echo "# rm -r \$\$i"; done ; echo "# (sleep 3)" ; sleep 3 \\\\\\
++	; for i in \$\$BUILD ; do test ".\$\$i" = "." && continue \\\\\\
++	; echo "\$\$i" | grep "^/" > /dev/null && continue \\\\\\
++	; echo "\$\$i" | grep "^../" > /dev/null && continue \\\\\\
++	; echo "rm -r \$\$i"; (rm -r "\$\$i") ; done ; rm Makefile
++_EOF
++      cp "$tmp/conftemp.sed" "$SRC/makefile.sed~"            ## DEBUGGING
++      $SED -f $tmp/conftemp.sed Makefile >$SRC/Makefile
++      if test -f "$SRC/m4_ifval([$2],[$2],[END])" ; then
++        AC_MSG_NOTICE([extend TOP/Makefile with TOP/m4_ifval([$2],[$2],[END])])
++        cat $SRC/END >>$SRC/Makefile
++      fi ; xxxx="####"
++      echo "$xxxx CONFIGURATIONS FOR TOPLEVEL MAKEFILE: " >>$SRC/Makefile
++      # sanity check
++      if grep '^; echo "MAKE ' $SRC/Makefile >/dev/null ; then
++        AC_MSG_NOTICE([buggy sed found - it deletes tab in "a" text parts])
++        $SED -e '/^@ HOST=/s/^/	/' -e '/^; /s/^/	/' $SRC/Makefile \
++          >$SRC/Makefile~
++        (test -s $SRC/Makefile~ && mv $SRC/Makefile~ $SRC/Makefile) 2>/dev/null
++      fi
++    else
++      xxxx="\\#\\#\\#\\#"
++      # echo "/^$xxxx *$ax_enable_builddir_host /d" >$tmp/conftemp.sed
++      echo "s!^$xxxx [[^|]]* | *$SUB *\$!$xxxx ...... $SUB!" >$tmp/conftemp.sed
++      $SED -f "$tmp/conftemp.sed" "$SRC/Makefile" >$tmp/mkfile.tmp
++        cp "$tmp/conftemp.sed" "$SRC/makefiles.sed~"         ## DEBUGGING
++        cp "$tmp/mkfile.tmp"   "$SRC/makefiles.out~"         ## DEBUGGING
++      if cmp -s "$SRC/Makefile" "$tmp/mkfile.tmp" 2>/dev/null ; then
++        AC_MSG_NOTICE([keeping TOP/Makefile from earlier configure])
++        rm "$tmp/mkfile.tmp"
++      else
++        AC_MSG_NOTICE([reusing TOP/Makefile from earlier configure])
++        mv "$tmp/mkfile.tmp" "$SRC/Makefile"
++      fi
++    fi
++    AC_MSG_NOTICE([build in $SUB (HOST=$ax_enable_builddir_host)])
++    xxxx="####"
++    echo "$xxxx" "$ax_enable_builddir_host" "|$SUB" >>$SRC/Makefile
++  fi
++popdef([END])dnl
++AS_VAR_POPDEF([SED])dnl
++AS_VAR_POPDEF([AUX])dnl
++AS_VAR_POPDEF([SRC])dnl
++AS_VAR_POPDEF([TOP])dnl
++AS_VAR_POPDEF([SUB])dnl
++],[dnl
++ax_enable_builddir_srcdir="$srcdir"                    # $srcdir
++ax_enable_builddir_host="$HOST"                        # $HOST / $host
++ax_enable_builddir_version="$VERSION"                  # $VERSION
++ax_enable_builddir_package="$PACKAGE"                  # $PACKAGE
++ax_enable_builddir_auxdir="$ax_enable_builddir_auxdir" # $AUX
++ax_enable_builddir_sed="$ax_enable_builddir_sed"       # $SED
++ax_enable_builddir="$ax_enable_builddir"               # $SUB
++])dnl
++])
+Index: libffi/m4/ax_gcc_archflag.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_gcc_archflag.m4
+@@ -0,0 +1,215 @@
++# ===========================================================================
++#      http://www.gnu.org/software/autoconf-archive/ax_gcc_archflag.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_GCC_ARCHFLAG([PORTABLE?], [ACTION-SUCCESS], [ACTION-FAILURE])
++#
++# DESCRIPTION
++#
++#   This macro tries to guess the "native" arch corresponding to the target
++#   architecture for use with gcc's -march=arch or -mtune=arch flags. If
++#   found, the cache variable $ax_cv_gcc_archflag is set to this flag and
++#   ACTION-SUCCESS is executed; otherwise $ax_cv_gcc_archflag is is set to
++#   "unknown" and ACTION-FAILURE is executed. The default ACTION-SUCCESS is
++#   to add $ax_cv_gcc_archflag to the end of $CFLAGS.
++#
++#   PORTABLE? should be either [yes] (default) or [no]. In the former case,
++#   the flag is set to -mtune (or equivalent) so that the architecture is
++#   only used for tuning, but the instruction set used is still portable. In
++#   the latter case, the flag is set to -march (or equivalent) so that
++#   architecture-specific instructions are enabled.
++#
++#   The user can specify --with-gcc-arch=<arch> in order to override the
++#   macro's choice of architecture, or --without-gcc-arch to disable this.
++#
++#   When cross-compiling, or if $CC is not gcc, then ACTION-FAILURE is
++#   called unless the user specified --with-gcc-arch manually.
++#
++#   Requires macros: AX_CHECK_COMPILER_FLAGS, AX_GCC_X86_CPUID
++#
++#   (The main emphasis here is on recent CPUs, on the principle that doing
++#   high-performance computing on old hardware is uncommon.)
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
++#   Copyright (c) 2008 Matteo Frigo
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 8
++
++AC_DEFUN([AX_GCC_ARCHFLAG],
++[AC_REQUIRE([AC_PROG_CC])
++AC_REQUIRE([AC_CANONICAL_HOST])
++
++AC_ARG_WITH(gcc-arch, [AS_HELP_STRING([--with-gcc-arch=<arch>], [use architecture <arch> for gcc -march/-mtune, instead of guessing])],
++	ax_gcc_arch=$withval, ax_gcc_arch=yes)
++
++AC_MSG_CHECKING([for gcc architecture flag])
++AC_MSG_RESULT([])
++AC_CACHE_VAL(ax_cv_gcc_archflag,
++[
++ax_cv_gcc_archflag="unknown"
++
++if test "$GCC" = yes; then
++
++if test "x$ax_gcc_arch" = xyes; then
++ax_gcc_arch=""
++if test "$cross_compiling" = no; then
++case $host_cpu in
++  i[[3456]]86*|x86_64*) # use cpuid codes, in part from x86info-1.7 by D. Jones
++     AX_GCC_X86_CPUID(0)
++     AX_GCC_X86_CPUID(1)
++     case $ax_cv_gcc_x86_cpuid_0 in
++       *:756e6547:*:*) # Intel
++          case $ax_cv_gcc_x86_cpuid_1 in
++	    *5[[48]]?:*:*:*) ax_gcc_arch="pentium-mmx pentium" ;;
++	    *5??:*:*:*) ax_gcc_arch=pentium ;;
++	    *6[[3456]]?:*:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
++	    *6a?:*[[01]]:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
++	    *6a?:*[[234]]:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
++	    *6[[9d]]?:*:*:*) ax_gcc_arch="pentium-m pentium3 pentiumpro" ;;
++	    *6[[78b]]?:*:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
++	    *6??:*:*:*) ax_gcc_arch=pentiumpro ;;
++            *f3[[347]]:*:*:*|*f4[1347]:*:*:*)
++		case $host_cpu in
++                  x86_64*) ax_gcc_arch="nocona pentium4 pentiumpro" ;;
++                  *) ax_gcc_arch="prescott pentium4 pentiumpro" ;;
++                esac ;;
++            *f??:*:*:*) ax_gcc_arch="pentium4 pentiumpro";;
++          esac ;;
++       *:68747541:*:*) # AMD
++          case $ax_cv_gcc_x86_cpuid_1 in
++	    *5[[67]]?:*:*:*) ax_gcc_arch=k6 ;;
++	    *5[[8d]]?:*:*:*) ax_gcc_arch="k6-2 k6" ;;
++	    *5[[9]]?:*:*:*) ax_gcc_arch="k6-3 k6" ;;
++	    *60?:*:*:*) ax_gcc_arch=k7 ;;
++	    *6[[12]]?:*:*:*) ax_gcc_arch="athlon k7" ;;
++	    *6[[34]]?:*:*:*) ax_gcc_arch="athlon-tbird k7" ;;
++	    *67?:*:*:*) ax_gcc_arch="athlon-4 athlon k7" ;;
++	    *6[[68a]]?:*:*:*)
++	       AX_GCC_X86_CPUID(0x80000006) # L2 cache size
++	       case $ax_cv_gcc_x86_cpuid_0x80000006 in
++                 *:*:*[[1-9a-f]]??????:*) # (L2 = ecx >> 16) >= 256
++			ax_gcc_arch="athlon-xp athlon-4 athlon k7" ;;
++                 *) ax_gcc_arch="athlon-4 athlon k7" ;;
++	       esac ;;
++	    *f[[4cef8b]]?:*:*:*) ax_gcc_arch="athlon64 k8" ;;
++	    *f5?:*:*:*) ax_gcc_arch="opteron k8" ;;
++	    *f7?:*:*:*) ax_gcc_arch="athlon-fx opteron k8" ;;
++	    *f??:*:*:*) ax_gcc_arch="k8" ;;
++          esac ;;
++	*:746e6543:*:*) # IDT
++	   case $ax_cv_gcc_x86_cpuid_1 in
++	     *54?:*:*:*) ax_gcc_arch=winchip-c6 ;;
++	     *58?:*:*:*) ax_gcc_arch=winchip2 ;;
++	     *6[[78]]?:*:*:*) ax_gcc_arch=c3 ;;
++	     *69?:*:*:*) ax_gcc_arch="c3-2 c3" ;;
++	   esac ;;
++     esac
++     if test x"$ax_gcc_arch" = x; then # fallback
++	case $host_cpu in
++	  i586*) ax_gcc_arch=pentium ;;
++	  i686*) ax_gcc_arch=pentiumpro ;;
++        esac
++     fi
++     ;;
++
++  sparc*)
++     AC_PATH_PROG([PRTDIAG], [prtdiag], [prtdiag], [$PATH:/usr/platform/`uname -i`/sbin/:/usr/platform/`uname -m`/sbin/])
++     cputype=`(((grep cpu /proc/cpuinfo | cut -d: -f2) ; ($PRTDIAG -v |grep -i sparc) ; grep -i cpu /var/run/dmesg.boot ) | head -n 1) 2> /dev/null`
++     cputype=`echo "$cputype" | tr -d ' -' |tr $as_cr_LETTERS $as_cr_letters`
++     case $cputype in
++         *ultrasparciv*) ax_gcc_arch="ultrasparc4 ultrasparc3 ultrasparc v9" ;;
++         *ultrasparciii*) ax_gcc_arch="ultrasparc3 ultrasparc v9" ;;
++         *ultrasparc*) ax_gcc_arch="ultrasparc v9" ;;
++         *supersparc*|*tms390z5[[05]]*) ax_gcc_arch="supersparc v8" ;;
++         *hypersparc*|*rt62[[056]]*) ax_gcc_arch="hypersparc v8" ;;
++         *cypress*) ax_gcc_arch=cypress ;;
++     esac ;;
++
++  alphaev5) ax_gcc_arch=ev5 ;;
++  alphaev56) ax_gcc_arch=ev56 ;;
++  alphapca56) ax_gcc_arch="pca56 ev56" ;;
++  alphapca57) ax_gcc_arch="pca57 pca56 ev56" ;;
++  alphaev6) ax_gcc_arch=ev6 ;;
++  alphaev67) ax_gcc_arch=ev67 ;;
++  alphaev68) ax_gcc_arch="ev68 ev67" ;;
++  alphaev69) ax_gcc_arch="ev69 ev68 ev67" ;;
++  alphaev7) ax_gcc_arch="ev7 ev69 ev68 ev67" ;;
++  alphaev79) ax_gcc_arch="ev79 ev7 ev69 ev68 ev67" ;;
++
++  powerpc*)
++     cputype=`((grep cpu /proc/cpuinfo | head -n 1 | cut -d: -f2 | cut -d, -f1 | sed 's/ //g') ; /usr/bin/machine ; /bin/machine; grep CPU /var/run/dmesg.boot | head -n 1 | cut -d" " -f2) 2> /dev/null`
++     cputype=`echo $cputype | sed -e 's/ppc//g;s/ *//g'`
++     case $cputype in
++       *750*) ax_gcc_arch="750 G3" ;;
++       *740[[0-9]]*) ax_gcc_arch="$cputype 7400 G4" ;;
++       *74[[4-5]][[0-9]]*) ax_gcc_arch="$cputype 7450 G4" ;;
++       *74[[0-9]][[0-9]]*) ax_gcc_arch="$cputype G4" ;;
++       *970*) ax_gcc_arch="970 G5 power4";;
++       *POWER4*|*power4*|*gq*) ax_gcc_arch="power4 970";;
++       *POWER5*|*power5*|*gr*|*gs*) ax_gcc_arch="power5 power4 970";;
++       603ev|8240) ax_gcc_arch="$cputype 603e 603";;
++       *) ax_gcc_arch=$cputype ;;
++     esac
++     ax_gcc_arch="$ax_gcc_arch powerpc"
++     ;;
++esac
++fi # not cross-compiling
++fi # guess arch
++
++if test "x$ax_gcc_arch" != x -a "x$ax_gcc_arch" != xno; then
++for arch in $ax_gcc_arch; do
++  if test "x[]m4_default([$1],yes)" = xyes; then # if we require portable code
++    flags="-mtune=$arch"
++    # -mcpu=$arch and m$arch generate nonportable code on every arch except
++    # x86.  And some other arches (e.g. Alpha) don't accept -mtune.  Grrr.
++    case $host_cpu in i*86|x86_64*) flags="$flags -mcpu=$arch -m$arch";; esac
++  else
++    flags="-march=$arch -mcpu=$arch -m$arch"
++  fi
++  for flag in $flags; do
++    AX_CHECK_COMPILER_FLAGS($flag, [ax_cv_gcc_archflag=$flag; break])
++  done
++  test "x$ax_cv_gcc_archflag" = xunknown || break
++done
++fi
++
++fi # $GCC=yes
++])
++AC_MSG_CHECKING([for gcc architecture flag])
++AC_MSG_RESULT($ax_cv_gcc_archflag)
++if test "x$ax_cv_gcc_archflag" = xunknown; then
++  m4_default([$3],:)
++else
++  m4_default([$2], [CFLAGS="$CFLAGS $ax_cv_gcc_archflag"])
++fi
++])
+Index: libffi/m4/ax_gcc_x86_cpuid.m4
+===================================================================
+--- /dev/null
++++ libffi/m4/ax_gcc_x86_cpuid.m4
+@@ -0,0 +1,79 @@
++# ===========================================================================
++#     http://www.gnu.org/software/autoconf-archive/ax_gcc_x86_cpuid.html
++# ===========================================================================
++#
++# SYNOPSIS
++#
++#   AX_GCC_X86_CPUID(OP)
++#
++# DESCRIPTION
++#
++#   On Pentium and later x86 processors, with gcc or a compiler that has a
++#   compatible syntax for inline assembly instructions, run a small program
++#   that executes the cpuid instruction with input OP. This can be used to
++#   detect the CPU type.
++#
++#   On output, the values of the eax, ebx, ecx, and edx registers are stored
++#   as hexadecimal strings as "eax:ebx:ecx:edx" in the cache variable
++#   ax_cv_gcc_x86_cpuid_OP.
++#
++#   If the cpuid instruction fails (because you are running a
++#   cross-compiler, or because you are not using gcc, or because you are on
++#   a processor that doesn't have this instruction), ax_cv_gcc_x86_cpuid_OP
++#   is set to the string "unknown".
++#
++#   This macro mainly exists to be used in AX_GCC_ARCHFLAG.
++#
++# LICENSE
++#
++#   Copyright (c) 2008 Steven G. Johnson <stevenj@alum.mit.edu>
++#   Copyright (c) 2008 Matteo Frigo
++#
++#   This program is free software: you can redistribute it and/or modify it
++#   under the terms of the GNU General Public License as published by the
++#   Free Software Foundation, either version 3 of the License, or (at your
++#   option) any later version.
++#
++#   This program is distributed in the hope that it will be useful, but
++#   WITHOUT ANY WARRANTY; without even the implied warranty of
++#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
++#   Public License for more details.
++#
++#   You should have received a copy of the GNU General Public License along
++#   with this program. If not, see <http://www.gnu.org/licenses/>.
++#
++#   As a special exception, the respective Autoconf Macro's copyright owner
++#   gives unlimited permission to copy, distribute and modify the configure
++#   scripts that are the output of Autoconf when processing the Macro. You
++#   need not follow the terms of the GNU General Public License when using
++#   or distributing such scripts, even though portions of the text of the
++#   Macro appear in them. The GNU General Public License (GPL) does govern
++#   all other use of the material that constitutes the Autoconf Macro.
++#
++#   This special exception to the GPL applies to versions of the Autoconf
++#   Macro released by the Autoconf Archive. When you make and distribute a
++#   modified version of the Autoconf Macro, you may extend this special
++#   exception to the GPL to apply to your modified version as well.
++
++#serial 7
++
++AC_DEFUN([AX_GCC_X86_CPUID],
++[AC_REQUIRE([AC_PROG_CC])
++AC_LANG_PUSH([C])
++AC_CACHE_CHECK(for x86 cpuid $1 output, ax_cv_gcc_x86_cpuid_$1,
++ [AC_RUN_IFELSE([AC_LANG_PROGRAM([#include <stdio.h>], [
++     int op = $1, eax, ebx, ecx, edx;
++     FILE *f;
++      __asm__("cpuid"
++        : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
++        : "a" (op));
++     f = fopen("conftest_cpuid", "w"); if (!f) return 1;
++     fprintf(f, "%x:%x:%x:%x\n", eax, ebx, ecx, edx);
++     fclose(f);
++     return 0;
++])],
++     [ax_cv_gcc_x86_cpuid_$1=`cat conftest_cpuid`; rm -f conftest_cpuid],
++     [ax_cv_gcc_x86_cpuid_$1=unknown; rm -f conftest_cpuid],
++     [ax_cv_gcc_x86_cpuid_$1=unknown])])
++AC_LANG_POP([C])
++])

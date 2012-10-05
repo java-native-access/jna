@@ -6,12 +6,13 @@
 #
 
 nowarn="/wd4127 /wd4820 /wd4706 /wd4100 /wd4255 /wd4668"
-args="/nologo /EHac /W3 /LD $nowarn" # /WX
+args="/nologo /EHac /W3 $nowarn" # /WX
+#md="/MD"
 
 cl="cl"
 ml="ml"
 
-if [ -z "$INCLUDE" -o -z "$LIB" ]; then
+if [ -z "$INCLUDE" -a -z "$Include" -o -z "$LIB" -a -z "$Lib" ]; then
     exit "INCLUDE and LIB must be set for CL.EXE to function properly"
 fi
 
@@ -35,16 +36,24 @@ do
       shift 1
     ;;
     -m32)
-      if echo $PATH | grep x64_amd64; then
+      if echo $PATH | grep amd64 >& /dev/null; then
           echo "Wrong CL.EXE in path; use 32-bit version"
+          exit 1
+      fi
+      if echo $LIB | grep amd64 >& /dev/null; then
+          echo "Wrong paths in LIB; use 32-bit version"
           exit 1
       fi
       ml=ml
       shift 1
     ;;
     -m64)
-      if ! echo $PATH | grep x64_amd64; then
+      if ! echo $PATH | grep amd64 >& /dev/null; then
           echo "Wrong CL.EXE in path; use 64-bit version"
+          exit 1
+      fi
+      if ! echo $LIB | grep amd64 >& /dev/null; then
+          echo "Wrong paths in LIB; use 64-bit version"
           exit 1
       fi
       ml=ml64
@@ -57,13 +66,17 @@ do
     -g)
       # using /RTC1 instead of /GZ
       args="$args /Od /D_DEBUG /RTC1 /Zi"
-      md=/MDd
+#      md=/MDd
       shift 1
     ;;
     -c)
       args="$args /c"
       args="$(echo $args | sed 's%/Fe%/Fo%g')"
       single=/c
+      shift 1
+    ;;
+    -shared)
+      args="$args /LD"
       shift 1
     ;;
     -D*=*)
@@ -119,6 +132,9 @@ do
       file=$(cygpath -m "$2")
       outdir=$(dirname "$file")
       base=$(basename "$file"|sed 's/\.[^.]*//g')
+      if [ -n "$assembly" ]; then
+        target="$file"
+      fi
       if [ -n "$single" ]; then 
         output="/Fo$file"
       else
@@ -134,8 +150,8 @@ do
     *.S)
       file=$(cygpath -m "$1")
       src=$(echo $file|sed -e 's/.S$/.asm/g' -e 's%\\%/%g')
-      echo "$cl /EP $includes $defines \"$file\" > \"$src\""
-      "$cl" /nologo /EP $includes $defines "$file" > "$src" || exit $?
+      echo "$cl /nologo /EP $includes $defines \"$file\" > \"$src\""
+      eval "$cl /nologo /EP $includes $defines \"$file\"" > "$src" || exit $?
       md=""
       cl="$ml"
       output=$(echo $output | sed 's%/F[dpa][^ ]*%%g')
@@ -161,12 +177,12 @@ do
 done
 
 args="$md $args"
-echo "$cl $args (INCLUDE=$INCLUDE LIB=$LIB)"
-eval "\"$cl\" $args"
+echo "$cl $args"
+eval "$cl $args"
 result=$?
 # @#!%@!# ml64 broken output
 if [ -n "$assembly" ]; then
     mv $src $outdir
-    mv *.obj $outdir
+    mv *.obj $target
 fi
 exit $result

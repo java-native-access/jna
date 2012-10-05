@@ -15,7 +15,9 @@ package com.sun.jna;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -185,10 +187,42 @@ public class NativeLibraryTest extends TestCase {
     	}
     }
     
+    // XFAIL on android
     public void testGetProcess() {
+        if (Platform.isAndroid()) {
+            fail("dlopen(NULL) segfaults on Android");
+        }
         NativeLibrary process = NativeLibrary.getProcess();
         // Access a common C library function
         process.getFunction("printf");
+    }
+
+    private String expected(String f) {
+        return new File(f).exists() ? f : null;
+    }
+
+    public void testMatchFramework() {
+        if (!Platform.isMac()) {
+            return;
+        }
+        final String[][] MAPPINGS = {
+            // Depending on the system, /Library/Frameworks may or may not
+            // have anything in it.
+            { "QtCore", expected("/Library/Frameworks/QtCore.framework/QtCore") },
+            { "Adobe AIR", expected("/Library/Frameworks/Adobe AIR.framework/Adobe AIR") },
+
+            { "QuickTime", expected("/System/Library/Frameworks/QuickTime.framework/QuickTime") },
+            { "QuickTime.framework/Versions/Current/QuickTime", expected("/System/Library/Frameworks/QuickTime.framework/Versions/Current/QuickTime") },
+        };
+        for (int i=0;i < MAPPINGS.length;i++) {
+            assertEquals("Wrong framework mapping", MAPPINGS[i][1], NativeLibrary.matchFramework(MAPPINGS[i][0]));
+        }
+    }
+
+    public void testLoadLibraryWithOptions() {
+        Map options = new HashMap();
+        options.put(Library.OPTION_OPEN_FLAGS, new Integer(-1));
+        Native.loadLibrary("testlib", TestLibrary.class, options);
     }
 
     public static void main(String[] args) {

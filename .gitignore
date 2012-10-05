@@ -8,3 +8,10 @@ bin
 contrib/ntservice/dist
 contrib/platform/dist
 doc
+*~
+**/*~
+dist/*.asc
+dist/*-sources.jar
+dist/*-javadoc.jar
+dist/src-mvn.zip
+dist/out-of-date.jar

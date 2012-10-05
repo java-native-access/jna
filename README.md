@@ -23,11 +23,6 @@ Version 3.4.1
 * [jna.jar](jna/blob/3.4.1/dist/jna.jar?raw=true)
 * [platform.jar](jna/blob/3.4.1/dist/platform.jar?raw=true)
 
-Version 3.4.0
-
-* [jna.jar](jna/blob/3.4.0/dist/jna.jar?raw=true)
-* [platform.jar](jna/blob/3.4.0/dist/platform.jar?raw=true)
-
 Features
 ========
 
@@ -42,7 +37,7 @@ Features
 * Nested structures and arrays
 * Wide (wchar_t-based) strings
 * Native long support (32- or 64-bit as appropriate)
-* Demo applications
+* [Demo applications/examples](https://github.com/twall/jna/tree/master/contrib)
 * Supported on 1.4 or later JVMs, including JavaME (earlier VMs may work with stubbed NIO support)
 * Customizable marshalling/unmarshalling (argument and return value conversions)
 * Customizable mapping from Java method to native function name, and customizable invocation to simulate C preprocessor function macros
@@ -73,18 +68,17 @@ For commercial support, please contact twalljava [at] java [dot] net.
 Using the Library
 =================
 
-* [Getting Started](jna/tree/master/www/GettingStarted.md)
-* [Mapping between Java and Native](jna/tree/master/www/Mappings.md)
-* [Using Pointers and Arrays](jna/tree/master/www/PointersAndArrays.md)
-* [Using Structures and Unions](jna/tree/master/www/StructuresAndUnions.md)
-* [Using By-Reference Arguments](jna/tree/master/www/ByRefArguments.md)
-* [Customization of Type Mapping](jna/tree/master/www/CustomMappings.md)
-* [Callbacks/Function Pointers/Closures](jna/tree/master/www/CallbacksAndClosures.md)
-* [Dynamically Typed Languages (JRuby/Jython)](jna/tree/master/www/DynamicallyTypedLanguages.md)
-* [Platform Library](jna/tree/master/www/PlatformLibrary.md)
-* [Direct Method Mapping](jna/tree/master/www/DirectMapping.md) (Optimization)
-* [Frequently Asked Questions (FAQ)](jna/tree/master/www/FrequentlyAskedQuestions.md)
-* [Setting up a Windows Development Environment](jna/tree/master/www/WindowsDevelopmentEnvironment.md)
+* [Getting Started](https://github.com/twall/jna/blob/master/www/GettingStarted.md)
+* [Mapping between Java and Native](https://github.com/twall/jna/blob/master/www/Mappings.md)
+* [Using Pointers and Arrays](https://github.com/twall/jna/blob/master/www/PointersAndArrays.md)
+* [Using Structures and Unions](https://github.com/twall/jna/blob/master/www/StructuresAndUnions.md)
+* [Using By-Reference Arguments](https://github.com/twall/jna/blob/master/www/ByRefArguments.md)
+* [Customization of Type Mapping](https://github.com/twall/jna/blob/master/www/CustomMappings.md)
+* [Callbacks/Function Pointers/Closures](https://github.com/twall/jna/blob/master/www/CallbacksAndClosures.md)
+* [Dynamically Typed Languages (JRuby/Jython)](https://github.com/twall/jna/blob/master/www/DynamicallyTypedLanguages.md)
+* [Platform Library](https://github.com/twall/jna/blob/master/www/PlatformLibrary.md)
+* [Direct Method Mapping](https://github.com/twall/jna/blob/master/www/DirectMapping.md) (Optimization)
+* [Frequently Asked Questions (FAQ)](https://github.com/twall/jna/blob/master/www/FrequentlyAskedQuestions.md)
 * [Avoiding Crashes](http://twall.github.com/jna/3.4.1/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
@@ -92,12 +86,21 @@ Primary Documentation (JavaDoc)
 
 The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.4.1/javadoc/).
 
+Developers
+==========
+
+* [Contributing to JNA](https://github.com/twall/jna/blob/master/www/Contributing.md).
+* [Setting up a Windows Development Environment](https://github.com/twall/jna/blob/master/www/WindowsDevelopmentEnvironment.md)
+* [Setting up an Android Development Environment](https://github.com/twall/jna/blob/master/www/AndroidDevelopmentEnvironment.md)
+* [Releasing JNA](https://github.com/twall/jna/blob/master/www/ReleasingJNA.md)
+* [Publishing to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)
+
 Contributing 
 ============
 
-You're encouraged to contribute to JNA. Fork the code from [github.com/twall/jna](https://github.com/twall/jna) and submit pull requests.
+You're encouraged to contribute to JNA. Fork the code from [https://github.com/twall/jna](https://github.com/twall/jna) and submit pull requests.
 
-For more informationon setting up a development environment see [Contributing to JNA](jna/tree/master/www/Contributing.md).
+For more informationon setting up a development environment see [Contributing to JNA](https://github.com/twall/jna/blob/master/www/Contributing.md).
 
 If you are interested in paid support, feel free to say so on the [jna-users mailing list](http://groups.google.com/group/jna-users). Most simple questions will be answered on the list, but more complicated work, new features or target platforms can be negotiated with any of the JNA developers (this is how several of JNA's features came into being). You may even encounter other users with the same need and be able to cost share the new development.
 
@@ -107,4 +110,3 @@ License
 This library is provided under the LGPL, version 2.1 or later.  Alternative license arrangements are negotiable.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
-

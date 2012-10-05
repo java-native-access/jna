@@ -5,16 +5,17 @@ When installing cygwin, include ssh, git, make, and either gcc3 or mingw64,
 depending on whether you're targeting win32 or win64, respectively (it's 
 possible to build both from the same host).
  
-To build on Win64, you'll need either mingw64 (available with cygwin),
-or the free MS Visual Studio C++ Express compiler.  The MS compiler is
-preferred, since it provides structured event handling (SEH), which allows
-JNA to trap native faults when run in protected mode.  To build with the
-mingw64, uncomment the MINGW line in native/Makefile.  For the MS compiler,
-ensure that the 64-bit versions of cl.exe/ml64.exe/link.exe are in your
-PATH and that the INCLUDE and LIB environment variables are set properly.
-Even if compiling with the MS compiler, you should also install mingw64 for 
-its "windres" resource compiler (JNA will still build if it is missing, the
-resulting DLL will simply lack versioning info).
+To build on Win64, you'll need mingw64 (available with cygwin or separately),
+and optionally the free MS Visual Studio C++ Express compiler.  The MS
+compiler is preferred, since it provides structured event handling (SEH),
+which allows JNA to trap native faults when run in protected mode.  To build
+with the mingw64, uncomment the line assigning CC to $(MINGW) in
+native/Makefile and make sure the cross-compiling mingw64 tools are in your
+path.  To use the MS compiler, ensure that the 64-bit versions of
+cl.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and LIB
+environment variables are set properly (as in VCVARS.BAT). 
+
+Even if compiling with the MS compiler, you must also install mingw64.
 
 Sample configuration, setting up INCLUDE/LIB:
 ``` shell

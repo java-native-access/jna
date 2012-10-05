@@ -5,7 +5,7 @@
 #args="/pdbtype:sept"
 args="/nologo /opt:REF /incremental:no /subsystem:console /nodefaultlib:msvcrtd"
 
-if [ -z "$LIB" ]; then
+if [ -z "$LIB" -a "$Lib" ]; then
     exit "LIB must be set for LINK.EXE to function properly"
 fi
 
@@ -15,15 +15,23 @@ do
   case $1
   in
     -m32)
-      if echo $PATH | grep x64_amd64; then
+      if echo $PATH | grep amd64; then
           echo "Wrong LINK.EXE in path; use 32-bit version"
+          exit 1
+      fi
+      if echo $LIB | grep amd64; then
+          echo "Wrong paths in LIB; use 32-bit version"
           exit 1
       fi
       shift 1
     ;;
     -m64)
-      if ! echo $PATH | grep x64_amd64; then
+      if ! echo $PATH | grep amd64; then
           echo "Wrong LINK.EXE in path; use 64-bit version"
+          exit 1
+      fi
+      if ! echo $LIB | grep amd64; then
+          echo "Wrong paths in LIB; use 64-bit version"
           exit 1
       fi
       shift 1

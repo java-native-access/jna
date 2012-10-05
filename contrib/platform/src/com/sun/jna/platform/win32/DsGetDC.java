@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -100,6 +103,10 @@ public interface DsGetDC extends StdCallLibrary {
          * subnet that the computer is in with a valid site.
          */
         public WString ClientSiteName;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "DomainControllerName", "DomainControllerAddress", "DomainGuid", "DomainName", "DnsForestName", "Flags", "DcSiteName", "ClientSiteName"});
+        }
     }	
 	
     /**
@@ -112,6 +119,10 @@ public interface DsGetDC extends StdCallLibrary {
         }
 
         public DOMAIN_CONTROLLER_INFO.ByReference dci;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dci" });
+        }
     }
 	
     /**
@@ -156,7 +167,6 @@ public interface DsGetDC extends StdCallLibrary {
     public static class DS_DOMAIN_TRUSTS extends Structure {
 			
         public static class ByReference extends DS_DOMAIN_TRUSTS implements Structure.ByReference {
-
         }
 		
         /**
@@ -194,6 +204,10 @@ public interface DsGetDC extends StdCallLibrary {
          * Contains the GUID of the domain represented by this structure.
          */
         public GUID DomainGuid;
+        
+        protected List getFieldOrder() { 
+            return Arrays.asList(new String[] { "NetbiosDomainName", "DnsDomainName", "Flags", "ParentIndex", "TrustType", "TrustAttributes", "DomainSid", "DomainGuid" });
+        }
 
         public DS_DOMAIN_TRUSTS() {
         }
@@ -202,26 +216,4 @@ public interface DsGetDC extends StdCallLibrary {
             super(p);
         }
     };
-	
-    /**
-     * A pointer to an array of DS_DOMAIN_TRUSTS.
-     */
-    public static class PDS_DOMAIN_TRUSTS extends Structure {
-        public static class ByReference extends PDS_DOMAIN_TRUSTS implements Structure.ByReference {
-
-        }
-		
-        public DS_DOMAIN_TRUSTS.ByReference t;
-
-        /**
-         * Returns domain trusts.
-         * @param count
-         *  Number of domain trusts.
-         * @return
-         *  An array of domain trusts.
-         */
-        public DS_DOMAIN_TRUSTS[] getTrusts(int count) {
-            return (DS_DOMAIN_TRUSTS[]) t.toArray(count);
-        }
-    }
 }

@@ -1,0 +1,38 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -850,6 +850,11 @@
+ 	* man/Makefile.in: Regenerate.
+ 	* testsuite/Makefile.in: Regenerate.
+ 
++2011-08-22  Jasper Lievisse Adriaanse <jasper@openbsd.org>
++
++	* configure.ac: Add OpenBSD/hppa and OpenBSD/powerpc support.
++	* configure: Rebuilt.
++
+ 2009-07-30  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+ 
+ 	* configure.ac (_AC_ARG_VAR_PRECIOUS): Use m4_rename_force.
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -83,7 +83,7 @@ case "$host" in
+ 	TARGET=FRV; TARGETDIR=frv
+ 	;;
+ 
+-  hppa*-*-linux* | parisc*-*-linux*)
++  hppa*-*-linux* | parisc*-*-linux* | hppa*-*-openbsd*)
+ 	TARGET=PA_LINUX; TARGETDIR=pa
+ 	;;
+   hppa*64-*-hpux*)
+@@ -155,7 +155,7 @@ case "$host" in
+   powerpc-*-aix* | rs6000-*-aix*)
+ 	TARGET=POWERPC_AIX; TARGETDIR=powerpc
+ 	;;
+-  powerpc-*-freebsd*)
++  powerpc-*-freebsd* | powerpc-*-openbsd*)
+ 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
+ 	;;
+   powerpc64-*-freebsd*)

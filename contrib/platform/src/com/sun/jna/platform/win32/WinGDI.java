@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.win32.StdCallLibrary;
@@ -30,11 +33,20 @@ public interface WinGDI extends StdCallLibrary {
         public int nCount;
         public int nRgnSize;
         public RECT rcBound;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dwSize", "iType", "nCount", "nRgnSize", "rcBound" });
+        }
     }
     
     public class RGNDATA extends Structure {
         public RGNDATAHEADER rdh;
         public byte[] Buffer;
+
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "rdh", "Buffer" });
+        }
+
         public RGNDATA(int bufferSize) {
             Buffer = new byte[bufferSize];
             allocateMemory();
@@ -74,6 +86,9 @@ public interface WinGDI extends StdCallLibrary {
         public int biYPelsPerMeter;
         public int biClrUsed;
         public int biClrImportant;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "biSize", "biWidth", "biHeight", "biPlanes", "biBitCount", "biCompression", "biSizeImage", "biXPelsPerMeter", "biYPelsPerMeter", "biClrUsed", "biClrImportant" });
+        }
     }
     
     public class RGBQUAD extends Structure {
@@ -81,11 +96,17 @@ public interface WinGDI extends StdCallLibrary {
         public byte rgbGreen;
         public byte rgbRed;
         public byte rgbReserved = 0;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "rgbBlue", "rgbGreen", "rgbRed", "rgbReserved" });
+        }
     }
     
     public class BITMAPINFO extends Structure {
         public BITMAPINFOHEADER bmiHeader = new BITMAPINFOHEADER();
         public RGBQUAD[] bmiColors = new RGBQUAD[1];
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "bmiHeader", "bmiColors" });
+        }
         public BITMAPINFO() { this(1); }
         public BITMAPINFO(int size) {
             bmiColors = new RGBQUAD[size];

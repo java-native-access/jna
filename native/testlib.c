@@ -45,6 +45,7 @@ typedef __int64 int64_t;
 #define THREAD_EXIT() ExitThread(0)
 #define THREAD_FUNC(FN,ARG) DWORD WINAPI FN(LPVOID ARG)
 #define THREAD_CURRENT() GetCurrentThreadId()
+#define THREAD_RETURN return 0
 #else
 #define EXPORT
 #include <unistd.h>
@@ -54,6 +55,7 @@ typedef __int64 int64_t;
 #define THREAD_CREATE(TP, FN, DATA) pthread_create(TP, NULL, FN, DATA)
 #define THREAD_EXIT() pthread_exit(NULL)
 #define THREAD_FUNC(FN,ARG) void* FN(void *ARG)
+#define THREAD_RETURN return NULL
 #define THREAD_CURRENT() pthread_self()
 #endif
 
@@ -645,6 +647,7 @@ static THREAD_FUNC(thread_function, arg) {
     SLEEP(td.sleep_time);
   }
   THREAD_EXIT();
+  THREAD_RETURN;
 }
 
 static thread_data data;

@@ -21,9 +21,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+
+import com.sun.jna.win32.DLLCallback;
 
 /** Provides a reference to an association between a native callback closure
  * and a Java {@link Callback} closure. 
@@ -60,7 +63,9 @@ class CallbackReference extends WeakReference {
         public boolean daemon;
         public boolean detach;
         public String name;
-        { setFieldOrder(new String[] { "daemon", "detach", "name" }); }
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "daemon", "detach", "name" });
+        }
     }
     /** Called from native code to initialize a callback thread. */
     private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {
@@ -166,9 +171,13 @@ class CallbackReference extends WeakReference {
             method = getCallbackMethod(callback);
             nativeParamTypes = method.getParameterTypes();
             returnType = method.getReturnType();
+            int flags = Native.CB_OPTION_DIRECT;
+            if (callback instanceof DLLCallback) {
+                flags |= Native.CB_OPTION_IN_DLL;
+            }
             long peer = Native.createNativeCallback(callback, method,
                                                     nativeParamTypes, returnType,
-                                                    callingConvention, true);
+                                                    callingConvention, flags);
             cbstruct = peer != 0 ? new Pointer(peer) : null;
         }
         else {
@@ -210,12 +219,13 @@ class CallbackReference extends WeakReference {
                     + " requires custom type conversion";
                 throw new IllegalArgumentException(msg);
             }
+            int flags = callback instanceof DLLCallback
+                ? Native.CB_OPTION_IN_DLL : 0;
             long peer = Native.createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
                                                     nativeParamTypes, returnType,
-                                                    callingConvention, false);
+                                                    callingConvention, flags);
             cbstruct = peer != 0 ? new Pointer(peer) : null;
         }
-
     }
     
     private Class getNativeType(Class cls) {
@@ -384,9 +394,9 @@ class CallbackReference extends WeakReference {
     }
 
     private class DefaultCallbackProxy implements CallbackProxy {
-        private Method callbackMethod;
+        private final Method callbackMethod;
         private ToNativeConverter toNative;
-        private FromNativeConverter[] fromNative;
+        private final FromNativeConverter[] fromNative;
         public DefaultCallbackProxy(Method callbackMethod, TypeMapper mapper) {
             this.callbackMethod = callbackMethod;
             Class[] argTypes = callbackMethod.getParameterTypes();
@@ -567,8 +577,8 @@ class CallbackReference extends WeakReference {
      * Cf. Library.Handler
      */
     private static class NativeFunctionHandler implements InvocationHandler {
-        private Function function;
-        private Map options;
+        private final Function function;
+        private final Map options;
         
         public NativeFunctionHandler(Pointer address, int callingConvention, Map options) {
             this.function = new Function(address, callingConvention);

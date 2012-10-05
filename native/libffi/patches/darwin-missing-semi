@@ -1,0 +1,25 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,7 @@
++2012-04-10  Anthony Green  <green@moxielogic.com>
++
++	* src/powerpc/ffi_darwin.c (ffi_prep_args): Add missing semicolon.
++
+ 2012-04-06  Anthony Green  <green@moxielogic.com>
+ 
+ 	* Makefile.am (EXTRA_DIST): Add new iOS/xcode files.
+Index: libffi/src/powerpc/ffi_darwin.c
+===================================================================
+--- libffi.orig/src/powerpc/ffi_darwin.c
++++ libffi/src/powerpc/ffi_darwin.c
+@@ -1235,7 +1235,7 @@ ffi_closure_helper_DARWIN (ffi_closure *
+ 	  if (arg_types[i]->elements[0]->type == FFI_TYPE_DOUBLE)
+ 	    size_al = ALIGN(arg_types[i]->size, 8);
+ #  if defined(POWERPC64)
+-	  FFI_ASSERT (cif->abi != FFI_DARWIN)
++	  FFI_ASSERT (cif->abi != FFI_DARWIN);
+ 	  avalue[i] = pgr;
+ 	  pgr += (size_al + 7) / 8;
+ #  else

@@ -1,0 +1,659 @@
+Index: libffi/.gitignore
+===================================================================
+--- libffi.orig/.gitignore
++++ libffi/.gitignore
+@@ -16,3 +16,7 @@ libtool
+ stamp-h1
+ libffi*gz
+ autom4te.cache
++libffi.xcodeproj/xcuserdata
++libffi.xcodeproj/project.xcworkspace
++ios/
++
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -129,7 +129,8 @@ under a MingW environment, you may need
+ that sets 'fix_srcfile_path' to a 'cygpath' command. ('cygpath' is not
+ present in MingW, and is not required when using MingW-style paths.)
+ 
+-For iOS builds, refer to the build-ios.sh script for guidance.
++For iOS builds, run generate-ios-source-and-headers.py and then
++libffi.xcodeproj should work.
+ 
+ Configure has many other options. Use "configure --help" to see them all.
+ 
+@@ -152,8 +153,9 @@ See the ChangeLog files for details.
+ 	Add Linux/x32 support.
+ 	Add thiscall, fastcall and MSVC cdecl support on Windows.
+         Add Amiga and newer MacOS support.
+-	Fix Octeon and MC68881 support.
+ 	Add m68k FreeMiNT support.
++	Integration with iOS' xcode build tools.
++	Fix Octeon and MC68881 support.
+ 	Fix code pessimizations.
+         Lots of build fixes.
+ 
+Index: libffi/build-ios.sh
+===================================================================
+--- libffi.orig/build-ios.sh
++++ /dev/null
+@@ -1,67 +0,0 @@
+-#!/bin/sh
+-
+-PLATFORM_IOS=/Developer/Platforms/iPhoneOS.platform/
+-PLATFORM_IOS_SIM=/Developer/Platforms/iPhoneSimulator.platform/
+-SDK_IOS_VERSION="4.2"
+-MIN_IOS_VERSION="3.0"
+-OUTPUT_DIR="universal-ios"
+-
+-build_target () {
+-    local platform=$1
+-    local sdk=$2
+-    local arch=$3
+-    local triple=$4
+-    local builddir=$5
+-
+-    mkdir -p "${builddir}"
+-    pushd "${builddir}"
+-    export CC="${platform}"/Developer/usr/bin/gcc-4.2
+-    export CFLAGS="-arch ${arch} -isysroot ${sdk} -miphoneos-version-min=${MIN_IOS_VERSION}"
+-    ../configure --host=${triple} && make
+-    popd
+-}
+-
+-# Build all targets
+-build_target "${PLATFORM_IOS}" "${PLATFORM_IOS}/Developer/SDKs/iPhoneOS${SDK_IOS_VERSION}.sdk/" armv6 arm-apple-darwin10 armv6-ios
+-build_target "${PLATFORM_IOS}" "${PLATFORM_IOS}/Developer/SDKs/iPhoneOS${SDK_IOS_VERSION}.sdk/" armv7 arm-apple-darwin10 armv7-ios
+-build_target "${PLATFORM_IOS_SIM}" "${PLATFORM_IOS_SIM}/Developer/SDKs/iPhoneSimulator${SDK_IOS_VERSION}.sdk/" i386 i386-apple-darwin10 i386-ios-sim
+-
+-# Create universal output directories
+-mkdir -p "${OUTPUT_DIR}"
+-mkdir -p "${OUTPUT_DIR}/include"
+-mkdir -p "${OUTPUT_DIR}/include/armv6"
+-mkdir -p "${OUTPUT_DIR}/include/armv7"
+-mkdir -p "${OUTPUT_DIR}/include/i386"
+-
+-# Create the universal binary
+-lipo -create armv6-ios/.libs/libffi.a armv7-ios/.libs/libffi.a i386-ios-sim/.libs/libffi.a -output "${OUTPUT_DIR}/libffi.a"
+-
+-# Copy in the headers
+-copy_headers () {
+-    local src=$1
+-    local dest=$2
+-
+-    # Fix non-relative header reference
+-    sed 's/<ffitarget.h>/"ffitarget.h"/' < "${src}/include/ffi.h" > "${dest}/ffi.h"
+-    cp "${src}/include/ffitarget.h" "${dest}"
+-}
+-
+-copy_headers armv6-ios "${OUTPUT_DIR}/include/armv6"
+-copy_headers armv7-ios "${OUTPUT_DIR}/include/armv7"
+-copy_headers i386-ios-sim "${OUTPUT_DIR}/include/i386"
+-
+-# Create top-level header
+-(
+-cat << EOF
+-#ifdef __arm__
+-  #include <arm/arch.h>
+-  #ifdef _ARM_ARCH_6
+-    #include "include/armv6/ffi.h"
+-  #elif _ARM_ARCH_7
+-    #include "include/armv7/ffi.h"
+-  #endif
+-#elif defined(__i386__)
+-  #include "include/i386/ffi.h"
+-#endif
+-EOF
+-) > "${OUTPUT_DIR}/ffi.h"
+Index: libffi/generate-ios-source-and-headers.py
+===================================================================
+--- /dev/null
++++ libffi/generate-ios-source-and-headers.py
+@@ -0,0 +1,177 @@
++#!/usr/bin/env python
++import subprocess
++import re
++import os
++import errno
++import collections
++import sys
++#developer_path =
++
++
++class Platform(object):
++    pass
++
++sdk_re = re.compile(r'.*-sdk ([a-zA-Z0-9.]*)')
++
++
++def sdkinfo(sdkname):
++    ret = {}
++    for line in subprocess.Popen(['xcodebuild', '-sdk', sdkname, '-version'], stdout=subprocess.PIPE).stdout:
++        kv = line.strip().split(': ', 1)
++        if len(kv) == 2:
++            k,v = kv
++            ret[k] = v
++    return ret
++
++def mkdir_p(path):
++    try:
++        os.makedirs(path)
++    except OSError as exc: # Python >2.5
++        if exc.errno == errno.EEXIST:
++            pass
++        else:
++            raise
++
++
++sim_sdk_info = sdkinfo('iphonesimulator')
++device_sdk_info = sdkinfo('iphoneos')
++
++def latest_sdks():
++    latest_sim = None
++    latest_device = None
++    for line in subprocess.Popen(['xcodebuild', '-showsdks'], stdout=subprocess.PIPE).stdout:
++        match = sdk_re.match(line)
++        if match:
++            if 'Simulator' in line:
++                latest_sim = match.group(1)
++            elif 'iOS' in line:
++                latest_device = match.group(1)
++
++    return latest_sim, latest_device
++
++sim_sdk, device_sdk = latest_sdks()
++
++class simulator_platform(Platform):
++    sdk='iphonesimulator'
++    arch = 'i386'
++    short_arch = arch
++    triple = 'i386-apple-darwin10'
++    sdkroot = sim_sdk_info['Path']
++
++    prefix = "#if !defined(__arm__) && defined(__i386__)\n\n"
++    suffix = "\n\n#endif"
++
++class device_platform(Platform):
++    sdk='iphoneos'
++    arch = 'armv7'
++    short_arch = 'arm'
++    triple = 'arm-apple-darwin10'
++    sdkroot = device_sdk_info['Path']
++
++    prefix = "#ifdef __arm__\n\n"
++    suffix = "\n\n#endif"
++
++
++def move_file(src_dir, dst_dir, filename, file_suffix=None, prefix='', suffix=''):
++    mkdir_p(dst_dir)
++    out_filename = filename
++
++    if file_suffix:
++        split_name = os.path.splitext(filename)
++        out_filename =  "%s_%s%s" % (split_name[0], file_suffix, split_name[1])
++
++    with open(os.path.join(src_dir, filename)) as in_file:
++        with open(os.path.join(dst_dir, out_filename), 'w') as out_file:
++            if prefix:
++                out_file.write(prefix)
++
++            out_file.write(in_file.read())
++
++            if suffix:
++                out_file.write(suffix)
++
++headers_seen = collections.defaultdict(set)
++
++def move_source_tree(src_dir, dest_dir, dest_include_dir, arch=None, prefix=None, suffix=None):
++    for root, dirs, files in os.walk(src_dir, followlinks=True):
++        relroot = os.path.relpath(root,src_dir)
++
++        def move_dir(arch, prefix='', suffix='', files=[]):
++            for file in files:
++                file_suffix = None
++                if file.endswith('.h'):
++                    if dest_include_dir:
++                        file_suffix = arch
++                        if arch:
++                            headers_seen[file].add(arch)
++                        move_file(root, dest_include_dir, file, arch, prefix=prefix, suffix=suffix)
++
++                elif dest_dir:
++                    outroot = os.path.join(dest_dir, relroot)
++                    move_file(root, outroot, file, prefix=prefix, suffix=suffix)
++
++        if relroot == '.':
++            move_dir(arch=arch,
++                     files=files,
++                     prefix=prefix,
++                     suffix=suffix)
++        elif relroot == 'arm':
++            move_dir(arch='arm',
++                     prefix="#ifdef __arm__\n\n",
++                     suffix="\n\n#endif",
++                     files=files)
++        elif relroot == 'x86':
++            move_dir(arch='i386',
++                     prefix="#if !defined(__arm__) && defined(__i386__)\n\n",
++                     suffix="\n\n#endif",
++                     files=files)
++
++def build_target(platform):
++    def xcrun_cmd(cmd):
++        return subprocess.check_output(['xcrun', '-sdk', platform.sdkroot, '-find', cmd]).strip()
++
++    build_dir = 'build_' + platform.short_arch
++    mkdir_p(build_dir)
++    env = dict(CC=xcrun_cmd('clang'),
++               LD=xcrun_cmd('ld'),
++               CFLAGS='-arch %s -isysroot %s -miphoneos-version-min=4.3' % (platform.arch, platform.sdkroot))
++    working_dir=os.getcwd()
++    try:
++        os.chdir(build_dir)
++        subprocess.check_call(['../configure', '-host', platform.triple], env=env)
++        move_source_tree('.', None, '../ios/include',
++                         arch=platform.short_arch,
++                         prefix=platform.prefix,
++                         suffix=platform.suffix)
++        move_source_tree('./include', None, '../ios/include',
++                         arch=platform.short_arch,
++                         prefix=platform.prefix,
++                         suffix=platform.suffix)
++    finally:
++        os.chdir(working_dir)
++
++    for header_name, archs in headers_seen.iteritems():
++        basename, suffix = os.path.splitext(header_name)
++
++def make_tramp():
++    with open('src/arm/trampoline.S', 'w') as tramp_out:
++        p = subprocess.Popen(['bash', 'src/arm/gentramp.sh'], stdout=tramp_out)
++        p.wait()
++
++
++def main():
++    make_tramp()
++
++    move_source_tree('src', 'ios/src', 'ios/include')
++    move_source_tree('include', None, 'ios/include')
++    build_target(simulator_platform)
++    build_target(device_platform)
++
++    for header_name, archs in headers_seen.iteritems():
++        basename, suffix = os.path.splitext(header_name)
++        with open(os.path.join('ios/include', header_name), 'w') as header:
++            for arch in archs:
++                header.write('#include <%s_%s%s>\n' % (basename, arch, suffix))
++
++if __name__ == '__main__':
++    main()
+Index: libffi/libffi.xcodeproj/project.pbxproj
+===================================================================
+--- /dev/null
++++ libffi/libffi.xcodeproj/project.pbxproj
+@@ -0,0 +1,304 @@
++// !$*UTF8*$!
++{
++	archiveVersion = 1;
++	classes = {
++	};
++	objectVersion = 46;
++	objects = {
++
++/* Begin PBXBuildFile section */
++		F66B6AF9152FA32400B29B2A /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AE4152FA32400B29B2A /* ffi.c */; };
++		F66B6AFA152FA32400B29B2A /* sysv.S in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AE6152FA32400B29B2A /* sysv.S */; };
++		F66B6AFB152FA32400B29B2A /* trampoline.S in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AE7152FA32400B29B2A /* trampoline.S */; };
++		F66B6AFC152FA32400B29B2A /* closures.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AE8152FA32400B29B2A /* closures.c */; };
++		F66B6AFD152FA32400B29B2A /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AE9152FA32400B29B2A /* debug.c */; };
++		F66B6AFE152FA32400B29B2A /* dlmalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AEA152FA32400B29B2A /* dlmalloc.c */; };
++		F66B6AFF152FA32400B29B2A /* java_raw_api.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AEB152FA32400B29B2A /* java_raw_api.c */; };
++		F66B6B00152FA32400B29B2A /* prep_cif.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AEC152FA32400B29B2A /* prep_cif.c */; };
++		F66B6B01152FA32400B29B2A /* raw_api.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AED152FA32400B29B2A /* raw_api.c */; };
++		F66B6B02152FA32400B29B2A /* types.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AEE152FA32400B29B2A /* types.c */; };
++		F66B6B03152FA32400B29B2A /* darwin.S in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AF0152FA32400B29B2A /* darwin.S */; };
++		F66B6B05152FA32400B29B2A /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = F66B6AF2152FA32400B29B2A /* ffi.c */; };
++/* End PBXBuildFile section */
++
++/* Begin PBXFileReference section */
++		F66B6AE4152FA32400B29B2A /* ffi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffi.c; sourceTree = "<group>"; };
++		F66B6AE5152FA32400B29B2A /* gentramp.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = gentramp.sh; sourceTree = "<group>"; };
++		F66B6AE6152FA32400B29B2A /* sysv.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = sysv.S; sourceTree = "<group>"; };
++		F66B6AE7152FA32400B29B2A /* trampoline.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = trampoline.S; sourceTree = "<group>"; };
++		F66B6AE8152FA32400B29B2A /* closures.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = closures.c; sourceTree = "<group>"; };
++		F66B6AE9152FA32400B29B2A /* debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debug.c; sourceTree = "<group>"; };
++		F66B6AEA152FA32400B29B2A /* dlmalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dlmalloc.c; sourceTree = "<group>"; };
++		F66B6AEB152FA32400B29B2A /* java_raw_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = java_raw_api.c; sourceTree = "<group>"; };
++		F66B6AEC152FA32400B29B2A /* prep_cif.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = prep_cif.c; sourceTree = "<group>"; };
++		F66B6AED152FA32400B29B2A /* raw_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = raw_api.c; sourceTree = "<group>"; };
++		F66B6AEE152FA32400B29B2A /* types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = types.c; sourceTree = "<group>"; };
++		F66B6AF0152FA32400B29B2A /* darwin.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = darwin.S; sourceTree = "<group>"; };
++		F66B6AF2152FA32400B29B2A /* ffi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffi.c; sourceTree = "<group>"; };
++		F6B08473147252410031D8A1 /* ffi_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_arm.h; sourceTree = "<group>"; };
++		F6B08474147252410031D8A1 /* ffi_i386.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_i386.h; sourceTree = "<group>"; };
++		F6B08475147252410031D8A1 /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
++		F6B08476147252410031D8A1 /* fficonfig_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fficonfig_arm.h; sourceTree = "<group>"; };
++		F6B08477147252410031D8A1 /* fficonfig_i386.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fficonfig_i386.h; sourceTree = "<group>"; };
++		F6B08478147252410031D8A1 /* fficonfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fficonfig.h; sourceTree = "<group>"; };
++		F6B08479147252410031D8A1 /* ffitarget_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_arm.h; sourceTree = "<group>"; };
++		F6B0847A147252410031D8A1 /* ffitarget_i386.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget_i386.h; sourceTree = "<group>"; };
++		F6B0847B147252410031D8A1 /* ffitarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget.h; sourceTree = "<group>"; };
++		F6F980BA147386130008F121 /* libffi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libffi.a; sourceTree = BUILT_PRODUCTS_DIR; };
++/* End PBXFileReference section */
++
++/* Begin PBXFrameworksBuildPhase section */
++		F6F980B7147386130008F121 /* Frameworks */ = {
++			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++/* End PBXFrameworksBuildPhase section */
++
++/* Begin PBXGroup section */
++		F66B6AE2152FA32400B29B2A /* src */ = {
++			isa = PBXGroup;
++			children = (
++				F66B6AE3152FA32400B29B2A /* arm */,
++				F66B6AE8152FA32400B29B2A /* closures.c */,
++				F66B6AE9152FA32400B29B2A /* debug.c */,
++				F66B6AEA152FA32400B29B2A /* dlmalloc.c */,
++				F66B6AEB152FA32400B29B2A /* java_raw_api.c */,
++				F66B6AEC152FA32400B29B2A /* prep_cif.c */,
++				F66B6AED152FA32400B29B2A /* raw_api.c */,
++				F66B6AEE152FA32400B29B2A /* types.c */,
++				F66B6AEF152FA32400B29B2A /* x86 */,
++			);
++			name = src;
++			path = ios/src;
++			sourceTree = "<group>";
++		};
++		F66B6AE3152FA32400B29B2A /* arm */ = {
++			isa = PBXGroup;
++			children = (
++				F66B6AE4152FA32400B29B2A /* ffi.c */,
++				F66B6AE5152FA32400B29B2A /* gentramp.sh */,
++				F66B6AE6152FA32400B29B2A /* sysv.S */,
++				F66B6AE7152FA32400B29B2A /* trampoline.S */,
++			);
++			path = arm;
++			sourceTree = "<group>";
++		};
++		F66B6AEF152FA32400B29B2A /* x86 */ = {
++			isa = PBXGroup;
++			children = (
++				F66B6AF0152FA32400B29B2A /* darwin.S */,
++				F66B6AF2152FA32400B29B2A /* ffi.c */,
++			);
++			path = x86;
++			sourceTree = "<group>";
++		};
++		F6B0839514721EE50031D8A1 = {
++			isa = PBXGroup;
++			children = (
++				F66B6AE2152FA32400B29B2A /* src */,
++				F6B0846C147241640031D8A1 /* include */,
++				F6B083A214721EE50031D8A1 /* Frameworks */,
++				F6F980C6147386260008F121 /* Products */,
++			);
++			sourceTree = "<group>";
++		};
++		F6B083A214721EE50031D8A1 /* Frameworks */ = {
++			isa = PBXGroup;
++			children = (
++			);
++			name = Frameworks;
++			sourceTree = "<group>";
++		};
++		F6B0846C147241640031D8A1 /* include */ = {
++			isa = PBXGroup;
++			children = (
++				F6B08473147252410031D8A1 /* ffi_arm.h */,
++				F6B08474147252410031D8A1 /* ffi_i386.h */,
++				F6B08475147252410031D8A1 /* ffi.h */,
++				F6B08476147252410031D8A1 /* fficonfig_arm.h */,
++				F6B08477147252410031D8A1 /* fficonfig_i386.h */,
++				F6B08478147252410031D8A1 /* fficonfig.h */,
++				F6B08479147252410031D8A1 /* ffitarget_arm.h */,
++				F6B0847A147252410031D8A1 /* ffitarget_i386.h */,
++				F6B0847B147252410031D8A1 /* ffitarget.h */,
++			);
++			name = include;
++			path = ios/include;
++			sourceTree = "<group>";
++		};
++		F6F980C6147386260008F121 /* Products */ = {
++			isa = PBXGroup;
++			children = (
++				F6F980BA147386130008F121 /* libffi.a */,
++			);
++			name = Products;
++			path = ../..;
++			sourceTree = BUILT_PRODUCTS_DIR;
++		};
++/* End PBXGroup section */
++
++/* Begin PBXHeadersBuildPhase section */
++		F6F980B8147386130008F121 /* Headers */ = {
++			isa = PBXHeadersBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++/* End PBXHeadersBuildPhase section */
++
++/* Begin PBXNativeTarget section */
++		F6F980B9147386130008F121 /* ffi */ = {
++			isa = PBXNativeTarget;
++			buildConfigurationList = F6F980C4147386130008F121 /* Build configuration list for PBXNativeTarget "ffi" */;
++			buildPhases = (
++				F6F980B6147386130008F121 /* Sources */,
++				F6F980B7147386130008F121 /* Frameworks */,
++				F6F980B8147386130008F121 /* Headers */,
++			);
++			buildRules = (
++			);
++			dependencies = (
++			);
++			name = ffi;
++			productName = ffi;
++			productReference = F6F980BA147386130008F121 /* libffi.a */;
++			productType = "com.apple.product-type.library.static";
++		};
++/* End PBXNativeTarget section */
++
++/* Begin PBXProject section */
++		F6B0839714721EE50031D8A1 /* Project object */ = {
++			isa = PBXProject;
++			attributes = {
++				LastUpgradeCheck = 0420;
++			};
++			buildConfigurationList = F6B0839A14721EE50031D8A1 /* Build configuration list for PBXProject "libffi" */;
++			compatibilityVersion = "Xcode 3.2";
++			developmentRegion = English;
++			hasScannedForEncodings = 0;
++			knownRegions = (
++				en,
++			);
++			mainGroup = F6B0839514721EE50031D8A1;
++			productRefGroup = F6B0839514721EE50031D8A1;
++			projectDirPath = "";
++			projectRoot = "";
++			targets = (
++				F6F980B9147386130008F121 /* ffi */,
++			);
++		};
++/* End PBXProject section */
++
++/* Begin PBXSourcesBuildPhase section */
++		F6F980B6147386130008F121 /* Sources */ = {
++			isa = PBXSourcesBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++				F66B6AF9152FA32400B29B2A /* ffi.c in Sources */,
++				F66B6AFA152FA32400B29B2A /* sysv.S in Sources */,
++				F66B6AFB152FA32400B29B2A /* trampoline.S in Sources */,
++				F66B6AFC152FA32400B29B2A /* closures.c in Sources */,
++				F66B6AFD152FA32400B29B2A /* debug.c in Sources */,
++				F66B6AFE152FA32400B29B2A /* dlmalloc.c in Sources */,
++				F66B6AFF152FA32400B29B2A /* java_raw_api.c in Sources */,
++				F66B6B00152FA32400B29B2A /* prep_cif.c in Sources */,
++				F66B6B01152FA32400B29B2A /* raw_api.c in Sources */,
++				F66B6B02152FA32400B29B2A /* types.c in Sources */,
++				F66B6B03152FA32400B29B2A /* darwin.S in Sources */,
++				F66B6B05152FA32400B29B2A /* ffi.c in Sources */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
++/* End PBXSourcesBuildPhase section */
++
++/* Begin XCBuildConfiguration section */
++		F6B083AB14721EE50031D8A1 /* Debug */ = {
++			isa = XCBuildConfiguration;
++			buildSettings = {
++				ALWAYS_SEARCH_USER_PATHS = NO;
++				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
++				COPY_PHASE_STRIP = NO;
++				GCC_C_LANGUAGE_STANDARD = gnu99;
++				GCC_DYNAMIC_NO_PIC = NO;
++				GCC_OPTIMIZATION_LEVEL = 0;
++				GCC_PREPROCESSOR_DEFINITIONS = (
++					"DEBUG=1",
++					"$(inherited)",
++				);
++				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
++				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
++				GCC_WARN_ABOUT_RETURN_TYPE = YES;
++				GCC_WARN_UNUSED_VARIABLE = YES;
++				HEADER_SEARCH_PATHS = ios/include;
++				SDKROOT = iphoneos;
++			};
++			name = Debug;
++		};
++		F6B083AC14721EE50031D8A1 /* Release */ = {
++			isa = XCBuildConfiguration;
++			buildSettings = {
++				ALWAYS_SEARCH_USER_PATHS = NO;
++				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
++				COPY_PHASE_STRIP = YES;
++				GCC_C_LANGUAGE_STANDARD = gnu99;
++				GCC_PREPROCESSOR_DEFINITIONS = "";
++				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
++				GCC_WARN_ABOUT_RETURN_TYPE = YES;
++				GCC_WARN_UNUSED_VARIABLE = YES;
++				HEADER_SEARCH_PATHS = ios/include;
++				SDKROOT = iphoneos;
++				VALIDATE_PRODUCT = YES;
++			};
++			name = Release;
++		};
++		F6F980C2147386130008F121 /* Debug */ = {
++			isa = XCBuildConfiguration;
++			buildSettings = {
++				DSTROOT = /tmp/ffi.dst;
++				GCC_PRECOMPILE_PREFIX_HEADER = YES;
++				OTHER_LDFLAGS = "-ObjC";
++				PRODUCT_NAME = "$(TARGET_NAME)";
++				SKIP_INSTALL = YES;
++			};
++			name = Debug;
++		};
++		F6F980C3147386130008F121 /* Release */ = {
++			isa = XCBuildConfiguration;
++			buildSettings = {
++				DSTROOT = /tmp/ffi.dst;
++				GCC_PRECOMPILE_PREFIX_HEADER = YES;
++				OTHER_LDFLAGS = "-ObjC";
++				PRODUCT_NAME = "$(TARGET_NAME)";
++				SKIP_INSTALL = YES;
++			};
++			name = Release;
++		};
++/* End XCBuildConfiguration section */
++
++/* Begin XCConfigurationList section */
++		F6B0839A14721EE50031D8A1 /* Build configuration list for PBXProject "libffi" */ = {
++			isa = XCConfigurationList;
++			buildConfigurations = (
++				F6B083AB14721EE50031D8A1 /* Debug */,
++				F6B083AC14721EE50031D8A1 /* Release */,
++			);
++			defaultConfigurationIsVisible = 0;
++			defaultConfigurationName = Release;
++		};
++		F6F980C4147386130008F121 /* Build configuration list for PBXNativeTarget "ffi" */ = {
++			isa = XCConfigurationList;
++			buildConfigurations = (
++				F6F980C2147386130008F121 /* Debug */,
++				F6F980C3147386130008F121 /* Release */,
++			);
++			defaultConfigurationIsVisible = 0;
++			defaultConfigurationName = Release;
++		};
++/* End XCConfigurationList section */
++	};
++	rootObject = F6B0839714721EE50031D8A1 /* Project object */;
++}
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,15 @@
++2012-04-06  Anthony Green  <green@moxielogic.com>
++
++	* Makefile.am (EXTRA_DIST): Add new iOS/xcode files.
++	* Makefile.in: Rebuilt.
++
++2012-04-06  Mike Lewis  <mikelikespie@gmail.com>
++
++	* generate-ios-source-and-headers.py: New file.
++	* libffi.xcodeproj/project.pbxproj: New file.
++	* README: Update instructions on building iOS binary.
++	* build-ios.sh: Delete.
++
+ 2012-04-06  H.J. Lu  <hongjiu.lu@intel.com>
+ 
+ 	* m4/libtool.m4 (_LT_ENABLE_LOCK): Support x32.
+Index: libffi/Makefile.am
+===================================================================
+--- libffi.orig/Makefile.am
++++ libffi/Makefile.am
+@@ -30,10 +30,11 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+-	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 build-ios.sh \
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c \
+-	msvcc.sh
+-
++	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
++	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
++	msvcc.sh generate-ios-source-and-headers.py \
++        libffi.xcodeproj/project.pbxproj \
++	src/arm/trampoline.S
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 
+Index: libffi/Makefile.in
+===================================================================
+--- libffi.orig/Makefile.in
++++ libffi/Makefile.in
+@@ -443,9 +443,11 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+ 	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+ 	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+ 	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+-	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 build-ios.sh \
+-	m4/ltversion.m4 build-ios.sh src/arm/gentramp.sh src/debug.c \
+-	msvcc.sh
++	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
++	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
++	msvcc.sh generate-ios-source-and-headers.py \
++        libffi.xcodeproj/project.pbxproj \
++	src/arm/trampoline.S
+ 
+ info_TEXINFOS = doc/libffi.texi
+ 

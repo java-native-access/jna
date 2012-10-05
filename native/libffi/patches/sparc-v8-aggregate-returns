@@ -1,0 +1,108 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -111,6 +111,12 @@
+ 
+ 	* configure: Regenerate.
+ 
++2011-02-08  Ginn Chen  <ginn.chen@oracle.com>
++
++	* src/sparc/ffi.c (ffi_call): Make compatible with Solaris Studio
++	aggregate return ABI.  Flush cache.
++	(ffi_prep_closure_loc): Flush cache.
++
+ 2011-02-11  Anthony Green  <green@moxielogic.com>
+ 
+ 	From Tom Honermann <tom.honermann@oracle.com>:
+Index: libffi/src/sparc/ffi.c
+===================================================================
+--- libffi.orig/src/sparc/ffi.c
++++ libffi/src/sparc/ffi.c
+@@ -1,5 +1,6 @@
+ /* -----------------------------------------------------------------------
+    ffi.c - Copyright (c) 1996, 2003, 2004, 2007, 2008 Red Hat, Inc.
++           Copyright (c) 2011 Anthony Green
+    
+    SPARC Foreign Function Interface 
+ 
+@@ -406,8 +407,50 @@ void ffi_call(ffi_cif *cif, void (*fn)(v
+       /* We don't yet support calling 32bit code from 64bit */
+       FFI_ASSERT(0);
+ #else
+-      ffi_call_v8(ffi_prep_args_v8, &ecif, cif->bytes, 
+-		  cif->flags, rvalue, fn);
++      if (rvalue && (cif->rtype->type == FFI_TYPE_STRUCT
++#if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
++	  || cif->flags == FFI_TYPE_LONGDOUBLE
++#endif
++	  ))
++	{
++	  /* For v8, we need an "unimp" with size of returning struct */
++	  /* behind "call", so we alloc some executable space for it. */
++	  /* l7 is used, we need to make sure v8.S doesn't use %l7.   */
++	  unsigned int *call_struct = NULL;
++	  ffi_closure_alloc(32, &call_struct);
++	  if (call_struct)
++	    {
++	      unsigned long f = (unsigned long)fn;
++	      call_struct[0] = 0xae10001f;		 /* mov   %i7, %l7	 */
++	      call_struct[1] = 0xbe10000f;		 /* mov   %o7, %i7	 */
++	      call_struct[2] = 0x03000000 | f >> 10;     /* sethi %hi(fn), %g1	 */
++	      call_struct[3] = 0x9fc06000 | (f & 0x3ff); /* jmp %g1+%lo(fn), %o7 */
++	      call_struct[4] = 0x01000000;		 /* nop			 */
++	      if (cif->rtype->size < 0x7f)
++		call_struct[5] = cif->rtype->size;	 /* unimp		 */
++	      else
++		call_struct[5] = 0x01000000;	     	 /* nop			 */
++	      call_struct[6] = 0x81c7e008;		 /* ret			 */
++	      call_struct[7] = 0xbe100017;		 /* mov   %l7, %i7	 */
++	      asm volatile ("iflush %0; iflush %0+8; iflush %0+16; iflush %0+24" : :
++			    "r" (call_struct) : "memory");
++	      /* SPARC v8 requires 5 instructions for flush to be visible */
++	      asm volatile ("nop; nop; nop; nop; nop");
++	      ffi_call_v8(ffi_prep_args_v8, &ecif, cif->bytes,
++			  cif->flags, rvalue, call_struct);
++	      ffi_closure_free(call_struct);
++	    }
++	  else
++	    {
++	      ffi_call_v8(ffi_prep_args_v8, &ecif, cif->bytes,
++			  cif->flags, rvalue, fn);
++	    }
++	}
++      else
++	{
++	  ffi_call_v8(ffi_prep_args_v8, &ecif, cif->bytes,
++		      cif->flags, rvalue, fn);
++	}
+ #endif
+       break;
+     case FFI_V9:
+@@ -425,7 +468,6 @@ void ffi_call(ffi_cif *cif, void (*fn)(v
+       FFI_ASSERT(0);
+       break;
+     }
+-
+ }
+ 
+ 
+@@ -468,13 +510,13 @@ ffi_prep_closure_loc (ffi_closure* closu
+   closure->fun = fun;
+   closure->user_data = user_data;
+ 
+-  /* Flush the Icache.  FIXME: alignment isn't certain, assume 8 bytes */
++  /* Flush the Icache.  closure is 8 bytes aligned.  */
+ #ifdef SPARC64
+-  asm volatile ("flush	%0" : : "r" (closure) : "memory");
+-  asm volatile ("flush	%0" : : "r" (((char *) closure) + 8) : "memory");
++  asm volatile ("flush	%0; flush %0+8" : : "r" (closure) : "memory");
+ #else
+-  asm volatile ("iflush	%0" : : "r" (closure) : "memory");
+-  asm volatile ("iflush	%0" : : "r" (((char *) closure) + 8) : "memory");
++  asm volatile ("iflush	%0; iflush %0+8" : : "r" (closure) : "memory");
++  /* SPARC v8 requires 5 instructions for flush to be visible */
++  asm volatile ("nop; nop; nop; nop; nop");
+ #endif
+ 
+   return FFI_OK;
