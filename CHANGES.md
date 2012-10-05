@@ -15,6 +15,7 @@ Bug Fixes
 * Fix `Advapi32Util.registryGetValues()` tried to allocate memory for a zero-length `REG_BINARY` value - [@phailwhale22](https://github.com/phailwhale22).
 * Fix crash in direct mode callbacks with certain type conversions - [@twall](https://github.com/twall).
 * More thoroughly propagate unexpected exceptions generated in jnidispatch - [@twall](https://github.com/twall).
+* Cleanup maven poms and publishing to central repo - [@bhamail](https://github.com/bhamail).
 
 Release 3.4.2
 =============
