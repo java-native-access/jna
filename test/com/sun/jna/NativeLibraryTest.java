@@ -15,7 +15,9 @@ package com.sun.jna;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -215,6 +217,12 @@ public class NativeLibraryTest extends TestCase {
         for (int i=0;i < MAPPINGS.length;i++) {
             assertEquals("Wrong framework mapping", MAPPINGS[i][1], NativeLibrary.matchFramework(MAPPINGS[i][0]));
         }
+    }
+
+    public void testLoadLibraryWithOptions() {
+        Map options = new HashMap();
+        options.put(Library.OPTION_OPEN_FLAGS, new Integer(-1));
+        Native.loadLibrary("testlib", TestLibrary.class, options);
     }
 
     public static void main(String[] args) {

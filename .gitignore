@@ -10,7 +10,8 @@ contrib/platform/dist
 doc
 *~
 **/*~
-dist/jna-*-javadoc.jar
+dist/*.asc
+dist/*-sources.jar
+dist/*-javadoc.jar
 dist/src-mvn.zip
 dist/out-of-date.jar
-

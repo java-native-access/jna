@@ -81,6 +81,8 @@ public interface Library {
     String OPTION_ALLOW_OBJECTS = "allow-objects";
     /** Calling convention for the entire library. */
     String OPTION_CALLING_CONVENTION = "calling-convention";
+    /** Flags to use when opening the native library (see {@link Native#open(String,int)}) */
+    String OPTION_OPEN_FLAGS = "open-flags";
 
     static class Handler implements InvocationHandler {
         

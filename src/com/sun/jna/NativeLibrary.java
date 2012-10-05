@@ -96,8 +96,19 @@ public class NativeLibrary {
         }
     }
 
+    private static final int DEFAULT_OPEN_OPTIONS = -1;
+    private static int openFlags(Map options) {
+        try {
+            return ((Integer)options.get(Library.OPTION_OPEN_FLAGS)).intValue();
+        }
+        catch(Throwable t) {
+            return DEFAULT_OPEN_OPTIONS;
+        }
+    }
+
     private static NativeLibrary loadLibrary(String libraryName, Map options) {
         List searchPath = new LinkedList();
+        int openFlags = openFlags(options);
 
         // Append web start path, if available.  Note that this does not
         // attempt any library name variations
@@ -125,7 +136,7 @@ public class NativeLibrary {
         // name if it cannot find the library.
         //
         try {
-            handle = Native.open(libraryPath);
+            handle = Native.open(libraryPath, openFlags);
         }
         catch(UnsatisfiedLinkError e) {
             // Add the system paths back for all fallback searching
@@ -134,7 +145,7 @@ public class NativeLibrary {
         try {
             if (handle == 0) {
                 libraryPath = findLibraryPath(libraryName, searchPath);
-                handle = Native.open(libraryPath);
+                handle = Native.open(libraryPath, openFlags);
                 if (handle == 0) {
                     throw new UnsatisfiedLinkError("Failed to load library '" + libraryName + "'");
                 }
@@ -147,7 +158,7 @@ public class NativeLibrary {
             if (Platform.isAndroid()) {
                 try {
                     System.loadLibrary(libraryName);
-                    handle = Native.open(libraryPath);
+                    handle = Native.open(libraryPath, openFlags);
                 }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
             }
@@ -158,7 +169,7 @@ public class NativeLibrary {
                 libraryPath = matchLibrary(libraryName, searchPath);
                 if (libraryPath != null) {
                     try {
-                        handle = Native.open(libraryPath);
+                        handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
@@ -168,7 +179,7 @@ public class NativeLibrary {
                 libraryPath = matchFramework(libraryName);
                 if (libraryPath != null) {
                     try {
-                        handle = Native.open(libraryPath);
+                        handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
                 }
@@ -176,7 +187,7 @@ public class NativeLibrary {
             // Try the same library with a "lib" prefix
             else if (Platform.isWindows()) {
                 libraryPath = findLibraryPath("lib" + libraryName, searchPath);
-                try { handle = Native.open(libraryPath); }
+                try { handle = Native.open(libraryPath, openFlags); }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
             }
             if (handle == 0) {
@@ -256,7 +267,8 @@ public class NativeLibrary {
 
         // Use current process to load libraries we know are already
         // loaded by the VM to ensure we get the correct version
-        if ((Platform.isLinux() || Platform.isAix()) && "c".equals(libraryName)) {
+        if ((Platform.isLinux() || Platform.isAix())
+            && Platform.C_LIBRARY_NAME.equals(libraryName)) {
             libraryName = null;
         }
         synchronized (libraries) {
@@ -265,7 +277,7 @@ public class NativeLibrary {
 
             if (library == null) {
                 if (libraryName == null) {
-                    library = new NativeLibrary("<process>", null, Native.open(null), options);
+                    library = new NativeLibrary("<process>", null, Native.open(null, openFlags(options)), options);
                 }
                 else {
                     library = loadLibrary(libraryName, options);
