@@ -228,6 +228,8 @@
     <echo>java.home=${java.home}</echo>
     <echo>java.library.path=${java.library.path}</echo>
     <echo>os.prefix=${os.prefix}</echo>
+    <echo>os.name=${os.name}</echo>
+    <echo>os.arch=${os.arch}</echo>
     <echo>build=${build}</echo>
     <echo>build.native=${build.native}</echo>
 

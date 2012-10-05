@@ -683,7 +683,8 @@ public class NativeLibrary {
             // on 64bit machines, so we have to explicitly search the 64bit
             // one when running a 64bit JVM.
             //
-            if (Platform.isLinux() || Platform.isSolaris() || Platform.isFreeBSD()) {
+            if (Platform.isLinux() || Platform.isSolaris() || Platform.isFreeBSD()
+                || Platform.iskFreeBSD()) {
                 // Linux & FreeBSD use /usr/lib32, solaris uses /usr/lib/32
                 archPath = (Platform.isSolaris() ? "/" : "") + Pointer.SIZE * 8;
             }
@@ -698,23 +699,27 @@ public class NativeLibrary {
             // paths is scanned against real directory
             // so for platforms which are not multi-arch
             // this should continue to work.
-            if (Platform.isLinux()) {
+            if (Platform.isLinux() || Platform.iskFreeBSD() || Platform.isGNU()) {
                 // Defaults - overridden below
-                String cpu = "";
+                String cpu = Platform.getBaseArch();
                 String kernel = "linux";
                 String libc = "gnu";
 
-                if (Platform.isIntel()) {
-                    cpu = (Platform.is64Bit() ? "x86_64" : "i386");
-                } else if (Platform.isPPC()) {
-                    cpu = (Platform.is64Bit() ? "powerpc64" : "powerpc");
-                } else if (Platform.isARM()) {
-                    cpu = "arm";
+                if (Platform.isARM()) {
                     libc = "gnueabi";
                 }
 
-                String multiArchPath =
-                    cpu + "-" + kernel + "-" + libc;
+                if (Platform.iskFreeBSD()) {
+                    kernel = "kfreebsd";
+                }
+
+                String multiArchPath;
+
+                if (Platform.isGNU()) {
+                    multiArchPath = cpu + "-" + libc;
+                } else {
+                    multiArchPath = cpu + "-" + kernel + "-" + libc;
+                }
 
                 // Assemble path with all possible options
                 paths = new String[] {
