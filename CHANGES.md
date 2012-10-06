@@ -10,6 +10,7 @@ Features
 * Add `jna.tmpdir` to override temporary JNA storage location - [@twall](https://github.com/twall).
 * Add `EXTRA_MAKE_OPTS` ant property to override make variables - [@twall](https://github.com/twall).
 * Add `Library.OPTION_OPEN_FLAGS` to customize dlopen behavior - [@twall](https://github.com/twall).
+* [#113](https://github.com/twall/jna/issues/113), [#114](https://github.com/twall/jna/issues/114): Add support for GNU/kFreeBSD and debian multi-arch distros - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
