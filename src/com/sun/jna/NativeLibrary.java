@@ -683,7 +683,8 @@ public class NativeLibrary {
             // on 64bit machines, so we have to explicitly search the 64bit
             // one when running a 64bit JVM.
             //
-            if (Platform.isLinux() || Platform.isSolaris() || Platform.isFreeBSD()) {
+            if (Platform.isLinux() || Platform.isSolaris()
+                || Platform.isFreeBSD() || Platform.iskFreeBSD()) {
                 // Linux & FreeBSD use /usr/lib32, solaris uses /usr/lib/32
                 archPath = (Platform.isSolaris() ? "/" : "") + Pointer.SIZE * 8;
             }
@@ -693,28 +694,13 @@ public class NativeLibrary {
                 "/usr/lib",
                 "/lib",
             };
-            // Fix for multi-arch support on Ubuntu (and other
+            // Multi-arch support on Ubuntu (and other
             // multi-arch distributions)
             // paths is scanned against real directory
             // so for platforms which are not multi-arch
             // this should continue to work.
-            if (Platform.isLinux()) {
-                // Defaults - overridden below
-                String cpu = "";
-                String kernel = "linux";
-                String libc = "gnu";
-
-                if (Platform.isIntel()) {
-                    cpu = (Platform.is64Bit() ? "x86_64" : "i386");
-                } else if (Platform.isPPC()) {
-                    cpu = (Platform.is64Bit() ? "powerpc64" : "powerpc");
-                } else if (Platform.isARM()) {
-                    cpu = "arm";
-                    libc = "gnueabi";
-                }
-
-                String multiArchPath =
-                    cpu + "-" + kernel + "-" + libc;
+            if (Platform.isLinux() || Platform.iskFreeBSD() || Platform.isGNU()) {
+                String multiArchPath = getMultiArchPath();
 
                 // Assemble path with all possible options
                 paths = new String[] {
@@ -738,5 +724,26 @@ public class NativeLibrary {
             }
         }
         librarySearchPath.addAll(initPaths("jna.platform.library.path"));
+    }
+
+    private static String getMultiArchPath() {
+        String cpu = System.getProperty("os.arch").toLowerCase().trim();
+        String kernel = Platform.iskFreeBSD()
+            ? "-kfreebsd"
+            : (Platform.isGNU() ? "" : "-linux");
+        String libc = "-gnu";
+        
+        if (Platform.isIntel()) {
+            cpu = (Platform.is64Bit() ? "x86_64" : "i386");
+        }
+        else if (Platform.isPPC()) {
+            cpu = (Platform.is64Bit() ? "powerpc64" : "powerpc");
+        }
+        else if (Platform.isARM()) {
+            cpu = "arm";
+            libc = "-gnueabi";
+        }
+        
+        return cpu + kernel + libc;
     }
 }

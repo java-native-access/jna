@@ -21,6 +21,8 @@ public final class Platform {
     public static final int WINDOWSCE = 6;
     public static final int AIX = 7;
     public static final int ANDROID = 8;
+    public static final int GNU = 9;
+    public static final int KFREEBSD = 10;
 
     /** Whether read-only (final) fields within Structures are supported. */
     public static final boolean RO_FIELDS;
@@ -67,6 +69,12 @@ public final class Platform {
         }
         else if (osName.startsWith("OpenBSD")) {
             osType = OPENBSD;
+        }
+        else if (osName.equalsIgnoreCase("gnu")) {
+            osType = GNU;
+        }
+        else if (osName.equalsIgnoreCase("gnu/kfreebsd")) {
+            osType = KFREEBSD;
         }
         else {
             osType = UNSPECIFIED;
@@ -125,6 +133,12 @@ public final class Platform {
     public static final boolean isOpenBSD() {
         return osType == OPENBSD;
     }
+    public static final boolean isGNU() {
+        return osType == GNU;
+    }
+    public static final boolean iskFreeBSD() {
+        return osType == KFREEBSD;
+    }
     public static final boolean isX11() {
         // TODO: check filesystem for /usr/X11 or some other X11-specific test
         return !Platform.isWindows() && !Platform.isMac();
@@ -155,6 +169,7 @@ public final class Platform {
         String arch =
             System.getProperty("os.arch").toLowerCase().trim();
         if (arch.equals("i386")
+            || arch.startsWith("i686")
             || arch.equals("x86")
             || arch.equals("x86_64")
             || arch.equals("amd64")) {
