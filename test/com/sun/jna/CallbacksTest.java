@@ -1036,13 +1036,16 @@ public class CallbacksTest extends TestCase {
                      1, threads.size());
     }
 
+    // Thread object is never GC'd on linux-amd64 and (sometimes) win32-amd64
     public void testAttachedThreadCleanupOnExit() throws Exception {
         final Set threads = new HashSet();
         final int[] called = { 0 };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
                 threads.add(new WeakReference(Thread.currentThread()));
-                ++called[0];
+                if (++called[0] == 1) {
+                    Thread.currentThread().setName("Thread to be cleaned up");
+                }
                 Native.detach(false);
             }
         };
@@ -1056,11 +1059,10 @@ public class CallbacksTest extends TestCase {
         while (ref.get() != null) {
             System.gc();
             Thread.sleep(10);
-            if (System.currentTimeMillis() - start > 5000) {
-                fail("Timed out waiting for attached thread to be detached on exit and disposed: " + ref.get());
+            if (System.currentTimeMillis() - start > 10000) {
+                Thread t = (Thread)ref.get();
+                fail("Timed out waiting for attached thread to be detached on exit and disposed: " + t + " alive: " + t.isAlive() + " daemon " + t.isDaemon());
             }
-            // Try calling into native to spur thread cleanup
-            lib.callVoidCallback(cb);
         }
     }
 
