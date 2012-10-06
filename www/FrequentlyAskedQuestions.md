@@ -8,7 +8,7 @@ Make sure you've read [this page](https://github.com/twall/jna/tree/master/www/M
 How do I map a native `long` type?
 ----------------------------------
 
-Actually, no one ever asks this question, but they really need the answer. Do not use Java `long`!
+Actually, no one ever asks this question, but they really need the answer. **Do not** use Java `long`!
 
 On Windows, you can use a Java `int`, since the native long type is always 32 bits. On any other platform, the type may be 32 or 64 bits, so you should use the `NativeLong` type to ensure the proper size is used.
 
