@@ -1046,7 +1046,8 @@ public class CallbacksTest extends TestCase {
                 Native.detach(false);
             }
         };
-        callThreadedCallback(cb, null, 1, 0, called);
+        CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true);
+        callThreadedCallback(cb, asDaemon, 1, 0, called);
         while (threads.size() == 0) {
             Thread.sleep(10);
         }
@@ -1058,6 +1059,8 @@ public class CallbacksTest extends TestCase {
             if (System.currentTimeMillis() - start > 5000) {
                 fail("Timed out waiting for attached thread to be detached on exit and disposed: " + ref.get());
             }
+            // Try calling into native to spur thread cleanup
+            lib.callVoidCallback(cb);
         }
     }
 
