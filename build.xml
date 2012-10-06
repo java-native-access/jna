@@ -187,6 +187,9 @@
     <condition property="os.prefix" value="sunos-${os.arch}">
       <os name="SunOS"/>
     </condition>
+    <condition property="os.prefix" value="kfreebsd-${jre.arch}">
+      <os name="GNU/kFreeBSD"/>
+    </condition>
     <condition property="os.prefix" value="freebsd-${os.arch}">
       <os name="FreeBSD"/>
     </condition>
