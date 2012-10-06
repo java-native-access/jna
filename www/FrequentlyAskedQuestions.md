@@ -5,8 +5,15 @@ I'm having trouble generating correct library mappings
 ------------------------------------------------------
 Make sure you've read [this page](https://github.com/twall/jna/tree/master/www/Mappings.md) and [this one](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).  Try [JNAerator](http://code.google.com/p/jnaerator/).  If you find its output too verbose, delete the mappings you don't need, or copy out the ones you do need.
 
-When should I use Structure.ByReference? Structure.ByValue? Structure[]?
-------------------------------------------------------------------------
+How do I map a native `long` type?
+----------------------------------
+
+Actually, no one ever asks this question, but they really need the answer. Do not use Java `long`!
+
+On Windows, you can use a Java `int`, since the native long type is always 32 bits. On any other platform, the type may be 32 or 64 bits, so you should use the `NativeLong` type to ensure the proper size is used.
+
+When should I use `Structure.ByReference`? `Structure.ByValue`? `Structure[]`?
+------------------------------------------------------------------------------
 
 Find your corresponding native declaration below:
 
@@ -58,17 +65,41 @@ How do I read back a function's string result?
 
 Suppose you have a function:
 
-    // Returns the number of characters written to the buffer
+    // Example A: Returns the number of characters written to the buffer
     int getString(char* buffer, int bufsize);
+    // Example B: Returns the number of characters written to the buffer
+    int getUnicodeString(wchar_t* buffer, int bufsize);
+    
+    // Mapping A:
+    int getString(byte[] buf, int bufsize);
+    // Mapping B:
+    int getUnicodeString(char[] buf, int bufsize);
+    
+    byte[] buf = new byte[256];
+    int len = getString(buf, buf.length);
+    String normalCString = Native.toString(buf);
+    String embeddedNULs = new String(buf, 0, len);
 
 The native code is expecting a fixed-size buffer, which it will fill in with the requested data. A Java `String` is not appropriate here, since Strings are immutable. Nor is a Java `StringBuffer`, since the native code only fills the buffer and does not change its size. The appropriate argument type would be either `byte[]`, `Memory`, or an NIO Buffer, with the size of the object passed as the second argument. The method `Native.toString(byte[])` may then be used to convert the array of byte into a Java String.
 
-How do I map a native long type?
---------------------------------
+    // Example A: Returns a C string directly
+    const char* getString();
+    // Example B: Returns a wide character C string directly
+    const wchar_t* getString();
 
-Actually, no one ever asks this question, but they really need the answer. Do not use Java `long`!
+If the string is returned directly, your Java mapping can use the `String` or `WString` type as a return value (as appropriate).
+Note that if the native code allocates memory for the string, you should return `Pointer` instead so that you can free the memory
+at some later point.
 
-On Windows, you can use a Java `int`, since the native long type is always 32 bits. On any other platform, the type may be 32 or 64 bits, so you should use the `NativeLong` type to ensure the proper size is used.
+    // Mapping A
+    String getString();
+    // Mapping B
+    WString getString();
+    // Mapping C, if native code allocates memory
+    // Use Pointer.getString(0) to extract the String data,
+    // then call the recommended native method with the Pointer
+    // value to free the memory
+    Pointer getString();
 
 My library mapping causes an UnsatisfiedLinkError
 -------------------------------------------------
