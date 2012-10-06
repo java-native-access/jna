@@ -29,6 +29,7 @@
   <!-- (all build-related props should go in -dynamic-properties) -->
   <property name="name" value="jna"/>
   <property name="jar" value="${name}.jar"/>
+  <property name="minjar" value="${name}-min.jar"/>
   <property name="testjar" value="${name}-test.jar"/>
   <property name="debug" value="true"/>
   <property name="debug.native" value="false"/>
@@ -281,6 +282,9 @@
   </target>
   <target name="jar" depends="-setup,native,:jar" unless="-jar"
           description="Build primary jar">
+    <!-- Bundle native components with primary jar to facilitate
+         easy distribution to common platforms.
+      -->
     <jar jarfile="${build}/${jar}" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="com.sun.jna.Native"/>
@@ -416,6 +420,9 @@ osname=macos
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
     </jar>
+    <zip zipfile="${build}/${minjar}">
+      <zipfileset src="${build}/${jar}" excludes="**/*jnidispatch*"/>
+    </zip>
   </target>
 
   <target name="platform-jar" depends="jar">
@@ -893,7 +900,7 @@ osname=macos
   <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}">
-      <fileset dir="${build}" includes="${jar}"/>
+      <fileset dir="${build}" includes="${jar},${minjar}"/>
       <fileset dir="${contrib}/platform/dist" includes="platform.jar"/>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
