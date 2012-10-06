@@ -190,6 +190,9 @@
     <condition property="os.prefix" value="freebsd-${os.arch}">
       <os name="FreeBSD"/>
     </condition>
+    <condition property="os.prefix" value="kfreebsd-${jre.arch}">
+      <os name="GNU/kFreeBSD"/>
+    </condition>
     <condition property="os.prefix" value="openbsd-${os.arch}">
       <os name="OpenBSD"/>
     </condition>
@@ -418,6 +421,44 @@ osname=macos
     </jar>
   </target>
 
+  <!-- 
+       Build a jar with no native libraries.
+       Used in the Debian/Ubuntu build, as the native library ships separately.
+  -->
+  <target name="nonativejar" depends="-setup,native,:jar" unless="-jar"
+          description="Build primary jar without native libraries">
+    <jar jarfile="${build}/${jar}" duplicate="preserve">
+      <manifest>
+        <attribute name="Main-Class" value="com.sun.jna.Native"/>
+        <attribute name="Manifest-Version" value="1.0"/>
+        <attribute name="Implementation-Title" value="${impl.title}"/>
+        <attribute name="Implementation-Vendor" value="${vendor}"/>
+        <attribute name="Implementation-Version" value="${impl.version}"/>
+        <attribute name="Specification-Title" value="${spec.title}"/>
+        <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+        <attribute name="Specification-Version" value="${spec.version}"/>
+        <!--
+            OSGi Bundle attributes
+            See http://www.osgi.org/Specifications/Reference
+          -->
+        <attribute name="Bundle-Category" value="jni"/>
+        <attribute name="Bundle-ManifestVersion" value="2"/>
+        <attribute name="Bundle-Name" value="jna"/>
+        <attribute name="Bundle-Description" value="JNA Library"/>
+        <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
+        <attribute name="Bundle-Version" value="${spec.version}"/>
+        <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
+        <attribute name="Bundle-Vendor" value="${vendor}"/>
+        <attribute name="Bundle-ActivationPolicy" value="lazy"/>
+        <attribute name="Export-Package" value="com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32"/>
+      </manifest>
+      <fileset dir="${classes}" excludes="${jar.omitted}">
+        <patternset refid="jar-compiled"/>
+        <exclude name="**/*jnidispatch*"/>
+      </fileset>
+   </jar>
+  </target>
+
   <target name="platform-jar" depends="jar">
     <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
@@ -502,6 +543,8 @@ osname=macos
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/kfreebsd-i386.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/kfreebsd-amd64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-i386.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-amd64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-i386.jar" overwrite="true"/>
