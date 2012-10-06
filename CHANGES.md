@@ -20,6 +20,7 @@ Bug Fixes
 * Cleanup maven poms and publishing to central repo - [@bhamail](https://github.com/bhamail).
 * [#129](https://github.com/twall/jna/issues/129): Allow `Memory` field in structure - [@twall](https://github.com/twall).
 * Preserve `PointerType` fields on `Structure.read()` if unchanged - [@twall](https://github.com/twall).
+* [#128](https://github.com/twall/jna/issues/128): Fix masking extracting DWORD upper and lower WORD values - [@twall](https://github.com/twall).
 
 Release 3.4.2
 =============

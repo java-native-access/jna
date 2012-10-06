@@ -65,7 +65,7 @@ public interface WinDef extends StdCallLibrary {
          *  Low WORD.
          */
         public WORD getLow() {
-            return new WORD(longValue() & 0xFF);
+            return new WORD(longValue() & 0xFFFF);
         }
 				
         /**
@@ -74,7 +74,7 @@ public interface WinDef extends StdCallLibrary {
          *  High WORD.
          */
         public WORD getHigh() {
-            return new WORD((longValue() >> 16) & 0xFF);
+            return new WORD((longValue() >> 16) & 0xFFFF);
         }
     }
 
