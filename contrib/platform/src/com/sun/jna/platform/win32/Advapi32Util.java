@@ -1262,8 +1262,28 @@ public abstract class Advapi32Util {
 	    
 	    String nameString = Native.toString(name);
 
-	    if(lpcbData.getValue() == 0 && lpType.getValue() == WinNT.REG_BINARY) {
-	        keyValues.put(nameString, new byte[0]);
+	    if(lpcbData.getValue() == 0) {
+	        switch (lpType.getValue()) {
+            case WinNT.REG_BINARY: {
+                keyValues.put(nameString, new byte[0]);
+                break;
+            }
+            case WinNT.REG_SZ:
+            case WinNT.REG_EXPAND_SZ: {
+                keyValues.put(nameString, new char[0]);
+                break;
+            }
+            case WinNT.REG_MULTI_SZ: {
+                keyValues.put(nameString, new String[0]);
+                break;
+            }
+            case WinNT.REG_NONE: {
+                keyValues.put(nameString, null);
+                break;
+            }
+	        default:
+	            throw new RuntimeException("Unsupported empty type: " + lpType.getValue());
+	        }
 	        continue;
 	    }
 
