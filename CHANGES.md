@@ -21,6 +21,7 @@ Bug Fixes
 * [#129](https://github.com/twall/jna/issues/129): Allow `Memory` field in structure - [@twall](https://github.com/twall).
 * Preserve `PointerType` fields on `Structure.read()` if unchanged - [@twall](https://github.com/twall).
 * [#128](https://github.com/twall/jna/issues/128): Fix masking extracting DWORD upper and lower WORD values - [@twall](https://github.com/twall).
+* [#135](https://github.com/twall/jna/issues/135): Fix for `Advapi32Util.registryGetValues()` when reading zero length values - [@danwi](https://github.com/danwi).
 
 Release 3.4.2
 =============
