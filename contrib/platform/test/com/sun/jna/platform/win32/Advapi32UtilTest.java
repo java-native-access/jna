@@ -26,6 +26,8 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
+import com.sun.jna.platform.win32.WinReg.HKEY;
+import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -316,6 +318,46 @@ public class Advapi32UtilTest extends TestCase {
 		assertEquals(0, stringsRead.length);
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");						
 	}
+
+	public void testRegistryGetEmptyValues() {
+        HKEY root = WinReg.HKEY_CURRENT_USER;
+        String keyPath = "Software\\JNA";
+        Advapi32Util.registryCreateKey(root, "Software", "JNA");
+        doTestRegistryGetEmptyValues(root, keyPath, WinNT.REG_BINARY);
+        doTestRegistryGetEmptyValues(root, keyPath, WinNT.REG_EXPAND_SZ);
+        doTestRegistryGetEmptyValues(root, keyPath, WinNT.REG_MULTI_SZ);
+        doTestRegistryGetEmptyValues(root, keyPath, WinNT.REG_NONE);
+        doTestRegistryGetEmptyValues(root, keyPath, WinNT.REG_SZ);
+        Advapi32Util.registryDeleteKey(root, "Software", "JNA");
+    }
+
+    private void doTestRegistryGetEmptyValues(HKEY root, String keyPath, int valueType) {
+        String valueName = "EmptyValue";
+        registrySetEmptyValue(root, keyPath, valueName, valueType);
+        Map<String, Object> values = Advapi32Util.registryGetValues(root, keyPath);
+        assertEquals(1, values.size());
+        assertTrue(values.containsKey(valueName));
+    }
+
+    private static void registrySetEmptyValue(HKEY root, String keyPath, String name, final int valueType) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            char[] data = new char[0];
+            rc = Advapi32.INSTANCE.RegSetValueEx(phkKey.getValue(), name, 0, valueType, data, 0);
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 	
 	public void testIsWellKnownSid() {		
 		String everyoneString = "S-1-1-0";
