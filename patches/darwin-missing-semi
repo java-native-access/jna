@@ -2,7 +2,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,7 @@
+@@ -24,6 +24,10 @@
+ 
+ 	* configure: Regenerated.
+ 
 +2012-04-10  Anthony Green  <green@moxielogic.com>
 +
 +	* src/powerpc/ffi_darwin.c (ffi_prep_args): Add missing semicolon.

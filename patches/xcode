@@ -24,16 +24,16 @@ Index: libffi/README
  
  Configure has many other options. Use "configure --help" to see them all.
  
-@@ -152,8 +153,9 @@ See the ChangeLog files for details.
+@@ -154,8 +155,9 @@ See the ChangeLog files for details.
  	Add Linux/x32 support.
  	Add thiscall, fastcall and MSVC cdecl support on Windows.
-         Add Amiga and newer MacOS support.
+ 	Add Amiga and newer MacOS support.
 -	Fix Octeon and MC68881 support.
  	Add m68k FreeMiNT support.
 +	Integration with iOS' xcode build tools.
 +	Fix Octeon and MC68881 support.
  	Fix code pessimizations.
-         Lots of build fixes.
+ 	Lots of build fixes.
  
 Index: libffi/build-ios.sh
 ===================================================================
@@ -602,9 +602,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,15 @@
-+2012-04-06  Anthony Green  <green@moxielogic.com>
-+
+@@ -26,6 +26,18 @@
+ 
+ 2012-04-06  Anthony Green  <green@moxielogic.com>
+ 
 +	* Makefile.am (EXTRA_DIST): Add new iOS/xcode files.
 +	* Makefile.in: Rebuilt.
 +
@@ -615,9 +616,11 @@ Index: libffi/ChangeLog
 +	* README: Update instructions on building iOS binary.
 +	* build-ios.sh: Delete.
 +
- 2012-04-06  H.J. Lu  <hongjiu.lu@intel.com>
++2012-04-06  Anthony Green  <green@moxielogic.com>
++
+ 	* src/x86/ffi64.c (UINT128): Define differently for Intel and GNU
+ 	compilers, then use it.
  
- 	* m4/libtool.m4 (_LT_ENABLE_LOCK): Support x32.
 Index: libffi/Makefile.am
 ===================================================================
 --- libffi.orig/Makefile.am
@@ -642,7 +645,7 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -443,9 +443,11 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -463,9 +463,11 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
  	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
  	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \

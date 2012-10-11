@@ -1,9 +1,41 @@
+2012-09-14  David Edelsohn  <dje.gcc@gmail.com>
+
+	* configure: Regenerated.
+
+2012-08-26  Andrew Pinski  <apinski@cavium.com>
+
+	PR libffi/53014
+	* src/mips/ffi.c (ffi_prep_closure_loc): Allow n32 with soft-float and n64 with
+	soft-float.
+
+2012-08-08  Uros Bizjak  <ubizjak@gmail.com>
+
+	* src/s390/ffi.c (ffi_prep_closure_loc): Don't ASSERT ABI test,
+	just return FFI_BAD_ABI when things are wrong.
+
+2012-07-18  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR libffi/53982
+	PR libffi/53973
+	* src/x86/ffitarget.h: Check __ILP32__ instead of __LP64__ for x32.
+	(FFI_SIZEOF_JAVA_RAW): Defined to 4 for x32.
+
+2012-05-16  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* configure: Regenerated.
+
 2012-03-21  Peter Rosin  <peda@lysator.liu.se>
 
 	* testsuite/lib/target-libpath.exp [*-*-cygwin*, *-*-mingw*]
 	(set_ld_library_path_env_vars): Add the library search dir to PATH
 	(and save PATH for later).
 	(restore_ld_library_path_env_vars): Restore PATH.
+
+2012-03-20  Peter Rosin  <peda@lysator.liu.se>
+
+	* testsuite/libffi.call/strlen2_win32.c (main): Remove bug.
+	* src/x86/win32.S [MSVC] (ffi_closure_SYSV): Make the 'stub' label
+	visible outside the PROC, so that ffi_closure_THISCALL can see it.
 
 2012-03-20  Peter Rosin  <peda@lysator.liu.se>
 

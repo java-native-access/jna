@@ -2,14 +2,16 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,11 @@
+@@ -24,6 +24,13 @@
+ 
+ 	* configure: Regenerated.
+ 
 +2012-04-23  Alexandre Keunecke I. de Mendonca <alexandre.keunecke@gmail.com>
 +
 +	* configure.ac: Add Blackfin/sysv support
 +	* Makefile.am: Add Blackfin/sysv support
 +	* src/bfin/ffi.c:  Add Blackfin/sysv support
 +	* src/bfin/ffitarget.h: Add Blackfin/sysv support
-+	* src/bfin/sysv.S: Add Blackfin/sysv support
 +
  2012-04-11  Anthony Green  <green@moxielogic.com>
  
@@ -40,7 +42,7 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -38,35 +38,36 @@ host_triplet = @host@
+@@ -55,35 +55,36 @@ host_triplet = @host@
  target_triplet = @target@
  @FFI_DEBUG_TRUE@am__append_1 = src/debug.c
  @MIPS_TRUE@am__append_2 = src/mips/ffi.c src/mips/o32.S src/mips/n32.S
@@ -104,26 +106,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -75,17 +76,7 @@ DIST_COMMON = README $(am__configure_dep
- 	compile config.guess config.sub depcomp install-sh ltmain.sh \
- 	mdate-sh missing texinfo.tex
- ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
--am__aclocal_m4_deps = $(top_srcdir)/m4/asmcfi.m4 \
--	$(top_srcdir)/m4/ax_cc_maxopt.m4 \
--	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
--	$(top_srcdir)/m4/ax_compiler_vendor.m4 \
--	$(top_srcdir)/m4/ax_configure_args.m4 \
--	$(top_srcdir)/m4/ax_enable_builddir.m4 \
--	$(top_srcdir)/m4/ax_gcc_archflag.m4 \
--	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
--	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
--	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
--	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
-+am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
- 	$(top_srcdir)/configure.ac
- am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
- 	$(ACLOCAL_M4)
-@@ -126,44 +117,45 @@ am_libffi_la_OBJECTS = src/prep_cif.lo s
+@@ -139,44 +140,45 @@ am_libffi_la_OBJECTS = src/prep_cif.lo s
  @FFI_DEBUG_TRUE@am__objects_1 = src/debug.lo
  @MIPS_TRUE@am__objects_2 = src/mips/ffi.lo src/mips/o32.lo \
  @MIPS_TRUE@	src/mips/n32.lo
@@ -195,7 +178,7 @@ Index: libffi/Makefile.in
  nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
  	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-@@ -173,17 +165,17 @@ nodist_libffi_la_OBJECTS = $(am__objects
+@@ -186,17 +188,17 @@ nodist_libffi_la_OBJECTS = $(am__objects
  	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
  	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
  	$(am__objects_24) $(am__objects_25) $(am__objects_26) \
@@ -217,7 +200,7 @@ Index: libffi/Makefile.in
  	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
  	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
  	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
-@@ -192,8 +184,8 @@ am__objects_30 = $(am__objects_1) $(am__
+@@ -205,8 +207,8 @@ am__objects_30 = $(am__objects_1) $(am__
  	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
  	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
  	$(am__objects_25) $(am__objects_26) $(am__objects_27) \
@@ -228,7 +211,7 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -440,6 +432,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -460,6 +462,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
  	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
  	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
@@ -236,7 +219,7 @@ Index: libffi/Makefile.in
  	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
  	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
  	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
-@@ -508,10 +501,10 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -528,10 +531,10 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
  	$(am__append_24) $(am__append_25) $(am__append_26) \
@@ -249,7 +232,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
  AM_CCASFLAGS = $(AM_CPPFLAGS) -g
-@@ -637,6 +630,16 @@ src/mips/o32.lo: src/mips/$(am__dirstamp
+@@ -656,6 +659,16 @@ src/mips/o32.lo: src/mips/$(am__dirstamp
  	src/mips/$(DEPDIR)/$(am__dirstamp)
  src/mips/n32.lo: src/mips/$(am__dirstamp) \
  	src/mips/$(DEPDIR)/$(am__dirstamp)
@@ -266,7 +249,7 @@ Index: libffi/Makefile.in
  src/x86/$(am__dirstamp):
  	@$(MKDIR_P) src/x86
  	@: > src/x86/$(am__dirstamp)
-@@ -852,6 +855,10 @@ mostlyclean-compile:
+@@ -871,6 +884,10 @@ mostlyclean-compile:
  	-rm -f src/avr32/ffi.lo
  	-rm -f src/avr32/sysv.$(OBJEXT)
  	-rm -f src/avr32/sysv.lo
@@ -277,7 +260,7 @@ Index: libffi/Makefile.in
  	-rm -f src/closures.$(OBJEXT)
  	-rm -f src/closures.lo
  	-rm -f src/cris/ffi.$(OBJEXT)
-@@ -973,6 +980,8 @@ distclean-compile:
+@@ -992,6 +1009,8 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/trampoline.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/sysv.Plo@am__quote@
@@ -286,7 +269,7 @@ Index: libffi/Makefile.in
  @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/sysv.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/frv/$(DEPDIR)/eabi.Plo@am__quote@
-@@ -1077,6 +1086,7 @@ clean-libtool:
+@@ -1096,6 +1115,7 @@ clean-libtool:
  	-rm -rf src/alpha/.libs src/alpha/_libs
  	-rm -rf src/arm/.libs src/arm/_libs
  	-rm -rf src/avr32/.libs src/avr32/_libs
@@ -294,7 +277,7 @@ Index: libffi/Makefile.in
  	-rm -rf src/cris/.libs src/cris/_libs
  	-rm -rf src/frv/.libs src/frv/_libs
  	-rm -rf src/ia64/.libs src/ia64/_libs
-@@ -1631,6 +1641,8 @@ distclean-generic:
+@@ -1666,6 +1686,8 @@ distclean-generic:
  	-rm -f src/arm/$(am__dirstamp)
  	-rm -f src/avr32/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/avr32/$(am__dirstamp)
@@ -303,7 +286,7 @@ Index: libffi/Makefile.in
  	-rm -f src/cris/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/cris/$(am__dirstamp)
  	-rm -f src/frv/$(DEPDIR)/$(am__dirstamp)
-@@ -1670,7 +1682,7 @@ clean-am: clean-aminfo clean-generic cle
+@@ -1705,7 +1727,7 @@ clean-am: clean-aminfo clean-generic cle
  
  distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -312,7 +295,7 @@ Index: libffi/Makefile.in
  	-rm -f Makefile
  distclean-am: clean-am distclean-compile distclean-generic \
  	distclean-hdr distclean-libtool distclean-tags
-@@ -1790,7 +1802,7 @@ installcheck-am:
+@@ -1840,7 +1862,7 @@ installcheck-am:
  maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
@@ -334,7 +317,7 @@ Index: libffi/configure
  MIPS_FALSE
  MIPS_TRUE
  AM_LTLDFLAGS
-@@ -6840,14 +6842,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
+@@ -6739,14 +6741,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
  	  x86_64-*linux*)
@@ -350,97 +333,7 @@ Index: libffi/configure
  	    ;;
  	  ppc64-*linux*|powerpc64-*linux*)
  	    LD="${LD-ld} -m elf32ppclinux"
-@@ -8418,10 +8413,6 @@ _lt_linker_boilerplate=`cat conftest.err
- $RM -r conftest*
- 
- 
--## CAVEAT EMPTOR:
--## There is no encapsulation within the following macros, do not change
--## the running order or otherwise move them around unless you know exactly
--## what you are doing...
- if test -n "$compiler"; then
- 
- lt_prog_compiler_no_builtin_flag=
-@@ -10972,10 +10963,14 @@ fi
-   # before this can be enabled.
-   hardcode_into_libs=yes
- 
-+  # Add ABI-specific directories to the system library path.
-+  sys_lib_dlsearch_path_spec="/lib64 /usr/lib64 /lib /usr/lib"
-+
-   # Append ld.so.conf contents to the search path
-   if test -f /etc/ld.so.conf; then
-     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s 2>/dev/null", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;/^[	 ]*hwcap[	 ]/d;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;s/"//g;/^$/d' | tr '\n' ' '`
--    sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
-+    sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec $lt_ld_extra"
-+
-   fi
- 
-   # We used to test for /lib/ld.so.1 and disable shared libraries on
-@@ -12419,7 +12414,7 @@ if test "x$ax_gcc_arch" = xyes; then
- ax_gcc_arch=""
- if test "$cross_compiling" = no; then
- case $host_cpu in
--  i[3456]86*|x86_64*) # use cpuid codes, in part from x86info-1.7 by D. Jones
-+  i[3456]86*|x86_64*) # use cpuid codes
- 
- ac_ext=c
- ac_cpp='$CPP $CPPFLAGS'
-@@ -12535,18 +12530,24 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
-           case $ax_cv_gcc_x86_cpuid_1 in
- 	    *5[48]?:*:*:*) ax_gcc_arch="pentium-mmx pentium" ;;
- 	    *5??:*:*:*) ax_gcc_arch=pentium ;;
--	    *6[3456]?:*:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
--	    *6a?:*[01]:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
--	    *6a?:*[234]:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
--	    *6[9d]?:*:*:*) ax_gcc_arch="pentium-m pentium3 pentiumpro" ;;
--	    *6[78b]?:*:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
--	    *6??:*:*:*) ax_gcc_arch=pentiumpro ;;
--            *f3[347]:*:*:*|*f41347:*:*:*)
-+	    *0?6[3456]?:*:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
-+	    *0?6a?:*[01]:*:*) ax_gcc_arch="pentium2 pentiumpro" ;;
-+	    *0?6a?:*[234]:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
-+	    *0?6[9de]?:*:*:*) ax_gcc_arch="pentium-m pentium3 pentiumpro" ;;
-+	    *0?6[78b]?:*:*:*) ax_gcc_arch="pentium3 pentiumpro" ;;
-+	    *0?6f?:*:*:*|*1?66?:*:*:*) ax_gcc_arch="core2 pentium-m pentium3 pentiumpro" ;;
-+	    *1?6[7d]?:*:*:*) ax_gcc_arch="penryn core2 pentium-m pentium3 pentiumpro" ;;
-+	    *1?6[aef]?:*:*:*|*2?6[5cef]?:*:*:*) ax_gcc_arch="corei7 core2 pentium-m pentium3 pentiumpro" ;;
-+	    *1?6c?:*:*:*|*[23]?66?:*:*:*) ax_gcc_arch="atom core2 pentium-m pentium3 pentiumpro" ;;
-+	    *2?6[ad]?:*:*:*) ax_gcc_arch="corei7-avx corei7 core2 pentium-m pentium3 pentiumpro" ;;
-+	    *0?6??:*:*:*) ax_gcc_arch=pentiumpro ;;
-+	    *6??:*:*:*) ax_gcc_arch="core2 pentiumpro" ;;
-+	    ?000?f3[347]:*:*:*|?000?f41347:*:*:*|?000?f6?:*:*:*)
- 		case $host_cpu in
--                  x86_64*) ax_gcc_arch="nocona pentium4 pentiumpro" ;;
--                  *) ax_gcc_arch="prescott pentium4 pentiumpro" ;;
--                esac ;;
--            *f??:*:*:*) ax_gcc_arch="pentium4 pentiumpro";;
-+	          x86_64*) ax_gcc_arch="nocona pentium4 pentiumpro" ;;
-+	          *) ax_gcc_arch="prescott pentium4 pentiumpro" ;;
-+	        esac ;;
-+	    ?000?f??:*:*:*) ax_gcc_arch="pentium4 pentiumpro";;
-           esac ;;
-        *:68747541:*:*) # AMD
-           case $ax_cv_gcc_x86_cpuid_1 in
-@@ -12618,10 +12619,13 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
- 			ax_gcc_arch="athlon-xp athlon-4 athlon k7" ;;
-                  *) ax_gcc_arch="athlon-4 athlon k7" ;;
- 	       esac ;;
--	    *f[4cef8b]?:*:*:*) ax_gcc_arch="athlon64 k8" ;;
--	    *f5?:*:*:*) ax_gcc_arch="opteron k8" ;;
--	    *f7?:*:*:*) ax_gcc_arch="athlon-fx opteron k8" ;;
--	    *f??:*:*:*) ax_gcc_arch="k8" ;;
-+	    ?00??f[4cef8b]?:*:*:*) ax_gcc_arch="athlon64 k8" ;;
-+	    ?00??f5?:*:*:*) ax_gcc_arch="opteron k8" ;;
-+	    ?00??f7?:*:*:*) ax_gcc_arch="athlon-fx opteron k8" ;;
-+	    ?00??f??:*:*:*) ax_gcc_arch="k8" ;;
-+	    ?05??f??:*:*:*) ax_gcc_arch="btver1 amdfam10 k8" ;;
-+	    ?06??f??:*:*:*) ax_gcc_arch="bdver1 amdfam10 k8" ;;
-+	    *f??:*:*:*) ax_gcc_arch="amdfam10 k8" ;;
-           esac ;;
- 	*:746e6543:*:*) # IDT
- 	   case $ax_cv_gcc_x86_cpuid_1 in
-@@ -13150,6 +13154,10 @@ case "$host" in
+@@ -12132,6 +12127,10 @@ case "$host" in
  	TARGET=AVR32; TARGETDIR=avr32
  	;;
  
@@ -451,7 +344,7 @@ Index: libffi/configure
    cris-*-*)
  	TARGET=LIBFFI_CRIS; TARGETDIR=cris
  	;;
-@@ -13295,6 +13303,14 @@ else
+@@ -12277,6 +12276,14 @@ else
    MIPS_FALSE=
  fi
  
@@ -466,49 +359,7 @@ Index: libffi/configure
   if test x$TARGET = xSPARC; then
    SPARC_TRUE=
    SPARC_FALSE='#'
-@@ -14134,40 +14150,7 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUI
-  esac
- 
- 
--{ $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler .cfi pseudo-op support" >&5
--$as_echo_n "checking assembler .cfi pseudo-op support... " >&6; }
--if ${gcc_cv_as_cfi_pseudo_op+:} false; then :
--  $as_echo_n "(cached) " >&6
--else
--
--    gcc_cv_as_cfi_pseudo_op=unknown
--    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
--/* end confdefs.h.  */
--asm (".cfi_startproc\n\t.cfi_endproc");
--int
--main ()
--{
--
--  ;
--  return 0;
--}
--_ACEOF
--if ac_fn_c_try_compile "$LINENO"; then :
--  gcc_cv_as_cfi_pseudo_op=yes
--else
--  gcc_cv_as_cfi_pseudo_op=no
--fi
--rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
--
--fi
--{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $gcc_cv_as_cfi_pseudo_op" >&5
--$as_echo "$gcc_cv_as_cfi_pseudo_op" >&6; }
-- if test "x$gcc_cv_as_cfi_pseudo_op" = xyes; then
--
--$as_echo "#define HAVE_AS_CFI_PSEUDO_OP 1" >>confdefs.h
--
-- fi
--
-+GCC_AS_CFI_PSEUDO_OP
- 
- if test x$TARGET = xSPARC; then
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler and linker support unaligned pc related relocs" >&5
-@@ -14739,6 +14722,10 @@ if test -z "${MIPS_TRUE}" && test -z "${
+@@ -13688,6 +13695,10 @@ if test -z "${MIPS_TRUE}" && test -z "${
    as_fn_error $? "conditional \"MIPS\" was never defined.
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi
@@ -980,9 +831,9 @@ Index: libffi/README
  Status
  ======
  
--libffi-3.0.11 was released on April 11, 2012.  Check the libffi web
+-libffi-3.0.12 was released on *****************. Check the libffi web
 -page for updates: <URL:http://sourceware.org/libffi/>.
-+libffi-3.0.XX was released on XXXXXXX.  Check the libffi web page for
++libffi-3.0.12 was released on XXXXXXX.  Check the libffi web page for
 +updates: <URL:http://sourceware.org/libffi/>.
  
  
@@ -995,13 +846,15 @@ Index: libffi/README
  | HPPA         | HPUX             |
  | IA-64        | Linux            |
  | M68K         | FreeMiNT         |
-@@ -148,6 +149,9 @@ History
+@@ -148,7 +149,10 @@ History
  
  See the ChangeLog files for details.
  
+-3.0.11 MMM-DD-YY
 +3.0.12 XXX-XX-XX
-+        Add Blackfin support.
++	Add Blackfin support.
 +
- 3.0.11 Apr-11-12
-         Add support for variadic functions (ffi_prep_cif_var).
- 	Add Linux/x32 support.
++3.0.11 Apr-11-12
+         Lots of build fixes.
+ 	Add Amiga newer MacOS support.
+ 	Add support for variadic functions (ffi_prep_cif_var).

@@ -2,7 +2,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,13 @@
+@@ -24,6 +24,16 @@
+ 
+ 	* configure: Regenerated.
+ 
 +2012-03-19  Alan Hourihane  <alanh@fairlite.co.uk>
 +
 +	* src/m68k/ffi.c: Add MINT support.
@@ -16,7 +19,7 @@ Index: libffi/ChangeLog
  2012-04-02  Peter Bergner  <bergner@vnet.ibm.com>
  
  	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Declare double_tmp.
-@@ -6,11 +16,6 @@
+@@ -32,11 +42,6 @@
  	(ffi_call): Silence possibly undefined warning.
  	(ffi_closure_helper_SYSV): Declare variable type.
  
@@ -352,11 +355,11 @@ Index: libffi/README
  | M68K         | RTEMS            |
  | MIPS         | IRIX             |
  | MIPS         | Linux            |
-@@ -152,6 +153,7 @@ See the ChangeLog files for details.
+@@ -154,6 +155,7 @@ See the ChangeLog files for details.
  	Add thiscall, fastcall and MSVC cdecl support on Windows.
-         Add Amiga and newer MacOS support.
+ 	Add Amiga and newer MacOS support.
  	Fix Octeon and MC68881 support.
 +	Add m68k FreeMiNT support.
  	Fix code pessimizations.
-         Lots of build fixes.
+ 	Lots of build fixes.
  

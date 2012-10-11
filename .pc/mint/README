@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.11 was released on *****************. Check the libffi web
+libffi-3.0.12 was released on *****************. Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -147,13 +147,15 @@ History
 See the ChangeLog files for details.
 
 3.0.11 MMM-DD-YY
-        Add support for variadic functions (ffi_prep_cif_var).
+        Lots of build fixes.
+	Add Amiga newer MacOS support.
+	Add support for variadic functions (ffi_prep_cif_var).
 	Add Linux/x32 support.
 	Add thiscall, fastcall and MSVC cdecl support on Windows.
-        Add Amiga and newer MacOS support.
+	Add Amiga and newer MacOS support.
 	Fix Octeon and MC68881 support.
 	Fix code pessimizations.
-        Lots of build fixes.
+	Lots of build fixes.
 
 3.0.10 Aug-23-11
         Add support for Apple's iOS.

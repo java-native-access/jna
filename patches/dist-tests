@@ -2,7 +2,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,8 @@
+@@ -24,6 +24,11 @@
+ 
+ 	* configure: Regenerated.
+ 
 +2012-04-06  Anthony Green  <green@moxielogic.com>
 +
 +	* testsuite/Makefile.am (EXTRA_DIST): Add missing test cases.
@@ -153,7 +156,7 @@ Index: libffi/testsuite/Makefile.in
 ===================================================================
 --- libffi.orig/testsuite/Makefile.in
 +++ libffi/testsuite/Makefile.in
-@@ -205,69 +205,74 @@ RUNTEST = `if [ -f $(top_srcdir)/../deja
+@@ -215,69 +215,74 @@ RUNTEST = `if [ -f $(top_srcdir)/../deja
  	    else echo runtest; fi`
  
  CLEANFILES = *.exe core* *.log *.sum

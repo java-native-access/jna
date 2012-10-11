@@ -148,7 +148,7 @@ See the ChangeLog files for details.
 
 3.0.11 MMM-DD-YY
         Lots of build fixes.
-        Add Amiga and newer MacOS support.
+        Add Amiga newer MacOS support.
 	Add Linux/x32 support.
 	Add thiscall and fastcall support on Windows.
 	Fix Octeon and MC68881 support.

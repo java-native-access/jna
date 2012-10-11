@@ -1,3 +1,29 @@
+2012-09-14  David Edelsohn  <dje.gcc@gmail.com>
+
+	* configure: Regenerated.
+
+2012-08-26  Andrew Pinski  <apinski@cavium.com>
+
+	PR libffi/53014
+	* src/mips/ffi.c (ffi_prep_closure_loc): Allow n32 with soft-float and n64 with
+	soft-float.
+
+2012-08-08  Uros Bizjak  <ubizjak@gmail.com>
+
+	* src/s390/ffi.c (ffi_prep_closure_loc): Don't ASSERT ABI test,
+	just return FFI_BAD_ABI when things are wrong.
+
+2012-07-18  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR libffi/53982
+	PR libffi/53973
+	* src/x86/ffitarget.h: Check __ILP32__ instead of __LP64__ for x32.
+	(FFI_SIZEOF_JAVA_RAW): Defined to 4 for x32.
+
+2012-05-16  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* configure: Regenerated.
+
 2012-04-06  Anthony Green  <green@moxielogic.com>
 
 	* src/x86/ffi64.c (UINT128): Define differently for Intel and GNU
@@ -14,14 +40,6 @@
 	* src/arm/sysv.S: Fix ENTRY definition, and wrap symbol references
 	in CNAME.
 	* src/x86/ffi.c: Wrap Windows specific code in ifdefs.
-
-2012-04-02  Peter Rosin  <peda@lysator.liu.se>
-
-	* src/x86/win32.S (ffi_call_win32): Sign/zero extend the return
-	value in the Intel version as is already done for the AT&T version.
-	(ffi_closure_SYSV): Likewise.
-	(ffi_closure_raw_SYSV): Likewise.
-	(ffi_closure_STDCALL): Likewise.
 
 2012-03-29  Peter Rosin  <peda@lysator.liu.se>
 
@@ -160,14 +178,6 @@
 	* testsuite/libffi.call/struct9.c: Likewise.
 	* testsuite/libffi.call/testclosure.c: Likewise.
 
-2012-03-06  Chung-Lin Tang  <cltang@codesourcery.com>
-
-	* src/arm/ffi.c (ffi_call): Add __ARM_EABI__ guard around call to
-	ffi_call_VFP().
-	(ffi_prep_closure_loc): Add __ARM_EABI__ guard around use of
-	ffi_closure_VFP.
-	* src/arm/sysv.S: Add __ARM_EABI__ guard around VFP code.
-
 2012-03-21  Peter Rosin	 <peda@lysator.liu.se>
 
 	* testsuite/libffi.call/float_va.c (float_va_fn): Use %f when
@@ -187,6 +197,12 @@
 	* src/x86/win32.S [MSVC] (ffi_closure_SYSV): Make the 'stub' label
 	visible outside the PROC, so that ffi_closure_THISCALL can see it.
 
+2012-03-20  Peter Rosin  <peda@lysator.liu.se>
+
+	* testsuite/libffi.call/strlen2_win32.c (main): Remove bug.
+	* src/x86/win32.S [MSVC] (ffi_closure_SYSV): Make the 'stub' label
+	visible outside the PROC, so that ffi_closure_THISCALL can see it.
+
 2012-03-19  Alan Hourihane  <alanh@fairlite.co.uk>
 
 	* src/m68k/ffi.c: Add MINT support.
@@ -197,6 +213,14 @@
 	* src/powerpc/ffi_darwin.c (ffi_prep_closure_loc): Fix AIX closure
 	support.
 
+2012-03-06  Chung-Lin Tang  <cltang@codesourcery.com>
+
+	* src/arm/ffi.c (ffi_call): Add __ARM_EABI__ guard around call to
+	ffi_call_VFP().
+	(ffi_prep_closure_loc): Add __ARM_EABI__ guard around use of
+	ffi_closure_VFP.
+	* src/arm/sysv.S: Add __ARM_EABI__ guard around VFP code.
+
 2012-04-02  Peter Bergner  <bergner@vnet.ibm.com>
 
 	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Declare double_tmp.
@@ -204,6 +228,14 @@
 	Delete goto to previously deleted label.
 	(ffi_call): Silence possibly undefined warning.
 	(ffi_closure_helper_SYSV): Declare variable type.
+
+2012-04-02  Peter Rosin  <peda@lysator.liu.se>
+
+	* src/x86/win32.S (ffi_call_win32): Sign/zero extend the return
+	value in the Intel version as is already done for the AT&T version.
+	(ffi_closure_SYSV): Likewise.
+	(ffi_closure_raw_SYSV): Likewise.
+	(ffi_closure_STDCALL): Likewise.
 
 2012-03-13  Kaz Kojima  <kkojima@gcc.gnu.org>
 
