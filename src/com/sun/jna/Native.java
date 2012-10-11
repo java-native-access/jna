@@ -770,7 +770,7 @@ public final class Native {
                 unpacked = true;
             }
             catch(IOException e) {
-                throw new Error("Failed to create temporary file for jnidispatch library: " + e);
+                throw new Error("Failed to create temporary file for jnidispatch library", e);
             }
             finally {
                 try { is.close(); } catch(IOException e) { }
