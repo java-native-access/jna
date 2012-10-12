@@ -627,8 +627,6 @@ FFI_EXEC_TRAMPOLINE_TABLE_TRUE
 sys_symbol_underscore
 HAVE_LONG_DOUBLE
 ALLOCA
-TILE_FALSE
-TILE_TRUE
 PA64_HPUX_FALSE
 PA64_HPUX_TRUE
 PA_HPUX_FALSE
@@ -12241,10 +12239,6 @@ case "$host" in
 	TARGET=SPARC; TARGETDIR=sparc
 	;;
 
-  tile*-*)
-        TARGET=TILE; TARGETDIR=tile
-        ;;
-
   x86_64-*-darwin*)
 	TARGET=X86_DARWIN; TARGETDIR=x86
 	;;
@@ -12496,14 +12490,6 @@ fi
 else
   PA64_HPUX_TRUE='#'
   PA64_HPUX_FALSE=
-fi
-
- if test x$TARGET = xTILE; then
-  TILE_TRUE=
-  TILE_FALSE='#'
-else
-  TILE_TRUE='#'
-  TILE_FALSE=
 fi
 
 
@@ -13815,10 +13801,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PA64_HPUX_TRUE}" && test -z "${PA64_HPUX_FALSE}"; then
   as_fn_error $? "conditional \"PA64_HPUX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${TILE_TRUE}" && test -z "${TILE_FALSE}"; then
-  as_fn_error $? "conditional \"TILE\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

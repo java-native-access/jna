@@ -48,51 +48,50 @@ refer to the wiki page here:
 At the time of release, the following basic configurations have been
 tested:
 
-|-----------------+------------------|
-| Architecture    | Operating System |
-|-----------------+------------------|
-| Alpha           | Linux            |
-| Alpha           | Tru64            |
-| ARM             | Linux            |
-| ARM             | iOS              |
-| AVR32           | Linux            |
-| Blackfin        | uClinux          |
-| HPPA            | HPUX             |
-| IA-64           | Linux            |
-| M68K            | FreeMiNT         |
-| M68K            | RTEMS            |
-| MIPS            | IRIX             |
-| MIPS            | Linux            |
-| MIPS            | RTEMS            |
-| MIPS64          | Linux            |
-| PowerPC         | AMIGA            |
-| PowerPC         | Linux            |
-| PowerPC         | Mac OSX          |
-| PowerPC         | FreeBSD          |
-| PowerPC64       | Linux            |
-| S390            | Linux            |
-| S390X           | Linux            |
-| SPARC           | Linux            |
-| SPARC           | Solaris          |
-| SPARC64         | Linux            |
-| SPARC64         | FreeBSD          |
-| TILE-Gx/TILEPro |                  |
-| X86             | FreeBSD          |
-| X86             | Interix          |
-| X86             | kFreeBSD         |
-| X86             | Linux            |
-| X86             | Mac OSX          |
-| X86             | OpenBSD          |
-| X86             | OS/2             |
-| X86             | Solaris          |
-| X86             | Windows/Cygwin   |
-| X86             | Windows/MingW    |
-| X86-64          | FreeBSD          |
-| X86-64          | Linux            |
-| X86-64          | Linux/x32        |
-| X86-64          | OpenBSD          |
-| X86-64          | Windows/MingW    |
-|-----------------+------------------|
+|--------------+------------------|
+| Architecture | Operating System |
+|--------------+------------------|
+| Alpha        | Linux            |
+| Alpha        | Tru64            |
+| ARM          | Linux            |
+| ARM          | iOS              |
+| AVR32        | Linux            |
+| Blackfin     | uClinux          |
+| HPPA         | HPUX             |
+| IA-64        | Linux            |
+| M68K         | FreeMiNT         |
+| M68K         | RTEMS            |
+| MIPS         | IRIX             |
+| MIPS         | Linux            |
+| MIPS         | RTEMS            |
+| MIPS64       | Linux            |
+| PowerPC      | AMIGA            |
+| PowerPC      | Linux            |
+| PowerPC      | Mac OSX          |
+| PowerPC      | FreeBSD          |
+| PowerPC64    | Linux            |
+| S390         | Linux            |
+| S390X        | Linux            |
+| SPARC        | Linux            |
+| SPARC        | Solaris          |
+| SPARC64      | Linux            |
+| SPARC64      | FreeBSD          |
+| X86          | FreeBSD          |
+| X86          | Interix          |
+| X86          | kFreeBSD         |
+| X86          | Linux            |
+| X86          | Mac OSX          |
+| X86          | OpenBSD          |
+| X86          | OS/2             |
+| X86          | Solaris          |
+| X86          | Windows/Cygwin   |
+| X86          | Windows/MingW    |
+| X86-64       | FreeBSD          |
+| X86-64       | Linux            |
+| X86-64       | Linux/x32        |
+| X86-64       | OpenBSD          |
+| X86-64       | Windows/MingW    |
+|--------------+------------------|
 
 Please send additional platform test results to
 libffi-discuss@sourceware.org and feel free to update the wiki page
@@ -151,7 +150,6 @@ See the ChangeLog files for details.
 
 3.0.12 XXX-XX-XX
 	Add Blackfin support.
-	Add TILE-Gx/TILEPro support.
 
 3.0.11 Apr-11-12
         Lots of build fixes.

@@ -4,39 +4,39 @@ AUTOMAKE_OPTIONS = foreign subdir-objects
 
 SUBDIRS = include testsuite man
 
-EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
-	 src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h		\
-	 src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h		\
-	 src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h		\
-	 src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h		\
-	 src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h	\
-	 src/ia64/unix.S src/mips/ffi.c src/mips/n32.S src/mips/o32.S	\
-	 src/mips/ffitarget.h src/m32r/ffi.c src/m32r/sysv.S		\
-	 src/m32r/ffitarget.h src/m68k/ffi.c src/m68k/sysv.S		\
-	 src/m68k/ffitarget.h src/powerpc/ffi.c src/powerpc/sysv.S	\
-	 src/powerpc/linux64.S src/powerpc/linux64_closure.S		\
-	 src/powerpc/ppc_closure.S src/powerpc/asm.h			\
-	src/powerpc/aix.S src/powerpc/darwin.S				\
-	src/powerpc/aix_closure.S src/powerpc/darwin_closure.S		\
-	src/powerpc/ffi_darwin.c src/powerpc/ffitarget.h		\
-	src/s390/ffi.c src/s390/sysv.S src/s390/ffitarget.h		\
-	src/sh/ffi.c src/sh/sysv.S src/sh/ffitarget.h src/sh64/ffi.c	\
-	src/sh64/sysv.S src/sh64/ffitarget.h src/sparc/v8.S		\
-	src/sparc/v9.S src/sparc/ffitarget.h src/sparc/ffi.c		\
-	src/x86/darwin64.S src/x86/ffi.c src/x86/sysv.S			\
-	src/x86/win32.S src/x86/darwin.S src/x86/win64.S		\
-	src/x86/freebsd.S src/x86/ffi64.c src/x86/unix64.S		\
-	src/x86/ffitarget.h src/pa/ffitarget.h src/pa/ffi.c		\
-	src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c src/bfin/ffi.c	\
-	src/bfin/ffitarget.h src/bfin/sysv.S src/frv/eabi.S		\
-	src/frv/ffitarget.h src/dlmalloc.c src/tile/ffi.c		\
-	src/tile/ffitarget.h src/tile/tile.S libtool-version		\
-	 ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4		\
-	 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4			\
-	 m4/ltversion.m4 src/arm/gentramp.sh src/debug.c msvcc.sh	\
-	generate-ios-source-and-headers.py				\
-	 generate-osx-source-and-headers.py				\
-	 libffi.xcodeproj/project.pbxproj src/arm/trampoline.S
+EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host \
+	src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h \
+	src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h \
+	src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h \
+	src/cris/ffi.c src/cris/sysv.S src/cris/ffitarget.h \
+	src/ia64/ffi.c src/ia64/ffitarget.h src/ia64/ia64_flags.h \
+	src/ia64/unix.S src/mips/ffi.c src/mips/n32.S src/mips/o32.S \
+	src/mips/ffitarget.h src/m32r/ffi.c src/m32r/sysv.S \
+	src/m32r/ffitarget.h src/m68k/ffi.c src/m68k/sysv.S \
+	src/m68k/ffitarget.h src/powerpc/ffi.c src/powerpc/sysv.S \
+	src/powerpc/linux64.S src/powerpc/linux64_closure.S \
+	src/powerpc/ppc_closure.S src/powerpc/asm.h src/powerpc/aix.S \
+	src/powerpc/darwin.S src/powerpc/aix_closure.S \
+	src/powerpc/darwin_closure.S src/powerpc/ffi_darwin.c \
+	src/powerpc/ffitarget.h src/s390/ffi.c src/s390/sysv.S \
+	src/s390/ffitarget.h src/sh/ffi.c src/sh/sysv.S	\
+	src/sh/ffitarget.h src/sh64/ffi.c src/sh64/sysv.S \
+	src/sh64/ffitarget.h src/sparc/v8.S src/sparc/v9.S \
+	src/sparc/ffitarget.h src/sparc/ffi.c src/x86/darwin64.S \
+	src/x86/ffi.c src/x86/sysv.S src/x86/win32.S src/x86/darwin.S \
+	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
+	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
+	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
+	src/bfin/ffi.c src/bfin/ffitarget.h src/bfin/sysv.S \
+	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
+	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
+	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
+	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
+	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
+	msvcc.sh generate-ios-source-and-headers.py \
+	generate-osx-source-and-headers.py \
+        libffi.xcodeproj/project.pbxproj \
+	src/arm/trampoline.S
 
 info_TEXINFOS = doc/libffi.texi
 
@@ -186,9 +186,6 @@ nodist_libffi_la_SOURCES += src/pa/linux.S src/pa/ffi.c
 endif
 if PA_HPUX
 nodist_libffi_la_SOURCES += src/pa/hpux32.S src/pa/ffi.c
-endif
-if TILE
-nodist_libffi_la_SOURCES += src/tile/tile.S src/tile/ffi.c
 endif
 
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
