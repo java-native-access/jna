@@ -76,7 +76,7 @@ tested:
 | SPARC           | Solaris          |
 | SPARC64         | Linux            |
 | SPARC64         | FreeBSD          |
-| TILE-Gx/TILEPro |                  |
+| TILE-Gx/TILEPro | Linux            |
 | X86             | FreeBSD          |
 | X86             | Interix          |
 | X86             | kFreeBSD         |
@@ -325,6 +325,7 @@ developers:
 
 alpha		Richard Henderson
 arm		Raffaele Sena
+blackfin        Alexandre Keunecke I. de Mendonca
 cris		Simon Posnjak, Hans-Peter Nilsson
 frv		Anthony Green
 ia64		Hans Boehm
@@ -340,6 +341,7 @@ s390		Gerhard Tonn, Ulrich Weigand
 sh		Kaz Kojima
 sh64		Kaz Kojima
 sparc		Anthony Green, Gordon Irlam
+tile-gx/tilepro Walter Lee
 x86		Anthony Green, Jon Beniston
 x86-64		Bo Thorsen
 
