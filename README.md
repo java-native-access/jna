@@ -100,7 +100,7 @@ Contributing
 
 You're encouraged to contribute to JNA. Fork the code from [https://github.com/twall/jna](https://github.com/twall/jna) and submit pull requests.
 
-For more informationon setting up a development environment see [Contributing to JNA](https://github.com/twall/jna/blob/master/www/Contributing.md).
+For more information on setting up a development environment see [Contributing to JNA](https://github.com/twall/jna/blob/master/www/Contributing.md).
 
 If you are interested in paid support, feel free to say so on the [jna-users mailing list](http://groups.google.com/group/jna-users). Most simple questions will be answered on the list, but more complicated work, new features or target platforms can be negotiated with any of the JNA developers (this is how several of JNA's features came into being). You may even encounter other users with the same need and be able to cost share the new development.
 
