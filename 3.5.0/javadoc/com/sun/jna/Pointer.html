@@ -1,0 +1,1769 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>Pointer (JNA API)</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Pointer (JNA API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size="-1"> 3.5.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../com/sun/jna/Platform.html" title="class in com.sun.jna"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../com/sun/jna/PointerType.html" title="class in com.sun.jna"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?com/sun/jna/Pointer.html" target="_top">Frames</a></li>
+<li><a href="Pointer.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">com.sun.jna</div>
+<h2 title="Class Pointer" class="title">Class Pointer</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li>com.sun.jna.Pointer</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../com/sun/jna/Function.html" title="class in com.sun.jna">Function</a>, <a href="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</a></dd>
+</dl>
+<hr>
+<br>
+<pre>public class <span class="strong">Pointer</span>
+extends <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">An abstraction for a native pointer data type.  A Pointer instance 
+ represents, on the Java side, a native pointer.  The native pointer could 
+ be any <em>type</em> of native pointer.  Methods such as <code>write</code>, 
+ <code>read</code>, <code>getXXX</code>, and <code>setXXX</code>, provide 
+ means to access memory underlying the native pointer.<p>
+ The constructors are intentionally package-private, since it's not generally
+ a good idea to be creating C pointers de novo.</div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>Sheng Liang, originator, Todd Fast, suitability modifications, Timothy Wall, robust library loading</dd>
+<dt><span class="strong">See Also:</span></dt><dd><a href="../../../com/sun/jna/Function.html" title="class in com.sun.jna"><code>Function</code></a></dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#NULL">NULL</a></strong></code>
+<div class="block">Convenience constant, same as <code>null</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#peer">peer</a></strong></code>
+<div class="block">Pointer value of the real native pointer.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#SIZE">SIZE</a></strong></code>
+<div class="block">Size of a native pointer, in bytes.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../com/sun/jna/Pointer.html#Pointer()">Pointer</a></strong>()</code>
+<div class="block">Derived class must assign peer pointer value.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../com/sun/jna/Pointer.html#Pointer(long)">Pointer</a></strong>(long&nbsp;peer)</code>
+<div class="block">Create from native pointer.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#clear(long)">clear</a></strong>(long&nbsp;size)</code>
+<div class="block">Zero memory for the given number of bytes.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#createConstant(int)">createConstant</a></strong>(int&nbsp;peer)</code>
+<div class="block">Convenience constant, equivalent to <code>(void*)CONSTANT</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#createConstant(long)">createConstant</a></strong>(long&nbsp;peer)</code>
+<div class="block">Convenience constant, equivalent to <code>(void*)CONSTANT</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#equals(java.lang.Object)">equals</a></strong>(<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</code>
+<div class="block">Compares this <code>Pointer</code> to the specified object.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>byte</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getByte(long)">getByte</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>byte</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getByteArray(long, int)">getByteArray</a></strong>(long&nbsp;offset,
+            int&nbsp;arraySize)</code>
+<div class="block">Read a native array of bytes of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getByteBuffer(long, long)">getByteBuffer</a></strong>(long&nbsp;offset,
+             long&nbsp;length)</code>
+<div class="block">Get a ByteBuffer mapped to the memory pointed to by the pointer,
+ ensuring the buffer uses native byte order.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>char</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getChar(long)">getChar</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>wchar_t</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>char[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getCharArray(long, int)">getCharArray</a></strong>(long&nbsp;offset,
+            int&nbsp;arraySize)</code>
+<div class="block">Read a native array of wchar_t of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getDouble(long)">getDouble</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>double</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getDoubleArray(long, int)">getDoubleArray</a></strong>(long&nbsp;offset,
+              int&nbsp;arraySize)</code>
+<div class="block">Read a native array of double of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getFloat(long)">getFloat</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>float</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>float[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getFloatArray(long, int)">getFloatArray</a></strong>(long&nbsp;offset,
+             int&nbsp;arraySize)</code>
+<div class="block">Read a native array of float of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getInt(long)">getInt</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>int</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getIntArray(long, int)">getIntArray</a></strong>(long&nbsp;offset,
+           int&nbsp;arraySize)</code>
+<div class="block">Read a native array of int32 of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getLong(long)">getLong</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>long</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>long[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getLongArray(long, int)">getLongArray</a></strong>(long&nbsp;offset,
+            int&nbsp;arraySize)</code>
+<div class="block">Read a native array of int64 of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getNativeLong(long)">getNativeLong</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>long</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getPointer(long)">getPointer</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to pointer.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getPointerArray(long)">getPointerArray</a></strong>(long&nbsp;offset)</code>
+<div class="block">Returns an array of <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getPointerArray(long, int)">getPointerArray</a></strong>(long&nbsp;offset,
+               int&nbsp;arraySize)</code>
+<div class="block">Returns an array of <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> of the requested size.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>short</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getShort(long)">getShort</a></strong>(long&nbsp;offset)</code>
+<div class="block">Indirect the native pointer as a pointer to <code>short</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>short[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getShortArray(long, int)">getShortArray</a></strong>(long&nbsp;offset,
+             int&nbsp;arraySize)</code>
+<div class="block">Read a native array of int16 of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getString(long)">getString</a></strong>(long&nbsp;offset)</code>
+<div class="block">Copy native memory to a Java String.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getString(long, boolean)">getString</a></strong>(long&nbsp;offset,
+         boolean&nbsp;wide)</code>
+<div class="block">Copy native memory to a Java String.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getStringArray(long)">getStringArray</a></strong>(long&nbsp;offset)</code>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getStringArray(long, boolean)">getStringArray</a></strong>(long&nbsp;offset,
+              boolean&nbsp;wide)</code>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getStringArray(long, int)">getStringArray</a></strong>(long&nbsp;offset,
+              int&nbsp;length)</code>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>, using the given array length.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getStringArray(long, int, boolean)">getStringArray</a></strong>(long&nbsp;offset,
+              int&nbsp;length,
+              boolean&nbsp;wide)</code>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter, using the given array length.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#getValue(long, java.lang.Class, java.lang.Object)">getValue</a></strong>(long&nbsp;offset,
+        <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&nbsp;type,
+        <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;currentValue)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#hashCode()">hashCode</a></strong>()</code>
+<div class="block">Returns a hashcode for the native pointer represented by this
+ <code>Pointer</code> object</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#indexOf(long, byte)">indexOf</a></strong>(long&nbsp;offset,
+       byte&nbsp;value)</code>
+<div class="block">Returns the offset of the given value in memory from the given offset,
+ or -1 if the value is not found.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer)">nativeValue</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p)</code>
+<div class="block">Read the native peer value.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#nativeValue(com.sun.jna.Pointer, long)">nativeValue</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p,
+           long&nbsp;value)</code>
+<div class="block">Set the native peer value.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, byte[], int, int)">read</a></strong>(long&nbsp;offset,
+    byte[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, char[], int, int)">read</a></strong>(long&nbsp;offset,
+    char[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, double[], int, int)">read</a></strong>(long&nbsp;offset,
+    double[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, float[], int, int)">read</a></strong>(long&nbsp;offset,
+    float[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, int[], int, int)">read</a></strong>(long&nbsp;offset,
+    int[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, long[], int, int)">read</a></strong>(long&nbsp;offset,
+    long[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, com.sun.jna.Pointer[], int, int)">read</a></strong>(long&nbsp;offset,
+    <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#read(long, short[], int, int)">read</a></strong>(long&nbsp;offset,
+    short[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setByte(long, byte)">setByte</a></strong>(long&nbsp;offset,
+       byte&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setChar(long, char)">setChar</a></strong>(long&nbsp;offset,
+       char&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setDouble(long, double)">setDouble</a></strong>(long&nbsp;offset,
+         double&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setFloat(long, float)">setFloat</a></strong>(long&nbsp;offset,
+        float&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setInt(long, int)">setInt</a></strong>(long&nbsp;offset,
+      int&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setLong(long, long)">setLong</a></strong>(long&nbsp;offset,
+       long&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setMemory(long, long, byte)">setMemory</a></strong>(long&nbsp;offset,
+         long&nbsp;length,
+         byte&nbsp;value)</code>
+<div class="block">Write <code>value</code> to the requested bank of memory.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setNativeLong(long, com.sun.jna.NativeLong)">setNativeLong</a></strong>(long&nbsp;offset,
+             <a href="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</a>&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setPointer(long, com.sun.jna.Pointer)">setPointer</a></strong>(long&nbsp;offset,
+          <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setShort(long, short)">setShort</a></strong>(long&nbsp;offset,
+        short&nbsp;value)</code>
+<div class="block">Set <code>value</code> at location being pointed to.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String)">setString</a></strong>(long&nbsp;offset,
+         <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>
+<div class="block">Copy string <code>value</code> to the location being pointed to.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setString(long, java.lang.String, boolean)">setString</a></strong>(long&nbsp;offset,
+         <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value,
+         boolean&nbsp;wide)</code>
+<div class="block">Copy string <code>value</code> to the location being pointed to.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#setValue(long, java.lang.Object, java.lang.Class)">setValue</a></strong>(long&nbsp;offset,
+        <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value,
+        <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&nbsp;type)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#share(long)">share</a></strong>(long&nbsp;offset)</code>
+<div class="block">Provide a view of this memory using the given offset to calculate a new base address.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#share(long, long)">share</a></strong>(long&nbsp;offset,
+     long&nbsp;sz)</code>
+<div class="block">Provide a view of this memory using the given offset to calculate a
+ new base address, bounds-limiting the memory with the given size.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, byte[], int, int)">write</a></strong>(long&nbsp;offset,
+     byte[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, char[], int, int)">write</a></strong>(long&nbsp;offset,
+     char[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, double[], int, int)">write</a></strong>(long&nbsp;offset,
+     double[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, float[], int, int)">write</a></strong>(long&nbsp;offset,
+     float[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, int[], int, int)">write</a></strong>(long&nbsp;offset,
+     int[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, long[], int, int)">write</a></strong>(long&nbsp;offset,
+     long[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by 
+ native pointer, from the specified array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, com.sun.jna.Pointer[], int, int)">write</a></strong>(long&nbsp;bOff,
+     <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Write the given array of Pointer to native memory.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Pointer.html#write(long, short[], int, int)">write</a></strong>(long&nbsp;offset,
+     short[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</a>, <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</a>, <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SIZE</h4>
+<pre>public static final&nbsp;int SIZE</pre>
+<div class="block">Size of a native pointer, in bytes.</div>
+</li>
+</ul>
+<a name="NULL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>NULL</h4>
+<pre>public static final&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a> NULL</pre>
+<div class="block">Convenience constant, same as <code>null</code>.</div>
+</li>
+</ul>
+<a name="peer">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>peer</h4>
+<pre>protected&nbsp;long peer</pre>
+<div class="block">Pointer value of the real native pointer. Use long to be 64-bit safe.</div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="Pointer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Pointer</h4>
+<pre>Pointer()</pre>
+<div class="block">Derived class must assign peer pointer value.</div>
+</li>
+</ul>
+<a name="Pointer(long)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Pointer</h4>
+<pre>public&nbsp;Pointer(long&nbsp;peer)</pre>
+<div class="block">Create from native pointer.  Don't use this unless you know what
+ you're doing.</div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="createConstant(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createConstant</h4>
+<pre>public static final&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;createConstant(long&nbsp;peer)</pre>
+<div class="block">Convenience constant, equivalent to <code>(void*)CONSTANT</code>.</div>
+</li>
+</ul>
+<a name="createConstant(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createConstant</h4>
+<pre>public static final&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;createConstant(int&nbsp;peer)</pre>
+<div class="block">Convenience constant, equivalent to <code>(void*)CONSTANT</code>.
+        This version will avoid setting any of the high bits on 64-bit
+        systems.</div>
+</li>
+</ul>
+<a name="share(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>share</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;share(long&nbsp;offset)</pre>
+<div class="block">Provide a view of this memory using the given offset to calculate a new base address.</div>
+</li>
+</ul>
+<a name="share(long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>share</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;share(long&nbsp;offset,
+            long&nbsp;sz)</pre>
+<div class="block">Provide a view of this memory using the given offset to calculate a
+ new base address, bounds-limiting the memory with the given size.</div>
+</li>
+</ul>
+<a name="clear(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clear</h4>
+<pre>public&nbsp;void&nbsp;clear(long&nbsp;size)</pre>
+<div class="block">Zero memory for the given number of bytes.</div>
+</li>
+</ul>
+<a name="equals(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>equals</h4>
+<pre>public&nbsp;boolean&nbsp;equals(<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;o)</pre>
+<div class="block">Compares this <code>Pointer</code> to the specified object.</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a></code>&nbsp;in class&nbsp;<code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>o</code> - A <code>Pointer</code> instance</dd>
+<dt><span class="strong">Returns:</span></dt><dd>True if the other object is a <code>Pointer</code>, 
+          and the C pointers being pointed to by these objects are also
+                        equal. Returns false otherwise.</dd></dl>
+</li>
+</ul>
+<a name="hashCode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre>public&nbsp;int&nbsp;hashCode()</pre>
+<div class="block">Returns a hashcode for the native pointer represented by this
+ <code>Pointer</code> object</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>A hash code value for the represented native pointer</dd></dl>
+</li>
+</ul>
+<a name="indexOf(long, byte)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>indexOf</h4>
+<pre>public&nbsp;long&nbsp;indexOf(long&nbsp;offset,
+           byte&nbsp;value)</pre>
+<div class="block">Returns the offset of the given value in memory from the given offset,
+ or -1 if the value is not found.</div>
+</li>
+</ul>
+<a name="read(long, byte[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        byte[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>byte</code> array into which data is copied</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="read(long, short[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        short[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer from which data is copied</dd><dd><code>buf</code> - <code>short</code> array into which data is copied</dd><dd><code>index</code> - array index to which data is copied</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="read(long, char[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        char[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer from which data is copied</dd><dd><code>buf</code> - <code>char</code> array into which data is copied</dd><dd><code>index</code> - array index to which data is copied</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="read(long, int[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        int[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer from which data is copied</dd><dd><code>buf</code> - <code>int</code> array into which data is copied</dd><dd><code>index</code> - array index to which data is copied</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="read(long, long[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        long[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer from which data is copied</dd><dd><code>buf</code> - <code>long</code> array into which data is copied</dd><dd><code>index</code> - array index to which data is copied</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="read(long, float[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        float[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer from which data is copied</dd><dd><code>buf</code> - <code>float</code> array into which data is copied</dd><dd><code>index</code> - array index to which data is copied</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="read(long, double[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        double[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer from which data is copied</dd><dd><code>buf</code> - <code>double</code> array into which data is copied</dd><dd><code>index</code> - array index to which data is copied</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="read(long, com.sun.jna.Pointer[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read(long&nbsp;offset,
+        <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>from</em> memory pointed to by
+ native pointer, into the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer from which data is copied</dd><dd><code>buf</code> - <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> array into which data is copied</dd><dd><code>index</code> - array index to which data is copied</dd><dd><code>length</code> - number of elements from native pointer that must be copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, byte[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;offset,
+         byte[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>byte</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, short[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;offset,
+         short[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>short</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, char[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;offset,
+         char[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>char</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, int[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;offset,
+         int[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>int</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, long[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;offset,
+         long[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by 
+ native pointer, from the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>long</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, float[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;offset,
+         float[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>float</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, double[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;offset,
+         double[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Indirect the native pointer, copying <em>into</em> memory pointed to by
+ native pointer, from the specified array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>double</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="write(long, com.sun.jna.Pointer[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(long&nbsp;bOff,
+         <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+<div class="block">Write the given array of Pointer to native memory.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>bOff</code> - byte offset from pointer into which data is copied</dd><dd><code>buf</code> - <code>Pointer</code> array from which to copy</dd><dd><code>index</code> - array index from which to start copying</dd><dd><code>length</code> - number of elements from <code>buf</code> that must be
+               copied</dd></dl>
+</li>
+</ul>
+<a name="getValue(long, java.lang.Class, java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getValue</h4>
+<pre><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;getValue(long&nbsp;offset,
+              <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&nbsp;type,
+              <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;currentValue)</pre>
+</li>
+</ul>
+<a name="getByte(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getByte</h4>
+<pre>public&nbsp;byte&nbsp;getByte(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>byte</code>.  This is
+ equivalent to the expression
+ <code>*((jbyte *)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>byte</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getChar(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getChar</h4>
+<pre>public&nbsp;char&nbsp;getChar(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>wchar_t</code>.  This
+ is equivalent to the expression
+ <code>*((wchar_t*)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>wchar_t</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getShort(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getShort</h4>
+<pre>public&nbsp;short&nbsp;getShort(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>short</code>.  This is
+ equivalent to the expression
+ <code>*((jshort *)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>short</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getInt(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInt</h4>
+<pre>public&nbsp;int&nbsp;getInt(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>int</code>.  This is
+ equivalent to the expression
+ <code>*((jint *)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>int</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getLong(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLong</h4>
+<pre>public&nbsp;long&nbsp;getLong(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>long</code>.  This is
+ equivalent to the expression
+ <code>*((jlong *)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>long</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getNativeLong(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNativeLong</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</a>&nbsp;getNativeLong(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>long</code>.  This is
+ equivalent to the expression
+ <code>*((long *)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>long</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getFloat(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloat</h4>
+<pre>public&nbsp;float&nbsp;getFloat(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>float</code>.  This is
+ equivalent to the expression
+ <code>*((jfloat *)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>float</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getDouble(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDouble</h4>
+<pre>public&nbsp;double&nbsp;getDouble(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to <code>double</code>.  This
+ is equivalent to the expression
+ <code>*((jdouble *)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>double</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getPointer(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPointer</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getPointer(long&nbsp;offset)</pre>
+<div class="block">Indirect the native pointer as a pointer to pointer.  This is equivalent
+ to the expression
+ <code>*((void **)((char *)Pointer + offset))</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to perform the indirection</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> equivalent of the pointer value
+ being pointed to, or <code>null</code> if the pointer value is
+ <code>NULL</code>;</dd></dl>
+</li>
+</ul>
+<a name="getByteBuffer(long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getByteBuffer</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</a>&nbsp;getByteBuffer(long&nbsp;offset,
+                       long&nbsp;length)</pre>
+<div class="block">Get a ByteBuffer mapped to the memory pointed to by the pointer,
+ ensuring the buffer uses native byte order.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to start the buffer</dd><dd><code>length</code> - Length of ByteBuffer</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a direct ByteBuffer that accesses the memory being pointed to,</dd></dl>
+</li>
+</ul>
+<a name="getString(long, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getString(long&nbsp;offset,
+               boolean&nbsp;wide)</pre>
+<div class="block">Copy native memory to a Java String.  If <code>wide</code> is true,
+ access the memory as an array of <code>wchar_t</code>, otherwise 
+ as an array of <code>char</code>, using the default platform encoding.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to obtain the native string
+v     * @param wide whether to convert from a wide or standard C string</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>String</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getString(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getString(long&nbsp;offset)</pre>
+<div class="block">Copy native memory to a Java String.  If the system property 
+ <code>jna.encoding</code> is set, uses it as the native charset
+ when decoding the value, otherwise falls back to the default platform
+ encoding.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to obtain the native string</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the <code>String</code> value being pointed to</dd></dl>
+</li>
+</ul>
+<a name="getByteArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getByteArray</h4>
+<pre>public&nbsp;byte[]&nbsp;getByteArray(long&nbsp;offset,
+                  int&nbsp;arraySize)</pre>
+<div class="block">Read a native array of bytes of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</li>
+</ul>
+<a name="getCharArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCharArray</h4>
+<pre>public&nbsp;char[]&nbsp;getCharArray(long&nbsp;offset,
+                  int&nbsp;arraySize)</pre>
+<div class="block">Read a native array of wchar_t of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</li>
+</ul>
+<a name="getShortArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getShortArray</h4>
+<pre>public&nbsp;short[]&nbsp;getShortArray(long&nbsp;offset,
+                    int&nbsp;arraySize)</pre>
+<div class="block">Read a native array of int16 of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</li>
+</ul>
+<a name="getIntArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIntArray</h4>
+<pre>public&nbsp;int[]&nbsp;getIntArray(long&nbsp;offset,
+                int&nbsp;arraySize)</pre>
+<div class="block">Read a native array of int32 of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</li>
+</ul>
+<a name="getLongArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLongArray</h4>
+<pre>public&nbsp;long[]&nbsp;getLongArray(long&nbsp;offset,
+                  int&nbsp;arraySize)</pre>
+<div class="block">Read a native array of int64 of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</li>
+</ul>
+<a name="getFloatArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloatArray</h4>
+<pre>public&nbsp;float[]&nbsp;getFloatArray(long&nbsp;offset,
+                    int&nbsp;arraySize)</pre>
+<div class="block">Read a native array of float of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</li>
+</ul>
+<a name="getDoubleArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDoubleArray</h4>
+<pre>public&nbsp;double[]&nbsp;getDoubleArray(long&nbsp;offset,
+                      int&nbsp;arraySize)</pre>
+<div class="block">Read a native array of double of size <code>arraySize</code> from the
+        given <code>offset</code> from this <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</li>
+</ul>
+<a name="getPointerArray(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPointerArray</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]&nbsp;getPointerArray(long&nbsp;offset)</pre>
+<div class="block">Returns an array of <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.  The array length is
+ determined by a NULL-valued terminating element.</div>
+</li>
+</ul>
+<a name="getPointerArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPointerArray</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>[]&nbsp;getPointerArray(long&nbsp;offset,
+                        int&nbsp;arraySize)</pre>
+<div class="block">Returns an array of <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> of the requested size.</div>
+</li>
+</ul>
+<a name="getStringArray(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringArray</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getStringArray(long&nbsp;offset)</pre>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>.  The array length is determined by a
+ NULL-valued terminating element.</div>
+</li>
+</ul>
+<a name="getStringArray(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringArray</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getStringArray(long&nbsp;offset,
+                      int&nbsp;length)</pre>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char *</code>, using the given array length.</div>
+</li>
+</ul>
+<a name="getStringArray(long, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringArray</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getStringArray(long&nbsp;offset,
+                      boolean&nbsp;wide)</pre>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter.  The array length is determined by a
+ NULL-valued terminating element.</div>
+</li>
+</ul>
+<a name="getStringArray(long, int, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringArray</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getStringArray(long&nbsp;offset,
+                      int&nbsp;length,
+                      boolean&nbsp;wide)</pre>
+<div class="block">Returns an array of <code>String</code> based on a native array
+ of <code>char*</code> or <code>wchar_t*</code> based on the
+ <code>wide</code> parameter, using the given array length.</div>
+</li>
+</ul>
+<a name="setValue(long, java.lang.Object, java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setValue</h4>
+<pre>void&nbsp;setValue(long&nbsp;offset,
+            <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;value,
+            <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&nbsp;type)</pre>
+</li>
+</ul>
+<a name="setMemory(long, long, byte)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMemory</h4>
+<pre>public&nbsp;void&nbsp;setMemory(long&nbsp;offset,
+             long&nbsp;length,
+             byte&nbsp;value)</pre>
+<div class="block">Write <code>value</code> to the requested bank of memory.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer to start</dd><dd><code>length</code> - number of bytes to write</dd><dd><code>value</code> - value to be written</dd></dl>
+</li>
+</ul>
+<a name="setByte(long, byte)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setByte</h4>
+<pre>public&nbsp;void&nbsp;setByte(long&nbsp;offset,
+           byte&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jbyte *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+                     must be set</dd><dd><code>value</code> - <code>byte</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setShort(long, short)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setShort</h4>
+<pre>public&nbsp;void&nbsp;setShort(long&nbsp;offset,
+            short&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jshort *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+                     must be set</dd><dd><code>value</code> - <code>short</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setChar(long, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setChar</h4>
+<pre>public&nbsp;void&nbsp;setChar(long&nbsp;offset,
+           char&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((wchar_t *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+               must be set</dd><dd><code>value</code> - <code>char</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setInt(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setInt</h4>
+<pre>public&nbsp;void&nbsp;setInt(long&nbsp;offset,
+          int&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jint *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+                     must be set</dd><dd><code>value</code> - <code>int</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setLong(long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLong</h4>
+<pre>public&nbsp;void&nbsp;setLong(long&nbsp;offset,
+           long&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jlong *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+               must be set</dd><dd><code>value</code> - <code>long</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setNativeLong(long, com.sun.jna.NativeLong)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setNativeLong</h4>
+<pre>public&nbsp;void&nbsp;setNativeLong(long&nbsp;offset,
+                 <a href="../../../com/sun/jna/NativeLong.html" title="class in com.sun.jna">NativeLong</a>&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((long *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+               must be set</dd><dd><code>value</code> - <code>long</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setFloat(long, float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFloat</h4>
+<pre>public&nbsp;void&nbsp;setFloat(long&nbsp;offset,
+            float&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jfloat *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+               must be set</dd><dd><code>value</code> - <code>float</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setDouble(long, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setDouble</h4>
+<pre>public&nbsp;void&nbsp;setDouble(long&nbsp;offset,
+             double&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression
+ <code>*((jdouble *)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code>
+               must be set</dd><dd><code>value</code> - <code>double</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="setPointer(long, com.sun.jna.Pointer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setPointer</h4>
+<pre>public&nbsp;void&nbsp;setPointer(long&nbsp;offset,
+              <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;value)</pre>
+<div class="block">Set <code>value</code> at location being pointed to. This is equivalent
+ to the expression 
+ <code>*((void **)((char *)Pointer + offset)) = value</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which <code>value</code> 
+               must be set</dd><dd><code>value</code> - <code>Pointer</code> holding the actual pointer value to 
+ set, which may be <code>null</code> to indicate a <code>NULL</code>
+ pointer.</dd></dl>
+</li>
+</ul>
+<a name="setString(long, java.lang.String, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setString</h4>
+<pre>public&nbsp;void&nbsp;setString(long&nbsp;offset,
+             <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value,
+             boolean&nbsp;wide)</pre>
+<div class="block">Copy string <code>value</code> to the location being pointed to.  Copy
+ each element in <code>value</code>, converted to native encoding, at an
+ <code>offset</code>from the location pointed to by this pointer.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which characters in
+                     <code>value</code> must be set</dd><dd><code>value</code> - <code>java.lang.String</code> value to set</dd><dd><code>wide</code> - whether to write the native string as an array of 
+ <code>wchar_t</code>.  If false, writes as a NUL-terminated array of 
+ <code>char</code> using the default platform encoding.</dd></dl>
+</li>
+</ul>
+<a name="setString(long, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setString</h4>
+<pre>public&nbsp;void&nbsp;setString(long&nbsp;offset,
+             <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
+<div class="block">Copy string <code>value</code> to the location being pointed to.  Copy
+ each element in <code>value</code>, converted to native encoding, at an
+ <code>offset</code>from the location pointed to by this pointer.
+ Uses the value of the system property <code>jna.encoding</code>, if set, 
+ to determine the appropriate native charset in which to encode the value.  
+ If the property is not set, uses the default platform encoding.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>offset</code> - byte offset from pointer at which characters in
+               <code>value</code> must be set</dd><dd><code>value</code> - <code>java.lang.String</code> value to set</dd></dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="nativeValue(com.sun.jna.Pointer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>nativeValue</h4>
+<pre>public static&nbsp;long&nbsp;nativeValue(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p)</pre>
+<div class="block">Read the native peer value.  Use with caution.</div>
+</li>
+</ul>
+<a name="nativeValue(com.sun.jna.Pointer, long)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>nativeValue</h4>
+<pre>public static&nbsp;void&nbsp;nativeValue(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p,
+               long&nbsp;value)</pre>
+<div class="block">Set the native peer value.  Use with caution.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size="-1"> 3.5.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../com/sun/jna/Platform.html" title="class in com.sun.jna"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../com/sun/jna/PointerType.html" title="class in com.sun.jna"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?com/sun/jna/Pointer.html" target="_top">Frames</a></li>
+<li><a href="Pointer.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small><center><i>Copyright &copy; 2007-2012 Timothy Wall. All Rights Reserved.</i></center></small></p>
+</body>
+</html>
