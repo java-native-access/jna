@@ -105,7 +105,7 @@ public interface DsGetDC extends StdCallLibrary {
         public WString ClientSiteName;
         
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "DomainControllerName", "DomainControllerAddress", "DomainGuid", "DomainName", "DnsForestName", "Flags", "DcSiteName", "ClientSiteName"});
+            return Arrays.asList(new String[] { "DomainControllerName", "DomainControllerAddress", "DomainControllerAddressType", "DomainGuid", "DomainName", "DnsForestName", "Flags", "DcSiteName", "ClientSiteName"});
         }
     }	
 	
