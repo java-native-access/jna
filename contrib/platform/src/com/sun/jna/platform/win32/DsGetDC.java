@@ -214,6 +214,7 @@ public interface DsGetDC extends StdCallLibrary {
 
         public DS_DOMAIN_TRUSTS(Pointer p) {
             super(p);
+            read();
         }
     };
 }
