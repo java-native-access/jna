@@ -1,10 +1,10 @@
-Release 3.5.1
-=============
+Next Release (3.5.1)
+====================
 
 Bug Fixes
 ---------
-* Fix `Netapi32Util.getDomainTrusts() includes "empty" domain object` - [@aikidojohn](https://github.com/aikidojohn).
-* Fixed problem with Netapi32.getDC() - added missing fields in DOMAIN_CONTROLLER_INFO - [@aikidojohn](https://github.com/aikidojohn).
+* [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32Util.getDomainTrusts()` returns "empty" domain object - [@aikidojohn](https://github.com/aikidojohn).
+* [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32.getDC()` - added missing fields in `DOMAIN_CONTROLLER_INFO` - [@aikidojohn](https://github.com/aikidojohn).
 
 Release 3.5.0
 =============
