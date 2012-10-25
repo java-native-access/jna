@@ -970,6 +970,22 @@ osname=macos
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
     </artifact:mvn>
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${maven-sources-jar}"/>
+      <arg value="-Dclassifier=sources"/>
+    </artifact:mvn>
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${maven-javadoc-jar}"/>
+      <arg value="-Dclassifier=javadoc"/>
+    </artifact:mvn>
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
@@ -977,6 +993,22 @@ osname=macos
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
+    </artifact:mvn>
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom-platform}"/>
+      <arg value="-Dfile=${platform-sources-jar}"/>
+      <arg value="-Dclassifier=sources"/>
+    </artifact:mvn>
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
+      <arg value="-Durl=${maven-snapshots-repository-url}"/>
+      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
+      <arg value="-DpomFile=${pom-platform}"/>
+      <arg value="-Dfile=${platform-javadoc-jar}"/>
+      <arg value="-Dclassifier=javadoc"/>
     </artifact:mvn>
   </target>
 
