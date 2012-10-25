@@ -50,7 +50,7 @@ Features
 Community and Support
 =====================
 
-All questions should be posted ot the [jna-users Google group](http://groups.google.com/group/jna-users). Issues can be submitted [here on Github](https://github.com/twall/jna/issues).
+All questions should be posted to the [jna-users Google group](http://groups.google.com/group/jna-users). Issues can be submitted [here on Github](https://github.com/twall/jna/issues).
 
 When posting to the mailing list, please include the following:
 

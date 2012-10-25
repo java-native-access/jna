@@ -1,7 +1,7 @@
 JNA Release Process
 ===================
 
-* Bump version in CHANGES.md and build.xml.  Change JNI version in build.xml *only* if
+* Bump version in CHANGES.md and build.xml. Remove the "-SNAPSHOT" suffix from "jna.version" property in build.xml. Change JNI version in build.xml *only* if
   JNA's native API has been changed (i.e. md5 changed).  Bump JNA minor version if its Java API
   has changed significantly or incompatibly.
 
