@@ -970,6 +970,7 @@ osname=macos
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
     </artifact:mvn>
+    <!-- @todo only one file at a time is working with maven-deploy-plugin, find way to deploy sources and javadoc too.
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
@@ -986,6 +987,7 @@ osname=macos
       <arg value="-Dfile=${maven-javadoc-jar}"/>
       <arg value="-Dclassifier=javadoc"/>
     </artifact:mvn>
+    -->
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
@@ -994,6 +996,7 @@ osname=macos
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
     </artifact:mvn>
+    <!-- @todo only one file at a time is working with maven-deploy-plugin, find way to deploy sources and javadoc too.
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
       <arg value="-Durl=${maven-snapshots-repository-url}"/>
@@ -1010,6 +1013,7 @@ osname=macos
       <arg value="-Dfile=${platform-javadoc-jar}"/>
       <arg value="-Dclassifier=javadoc"/>
     </artifact:mvn>
+    -->
   </target>
 
 
