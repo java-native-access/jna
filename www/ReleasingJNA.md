@@ -8,7 +8,7 @@ JNA Release Process
 * If native changes have been made, run `ant dist` target on each target
   platform, pushing the resulting target-specific jar file to master.
 
-* Run `ant dist` target.  Commit and push generated jar files in dist.
+* Delete the dist/platform.jar - otherwise it may not be regenerated. Run `ant dist` target.  Commit and push generated jar files in dist.
 
 * Update Javadoc
   Check out gh-pages branch, copy latest doc/javadoc into <version>/javadoc,
