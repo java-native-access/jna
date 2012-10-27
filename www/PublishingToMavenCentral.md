@@ -37,4 +37,4 @@ Every Time
 * Run `ant stage`. This uploads current checkout to maven central.
 * Follow steps from [release it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt)
 * Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
-* After the release is finished, increment the version in build.xml for the next development iteration. Typically, this means increment "jna.revision" by one, and append "-SNAPSHOT" to the "jna.version" property, commit and push.
+* After the release is finished, increment the version in build.xml for the next development iteration. Typically, this means increment "jna.revision" by one, and append "-SNAPSHOT" to the "jna.version" property. Create new section in CHANGES.md for 'Next Release (x.y.z)'. Commit and push.
