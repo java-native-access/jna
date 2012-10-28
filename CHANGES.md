@@ -1,10 +1,11 @@
-Next Release (3.5.1)
+Release 3.5.1
 ====================
 
 Bug Fixes
 ---------
 * [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32Util.getDomainTrusts()` returns "empty" domain object - [@aikidojohn](https://github.com/aikidojohn).
 * [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32.getDC()` - added missing fields in `DOMAIN_CONTROLLER_INFO` - [@aikidojohn](https://github.com/aikidojohn).
+* [#151] 'platform.jar' in the dist directory was not updated for release 3.5.0. (The 'platform.jar' published to maven central was correct.)
 
 Release 3.5.0
 =============
