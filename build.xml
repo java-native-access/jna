@@ -54,7 +54,7 @@
   <property name="jna.minor" value="5"/>
   <property name="jna.revision" value="1"/>
   <property name="jna.build" value="${build.number}"/>
-  <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}-SNAPSHOT"/>
+  <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="3"/>
   <property name="jni.minor" value="5"/>
