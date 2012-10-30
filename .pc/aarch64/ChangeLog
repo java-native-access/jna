@@ -1,27 +1,3 @@
-2012-10-30  James Greenhalgh  <james.greenhalgh at arm.com>
-            Marcus Shawcroft  <marcus.shawcroft at arm.com>
-
-        * README: Add details of aarch64 port.
-        * src/aarch64/ffi.c: New.
-        * src/aarch64/ffitarget.h: Likewise.
-        * src/aarch64/sysv.S: Likewise.
-
-2012-10-30  James Greenhalgh  <james.greenhalgh at arm.com>
-            Marcus Shawcroft  <marcus.shawcroft at arm.com>
-
-        * testsuite/lib/libffi.exp: Add support for aarch64.
-        * testsuite/libffi.call/cls_struct_va1.c: New.
-        * testsuite/libffi.call/cls_uchar_va.c: Likewise.
-        * testsuite/libffi.call/cls_uint_va.c: Likewise.
-        * testsuite/libffi.call/cls_ulong_va.c: Liekwise.
-        * testsuite/libffi.call/cls_ushort_va.c: Likewise.
-        * testsuite/libffi.call/nested_struct11.c: Likewise.
-        * testsuite/libffi.call/uninitialized.c: Likewise.
-        * testsuite/libffi.call/va_1.c: Likewise.
-        * testsuite/libffi.call/va_struct1.c: Likewise.
-        * testsuite/libffi.call/va_struct2.c: Likewise.
-        * testsuite/libffi.call/va_struct3.c: Likewise.
-
 2012-10-12  Walter Lee  <walt@tilera.com>
 
         * Makefile.am: Add TILE-Gx/TILEPro support.

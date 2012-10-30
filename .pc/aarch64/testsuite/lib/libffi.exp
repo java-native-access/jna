@@ -203,10 +203,6 @@ proc libffi_target_compile { source dest type options } {
 
     lappend options "libs= -lffi"
 
-    if { [string match "aarch64*-*-linux*" $target_triplet] } {
-	lappend options "libs= -lpthread"
-    }
-
     verbose "options: $options"
     return [target_compile $source $dest $type $options]
 }
