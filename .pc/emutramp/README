@@ -154,7 +154,6 @@ See the ChangeLog files for details.
 	Add Blackfin support.
 	Add TILE-Gx/TILEPro support.
 	Add AArch64 support.
-	Add support for PaX enabled kernels with MPROTECT.
 
 3.0.11 Apr-11-12
         Lots of build fixes.

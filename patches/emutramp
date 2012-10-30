@@ -1,0 +1,128 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,11 @@
++2012-10-30  Magnus Granberg  <zorry@gentoo.org>
++	    Pavel Labushev  <pavel.labushev@runbox.ru>
++
++	* configure.ac: New options pax_emutramp
++	* configure, fficonfig.h.in: Regenerated
++	* src/closures.c: New function emutramp_enabled_check() and
++	checks.
++
+ 2012-10-30  Frederick Cheung  <frederick.cheung@gmail.com>
+ 
+ 	* configure.ac: Enable FFI_MAP_EXEC_WRIT for Darwin 12 (mountain
+Index: libffi/README
+===================================================================
+--- libffi.orig/README
++++ libffi/README
+@@ -154,6 +154,7 @@ See the ChangeLog files for details.
+ 	Add Blackfin support.
+ 	Add TILE-Gx/TILEPro support.
+ 	Add AArch64 support.
++	Add support for PaX enabled kernels with MPROTECT.
+ 
+ 3.0.11 Apr-11-12
+         Lots of build fixes.
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -826,6 +826,7 @@ enable_libtool_lock
+ enable_portable_binary
+ with_gcc_arch
+ enable_maintainer_mode
++enable_pax_emutramp
+ enable_debug
+ enable_structs
+ enable_raw_api
+@@ -1473,6 +1474,7 @@ Optional Features:
+                           unportable binaries
+   --enable-maintainer-mode  enable make rules and dependencies not useful
+ 			  (and sometimes confusing) to the casual installer
++  --enable-pax_emutramp       enable pax emulated trampolines, for we can't use PROT_EXEC
+   --enable-debug          debugging mode
+   --disable-structs       omit code for struct support
+   --disable-raw-api       make the raw api unavailable
+@@ -14457,6 +14459,16 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
+     fi
+ fi
+ 
++# On PaX enable kernels that have MPROTECT enable we can't use PROT_EXEC.
++# Check whether --enable-pax_emutramp was given.
++if test "${enable_pax_emutramp+set}" = set; then :
++  enableval=$enable_pax_emutramp; if test "$enable_pax_emutramp" = "yes"; then
++
++$as_echo "#define FFI_MMAP_EXEC_EMUTRAMP_PAX 1" >>confdefs.h
++
++  fi
++fi
++
+ 
+ FFI_EXEC_TRAMPOLINE_TABLE=0
+ case "$target" in
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -352,6 +352,13 @@ if test x$TARGET = xX86_WIN64; then
+     fi
+ fi
+ 
++# On PaX enable kernels that have MPROTECT enable we can't use PROT_EXEC.
++AC_ARG_ENABLE(pax_emutramp,
++  [  --enable-pax_emutramp       enable pax emulated trampolines, for we can't use PROT_EXEC],
++  if test "$enable_pax_emutramp" = "yes"; then
++    AC_DEFINE(FFI_MMAP_EXEC_EMUTRAMP_PAX, 1,
++      [Define this if you want to enable pax emulated trampolines])
++  fi)
+ 
+ FFI_EXEC_TRAMPOLINE_TABLE=0
+ case "$target" in
+Index: libffi/src/closures.c
+===================================================================
+--- libffi.orig/src/closures.c
++++ libffi/src/closures.c
+@@ -172,6 +172,27 @@ selinux_enabled_check (void)
+ 
+ #endif /* !FFI_MMAP_EXEC_SELINUX */
+ 
++/* On PaX enable kernels that have MPROTECT enable we can't use PROT_EXEC. */
++#ifdef FFI_MMAP_EXEC_EMUTRAMP_PAX
++#include <stdlib.h>
++
++static int emutramp_enabled = -1;
++
++static int
++emutramp_enabled_check (void)
++{
++  if (getenv ("FFI_DISABLE_EMUTRAMP") == NULL)
++    return 1;
++  else
++    return 0;
++}
++
++#define is_emutramp_enabled() (emutramp_enabled >= 0 ? emutramp_enabled \
++                               : (emutramp_enabled = emutramp_enabled_check ()))
++#else
++#define is_emutramp_enabled() 0
++#endif /* FFI_MMAP_EXEC_EMUTRAMP_PAX */
++
+ #elif defined (__CYGWIN__) || defined(__INTERIX)
+ 
+ #include <sys/mman.h>
+@@ -458,6 +479,12 @@ dlmmap (void *start, size_t length, int
+   printf ("mapping in %zi\n", length);
+ #endif
+ 
++  if (execfd == -1 && is_emutramp_enabled ())
++    {
++      ptr = mmap (start, length, prot & ~PROT_EXEC, flags, fd, offset);
++      return ptr;
++    }
++
+   if (execfd == -1 && !is_selinux_enabled ())
+     {
+       ptr = mmap (start, length, prot | PROT_EXEC, flags, fd, offset);

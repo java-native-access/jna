@@ -352,13 +352,6 @@ if test x$TARGET = xX86_WIN64; then
     fi
 fi
 
-# On PaX enable kernels that have MPROTECT enable we can't use PROT_EXEC.
-AC_ARG_ENABLE(pax_emutramp,
-  [  --enable-pax_emutramp       enable pax emulated trampolines, for we can't use PROT_EXEC],
-  if test "$enable_pax_emutramp" = "yes"; then
-    AC_DEFINE(FFI_MMAP_EXEC_EMUTRAMP_PAX, 1,
-      [Define this if you want to enable pax emulated trampolines])
-  fi)
 
 FFI_EXEC_TRAMPOLINE_TABLE=0
 case "$target" in

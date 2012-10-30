@@ -826,7 +826,6 @@ enable_libtool_lock
 enable_portable_binary
 with_gcc_arch
 enable_maintainer_mode
-enable_pax_emutramp
 enable_debug
 enable_structs
 enable_raw_api
@@ -1474,7 +1473,6 @@ Optional Features:
                           unportable binaries
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
-  --enable-pax_emutramp       enable pax emulated trampolines, for we can't use PROT_EXEC
   --enable-debug          debugging mode
   --disable-structs       omit code for struct support
   --disable-raw-api       make the raw api unavailable
@@ -14457,16 +14455,6 @@ $as_echo "$lt_cv_sys_symbol_underscore" >&6; }
 $as_echo "#define SYMBOL_UNDERSCORE 1" >>confdefs.h
 
     fi
-fi
-
-# On PaX enable kernels that have MPROTECT enable we can't use PROT_EXEC.
-# Check whether --enable-pax_emutramp was given.
-if test "${enable_pax_emutramp+set}" = set; then :
-  enableval=$enable_pax_emutramp; if test "$enable_pax_emutramp" = "yes"; then
-
-$as_echo "#define FFI_MMAP_EXEC_EMUTRAMP_PAX 1" >>confdefs.h
-
-  fi
 fi
 
 
