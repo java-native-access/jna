@@ -1,0 +1,56 @@
+Index: libffi/ChangeLog
+===================================================================
+--- libffi.orig/ChangeLog
++++ libffi/ChangeLog
+@@ -1,3 +1,9 @@
++2012-10-30  Frederick Cheung  <frederick.cheung@gmail.com>
++
++	* configure.ac: Enable FFI_MAP_EXEC_WRIT for Darwin 12 (mountain
++	lion) and future version.
++	* configure: Rebuild.
++
+ 2012-10-30  James Greenhalgh  <james.greenhalgh at arm.com>
+             Marcus Shawcroft  <marcus.shawcroft at arm.com>
+ 
+Index: libffi/configure
+===================================================================
+--- libffi.orig/configure
++++ libffi/configure
+@@ -6848,7 +6848,14 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
+ 	    LD="${LD-ld} -m elf_i386_fbsd"
+ 	    ;;
+ 	  x86_64-*linux*)
+-	    LD="${LD-ld} -m elf_i386"
++	    case `/usr/bin/file conftest.o` in
++	      *x86-64*)
++	         LD="${LD-ld} -m elf32_x86_64"
++	         ;;
++	      *)
++	         LD="${LD-ld} -m elf_i386"
++	         ;;
++	    esac
+ 	    ;;
+ 	  ppc64-*linux*|powerpc64-*linux*)
+ 	    LD="${LD-ld} -m elf32ppclinux"
+@@ -14459,7 +14466,7 @@ case "$target" in
+ $as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
+ 
+      ;;
+-     *-apple-darwin1[10]* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
++     *-apple-darwin1* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+ 
+ $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
+ 
+Index: libffi/configure.ac
+===================================================================
+--- libffi.orig/configure.ac
++++ libffi/configure.ac
+@@ -361,7 +361,7 @@ case "$target" in
+                  [Cannot use PROT_EXEC on this target, so, we revert to
+                    alternative means])
+      ;;
+-     *-apple-darwin1[[10]]* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
++     *-apple-darwin1* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
+                  [Cannot use malloc on this target, so, we revert to
+                    alternative means])

@@ -1,9 +1,3 @@
-2012-10-30  Frederick Cheung  <frederick.cheung@gmail.com>
-
-	* configure.ac: Enable FFI_MAP_EXEC_WRIT for Darwin 12 (mountain
-	lion) and future version.
-	* configure: Rebuild.
-
 2012-10-30  James Greenhalgh  <james.greenhalgh at arm.com>
             Marcus Shawcroft  <marcus.shawcroft at arm.com>
 
