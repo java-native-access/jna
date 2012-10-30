@@ -51,7 +51,6 @@ tested:
 |-----------------+------------------|
 | Architecture    | Operating System |
 |-----------------+------------------|
-| AArch64         | Linux            |
 | Alpha           | Linux            |
 | Alpha           | Tru64            |
 | ARM             | Linux            |
@@ -153,7 +152,6 @@ See the ChangeLog files for details.
 3.0.12 XXX-XX-XX
 	Add Blackfin support.
 	Add TILE-Gx/TILEPro support.
-	Add AArch64 support.
 
 3.0.11 Apr-11-12
         Lots of build fixes.
@@ -325,7 +323,6 @@ Thorup.
 Major processor architecture ports were contributed by the following
 developers:
 
-aarch64		Marcus Shawcroft, James Greenhalgh
 alpha		Richard Henderson
 arm		Raffaele Sena
 blackfin        Alexandre Keunecke I. de Mendonca
