@@ -121,7 +121,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -179,6 +180,7 @@ am_libffi_la_OBJECTS = src/prep_cif.lo s
+@@ -190,6 +191,7 @@ am_libffi_la_OBJECTS = src/prep_cif.lo s
  @SH64_TRUE@am__objects_27 = src/sh64/sysv.lo src/sh64/ffi.lo
  @PA_LINUX_TRUE@am__objects_28 = src/pa/linux.lo src/pa/ffi.lo
  @PA_HPUX_TRUE@am__objects_29 = src/pa/hpux32.lo src/pa/ffi.lo
@@ -129,7 +129,7 @@ Index: libffi/Makefile.in
  nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
  	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-@@ -188,17 +190,18 @@ nodist_libffi_la_OBJECTS = $(am__objects
+@@ -199,17 +201,18 @@ nodist_libffi_la_OBJECTS = $(am__objects
  	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
  	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
  	$(am__objects_24) $(am__objects_25) $(am__objects_26) \
@@ -152,7 +152,7 @@ Index: libffi/Makefile.in
  	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
  	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
  	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
-@@ -207,8 +210,8 @@ am__objects_31 = $(am__objects_1) $(am__
+@@ -218,8 +221,8 @@ am__objects_31 = $(am__objects_1) $(am__
  	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
  	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
  	$(am__objects_25) $(am__objects_26) $(am__objects_27) \
@@ -163,7 +163,7 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -439,39 +442,39 @@ top_builddir = @top_builddir@
+@@ -452,39 +455,39 @@ top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
  AUTOMAKE_OPTIONS = foreign subdir-objects
  SUBDIRS = include testsuite man
@@ -236,7 +236,7 @@ Index: libffi/Makefile.in
  
  info_TEXINFOS = doc/libffi.texi
  
-@@ -531,10 +534,11 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -544,10 +547,11 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
  	$(am__append_24) $(am__append_25) $(am__append_26) \
@@ -250,7 +250,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
  AM_CCASFLAGS = $(AM_CPPFLAGS) -g
-@@ -863,6 +867,16 @@ src/pa/linux.lo: src/pa/$(am__dirstamp)
+@@ -876,6 +880,16 @@ src/pa/linux.lo: src/pa/$(am__dirstamp)
  src/pa/ffi.lo: src/pa/$(am__dirstamp) src/pa/$(DEPDIR)/$(am__dirstamp)
  src/pa/hpux32.lo: src/pa/$(am__dirstamp) \
  	src/pa/$(DEPDIR)/$(am__dirstamp)
@@ -267,7 +267,7 @@ Index: libffi/Makefile.in
  libffi.la: $(libffi_la_OBJECTS) $(libffi_la_DEPENDENCIES) $(EXTRA_libffi_la_DEPENDENCIES) 
  	$(libffi_la_LINK) -rpath $(libdir) $(libffi_la_OBJECTS) $(libffi_la_LIBADD) $(LIBS)
  libffi_convenience.la: $(libffi_convenience_la_OBJECTS) $(libffi_convenience_la_DEPENDENCIES) $(EXTRA_libffi_convenience_la_DEPENDENCIES) 
-@@ -972,6 +986,10 @@ mostlyclean-compile:
+@@ -985,6 +999,10 @@ mostlyclean-compile:
  	-rm -f src/sparc/v8.lo
  	-rm -f src/sparc/v9.$(OBJEXT)
  	-rm -f src/sparc/v9.lo
@@ -278,7 +278,7 @@ Index: libffi/Makefile.in
  	-rm -f src/types.$(OBJEXT)
  	-rm -f src/types.lo
  	-rm -f src/x86/darwin.$(OBJEXT)
-@@ -1048,6 +1066,8 @@ distclean-compile:
+@@ -1061,6 +1079,8 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@src/sparc/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/sparc/$(DEPDIR)/v8.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/sparc/$(DEPDIR)/v9.Plo@am__quote@
@@ -287,7 +287,7 @@ Index: libffi/Makefile.in
  @AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/darwin.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/darwin64.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/x86/$(DEPDIR)/ffi.Plo@am__quote@
-@@ -1129,6 +1149,7 @@ clean-libtool:
+@@ -1142,6 +1162,7 @@ clean-libtool:
  	-rm -rf src/sh/.libs src/sh/_libs
  	-rm -rf src/sh64/.libs src/sh64/_libs
  	-rm -rf src/sparc/.libs src/sparc/_libs
@@ -295,7 +295,7 @@ Index: libffi/Makefile.in
  	-rm -rf src/x86/.libs src/x86/_libs
  
  distclean-libtool:
-@@ -1714,6 +1735,8 @@ distclean-generic:
+@@ -1727,6 +1748,8 @@ distclean-generic:
  	-rm -f src/sh64/$(am__dirstamp)
  	-rm -f src/sparc/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/sparc/$(am__dirstamp)
@@ -304,7 +304,7 @@ Index: libffi/Makefile.in
  	-rm -f src/x86/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/x86/$(am__dirstamp)
  
-@@ -1727,7 +1750,7 @@ clean-am: clean-aminfo clean-generic cle
+@@ -1740,7 +1763,7 @@ clean-am: clean-aminfo clean-generic cle
  
  distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -313,7 +313,7 @@ Index: libffi/Makefile.in
  	-rm -f Makefile
  distclean-am: clean-am distclean-compile distclean-generic \
  	distclean-hdr distclean-libtool distclean-tags
-@@ -1862,7 +1885,7 @@ installcheck-am:
+@@ -1875,7 +1898,7 @@ installcheck-am:
  maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
@@ -335,7 +335,7 @@ Index: libffi/configure
  PA64_HPUX_FALSE
  PA64_HPUX_TRUE
  PA_HPUX_FALSE
-@@ -12239,6 +12241,10 @@ case "$host" in
+@@ -13293,6 +13295,10 @@ case "$host" in
  	TARGET=SPARC; TARGETDIR=sparc
  	;;
  
@@ -346,7 +346,7 @@ Index: libffi/configure
    x86_64-*-darwin*)
  	TARGET=X86_DARWIN; TARGETDIR=x86
  	;;
-@@ -12492,6 +12498,14 @@ else
+@@ -13546,6 +13552,14 @@ else
    PA64_HPUX_FALSE=
  fi
  
@@ -361,7 +361,7 @@ Index: libffi/configure
  
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
  $as_echo_n "checking for ANSI C header files... " >&6; }
-@@ -13803,6 +13817,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
+@@ -14890,6 +14904,10 @@ if test -z "${PA64_HPUX_TRUE}" && test -
    as_fn_error $? "conditional \"PA64_HPUX\" was never defined.
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi

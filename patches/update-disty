@@ -30,7 +30,7 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -466,6 +466,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -479,6 +479,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 \
  	m4/ltversion.m4 src/arm/gentramp.sh src/debug.c \
  	msvcc.sh generate-ios-source-and-headers.py \

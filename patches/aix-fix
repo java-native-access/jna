@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -6,6 +6,11 @@
+@@ -32,6 +32,11 @@
  	(ffi_call): Silence possibly undefined warning.
  	(ffi_closure_helper_SYSV): Declare variable type.
  

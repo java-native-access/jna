@@ -156,7 +156,7 @@ Index: libffi/testsuite/Makefile.in
 ===================================================================
 --- libffi.orig/testsuite/Makefile.in
 +++ libffi/testsuite/Makefile.in
-@@ -215,69 +215,74 @@ RUNTEST = `if [ -f $(top_srcdir)/../deja
+@@ -228,69 +228,74 @@ RUNTEST = `if [ -f $(top_srcdir)/../deja
  	    else echo runtest; fi`
  
  CLEANFILES = *.exe core* *.log *.sum

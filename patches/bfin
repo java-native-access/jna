@@ -106,7 +106,7 @@ Index: libffi/Makefile.in
  subdir = .
  DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
  	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
-@@ -139,44 +140,45 @@ am_libffi_la_OBJECTS = src/prep_cif.lo s
+@@ -150,44 +151,45 @@ am_libffi_la_OBJECTS = src/prep_cif.lo s
  @FFI_DEBUG_TRUE@am__objects_1 = src/debug.lo
  @MIPS_TRUE@am__objects_2 = src/mips/ffi.lo src/mips/o32.lo \
  @MIPS_TRUE@	src/mips/n32.lo
@@ -178,7 +178,7 @@ Index: libffi/Makefile.in
  nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
  	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
  	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
-@@ -186,17 +188,17 @@ nodist_libffi_la_OBJECTS = $(am__objects
+@@ -197,17 +199,17 @@ nodist_libffi_la_OBJECTS = $(am__objects
  	$(am__objects_18) $(am__objects_19) $(am__objects_20) \
  	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
  	$(am__objects_24) $(am__objects_25) $(am__objects_26) \
@@ -200,7 +200,7 @@ Index: libffi/Makefile.in
  	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
  	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
  	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
-@@ -205,8 +207,8 @@ am__objects_30 = $(am__objects_1) $(am__
+@@ -216,8 +218,8 @@ am__objects_30 = $(am__objects_1) $(am__
  	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
  	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
  	$(am__objects_25) $(am__objects_26) $(am__objects_27) \
@@ -211,7 +211,7 @@ Index: libffi/Makefile.in
  libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
  	$(nodist_libffi_convenience_la_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
-@@ -460,6 +462,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
+@@ -473,6 +475,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 Change
  	src/x86/win64.S src/x86/freebsd.S src/x86/ffi64.c \
  	src/x86/unix64.S src/x86/ffitarget.h src/pa/ffitarget.h	\
  	src/pa/ffi.c src/pa/linux.S src/pa/hpux32.S src/frv/ffi.c \
@@ -219,7 +219,7 @@ Index: libffi/Makefile.in
  	src/frv/eabi.S src/frv/ffitarget.h src/dlmalloc.c \
  	src/moxie/ffi.c src/moxie/eabi.S libtool-version \
  	ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4 \
-@@ -528,10 +531,10 @@ nodist_libffi_la_SOURCES = $(am__append_
+@@ -541,10 +544,10 @@ nodist_libffi_la_SOURCES = $(am__append_
  	$(am__append_18) $(am__append_19) $(am__append_20) \
  	$(am__append_21) $(am__append_22) $(am__append_23) \
  	$(am__append_24) $(am__append_25) $(am__append_26) \
@@ -232,7 +232,7 @@ Index: libffi/Makefile.in
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
  AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
  AM_CCASFLAGS = $(AM_CPPFLAGS) -g
-@@ -656,6 +659,16 @@ src/mips/o32.lo: src/mips/$(am__dirstamp
+@@ -669,6 +672,16 @@ src/mips/o32.lo: src/mips/$(am__dirstamp
  	src/mips/$(DEPDIR)/$(am__dirstamp)
  src/mips/n32.lo: src/mips/$(am__dirstamp) \
  	src/mips/$(DEPDIR)/$(am__dirstamp)
@@ -249,7 +249,7 @@ Index: libffi/Makefile.in
  src/x86/$(am__dirstamp):
  	@$(MKDIR_P) src/x86
  	@: > src/x86/$(am__dirstamp)
-@@ -871,6 +884,10 @@ mostlyclean-compile:
+@@ -884,6 +897,10 @@ mostlyclean-compile:
  	-rm -f src/avr32/ffi.lo
  	-rm -f src/avr32/sysv.$(OBJEXT)
  	-rm -f src/avr32/sysv.lo
@@ -260,7 +260,7 @@ Index: libffi/Makefile.in
  	-rm -f src/closures.$(OBJEXT)
  	-rm -f src/closures.lo
  	-rm -f src/cris/ffi.$(OBJEXT)
-@@ -992,6 +1009,8 @@ distclean-compile:
+@@ -1005,6 +1022,8 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/trampoline.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/avr32/$(DEPDIR)/sysv.Plo@am__quote@
@@ -269,7 +269,7 @@ Index: libffi/Makefile.in
  @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/ffi.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/cris/$(DEPDIR)/sysv.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@src/frv/$(DEPDIR)/eabi.Plo@am__quote@
-@@ -1096,6 +1115,7 @@ clean-libtool:
+@@ -1109,6 +1128,7 @@ clean-libtool:
  	-rm -rf src/alpha/.libs src/alpha/_libs
  	-rm -rf src/arm/.libs src/arm/_libs
  	-rm -rf src/avr32/.libs src/avr32/_libs
@@ -277,7 +277,7 @@ Index: libffi/Makefile.in
  	-rm -rf src/cris/.libs src/cris/_libs
  	-rm -rf src/frv/.libs src/frv/_libs
  	-rm -rf src/ia64/.libs src/ia64/_libs
-@@ -1666,6 +1686,8 @@ distclean-generic:
+@@ -1679,6 +1699,8 @@ distclean-generic:
  	-rm -f src/arm/$(am__dirstamp)
  	-rm -f src/avr32/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/avr32/$(am__dirstamp)
@@ -286,7 +286,7 @@ Index: libffi/Makefile.in
  	-rm -f src/cris/$(DEPDIR)/$(am__dirstamp)
  	-rm -f src/cris/$(am__dirstamp)
  	-rm -f src/frv/$(DEPDIR)/$(am__dirstamp)
-@@ -1705,7 +1727,7 @@ clean-am: clean-aminfo clean-generic cle
+@@ -1718,7 +1740,7 @@ clean-am: clean-aminfo clean-generic cle
  
  distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -295,7 +295,7 @@ Index: libffi/Makefile.in
  	-rm -f Makefile
  distclean-am: clean-am distclean-compile distclean-generic \
  	distclean-hdr distclean-libtool distclean-tags
-@@ -1840,7 +1862,7 @@ installcheck-am:
+@@ -1853,7 +1875,7 @@ installcheck-am:
  maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
@@ -317,7 +317,7 @@ Index: libffi/configure
  MIPS_FALSE
  MIPS_TRUE
  AM_LTLDFLAGS
-@@ -6739,14 +6741,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
+@@ -6844,14 +6846,7 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
  	  x86_64-*linux*)
@@ -333,7 +333,7 @@ Index: libffi/configure
  	    ;;
  	  ppc64-*linux*|powerpc64-*linux*)
  	    LD="${LD-ld} -m elf32ppclinux"
-@@ -12132,6 +12127,10 @@ case "$host" in
+@@ -13186,6 +13181,10 @@ case "$host" in
  	TARGET=AVR32; TARGETDIR=avr32
  	;;
  
@@ -344,7 +344,7 @@ Index: libffi/configure
    cris-*-*)
  	TARGET=LIBFFI_CRIS; TARGETDIR=cris
  	;;
-@@ -12277,6 +12276,14 @@ else
+@@ -13331,6 +13330,14 @@ else
    MIPS_FALSE=
  fi
  
@@ -359,7 +359,7 @@ Index: libffi/configure
   if test x$TARGET = xSPARC; then
    SPARC_TRUE=
    SPARC_FALSE='#'
-@@ -13688,6 +13695,10 @@ if test -z "${MIPS_TRUE}" && test -z "${
+@@ -14775,6 +14782,10 @@ if test -z "${MIPS_TRUE}" && test -z "${
    as_fn_error $? "conditional \"MIPS\" was never defined.
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi

@@ -37,7 +37,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -6739,7 +6739,14 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
+@@ -6844,7 +6844,14 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*
  	    LD="${LD-ld} -m elf_i386_fbsd"
  	    ;;
  	  x86_64-*linux*)

@@ -55,7 +55,7 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 12
+#serial 13
 
 AC_DEFUN([AX_CC_MAXOPT],
 [
@@ -64,7 +64,7 @@ AC_REQUIRE([AX_COMPILER_VENDOR])
 AC_REQUIRE([AC_CANONICAL_HOST])
 
 AC_ARG_ENABLE(portable-binary, [AS_HELP_STRING([--enable-portable-binary], [disable compiler optimizations that would produce unportable binaries])],
-	acx_maxopt_portable=$withval, acx_maxopt_portable=no)
+	acx_maxopt_portable=$enableval, acx_maxopt_portable=no)
 
 # Try to determine "good" native compiler flags if none specified via CFLAGS
 if test "$ac_test_CFLAGS" != "set"; then
