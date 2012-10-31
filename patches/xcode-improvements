@@ -14,7 +14,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -24,6 +24,14 @@
+@@ -29,6 +29,14 @@
  
  	* configure: Regenerated.
  

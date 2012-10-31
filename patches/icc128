@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -26,6 +26,11 @@
+@@ -31,6 +31,11 @@
  
  2012-04-06  Anthony Green  <green@moxielogic.com>
  

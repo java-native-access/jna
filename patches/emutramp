@@ -2,7 +2,10 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -1,3 +1,11 @@
+@@ -3,6 +3,14 @@
+ 	* src/powerpc/linux64_closure.S: Add new ABI support.
+ 	* src/powerpc/linux64.S: Likewise.
+ 
 +2012-10-30  Magnus Granberg  <zorry@gentoo.org>
 +	    Pavel Labushev  <pavel.labushev@runbox.ru>
 +

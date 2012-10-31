@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -29,6 +29,10 @@
+@@ -34,6 +34,10 @@
  	* src/x86/ffi64.c (UINT128): Define differently for Intel and GNU
  	compilers, then use it.
  

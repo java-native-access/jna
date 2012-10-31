@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -24,6 +24,16 @@
+@@ -29,6 +29,16 @@
  
  	* configure: Regenerated.
  
@@ -19,7 +19,7 @@ Index: libffi/ChangeLog
  2012-04-02  Peter Bergner  <bergner@vnet.ibm.com>
  
  	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Declare double_tmp.
-@@ -32,11 +42,6 @@
+@@ -37,11 +47,6 @@
  	(ffi_call): Silence possibly undefined warning.
  	(ffi_closure_helper_SYSV): Declare variable type.
  

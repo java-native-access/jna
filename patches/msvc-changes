@@ -2,7 +2,7 @@ Index: libffi/ChangeLog
 ===================================================================
 --- libffi.orig/ChangeLog
 +++ libffi/ChangeLog
-@@ -24,6 +24,143 @@
+@@ -29,6 +29,143 @@
  
  	* configure: Regenerated.
  
@@ -163,7 +163,7 @@ Index: libffi/Makefile.in
 ===================================================================
 --- libffi.orig/Makefile.in
 +++ libffi/Makefile.in
-@@ -530,7 +530,7 @@ libffi_convenience_la_SOURCES = $(libffi
+@@ -543,7 +543,7 @@ libffi_convenience_la_SOURCES = $(libffi
  nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
  AM_CFLAGS = -g $(am__append_29)
  libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
