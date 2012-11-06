@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 2009 Anthony Green
+   ffitarget.h - Copyright (c) 2012 Anthony Green
    Target configuration macros for Moxie
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -47,7 +47,7 @@ typedef enum ffi_abi {
 
 /* ---- Definitions for closures ----------------------------------------- */
 
-#define FFI_CLOSURES 0
+#define FFI_CLOSURES 1
 #define FFI_NATIVE_RAW_API 0
 
 /* Trampolines are 5 4-byte instructions long.  */

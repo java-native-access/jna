@@ -17,6 +17,15 @@ Index: libffi/ChangeLog
  2012-10-30  Frederick Cheung  <frederick.cheung@gmail.com>
  
  	* configure.ac: Enable FFI_MAP_EXEC_WRIT for Darwin 12 (mountain
+@@ -27,7 +35,7 @@
+         * testsuite/libffi.call/cls_struct_va1.c: New.
+         * testsuite/libffi.call/cls_uchar_va.c: Likewise.
+         * testsuite/libffi.call/cls_uint_va.c: Likewise.
+-        * testsuite/libffi.call/cls_ulong_va.c: Liekwise.
++        * testsuite/libffi.call/cls_ulong_va.c: Likewise.
+         * testsuite/libffi.call/cls_ushort_va.c: Likewise.
+         * testsuite/libffi.call/nested_struct11.c: Likewise.
+         * testsuite/libffi.call/uninitialized.c: Likewise.
 Index: libffi/README
 ===================================================================
 --- libffi.orig/README
@@ -33,7 +42,7 @@ Index: libffi/configure
 ===================================================================
 --- libffi.orig/configure
 +++ libffi/configure
-@@ -826,6 +826,7 @@ enable_libtool_lock
+@@ -828,6 +828,7 @@ enable_libtool_lock
  enable_portable_binary
  with_gcc_arch
  enable_maintainer_mode
@@ -41,7 +50,7 @@ Index: libffi/configure
  enable_debug
  enable_structs
  enable_raw_api
-@@ -1473,6 +1474,7 @@ Optional Features:
+@@ -1475,6 +1476,7 @@ Optional Features:
                            unportable binaries
    --enable-maintainer-mode  enable make rules and dependencies not useful
  			  (and sometimes confusing) to the casual installer
@@ -49,7 +58,7 @@ Index: libffi/configure
    --enable-debug          debugging mode
    --disable-structs       omit code for struct support
    --disable-raw-api       make the raw api unavailable
-@@ -14457,6 +14459,16 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
+@@ -14485,6 +14487,16 @@ $as_echo "#define SYMBOL_UNDERSCORE 1" >
      fi
  fi
  
@@ -70,7 +79,7 @@ Index: libffi/configure.ac
 ===================================================================
 --- libffi.orig/configure.ac
 +++ libffi/configure.ac
-@@ -352,6 +352,13 @@ if test x$TARGET = xX86_WIN64; then
+@@ -357,6 +357,13 @@ if test x$TARGET = xX86_WIN64; then
      fi
  fi
  

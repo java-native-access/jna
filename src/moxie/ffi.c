@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   ffi.c - Copyright (C) 2009  Anthony Green
+   ffi.c - Copyright (C) 2012  Anthony Green
    
    Moxie Foreign Function Interface 
 
@@ -56,17 +56,6 @@ void *ffi_prep_args(char *stack, extended_cif *ecif)
 	  z = sizeof(void*);
 	  *(void **) argp = *p_argv;
 	} 
-      /*      if ((*p_arg)->type == FFI_TYPE_FLOAT)
-	{
-	  if (count > 24)
-	    {
-	      // This is going on the stack.  Turn it into a double.  
-	      *(double *) argp = (double) *(float*)(* p_argv);
-	      z = sizeof(double);
-	    }
-	  else
-	    *(void **) argp = *(void **)(* p_argv);
-	}  */
       else if (z < sizeof(int))
 	{
 	  z = sizeof(int);
@@ -167,12 +156,12 @@ void ffi_closure_eabi (unsigned arg1, unsigned arg2, unsigned arg3,
   /* This function is called by a trampoline.  The trampoline stows a
      pointer to the ffi_closure object in gr7.  We must save this
      pointer in a place that will persist while we do our work.  */
-  register ffi_closure *creg __asm__ ("gr7");
+  register ffi_closure *creg __asm__ ("$r7");
   ffi_closure *closure = creg;
 
   /* Arguments that don't fit in registers are found on the stack
      at a fixed offset above the current frame pointer.  */
-  register char *frame_pointer __asm__ ("fp");
+  register char *frame_pointer __asm__ ("$fp");
   char *stack_args = frame_pointer + 16;
 
   /* Lay the register arguments down in a continuous chunk of memory.  */
@@ -226,7 +215,7 @@ void ffi_closure_eabi (unsigned arg1, unsigned arg2, unsigned arg3,
       /* The caller allocates space for the return structure, and
        passes a pointer to this space in gr3.  Use this value directly
        as the return value.  */
-      register void *return_struct_ptr __asm__("gr3");
+      register void *return_struct_ptr __asm__("$r0");
       (closure->fun) (cif, return_struct_ptr, avalue, closure->user_data);
     }
   else
@@ -237,9 +226,9 @@ void ffi_closure_eabi (unsigned arg1, unsigned arg2, unsigned arg3,
 
       /* Functions return 4-byte or smaller results in gr8.  8-byte
 	 values also use gr9.  We fill the both, even for small return
-	 values, just to avoid a branch.  */ 
+	 values, just to avoid a branch.  */ /*
       asm ("ldi  @(%0, #0), gr8" : : "r" (&rvalue));
-      asm ("ldi  @(%0, #0), gr9" : : "r" (&((int *) &rvalue)[1]));
+      asm ("ldi  @(%0, #0), gr9" : : "r" (&((int *) &rvalue)[1])); */
     }
 }
 
@@ -266,11 +255,6 @@ ffi_prep_closure_loc (ffi_closure* closure,
   closure->cif = cif;
   closure->fun = fun;
   closure->user_data = user_data;
-
-  /* Cache flushing.  */
-  for (i = 0; i < FFI_TRAMPOLINE_SIZE; i++)
-    __asm__ volatile ("dcf @(%0,%1)\n\tici @(%2,%1)" :: "r" (tramp), "r" (i),
-		      "r" (codeloc));
 
   return FFI_OK;
 }

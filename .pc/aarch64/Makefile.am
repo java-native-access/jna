@@ -5,7 +5,6 @@ AUTOMAKE_OPTIONS = foreign subdir-objects
 SUBDIRS = include testsuite man
 
 EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
-	 src/aarch64/ffi.c src/aarch64/ffitarget.h			\
 	 src/alpha/ffi.c src/alpha/osf.S src/alpha/ffitarget.h		\
 	 src/arm/ffi.c src/arm/sysv.S src/arm/ffitarget.h		\
 	 src/avr32/ffi.c src/avr32/sysv.S src/avr32/ffitarget.h		\
@@ -151,9 +150,6 @@ nodist_libffi_la_SOURCES += src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/po
 endif
 if POWERPC_FREEBSD
 nodist_libffi_la_SOURCES += src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
-endif
-if AARCH64
-nodist_libffi_la_SOURCES += src/aarch64/sysv.S src/aarch64/ffi.c
 endif
 if ARM
 nodist_libffi_la_SOURCES += src/arm/sysv.S src/arm/ffi.c
