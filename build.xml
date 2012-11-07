@@ -119,6 +119,7 @@
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2"
+                   flags="g"
                    file="${pom-platform}"/>
 
     <replaceregexp match='VERSION = ".*";'
@@ -969,25 +970,10 @@ osname=macos
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
     </artifact:mvn>
-    <!-- @todo only one file at a time is working with maven-deploy-plugin, find way to deploy sources and javadoc too.
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
-      <arg value="-Durl=${maven-snapshots-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
-      <arg value="-DpomFile=${pom}"/>
-      <arg value="-Dfile=${maven-sources-jar}"/>
-      <arg value="-Dclassifier=sources"/>
-    </artifact:mvn>
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
-      <arg value="-Durl=${maven-snapshots-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
-      <arg value="-DpomFile=${pom}"/>
-      <arg value="-Dfile=${maven-javadoc-jar}"/>
-      <arg value="-Dclassifier=javadoc"/>
-    </artifact:mvn>
-    -->
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
@@ -995,25 +981,10 @@ osname=macos
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
+      <arg value="-Dtypes=jar,jar"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
     </artifact:mvn>
-    <!-- @todo only one file at a time is working with maven-deploy-plugin, find way to deploy sources and javadoc too.
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
-      <arg value="-Durl=${maven-snapshots-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
-      <arg value="-DpomFile=${pom-platform}"/>
-      <arg value="-Dfile=${platform-sources-jar}"/>
-      <arg value="-Dclassifier=sources"/>
-    </artifact:mvn>
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file"/>
-      <arg value="-Durl=${maven-snapshots-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
-      <arg value="-DpomFile=${pom-platform}"/>
-      <arg value="-Dfile=${platform-javadoc-jar}"/>
-      <arg value="-Dclassifier=javadoc"/>
-    </artifact:mvn>
-    -->
   </target>
 
 
