@@ -8,8 +8,9 @@ JNA Release Process
 * If native changes have been made, run `ant dist` target on each target
   platform, pushing the resulting target-specific jar file to master.
 
-* Run `ant clean dist` target.  Commit and push generated files in dist.
-  You will also see differences in the pom-*.xml files, src/.../Native.java, and a platform specific jar in lib/native/. Commit and push these also.
+* Run `ant clean dist` target.  Commit and push generated files in dist, except for a platform specific jar: "&lt;os>-&lt;arch>.jar".
+  You will also see differences in the pom-*.xml files and src/.../Native.java. Commit and push these also. Do not commit the altered platform specific jar "&lt;os>-&lt;arch>.jar" in lib/native/.
+  At some point we may change the 'dist' target to "skip-native", thereby avoiding the rebuild of the "&lt;os>-&lt;arch>.jar" files in lib/native and dist.
 
 * Update Javadoc
   Check out gh-pages branch, copy latest doc/javadoc into <version>/javadoc,
