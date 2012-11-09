@@ -5,6 +5,12 @@ I'm having trouble generating correct library mappings
 ------------------------------------------------------
 Make sure you've read [this page](https://github.com/twall/jna/tree/master/www/Mappings.md) and [this one](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).  Try [JNAerator](http://code.google.com/p/jnaerator/).  If you find its output too verbose, delete the mappings you don't need, or copy out the ones you do need.
 
+My library mapping causes an UnsatisfiedLinkError
+-------------------------------------------------
+
+Use a dump utility to examine the names of your exported functions to make sure they match (nm on linux, [depends](http://www.dependencywalker.com/) on Windows). On Windows, if the functions have a suffix of the form "@NN", you need to pass a `StdCallFunctionMapper` as an option when initializing your library interface. In general, you can use a function mapper (`FunctionMapper`) to change the name of the looked-up method, or an invocation mapper (`InvocationMapper`) for more extensive control over the method invocation.
+
+
 How do I map a native `long` type?
 ----------------------------------
 
@@ -100,12 +106,6 @@ at some later point.
     // then call the recommended native method with the Pointer
     // value to free the memory
     Pointer getString();
-
-My library mapping causes an UnsatisfiedLinkError
--------------------------------------------------
-
-Use a dump utility to examine the names of your exported functions to make sure they match (nm on linux, [depends](http://www.dependencywalker.com/) on Windows). On Windows, if the functions have a suffix of the form "@NN", you need to pass a `StdCallFunctionMapper` as an option when initializing your library interface. In general, you can use a function mapper (`FunctionMapper`) to change the name of the looked-up method, or an invocation mapper (`InvocationMapper`) for more extensive control over the method invocation.
-
 
 My library sometimes causes a VM crash
 --------------------------------------
