@@ -79,6 +79,11 @@ Declare methods that mirror the functions in the target library by defining Java
         public short wMinute;
         public short wSecond;
         public short wMilliseconds;
+        protected List getFieldOrder() { 
+            return Arrays.asList(new String[] { 
+                "wYear", "wMonth", "wDayOfWeek", "wDay", "wHour", "wMinute", "wSecond", "wMilliseconds",
+            });
+        }
     }
 
     void GetSystemTime(SYSTEMTIME result);
