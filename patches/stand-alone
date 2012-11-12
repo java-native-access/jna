@@ -19503,26 +19503,37 @@ Index: libffi/config.sub
 -#   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
 -#   Free Software Foundation, Inc.
 +#   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
-+#   2011 Free Software Foundation, Inc.
++#   2011, 2012 Free Software Foundation, Inc.
  
 -timestamp='2009-11-20'
-+timestamp='2011-10-29'
++timestamp='2012-04-18'
  
  # This file is (in principle) common to ALL GNU software.
  # The presence of a machine in this file suggests that SOME GNU software
-@@ -75,8 +75,9 @@ Report bugs and patches to <config-patch
+@@ -21,9 +21,7 @@ timestamp='2009-11-20'
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+-# along with this program; if not, write to the Free Software
+-# Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA
+-# 02110-1301, USA.
++# along with this program; if not, see <http://www.gnu.org/licenses/>.
+ #
+ # As a special exception to the GNU General Public License, if you
+ # distribute this file as part of a program that contains a
+@@ -75,8 +73,9 @@ Report bugs and patches to <config-patch
  version="\
  GNU config.sub ($timestamp)
  
 -Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
 -2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 +Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-+2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free
-+Software Foundation, Inc.
++2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012
++Free Software Foundation, Inc.
  
  This is free software; see the source for copying conditions.  There is NO
  warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
-@@ -123,8 +124,9 @@ esac
+@@ -123,13 +122,18 @@ esac
  # Here we must recognize all the valid KERNEL-OS combinations.
  maybe_os=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\2/'`
  case $maybe_os in
@@ -19534,7 +19545,16 @@ Index: libffi/config.sub
    kopensolaris*-gnu* | \
    storm-chaos* | os2-emx* | rtmk-nova*)
      os=-$maybe_os
-@@ -156,8 +158,8 @@ case $os in
+     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+     ;;
++  android-linux)
++    os=-linux-android
++    basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`-unknown
++    ;;
+   *)
+     basic_machine=`echo $1 | sed 's/-[^-]*$//'`
+     if [ $basic_machine != $1 ]
+@@ -156,8 +160,8 @@ case $os in
  		os=
  		basic_machine=$1
  		;;
@@ -19545,7 +19565,7 @@ Index: libffi/config.sub
  		;;
  	-sim | -cisco | -oki | -wec | -winbond)
  		os=
-@@ -173,10 +175,10 @@ case $os in
+@@ -173,10 +177,10 @@ case $os in
  		os=-chorusos
  		basic_machine=$1
  		;;
@@ -19559,7 +19579,25 @@ Index: libffi/config.sub
  	-hiux*)
  		os=-hiuxwe2
  		;;
-@@ -249,13 +251,17 @@ case $basic_machine in
+@@ -221,6 +225,12 @@ case $os in
+ 	-isc*)
+ 		basic_machine=`echo $1 | sed -e 's/86-.*/86-pc/'`
+ 		;;
++	-lynx*178)
++		os=-lynxos178
++		;;
++	-lynx*5)
++		os=-lynxos5
++		;;
+ 	-lynx*)
+ 		os=-lynxos
+ 		;;
+@@ -245,17 +255,22 @@ case $basic_machine in
+ 	# Some are omitted here because they have special meanings below.
+ 	1750a | 580 \
+ 	| a29k \
++	| aarch64 | aarch64_be \
+ 	| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] | alphapca5[67] \
  	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
  	| am33_2.0 \
  	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
@@ -19577,7 +19615,7 @@ Index: libffi/config.sub
  	| lm32 \
  	| m32c | m32r | m32rle | m68000 | m68k | m88k \
  	| maxq | mb | microblaze | mcore | mep | metag \
-@@ -281,27 +287,38 @@ case $basic_machine in
+@@ -281,29 +296,39 @@ case $basic_machine in
  	| moxie \
  	| mt \
  	| msp430 \
@@ -19610,6 +19648,8 @@ Index: libffi/config.sub
  	| z8k | z80)
  		basic_machine=$basic_machine-unknown
  		;;
+-	m6811 | m68hc11 | m6812 | m68hc12 | picochip)
+-		# Motorola 68HC11/12.
 +	c54x)
 +		basic_machine=tic54x-unknown
 +		;;
@@ -19619,17 +19659,21 @@ Index: libffi/config.sub
 +	c6x)
 +		basic_machine=tic6x-unknown
 +		;;
- 	m6811 | m68hc11 | m6812 | m68hc12 | picochip)
- 		# Motorola 68HC11/12.
++	m6811 | m68hc11 | m6812 | m68hc12 | m68hcs12x | picochip)
  		basic_machine=$basic_machine-unknown
-@@ -313,6 +330,18 @@ case $basic_machine in
+ 		os=-none
+ 		;;
+@@ -313,6 +338,21 @@ case $basic_machine in
  		basic_machine=mt-unknown
  		;;
  
 +	strongarm | thumb | xscale)
 +		basic_machine=arm-unknown
 +		;;
-+
++	xgate)
++		basic_machine=$basic_machine-unknown
++		os=-none
++		;;
 +	xscaleeb)
 +		basic_machine=armeb-unknown
 +		;;
@@ -19641,7 +19685,13 @@ Index: libffi/config.sub
  	# We use `pc' rather than `unknown'
  	# because (1) that's what they normally are, and
  	# (2) the word "unknown" tends to confuse beginning users.
-@@ -332,16 +361,19 @@ case $basic_machine in
+@@ -327,21 +367,25 @@ case $basic_machine in
+ 	# Recognize the basic CPU types with company name.
+ 	580-* \
+ 	| a29k-* \
++	| aarch64-* | aarch64_be-* \
+ 	| alpha-* | alphaev[4-8]-* | alphaev56-* | alphaev6[78]-* \
+ 	| alpha64-* | alpha64ev[4-8]-* | alpha64ev56-* | alpha64ev6[78]-* \
  	| alphapca5[67]-* | alpha64pca5[67]-* | arc-* \
  	| arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
  	| avr-* | avr32-* \
@@ -19662,7 +19712,7 @@ Index: libffi/config.sub
  	| lm32-* \
  	| m32c-* | m32r-* | m32rle-* \
  	| m68000-* | m680[012346]0-* | m68360-* | m683?2-* | m68k-* \
-@@ -367,25 +399,29 @@ case $basic_machine in
+@@ -367,25 +411,29 @@ case $basic_machine in
  	| mmix-* \
  	| mt-* \
  	| msp430-* \
@@ -19699,7 +19749,7 @@ Index: libffi/config.sub
  	| xstormy16-* | xtensa*-* \
  	| ymp-* \
  	| z8k-* | z80-*)
-@@ -410,7 +446,7 @@ case $basic_machine in
+@@ -410,7 +458,7 @@ case $basic_machine in
  		basic_machine=a29k-amd
  		os=-udi
  		;;
@@ -19708,7 +19758,7 @@ Index: libffi/config.sub
  		basic_machine=abacus-unknown
  		;;
  	adobe68k)
-@@ -480,11 +516,20 @@ case $basic_machine in
+@@ -480,11 +528,20 @@ case $basic_machine in
  		basic_machine=powerpc-ibm
  		os=-cnk
  		;;
@@ -19730,7 +19780,7 @@ Index: libffi/config.sub
  		basic_machine=arm-unknown
  		os=-cegcc
  		;;
-@@ -516,7 +561,7 @@ case $basic_machine in
+@@ -516,7 +573,7 @@ case $basic_machine in
  		basic_machine=craynv-cray
  		os=-unicosmp
  		;;
@@ -19739,7 +19789,15 @@ Index: libffi/config.sub
  		basic_machine=cr16-unknown
  		os=-elf
  		;;
-@@ -732,7 +777,7 @@ case $basic_machine in
+@@ -674,7 +731,6 @@ case $basic_machine in
+ 	i370-ibm* | ibm*)
+ 		basic_machine=i370-ibm
+ 		;;
+-# I'm not sure what "Sysv32" means.  Should this be sysv3.2?
+ 	i*86v32)
+ 		basic_machine=`echo $1 | sed -e 's/86.*/86-pc/'`
+ 		os=-sysv32
+@@ -732,7 +788,7 @@ case $basic_machine in
  		basic_machine=ns32k-utek
  		os=-sysv
  		;;
@@ -19748,7 +19806,15 @@ Index: libffi/config.sub
  		basic_machine=microblaze-xilinx
  		;;
  	mingw32)
-@@ -775,6 +820,10 @@ case $basic_machine in
+@@ -771,10 +827,18 @@ case $basic_machine in
+ 	ms1-*)
+ 		basic_machine=`echo $basic_machine | sed -e 's/ms1-/mt-/'`
+ 		;;
++	msys)
++		basic_machine=i386-pc
++		os=-msys
++		;;
+ 	mvs)
  		basic_machine=i370-ibm
  		os=-mvs
  		;;
@@ -19759,7 +19825,7 @@ Index: libffi/config.sub
  	ncr3000)
  		basic_machine=i486-ncr
  		os=-sysv4
-@@ -839,6 +888,12 @@ case $basic_machine in
+@@ -839,6 +903,12 @@ case $basic_machine in
  	np1)
  		basic_machine=np1-gould
  		;;
@@ -19772,7 +19838,7 @@ Index: libffi/config.sub
  	nsr-tandem)
  		basic_machine=nsr-tandem
  		;;
-@@ -921,9 +976,10 @@ case $basic_machine in
+@@ -921,9 +991,10 @@ case $basic_machine in
  		;;
  	power)	basic_machine=power-ibm
  		;;
@@ -19785,7 +19851,7 @@ Index: libffi/config.sub
  		;;
  	ppcle | powerpclittle | ppc-le | powerpc-little)
  		basic_machine=powerpcle-unknown
-@@ -1017,6 +1073,9 @@ case $basic_machine in
+@@ -1017,6 +1088,9 @@ case $basic_machine in
  		basic_machine=i860-stratus
  		os=-sysv4
  		;;
@@ -19795,7 +19861,7 @@ Index: libffi/config.sub
  	sun2)
  		basic_machine=m68000-sun
  		;;
-@@ -1073,20 +1132,8 @@ case $basic_machine in
+@@ -1073,20 +1147,8 @@ case $basic_machine in
  		basic_machine=t90-cray
  		os=-unicos
  		;;
@@ -19817,7 +19883,7 @@ Index: libffi/config.sub
  		os=-linux-gnu
  		;;
  	tx39)
-@@ -1156,6 +1203,9 @@ case $basic_machine in
+@@ -1156,6 +1218,9 @@ case $basic_machine in
  	xps | xps100)
  		basic_machine=xps100-honeywell
  		;;
@@ -19827,7 +19893,7 @@ Index: libffi/config.sub
  	ymp)
  		basic_machine=ymp-cray
  		os=-unicos
-@@ -1253,11 +1303,11 @@ esac
+@@ -1253,11 +1318,11 @@ esac
  if [ x"$os" != x"" ]
  then
  case $os in
@@ -19843,17 +19909,19 @@ Index: libffi/config.sub
  		;;
  	-solaris1 | -solaris1.*)
  		os=`echo $os | sed -e 's|solaris1|sunos4|'`
-@@ -1294,7 +1344,8 @@ case $os in
+@@ -1293,8 +1358,9 @@ case $os in
+ 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
  	      | -chorusos* | -chorusrdb* | -cegcc* \
- 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+-	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
 -	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
++	      | -cygwin* | -msys* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
 +	      | -mingw32* | -linux-gnu* | -linux-android* \
 +	      | -linux-newlib* | -linux-uclibc* \
  	      | -uxpv* | -beos* | -mpeix* | -udk* \
  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
  	      | -openstep* | -oskit* | -conix* | -pw32* | -nonstopux* \
-@@ -1341,7 +1392,7 @@ case $os in
+@@ -1341,7 +1407,7 @@ case $os in
  	-opened*)
  		os=-openedition
  		;;
@@ -19862,7 +19930,7 @@ Index: libffi/config.sub
  		os=-os400
  		;;
  	-wince*)
-@@ -1390,7 +1441,7 @@ case $os in
+@@ -1390,7 +1456,7 @@ case $os in
  	-sinix*)
  		os=-sysv4
  		;;
@@ -19871,7 +19939,7 @@ Index: libffi/config.sub
  		os=-tpf
  		;;
  	-triton*)
-@@ -1435,6 +1486,8 @@ case $os in
+@@ -1435,6 +1501,8 @@ case $os in
  	-dicos*)
  		os=-dicos
  		;;
@@ -19880,7 +19948,7 @@ Index: libffi/config.sub
  	-none)
  		;;
  	*)
-@@ -1457,10 +1510,10 @@ else
+@@ -1457,10 +1525,10 @@ else
  # system, and we'll never get to this point.
  
  case $basic_machine in
@@ -19893,7 +19961,7 @@ Index: libffi/config.sub
  		os=-elf
  		;;
  	*-acorn)
-@@ -1472,8 +1525,17 @@ case $basic_machine in
+@@ -1472,8 +1540,17 @@ case $basic_machine in
  	arm*-semi)
  		os=-aout
  		;;
@@ -19913,7 +19981,14 @@ Index: libffi/config.sub
  		;;
  	# This must come before the *-dec entry.
  	pdp10-*)
-@@ -1500,7 +1562,7 @@ case $basic_machine in
+@@ -1493,14 +1570,11 @@ case $basic_machine in
+ 		;;
+ 	m68000-sun)
+ 		os=-sunos3
+-		# This also exists in the configure program, but was not the
+-		# default.
+-		# os=-sunos4
+ 		;;
  	m68*-cisco)
  		os=-aout
  		;;
@@ -19922,7 +19997,7 @@ Index: libffi/config.sub
  		os=-elf
  		;;
  	mips*-cisco)
-@@ -1527,7 +1589,7 @@ case $basic_machine in
+@@ -1527,7 +1601,7 @@ case $basic_machine in
  	*-ibm)
  		os=-aix
  		;;
