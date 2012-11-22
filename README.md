@@ -20,8 +20,8 @@ Download
 
 Version 3.5.1
 
-* [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.1/dist/jna.jar?raw=true)
-* [platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.1/dist/platform.jar?raw=true)
+* [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.1/dist/jna-3.5.1.jar)
+* [platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.1/dist/platform-3.5.1.jar)
 
 Features
 ========
