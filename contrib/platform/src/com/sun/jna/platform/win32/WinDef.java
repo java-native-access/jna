@@ -25,359 +25,425 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
- * Ported from Windef.h (various macros and types). 
- * Microsoft Windows SDK 6.0A.
+ * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
+ * 
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
 public interface WinDef extends StdCallLibrary {
 
-    int MAX_PATH = 260;
+	int MAX_PATH = 260;
 
-    /**
-     * 16-bit unsigned integer.
-     */
-    public static class WORD extends IntegerType {
-        public WORD() {
-            this(0);
-        }
+	/**
+	 * 16-bit unsigned integer.
+	 */
+	public static class WORD extends IntegerType {
+		public WORD() {
+			this(0);
+		}
 
-        public WORD(long value) {
-            super(2, value, true);
-        }
-    }
+		public WORD(long value) {
+			super(2, value, true);
+		}
+	}
 
-    /**
-     * 32-bit unsigned integer.
-     */
-    public static class DWORD extends IntegerType {
-        public DWORD() {
-            this(0);
-        }
+	/**
+	 * 32-bit unsigned integer.
+	 */
+	public static class DWORD extends IntegerType {
+		public DWORD() {
+			this(0);
+		}
 
-        public DWORD(long value) {
-            super(4, value, true);
-        }
-		
-        /**
-         * Low WORD.
-         * @return
-         *  Low WORD.
-         */
-        public WORD getLow() {
-            return new WORD(longValue() & 0xFFFF);
-        }
-				
-        /**
-         * High WORD.
-         * @return
-         *  High WORD.
-         */
-        public WORD getHigh() {
-            return new WORD((longValue() >> 16) & 0xFFFF);
-        }
-    }
+		public DWORD(long value) {
+			super(4, value, true);
+		}
 
-    /**
-     * 32-bit signed integer.
-     */
-    public static class LONG extends IntegerType {
-        public LONG() {
-            this(0);
-        }
+		/**
+		 * Low WORD.
+		 * 
+		 * @return Low WORD.
+		 */
+		public WORD getLow() {
+			return new WORD(longValue() & 0xFF);
+		}
 
-        public LONG(long value) {
-            super(Native.LONG_SIZE, value);
-        }
-    }
+		/**
+		 * High WORD.
+		 * 
+		 * @return High WORD.
+		 */
+		public WORD getHigh() {
+			return new WORD((longValue() >> 16) & 0xFF);
+		}
+	}
 
-    /**
-     * Handle to a device context (DC).
-     */
-    public static class HDC extends HANDLE {
-        public HDC() {
+	/**
+	 * 32-bit signed integer.
+	 */
+	public static class LONG extends IntegerType {
+		public LONG() {
+			this(0);
+		}
 
-        }
+		public LONG(long value) {
+			super(Native.LONG_SIZE, value);
+		}
+	}
 
-        public HDC(Pointer p) {
-            super(p);
-        }
-    }
+	/**
+	 * Handle to a device context (DC).
+	 */
+	public static class HDC extends HANDLE {
+		public HDC() {
 
-    /**
-     * Handle to an icon.
-     */
-    public static class HICON extends HANDLE {
-        public HICON() {
+		}
 
-        }
+		public HDC(Pointer p) {
+			super(p);
+		}
+	}
 
-        public HICON(Pointer p) {
-            super(p);
-        }
-    }
-	
-    /**
-     * Handle to a cursor. 
-     */
-    public static class HCURSOR extends HICON {
-        public HCURSOR() {
+	/**
+	 * Handle to an icon.
+	 */
+	public static class HICON extends HANDLE {
+		public HICON() {
 
-        }
+		}
 
-        public HCURSOR(Pointer p) {
-            super(p);
-        }
-    }
+		public HICON(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a cursor. 
-     */
-    public static class HMENU extends HANDLE {
-        public HMENU() {
+	/**
+	 * Handle to a cursor.
+	 */
+	public static class HCURSOR extends HICON {
+		public HCURSOR() {
 
-        }
+		}
 
-        public HMENU(Pointer p) {
-            super(p);
-        }
-    }
+		public HCURSOR(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a pen.
-     */
-    public static class HPEN extends HANDLE {
-        public HPEN() {
+	/**
+	 * Handle to a cursor.
+	 */
+	public static class HMENU extends HANDLE {
+		public HMENU() {
 
-        }
+		}
 
-        public HPEN(Pointer p) {
-            super(p);
-        }
-    }
+		public HMENU(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a resource. 
-     */
-    public static class HRSRC extends HANDLE {
-        public HRSRC() {
+	/**
+	 * Handle to a pen.
+	 */
+	public static class HPEN extends HANDLE {
+		public HPEN() {
 
-        }
+		}
 
-        public HRSRC(Pointer p) {
-            super(p);
-        }
-    }
-	
-    /**
-     * Handle to a palette. 
-     */
-    public static class HPALETTE extends HANDLE {
-        public HPALETTE() {
+		public HPEN(Pointer p) {
+			super(p);
+		}
+	}
 
-        }
+	/**
+	 * Handle to a resource.
+	 */
+	public static class HRSRC extends HANDLE {
+		public HRSRC() {
 
-        public HPALETTE(Pointer p) {
-            super(p);
-        }
-    }
-	
-    /**
-     * Handle to a bitmap.
-     */
-    public static class HBITMAP extends HANDLE {
-        public HBITMAP() {
+		}
 
-        }
+		public HRSRC(Pointer p) {
+			super(p);
+		}
+	}
 
-        public HBITMAP(Pointer p) {
-            super(p);
-        }
-    }
+	/**
+	 * Handle to a palette.
+	 */
+	public static class HPALETTE extends HANDLE {
+		public HPALETTE() {
 
-    /**
-     * Handle to a region.
-     */
-    public static class HRGN extends HANDLE {
-        public HRGN() {
+		}
 
-        }
+		public HPALETTE(Pointer p) {
+			super(p);
+		}
+	}
 
-        public HRGN(Pointer p) {
-            super(p);
-        }
-    }
+	/**
+	 * Handle to a bitmap.
+	 */
+	public static class HBITMAP extends HANDLE {
+		public HBITMAP() {
 
-    /**
-     * Handle to a window.
-     */
-    public static class HWND extends HANDLE {
-        public HWND() {
+		}
 
-        }
+		public HBITMAP(Pointer p) {
+			super(p);
+		}
+	}
 
-        public HWND(Pointer p) {
-            super(p);
-        }
-    }
+	/**
+	 * Handle to a region.
+	 */
+	public static class HRGN extends HANDLE {
+		public HRGN() {
 
-    /**
-     * Handle to an instance.
-     */
-    public static class HINSTANCE extends HANDLE {
+		}
 
-    }
+		public HRGN(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a module. The value is the base address of the module.
-     */
-    public static class HMODULE extends HINSTANCE {
+	/**
+	 * Handle to a window.
+	 */
+	public static class HWND extends HANDLE {
+		public HWND() {
 
-    }
+		}
 
-    /**
-     * Handle to a font.
-     */
-    public static class HFONT extends HANDLE {
-        public HFONT() {
+		public HWND(Pointer p) {
+			super(p);
+		}
+	}
 
-        }
+	/**
+	 * Handle to an instance.
+	 */
+	public static class HINSTANCE extends HANDLE {
 
-        public HFONT(Pointer p) {
-            super(p);
-        }
-    }
+	}
 
-    /**
-     * Message parameter. 
-     */
-    public static class LPARAM extends LONG_PTR {
-        public LPARAM() {
-            this(0);
-        }
+	/**
+	 * Handle to a module. The value is the base address of the module.
+	 */
+	public static class HMODULE extends HINSTANCE {
 
-        public LPARAM(long value) {
-            super(value);
-        }
-    }
+	}
 
-    /**
-     * Signed result of message processing. 
-     */
-    public static class LRESULT extends LONG_PTR {
-        public LRESULT() {
-            this(0);
-        }
+	/**
+	 * Handle to a font.
+	 */
+	public static class HFONT extends HANDLE {
+		public HFONT() {
 
-        public LRESULT(long value) {
-            super(value);
-        }
-    }
+		}
 
-    /** Integer type big enough for a pointer. */
-    public static class INT_PTR extends IntegerType {
-        public INT_PTR() {
-            super(Pointer.SIZE);
-        }
+		public HFONT(Pointer p) {
+			super(p);
+		}
+	}
 
-        public INT_PTR(long value) {
-            super(Pointer.SIZE, value);
-        }
+	/**
+	 * Message parameter.
+	 */
+	public static class LPARAM extends LONG_PTR {
+		public LPARAM() {
+			this(0);
+		}
 
-        public Pointer toPointer() {
-            return Pointer.createConstant(longValue());
-        }
-    }
+		public LPARAM(long value) {
+			super(value);
+		}
+	}
 
-    /**
-     * Unsigned INT_PTR.
-     */
-    public static class UINT_PTR extends IntegerType {
-        public UINT_PTR() {
-            super(Pointer.SIZE);
-        }
+	/**
+	 * Signed result of message processing.
+	 */
+	public static class LRESULT extends LONG_PTR {
+		public LRESULT() {
+			this(0);
+		}
 
-        public UINT_PTR(long value) {
-            super(Pointer.SIZE, value, true);
-        }
+		public LRESULT(long value) {
+			super(value);
+		}
+	}
 
-        public Pointer toPointer() {
-            return Pointer.createConstant(longValue());
-        }
-    }
+	/** Integer type big enough for a pointer. */
+	public static class INT_PTR extends IntegerType {
+		public INT_PTR() {
+			super(Pointer.SIZE);
+		}
 
-    /**
-     * Message parameter. 
-     */
-    public static class WPARAM extends UINT_PTR {
-        public WPARAM() {
-            this(0);
-        }
+		public INT_PTR(long value) {
+			super(Pointer.SIZE, value);
+		}
 
-        public WPARAM(long value) {
-            super(value);
-        }
-    }
-	
-    public class RECT extends Structure {
-        public int left;
-        public int top;
-        public int right;
-        public int bottom;
-        
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "left", "top", "right", "bottom" });
-        }
-        
-        public Rectangle toRectangle() {
-            return new Rectangle(left, top, right-left, bottom-top);
-        }
-        
-        public String toString() {
-            return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
-        }
-    }
-    
-    /**
-     * 32-bit unsigned integer.
-     */
-    public static class ULONG extends IntegerType {
-        public ULONG() {
-            this(0);
-        }
+		public Pointer toPointer() {
+			return Pointer.createConstant(longValue());
+		}
+	}
 
-        public ULONG(long value) {
-            super(Native.LONG_SIZE, value, true);
-        }
-        
-        public static class ByReference implements Structure.ByReference {
-        	
-        }
-    }
+	/**
+	 * Unsigned INT_PTR.
+	 */
+	public static class UINT_PTR extends IntegerType {
+		public UINT_PTR() {
+			super(Pointer.SIZE);
+		}
 
-    /**
-     * 64-bit unsigned integer.
-     */
-    public static class ULONGLONG extends IntegerType {
-        public ULONGLONG() {
-            this(0);
-        }
+		public UINT_PTR(long value) {
+			super(Pointer.SIZE, value, true);
+		}
 
-        public ULONGLONG(long value) {
-            super(8, value, true);
-        }
-    }
-	
-    /**
-     * 64-bit unsigned integer.
-     */
-    public static class DWORDLONG extends IntegerType {
-        public DWORDLONG() {
-            this(0);
-        }
+		public Pointer toPointer() {
+			return Pointer.createConstant(longValue());
+		}
+	}
 
-        public DWORDLONG(long value) {
-            super(8, value, true);
-        }
-    }
+	/**
+	 * Message parameter.
+	 */
+	public static class WPARAM extends UINT_PTR {
+		public WPARAM() {
+			this(0);
+		}
+
+		public WPARAM(long value) {
+			super(value);
+		}
+	}
+
+	public class RECT extends Structure {
+		public int left;
+		public int top;
+		public int right;
+		public int bottom;
+
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "left", "top", "right",
+					"bottom" });
+		}
+
+		public Rectangle toRectangle() {
+			return new Rectangle(left, top, right - left, bottom - top);
+		}
+
+		public String toString() {
+			return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
+		}
+	}
+
+	/**
+	 * 32-bit unsigned integer.
+	 */
+	public static class ULONG extends IntegerType {
+		public ULONG() {
+			this(0);
+		}
+
+		public ULONG(long value) {
+			super(Native.LONG_SIZE, value, true);
+		}
+
+		public static class ByReference implements Structure.ByReference {
+
+		}
+	}
+
+	/**
+	 * 64-bit unsigned integer.
+	 */
+	public static class ULONGLONG extends IntegerType {
+		public ULONGLONG() {
+			this(0);
+		}
+
+		public ULONGLONG(long value) {
+			super(8, value, true);
+		}
+	}
+
+	/**
+	 * 64-bit unsigned integer.
+	 */
+	public static class DWORDLONG extends IntegerType {
+		public DWORDLONG() {
+			this(0);
+		}
+
+		public DWORDLONG(long value) {
+			super(8, value, true);
+		}
+	}
+
+	/**
+	 * Handle to a bitmap.
+	 */
+	public static class HBRUSH extends HANDLE {
+		public HBRUSH() {
+
+		}
+
+		public HBRUSH(Pointer p) {
+			super(p);
+		}
+	}
+
+	/**
+	 * 16-bit unsigned integer.
+	 */
+	public static class ATOM extends WORD {
+		public ATOM() {
+			this(0);
+		}
+
+		public ATOM(long value) {
+			super(value);
+		}
+	}
+
+	/**
+	 * Message parameter.
+	 */
+	public static class LPVOID extends LONG_PTR {
+		public LPVOID() {
+			this(0);
+		}
+
+		public LPVOID(long value) {
+			super(value);
+		}
+	}
+
+	public class POINT extends Structure {
+
+		public static class ByReference extends POINT implements
+				Structure.ByReference {
+		}
+
+		public POINT() {
+		}
+
+		public POINT(Pointer memory) {
+			super(memory);
+			read();
+		}
+
+		public int x, y;
+
+		public POINT(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "x", "y" });
+		}
+	}
 }
