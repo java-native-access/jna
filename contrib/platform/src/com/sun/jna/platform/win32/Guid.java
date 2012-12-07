@@ -18,83 +18,257 @@ import java.util.List;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
+// TODO: Auto-generated Javadoc
 /**
- * Ported from Guid.h.
- * Microsoft Windows SDK 6.0A.
+ * Ported from Guid.h. Microsoft Windows SDK 6.0A.
+ * 
  * @author dblock[at]dblock.org
  */
 public interface Guid {
-    
-    public static class GUID extends Structure {
-        
-        public static class ByReference extends GUID implements Structure.ByReference {
-            public ByReference() {                
-            }
 
-            public ByReference(GUID guid) {
-                super(guid.getPointer());
+	/**
+	 * The Class GUID.
+	 */
+	public static class GUID extends Structure {
 
-                Data1 = guid.Data1;
-                Data2 = guid.Data2;
-                Data3 = guid.Data3;
-                Data4 = guid.Data4;
-            }
-            
-            public ByReference(Pointer memory) {
-                super(memory);
-            }
-        }
-        
-        public GUID() {
-            
-        }
-            
-        public GUID(Pointer memory) {
-            super(memory);
-            read();
-        }
+		/**
+		 * The Class ByReference.
+		 */
+		public static class ByReference extends GUID implements
+				Structure.ByReference {
 
-        public GUID(byte[] data) {
-            if (data.length != 16) {
-                throw new IllegalArgumentException("Invalid data length: " + data.length);
-            }
+			/**
+			 * Instantiates a new by reference.
+			 */
+			public ByReference() {
+			}
 
-            long data1Temp = data[3] & 0xff;
-            data1Temp <<= 8;
-            data1Temp |= data[2] & 0xff;
-            data1Temp <<= 8;
-            data1Temp |= data[1] & 0xff;
-            data1Temp <<= 8;
-            data1Temp |= data[0] & 0xff;
-            Data1 = (int) data1Temp;
+			/**
+			 * Instantiates a new by reference.
+			 * 
+			 * @param guid
+			 *            the guid
+			 */
+			public ByReference(GUID guid) {
+				super(guid.getPointer());
 
-            int data2Temp = data[5] & 0xff;
-            data2Temp <<= 8;
-            data2Temp |= data[4] & 0xff;
-            Data2 = (short) data2Temp;
+				Data1 = guid.Data1;
+				Data2 = guid.Data2;
+				Data3 = guid.Data3;
+				Data4 = guid.Data4;
+			}
 
-            int data3Temp = data[7] & 0xff;
-            data3Temp <<= 8;
-            data3Temp |= data[6] & 0xff;
-            Data3 = (short) data3Temp;
+			/**
+			 * Instantiates a new by reference.
+			 * 
+			 * @param memory
+			 *            the memory
+			 */
+			public ByReference(Pointer memory) {
+				super(memory);
+			}
+		}
 
-            Data4[0] = data[8];
-            Data4[1] = data[9];
-            Data4[2] = data[10];
-            Data4[3] = data[11];
-            Data4[4] = data[12];
-            Data4[5] = data[13];
-            Data4[6] = data[14];
-            Data4[7] = data[15];
-        }
+		/** The Data1. */
+		public int Data1;
 
-        public int Data1;
-        public short Data2;
-        public short Data3;
-        public byte[] Data4 = new byte[8];
-        
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "Data1", "Data2", "Data3", "Data4" });
-        }
-    }    
+		/** The Data2. */
+		public short Data2;
+
+		/** The Data3. */
+		public short Data3;
+
+		/** The Data4. */
+		public byte[] Data4 = new byte[8];
+
+		/**
+		 * Instantiates a new guid.
+		 */
+		public GUID() {
+		}
+
+		/**
+		 * Instantiates a new guid.
+		 * 
+		 * @param guid
+		 *            the guid
+		 */
+		public GUID(GUID guid) {
+			this.Data1 = guid.Data1;
+			this.Data2 = guid.Data2;
+			this.Data3 = guid.Data3;
+			this.Data4 = guid.Data4;
+		}
+
+		/**
+		 * Instantiates a new guid.
+		 * 
+		 * @param guid
+		 *            the guid
+		 */
+		public GUID(String guid) {
+			this(fromString(guid));
+		}
+
+		/**
+		 * Instantiates a new guid.
+		 * 
+		 * @param data
+		 *            the data
+		 */
+		public GUID(byte[] data) {
+			this(fromBinary(data));
+		}
+
+		/**
+		 * Instantiates a new guid.
+		 * 
+		 * @param memory
+		 *            the memory
+		 */
+		public GUID(Pointer memory) {
+			super(memory);
+			read();
+		}
+
+		/**
+		 * From binary.
+		 * 
+		 * @param data
+		 *            the data
+		 * @return the guid
+		 */
+		public static GUID fromBinary(byte[] data) {
+			if (data.length != 16) {
+				throw new IllegalArgumentException("Invalid data length: "
+						+ data.length);
+			}
+
+			GUID newGuid = new GUID();
+			long data1Temp = data[3] & 0xff;
+			data1Temp <<= 8;
+			data1Temp |= data[2] & 0xff;
+			data1Temp <<= 8;
+			data1Temp |= data[1] & 0xff;
+			data1Temp <<= 8;
+			data1Temp |= data[0] & 0xff;
+			newGuid.Data1 = (int) data1Temp;
+
+			int data2Temp = data[5] & 0xff;
+			data2Temp <<= 8;
+			data2Temp |= data[4] & 0xff;
+			newGuid.Data2 = (short) data2Temp;
+
+			int data3Temp = data[7] & 0xff;
+			data3Temp <<= 8;
+			data3Temp |= data[6] & 0xff;
+			newGuid.Data3 = (short) data3Temp;
+
+			newGuid.Data4[0] = data[8];
+			newGuid.Data4[1] = data[9];
+			newGuid.Data4[2] = data[10];
+			newGuid.Data4[3] = data[11];
+			newGuid.Data4[4] = data[12];
+			newGuid.Data4[5] = data[13];
+			newGuid.Data4[6] = data[14];
+			newGuid.Data4[7] = data[15];
+
+			return newGuid;
+		}
+
+		/**
+		 * From string.
+		 * 
+		 * @param guid
+		 *            the guid
+		 * @return the guid
+		 */
+		public static GUID fromString(String guid) {
+			int y = 0;
+			char[] _newguid = new char[32];
+			char[] _guid = guid.toCharArray();
+
+			if (guid.length() > 38) {
+				throw new IllegalArgumentException("Invalid data length: "
+						+ guid.length());
+			}
+
+			for (int i = 0; i < _guid.length; i++) {
+				if ((_guid[i] != '{') && (_guid[i] != '-') && (_guid[i] != '}'))
+					_newguid[y++] = _guid[i];
+			}
+
+			byte[] data = new byte[16];
+			for (int i = 0; i < 32; i += 2) {
+				data[i / 2] = (byte) ((Character.digit(_newguid[i], 16) << 4) + Character
+						.digit(_newguid[i + 1], 16));
+			}
+
+			return new GUID(data);
+		}
+
+		public byte[] toByteArray() {
+			byte[] guid = new byte[16];
+
+			byte[] bytes1 = new byte[4];
+			bytes1[3] = (byte) (Data1 >> 24);
+			bytes1[2] = (byte) (Data1 >> 16);
+			bytes1[1] = (byte) (Data1 >> 8);
+			bytes1[0] = (byte) (Data1 >> 0);
+
+			byte[] bytes2 = new byte[4];
+			bytes2[3] = (byte) (Data2 >> 24);
+			bytes2[2] = (byte) (Data2 >> 16);
+			bytes2[1] = (byte) (Data2 >> 8);
+			bytes2[0] = (byte) (Data2 >> 0);
+
+			byte[] bytes3 = new byte[4];
+			bytes3[3] = (byte) (Data3 >> 24);
+			bytes3[2] = (byte) (Data3 >> 16);
+			bytes3[1] = (byte) (Data3 >> 8);
+			bytes3[0] = (byte) (Data3 >> 0);
+
+			System.arraycopy(bytes1, 0, guid, 0, 4);
+			System.arraycopy(bytes2, 0, guid, 4, 2);
+			System.arraycopy(bytes3, 0, guid, 6, 2);
+			System.arraycopy(Data4, 0, guid, 8, 8);
+
+			return guid;
+		}
+
+		/**
+		 * The value of this Guid, formatted as follows:
+		 * xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
+		 * 
+		 * @return the string
+		 */
+		public String toGuidString() {
+			final String HEXES = "0123456789ABCDEF";
+			byte[] bGuid = toByteArray();
+
+			final StringBuilder hexStr = new StringBuilder(2 * bGuid.length);
+			for (int i = 0; i < bGuid.length; i++) {
+				hexStr.append(HEXES.charAt((bGuid[i] & 0xF0) >> 4)).append(HEXES.charAt((bGuid[i] & 0x0F)));
+			}
+			
+			hexStr.insert(0, "{");
+			hexStr.insert(9, "-");
+			hexStr.insert(14, "-");
+			hexStr.insert(19, "-");
+			hexStr.insert(24, "-");
+			hexStr.append("}");
+			
+			return hexStr.toString();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.sun.jna.Structure#getFieldOrder()
+		 */
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "Data1", "Data2", "Data3",
+					"Data4" });
+		}
+	}
 }

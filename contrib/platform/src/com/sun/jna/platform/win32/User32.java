@@ -12,10 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.sun.jna.Callback;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -42,12 +38,24 @@ public interface User32 extends StdCallLibrary, WinUser {
 	User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class,
 			W32APIOptions.DEFAULT_OPTIONS);
 
+	/** The cs globalclass. */
 	int CS_GLOBALCLASS = 0x4000;
 
+	/** The ws ex topmost. */
 	int WS_EX_TOPMOST = 0x00000008;
 
+	/** The ws overlapped. */
 	int WS_OVERLAPPED = 0x00000000;
 
+	/** The hRecipient parameter is a window handle. */
+	int DEVICE_NOTIFY_WINDOW_HANDLE = 0x00000000;
+
+	/** The hRecipient parameter is a service status handle. */
+	int DEVICE_NOTIFY_SERVICE_HANDLE = 0x00000001;
+	
+	/** The device notify all interface classes. */
+	int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 0x00000004;
+	
 	/**
 	 * This function retrieves a handle to a display device context (DC) for the
 	 * client area of the specified window. The display device context can be
@@ -1614,126 +1622,66 @@ public interface User32 extends StdCallLibrary, WinUser {
 			LPARAM lParam);
 
 	/**
-	 * Contains window class information. It is used with the RegisterClassEx
-	 * and GetClassInfoEx functions.
+	 * Registers the device or type of device for which a window will receive
+	 * notifications.
 	 * 
-	 * The WNDCLASSEX structure is similar to the WNDCLASS structure. There are
-	 * two differences. WNDCLASSEX includes the cbSize member, which specifies
-	 * the size of the structure, and the hIconSm member, which contains a
-	 * handle to a small icon associated with the window class.
+	 * @hRecipient [in] A handle to the window or service that will receive
+	 *             device events for the devices specified in the
+	 *             NotificationFilter parameter. The same window handle can be
+	 *             used in multiple calls to RegisterDeviceNotification.
+	 * 
+	 *             Services can specify either a window handle or service status
+	 *             handle.
+	 * 
+	 * @param NotificationFilter
+	 *            [in] A pointer to a block of data that specifies the type of
+	 *            device for which notifications should be sent. This block
+	 *            always begins with the DEV_BROADCAST_HDR structure. The data
+	 *            following this header is dependent on the value of the
+	 *            dbch_devicetype member, which can be
+	 *            DBT_DEVTYP_DEVICEINTERFACE or DBT_DEVTYP_HANDLE. For more
+	 *            information, see Remarks.
+	 * 
+	 * @param Flags
+	 *            [in] This parameter can be one of the following values.
+	 *            DEVICE_NOTIFY_WINDOW_HANDLE0x00000000 The hRecipient parameter
+	 *            is a window handle.
+	 * 
+	 *            DEVICE_NOTIFY_SERVICE_HANDLE0x00000001 The hRecipient
+	 *            parameter is a service status handle.
+	 * 
+	 *            In addition, you can specify the following value.
+	 * 
+	 *            DEVICE_NOTIFY_ALL_INTERFACE_CLASSES0x00000004 Notifies the
+	 *            recipient of device interface events for all device interface
+	 *            classes. (The dbcc_classguid member is ignored.)
+	 * 
+	 *            This value can be used only if the dbch_devicetype member is
+	 *            DBT_DEVTYP_DEVICEINTERFACE.
+	 * 
+	 * @return value
+	 * 
+	 *         If the function succeeds, the return value is a device
+	 *         notification handle.
+	 * 
+	 *         If the function fails, the return value is NULL. To get extended
+	 *         error information, call GetLastError.
 	 */
-	public class WNDCLASSEX extends Structure {
-
-		/**
-		 * The Class ByReference.
-		 */
-		public static class ByReference extends WNDCLASSEX implements
-				Structure.ByReference {
-		}
-
-		/**
-		 * Instantiates a new wndclassex.
-		 */
-		public WNDCLASSEX() {
-		}
-
-		/**
-		 * Instantiates a new wndclassex.
-		 * 
-		 * @param memory
-		 *            the memory
-		 */
-		public WNDCLASSEX(Pointer memory) {
-			super(memory);
-			read();
-		}
-
-		/** The cb size. */
-		public int cbSize = this.size();
-
-		/** The style. */
-		public int style;
-
-		/** The lpfn wnd proc. */
-		public Callback lpfnWndProc;
-
-		/** The cb cls extra. */
-		public int cbClsExtra;
-
-		/** The cb wnd extra. */
-		public int cbWndExtra;
-
-		/** The h instance. */
-		public HINSTANCE hInstance;
-
-		/** The h icon. */
-		public HICON hIcon;
-
-		/** The h cursor. */
-		public HCURSOR hCursor;
-
-		/** The hbr background. */
-		public HBRUSH hbrBackground;
-
-		/** The lpsz menu name. */
-		public String lpszMenuName;
-
-		/** The lpsz class name. */
-		public WString lpszClassName;
-
-		/** The h icon sm. */
-		public HICON hIconSm;
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.sun.jna.Structure#getFieldOrder()
-		 */
-		@Override
-		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "cbSize", "style",
-					"lpfnWndProc", "cbClsExtra", "cbWndExtra", "hInstance",
-					"hIcon", "hCursor", "hbrBackground", "lpszMenuName",
-					"lpszClassName", "hIconSm" });
-		}
-	}
+	HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient,
+			Structure notificationFilter, int Flags);
 
 	/**
-	 * An application-defined function that processes messages sent to a window.
-	 * The WNDPROC type defines a pointer to this callback function.
+	 * Closes the specified device notification handle.
 	 * 
-	 * WindowProc is a placeholder for the application-defined function name.
+	 * @Handle [in] Device notification handle returned by the
+	 *         RegisterDeviceNotification function.
+	 * 
+	 * @return Return value
+	 * 
+	 *         If the function succeeds, the return value is nonzero.
+	 * 
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call GetLastError.
 	 */
-	public interface WindowProc extends Callback {
-
-		/**
-		 * @param hwnd
-		 *            [in] Type: HWND
-		 * 
-		 *            A handle to the window.
-		 * 
-		 * @param uMsg
-		 *            [in] Type: UINT
-		 * 
-		 *            The message.
-		 * 
-		 *            For lists of the system-provided messages, see
-		 *            System-Defined Messages.
-		 * 
-		 * @param wParam
-		 *            [in] Type: WPARAM
-		 * 
-		 *            Additional message information. The contents of this
-		 *            parameter depend on the value of the uMsg parameter.
-		 * 
-		 * @param lParam
-		 *            [in] Type: LPARAM
-		 * 
-		 *            Additional message information. The contents of this
-		 *            parameter depend on the value of the uMsg parameter.
-		 * 
-		 * @return the lresult
-		 */
-		LRESULT callback(HWND hwnd, int uMsg, WPARAM wParam, LPARAM lParam);
-	}
+	boolean UnregisterDeviceNotification(HDEVNOTIFY Handle);
 }

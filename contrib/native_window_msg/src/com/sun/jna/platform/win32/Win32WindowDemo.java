@@ -14,38 +14,40 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.User32.WNDCLASSEX;
-import com.sun.jna.platform.win32.User32.WindowProc;
+import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
+import com.sun.jna.platform.win32.WinUser.HDEVNOTIFY;
 import com.sun.jna.platform.win32.WinUser.MSG;
+import com.sun.jna.platform.win32.WinUser.WNDCLASSEX;
+import com.sun.jna.platform.win32.WinUser.WindowProc;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Win32WindowTest.
  */
-public class Win32WindowTest implements WindowProc {
+public class Win32WindowDemo implements WindowProc {
 
 	/**
 	 * Instantiates a new win32 window test.
 	 */
-	public Win32WindowTest() {
+	public Win32WindowDemo() {
 		// define new window class
 		WString windowClass = new WString("MyWindowClass");
 		HMODULE hInst = Kernel32.INSTANCE.GetModuleHandle("");
 
 		WNDCLASSEX wClass = new WNDCLASSEX();
 		wClass.hInstance = hInst;
-		wClass.lpfnWndProc = Win32WindowTest.this;
+		wClass.lpfnWndProc = Win32WindowDemo.this;
 		wClass.lpszClassName = windowClass;
-		
+
 		// register window class
 		User32.INSTANCE.RegisterClassEx(wClass);
 		getLastError();
-		
+
 		// create new window
 		HWND hWnd = User32.INSTANCE
 				.CreateWindowEx(
@@ -55,29 +57,57 @@ public class Win32WindowTest implements WindowProc {
 						0, 0, 0, 0, 0, WinUser.HWND_MESSAGE, null, hInst, null);
 
 		getLastError();
-		System.out.println("window sucessfully created! window hwnd: " + hWnd.getPointer().toString());
+		System.out.println("window sucessfully created! window hwnd: "
+				+ hWnd.getPointer().toString());
 
 		Wtsapi32.INSTANCE.WTSRegisterSessionNotification(hWnd,
 				Wtsapi32.NOTIFY_FOR_THIS_SESSION);
 
+		/* this filters for all device classes */
+		// DEV_BROADCAST_HDR notificationFilter = new DEV_BROADCAST_HDR();
+		// notificationFilter.dbch_devicetype = DBT.DBT_DEVTYP_DEVICEINTERFACE;
+
+		/* this filters for all usb device classes */
+		DEV_BROADCAST_DEVICEINTERFACE notificationFilter = new DEV_BROADCAST_DEVICEINTERFACE();
+		notificationFilter.dbcc_devicetype = DBT.DBT_DEVTYP_DEVICEINTERFACE;
+		notificationFilter.dbcc_classguid = DBT.GUID_DEVINTERFACE_HID;
+
+		HDEVNOTIFY hDevNotify = User32.INSTANCE.RegisterDeviceNotification(
+				hWnd, notificationFilter,
+				User32.DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
+
+		getLastError();
+		if (hDevNotify != null)
+			System.out.println("RegisterDeviceNotification was sucessfully!");
+
 		MSG msg = new MSG();
-		while (User32.INSTANCE.GetMessage(msg, hWnd, 0, 0) != 0) {
+		while (User32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
 			User32.INSTANCE.TranslateMessage(msg);
 			User32.INSTANCE.DispatchMessage(msg);
 		}
 
+		User32.INSTANCE.UnregisterDeviceNotification(hDevNotify);
 		Wtsapi32.INSTANCE.WTSUnRegisterSessionNotification(hWnd);
 		User32.INSTANCE.UnregisterClass(windowClass, hInst);
 		User32.INSTANCE.DestroyWindow(hWnd);
-		
+
 		System.out.println("program exit!");
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sun.jna.platform.win32.User32.WindowProc#callback(com.sun.jna.platform.win32.WinDef.HWND, int, com.sun.jna.platform.win32.WinDef.WPARAM, com.sun.jna.platform.win32.WinDef.LPARAM)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sun.jna.platform.win32.User32.WindowProc#callback(com.sun.jna.platform
+	 * .win32.WinDef.HWND, int, com.sun.jna.platform.win32.WinDef.WPARAM,
+	 * com.sun.jna.platform.win32.WinDef.LPARAM)
 	 */
 	public LRESULT callback(HWND hwnd, int uMsg, WPARAM wParam, LPARAM lParam) {
 		switch (uMsg) {
+		case WinUser.WM_CREATE: {
+			onCreate(wParam, lParam);
+			return new LRESULT(0);
+		}
 		case WinUser.WM_DESTROY: {
 			User32.INSTANCE.PostQuitMessage(0);
 			return new LRESULT(0);
@@ -97,7 +127,7 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * Gets the last error.
-	 *
+	 * 
 	 * @return the last error
 	 */
 	public int getLastError() {
@@ -111,9 +141,11 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On session change.
-	 *
-	 * @param wParam the w param
-	 * @param lParam the l param
+	 * 
+	 * @param wParam
+	 *            the w param
+	 * @param lParam
+	 *            the l param
 	 */
 	protected void onSessionChange(WPARAM wParam, LPARAM lParam) {
 		switch (wParam.intValue()) {
@@ -146,8 +178,9 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On console connect.
-	 *
-	 * @param sessionId the session id
+	 * 
+	 * @param sessionId
+	 *            the session id
 	 */
 	protected void onConsoleConnect(int sessionId) {
 		System.out.println("onConsoleConnect: " + sessionId);
@@ -155,8 +188,9 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On console disconnect.
-	 *
-	 * @param sessionId the session id
+	 * 
+	 * @param sessionId
+	 *            the session id
 	 */
 	protected void onConsoleDisconnect(int sessionId) {
 		System.out.println("onConsoleDisconnect: " + sessionId);
@@ -164,8 +198,9 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On machine locked.
-	 *
-	 * @param sessionId the session id
+	 * 
+	 * @param sessionId
+	 *            the session id
 	 */
 	protected void onMachineLocked(int sessionId) {
 		System.out.println("onMachineLocked: " + sessionId);
@@ -173,8 +208,9 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On machine unlocked.
-	 *
-	 * @param sessionId the session id
+	 * 
+	 * @param sessionId
+	 *            the session id
 	 */
 	protected void onMachineUnlocked(int sessionId) {
 		System.out.println("onMachineUnlocked: " + sessionId);
@@ -182,8 +218,9 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On machine logon.
-	 *
-	 * @param sessionId the session id
+	 * 
+	 * @param sessionId
+	 *            the session id
 	 */
 	protected void onMachineLogon(int sessionId) {
 		System.out.println("onMachineLogon: " + sessionId);
@@ -191,8 +228,9 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On machine logoff.
-	 *
-	 * @param sessionId the session id
+	 * 
+	 * @param sessionId
+	 *            the session id
 	 */
 	protected void onMachineLogoff(int sessionId) {
 		System.out.println("onMachineLogoff: " + sessionId);
@@ -200,20 +238,68 @@ public class Win32WindowTest implements WindowProc {
 
 	/**
 	 * On device change.
-	 *
-	 * @param wParam the w param
-	 * @param lParam the l param
+	 * 
+	 * @param wParam
+	 *            the w param
+	 * @param lParam
+	 *            the l param
 	 */
 	protected void onDeviceChange(WPARAM wParam, LPARAM lParam) {
-		System.out.println("WM_DEVICECHANGE");
+		//
+		// This is the actual message from the interface via Windows messaging.
+		// This code includes some additional decoding for this particular
+		// device type
+		// and some common validation checks.
+		//
+		// Note that not all devices utilize these optional parameters in the
+		// same
+		// way. Refer to the extended information for your particular device
+		// type
+		// specified by your GUID.
+		//
+		DEV_BROADCAST_DEVICEINTERFACE bdif = new DEV_BROADCAST_DEVICEINTERFACE(
+				lParam.longValue());
+		System.out.println("dbcc_devicetype: " + bdif.dbcc_devicetype);
+		System.out.println("dbcc_name: " + bdif.getDbcc_name());
+		System.out.println("dbcc_classguid: "
+				+ bdif.dbcc_classguid.toGuidString());
+
+		// Output some messages to the window.
+		switch (wParam.intValue()) {
+		case DBT.DBT_DEVICEARRIVAL:
+			System.out.println("Message DBT_DEVICEARRIVAL");
+			break;
+		case DBT.DBT_DEVICEREMOVECOMPLETE:
+			System.out.println("Message DBT_DEVICEREMOVECOMPLETE");
+			break;
+		case DBT.DBT_DEVNODES_CHANGED:
+			System.out.println("Message DBT_DEVNODES_CHANGED");
+			break;
+		default:
+			System.out
+					.println("Message WM_DEVICECHANGE message received, value unhandled.");
+		}
+	}
+
+	/**
+	 * On create.
+	 * 
+	 * @param wParam
+	 *            the w param
+	 * @param lParam
+	 *            the l param
+	 */
+	protected void onCreate(WPARAM wParam, LPARAM lParam) {
+		System.out.println("onCreate: WM_CREATE");
 	}
 
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
+	 * 
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
-		new Win32WindowTest();
+		new Win32WindowDemo();
 	}
 }

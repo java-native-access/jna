@@ -408,6 +408,16 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	public static class PVOID extends HANDLE {
+		public PVOID() {
+
+		}
+
+		public PVOID(Pointer p) {
+			super(p);
+		}
+	}
+
 	/**
 	 * Message parameter.
 	 */
