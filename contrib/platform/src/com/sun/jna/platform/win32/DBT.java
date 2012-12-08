@@ -56,23 +56,23 @@ public interface DBT extends StdCallLibrary {
 
 	/** The guid devinterface usb device. */
 	public GUID GUID_DEVINTERFACE_USB_DEVICE = new GUID(
-			"{88BAE032-5A81-49f0-BC3D-A4FF138216D6}");
+			"{A5DCBF10-6530-11D2-901F-00C04FB951ED}");
 
 	/** The guid devinterface hid. */
 	public GUID GUID_DEVINTERFACE_HID = new GUID(
-			"{745a17a0-74d3-11d0-b6fe-00a0c90f57da}");
+			"{4D1E55B2-F16F-11CF-88CB-001111000030}");
 
-	/** The guid devclass storage volume. */
-	public GUID GUID_DEVCLASS_VOLUME = new GUID(
-			"{71a27cdd-812a-11d0-bec7-08002be2092f}");
+	/** The guid devinterface volume. */
+	public GUID GUID_DEVINTERFACE_VOLUME = new GUID(
+			"{53F5630D-B6BF-11D0-94F2-00A0C91EFB8B}");
 
-	/** The guid devclass keyboard. */
-	public GUID GUID_DEVCLASS_KEYBOARD = new GUID(
-			"{4d36e96b-e325-11ce-bfc1-08002be10318}");
+	/** The guid devinterface keyboard. */
+	public GUID GUID_DEVINTERFACE_KEYBOARD = new GUID(
+			"{884b96c3-56ef-11d1-bc8c-00a0c91405dd}");
 
-	/** The guid devclass mouse. */
-	public GUID GUID_DEVCLASS_MOUSE = new GUID(
-			"{4d36e96f-e325-11ce-bfc1-08002be10318}");
+	/** The guid devinterface mouse. */
+	public GUID GUID_DEVINTERFACE_MOUSE = new GUID(
+			"{378DE44C-56EF-11D1-BC8C-00A0C91405DD}");
 
 	/**
 	 * The Class DEV_BROADCAST_HDR.
@@ -431,13 +431,18 @@ public interface DBT extends StdCallLibrary {
 		 */
 		public DEV_BROADCAST_DEVICEINTERFACE(Pointer memory) {
 			super(memory);
-			this.dbcc_size = (Integer)this.readField("dbcc_size");
-			 // figure out how long dbcc_name should be based on the size 
-            int len = 1 + this.dbcc_size - size(); 
-            this.dbcc_name = new char[len]; 			
+			this.dbcc_size = (Integer) this.readField("dbcc_size");
+			// figure out how long dbcc_name should be based on the size
+			int len = 1 + this.dbcc_size - size();
+			this.dbcc_name = new char[len];
 			read();
 		}
 
+		/**
+		 * Gets the dbcc_name.
+		 * 
+		 * @return the dbcc_name
+		 */
 		public String getDbcc_name() {
 			return Native.toString(this.dbcc_name);
 		}

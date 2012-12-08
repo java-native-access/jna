@@ -145,23 +145,23 @@ public interface Guid {
 			}
 
 			GUID newGuid = new GUID();
-			long data1Temp = data[3] & 0xff;
-			data1Temp <<= 8;
-			data1Temp |= data[2] & 0xff;
+			long data1Temp = data[0] & 0xff;
 			data1Temp <<= 8;
 			data1Temp |= data[1] & 0xff;
 			data1Temp <<= 8;
-			data1Temp |= data[0] & 0xff;
+			data1Temp |= data[2] & 0xff;
+			data1Temp <<= 8;
+			data1Temp |= data[3] & 0xff;
 			newGuid.Data1 = (int) data1Temp;
 
-			int data2Temp = data[5] & 0xff;
+			int data2Temp = data[4] & 0xff;
 			data2Temp <<= 8;
-			data2Temp |= data[4] & 0xff;
+			data2Temp |= data[5] & 0xff;
 			newGuid.Data2 = (short) data2Temp;
 
-			int data3Temp = data[7] & 0xff;
+			int data3Temp = data[6] & 0xff;
 			data3Temp <<= 8;
-			data3Temp |= data[6] & 0xff;
+			data3Temp |= data[7] & 0xff;
 			newGuid.Data3 = (short) data3Temp;
 
 			newGuid.Data4[0] = data[8];
@@ -185,52 +185,89 @@ public interface Guid {
 		 */
 		public static GUID fromString(String guid) {
 			int y = 0;
-			char[] _newguid = new char[32];
-			char[] _guid = guid.toCharArray();
-
+			char[] _cnewguid = new char[32];
+			char[] _cguid = guid.toCharArray();
+			byte[] bdata = new byte[16];
+			GUID newGuid = new GUID();
+			
+			// we not accept a string longer than 38 chars
 			if (guid.length() > 38) {
-				throw new IllegalArgumentException("Invalid data length: "
+				throw new IllegalArgumentException("Invalid guid length: "
 						+ guid.length());
 			}
-
-			for (int i = 0; i < _guid.length; i++) {
-				if ((_guid[i] != '{') && (_guid[i] != '-') && (_guid[i] != '}'))
-					_newguid[y++] = _guid[i];
+			
+			// remove '{', '}' and '-' from guid string
+			for (int i = 0; i < _cguid.length; i++) {
+				if ((_cguid[i] != '{') && (_cguid[i] != '-') && (_cguid[i] != '}'))
+					_cnewguid[y++] = _cguid[i];
 			}
-
-			byte[] data = new byte[16];
+			
+			// convert char to byte
 			for (int i = 0; i < 32; i += 2) {
-				data[i / 2] = (byte) ((Character.digit(_newguid[i], 16) << 4) + Character
-						.digit(_newguid[i + 1], 16));
+				bdata[i / 2] = (byte) ((Character.digit(_cnewguid[i], 16) << 4) + Character
+						.digit(_cnewguid[i + 1], 16) & 0xff);
 			}
+			
+			if (bdata.length != 16) {
+				throw new IllegalArgumentException("Invalid data length: "
+						+ bdata.length);
+			}
+			
+			long data1Temp = bdata[0] & 0xff;
+			data1Temp <<= 8;
+			data1Temp |= bdata[1] & 0xff;
+			data1Temp <<= 8;
+			data1Temp |= bdata[2] & 0xff;
+			data1Temp <<= 8;
+			data1Temp |= bdata[3] & 0xff;
+			newGuid.Data1 = (int) data1Temp;
 
-			return new GUID(data);
+			int data2Temp = bdata[4] & 0xff;
+			data2Temp <<= 8;
+			data2Temp |= bdata[5] & 0xff;
+			newGuid.Data2 = (short) data2Temp;
+
+			int data3Temp = bdata[6] & 0xff;
+			data3Temp <<= 8;
+			data3Temp |= bdata[7] & 0xff;
+			newGuid.Data3 = (short) data3Temp;
+
+			newGuid.Data4[0] = bdata[8];
+			newGuid.Data4[1] = bdata[9];
+			newGuid.Data4[2] = bdata[10];
+			newGuid.Data4[3] = bdata[11];
+			newGuid.Data4[4] = bdata[12];
+			newGuid.Data4[5] = bdata[13];
+			newGuid.Data4[6] = bdata[14];
+			newGuid.Data4[7] = bdata[15]; 
+			
+			return newGuid;
 		}
 
 		public byte[] toByteArray() {
 			byte[] guid = new byte[16];
 
 			byte[] bytes1 = new byte[4];
-			bytes1[3] = (byte) (Data1 >> 24);
-			bytes1[2] = (byte) (Data1 >> 16);
-			bytes1[1] = (byte) (Data1 >> 8);
-			bytes1[0] = (byte) (Data1 >> 0);
+			bytes1[0] = (byte) (Data1 >> 24);
+			bytes1[1] = (byte) (Data1 >> 16);
+			bytes1[2] = (byte) (Data1 >> 8);
+			bytes1[3] = (byte) (Data1 >> 0);
 
 			byte[] bytes2 = new byte[4];
-			bytes2[3] = (byte) (Data2 >> 24);
-			bytes2[2] = (byte) (Data2 >> 16);
-			bytes2[1] = (byte) (Data2 >> 8);
-			bytes2[0] = (byte) (Data2 >> 0);
+			bytes2[0] = (byte) (Data2 >> 24);
+			bytes2[1] = (byte) (Data2 >> 16);
+			bytes2[2] = (byte) (Data2 >> 8);
+			bytes2[3] = (byte) (Data2 >> 0);
 
 			byte[] bytes3 = new byte[4];
-			bytes3[3] = (byte) (Data3 >> 24);
-			bytes3[2] = (byte) (Data3 >> 16);
-			bytes3[1] = (byte) (Data3 >> 8);
-			bytes3[0] = (byte) (Data3 >> 0);
+			bytes3[0] = (byte) (Data3 >> 24);
+			bytes3[1] = (byte) (Data3 >> 16);
+			bytes3[2] = (byte) (Data3 >> 8);
+			bytes3[3] = (byte) (Data3 >> 0);
 
 			System.arraycopy(bytes1, 0, guid, 0, 4);
-			System.arraycopy(bytes2, 0, guid, 4, 2);
-			System.arraycopy(bytes3, 0, guid, 6, 2);
+			System.arraycopy(bytes2, 2, guid, 4, 2);
+			System.arraycopy(bytes3, 2, guid, 6, 2);
 			System.arraycopy(Data4, 0, guid, 8, 8);
 
 			return guid;
@@ -247,17 +284,18 @@ public interface Guid {
 			byte[] bGuid = toByteArray();
 
 			final StringBuilder hexStr = new StringBuilder(2 * bGuid.length);
+			hexStr.append("{");
+
 			for (int i = 0; i < bGuid.length; i++) {
-				hexStr.append(HEXES.charAt((bGuid[i] & 0xF0) >> 4)).append(HEXES.charAt((bGuid[i] & 0x0F)));
+				char ch1 = HEXES.charAt( (bGuid[i] & 0xF0) >> 4);
+				char ch2 = HEXES.charAt(bGuid[i] & 0x0F);
+				hexStr.append(ch1).append(ch2);
+				
+				if( (i == 3) || (i == 5) || (i == 7) || (i == 9) )
+					hexStr.append("-");
 			}
 			
-			hexStr.insert(0, "{");
-			hexStr.insert(9, "-");
-			hexStr.insert(14, "-");
-			hexStr.insert(19, "-");
-			hexStr.insert(24, "-");
 			hexStr.append("}");
-			
 			return hexStr.toString();
 		}
 

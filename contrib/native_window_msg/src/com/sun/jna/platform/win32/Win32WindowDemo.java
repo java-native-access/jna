@@ -70,18 +70,21 @@ public class Win32WindowDemo implements WindowProc {
 		/* this filters for all usb device classes */
 		DEV_BROADCAST_DEVICEINTERFACE notificationFilter = new DEV_BROADCAST_DEVICEINTERFACE();
 		notificationFilter.dbcc_devicetype = DBT.DBT_DEVTYP_DEVICEINTERFACE;
-		notificationFilter.dbcc_classguid = DBT.GUID_DEVINTERFACE_HID;
+		notificationFilter.dbcc_classguid = DBT.GUID_DEVINTERFACE_USB_DEVICE;
 
+		/*
+		 * use User32.DEVICE_NOTIFY_ALL_INTERFACE_CLASSES instead of
+		 * DEVICE_NOTIFY_WINDOW_HANDLE to ignore the dbcc_classguid value
+		 */
 		HDEVNOTIFY hDevNotify = User32.INSTANCE.RegisterDeviceNotification(
-				hWnd, notificationFilter,
-				User32.DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
+				hWnd, notificationFilter, User32.DEVICE_NOTIFY_WINDOW_HANDLE);
 
 		getLastError();
 		if (hDevNotify != null)
 			System.out.println("RegisterDeviceNotification was sucessfully!");
 
 		MSG msg = new MSG();
-		while (User32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
+		while (User32.INSTANCE.GetMessage(msg, hWnd, 0, 0) != 0) {
 			User32.INSTANCE.TranslateMessage(msg);
 			User32.INSTANCE.DispatchMessage(msg);
 		}
