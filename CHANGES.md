@@ -3,6 +3,15 @@ Next Release (3.5.2)
 
 Features
 --------
+- Now the java guid structure can be used directly as alternative to
+'Ole32Util.getGUIDFromString()'.
+- The listening for usb devices is now working also with filter usage
+- Extension for listening to windows devices (usb)
+- Code extension for creating and registering win32 native windows 
+- Create new code for registering new win32 window classes and created a window
+demo. Listening for win32 window events. Listening for logoff/logon events.
+- Created new api for 'Wtsapi32.dll'.
+
 
 Bug Fixes
 ---------
