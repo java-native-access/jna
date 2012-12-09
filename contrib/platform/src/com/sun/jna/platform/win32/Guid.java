@@ -98,6 +98,8 @@ public interface Guid {
 			this.Data2 = guid.Data2;
 			this.Data3 = guid.Data3;
 			this.Data4 = guid.Data4;
+			
+			this.writeFieldsToMemory();
 		}
 
 		/**
@@ -172,7 +174,9 @@ public interface Guid {
 			newGuid.Data4[5] = data[13];
 			newGuid.Data4[6] = data[14];
 			newGuid.Data4[7] = data[15];
-
+			
+			newGuid.writeFieldsToMemory();
+			
 			return newGuid;
 		}
 
@@ -241,9 +245,16 @@ public interface Guid {
 			newGuid.Data4[6] = bdata[14];
 			newGuid.Data4[7] = bdata[15]; 
 			
+			newGuid.writeFieldsToMemory();
+			
 			return newGuid;
 		}
 
+		/**
+		 * To byte array.
+		 *
+		 * @return the byte[]
+		 */
 		public byte[] toByteArray() {
 			byte[] guid = new byte[16];
 
@@ -298,7 +309,17 @@ public interface Guid {
 			hexStr.append("}");
 			return hexStr.toString();
 		}
-
+		
+		/**
+		 * Write fields to backing memory.
+		 */
+		protected void writeFieldsToMemory() {
+			this.writeField("Data1");
+			this.writeField("Data2");
+			this.writeField("Data3");
+			this.writeField("Data4");
+		}
+		
 		/*
 		 * (non-Javadoc)
 		 * 
