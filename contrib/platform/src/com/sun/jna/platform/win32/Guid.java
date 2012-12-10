@@ -1,17 +1,18 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import com.sun.jna.Structure;
 // TODO: Auto-generated Javadoc
 /**
  * Ported from Guid.h. Microsoft Windows SDK 6.0A.
- * 
+ *
  * @author dblock[at]dblock.org
  */
 public interface Guid {
@@ -45,7 +46,7 @@ public interface Guid {
 
 			/**
 			 * Instantiates a new by reference.
-			 * 
+			 *
 			 * @param guid
 			 *            the guid
 			 */
@@ -60,7 +61,7 @@ public interface Guid {
 
 			/**
 			 * Instantiates a new by reference.
-			 * 
+			 *
 			 * @param memory
 			 *            the memory
 			 */
@@ -89,7 +90,7 @@ public interface Guid {
 
 		/**
 		 * Instantiates a new guid.
-		 * 
+		 *
 		 * @param guid
 		 *            the guid
 		 */
@@ -98,13 +99,13 @@ public interface Guid {
 			this.Data2 = guid.Data2;
 			this.Data3 = guid.Data3;
 			this.Data4 = guid.Data4;
-			
+
 			this.writeFieldsToMemory();
 		}
 
 		/**
 		 * Instantiates a new guid.
-		 * 
+		 *
 		 * @param guid
 		 *            the guid
 		 */
@@ -114,7 +115,7 @@ public interface Guid {
 
 		/**
 		 * Instantiates a new guid.
-		 * 
+		 *
 		 * @param data
 		 *            the data
 		 */
@@ -124,7 +125,7 @@ public interface Guid {
 
 		/**
 		 * Instantiates a new guid.
-		 * 
+		 *
 		 * @param memory
 		 *            the memory
 		 */
@@ -135,7 +136,7 @@ public interface Guid {
 
 		/**
 		 * From binary.
-		 * 
+		 *
 		 * @param data
 		 *            the data
 		 * @return the guid
@@ -174,15 +175,15 @@ public interface Guid {
 			newGuid.Data4[5] = data[13];
 			newGuid.Data4[6] = data[14];
 			newGuid.Data4[7] = data[15];
-			
+
 			newGuid.writeFieldsToMemory();
-			
+
 			return newGuid;
 		}
 
 		/**
 		 * From string.
-		 * 
+		 *
 		 * @param guid
 		 *            the guid
 		 * @return the guid
@@ -193,30 +194,31 @@ public interface Guid {
 			char[] _cguid = guid.toCharArray();
 			byte[] bdata = new byte[16];
 			GUID newGuid = new GUID();
-			
+
 			// we not accept a string longer than 38 chars
 			if (guid.length() > 38) {
 				throw new IllegalArgumentException("Invalid guid length: "
 						+ guid.length());
 			}
-			
+
 			// remove '{', '}' and '-' from guid string
 			for (int i = 0; i < _cguid.length; i++) {
-				if ((_cguid[i] != '{') && (_cguid[i] != '-') && (_cguid[i] != '}'))
+				if ((_cguid[i] != '{') && (_cguid[i] != '-')
+						&& (_cguid[i] != '}'))
 					_cnewguid[y++] = _cguid[i];
 			}
-			
+
 			// convert char to byte
 			for (int i = 0; i < 32; i += 2) {
-				bdata[i / 2] = (byte) ((Character.digit(_cnewguid[i], 16) << 4) + Character
-						.digit(_cnewguid[i + 1], 16) & 0xff);
+				bdata[i / 2] = (byte) ((Character.digit(_cnewguid[i], 16) << 4)
+						+ Character.digit(_cnewguid[i + 1], 16) & 0xff);
 			}
-			
+
 			if (bdata.length != 16) {
 				throw new IllegalArgumentException("Invalid data length: "
 						+ bdata.length);
 			}
-			
+
 			long data1Temp = bdata[0] & 0xff;
 			data1Temp <<= 8;
 			data1Temp |= bdata[1] & 0xff;
@@ -243,11 +245,32 @@ public interface Guid {
 			newGuid.Data4[4] = bdata[12];
 			newGuid.Data4[5] = bdata[13];
 			newGuid.Data4[6] = bdata[14];
-			newGuid.Data4[7] = bdata[15]; 
-			
+			newGuid.Data4[7] = bdata[15];
+
 			newGuid.writeFieldsToMemory();
-			
+
 			return newGuid;
+		}
+
+		/**
+		 * Generates a new guid. Code taken from the standard jdk
+		 * implementation (see UUID class).
+		 *
+		 * @param guid
+		 *            the guid
+		 * @return the guid
+		 */
+		public static GUID newGuid() {
+			SecureRandom ng = new SecureRandom();
+			byte[] randomBytes = new byte[16];
+
+			ng.nextBytes(randomBytes);
+			randomBytes[6] &= 0x0f;
+			randomBytes[6] |= 0x40;
+			randomBytes[8] &= 0x3f;
+			randomBytes[8] |= 0x80;
+
+			return new GUID(randomBytes);
 		}
 
 		/**
@@ -287,7 +310,7 @@ public interface Guid {
 		/**
 		 * The value of this Guid, formatted as follows:
 		 * xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
-		 * 
+		 *
 		 * @return the string
 		 */
 		public String toGuidString() {
@@ -298,18 +321,18 @@ public interface Guid {
 			hexStr.append("{");
 
 			for (int i = 0; i < bGuid.length; i++) {
-				char ch1 = HEXES.charAt( (bGuid[i] & 0xF0) >> 4);
+				char ch1 = HEXES.charAt((bGuid[i] & 0xF0) >> 4);
 				char ch2 = HEXES.charAt(bGuid[i] & 0x0F);
 				hexStr.append(ch1).append(ch2);
-				
-				if( (i == 3) || (i == 5) || (i == 7) || (i == 9) )
+
+				if ((i == 3) || (i == 5) || (i == 7) || (i == 9))
 					hexStr.append("-");
 			}
-			
+
 			hexStr.append("}");
 			return hexStr.toString();
 		}
-		
+
 		/**
 		 * Write fields to backing memory.
 		 */
@@ -319,10 +342,10 @@ public interface Guid {
 			this.writeField("Data3");
 			this.writeField("Data4");
 		}
-		
+
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		protected List getFieldOrder() {
