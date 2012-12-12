@@ -24,360 +24,808 @@ import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
+// TODO: Auto-generated Javadoc
 /**
- * Ported from Windef.h (various macros and types). 
- * Microsoft Windows SDK 6.0A.
+ * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
+ * 
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
 public interface WinDef extends StdCallLibrary {
 
-    int MAX_PATH = 260;
+	/** The max path. */
+	int MAX_PATH = 260;
 
-    /**
-     * 16-bit unsigned integer.
-     */
-    public static class WORD extends IntegerType {
-        public WORD() {
-            this(0);
-        }
-
-        public WORD(long value) {
-            super(2, value, true);
-        }
-    }
-
-    /**
-     * 32-bit unsigned integer.
-     */
-    public static class DWORD extends IntegerType {
-        public DWORD() {
-            this(0);
-        }
-
-        public DWORD(long value) {
-            super(4, value, true);
-        }
+	/**
+	 * 16-bit unsigned integer.
+	 */
+	public static class WORD extends IntegerType {
 		
-        /**
-         * Low WORD.
-         * @return
-         *  Low WORD.
-         */
-        public WORD getLow() {
-            return new WORD(longValue() & 0xFFFF);
-        }
-				
-        /**
-         * High WORD.
-         * @return
-         *  High WORD.
-         */
-        public WORD getHigh() {
-            return new WORD((longValue() >> 16) & 0xFFFF);
-        }
-    }
+		/**
+		 * Instantiates a new word.
+		 */
+		public WORD() {
+			this(0);
+		}
 
-    /**
-     * 32-bit signed integer.
-     */
-    public static class LONG extends IntegerType {
-        public LONG() {
-            this(0);
-        }
+		/**
+		 * Instantiates a new word.
+		 *
+		 * @param value the value
+		 */
+		public WORD(long value) {
+			super(2, value, true);
+		}
+	}
 
-        public LONG(long value) {
-            super(Native.LONG_SIZE, value);
-        }
-    }
+	/**
+	 * 32-bit unsigned integer.
+	 */
+	public static class DWORD extends IntegerType {
+		
+		/**
+		 * Instantiates a new dword.
+		 */
+		public DWORD() {
+			this(0);
+		}
 
-    /**
-     * Handle to a device context (DC).
-     */
-    public static class HDC extends HANDLE {
-        public HDC() {
+		/**
+		 * Instantiates a new dword.
+		 *
+		 * @param value the value
+		 */
+		public DWORD(long value) {
+			super(4, value, true);
+		}
 
-        }
+		/**
+		 * Low WORD.
+		 * 
+		 * @return Low WORD.
+		 */
+		public WORD getLow() {
+			return new WORD(longValue() & 0xFF);
+		}
 
-        public HDC(Pointer p) {
-            super(p);
-        }
-    }
+		/**
+		 * High WORD.
+		 * 
+		 * @return High WORD.
+		 */
+		public WORD getHigh() {
+			return new WORD((longValue() >> 16) & 0xFF);
+		}
+	}
 
-    /**
-     * Handle to an icon.
-     */
-    public static class HICON extends HANDLE {
-        public HICON() {
+	/**
+	 * 32-bit signed integer.
+	 */
+	public static class LONG extends IntegerType {
+		
+		/**
+		 * Instantiates a new long.
+		 */
+		public LONG() {
+			this(0);
+		}
 
-        }
+		/**
+		 * Instantiates a new long.
+		 *
+		 * @param value the value
+		 */
+		public LONG(long value) {
+			super(Native.LONG_SIZE, value);
+		}
+	}
 
-        public HICON(Pointer p) {
-            super(p);
-        }
-    }
-	
-    /**
-     * Handle to a cursor. 
-     */
-    public static class HCURSOR extends HICON {
-        public HCURSOR() {
+	/**
+	 * Handle to a device context (DC).
+	 */
+	public static class HDC extends HANDLE {
+		
+		/**
+		 * Instantiates a new hdc.
+		 */
+		public HDC() {
 
-        }
+		}
 
-        public HCURSOR(Pointer p) {
-            super(p);
-        }
-    }
+		/**
+		 * Instantiates a new hdc.
+		 *
+		 * @param p the p
+		 */
+		public HDC(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a cursor. 
-     */
-    public static class HMENU extends HANDLE {
-        public HMENU() {
+	/**
+	 * Handle to an icon.
+	 */
+	public static class HICON extends HANDLE {
+		
+		/**
+		 * Instantiates a new hicon.
+		 */
+		public HICON() {
 
-        }
+		}
 
-        public HMENU(Pointer p) {
-            super(p);
-        }
-    }
+		/**
+		 * Instantiates a new hicon.
+		 *
+		 * @param p the p
+		 */
+		public HICON(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a pen.
-     */
-    public static class HPEN extends HANDLE {
-        public HPEN() {
+	/**
+	 * Handle to a cursor.
+	 */
+	public static class HCURSOR extends HICON {
+		
+		/**
+		 * Instantiates a new hcursor.
+		 */
+		public HCURSOR() {
 
-        }
+		}
 
-        public HPEN(Pointer p) {
-            super(p);
-        }
-    }
+		/**
+		 * Instantiates a new hcursor.
+		 *
+		 * @param p the p
+		 */
+		public HCURSOR(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a resource. 
-     */
-    public static class HRSRC extends HANDLE {
-        public HRSRC() {
+	/**
+	 * Handle to a cursor.
+	 */
+	public static class HMENU extends HANDLE {
+		
+		/**
+		 * Instantiates a new hmenu.
+		 */
+		public HMENU() {
 
-        }
+		}
 
-        public HRSRC(Pointer p) {
-            super(p);
-        }
-    }
-	
-    /**
-     * Handle to a palette. 
-     */
-    public static class HPALETTE extends HANDLE {
-        public HPALETTE() {
+		/**
+		 * Instantiates a new hmenu.
+		 *
+		 * @param p the p
+		 */
+		public HMENU(Pointer p) {
+			super(p);
+		}
+	}
 
-        }
+	/**
+	 * Handle to a pen.
+	 */
+	public static class HPEN extends HANDLE {
+		
+		/**
+		 * Instantiates a new hpen.
+		 */
+		public HPEN() {
 
-        public HPALETTE(Pointer p) {
-            super(p);
-        }
-    }
-	
-    /**
-     * Handle to a bitmap.
-     */
-    public static class HBITMAP extends HANDLE {
-        public HBITMAP() {
+		}
 
-        }
+		/**
+		 * Instantiates a new hpen.
+		 *
+		 * @param p the p
+		 */
+		public HPEN(Pointer p) {
+			super(p);
+		}
+	}
 
-        public HBITMAP(Pointer p) {
-            super(p);
-        }
-    }
+	/**
+	 * Handle to a resource.
+	 */
+	public static class HRSRC extends HANDLE {
+		
+		/**
+		 * Instantiates a new hrsrc.
+		 */
+		public HRSRC() {
 
-    /**
-     * Handle to a region.
-     */
-    public static class HRGN extends HANDLE {
-        public HRGN() {
+		}
 
-        }
+		/**
+		 * Instantiates a new hrsrc.
+		 *
+		 * @param p the p
+		 */
+		public HRSRC(Pointer p) {
+			super(p);
+		}
+	}
 
-        public HRGN(Pointer p) {
-            super(p);
-        }
-    }
+	/**
+	 * Handle to a palette.
+	 */
+	public static class HPALETTE extends HANDLE {
+		
+		/**
+		 * Instantiates a new hpalette.
+		 */
+		public HPALETTE() {
 
-    /**
-     * Handle to a window.
-     */
-    public static class HWND extends HANDLE {
-        public HWND() {
+		}
 
-        }
+		/**
+		 * Instantiates a new hpalette.
+		 *
+		 * @param p the p
+		 */
+		public HPALETTE(Pointer p) {
+			super(p);
+		}
+	}
 
-        public HWND(Pointer p) {
-            super(p);
-        }
-    }
+	/**
+	 * Handle to a bitmap.
+	 */
+	public static class HBITMAP extends HANDLE {
+		
+		/**
+		 * Instantiates a new hbitmap.
+		 */
+		public HBITMAP() {
 
-    /**
-     * Handle to an instance.
-     */
-    public static class HINSTANCE extends HANDLE {
+		}
 
-    }
+		/**
+		 * Instantiates a new hbitmap.
+		 *
+		 * @param p the p
+		 */
+		public HBITMAP(Pointer p) {
+			super(p);
+		}
+	}
 
-    /**
-     * Handle to a module. The value is the base address of the module.
-     */
-    public static class HMODULE extends HINSTANCE {
+	/**
+	 * Handle to a region.
+	 */
+	public static class HRGN extends HANDLE {
+		
+		/**
+		 * Instantiates a new hrgn.
+		 */
+		public HRGN() {
 
-    }
+		}
 
-    /**
-     * Handle to a font.
-     */
-    public static class HFONT extends HANDLE {
-        public HFONT() {
+		/**
+		 * Instantiates a new hrgn.
+		 *
+		 * @param p the p
+		 */
+		public HRGN(Pointer p) {
+			super(p);
+		}
+	}
 
-        }
+	/**
+	 * Handle to a window.
+	 */
+	public static class HWND extends HANDLE {
+		
+		/**
+		 * Instantiates a new hwnd.
+		 */
+		public HWND() {
 
-        public HFONT(Pointer p) {
-            super(p);
-        }
-    }
+		}
 
-    /**
-     * Message parameter. 
-     */
-    public static class LPARAM extends LONG_PTR {
-        public LPARAM() {
-            this(0);
-        }
+		/**
+		 * Instantiates a new hwnd.
+		 *
+		 * @param p the p
+		 */
+		public HWND(Pointer p) {
+			super(p);
+		}
+	}
 
-        public LPARAM(long value) {
-            super(value);
-        }
-    }
+	/**
+	 * Handle to an instance.
+	 */
+	public static class HINSTANCE extends HANDLE {
 
-    /**
-     * Signed result of message processing. 
-     */
-    public static class LRESULT extends LONG_PTR {
-        public LRESULT() {
-            this(0);
-        }
+	}
 
-        public LRESULT(long value) {
-            super(value);
-        }
-    }
+	/**
+	 * Handle to a module. The value is the base address of the module.
+	 */
+	public static class HMODULE extends HINSTANCE {
 
-    /** Integer type big enough for a pointer. */
-    public static class INT_PTR extends IntegerType {
-        public INT_PTR() {
-            super(Pointer.SIZE);
-        }
+	}
 
-        public INT_PTR(long value) {
-            super(Pointer.SIZE, value);
-        }
+	/**
+	 * Handle to a font.
+	 */
+	public static class HFONT extends HANDLE {
+		
+		/**
+		 * Instantiates a new hfont.
+		 */
+		public HFONT() {
 
-        public Pointer toPointer() {
-            return Pointer.createConstant(longValue());
-        }
-    }
+		}
 
-    /**
-     * Unsigned INT_PTR.
-     */
-    public static class UINT_PTR extends IntegerType {
-        public UINT_PTR() {
-            super(Pointer.SIZE);
-        }
+		/**
+		 * Instantiates a new hfont.
+		 *
+		 * @param p the p
+		 */
+		public HFONT(Pointer p) {
+			super(p);
+		}
+	}
 
-        public UINT_PTR(long value) {
-            super(Pointer.SIZE, value, true);
-        }
+	/**
+	 * Message parameter.
+	 */
+	public static class LPARAM extends LONG_PTR {
+		
+		/**
+		 * Instantiates a new lparam.
+		 */
+		public LPARAM() {
+			this(0);
+		}
 
-        public Pointer toPointer() {
-            return Pointer.createConstant(longValue());
-        }
-    }
+		/**
+		 * Instantiates a new lparam.
+		 *
+		 * @param value the value
+		 */
+		public LPARAM(long value) {
+			super(value);
+		}
+	}
 
-    /**
-     * Message parameter. 
-     */
-    public static class WPARAM extends UINT_PTR {
-        public WPARAM() {
-            this(0);
-        }
+	/**
+	 * Signed result of message processing.
+	 */
+	public static class LRESULT extends LONG_PTR {
+		
+		/**
+		 * Instantiates a new lresult.
+		 */
+		public LRESULT() {
+			this(0);
+		}
 
-        public WPARAM(long value) {
-            super(value);
-        }
-    }
-	
-    public class RECT extends Structure {
-        public int left;
-        public int top;
-        public int right;
-        public int bottom;
-        
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "left", "top", "right", "bottom" });
-        }
-        
-        public Rectangle toRectangle() {
-            return new Rectangle(left, top, right-left, bottom-top);
-        }
-        
-        public String toString() {
-            return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
-        }
-    }
-    
-    /**
-     * 32-bit unsigned integer.
-     */
-    public static class ULONG extends IntegerType {
-        public ULONG() {
-            this(0);
-        }
+		/**
+		 * Instantiates a new lresult.
+		 *
+		 * @param value the value
+		 */
+		public LRESULT(long value) {
+			super(value);
+		}
+	}
 
-        public ULONG(long value) {
-            super(Native.LONG_SIZE, value, true);
-        }
-        
-        public static class ByReference implements Structure.ByReference {
-        	
-        }
-    }
+	/** Integer type big enough for a pointer. */
+	public static class INT_PTR extends IntegerType {
+		
+		/**
+		 * Instantiates a new int ptr.
+		 */
+		public INT_PTR() {
+			super(Pointer.SIZE);
+		}
 
-    /**
-     * 64-bit unsigned integer.
-     */
-    public static class ULONGLONG extends IntegerType {
-        public ULONGLONG() {
-            this(0);
-        }
+		/**
+		 * Instantiates a new int ptr.
+		 *
+		 * @param value the value
+		 */
+		public INT_PTR(long value) {
+			super(Pointer.SIZE, value);
+		}
 
-        public ULONGLONG(long value) {
-            super(8, value, true);
-        }
-    }
-	
-    /**
-     * 64-bit unsigned integer.
-     */
-    public static class DWORDLONG extends IntegerType {
-        public DWORDLONG() {
-            this(0);
-        }
+		/**
+		 * To pointer.
+		 *
+		 * @return the pointer
+		 */
+		public Pointer toPointer() {
+			return Pointer.createConstant(longValue());
+		}
+	}
 
-        public DWORDLONG(long value) {
-            super(8, value, true);
-        }
-    }
+	/**
+	 * Unsigned INT_PTR.
+	 */
+	public static class UINT_PTR extends IntegerType {
+		
+		/**
+		 * Instantiates a new uint ptr.
+		 */
+		public UINT_PTR() {
+			super(Pointer.SIZE);
+		}
+
+		/**
+		 * Instantiates a new uint ptr.
+		 *
+		 * @param value the value
+		 */
+		public UINT_PTR(long value) {
+			super(Pointer.SIZE, value, true);
+		}
+
+		/**
+		 * To pointer.
+		 *
+		 * @return the pointer
+		 */
+		public Pointer toPointer() {
+			return Pointer.createConstant(longValue());
+		}
+	}
+
+	/**
+	 * Message parameter.
+	 */
+	public static class WPARAM extends UINT_PTR {
+		
+		/**
+		 * Instantiates a new wparam.
+		 */
+		public WPARAM() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new wparam.
+		 *
+		 * @param value the value
+		 */
+		public WPARAM(long value) {
+			super(value);
+		}
+	}
+
+	/**
+	 * The Class RECT.
+	 */
+	public class RECT extends Structure {
+		
+		/** The left. */
+		public int left;
+		
+		/** The top. */
+		public int top;
+		
+		/** The right. */
+		public int right;
+		
+		/** The bottom. */
+		public int bottom;
+
+		/* (non-Javadoc)
+		 * @see com.sun.jna.Structure#getFieldOrder()
+		 */
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "left", "top", "right",
+					"bottom" });
+		}
+
+		/**
+		 * To rectangle.
+		 *
+		 * @return the rectangle
+		 */
+		public Rectangle toRectangle() {
+			return new Rectangle(left, top, right - left, bottom - top);
+		}
+
+		/* (non-Javadoc)
+		 * @see com.sun.jna.Structure#toString()
+		 */
+		public String toString() {
+			return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
+		}
+	}
+
+	/**
+	 * 32-bit unsigned integer.
+	 */
+	public static class ULONG extends IntegerType {
+		
+		/**
+		 * Instantiates a new ulong.
+		 */
+		public ULONG() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new ulong.
+		 *
+		 * @param value the value
+		 */
+		public ULONG(long value) {
+			super(Native.LONG_SIZE, value, true);
+		}
+
+		/**
+		 * The Class ByReference.
+		 */
+		public static class ByReference implements Structure.ByReference {
+
+		}
+	}
+
+	/**
+	 * 64-bit unsigned integer.
+	 */
+	public static class ULONGLONG extends IntegerType {
+		
+		/**
+		 * Instantiates a new ulonglong.
+		 */
+		public ULONGLONG() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new ulonglong.
+		 *
+		 * @param value the value
+		 */
+		public ULONGLONG(long value) {
+			super(8, value, true);
+		}
+	}
+
+	/**
+	 * 64-bit unsigned integer.
+	 */
+	public static class DWORDLONG extends IntegerType {
+		
+		/**
+		 * Instantiates a new dwordlong.
+		 */
+		public DWORDLONG() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new dwordlong.
+		 *
+		 * @param value the value
+		 */
+		public DWORDLONG(long value) {
+			super(8, value, true);
+		}
+	}
+
+	/**
+	 * Handle to a bitmap.
+	 */
+	public static class HBRUSH extends HANDLE {
+		
+		/**
+		 * Instantiates a new hbrush.
+		 */
+		public HBRUSH() {
+
+		}
+
+		/**
+		 * Instantiates a new hbrush.
+		 *
+		 * @param p the p
+		 */
+		public HBRUSH(Pointer p) {
+			super(p);
+		}
+	}
+
+	/**
+	 * 16-bit unsigned integer.
+	 */
+	public static class ATOM extends WORD {
+		
+		/**
+		 * Instantiates a new atom.
+		 */
+		public ATOM() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new atom.
+		 *
+		 * @param value the value
+		 */
+		public ATOM(long value) {
+			super(value);
+		}
+	}
+
+	/**
+	 * The Class PVOID.
+	 */
+	public static class PVOID extends HANDLE {
+		
+		/**
+		 * Instantiates a new pvoid.
+		 */
+		public PVOID() {
+
+		}
+
+		/**
+		 * Instantiates a new pvoid.
+		 *
+		 * @param p the p
+		 */
+		public PVOID(Pointer p) {
+			super(p);
+		}
+	}
+
+	/**
+	 * Message parameter.
+	 */
+	public static class LPVOID extends LONG_PTR {
+		
+		/**
+		 * Instantiates a new lpvoid.
+		 */
+		public LPVOID() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new lpvoid.
+		 *
+		 * @param value the value
+		 */
+		public LPVOID(long value) {
+			super(value);
+		}
+	}
+
+	/**
+	 * The Class POINT.
+	 */
+	public class POINT extends Structure {
+
+		/**
+		 * The Class ByReference.
+		 */
+		public static class ByReference extends POINT implements
+				Structure.ByReference {
+		}
+
+		/**
+		 * Instantiates a new point.
+		 */
+		public POINT() {
+		}
+
+		/**
+		 * Instantiates a new point.
+		 *
+		 * @param memory the memory
+		 */
+		public POINT(Pointer memory) {
+			super(memory);
+			read();
+		}
+
+		/** The y. */
+		public int x, y;
+
+		/**
+		 * Instantiates a new point.
+		 *
+		 * @param x the x
+		 * @param y the y
+		 */
+		public POINT(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		/* (non-Javadoc)
+		 * @see com.sun.jna.Structure#getFieldOrder()
+		 */
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "x", "y" });
+		}
+	}
+
+	/**
+	 * 16-bit unsigned short.
+	 */
+	public static class USHORT extends IntegerType {
+		
+		/**
+		 * Instantiates a new ushort.
+		 */
+		public USHORT() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new ushort.
+		 *
+		 * @param value the value
+		 */
+		public USHORT(long value) {
+			super(2, value, true);
+		}
+	}
+
+	/**
+	 * 32-bit unsigned short.
+	 */
+	public static class UINT extends IntegerType {
+		
+		/**
+		 * Instantiates a new uint.
+		 */
+		public UINT() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new uint.
+		 *
+		 * @param value the value
+		 */
+		public UINT(long value) {
+			super(4, value, true);
+		}
+	}
+
+	/**
+	 * The Class SCODE.
+	 */
+	public static class SCODE extends ULONG {
+		
+		/**
+		 * Instantiates a new scode.
+		 */
+		public SCODE() {
+			this(0);
+		}
+
+		/**
+		 * Instantiates a new scode.
+		 *
+		 * @param value the value
+		 */
+		public SCODE(long value) {
+			super(value);
+		}
+
+		/**
+		 * The Class ByReference.
+		 */
+		public static class ByReference implements Structure.ByReference {
+
+		}
+	}
+
 }
