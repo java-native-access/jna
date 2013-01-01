@@ -26,13 +26,13 @@ public class Oleaut32Test extends TestCase {
     }
     
     public void testSysAllocString() {
-    	assertEquals(null, Oleaut32.INSTANCE.SysAllocString(null));
-    	Pointer p = Oleaut32.INSTANCE.SysAllocString("hello world");
+    	assertEquals(null, OleAut32.INSTANCE.SysAllocString(null));
+    	Pointer p = OleAut32.INSTANCE.SysAllocString("hello world");
     	assertEquals("hello world", p.getString(0, true));
-    	Oleaut32.INSTANCE.SysFreeString(p);
+    	OleAut32.INSTANCE.SysFreeString(p);
     }
     
     public void testSysFreeString() {
-    	Oleaut32.INSTANCE.SysFreeString(null);
+    	OleAut32.INSTANCE.SysFreeString(null);
     }
 }

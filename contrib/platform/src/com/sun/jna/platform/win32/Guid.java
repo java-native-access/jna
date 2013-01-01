@@ -26,7 +26,9 @@ import com.sun.jna.Structure;
  * @author dblock[at]dblock.org
  */
 public interface Guid {
-
+	
+	public final static IID IID_NULL = new IID();
+	
 	/**
 	 * The Class GUID.
 	 */
@@ -275,7 +277,7 @@ public interface Guid {
 
 		/**
 		 * To byte array.
-		 *
+		 * 
 		 * @return the byte[]
 		 */
 		public byte[] toByteArray() {
@@ -351,6 +353,126 @@ public interface Guid {
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "Data1", "Data2", "Data3",
 					"Data4" });
+		}
+	}
+
+	/**
+	 * The Class CLSID.
+	 */
+	public static class CLSID extends GUID {
+
+		/**
+		 * The Class ByReference.
+		 */
+		public static class ByReference extends GUID {
+
+			/**
+			 * Instantiates a new by reference.
+			 */
+			public ByReference() {
+			}
+
+			/**
+			 * Instantiates a new by reference.
+			 * 
+			 * @param guid
+			 *            the guid
+			 */
+			public ByReference(GUID guid) {
+				super(guid);
+			}
+
+			/**
+			 * Instantiates a new by reference.
+			 * 
+			 * @param memory
+			 *            the memory
+			 */
+			public ByReference(Pointer memory) {
+
+			}
+		}
+
+		/**
+		 * Instantiates a new clsid.
+		 */
+		public CLSID() {
+		}
+	}
+
+	/**
+	 * The Class REFIID.
+	 */
+	public class REFIID extends IID {
+
+		/**
+		 * Instantiates a new refiid.
+		 */
+		public REFIID() {
+			// TODO Auto-generated constructor stub
+		}
+
+		/**
+		 * Instantiates a new refiid.
+		 * 
+		 * @param memory
+		 *            the memory
+		 */
+		public REFIID(Pointer memory) {
+			super(memory);
+			// TODO Auto-generated constructor stub
+		}
+
+		/**
+		 * Instantiates a new refiid.
+		 * 
+		 * @param data
+		 *            the data
+		 */
+		public REFIID(byte[] data) {
+			super(data);
+			// TODO Auto-generated constructor stub
+		}
+
+	}
+
+	/**
+	 * The Class IID.
+	 */
+	public class IID extends GUID {
+
+		/**
+		 * Instantiates a new iid.
+		 */
+		public IID() {
+			// TODO Auto-generated constructor stub
+		}
+
+		/**
+		 * Instantiates a new iid.
+		 * 
+		 * @param memory
+		 *            the memory
+		 */
+		public IID(Pointer memory) {
+			super(memory);
+			// TODO Auto-generated constructor stub
+		}
+
+		public IID(String iid) {
+			super(iid);
+			// TODO Auto-generated constructor stub
+		}
+
+		/**
+		 * Instantiates a new iid.
+		 * 
+		 * @param data
+		 *            the data
+		 */
+		public IID(byte[] data) {
+			super(data);
+			// TODO Auto-generated constructor stub
 		}
 	}
 }
