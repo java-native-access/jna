@@ -85,18 +85,16 @@ AM_MAKEFLAGS = \
 	"RANLIB=$(RANLIB)" \
 	"DESTDIR=$(DESTDIR)"
 
+# Subdir rules rely on $(FLAGS_TO_PASS)
+FLAGS_TO_PASS = $(AM_MAKEFLAGS)
+
 MAKEOVERRIDES=
 
-ACLOCAL_AMFLAGS=$(ACLOCAL_AMFLAGS) -I m4
-
-lib_LTLIBRARIES = libffi.la
+toolexeclib_LTLIBRARIES = libffi.la
 noinst_LTLIBRARIES = libffi_convenience.la
 
 libffi_la_SOURCES = src/prep_cif.c src/types.c \
 		src/raw_api.c src/java_raw_api.c src/closures.c
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libffi.pc
 
 nodist_libffi_la_SOURCES =
 
@@ -170,9 +168,6 @@ endif
 if FRV
 nodist_libffi_la_SOURCES += src/frv/eabi.S src/frv/ffi.c
 endif
-if MOXIE
-nodist_libffi_la_SOURCES += src/moxie/eabi.S src/moxie/ffi.c
-endif
 if S390
 nodist_libffi_la_SOURCES += src/s390/sysv.S src/s390/ffi.c
 endif
@@ -198,19 +193,19 @@ endif
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 
-AM_CFLAGS = -g
-if FFI_DEBUG
-# Build debug. Define FFI_DEBUG on the commandline so that, when building with
-# MSVC, it can link against the debug CRT.
-AM_CFLAGS += -DFFI_DEBUG
-endif
+AM_CFLAGS = -Wall -g -fexceptions
+
+LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/../libtool-ldflags $(LDFLAGS))
 
 libffi_la_LDFLAGS = -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
 
-AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src -DFFI_BUILDING
-AM_CCASFLAGS = $(AM_CPPFLAGS) -g
+AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
+AM_CCASFLAGS = $(AM_CPPFLAGS)
 
-# No install-html or install-pdf support in automake yet
-.PHONY: install-html install-pdf
-install-html:
-install-pdf:
+# Multilib support.  Automake should provide these on its own.
+all-recursive: all-multi
+install-recursive: install-multi
+mostlyclean-recursive: mostlyclean-multi
+clean-recursive: clean-multi
+distclean-recursive: distclean-multi
+maintainer-clean-recursive: maintainer-clean-multi

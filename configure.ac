@@ -1,16 +1,16 @@
 dnl Process this with autoconf to create configure
 
-AC_PREREQ(2.68)
+AC_PREREQ(2.64)
 
-AC_INIT([libffi], [3.0.11], [http://github.com/atgreen/libffi/issues])
+AC_INIT([libffi], [3.0.11], [http://gcc.gnu.org/bugs.html])
 AC_CONFIG_HEADERS([fficonfig.h])
+
+AM_ENABLE_MULTILIB(, ..)
 
 AC_CANONICAL_SYSTEM
 target_alias=${target_alias-$host_alias}
 
 . ${srcdir}/configure.host
-
-AX_ENABLE_BUILDDIR
 
 AM_INIT_AUTOMAKE
 
@@ -18,29 +18,17 @@ AM_INIT_AUTOMAKE
 # We must force CC to /not/ be precious variables; otherwise
 # the wrong, non-multilib-adjusted value will be used in multilibs.
 # As a side effect, we have to subst CFLAGS ourselves.
-# Also save and restore CFLAGS, since AC_PROG_CC will come up with
-# defaults of its own if none are provided.
 
 m4_rename([_AC_ARG_VAR_PRECIOUS],[real_PRECIOUS])
 m4_define([_AC_ARG_VAR_PRECIOUS],[])
-save_CFLAGS=$CFLAGS
 AC_PROG_CC
-CFLAGS=$save_CFLAGS
-m4_undefine([_AC_ARG_VAR_PRECIOUS])
-m4_rename([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
+m4_rename_force([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
 
 AC_SUBST(CFLAGS)
 
 AM_PROG_AS
 AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
-AC_CONFIG_MACRO_DIR([m4])
-
-AX_CC_MAXOPT
-AX_CFLAGS_WARN_ALL
-if test "x$GCC" = "xyes"; then
-  CFLAGS="$CFLAGS -fexceptions"
-fi
 
 AM_MAINTAINER_MODE
 
@@ -147,10 +135,6 @@ case "$host" in
 	TARGET=MIPS; TARGETDIR=mips
 	;;
 
-  moxie-*-*)
-        TARGET=MOXIE; TARGETDIR=moxie
-	;;
-
   powerpc*-*-linux* | powerpc-*-sysv*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
@@ -236,7 +220,6 @@ AM_CONDITIONAL(ALPHA, test x$TARGET = xALPHA)
 AM_CONDITIONAL(IA64, test x$TARGET = xIA64)
 AM_CONDITIONAL(M32R, test x$TARGET = xM32R)
 AM_CONDITIONAL(M68K, test x$TARGET = xM68K)
-AM_CONDITIONAL(MOXIE, test x$TARGET = xMOXIE)
 AM_CONDITIONAL(POWERPC, test x$TARGET = xPOWERPC)
 AM_CONDITIONAL(POWERPC_AIX, test x$TARGET = xPOWERPC_AIX)
 AM_CONDITIONAL(POWERPC_DARWIN, test x$TARGET = xPOWERPC_DARWIN)
@@ -347,13 +330,6 @@ if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64
     if test "x$libffi_cv_as_string_pseudo_op" = xyes; then
        AC_DEFINE(HAVE_AS_STRING_PSEUDO_OP, 1,
 	       [Define if your assembler supports .string.])
-    fi
-fi
-
-if test x$TARGET = xX86_WIN64; then
-    LT_SYS_SYMBOL_USCORE
-    if test "x$sys_symbol_underscore" = xyes; then
-        AC_DEFINE(SYMBOL_UNDERSCORE, 1, [Define if symbols are underscored.])
     fi
 fi
 
@@ -485,25 +461,21 @@ AC_ARG_ENABLE(purify-safety,
     AC_DEFINE(USING_PURIFY, 1, [Define this if you are using Purify and want to suppress spurious messages.])
   fi)
 
-# These variables are only ever used when we cross-build to X86_WIN32.
-# And we only support this with GCC, so...
-if test x"$GCC" != x"no"; then
-  if test -n "$with_cross_host" &&
-     test x"$with_cross_host" != x"no"; then
-    toolexecdir='$(exec_prefix)/$(target_alias)'
-    toolexeclibdir='$(toolexecdir)/lib'
-  else
-    toolexecdir='$(libdir)/gcc-lib/$(target_alias)'
-    toolexeclibdir='$(libdir)'
-  fi
-  multi_os_directory=`$CC -print-multi-os-directory`
-  case $multi_os_directory in
-    .) ;; # Avoid trailing /.
-    *) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
-  esac
-  AC_SUBST(toolexecdir)
-  AC_SUBST(toolexeclibdir)
+if test -n "$with_cross_host" &&
+   test x"$with_cross_host" != x"no"; then
+  toolexecdir='$(exec_prefix)/$(target_alias)'
+  toolexeclibdir='$(toolexecdir)/lib'
+else
+  toolexecdir='$(libdir)/gcc-lib/$(target_alias)'
+  toolexeclibdir='$(libdir)'
 fi
+multi_os_directory=`$CC -print-multi-os-directory`
+case $multi_os_directory in
+  .) ;; # Avoid trailing /.
+  *) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
+esac
+AC_SUBST(toolexecdir)
+AC_SUBST(toolexeclibdir)
 
 if test "${multilib}" = "yes"; then
   multilib_arg="--enable-multilib"
@@ -519,6 +491,6 @@ test -d src/$TARGETDIR || mkdir src/$TARGETDIR
 
 AC_CONFIG_LINKS(include/ffitarget.h:src/$TARGETDIR/ffitarget.h)
 
-AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile libffi.pc)
+AC_CONFIG_FILES(include/Makefile include/ffi.h Makefile testsuite/Makefile man/Makefile)
 
 AC_OUTPUT

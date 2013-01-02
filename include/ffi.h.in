@@ -166,36 +166,22 @@ typedef struct _ffi_type
  #error "long size not supported"
 #endif
 
-/* Need minimal decorations for DLLs to works on Windows. */
-/* GCC has autoimport and autoexport.  Rely on Libtool to */
-/* help MSVC export from a DLL, but always declare data   */
-/* to be imported for MSVC clients.  This costs an extra  */
-/* indirection for MSVC clients using the static version  */
-/* of the library, but don't worry about that.  Besides,  */
-/* as a workaround, they can define FFI_BUILDING if they  */
-/* *know* they are going to link with the static library. */
-#if defined _MSC_VER && !defined FFI_BUILDING
-#define FFI_EXTERN extern __declspec(dllimport)
-#else
-#define FFI_EXTERN extern
-#endif
-
 /* These are defined in types.c */
-FFI_EXTERN ffi_type ffi_type_void;
-FFI_EXTERN ffi_type ffi_type_uint8;
-FFI_EXTERN ffi_type ffi_type_sint8;
-FFI_EXTERN ffi_type ffi_type_uint16;
-FFI_EXTERN ffi_type ffi_type_sint16;
-FFI_EXTERN ffi_type ffi_type_uint32;
-FFI_EXTERN ffi_type ffi_type_sint32;
-FFI_EXTERN ffi_type ffi_type_uint64;
-FFI_EXTERN ffi_type ffi_type_sint64;
-FFI_EXTERN ffi_type ffi_type_float;
-FFI_EXTERN ffi_type ffi_type_double;
-FFI_EXTERN ffi_type ffi_type_pointer;
+extern ffi_type ffi_type_void;
+extern ffi_type ffi_type_uint8;
+extern ffi_type ffi_type_sint8;
+extern ffi_type ffi_type_uint16;
+extern ffi_type ffi_type_sint16;
+extern ffi_type ffi_type_uint32;
+extern ffi_type ffi_type_sint32;
+extern ffi_type ffi_type_uint64;
+extern ffi_type ffi_type_sint64;
+extern ffi_type ffi_type_float;
+extern ffi_type ffi_type_double;
+extern ffi_type ffi_type_pointer;
 
 #if @HAVE_LONG_DOUBLE@
-FFI_EXTERN ffi_type ffi_type_longdouble;
+extern ffi_type ffi_type_longdouble;
 #else
 #define ffi_type_longdouble ffi_type_double
 #endif
@@ -297,12 +283,7 @@ size_t ffi_java_raw_size (ffi_cif *cif);
 __declspec(align(8))
 #endif
 typedef struct {
-#if @FFI_EXEC_TRAMPOLINE_TABLE@
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
   ffi_cif   *cif;
   void     (*fun)(ffi_cif*,void*,void**,void*);
   void      *user_data;
@@ -335,12 +316,8 @@ ffi_prep_closure_loc (ffi_closure*,
 # pragma pack 8
 #endif
 typedef struct {
-#if @FFI_EXEC_TRAMPOLINE_TABLE@
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
+
   ffi_cif   *cif;
 
 #if !FFI_NATIVE_RAW_API
@@ -360,12 +337,7 @@ typedef struct {
 } ffi_raw_closure;
 
 typedef struct {
-#if @FFI_EXEC_TRAMPOLINE_TABLE@
-  void *trampoline_table;
-  void *trampoline_table_entry;
-#else
   char tramp[FFI_TRAMPOLINE_SIZE];
-#endif
 
   ffi_cif   *cif;
 
