@@ -1,3 +1,14 @@
+2013-01-02  rofl0r <https://github.com/rofl0r>
+
+	* src/powerpc/ffi.c (ffi_prep_cif_machdep): Fix build error on ppc
+	when long double == double.
+
+2013-01-02  Reini Urban  <rurban@x-ray.at>
+
+	* Makefile.am (libffi_la_LDFLAGS): Add -no-undefined to LDFLAGS
+	(required for shared libs on cygwin/mingw).
+	* Makefile.in: Rebuilt.
+
 2012-10-31  Alan Modra  <amodra@gmail.com>
 
 	* src/powerpc/linux64_closure.S: Add new ABI support.
