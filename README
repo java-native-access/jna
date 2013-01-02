@@ -167,7 +167,6 @@ See the ChangeLog files for details.
 	Integration with iOS' xcode build tools.
 	Fix Octeon and MC68881 support.
 	Fix code pessimizations.
-	Lots of build fixes.
 
 3.0.10 Aug-23-11
         Add support for Apple's iOS.
