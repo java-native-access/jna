@@ -148,6 +148,22 @@
 	in CNAME.
 	* src/x86/ffi.c: Wrap Windows specific code in ifdefs.
 
+2012-04-02  Peter Bergner  <bergner@vnet.ibm.com>
+
+	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Declare double_tmp.
+	Silence casting pointer to integer of different size warning.
+	Delete goto to previously deleted label.
+	(ffi_call): Silence possibly undefined warning.
+	(ffi_closure_helper_SYSV): Declare variable type.
+
+2012-04-02  Peter Rosin  <peda@lysator.liu.se>
+
+	* src/x86/win32.S (ffi_call_win32): Sign/zero extend the return
+	value in the Intel version as is already done for the AT&T version.
+	(ffi_closure_SYSV): Likewise.
+	(ffi_closure_raw_SYSV): Likewise.
+	(ffi_closure_STDCALL): Likewise.
+
 2012-03-29  Peter Rosin  <peda@lysator.liu.se>
 
 	* src/x86/win32.S (ffi_closure_raw_THISCALL): Unify the frame
@@ -315,11 +331,6 @@
 	* src/m68k/ffi.c: Add MINT support.
 	* src/m68k/sysv.S: Ditto.
 
-2012-03-19  chennam  <csit@axway.com>
-
-	* src/powerpc/ffi_darwin.c (ffi_prep_closure_loc): Fix AIX closure
-	support.
-
 2012-03-06  Chung-Lin Tang  <cltang@codesourcery.com>
 
 	* src/arm/ffi.c (ffi_call): Add __ARM_EABI__ guard around call to
@@ -328,21 +339,10 @@
 	ffi_closure_VFP.
 	* src/arm/sysv.S: Add __ARM_EABI__ guard around VFP code.
 
-2012-04-02  Peter Bergner  <bergner@vnet.ibm.com>
+2012-03-19  chennam  <csit@axway.com>
 
-	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Declare double_tmp.
-	Silence casting pointer to integer of different size warning.
-	Delete goto to previously deleted label.
-	(ffi_call): Silence possibly undefined warning.
-	(ffi_closure_helper_SYSV): Declare variable type.
-
-2012-04-02  Peter Rosin  <peda@lysator.liu.se>
-
-	* src/x86/win32.S (ffi_call_win32): Sign/zero extend the return
-	value in the Intel version as is already done for the AT&T version.
-	(ffi_closure_SYSV): Likewise.
-	(ffi_closure_raw_SYSV): Likewise.
-	(ffi_closure_STDCALL): Likewise.
+	* src/powerpc/ffi_darwin.c (ffi_prep_closure_loc): Fix AIX closure
+	support.
 
 2012-03-13  Kaz Kojima  <kkojima@gcc.gnu.org>
 
