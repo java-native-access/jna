@@ -314,6 +314,13 @@
 	(and save PATH for later).
 	(restore_ld_library_path_env_vars): Restore PATH.
 
+2012-03-21  Peter Rosin  <peda@lysator.liu.se>
+
+	* testsuite/lib/target-libpath.exp [*-*-cygwin*, *-*-mingw*]
+	(set_ld_library_path_env_vars): Add the library search dir to PATH
+	(and save PATH for later).
+	(restore_ld_library_path_env_vars): Restore PATH.
+
 2012-03-20  Peter Rosin  <peda@lysator.liu.se>
 
 	* testsuite/libffi.call/strlen2_win32.c (main): Remove bug.
