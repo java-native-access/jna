@@ -33,9 +33,6 @@ public class IUnknown extends PointerType {
 	public final static IID IID_IDispatch = new IID(
 			"{00000000-0000-0000-C000-000000000046}");
 
-	/** The pv instance. */
-	protected Pointer pvInstance;
-
 	public IUnknown() {
 	}
 
@@ -46,7 +43,7 @@ public class IUnknown extends PointerType {
 	 *            the pv instance
 	 */
 	public IUnknown(Pointer pvInstance) {
-		this.pvInstance = pvInstance;
+		this.setPointer(pvInstance);
 	}
 
 	/**
@@ -59,10 +56,10 @@ public class IUnknown extends PointerType {
 	 * @return the hresult
 	 */
 	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
-		Pointer vptr = this.pvInstance.getPointer(0);
+		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(0));
 		int hr = func
-				.invokeInt(new Object[] { this.pvInstance, riid, ppvObject });
+				.invokeInt(new Object[] { this.getPointer(), riid, ppvObject });
 
 		return new HRESULT(hr);
 	}
@@ -73,10 +70,10 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int AddRef() {
-		Pointer vptr = this.pvInstance.getPointer(0);
+		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(4));
 
-		return func.invokeInt(new Object[] { this.pvInstance });
+		return func.invokeInt(new Object[] { this.getPointer() });
 	}
 
 	/**
@@ -85,9 +82,9 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int Release() {
-		Pointer vptr = this.pvInstance.getPointer(0);
+		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(8));
 
-		return func.invokeInt(new Object[] { this.pvInstance });
+		return func.invokeInt(new Object[] { this.getPointer() });
 	}
 }

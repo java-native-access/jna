@@ -46,9 +46,9 @@ public class IDispatch extends IUnknown {
 	 * @return the hresult
 	 */
 	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
-		Pointer vptr = this.pvInstance.getPointer(0);
+		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(12));
-		int hr = func.invokeInt(new Object[] { this.pvInstance, pctinfo });
+		int hr = func.invokeInt(new Object[] { this.getPointer(), pctinfo });
 
 		return new HRESULT(hr);
 	}
@@ -66,9 +66,9 @@ public class IDispatch extends IUnknown {
 	 */
 	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
 			PointerByReference ppTInfo) {
-		Pointer vptr = this.pvInstance.getPointer(0);
+		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(16));
-		int hr = func.invokeInt(new Object[] { this.pvInstance, iTInfo, lcid,
+		int hr = func.invokeInt(new Object[] { this.getPointer(), iTInfo, lcid,
 				ppTInfo });
 
 		return new HRESULT(hr);
@@ -92,9 +92,9 @@ public class IDispatch extends IUnknown {
 	public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
 			LCID lcid, DISPID.ByReference rgDispId) {
 
-		Pointer vptr = this.pvInstance.getPointer(0);
+		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(20));
-		int hr = func.invokeInt(new Object[] { this.pvInstance, riid,
+		int hr = func.invokeInt(new Object[] { this.getPointer(), riid,
 				rgszNames, cNames, lcid, rgDispId });
 
 		return new HRESULT(hr);
@@ -122,13 +122,13 @@ public class IDispatch extends IUnknown {
 	 * @return the hresult
 	 */
 	public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-			DISPID wFlags, DISPPARAMS.ByReference pDispParams,
+			DISPID wFlags, DISPPARAMS pDispParams,
 			VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
 
-		Pointer vptr = this.pvInstance.getPointer(0);
+		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(24));
-		int hr = func.invokeInt(new Object[] { this.pvInstance, dispIdMember,
+		int hr = func.invokeInt(new Object[] { this.getPointer(), dispIdMember,
 				riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo,
 				puArgErr });
 

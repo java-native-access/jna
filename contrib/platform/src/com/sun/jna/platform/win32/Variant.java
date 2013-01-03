@@ -84,11 +84,11 @@ public interface Variant {
 	public static VARTYPE VT_ILLEGAL = new VARTYPE(0xffff);
 	public static VARTYPE VT_ILLEGALMASKED = new VARTYPE(0xfff);
 	public static VARTYPE VT_TYPEMASK = new VARTYPE(0xfff);
-	
+
 	public static VARIANT_BOOL VARIANT_TRUE = new VARIANT_BOOL(0xFFFF);
 	public static VARIANT_BOOL VARIANT_FALSE = new VARIANT_BOOL(0x0000);
 
-	public static class VARIANT extends Structure {
+	public static class VARIANT extends Union {
 
 		public static class ByReference extends VARIANT implements
 				Structure.ByReference {
@@ -119,13 +119,16 @@ public interface Variant {
 		public DECIMAL decVal;
 
 		public VARIANT() {
+			this.setType(_VARIANT.class);
 		}
 
 		public VARIANT(VARTYPE vt) {
+			this();
 			this._variant = new _VARIANT(vt);
 		}
 
 		public VARIANT(VARTYPE vt, __VARIANT __variant) {
+			this();
 			this._variant = new _VARIANT(vt, __variant);
 		}
 
@@ -137,12 +140,74 @@ public interface Variant {
 			super(pointer);
 		}
 
+		public VARIANT(BSTR str) {
+			this.setBSTR(str);
+		}
+
+		public VARIANT(VARIANT_BOOL boolVal) {
+			this.setBoolVal(boolVal);
+		}
+
 		public VARTYPE getVarType() {
 			return _variant.vt;
 		}
 
 		public void setVarType(VARTYPE vt) {
 			this._variant.vt = vt;
+		}
+
+		public VARIANT_BOOL getBoolVal() {
+			return this._variant.__variant.boolVal;
+		}
+
+		public void setBoolVal(VARIANT_BOOL boolVal) {
+			this.setVarType(VT_BOOL);
+			this._variant.__variant.boolVal = boolVal;
+		}
+
+		public void setBSTR(BSTR str) {
+			this._variant.vt = VT_BSTR;
+			this._variant.__variant.bstrVal = str;
+		}
+
+		public BSTR getBSTR() {
+			return this._variant.__variant.bstrVal;
+		}
+
+		public void setDispVal(IDispatch pdispVal) {
+			this._variant.vt = VT_DISPATCH;
+			this._variant.__variant.pdispVal = pdispVal;
+		}
+
+		public IDispatch getDispVal() {
+			return this._variant.__variant.pdispVal;
+		}
+
+		public void setVariant(VARIANT.ByReference variant) {
+			this._variant.vt = VT_VARIANT;
+			this._variant.__variant.pvarVal = variant;
+		}
+
+		public SAFEARRAY.ByReference getSAFEARRAY() {
+			return this._variant.__variant.pparray;
+		}
+
+		public void setSAFEARRAY(SAFEARRAY.ByReference variantArg) {
+			this._variant.vt = VT_ARRAY;
+			this._variant.__variant.pparray = variantArg;
+		}
+
+		public VARIANT.ByReference getVariant() {
+			return this._variant.__variant.pvarVal;
+		}
+
+		public void setI4(int value) {
+			this._variant.vt = VT_I4;
+			this._variant.__variant.iVal = value;
+		}
+
+		public int getI4() {
+			return this._variant.__variant.iVal;
 		}
 
 		public static class _VARIANT extends Structure {
@@ -167,12 +232,12 @@ public interface Variant {
 			}
 
 			public static class __VARIANT extends Union {
-				public long llVal;
+				public Long llVal;
 				public NativeLong lVal;
-				public byte bVal;
-				public short iVal;
-				public float fltVal;
-				public double dblVal;
+				public Byte bVal;
+				public Integer iVal;
+				public Float fltVal;
+				public Double dblVal;
 				// / C type : VARIANT_BOOL
 				public VARIANT_BOOL boolVal;
 				// / C type : _VARIANT_BOOL
@@ -220,7 +285,7 @@ public interface Variant {
 				// / C type : IDispatch**
 				public IDispatch[] ppdispVal = new IDispatch[1];
 				// / C type : SAFEARRAY**
-				public SAFEARRAY[] pparray = new SAFEARRAY[1];
+				public SAFEARRAY.ByReference pparray;
 				// / C type : VARIANT*
 				public VARIANT.ByReference pvarVal;
 				// / C type : PVOID
@@ -230,12 +295,12 @@ public interface Variant {
 				public SHORT uiVal;
 				public NativeLong ulVal;
 				public long ullVal;
-				public int intVal;
+				public Integer intVal;
 				public int uintVal;
 				// / C type : DECIMAL*
 				public DECIMAL pdecVal;
 				// / C type : CHAR*
-				public char pcVal;
+				public Character pcVal;
 				// / C type : USHORT*
 				public ShortByReference puiVal;
 				// / C type : ULONG*
@@ -246,6 +311,10 @@ public interface Variant {
 				public IntByReference pintVal;
 				// / C type : UINT*
 				public IntByReference puintVal;
+
+				public __VARIANT() {
+					this.setType(Integer.class);
+				}
 			}
 
 			public static class BRECORD extends Structure {
@@ -264,11 +333,6 @@ public interface Variant {
 				return Arrays.asList(new String[] { "vt", "wReserved1",
 						"wReserved2", "wReserved3", "__variant", "bRecord" });
 			}
-		}
-
-		@Override
-		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "_variant", "decVal" });
 		}
 	}
 }

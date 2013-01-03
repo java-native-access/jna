@@ -22,9 +22,8 @@ import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
-import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -53,7 +52,7 @@ public interface OleAut32 extends StdCallLibrary {
 	 * @return Null if there is insufficient memory or if a null pointer is
 	 *         passed in.
 	 */
-	public Pointer SysAllocString(String sz);
+	public BSTR SysAllocString(String sz);
 
 	/**
 	 * This function frees a string allocated previously by SysAllocString,
@@ -64,9 +63,11 @@ public interface OleAut32 extends StdCallLibrary {
 	 *            Unicode string that was allocated previously, or NULL. Setting
 	 *            this parameter to NULL causes the function to simply return.
 	 */
-	public void SysFreeString(Pointer bstr);
+	public void SysFreeString(BSTR bstr);
 
 	public void VariantInit(VARIANT.ByReference pvarg);
+
+	public void VariantInit(VARIANT pvarg);
 
 	public SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
@@ -77,7 +78,7 @@ public interface OleAut32 extends StdCallLibrary {
 				Structure.ByReference {
 		}
 
-		public VARIANT[] rgvarg;
+		public VARIANT[] rgvarg = new VARIANT[1];
 		public DISPID[] rgdispidNamedArgs = new DISPID[1];
 		public int cArgs = 0;
 		public int cNamedArgs = 0;
@@ -87,6 +88,11 @@ public interface OleAut32 extends StdCallLibrary {
 
 		public DISPPARAMS(Pointer memory) {
 			super(memory);
+			this.cArgs = (Integer) this.readField("cArgs");
+			this.rgvarg = new VARIANT[cArgs];
+			this.cNamedArgs = (Integer) this.readField("cNamedArgs");
+			this.rgdispidNamedArgs = new DISPID[cNamedArgs];
+			read();
 		}
 
 		public void writeFieldsToMemory() {

@@ -27,6 +27,10 @@ public class COMObject {
 
 	private PointerByReference pDispatch = new PointerByReference();
 
+	public COMObject(IDispatch iDispatch) {
+		this.iDispatch = iDispatch;
+	}
+
 	public COMObject(String progId) throws COMException {
 		// enable JNA protected mode
 		Native.setProtected(true);
@@ -61,19 +65,19 @@ public class COMObject {
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-			IDispatch pDisp, String name, int cArgs, VARIANT[] pArgs) throws COMException {
+			IDispatch pDisp, String name, VARIANT[] pArgs) throws COMException {
 
 		if (pDisp == null)
-			return new HRESULT(COMUtils.E_FAIL);
+			throw new COMException("pDisp parameter is null!");
 
 		// va_list marker;
 		// va_start(marker, cArgs);
 
 		WString[] ptName = new WString[] { new WString(name) };
-		DISPPARAMS.ByReference dp = new DISPPARAMS.ByReference();
+		DISPPARAMS dp = new DISPPARAMS();
 		DISPID dispidNamed = new DISPID(OleAut32.DISPATCH_PROPERTYPUT);
 		DISPID.ByReference pdispID = new DISPID.ByReference();
-
+		
 		// Get DISPID for name passed...
 		HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
 				LOCALE_USER_DEFAULT, pdispID);
@@ -81,14 +85,19 @@ public class COMObject {
 		COMUtils.SUCCEEDED(hr);
 
 		// Build DISPPARAMS
-		dp.cArgs = cArgs;
-		dp.rgvarg = pArgs;
+		if ((pArgs != null) && (pArgs.length > 0)) {
+			dp.cArgs = pArgs.length;
+			dp.rgvarg = pArgs;
+		}
 
 		// Handle special-case for property-puts!
 		if (nType == OleAut32.DISPATCH_PROPERTYPUT) {
 			dp.cNamedArgs = 1;
 			dp.rgdispidNamedArgs[0] = dispidNamed;
 		}
+
+		dp.writeFieldsToMemory();
+		
 
 		// Make the call!
 		hr = pDisp.Invoke(pdispID.getDISPID(), Guid.IID_NULL,
@@ -98,6 +107,35 @@ public class COMObject {
 		COMUtils.SUCCEEDED(hr);
 		return hr;
 
+	}
+
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+			IDispatch pDisp, String name, VARIANT pArg) throws COMException {
+
+		return this.oleMethod(nType, pvResult, pDisp, name,
+				new VARIANT[] { pArg });
+	}
+
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+			IDispatch pDisp, String name) throws COMException {
+
+		return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[])null);
+	}
+
+	public IDispatch getIDispatch() {
+		return iDispatch;
+	}
+
+	public void setIDispatch(IDispatch iDispatch) {
+		this.iDispatch = iDispatch;
+	}
+
+	public PointerByReference getIDispatchPointer() {
+		return pDispatch;
+	}
+
+	public void setIDispatchPointer(PointerByReference pDispatch) {
+		this.pDispatch = pDispatch;
 	}
 
 	public void release() {

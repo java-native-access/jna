@@ -14,25 +14,25 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WTypes.BSTR;
 
 /**
  * @author dblock[at]dblock[dot]org
  */
 public class Oleaut32Test extends TestCase {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Oleaut32Test.class);       
-    }
-    
-    public void testSysAllocString() {
-    	assertEquals(null, OleAut32.INSTANCE.SysAllocString(null));
-    	Pointer p = OleAut32.INSTANCE.SysAllocString("hello world");
-    	assertEquals("hello world", p.getString(0, true));
-    	OleAut32.INSTANCE.SysFreeString(p);
-    }
-    
-    public void testSysFreeString() {
-    	OleAut32.INSTANCE.SysFreeString(null);
-    }
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(Oleaut32Test.class);
+	}
+
+	public void testSysAllocString() {
+		assertEquals(null, OleAut32.INSTANCE.SysAllocString(null));
+		BSTR p = OleAut32.INSTANCE.SysAllocString("hello world");
+		assertEquals("hello world", p.toNative());
+		OleAut32.INSTANCE.SysFreeString(p);
+	}
+
+	public void testSysFreeString() {
+		OleAut32.INSTANCE.SysFreeString(null);
+	}
 }

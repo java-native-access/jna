@@ -15,13 +15,11 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.nio.CharBuffer;
-import java.util.Arrays;
-import java.util.List;
-
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.WinDef.USHORT;
+import com.sun.jna.ptr.ByReference;
 
 /**
  * Constant defined in WTypes.h
@@ -68,55 +66,29 @@ public interface WTypes {
 		}
 	}
 
-	public static class BSTR extends Structure {
-
-		public static class ByReference extends BSTR implements
-				Structure.ByReference {
-		}
-
-		public WString string;
+	public static class BSTR extends ByReference implements
+			Structure.ByReference {
 
 		public BSTR() {
+			this("null");
 		}
 
-		public BSTR(String s) {
-			if (s == null)
-				throw new NullPointerException(
-						"String initializer must be non-null");
-			this.string = new WString(s);
+		public BSTR(String value) {
+			super(value.length() *4);
+			setValue(value);
 		}
 
-		public String toString() {
-			return string.toString();
+		public void setValue(String value) {
+			getPointer().setString(0, value, true);
 		}
 
-		public boolean equals(Object o) {
-			return o instanceof WString && toString().equals(o.toString());
+		public String getValue() {
+			return getPointer().getString(0, true);
 		}
-
-		public int hashCode() {
-			return toString().hashCode();
-		}
-
-		public int compareTo(Object o) {
-			return toString().compareTo(o.toString());
-		}
-
-		public int length() {
-			return toString().length();
-		}
-
-		public char charAt(int index) {
-			return toString().charAt(index);
-		}
-
-		public CharSequence subSequence(int start, int end) {
-			return CharBuffer.wrap(toString()).subSequence(start, end);
-		}
-
+		
 		@Override
-		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "string" });
+		public String toString() {
+			return this.getValue();
 		}
 	}
 

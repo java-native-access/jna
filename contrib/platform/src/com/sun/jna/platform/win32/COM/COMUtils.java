@@ -38,7 +38,7 @@ public abstract class COMUtils {
 	public static final int DISP_E_BUFFERTOOSMALL = -2147352557;
 	public static final int DISP_E_UNKNOWNNAME = -2147352570;
 	public static final int DISP_E_NONAMEDARGS = -2147352569;
-
+	
 	public static boolean SUCCEEDED(HRESULT err) throws COMException {
 		return SUCCEEDED(err.intValue());
 	}
