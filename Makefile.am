@@ -193,8 +193,6 @@ endif
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 
-AM_CFLAGS = -Wall -g -fexceptions
-
 LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/../libtool-ldflags $(LDFLAGS))
 
 libffi_la_LDFLAGS = -no-undefined -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)

@@ -1,3 +1,10 @@
+2013-01-04  Anthony Green  <green@moxielogic.com>
+
+	* Makefile.am (AM_CFLAGS): Don't automatically add -fexceptions
+	and -Wall.  This is set in the configure script after testing for
+	GCC.
+	* Makefile.in: Rebuilt.
+
 2013-01-02  rofl0r <https://github.com/rofl0r>
 
 	* src/powerpc/ffi.c (ffi_prep_cif_machdep): Fix build error on ppc
