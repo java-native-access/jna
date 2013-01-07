@@ -1,5 +1,11 @@
 2013-01-07  Thorsten Glaser <tg@mirbsd.org>
 
+	* testsuite/libffi.call/cls_uchar_va.c,
+	testsuite/libffi.call/cls_ushort_va.c,
+	testsuite/libffi.call/va_1.c: Testsuite fixes.
+
+2013-01-07  Thorsten Glaser <tg@mirbsd.org>
+
 	* src/m68k/ffi.c (CIF_FLAGS_SINT8, CIF_FLAGS_SINT16): Define.
 	(ffi_prep_cif_machdep): Fix 8-bit and 16-bit signed calls.
 	* src/m68k/sysv.S (ffi_call_SYSV, ffi_closure_SYSV): Ditto.
