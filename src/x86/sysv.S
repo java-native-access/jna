@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
-   sysv.S - Copyright (c) 1996, 1998, 2001-2003, 2005, 2008, 2010  Red Hat, Inc.
+   sysv.S - Copyright (c) 2013  The Written Word
+	  - Copyright (c) 1996,1998,2001-2003,2005,2008,2010  Red Hat, Inc.
    
    X86 Foreign Function Interface 
 
@@ -328,6 +329,9 @@ ffi_closure_raw_SYSV:
 	.size	ffi_closure_raw_SYSV, .-ffi_closure_raw_SYSV
 #endif
 
+#if defined __GNUC__
+/* Only emit dwarf unwind info when building with GNU toolchain.  */
+
 #if defined __PIC__
 # if defined __sun__ && defined __svr4__
 /* 32-bit Solaris 2/x86 uses datarel encoding for PIC.  GNU ld before 2.22
@@ -459,6 +463,7 @@ ffi_closure_raw_SYSV:
 	.align 4
 .LEFDE3:
 
+#endif
 #endif
 
 #endif /* ifndef __x86_64__ */
