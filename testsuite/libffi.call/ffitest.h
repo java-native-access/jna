@@ -15,7 +15,7 @@
 
 #define MAX_ARGS 256
 
-#define CHECK(x) !(x) ? abort() : 0
+#define CHECK(x) !(x) ? (abort(), 1) : 0
 
 /* Define __UNUSED__ that also other compilers than gcc can run the tests.  */
 #undef __UNUSED__

@@ -1,3 +1,8 @@
+2013-01-08  Anthony Green  <green@moxielogic.com>
+
+	* testsuite/libffi.call/ffitest.h (CHECK): Fix for Solaris vendor
+	compiler.
+
 2013-01-07  Thorsten Glaser <tg@mirbsd.org>
 
 	* testsuite/libffi.call/cls_uchar_va.c,
