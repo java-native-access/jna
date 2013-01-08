@@ -1,5 +1,13 @@
 2013-01-08  Anthony Green  <green@moxielogic.com>
 
+	* testsuite/libffi.call/call.exp: Run tests with different
+	options, depending on whether or not we are using gcc or the
+	vendor compiler.
+	* testsuite/lib/libffi.exp (libffi-init): Set using_gcc based on
+	whether or not we are building/testing with gcc.
+
+2013-01-08  Anthony Green  <green@moxielogic.com>
+
 	* configure.ac: Switch x86 solaris target to X86 by default.
 	* configure: Rebuilt.
 
