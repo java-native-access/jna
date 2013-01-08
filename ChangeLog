@@ -1,5 +1,10 @@
 2013-01-08  Anthony Green  <green@moxielogic.com>
 
+	* configure.ac: Switch x86 solaris target to X86 by default.
+	* configure: Rebuilt.
+
+2013-01-08  Anthony Green  <green@moxielogic.com>
+
 	* configure.ac: Fix test for read-only eh_frame.
 	* configure: Rebuilt.
 
