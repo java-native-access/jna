@@ -227,6 +227,7 @@ RUNTEST = `if [ -f $(top_srcdir)/../dejagnu/runtest ] ; then \
 	       echo $(top_srcdir)/../dejagnu/runtest ; \
 	    else echo runtest; fi`
 
+EXTRA_DEJAGNU_SITE_CONFIG = ../local.exp
 CLEANFILES = *.exe core* *.log *.sum
 EXTRA_DIST = config/default.exp libffi.call/cls_19byte.c \
 libffi.call/cls_align_longdouble_split.c libffi.call/closure_loc_fn0.c \

@@ -1,5 +1,11 @@
 2013-01-08  Anthony Green  <green@moxielogic.com>
 
+	* configure.ac: Generate local.exp.  This sets CC_FOR_TARGET
+	when we are using the vendor compiler.
+	* testsuite/Makefile.am (EXTRA_DEJAGNU_SITE_CONFIG): Point to
+	../local.exp.
+	* configure, testsuite/Makefile.in: Rebuilt.
+
 	* testsuite/libffi.call/call.exp: Run tests with different
 	options, depending on whether or not we are using gcc or the
 	vendor compiler.
