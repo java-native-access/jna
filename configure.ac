@@ -402,11 +402,12 @@ if test "x$GCC" = "xyes"; then
       libffi_cv_ro_eh_frame, [
   	libffi_cv_ro_eh_frame=no
   	echo 'extern void foo (void); void bar (void) { foo (); foo (); }' > conftest.c
-  	if $CC $CFLAGS -S -fpic -fexceptions -o conftest.s conftest.c > /dev/null 2>&1; then
-  	    if grep '.section.*eh_frame.*"a"' conftest.s > /dev/null; then
-  		libffi_cv_ro_eh_frame=yes
-  	    elif grep '.section.*eh_frame.*#alloc' conftest.c \
-  		 | grep -v '#write' > /dev/null; then
+  	if $CC $CFLAGS -c -fpic -fexceptions -o conftest.o conftest.c > /dev/null 2>&1; then
+	    objdump -h conftest.o > conftest.dump 2>&1
+	    libffi_eh_frame_line=`grep -n eh_frame conftest.dump | cut -d: -f 1`
+	    libffi_test_line=`expr $libffi_eh_frame_line + 1`p
+	    sed -n $libffi_test_line conftest.dump > conftest.line
+  	    if grep READONLY conftest.line > /dev/null; then
   		libffi_cv_ro_eh_frame=yes
   	    fi
   	fi
