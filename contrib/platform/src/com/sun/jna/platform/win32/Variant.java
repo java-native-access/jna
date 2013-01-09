@@ -281,9 +281,9 @@ public interface Variant {
 				// / C type : BSTR*
 				public BSTR pbstrVal;
 				// / C type : IUnknown**
-				public IUnknown[] ppunkVal = new IUnknown[1];
+				public IUnknown.ByReference ppunkVal;
 				// / C type : IDispatch**
-				public IDispatch[] ppdispVal = new IDispatch[1];
+				public IDispatch.ByReference ppdispVal;
 				// / C type : SAFEARRAY**
 				public SAFEARRAY.ByReference pparray;
 				// / C type : VARIANT*
@@ -291,14 +291,14 @@ public interface Variant {
 				// / C type : PVOID
 				public PVOID byref;
 				// / C type : CHAR
-				public CHAR cVal;
+				public String cVal;
 				public SHORT uiVal;
 				public NativeLong ulVal;
 				public long ullVal;
 				public Integer intVal;
 				public int uintVal;
 				// / C type : DECIMAL*
-				public DECIMAL pdecVal;
+				public DECIMAL.ByReference pdecVal;
 				// / C type : CHAR*
 				public Character pcVal;
 				// / C type : USHORT*
@@ -313,7 +313,7 @@ public interface Variant {
 				public IntByReference puintVal;
 
 				public __VARIANT() {
-					this.setType(Integer.class);
+					this.setType(VARIANT_BOOL.class);
 				}
 			}
 

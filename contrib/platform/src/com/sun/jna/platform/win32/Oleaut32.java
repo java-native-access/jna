@@ -24,6 +24,7 @@ import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -69,8 +70,10 @@ public interface OleAut32 extends StdCallLibrary {
 
 	public void VariantInit(VARIANT pvarg);
 
-	public SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
+	public SAFEARRAY SafeArrayCreate(VARTYPE vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
+
+	public HRESULT SafeArrayPutElement(SAFEARRAY psa, int[] idx, Pointer pv);
 
 	public class DISPPARAMS extends Structure {
 
@@ -78,7 +81,7 @@ public interface OleAut32 extends StdCallLibrary {
 				Structure.ByReference {
 		}
 
-		public VARIANT[] rgvarg = new VARIANT[1];
+		public SAFEARRAY rgvarg;
 		public DISPID[] rgdispidNamedArgs = new DISPID[1];
 		public int cArgs = 0;
 		public int cNamedArgs = 0;
@@ -88,10 +91,10 @@ public interface OleAut32 extends StdCallLibrary {
 
 		public DISPPARAMS(Pointer memory) {
 			super(memory);
-			this.cArgs = (Integer) this.readField("cArgs");
-			this.rgvarg = new VARIANT[cArgs];
-			this.cNamedArgs = (Integer) this.readField("cNamedArgs");
-			this.rgdispidNamedArgs = new DISPID[cNamedArgs];
+			// this.cArgs = (Integer) this.readField("cArgs");
+			// this.rgvarg = new VARIANT[cArgs];
+			// this.cNamedArgs = (Integer) this.readField("cNamedArgs");
+			// this.rgdispidNamedArgs = new DISPID[cNamedArgs];
 			read();
 		}
 

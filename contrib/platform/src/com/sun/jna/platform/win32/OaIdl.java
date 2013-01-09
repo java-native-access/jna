@@ -357,11 +357,16 @@ public interface OaIdl {
 				Structure.ByReference {
 		}
 
-		public ULONG cElements;
-		public LONG lLbound;
-
+		public int cElements;
+		public int lLbound;
+		
 		public SAFEARRAYBOUND() {
 			// TODO Auto-generated constructor stub
+		}
+		
+		public SAFEARRAYBOUND(int cElements, int lLbound) {
+			this.cElements = cElements;
+			this.lLbound = lLbound;
 		}
 
 		public SAFEARRAYBOUND(Pointer p) {

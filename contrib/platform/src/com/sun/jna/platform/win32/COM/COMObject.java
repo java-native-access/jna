@@ -6,9 +6,12 @@ import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.Ole32Util;
 import com.sun.jna.platform.win32.OleAut32;
 import com.sun.jna.platform.win32.OleAut32.DISPPARAMS;
+import com.sun.jna.platform.win32.OleAut32Util;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
@@ -23,7 +26,7 @@ public class COMObject {
 	public final static LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE
 			.GetSystemDefaultLCID();
 
-	protected IDispatch iDispatch;
+	protected IDispatch iDispatch = new IDispatch();
 
 	private PointerByReference pDispatch = new PointerByReference();
 
@@ -86,8 +89,14 @@ public class COMObject {
 
 		// Build DISPPARAMS
 		if ((pArgs != null) && (pArgs.length > 0)) {
+			SAFEARRAY varArray = OleAut32Util.createVarArray(pArgs.length);
+			
+			for (int i = 0; i < pArgs.length; i++) {
+				OleAut32Util.SafeArrayPutElement(varArray, 0, pArgs[i]);
+			}
+
 			dp.cArgs = pArgs.length;
-			dp.rgvarg = pArgs;
+			dp.rgvarg = varArray;
 		}
 
 		// Handle special-case for property-puts!

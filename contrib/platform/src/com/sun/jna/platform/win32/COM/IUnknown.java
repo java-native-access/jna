@@ -15,9 +15,11 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.Function;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
+import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.IID;
-import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.PointerByReference;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,6 +30,10 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
  * 
  */
 public class IUnknown extends PointerType {
+
+	public static class ByReference extends IUnknown implements
+			Structure.ByReference {
+	}
 
 	/** The Constant IID_IDispatch. */
 	public final static IID IID_IDispatch = new IID(
@@ -58,8 +64,8 @@ public class IUnknown extends PointerType {
 	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(0));
-		int hr = func
-				.invokeInt(new Object[] { this.getPointer(), riid, ppvObject });
+		int hr = func.invokeInt(new Object[] { this.getPointer(), riid,
+				ppvObject });
 
 		return new HRESULT(hr);
 	}

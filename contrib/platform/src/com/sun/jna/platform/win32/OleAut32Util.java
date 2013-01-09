@@ -12,10 +12,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
-import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMUtils;
 
 /**
  * @author Tobias Wolf, wolf.tobias@gmx.net
@@ -23,19 +27,23 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
  */
 public abstract class OleAut32Util {
 
-	public static SAFEARRAY createVarArray(long size) {
+	public static SAFEARRAY createVarArray(int size) {
+		VARTYPE arrayType = new VARTYPE(0x2000 | 3);
 		SAFEARRAY psa;
 		SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
-		SAFEARRAYBOUND element = new SAFEARRAYBOUND();
+		rgsabound[0] = new SAFEARRAYBOUND(size, 0);
 
-		element.lLbound = new LONG(0);
-		element.cElements = new ULONG(size);
-
-		rgsabound[0] = element;
-
-		psa = OleAut32.INSTANCE
-				.SafeArrayCreate(Variant.VT_DECIMAL, 1, rgsabound);
+		psa = OleAut32.INSTANCE.SafeArrayCreate(Variant.VT_VARIANT, 1,
+				rgsabound);
 
 		return psa;
+	}
+
+	public static void SafeArrayPutElement(SAFEARRAY array, int index,
+			VARIANT arg) throws COMException {
+		int[] idx = new int[1];
+		idx[0] = index;
+		HRESULT hr = OleAut32.INSTANCE.SafeArrayPutElement(array, idx, arg.getPointer());
+		COMUtils.SUCCEEDED(hr);
 	}
 }

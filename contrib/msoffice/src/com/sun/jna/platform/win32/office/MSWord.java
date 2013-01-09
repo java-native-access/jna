@@ -31,8 +31,8 @@ public class MSWord extends COMObject {
 		OleAut32.INSTANCE.VariantInit(result);
 
 		VARIANT varVisible = new VARIANT();
-		varVisible.setVarType(Variant.VT_I4);
-		varVisible.setI4(1);
+		varVisible.setVarType(Variant.VT_BOOL);
+		varVisible.setBoolVal(bVisible);
 
 		HRESULT hr = this.oleMethod(OleAut32.DISPATCH_PROPERTYPUT, result,
 				this.iDispatch, "Visible", varVisible);
