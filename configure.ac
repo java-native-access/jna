@@ -36,8 +36,14 @@ AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 
+AX_COMPILER_VENDOR
 AX_CC_MAXOPT
-AX_CFLAGS_WARN_ALL
+# The AX_CFLAGS_WARN_ALL macro doesn't currently work for sunpro
+# compiler.
+if test "$ax_cv_c_compiler_vendor" != "sun"; then
+  AX_CFLAGS_WARN_ALL
+fi
+
 if test "x$GCC" = "xyes"; then
   CFLAGS="$CFLAGS -fexceptions"
   touch local.exp

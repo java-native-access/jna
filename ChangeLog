@@ -1,5 +1,12 @@
 2013-01-10  Anthony Green  <green@moxielogic.com>
 
+	* m4/ax_compiler_vendor.m4: New file.
+	* configure.ac: Test for compiler vendor and don't use
+	AX_CFLAGS_WARN_ALL with the sun compiler.
+	* aclocal.m4, configure: Rebuilt.
+
+2013-01-10  Anthony Green  <green@moxielogic.com>
+
 	* include/ffi_common.h: Don't use GCCisms to define types when
 	building with the SUNPRO compiler.
 
