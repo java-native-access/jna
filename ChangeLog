@@ -1,5 +1,9 @@
 2013-01-10  Anthony Green  <green@moxielogic.com>
 
+	* README (tested): Add Compiler column to table.
+
+2013-01-10  Anthony Green  <green@moxielogic.com>
+
 	* src/x86/ffi64.c (struct register_args): Make sse array and array
 	of unions for sunpro compiler compatibility.
 

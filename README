@@ -48,52 +48,54 @@ refer to the wiki page here:
 At the time of release, the following basic configurations have been
 tested:
 
-|-----------------+------------------|
-| Architecture    | Operating System |
-|-----------------+------------------|
-| AArch64         | Linux            |
-| Alpha           | Linux            |
-| Alpha           | Tru64            |
-| ARM             | Linux            |
-| ARM             | iOS              |
-| AVR32           | Linux            |
-| Blackfin        | uClinux          |
-| HPPA            | HPUX             |
-| IA-64           | Linux            |
-| M68K            | FreeMiNT         |
-| M68K            | RTEMS            |
-| MIPS            | IRIX             |
-| MIPS            | Linux            |
-| MIPS            | RTEMS            |
-| MIPS64          | Linux            |
-| PowerPC         | AMIGA            |
-| PowerPC         | Linux            |
-| PowerPC         | Mac OSX          |
-| PowerPC         | FreeBSD          |
-| PowerPC64       | Linux            |
-| S390            | Linux            |
-| S390X           | Linux            |
-| SPARC           | Linux            |
-| SPARC           | Solaris          |
-| SPARC64         | Linux            |
-| SPARC64         | FreeBSD          |
-| TILE-Gx/TILEPro | Linux            |
-| X86             | FreeBSD          |
-| X86             | Interix          |
-| X86             | kFreeBSD         |
-| X86             | Linux            |
-| X86             | Mac OSX          |
-| X86             | OpenBSD          |
-| X86             | OS/2             |
-| X86             | Solaris          |
-| X86             | Windows/Cygwin   |
-| X86             | Windows/MingW    |
-| X86-64          | FreeBSD          |
-| X86-64          | Linux            |
-| X86-64          | Linux/x32        |
-| X86-64          | OpenBSD          |
-| X86-64          | Windows/MingW    |
-|-----------------+------------------|
+|-----------------+------------------|-------------------------|
+| Architecture    | Operating System | Compiler                |
+|-----------------+------------------|-------------------------|
+| AArch64         | Linux            | GCC                     |
+| Alpha           | Linux            | GCC                     |
+| Alpha           | Tru64            | GCC                     |
+| ARM             | Linux            | GCC                     |
+| ARM             | iOS              | GCC                     |
+| AVR32           | Linux            | GCC                     |
+| Blackfin        | uClinux          | GCC                     |
+| HPPA            | HPUX             | GCC                     |
+| IA-64           | Linux            | GCC                     |
+| M68K            | FreeMiNT         | GCC                     |
+| M68K            | RTEMS            | GCC                     |
+| MIPS            | IRIX             | GCC                     |
+| MIPS            | Linux            | GCC                     |
+| MIPS            | RTEMS            | GCC                     |
+| MIPS64          | Linux            | GCC                     |
+| PowerPC         | AMIGA            | GCC                     |
+| PowerPC         | Linux            | GCC                     |
+| PowerPC         | Mac OSX          | GCC                     |
+| PowerPC         | FreeBSD          | GCC                     |
+| PowerPC64       | Linux            | GCC                     |
+| S390            | Linux            | GCC                     |
+| S390X           | Linux            | GCC                     |
+| SPARC           | Linux            | GCC                     |
+| SPARC           | Solaris          | GCC                     |
+| SPARC64         | Linux            | GCC                     |
+| SPARC64         | FreeBSD          | GCC                     |
+| TILE-Gx/TILEPro | Linux            | GCC                     |
+| X86             | FreeBSD          | GCC                     |
+| X86             | Interix          | GCC                     |
+| X86             | kFreeBSD         | GCC                     |
+| X86             | Linux            | GCC                     |
+| X86             | Mac OSX          | GCC                     |
+| X86             | OpenBSD          | GCC                     |
+| X86             | OS/2             | GCC                     |
+| X86             | Solaris          | GCC                     |
+| X86             | Solaris          | Oracle Solaris Studio C |
+| X86             | Windows/Cygwin   | GCC                     |
+| X86             | Windows/MingW    | GCC                     |
+| X86-64          | FreeBSD          | GCC                     |
+| X86-64          | Linux            | GCC                     |
+| X86-64          | Linux/x32        | GCC                     |
+| X86-64          | OpenBSD          | GCC                     |
+| X86-64          | Solaris          | Oracle Solaris Studio C |
+| X86-64          | Windows/MingW    | GCC                     |
+|-----------------+------------------+-------------------------|
 
 Please send additional platform test results to
 libffi-discuss@sourceware.org and feel free to update the wiki page
