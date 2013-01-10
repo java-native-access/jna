@@ -40,10 +40,10 @@ AX_CC_MAXOPT
 AX_CFLAGS_WARN_ALL
 if test "x$GCC" = "xyes"; then
   CFLAGS="$CFLAGS -fexceptions"
-  touch testsuite/local.exp
+  touch local.exp
 else
   cat > local.exp <<EOF
-set CC_FOR_TARGET $CC  
+set CC_FOR_TARGET "$CC"
 EOF
 fi
 

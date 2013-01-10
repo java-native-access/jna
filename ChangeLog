@@ -1,3 +1,13 @@
+2013-01-10  Anthony Green  <green@moxielogic.com>
+
+	* configure.ac: Put local.exp in the right place.
+	* configure: Rebuilt.
+
+	* src/x86/ffi.c: Update comment about regparm function attributes.
+	* src/x86/sysv.S (ffi_closure_SYSV): The SUNPRO compiler requires
+	that all function arguments be passed on the stack (no regparm
+	support).
+
 2013-01-08  Anthony Green  <green@moxielogic.com>
 
 	* configure.ac: Generate local.exp.  This sets CC_FOR_TARGET

@@ -182,9 +182,19 @@ ffi_closure_SYSV:
 	leal	-24(%ebp), %edx
 	movl	%edx, -12(%ebp)	/* resp */
 	leal	8(%ebp), %edx
+#ifdef __SUNPRO_C
+	/* The SUNPRO compiler doesn't support GCC's regparm function
+  	   attribute, so we have to pass all three arguments to
+	   ffi_closure_SYSV_inner on the stack.  */
+	movl	%edx, 8(%esp)	/* args = __builtin_dwarf_cfa () */
+	leal	-12(%ebp), %edx
+	movl	%edx, 4(%esp)	/* &resp */
+	movl    %eax, (%esp)    /* closure */
+#else
 	movl	%edx, 4(%esp)	/* args = __builtin_dwarf_cfa () */
 	leal	-12(%ebp), %edx
 	movl	%edx, (%esp)	/* &resp */
+#endif
 #if defined HAVE_HIDDEN_VISIBILITY_ATTRIBUTE || !defined __PIC__
 	call	ffi_closure_SYSV_inner
 #else
