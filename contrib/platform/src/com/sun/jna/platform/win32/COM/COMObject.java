@@ -73,14 +73,11 @@ public class COMObject {
 		if (pDisp == null)
 			throw new COMException("pDisp parameter is null!");
 
-		// va_list marker;
-		// va_start(marker, cArgs);
-
 		WString[] ptName = new WString[] { new WString(name) };
 		DISPPARAMS dp = new DISPPARAMS();
 		DISPID dispidNamed = new DISPID(OleAut32.DISPATCH_PROPERTYPUT);
 		DISPID.ByReference pdispID = new DISPID.ByReference();
-		
+
 		// Get DISPID for name passed...
 		HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
 				LOCALE_USER_DEFAULT, pdispID);
@@ -90,7 +87,7 @@ public class COMObject {
 		// Build DISPPARAMS
 		if ((pArgs != null) && (pArgs.length > 0)) {
 			SAFEARRAY varArray = OleAut32Util.createVarArray(pArgs.length);
-			
+
 			for (int i = 0; i < pArgs.length; i++) {
 				OleAut32Util.SafeArrayPutElement(varArray, 0, pArgs[i]);
 			}
@@ -106,7 +103,7 @@ public class COMObject {
 		}
 
 		dp.writeFieldsToMemory();
-		
+
 
 		// Make the call!
 		hr = pDisp.Invoke(pdispID.getDISPID(), Guid.IID_NULL,

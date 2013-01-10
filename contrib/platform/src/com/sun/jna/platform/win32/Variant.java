@@ -132,7 +132,7 @@ public interface Variant {
 			this._variant = new _VARIANT(vt, __variant);
 		}
 
-		public VARIANT(int pointer) {
+		public VARIANT(long pointer) {
 			super(new Pointer(pointer));
 		}
 
@@ -146,6 +146,10 @@ public interface Variant {
 
 		public VARIANT(VARIANT_BOOL boolVal) {
 			this.setBoolVal(boolVal);
+		}
+
+		public VARIANT(int i4) {
+			this.setI4(i4);
 		}
 
 		public VARTYPE getVarType() {
@@ -162,11 +166,13 @@ public interface Variant {
 
 		public void setBoolVal(VARIANT_BOOL boolVal) {
 			this.setVarType(VT_BOOL);
+			this._variant.__variant.setType("boolVal");
 			this._variant.__variant.boolVal = boolVal;
 		}
 
 		public void setBSTR(BSTR str) {
 			this._variant.vt = VT_BSTR;
+			this._variant.__variant.setType("bstrVal");
 			this._variant.__variant.bstrVal = str;
 		}
 
@@ -176,6 +182,7 @@ public interface Variant {
 
 		public void setDispVal(IDispatch pdispVal) {
 			this._variant.vt = VT_DISPATCH;
+			this._variant.__variant.setType("pdispVal");
 			this._variant.__variant.pdispVal = pdispVal;
 		}
 
@@ -185,6 +192,7 @@ public interface Variant {
 
 		public void setVariant(VARIANT.ByReference variant) {
 			this._variant.vt = VT_VARIANT;
+			this._variant.__variant.setType("pvarVal");
 			this._variant.__variant.pvarVal = variant;
 		}
 
@@ -194,6 +202,7 @@ public interface Variant {
 
 		public void setSAFEARRAY(SAFEARRAY.ByReference variantArg) {
 			this._variant.vt = VT_ARRAY;
+			this._variant.__variant.setType("pparray");
 			this._variant.__variant.pparray = variantArg;
 		}
 
@@ -202,7 +211,8 @@ public interface Variant {
 		}
 
 		public void setI4(int value) {
-			this._variant.vt = VT_I4;
+			this.setVarType(VT_I4);
+			this._variant.__variant.setType("iVal");
 			this._variant.__variant.iVal = value;
 		}
 
@@ -232,12 +242,12 @@ public interface Variant {
 			}
 
 			public static class __VARIANT extends Union {
-				public Long llVal;
+				public long llVal;
 				public NativeLong lVal;
-				public Byte bVal;
-				public Integer iVal;
-				public Float fltVal;
-				public Double dblVal;
+				public byte bVal;
+				public int iVal;
+				public float fltVal;
+				public double dblVal;
 				// / C type : VARIANT_BOOL
 				public VARIANT_BOOL boolVal;
 				// / C type : _VARIANT_BOOL
@@ -295,7 +305,7 @@ public interface Variant {
 				public SHORT uiVal;
 				public NativeLong ulVal;
 				public long ullVal;
-				public Integer intVal;
+				public int intVal;
 				public int uintVal;
 				// / C type : DECIMAL*
 				public DECIMAL.ByReference pdecVal;
@@ -313,7 +323,6 @@ public interface Variant {
 				public IntByReference puintVal;
 
 				public __VARIANT() {
-					this.setType(VARIANT_BOOL.class);
 				}
 			}
 
