@@ -1,5 +1,10 @@
 2013-01-10  Anthony Green  <green@moxielogic.com>
 
+	* src/x86/ffi64.c (struct register_args): Make sse array and array
+	of unions for sunpro compiler compatibility.
+
+2013-01-10  Anthony Green  <green@moxielogic.com>
+
 	* configure.ac: Test target platform size_t size.  Handle both 32
 	and 64-bit builds for x86_64-* and i?86-* targets (allowing for
 	CFLAG option to change default settings).
