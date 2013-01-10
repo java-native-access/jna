@@ -1,5 +1,10 @@
 2013-01-10  Anthony Green  <green@moxielogic.com>
 
+	* include/ffi_common.h: Don't use GCCisms to define types when
+	building with the SUNPRO compiler.
+
+2013-01-10  Anthony Green  <green@moxielogic.com>
+
 	* configure.ac: Put local.exp in the right place.
 	* configure: Rebuilt.
 
