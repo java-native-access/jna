@@ -1,5 +1,8 @@
 2013-01-10  Anthony Green  <green@moxielogic.com>
 
+	* testsuite/libffi.special/special.exp: Only run exception
+	handling tests when using GNU compiler.
+
 	* m4/ax_compiler_vendor.m4: New file.
 	* configure.ac: Test for compiler vendor and don't use
 	AX_CFLAGS_WARN_ALL with the sun compiler.
