@@ -36,6 +36,9 @@ AM_PROG_CC_C_O
 AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 
+# Test for 64-bit build.
+AC_CHECK_SIZEOF([size_t])
+
 AX_COMPILER_VENDOR
 AX_CC_MAXOPT
 # The AX_CFLAGS_WARN_ALL macro doesn't currently work for sunpro
@@ -135,10 +138,21 @@ case "$host" in
 	TARGET=X86_DARWIN; TARGETDIR=x86
 	;;
   i?86-*-solaris2.1[[0-9]]*)
-	TARGET=X86; TARGETDIR=x86
+	TARGETDIR=x86
+	if test $ac_cv_sizeof_size_t = 4; then
+	  TARGET=X86; 
+	else
+	  TARGET=X86_64; 
+	fi	  
 	;;
-  i?86-*-*)
-	TARGET=X86_64; TARGETDIR=x86
+
+  i?86-*-* | x86_64-*-*)
+	TARGETDIR=x86
+	if test $ac_cv_sizeof_size_t = 4; then
+	  TARGET=X86; 
+	else
+	  TARGET=X86_64; 
+	fi	  
 	;;
 
   ia64*-*-*)
@@ -223,9 +237,6 @@ case "$host" in
 	fi
 	;;
 
-  x86_64-*-*)
-	TARGET=X86_64; TARGETDIR=x86
-	;;
 esac
 
 AC_SUBST(AM_RUNTESTFLAGS)

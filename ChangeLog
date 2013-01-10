@@ -1,5 +1,12 @@
 2013-01-10  Anthony Green  <green@moxielogic.com>
 
+	* configure.ac: Test target platform size_t size.  Handle both 32
+	and 64-bit builds for x86_64-* and i?86-* targets (allowing for
+	CFLAG option to change default settings).
+	* configure, aclocal.m4: Rebuilt.
+
+2013-01-10  Anthony Green  <green@moxielogic.com>
+
 	* testsuite/libffi.special/special.exp: Only run exception
 	handling tests when using GNU compiler.
 
