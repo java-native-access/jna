@@ -49,6 +49,7 @@ public abstract class OleAut32Util {
 		long[] idx = new long[1];
 		idx[0] = index;
 		VARIANT result = new VARIANT();
+		OleAut32.INSTANCE.VariantInit(result);
 		HRESULT hr = OleAut32.INSTANCE.SafeArrayGetElement(array, idx,
 				result.getPointer());
 		COMUtils.SUCCEEDED(hr);

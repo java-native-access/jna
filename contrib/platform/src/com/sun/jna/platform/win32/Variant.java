@@ -92,7 +92,7 @@ public interface Variant {
 				Structure.ByReference {
 		}
 
-		public _VARIANT _variant;
+		public _VARIANT _variant = new _VARIANT();
 
 		public DECIMAL decVal;
 
@@ -165,8 +165,6 @@ public interface Variant {
 
 			switch (this.getVarType()) {
 			case VT_I4:
-				this._variant.__variant.setType("iVal");
-				this._variant.__variant.read();
 				return this._variant.__variant.readField("iVal");
 			case VT_BSTR:
 				return this._variant.__variant.readField("bstrVal");
@@ -187,7 +185,7 @@ public interface Variant {
 			public short wReserved1;
 			public short wReserved2;
 			public short wReserved3;
-			public __VARIANT __variant;
+			public __VARIANT __variant = new __VARIANT();
 			public BRECORD bRecord;
 
 			public static class __VARIANT extends Union {
