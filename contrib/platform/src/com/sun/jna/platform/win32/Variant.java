@@ -148,6 +148,12 @@ public interface Variant {
 			case VT_BOOL:
 				this._variant.__variant.writeField("boolVal", value);
 				break;
+			case VT_SAFEARRAY:
+				this._variant.__variant.writeField("parray", value);
+				break;
+			case VT_ARRAY:
+				this._variant.__variant.writeField("parray", value);
+				break;
 			}
 
 			this._variant.writeField("vt", vt);
@@ -168,6 +174,8 @@ public interface Variant {
 				return this._variant.__variant.readField("pdispVal");
 			case VT_BOOL:
 				return this._variant.__variant.readField("boolVal");
+			case VT_SAFEARRAY:
+				return this._variant.__variant.readField("parray");
 			default:
 				return null;
 			}

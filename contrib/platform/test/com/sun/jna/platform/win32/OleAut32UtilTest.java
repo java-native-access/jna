@@ -28,12 +28,13 @@ public class OleAut32UtilTest extends TestCase {
 	}
 
 	public void testCreateVarArray() {
-		SAFEARRAY varArray = OleAut32Util.createVarArray(10);
+		SAFEARRAY varArray = OleAut32Util
+				.createVarArray(Variant.VT_VARIANT, 10);
 		assertTrue(varArray != null);
 	}
 
 	public void testSafeArrayPutGetElement() {
-		SAFEARRAY varArray = OleAut32Util.createVarArray(10);
+		SAFEARRAY varArray = OleAut32Util.createVarArray(Variant.VT_VARIANT, 1);
 
 		for (int i = 0; i < 1; i++) {
 			try {

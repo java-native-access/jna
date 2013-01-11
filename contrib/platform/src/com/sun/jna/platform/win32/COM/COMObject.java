@@ -10,6 +10,7 @@ import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Ole32Util;
 import com.sun.jna.platform.win32.OleAut32;
+import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.OleAut32.DISPPARAMS;
 import com.sun.jna.platform.win32.OleAut32Util;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -86,14 +87,17 @@ public class COMObject {
 
 		// Build DISPPARAMS
 		if ((pArgs != null) && (pArgs.length > 0)) {
-			SAFEARRAY varArray = OleAut32Util.createVarArray(pArgs.length);
+			SAFEARRAY safeArg = OleAut32Util.createVarArray(Variant.VT_VARIANT, pArgs.length);
 
 			for (int i = 0; i < pArgs.length; i++) {
-				OleAut32Util.SafeArrayPutElement(varArray, 0, pArgs[i]);
+				OleAut32Util.SafeArrayPutElement(safeArg, i, pArgs[i]);
 			}
 
+			VARIANT varArg = new VARIANT();
+			varArg.setValue(Variant.VT_ARRAY, safeArg);
+
 			dp.cArgs = pArgs.length;
-			dp.rgvarg = varArray;
+			dp.rgvarg = varArg;
 		}
 
 		// Handle special-case for property-puts!
@@ -102,9 +106,6 @@ public class COMObject {
 			dp.rgdispidNamedArgs[0] = dispidNamed;
 		}
 
-		dp.writeFieldsToMemory();
-
-
 		// Make the call!
 		hr = pDisp.Invoke(pdispID.getDISPID(), Guid.IID_NULL,
 				LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult, null,
@@ -112,7 +113,6 @@ public class COMObject {
 
 		COMUtils.SUCCEEDED(hr);
 		return hr;
-
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,

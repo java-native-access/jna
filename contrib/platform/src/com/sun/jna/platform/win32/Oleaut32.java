@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+// TODO: Auto-generated Javadoc
 /**
  * Oleaut32.dll Interface.
  *
@@ -35,10 +36,56 @@ import com.sun.jna.win32.W32APIOptions;
 public interface OleAut32 extends StdCallLibrary {
 
 	/* Flags for IDispatch::Invoke */
+	/** The Constant DISPATCH_METHOD. */
 	public final static int DISPATCH_METHOD = 0x1;
+
+	/** The Constant DISPATCH_PROPERTYGET. */
 	public final static int DISPATCH_PROPERTYGET = 0x2;
+
+	/** The Constant DISPATCH_PROPERTYPUT. */
 	public final static int DISPATCH_PROPERTYPUT = 0x4;
+
+	/** The Constant DISPATCH_PROPERTYPUTREF. */
 	public final static int DISPATCH_PROPERTYPUTREF = 0x8;
+
+	/** An array that is allocated on the stac. */
+	public final static int FADF_AUTO = 0x0001;
+
+	/** An array that is statically allocated. */
+	public final static int FADF_STATIC = 0x0002;
+
+	/** An array that is embedded in a structure. */
+	public final static int FADF_EMBEDDED = 0x0004;
+
+	/** An array that is embedded in a structure. */
+	public final static int FADF_FIXEDSIZE = 0x0010;
+
+	/** An array that is embedded in a structure. */
+	public final static int FADF_RECORD = 0x0020;
+
+	/** An array that is embedded in a structure. */
+	public final static int FADF_HAVEIID = 0x0040;
+
+	/**
+	 * An array that has a variant type. The variant type can be retrieved with
+	 * SafeArrayGetVartype.
+	 */
+	public final static int FADF_HAVEVARTYPE = 0x0080;
+
+	/** An array of BSTRs. */
+	public final static int FADF_BSTR = 0x0100;
+
+	/** An array of IUnknown*. */
+	public final static int FADF_UNKNOWN = 0x0200;
+
+	/** An array of IDispatch*. */
+	public final static int FADF_DISPATCH = 0x0400;
+
+	/** An array of VARIANTs. */
+	public final static int FADF_VARIANT = 0x0800;
+
+	/** Bits reserved for future use. */
+	public final static int FADF_RESERVED = 0xF008;
 
 	OleAut32 INSTANCE = (OleAut32) Native.loadLibrary("OleAut32",
 			OleAut32.class, W32APIOptions.UNICODE_OPTIONS);
@@ -65,32 +112,99 @@ public interface OleAut32 extends StdCallLibrary {
 	 */
 	public void SysFreeString(BSTR bstr);
 
+	/**
+	 * Variant init.
+	 *
+	 * @param pvarg
+	 *            the pvarg
+	 */
 	public void VariantInit(VARIANT.ByReference pvarg);
 
+	/**
+	 * Variant init.
+	 *
+	 * @param pvarg
+	 *            the pvarg
+	 */
 	public void VariantInit(VARIANT pvarg);
 
+	/**
+	 * Safe array create.
+	 *
+	 * @param vt
+	 *            the vt
+	 * @param cDims
+	 *            the c dims
+	 * @param rgsabound
+	 *            the rgsabound
+	 * @return the safearray
+	 */
 	public SAFEARRAY SafeArrayCreate(int vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
 
+	/**
+	 * Safe array put element.
+	 *
+	 * @param psa
+	 *            the psa
+	 * @param idx
+	 *            the idx
+	 * @param pv
+	 *            the pv
+	 * @return the hresult
+	 */
 	public HRESULT SafeArrayPutElement(SAFEARRAY psa, long[] idx, Pointer pv);
 
+	/**
+	 * Safe array get element.
+	 *
+	 * @param psa
+	 *            the psa
+	 * @param rgIndices
+	 *            the rg indices
+	 * @param pv
+	 *            the pv
+	 * @return the hresult
+	 */
 	public HRESULT SafeArrayGetElement(SAFEARRAY psa, long[] rgIndices,
 			Pointer pv);
 
+	/**
+	 * The Class DISPPARAMS.
+	 */
 	public class DISPPARAMS extends Structure {
 
+		/**
+		 * The Class ByReference.
+		 */
 		public static class ByReference extends DISPPARAMS implements
 				Structure.ByReference {
 		}
 
-		public SAFEARRAY rgvarg;
+		/** The rgvarg. */
+		public VARIANT rgvarg;
+
+		/** The rgdispid named args. */
 		public DISPID[] rgdispidNamedArgs = new DISPID[1];
+
+		/** The c args. */
 		public int cArgs = 0;
+
+		/** The c named args. */
 		public int cNamedArgs = 0;
 
+		/**
+		 * Instantiates a new dispparams.
+		 */
 		public DISPPARAMS() {
 		}
 
+		/**
+		 * Instantiates a new dispparams.
+		 *
+		 * @param memory
+		 *            the memory
+		 */
 		public DISPPARAMS(Pointer memory) {
 			super(memory);
 			// this.cArgs = (Integer) this.readField("cArgs");
@@ -100,6 +214,9 @@ public interface OleAut32 extends StdCallLibrary {
 			read();
 		}
 
+		/**
+		 * Write fields to memory.
+		 */
 		public void writeFieldsToMemory() {
 			this.writeField("rgvarg");
 			this.writeField("rgdispidNamedArgs");
@@ -107,6 +224,11 @@ public interface OleAut32 extends StdCallLibrary {
 			this.writeField("cNamedArgs");
 		}
 
+		/*
+		 * (non-Javadoc)
+		 *
+		 * @see com.sun.jna.Structure#getFieldOrder()
+		 */
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "rgvarg", "rgdispidNamedArgs",
