@@ -75,8 +75,10 @@ tested:
 | S390X           | Linux            | GCC                     |
 | SPARC           | Linux            | GCC                     |
 | SPARC           | Solaris          | GCC                     |
+| SPARC           | Solaris          | Oracle Solaris Studio C |
 | SPARC64         | Linux            | GCC                     |
 | SPARC64         | FreeBSD          | GCC                     |
+| SPARC64         | Solaris          | Oracle Solaris Studio C |
 | TILE-Gx/TILEPro | Linux            | GCC                     |
 | X86             | FreeBSD          | GCC                     |
 | X86             | Interix          | GCC                     |

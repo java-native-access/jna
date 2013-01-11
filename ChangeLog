@@ -1,3 +1,11 @@
+2013-01-11  Anthony Green  <green@moxielogic.com>
+
+	* configure.ac: Robustify pc relative reloc check.
+	* m4/ax_cc_maxopt.m4: Don't -malign-double.  This is an ABI
+	changing option for 32-bit x86.
+	* aclocal.m4, configure: Rebuilt.
+	* README: Update supported target list.
+
 2013-01-10  Anthony Green  <green@moxielogic.com>
 
 	* README (tested): Add Compiler column to table.
