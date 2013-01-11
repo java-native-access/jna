@@ -128,7 +128,7 @@
 #endif
 
 #ifdef USING_MMAP
-static inline void *
+static void *
 allocate_mmap (size_t size)
 {
   void *page;

@@ -66,6 +66,7 @@ tested:
 | MIPS            | Linux            | GCC                     |
 | MIPS            | RTEMS            | GCC                     |
 | MIPS64          | Linux            | GCC                     |
+| Power 	  | AIX 7.1.1.0	     | IBM XL C/C++, V11.1     |
 | PowerPC         | AMIGA            | GCC                     |
 | PowerPC         | Linux            | GCC                     |
 | PowerPC         | Mac OSX          | GCC                     |
