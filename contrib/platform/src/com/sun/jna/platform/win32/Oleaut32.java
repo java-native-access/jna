@@ -23,7 +23,6 @@ import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -70,12 +69,13 @@ public interface OleAut32 extends StdCallLibrary {
 
 	public void VariantInit(VARIANT pvarg);
 
-	public SAFEARRAY SafeArrayCreate(VARTYPE vt, int cDims,
+	public SAFEARRAY SafeArrayCreate(int vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
 
 	public HRESULT SafeArrayPutElement(SAFEARRAY psa, long[] idx, Pointer pv);
 
-	public HRESULT SafeArrayGetElement(SAFEARRAY psa, long[] rgIndices, Pointer pv);
+	public HRESULT SafeArrayGetElement(SAFEARRAY psa, long[] rgIndices,
+			Pointer pv);
 
 	public class DISPPARAMS extends Structure {
 

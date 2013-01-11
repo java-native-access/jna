@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+/* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,11 +16,10 @@ import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.COM.COMException;
 
 /**
- * @author dblock[at]dblock[dot]org
+ * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class OleAut32UtilTest extends TestCase {
 
@@ -36,9 +35,9 @@ public class OleAut32UtilTest extends TestCase {
 	public void testSafeArrayPutGetElement() {
 		SAFEARRAY varArray = OleAut32Util.createVarArray(10);
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 1; i++) {
 			try {
-				VARIANT variant = new VARIANT(new BSTR("TEST_" + i));
+				VARIANT variant = new VARIANT(i + 3333333);
 				System.out.println(variant.toString(true));
 				OleAut32Util.SafeArrayPutElement(varArray, i, variant);
 			} catch (COMException e) {
@@ -48,10 +47,17 @@ public class OleAut32UtilTest extends TestCase {
 
 		assertTrue(varArray != null);
 
-		for (int i = 0; i < 10; i++) {
+		System.out
+				.println("\n\n\n-------------------------------------------------------------");
+		System.out
+				.println("-------------------------------------------------------------\n\n\n");
+
+		for (int i = 0; i < 1; i++) {
 			try {
 				VARIANT element = OleAut32Util.SafeArrayGetElement(varArray, i);
 				System.out.println(element.toString(true));
+				System.out.println("variant type: " + element.getVarType());
+				System.out.println("value: " + element.getValue());
 			} catch (COMException e) {
 				e.printStackTrace();
 			}

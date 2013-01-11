@@ -12,12 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.WTypes.VARTYPE;
-import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
@@ -29,7 +26,6 @@ import com.sun.jna.platform.win32.COM.COMUtils;
 public abstract class OleAut32Util {
 
 	public static SAFEARRAY createVarArray(int size) {
-		VARTYPE arrayType = new VARTYPE(0x2000 | 3);
 		SAFEARRAY psa;
 		SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
 		rgsabound[0] = new SAFEARRAYBOUND(size, 0);
@@ -49,16 +45,14 @@ public abstract class OleAut32Util {
 		COMUtils.SUCCEEDED(hr);
 	}
 
-	public static VARIANT SafeArrayGetElement(SAFEARRAY array, long index) throws COMException {
+	public static VARIANT SafeArrayGetElement(SAFEARRAY array, long index)
+			throws COMException {
 		long[] idx = new long[1];
 		idx[0] = index;
 		VARIANT result = new VARIANT();
-		OleAut32.INSTANCE.VariantInit(result);
 		HRESULT hr = OleAut32.INSTANCE.SafeArrayGetElement(array, idx,
 				result.getPointer());
 		COMUtils.SUCCEEDED(hr);
 		return result;
 	}
-
-
 }

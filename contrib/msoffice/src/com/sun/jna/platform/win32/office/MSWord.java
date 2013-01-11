@@ -30,12 +30,8 @@ public class MSWord extends COMObject {
 		VARIANT.ByReference result = new VARIANT.ByReference();
 		OleAut32.INSTANCE.VariantInit(result);
 
-		VARIANT varVisible = new VARIANT();
-		varVisible.setVarType(Variant.VT_BOOL);
-		varVisible.setBoolVal(bVisible);
-
 		HRESULT hr = this.oleMethod(OleAut32.DISPATCH_PROPERTYPUT, result,
-				this.iDispatch, "Visible", varVisible);
+				this.iDispatch, "Visible", new VARIANT(bVisible));
 
 		COMUtils.SUCCEEDED(hr);
 
@@ -49,7 +45,7 @@ public class MSWord extends COMObject {
 				this.iDispatch, "Version");
 
 		COMUtils.SUCCEEDED(hr);
-		return result.getBSTR().toString();
+		return result.getValue().toString();
 	}
 
 	public HRESULT newDocument(VARIANT_BOOL visible) throws COMException {
@@ -59,13 +55,13 @@ public class MSWord extends COMObject {
 		OleAut32.INSTANCE.VariantInit(result);
 		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
 				"Documents");
-		m_pDocuments = new Documents(result.getDispVal());
+		m_pDocuments = new Documents((IDispatch)result.getValue());
 
 		VARIANT.ByReference result2 = new VARIANT.ByReference();
 		OleAut32.INSTANCE.VariantInit(result);
 		hr = oleMethod(OleAut32.DISPATCH_METHOD, result2,
 				m_pDocuments.getIDispatch(), "Add");
-		m_pActiveDocument = new ActiveDocument(result2.getDispVal());
+		m_pActiveDocument = new ActiveDocument((IDispatch)result2.getValue());
 
 		return hr;
 	}
@@ -79,7 +75,7 @@ public class MSWord extends COMObject {
 		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
 				"Documents");
 		COMUtils.SUCCEEDED(hr);
-		m_pDocuments = new Documents(result.getDispVal());
+		m_pDocuments = new Documents((IDispatch)result.getValue());
 
 		// OpenDocument
 		VARIANT[] variantArgs = new VARIANT[1];
@@ -89,24 +85,20 @@ public class MSWord extends COMObject {
 //		hr = oleMethod(OleAut32.DISPATCH_METHOD, result2,
 //				m_pDocuments.getIDispatch(), "Open", 1, variantArgs);
 		COMUtils.SUCCEEDED(hr);
-		m_pDocuments = new Documents(result.getDispVal());
+		m_pDocuments = new Documents((IDispatch)result.getValue());
 
 		VARIANT.ByReference result3 = new VARIANT.ByReference();
 		OleAut32.INSTANCE.VariantInit(result3);
 		oleMethod(OleAut32.DISPATCH_PROPERTYGET, result3,
 				m_pActiveDocument.getIDispatch(), "Application");
-		m_pActiveDocument = new ActiveDocument(result2.getDispVal());
+		m_pActiveDocument = new ActiveDocument((IDispatch)result2.getValue());
 
 		return hr;
 	}
 
 	public HRESULT closeActiveDocument(VARIANT_BOOL bSave) throws COMException {
-		VARIANT.ByReference varSave = new VARIANT.ByReference();
-		varSave.setVarType(Variant.VT_BOOL);
-		varSave.setBoolVal(bSave);
-
 		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null,
-				m_pActiveDocument.getIDispatch(), "Close", varSave);
+				m_pActiveDocument.getIDispatch(), "Close", new VARIANT(bSave));
 
 		this.m_pActiveDocument = null;
 		COMUtils.SUCCEEDED(hr);

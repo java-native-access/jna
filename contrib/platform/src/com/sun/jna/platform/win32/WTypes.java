@@ -23,7 +23,7 @@ import com.sun.jna.ptr.ByReference;
 
 /**
  * Constant defined in WTypes.h
- * 
+ *
  * @author scott.palmer
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
@@ -55,17 +55,6 @@ public interface WTypes {
 	public static int CLSCTX_ACTIVATE_AAA_AS_IU = 0x800000;
 	public static int CLSCTX_PS_DLL = 0x80000000;
 
-	public static class VARTYPE extends USHORT {
-
-		public VARTYPE() {
-			this(0);
-		}
-
-		public VARTYPE(long value) {
-			super(value);
-		}
-	}
-
 	public static class BSTR extends ByReference implements
 			Structure.ByReference {
 
@@ -85,7 +74,7 @@ public interface WTypes {
 		public String getValue() {
 			return getPointer().getString(0, true);
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.getValue();

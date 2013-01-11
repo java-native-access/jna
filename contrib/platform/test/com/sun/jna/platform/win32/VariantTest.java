@@ -14,14 +14,12 @@ public class VariantTest extends TestCase {
 
 	public VariantTest() {
 	}
-	
+
 	public void testVariant() {
-		VARIANT[] variantArr = new VARIANT[1];
-		VARIANT variant = new VARIANT(Variant.VT_I1);
-		variant._variant.__variant.iVal = 1;
-		variantArr[0] = variant;
-		
-		
+		VARIANT variant = new VARIANT(33333);
+		System.out.println(variant.toString(false));
+
+		VARIANT variant2 = new VARIANT(variant.getPointer());
+		System.out.println(variant2.toString(false));
 	}
-	
 }

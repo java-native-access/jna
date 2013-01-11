@@ -1,14 +1,14 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -27,7 +27,7 @@ import com.sun.jna.win32.StdCallLibrary;
 // TODO: Auto-generated Javadoc
 /**
  * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
- * 
+ *
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
@@ -50,7 +50,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new word.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -73,7 +73,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new dword.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -83,7 +83,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Low WORD.
-		 * 
+		 *
 		 * @return Low WORD.
 		 */
 		public WORD getLow() {
@@ -92,7 +92,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * High WORD.
-		 * 
+		 *
 		 * @return High WORD.
 		 */
 		public WORD getHigh() {
@@ -114,7 +114,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new long.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -137,7 +137,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hdc.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -160,7 +160,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hicon.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -183,7 +183,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hcursor.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -206,7 +206,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hmenu.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -229,7 +229,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hpen.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -252,7 +252,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hrsrc.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -275,7 +275,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hpalette.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -298,7 +298,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hbitmap.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -321,7 +321,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hrgn.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -344,7 +344,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hwnd.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -381,7 +381,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hfont.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -404,7 +404,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new lparam.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -427,7 +427,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new lresult.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -448,7 +448,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new int ptr.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -458,7 +458,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * To pointer.
-		 * 
+		 *
 		 * @return the pointer
 		 */
 		public Pointer toPointer() {
@@ -480,7 +480,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new uint ptr.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -490,7 +490,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * To pointer.
-		 * 
+		 *
 		 * @return the pointer
 		 */
 		public Pointer toPointer() {
@@ -512,7 +512,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new wparam.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -540,7 +540,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		protected List getFieldOrder() {
@@ -550,7 +550,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * To rectangle.
-		 * 
+		 *
 		 * @return the rectangle
 		 */
 		public Rectangle toRectangle() {
@@ -559,7 +559,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jna.Structure#toString()
 		 */
 		public String toString() {
@@ -581,7 +581,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new ulong.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -633,7 +633,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new dwordlong.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -656,7 +656,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hbrush.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -679,7 +679,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new atom.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -702,7 +702,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new pvoid.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -725,7 +725,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new lpvoid.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -754,7 +754,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new point.
-		 * 
+		 *
 		 * @param memory
 		 *            the memory
 		 */
@@ -768,7 +768,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new point.
-		 * 
+		 *
 		 * @param x
 		 *            the x
 		 * @param y
@@ -781,7 +781,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		protected List getFieldOrder() {
@@ -803,7 +803,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new ushort.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -811,7 +811,7 @@ public interface WinDef extends StdCallLibrary {
 			super(2, value, true);
 		}
 	}
-	
+
 	/**
 	 * 16-bit short.
 	 */
@@ -826,7 +826,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new ushort.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -834,6 +834,7 @@ public interface WinDef extends StdCallLibrary {
 			super(2, value, false);
 		}
 	}
+
 	/**
 	 * 32-bit unsigned int.
 	 */
@@ -848,7 +849,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new uint.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -871,7 +872,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new scode.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -930,8 +931,13 @@ public interface WinDef extends StdCallLibrary {
 			super(value);
 		}
 	}
-	
+
 	public static class CHAR extends IntegerType {
+
+		public static class ByReference extends CHAR implements
+				Structure.ByReference {
+
+		}
 
 		public CHAR() {
 			this(0);
@@ -940,5 +946,5 @@ public interface WinDef extends StdCallLibrary {
 		public CHAR(long value) {
 			super(1, value, false);
 		}
-	}	
+	}
 }
