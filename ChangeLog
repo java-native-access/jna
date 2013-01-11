@@ -3,8 +3,9 @@
 	* src/powerpc/ffi_darwin.c (ffi_prep_args): Replace // style
 	comments with /* */ for xlc compiler.
 	* src/powerpc/aix.S (ffi_call_AIX): Ditto.
-	* testsuite/libffi.call/ffitest.h (allocate_mmap): Remove inline
-	for xlc compiler.
+	* testsuite/libffi.call/ffitest.h (allocate_mmap): Delete
+	deprecated inline function.
+	* testsuite/libffi.special/ffitestcxx.h: Ditto.
 	* README: Add update for AIX support.
 
 2013-01-11  Anthony Green  <green@moxielogic.com>
