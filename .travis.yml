@@ -3,4 +3,6 @@ compiler:
   - gcc
   - clang
 
+before_script: apt-get install dejagnu
+
 script: ./configure && make && make check
