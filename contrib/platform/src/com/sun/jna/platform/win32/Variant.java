@@ -21,6 +21,7 @@ import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IRecordInfo;
 import com.sun.jna.platform.win32.COM.IUnknown;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -103,11 +104,13 @@ public interface Variant {
 		public VARIANT(long pointer) {
 			super(new Pointer(pointer));
 			this.setType("_variant");
+			this.read();
 		}
 
 		public VARIANT(Pointer pointer) {
 			super(pointer);
 			this.setType("_variant");
+			this.read();
 		}
 
 		public VARIANT(BSTR value) {
@@ -126,7 +129,7 @@ public interface Variant {
 		}
 
 		public int getVarType() {
-			this.read();
+//			this.read();
 			return _variant.vt;
 		}
 
@@ -161,7 +164,7 @@ public interface Variant {
 		}
 
 		public Object getValue() {
-			this.read();
+//			this.read();
 
 			switch (this.getVarType()) {
 			case VT_I4:
@@ -181,6 +184,10 @@ public interface Variant {
 
 		public static class _VARIANT extends Structure {
 
+			public static class ByReference extends _VARIANT implements
+					Structure.ByReference {
+			}
+
 			public int vt;
 			public short wReserved1;
 			public short wReserved2;
@@ -188,7 +195,25 @@ public interface Variant {
 			public __VARIANT __variant = new __VARIANT();
 			public BRECORD bRecord;
 
+			public _VARIANT() {
+			}
+
+			public _VARIANT(Pointer pointer) {
+				super(pointer);
+				this.read();
+			}
+
+			public _VARIANT(long pointer) {
+				super(new Pointer(pointer));
+				this.read();
+			}
+
 			public static class __VARIANT extends Union {
+
+				public static class ByReference extends __VARIANT implements
+						Structure.ByReference {
+				}
+
 				public Long llVal;
 				public NativeLong lVal;
 				public Byte bVal;
@@ -214,7 +239,7 @@ public interface Variant {
 				// / C type : SAFEARRAY*
 				public SAFEARRAY parray;
 				// / C type : BYTE*
-				public Pointer pbVal;
+				public ByteByReference pbVal;
 				// / C type : short*
 				public ShortByReference piVal;
 				// / C type : long*
@@ -272,11 +297,38 @@ public interface Variant {
 				public __VARIANT() {
 					this.setType("iVal");
 				}
+
+				public __VARIANT(Pointer pointer) {
+					super(pointer);
+					this.setType("iVal");
+					this.read();
+				}
+
+				public __VARIANT(long pointer) {
+					super(new Pointer(pointer));
+					this.setType("iVal");
+					this.read();
+				}
 			}
 
 			public static class BRECORD extends Structure {
+				public static class ByReference extends BRECORD implements
+						Structure.ByReference {
+				}
+
 				public PVOID pvRecord;
 				public IRecordInfo pRecInfo;
+
+				public BRECORD() {
+				}
+
+				public BRECORD(long pointer) {
+					super(new Pointer(pointer));
+				}
+
+				public BRECORD(Pointer pointer) {
+					super(pointer);
+				}
 
 				@Override
 				protected List getFieldOrder() {

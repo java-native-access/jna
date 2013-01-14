@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package com.sun.jna.platform.win32;
 
@@ -111,7 +111,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new excepinfo.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -121,7 +121,7 @@ public interface OaIdl {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override
@@ -225,7 +225,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new dispid.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -359,11 +359,11 @@ public interface OaIdl {
 
 		public int cElements;
 		public int lLbound;
-		
+
 		public SAFEARRAYBOUND() {
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		public SAFEARRAYBOUND(int cElements, int lLbound) {
 			this.cElements = cElements;
 			this.lLbound = lLbound;
@@ -389,9 +389,23 @@ public interface OaIdl {
 		public _CURRENCY currency;
 		public LONGLONG int64;
 
+		public CURRENCY() {
+		}
+
+		public CURRENCY(Pointer pointer) {
+			super(pointer);
+		}
+
 		public static class _CURRENCY extends Structure {
 			public ULONG Lo;
 			public LONG Hi;
+
+			public _CURRENCY() {
+			}
+
+			public _CURRENCY(Pointer pointer) {
+				super(pointer);
+			}
 
 			@Override
 			protected List getFieldOrder() {
@@ -406,6 +420,13 @@ public interface OaIdl {
 				Structure.ByReference {
 		};
 
+		public DECIMAL() {
+		}
+
+		public DECIMAL(Pointer pointer) {
+			super(pointer);
+		}
+
 		public short wReserved;
 		public _DECIMAL1 decimal1;
 		public NativeLong Hi32;
@@ -413,9 +434,23 @@ public interface OaIdl {
 
 		public static class _DECIMAL1 extends Union {
 
+			public _DECIMAL1() {
+			}
+
+			public _DECIMAL1(Pointer pointer) {
+				super(pointer);
+			}
+
 			public static class _DECIMAL1_DECIMAL extends Structure {
 				public BYTE scale;
 				public BYTE sign;
+
+				public _DECIMAL1_DECIMAL() {
+				}
+
+				public _DECIMAL1_DECIMAL(Pointer pointer) {
+					super(pointer);
+				}
 
 				@Override
 				protected List getFieldOrder() {
@@ -431,6 +466,13 @@ public interface OaIdl {
 			public class _DECIMAL2_DECIMAL extends Structure {
 				public BYTE Lo32;
 				public BYTE Mid32;
+
+				public _DECIMAL2_DECIMAL() {
+				}
+
+				public _DECIMAL2_DECIMAL(Pointer pointer) {
+					super(pointer);
+				}
 
 				@Override
 				protected List getFieldOrder() {
