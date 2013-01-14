@@ -13,6 +13,7 @@ import com.sun.jna.platform.win32.OaIdl.DECIMAL;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OaIdl._VARIANT_BOOL;
+import com.sun.jna.platform.win32.Variant.VARIANT._VARIANT.__VARIANT.BRECORD;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.PVOID;
@@ -104,7 +105,6 @@ public interface Variant {
 		public VARIANT(Pointer pointer) {
 			super(pointer);
 			this.setType("_variant");
-			this._variant = new _VARIANT(pointer);
 			this.read();
 		}
 
@@ -176,32 +176,21 @@ public interface Variant {
 
 		public static class _VARIANT extends Structure {
 
-			public static class ByReference extends _VARIANT implements
-					Structure.ByReference {
-			}
-
 			public int vt;
 			public short wReserved1;
 			public short wReserved2;
 			public short wReserved3;
 			public __VARIANT __variant;
-			public BRECORD bRecord;
 
 			public _VARIANT() {
 			}
 
 			public _VARIANT(Pointer pointer) {
 				super(pointer);
-				this.__variant = new __VARIANT(pointer);
 				this.read();
 			}
 
 			public static class __VARIANT extends Union {
-
-				public static class ByReference extends __VARIANT implements
-						Structure.ByReference {
-				}
-
 				public Long llVal;
 				public NativeLong lVal;
 				public Byte bVal;
@@ -282,6 +271,28 @@ public interface Variant {
 				// / C type : UINT*
 				public IntByReference puintVal;
 
+				public static class BRECORD extends Structure {
+					public static class ByReference extends BRECORD implements
+							Structure.ByReference {
+					}
+
+					public PVOID pvRecord;
+					public IRecordInfo pRecInfo;
+
+					public BRECORD() {
+					}
+
+					public BRECORD(Pointer pointer) {
+						super(pointer);
+					}
+
+					@Override
+					protected List getFieldOrder() {
+						return Arrays.asList(new String[] { "pvRecord",
+								"pRecInfo" });
+					}
+				}
+
 				public __VARIANT() {
 					this.setType("iVal");
 				}
@@ -293,36 +304,10 @@ public interface Variant {
 				}
 			}
 
-			public static class BRECORD extends Structure {
-				public static class ByReference extends BRECORD implements
-						Structure.ByReference {
-				}
-
-				public PVOID pvRecord;
-				public IRecordInfo pRecInfo;
-
-				public BRECORD() {
-				}
-
-				public BRECORD(long pointer) {
-					super(new Pointer(pointer));
-				}
-
-				public BRECORD(Pointer pointer) {
-					super(pointer);
-				}
-
-				@Override
-				protected List getFieldOrder() {
-					return Arrays
-							.asList(new String[] { "pvRecord", "pRecInfo" });
-				}
-			}
-
 			@Override
 			protected List getFieldOrder() {
 				return Arrays.asList(new String[] { "vt", "wReserved1",
-						"wReserved2", "wReserved3", "__variant", "bRecord" });
+						"wReserved2", "wReserved3", "__variant" });
 			}
 		}
 	}
