@@ -11,6 +11,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -23,6 +24,7 @@ import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.LongByReference;
 
 // TODO: Auto-generated Javadoc
@@ -111,7 +113,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new excepinfo.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -121,7 +123,7 @@ public interface OaIdl {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override
@@ -134,6 +136,7 @@ public interface OaIdl {
 	}
 
 	public static class VARIANT_BOOL extends IntegerType {
+		public static final int SIZE = 8;
 
 		public VARIANT_BOOL() {
 			this(0);
@@ -155,8 +158,37 @@ public interface OaIdl {
 		}
 	}
 
-	public static class DATE extends IntegerType {
+	public class VARIANT_BOOLByReference extends ByReference {
+		public VARIANT_BOOLByReference() {
+			this(new VARIANT_BOOL(0));
+		}
 
+		public VARIANT_BOOLByReference(VARIANT_BOOL value) {
+			super(VARIANT_BOOL.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(VARIANT_BOOL value) {
+			getPointer().setLong(0, value.longValue());
+		}
+
+		public VARIANT_BOOL getValue() {
+			return new VARIANT_BOOL(getPointer().getLong(0));
+		}
+	}
+
+	public class _VARIANT_BOOLByReference extends VARIANT_BOOLByReference {
+		public _VARIANT_BOOLByReference() {
+			this(new _VARIANT_BOOL(0));
+		}
+
+		public _VARIANT_BOOLByReference(_VARIANT_BOOL value) {
+			super(value);
+		}
+	}
+
+	public static class DATE extends IntegerType {
+		public static final int SIZE = 8;
 		public DATE() {
 			this(0);
 		}
@@ -166,6 +198,25 @@ public interface OaIdl {
 		}
 	}
 
+	public class DATEByReference extends ByReference {
+		public DATEByReference() {
+			this(new DATE(0));
+		}
+
+		public DATEByReference(DATE value) {
+			super(DATE.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(DATE value) {
+			getPointer().setLong(0, value.longValue());
+		}
+
+		public DATE getValue() {
+			return new DATE(getPointer().getLong(0));
+		}
+	}
+	
 	/**
 	 * The Class VARIANTARG.
 	 */
@@ -225,7 +276,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new dispid.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */

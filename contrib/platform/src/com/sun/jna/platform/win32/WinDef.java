@@ -22,12 +22,13 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
 // TODO: Auto-generated Javadoc
 /**
  * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
- *
+ * 
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
@@ -50,7 +51,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new word.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -73,7 +74,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new dword.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -83,7 +84,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Low WORD.
-		 *
+		 * 
 		 * @return Low WORD.
 		 */
 		public WORD getLow() {
@@ -92,7 +93,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * High WORD.
-		 *
+		 * 
 		 * @return High WORD.
 		 */
 		public WORD getHigh() {
@@ -104,22 +105,64 @@ public interface WinDef extends StdCallLibrary {
 	 * 32-bit signed integer.
 	 */
 	public static class LONG extends IntegerType {
+		public static final int SIZE = 8;
 
-		/**
-		 * Instantiates a new long.
-		 */
 		public LONG() {
 			this(0);
 		}
 
-		/**
-		 * Instantiates a new long.
-		 *
-		 * @param value
-		 *            the value
-		 */
 		public LONG(long value) {
-			super(Native.LONG_SIZE, value);
+			super(4, value, false);
+		}
+	}
+
+	public class LONGByReference extends ByReference {
+		public LONGByReference() {
+			this(new LONG(0));
+		}
+
+		public LONGByReference(LONG value) {
+			super(LONG.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(LONG value) {
+			getPointer().setLong(0, value.longValue());
+		}
+
+		public LONG getValue() {
+			return new LONG(getPointer().getLong(0));
+		}
+	}
+
+	public static class LONGLONG extends IntegerType {
+		public static final int SIZE = 8;
+
+		public LONGLONG() {
+			this(0);
+		}
+
+		public LONGLONG(long value) {
+			super(8, value, false);
+		}
+	}
+
+	public class LONGLONGByReference extends ByReference {
+		public LONGLONGByReference() {
+			this(new LONGLONG(0));
+		}
+
+		public LONGLONGByReference(LONGLONG value) {
+			super(LONGLONG.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(LONGLONG value) {
+			getPointer().setLong(0, value.longValue());
+		}
+
+		public LONGLONG getValue() {
+			return new LONGLONG(getPointer().getLong(0));
 		}
 	}
 
@@ -137,7 +180,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hdc.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -160,7 +203,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hicon.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -183,7 +226,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hcursor.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -206,7 +249,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hmenu.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -229,7 +272,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hpen.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -252,7 +295,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hrsrc.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -275,7 +318,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hpalette.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -298,7 +341,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hbitmap.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -321,7 +364,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hrgn.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -344,7 +387,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hwnd.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -381,7 +424,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hfont.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -404,7 +447,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new lparam.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -427,7 +470,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new lresult.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -448,7 +491,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new int ptr.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -458,7 +501,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * To pointer.
-		 *
+		 * 
 		 * @return the pointer
 		 */
 		public Pointer toPointer() {
@@ -480,7 +523,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new uint ptr.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -490,7 +533,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * To pointer.
-		 *
+		 * 
 		 * @return the pointer
 		 */
 		public Pointer toPointer() {
@@ -512,7 +555,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new wparam.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -540,7 +583,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		protected List getFieldOrder() {
@@ -550,7 +593,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * To rectangle.
-		 *
+		 * 
 		 * @return the rectangle
 		 */
 		public Rectangle toRectangle() {
@@ -559,7 +602,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#toString()
 		 */
 		public String toString() {
@@ -571,6 +614,7 @@ public interface WinDef extends StdCallLibrary {
 	 * 32-bit unsigned integer.
 	 */
 	public static class ULONG extends IntegerType {
+		public static final int SIZE = 8;
 
 		/**
 		 * Instantiates a new ulong.
@@ -581,23 +625,36 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new ulong.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
 		public ULONG(long value) {
 			super(Native.LONG_SIZE, value, true);
 		}
+	}
 
-		/**
-		 * The Class ByReference.
-		 */
-		public static class ByReference implements Structure.ByReference {
+	public class ULONGByReference extends ByReference {
+		public ULONGByReference() {
+			this(new ULONG(0));
+		}
 
+		public ULONGByReference(ULONG value) {
+			super(ULONG.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(ULONG value) {
+			getPointer().setLong(0, value.longValue());
+		}
+
+		public ULONG getValue() {
+			return new ULONG(getPointer().getLong(0));
 		}
 	}
 
 	public static class ULONGLONG extends IntegerType {
+		public static final int SIZE = 8;
 
 		public ULONGLONG() {
 			this(0);
@@ -608,14 +665,22 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public static class LONGLONG extends IntegerType {
-
-		public LONGLONG() {
-			this(0);
+	public class ULONGLONGByReference extends ByReference {
+		public ULONGLONGByReference() {
+			this(new ULONGLONG(0));
 		}
 
-		public LONGLONG(long value) {
-			super(8, value, false);
+		public ULONGLONGByReference(ULONGLONG value) {
+			super(ULONGLONG.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(ULONGLONG value) {
+			getPointer().setLong(0, value.longValue());
+		}
+
+		public ULONGLONG getValue() {
+			return new ULONGLONG(getPointer().getLong(0));
 		}
 	}
 
@@ -633,7 +698,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new dwordlong.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -656,7 +721,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new hbrush.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -679,7 +744,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new atom.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -702,7 +767,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new pvoid.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -725,7 +790,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new lpvoid.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -754,7 +819,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new point.
-		 *
+		 * 
 		 * @param memory
 		 *            the memory
 		 */
@@ -768,7 +833,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new point.
-		 *
+		 * 
 		 * @param x
 		 *            the x
 		 * @param y
@@ -781,7 +846,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		protected List getFieldOrder() {
@@ -793,6 +858,7 @@ public interface WinDef extends StdCallLibrary {
 	 * 16-bit unsigned short.
 	 */
 	public static class USHORT extends IntegerType {
+		public static final int SIZE = 2;
 
 		/**
 		 * Instantiates a new ushort.
@@ -803,7 +869,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new ushort.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -812,10 +878,30 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	public class USHORTbyReference extends ByReference {
+		public USHORTbyReference() {
+			this(new USHORT(0));
+		}
+
+		public USHORTbyReference(USHORT value) {
+			super(USHORT.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(USHORT value) {
+			getPointer().setShort(0, value.shortValue());
+		}
+
+		public USHORT getValue() {
+			return new USHORT(getPointer().getShort(0));
+		}
+	}
+
 	/**
 	 * 16-bit short.
 	 */
 	public static class SHORT extends IntegerType {
+		public static final int SIZE = 2;
 
 		/**
 		 * Instantiates a new ushort.
@@ -826,7 +912,7 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new ushort.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
@@ -839,6 +925,7 @@ public interface WinDef extends StdCallLibrary {
 	 * 32-bit unsigned int.
 	 */
 	public static class UINT extends IntegerType {
+		public static final int SIZE = 4;
 
 		/**
 		 * Instantiates a new uint.
@@ -849,12 +936,31 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new uint.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
 		public UINT(long value) {
 			super(4, value, true);
+		}
+	}
+
+	public class UINTbyReference extends ByReference {
+		public UINTbyReference() {
+			this(new UINT(0));
+		}
+
+		public UINTbyReference(UINT value) {
+			super(UINT.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(UINT value) {
+			getPointer().setInt(0, value.intValue());
+		}
+
+		public UINT getValue() {
+			return new UINT(getPointer().getInt(0));
 		}
 	}
 
@@ -872,19 +978,31 @@ public interface WinDef extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new scode.
-		 *
+		 * 
 		 * @param value
 		 *            the value
 		 */
 		public SCODE(long value) {
 			super(value);
 		}
+	}
 
-		/**
-		 * The Class ByReference.
-		 */
-		public static class ByReference implements Structure.ByReference {
+	public static class SCODEbyReference extends ByReference {
+		public SCODEbyReference() {
+			this(new SCODE(0));
+		}
 
+		public SCODEbyReference(SCODE value) {
+			super(SCODE.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(SCODE value) {
+			getPointer().setLong(0, value.longValue());
+		}
+
+		public SCODE getValue() {
+			return new SCODE(getPointer().getLong(0));
 		}
 	}
 

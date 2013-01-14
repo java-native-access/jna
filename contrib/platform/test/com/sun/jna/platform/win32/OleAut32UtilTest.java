@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.COM.COMException;
 
 /**
@@ -28,8 +29,7 @@ public class OleAut32UtilTest extends TestCase {
 	}
 
 	public void testCreateVarArray() {
-		SAFEARRAY varArray = OleAut32Util
-				.createVarArray(Variant.VT_VARIANT, 10);
+		SAFEARRAY varArray = OleAut32Util.createVarArray(Variant.VT_VARIANT, 1);
 		assertTrue(varArray != null);
 	}
 
@@ -38,7 +38,7 @@ public class OleAut32UtilTest extends TestCase {
 
 		for (int i = 0; i < 1; i++) {
 			try {
-				VARIANT variant = new VARIANT(i + 3333333);
+				VARIANT variant = new VARIANT(new SHORT(i + 3333));
 				System.out.println(variant.toString(true));
 				OleAut32Util.SafeArrayPutElement(varArray, i, variant);
 			} catch (COMException e) {

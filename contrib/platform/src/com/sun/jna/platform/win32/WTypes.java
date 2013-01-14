@@ -16,14 +16,12 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
-import com.sun.jna.platform.win32.OaIdl.DISPID;
-import com.sun.jna.platform.win32.WinDef.USHORT;
+import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.ptr.ByReference;
 
 /**
  * Constant defined in WTypes.h
- *
+ * 
  * @author scott.palmer
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
@@ -58,12 +56,16 @@ public interface WTypes {
 	public static class BSTR extends ByReference implements
 			Structure.ByReference {
 
+		public static class ByReference extends BSTR implements
+				Structure.ByReference {
+		}
+
 		public BSTR() {
 			this("null");
 		}
 
 		public BSTR(String value) {
-			super(value.length() *4);
+			super(value.length() * 4);
 			setValue(value);
 		}
 

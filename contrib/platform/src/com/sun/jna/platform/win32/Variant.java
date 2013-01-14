@@ -3,22 +3,36 @@ package com.sun.jna.platform.win32;
 import java.util.Arrays;
 import java.util.List;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.OaIdl.CURRENCY;
 import com.sun.jna.platform.win32.OaIdl.DATE;
+import com.sun.jna.platform.win32.OaIdl.DATEByReference;
 import com.sun.jna.platform.win32.OaIdl.DECIMAL;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
-import com.sun.jna.platform.win32.OaIdl._VARIANT_BOOL;
-import com.sun.jna.platform.win32.Variant.VARIANT._VARIANT.__VARIANT.BRECORD;
+import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOLByReference;
+import com.sun.jna.platform.win32.OaIdl._VARIANT_BOOLByReference;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.CHAR;
+import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinDef.LONGByReference;
+import com.sun.jna.platform.win32.WinDef.LONGLONG;
+import com.sun.jna.platform.win32.WinDef.LONGLONGByReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.SCODE;
+import com.sun.jna.platform.win32.WinDef.SCODEbyReference;
 import com.sun.jna.platform.win32.WinDef.SHORT;
+import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinDef.UINTbyReference;
+import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinDef.ULONGByReference;
+import com.sun.jna.platform.win32.WinDef.ULONGLONG;
+import com.sun.jna.platform.win32.WinDef.ULONGLONGByReference;
+import com.sun.jna.platform.win32.WinDef.USHORT;
+import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IRecordInfo;
 import com.sun.jna.platform.win32.COM.IUnknown;
@@ -26,8 +40,6 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
-import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.ShortByReference;
 
 public interface Variant {
@@ -118,12 +130,18 @@ public interface Variant {
 			this.setValue(VT_BOOL, value);
 		}
 
-		public VARIANT(int value) {
+		public VARIANT(LONG value) {
 			this();
 			this.setValue(VT_I4, value);
 		}
 
+		public VARIANT(SHORT value) {
+			this();
+			this.setValue(VT_I2, value);
+		}
+
 		public int getVarType() {
+			this.read();
 			return _variant.vt;
 		}
 
@@ -133,8 +151,11 @@ public interface Variant {
 
 		public void setValue(int vt, Object value) {
 			switch (vt) {
-			case VT_I4:
+			case VT_I2:
 				this._variant.__variant.writeField("iVal", value);
+				break;
+			case VT_I4:
+				this._variant.__variant.writeField("lVal", value);
 				break;
 			case VT_BSTR:
 				this._variant.__variant.writeField("bstrVal", value);
@@ -158,6 +179,7 @@ public interface Variant {
 		}
 
 		public Object getValue() {
+			this.read();
 			switch (this.getVarType()) {
 			case VT_I4:
 				return this._variant.__variant.readField("iVal");
@@ -191,85 +213,94 @@ public interface Variant {
 			}
 
 			public static class __VARIANT extends Union {
-				public Long llVal;
-				public NativeLong lVal;
-				public Byte bVal;
-				public Integer iVal;
+				// LONGLONG VT_I8
+				public LONGLONG llVal;
+				// LONG VT_I4
+				public LONG lVal;
+				// BYTE VT_UI1
+				public BYTE bVal;
+				// SHORT VT_I2
+				public SHORT iVal;
+				// FLOAT VT_R4
 				public Float fltVal;
+				// DOUBLE VT_R8
 				public Double dblVal;
-				// / C type : VARIANT_BOOL
+				// VARIANT_BOOL VT_BOOL
 				public VARIANT_BOOL boolVal;
-				// / C type : _VARIANT_BOOL
-				public _VARIANT_BOOL bool;
-				// / C type : SCODE
+				// SCODE VT_ERROR
 				public SCODE scode;
-				// / C type : CY
+				// CY VT_CY
 				public CURRENCY cyVal;
-				// / C type : DATE
+				// DATE VT_DATE
 				public DATE date;
-				// / C type : BSTR
+				// BSTR VT_BSTR
 				public BSTR bstrVal;
-				// / C type : IUnknown*
+				// IUnknown * VT_UNKNOWN
 				public IUnknown punkVal;
-				// / C type : IDispatch*
+				// IDispatch * VT_DISPATCH
 				public IDispatch pdispVal;
-				// / C type : SAFEARRAY*
-				public SAFEARRAY parray;
-				// / C type : BYTE*
+				// SAFEARRAY * VT_ARRAY
+				public SAFEARRAY.ByReference parray;
+				// BYTE * VT_BYREF|VT_UI1
 				public ByteByReference pbVal;
-				// / C type : short*
+				// SHORT * VT_BYREF|VT_I2
 				public ShortByReference piVal;
-				// / C type : long*
-				public NativeLongByReference plVal;
-				// / C type : LONGLONG*
-				public LongByReference pllVal;
-				// / C type : FLOAT*
+				// LONG * VT_BYREF|VT_I4
+				public LONGByReference plVal;
+				// LONGLONG * VT_BYREF|VT_I8
+				public LONGLONGByReference pllVal;
+				// FLOAT * VT_BYREF|VT_R4
 				public FloatByReference pfltVal;
-				// / C type : DOUBLE*
+				// DOUBLE * VT_BYREF|VT_R8
 				public DoubleByReference pdblVal;
-				// / C type : VARIANT_BOOL*
-				public VARIANT_BOOL pboolVal;
-				// / C type : _VARIANT_BOOL*
-				public _VARIANT_BOOL pbool;
-				// / C type : SCODE*
-				public SCODE pscode;
-				// / C type : CY*
-				public CURRENCY pcyVal;
-				// / C type : DATE*
-				public DATE pdate;
-				// / C type : BSTR*
-				public BSTR pbstrVal;
-				// / C type : IUnknown**
+				// VARIANT_BOOL * VT_BYREF|VT_BOOL
+				public VARIANT_BOOLByReference pboolVal;
+				// VARIANT_BOOL * VT_BYREF|VT_BOOL
+				public _VARIANT_BOOLByReference pbool;
+				// SCODE * VT_BYREF|VT_ERROR
+				public SCODEbyReference pscode;
+				// CY * VT_BYREF|VT_CY
+				public CURRENCY.ByReference pcyVal;
+				// DATE * VT_BYREF|VT_DATE
+				public DATEByReference pdate;
+				// BSTR * VT_BYREF|VT_BSTR
+				public BSTR.ByReference pbstrVal;
+				// IUnknown ** VT_BYREF|VT_UNKNOWN
 				public IUnknown.ByReference ppunkVal;
-				// / C type : IDispatch**
+				// IDispatch ** VT_BYREF|VT_DISPATCH
 				public IDispatch.ByReference ppdispVal;
-				// / C type : SAFEARRAY**
+				// SAFEARRAY ** VT_BYREF|VT_ARRAY
 				public SAFEARRAY.ByReference pparray;
-				// / C type : VARIANT*
+				// VARIANT * VT_BYREF|VT_VARIANT
 				public VARIANT.ByReference pvarVal;
-				// / C type : PVOID
+				// PVOID VT_BYREF (Generic ByRef)
 				public PVOID byref;
-				// / C type : CHAR
+				// CHAR VT_I1
 				public CHAR cVal;
-				public SHORT uiVal;
-				public NativeLong ulVal;
-				public Long ullVal;
+				// USHORT VT_UI2
+				public USHORT uiVal;
+				// ULONG VT_UI4
+				public ULONG ulVal;
+				// ULONGLONG VT_UI8
+				public ULONGLONG ullVal;
+				// INT VT_INT
 				public Integer intVal;
-				public Integer uintVal;
-				// / C type : DECIMAL*
+				// UINT VT_UINT
+				public UINT uintVal;
+				// DECIMAL * VT_BYREF|VT_DECIMAL
 				public DECIMAL.ByReference pdecVal;
-				// / C type : CHAR*
+				// CHAR * VT_BYREF|VT_I1
 				public CHAR.ByReference pcVal;
-				// / C type : USHORT*
-				public ShortByReference puiVal;
-				// / C type : ULONG*
-				public NativeLongByReference pulVal;
-				// / C type : ULONGLONG*
-				public LongByReference pullVal;
-				// / C type : INT*
+				// USHORT * VT_BYREF|VT_UI2
+				public USHORTbyReference puiVal;
+				// ULONG * VT_BYREF|VT_UI4
+				public ULONGByReference pulVal;
+				// ULONGLONG * VT_BYREF|VT_UI8
+				public ULONGLONGByReference pullVal;
+				// INT * VT_BYREF|VT_INT
 				public IntByReference pintVal;
-				// / C type : UINT*
-				public IntByReference puintVal;
+				// UINT * VT_BYREF|VT_UINT
+				public UINTbyReference puintVal;
 
 				public static class BRECORD extends Structure {
 					public static class ByReference extends BRECORD implements
@@ -277,6 +308,7 @@ public interface Variant {
 					}
 
 					public PVOID pvRecord;
+
 					public IRecordInfo pRecInfo;
 
 					public BRECORD() {
