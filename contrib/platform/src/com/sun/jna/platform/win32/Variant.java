@@ -93,7 +93,7 @@ public interface Variant {
 				Structure.ByReference {
 		}
 
-		public _VARIANT _variant = new _VARIANT();
+		public _VARIANT _variant;
 
 		public DECIMAL decVal;
 
@@ -101,15 +101,10 @@ public interface Variant {
 			this.setType("_variant");
 		}
 
-		public VARIANT(long pointer) {
-			super(new Pointer(pointer));
-			this.setType("_variant");
-			this.read();
-		}
-
 		public VARIANT(Pointer pointer) {
 			super(pointer);
 			this.setType("_variant");
+			this._variant = new _VARIANT(pointer);
 			this.read();
 		}
 
@@ -129,7 +124,6 @@ public interface Variant {
 		}
 
 		public int getVarType() {
-//			this.read();
 			return _variant.vt;
 		}
 
@@ -164,8 +158,6 @@ public interface Variant {
 		}
 
 		public Object getValue() {
-//			this.read();
-
 			switch (this.getVarType()) {
 			case VT_I4:
 				return this._variant.__variant.readField("iVal");
@@ -192,7 +184,7 @@ public interface Variant {
 			public short wReserved1;
 			public short wReserved2;
 			public short wReserved3;
-			public __VARIANT __variant = new __VARIANT();
+			public __VARIANT __variant;
 			public BRECORD bRecord;
 
 			public _VARIANT() {
@@ -200,11 +192,7 @@ public interface Variant {
 
 			public _VARIANT(Pointer pointer) {
 				super(pointer);
-				this.read();
-			}
-
-			public _VARIANT(long pointer) {
-				super(new Pointer(pointer));
+				this.__variant = new __VARIANT(pointer);
 				this.read();
 			}
 
@@ -300,12 +288,6 @@ public interface Variant {
 
 				public __VARIANT(Pointer pointer) {
 					super(pointer);
-					this.setType("iVal");
-					this.read();
-				}
-
-				public __VARIANT(long pointer) {
-					super(new Pointer(pointer));
 					this.setType("iVal");
 					this.read();
 				}
