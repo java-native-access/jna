@@ -113,6 +113,7 @@ public interface Variant {
 
 		public VARIANT() {
 			this.setType("_variant");
+			this.read();
 		}
 
 		public VARIANT(Pointer pointer) {
@@ -328,6 +329,7 @@ public interface Variant {
 
 				public __VARIANT() {
 					this.setType("iVal");
+					this.read();
 				}
 
 				public __VARIANT(Pointer pointer) {

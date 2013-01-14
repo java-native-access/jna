@@ -30,7 +30,7 @@ import com.sun.jna.win32.W32APIOptions;
 // TODO: Auto-generated Javadoc
 /**
  * Oleaut32.dll Interface.
- *
+ * 
  * @author scott.palmer
  */
 public interface OleAut32 extends StdCallLibrary {
@@ -93,7 +93,7 @@ public interface OleAut32 extends StdCallLibrary {
 	/**
 	 * This function allocates a new string and copies the passed string into
 	 * it.
-	 *
+	 * 
 	 * @param sz
 	 *            Null-terminated UNICODE string to copy.
 	 * @return Null if there is insufficient memory or if a null pointer is
@@ -105,7 +105,7 @@ public interface OleAut32 extends StdCallLibrary {
 	 * This function frees a string allocated previously by SysAllocString,
 	 * SysAllocStringByteLen, SysReAllocString, SysAllocStringLen, or
 	 * SysReAllocStringLen.
-	 *
+	 * 
 	 * @param bstr
 	 *            Unicode string that was allocated previously, or NULL. Setting
 	 *            this parameter to NULL causes the function to simply return.
@@ -114,7 +114,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Variant init.
-	 *
+	 * 
 	 * @param pvarg
 	 *            the pvarg
 	 */
@@ -122,15 +122,17 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Variant init.
-	 *
+	 * 
 	 * @param pvarg
 	 *            the pvarg
 	 */
 	public void VariantInit(VARIANT pvarg);
 
+	HRESULT VariantCopy(VARIANT pvargDest, VARIANT pvargSrc);
+
 	/**
 	 * Safe array create.
-	 *
+	 * 
 	 * @param vt
 	 *            the vt
 	 * @param cDims
@@ -144,7 +146,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Safe array put element.
-	 *
+	 * 
 	 * @param psa
 	 *            the psa
 	 * @param idx
@@ -157,7 +159,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Safe array get element.
-	 *
+	 * 
 	 * @param psa
 	 *            the psa
 	 * @param rgIndices
@@ -201,7 +203,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new dispparams.
-		 *
+		 * 
 		 * @param memory
 		 *            the memory
 		 */
@@ -226,7 +228,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override

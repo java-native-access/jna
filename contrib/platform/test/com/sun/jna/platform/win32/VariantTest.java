@@ -15,10 +15,11 @@ public class VariantTest extends TestCase {
 	}
 
 	public void testVariant() {
-		VARIANT variant = new VARIANT(new SHORT(33333));
-		System.out.println(variant.toString(false));
+		VARIANT variantSource = new VARIANT(new SHORT(33333));
+		VARIANT variantDest = new VARIANT();
 
-		VARIANT variant2 = new VARIANT(variant.getPointer());
-		System.out.println(variant2.toString(false));
+		System.out.println(variantSource.toString(true));
+		OleAut32.INSTANCE.VariantCopy(variantDest, variantSource);
+		System.out.println(variantDest.toString(true));
 	}
 }
