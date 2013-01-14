@@ -8,19 +8,20 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.OaIdl.CURRENCY;
 import com.sun.jna.platform.win32.OaIdl.DATE;
-import com.sun.jna.platform.win32.OaIdl.DATEByReference;
+import com.sun.jna.platform.win32.OaIdl.DATEbyReference;
 import com.sun.jna.platform.win32.OaIdl.DECIMAL;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOLByReference;
-import com.sun.jna.platform.win32.OaIdl._VARIANT_BOOLByReference;
+import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOLbyReference;
+import com.sun.jna.platform.win32.OaIdl._VARIANT_BOOLbyReference;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.CHAR;
+import com.sun.jna.platform.win32.WinDef.CHARbyReference;
 import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinDef.LONGByReference;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
-import com.sun.jna.platform.win32.WinDef.LONGLONGByReference;
+import com.sun.jna.platform.win32.WinDef.LONGLONGbyReference;
+import com.sun.jna.platform.win32.WinDef.LONGbyReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.SCODE;
 import com.sun.jna.platform.win32.WinDef.SCODEbyReference;
@@ -28,9 +29,9 @@ import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTbyReference;
 import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinDef.ULONGLONG;
-import com.sun.jna.platform.win32.WinDef.ULONGLONGByReference;
+import com.sun.jna.platform.win32.WinDef.ULONGLONGbyReference;
+import com.sun.jna.platform.win32.WinDef.ULONGbyReference;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
 import com.sun.jna.platform.win32.COM.IDispatch;
@@ -246,23 +247,23 @@ public interface Variant {
 				// SHORT * VT_BYREF|VT_I2
 				public ShortByReference piVal;
 				// LONG * VT_BYREF|VT_I4
-				public LONGByReference plVal;
+				public LONGbyReference plVal;
 				// LONGLONG * VT_BYREF|VT_I8
-				public LONGLONGByReference pllVal;
+				public LONGLONGbyReference pllVal;
 				// FLOAT * VT_BYREF|VT_R4
 				public FloatByReference pfltVal;
 				// DOUBLE * VT_BYREF|VT_R8
 				public DoubleByReference pdblVal;
 				// VARIANT_BOOL * VT_BYREF|VT_BOOL
-				public VARIANT_BOOLByReference pboolVal;
+				public VARIANT_BOOLbyReference pboolVal;
 				// VARIANT_BOOL * VT_BYREF|VT_BOOL
-				public _VARIANT_BOOLByReference pbool;
+				public _VARIANT_BOOLbyReference pbool;
 				// SCODE * VT_BYREF|VT_ERROR
 				public SCODEbyReference pscode;
 				// CY * VT_BYREF|VT_CY
 				public CURRENCY.ByReference pcyVal;
 				// DATE * VT_BYREF|VT_DATE
-				public DATEByReference pdate;
+				public DATEbyReference pdate;
 				// BSTR * VT_BYREF|VT_BSTR
 				public BSTR.ByReference pbstrVal;
 				// IUnknown ** VT_BYREF|VT_UNKNOWN
@@ -290,13 +291,13 @@ public interface Variant {
 				// DECIMAL * VT_BYREF|VT_DECIMAL
 				public DECIMAL.ByReference pdecVal;
 				// CHAR * VT_BYREF|VT_I1
-				public CHAR.ByReference pcVal;
+				public CHARbyReference pcVal;
 				// USHORT * VT_BYREF|VT_UI2
 				public USHORTbyReference puiVal;
 				// ULONG * VT_BYREF|VT_UI4
-				public ULONGByReference pulVal;
+				public ULONGbyReference pulVal;
 				// ULONGLONG * VT_BYREF|VT_UI8
-				public ULONGLONGByReference pullVal;
+				public ULONGLONGbyReference pullVal;
 				// INT * VT_BYREF|VT_INT
 				public IntByReference pintVal;
 				// UINT * VT_BYREF|VT_UINT

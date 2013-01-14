@@ -116,12 +116,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class LONGByReference extends ByReference {
-		public LONGByReference() {
+	public class LONGbyReference extends ByReference {
+		public LONGbyReference() {
 			this(new LONG(0));
 		}
 
-		public LONGByReference(LONG value) {
+		public LONGbyReference(LONG value) {
 			super(LONG.SIZE);
 			setValue(value);
 		}
@@ -147,12 +147,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class LONGLONGByReference extends ByReference {
-		public LONGLONGByReference() {
+	public class LONGLONGbyReference extends ByReference {
+		public LONGLONGbyReference() {
 			this(new LONGLONG(0));
 		}
 
-		public LONGLONGByReference(LONGLONG value) {
+		public LONGLONGbyReference(LONGLONG value) {
 			super(LONGLONG.SIZE);
 			setValue(value);
 		}
@@ -634,12 +634,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class ULONGByReference extends ByReference {
-		public ULONGByReference() {
+	public class ULONGbyReference extends ByReference {
+		public ULONGbyReference() {
 			this(new ULONG(0));
 		}
 
-		public ULONGByReference(ULONG value) {
+		public ULONGbyReference(ULONG value) {
 			super(ULONG.SIZE);
 			setValue(value);
 		}
@@ -665,12 +665,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class ULONGLONGByReference extends ByReference {
-		public ULONGLONGByReference() {
+	public class ULONGLONGbyReference extends ByReference {
+		public ULONGLONGbyReference() {
 			this(new ULONGLONG(0));
 		}
 
-		public ULONGLONGByReference(ULONGLONG value) {
+		public ULONGLONGbyReference(ULONGLONG value) {
 			super(ULONGLONG.SIZE);
 			setValue(value);
 		}
@@ -1051,11 +1051,7 @@ public interface WinDef extends StdCallLibrary {
 	}
 
 	public static class CHAR extends IntegerType {
-
-		public static class ByReference extends CHAR implements
-				Structure.ByReference {
-
-		}
+		public static final int SIZE = 1;
 
 		public CHAR() {
 			this(0);
@@ -1063,6 +1059,25 @@ public interface WinDef extends StdCallLibrary {
 
 		public CHAR(long value) {
 			super(1, value, false);
+		}
+	}
+
+	public static class CHARbyReference extends ByReference {
+		public CHARbyReference() {
+			this(new CHAR(0));
+		}
+
+		public CHARbyReference(CHAR value) {
+			super(CHAR.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(CHAR value) {
+			getPointer().setByte(0, value.byteValue());
+		}
+
+		public CHAR getValue() {
+			return new CHAR(getPointer().getChar(0));
 		}
 	}
 }

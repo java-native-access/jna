@@ -11,7 +11,6 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -158,12 +157,12 @@ public interface OaIdl {
 		}
 	}
 
-	public class VARIANT_BOOLByReference extends ByReference {
-		public VARIANT_BOOLByReference() {
+	public class VARIANT_BOOLbyReference extends ByReference {
+		public VARIANT_BOOLbyReference() {
 			this(new VARIANT_BOOL(0));
 		}
 
-		public VARIANT_BOOLByReference(VARIANT_BOOL value) {
+		public VARIANT_BOOLbyReference(VARIANT_BOOL value) {
 			super(VARIANT_BOOL.SIZE);
 			setValue(value);
 		}
@@ -177,18 +176,19 @@ public interface OaIdl {
 		}
 	}
 
-	public class _VARIANT_BOOLByReference extends VARIANT_BOOLByReference {
-		public _VARIANT_BOOLByReference() {
+	public class _VARIANT_BOOLbyReference extends VARIANT_BOOLbyReference {
+		public _VARIANT_BOOLbyReference() {
 			this(new _VARIANT_BOOL(0));
 		}
 
-		public _VARIANT_BOOLByReference(_VARIANT_BOOL value) {
+		public _VARIANT_BOOLbyReference(_VARIANT_BOOL value) {
 			super(value);
 		}
 	}
 
 	public static class DATE extends IntegerType {
 		public static final int SIZE = 8;
+
 		public DATE() {
 			this(0);
 		}
@@ -198,12 +198,12 @@ public interface OaIdl {
 		}
 	}
 
-	public class DATEByReference extends ByReference {
-		public DATEByReference() {
+	public class DATEbyReference extends ByReference {
+		public DATEbyReference() {
 			this(new DATE(0));
 		}
 
-		public DATEByReference(DATE value) {
+		public DATEbyReference(DATE value) {
 			super(DATE.SIZE);
 			setValue(value);
 		}
@@ -216,7 +216,7 @@ public interface OaIdl {
 			return new DATE(getPointer().getLong(0));
 		}
 	}
-	
+
 	/**
 	 * The Class VARIANTARG.
 	 */
