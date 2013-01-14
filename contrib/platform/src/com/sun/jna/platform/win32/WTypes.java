@@ -16,7 +16,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
 
 /**
@@ -91,6 +91,16 @@ public interface WTypes {
 
 		public LPCOLESTR(String str) {
 			super(str);
+		}
+	}
+
+	public static class VARTYPE extends USHORT {
+		public VARTYPE() {
+			this(0);
+		}
+
+		public VARTYPE(int value) {
+			super(value);
 		}
 	}
 }

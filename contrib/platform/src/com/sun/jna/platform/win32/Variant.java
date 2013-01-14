@@ -15,6 +15,7 @@ import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOLbyReference;
 import com.sun.jna.platform.win32.OaIdl._VARIANT_BOOLbyReference;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.CHARbyReference;
@@ -66,8 +67,8 @@ public interface Variant {
 	public static int VT_UI4 = 19;
 	public static int VT_I8 = 20;
 	public static int VT_UI8 = 21;
-	public static int VT_int = 22;
-	public static int VT_Uint = 23;
+	public static int VT_INT = 22;
+	public static int VT_UINT = 23;
 	public static int VT_VOID = 24;
 	public static int VT_HRESULT = 25;
 	public static int VT_PTR = 26;
@@ -77,8 +78,8 @@ public interface Variant {
 	public static int VT_LPSTR = 30;
 	public static int VT_LPWSTR = 31;
 	public static int VT_RECORD = 36;
-	public static int VT_int_PTR = 37;
-	public static int VT_Uint_PTR = 38;
+	public static int VT_INT_PTR = 37;
+	public static int VT_UINT_PTR = 38;
 	public static int VT_FILETIME = 64;
 	public static int VT_BLOB = 65;
 	public static int VT_STREAM = 66;
@@ -142,17 +143,21 @@ public interface Variant {
 			this.setValue(VT_I2, value);
 		}
 
-		public int getVarType() {
+		public VARTYPE getVarType() {
 			this.read();
 			return _variant.vt;
 		}
 
-		public void setVarType(int vt) {
-			this._variant.vt = vt;
+		public void setVarType(short vt) {
+			this._variant.vt = new VARTYPE(vt);
 		}
 
 		public void setValue(int vt, Object value) {
-			switch (vt) {
+			this.setValue(new VARTYPE(vt), value);
+		}
+
+		public void setValue(VARTYPE vt, Object value) {
+			switch (vt.intValue()) {
 			case VT_I2:
 				this._variant.__variant.writeField("iVal", value);
 				break;
@@ -182,9 +187,11 @@ public interface Variant {
 
 		public Object getValue() {
 			this.read();
-			switch (this.getVarType()) {
-			case VT_I4:
+			switch (this.getVarType().intValue()) {
+			case VT_I2:
 				return this._variant.__variant.readField("iVal");
+			case VT_I4:
+				return this._variant.__variant.readField("lVal");
 			case VT_BSTR:
 				return this._variant.__variant.readField("bstrVal");
 			case VT_DISPATCH:
@@ -200,7 +207,7 @@ public interface Variant {
 
 		public static class _VARIANT extends Structure {
 
-			public int vt;
+			public VARTYPE vt;
 			public short wReserved1;
 			public short wReserved2;
 			public short wReserved3;
