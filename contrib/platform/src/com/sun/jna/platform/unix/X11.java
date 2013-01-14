@@ -1598,7 +1598,7 @@ public interface X11 extends Library {
         public Window event;
         public Window window;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window" }); }
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "event", "window" }); }
     }
 
     class XUnmapEvent extends Structure {
