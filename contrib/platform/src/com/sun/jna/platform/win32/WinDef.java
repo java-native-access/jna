@@ -105,14 +105,14 @@ public interface WinDef extends StdCallLibrary {
 	 * 32-bit signed integer.
 	 */
 	public static class LONG extends IntegerType {
-		public static final int SIZE = 8;
+		public static final int SIZE = 4;
 
 		public LONG() {
 			this(0);
 		}
 
 		public LONG(long value) {
-			super(4, value, false);
+			super(SIZE, value);
 		}
 	}
 
@@ -127,11 +127,11 @@ public interface WinDef extends StdCallLibrary {
 		}
 
 		public void setValue(LONG value) {
-			getPointer().setLong(0, value.longValue());
+			getPointer().setInt(0, value.intValue());
 		}
 
 		public LONG getValue() {
-			return new LONG(getPointer().getLong(0));
+			return new LONG(getPointer().getInt(0));
 		}
 	}
 

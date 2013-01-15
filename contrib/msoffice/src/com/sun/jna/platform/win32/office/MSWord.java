@@ -28,7 +28,6 @@ public class MSWord extends COMObject {
 
 	public void setVisible(VARIANT_BOOL bVisible) throws COMException {
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		OleAut32.INSTANCE.VariantInit(result);
 
 		HRESULT hr = this.oleMethod(OleAut32.DISPATCH_PROPERTYPUT, result,
 				this.iDispatch, "Visible", new VARIANT(bVisible));

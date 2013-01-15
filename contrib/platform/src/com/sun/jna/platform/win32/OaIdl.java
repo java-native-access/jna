@@ -135,14 +135,14 @@ public interface OaIdl {
 	}
 
 	public static class VARIANT_BOOL extends IntegerType {
-		public static final int SIZE = 8;
+		public static final int SIZE = 2;
 
 		public VARIANT_BOOL() {
 			this(0);
 		}
 
 		public VARIANT_BOOL(long value) {
-			super(2, value, false);
+			super(2, value);
 		}
 	}
 
@@ -168,11 +168,11 @@ public interface OaIdl {
 		}
 
 		public void setValue(VARIANT_BOOL value) {
-			getPointer().setLong(0, value.longValue());
+			getPointer().setShort(0, value.shortValue());
 		}
 
 		public VARIANT_BOOL getValue() {
-			return new VARIANT_BOOL(getPointer().getLong(0));
+			return new VARIANT_BOOL(getPointer().getShort(0));
 		}
 	}
 

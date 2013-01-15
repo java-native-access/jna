@@ -2,8 +2,10 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.SHORT;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 public class VariantTest extends TestCase {
 
@@ -12,14 +14,52 @@ public class VariantTest extends TestCase {
 	}
 
 	public VariantTest() {
+		Native.setProtected(true);
 	}
 
-	public void testVariant() {
-		VARIANT variantSource = new VARIANT(new SHORT(33333));
-		VARIANT.ByReference variantDest = new VARIANT.ByReference();
+	public void testVariantClear() {
+		System.out.println("------------------------------------------");
 
+		VARIANT variant = new VARIANT(new SHORT(33333));
+		HRESULT hr = OleAut32.INSTANCE.VariantClear(variant.getPointer());
+		
+		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
+		
+		System.out.println(variant.toString(true));
+		System.out.println("------------------------------------------");
+	}
+	
+	public void testVariantCopyShort() {
+		System.out.println("------------------------------------------");
+
+		VARIANT variantSource = new VARIANT(new SHORT(33333));
+		VARIANT variantDest = new VARIANT();
+		
 		System.out.println(variantSource.toString(true));
-		OleAut32.INSTANCE.VariantCopy(variantDest, variantSource);
+		HRESULT hr = OleAut32.INSTANCE.VariantCopy(variantDest.getPointer(), variantSource);
+		
+		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
+
 		System.out.println(variantDest.toString(true));
+		System.out.println("variant type  :" + variantDest.getVarType());
+		System.out.println("variant value :" + variantDest.getValue());
+		System.out.println("------------------------------------------");
+	}
+	
+	public void testVariantCopyBoolean() {
+		System.out.println("------------------------------------------");
+
+		VARIANT variantSource = new VARIANT(Variant.VARIANT_TRUE);
+		VARIANT variantDest = new VARIANT();
+		
+		System.out.println(variantSource.toString(true));
+		HRESULT hr = OleAut32.INSTANCE.VariantCopy(variantDest.getPointer(), variantSource);
+		
+		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
+		
+		System.out.println(variantDest.toString(true));
+		System.out.println("variant type  :" + variantDest.getVarType());
+		System.out.println("variant value :" + variantDest.getValue());
+		System.out.println("------------------------------------------");
 	}
 }

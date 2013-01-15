@@ -7,17 +7,15 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Ole32;
-import com.sun.jna.platform.win32.Ole32Util;
 import com.sun.jna.platform.win32.OleAut32;
-import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.OleAut32.DISPPARAMS;
 import com.sun.jna.platform.win32.OleAut32Util;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef.LCID;
+import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -95,7 +93,7 @@ public class COMObject {
 			}
 
 			dp.cArgs = pArgs.length;
-			dp.rgvarg = new VARIANT(Variant.VARIANT_TRUE);
+			dp.rgvarg = safeArg;
 		}
 
 		// Handle special-case for property-puts!
@@ -123,7 +121,7 @@ public class COMObject {
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
 			IDispatch pDisp, String name) throws COMException {
 
-		return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[])null);
+		return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[]) null);
 	}
 
 	public IDispatch getIDispatch() {
