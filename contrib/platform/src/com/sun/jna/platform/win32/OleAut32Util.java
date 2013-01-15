@@ -25,12 +25,12 @@ import com.sun.jna.platform.win32.COM.COMUtils;
  */
 public abstract class OleAut32Util {
 
-	public static SAFEARRAY createVarArray(int vt, int size) {
+	public static SAFEARRAY createVarArray(int size) {
 		SAFEARRAY psa;
 		SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
 		rgsabound[0] = new SAFEARRAYBOUND(size, 0);
 
-		psa = OleAut32.INSTANCE.SafeArrayCreate(vt, 1, rgsabound);
+		psa = OleAut32.INSTANCE.SafeArrayCreate(Variant.VT_VARIANT, 1, rgsabound);
 
 		return psa;
 	}
@@ -40,7 +40,7 @@ public abstract class OleAut32Util {
 		long[] idx = new long[1];
 		idx[0] = index;
 		HRESULT hr = OleAut32.INSTANCE.SafeArrayPutElement(array, idx,
-				arg.getPointer());
+				arg);
 		COMUtils.SUCCEEDED(hr);
 	}
 

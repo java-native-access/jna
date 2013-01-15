@@ -16,7 +16,7 @@ public class VariantTest extends TestCase {
 
 	public void testVariant() {
 		VARIANT variantSource = new VARIANT(new SHORT(33333));
-		VARIANT variantDest = new VARIANT();
+		VARIANT.ByReference variantDest = new VARIANT.ByReference();
 
 		System.out.println(variantSource.toString(true));
 		OleAut32.INSTANCE.VariantCopy(variantDest, variantSource);

@@ -29,16 +29,16 @@ public class OleAut32UtilTest extends TestCase {
 	}
 
 	public void testCreateVarArray() {
-		SAFEARRAY varArray = OleAut32Util.createVarArray(Variant.VT_VARIANT, 1);
+		SAFEARRAY varArray = OleAut32Util.createVarArray(1);
 		assertTrue(varArray != null);
 	}
 
 	public void testSafeArrayPutGetElement() {
-		SAFEARRAY varArray = OleAut32Util.createVarArray(Variant.VT_VARIANT, 1);
+		SAFEARRAY varArray = OleAut32Util.createVarArray(10);
 
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 10; i++) {
 			try {
-				VARIANT variant = new VARIANT(new SHORT(i + 3333));
+				VARIANT variant = new VARIANT(new SHORT(i + i*100));
 				System.out.println(variant.toString(true));
 				OleAut32Util.SafeArrayPutElement(varArray, i, variant);
 			} catch (COMException e) {
@@ -53,7 +53,7 @@ public class OleAut32UtilTest extends TestCase {
 		System.out
 				.println("-------------------------------------------------------------\n\n\n");
 
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 10; i++) {
 			try {
 				VARIANT element = OleAut32Util.SafeArrayGetElement(varArray, i);
 				System.out.println(element.toString(true));
