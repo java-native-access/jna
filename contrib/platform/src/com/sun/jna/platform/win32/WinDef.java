@@ -101,9 +101,6 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	/**
-	 * 32-bit signed integer.
-	 */
 	public static class LONG extends IntegerType {
 		public static final int SIZE = 4;
 
@@ -111,7 +108,7 @@ public interface WinDef extends StdCallLibrary {
 			this(0);
 		}
 
-		public LONG(long value) {
+		public LONG(int value) {
 			super(SIZE, value);
 		}
 	}
@@ -629,8 +626,8 @@ public interface WinDef extends StdCallLibrary {
 		 * @param value
 		 *            the value
 		 */
-		public ULONG(long value) {
-			super(Native.LONG_SIZE, value, true);
+		public ULONG(int value) {
+			super(SIZE, value, true);
 		}
 	}
 
@@ -649,7 +646,7 @@ public interface WinDef extends StdCallLibrary {
 		}
 
 		public ULONG getValue() {
-			return new ULONG(getPointer().getLong(0));
+			return new ULONG(getPointer().getInt(0));
 		}
 	}
 
@@ -982,7 +979,7 @@ public interface WinDef extends StdCallLibrary {
 		 * @param value
 		 *            the value
 		 */
-		public SCODE(long value) {
+		public SCODE(int value) {
 			super(value);
 		}
 	}
@@ -1002,7 +999,7 @@ public interface WinDef extends StdCallLibrary {
 		}
 
 		public SCODE getValue() {
-			return new SCODE(getPointer().getLong(0));
+			return new SCODE(getPointer().getInt(0));
 		}
 	}
 

@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.WTypes.BSTR;
 public class Oleaut32Test extends TestCase {
 
 	public static void main(String[] args) {
+		Native.setProtected(true);
 		junit.textui.TestRunner.run(Oleaut32Test.class);
 	}
 
@@ -46,20 +47,16 @@ public class Oleaut32Test extends TestCase {
 	}
 
 	public void testDISPPARAMS() {
-		VARIANT[] varArgs = new VARIANT[] { new VARIANT(Variant.VARIANT_TRUE) };
-		DISPPARAMS dp = new DISPPARAMS();
-
 		// Build DISPPARAMS
-		SAFEARRAY.ByReference safeArg = OleAut32Util.createVarArray(1);
-		OleAut32Util.SafeArrayPutElement(safeArg, 0, varArgs[0]);
-
-		dp.cArgs = 1;
-		dp.rgvarg = safeArg;
-		dp.cNamedArgs = 1;
-		dp.rgdispidNamedArgs = new DISPID.ByReference(OleAut32.DISPATCH_PROPERTYPUT);
+		SAFEARRAY safeArg = OleAut32Util.createVarArray(1);
+		OleAut32Util.SafeArrayPutElement(safeArg, 0, new VARIANT(
+				Variant.VARIANT_TRUE));
+		DISPPARAMS dp = new DISPPARAMS(safeArg, new DISPID(
+				OleAut32.DISPATCH_PROPERTYPUT), 1, 1);
 
 		System.out.println(safeArg.toString(true));
-		System.out.println("\n\n\n----------------------------------------------\n\n\n");
+		System.out
+				.println("\n\n\n----------------------------------------------\n\n\n");
 		System.out.println(dp.toString(true));
 	}
 }

@@ -240,50 +240,33 @@ public interface OaIdl {
 	 * The Class DISPID.
 	 */
 	public static class DISPID extends LONG {
-
-		/**
-		 * The Class ByReference.
-		 */
-		public static class ByReference extends LongByReference {
-			public ByReference() {
-				this(0L);
-			}
-
-			public ByReference(long value) {
-				super(8);
-				setValue(value);
-			}
-
-			public void setValue(long value) {
-				getPointer().setLong(0, value);
-			}
-
-			public long getValue() {
-				return getPointer().getLong(0);
-			}
-
-			public DISPID getDISPID() {
-				return new DISPID(getValue());
-			}
-		}
-
-		/**
-		 * Instantiates a new dispid.
-		 */
 		public DISPID() {
 			this(0);
 		}
 
-		/**
-		 * Instantiates a new dispid.
-		 *
-		 * @param value
-		 *            the value
-		 */
-		public DISPID(long value) {
+		public DISPID(int value) {
 			super(value);
 		}
 	}
+	
+	public class DISPIDbyReference extends ByReference {
+		public DISPIDbyReference() {
+			this(new DISPID(0));
+		}
+
+		public DISPIDbyReference(DISPID value) {
+			super(DISPID.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(DISPID value) {
+			getPointer().setInt(0, value.intValue());
+		}
+
+		public DISPID getValue() {
+			return new DISPID(getPointer().getInt(0));
+		}
+	}	
 
 	// The Collect property. You use this property if the method you are calling
 	// through Invoke is an accessor function.
@@ -384,7 +367,7 @@ public interface OaIdl {
 		public PVOID pvData;
 
 		/** The rgsabound. */
-		public SAFEARRAYBOUND.ByReference rgsabound;
+		public SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
 
 		public SAFEARRAY() {
 			// TODO Auto-generated constructor stub
@@ -392,6 +375,7 @@ public interface OaIdl {
 
 		public SAFEARRAY(Pointer pointer) {
 			super(pointer);
+			this.read();
 		}
 
 		@Override
@@ -407,20 +391,22 @@ public interface OaIdl {
 				Structure.ByReference {
 		}
 
-		public int cElements;
+		public ULONG cElements;
 
-		public int lLbound;
+		public LONG lLbound;
 
 		public SAFEARRAYBOUND() {
 		}
 
 		public SAFEARRAYBOUND(Pointer pointer) {
 			super(pointer);
+			this.read();
 		}
 
 		public SAFEARRAYBOUND(int cElements, int lLbound) {
-			this.writeField("cElements", cElements);
-			this.writeField("lLbound", lLbound);
+			this.cElements = new ULONG(cElements);
+			this.lLbound = new LONG(lLbound);
+			this.write();
 		}
 
 		@Override

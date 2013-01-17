@@ -23,6 +23,7 @@ import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.win32.StdCallLibrary;
@@ -31,7 +32,7 @@ import com.sun.jna.win32.W32APIOptions;
 // TODO: Auto-generated Javadoc
 /**
  * Oleaut32.dll Interface.
- *
+ * 
  * @author scott.palmer
  */
 public interface OleAut32 extends StdCallLibrary {
@@ -94,7 +95,7 @@ public interface OleAut32 extends StdCallLibrary {
 	/**
 	 * This function allocates a new string and copies the passed string into
 	 * it.
-	 *
+	 * 
 	 * @param sz
 	 *            Null-terminated UNICODE string to copy.
 	 * @return Null if there is insufficient memory or if a null pointer is
@@ -106,7 +107,7 @@ public interface OleAut32 extends StdCallLibrary {
 	 * This function frees a string allocated previously by SysAllocString,
 	 * SysAllocStringByteLen, SysReAllocString, SysAllocStringLen, or
 	 * SysReAllocStringLen.
-	 *
+	 * 
 	 * @param bstr
 	 *            Unicode string that was allocated previously, or NULL. Setting
 	 *            this parameter to NULL causes the function to simply return.
@@ -115,7 +116,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Variant init.
-	 *
+	 * 
 	 * @param pvarg
 	 *            the pvarg
 	 */
@@ -123,7 +124,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Variant init.
-	 *
+	 * 
 	 * @param pvarg
 	 *            the pvarg
 	 */
@@ -135,7 +136,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Safe array create.
-	 *
+	 * 
 	 * @param vt
 	 *            the vt
 	 * @param cDims
@@ -144,12 +145,12 @@ public interface OleAut32 extends StdCallLibrary {
 	 *            the rgsabound
 	 * @return the safearray
 	 */
-	public SAFEARRAY.ByReference SafeArrayCreate(int vt, int cDims,
+	public SAFEARRAY SafeArrayCreate(VARTYPE vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
 
 	/**
 	 * Safe array put element.
-	 *
+	 * 
 	 * @param psa
 	 *            the psa
 	 * @param idx
@@ -162,7 +163,7 @@ public interface OleAut32 extends StdCallLibrary {
 
 	/**
 	 * Safe array get element.
-	 *
+	 * 
 	 * @param psa
 	 *            the psa
 	 * @param rgIndices
@@ -187,16 +188,16 @@ public interface OleAut32 extends StdCallLibrary {
 		}
 
 		/** The rgvarg. */
-		public SAFEARRAY.ByReference rgvarg;
+		public SAFEARRAY rgvarg;
 
 		/** The rgdispid named args. */
-		public DISPID.ByReference rgdispidNamedArgs;
+		public DISPID rgdispidNamedArgs;
 
 		/** The c args. */
-		public int cArgs;
+		public UINT cArgs;
 
 		/** The c named args. */
-		public int cNamedArgs;
+		public UINT cNamedArgs;
 
 		/**
 		 * Instantiates a new dispparams.
@@ -207,27 +208,28 @@ public interface OleAut32 extends StdCallLibrary {
 
 		/**
 		 * Instantiates a new dispparams.
-		 *
+		 * 
 		 * @param memory
 		 *            the memory
 		 */
 		public DISPPARAMS(Pointer memory) {
 			super(memory);
+			this.read();
 		}
 
-		/**
-		 * Write fields to memory.
-		 */
-		public void writeFieldsToMemory() {
-			this.writeField("rgvarg");
-			this.writeField("rgdispidNamedArgs");
-			this.writeField("cArgs");
-			this.writeField("cNamedArgs");
+		public DISPPARAMS(SAFEARRAY rgvarg, DISPID rgdispidNamedArgs,
+				int cArgs, int cNamedArgs) {
+			this();
+			this.rgvarg = rgvarg;
+			this.rgdispidNamedArgs = rgdispidNamedArgs;
+			this.cArgs = new UINT(cArgs);
+			this.cNamedArgs = new UINT(cNamedArgs);
+			this.write();
 		}
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override

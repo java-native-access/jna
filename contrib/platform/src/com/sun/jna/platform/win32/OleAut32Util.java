@@ -15,22 +15,23 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 
 /**
  * @author Tobias Wolf, wolf.tobias@gmx.net
- *
+ * 
  */
 public abstract class OleAut32Util {
 
-	public static SAFEARRAY.ByReference createVarArray(int size) {
-		SAFEARRAY.ByReference psa;
-		SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[] { new SAFEARRAYBOUND(
-				size, 0) };
+	public static SAFEARRAY createVarArray(int size) {
+		SAFEARRAY psa;
+		SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
+		rgsabound[0] = new SAFEARRAYBOUND(size, 0);
 
-		psa = OleAut32.INSTANCE.SafeArrayCreate(Variant.VT_VARIANT, 1,
-				rgsabound);
+		psa = OleAut32.INSTANCE.SafeArrayCreate(
+				new VARTYPE(Variant.VT_VARIANT), 1, rgsabound);
 
 		return psa;
 	}
