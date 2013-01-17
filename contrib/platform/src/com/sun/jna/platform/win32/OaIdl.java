@@ -112,7 +112,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new excepinfo.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -122,7 +122,7 @@ public interface OaIdl {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override
@@ -276,7 +276,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new dispid.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -384,15 +384,14 @@ public interface OaIdl {
 		public PVOID pvData;
 
 		/** The rgsabound. */
-		public SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
+		public SAFEARRAYBOUND.ByReference rgsabound;
 
 		public SAFEARRAY() {
 			// TODO Auto-generated constructor stub
 		}
 
-		public SAFEARRAY(Pointer p) {
-			super(p);
-			// TODO Auto-generated constructor stub
+		public SAFEARRAY(Pointer pointer) {
+			super(pointer);
 		}
 
 		@Override
@@ -409,20 +408,19 @@ public interface OaIdl {
 		}
 
 		public int cElements;
+
 		public int lLbound;
 
 		public SAFEARRAYBOUND() {
-			// TODO Auto-generated constructor stub
+		}
+
+		public SAFEARRAYBOUND(Pointer pointer) {
+			super(pointer);
 		}
 
 		public SAFEARRAYBOUND(int cElements, int lLbound) {
-			this.cElements = cElements;
-			this.lLbound = lLbound;
-		}
-
-		public SAFEARRAYBOUND(Pointer p) {
-			super(p);
-			// TODO Auto-generated constructor stub
+			this.writeField("cElements", cElements);
+			this.writeField("lLbound", lLbound);
 		}
 
 		@Override

@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.SHORT;
-import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.AutomationException;
 
 /**
  * @author Tobias Wolf, wolf.tobias@gmx.net
@@ -41,7 +41,7 @@ public class OleAut32UtilTest extends TestCase {
 				VARIANT variant = new VARIANT(new SHORT(i + i*100));
 				System.out.println(variant.toString(true));
 				OleAut32Util.SafeArrayPutElement(varArray, i, variant);
-			} catch (COMException e) {
+			} catch (AutomationException e) {
 				e.printStackTrace();
 			}
 		}
@@ -59,7 +59,7 @@ public class OleAut32UtilTest extends TestCase {
 				System.out.println(element.toString(true));
 				System.out.println("variant type: " + element.getVarType());
 				System.out.println("value: " + element.getValue());
-			} catch (COMException e) {
+			} catch (AutomationException e) {
 				e.printStackTrace();
 			}
 		}

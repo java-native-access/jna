@@ -15,7 +15,6 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef.LCID;
-import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -34,7 +33,7 @@ public class COMObject {
 		this.iDispatch = iDispatch;
 	}
 
-	public COMObject(String progId) throws COMException {
+	public COMObject(String progId) throws AutomationException {
 		// enable JNA protected mode
 		Native.setProtected(true);
 
@@ -43,7 +42,7 @@ public class COMObject {
 
 		if (W32Errors.FAILED(hr)) {
 			this.release();
-			throw new COMException("CoInitialize() failed!");
+			throw new AutomationException("CoInitialize() failed!");
 		}
 
 		// Get CLSID for Word.Application...
@@ -52,7 +51,7 @@ public class COMObject {
 
 		if (W32Errors.FAILED(hr)) {
 			Ole32.INSTANCE.CoUninitialize();
-			throw new COMException("CLSIDFromProgID() failed!");
+			throw new AutomationException("CLSIDFromProgID() failed!");
 		}
 
 		hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
@@ -60,7 +59,7 @@ public class COMObject {
 				this.pDispatch);
 
 		if (W32Errors.FAILED(hr)) {
-			throw new COMException("COM object '" + progId
+			throw new AutomationException("COM object '" + progId
 					+ "' not registered properly!");
 		}
 
@@ -68,14 +67,13 @@ public class COMObject {
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-			IDispatch pDisp, String name, VARIANT[] pArgs) throws COMException {
+			IDispatch pDisp, String name, VARIANT[] pArgs) throws AutomationException {
 
 		if (pDisp == null)
-			throw new COMException("pDisp parameter is null!");
+			throw new AutomationException("pDisp parameter is null!");
 
 		WString[] ptName = new WString[] { new WString(name) };
 		DISPPARAMS dp = new DISPPARAMS();
-		DISPID dispidNamed = new DISPID(OleAut32.DISPATCH_PROPERTYPUT);
 		DISPID.ByReference pdispID = new DISPID.ByReference();
 
 		// Get DISPID for name passed...
@@ -86,7 +84,8 @@ public class COMObject {
 
 		// Build DISPPARAMS
 		if ((pArgs != null) && (pArgs.length > 0)) {
-			SAFEARRAY safeArg = OleAut32Util.createVarArray(pArgs.length);
+			SAFEARRAY.ByReference safeArg = OleAut32Util
+					.createVarArray(pArgs.length);
 
 			for (int i = 0; i < pArgs.length; i++) {
 				OleAut32Util.SafeArrayPutElement(safeArg, i, pArgs[i]);
@@ -99,8 +98,10 @@ public class COMObject {
 		// Handle special-case for property-puts!
 		if (nType == OleAut32.DISPATCH_PROPERTYPUT) {
 			dp.cNamedArgs = 1;
-			dp.rgdispidNamedArgs[0] = dispidNamed;
+			dp.rgdispidNamedArgs = new DISPID.ByReference(OleAut32.DISPATCH_PROPERTYPUT);
 		}
+
+		System.out.println(dp.toString(true));
 
 		// Make the call!
 		hr = pDisp.Invoke(pdispID.getDISPID(), Guid.IID_NULL,
@@ -112,14 +113,14 @@ public class COMObject {
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-			IDispatch pDisp, String name, VARIANT pArg) throws COMException {
+			IDispatch pDisp, String name, VARIANT pArg) throws AutomationException {
 
 		return this.oleMethod(nType, pvResult, pDisp, name,
 				new VARIANT[] { pArg });
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-			IDispatch pDisp, String name) throws COMException {
+			IDispatch pDisp, String name) throws AutomationException {
 
 		return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[]) null);
 	}

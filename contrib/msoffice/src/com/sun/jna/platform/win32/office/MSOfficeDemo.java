@@ -1,7 +1,7 @@
 package com.sun.jna.platform.win32.office;
 
 import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.AutomationException;
 
 public class MSOfficeDemo {
 
@@ -20,13 +20,13 @@ public class MSOfficeDemo {
 			msWord.setVisible(Variant.VARIANT_TRUE);
 			// msWord.newDocument(Variant.VARIANT_TRUE);
 			// msWord.OpenDocument("jnatest.doc", true);
-		} catch (COMException e) {
+		} catch (AutomationException e) {
 			e.printStackTrace();
 		} finally {
 			if (msWord != null)
 				try {
 					msWord.quit();
-				} catch (COMException e) {
+				} catch (AutomationException e) {
 					e.printStackTrace();
 				}
 		}

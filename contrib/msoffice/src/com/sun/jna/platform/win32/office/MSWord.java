@@ -6,7 +6,7 @@ import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.AutomationException;
 import com.sun.jna.platform.win32.COM.COMObject;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.IDispatch;
@@ -17,16 +17,16 @@ public class MSWord extends COMObject {
 
 	private ActiveDocument m_pActiveDocument;
 
-	public MSWord() throws COMException {
+	public MSWord() throws AutomationException {
 		super("Word.Application");
 	}
 
-	public MSWord(boolean visible) throws COMException {
+	public MSWord(boolean visible) throws AutomationException {
 		this();
 		this.setVisible(Variant.VARIANT_TRUE);
 	}
 
-	public void setVisible(VARIANT_BOOL bVisible) throws COMException {
+	public void setVisible(VARIANT_BOOL bVisible) throws AutomationException {
 		VARIANT.ByReference result = new VARIANT.ByReference();
 
 		HRESULT hr = this.oleMethod(OleAut32.DISPATCH_PROPERTYPUT, result,
@@ -36,7 +36,7 @@ public class MSWord extends COMObject {
 
 	}
 
-	public String getVersion() throws COMException {
+	public String getVersion() throws AutomationException {
 		VARIANT.ByReference result = new VARIANT.ByReference();
 		OleAut32.INSTANCE.VariantInit(result);
 
@@ -47,7 +47,7 @@ public class MSWord extends COMObject {
 		return result.getValue().toString();
 	}
 
-	public HRESULT newDocument(VARIANT_BOOL visible) throws COMException {
+	public HRESULT newDocument(VARIANT_BOOL visible) throws AutomationException {
 		HRESULT hr;
 		// Mozda problem?
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -66,7 +66,7 @@ public class MSWord extends COMObject {
 	}
 
 	public HRESULT openDocument(String szFilename, boolean bVisible)
-			throws COMException {
+			throws AutomationException {
 		HRESULT hr;
 		// GetDocuments
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -95,7 +95,7 @@ public class MSWord extends COMObject {
 		return hr;
 	}
 
-	public HRESULT closeActiveDocument(VARIANT_BOOL bSave) throws COMException {
+	public HRESULT closeActiveDocument(VARIANT_BOOL bSave) throws AutomationException {
 		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null,
 				m_pActiveDocument.getIDispatch(), "Close", new VARIANT(bSave));
 
@@ -104,7 +104,7 @@ public class MSWord extends COMObject {
 		return hr;
 	}
 
-	public HRESULT quit() throws COMException {
+	public HRESULT quit() throws AutomationException {
 		HRESULT hr = this.oleMethod(OleAut32.DISPATCH_METHOD, null,
 				this.iDispatch, "Quit");
 
@@ -114,14 +114,14 @@ public class MSWord extends COMObject {
 
 	public class Documents extends COMObject {
 
-		public Documents(IDispatch iDispatch) throws COMException {
+		public Documents(IDispatch iDispatch) throws AutomationException {
 			super(iDispatch);
 		}
 	}
 
 	public class ActiveDocument extends COMObject {
 
-		public ActiveDocument(IDispatch iDispatch) throws COMException {
+		public ActiveDocument(IDispatch iDispatch) throws AutomationException {
 			super(iDispatch);
 		}
 	}
