@@ -48,7 +48,7 @@ public class Oleaut32Test extends TestCase {
 
 	public void testDISPPARAMS() {
 		// Build DISPPARAMS
-		SAFEARRAY safeArg = OleAut32Util.createVarArray(1);
+		SAFEARRAY.ByReference safeArg = OleAut32Util.createVarArray(1);
 		OleAut32Util.SafeArrayPutElement(safeArg, 0, new VARIANT(
 				Variant.VARIANT_TRUE));
 		DISPPARAMS dp = new DISPPARAMS(safeArg, new DISPID(

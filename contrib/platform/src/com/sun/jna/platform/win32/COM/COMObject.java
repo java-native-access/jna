@@ -85,26 +85,21 @@ public class COMObject {
 
 		COMUtils.SUCCEEDED(hr);
 
-		// Build DISPPARAMS
-		if ((pArgs != null) && (pArgs.length > 0)) {
-			SAFEARRAY safeArg = OleAut32Util.createVarArray(pArgs.length);
-
-			for (int i = 0; i < pArgs.length; i++) {
-				OleAut32Util.SafeArrayPutElement(safeArg, i, pArgs[i]);
-			}
-
-			dp.cArgs = new UINT(pArgs.length);
-			dp.rgvarg = safeArg;
-		}
-
 		// Handle special-case for property-puts!
 		if (nType == OleAut32.DISPATCH_PROPERTYPUT) {
-			dp.cNamedArgs = new UINT(1);
+			dp.cNamedArgs = new UINT(pArgs.length);
 			dp.rgdispidNamedArgs = new DISPID(OleAut32.DISPATCH_PROPERTYPUT);
 		}
-		
-		// write structure to memory
-		dp.write();
+
+		// Build DISPPARAMS
+		if ((pArgs != null) && (pArgs.length > 0)) {
+			dp.cArgs = new UINT(pArgs.length);
+			dp.rgvarg._variant = pArgs;
+
+			// write structure to memory
+			dp.write();
+			System.out.println(dp.toString(true));
+		}
 
 		// Make the call!
 		hr = pDisp.Invoke(pdispID.getValue(), Guid.IID_NULL,
