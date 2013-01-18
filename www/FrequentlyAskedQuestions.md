@@ -46,13 +46,15 @@ Find your corresponding native declaration below:
     // Field is a pointer to an array of struct
     typedef struct _outerstruct5 {
       simplestruct* ptr_to_array; // use Structure.ByReference, and use
-                                  // Structure.toArray() to allocate the array
+                                  // Structure.toArray() to allocate the array, 
+                                  // then assign the first array element to the field
     } outerstruct5;
 
     // struct pointers as return value or argument
-    // use Structure
-    outerstruct *myfunc(); 
-    void myfunc(outerstruct* data);
+    simplestruct *myfunc(); // use Structure
+    void myfunc(simplestruct* data);
+    void myfunc(simplestruct* data_array, int count); // use Structure[], and use Structure.toArray() to generate the array
+    void myfunc(simplestruct** data_array, int count); // use Structure.ByReference[]
 
     // struct (by value) as return value or argument
     // use Structure.ByValue
