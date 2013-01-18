@@ -7,15 +7,14 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
-import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAut32;
 import com.sun.jna.platform.win32.OleAut32.DISPPARAMS;
-import com.sun.jna.platform.win32.OleAut32Util;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef.LCID;
+import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
@@ -94,11 +93,12 @@ public class COMObject {
 		// Build DISPPARAMS
 		if ((pArgs != null) && (pArgs.length > 0)) {
 			dp.cArgs = new UINT(pArgs.length);
-			dp.rgvarg._variant = pArgs;
+			dp.rgvarg = null;
 
 			// write structure to memory
 			dp.write();
 			System.out.println(dp.toString(true));
+			System.out.println("dp size: " + dp.size());
 		}
 
 		// Make the call!

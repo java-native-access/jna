@@ -658,7 +658,7 @@ public interface WinDef extends StdCallLibrary {
 		}
 
 		public ULONGLONG(long value) {
-			super(8, value, true);
+			super(SIZE, value, true);
 		}
 	}
 
@@ -1015,7 +1015,7 @@ public interface WinDef extends StdCallLibrary {
 	}
 
 	public static class BOOL extends IntegerType {
-
+		public static final int SIZE = 2;
 		public BOOL() {
 			super(0);
 		}
@@ -1026,13 +1026,13 @@ public interface WinDef extends StdCallLibrary {
 	}
 
 	public static class UCHAR extends IntegerType {
-
+		public static final int SIZE = 1;
 		public UCHAR() {
 			this(0);
 		}
 
 		public UCHAR(long value) {
-			super(1, value, true);
+			super(SIZE, value, true);
 		}
 	}
 

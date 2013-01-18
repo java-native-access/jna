@@ -115,7 +115,6 @@ public interface Variant {
 		public VARIANT() {
 			this.setType("_variant");
 			this.read();
-			this.getValue();
 		}
 
 		public VARIANT(Pointer pointer) {

@@ -24,7 +24,6 @@ import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.ByReference;
-import com.sun.jna.ptr.LongByReference;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -248,7 +247,7 @@ public interface OaIdl {
 			super(value);
 		}
 	}
-	
+
 	public class DISPIDbyReference extends ByReference {
 		public DISPIDbyReference() {
 			this(new DISPID(0));
@@ -266,7 +265,7 @@ public interface OaIdl {
 		public DISPID getValue() {
 			return new DISPID(getPointer().getInt(0));
 		}
-	}	
+	}
 
 	// The Collect property. You use this property if the method you are calling
 	// through Invoke is an accessor function.
@@ -425,6 +424,7 @@ public interface OaIdl {
 		public LONGLONG int64;
 
 		public CURRENCY() {
+			super();
 		}
 
 		public CURRENCY(Pointer pointer) {
@@ -436,6 +436,7 @@ public interface OaIdl {
 			public LONG Hi;
 
 			public _CURRENCY() {
+				super();
 			}
 
 			public _CURRENCY(Pointer pointer) {
@@ -456,6 +457,7 @@ public interface OaIdl {
 		};
 
 		public DECIMAL() {
+			super();
 		}
 
 		public DECIMAL(Pointer pointer) {
@@ -469,11 +471,18 @@ public interface OaIdl {
 
 		public static class _DECIMAL1 extends Union {
 
+			public USHORT signscale;
+			public _DECIMAL1_DECIMAL decimal1_DECIMAL;
+
 			public _DECIMAL1() {
+				super();
+				this.setType("signscale");
 			}
 
 			public _DECIMAL1(Pointer pointer) {
 				super(pointer);
+				this.setType("signscale");
+				this.read();
 			}
 
 			public static class _DECIMAL1_DECIMAL extends Structure {
@@ -481,6 +490,7 @@ public interface OaIdl {
 				public BYTE sign;
 
 				public _DECIMAL1_DECIMAL() {
+					super();
 				}
 
 				public _DECIMAL1_DECIMAL(Pointer pointer) {
@@ -492,17 +502,29 @@ public interface OaIdl {
 					return Arrays.asList(new String[] { "scale", "sign" });
 				}
 			}
-
-			public USHORT signscale;
 		}
 
 		public static class _DECIMAL2 extends Union {
 
-			public class _DECIMAL2_DECIMAL extends Structure {
+			public ULONGLONG Lo64;
+			public _DECIMAL2_DECIMAL decimal2_DECIMAL;
+
+			public _DECIMAL2() {
+				this.setType("Lo64");
+			}
+
+			public _DECIMAL2(Pointer pointer) {
+				super(pointer);
+				this.setType("Lo64");
+				this.read();
+			}
+
+			public static class _DECIMAL2_DECIMAL extends Structure {
 				public BYTE Lo32;
 				public BYTE Mid32;
 
 				public _DECIMAL2_DECIMAL() {
+					super();
 				}
 
 				public _DECIMAL2_DECIMAL(Pointer pointer) {
@@ -514,8 +536,6 @@ public interface OaIdl {
 					return Arrays.asList(new String[] { "Lo32", "Mid32" });
 				}
 			}
-
-			public ULONGLONG Lo64;
 		}
 
 		@Override

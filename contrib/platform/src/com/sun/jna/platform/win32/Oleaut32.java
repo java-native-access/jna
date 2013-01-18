@@ -21,7 +21,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
-import com.sun.jna.platform.win32.OaIdl.VARIANTARG;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
@@ -193,7 +192,7 @@ public interface OleAut32 extends StdCallLibrary {
 		}
 
 		/** The rgvarg. */
-		public VARIANTARG rgvarg;
+		public SAFEARRAY.ByReference rgvarg;
 
 		/** The rgdispid named args. */
 		public DISPID rgdispidNamedArgs;
@@ -222,7 +221,7 @@ public interface OleAut32 extends StdCallLibrary {
 			this.read();
 		}
 
-		public DISPPARAMS(VARIANTARG.ByReference rgvarg,
+		public DISPPARAMS(SAFEARRAY.ByReference rgvarg,
 				DISPID rgdispidNamedArgs, int cArgs, int cNamedArgs) {
 			this();
 			this.rgvarg = rgvarg;

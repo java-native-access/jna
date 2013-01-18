@@ -51,12 +51,6 @@ public class Oleaut32Test extends TestCase {
 		SAFEARRAY.ByReference safeArg = OleAut32Util.createVarArray(1);
 		OleAut32Util.SafeArrayPutElement(safeArg, 0, new VARIANT(
 				Variant.VARIANT_TRUE));
-		DISPPARAMS dp = new DISPPARAMS(safeArg, new DISPID(
-				OleAut32.DISPATCH_PROPERTYPUT), 1, 1);
-
 		System.out.println(safeArg.toString(true));
-		System.out
-				.println("\n\n\n----------------------------------------------\n\n\n");
-		System.out.println(dp.toString(true));
 	}
 }
