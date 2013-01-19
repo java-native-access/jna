@@ -52,7 +52,7 @@ Find your corresponding native declaration below:
 
     // struct pointers as return value or argument
     simplestruct *myfunc(); // use Structure
-    void myfunc(simplestruct* data);
+    void myfunc(simplestruct* data); // use Structure
     void myfunc(simplestruct* data_array, int count); // use Structure[], and use Structure.toArray() to generate the array
     void myfunc(simplestruct** data_array, int count); // use Structure.ByReference[]
 
