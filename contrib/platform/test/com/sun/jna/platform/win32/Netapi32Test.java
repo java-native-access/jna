@@ -21,6 +21,7 @@ import com.sun.jna.platform.win32.LMAccess.GROUP_INFO_2;
 import com.sun.jna.platform.win32.LMAccess.GROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
+import com.sun.jna.platform.win32.LMAccess.USER_INFO_10;
 import com.sun.jna.platform.win32.NTSecApi.LSA_FOREST_TRUST_RECORD;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_RECORD;
@@ -130,7 +131,7 @@ public class Netapi32Test extends TestCase {
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
     }
     
-    public void testNetUserEnum() {
+    public void testNetUserEnum1() {
     	PointerByReference bufptr = new PointerByReference();
     	IntByReference entriesread = new IntByReference();
     	IntByReference totalentries = new IntByReference();
@@ -142,7 +143,21 @@ public class Netapi32Test extends TestCase {
         	assertTrue(ui.usri1_name.length() > 0);
         }
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
-    }    
+    }
+
+    public void testNetUserEnum10() {
+    	PointerByReference bufptr = new PointerByReference();
+    	IntByReference entriesread = new IntByReference();
+    	IntByReference totalentries = new IntByReference();
+    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserEnum(
+    			null, 10, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries, null));
+    	USER_INFO_10 userinfo = new USER_INFO_10(bufptr.getValue());
+    	USER_INFO_10[] userinfos = (USER_INFO_10[]) userinfo.toArray(entriesread.getValue());
+        for (USER_INFO_10 ui : userinfos) {
+        	assertTrue(ui.usri10_name.length() > 0);
+        }
+    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
+    }
     
     public void testNetUserAdd() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
