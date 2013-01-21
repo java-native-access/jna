@@ -7,6 +7,7 @@ Features
 * [#163](https://github.com/twall/jna/pull/163): Ported Win32 `dbt.h` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification` and `WTSUnRegisterSessionNotification` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `native_window_msg` that creates windows, registers for USB device and logon/logoff notifications - [@wolftobias](https://github.com/wolftobias).
+* [#180](https://github.com/twall/jna/pull/180): Added missing fields in XEvents' getFieldOrder() - [@xwizard](https://github.com/xwizard)
 
 Release 3.5.1
 ====================
