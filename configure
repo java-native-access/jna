@@ -685,6 +685,8 @@ POWERPC_FALSE
 POWERPC_TRUE
 MOXIE_FALSE
 MOXIE_TRUE
+MICROBLAZE_FALSE
+MICROBLAZE_TRUE
 M68K_FALSE
 M68K_TRUE
 M32R_FALSE
@@ -13384,6 +13386,10 @@ case "$host" in
 	TARGET=M68K; TARGETDIR=m68k
 	;;
 
+  microblaze*-*-*)
+	TARGET=MICROBLAZE; TARGETDIR=microblaze
+	;;
+
   mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)
 	TARGET=MIPS; TARGETDIR=mips
 	;;
@@ -13561,6 +13567,14 @@ fi
 else
   M68K_TRUE='#'
   M68K_FALSE=
+fi
+
+ if test x$TARGET = xMICROBLAZE; then
+  MICROBLAZE_TRUE=
+  MICROBLAZE_FALSE='#'
+else
+  MICROBLAZE_TRUE='#'
+  MICROBLAZE_FALSE=
 fi
 
  if test x$TARGET = xMOXIE; then
@@ -15011,6 +15025,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${M68K_TRUE}" && test -z "${M68K_FALSE}"; then
   as_fn_error $? "conditional \"M68K\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${MICROBLAZE_TRUE}" && test -z "${MICROBLAZE_FALSE}"; then
+  as_fn_error $? "conditional \"MICROBLAZE\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${MOXIE_TRUE}" && test -z "${MOXIE_FALSE}"; then

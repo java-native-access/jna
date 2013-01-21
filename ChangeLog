@@ -1,3 +1,15 @@
+2013-01-21  Nathan Rossi <nathan.rossi@xilinx.com>
+
+	* README: Add MicroBlaze details.
+	* Makefile.am: Add MicroBlaze support.
+	* configure.ac: Likewise.
+	* src/microblaze/ffi.c: New.
+	* src/microblaze/ffitarget.h: Likewise.
+	* src/microblaze/sysv.S: Likewise.
+
+2013-01-21  Nathan Rossi <nathan.rossi@xilinx.com>
+	* testsuite/libffi.call/return_uc.c: Fixed issue.
+
 2013-01-21  Chris Zankel   <chris@zankel.net>
 
 	* README: Add Xtensa support.

@@ -64,24 +64,25 @@ target_triplet = @target@
 @IA64_TRUE@am__append_11 = src/ia64/ffi.c src/ia64/unix.S
 @M32R_TRUE@am__append_12 = src/m32r/sysv.S src/m32r/ffi.c
 @M68K_TRUE@am__append_13 = src/m68k/ffi.c src/m68k/sysv.S
-@POWERPC_TRUE@am__append_14 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S src/powerpc/linux64.S src/powerpc/linux64_closure.S
-@POWERPC_AIX_TRUE@am__append_15 = src/powerpc/ffi_darwin.c src/powerpc/aix.S src/powerpc/aix_closure.S
-@POWERPC_DARWIN_TRUE@am__append_16 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
-@POWERPC_FREEBSD_TRUE@am__append_17 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
-@AARCH64_TRUE@am__append_18 = src/aarch64/sysv.S src/aarch64/ffi.c
-@ARM_TRUE@am__append_19 = src/arm/sysv.S src/arm/ffi.c
-@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__append_20 = src/arm/trampoline.S
-@AVR32_TRUE@am__append_21 = src/avr32/sysv.S src/avr32/ffi.c
-@LIBFFI_CRIS_TRUE@am__append_22 = src/cris/sysv.S src/cris/ffi.c
-@FRV_TRUE@am__append_23 = src/frv/eabi.S src/frv/ffi.c
-@S390_TRUE@am__append_24 = src/s390/sysv.S src/s390/ffi.c
-@X86_64_TRUE@am__append_25 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
-@SH_TRUE@am__append_26 = src/sh/sysv.S src/sh/ffi.c
-@SH64_TRUE@am__append_27 = src/sh64/sysv.S src/sh64/ffi.c
-@PA_LINUX_TRUE@am__append_28 = src/pa/linux.S src/pa/ffi.c
-@PA_HPUX_TRUE@am__append_29 = src/pa/hpux32.S src/pa/ffi.c
-@TILE_TRUE@am__append_30 = src/tile/tile.S src/tile/ffi.c
-@XTENSA_TRUE@am__append_31 = src/xtensa/sysv.S src/xtensa/ffi.c
+@MICROBLAZE_TRUE@am__append_14 = src/microblaze/ffi.c src/microblaze/sysv.S
+@POWERPC_TRUE@am__append_15 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S src/powerpc/linux64.S src/powerpc/linux64_closure.S
+@POWERPC_AIX_TRUE@am__append_16 = src/powerpc/ffi_darwin.c src/powerpc/aix.S src/powerpc/aix_closure.S
+@POWERPC_DARWIN_TRUE@am__append_17 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
+@POWERPC_FREEBSD_TRUE@am__append_18 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
+@AARCH64_TRUE@am__append_19 = src/aarch64/sysv.S src/aarch64/ffi.c
+@ARM_TRUE@am__append_20 = src/arm/sysv.S src/arm/ffi.c
+@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__append_21 = src/arm/trampoline.S
+@AVR32_TRUE@am__append_22 = src/avr32/sysv.S src/avr32/ffi.c
+@LIBFFI_CRIS_TRUE@am__append_23 = src/cris/sysv.S src/cris/ffi.c
+@FRV_TRUE@am__append_24 = src/frv/eabi.S src/frv/ffi.c
+@S390_TRUE@am__append_25 = src/s390/sysv.S src/s390/ffi.c
+@X86_64_TRUE@am__append_26 = src/x86/ffi64.c src/x86/unix64.S src/x86/ffi.c src/x86/sysv.S
+@SH_TRUE@am__append_27 = src/sh/sysv.S src/sh/ffi.c
+@SH64_TRUE@am__append_28 = src/sh64/sysv.S src/sh64/ffi.c
+@PA_LINUX_TRUE@am__append_29 = src/pa/linux.S src/pa/ffi.c
+@PA_HPUX_TRUE@am__append_30 = src/pa/hpux32.S src/pa/ffi.c
+@TILE_TRUE@am__append_31 = src/tile/tile.S src/tile/ffi.c
+@XTENSA_TRUE@am__append_32 = src/xtensa/sysv.S src/xtensa/ffi.c
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/doc/stamp-vti \
@@ -161,34 +162,36 @@ am_libffi_la_OBJECTS = src/prep_cif.lo src/types.lo src/raw_api.lo \
 @IA64_TRUE@am__objects_11 = src/ia64/ffi.lo src/ia64/unix.lo
 @M32R_TRUE@am__objects_12 = src/m32r/sysv.lo src/m32r/ffi.lo
 @M68K_TRUE@am__objects_13 = src/m68k/ffi.lo src/m68k/sysv.lo
-@POWERPC_TRUE@am__objects_14 = src/powerpc/ffi.lo src/powerpc/sysv.lo \
+@MICROBLAZE_TRUE@am__objects_14 = src/microblaze/ffi.lo \
+@MICROBLAZE_TRUE@	src/microblaze/sysv.lo
+@POWERPC_TRUE@am__objects_15 = src/powerpc/ffi.lo src/powerpc/sysv.lo \
 @POWERPC_TRUE@	src/powerpc/ppc_closure.lo \
 @POWERPC_TRUE@	src/powerpc/linux64.lo \
 @POWERPC_TRUE@	src/powerpc/linux64_closure.lo
-@POWERPC_AIX_TRUE@am__objects_15 = src/powerpc/ffi_darwin.lo \
+@POWERPC_AIX_TRUE@am__objects_16 = src/powerpc/ffi_darwin.lo \
 @POWERPC_AIX_TRUE@	src/powerpc/aix.lo \
 @POWERPC_AIX_TRUE@	src/powerpc/aix_closure.lo
-@POWERPC_DARWIN_TRUE@am__objects_16 = src/powerpc/ffi_darwin.lo \
+@POWERPC_DARWIN_TRUE@am__objects_17 = src/powerpc/ffi_darwin.lo \
 @POWERPC_DARWIN_TRUE@	src/powerpc/darwin.lo \
 @POWERPC_DARWIN_TRUE@	src/powerpc/darwin_closure.lo
-@POWERPC_FREEBSD_TRUE@am__objects_17 = src/powerpc/ffi.lo \
+@POWERPC_FREEBSD_TRUE@am__objects_18 = src/powerpc/ffi.lo \
 @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
 @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
-@AARCH64_TRUE@am__objects_18 = src/aarch64/sysv.lo src/aarch64/ffi.lo
-@ARM_TRUE@am__objects_19 = src/arm/sysv.lo src/arm/ffi.lo
-@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__objects_20 = src/arm/trampoline.lo
-@AVR32_TRUE@am__objects_21 = src/avr32/sysv.lo src/avr32/ffi.lo
-@LIBFFI_CRIS_TRUE@am__objects_22 = src/cris/sysv.lo src/cris/ffi.lo
-@FRV_TRUE@am__objects_23 = src/frv/eabi.lo src/frv/ffi.lo
-@S390_TRUE@am__objects_24 = src/s390/sysv.lo src/s390/ffi.lo
-@X86_64_TRUE@am__objects_25 = src/x86/ffi64.lo src/x86/unix64.lo \
+@AARCH64_TRUE@am__objects_19 = src/aarch64/sysv.lo src/aarch64/ffi.lo
+@ARM_TRUE@am__objects_20 = src/arm/sysv.lo src/arm/ffi.lo
+@ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__objects_21 = src/arm/trampoline.lo
+@AVR32_TRUE@am__objects_22 = src/avr32/sysv.lo src/avr32/ffi.lo
+@LIBFFI_CRIS_TRUE@am__objects_23 = src/cris/sysv.lo src/cris/ffi.lo
+@FRV_TRUE@am__objects_24 = src/frv/eabi.lo src/frv/ffi.lo
+@S390_TRUE@am__objects_25 = src/s390/sysv.lo src/s390/ffi.lo
+@X86_64_TRUE@am__objects_26 = src/x86/ffi64.lo src/x86/unix64.lo \
 @X86_64_TRUE@	src/x86/ffi.lo src/x86/sysv.lo
-@SH_TRUE@am__objects_26 = src/sh/sysv.lo src/sh/ffi.lo
-@SH64_TRUE@am__objects_27 = src/sh64/sysv.lo src/sh64/ffi.lo
-@PA_LINUX_TRUE@am__objects_28 = src/pa/linux.lo src/pa/ffi.lo
-@PA_HPUX_TRUE@am__objects_29 = src/pa/hpux32.lo src/pa/ffi.lo
-@TILE_TRUE@am__objects_30 = src/tile/tile.lo src/tile/ffi.lo
-@XTENSA_TRUE@am__objects_31 = src/xtensa/sysv.lo src/xtensa/ffi.lo
+@SH_TRUE@am__objects_27 = src/sh/sysv.lo src/sh/ffi.lo
+@SH64_TRUE@am__objects_28 = src/sh64/sysv.lo src/sh64/ffi.lo
+@PA_LINUX_TRUE@am__objects_29 = src/pa/linux.lo src/pa/ffi.lo
+@PA_HPUX_TRUE@am__objects_30 = src/pa/hpux32.lo src/pa/ffi.lo
+@TILE_TRUE@am__objects_31 = src/tile/tile.lo src/tile/ffi.lo
+@XTENSA_TRUE@am__objects_32 = src/xtensa/sysv.lo src/xtensa/ffi.lo
 nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3) $(am__objects_4) $(am__objects_5) \
 	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
@@ -199,17 +202,17 @@ nodist_libffi_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_21) $(am__objects_22) $(am__objects_23) \
 	$(am__objects_24) $(am__objects_25) $(am__objects_26) \
 	$(am__objects_27) $(am__objects_28) $(am__objects_29) \
-	$(am__objects_30) $(am__objects_31)
+	$(am__objects_30) $(am__objects_31) $(am__objects_32)
 libffi_la_OBJECTS = $(am_libffi_la_OBJECTS) \
 	$(nodist_libffi_la_OBJECTS)
 libffi_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(libffi_la_LDFLAGS) $(LDFLAGS) -o $@
 libffi_convenience_la_LIBADD =
-am__objects_32 = src/prep_cif.lo src/types.lo src/raw_api.lo \
+am__objects_33 = src/prep_cif.lo src/types.lo src/raw_api.lo \
 	src/java_raw_api.lo src/closures.lo
-am_libffi_convenience_la_OBJECTS = $(am__objects_32)
-am__objects_33 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+am_libffi_convenience_la_OBJECTS = $(am__objects_33)
+am__objects_34 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
 	$(am__objects_7) $(am__objects_8) $(am__objects_9) \
 	$(am__objects_10) $(am__objects_11) $(am__objects_12) \
@@ -219,8 +222,8 @@ am__objects_33 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_22) $(am__objects_23) $(am__objects_24) \
 	$(am__objects_25) $(am__objects_26) $(am__objects_27) \
 	$(am__objects_28) $(am__objects_29) $(am__objects_30) \
-	$(am__objects_31)
-nodist_libffi_convenience_la_OBJECTS = $(am__objects_33)
+	$(am__objects_31) $(am__objects_32)
+nodist_libffi_convenience_la_OBJECTS = $(am__objects_34)
 libffi_convenience_la_OBJECTS = $(am_libffi_convenience_la_OBJECTS) \
 	$(nodist_libffi_convenience_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -465,7 +468,9 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 src/ia64/unix.S src/mips/ffi.c src/mips/n32.S src/mips/o32.S	\
 	 src/mips/ffitarget.h src/m32r/ffi.c src/m32r/sysv.S		\
 	 src/m32r/ffitarget.h src/m68k/ffi.c src/m68k/sysv.S		\
-	 src/m68k/ffitarget.h src/powerpc/ffi.c src/powerpc/sysv.S	\
+	 src/m68k/ffitarget.h src/microblaze/ffi.c			\
+	 src/microblaze/sysv.S src/microblaze/ffitarget.h		\
+	 src/powerpc/ffi.c src/powerpc/sysv.S				\
 	 src/powerpc/linux64.S src/powerpc/linux64_closure.S		\
 	 src/powerpc/ppc_closure.S src/powerpc/asm.h			\
 	src/powerpc/aix.S src/powerpc/darwin.S				\
@@ -550,7 +555,7 @@ nodist_libffi_la_SOURCES = $(am__append_1) $(am__append_2) \
 	$(am__append_21) $(am__append_22) $(am__append_23) \
 	$(am__append_24) $(am__append_25) $(am__append_26) \
 	$(am__append_27) $(am__append_28) $(am__append_29) \
-	$(am__append_30) $(am__append_31)
+	$(am__append_30) $(am__append_31) $(am__append_32)
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/../libtool-ldflags $(LDFLAGS))
@@ -766,6 +771,16 @@ src/m68k/ffi.lo: src/m68k/$(am__dirstamp) \
 	src/m68k/$(DEPDIR)/$(am__dirstamp)
 src/m68k/sysv.lo: src/m68k/$(am__dirstamp) \
 	src/m68k/$(DEPDIR)/$(am__dirstamp)
+src/microblaze/$(am__dirstamp):
+	@$(MKDIR_P) src/microblaze
+	@: > src/microblaze/$(am__dirstamp)
+src/microblaze/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) src/microblaze/$(DEPDIR)
+	@: > src/microblaze/$(DEPDIR)/$(am__dirstamp)
+src/microblaze/ffi.lo: src/microblaze/$(am__dirstamp) \
+	src/microblaze/$(DEPDIR)/$(am__dirstamp)
+src/microblaze/sysv.lo: src/microblaze/$(am__dirstamp) \
+	src/microblaze/$(DEPDIR)/$(am__dirstamp)
 src/powerpc/$(am__dirstamp):
 	@$(MKDIR_P) src/powerpc
 	@: > src/powerpc/$(am__dirstamp)
@@ -935,6 +950,8 @@ mostlyclean-compile:
 	-rm -f src/m32r/*.lo
 	-rm -f src/m68k/*.$(OBJEXT)
 	-rm -f src/m68k/*.lo
+	-rm -f src/microblaze/*.$(OBJEXT)
+	-rm -f src/microblaze/*.lo
 	-rm -f src/mips/*.$(OBJEXT)
 	-rm -f src/mips/*.lo
 	-rm -f src/pa/*.$(OBJEXT)
@@ -986,6 +1003,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/m32r/$(DEPDIR)/sysv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/m68k/$(DEPDIR)/ffi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/m68k/$(DEPDIR)/sysv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/microblaze/$(DEPDIR)/ffi.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/microblaze/$(DEPDIR)/sysv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/mips/$(DEPDIR)/ffi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/mips/$(DEPDIR)/n32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/mips/$(DEPDIR)/o32.Plo@am__quote@
@@ -1089,6 +1108,7 @@ clean-libtool:
 	-rm -rf src/ia64/.libs src/ia64/_libs
 	-rm -rf src/m32r/.libs src/m32r/_libs
 	-rm -rf src/m68k/.libs src/m68k/_libs
+	-rm -rf src/microblaze/.libs src/microblaze/_libs
 	-rm -rf src/mips/.libs src/mips/_libs
 	-rm -rf src/pa/.libs src/pa/_libs
 	-rm -rf src/powerpc/.libs src/powerpc/_libs
@@ -1643,6 +1663,8 @@ distclean-generic:
 	-rm -f src/m32r/$(am__dirstamp)
 	-rm -f src/m68k/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/m68k/$(am__dirstamp)
+	-rm -f src/microblaze/$(DEPDIR)/$(am__dirstamp)
+	-rm -f src/microblaze/$(am__dirstamp)
 	-rm -f src/mips/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/mips/$(am__dirstamp)
 	-rm -f src/pa/$(DEPDIR)/$(am__dirstamp)
@@ -1675,7 +1697,7 @@ clean-am: clean-aminfo clean-generic clean-libtool \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf src/$(DEPDIR) src/aarch64/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/bfin/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/tile/$(DEPDIR) src/x86/$(DEPDIR) src/xtensa/$(DEPDIR)
+	-rm -rf src/$(DEPDIR) src/aarch64/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/bfin/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/microblaze/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/tile/$(DEPDIR) src/x86/$(DEPDIR) src/xtensa/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1814,7 +1836,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf src/$(DEPDIR) src/aarch64/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/bfin/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/tile/$(DEPDIR) src/x86/$(DEPDIR) src/xtensa/$(DEPDIR)
+	-rm -rf src/$(DEPDIR) src/aarch64/$(DEPDIR) src/alpha/$(DEPDIR) src/arm/$(DEPDIR) src/avr32/$(DEPDIR) src/bfin/$(DEPDIR) src/cris/$(DEPDIR) src/frv/$(DEPDIR) src/ia64/$(DEPDIR) src/m32r/$(DEPDIR) src/m68k/$(DEPDIR) src/microblaze/$(DEPDIR) src/mips/$(DEPDIR) src/pa/$(DEPDIR) src/powerpc/$(DEPDIR) src/s390/$(DEPDIR) src/sh/$(DEPDIR) src/sh64/$(DEPDIR) src/sparc/$(DEPDIR) src/tile/$(DEPDIR) src/x86/$(DEPDIR) src/xtensa/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-aminfo \
 	maintainer-clean-generic maintainer-clean-vti
