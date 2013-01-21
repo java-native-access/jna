@@ -159,9 +159,10 @@ History
 See the ChangeLog files for details.
 
 3.0.12 XXX-XX-XX
+	Add AArch64 support.
 	Add Blackfin support.
 	Add TILE-Gx/TILEPro support.
-	Add AArch64 support.
+	Add Microblaze support.
 	Add Xtensa support.
 	Add support for PaX enabled kernels with MPROTECT.
 	Add support for native vendor compilers on
