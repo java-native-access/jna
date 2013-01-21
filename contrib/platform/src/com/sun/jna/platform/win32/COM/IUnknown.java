@@ -31,6 +31,9 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class IUnknown extends PointerType {
 
+	/**
+	 * The Class ByReference.
+	 */
 	public static class ByReference extends IUnknown implements
 			Structure.ByReference {
 	}
@@ -39,6 +42,9 @@ public class IUnknown extends PointerType {
 	public final static IID IID_IDispatch = new IID(
 			"{00000000-0000-0000-C000-000000000046}");
 
+	/**
+	 * Instantiates a new i unknown.
+	 */
 	public IUnknown() {
 	}
 

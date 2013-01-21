@@ -351,4 +351,25 @@ public interface Variant {
 			}
 		}
 	}
+
+	public static class VariantArg extends Structure {
+
+		public static class ByReference extends VariantArg implements
+				Structure.ByReference {
+		}
+
+		public VARIANT[] variantArg;
+
+		public VariantArg() {
+		}
+		
+		public VariantArg(VARIANT[] variantArg) {
+			this.variantArg = variantArg;
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "variantArg" });
+		}
+	}
 }

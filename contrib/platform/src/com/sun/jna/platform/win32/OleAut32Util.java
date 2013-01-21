@@ -19,12 +19,20 @@ import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Tobias Wolf, wolf.tobias@gmx.net
+ * The Class OleAut32Util.
  *
+ * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public abstract class OleAut32Util {
 
+	/**
+	 * Creates a new the variant array.
+	 *
+	 * @param size the size
+	 * @return the sAFEARRA y. by reference
+	 */
 	public static SAFEARRAY.ByReference createVarArray(int size) {
 		SAFEARRAY.ByReference psa;
 		SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
@@ -36,6 +44,13 @@ public abstract class OleAut32Util {
 		return psa;
 	}
 
+	/**
+	 * Safe array put element.
+	 *
+	 * @param array the array
+	 * @param index the index
+	 * @param arg the arg
+	 */
 	public static void SafeArrayPutElement(SAFEARRAY array, long index,
 			VARIANT arg) {
 		long[] idx = new long[1];
@@ -44,6 +59,13 @@ public abstract class OleAut32Util {
 		COMUtils.SUCCEEDED(hr);
 	}
 
+	/**
+	 * Safe array get element.
+	 *
+	 * @param array the array
+	 * @param index the index
+	 * @return the variant
+	 */
 	public static VARIANT SafeArrayGetElement(SAFEARRAY array, long index) {
 		long[] idx = new long[1];
 		idx[0] = index;

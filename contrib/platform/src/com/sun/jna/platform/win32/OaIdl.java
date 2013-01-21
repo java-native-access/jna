@@ -11,7 +11,7 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
-import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -22,7 +22,6 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.ByReference;
 
 // TODO: Auto-generated Javadoc
@@ -83,13 +82,13 @@ public interface OaIdl {
 		public WORD wReserved;
 
 		/** The bstr source. */
-		public String bstrSource;
+		public BSTR bstrSource;
 
 		/** The bstr description. */
-		public String bstrDescription;
+		public BSTR bstrDescription;
 
 		/** The bstr help file. */
-		public String bstrHelpFile;
+		public BSTR bstrHelpFile;
 
 		/** The dw help context. */
 		public DWORD dwHelpContext;
@@ -98,7 +97,7 @@ public interface OaIdl {
 		public PVOID pvReserved;
 
 		/** The pfn deferred fill in. */
-		public HRESULT pfnDeferredFillIn;
+		public EXCEPINFO.ByReference pfnDeferredFillIn;
 
 		/** The scode. */
 		public SCODE scode;
@@ -111,7 +110,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new excepinfo.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -121,7 +120,7 @@ public interface OaIdl {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override
@@ -213,25 +212,6 @@ public interface OaIdl {
 
 		public DATE getValue() {
 			return new DATE(getPointer().getLong(0));
-		}
-	}
-
-	/**
-	 * The Class VARIANTARG.
-	 */
-	public class VARIANTARG extends VARIANT {
-
-		/**
-		 * The Class ByReference.
-		 */
-		public static class ByReference extends VARIANTARG implements
-				Structure.ByReference {
-		}
-
-		/**
-		 * Instantiates a new variantarg.
-		 */
-		public VARIANTARG() {
 		}
 	}
 
