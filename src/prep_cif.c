@@ -143,6 +143,10 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
 #ifdef TILE
       && (cif->rtype->size > 10 * FFI_SIZEOF_ARG)
 #endif
+#ifdef XTENSA
+      && (cif->rtype->size > 16)
+#endif
+
      )
     bytes = STACK_ARG_SIZE(sizeof(void*));
 #endif
@@ -180,6 +184,10 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
 		 registers and the stack.  */
 	      bytes = 10 * FFI_SIZEOF_ARG;
 	    }
+#endif
+#ifdef XTENSA
+	  if (bytes <= 6*4 && bytes + STACK_ARG_SIZE((*ptr)->size) > 6*4)
+	    bytes = 6*4;
 #endif
 
 	  bytes += STACK_ARG_SIZE((*ptr)->size);

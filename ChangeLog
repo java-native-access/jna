@@ -1,3 +1,16 @@
+2013-01-21  Chris Zankel   <chris@zankel.net>
+
+	* README: Add Xtensa support.
+	* Makefile.am: Likewise.
+	* configure.ac: Likewise.
+	* Makefile.in Regenerate.
+	* configure: Likewise.
+	* src/prep_cif.c: Handle Xtensa.
+	* src/xtensa: New directory.
+	* src/xtensa/ffi.c: New file.
+	* src/xtensa/ffitarget.h: Ditto.
+	* src/xtensa/sysv.S: Ditto.
+
 2013-01-11  Anthony Green  <green@moxielogic.com>
 
 	* src/powerpc/ffi_darwin.c (ffi_prep_args): Replace // style

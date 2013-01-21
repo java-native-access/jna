@@ -647,6 +647,8 @@ FFI_EXEC_TRAMPOLINE_TABLE_TRUE
 sys_symbol_underscore
 HAVE_LONG_DOUBLE
 ALLOCA
+XTENSA_FALSE
+XTENSA_TRUE
 TILE_FALSE
 TILE_TRUE
 PA64_HPUX_FALSE
@@ -13452,6 +13454,10 @@ case "$host" in
 	fi
 	;;
 
+  xtensa*-*)
+	TARGET=XTENSA; TARGETDIR=xtensa
+	;;
+
 esac
 
 
@@ -13699,6 +13705,14 @@ fi
 else
   TILE_TRUE='#'
   TILE_FALSE=
+fi
+
+ if test x$TARGET = xXTENSA; then
+  XTENSA_TRUE=
+  XTENSA_FALSE='#'
+else
+  XTENSA_TRUE='#'
+  XTENSA_FALSE=
 fi
 
 
@@ -15069,6 +15083,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${TILE_TRUE}" && test -z "${TILE_FALSE}"; then
   as_fn_error $? "conditional \"TILE\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${XTENSA_TRUE}" && test -z "${XTENSA_FALSE}"; then
+  as_fn_error $? "conditional \"XTENSA\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
