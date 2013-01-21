@@ -8,6 +8,7 @@ Features
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification` and `WTSUnRegisterSessionNotification` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `native_window_msg` that creates windows, registers for USB device and logon/logoff notifications - [@wolftobias](https://github.com/wolftobias).
 * [#178](https://github.com/twall/jna/pull/178): Added Win32 `USER_INFO_10` structure from `LMAccess.h` - [@davidmc24](https://github.com/davidmc24).
+* [#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
 
 Release 3.5.1
 ====================
