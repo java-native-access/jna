@@ -62,6 +62,7 @@ tested:
 | IA-64           | Linux            | GCC                     |
 | M68K            | FreeMiNT         | GCC                     |
 | M68K            | RTEMS            | GCC                     |
+| MicroBlaze      | Linux            | GCC                     |
 | MIPS            | IRIX             | GCC                     |
 | MIPS            | Linux            | GCC                     |
 | MIPS            | RTEMS            | GCC                     |
@@ -344,6 +345,7 @@ frv		Anthony Green
 ia64		Hans Boehm
 m32r		Kazuhiro Inaoka
 m68k		Andreas Schwab
+microblaze	Nathan Rossi
 mips		Anthony Green, Casey Marshall
 mips64		David Daney
 pa		Randolph Chung, Dave Anglin, Andreas Tobler
