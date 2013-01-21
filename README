@@ -48,9 +48,9 @@ refer to the wiki page here:
 At the time of release, the following basic configurations have been
 tested:
 
-|-----------------+------------------|-------------------------|
+|-----------------+------------------+-------------------------|
 | Architecture    | Operating System | Compiler                |
-|-----------------+------------------|-------------------------|
+|-----------------+------------------+-------------------------|
 | AArch64         | Linux            | GCC                     |
 | Alpha           | Linux            | GCC                     |
 | Alpha           | Tru64            | GCC                     |
@@ -66,7 +66,8 @@ tested:
 | MIPS            | Linux            | GCC                     |
 | MIPS            | RTEMS            | GCC                     |
 | MIPS64          | Linux            | GCC                     |
-| Power 	  | AIX 7.1.1.0	     | IBM XL C/C++, V11.1     |
+| PowerPC 32-bit  | AIX 6.1.0.0      | IBM XL C/C++, V11.1     |
+| PowerPC 32-bit  | AIX 7.1.1.0      | IBM XL C/C++, V11.1     |
 | PowerPC         | AMIGA            | GCC                     |
 | PowerPC         | Linux            | GCC                     |
 | PowerPC         | Mac OSX          | GCC                     |
@@ -160,6 +161,8 @@ See the ChangeLog files for details.
 	Add TILE-Gx/TILEPro support.
 	Add AArch64 support.
 	Add support for PaX enabled kernels with MPROTECT.
+	Add support for native vendor compilers on
+	  Solaris and AIX.
 
 3.0.11 Apr-11-12
         Lots of build fixes.
