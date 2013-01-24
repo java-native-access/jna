@@ -18,11 +18,16 @@ public class MSOfficeDemo {
 			+ File.separator;
 
 	public MSOfficeDemo() {
+		//this.testMSWord();
+		this.testMSExcel();
+	}
+	
+	public void testMSWord() {
 		MSWord msWord = null;
 
 		try {
 			msWord = new MSWord();
-			// System.out.println("MSWord version: " + msWord.getVersion());
+			System.out.println("MSWord version: " + msWord.getVersion());
 			msWord.setVisible(Variant.VARIANT_TRUE);
 			msWord.newDocument();
 			//msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
@@ -42,6 +47,34 @@ public class MSOfficeDemo {
 			
 			if(msWord != null)
 				msWord.quit();
+		}
+	}
+	
+	public void testMSExcel() {
+		MSExcel msExcel = null;
+
+		try {
+			msExcel = new MSExcel();
+			System.out.println("MSExcel version: " + msExcel.getVersion());
+			msExcel.setVisible(Variant.VARIANT_TRUE);
+			//msExcel.newExcelBook();
+			msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
+			msExcel.insertValue("A1", "Hello from JNA!");
+			// close and save the active sheet
+			msExcel.closeActiveWorkbook(Variant.VARIANT_TRUE);
+			// wait then close excel
+			msExcel.quit();
+		} catch (COMException e) {
+			if (e.getExcepInfo() != null) {
+				System.out
+						.println("bstrSource: " + e.getExcepInfo().bstrSource);
+				System.out.println("bstrDescription: "
+						+ e.getExcepInfo().bstrDescription);
+			} else
+				e.printStackTrace();
+			
+			if(msExcel != null)
+				msExcel.quit();
 		}
 	}
 }

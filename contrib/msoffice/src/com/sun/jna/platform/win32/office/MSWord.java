@@ -74,10 +74,10 @@ public class MSWord extends COMObject {
 	public HRESULT insertText(String text) throws COMException {
 		HRESULT hr;
 
-		VARIANT.ByReference result2 = new VARIANT.ByReference();
-		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result2,
+		VARIANT.ByReference result = new VARIANT.ByReference();
+		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result,
 				this.iDispatch, "Selection");
-		Selection pSelection = new Selection((IDispatch) result2.getValue());
+		Selection pSelection = new Selection((IDispatch) result.getValue());
 
 		BSTR bstrText = OleAut32.INSTANCE.SysAllocString(text);
 		VARIANT varText = new VARIANT(bstrText);
