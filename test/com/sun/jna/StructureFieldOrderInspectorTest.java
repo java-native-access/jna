@@ -149,6 +149,22 @@ public class StructureFieldOrderInspectorTest extends TestCase {
     }
 
 
+    private static class MyStructSuper extends Structure {
+        public long instanceField;
+
+        @Override
+        protected List getFieldOrder() {
+            //return Arrays.asList();
+            return Arrays.asList("instanceField");
+        }
+    }
+    private static final class MyStructChildEmpty extends MyStructSuper {
+    }
+    public void testCheckMethodGetFieldOrderSuperImplOnly() throws Exception {
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructChildEmpty.class, null);
+    }
+
+
     public void testCheckMethodGetFieldOrderWithAbstractSubtype() throws Exception {
         StructureFieldOrderInspector.checkMethodGetFieldOrder(Union.class, null);
     }

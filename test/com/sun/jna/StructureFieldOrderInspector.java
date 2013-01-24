@@ -97,14 +97,7 @@ public final class StructureFieldOrderInspector {
             return;
         }
 
-        final Method methodGetFieldOrder;
-        try {
-            methodGetFieldOrder = structureSubType.getDeclaredMethod("getFieldOrder", new Class[]{});
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("The Structure sub type: " + structureSubType.getName()
-                    + " must define the method: getFieldOrder()."
-                    + " See the javadoc for Structure.getFieldOrder() for details.", e);
-        }
+        final Method methodGetFieldOrder = getMethodGetFieldOrder(structureSubType);
 
 
         if (Modifier.isAbstract(structureSubType.getModifiers())) {
@@ -158,7 +151,7 @@ public final class StructureFieldOrderInspector {
             throw new RuntimeException("Could not invoke getFieldOrder() on Structure sub type: " + structureSubType.getName(), e);
         }
 
-        final Field[] actualFields = structureSubType.getDeclaredFields();
+        final Field[] actualFields = structureSubType.getFields(); // include fields from super classes
         final List actualFieldNames = new ArrayList(actualFields.length);
         for (final Field field : actualFields) {
             // ignore static fields
@@ -178,5 +171,26 @@ public final class StructureFieldOrderInspector {
                         + "] includes undeclared field: " + methodCallField);
             }
         }
+    }
+
+    /**
+     * Find the getFieldOrder() method in the given class, or any of it's parents.
+     * @param structureSubType a structure sub type
+     * @return the getFieldOrder() method found in the given class, or any of it's parents.
+     */
+    private static Method getMethodGetFieldOrder(Class<? extends Structure> structureSubType) {
+        final Method methodGetFieldOrder;
+        try {
+            methodGetFieldOrder = structureSubType.getDeclaredMethod("getFieldOrder", new Class[]{});
+        } catch (NoSuchMethodException e) {
+            if (structureSubType.getSuperclass() != null) {
+                // look for method in parent
+                return getMethodGetFieldOrder((Class<? extends Structure>) structureSubType.getSuperclass());
+            }
+            throw new IllegalArgumentException("The Structure sub type: " + structureSubType.getName()
+                    + " must define the method: getFieldOrder()."
+                    + " See the javadoc for Structure.getFieldOrder() for details.", e);
+        }
+        return methodGetFieldOrder;
     }
 }
