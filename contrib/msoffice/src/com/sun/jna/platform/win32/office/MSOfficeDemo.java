@@ -25,17 +25,12 @@ public class MSOfficeDemo {
 			// System.out.println("MSWord version: " + msWord.getVersion());
 			msWord.setVisible(Variant.VARIANT_TRUE);
 			msWord.newDocument();
-			Thread.currentThread().sleep(2000);
-			//msWord.insertText("Hello from JNA!");
-			// msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
-			Thread.currentThread().sleep(2000);
+			//msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
+			msWord.insertText("Hello from JNA!");
 			// close and save the document
-			msWord.closeActiveDocument(Variant.VARIANT_FALSE);
-			Thread.currentThread().sleep(2000);
+			msWord.closeActiveDocument(Variant.VARIANT_TRUE);
 			// wait then close word
 			msWord.quit();
-		} catch (InterruptedException ie) {
-			ie.printStackTrace();
 		} catch (AutomationException e) {
 			if (e.getExcepInfo() != null) {
 				System.out

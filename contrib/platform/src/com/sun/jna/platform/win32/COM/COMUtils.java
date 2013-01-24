@@ -100,6 +100,9 @@ public abstract class COMUtils {
 	/** The Constant DISP_E_NONAMEDARGS. */
 	public static final int DISP_E_NONAMEDARGS = -2147352569;
 
+	/** The Constant CO_E_OBJNOTCONNECTED. */
+	public static final int CO_E_OBJNOTCONNECTED = -2147220995;
+
 	/**
 	 * Succeeded.
 	 *
@@ -219,6 +222,9 @@ public abstract class COMUtils {
 		case DISP_E_UNKNOWNINTERFACE:
 			throw new AutomationException(
 					"The interface identifier passed in riid is not IID_NULL!");
+		case CO_E_OBJNOTCONNECTED:
+			throw new AutomationException(
+					"The method is not connected to the Dispatch pointer!");
 		default:
 			throw new AutomationException("Unexpected COM error code : "
 					+ hr.intValue());

@@ -13,10 +13,6 @@ import com.sun.jna.platform.win32.COM.IDispatch;
 
 public class MSWord extends COMObject {
 
-	private Documents m_pDocuments;
-
-	private ActiveDocument m_pActiveDocument;
-
 	public MSWord() throws AutomationException {
 		super("Word.Application", false);
 	}
@@ -41,39 +37,19 @@ public class MSWord extends COMObject {
 	}
 
 	public HRESULT newDocument() throws AutomationException {
-		HRESULT hr;
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
-				"Documents");
-		this.m_pDocuments = new Documents((IDispatch) result.getValue());
-
-		VARIANT.ByReference result2 = new VARIANT.ByReference();
-		hr = oleMethod(OleAut32.DISPATCH_METHOD, result2,
-				m_pDocuments.getIDispatch(), "Add");
-		this.m_pActiveDocument = new ActiveDocument((IDispatch) result2.getValue());
+		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null,
+				getDocuments().getIDispatch(), "Add");
 
 		return hr;
 	}
 
 	public HRESULT openDocument(String filename, boolean bVisible)
 			throws AutomationException {
-
-		HRESULT hr;
-		// GetDocuments
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
-				"Documents");
-		m_pDocuments = new Documents((IDispatch) result.getValue());
-
 		// OpenDocument
 		BSTR bstrFilename = OleAut32.INSTANCE.SysAllocString(filename);
 		VARIANT varFilename = new VARIANT(bstrFilename);
-		VARIANT.ByReference result2 = new VARIANT.ByReference();
-
-		hr = oleMethod(OleAut32.DISPATCH_METHOD, result2,
-				m_pDocuments.getIDispatch(), "Open", varFilename);
-		this.m_pActiveDocument = new ActiveDocument(
-				(IDispatch) result2.getValue());
+		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null,
+				getDocuments().getIDispatch(), "Open", varFilename);
 
 		return hr;
 	}
@@ -82,8 +58,7 @@ public class MSWord extends COMObject {
 			throws AutomationException {
 
 		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null,
-				m_pActiveDocument.getIDispatch(), "Close", new VARIANT(bSave));
-		this.m_pActiveDocument = null;
+				getActiveDocument().getIDispatch(), "Close", new VARIANT(bSave));
 
 		return hr;
 	}
@@ -99,14 +74,9 @@ public class MSWord extends COMObject {
 	public HRESULT insertText(String text) throws AutomationException {
 		HRESULT hr;
 
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result,
-				m_pActiveDocument.getIDispatch(), "Application");
-		Application pDocApp = new Application((IDispatch) result.getValue());
-
 		VARIANT.ByReference result2 = new VARIANT.ByReference();
 		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result2,
-				pDocApp.getIDispatch(), "Selection");
+				this.iDispatch, "Selection");
 		Selection pSelection = new Selection((IDispatch) result2.getValue());
 
 		BSTR bstrText = OleAut32.INSTANCE.SysAllocString(text);
@@ -114,12 +84,44 @@ public class MSWord extends COMObject {
 		hr = oleMethod(OleAut32.DISPATCH_METHOD, null,
 				pSelection.getIDispatch(), "TypeText", varText);
 
-		pDocApp.release();
-		pSelection.release();
-
 		return hr;
 	}
 
+	public ActiveDocument getActiveDocument() {
+		VARIANT.ByReference result = new VARIANT.ByReference();
+		HRESULT hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
+				"ActiveDocument");
+		
+		COMUtils.SUCCEEDED(hr);
+		return new ActiveDocument((IDispatch) result.getValue());
+	}
+	
+	public Documents getDocuments() {
+		// GetDocuments
+		VARIANT.ByReference result = new VARIANT.ByReference();
+		HRESULT hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
+				"Documents");
+		
+		COMUtils.SUCCEEDED(hr);
+		return new Documents((IDispatch) result.getValue());
+	}
+	
+	public Application getApplication() {
+		VARIANT.ByReference result = new VARIANT.ByReference();
+		HRESULT hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
+				"Application");
+		
+		COMUtils.SUCCEEDED(hr);
+		return new Application((IDispatch) result.getValue());
+	}
+	
+	public class Application extends COMObject {
+
+		public Application(IDispatch iDispatch) throws AutomationException {
+			super(iDispatch);
+		}
+	}
+	
 	public class Documents extends COMObject {
 
 		public Documents(IDispatch iDispatch) throws AutomationException {
@@ -134,18 +136,10 @@ public class MSWord extends COMObject {
 		}
 	}
 
-	public class Application extends COMObject {
-
-		public Application(IDispatch iDispatch) throws AutomationException {
-			super(iDispatch);
-		}
-	}
-
 	public class Selection extends COMObject {
 
 		public Selection(IDispatch iDispatch) throws AutomationException {
 			super(iDispatch);
 		}
 	}
-
 }
