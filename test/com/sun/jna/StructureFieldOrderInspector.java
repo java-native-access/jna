@@ -30,11 +30,12 @@ public final class StructureFieldOrderInspector {
      *
      * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
      */
-    public static void checkStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch) {
+    public static void checkStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch,
+                                                   final List<Class> ignoreConstructorError) {
         final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
 
         for (final Class<? extends Structure> structureSubType : classes) {
-            StructureFieldOrderInspector.checkMethodGetFieldOrder(structureSubType);
+            StructureFieldOrderInspector.checkMethodGetFieldOrder(structureSubType, ignoreConstructorError);
         }
     }
 
@@ -54,7 +55,8 @@ public final class StructureFieldOrderInspector {
     }
 
 
-    public static void checkMethodGetFieldOrder(final Class<? extends Structure> structureSubType) {
+    public static void checkMethodGetFieldOrder(final Class<? extends Structure> structureSubType,
+                                                final List<Class> ignoreConstructorError) {
 
         if (Structure.ByValue.class.isAssignableFrom(structureSubType)
                 || Structure.ByReference.class.isAssignableFrom(structureSubType)) {
@@ -100,7 +102,10 @@ public final class StructureFieldOrderInspector {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
         } catch (InvocationTargetException e) {
-            // this is triggered by checks in Structure.getFields()
+            // this is triggered by checks in Structure.getFields(), and static loadlibrary() failures
+            if (ignoreConstructorError != null && ignoreConstructorError.contains(structureSubType)) {
+                return;
+            }
             throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
         }
 

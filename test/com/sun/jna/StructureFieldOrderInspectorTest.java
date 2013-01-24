@@ -43,11 +43,11 @@ public class StructureFieldOrderInspectorTest extends TestCase {
     }
 
     public void testCheckMethodGetFieldOrderExisting() {
-        StructureFieldOrderInspector.checkMethodGetFieldOrder(StructureByValueTest.TestNativeMappedInStructure.class);
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(StructureByValueTest.TestNativeMappedInStructure.class, null);
     }
 
     public void testCheckMethodGetFieldOrderTagInterface() {
-        StructureFieldOrderInspector.checkMethodGetFieldOrder(StructureByValueTest.TestNativeMappedInStructure.ByValue.class);
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(StructureByValueTest.TestNativeMappedInStructure.ByValue.class, null);
     }
 
 
@@ -63,7 +63,7 @@ public class StructureFieldOrderInspectorTest extends TestCase {
     }
     public void testCheckMethodGetFieldOrderMissingField() throws Exception {
         try {
-            StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructMissingField.class);
+            StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructMissingField.class, null);
             fail("Expected Error: Structure.getFieldOrder()...");
         } catch (RuntimeException e) {
             assertTrue(e.getCause().getCause().getMessage().contains("not match declared field names"));
@@ -78,7 +78,7 @@ public class StructureFieldOrderInspectorTest extends TestCase {
     }
     public void testCheckMethodGetFieldOrderExtraField() throws Exception {
         try {
-            StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructExtraField.class);
+            StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructExtraField.class, null);
             fail("Expected Error: Structure.getFieldOrder()...");
         } catch (RuntimeException e) {
             assertTrue(e.getCause().getCause().getMessage().contains("not match declared field names"));
@@ -87,10 +87,10 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
 
     public void testCheckMethodGetFieldOrderWithAbstractSubtype() throws Exception {
-        StructureFieldOrderInspector.checkMethodGetFieldOrder(Union.class);
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(Union.class, null);
     }
 
     public void testCheckStructureGetFieldOrder() throws Exception {
-        StructureFieldOrderInspector.checkStructureGetFieldOrder(Platform.class);
+        StructureFieldOrderInspector.checkStructureGetFieldOrder(Platform.class, null);
     }
 }
