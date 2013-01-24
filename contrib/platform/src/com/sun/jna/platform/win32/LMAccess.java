@@ -411,7 +411,7 @@ public interface LMAccess extends StdCallLibrary {
         public int grpi3_attributes;
         
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "grpi3_name", "grpi3_comment", "grpi3_group_id", "grpi3_attributes" });
+            return Arrays.asList(new String[] { "grpi3_name", "grpi3_comment", "grpi3_group_sid", "grpi3_attributes" });
         }
     }
 	
