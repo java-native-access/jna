@@ -32,6 +32,19 @@ public final class StructureFieldOrderInspector {
     private StructureFieldOrderInspector(){}
 
     /**
+     * Search for Structure sub types in the source tree of the given class, and validate the getFieldOrder() method.
+     *
+     * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
+     */
+    public static void checkStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch) {
+        final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
+
+        for (final Class<? extends Structure> structureSubType : classes) {
+            StructureFieldOrderInspector.checkMethodGetFieldOrder(structureSubType);
+        }
+    }
+
+    /**
      * Find all classes that extend {@link Structure}.
      */
     public static Set<Class<? extends Structure >> findSubTypesOfStructure(final Class classDeclaredInSourceTreeToSearch) {

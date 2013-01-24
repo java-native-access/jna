@@ -90,11 +90,7 @@ public class StructureFieldOrderInspectorTest extends TestCase {
         StructureFieldOrderInspector.checkMethodGetFieldOrder(Union.class);
     }
 
-    public void testCheckMethodGetFieldOrder() throws Exception {
-        final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(Platform.class);
-
-        for (final Class<? extends Structure> structureSubType : classes) {
-            StructureFieldOrderInspector.checkMethodGetFieldOrder(structureSubType);
-        }
+    public void testCheckStructureGetFieldOrder() throws Exception {
+        StructureFieldOrderInspector.checkStructureGetFieldOrder(Platform.class);
     }
 }
