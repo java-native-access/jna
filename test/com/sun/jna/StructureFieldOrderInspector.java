@@ -104,6 +104,9 @@ public final class StructureFieldOrderInspector {
             throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
         }
 
+        if (!methodGetFieldOrder.isAccessible()) {
+            methodGetFieldOrder.setAccessible(true);
+        }
         final List methodCallFieldList;
         try {
             methodCallFieldList = (List) methodGetFieldOrder.invoke(structure);
