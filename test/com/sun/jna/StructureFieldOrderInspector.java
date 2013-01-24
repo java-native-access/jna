@@ -161,12 +161,15 @@ public final class StructureFieldOrderInspector {
         final Field[] actualFields = structureSubType.getDeclaredFields();
         final List actualFieldNames = new ArrayList(actualFields.length);
         for (final Field field : actualFields) {
-            final String actualFieldName = field.getName();
-            if (!methodCallFieldList.contains(actualFieldName)) {
-                throw new IllegalArgumentException(structureSubType.getName() + ".getFieldOrder() [" + methodCallFieldList
-                        + "] does not include declared field: " + actualFieldName);
+            // ignore static fields
+            if (!Modifier.isStatic(field.getModifiers())) {
+                final String actualFieldName = field.getName();
+                if (!methodCallFieldList.contains(actualFieldName)) {
+                    throw new IllegalArgumentException(structureSubType.getName() + ".getFieldOrder() [" + methodCallFieldList
+                            + "] does not include declared field: " + actualFieldName);
+                }
+                actualFieldNames.add(actualFieldName);
             }
-            actualFieldNames.add(actualFieldName);
         }
 
         for (final Object methodCallField : methodCallFieldList) {
