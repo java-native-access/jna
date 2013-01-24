@@ -1,5 +1,6 @@
 package com.sun.jna;
 
+import com.google.common.collect.Lists;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -7,6 +8,11 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
+import java.io.File;
+import java.lang.reflect.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -28,23 +34,94 @@ public final class StructureFieldOrderInspector {
     /**
      * Find all classes that extend {@link Structure}.
      */
-    public static Set<Class<Structure>> findStructureSubClasses(final ClassLoader classLoader) {
+    public static Set<Class<? extends Structure >> findSubTypesOfStructure(final Class classDeclaredInSourceTreeToSearch) {
 
-        // @todo use: http://code.google.com/p/reflections/
+        // use: http://code.google.com/p/reflections/
 
-        List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
-        classLoadersList.add(ClasspathHelper.contextClassLoader());
-        classLoadersList.add(ClasspathHelper.staticClassLoader());
-
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
+        final Reflections reflections = new Reflections(new ConfigurationBuilder()
                 .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
-                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.your.package"))));
+                .setUrls(ClasspathHelper.forClass(classDeclaredInSourceTreeToSearch))
+        );
 
-        //Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
-        Set<Class<Structure>> classes = (Set<Class<Structure>>) reflections.getSubTypesOf(Structure.class);
-
-        return classes;
+        return (Set<Class<? extends Structure >>)reflections.getSubTypesOf(Structure.class);
     }
 
+
+    public static void checkMethodGetFieldOrder(final Class<? extends Structure> structureSubType) {
+
+        if (Structure.ByValue.class.isAssignableFrom(structureSubType)
+                || Structure.ByReference.class.isAssignableFrom(structureSubType)) {
+
+            // ignore tagging interfaces
+            return;
+        }
+
+        final Method methodGetFieldOrder;
+        try {
+            methodGetFieldOrder = structureSubType.getDeclaredMethod("getFieldOrder", new Class[]{});
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("The Structure sub type: " + structureSubType.getName()
+                    + " \nmust define the method: getFieldOrder()."
+                    + " \nSee the javadoc for Structure.getFieldOrder() for details.", e);
+        }
+
+
+        if (Modifier.isAbstract(structureSubType.getModifiers())) {
+            // do not try to construct abstract Structure sub types
+            return;
+        }
+        final Constructor<? extends Structure> structConstructor;
+        try {
+            structConstructor = structureSubType.getDeclaredConstructor();
+        } catch (NoSuchMethodException e) {
+            if (structureSubType == Structure.FFIType.class) {
+                // ignore this case
+                // @todo Allow user to pass in list of classes for which to skip construction?
+                return;
+            }
+            throw new RuntimeException("Parameterless constructor failed on Structure sub type: " + structureSubType.getName());
+        }
+
+        if (!structConstructor.isAccessible()) {
+            structConstructor.setAccessible(true);
+        }
+        final Structure structure;
+        try {
+            structure= structConstructor.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
+        } catch (InvocationTargetException e) {
+            // this is triggered by checks in Structure.getFields()
+            throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
+        }
+
+        final List methodCallFieldList;
+        try {
+            methodCallFieldList = (List) methodGetFieldOrder.invoke(structure);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Could not invoke getFieldOrder() on Structure sub type: " + structureSubType.getName(), e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("Could not invoke getFieldOrder() on Structure sub type: " + structureSubType.getName(), e);
+        }
+
+        final Field[] actualFields = structureSubType.getDeclaredFields();
+        final List actualFieldNames = new ArrayList(actualFields.length);
+        for (final Field field : actualFields) {
+            final String actualFieldName = field.getName();
+            if (!methodCallFieldList.contains(actualFieldName)) {
+                throw new IllegalArgumentException(structureSubType.getName() + ".getFieldOrder() [" + methodCallFieldList
+                        + "] does not include declared field: " + actualFieldName);
+            }
+            actualFieldNames.add(actualFieldName);
+        }
+
+        for (final Object methodCallField : methodCallFieldList) {
+            if (!actualFieldNames.contains(methodCallField)) {
+                throw new IllegalArgumentException(structureSubType.getName() + ".getFieldOrder() [" + methodCallFieldList
+                        + "] includes undeclared field: " + methodCallField);
+            }
+        }
+    }
 }
