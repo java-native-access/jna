@@ -1,8 +1,13 @@
 Next Release (3.5.2)
 ====================
 
+Bug Fixes
+---------
+* [#183](https://github.com/twall/jna/pull/183): Fix LMAccess.GROUP_INFO_3.getFieldOrder() to return correct fields names. - [@bhamail](https://github.com/bhamail).
+
 Features
 --------
+* [#183](https://github.com/twall/jna/pull/183): Added StructureFieldOrderInspector unit test utility to scan for Structure field issues. See: com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder() - [@bhamail](https://github.com/bhamail).
 * [#163](https://github.com/twall/jna/pull/163): The Java `GUID` structure can be used directly as alternative to `Ole32Util.getGUIDFromString()` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Ported Win32 `dbt.h` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification` and `WTSUnRegisterSessionNotification` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
