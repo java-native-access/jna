@@ -30,9 +30,10 @@ public final class StructureFieldOrderInspector {
      * and collects all errors into one exception.
      *
      * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
+     * @param ignoreConstructorError list of classname prefixes for which to ignore construction errors.
      */
     public static void batchCheckStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch,
-                                                   final List<Class> ignoreConstructorError) {
+                                                   final List<String> ignoreConstructorError) {
         final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
 
         final List<Throwable> problems = new ArrayList<Throwable>();
@@ -59,9 +60,10 @@ public final class StructureFieldOrderInspector {
      * Search for Structure sub types in the source tree of the given class, and validate the getFieldOrder() method.
      *
      * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
+     * @param ignoreConstructorError list of classname prefixes for which to ignore construction errors.
      */
     public static void checkStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch,
-                                                   final List<Class> ignoreConstructorError) {
+                                                   final List<String> ignoreConstructorError) {
         final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
 
         for (final Class<? extends Structure> structureSubType : classes) {
@@ -72,7 +74,7 @@ public final class StructureFieldOrderInspector {
     /**
      * Find all classes that extend {@link Structure}.
      */
-    public static Set<Class<? extends Structure >> findSubTypesOfStructure(final Class classDeclaredInSourceTreeToSearch) {
+    public static Set<Class<? extends Structure>> findSubTypesOfStructure(final Class classDeclaredInSourceTreeToSearch) {
 
         // use: http://code.google.com/p/reflections/
 
@@ -86,7 +88,7 @@ public final class StructureFieldOrderInspector {
 
 
     public static void checkMethodGetFieldOrder(final Class<? extends Structure> structureSubType,
-                                                final List<Class> ignoreConstructorError) {
+                                                final List<String> ignoreConstructorError) {
 
         if (Structure.ByValue.class.isAssignableFrom(structureSubType)
                 || Structure.ByReference.class.isAssignableFrom(structureSubType)) {
@@ -133,8 +135,13 @@ public final class StructureFieldOrderInspector {
             throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
         } catch (InvocationTargetException e) {
             // this is triggered by checks in Structure.getFields(), and static loadlibrary() failures
-            if (ignoreConstructorError != null && ignoreConstructorError.contains(structureSubType)) {
-                return;
+            if (ignoreConstructorError != null) {
+                final String structSubtypeName = structureSubType.getName();
+                for (final String classPrefix : ignoreConstructorError) {
+                    if (structSubtypeName.startsWith(classPrefix)) {
+                        return;
+                    }
+                }
             }
             throw new RuntimeException("Could not instantiate Structure sub type: " + structureSubType.getName(), e);
         }

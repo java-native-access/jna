@@ -2,6 +2,7 @@ package com.sun.jna;
 
 import junit.framework.TestCase;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -88,6 +89,12 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
     public void testCheckMethodGetFieldOrderWithAbstractSubtype() throws Exception {
         StructureFieldOrderInspector.checkMethodGetFieldOrder(Union.class, null);
+    }
+
+    public void testCheckMethodGetFieldOrderWithIgnoreCtorError() throws Exception {
+        final List<String> ignoreConstructorError = new ArrayList<String>();
+        ignoreConstructorError.add(StructureFieldOrderInspectorTest.class.getName());
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructExtraField.class, ignoreConstructorError);
     }
 
     public void testCheckStructureGetFieldOrder() throws Exception {
