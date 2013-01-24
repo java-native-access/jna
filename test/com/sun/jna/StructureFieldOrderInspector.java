@@ -43,7 +43,7 @@ public final class StructureFieldOrderInspector {
                 .setUrls(ClasspathHelper.forClass(classDeclaredInSourceTreeToSearch))
         );
 
-        return (Set<Class<? extends Structure >>)reflections.getSubTypesOf(Structure.class);
+        return reflections.getSubTypesOf(Structure.class);
     }
 
 
