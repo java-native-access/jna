@@ -93,4 +93,13 @@ public class StructureFieldOrderInspectorTest extends TestCase {
     public void testCheckStructureGetFieldOrder() throws Exception {
         StructureFieldOrderInspector.checkStructureGetFieldOrder(Platform.class, null);
     }
+
+    public void testBatchCheckStructureGetFieldOrder() throws Exception {
+        try {
+            StructureFieldOrderInspector.batchCheckStructureGetFieldOrder(StructureTest.class, null);
+            fail("Expected structure failures");
+        } catch (RuntimeException e) {
+            assertTrue(e.getMessage().startsWith("Some Structure sub types"));
+        }
+    }
 }

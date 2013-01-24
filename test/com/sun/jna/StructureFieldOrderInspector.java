@@ -26,6 +26,36 @@ public final class StructureFieldOrderInspector {
     private StructureFieldOrderInspector(){}
 
     /**
+     * Search for Structure sub types in the source tree of the given class, and validate the getFieldOrder() method,
+     * and collects all errors into one exception.
+     *
+     * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
+     */
+    public static void batchCheckStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch,
+                                                   final List<Class> ignoreConstructorError) {
+        final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
+
+        final List<Throwable> problems = new ArrayList<Throwable>();
+
+        for (final Class<? extends Structure> structureSubType : classes) {
+            try {
+                StructureFieldOrderInspector.checkMethodGetFieldOrder(structureSubType, ignoreConstructorError);
+            } catch (Throwable t) {
+                problems.add(t);
+            }
+        }
+
+        if (problems.size() > 0) {
+            String msg = "";
+            for (final Throwable t : problems) {
+                msg += t.getMessage() + "; \n";
+            }
+
+            throw new RuntimeException("Some Structure sub types (" + problems.size() + ") have problems with getFieldOrder(): \n" + msg);
+        }
+    }
+
+    /**
      * Search for Structure sub types in the source tree of the given class, and validate the getFieldOrder() method.
      *
      * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
@@ -70,8 +100,8 @@ public final class StructureFieldOrderInspector {
             methodGetFieldOrder = structureSubType.getDeclaredMethod("getFieldOrder", new Class[]{});
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("The Structure sub type: " + structureSubType.getName()
-                    + " \nmust define the method: getFieldOrder()."
-                    + " \nSee the javadoc for Structure.getFieldOrder() for details.", e);
+                    + " must define the method: getFieldOrder()."
+                    + " See the javadoc for Structure.getFieldOrder() for details.", e);
         }
 
 
