@@ -1,3 +1,15 @@
+/* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.  
+ */
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Native;
@@ -21,15 +33,20 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+/**
+ * Helper class to provide basic COM support.
+ * 
+ * @author Tobias Wolf, wolf.tobias@gmx.net
+ */
 public class COMObject {
 
 	public final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE
 			.GetUserDefaultLCID();
 	public final static LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE
 			.GetSystemDefaultLCID();
-	
+
 	protected IUnknown iUnknown;
-	
+
 	protected IDispatch iDispatch;
 
 	private PointerByReference pDispatch = new PointerByReference();
@@ -42,13 +59,16 @@ public class COMObject {
 
 	/**
 	 * Instantiates a new cOM object.
-	 *
-	 * @param progId the prog id
-	 * @param useActiveInstance the use active instance
-	 * @throws AutomationException the automation exception
+	 * 
+	 * @param progId
+	 *            the prog id
+	 * @param useActiveInstance
+	 *            the use active instance
+	 * @throws COMException
+	 *             the automation exception
 	 */
 	public COMObject(String progId, boolean useActiveInstance)
-			throws AutomationException {
+			throws COMException {
 		// enable JNA protected mode
 		Native.setProtected(true);
 
@@ -57,7 +77,7 @@ public class COMObject {
 
 		if (COMUtils.FAILED(hr)) {
 			this.release();
-			throw new AutomationException("CoInitialize() failed!");
+			throw new COMException("CoInitialize() failed!");
 		}
 
 		// Get CLSID for Word.Application...
@@ -66,7 +86,7 @@ public class COMObject {
 
 		if (COMUtils.FAILED(hr)) {
 			Ole32.INSTANCE.CoUninitialize();
-			throw new AutomationException("CLSIDFromProgID() failed!");
+			throw new COMException("CLSIDFromProgID() failed!");
 		}
 
 		if (useActiveInstance) {
@@ -74,7 +94,8 @@ public class COMObject {
 
 			if (COMUtils.SUCCEEDED(hr)) {
 				this.iUnknown = new IUnknown(this.pUnknown.getValue());
-				hr = iUnknown.QueryInterface(IDispatch.IID_IDispatch, this.pDispatch);
+				hr = iUnknown.QueryInterface(IDispatch.IID_IDispatch,
+						this.pDispatch);
 			} else {
 				hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
 						WTypes.CLSCTX_LOCAL_SERVER, IDispatch.IID_IDispatch,
@@ -87,7 +108,7 @@ public class COMObject {
 		}
 
 		if (COMUtils.FAILED(hr)) {
-			throw new AutomationException("COM object '" + progId
+			throw new COMException("COM object '" + progId
 					+ "' not registered properly!");
 		}
 
@@ -96,10 +117,10 @@ public class COMObject {
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
 			IDispatch pDisp, String name, VARIANT[] pArgs)
-			throws AutomationException {
+			throws COMException {
 
 		if (pDisp == null)
-			throw new AutomationException(
+			throw new COMException(
 					"pDisp (IDispatch) parameter is null!");
 
 		WString[] ptName = new WString[] { new WString(name) };
@@ -143,14 +164,14 @@ public class COMObject {
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
 			IDispatch pDisp, String name, VARIANT pArg)
-			throws AutomationException {
+			throws COMException {
 
 		return this.oleMethod(nType, pvResult, pDisp, name,
 				new VARIANT[] { pArg });
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-			IDispatch pDisp, String name) throws AutomationException {
+			IDispatch pDisp, String name) throws COMException {
 
 		return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[]) null);
 	}

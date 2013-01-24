@@ -3,7 +3,7 @@ package com.sun.jna.platform.win32.office;
 import java.io.File;
 
 import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.COM.AutomationException;
+import com.sun.jna.platform.win32.COM.COMException;
 
 public class MSOfficeDemo {
 
@@ -31,7 +31,7 @@ public class MSOfficeDemo {
 			msWord.closeActiveDocument(Variant.VARIANT_TRUE);
 			// wait then close word
 			msWord.quit();
-		} catch (AutomationException e) {
+		} catch (COMException e) {
 			if (e.getExcepInfo() != null) {
 				System.out
 						.println("bstrSource: " + e.getExcepInfo().bstrSource);

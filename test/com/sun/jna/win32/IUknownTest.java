@@ -20,7 +20,7 @@ import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.AutomationException;
+import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -42,7 +42,7 @@ public class IUknownTest extends TestCase {
 
 		if (W32Errors.FAILED(hr)) {
 			this.tearDown();
-			throw new AutomationException("CoInitialize() failed");
+			throw new COMException("CoInitialize() failed");
 		}
 
 		// Get CLSID for Word.Application...
@@ -52,7 +52,7 @@ public class IUknownTest extends TestCase {
 
 		if (W32Errors.FAILED(hr)) {
 			Ole32.INSTANCE.CoUninitialize();
-			throw new AutomationException("CLSIDFromProgID() failed!");
+			throw new COMException("CLSIDFromProgID() failed!");
 		}
 
 		hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
@@ -60,7 +60,7 @@ public class IUknownTest extends TestCase {
 				this.pDispatch);
 
 		if (W32Errors.FAILED(hr)) {
-			throw new AutomationException("Internet Explorer not registered properly!");
+			throw new COMException("Internet Explorer not registered properly!");
 		}
 
 		this.iDispatch = new IDispatch(pDispatch.getPointer());

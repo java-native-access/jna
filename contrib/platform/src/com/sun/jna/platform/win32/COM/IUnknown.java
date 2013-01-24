@@ -17,17 +17,16 @@ import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.IID;
-import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class IUnknown.
+ * Wrapper class for the ITypeInfo interface
  * 
  * Method Name V-Table Offset IUnknown.QueryInterface 0 IUnknown.AddRef 4
  * IUnknown.Release 8
  * 
+ * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class IUnknown extends PointerType {
 
