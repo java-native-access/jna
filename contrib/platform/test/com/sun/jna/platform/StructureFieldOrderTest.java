@@ -15,6 +15,7 @@ package com.sun.jna.platform;
 
 import com.sun.jna.Platform;
 import com.sun.jna.platform.unix.X11;
+import com.sun.jna.platform.win32.DBT;
 import junit.framework.TestCase;
 
 import com.sun.jna.StructureFieldOrderInspector;
@@ -30,6 +31,9 @@ public class StructureFieldOrderTest extends TestCase {
         if (Platform.isWindows()) {
             ignoreConstructorError.add(X11.class.getName() + "$");
         }
+
+        ignoreConstructorError.add(DBT.DEV_BROADCAST_HANDLE.class.getName()); // manually validated by wolftobias
+        ignoreConstructorError.add(DBT.DEV_BROADCAST_PORT.class.getName()); // manually validated by wolftobias
 
         StructureFieldOrderInspector.batchCheckStructureGetFieldOrder(FileUtils.class, ignoreConstructorError);
     }
