@@ -109,10 +109,11 @@ public class Advapi32UtilTest extends TestCase {
     	userInfo.usri1_name = new WString("JNANetapi32TestUser");
     	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+        // ignore test if not able to add user (need to be administrator to do this).
+        if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
+            return;
+        }
 		try {
-                    assertEquals("Error in NetUserAdd",
-                                 LMErr.NERR_Success,
-                                 Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null));
 			HANDLEByReference phUser = new HANDLEByReference();
 			try {
 				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
@@ -142,9 +143,11 @@ public class Advapi32UtilTest extends TestCase {
     	userInfo.usri1_name = new WString("JNANetapi32TestUser");
     	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+        // ignore test if not able to add user (need to be administrator to do this).
+        if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
+            return;
+        }
 		try {
-	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
-	    			null, 1, userInfo, null));
 			HANDLEByReference phUser = new HANDLEByReference();
 			try {
 				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
