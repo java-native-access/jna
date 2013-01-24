@@ -38,4 +38,18 @@ public class StructureFieldOrderTest extends TestCase {
         StructureFieldOrderInspector.batchCheckStructureGetFieldOrder(FileUtils.class, ignoreConstructorError);
     }
 
+// test below is helpful when investigating failure cause of a specific Structure class, it shows full causes and traces.
+/*
+    public void testMethodGetFieldOrderSingleClass() {
+        final List<String> ignoreConstructorError = new ArrayList<String>();
+
+        if (Platform.isWindows()) {
+            ignoreConstructorError.add(X11.class.getName() + "$");
+        }
+
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(LMAccess.GROUP_INFO_3.class, ignoreConstructorError);
+    }
+//*/
+
+
 }
