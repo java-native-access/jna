@@ -519,16 +519,7 @@ public class Advapi32Test extends TestCase {
     	String applicationEventLog = "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application";
     	String jnaEventSource = "JNADevEventSource";    	
     	String jnaEventSourceRegistryPath = applicationEventLog + "\\" + jnaEventSource;
-        // ignore test if not able to create key (need to be administrator to do this).
-        try {
-            final boolean keyCreated = Advapi32Util.registryCreateKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);
-            if (!keyCreated) {
-                return;
-            }
-        } catch (Win32Exception e) {
-            return;
-        }
-
+    	Advapi32Util.registryCreateKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);    	
     	HANDLE h = Advapi32.INSTANCE.RegisterEventSource(null, jnaEventSource);    	
     	IntByReference before = new IntByReference();
     	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, before));
