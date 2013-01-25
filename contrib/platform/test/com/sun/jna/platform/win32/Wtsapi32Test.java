@@ -10,9 +10,7 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 
 public class Wtsapi32Test extends TestCase {
 
-	private final long peer;
-
-	private final HWND hwnd;
+    private final HWND hwnd;
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(Wtsapi32Test.class);
@@ -21,8 +19,7 @@ public class Wtsapi32Test extends TestCase {
 	public Wtsapi32Test() {
 		Frame frame = new Frame();
 		frame.setVisible(true);
-		this.peer = Native.getWindowID(frame);
-		this.hwnd = new HWND(new Pointer(peer));
+		this.hwnd = new HWND(Native.getWindowPointer(frame));
 	}
 
 	public void testWTSRegisterSessionNotification() {
