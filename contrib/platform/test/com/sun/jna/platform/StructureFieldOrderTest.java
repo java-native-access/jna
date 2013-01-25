@@ -30,6 +30,11 @@ public class StructureFieldOrderTest extends TestCase {
 
         if (Platform.isWindows()) {
             ignoreConstructorError.add(X11.class.getName() + "$");
+        } else {
+            ignoreConstructorError.add(com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1.class.getName());
+            ignoreConstructorError.add(com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4.class.getName());
+            ignoreConstructorError.add(com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA.class.getName());
+            ignoreConstructorError.add(com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA.class.getName());
         }
 
         ignoreConstructorError.add(DBT.DEV_BROADCAST_HANDLE.class.getName()); // manually validated by wolftobias
@@ -39,7 +44,7 @@ public class StructureFieldOrderTest extends TestCase {
     }
 
 // test below is helpful when investigating failure cause of a specific Structure class, it shows full causes and traces.
-/*
+//*
     public void testMethodGetFieldOrderSingleClass() {
         final List<String> ignoreConstructorError = new ArrayList<String>();
 
@@ -47,7 +52,7 @@ public class StructureFieldOrderTest extends TestCase {
             ignoreConstructorError.add(X11.class.getName() + "$");
         }
 
-        StructureFieldOrderInspector.checkMethodGetFieldOrder(LMAccess.GROUP_INFO_3.class, ignoreConstructorError);
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA.class, ignoreConstructorError);
     }
 //*/
 
