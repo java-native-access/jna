@@ -69,6 +69,9 @@
     <condition property="tests.platform" value="test-osx">
       <os family="mac"/>
     </condition>
+    <condition property="tests.platform" value="test-linux">
+      <os family="unix"/>
+    </condition>
     <target name="test" depends="init,compile-test" description="Run unit tests." if="tests.platform">
     	<antcall target="${tests.platform}" />
     </target>
@@ -86,4 +89,20 @@
       <echo>No platform tests yet for OSX</echo>
     </target>
     <target name="test-win32" depends="-pre-test-run,-do-test-run,test-report,-post-test-run,-test-browse" />
+
+    <target name="test-linux" depends="-pre-test-run-single" >
+        <!-- @todo How to ensure sys prop: jna.nosys=true is seen in tests? -->
+        <!--<property name="test.includes" value="com/sun/jna/platform/**/*.java"/>-->
+        <property name="test.includes" value="com/sun/jna/platform/StructureFieldOrderTest.java"/>
+
+        <property name="javac.includes" value="**/*"/>
+
+        <antcall target="test-single"/>
+
+        <!--
+        <antcall target="test-report"/>
+        <antcall target="-post-test-run"/>
+        <antcall target="-test-browse"/>
+        -->
+    </target>
 </project>
