@@ -4,6 +4,7 @@ Next Release (3.5.2)
 Bug Fixes
 ---------
 * [#183](https://github.com/twall/jna/pull/183): Fix LMAccess.GROUP_INFO_3.getFieldOrder() to return correct fields names. - [@bhamail](https://github.com/bhamail).
+* [#187](https://github.com/twall/jna/pull/187): Fix getFieldOrder() to return correct field names for some X11 structures. - [@bhamail](https://github.com/bhamail).
 
 Features
 --------
@@ -15,6 +16,7 @@ Features
 * [#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
 * [#180](https://github.com/twall/jna/pull/180): Fix: added missing fields in `XEvents.getFieldOrder()` - [@xwizard](https://github.com/xwizard).
 * [#183](https://github.com/twall/jna/pull/183): Added StructureFieldOrderInspector unit test utility to scan for Structure field issues. See: com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder() - [@bhamail](https://github.com/bhamail).
+* [#187](https://github.com/twall/jna/pull/187): Allow StructureFieldOrderTest unit test in platform project to run on Linux. - [@bhamail](https://github.com/bhamail).
 
 Release 3.5.1
 ====================
