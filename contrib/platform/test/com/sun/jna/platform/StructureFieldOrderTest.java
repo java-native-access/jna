@@ -44,7 +44,7 @@ public class StructureFieldOrderTest extends TestCase {
     }
 
 // test below is helpful when investigating failure cause of a specific Structure class, it shows full causes and traces.
-//*
+/*
     public void testMethodGetFieldOrderSingleClass() {
         final List<String> ignoreConstructorError = new ArrayList<String>();
 
