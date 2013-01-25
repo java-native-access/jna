@@ -243,6 +243,7 @@
         <fileset dir="lib">
           <include name="junit.jar"/>
         </fileset>
+        <fileset dir="lib/test"/>
         <pathelement path="${classes}"/>
       </path>
     </path>

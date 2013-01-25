@@ -1,6 +1,10 @@
 Next Release (3.5.2)
 ====================
 
+Bug Fixes
+---------
+* [#183](https://github.com/twall/jna/pull/183): Fix LMAccess.GROUP_INFO_3.getFieldOrder() to return correct fields names. - [@bhamail](https://github.com/bhamail).
+
 Features
 --------
 * [#163](https://github.com/twall/jna/pull/163): The Java `GUID` structure can be used directly as alternative to `Ole32Util.getGUIDFromString()` - [@wolftobias](https://github.com/wolftobias).
@@ -10,6 +14,7 @@ Features
 * [#178](https://github.com/twall/jna/pull/178): Added Win32 `USER_INFO_10` structure from `LMAccess.h` - [@davidmc24](https://github.com/davidmc24).
 * [#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
 * [#180](https://github.com/twall/jna/pull/180): Fix: added missing fields in `XEvents.getFieldOrder()` - [@xwizard](https://github.com/xwizard).
+* [#183](https://github.com/twall/jna/pull/183): Added StructureFieldOrderInspector unit test utility to scan for Structure field issues. See: com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder() - [@bhamail](https://github.com/bhamail).
 
 Release 3.5.1
 ====================
