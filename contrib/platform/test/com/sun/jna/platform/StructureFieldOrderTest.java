@@ -25,6 +25,22 @@ import java.util.List;
 
 public class StructureFieldOrderTest extends TestCase {
 
+    private String origPropJNANoSys;
+
+    protected void setUp() {
+        origPropJNANoSys = System.getProperty("jna.nosys");
+        System.setProperty("jna.nosys", "true"); // would be set by ant script, set here for IDE usage
+    }
+
+    protected void tearDown() {
+        if (origPropJNANoSys == null) {
+            System.getProperties().remove("jna.nosys");
+        } else {
+            System.setProperty("jna.nosys", origPropJNANoSys);
+        }
+    }
+
+
     public void testMethodGetFieldOrder() {
         final List<String> ignoreConstructorError = new ArrayList<String>();
 
