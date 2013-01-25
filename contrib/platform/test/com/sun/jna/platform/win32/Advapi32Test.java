@@ -273,7 +273,10 @@ public class Advapi32Test extends TestCase {
     	userInfo.usri1_name = new WString("JNAAdvapi32TestImp");
     	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
-    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null));
+        // ignore test if not able to add user (need to be administrator to do this).
+    	if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
+            return;
+        }
 		try {
 			HANDLEByReference phUser = new HANDLEByReference();
 			try {
@@ -516,7 +519,16 @@ public class Advapi32Test extends TestCase {
     	String applicationEventLog = "SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application";
     	String jnaEventSource = "JNADevEventSource";    	
     	String jnaEventSourceRegistryPath = applicationEventLog + "\\" + jnaEventSource;
-    	Advapi32Util.registryCreateKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);    	
+        // ignore test if not able to create key (need to be administrator to do this).
+        try {
+            final boolean keyCreated = Advapi32Util.registryCreateKey(WinReg.HKEY_LOCAL_MACHINE, jnaEventSourceRegistryPath);
+            if (!keyCreated) {
+                return;
+            }
+        } catch (Win32Exception e) {
+            return;
+        }
+
     	HANDLE h = Advapi32.INSTANCE.RegisterEventSource(null, jnaEventSource);    	
     	IntByReference before = new IntByReference();
     	assertTrue(Advapi32.INSTANCE.GetNumberOfEventLogRecords(h, before));
