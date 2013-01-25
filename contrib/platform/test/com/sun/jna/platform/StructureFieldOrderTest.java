@@ -25,11 +25,32 @@ import java.util.List;
 
 public class StructureFieldOrderTest extends TestCase {
 
+    private String origPropJNANoSys;
+
+    protected void setUp() {
+        origPropJNANoSys = System.getProperty("jna.nosys");
+        System.setProperty("jna.nosys", "true"); // would be set by ant script, set here for IDE usage
+    }
+
+    protected void tearDown() {
+        if (origPropJNANoSys == null) {
+            System.getProperties().remove("jna.nosys");
+        } else {
+            System.setProperty("jna.nosys", origPropJNANoSys);
+        }
+    }
+
+
     public void testMethodGetFieldOrder() {
         final List<String> ignoreConstructorError = new ArrayList<String>();
 
         if (Platform.isWindows()) {
             ignoreConstructorError.add(X11.class.getName() + "$");
+        } else {
+            ignoreConstructorError.add(com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1.class.getName());
+            ignoreConstructorError.add(com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4.class.getName());
+            ignoreConstructorError.add(com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA.class.getName());
+            ignoreConstructorError.add(com.sun.jna.platform.win32.SetupApi.SP_DEVINFO_DATA.class.getName());
         }
 
         ignoreConstructorError.add(DBT.DEV_BROADCAST_HANDLE.class.getName()); // manually validated by wolftobias
@@ -47,7 +68,7 @@ public class StructureFieldOrderTest extends TestCase {
             ignoreConstructorError.add(X11.class.getName() + "$");
         }
 
-        StructureFieldOrderInspector.checkMethodGetFieldOrder(LMAccess.GROUP_INFO_3.class, ignoreConstructorError);
+        StructureFieldOrderInspector.checkMethodGetFieldOrder(com.sun.jna.platform.win32.SetupApi.SP_DEVICE_INTERFACE_DATA.class, ignoreConstructorError);
     }
 //*/
 
