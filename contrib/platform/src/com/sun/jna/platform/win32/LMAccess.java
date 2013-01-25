@@ -154,50 +154,6 @@ public interface LMAccess extends StdCallLibrary {
             return Arrays.asList(new String[] { "usri1_name", "usri1_password", "usri1_password_age", "usri1_priv", "usri1_home_dir", "usri1_comment", "usri1_flags", "usri1_script_path" });
         }
     }
-
-    /**
-     * The USER_INFO_10 structure contains information about a user account,
-     * including the account name, comments associated with the account, and
-     * the user's full name.
-     */
-    public static class USER_INFO_10 extends Structure {
-        public USER_INFO_10() {
-            super();
-        }
-
-        public USER_INFO_10(Pointer memory) {
-            super(memory);
-            read();
-        }
-
-        /**
-         * Pointer to a Unicode string that specifies the name of the user
-         * account.  Calls to the NetUserSetInfo function ignore this member.
-         */
-        public WString usri10_name;
-        /**
-         * Pointer to a Unicode string that contains a comment associated with
-         * the user account. The string can be a null string, or can have any
-         * number of characters before the terminating null character.
-         */
-        public WString usri10_comment;
-        /**
-         * Pointer to a Unicode string that contains a user comment. This
-         * string can be a null string, or it can have any number of characters
-         * before the terminating null character.
-         */
-        public WString usri10_usr_comment;
-        /**
-         * Pointer to a Unicode string that contains the full name of the user.
-         * This string can be a null string, or it can have any number of
-         * characters before the terminating null character.
-         */
-        public WString usri10_full_name;
-
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "usri10_name", "usri10_comment", "usri10_usr_comment", "usri10_full_name" });
-        }
-    }
 	
     /**
      * The USER_INFO_23 structure contains information about a user account, 
