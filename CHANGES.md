@@ -1,12 +1,20 @@
 Next Release (3.5.2)
 ====================
 
+Bug Fixes
+---------
+* [#183](https://github.com/twall/jna/pull/183): Fix LMAccess.GROUP_INFO_3.getFieldOrder() to return correct fields names. - [@bhamail](https://github.com/bhamail).
+
 Features
 --------
 * [#163](https://github.com/twall/jna/pull/163): The Java `GUID` structure can be used directly as alternative to `Ole32Util.getGUIDFromString()` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Ported Win32 `dbt.h` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification` and `WTSUnRegisterSessionNotification` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `native_window_msg` that creates windows, registers for USB device and logon/logoff notifications - [@wolftobias](https://github.com/wolftobias).
+* [#178](https://github.com/twall/jna/pull/178): Added Win32 `USER_INFO_10` structure from `LMAccess.h` - [@davidmc24](https://github.com/davidmc24).
+* [#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
+* [#180](https://github.com/twall/jna/pull/180): Fix: added missing fields in `XEvents.getFieldOrder()` - [@xwizard](https://github.com/xwizard).
+* [#183](https://github.com/twall/jna/pull/183): Added StructureFieldOrderInspector unit test utility to scan for Structure field issues. See: com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder() - [@bhamail](https://github.com/bhamail).
 
 Release 3.5.1
 ====================
@@ -15,13 +23,14 @@ Bug Fixes
 ---------
 * [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32Util.getDomainTrusts()` returns "empty" domain object - [@aikidojohn](https://github.com/aikidojohn).
 * [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32.getDC()` - added missing fields in `DOMAIN_CONTROLLER_INFO` - [@aikidojohn](https://github.com/aikidojohn).
-* [#151] 'platform.jar' in the dist directory was not updated for release 3.5.0. (The 'platform.jar' published to maven central was correct.)
+* [#151](https://github.com/twall/jna/pull/151): 'platform.jar' in the dist directory was not updated for release 3.5.0. (The 'platform.jar' published to maven central was correct.)
 
 Release 3.5.0
 =============
 
 Features
 --------
+* [#62](https://github.com/twall/jna/issues/62) If a callback is required to reside in a DLL, use [`DLLCallback`](http://twall.github.com/jna/3.5.1/javadoc/com/sun/jna/win32/DLLCallback.html) to tag your Callback object - [@twall](https://github.com/twall).
 * `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
 * Search `~/Library/Frameworks` and `/Library/Frameworks` on OSX - [@shaneholloway](https://github.com/shaneholloway).
 * Automatic cleanup of native threads (based on suggestions from neil smith) - [@twall](https://github.com/twall).
