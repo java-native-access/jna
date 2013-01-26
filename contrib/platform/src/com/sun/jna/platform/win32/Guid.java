@@ -256,8 +256,6 @@ public interface Guid {
 		 * Generates a new guid. Code taken from the standard jdk
 		 * implementation (see UUID class).
 		 *
-		 * @param guid
-		 *            the guid
 		 * @return the guid
 		 */
 		public static GUID newGuid() {

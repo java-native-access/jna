@@ -1625,7 +1625,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 * Registers the device or type of device for which a window will receive
 	 * notifications.
 	 * 
-	 * @hRecipient [in] A handle to the window or service that will receive
+	 * @param hRecipient [in] A handle to the window or service that will receive
 	 *             device events for the devices specified in the
 	 *             NotificationFilter parameter. The same window handle can be
 	 *             used in multiple calls to RegisterDeviceNotification.
@@ -1633,7 +1633,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 *             Services can specify either a window handle or service status
 	 *             handle.
 	 * 
-	 * @param NotificationFilter
+	 * @param notificationFilter
 	 *            [in] A pointer to a block of data that specifies the type of
 	 *            device for which notifications should be sent. This block
 	 *            always begins with the DEV_BROADCAST_HDR structure. The data
@@ -1673,7 +1673,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	/**
 	 * Closes the specified device notification handle.
 	 * 
-	 * @Handle [in] Device notification handle returned by the
+	 * @param Handle [in] Device notification handle returned by the
 	 *         RegisterDeviceNotification function.
 	 * 
 	 * @return Return value

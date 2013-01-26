@@ -329,6 +329,10 @@ public final class Native {
     /** Map a library interface to the current process, providing
      * the explicit interface class.
      * @param interfaceClass
+     * @return an instance of the requested interface, mapped to the current
+     * process. 
+     * @throws UnsatisfiedLinkError if the library cannot be found or
+     * dependent libraries are missing.
      */
     public static Object loadLibrary(Class interfaceClass) {
         return loadLibrary(null, interfaceClass);
@@ -338,6 +342,10 @@ public final class Native {
      * the explicit interface class.
      * @param interfaceClass
      * @param options Map of library options
+     * @return an instance of the requested interface, mapped to the current
+     * process. 
+     * @throws UnsatisfiedLinkError if the library cannot be found or
+     * dependent libraries are missing.
      */
     public static Object loadLibrary(Class interfaceClass, Map options) {
         return loadLibrary(null, interfaceClass, options);
@@ -348,6 +356,10 @@ public final class Native {
      * If <code>name</code> is null, attempts to map onto the current process.
      * @param name
      * @param interfaceClass
+     * @return an instance of the requested interface, mapped to the indicated
+     * native library. 
+     * @throws UnsatisfiedLinkError if the library cannot be found or
+     * dependent libraries are missing.
      */
     public static Object loadLibrary(String name, Class interfaceClass) {
         return loadLibrary(name, interfaceClass, Collections.EMPTY_MAP);
@@ -361,6 +373,10 @@ public final class Native {
      * @param name
      * @param interfaceClass
      * @param options Map of library options
+     * @return an instance of the requested interface, mapped to the indicated
+     * native library. 
+     * @throws UnsatisfiedLinkError if the library cannot be found or
+     * dependent libraries are missing.
      */
     public static Object loadLibrary(String name, 
                                      Class interfaceClass,
