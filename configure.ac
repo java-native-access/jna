@@ -146,6 +146,23 @@ case "$host" in
 	fi	  
 	;;
 
+  x86_64-*-darwin*)
+	TARGET=X86_DARWIN; TARGETDIR=x86
+	;;
+
+  x86_64-*-cygwin* | x86_64-*-mingw*)
+	TARGET=X86_WIN64; TARGETDIR=x86
+	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+	# We must also check with_cross_host to decide if this is a native
+	# or cross-build and select where to install dlls appropriately.
+	if test -n "$with_cross_host" &&
+	   test x"$with_cross_host" != x"no"; then
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
+	else
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+	fi
+	;;
+
   i?86-*-* | x86_64-*-*)
 	TARGETDIR=x86
 	if test $ac_cv_sizeof_size_t = 4; then
@@ -223,23 +240,6 @@ case "$host" in
   tile*-*)
         TARGET=TILE; TARGETDIR=tile
         ;;
-
-  x86_64-*-darwin*)
-	TARGET=X86_DARWIN; TARGETDIR=x86
-	;;
-
-  x86_64-*-cygwin* | x86_64-*-mingw*)
-	TARGET=X86_WIN64; TARGETDIR=x86
-	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
-	# We must also check with_cross_host to decide if this is a native
-	# or cross-build and select where to install dlls appropriately.
-	if test -n "$with_cross_host" &&
-	   test x"$with_cross_host" != x"no"; then
-	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
-	else
-	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
-	fi
-	;;
 
   xtensa*-*)
 	TARGET=XTENSA; TARGETDIR=xtensa
