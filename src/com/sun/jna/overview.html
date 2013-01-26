@@ -299,6 +299,12 @@ in the interface which extends Callback or the class which implements
 {@link com.sun.jna.Callback}.  The arguments and return value follow the same
 rules as for a direct function invocation. 
 <p>
+When accessing Windows APIs, sometimes the documentation indicates that a
+function pointer parameter must refer to a function that resides in a 
+DLL.  In these instances, add the {@link com.sun.jna.win32.DLLCallback}
+interface to your callback definition.  The function pointer as seen by
+Windows will be located in the <code>jnidispatch.dll</code> module.
+<p>
 If the callback returns a <code>String</code> or <code>String[]</code>, the
 returned memory will be valid until the returned object is GC'd.
 <p>
