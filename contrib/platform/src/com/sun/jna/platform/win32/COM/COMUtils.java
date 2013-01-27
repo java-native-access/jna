@@ -1,6 +1,7 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
+import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 
@@ -18,85 +19,85 @@ public abstract class COMUtils {
 
 	/** The Constant E_UNEXPECTED. */
 	public static final int E_UNEXPECTED = 0x8000FFFF;
-	
+
 	/** The Constant E_NOTIMPL. */
 	public static final int E_NOTIMPL = 0x80004001;
-	
+
 	/** The Constant E_OUTOFMEMORY. */
 	public static final int E_OUTOFMEMORY = 0x8007000E;
-	
+
 	/** The Constant E_INVALIDARG. */
 	public static final int E_INVALIDARG = 0x80070057;
-	
+
 	/** The Constant E_NOINTERFACE. */
 	public static final int E_NOINTERFACE = 0x80004002;
-	
+
 	/** The Constant E_POINTER. */
 	public static final int E_POINTER = 0x80004003;
-	
+
 	/** The Constant E_HANDLE. */
 	public static final int E_HANDLE = 0x80070006;
-	
+
 	/** The Constant E_ABORT. */
 	public static final int E_ABORT = 0x80004004;
-	
+
 	/** The Constant E_FAIL. */
 	public static final int E_FAIL = 0x80004005;
-	
+
 	/** The Constant E_ACCESSDENIED. */
 	public static final int E_ACCESSDENIED = 0x80070005;
 
 	/** The Constant DISP_E_BADVARTYPE. */
 	public static final int DISP_E_BADVARTYPE = -2147352568;
-	
+
 	/** The Constant DISP_E_NOTACOLLECTION. */
 	public static final int DISP_E_NOTACOLLECTION = -2147352559;
-	
+
 	/** The Constant DISP_E_MEMBERNOTFOUND. */
 	public static final int DISP_E_MEMBERNOTFOUND = -2147352573;
-	
+
 	/** The Constant DISP_E_ARRAYISLOCKED. */
 	public static final int DISP_E_ARRAYISLOCKED = -2147352563;
-	
+
 	/** The Constant DISP_E_EXCEPTION. */
 	public static final int DISP_E_EXCEPTION = -2147352567;
-	
+
 	/** The Constant DISP_E_TYPEMISMATCH. */
 	public static final int DISP_E_TYPEMISMATCH = -2147352571;
-	
+
 	/** The Constant DISP_E_BADINDEX. */
 	public static final int DISP_E_BADINDEX = -2147352565;
-	
+
 	/** The Constant DISP_E_BADCALLEE. */
 	public static final int DISP_E_BADCALLEE = -2147352560;
-	
+
 	/** The Constant DISP_E_OVERFLOW. */
 	public static final int DISP_E_OVERFLOW = -2147352566;
-	
+
 	/** The Constant DISP_E_UNKNOWNINTERFACE. */
 	public static final int DISP_E_UNKNOWNINTERFACE = -2147352575;
-	
+
 	/** The Constant DISP_E_DIVBYZERO. */
 	public static final int DISP_E_DIVBYZERO = -2147352558;
-	
+
 	/** The Constant DISP_E_UNKNOWNLCID. */
 	public static final int DISP_E_UNKNOWNLCID = -2147352564;
-	
+
 	/** The Constant DISP_E_PARAMNOTOPTIONAL. */
 	public static final int DISP_E_PARAMNOTOPTIONAL = -2147352561;
-	
+
 	/** The Constant DISP_E_PARAMNOTFOUND. */
 	public static final int DISP_E_PARAMNOTFOUND = -2147352572;
-	
+
 	/** The Constant DISP_E_BADPARAMCOUNT. */
 	public static final int DISP_E_BADPARAMCOUNT = -2147352562;
-	
+
 	/** The Constant DISP_E_BUFFERTOOSMALL. */
 	public static final int DISP_E_BUFFERTOOSMALL = -2147352557;
-	
+
 	/** The Constant DISP_E_UNKNOWNNAME. */
 	public static final int DISP_E_UNKNOWNNAME = -2147352570;
-	
+
 	/** The Constant DISP_E_NONAMEDARGS. */
 	public static final int DISP_E_NONAMEDARGS = -2147352569;
 
@@ -105,8 +106,9 @@ public abstract class COMUtils {
 
 	/**
 	 * Succeeded.
-	 *
-	 * @param hr the hr
+	 * 
+	 * @param hr
+	 *            the hr
 	 * @return true, if successful
 	 */
 	public static boolean SUCCEEDED(HRESULT hr) {
@@ -115,8 +117,9 @@ public abstract class COMUtils {
 
 	/**
 	 * Succeeded.
-	 *
-	 * @param hr the hr
+	 * 
+	 * @param hr
+	 *            the hr
 	 * @return true, if successful
 	 */
 	public static boolean SUCCEEDED(int hr) {
@@ -128,8 +131,9 @@ public abstract class COMUtils {
 
 	/**
 	 * Failed.
-	 *
-	 * @param hr the hr
+	 * 
+	 * @param hr
+	 *            the hr
 	 * @return true, if successful
 	 */
 	public static boolean FAILED(HRESULT hr) {
@@ -138,8 +142,9 @@ public abstract class COMUtils {
 
 	/**
 	 * Failed.
-	 *
-	 * @param hr the hr
+	 * 
+	 * @param hr
+	 *            the hr
 	 * @return true, if successful
 	 */
 	public static boolean FAILED(int hr) {
@@ -151,21 +156,25 @@ public abstract class COMUtils {
 
 	/**
 	 * Throw new exception.
-	 *
-	 * @param hr the hr
+	 * 
+	 * @param hr
+	 *            the hr
 	 */
-	public static void throwNewException(HRESULT hr) {
-		throwNewException(hr, null, null);
+	public static void checkAutoRC(HRESULT hr) {
+		checkAutoRC(hr, null, null);
 	}
 
 	/**
 	 * Throw new exception.
-	 *
-	 * @param hr the hr
-	 * @param pExcepInfo the excep info
-	 * @param puArgErr the pu arg err
+	 * 
+	 * @param hr
+	 *            the hr
+	 * @param pExcepInfo
+	 *            the excep info
+	 * @param puArgErr
+	 *            the pu arg err
 	 */
-	public static void throwNewException(HRESULT hr, EXCEPINFO pExcepInfo,
+	public static void checkAutoRC(HRESULT hr, EXCEPINFO pExcepInfo,
 			IntByReference puArgErr) {
 		switch (hr.intValue()) {
 		case S_OK:
@@ -182,8 +191,7 @@ public abstract class COMUtils {
 		case CO_E_NOTINITIALIZED:
 			throw new COMException("CoInitialized wasn't called!");
 		case E_NOINTERFACE:
-			throw new COMException(
-					"Interface does not inherit from class!");
+			throw new COMException("Interface does not inherit from class!");
 		case E_POINTER:
 			throw new COMException("Allocated pointer pointer is null!");
 		case DISP_E_UNKNOWNNAME:
@@ -203,8 +211,7 @@ public abstract class COMUtils {
 					"The application needs to raise an exception. In this case, the structure passed in pexcepinfo should be filled in!",
 					pExcepInfo, puArgErr);
 		case DISP_E_MEMBERNOTFOUND:
-			throw new COMException(
-					"The requested member does not exist!");
+			throw new COMException("The requested member does not exist!");
 		case DISP_E_NONAMEDARGS:
 			throw new COMException(
 					"This implementation of IDispatch does not support named arguments!");
@@ -227,6 +234,36 @@ public abstract class COMUtils {
 					"The method is not connected to the Dispatch pointer!");
 		default:
 			throw new COMException("Unexpected COM error code : "
+					+ hr.intValue());
+		}
+	}
+
+	public static void checkTypeLibRC(HRESULT hr) {
+		switch (hr.intValue()) {
+		case S_OK:
+			return;
+		case WinError.E_INVALIDARG:
+			throw new COMException("One or more of the arguments is not valid.");
+		case WinError.E_OUTOFMEMORY:
+			throw new COMException(
+					"Insufficient memory to complete the operation.");
+		case WinError.TYPE_E_IOERROR:
+			throw new COMException("The function could not write to the file.");
+		case WinError.TYPE_E_INVALIDSTATE:
+			throw new COMException("The type library could not be opened.");
+		case WinError.TYPE_E_INVDATAREAD:
+			throw new COMException(
+					"The function could not read from the file. ");
+		case WinError.TYPE_E_UNSUPFORMAT:
+			throw new COMException("The type library has an older format.");
+		case WinError.TYPE_E_UNKNOWNLCID:
+			throw new COMException(
+					"The LCID could not be found in the OLE-supported DLLs.");
+		case WinError.TYPE_E_CANTLOADLIBRARY:
+			throw new COMException(
+					"The type library or DLL could not be loaded.");
+		default:
+			throw new COMException("Unexpected Typelib error code : "
 					+ hr.intValue());
 		}
 	}

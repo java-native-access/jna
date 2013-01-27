@@ -26,6 +26,7 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -396,4 +397,43 @@ public interface OleAut32 extends StdCallLibrary {
 					"cArgs", "cNamedArgs" });
 		}
 	}
+
+	/**
+	 * Uses registry information to load a type library.
+	 * 
+	 * @param rguid
+	 *            The GUID of the library.
+	 * @param wVerMajor
+	 *            The major version of the library.
+	 * @param wVerMinor
+	 *            The minor version of the library.
+	 * @param lcid
+	 *            The national language code of the library.
+	 * @param pptlib
+	 *            The loaded type library.
+	 * 
+	 *            This function can return one of these values:
+	 *            S_OK Success.
+	 * 
+	 *            E_INVALIDARG One or more of the arguments is not valid.
+	 * 
+	 *            E_OUTOFMEMORY Insufficient memory to complete the operation.
+	 * 
+	 *            TYPE_E_IOERROR The function could not write to the file.
+	 * 
+	 *            TYPE_E_INVALIDSTATE The type library could not be opened.
+	 * 
+	 *            TYPE_E_INVDATAREAD The function could not read from the file.
+	 * 
+	 *            TYPE_E_UNSUPFORMAT The type library has an older format.
+	 * 
+	 *            TYPE_E_UNKNOWNLCID The LCID could not be found in the
+	 *            OLE-supported DLLs.
+	 * 
+	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
+	 *            loaded.
+	 */
+	public HRESULT LoadRegTypeLib(GUID rguid, int wVerMajor, int wVerMinor,
+			LCID lcid, PointerByReference pptlib);
+
 }

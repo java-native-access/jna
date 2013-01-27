@@ -135,7 +135,7 @@ public class COMObject {
 		HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
 				LOCALE_USER_DEFAULT, pdispID);
 
-		COMUtils.throwNewException(hr);
+		COMUtils.checkAutoRC(hr);
 
 		// Handle special-case for property-puts!
 		if (nType == OleAut32.DISPATCH_PROPERTYPUT) {
@@ -158,7 +158,7 @@ public class COMObject {
 				LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
 				pExcepInfo, puArgErr);
 
-		COMUtils.throwNewException(hr, pExcepInfo, puArgErr);
+		COMUtils.checkAutoRC(hr, pExcepInfo, puArgErr);
 		return hr;
 	}
 
@@ -177,7 +177,7 @@ public class COMObject {
 	}
 
 	protected void checkFailed(HRESULT hr) {
-		COMUtils.throwNewException(hr, null, null);
+		COMUtils.checkAutoRC(hr, null, null);
 	}
 
 	public IDispatch getIDispatch() {

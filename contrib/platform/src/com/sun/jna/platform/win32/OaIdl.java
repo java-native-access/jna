@@ -11,9 +11,11 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
 import com.sun.jna.platform.win32.WinDef.PVOID;
@@ -246,7 +248,17 @@ public interface OaIdl {
 			return new DISPID(getPointer().getInt(0));
 		}
 	}
+	
+	public static class MEMBERID extends DISPID {
+		public MEMBERID() {
+			this(0);
+		}
 
+		public MEMBERID(int value) {
+			super(value);
+		}
+	}
+	
 	// The Collect property. You use this property if the method you are calling
 	// through Invoke is an accessor function.
 	/** The Constant DISPID_COLLECT. */
@@ -333,6 +345,21 @@ public interface OaIdl {
 	/** Bits reserved for future use. */
 	public final static int FADF_RESERVED = 0xF008;
 
+	public final static int TKIND_ENUM = 0;
+	public final static int TKIND_RECORD = TKIND_ENUM + 1;
+	public final static int TKIND_MODULE = TKIND_RECORD + 1;
+	public final static int TKIND_INTERFACE = TKIND_MODULE + 1;
+	public final static int TKIND_DISPATCH = TKIND_INTERFACE + 1;
+	public final static int TKIND_COCLASS = TKIND_DISPATCH + 1;
+	public final static int TKIND_ALIAS = TKIND_COCLASS + 1;
+	public final static int TKIND_UNION = TKIND_ALIAS + 1;
+	public final static int TKIND_MAX = TKIND_UNION + 1;
+
+	public final static int SYS_WIN16 = 0;
+	public final static int SYS_WIN32 = SYS_WIN16 + 1;
+	public final static int SYS_MAC = SYS_WIN32 + 1;
+	public final static int SYS_WIN64 = SYS_MAC + 1;
+	
 	public class SAFEARRAY extends Structure {
 
 		public static class ByReference extends SAFEARRAY implements
@@ -522,6 +549,30 @@ public interface OaIdl {
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "wReserved", "decimal1",
 					"Hi32", "decimal2" });
+		}
+	}
+
+	public static class TLIBATTR extends Structure {
+		public GUID guid;
+		public LCID lcid;
+		public int syskind;
+		public WORD wMajorVerNum;
+		public WORD wMinorVerNum;
+		public WORD wLibFlags;
+
+		public TLIBATTR() {
+			super();
+		}
+
+		public TLIBATTR(Pointer pointer) {
+			super(pointer);
+			this.read();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "guid", "lcid", "syskind",
+					"wMajorVerNum", "wMinorVerNum", "wLibFlags" });
 		}
 	}
 }
