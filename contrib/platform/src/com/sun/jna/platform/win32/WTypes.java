@@ -16,6 +16,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
 
@@ -80,17 +81,6 @@ public interface WTypes {
 		@Override
 		public String toString() {
 			return this.getValue();
-		}
-	}
-
-	public class LPCOLESTR extends BSTR {
-
-		public LPCOLESTR() {
-			super("");
-		}
-
-		public LPCOLESTR(String str) {
-			super(str);
 		}
 	}
 

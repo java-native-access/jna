@@ -17,13 +17,13 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.OaIdl;
-import com.sun.jna.platform.win32.OaIdl.DISPID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
-import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
+import com.sun.jna.platform.win32.OAIdl;
+import com.sun.jna.platform.win32.OAIdl.DISPID;
+import com.sun.jna.platform.win32.OAIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OAIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
-import com.sun.jna.platform.win32.OleAut32;
-import com.sun.jna.platform.win32.OleAut32.DISPPARAMS;
+import com.sun.jna.platform.win32.OleAuto;
+import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes;
@@ -90,7 +90,7 @@ public class COMObject {
 		}
 
 		if (useActiveInstance) {
-			hr = OleAut32.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
+			hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
 
 			if (COMUtils.SUCCEEDED(hr)) {
 				this.iUnknown = new IUnknown(this.pUnknown.getValue());
@@ -138,10 +138,10 @@ public class COMObject {
 		COMUtils.checkAutoRC(hr);
 
 		// Handle special-case for property-puts!
-		if (nType == OleAut32.DISPATCH_PROPERTYPUT) {
+		if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
 			dp.cNamedArgs = new UINT(pArgs.length);
 			dp.rgdispidNamedArgs = new DISPIDbyReference(
-					OaIdl.DISPID_PROPERTYPUT);
+					OAIdl.DISPID_PROPERTYPUT);
 		}
 
 		// Build DISPPARAMS

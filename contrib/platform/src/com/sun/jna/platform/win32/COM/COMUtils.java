@@ -1,6 +1,6 @@
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
+import com.sun.jna.platform.win32.OAIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;

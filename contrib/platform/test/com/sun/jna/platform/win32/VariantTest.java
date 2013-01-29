@@ -21,7 +21,7 @@ public class VariantTest extends TestCase {
 		System.out.println("------------------------------------------");
 
 		VARIANT variant = new VARIANT(new SHORT(33333));
-		HRESULT hr = OleAut32.INSTANCE.VariantClear(variant.getPointer());
+		HRESULT hr = OleAuto.INSTANCE.VariantClear(variant.getPointer());
 		
 		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
 		
@@ -36,7 +36,7 @@ public class VariantTest extends TestCase {
 		VARIANT variantDest = new VARIANT();
 		
 		System.out.println(variantSource.toString(true));
-		HRESULT hr = OleAut32.INSTANCE.VariantCopy(variantDest.getPointer(), variantSource);
+		HRESULT hr = OleAuto.INSTANCE.VariantCopy(variantDest.getPointer(), variantSource);
 		
 		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
 
@@ -53,7 +53,7 @@ public class VariantTest extends TestCase {
 		VARIANT variantDest = new VARIANT();
 		
 		System.out.println(variantSource.toString(true));
-		HRESULT hr = OleAut32.INSTANCE.VariantCopy(variantDest.getPointer(), variantSource);
+		HRESULT hr = OleAuto.INSTANCE.VariantCopy(variantDest.getPointer(), variantSource);
 		
 		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
 		

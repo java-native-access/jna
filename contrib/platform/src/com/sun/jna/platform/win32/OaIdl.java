@@ -11,8 +11,13 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.WString;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LCID;
@@ -24,46 +29,14 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.COM.ITypeComp;
 import com.sun.jna.ptr.ByReference;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface OaIdl.
  */
-public interface OaIdl {
-
-	/** The Constant CC_FASTCALL. */
-	public final static int CC_FASTCALL = 0;
-
-	/** The Constant CC_CDECL. */
-	public final static int CC_CDECL = 1;
-
-	/** The Constant CC_MSCPASCAL. */
-	public final static int CC_MSCPASCAL = CC_CDECL + 1;
-
-	/** The Constant CC_PASCAL. */
-	public final static int CC_PASCAL = CC_MSCPASCAL;
-
-	/** The Constant CC_MACPASCAL. */
-	public final static int CC_MACPASCAL = CC_PASCAL + 1;
-
-	/** The Constant CC_STDCALL. */
-	public final static int CC_STDCALL = CC_MACPASCAL + 1;
-
-	/** The Constant CC_FPFASTCALL. */
-	public final static int CC_FPFASTCALL = CC_STDCALL + 1;
-
-	/** The Constant CC_SYSCALL. */
-	public final static int CC_SYSCALL = CC_FPFASTCALL + 1;
-
-	/** The Constant CC_MPWCDECL. */
-	public final static int CC_MPWCDECL = CC_SYSCALL + 1;
-
-	/** The Constant CC_MPWPASCAL. */
-	public final static int CC_MPWPASCAL = CC_MPWCDECL + 1;
-
-	/** The Constant CC_MAX. */
-	public final static int CC_MAX = CC_MPWPASCAL + 1;
+public interface OAIdl {
 
 	/**
 	 * The Class EXCEPINFO.
@@ -248,7 +221,7 @@ public interface OaIdl {
 			return new DISPID(getPointer().getInt(0));
 		}
 	}
-	
+
 	public static class MEMBERID extends DISPID {
 		public MEMBERID() {
 			this(0);
@@ -259,6 +232,25 @@ public interface OaIdl {
 		}
 	}
 	
+	public class MEMBERIDbyReference extends ByReference {
+		public MEMBERIDbyReference() {
+			this(new MEMBERID(0));
+		}
+
+		public MEMBERIDbyReference(MEMBERID value) {
+			super(MEMBERID.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(MEMBERID value) {
+			getPointer().setInt(0, value.intValue());
+		}
+
+		public MEMBERID getValue() {
+			return new MEMBERID(getPointer().getInt(0));
+		}
+	}	
+
 	// The Collect property. You use this property if the method you are calling
 	// through Invoke is an accessor function.
 	/** The Constant DISPID_COLLECT. */
@@ -345,23 +337,47 @@ public interface OaIdl {
 	/** Bits reserved for future use. */
 	public final static int FADF_RESERVED = 0xF008;
 
-	public final static int TKIND_ENUM = 0;
-	public final static int TKIND_RECORD = TKIND_ENUM + 1;
-	public final static int TKIND_MODULE = TKIND_RECORD + 1;
-	public final static int TKIND_INTERFACE = TKIND_MODULE + 1;
-	public final static int TKIND_DISPATCH = TKIND_INTERFACE + 1;
-	public final static int TKIND_COCLASS = TKIND_DISPATCH + 1;
-	public final static int TKIND_ALIAS = TKIND_COCLASS + 1;
-	public final static int TKIND_UNION = TKIND_ALIAS + 1;
-	public final static int TKIND_MAX = TKIND_UNION + 1;
+	public static interface TYPEKIND {
+		// / <i>native declaration : line 4</i>
+		public static final int TKIND_ENUM = 0;
+		// / <i>native declaration : line 5</i>
+		public static final int TKIND_RECORD = TYPEKIND.TKIND_ENUM + 1;
+		// / <i>native declaration : line 6</i>
+		public static final int TKIND_MODULE = TYPEKIND.TKIND_RECORD + 1;
+		// / <i>native declaration : line 7</i>
+		public static final int TKIND_INTERFACE = TYPEKIND.TKIND_MODULE + 1;
+		// / <i>native declaration : line 8</i>
+		public static final int TKIND_DISPATCH = TYPEKIND.TKIND_INTERFACE + 1;
+		// / <i>native declaration : line 9</i>
+		public static final int TKIND_COCLASS = TYPEKIND.TKIND_DISPATCH + 1;
+		// / <i>native declaration : line 10</i>
+		public static final int TKIND_ALIAS = TYPEKIND.TKIND_COCLASS + 1;
+		// / <i>native declaration : line 11</i>
+		public static final int TKIND_UNION = TYPEKIND.TKIND_ALIAS + 1;
+		// / <i>native declaration : line 12</i>
+		public static final int TKIND_MAX = TYPEKIND.TKIND_UNION + 1;
+	};
 
-	public final static int SYS_WIN16 = 0;
-	public final static int SYS_WIN32 = SYS_WIN16 + 1;
-	public final static int SYS_MAC = SYS_WIN32 + 1;
-	public final static int SYS_WIN64 = SYS_MAC + 1;
-	
+	public static class DESCKIND {
+		public static class ByReference extends DESCKIND implements
+				Structure.ByReference {
+		}
+
+		// / <i>native declaration : line 4</i>
+		public static final int DESCKIND_NONE = 0;
+		// / <i>native declaration : line 5</i>
+		public static final int DESCKIND_FUNCDESC = DESCKIND.DESCKIND_NONE + 1;
+		// / <i>native declaration : line 6</i>
+		public static final int DESCKIND_VARDESC = DESCKIND.DESCKIND_FUNCDESC + 1;
+		// / <i>native declaration : line 7</i>
+		public static final int DESCKIND_TYPECOMP = DESCKIND.DESCKIND_VARDESC + 1;
+		// / <i>native declaration : line 8</i>
+		public static final int DESCKIND_IMPLICITAPPOBJ = DESCKIND.DESCKIND_TYPECOMP + 1;
+		// / <i>native declaration : line 9</i>
+		public static final int DESCKIND_MAX = DESCKIND.DESCKIND_IMPLICITAPPOBJ + 1;
+	};
+
 	public class SAFEARRAY extends Structure {
-
 		public static class ByReference extends SAFEARRAY implements
 				Structure.ByReference {
 		}
@@ -376,7 +392,6 @@ public interface OaIdl {
 		public SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
 
 		public SAFEARRAY() {
-			// TODO Auto-generated constructor stub
 		}
 
 		public SAFEARRAY(Pointer pointer) {
@@ -553,6 +568,10 @@ public interface OaIdl {
 	}
 
 	public static class TLIBATTR extends Structure {
+		public static class ByReference extends TLIBATTR implements
+				Structure.ByReference {
+		};
+
 		public GUID guid;
 		public LCID lcid;
 		public int syskind;
@@ -573,6 +592,505 @@ public interface OaIdl {
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "guid", "lcid", "syskind",
 					"wMajorVerNum", "wMinorVerNum", "wLibFlags" });
+		}
+	}
+
+	public static class BINDPTR extends Union {
+		public static class ByReference extends BINDPTR implements
+				Structure.ByReference {
+		};
+
+		// / C type : FUNCDESC*
+		public FUNCDESC lpfuncdesc;
+		// / C type : VARDESC*
+		public VARDESC lpvardesc;
+		// / C type : ITypeComp*
+		public ITypeComp lptcomp;
+
+		public BINDPTR() {
+			super();
+		}
+
+		// / @param lpvardesc C type : VARDESC*
+		public BINDPTR(VARDESC lpvardesc) {
+			super();
+			this.lpvardesc = lpvardesc;
+			setType(VARDESC.class);
+		}
+
+		// / @param lptcomp C type : ITypeComp*
+		public BINDPTR(ITypeComp lptcomp) {
+			super();
+			this.lptcomp = lptcomp;
+			setType(ITypeComp.class);
+		}
+
+		// / @param lpfuncdesc C type : FUNCDESC*
+		public BINDPTR(FUNCDESC lpfuncdesc) {
+			super();
+			this.lpfuncdesc = lpfuncdesc;
+			setType(FUNCDESC.class);
+		}
+	}
+
+	public static class FUNCDESC extends Structure {
+		public static class ByReference extends FUNCDESC implements
+				Structure.ByReference {
+		};
+
+		// / C type : MEMBERID
+		public MEMBERID memid;
+		/**
+		 * [size_is]<br>
+		 * C type : SCODE*
+		 */
+		public SCODE lprgscode;
+		/**
+		 * [size_is]<br>
+		 * C type : ELEMDESC*
+		 */
+		public ELEMDESC lprgelemdescParam;
+		// / C type : FUNCKIND
+		public FUNCKIND funckind;
+		// / C type : INVOKEKIND
+		public INVOKEKIND invkind;
+		// / C type : CALLCONV
+		public CALLCONV callconv;
+		public short cParams;
+		public short cParamsOpt;
+		public short oVft;
+		public short cScodes;
+		// / C type : ELEMDESC
+		public ELEMDESC elemdescFunc;
+		public short wFuncFlags;
+
+		public FUNCDESC() {
+			super();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "memid", "lprgscode",
+					"lprgelemdescParam", "funckind", "invkind", "callconv",
+					"cParams", "cParamsOpt", "oVft", "cScodes", "elemdescFunc",
+					"wFuncFlags" });
+		}
+	}
+
+	public static class VARDESC extends Structure {
+		public static class ByReference extends VARDESC implements
+				Structure.ByReference {
+
+		};
+
+		// / C type : MEMBERID
+		public MEMBERID memid;
+		// / C type : LPOLESTR
+		public WString lpstrSchema;
+		/**
+		 * [switch_is][switch_type]<br>
+		 * C type : DUMMYUNIONNAMEUnion
+		 */
+		public _Union union;
+		// / C type : ELEMDESC
+		public ELEMDESC elemdescVar;
+		public short wVarFlags;
+		// / C type : VARKIND
+		public VARKIND varkind;
+
+		// / <i>native declaration : line 6</i>
+		// / <i>native declaration : line 6</i>
+		public static class _Union extends Union {
+
+			public static class ByReference extends _Union implements
+					Structure.ByReference {
+			};
+
+			// / [case()]
+			public NativeLong oInst;
+			/**
+			 * [case()]<br>
+			 * C type : VARIANT*
+			 */
+			public VARIANT lpvarValue;
+
+			public _Union() {
+				super();
+			}
+
+			/**
+			 * @param lpvarValue
+			 *            [case()]<br>
+			 *            C type : VARIANT*
+			 */
+			public _Union(VARIANT lpvarValue) {
+				super();
+				this.lpvarValue = lpvarValue;
+				setType(VARIANT.class);
+			}
+
+			// / @param oInst [case()]
+			public _Union(NativeLong oInst) {
+				super();
+				this.oInst = oInst;
+				setType(NativeLong.class);
+			}
+		};
+
+		public VARDESC() {
+			super();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "memid", "lpstrSchema",
+					"union", "elemdescVar", "wVarFlags", "varkind" });
+		}
+
+		/**
+		 * @param memid
+		 *            C type : MEMBERID<br>
+		 * @param lpstrSchema
+		 *            C type : LPOLESTR<br>
+		 * @param DUMMYUNIONNAME
+		 *            [switch_is][switch_type]<br>
+		 *            C type : DUMMYUNIONNAMEUnion<br>
+		 * @param elemdescVar
+		 *            C type : ELEMDESC<br>
+		 * @param varkind
+		 *            C type : VARKIND
+		 */
+		public VARDESC(MEMBERID memid, WString lpstrSchema, _Union union,
+				ELEMDESC elemdescVar, short wVarFlags, VARKIND varkind) {
+			super();
+			this.memid = memid;
+			this.lpstrSchema = lpstrSchema;
+			this.union = union;
+			this.elemdescVar = elemdescVar;
+			this.wVarFlags = wVarFlags;
+			this.varkind = varkind;
+		}
+	}
+
+	public class ELEMDESC extends Structure {
+		public static class ByReference extends ELEMDESC implements
+				Structure.ByReference {
+		};
+
+		/**
+		 * the type of the element<br>
+		 * C type : TYPEDESC
+		 */
+		public TYPEDESC tdesc;
+		// / C type : DUMMYUNIONNAMEUnion
+		public _Union union;
+
+		// / <i>native declaration : line 4</i>
+		// / <i>native declaration : line 4</i>
+		public static class _Union extends Union {
+			public static class ByReference extends _Union implements
+					Structure.ByReference {
+			};
+
+			/**
+			 * info for remoting the element<br>
+			 * C type : IDLDESC
+			 */
+			public IDLDESC idldesc;
+			/**
+			 * info about the parameter<br>
+			 * C type : PARAMDESC
+			 */
+			public PARAMDESC paramdesc;
+
+			public _Union() {
+				super();
+			}
+
+			/**
+			 * @param paramdesc
+			 *            info about the parameter<br>
+			 *            C type : PARAMDESC
+			 */
+			public _Union(PARAMDESC paramdesc) {
+				super();
+				this.paramdesc = paramdesc;
+				setType(PARAMDESC.class);
+			}
+
+			/**
+			 * @param idldesc
+			 *            info for remoting the element<br>
+			 *            C type : IDLDESC
+			 */
+			public _Union(IDLDESC idldesc) {
+				super();
+				this.idldesc = idldesc;
+				setType(IDLDESC.class);
+			}
+		};
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "tdesc", "union" });
+		}
+
+		public ELEMDESC() {
+		}
+
+		public ELEMDESC(TYPEDESC tdesc, _Union union) {
+			super();
+			this.tdesc = tdesc;
+			this.union = union;
+		}
+	}
+
+	public static interface FUNCKIND {
+		// / <i>native declaration : line 20</i>
+		public static final int FUNC_VIRTUAL = 0;
+		// / <i>native declaration : line 21</i>
+		public static final int FUNC_PUREVIRTUAL = FUNC_VIRTUAL + 1;
+		// / <i>native declaration : line 22</i>
+		public static final int FUNC_NONVIRTUAL = FUNC_PUREVIRTUAL + 1;
+		// / <i>native declaration : line 23</i>
+		public static final int FUNC_STATIC = FUNC_NONVIRTUAL + 1;
+		// / <i>native declaration : line 24</i>
+		public static final int FUNC_DISPATCH = FUNC_STATIC + 1;
+	};
+
+	public static interface INVOKEKIND {
+		// / <i>native declaration : line 30</i>
+		public static final int INVOKE_FUNC = 1;
+		// / <i>native declaration : line 31</i>
+		public static final int INVOKE_PROPERTYGET = 2;
+		// / <i>native declaration : line 32</i>
+		public static final int INVOKE_PROPERTYPUT = 4;
+		// / <i>native declaration : line 33</i>
+		public static final int INVOKE_PROPERTYPUTREF = 8;
+	};
+
+	public static interface CALLCONV {
+		// / <i>native declaration : line 4</i>
+		public static final int CC_FASTCALL = 0;
+		// / <i>native declaration : line 5</i>
+		public static final int CC_CDECL = 1;
+		// / <i>native declaration : line 6</i>
+		public static final int CC_MSCPASCAL = CALLCONV.CC_CDECL + 1;
+		// / <i>native declaration : line 7</i>
+		public static final int CC_PASCAL = CALLCONV.CC_MSCPASCAL;
+		// / <i>native declaration : line 8</i>
+		public static final int CC_MACPASCAL = CALLCONV.CC_PASCAL + 1;
+		// / <i>native declaration : line 9</i>
+		public static final int CC_STDCALL = CALLCONV.CC_MACPASCAL + 1;
+		// / <i>native declaration : line 10</i>
+		public static final int CC_FPFASTCALL = CALLCONV.CC_STDCALL + 1;
+		// / <i>native declaration : line 11</i>
+		public static final int CC_SYSCALL = CALLCONV.CC_FPFASTCALL + 1;
+		// / <i>native declaration : line 12</i>
+		public static final int CC_MPWCDECL = CALLCONV.CC_SYSCALL + 1;
+		// / <i>native declaration : line 13</i>
+		public static final int CC_MPWPASCAL = CALLCONV.CC_MPWCDECL + 1;
+		// / <i>native declaration : line 14</i>
+		public static final int CC_MAX = CALLCONV.CC_MPWPASCAL + 1;
+	};
+
+	public static interface VARKIND {
+		// / <i>native declaration : line 4</i>
+		public static final int VAR_PERINSTANCE = 0;
+		// / <i>native declaration : line 5</i>
+		public static final int VAR_STATIC = VAR_PERINSTANCE + 1;
+		// / <i>native declaration : line 6</i>
+		public static final int VAR_CONST = VAR_STATIC + 1;
+		// / <i>native declaration : line 7</i>
+		public static final int VAR_DISPATCH = VAR_CONST + 1;
+	};
+
+	public class TYPEDESC extends Structure {
+		public static class ByReference extends TYPEDESC implements
+				Structure.ByReference {
+		};
+
+		/**
+		 * [switch_is][switch_type]<br>
+		 * C type : DUMMYUNIONNAMEUnion
+		 */
+		public _Union union;
+		// / C type : VARTYPE
+		public VARTYPE vt;
+
+		// / <i>native declaration : line 4</i>
+		// / <i>native declaration : line 4</i>
+		public static class _Union extends Union {
+			/**
+			 * [case()]<br>
+			 * C type : tagTYPEDESC*
+			 */
+			public TYPEDESC lptdesc;
+			/**
+			 * [case()]<br>
+			 * C type : tagARRAYDESC*
+			 */
+			public ARRAYDESC lpadesc;
+			/**
+			 * [case()]<br>
+			 * C type : HREFTYPE
+			 */
+			public HREFTYPE hreftype;
+
+			public _Union() {
+				super();
+			}
+
+			/**
+			 * @param lpadesc
+			 *            [case()]<br>
+			 *            C type : tagARRAYDESC*
+			 */
+			public _Union(ARRAYDESC lpadesc) {
+				super();
+				this.lpadesc = lpadesc;
+				setType(ARRAYDESC.class);
+			}
+
+			/**
+			 * @param hreftype
+			 *            [case()]<br>
+			 *            C type : HREFTYPE
+			 */
+			public _Union(HREFTYPE hreftype) {
+				super();
+				this.hreftype = hreftype;
+				setType(HREFTYPE.class);
+			}
+
+			/**
+			 * @param lptdesc
+			 *            [case()]<br>
+			 *            C type : tagTYPEDESC*
+			 */
+			public _Union(TYPEDESC lptdesc) {
+				super();
+				this.lptdesc = lptdesc;
+				setType(TYPEDESC.class);
+			}
+
+			public static class ByReference extends _Union implements
+					Structure.ByReference {
+
+			};
+		};
+
+		public TYPEDESC() {
+			super();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "union", "vt" });
+		}
+
+		/**
+		 * @param DUMMYUNIONNAME
+		 *            [switch_is][switch_type]<br>
+		 *            C type : DUMMYUNIONNAMEUnion<br>
+		 * @param vt
+		 *            C type : VARTYPE
+		 */
+		public TYPEDESC(_Union union, VARTYPE vt) {
+			super();
+			this.union = union;
+			this.vt = vt;
+		}
+	}
+
+	public class IDLDESC extends Structure {
+		public static class ByReference extends IDLDESC implements
+				Structure.ByReference {
+		};
+
+		// / C type : ULONG_PTR
+		public ULONG_PTR dwReserved;
+		public short wIDLFlags;
+
+		public IDLDESC() {
+			super();
+		}
+
+		// / @param dwReserved C type : ULONG_PTR
+		public IDLDESC(ULONG_PTR dwReserved, short wIDLFlags) {
+			super();
+			this.dwReserved = dwReserved;
+			this.wIDLFlags = wIDLFlags;
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "dwReserved", "wIDLFlags" });
+		}
+	}
+
+	public class ARRAYDESC extends Structure {
+		public static class ByReference extends ARRAYDESC implements
+				Structure.ByReference {
+		};
+
+		public TYPEDESC tdescElem;
+		public USHORT cDims;
+
+		public ARRAYDESC() {
+			super();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "tdescElem", "cDims" });
+		}
+	}
+
+	public class PARAMDESC extends Structure {
+		public static class ByReference extends PARAMDESC implements
+				Structure.ByReference {
+		};
+
+		public PARAMDESCEX.ByReference pparamdescex;
+		public USHORT wParamFlags;
+
+		public PARAMDESC() {
+			super();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays
+					.asList(new String[] { "pparamdescex", "wParamFlags" });
+		}
+	}
+
+	public class PARAMDESCEX extends Structure {
+		public static class ByReference extends PARAMDESCEX implements
+				Structure.ByReference {
+		};
+
+		public ULONG cBytes;
+		public VariantArg varDefaultValue;
+
+		public PARAMDESCEX() {
+			super();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "cBytes", "varDefaultValue" });
+		}
+	}
+
+	public static class HREFTYPE extends DWORD {
+		public HREFTYPE() {
+			super();
+		}
+
+		public HREFTYPE(long value) {
+			super(value);
 		}
 	}
 }

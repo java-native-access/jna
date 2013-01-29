@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 
 /**
  * Wrapper class for the ITypeInfo interface
@@ -20,14 +21,17 @@ import com.sun.jna.Pointer;
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class ITypeInfo extends IUnknown {
-
-	/**
-	 * Instantiates a new i type info.
-	 *
-	 * @param pvInstance the pv instance
-	 */
+	
+	public static class ByReference extends ITypeInfo implements
+			Structure.ByReference {
+	}
+	
+	public ITypeInfo() {
+	}
+	
 	public ITypeInfo(Pointer pvInstance) {
 		super(pvInstance);
 	}
-
+	
+	
 }

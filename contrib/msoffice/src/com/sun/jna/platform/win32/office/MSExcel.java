@@ -1,7 +1,7 @@
 package com.sun.jna.platform.win32.office;
 
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
-import com.sun.jna.platform.win32.OleAut32;
+import com.sun.jna.platform.win32.OAIdl.VARIANT_BOOL;
+import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
@@ -24,20 +24,20 @@ public class MSExcel extends COMObject {
 
 	public void setVisible(VARIANT_BOOL bVisible) throws COMException {
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		this.oleMethod(OleAut32.DISPATCH_PROPERTYPUT, result, this.iDispatch,
+		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, result, this.iDispatch,
 				"Visible", new VARIANT(bVisible));
 	}
 
 	public String getVersion() throws COMException {
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		this.oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this.iDispatch,
+		this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.iDispatch,
 				"Version");
 
 		return result.getValue().toString();
 	}
 
 	public HRESULT newExcelBook() throws COMException {
-		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null, getWorkbooks()
+		HRESULT hr = oleMethod(OleAuto.DISPATCH_METHOD, null, getWorkbooks()
 				.getIDispatch(), "Add");
 
 		return hr;
@@ -46,9 +46,9 @@ public class MSExcel extends COMObject {
 	public HRESULT openExcelBook(String filename, boolean bVisible)
 			throws COMException {
 		// OpenDocument
-		BSTR bstrFilename = OleAut32.INSTANCE.SysAllocString(filename);
+		BSTR bstrFilename = OleAuto.INSTANCE.SysAllocString(filename);
 		VARIANT varFilename = new VARIANT(bstrFilename);
-		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null, getWorkbooks()
+		HRESULT hr = oleMethod(OleAuto.DISPATCH_METHOD, null, getWorkbooks()
 				.getIDispatch(), "Open", varFilename);
 
 		return hr;
@@ -56,14 +56,14 @@ public class MSExcel extends COMObject {
 
 	public HRESULT closeActiveWorkbook(VARIANT_BOOL bSave) throws COMException {
 
-		HRESULT hr = oleMethod(OleAut32.DISPATCH_METHOD, null,
+		HRESULT hr = oleMethod(OleAuto.DISPATCH_METHOD, null,
 				getActiveWorkbook().getIDispatch(), "Close", new VARIANT(bSave));
 
 		return hr;
 	}
 
 	public HRESULT quit() throws COMException {
-		HRESULT hr = this.oleMethod(OleAut32.DISPATCH_METHOD, null,
+		HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, null,
 				this.iDispatch, "Quit");
 
 		COMUtils.SUCCEEDED(hr);
@@ -73,16 +73,16 @@ public class MSExcel extends COMObject {
 	public HRESULT insertValue(String range, String value) throws COMException {
 		HRESULT hr;
 
-		BSTR bstrRange = OleAut32.INSTANCE.SysAllocString(range);
+		BSTR bstrRange = OleAuto.INSTANCE.SysAllocString(range);
 		VARIANT varRange = new VARIANT(bstrRange);
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result, this
+		hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this
 				.getActiveSheet().getIDispatch(), "Range", varRange);
 		Range pRange = new Range((IDispatch) result.getValue());
 
-		BSTR bstrValue = OleAut32.INSTANCE.SysAllocString(value);
+		BSTR bstrValue = OleAuto.INSTANCE.SysAllocString(value);
 		VARIANT varText = new VARIANT(bstrValue);
-		hr = oleMethod(OleAut32.DISPATCH_PROPERTYPUT, null,
+		hr = oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null,
 				pRange.getIDispatch(), "Value", varText);
 
 		return hr;
@@ -90,7 +90,7 @@ public class MSExcel extends COMObject {
 
 	public Application getApplication() {
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		HRESULT hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result,
+		HRESULT hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
 				this.iDispatch, "Application");
 
 		COMUtils.SUCCEEDED(hr);
@@ -99,7 +99,7 @@ public class MSExcel extends COMObject {
 
 	public ActiveWorkbook getActiveWorkbook() {
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		HRESULT hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result,
+		HRESULT hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
 				this.iDispatch, "ActiveWorkbook");
 
 		COMUtils.SUCCEEDED(hr);
@@ -109,7 +109,7 @@ public class MSExcel extends COMObject {
 	public Workbooks getWorkbooks() {
 		// GetDocuments
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		HRESULT hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result,
+		HRESULT hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
 				this.iDispatch, "WorkBooks");
 
 		COMUtils.SUCCEEDED(hr);
@@ -118,7 +118,7 @@ public class MSExcel extends COMObject {
 
 	public ActiveSheet getActiveSheet() {
 		VARIANT.ByReference result = new VARIANT.ByReference();
-		HRESULT hr = oleMethod(OleAut32.DISPATCH_PROPERTYGET, result,
+		HRESULT hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
 				this.iDispatch, "ActiveSheet");
 
 		COMUtils.SUCCEEDED(hr);

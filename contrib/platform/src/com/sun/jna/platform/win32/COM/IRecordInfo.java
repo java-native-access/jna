@@ -13,11 +13,11 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WTypes.LPCOLESTR;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.ULONG;
@@ -42,8 +42,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Instantiates a new i record info.
-	 *
-	 * @param pvInstance the pv instance
+	 * 
+	 * @param pvInstance
+	 *            the pv instance
 	 */
 	public IRecordInfo(Pointer pvInstance) {
 		super(pvInstance);
@@ -51,8 +52,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Record init.
-	 *
-	 * @param pvNew the pv new
+	 * 
+	 * @param pvNew
+	 *            the pv new
 	 * @return the hresult
 	 */
 	public HRESULT RecordInit(/* [out] */PVOID pvNew) {
@@ -61,8 +63,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Record clear.
-	 *
-	 * @param pvExisting the pv existing
+	 * 
+	 * @param pvExisting
+	 *            the pv existing
 	 * @return the hresult
 	 */
 	public HRESULT RecordClear(
@@ -72,9 +75,11 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Record copy.
-	 *
-	 * @param pvExisting the pv existing
-	 * @param pvNew the pv new
+	 * 
+	 * @param pvExisting
+	 *            the pv existing
+	 * @param pvNew
+	 *            the pv new
 	 * @return the hresult
 	 */
 	public HRESULT RecordCopy(
@@ -85,8 +90,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Gets the guid.
-	 *
-	 * @param pguid the pguid
+	 * 
+	 * @param pguid
+	 *            the pguid
 	 * @return the hresult
 	 */
 	public HRESULT GetGuid(
@@ -96,8 +102,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Gets the name.
-	 *
-	 * @param pbstrName the pbstr name
+	 * 
+	 * @param pbstrName
+	 *            the pbstr name
 	 * @return the hresult
 	 */
 	public HRESULT GetName(
@@ -107,8 +114,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Gets the size.
-	 *
-	 * @param pcbSize the pcb size
+	 * 
+	 * @param pcbSize
+	 *            the pcb size
 	 * @return the hresult
 	 */
 	public HRESULT GetSize(
@@ -118,8 +126,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Gets the type info.
-	 *
-	 * @param ppTypeInfo the pp type info
+	 * 
+	 * @param ppTypeInfo
+	 *            the pp type info
 	 * @return the hresult
 	 */
 	public HRESULT GetTypeInfo(
@@ -129,31 +138,38 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Gets the field.
-	 *
-	 * @param pvData the pv data
-	 * @param szFieldName the sz field name
-	 * @param pvarField the pvar field
+	 * 
+	 * @param pvData
+	 *            the pv data
+	 * @param szFieldName
+	 *            the sz field name
+	 * @param pvarField
+	 *            the pvar field
 	 * @return the hresult
 	 */
 	public HRESULT GetField(
 	/* [in] */PVOID pvData,
-	/* [in] */LPCOLESTR szFieldName,
+	/* [in] */WString szFieldName,
 	/* [out] */VARIANT pvarField) {
 		return null;
 	}
 
 	/**
 	 * Gets the field no copy.
-	 *
-	 * @param pvData the pv data
-	 * @param szFieldName the sz field name
-	 * @param pvarField the pvar field
-	 * @param ppvDataCArray the ppv data c array
+	 * 
+	 * @param pvData
+	 *            the pv data
+	 * @param szFieldName
+	 *            the sz field name
+	 * @param pvarField
+	 *            the pvar field
+	 * @param ppvDataCArray
+	 *            the ppv data c array
 	 * @return the hresult
 	 */
 	public HRESULT GetFieldNoCopy(
 	/* [in] */PVOID pvData,
-	/* [in] */LPCOLESTR szFieldName,
+	/* [in] */WString szFieldName,
 	/* [out] */VARIANT pvarField,
 	/* [out] */PVOID ppvDataCArray) {
 		return null;
@@ -161,43 +177,53 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Put field.
-	 *
-	 * @param wFlags the w flags
-	 * @param pvData the pv data
-	 * @param szFieldName the sz field name
-	 * @param pvarField the pvar field
+	 * 
+	 * @param wFlags
+	 *            the w flags
+	 * @param pvData
+	 *            the pv data
+	 * @param szFieldName
+	 *            the sz field name
+	 * @param pvarField
+	 *            the pvar field
 	 * @return the hresult
 	 */
 	public HRESULT PutField(
 	/* [in] */ULONG wFlags,
 	/* [out][in] */PVOID pvData,
-	/* [in] */LPCOLESTR szFieldName,
+	/* [in] */WString szFieldName,
 	/* [in] */VARIANT pvarField) {
 		return null;
 	}
 
 	/**
 	 * Put field no copy.
-	 *
-	 * @param wFlags the w flags
-	 * @param pvData the pv data
-	 * @param szFieldName the sz field name
-	 * @param pvarField the pvar field
+	 * 
+	 * @param wFlags
+	 *            the w flags
+	 * @param pvData
+	 *            the pv data
+	 * @param szFieldName
+	 *            the sz field name
+	 * @param pvarField
+	 *            the pvar field
 	 * @return the hresult
 	 */
 	public HRESULT PutFieldNoCopy(
 	/* [in] */ULONG wFlags,
 	/* [out][in] */PVOID pvData,
-	/* [in] */LPCOLESTR szFieldName,
+	/* [in] */WString szFieldName,
 	/* [in] */VARIANT pvarField) {
 		return null;
 	}
 
 	/**
 	 * Gets the field names.
-	 *
-	 * @param pcNames the pc names
-	 * @param rgBstrNames the rg bstr names
+	 * 
+	 * @param pcNames
+	 *            the pc names
+	 * @param rgBstrNames
+	 *            the rg bstr names
 	 * @return the hresult
 	 */
 	public HRESULT GetFieldNames(
@@ -208,8 +234,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Checks if is matching type.
-	 *
-	 * @param pRecordInfo the record info
+	 * 
+	 * @param pRecordInfo
+	 *            the record info
 	 * @return the bool
 	 */
 	public BOOL IsMatchingType(
@@ -219,7 +246,7 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Record create.
-	 *
+	 * 
 	 * @return the pvoid
 	 */
 	public PVOID RecordCreate() {
@@ -228,9 +255,11 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Record create copy.
-	 *
-	 * @param pvSource the pv source
-	 * @param ppvDest the ppv dest
+	 * 
+	 * @param pvSource
+	 *            the pv source
+	 * @param ppvDest
+	 *            the ppv dest
 	 * @return the hresult
 	 */
 	public HRESULT RecordCreateCopy(
@@ -241,8 +270,9 @@ public class IRecordInfo extends IUnknown {
 
 	/**
 	 * Record destroy.
-	 *
-	 * @param pvRecord the pv record
+	 * 
+	 * @param pvRecord
+	 *            the pv record
 	 * @return the hresult
 	 */
 	public HRESULT RecordDestroy(

@@ -18,10 +18,11 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
-import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
-import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
+import com.sun.jna.platform.win32.OAIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OAIdl.SAFEARRAY;
+import com.sun.jna.platform.win32.OAIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes.BSTR;
@@ -30,6 +31,7 @@ import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.COM.ITypeLib;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -40,7 +42,7 @@ import com.sun.jna.win32.W32APIOptions;
  * 
  * @author scott.palmer
  */
-public interface OleAut32 extends StdCallLibrary {
+public interface OleAuto extends StdCallLibrary {
 
 	/* Flags for IDispatch::Invoke */
 	/** The Constant DISPATCH_METHOD. */
@@ -95,8 +97,8 @@ public interface OleAut32 extends StdCallLibrary {
 	public final static int FADF_RESERVED = 0xF008;
 
 	/** The instance. */
-	OleAut32 INSTANCE = (OleAut32) Native.loadLibrary("OleAut32",
-			OleAut32.class, W32APIOptions.UNICODE_OPTIONS);
+	OleAuto INSTANCE = (OleAuto) Native.loadLibrary("OleAut32",
+			OleAuto.class, W32APIOptions.UNICODE_OPTIONS);
 
 	/**
 	 * This function allocates a new string and copies the passed string into
@@ -412,8 +414,7 @@ public interface OleAut32 extends StdCallLibrary {
 	 * @param pptlib
 	 *            The loaded type library.
 	 * 
-	 *            This function can return one of these values:
-	 *            S_OK Success.
+	 *            This function can return one of these values: S_OK Success.
 	 * 
 	 *            E_INVALIDARG One or more of the arguments is not valid.
 	 * 
@@ -436,4 +437,37 @@ public interface OleAut32 extends StdCallLibrary {
 	public HRESULT LoadRegTypeLib(GUID rguid, int wVerMajor, int wVerMinor,
 			LCID lcid, PointerByReference pptlib);
 
+	/**
+	 * Loads and registers a type library.
+	 * 
+	 * @param szFile
+	 *            The name of the file from which the method should attempt to
+	 *            load a type library.
+	 * 
+	 * @param pptlib
+	 *            The loaded type library. Return value
+	 * 
+	 *            This function can return one of these values.
+	 * 
+	 *            S_OK Success.
+	 * 
+	 *            E_INVALIDARG One or more of the arguments is not valid.
+	 * 
+	 *            E_OUTOFMEMORY Insufficient memory to complete the operation.
+	 * 
+	 *            TYPE_E_IOERROR The function could not write to the file.
+	 * 
+	 *            TYPE_E_INVALIDSTATE The type library could not be opened.
+	 * 
+	 *            TYPE_E_INVDATAREAD The function could not read from the file.
+	 * 
+	 *            TYPE_E_UNSUPFORMAT The type library has an older format.
+	 * 
+	 *            TYPE_E_UNKNOWNLCID The LCID could not be found in the
+	 *            OLE-supported DLLs.
+	 * 
+	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
+	 *            loaded.
+	 */
+	HRESULT LoadTypeLib(WString szFile, ITypeLib pptlib);
 }
