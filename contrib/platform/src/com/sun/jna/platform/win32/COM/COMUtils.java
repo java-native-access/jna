@@ -1,6 +1,6 @@
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.platform.win32.OAIdl.EXCEPINFO;
+import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
@@ -106,7 +106,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Succeeded.
-	 * 
+	 *
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -117,7 +117,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Succeeded.
-	 * 
+	 *
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -131,7 +131,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Failed.
-	 * 
+	 *
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -142,7 +142,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Failed.
-	 * 
+	 *
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -156,7 +156,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Throw new exception.
-	 * 
+	 *
 	 * @param hr
 	 *            the hr
 	 */
@@ -166,7 +166,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Throw new exception.
-	 * 
+	 *
 	 * @param hr
 	 *            the hr
 	 * @param pExcepInfo
@@ -234,7 +234,7 @@ public abstract class COMUtils {
 					"The method is not connected to the Dispatch pointer!");
 		default:
 			throw new COMException("Unexpected COM error code : "
-					+ hr.intValue());
+					+ toHexStr(hr));
 		}
 	}
 
@@ -262,9 +262,16 @@ public abstract class COMUtils {
 		case WinError.TYPE_E_CANTLOADLIBRARY:
 			throw new COMException(
 					"The type library or DLL could not be loaded.");
+		case WinError.TYPE_E_ELEMENTNOTFOUND:
+			throw new COMException(
+					"No type description was found in the library with the specified GUID.");
 		default:
 			throw new COMException("Unexpected Typelib error code : "
-					+ hr.intValue());
+					+ toHexStr(hr));
 		}
+	}
+
+	private static String toHexStr(HRESULT hr) {
+		return "0x" + Integer.toHexString(hr.intValue()).toUpperCase();
 	}
 }

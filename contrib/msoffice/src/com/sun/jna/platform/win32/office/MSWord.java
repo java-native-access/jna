@@ -1,6 +1,6 @@
 package com.sun.jna.platform.win32.office;
 
-import com.sun.jna.platform.win32.OAIdl.VARIANT_BOOL;
+import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;

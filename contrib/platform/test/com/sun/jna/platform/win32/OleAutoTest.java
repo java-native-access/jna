@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.OAIdl.SAFEARRAY;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.LCID;

@@ -1,14 +1,14 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32.COM;
 
@@ -17,8 +17,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OAIdl.MEMBERIDbyReference;
-import com.sun.jna.platform.win32.OAIdl.TLIBATTR;
+import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
@@ -27,10 +27,11 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Wrapper class for the ITypeLib interface
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class ITypeLib extends IUnknown {
@@ -56,11 +57,13 @@ public class ITypeLib extends IUnknown {
 
 	public HRESULT GetTypeInfo(
 	/* [in] */UINT index,
-	/* [out] */ITypeInfo.ByReference ppTInfo) {
+	/* [out] */ITypeInfo.ByReference pTInfo) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(16));
+		PointerByReference ppTInfo = new PointerByReference();
 		int hr = func.invokeInt(new Object[] { this.getPointer(), index, ppTInfo });
+		pTInfo.setPointer(ppTInfo.getValue());
 
 		return new HRESULT(hr);
 	}
@@ -79,12 +82,13 @@ public class ITypeLib extends IUnknown {
 
 	public HRESULT GetTypeInfoOfGuid(
 	/* [in] */GUID guid,
-	/* [out] */ITypeInfo.ByReference ppTinfo) {
+	/* [out] */ITypeInfo.ByReference pTinfo) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(24));
-		int hr = func
-				.invokeInt(new Object[] { this.getPointer(), guid, ppTinfo });
+		PointerByReference ppTinfo = new PointerByReference();
+		int hr = func.invokeInt(new Object[] { this.getPointer(), guid, ppTinfo });
+		pTinfo.setPointer(ppTinfo.getPointer());
 
 		return new HRESULT(hr);
 	}
@@ -100,11 +104,13 @@ public class ITypeLib extends IUnknown {
 	}
 
 	public HRESULT GetTypeComp(
-	/* [out] */ITypeComp.ByReference ppTComp) {
+	/* [out] */ITypeComp.ByReference pTComp) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(32));
-		int hr = func.invokeInt(new Object[] { this.getPointer() });
+		PointerByReference ppTComp = new PointerByReference();
+		int hr = func.invokeInt(new Object[] { this.getPointer(), ppTComp });
+		pTComp.setPointer(ppTComp.getPointer());
 
 		return new HRESULT(hr);
 	}

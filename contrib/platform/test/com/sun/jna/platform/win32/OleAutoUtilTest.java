@@ -14,7 +14,7 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.platform.win32.OAIdl.SAFEARRAY;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.COM.COMException;

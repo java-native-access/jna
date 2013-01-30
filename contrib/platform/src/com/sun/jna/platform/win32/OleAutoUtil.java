@@ -12,8 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.platform.win32.OAIdl.SAFEARRAY;
-import com.sun.jna.platform.win32.OAIdl.SAFEARRAYBOUND;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;

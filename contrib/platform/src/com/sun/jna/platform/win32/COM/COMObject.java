@@ -17,10 +17,10 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.OAIdl;
-import com.sun.jna.platform.win32.OAIdl.DISPID;
-import com.sun.jna.platform.win32.OAIdl.DISPIDbyReference;
-import com.sun.jna.platform.win32.OAIdl.EXCEPINFO;
+import com.sun.jna.platform.win32.OaIdl;
+import com.sun.jna.platform.win32.OaIdl.DISPID;
+import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
@@ -141,7 +141,7 @@ public class COMObject {
 		if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
 			dp.cNamedArgs = new UINT(pArgs.length);
 			dp.rgdispidNamedArgs = new DISPIDbyReference(
-					OAIdl.DISPID_PROPERTYPUT);
+					OaIdl.DISPID_PROPERTYPUT);
 		}
 
 		// Build DISPPARAMS

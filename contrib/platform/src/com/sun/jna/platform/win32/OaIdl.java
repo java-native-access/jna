@@ -20,6 +20,7 @@ import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
@@ -36,7 +37,7 @@ import com.sun.jna.ptr.ByReference;
 /**
  * The Interface OaIdl.
  */
-public interface OAIdl {
+public interface OaIdl {
 
 	/**
 	 * The Class EXCEPINFO.
@@ -85,7 +86,7 @@ public interface OAIdl {
 
 		/**
 		 * Instantiates a new excepinfo.
-		 * 
+		 *
 		 * @param p
 		 *            the p
 		 */
@@ -95,7 +96,7 @@ public interface OAIdl {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override
@@ -231,7 +232,7 @@ public interface OAIdl {
 			super(value);
 		}
 	}
-	
+
 	public class MEMBERIDbyReference extends ByReference {
 		public MEMBERIDbyReference() {
 			this(new MEMBERID(0));
@@ -249,7 +250,7 @@ public interface OAIdl {
 		public MEMBERID getValue() {
 			return new MEMBERID(getPointer().getInt(0));
 		}
-	}	
+	}
 
 	// The Collect property. You use this property if the method you are calling
 	// through Invoke is an accessor function.
@@ -1093,4 +1094,63 @@ public interface OAIdl {
 			super(value);
 		}
 	}
+
+	public class HREFTYPEbyReference extends DWORDbyReference {
+		public HREFTYPEbyReference() {
+			this(new HREFTYPE(0));
+		}
+
+		public HREFTYPEbyReference(DWORD value) {
+			super(value);
+		}
+
+		public void setValue(HREFTYPE value) {
+			getPointer().setInt(0, value.intValue());
+		}
+
+		public HREFTYPE getValue() {
+			return new HREFTYPE(getPointer().getInt(0));
+		}
+	}
+
+	public class TYPEATTR extends Structure {
+		public static class ByReference extends TYPEATTR implements
+				Structure.ByReference {
+		};
+
+		public GUID guid;
+		public LCID lcid;
+		public DWORD dwReserved;
+		public MEMBERID memidConstructor;
+		public MEMBERID memidDestructor;
+		public WString lpstrSchema;
+		public ULONG cbSizeInstance;
+		public TYPEKIND typekind;
+		public WORD cFuncs;
+		public WORD cVars;
+		public WORD cImplTypes;
+		public WORD cbSizeVft;
+		public WORD cbAlignment;
+		public WORD wTypeFlags;
+		public WORD wMajorVerNum;
+		public WORD wMinorVerNum;
+		public TYPEDESC tdescAlias;
+		public IDLDESC idldescType;
+
+		public TYPEATTR() {
+			super();
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays
+					.asList(new String[] { "guid", "lcid", "dwReserved",
+							"memidConstructor", "memidDestructor",
+							"lpstrSchema", "cbSizeInstance", "typekind",
+							"cFuncs", "cVars", "cImplTypes", "cbSizeVft",
+							"cbAlignment", "wTypeFlags", "wMajorVerNum",
+							"wMinorVerNum", "tdescAlias", "idldescType" });
+		}
+	}
+
 }
