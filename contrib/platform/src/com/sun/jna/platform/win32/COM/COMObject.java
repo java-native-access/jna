@@ -1,14 +1,14 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32.COM;
 
@@ -35,7 +35,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Helper class to provide basic COM support.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class COMObject {
@@ -59,7 +59,7 @@ public class COMObject {
 
 	/**
 	 * Instantiates a new cOM object.
-	 * 
+	 *
 	 * @param progId
 	 *            the prog id
 	 * @param useActiveInstance
@@ -116,12 +116,10 @@ public class COMObject {
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-			IDispatch pDisp, String name, VARIANT[] pArgs)
-			throws COMException {
+			IDispatch pDisp, String name, VARIANT[] pArgs) throws COMException {
 
 		if (pDisp == null)
-			throw new COMException(
-					"pDisp (IDispatch) parameter is null!");
+			throw new COMException("pDisp (IDispatch) parameter is null!");
 
 		WString[] ptName = new WString[] { new WString(name) };
 		DISPPARAMS dp = new DISPPARAMS();
@@ -163,8 +161,7 @@ public class COMObject {
 	}
 
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-			IDispatch pDisp, String name, VARIANT pArg)
-			throws COMException {
+			IDispatch pDisp, String name, VARIANT pArg) throws COMException {
 
 		return this.oleMethod(nType, pvResult, pDisp, name,
 				new VARIANT[] { pArg });
@@ -184,16 +181,16 @@ public class COMObject {
 		return iDispatch;
 	}
 
-	public void setIDispatch(IDispatch iDispatch) {
-		this.iDispatch = iDispatch;
-	}
-
 	public PointerByReference getIDispatchPointer() {
 		return pDispatch;
 	}
 
-	public void setIDispatchPointer(PointerByReference pDispatch) {
-		this.pDispatch = pDispatch;
+	public IUnknown getIUnknown() {
+		return iUnknown;
+	}
+
+	public PointerByReference getIUnknownPointer() {
+		return pUnknown;
 	}
 
 	public void release() {

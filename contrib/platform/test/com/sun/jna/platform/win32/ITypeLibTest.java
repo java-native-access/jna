@@ -53,6 +53,7 @@ public class ITypeLibTest extends TestCase {
 
 		// get user default lcid
 		LCID lcid = Kernel32.INSTANCE.GetUserDefaultLCID();
+		// create a IUnknown pointer
 		PointerByReference pShellTypeLib = new PointerByReference();
 		// load typelib
 		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 1, 0, lcid, pShellTypeLib);

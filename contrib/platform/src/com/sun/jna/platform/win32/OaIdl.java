@@ -338,7 +338,7 @@ public interface OaIdl {
 	/** Bits reserved for future use. */
 	public final static int FADF_RESERVED = 0xF008;
 
-	public static interface TYPEKIND {
+	public static class TYPEKIND extends IntegerType{
 		// / <i>native declaration : line 4</i>
 		public static final int TKIND_ENUM = 0;
 		// / <i>native declaration : line 5</i>
@@ -357,6 +357,10 @@ public interface OaIdl {
 		public static final int TKIND_UNION = TYPEKIND.TKIND_ALIAS + 1;
 		// / <i>native declaration : line 12</i>
 		public static final int TKIND_MAX = TYPEKIND.TKIND_UNION + 1;
+
+		public TYPEKIND() {
+			super(4);
+		}
 	};
 
 	public static class DESCKIND {
@@ -939,7 +943,11 @@ public interface OaIdl {
 			public HREFTYPE hreftype;
 
 			public _Union() {
-				super();
+				setType(TYPEDESC.class);
+			}
+
+			public _Union(Pointer pointer) {
+				super(pointer);
 			}
 
 			/**
@@ -974,15 +982,13 @@ public interface OaIdl {
 				this.lptdesc = lptdesc;
 				setType(TYPEDESC.class);
 			}
-
-			public static class ByReference extends _Union implements
-					Structure.ByReference {
-
-			};
 		};
 
 		public TYPEDESC() {
-			super();
+		}
+
+		public TYPEDESC(Pointer pointer) {
+			super(pointer);
 		}
 
 		@Override
@@ -1138,7 +1144,11 @@ public interface OaIdl {
 		public IDLDESC idldescType;
 
 		public TYPEATTR() {
-			super();
+		}
+
+		public TYPEATTR(Pointer pointer) {
+			super(pointer);
+			this.read();
 		}
 
 		@Override
