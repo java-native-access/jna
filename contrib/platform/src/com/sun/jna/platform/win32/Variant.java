@@ -335,6 +335,7 @@ public interface Variant {
 				}
 
 				public __VARIANT() {
+					super();
 					this.read();
 				}
 
@@ -362,7 +363,7 @@ public interface Variant {
 
 		public VariantArg() {
 		}
-		
+
 		public VariantArg(VARIANT[] variantArg) {
 			this.variantArg = variantArg;
 		}

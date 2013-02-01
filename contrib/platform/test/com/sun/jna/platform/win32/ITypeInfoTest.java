@@ -42,9 +42,9 @@ public class ITypeInfoTest extends TestCase {
 		Native.setProtected(true);
 	}
 
-	public ITypeInfo getShellTypeInfo() {
+	public ITypeInfo getTypeInfo() {
 		// create a shell COM object
-		COMObject shellObj = new COMObject("Word.Application", false);
+		COMObject shellObj = new COMObject("Word.Application", true);
 		// get user default lcid
 		LCID lcid = Kernel32.INSTANCE.GetUserDefaultLCID();
 		// create a IUnknown pointer
@@ -56,8 +56,8 @@ public class ITypeInfoTest extends TestCase {
 	}
 
 	public void testGetTypeAttr() {
-		ITypeInfo typeInfo = getShellTypeInfo();
-		TYPEATTR.ByReference pTypeAttr = new TYPEATTR.ByReference();
+		ITypeInfo typeInfo = getTypeInfo();
+		TYPEATTR pTypeAttr = new TYPEATTR();
 		HRESULT hr = typeInfo.GetTypeAttr(pTypeAttr);
 
 		COMUtils.checkTypeLibRC(hr);

@@ -338,7 +338,7 @@ public interface OaIdl {
 	/** Bits reserved for future use. */
 	public final static int FADF_RESERVED = 0xF008;
 
-	public static class TYPEKIND extends IntegerType{
+	public static class TYPEKIND extends IntegerType {
 		// / <i>native declaration : line 4</i>
 		public static final int TKIND_ENUM = 0;
 		// / <i>native declaration : line 5</i>
@@ -915,17 +915,13 @@ public interface OaIdl {
 				Structure.ByReference {
 		};
 
-		/**
-		 * [switch_is][switch_type]<br>
-		 * C type : DUMMYUNIONNAMEUnion
-		 */
-		public _Union union;
+		public _TYPEDESC _typeDesc;
 		// / C type : VARTYPE
 		public VARTYPE vt;
 
 		// / <i>native declaration : line 4</i>
 		// / <i>native declaration : line 4</i>
-		public static class _Union extends Union {
+		public static class _TYPEDESC extends Union {
 			/**
 			 * [case()]<br>
 			 * C type : tagTYPEDESC*
@@ -942,11 +938,12 @@ public interface OaIdl {
 			 */
 			public HREFTYPE hreftype;
 
-			public _Union() {
+			public _TYPEDESC() {
+				super();
 				setType(TYPEDESC.class);
 			}
 
-			public _Union(Pointer pointer) {
+			public _TYPEDESC(Pointer pointer) {
 				super(pointer);
 			}
 
@@ -955,7 +952,7 @@ public interface OaIdl {
 			 *            [case()]<br>
 			 *            C type : tagARRAYDESC*
 			 */
-			public _Union(ARRAYDESC lpadesc) {
+			public _TYPEDESC(ARRAYDESC lpadesc) {
 				super();
 				this.lpadesc = lpadesc;
 				setType(ARRAYDESC.class);
@@ -966,7 +963,7 @@ public interface OaIdl {
 			 *            [case()]<br>
 			 *            C type : HREFTYPE
 			 */
-			public _Union(HREFTYPE hreftype) {
+			public _TYPEDESC(HREFTYPE hreftype) {
 				super();
 				this.hreftype = hreftype;
 				setType(HREFTYPE.class);
@@ -977,7 +974,7 @@ public interface OaIdl {
 			 *            [case()]<br>
 			 *            C type : tagTYPEDESC*
 			 */
-			public _Union(TYPEDESC lptdesc) {
+			public _TYPEDESC(TYPEDESC.ByReference lptdesc) {
 				super();
 				this.lptdesc = lptdesc;
 				setType(TYPEDESC.class);
@@ -991,11 +988,6 @@ public interface OaIdl {
 			super(pointer);
 		}
 
-		@Override
-		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "union", "vt" });
-		}
-
 		/**
 		 * @param DUMMYUNIONNAME
 		 *            [switch_is][switch_type]<br>
@@ -1003,10 +995,15 @@ public interface OaIdl {
 		 * @param vt
 		 *            C type : VARTYPE
 		 */
-		public TYPEDESC(_Union union, VARTYPE vt) {
+		public TYPEDESC(_TYPEDESC _typeDesc, VARTYPE vt) {
 			super();
-			this.union = union;
+			this._typeDesc = _typeDesc;
 			this.vt = vt;
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "_typeDesc", "vt" });
 		}
 	}
 
@@ -1041,7 +1038,8 @@ public interface OaIdl {
 				Structure.ByReference {
 		};
 
-		public TYPEDESC tdescElem;
+		public TYPEDESC.ByReference tdescElem;
+
 		public USHORT cDims;
 
 		public ARRAYDESC() {

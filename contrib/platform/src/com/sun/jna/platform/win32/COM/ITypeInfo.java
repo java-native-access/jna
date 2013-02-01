@@ -58,7 +58,7 @@ public class ITypeInfo extends IUnknown {
 	}
 
 	public HRESULT GetTypeAttr(
-	/* [out] */TYPEATTR.ByReference pTypeAttr) {
+	/* [out] */TYPEATTR pTypeAttr) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(12));
@@ -72,7 +72,9 @@ public class ITypeInfo extends IUnknown {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(16));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), pTComp });
+		PointerByReference ppTComp = new PointerByReference();
+		int hr = func.invokeInt(new Object[] { this.getPointer(), ppTComp });
+		pTComp.setPointer(ppTComp.getValue());
 
 		return new HRESULT(hr);
 	}
@@ -254,7 +256,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */UINTbyReference pIndex) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(68));
+		Function func = Function.getFunction(vptr.getPointer(72));
 		PointerByReference ppTLib = new PointerByReference();
 		int hr = func.invokeInt(new Object[] { this.getPointer(), ppTLib,
 				pIndex });
@@ -267,7 +269,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */TYPEATTR pTypeAttr) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(68));
+		Function func = Function.getFunction(vptr.getPointer(76));
 		func.invokeInt(new Object[] { this.getPointer(), pTypeAttr });
 	}
 
@@ -275,7 +277,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */FUNCDESC pFuncDesc) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(68));
+		Function func = Function.getFunction(vptr.getPointer(80));
 		func.invokeInt(new Object[] { this.getPointer(), pFuncDesc });
 	}
 
@@ -283,7 +285,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */VARDESC pVarDesc) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(68));
+		Function func = Function.getFunction(vptr.getPointer(84));
 		func.invokeInt(new Object[] { this.getPointer(), pVarDesc });
 	}
 }
