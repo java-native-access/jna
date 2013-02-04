@@ -57,7 +57,7 @@ public class ITypeInfoTest extends TestCase {
 
 	public void testGetTypeAttr() {
 		ITypeInfo typeInfo = getTypeInfo();
-		TYPEATTR pTypeAttr = new TYPEATTR();
+		TYPEATTR.ByReference pTypeAttr = new TYPEATTR.ByReference();
 		HRESULT hr = typeInfo.GetTypeAttr(pTypeAttr);
 
 		COMUtils.checkTypeLibRC(hr);

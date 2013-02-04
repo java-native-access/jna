@@ -916,68 +916,44 @@ public interface OaIdl {
 		};
 
 		public _TYPEDESC _typeDesc;
-		// / C type : VARTYPE
+
 		public VARTYPE vt;
 
-		// / <i>native declaration : line 4</i>
-		// / <i>native declaration : line 4</i>
 		public static class _TYPEDESC extends Union {
-			/**
-			 * [case()]<br>
-			 * C type : tagTYPEDESC*
-			 */
-			public TYPEDESC lptdesc;
-			/**
-			 * [case()]<br>
-			 * C type : tagARRAYDESC*
-			 */
-			public ARRAYDESC lpadesc;
-			/**
-			 * [case()]<br>
-			 * C type : HREFTYPE
-			 */
-			public HREFTYPE hreftype;
+
+			public TYPEDESC.ByReference lptdesc;
+
+			public ARRAYDESC.ByReference lpadesc;
+
+			public HREFTYPEbyReference hreftype;
 
 			public _TYPEDESC() {
 				super();
-				setType(TYPEDESC.class);
+				setType("lptdesc");
+				this.read();
 			}
 
 			public _TYPEDESC(Pointer pointer) {
 				super(pointer);
+				this.read();
 			}
 
-			/**
-			 * @param lpadesc
-			 *            [case()]<br>
-			 *            C type : tagARRAYDESC*
-			 */
-			public _TYPEDESC(ARRAYDESC lpadesc) {
+			public _TYPEDESC(ARRAYDESC.ByReference lpadesc) {
 				super();
 				this.lpadesc = lpadesc;
-				setType(ARRAYDESC.class);
+				setType("lpadesc");
 			}
 
-			/**
-			 * @param hreftype
-			 *            [case()]<br>
-			 *            C type : HREFTYPE
-			 */
-			public _TYPEDESC(HREFTYPE hreftype) {
+			public _TYPEDESC(HREFTYPEbyReference hreftype) {
 				super();
 				this.hreftype = hreftype;
-				setType(HREFTYPE.class);
+				setType("hreftype");
 			}
 
-			/**
-			 * @param lptdesc
-			 *            [case()]<br>
-			 *            C type : tagTYPEDESC*
-			 */
 			public _TYPEDESC(TYPEDESC.ByReference lptdesc) {
 				super();
 				this.lptdesc = lptdesc;
-				setType(TYPEDESC.class);
+				setType("lptdesc");
 			}
 		};
 
@@ -988,13 +964,6 @@ public interface OaIdl {
 			super(pointer);
 		}
 
-		/**
-		 * @param DUMMYUNIONNAME
-		 *            [switch_is][switch_type]<br>
-		 *            C type : DUMMYUNIONNAMEUnion<br>
-		 * @param vt
-		 *            C type : VARTYPE
-		 */
 		public TYPEDESC(_TYPEDESC _typeDesc, VARTYPE vt) {
 			super();
 			this._typeDesc = _typeDesc;
@@ -1120,6 +1089,13 @@ public interface OaIdl {
 	public class TYPEATTR extends Structure {
 		public static class ByReference extends TYPEATTR implements
 				Structure.ByReference {
+			
+			public ByReference() {
+			}
+			
+			public ByReference(Pointer memory) {
+				super(memory);
+			}
 		};
 
 		public GUID guid;
