@@ -14,3 +14,35 @@ Cross-platform functions and structures are implemented in `com.sun.jna.platform
 * `KeyboardUtils`: a cross-platform set of keyboard functions, such as finding out whether a key is pressed
 * `WindowUtils`: a cross-platform set of window functions, providing non-rectangular shaped and transparent windows.
 
+
+COM support
+===========
+
+late-time-binding
+-----------------
+
+JNA includes basic Microsoft COM support in the package `com.sun.jna.platform.win32.COM.*`.
+The COM support is being implemented with late-time-binding, vtable support is not yet available.
+The straightforward approach is to extend the class `COMObject.class` as base class for all COM enabled java applications.
+
+* `COMObject(String progId, boolean useActiveInstance)`: first parameter describes the `ProgID` (e.g. WinWord -> `Word.Application`), second parameter if a current running instance should be used.
+
+* `COMObject.oleMethod`: provides the possability to call any kind of COM method like `Properties` and `Methods`. The 'oleMethod' should be used to create a COM method in the custom java wrapper, 
+
+e.g. (part of the MSWord sample)   
+`this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, result, this.iDispatch, "Visible", new VARIANT(bVisible));`
+
+* `ITypeLib.java`: a wrapper for a `TypeLib` definition
+* `IUnknown.java`: a wrapper for the `IUnknown` interface
+* COMException.java: used as exception 
+* `COMObject.java`:  base class for all COM enabled applications
+* `COMUtils.java`: utility class
+* `IDispatch.java`:  a wrapper for the `IDispatch` interface
+* `IRecordInfo.java`:  a wrapper for the `IRecordInfo` interface
+* `ITypeComp.java`:  a wrapper for the `ITypeComp` interface
+* `ITypeInfo.java`:  a wrapper for the `ITypeInfo` interface, which describes a COM interface itself
+
+
+Typelib parsing
+---------------
+
