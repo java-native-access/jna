@@ -1,8 +1,13 @@
 package com.sun.jna.platform.win32.COM;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.WinError;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.WinReg;
+import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 
 // TODO: Auto-generated Javadoc
@@ -269,6 +274,58 @@ public abstract class COMUtils {
 			throw new COMException("Unexpected Typelib error code : "
 					+ toHexStr(hr));
 		}
+	}
+
+	public static String getAllProgIDsOnSystem() {
+		String result = "";
+		int rc = 0;
+
+		String subKey = "CLSID";
+		HKEYByReference phkResult = new HKEYByReference();
+		rc = Advapi32.INSTANCE.RegOpenKeyEx(WinReg.HKEY_CLASSES_ROOT, "CLSID",
+				0, WinNT.KEY_READ, phkResult);
+
+		IntByReference lpcSubKeys = new IntByReference();
+		rc = Advapi32.INSTANCE.RegQueryInfoKey(phkResult.getValue(), null,
+				null, null, lpcSubKeys, null, null, null, null, null,
+				new IntByReference(WinNT.KEY_READ), null);
+
+		for (int i = 1; i < lpcSubKeys.getValue(); i++) {
+			char[] lpName = new char[WinNT.MAX_PATH];
+			IntByReference lpcClass = new IntByReference(WinNT.MAX_PATH);
+
+			rc = Advapi32.INSTANCE.RegEnumKeyEx(phkResult.getValue(), i,
+					lpName, lpcClass, null, null, null, null);
+			subKey = Native.toString(lpName);
+
+			HKEYByReference phkResult2 = new HKEYByReference();
+			rc = Advapi32.INSTANCE.RegOpenKeyEx(phkResult.getValue(), subKey,
+					0, WinNT.KEY_READ, phkResult2);
+
+			for (int y = 0; y < 2; y++) {
+				char[] lpName2 = new char[WinNT.MAX_PATH];
+				IntByReference lpcClass2 = new IntByReference(WinNT.MAX_PATH);
+				rc = Advapi32.INSTANCE.RegEnumKeyEx(phkResult2.getValue(), 1,
+						lpName2, lpcClass2, null, null, null, null);
+				String subKey2 = Native.toString(lpName2);
+
+				if(subKey2.equals("InprocServer32")) {
+
+				}else if(subKey2.equals("ProgID")) {
+					HKEYByReference phkResult3 = new HKEYByReference();
+					rc = Advapi32.INSTANCE.RegOpenKeyEx(phkResult2.getValue(), subKey2,
+							0, WinNT.KEY_READ, phkResult3);
+
+					byte[] lpData = new byte[WinNT.MAX_PATH];
+					IntByReference lpcbData = new IntByReference();
+					rc = Advapi32.INSTANCE.RegQueryValueEx(phkResult3.getValue(), null, 0, null, lpData, lpcbData);
+					result += Native.toString(lpData) + "\n";
+				}
+
+			}
+		}
+
+		return result;
 	}
 
 	private static String toHexStr(HRESULT hr) {

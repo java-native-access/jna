@@ -64,7 +64,7 @@ public class ITypeInfo extends IUnknown {
 		Function func = Function.getFunction(vptr.getPointer(12));
 		int hr = func.invokeInt(new Object[] { this.getPointer(), pTypeAttr });
 		pTypeAttr.read();
-		
+
 		return new HRESULT(hr);
 	}
 
@@ -106,13 +106,13 @@ public class ITypeInfo extends IUnknown {
 
 	public/* [local] */HRESULT GetNames(
 	/* [in] */MEMBERID memid,
-	/* [length_is][size_is][out] */BSTR rgBstrNames,
+	/* [length_is][size_is][out] */BSTR.ByReference rgBstrNames,
 	/* [in] */UINT cMaxNames,
 	/* [out] */UINTbyReference pcNames) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(28));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), cMaxNames,
+		int hr = func.invokeInt(new Object[] { this.getPointer(), memid, rgBstrNames, cMaxNames,
 				pcNames });
 
 		return new HRESULT(hr);

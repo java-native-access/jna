@@ -850,7 +850,7 @@ public interface OaIdl {
 		}
 	}
 
-	public static interface FUNCKIND {
+	public static class FUNCKIND {
 		// / <i>native declaration : line 20</i>
 		public static final int FUNC_VIRTUAL = 0;
 		// / <i>native declaration : line 21</i>
@@ -863,18 +863,37 @@ public interface OaIdl {
 		public static final int FUNC_DISPATCH = FUNC_STATIC + 1;
 	};
 
-	public static interface INVOKEKIND {
+	public static class INVOKEKIND extends Structure {
+		public static class ByReference extends INVOKEKIND implements
+				Structure.ByReference {
+		};
+
 		// / <i>native declaration : line 30</i>
-		public static final int INVOKE_FUNC = 1;
+		public static final INVOKEKIND INVOKE_FUNC = new INVOKEKIND(1);
 		// / <i>native declaration : line 31</i>
-		public static final int INVOKE_PROPERTYGET = 2;
+		public static final INVOKEKIND INVOKE_PROPERTYGET = new INVOKEKIND(2);
 		// / <i>native declaration : line 32</i>
-		public static final int INVOKE_PROPERTYPUT = 4;
+		public static final INVOKEKIND INVOKE_PROPERTYPUT = new INVOKEKIND(4);
 		// / <i>native declaration : line 33</i>
-		public static final int INVOKE_PROPERTYPUTREF = 8;
+		public static final INVOKEKIND INVOKE_PROPERTYPUTREF = new INVOKEKIND(8);
+
+		public int value;
+
+		public INVOKEKIND() {
+		}
+
+		public INVOKEKIND(int value) {
+			this.value = value;
+
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
+		}
 	};
 
-	public static interface CALLCONV {
+	public static class CALLCONV {
 		// / <i>native declaration : line 4</i>
 		public static final int CC_FASTCALL = 0;
 		// / <i>native declaration : line 5</i>
@@ -899,7 +918,7 @@ public interface OaIdl {
 		public static final int CC_MAX = CALLCONV.CC_MPWPASCAL + 1;
 	};
 
-	public static interface VARKIND {
+	public static class VARKIND {
 		// / <i>native declaration : line 4</i>
 		public static final int VAR_PERINSTANCE = 0;
 		// / <i>native declaration : line 5</i>
@@ -1089,10 +1108,10 @@ public interface OaIdl {
 	public class TYPEATTR extends Structure {
 		public static class ByReference extends TYPEATTR implements
 				Structure.ByReference {
-			
+
 			public ByReference() {
 			}
-			
+
 			public ByReference(Pointer memory) {
 				super(memory);
 			}
