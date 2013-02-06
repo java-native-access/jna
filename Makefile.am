@@ -99,6 +99,9 @@ noinst_LTLIBRARIES = libffi_convenience.la
 libffi_la_SOURCES = src/prep_cif.c src/types.c \
 		src/raw_api.c src/java_raw_api.c src/closures.c
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libffi.pc
+
 nodist_libffi_la_SOURCES =
 
 if FFI_DEBUG
