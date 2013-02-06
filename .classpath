@@ -6,5 +6,6 @@
 	<classpathentry kind="src" output="build.eclipse/test-classes" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="C:/GitHub/jna-3.5.1.jar"/>
 	<classpathentry kind="output" path="build.eclipse/classes"/>
 </classpath>
