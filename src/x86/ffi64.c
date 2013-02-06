@@ -484,8 +484,25 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 		{
 		case X86_64_INTEGER_CLASS:
 		case X86_64_INTEGERSI_CLASS:
-		  reg_args->gpr[gprcount] = 0;
-		  memcpy (&reg_args->gpr[gprcount], a, size < 8 ? size : 8);
+		  /* Sign-extend integer arguments passed in general
+		     purpose registers, to cope with the fact that
+		     LLVM incorrectly assumes that this will be done
+		     (the x86-64 PS ABI does not specify this). */
+		  switch (arg_types[i]->type)
+		    {
+		    case FFI_TYPE_SINT8:
+		      *(SINT64 *)&reg_args->gpr[gprcount] = (SINT64) *((SINT8 *) a);
+		      break;
+		    case FFI_TYPE_SINT16:
+		      *(SINT64 *)&reg_args->gpr[gprcount] = (SINT64) *((SINT16 *) a);
+		      break;
+		    case FFI_TYPE_SINT32:
+		      *(SINT64 *)&reg_args->gpr[gprcount] = (SINT64) *((SINT32 *) a);
+		      break;
+		    default:
+		      reg_args->gpr[gprcount] = 0;
+		      memcpy (&reg_args->gpr[gprcount], a, size < 8 ? size : 8);
+		    }
 		  gprcount++;
 		  break;
 		case X86_64_SSE_CLASS:

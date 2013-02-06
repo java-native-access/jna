@@ -1,3 +1,8 @@
+2013-02-02  Mark H Weaver <mhw@netris.org>
+
+	* src/x86/ffi64.c (ffi_call): Sign-extend integer arguments passed
+	via general purpose registers.
+
 2013-01-21  Nathan Rossi <nathan.rossi@xilinx.com>
 
 	* README: Add MicroBlaze details.
