@@ -1,5 +1,13 @@
 2013-02-07  Anthony Green <green@moxielogic.com>
 
+	* src/sparc/v8.S (ffi_flush_icache): Out-of-line cache flusher for
+	Sun compiler.
+	* src/sparc/ffi.c (ffi_call): Remove warning.
+	Call ffi_flush_icache for non-GCC builds.
+	(ffi_prep_closure_loc): Use ffi_flush_icache.
+
+2013-02-07  Anthony Green <green@moxielogic.com>
+
 	* Makefile.am (EXTRA_DIST): Add libtool-ldflags.
 	* Makefile.in: Rebuilt.
 	* libtool-ldflags: New file.

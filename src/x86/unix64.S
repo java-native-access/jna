@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------
-   unix64.S - Copyright (c) 2013  The Written Word
+   unix64.S - Copyright (c) 2013  The Written Word, Inc.
 	    - Copyright (c) 2008  Red Hat, Inc
 	    - Copyright (c) 2002  Bo Thorsen <bo@suse.de>
 
