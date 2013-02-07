@@ -1,5 +1,10 @@
 2013-02-07  Anthony Green <green@moxielogic.com>
 
+	* configure.ac: Fix GCC usage test.
+	* configure: Rebuilt.
+
+2013-02-07  Anthony Green <green@moxielogic.com>
+
 	* testsuite/libffi.call/cls_double_va.c (main): Replace // style
 	comments with /* */ for xlc compiler.
 	* testsuite/libffi.call/stret_large.c (main): Ditto.

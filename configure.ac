@@ -521,7 +521,7 @@ AC_ARG_ENABLE(purify-safety,
 
 # These variables are only ever used when we cross-build to X86_WIN32.
 # And we only support this with GCC, so...
-if test x"$GCC" != x"no"; then
+if test "x$GCC" = "xyes"; then
   if test -n "$with_cross_host" &&
      test x"$with_cross_host" != x"no"; then
     toolexecdir='$(exec_prefix)/$(target_alias)'

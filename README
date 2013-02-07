@@ -167,6 +167,7 @@ See the ChangeLog files for details.
 	Add support for PaX enabled kernels with MPROTECT.
 	Add support for native vendor compilers on
 	  Solaris and AIX.
+	Work around LLVM/GCC interoperability issue on x86_64.
 
 3.0.11 Apr-11-12
         Lots of build fixes.
