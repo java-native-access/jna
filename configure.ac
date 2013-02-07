@@ -543,8 +543,10 @@ if test "x$GCC" = "xyes"; then
     *) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
   esac
   AC_SUBST(toolexecdir)
-  AC_SUBST(toolexeclibdir)
+else
+  toolexeclibdir='$(libdir)'
 fi
+AC_SUBST(toolexeclibdir)
 
 AC_CONFIG_COMMANDS(include, [test -d include || mkdir include])
 AC_CONFIG_COMMANDS(src, [

@@ -1,3 +1,9 @@
+2013-02-07  Anthony Green <green@moxielogic.com>
+
+	* Makefile.am (EXTRA_DIST): Add libtool-ldflags.
+	* Makefile.in: Rebuilt.
+	* libtool-ldflags: New file.
+
 2013-02-07  Daniel Schepler <dschepler@gmail.com>
 
 	* configure.ac: Correctly identify x32 systems as 64-bit.

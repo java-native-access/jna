@@ -14828,8 +14828,10 @@ if test "x$GCC" = "xyes"; then
     *) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
   esac
 
-
+else
+  toolexeclibdir='$(libdir)'
 fi
+
 
 ac_config_commands="$ac_config_commands include"
 
