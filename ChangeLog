@@ -1,5 +1,9 @@
 2013-02-06  Anthony Green <green@moxielogic.com>
 
+	* man/ffi_prep_cif.3: Clean up for debian lintian checker.
+
+2013-02-06  Anthony Green <green@moxielogic.com>
+
 	* Makefile.am (pkgconfigdir): Add missing pkgconfig install bits.
 	* Makefile.in: Rebuild.
 
