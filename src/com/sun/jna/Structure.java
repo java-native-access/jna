@@ -1533,7 +1533,7 @@ public abstract class Structure {
     static class FFIType extends Structure {
         public static class size_t extends IntegerType {
             public size_t() { this(0); }
-            public size_t(long value) { super(Native.POINTER_SIZE, value); }
+            public size_t(long value) { super(Native.SIZE_T_SIZE, value); }
         }
         private static Map typeInfoMap = new WeakHashMap();
         // Native.initIDs initializes these fields to their appropriate
