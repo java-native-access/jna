@@ -836,78 +836,40 @@ public abstract class Advapi32Util {
 	 *            Name of the value to retrieve or null for the default value.
 	 * @return Object value.
 	 */
-	public static Object registryGetValue(HKEY root, String key, String value) {
+	public static Object registryGetValue(HKEY hkKey, String subKey,
+			String lpValueName) {
 		Object result = null;
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
-				phkKey);
+		IntByReference lpType = new IntByReference();
+		byte[] lpData = new byte[Advapi32.MAX_VALUE_NAME];
+		IntByReference lpcbData = new IntByReference(Advapi32.MAX_VALUE_NAME);
 
-		if (rc != W32Errors.ERROR_SUCCESS) {
+		int rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
+				Advapi32.RRF_RT_ANY, lpType, lpData, lpcbData);
+
+		// if lpType == 0 then the value is empty (REG_NONE)!
+		if (lpType.getValue() == WinNT.REG_NONE)
+			return null;
+
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
 			throw new Win32Exception(rc);
 		}
 
-		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
+		Memory byteData = new Memory(lpcbData.getValue());
+		byteData.write(0, lpData, 0, lpcbData.getValue());
 
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-
-			// if lpcbData == 0 then the value is empty!
-			if(lpcbData.getValue() == 0)
-				return null;
-
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-
-			if (lpType.getValue() == WinNT.REG_DWORD) {
-				IntByReference data = new IntByReference();
-				rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(),
-						value, 0, lpType, data, lpcbData);
-				if (rc != W32Errors.ERROR_SUCCESS
-						&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-					throw new Win32Exception(rc);
-				}
-				result = new Integer(data.getValue());
-			} else if (lpType.getValue() == WinNT.REG_QWORD) {
-				LongByReference data = new LongByReference();
-				rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(),
-						value, 0, lpType, data, lpcbData);
-				if (rc != W32Errors.ERROR_SUCCESS
-						&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-					throw new Win32Exception(rc);
-				}
-				result = new Long(data.getValue());
-			} else if (lpType.getValue() == WinNT.REG_BINARY) {
-				byte[] data = new byte[lpcbData.getValue()];
-				rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(),
-						value, 0, lpType, data, lpcbData);
-				if (rc != W32Errors.ERROR_SUCCESS
-						&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-					throw new Win32Exception(rc);
-				}
-				result = data;
-			} else if ((lpType.getValue() == WinNT.REG_SZ)
-					|| (lpType.getValue() == WinNT.REG_EXPAND_SZ)) {
-				char[] data = new char[lpcbData.getValue()];
-				rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(),
-						value, 0, lpType, data, lpcbData);
-				if (rc != W32Errors.ERROR_SUCCESS
-						&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-					throw new Win32Exception(rc);
-				}
-				result = Native.toString(data);
-			}
-
-			return result;
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
+		if (lpType.getValue() == WinNT.REG_DWORD) {
+			result = new Integer(byteData.getInt(0));
+		} else if (lpType.getValue() == WinNT.REG_QWORD) {
+			result = new Long(byteData.getLong(0));
+		} else if (lpType.getValue() == WinNT.REG_BINARY) {
+			result = byteData.getByteArray(0, lpcbData.getValue());
+		} else if ((lpType.getValue() == WinNT.REG_SZ)
+				|| (lpType.getValue() == WinNT.REG_EXPAND_SZ)) {
+			result = byteData.getString(0, true);
 		}
+
+		return result;
 	}
 
 	/**
@@ -1666,10 +1628,12 @@ public abstract class Advapi32Util {
 	public static class EnumKey {
 		public HKEY hKey;
 		public int dwIndex = 0;
-		public char[] lpName = new char[Advapi32.MAX_VALUE_NAME];
-		public IntByReference lpcName = new IntByReference(Advapi32.MAX_VALUE_NAME);
-		public char[] lpClass = new char[WinNT.MAX_PATH];
-		public IntByReference lpcbClass = new IntByReference(WinNT.MAX_PATH);
+		public char[] lpName = new char[Advapi32.MAX_KEY_LENGTH];
+		public IntByReference lpcName = new IntByReference(
+				Advapi32.MAX_KEY_LENGTH);
+		public char[] lpClass = new char[Advapi32.MAX_KEY_LENGTH];
+		public IntByReference lpcbClass = new IntByReference(
+				Advapi32.MAX_KEY_LENGTH);
 		public FILETIME lpftLastWriteTime = new FILETIME();
 
 		public EnumKey() {
