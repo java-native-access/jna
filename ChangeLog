@@ -1,3 +1,17 @@
+2013-02-07  Anthony Green <green@moxielogic.com>
+
+	* testsuite/libffi.call/cls_double_va.c (main): Replace // style
+	comments with /* */ for xlc compiler.
+	* testsuite/libffi.call/stret_large.c (main): Ditto.
+	* testsuite/libffi.call/stret_large2.c (main): Ditto.
+	* testsuite/libffi.call/nested_struct1.c (main): Ditto.
+	* testsuite/libffi.call/huge_struct.c (main): Ditto.
+	* testsuite/libffi.call/float_va.c (main): Ditto.
+	* testsuite/libffi.call/cls_struct_va1.c (main): Ditto.
+	* testsuite/libffi.call/cls_pointer_stack.c (main): Ditto.
+	* testsuite/libffi.call/cls_pointer.c (main): Ditto.
+	* testsuite/libffi.call/cls_longdouble_va.c (main): Ditto.
+
 2013-02-06  Anthony Green <green@moxielogic.com>
 
 	* man/ffi_prep_cif.3: Clean up for debian lintian checker.
