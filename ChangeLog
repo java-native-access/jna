@@ -1,3 +1,9 @@
+2013-02-07  Daniel Schepler <dschepler@gmail.com>
+
+	* configure.ac: Correctly identify x32 systems as 64-bit.
+	* m4/libtool.m4: Remove libtool expr error.
+	* aclocal.m4, configure: Rebuilt.
+
 2013-02-07  Anthony Green <green@moxielogic.com>
 
 	* configure.ac: Fix GCC usage test.

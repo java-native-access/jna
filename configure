@@ -5361,7 +5361,8 @@ else
     ;;
   *)
     lt_cv_sys_max_cmd_len=`(getconf ARG_MAX) 2> /dev/null`
-    if test -n "$lt_cv_sys_max_cmd_len"; then
+    if test -n "$lt_cv_sys_max_cmd_len" && \
+      test undefined != "$lt_cv_sys_max_cmd_len"; then
       lt_cv_sys_max_cmd_len=`expr $lt_cv_sys_max_cmd_len \/ 4`
       lt_cv_sys_max_cmd_len=`expr $lt_cv_sys_max_cmd_len \* 3`
     else
@@ -13385,7 +13386,14 @@ case "$host" in
   i?86-*-* | x86_64-*-*)
 	TARGETDIR=x86
 	if test $ac_cv_sizeof_size_t = 4; then
-	  TARGET=X86;
+	  case "$host" in
+	    *-gnux32)
+	      TARGET=X86_64
+	      ;;
+	    *)
+	      TARGET=X86
+	      ;;
+          esac
 	else
 	  TARGET=X86_64;
 	fi

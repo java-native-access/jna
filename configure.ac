@@ -166,7 +166,14 @@ case "$host" in
   i?86-*-* | x86_64-*-*)
 	TARGETDIR=x86
 	if test $ac_cv_sizeof_size_t = 4; then
-	  TARGET=X86; 
+	  case "$host" in
+	    *-gnux32)
+	      TARGET=X86_64
+	      ;;
+	    *)
+	      TARGET=X86
+	      ;;
+          esac	
 	else
 	  TARGET=X86_64; 
 	fi	  
