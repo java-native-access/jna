@@ -2,6 +2,8 @@
 
 	* configure.ac: Fix GCC usage test.
 	* configure: Rebuilt.
+	* README: Mention LLVM/GCC x86_64 issue.
+	* testsuite/Makefile.in: Rebuilt.
 
 2013-02-07  Anthony Green <green@moxielogic.com>
 

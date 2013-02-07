@@ -256,7 +256,7 @@ libffi.call/struct5.c libffi.call/cls_12byte.c \
 libffi.call/cls_multi_sshortchar.c \
 libffi.call/cls_align_longdouble_split2.c libffi.call/return_dbl2.c \
 libffi.call/return_fl3.c libffi.call/stret_medium.c \
-libffi.call/nested_struct6.c libffi.call/a.out \
+libffi.call/nested_struct6.c \
 libffi.call/closure_fn3.c libffi.call/float3.c libffi.call/many2.c \
 libffi.call/closure_stdcall.c libffi.call/cls_align_uint16.c \
 libffi.call/cls_9byte1.c libffi.call/closure_fn6.c \
