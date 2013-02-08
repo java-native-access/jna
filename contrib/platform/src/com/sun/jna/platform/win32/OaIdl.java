@@ -757,11 +757,13 @@ public interface OaIdl {
 		 *            C type : MEMBERID<br>
 		 * @param lpstrSchema
 		 *            C type : LPOLESTR<br>
-		 * @param DUMMYUNIONNAME
+		 * @param union
 		 *            [switch_is][switch_type]<br>
 		 *            C type : DUMMYUNIONNAMEUnion<br>
 		 * @param elemdescVar
 		 *            C type : ELEMDESC<br>
+                 * @param wVarFlags
+                 *            C type : short
 		 * @param varkind
 		 *            C type : VARKIND
 		 */

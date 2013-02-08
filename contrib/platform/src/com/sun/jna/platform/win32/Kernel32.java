@@ -13,9 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import java.nio.Buffer;
-
-import sun.security.jca.GetInstance.Instance;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
