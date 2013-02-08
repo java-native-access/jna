@@ -1,3 +1,9 @@
+2013-02-08  Andreas Tobler  <andreast@fgznet.ch>
+
+	* src/powerpc/ffi.c (ffi_prep_cif_machdep): Fix small struct
+	support.
+	* src/powerpc/sysv.S: Ditto.
+
 2013-02-08  Anthony Green <green@moxielogic.com>
 
 	* testsuite/libffi.call/cls_longdouble.c: Remove xfail for

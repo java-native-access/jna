@@ -529,6 +529,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
   /* SPARC v8 requires 5 instructions for flush to be visible */
   asm volatile ("nop; nop; nop; nop; nop");
 #endif
+#else
   ffi_flush_icache (closure, 16);
 #endif
 
