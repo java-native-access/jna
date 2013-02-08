@@ -1,3 +1,9 @@
+2013-02-08  Nathan Rossi <nathan.rossi@xilinx.com>
+
+	* src/microblaze/ffi.c (ffi_closure_call_SYSV): Fix handling of
+	small big-endian structures.
+	(ffi_prep_args): Ditto.
+
 2013-02-07  Anthony Green <green@moxielogic.com>
 
 	* src/sparc/v8.S (ffi_call_v8): Fix typo from last patch

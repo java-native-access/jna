@@ -119,17 +119,8 @@ void ffi_prep_args(void* stack, extended_cif* ecif)
 				 */
 				if (size < WORD_SIZE)
 				{
-					if (size == 1) {
-						*(unsigned int *)addr =
-								(unsigned int)*(UINT8*)(value);
-					} else if (size == 2) {
-						*(unsigned int *)addr =
-								(unsigned int)*(UINT16*)(value);
-					} else {
-						*(unsigned int *)addr =
-								((unsigned int)*(UINT32*)(value)) >> 8;
-					}
-					break;
+				  memcpy (addr + (WORD_SIZE - size), value, size);
+				  break;
 				}
 #endif
 			case FFI_TYPE_SINT32:
@@ -250,16 +241,7 @@ void ffi_closure_call_SYSV(void* register_args, void* stack_args,
 				 */
 				if (arg_types[i]->size < WORD_SIZE)
 				{
-					if (arg_types[i]->size == 1) {
-						*(unsigned int *)ptr =
-								((unsigned int)*(UINT32*)(ptr)) << 24;
-					} else if (arg_types[i]->size == 2) {
-						*(unsigned int *)ptr =
-								((unsigned int)*(UINT32*)(ptr)) << 16;
-					} else {
-						*(unsigned int *)ptr =
-								((unsigned int)*(UINT32*)(ptr)) << 8;
-					}
+				  memcpy (ptr, ptr + (WORD_SIZE - arg_types[i]->size), arg_types[i]->size);
 				}
 #endif
 				avalue[i] = (void*)ptr;
