@@ -1,3 +1,13 @@
+2013-02-08  Anthony Green <green@moxielogic.com>
+
+	* configure.ac: Move sparc asm config checks to within functions
+	for compatibility with sun tools.
+	* configure: Rebuilt.
+	* src/sparc/ffi.c (ffi_prep_closure_loc): Flush cache on v9
+	systems.
+	* src/sparc/v8.S (ffi_flush_icache): Implement a sparc v9 cache
+	flusher.
+
 2013-02-08  Nathan Rossi <nathan.rossi@xilinx.com>
 
 	* src/microblaze/ffi.c (ffi_closure_call_SYSV): Fix handling of

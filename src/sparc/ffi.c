@@ -521,16 +521,15 @@ ffi_prep_closure_loc (ffi_closure* closure,
   closure->user_data = user_data;
 
   /* Flush the Icache.  closure is 8 bytes aligned.  */
+#ifdef __GNUC__
 #ifdef SPARC64
   asm volatile ("flush	%0; flush %0+8" : : "r" (closure) : "memory");
 #else
-#ifdef __GNUC__
   asm volatile ("iflush	%0; iflush %0+8" : : "r" (closure) : "memory");
   /* SPARC v8 requires 5 instructions for flush to be visible */
   asm volatile ("nop; nop; nop; nop; nop");
-#else
-  ffi_flush_icache (closure, 16);
 #endif
+  ffi_flush_icache (closure, 16);
 #endif
 
   return FFI_OK;

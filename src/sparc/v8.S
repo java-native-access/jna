@@ -41,7 +41,11 @@
 ffi_flush_icache:
 _ffi_flush_icache:	
         add %o0, %o1, %o2
+#ifdef SPARC64	
+1:	flush %o0
+#else	
 1:	iflush %o0
+#endif
 	add %o0, 8, %o0
 	cmp %o0, %o2
 	blt 1b
