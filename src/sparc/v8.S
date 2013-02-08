@@ -33,7 +33,7 @@
 #define ARGS (64+4)		/* Offset of register area in frame */
 
 #ifndef __GNUC__	
-.text
+	.text
         .align 8
 .globl ffi_flush_icache
 .globl _ffi_flush_icache
@@ -54,12 +54,12 @@ _ffi_flush_icache:
 	nop
 .ffi_flush_icache_end:
 	.size	ffi_flush_icache,.ffi_flush_icache_end-ffi_flush_icache
+#endif
 
 	.text
         .align 8
 .globl ffi_call_v8
 .globl _ffi_call_v8
-#endif
 	
 ffi_call_v8:
 _ffi_call_v8:

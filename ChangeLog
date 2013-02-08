@@ -1,5 +1,10 @@
 2013-02-07  Anthony Green <green@moxielogic.com>
 
+	* src/sparc/v8.S (ffi_call_v8): Fix typo from last patch
+	(effectively hiding ffi_call_v8).
+
+2013-02-07  Anthony Green <green@moxielogic.com>
+
 	* configure.ac: Update bug reporting address.
 	* configure.in: Rebuild.
 
