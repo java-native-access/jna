@@ -1,5 +1,11 @@
 2013-02-08  Anthony Green <green@moxielogic.com>
 
+	* Makefile.am (EXTRA_DIST): Add missing files.
+	* testsuite/Makefile.am (EXTRA_DIST): Ditto.
+	* Makefile.in: Rebuilt.
+
+2013-02-08  Anthony Green <green@moxielogic.com>
+
 	* configure.ac: Move sparc asm config checks to within functions
 	for compatibility with sun tools.
 	* configure: Rebuilt.
