@@ -117,10 +117,10 @@ public class ITypeLib extends IUnknown {
 
 	public HRESULT GetDocumentation(
 	/* [in] */int index,
-	/* [out] */BSTR.ByReference pBstrName,
-	/* [out] */BSTR.ByReference pBstrDocString,
+	/* [out] */BSTR pBstrName,
+	/* [out] */BSTR pBstrDocString,
 	/* [out] */DWORDbyReference pdwHelpContext,
-	/* [out] */BSTR.ByReference pBstrHelpFile) {
+	/* [out] */BSTR pBstrHelpFile) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(36));

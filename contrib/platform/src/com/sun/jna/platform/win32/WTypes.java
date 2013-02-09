@@ -15,14 +15,14 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Structure;
-import com.sun.jna.WString;
+import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
 
 /**
  * Constant defined in WTypes.h
- * 
+ *
  * @author scott.palmer
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
@@ -53,34 +53,47 @@ public interface WTypes {
 	public static int CLSCTX_APPCONTAINER = 0x400000;
 	public static int CLSCTX_ACTIVATE_AAA_AS_IU = 0x800000;
 	public static int CLSCTX_PS_DLL = 0x80000000;
+	public static int CLSCTX_SERVER = CLSCTX_INPROC_SERVER
+			| CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER;
+	public static int CLSCTX_ALL = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER
+			| CLSCTX_LOCAL_SERVER;
 
-	public static class BSTR extends ByReference implements
-			Structure.ByReference {
-
-		public static class ByReference extends BSTR implements
-				Structure.ByReference {
-		}
-
+	public static class BSTR extends PointerType {
 		public BSTR() {
-			this("null");
-		}
-
-		public BSTR(String value) {
-			super(value.length() * 4);
-			setValue(value);
+			super(Pointer.NULL);
 		}
 
 		public void setValue(String value) {
-			getPointer().setString(0, value, true);
+			this.getPointer().setString(0, value, true);
 		}
 
 		public String getValue() {
-			return getPointer().getString(0, true);
+			return this.getPointer().getString(0, true);
 		}
 
 		@Override
 		public String toString() {
 			return this.getValue();
+		}
+	}
+
+	public class BSTRByReference extends ByReference {
+
+		public BSTRByReference() {
+			super(Pointer.SIZE);
+		}
+
+		public BSTRByReference(String value) {
+			super(Pointer.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(String value) {
+			getPointer().setString(0, value);
+		}
+
+		public String getValue() {
+			return getPointer().getString(0);
 		}
 	}
 

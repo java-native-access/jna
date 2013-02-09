@@ -98,18 +98,18 @@ public class COMObject {
 						this.pDispatch);
 			} else {
 				hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
-						WTypes.CLSCTX_LOCAL_SERVER, IDispatch.IID_IDispatch,
+						WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
 						this.pDispatch);
 			}
 		} else {
 			hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
-					WTypes.CLSCTX_LOCAL_SERVER, IDispatch.IID_IDispatch,
+					WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
 					this.pDispatch);
 		}
 
 		if (COMUtils.FAILED(hr)) {
-			throw new COMException("COM object '" + progId
-					+ "' not registered properly!");
+			throw new COMException("COM object with ProgID '" + progId
+					+ "' and CLSID " + clsid.toGuidString() + " not registered properly!");
 		}
 
 		this.iDispatch = new IDispatch(this.pDispatch.getValue());
