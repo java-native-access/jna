@@ -127,3 +127,6 @@
 #define PRId64 "I64d"
 #endif
 
+#ifndef PRIuPTR
+#define PRIuPTR "u"
+#endif
