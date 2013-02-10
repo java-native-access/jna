@@ -1,3 +1,13 @@
+2013-02-09  Anthony Green <green@moxielogic.com>
+
+	* testsuite/libffi.call/negint.c: Remove forced -O2.
+	* testsuite/libffi.call/many2.c (foo): Remove GCCism.
+	* testsuite/libffi.call/ffitest.h: Add default PRIuPTR definition.
+
+	* src/sparc/v8.S (ffi_closure_v8): Import ancient ulonglong
+	closure return type fix developed by Martin v. Löwis for cpython
+	fork.
+
 2013-02-08  Andreas Tobler  <andreast@fgznet.ch>
 
 	* src/powerpc/ffi.c (ffi_prep_cif_machdep): Fix small struct

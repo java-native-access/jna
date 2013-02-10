@@ -43,7 +43,7 @@ Libffi has been ported to many different platforms.
 For specific configuration details and testing status, please
 refer to the wiki page here:
 
- http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.11
+ http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.12
 
 At the time of release, the following basic configurations have been
 tested:
@@ -61,19 +61,21 @@ tested:
 | HPPA            | HPUX             | GCC                     |
 | IA-64           | Linux            | GCC                     |
 | M68K            | FreeMiNT         | GCC                     |
+| M68K            | Linux	     | GCC                     |
 | M68K            | RTEMS            | GCC                     |
 | MicroBlaze      | Linux            | GCC                     |
 | MIPS            | IRIX             | GCC                     |
 | MIPS            | Linux            | GCC                     |
 | MIPS            | RTEMS            | GCC                     |
 | MIPS64          | Linux            | GCC                     |
-| PowerPC 32-bit  | AIX 6.1.0.0      | IBM XL C/C++, V11.1     |
-| PowerPC 32-bit  | AIX 7.1.1.0      | IBM XL C/C++, V11.1     |
+| PowerPC 32-bit  | AIX              | IBM XL C                |
+| PowerPC 64-bit  | AIX              | IBM XL C                |
 | PowerPC         | AMIGA            | GCC                     |
 | PowerPC         | Linux            | GCC                     |
 | PowerPC         | Mac OSX          | GCC                     |
 | PowerPC         | FreeBSD          | GCC                     |
-| PowerPC64       | Linux            | GCC                     |
+| PowerPC 64-bit  | FreeBSD          | GCC                     |
+| PowerPC 64-bit  | Linux            | GCC                     |
 | S390            | Linux            | GCC                     |
 | S390X           | Linux            | GCC                     |
 | SPARC           | Linux            | GCC                     |
@@ -84,6 +86,7 @@ tested:
 | SPARC64         | Solaris          | Oracle Solaris Studio C |
 | TILE-Gx/TILEPro | Linux            | GCC                     |
 | X86             | FreeBSD          | GCC                     |
+| X86             | GNU HURD         | GCC                     |
 | X86             | Interix          | GCC                     |
 | X86             | kFreeBSD         | GCC                     |
 | X86             | Linux            | GCC                     |
@@ -145,7 +148,7 @@ For iOS builds, the 'libffi.xcodeproj' Xcode project is available.
 Configure has many other options. Use "configure --help" to see them all.
 
 Once configure has finished, type "make". Note that you must be using
-GNU make.  You can ftp GNU make from prep.ai.mit.edu:/pub/gnu.
+GNU make.  You can ftp GNU make from ftp.gnu.org:/pub/gnu/make .
 
 To ensure that libffi is working as advertised, type "make check".
 This will require that you have DejaGNU installed.
