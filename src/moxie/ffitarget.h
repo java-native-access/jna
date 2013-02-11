@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 2012 Anthony Green
+   ffitarget.h - Copyright (c) 2012, 2013  Anthony Green
    Target configuration macros for Moxie
 
    Permission is hereby granted, free of charge, to any person obtaining
@@ -35,12 +35,8 @@ typedef signed long            ffi_sarg;
 
 typedef enum ffi_abi {
   FFI_FIRST_ABI = 0,
-
-#ifdef MOXIE
   FFI_EABI,
   FFI_DEFAULT_ABI = FFI_EABI,
-#endif
-
   FFI_LAST_ABI = FFI_DEFAULT_ABI + 1
 } ffi_abi;
 #endif
@@ -50,7 +46,7 @@ typedef enum ffi_abi {
 #define FFI_CLOSURES 1
 #define FFI_NATIVE_RAW_API 0
 
-/* Trampolines are 5 4-byte instructions long.  */
-#define FFI_TRAMPOLINE_SIZE (5*4)
+/* Trampolines are 12-bytes long.  See ffi_prep_closure_loc.  */
+#define FFI_TRAMPOLINE_SIZE (12)
 
 #endif

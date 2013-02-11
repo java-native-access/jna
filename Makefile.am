@@ -148,6 +148,9 @@ endif
 if M68K
 nodist_libffi_la_SOURCES += src/m68k/ffi.c src/m68k/sysv.S
 endif
+if MOXIE
+nodist_libffi_la_SOURCES += src/moxie/ffi.c src/moxie/eabi.S
+endif
 if MICROBLAZE
 nodist_libffi_la_SOURCES += src/microblaze/ffi.c src/microblaze/sysv.S
 endif
@@ -209,7 +212,7 @@ endif
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
 nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 
-LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/../libtool-ldflags $(LDFLAGS))
+LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/libtool-ldflags $(LDFLAGS))
 
 libffi_la_LDFLAGS = -no-undefined -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
 

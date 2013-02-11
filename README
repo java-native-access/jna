@@ -1,8 +1,8 @@
 Status
 ======
 
-libffi-3.0.12 was released on XXXXXXX.  Check the libffi web page for
-updates: <URL:http://sourceware.org/libffi/>.
+libffi-3.0.12 was released on February 11, 2013.  Check the libffi web
+page for updates: <URL:http://sourceware.org/libffi/>.
 
 
 What is libffi?
@@ -68,6 +68,7 @@ tested:
 | MIPS            | Linux            | GCC                     |
 | MIPS            | RTEMS            | GCC                     |
 | MIPS64          | Linux            | GCC                     |
+| Moxie		  | Bare metal	     | GCC
 | PowerPC 32-bit  | AIX              | IBM XL C                |
 | PowerPC 64-bit  | AIX              | IBM XL C                |
 | PowerPC         | AMIGA            | GCC                     |
@@ -161,11 +162,12 @@ History
 
 See the ChangeLog files for details.
 
-3.0.12 XXX-XX-XX
+3.0.12 Feb-11-13
+        Add Moxie support.
 	Add AArch64 support.
 	Add Blackfin support.
 	Add TILE-Gx/TILEPro support.
-	Add Microblaze support.
+	Add MicroBlaze support.
 	Add Xtensa support.
 	Add support for PaX enabled kernels with MPROTECT.
 	Add support for native vendor compilers on
@@ -353,6 +355,7 @@ m68k		Andreas Schwab
 microblaze	Nathan Rossi
 mips		Anthony Green, Casey Marshall
 mips64		David Daney
+moxie		Anthony Green
 pa		Randolph Chung, Dave Anglin, Andreas Tobler
 powerpc		Geoffrey Keating, Andreas Tobler, 
 			 David Edelsohn, John Hornkvist

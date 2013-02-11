@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.68)
 
-AC_INIT([libffi], [3.0.12-rc3], [http://github.com/atgreen/libffi/issues])
+AC_INIT([libffi], [3.0.12], [http://github.com/atgreen/libffi/issues])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -193,6 +193,10 @@ case "$host" in
 
   microblaze*-*-*)
 	TARGET=MICROBLAZE; TARGETDIR=microblaze
+	;;
+
+  moxie-*-*)
+	TARGET=MOXIE; TARGETDIR=moxie
 	;;
 
   mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)

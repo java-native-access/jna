@@ -1,3 +1,27 @@
+2013-02-11  Anthony Green <green@moxielogic.com>
+
+	* configure.ac: Update release number to 3.0.12.
+	* configure: Rebuilt.
+	* README: Update release info.
+
+2013-02-10  Anthony Green <green@moxielogic.com>
+
+	* README: Add Moxie.
+	* src/moxie/ffi.c: Created.
+	* src/moxie/eabi.S: Created.
+	* src/moxie/ffitarget.h: Created.
+	* Makefile.am (nodist_libffi_la_SOURCES): Add Moxie.
+	* Makefile.in: Rebuilt.
+	* configure.ac: Add Moxie.
+	* configure: Rebuilt.
+	* testsuite/libffi.call/huge_struct.c: Disable format string
+	warnings for moxie*-*-elf tests.
+
+2013-02-10  Anthony Green <green@moxielogic.com>
+
+	* Makefile.am (LTLDFLAGS): Fix reference.
+	* Makefile.in: Rebuilt.
+
 2013-02-10  Anthony Green <green@moxielogic.com>
 
 	* README: Update supported platforms.  Update test results link.
