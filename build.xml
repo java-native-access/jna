@@ -12,8 +12,8 @@
        (cross-compile currently only configured/tested on w32ce-arm and
        android-arm) 
 
-       Use -Dskip-native to skip building native parts.
-       Use -Dheadless to run tests headless
+       Use ANT_OPTS=-Dskip-native to skip building native parts.
+       Use ANT_OPTS=-Dheadless to run tests headless
     -->
 
   <!--
@@ -68,6 +68,9 @@
   <property name="impl.title" value="com.sun.jna"/>
   <property name="impl.vendor" value="${spec.vendor}"/>
   <property name="impl.version" value="${jna.version} (b${jna.build})"/>
+  <condition property="jni.valid" value="true">
+    <isset property="skip-native"/>
+  </condition>
 
   <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
   <property name="compatibility" value="1.4"/>
@@ -275,7 +278,6 @@
     <uptodate property="-jar" targetfile="${build}/${jar}">
       <srcfiles dir="${classes}">
         <patternset id="jar-compiled">
-          <include name="lib/armeabi/*"/>
           <include name="com/sun/jna/*"/>
           <include name="com/sun/jna/**/*"/>
         </patternset>
@@ -454,7 +456,7 @@ osname=macos
     </subant>
   </target>
 
-  <target name="javah" depends="compile">
+  <target name="javah" depends="compile" unless="skip-native">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
       <class name="com.sun.jna.Function"/>
       <class name="com.sun.jna.Native"/>
@@ -644,9 +646,7 @@ osname=macos
       <isset property="EXTRA_MAKE_OPTS"/>
     </condition>
     <!-- Native resource path within jna.jar -->
-    <condition property="native.path" value="lib/armeabi" else="com/sun/jna/${os.prefix}">
-      <equals arg1="${os.prefix}" arg2="android-arm"/>
-    </condition>
+    <property name="native.path" value="com/sun/jna/${os.prefix}"/>
 
     <!-- Default make program -->
     <property name="make" value="make"/>
