@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+/* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 /**
  * @author dblock[at]dblock[dot]org
+ * @author markus[at]headcrashing[dot]eu
  */
 public class Shell32Test extends TestCase {
 
@@ -42,4 +43,9 @@ public class Shell32Test extends TestCase {
         // should release the interface, but we need Com4JNA to do that.
     }
 
+    public final void testSHGetSpecialFolderPath() {
+        final char[] pszPath = new char[WinDef.MAX_PATH];
+        assertTrue(Shell32.INSTANCE.SHGetSpecialFolderPath(null, pszPath, ShlObj.CSIDL_APPDATA, false));
+        assertFalse(Native.toString(pszPath).isEmpty());
+    }
 }
