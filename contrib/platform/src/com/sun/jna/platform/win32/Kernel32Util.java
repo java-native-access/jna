@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+/* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import com.sun.jna.ptr.PointerByReference;
 /**
  * Kernel32 utility API.
  * @author dblock[at]dblock.org
+ * @author markus[at]headcrashing[dot]eu
  */
 public abstract class Kernel32Util implements WinDef {
 	
@@ -176,7 +177,7 @@ public abstract class Kernel32Util implements WinDef {
 		  case WinNT.FILE_TYPE_UNKNOWN:
 		    int err = Kernel32.INSTANCE.GetLastError();
 		    switch(err) {
-		      case W32Errors.NO_ERROR:
+		      case WinError.NO_ERROR:
 			break;
 		      default:
 			throw new Win32Exception(err);
@@ -224,5 +225,67 @@ public abstract class Kernel32Util implements WinDef {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
     	return Native.toString(buffer);
-	}	
+	}
+
+    /**
+     * Retrieves an integer associated with a key in the specified section of an initialization file.
+     *
+     * @param appName
+     *            The name of the section in the initialization file.
+     * @param keyName
+     *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link #GetPrivateProfileInt} function converts
+     *            the string into an integer and returns the integer.
+     * @param defaultValue
+     *            The default value to return if the key name cannot be found in the initialization file.
+     * @param fileName
+     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+     *            Windows directory.
+     * @return The retrieved integer, or the default if not found.
+     */
+    public static final int getPrivateProfileInt(final String appName, final String keyName, final int defaultValue, final String fileName) {
+        return Kernel32.INSTANCE.GetPrivateProfileInt(appName, keyName, defaultValue, fileName);
+    }
+
+    /**
+     * Retrieves a string from the specified section in an initialization file.
+     * 
+     * @param lpAppName
+     *            The name of the section containing the key name. If this parameter is {@code null}, the {@link GetPrivateProfileString} function copies all
+     *            section names in the file to the supplied buffer.
+     * @param lpKeyName
+     *            The name of the key whose associated string is to be retrieved. If this parameter is {@code null}, all key names in the section specified by
+     *            the {@code lpAppName} parameter are returned.
+     * @param lpDefault
+     *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link GetPrivateProfileString} returns the
+     *            default. If this parameter is {@code null}, the default is an empty string, {@code ""}.
+     *            <p>
+     *            Avoid specifying a default string with trailing blank characters. The function inserts a {@code null} character in the
+     *            {@code lpReturnedString} buffer to strip any trailing blanks.
+     *            </p>
+     * @param lpFileName
+     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+     *            Windows directory.
+     * @return <p>
+     *         If neither {@code lpAppName} nor {@code lpKeyName} is {@code null} and the destination buffer is too small to hold the requested string, the
+     *         string is truncated.
+     *         </p>
+     *         <p>
+     *         If either {@code lpAppName} or {@code lpKeyName} is {@code null} and the destination buffer is too small to hold all the strings, the last string
+     *         is truncated and followed by two {@code null} characters.
+     *         </p>
+     *         <p>
+     *         In the event the initialization file specified by {@code lpFileName} is not found, or contains invalid values, this function will set errorno
+     *         with a value of '0x2' (File Not Found). To retrieve extended error information, call {@link #GetLastError}.
+     *         </p>
+     */
+    public static final String getPrivateProfileString(final String appName, final String keyName, final String defaultValue, final String fileName) {
+        final char buffer[] = new char[1024];
+        Kernel32.INSTANCE.GetPrivateProfileString(appName, keyName, defaultValue, buffer, new DWORD(buffer.length), fileName);
+        return Native.toString(buffer);
+    }
+
+    public static final void writePrivateProfileString(final String appName, final String keyName, final String string, final String fileName) {
+        if (!Kernel32.INSTANCE.WritePrivateProfileString(appName, keyName, string, fileName))
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    }
 }

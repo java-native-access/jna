@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1727,4 +1727,84 @@ public interface Kernel32 extends WinNT {
 	 *         value.
 	 */
 	LCID GetUserDefaultLCID();
+
+	/**
+     * Retrieves an integer associated with a key in the specified section of an initialization file.
+     *
+     * @param appName
+     *            The name of the section in the initialization file.
+     * @param keyName
+     *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link GetPrivateProfileInt} function converts
+     *            the string into an integer and returns the integer.
+     * @param defaultValue
+     *            The default value to return if the key name cannot be found in the initialization file.
+     * @param fileName
+     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+     *            Windows directory.
+     * @return The return value is the integer equivalent of the string following the specified key name in the specified initialization file. If the key is not
+     *         found, the return value is the specified default value.
+     */
+    int GetPrivateProfileInt(String appName, String keyName, int defaultValue, String fileName);
+
+    /**
+     * Retrieves a string from the specified section in an initialization file.
+     * 
+     * @param lpAppName
+     *            The name of the section containing the key name. If this parameter is {@code null}, the {@link GetPrivateProfileString} function copies all
+     *            section names in the file to the supplied buffer.
+     * @param lpKeyName
+     *            The name of the key whose associated string is to be retrieved. If this parameter is {@code null}, all key names in the section specified by
+     *            the {@code lpAppName} parameter are copied to the buffer specified by the {@code lpReturnedString} parameter.
+     * @param lpDefault
+     *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link GetPrivateProfileString} copies the default
+     *            string to the {@code lpReturnedString} buffer. If this parameter is {@code null}, the default is an empty string, {@code ""}.
+     *            <p>
+     *            Avoid specifying a default string with trailing blank characters. The function inserts a {@code null} character in the
+     *            {@code lpReturnedString} buffer to strip any trailing blanks.
+     *            </p>
+     * @param lpReturnedString
+     *            A pointer to the buffer that receives the retrieved string.
+     * @param nSize
+     *            The size of the buffer pointed to by the {@code lpReturnedString} parameter, in characters.
+     * @param lpFileName
+     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+     *            Windows directory.
+     * @return The return value is the number of characters copied to the buffer, not including the terminating {@code null} character.
+     *         <p>
+     *         If neither {@code lpAppName} nor {@code lpKeyName} is {@code null} and the supplied destination buffer is too small to hold the requested string,
+     *         the string is truncated and followed by a {@code null} character, and the return value is equal to {@code nSize} minus one.
+     *         </p>
+     *         <p>
+     *         If either {@code lpAppName} or {@code lpKeyName} is {@code null} and the supplied destination buffer is too small to hold all the strings, the
+     *         last string is truncated and followed by two {@code null} characters. In this case, the return value is equal to {@code nSize} minus two.
+     *         </p>
+     *         <p>
+     *         In the event the initialization file specified by {@code lpFileName} is not found, or contains invalid values, this function will set errorno
+     *         with a value of '0x2' (File Not Found). To retrieve extended error information, call {@link #GetLastError}.
+     *         </p>
+     */
+    DWORD GetPrivateProfileString(String lpAppName, String lpKeyName, String lpDefault, char[] lpReturnedString, DWORD nSize, String lpFileName);
+    
+    /**
+     * Copies a string into the specified section of an initialization file.
+     * 
+     * If the file was created using Unicode characters, the function writes Unicode characters to the file. Otherwise, the function writes ANSI characters.
+     * 
+     * @param lpAppName
+     *            The name of the section to which the string will be copied. If the section does not exist, it is created. The name of the section is
+     *            case-independent; the string can be any combination of uppercase and lowercase letters.
+     * @param lpKeyName
+     *            The name of the key to be associated with a string. If the key does not exist in the specified section, it is created. If this parameter is
+     *            {@code null}, the entire section, including all entries within the section, is deleted.
+     * @param lpString
+     *            A string to be written to the file. If this parameter is {@code null}, the key pointed to by the {@code lpKeyName} parameter is deleted.
+     * @param lpFileName
+     *            The name of the initialization file.
+     * @return If the function successfully copies the string to the initialization file, the return value is {@code true}.
+     *         <p>
+     *         If the function fails, or if it flushes the cached version of the most recently accessed initialization file, the return value is {@code false}.
+     *         To get extended error information, call {@link #GetLastError}.
+     *         </p>
+     */
+    boolean WritePrivateProfileString(String lpAppName, String lpKeyName, String lpString, String lpFileName);
 }

@@ -1,20 +1,24 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,11 +28,11 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
-import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -41,24 +45,24 @@ import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.IntByReference;
 
 public class Kernel32Test extends TestCase {
-    
+
     public static void main(String[] args) {
-    	OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO(); 
+    	OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO();
     	assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
-    	System.out.println("Operating system: " 
+    	System.out.println("Operating system: "
     			+ lpVersionInfo.dwMajorVersion.longValue() + "." + lpVersionInfo.dwMinorVersion.longValue()
     			+ " (" + lpVersionInfo.dwBuildNumber + ")"
     			+ " [" + Native.toString(lpVersionInfo.szCSDVersion) + "]");
         junit.textui.TestRunner.run(Kernel32Test.class);
     }
-    
+
     public void testGetDriveType() {
         if (!Platform.isWindows()) return;
-        
+
         Kernel32 kernel = Kernel32.INSTANCE;
         assertEquals("Wrong drive type.", WinBase.DRIVE_FIXED, kernel.GetDriveType("c:"));
     }
-    
+
     public void testStructureOutArgument() {
         Kernel32 kernel = Kernel32.INSTANCE;
         WinBase.SYSTEMTIME time = new WinBase.SYSTEMTIME();
@@ -69,18 +73,18 @@ public class Kernel32Test extends TestCase {
         assertEquals("Day not properly set",
                      cal.get(Calendar.DAY_OF_WEEK)-1,
                      time.wDayOfWeek);
-        assertEquals("Year not properly set", 
+        assertEquals("Year not properly set",
                      cal.get(Calendar.YEAR), time.wYear);
     }
-    
+
     public void testGetLastError() {
         Kernel32 kernel = Kernel32.INSTANCE;
         int ERRCODE  = 8;
-        
+
         kernel.SetLastError(ERRCODE);
         int code = kernel.GetLastError();
         assertEquals("Wrong error value after SetLastError", ERRCODE, code);
-        
+
         if (kernel.GetProcessVersion(-1) == 0) {
             final int INVALID_PARAMETER = 87;
             code = kernel.GetLastError();
@@ -90,16 +94,16 @@ public class Kernel32Test extends TestCase {
             fail("GetProcessId(NULL) should fail");
         }
     }
-    
+
     public void testConvertHWND_BROADCAST() {
         HWND hwnd = WinUser.HWND_BROADCAST;
         NativeMappedConverter.getInstance(hwnd.getClass()).toNative(hwnd, null);
     }
-    
+
     public void testGetComputerName() {
     	IntByReference lpnSize = new IntByReference(0);
     	assertFalse(Kernel32.INSTANCE.GetComputerName(null, lpnSize));
-    	assertEquals(W32Errors.ERROR_BUFFER_OVERFLOW, Kernel32.INSTANCE.GetLastError());
+    	assertEquals(WinError.ERROR_BUFFER_OVERFLOW, Kernel32.INSTANCE.GetLastError());
     	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH + 1];
     	lpnSize.setValue(buffer.length);
     	assertTrue(Kernel32.INSTANCE.GetComputerName(buffer, lpnSize));
@@ -107,87 +111,87 @@ public class Kernel32Test extends TestCase {
 
     public void testWaitForSingleObject() {
 		HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-		
-		// handle runs into timeout since it is not triggered
-		// WAIT_TIMEOUT = 0x00000102 
-		assertEquals(W32Errors.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
-				handle, 1000));
-		
-		Kernel32.INSTANCE.CloseHandle(handle);
-	}
-    
-    public void testWaitForMultipleObjects(){    	
-    	HANDLE[] handles = new HANDLE[2];
-    	
-		handles[0] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-		handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-		
+
 		// handle runs into timeout since it is not triggered
 		// WAIT_TIMEOUT = 0x00000102
-		assertEquals(W32Errors.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForMultipleObjects(
+		assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
+				handle, 1000));
+
+		Kernel32.INSTANCE.CloseHandle(handle);
+	}
+
+    public void testWaitForMultipleObjects(){
+    	HANDLE[] handles = new HANDLE[2];
+
+		handles[0] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+		handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+
+		// handle runs into timeout since it is not triggered
+		// WAIT_TIMEOUT = 0x00000102
+		assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForMultipleObjects(
 				handles.length, handles, false, 1000));
-		
+
 		Kernel32.INSTANCE.CloseHandle(handles[0]);
 		Kernel32.INSTANCE.CloseHandle(handles[1]);
-		
+
 		// invalid Handle
 		handles[0] = WinBase.INVALID_HANDLE_VALUE;
 		handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-		
+
 		// returns WAIT_FAILED since handle is invalid
 		assertEquals(WinBase.WAIT_FAILED, Kernel32.INSTANCE.WaitForMultipleObjects(
 				handles.length, handles, false, 5000));
 
 		Kernel32.INSTANCE.CloseHandle(handles[1]);
-    }   
-    
+    }
+
     public void testGetCurrentThreadId() {
     	assertTrue(Kernel32.INSTANCE.GetCurrentThreadId() > 0);
     }
-    
+
     public void testGetCurrentThread() {
     	HANDLE h = Kernel32.INSTANCE.GetCurrentThread();
     	assertNotNull(h);
     	assertFalse(h.equals(0));
     	// CloseHandle does not need to be called for a thread handle
     	assertFalse(Kernel32.INSTANCE.CloseHandle(h));
-    	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    	assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
     }
 
     public void testOpenThread() {
-    	HANDLE h = Kernel32.INSTANCE.OpenThread(WinNT.THREAD_ALL_ACCESS, false, 
+    	HANDLE h = Kernel32.INSTANCE.OpenThread(WinNT.THREAD_ALL_ACCESS, false,
     			Kernel32.INSTANCE.GetCurrentThreadId());
     	assertNotNull(h);
     	assertFalse(h.equals(0));
     	assertTrue(Kernel32.INSTANCE.CloseHandle(h));
     }
-    
+
     public void testGetCurrentProcessId() {
     	assertTrue(Kernel32.INSTANCE.GetCurrentProcessId() > 0);
     }
-    
+
     public void testGetCurrentProcess() {
     	HANDLE h = Kernel32.INSTANCE.GetCurrentProcess();
     	assertNotNull(h);
     	assertFalse(h.equals(0));
     	// CloseHandle does not need to be called for a process handle
     	assertFalse(Kernel32.INSTANCE.CloseHandle(h));
-    	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
-    }    
-    
+    	assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    }
+
     public void testOpenProcess() {
-    	HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, 
+    	HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false,
     			Kernel32.INSTANCE.GetCurrentProcessId());
     	assertNull(h);
     	// opening your own process fails with access denied
-    	assertEquals(W32Errors.ERROR_ACCESS_DENIED, Kernel32.INSTANCE.GetLastError());
+    	assertEquals(WinError.ERROR_ACCESS_DENIED, Kernel32.INSTANCE.GetLastError());
     }
-    
+
     public void testGetTempPath() {
-    	char[] buffer = new char[WinDef.MAX_PATH]; 
-    	assertTrue(Kernel32.INSTANCE.GetTempPath(new DWORD(WinDef.MAX_PATH), buffer).intValue() > 0);    	
+    	char[] buffer = new char[WinDef.MAX_PATH];
+    	assertTrue(Kernel32.INSTANCE.GetTempPath(new DWORD(WinDef.MAX_PATH), buffer).intValue() > 0);
     }
-    
+
 	public void testGetTickCount() throws InterruptedException {
 		// Tick count rolls over every 49.7 days, so to safeguard from
 		// roll-over, we will get two time spans. At least one should
@@ -200,15 +204,15 @@ public class Kernel32Test extends TestCase {
 
 		assertTrue(tick2 > tick1 || tick3 > tick2);
 	}
-    
+
     public void testGetVersion() {
     	DWORD version = Kernel32.INSTANCE.GetVersion();
     	assertTrue("Version high should be non-zero: 0x" + Integer.toHexString(version.getHigh().intValue()), version.getHigh().intValue() != 0);
     	assertTrue("Version low should be >= 0: 0x" + Integer.toHexString(version.getLow().intValue()), version.getLow().intValue() >= 0);
     }
-    
+
     public void testGetVersionEx_OSVERSIONINFO() {
-    	OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO(); 
+    	OSVERSIONINFO lpVersionInfo = new OSVERSIONINFO();
     	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
     	assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
     	assertTrue(lpVersionInfo.dwMajorVersion.longValue() > 0);
@@ -216,11 +220,11 @@ public class Kernel32Test extends TestCase {
     	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
     	assertTrue(lpVersionInfo.dwPlatformId.longValue() > 0);
     	assertTrue(lpVersionInfo.dwBuildNumber.longValue() > 0);
-    	assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);    	
+    	assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);
     }
-    
+
     public void testGetVersionEx_OSVERSIONINFOEX() {
-    	OSVERSIONINFOEX lpVersionInfo = new OSVERSIONINFOEX(); 
+    	OSVERSIONINFOEX lpVersionInfo = new OSVERSIONINFOEX();
     	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
     	assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
     	assertTrue(lpVersionInfo.dwMajorVersion.longValue() > 0);
@@ -228,16 +232,16 @@ public class Kernel32Test extends TestCase {
     	assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
     	assertTrue(lpVersionInfo.dwPlatformId.longValue() > 0);
     	assertTrue(lpVersionInfo.dwBuildNumber.longValue() > 0);
-    	assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);    	
+    	assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);
     	assertTrue(lpVersionInfo.wProductType >= 0);
     }
-    
+
     public void testGetSystemInfo() {
     	SYSTEM_INFO lpSystemInfo = new SYSTEM_INFO();
     	Kernel32.INSTANCE.GetSystemInfo(lpSystemInfo);
     	assertTrue(lpSystemInfo.dwNumberOfProcessors.intValue() > 0);
     }
-    
+
     public void testIsWow64Process() {
     	try {
 	    	IntByReference isWow64 = new IntByReference(42);
@@ -248,7 +252,7 @@ public class Kernel32Test extends TestCase {
     		// IsWow64Process is not available on this OS
     	}
     }
-    
+
     public void testGetNativeSystemInfo() {
     	try {
         	SYSTEM_INFO lpSystemInfo = new SYSTEM_INFO();
@@ -258,7 +262,7 @@ public class Kernel32Test extends TestCase {
     		// only available under WOW64
     	}
     }
-    
+
     public void testGlobalMemoryStatusEx() {
     	MEMORYSTATUSEX lpBuffer = new MEMORYSTATUSEX();
     	assertTrue(Kernel32.INSTANCE.GlobalMemoryStatusEx(lpBuffer));
@@ -273,46 +277,46 @@ public class Kernel32Test extends TestCase {
     	char buf[] = new char[dwSize.intValue()];
     	assertTrue(Kernel32.INSTANCE.GetLogicalDriveStrings(dwSize, buf).intValue() > 0);
     }
-    
+
     public void testGetDiskFreeSpaceEx() {
-    	LARGE_INTEGER.ByReference lpFreeBytesAvailable = new LARGE_INTEGER.ByReference(); 
-    	LARGE_INTEGER.ByReference lpTotalNumberOfBytes = new LARGE_INTEGER.ByReference(); 
-    	LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes = new LARGE_INTEGER.ByReference(); 
-    	assertTrue(Kernel32.INSTANCE.GetDiskFreeSpaceEx(null, 
+    	LARGE_INTEGER.ByReference lpFreeBytesAvailable = new LARGE_INTEGER.ByReference();
+    	LARGE_INTEGER.ByReference lpTotalNumberOfBytes = new LARGE_INTEGER.ByReference();
+    	LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes = new LARGE_INTEGER.ByReference();
+    	assertTrue(Kernel32.INSTANCE.GetDiskFreeSpaceEx(null,
     			lpFreeBytesAvailable, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes));
     	assertTrue(lpTotalNumberOfFreeBytes.getValue() > 0);
     	assertTrue(lpTotalNumberOfFreeBytes.getValue() < lpTotalNumberOfBytes.getValue());
     }
-    
+
     public void testDeleteFile() {
     	String filename = Kernel32Util.getTempPath() + "\\FileDoesNotExist.jna";
     	assertFalse(Kernel32.INSTANCE.DeleteFile(filename));
-    	assertEquals(W32Errors.ERROR_FILE_NOT_FOUND, Kernel32.INSTANCE.GetLastError());
+    	assertEquals(WinError.ERROR_FILE_NOT_FOUND, Kernel32.INSTANCE.GetLastError());
     }
-    
+
     public void testReadFile() throws IOException {
     	String expected = "jna - testReadFile";
     	File tmp = File.createTempFile("testReadFile", "jna");
     	tmp.deleteOnExit();
-    	
+
     	FileWriter fw = new FileWriter(tmp);
     	fw.append(expected);
     	fw.close();
-    	
+
     	HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
     			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
     	assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
-    	
+
     	Memory m = new Memory(2048);
     	IntByReference lpNumberOfBytesRead = new IntByReference(0);
     	assertTrue(Kernel32.INSTANCE.ReadFile(hFile, m, (int) m.size(), lpNumberOfBytesRead, null));
     	int read = lpNumberOfBytesRead.getValue();
     	assertEquals(expected.length(), read);
     	assertEquals(expected, new String(m.getByteArray(0, read)));
-    	
-    	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));    	
+
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
     }
-    
+
     public void testSetHandleInformation() throws IOException {
     	File tmp = File.createTempFile("testSetHandleInformation", "jna");
     	tmp.deleteOnExit();
@@ -320,39 +324,39 @@ public class Kernel32Test extends TestCase {
     	HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
     			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
     	assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
-    	
+
     	assertTrue(Kernel32.INSTANCE.SetHandleInformation(hFile, WinBase.HANDLE_FLAG_PROTECT_FROM_CLOSE, 0));
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
     }
-    
+
     public void testCreatePipe() {
     	HANDLEByReference hReadPipe = new HANDLEByReference();
     	HANDLEByReference hWritePipe = new HANDLEByReference();
-    	
+
     	assertTrue(Kernel32.INSTANCE.CreatePipe(hReadPipe, hWritePipe, null, 0));
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hReadPipe.getValue()));
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hWritePipe.getValue()));
     }
-    
+
     public void testGetExitCodeProcess() {
     	IntByReference lpExitCode = new IntByReference(0);
     	assertTrue(Kernel32.INSTANCE.GetExitCodeProcess(Kernel32.INSTANCE.GetCurrentProcess(), lpExitCode));
     	assertEquals(WinBase.STILL_ACTIVE, lpExitCode.getValue());
     }
-    
+
     public void testTerminateProcess() throws IOException {
     	File tmp = File.createTempFile("testTerminateProcess", "jna");
     	tmp.deleteOnExit();
     	HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
     			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-    	
+
     	assertFalse(Kernel32.INSTANCE.TerminateProcess(hFile, 1));
-    	assertEquals(W32Errors.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    	assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
     	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
     }
-    
+
     public void testGetFileAttributes() {
-    	assertTrue(WinBase.INVALID_FILE_ATTRIBUTES != Kernel32.INSTANCE.GetFileAttributes("."));    	
+    	assertTrue(WinBase.INVALID_FILE_ATTRIBUTES != Kernel32.INSTANCE.GetFileAttributes("."));
     }
 
     public void testCopyFile() throws IOException {
@@ -406,7 +410,7 @@ public class Kernel32Test extends TestCase {
         assertTrue(status);
         assertTrue(processInformation.dwProcessId.longValue() > 0);
     }
-    
+
     public void testGetEnvironmentVariable() {
     	assertTrue(Kernel32.INSTANCE.SetEnvironmentVariable("jna-getenvironment-test", "42"));
     	int size = Kernel32.INSTANCE.GetEnvironmentVariable("jna-getenvironment-test", null, 0);
@@ -474,5 +478,51 @@ public class Kernel32Test extends TestCase {
 
         assertTrue(Kernel32.INSTANCE.CloseHandle(processEnumHandle));
         assertTrue(processIdList.size() > 4);
+    }
+
+    public final void testGetPrivateProfileInt() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileInt", "ini");
+        tmp.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = 123");
+        writer.close();
+
+        assertEquals(123, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "existingKey", 456, tmp.getCanonicalPath()));
+        assertEquals(456, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "missingKey", 456, tmp.getCanonicalPath()));
+    }
+
+    public final void testGetPrivateProfileString() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileString", "ini");
+        tmp.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = ABC");
+        writer.close();
+
+        final char[] buffer = new char[8];
+        assertEquals("ABC", Kernel32.INSTANCE.GetPrivateProfileString("Section", "existingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath()));
+        assertEquals("DEF", Kernel32.INSTANCE.GetPrivateProfileString("Section", "missingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath()));
+    }
+
+    public final void testWritePrivateProfileString() throws IOException {
+        final File tmp = File.createTempFile("testWritePrivateProfileString", "ini");
+        tmp.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = ABC");
+        writer.println("removedKey = JKL");
+        writer.close();
+
+        assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath()));
+        assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "addedKey", "GHI", tmp.getCanonicalPath()));
+        assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "removedKey", null, tmp.getCanonicalPath()));
+
+        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
+        assertEquals(reader.readLine(), "[Section]");
+        assertTrue(reader.readLine().matches("existingKey\\s*=\\s*DEF"));
+        assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
+        assertEquals(reader.readLine(), null);
+        reader.close();
     }
 }
