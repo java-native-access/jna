@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+/* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 /**
  * Shell32 Utility API.
  * @author dblock[at]dblock.org
+ * @author markus[at]headcrashing[dot]eu
  */
 public abstract class Shell32Util {
 	
@@ -55,4 +56,21 @@ public abstract class Shell32Util {
 	public static String getFolderPath(int nFolder) {
 		return getFolderPath(null, nFolder, ShlObj.SHGFP_TYPE_CURRENT);
 	}
+
+	/**
+     * Retrieves the path of a special folder, identified by its CSIDL.
+     *
+     * @param csidl
+     *            A CSIDL that identifies the folder of interest. If a virtual folder is specified, this function will fail.
+     * @param create
+     *            Indicates whether the folder should be created if it does not already exist. If this value is nonzero, the folder is created. If this value is
+     *            zero, the folder is not created.
+     * @return The drive and path of the specified folder
+     */
+    public static final String getSpecialFolderPath(final int csidl, final boolean create) {
+        final char[] pszPath = new char[WinDef.MAX_PATH];
+        if (!Shell32.INSTANCE.SHGetSpecialFolderPath(null, pszPath, csidl, create))
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        return Native.toString(pszPath);
+    }
 }

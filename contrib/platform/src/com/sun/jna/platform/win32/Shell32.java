@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -151,4 +151,21 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      */
     INT_PTR ShellExecute(HWND hwnd, String lpOperation, String lpFile, String lpParameters, String lpDirectory,
                                   int nShowCmd);
+
+    /**
+     * Retrieves the path of a special folder, identified by its CSIDL.
+     *
+     * @param owner
+     *            Reserved.
+     * @param path
+     *            A pointer to a null-terminated string that receives the drive and path of the specified folder. This buffer must be at least MAX_PATH
+     *            characters in size.
+     * @param csidl
+     *            A CSIDL that identifies the folder of interest. If a virtual folder is specified, this function will fail.
+     * @param create
+     *            Indicates whether the folder should be created if it does not already exist. If this value is nonzero, the folder is created. If this value is
+     *            zero, the folder is not created.
+     * @return {@code true} if successful; otherwise, {@code false}.
+     */
+    boolean SHGetSpecialFolderPath(HWND owner, char[] path, int csidl, boolean create);
 }
