@@ -12,12 +12,15 @@
  */
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
+import static com.sun.jna.platform.win32.User32.INSTANCE;
 
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
-import static com.sun.jna.platform.win32.User32.*;
+import junit.framework.TestCase;
+
+import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -101,5 +104,10 @@ public class User32Test extends TestCase {
         assertTrue(User32.INSTANCE.GetLastInputInfo(plii));
         assertTrue(Kernel32.INSTANCE.GetTickCount() >= plii.dwTime);
         assertTrue(plii.dwTime > 0);
+    }
+    
+    public final void testRegisterWindowMessage() {
+        final int msg = User32.INSTANCE.RegisterWindowMessage("RM_UNITTEST"); 
+        assertTrue(msg >= 0xC000 && msg <= 0xFFFF);
     }
 }
