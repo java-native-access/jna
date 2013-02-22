@@ -17,6 +17,7 @@ Features
 * [#180](https://github.com/twall/jna/pull/180): Fix: added missing fields in `XEvents.getFieldOrder()` - [@xwizard](https://github.com/xwizard).
 * [#183](https://github.com/twall/jna/pull/183): Added StructureFieldOrderInspector unit test utility to scan for Structure field issues. See: com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder() - [@bhamail](https://github.com/bhamail).
 * [#187](https://github.com/twall/jna/pull/187): Allow StructureFieldOrderTest unit test in platform project to run on Linux. - [@bhamail](https://github.com/bhamail).
+* [#192](https://github.com/twall/jna/pull/192): SHGetSpecialFolderPath() and initialization file (.ini) API function. - [@headcrashing](https://github.com/headcrashing).
 
 Release 3.5.1
 ====================
