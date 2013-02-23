@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Todd Fast, todd.fast@sun.com
  * @author twalljava@dev.java.net
  * @author Tobias Wolf, wolf.tobias@gmx.net
+ * @auhtor Markus KARG (markus[at]headcrashing[dot]eu)
  */
 public interface User32 extends StdCallLibrary, WinUser {
 
@@ -38,7 +39,12 @@ public interface User32 extends StdCallLibrary, WinUser {
 	User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class,
 			W32APIOptions.DEFAULT_OPTIONS);
 
-	/** The cs globalclass. */
+	/**
+	 * Handle for message-only window.
+	 */
+    public static final HWND HWND_MESSAGE = new HWND(Pointer.createConstant(-3));
+
+    /** The cs globalclass. */
 	int CS_GLOBALCLASS = 0x4000;
 
 	/** The ws ex topmost. */
@@ -1684,4 +1690,17 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 *         error information, call GetLastError.
 	 */
 	boolean UnregisterDeviceNotification(HDEVNOTIFY Handle);
+
+    /**
+     * Defines a new window message that is guaranteed to be unique throughout the system. The message value can be used when sending or posting messages.
+     * 
+     * @param string
+     *            The message to be registered.
+     * 
+     * @return If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.
+     *         <p>
+     *         If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     *         </p>
+     */
+    int RegisterWindowMessage(String string);
 }
