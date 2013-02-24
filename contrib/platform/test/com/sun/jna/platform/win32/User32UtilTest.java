@@ -12,6 +12,7 @@ package com.sun.jna.platform.win32;
 import junit.framework.TestCase;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef.HWND;
 
 /**
  * @author markus[at]headcrashing[dot]eu
@@ -27,11 +28,21 @@ public final class User32UtilTest extends TestCase {
     }
 
     public final void testCreateWindow() {
-        assertTrue(Pointer.nativeValue(User32Util.createWindow("Message", null, 0, 0, 0, 0, 0, null, null, null, null).getPointer()) > 0);
+        final HWND hWnd = User32Util.createWindow("Message", null, 0, 0, 0, 0, 0, null, null, null, null);
+        try {
+            assertTrue(Pointer.nativeValue(hWnd.getPointer()) > 0);
+        } finally {
+            User32Util.destroyWindow(hWnd);
+        }
     }
 
     public final void testCreateWindowEx() {
-        assertTrue(Pointer.nativeValue(User32Util.createWindowEx(0, "Message", null, 0, 0, 0, 0, 0, null, null, null, null).getPointer()) > 0);
+        final HWND hWnd = User32Util.createWindowEx(0, "Message", null, 0, 0, 0, 0, 0, null, null, null, null);
+        try {
+            assertTrue(Pointer.nativeValue(hWnd.getPointer()) > 0);
+        } finally {
+            User32Util.destroyWindow(hWnd);
+        }
     }
 
     public final void testDestroyWindow() {
