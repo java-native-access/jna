@@ -101,7 +101,7 @@ public class Memory extends Pointer {
      * the allocated bounds. 
      */
     public Pointer share(long offset) {
-        return share(offset, getSize() - offset);
+        return share(offset, size() - offset);
     }
     
     /** Provide a view of this memory using the given offset as the base
@@ -162,11 +162,6 @@ public class Memory extends Pointer {
         clear(size);
     }
 
-    /** @deprecated use {@link #valid()} instead. */
-    public boolean isValid() {
-        return valid();
-    }
-
     /** Returns false if the memory has been freed. */
     public boolean valid() {
         return peer != 0;
@@ -175,12 +170,6 @@ public class Memory extends Pointer {
     public long size() {
         return size;
     }
-
-    /** @deprecated use {@link #size()} instead. */
-    public long getSize() {
-        return size();
-    }
-
 
     /**
      * Check that indirection won't cause us to write outside the 
