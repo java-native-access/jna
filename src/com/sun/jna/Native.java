@@ -996,9 +996,7 @@ public final class Native {
         }
         if (Structure.class.isAssignableFrom(type)
             && !Structure.ByReference.class.isAssignableFrom(type)) {
-            if (value == null)
-                value = Structure.newInstance(type);
-            return ((Structure)value).size();
+            return Structure.size(type, (Structure)value);
         }
         try {
             return getNativeSize(type);
