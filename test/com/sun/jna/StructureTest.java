@@ -298,7 +298,10 @@ public class StructureTest extends TestCase {
 
     // must be publicly accessible in order to create array elements
     public static class PublicTestStructure extends Structure {
-        public static class ByReference extends PublicTestStructure implements Structure.ByReference { }
+        public static class ByReference extends PublicTestStructure implements Structure.ByReference {
+            public ByReference() { }
+            public ByReference(Pointer p) { super(p); }
+        }
         public int x = 1, y = 2;
         public PublicTestStructure() { }
         public PublicTestStructure(Pointer p) { super(p); read(); }
@@ -349,7 +352,6 @@ public class StructureTest extends TestCase {
     }
 
     // TODO: add'l newInstance(Pointer) tests: 
-    // struct by reference (from pointer)
     // getNativeAlignment
     // callback convert pointer to structure
     // native call (direct mode) (maybe not...)
@@ -815,11 +817,13 @@ public class StructureTest extends TestCase {
         StructureWithPointers s = new StructureWithPointers();
         PublicTestStructure.ByReference inner =
             new PublicTestStructure.ByReference();
+        PublicTestStructure.allocations = 0;
         s.s1 = inner;
         s.write();
         s.s1 = null;
         s.read();
         assertEquals("Inner structure not regenerated on read", inner, s.s1);
+        assertEquals("Inner structure should not allocate memory", 0, PublicTestStructure.allocations);
     }
 
     public void testPreserveStructureByReferenceWithUnchangedPointerOnRead() {

@@ -603,9 +603,7 @@ public abstract class Structure {
                     s = s1;
                 }
                 else {
-                    //s = newInstance(type, address);
-                    s = newInstance(type);
-                    s.useMemory(address);
+                    s = newInstance(type, address);
                 }
             }
             s.autoRead();
