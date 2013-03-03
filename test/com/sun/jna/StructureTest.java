@@ -352,8 +352,9 @@ public class StructureTest extends TestCase {
     }
 
     // TODO: add'l newInstance(Pointer) tests: 
+    // DirectCallbacksTest.testCallStructureCallback
+    // DirectReturnTypesTest.testInvokeStructure
     // getNativeAlignment
-    // callback convert pointer to structure
     // native call (direct mode) (maybe not...)
     public void testStructureFieldAvoidsSeparateMemoryAllocation() {
         class TestStructure extends Structure {

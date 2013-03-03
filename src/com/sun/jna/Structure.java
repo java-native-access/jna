@@ -1852,4 +1852,9 @@ public abstract class Structure {
     private static final Pointer PLACEHOLDER_MEMORY = new Pointer(0) {
         public Pointer share(long offset, long sz) { return this; }
     };
+
+    /** Indicate whether the given Structure class can be created by JNA. */
+    static void validate(Class cls) {
+        Structure.newInstance(cls, PLACEHOLDER_MEMORY);
+    }
 }

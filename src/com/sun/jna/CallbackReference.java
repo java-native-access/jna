@@ -231,7 +231,7 @@ class CallbackReference extends WeakReference {
     private Class getNativeType(Class cls) {
         if (Structure.class.isAssignableFrom(cls)) {
             // Make sure we can instantiate an argument of this type
-            Structure.newInstance(cls);
+            Structure.validate(cls);
             if (!Structure.ByValue.class.isAssignableFrom(cls))
                 return Pointer.class;
         }

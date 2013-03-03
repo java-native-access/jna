@@ -41,6 +41,13 @@ public class CallbacksTest extends TestCase {
 
     public static class SmallTestStructure extends Structure {
         public double value;
+        public static int allocations = 0;
+        protected void allocateMemory(int size) {
+            super.allocateMemory(size);
+            ++allocations;
+        }
+        public SmallTestStructure() { }
+        public SmallTestStructure(Pointer p) { super(p); read(); }
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "value" });
         }
@@ -411,6 +418,7 @@ public class CallbacksTest extends TestCase {
                 return arg;
             }
         };
+        SmallTestStructure.allocations = 0;
         SmallTestStructure value = lib.callStructureCallback(cb, s);
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong argument passed to callback", s.getPointer(), cbarg[0]);
@@ -419,6 +427,9 @@ public class CallbacksTest extends TestCase {
         assertEquals("Wrong structure return", s.getPointer(), value.getPointer());
         assertEquals("Structure return not synched",
                      MAGIC, value.value, 0d);
+        // All structures involved should be created from pointers, with no
+        // memory allocation at all
+        assertEquals("No structure memory should be allocated", 0, SmallTestStructure.allocations);
     }
     
     public void testCallStructureArrayCallback() {

@@ -36,6 +36,13 @@ public class ReturnTypesTest extends TestCase {
         
         public static class SimpleStructure extends Structure {
             public double value;
+            public static int allocations = 0;
+            public SimpleStructure() { }
+            public SimpleStructure(Pointer p) { super(p); read(); }
+            protected void allocateMemory(int size) {
+                super.allocateMemory(size);
+                ++allocations;
+            }
             protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "value" });
             }
@@ -230,8 +237,10 @@ public class ReturnTypesTest extends TestCase {
     }
     
     public void testInvokeStructure() {
+        SimpleStructure.allocations = 0;
         SimpleStructure s = lib.returnStaticTestStructure();
         assertEquals("Expect test structure magic", DOUBLE_MAGIC, s.value, 0d);
+        assertEquals("Returned Structure should allocate no memory", 0, SimpleStructure.allocations);
     }
     
     public void testInvokeNullStructure() {
