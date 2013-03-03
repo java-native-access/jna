@@ -240,7 +240,10 @@ public class ReturnTypesTest extends TestCase {
         SimpleStructure.allocations = 0;
         SimpleStructure s = lib.returnStaticTestStructure();
         assertEquals("Expect test structure magic", DOUBLE_MAGIC, s.value, 0d);
-        assertEquals("Returned Structure should allocate no memory", 0, SimpleStructure.allocations);
+        // Optimized structure allocation not yet implemented for direct mapping
+        if (getClass() == ReturnTypesTest.class) {
+            assertEquals("Returned Structure should allocate no memory", 0, SimpleStructure.allocations);
+        }
     }
     
     public void testInvokeNullStructure() {
