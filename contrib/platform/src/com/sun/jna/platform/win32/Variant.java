@@ -8,7 +8,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.OaIdl.CURRENCY;
 import com.sun.jna.platform.win32.OaIdl.DATE;
-import com.sun.jna.platform.win32.OaIdl.DATEbyReference;
 import com.sun.jna.platform.win32.OaIdl.DECIMAL;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
@@ -141,6 +140,11 @@ public interface Variant {
 		public VARIANT(SHORT value) {
 			this();
 			this.setValue(VT_I2, value);
+		}
+
+		public VARIANT(DATE value) {
+			this();
+			this.setValue(VT_DATE, value);
 		}
 
 		public VARTYPE getVarType() {
@@ -303,7 +307,7 @@ public interface Variant {
 				// CY * VT_BYREF|VT_CY
 				public CURRENCY.ByReference pcyVal;
 				// DATE * VT_BYREF|VT_DATE
-				public DATEbyReference pdate;
+				public DATE.ByReference pdate;
 				// BSTR * VT_BYREF|VT_BSTR
 				public BSTR pbstrVal;
 				// IUnknown ** VT_BYREF|VT_UNKNOWN
