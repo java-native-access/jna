@@ -29,6 +29,7 @@ import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -106,14 +107,14 @@ public class ITypeInfo extends IUnknown {
 
 	public/* [local] */HRESULT GetNames(
 	/* [in] */MEMBERID memid,
-	/* [length_is][size_is][out] */BSTR.ByReference rgBstrNames,
+	/* [length_is][size_is][out] */BSTR[] rgBstrNames,
 	/* [in] */UINT cMaxNames,
 	/* [out] */UINTbyReference pcNames) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(28));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), memid, rgBstrNames, cMaxNames,
-				pcNames });
+		int hr = func.invokeInt(new Object[] { this.getPointer(), memid,
+				rgBstrNames, cMaxNames, pcNames });
 
 		return new HRESULT(hr);
 	}
@@ -143,9 +144,9 @@ public class ITypeInfo extends IUnknown {
 	}
 
 	public/* [local] */HRESULT GetIDsOfNames(
-	/* [size_is][in] */WString rgszNames,
+	/* [size_is][in] */WString[] rgszNames,
 	/* [in] */UINT cNames,
-	/* [size_is][out] */MEMBERIDbyReference pMemId) {
+	/* [size_is][out] */MEMBERID[] pMemId) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(40));
@@ -174,10 +175,10 @@ public class ITypeInfo extends IUnknown {
 
 	public/* [local] */HRESULT GetDocumentation(
 	/* [in] */MEMBERID memid,
-	/* [out] */BSTR.ByReference pBstrName,
-	/* [out] */BSTR.ByReference pBstrDocString,
+	/* [out] */BSTR pBstrName,
+	/* [out] */BSTR pBstrDocString,
 	/* [out] */DWORDbyReference pdwHelpContext,
-	/* [out] */BSTR.ByReference pBstrHelpFile) {
+	/* [out] */BSTR pBstrHelpFile) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(48));
@@ -190,8 +191,8 @@ public class ITypeInfo extends IUnknown {
 	public/* [local] */HRESULT GetDllEntry(
 	/* [in] */MEMBERID memid,
 	/* [in] */INVOKEKIND invKind,
-	/* [out] */BSTR.ByReference pBstrDllName,
-	/* [out] */BSTR.ByReference pBstrName,
+	/* [out] */BSTR pBstrDllName,
+	/* [out] */BSTR pBstrName,
 	/* [out] */WORDbyReference pwOrdinal) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
@@ -242,7 +243,7 @@ public class ITypeInfo extends IUnknown {
 
 	public HRESULT GetMops(
 	/* [in] */MEMBERID memid,
-	/* [out] */BSTR.ByReference pBstrMops) {
+	/* [out] */BSTR pBstrMops) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(68));

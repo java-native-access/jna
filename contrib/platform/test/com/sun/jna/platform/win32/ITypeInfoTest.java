@@ -25,6 +25,7 @@ import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -56,16 +57,15 @@ public class ITypeInfoTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		if(this.comObj == null) {
+		if (this.comObj == null) {
 			// create a shell COM object
-			this.comObj = new COMObject("InternetExplorer.Application",
-					false);
+			this.comObj = new COMObject("Shell.Application", false);
 		}
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		if(this.comObj != null) {
+		if (this.comObj != null) {
 			this.comObj.release();
 		}
 	}
@@ -124,14 +124,14 @@ public class ITypeInfoTest extends TestCase {
 	public void testGetNames() {
 		ITypeInfo typeInfo = getTypeInfo();
 		MEMBERID memid = new MEMBERID(1);
-		BSTR.ByReference rgBstrNames = new BSTR.ByReference();
-		UINT cMaxNames = new UINT(0);
+		BSTR[] rgBstrNames = new BSTR[1];
+		UINT cMaxNames = new UINT(1);
 		UINTbyReference pcNames = new UINTbyReference();
 		HRESULT hr = typeInfo.GetNames(memid, rgBstrNames, cMaxNames, pcNames);
 
 		COMUtils.checkTypeLibRC(hr);
 		assertEquals(0, hr.intValue());
-		System.out.println("rgBstrNames: " + rgBstrNames.toString());
+		System.out.println("rgBstrNames: " + rgBstrNames[0].getValue());
 		System.out.println("pcNames: " + pcNames.getValue().intValue());
 	}
 
@@ -157,14 +157,14 @@ public class ITypeInfoTest extends TestCase {
 
 	public void testGetIDsOfNames() {
 		ITypeInfo typeInfo = getTypeInfo();
-		WString rgszNames = new WString("Visible");
-		UINT cNames = new UINT(0);
-		MEMBERIDbyReference pMemId = new MEMBERIDbyReference();
+		WString[] rgszNames = { new WString("Visible") };
+		UINT cNames = new UINT(1);
+		MEMBERID[] pMemId = new MEMBERID[1];
 		HRESULT hr = typeInfo.GetIDsOfNames(rgszNames, cNames, pMemId);
 
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkAutoRC(hr);
 		assertEquals(0, hr.intValue());
-		System.out.println("GetIDsOfNames: " + pMemId.toString());
+		System.out.println("pMemId: " + pMemId.toString());
 	}
 
 	public void testInvoke() {
@@ -174,37 +174,37 @@ public class ITypeInfoTest extends TestCase {
 	public void testGetDocumentation() {
 		ITypeInfo typeInfo = getTypeInfo();
 		MEMBERID memid = new MEMBERID(0);
-		BSTR.ByReference pBstrName = new BSTR.ByReference();
-		BSTR.ByReference pBstrDocString = new BSTR.ByReference();
+		BSTR pBstrName = new BSTR();
+		BSTR pBstrDocString = new BSTR();
 		DWORDbyReference pdwHelpContext = new DWORDbyReference();
-		BSTR.ByReference pBstrHelpFile = new BSTR.ByReference();
+		BSTR pBstrHelpFile = new BSTR();
 		HRESULT hr = typeInfo.GetDocumentation(memid, pBstrName,
 				pBstrDocString, pdwHelpContext, pBstrHelpFile);
 
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkAutoRC(hr);
 		assertEquals(0, hr.intValue());
-		System.out.println("memid: " + memid.toString());
-		System.out.println("pBstrName: " + pBstrName.toString());
-		System.out.println("pBstrDocString: " + pBstrDocString.toString());
-		System.out.println("pdwHelpContext: " + pdwHelpContext.toString());
-		System.out.println("pBstrHelpFile: " + pBstrHelpFile.toString());
+		System.out.println("memid: " + memid.intValue());
+		System.out.println("pBstrName: " + pBstrName.getValue());
+		System.out.println("pBstrDocString: " + pBstrDocString.getValue());
+		System.out.println("pdwHelpContext: " + pdwHelpContext.getValue());
+		System.out.println("pBstrHelpFile: " + pBstrHelpFile.getValue());
 	}
 
 	public void testGetDllEntry() {
 		ITypeInfo typeInfo = getTypeInfo();
 		MEMBERID memid = new MEMBERID(0);
-		BSTR.ByReference pBstrDllName = new BSTR.ByReference();
-		BSTR.ByReference pBstrName = new BSTR.ByReference();
+		BSTR pBstrDllName = new BSTR();
+		BSTR pBstrName = new BSTR();
 		WORDbyReference pwOrdinal = new WORDbyReference();
 		HRESULT hr = typeInfo.GetDllEntry(memid, INVOKEKIND.INVOKE_FUNC,
 				pBstrDllName, pBstrName, pwOrdinal);
 
 		COMUtils.checkTypeLibRC(hr);
 		assertEquals(0, hr.intValue());
-		System.out.println("memid: " + memid.toString());
-		System.out.println("pBstrDllName: " + pBstrDllName.toString());
-		System.out.println("pBstrName: " + pBstrName.toString());
-		System.out.println("pwOrdinal: " + pwOrdinal.toString());
+		System.out.println("memid: " + memid.intValue());
+		System.out.println("pBstrDllName: " + pBstrDllName.getValue());
+		System.out.println("pBstrName: " + pBstrName.getValue());
+		System.out.println("pwOrdinal: " + pwOrdinal.getValue());
 	}
 
 	public void testGetRefTypeInfo() {
@@ -237,7 +237,7 @@ public class ITypeInfoTest extends TestCase {
 	public void testGetMops() {
 		ITypeInfo typeInfo = getTypeInfo();
 		MEMBERID memid = new MEMBERID(0);
-		BSTR.ByReference pBstrMops = new BSTR.ByReference();
+		BSTR pBstrMops = new BSTR();
 		HRESULT hr = typeInfo.GetMops(memid, pBstrMops);
 
 		COMUtils.checkTypeLibRC(hr);
