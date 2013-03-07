@@ -1,8 +1,12 @@
 package com.sun.jna.platform.win32.COM;
 
+import java.util.ArrayList;
+
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.Advapi32Util.EnumKey;
+import com.sun.jna.platform.win32.Advapi32Util.InfoKey;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.Win32Exception;
@@ -279,78 +283,70 @@ public abstract class COMUtils {
 		}
 	}
 
-	public static String getAllProgIDsOnSystem() {
-		String result = "";
-		int rc = 0;
-		
-		String[] regCLSIDkeys = Advapi32Util.registryGetKeys(WinReg.HKEY_CLASSES_ROOT, "CLSID");
-		
-		for (int i = 0; i < regCLSIDkeys.length; i++) {
-			String value = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, "CLSID\\{" + regCLSIDkeys[i]+"}", null);
-			System.out.println(value);
-		}
-		
-		// open root key
-		String subKey = "CLSID";
+	public static ArrayList<COMInfo> getAllCOMInfoOnSystem() {
 		HKEYByReference phkResult = new HKEYByReference();
-		rc = Advapi32.INSTANCE.RegOpenKeyEx(WinReg.HKEY_CLASSES_ROOT, "CLSID",
-				0, WinNT.KEY_READ, phkResult);
-		checkRegistryRC(rc);
-		
-		// open subkey
-		IntByReference lpcSubKeys = new IntByReference();
-		rc = Advapi32.INSTANCE.RegQueryInfoKey(phkResult.getValue(), null,
-				null, null, lpcSubKeys, null, null, null, null, null,
-				new IntByReference(WinNT.KEY_READ), null);
-		checkRegistryRC(rc);
+		HKEYByReference phkResult2 = new HKEYByReference();
+		String subKey;
+		ArrayList<COMInfo> comInfos = new ArrayList<COMUtils.COMInfo>();
 
-		for (int i = 1; i < lpcSubKeys.getValue(); i++) {
-			char[] lpName = new char[WinNT.MAX_PATH];
-			IntByReference lpcClass = new IntByReference(WinNT.MAX_PATH);
-			rc = Advapi32.INSTANCE.RegEnumKeyEx(phkResult.getValue(), i,
-					lpName, lpcClass, null, null, null, null);
-			checkRegistryRC(rc);
-			subKey = Native.toString(lpName);
+		try {
+			// open root key
+			phkResult = Advapi32Util.registryGetKey(WinReg.HKEY_CLASSES_ROOT, "CLSID", WinNT.KEY_ALL_ACCESS);
+			// open subkey
+			InfoKey infoKey = Advapi32Util.registryQueryInfoKey(phkResult.getValue(), WinNT.KEY_ALL_ACCESS);
 
-			HKEYByReference phkResult2 = new HKEYByReference();
-			rc = Advapi32.INSTANCE.RegOpenKeyEx(phkResult.getValue(), subKey,
-					0, WinNT.KEY_READ, phkResult2);
-			checkRegistryRC(rc);
-			
-			for (int y = 0; y < 2; y++) {
-				char[] lpName2 = new char[WinNT.MAX_PATH];
-				IntByReference lpcClass2 = new IntByReference(WinNT.MAX_PATH);
-				rc = Advapi32.INSTANCE.RegEnumKeyEx(phkResult2.getValue(), 1,
-						lpName2, lpcClass2, null, null, null, null);
-				checkRegistryRC(rc);
-				String subKey2 = Native.toString(lpName2);
-				
-				if(subKey2.equals("ProgID")) {
-					HKEYByReference phkResult3 = new HKEYByReference();
-					rc = Advapi32.INSTANCE.RegOpenKeyEx(phkResult2.getValue(), subKey2,
-							0, WinNT.KEY_READ, phkResult3);
-					checkRegistryRC(rc);
-					
-					IntByReference lpcbData = new IntByReference();
-					rc = Advapi32.INSTANCE.RegQueryValueEx(phkResult3.getValue(), null, 0, null, (char[])null, lpcbData);
-					checkRegistryRC(rc);
-					
-					char[] lpData = new char[lpcbData.getValue()];
-					rc = Advapi32.INSTANCE.RegQueryValueEx(phkResult3.getValue(), null, 0, null, lpData, lpcbData);
-					checkRegistryRC(rc);
-					
-					result += Native.toString(lpData) + "\n";
+			for (int i = 0; i < infoKey.lpcSubKeys.getValue(); i++) {
+				EnumKey enumKey = Advapi32Util.registryRegEnumKey(phkResult.getValue(), i);
+				subKey = Native.toString(enumKey.lpName);
+
+				COMInfo comInfo = new COMInfo(subKey);
+
+				phkResult2 = Advapi32Util.registryGetKey(phkResult.getValue(), subKey, WinNT.KEY_ALL_ACCESS);
+				InfoKey infoKey2 = Advapi32Util.registryQueryInfoKey(phkResult2.getValue(), WinNT.KEY_ALL_ACCESS);
+
+				for (int y = 0; y < infoKey2.lpcSubKeys.getValue(); y++)
+				{
+					EnumKey enumKey2 = Advapi32Util.registryRegEnumKey(phkResult2.getValue(), y);
+					String subKey2 = Native.toString(enumKey2.lpName);
+
+					if(subKey2.equals("InprocHandler32")) {
+						comInfo.inprocHandler32 = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
+					}else if(subKey2.equals("InprocServer32")) {
+						comInfo.inprocServer32 = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
+					}else if(subKey2.equals("LocalServer32")) {
+						comInfo.localServer32 = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
+					}else if(subKey2.equals("ProgID")) {
+						comInfo.progID = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
+					}else if(subKey2.equals("TypeLib")) {
+						comInfo.typeLib = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
+					}
 				}
+
+				Advapi32.INSTANCE.RegCloseKey(phkResult2.getValue());
+				comInfos.add(comInfo);
 			}
+		} finally {
+			Advapi32.INSTANCE.RegCloseKey(phkResult.getValue());
+			Advapi32.INSTANCE.RegCloseKey(phkResult2.getValue());
 		}
 
-		return result;
+		return comInfos;
 	}
-	
-	public static void checkRegistryRC(int rc) {
-		 if (rc != W32Errors.ERROR_SUCCESS && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-		 }		
+
+	public static class COMInfo {
+		public String clsid;
+		public String inprocHandler32;
+		public String inprocServer32;
+		public String localServer32;
+		public String progID;
+		public String typeLib;
+
+		public COMInfo() {
+		}
+
+		public COMInfo(String clsid) {
+			this.clsid = clsid;
+		}
 	}
 
 	private static String toHexStr(HRESULT hr) {

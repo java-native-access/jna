@@ -273,7 +273,7 @@ public interface Variant {
 				// DATE * VT_BYREF|VT_DATE
 				public DATEbyReference pdate;
 				// BSTR * VT_BYREF|VT_BSTR
-				public BSTR.ByReference pbstrVal;
+				public BSTR pbstrVal;
 				// IUnknown ** VT_BYREF|VT_UNKNOWN
 				public IUnknown.ByReference ppunkVal;
 				// IDispatch ** VT_BYREF|VT_DISPATCH
