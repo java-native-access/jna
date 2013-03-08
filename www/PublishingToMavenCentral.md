@@ -55,6 +55,6 @@ To publish a development SNAPSHOT do the following:
         git checkout --
         ant deploy -DskipNative=true
 
-Note: unlike stable, unchanging releases, a SNAPSHOT may be re-published at any time (and it typically deleted after a
+Note: unlike stable, unchanging releases, a SNAPSHOT may be re-published at any time (and is typically deleted after a
 full release is performed).
 
