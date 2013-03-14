@@ -26,7 +26,7 @@ import com.sun.jna.win32.W32APIOptions;
  * alternate mappings from {@link WinNT} which make use of NIO buffers.
  */
 public interface Kernel32 extends WinNT {
-	
+
 	/** The instance. */
 	Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32",
 			Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
@@ -158,6 +158,15 @@ public interface Kernel32 extends WinNT {
 	 *            system date and time.
 	 */
 	void GetSystemTime(WinBase.SYSTEMTIME lpSystemTime);
+
+	/**
+	 * Retrieves the current local date and time.
+	 * 
+	 * @param lpSystemTime
+	 *            A pointer to a SYSTEMTIME structure to receive the current
+	 *            local date and time.
+	 */
+	void GetLocalTime(WinBase.SYSTEMTIME lpSystemTime);
 
 	/**
 	 * The GetTickCount function retrieves the number of milliseconds that have
