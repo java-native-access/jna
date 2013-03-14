@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+/* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,15 +12,21 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-
-import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
+import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
+
 /**
  * @author dblock[at]dblock[dot]org
+ * @author markus[at]headcrashing[dot]eu
  */
 public class Kernel32UtilTest extends TestCase {
 	
@@ -128,5 +134,50 @@ public class Kernel32UtilTest extends TestCase {
     	assertEquals(null, Kernel32Util.getEnvironmentVariable("jna-getenvironment-test"));
     	Kernel32.INSTANCE.SetEnvironmentVariable("jna-getenvironment-test", "42");
     	assertEquals("42", Kernel32Util.getEnvironmentVariable("jna-getenvironment-test"));
+    }
+
+    public final void testGetPrivateProfileInt() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileInt", "ini");
+        tmp.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = 123");
+        writer.close();
+
+        assertEquals(123, Kernel32Util.getPrivateProfileInt("Section", "existingKey", 456, tmp.getCanonicalPath()));
+        assertEquals(456, Kernel32Util.getPrivateProfileInt("Section", "missingKey", 456, tmp.getCanonicalPath()));
+    }
+
+    public final void testGetPrivateProfileString() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileString", "ini");
+        tmp.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = ABC");
+        writer.close();
+
+        assertEquals("ABC", Kernel32Util.getPrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath()));
+        assertEquals("DEF", Kernel32Util.getPrivateProfileString("Section", "missingKey", "DEF", tmp.getCanonicalPath()));
+    }
+
+    public final void testWritePrivateProfileString() throws IOException {
+        final File tmp = File.createTempFile("testWritePrivateProfileString", "ini");
+        tmp.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = ABC");
+        writer.println("removedKey = JKL");
+        writer.close();
+
+        Kernel32Util.writePrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath());
+        Kernel32Util.writePrivateProfileString("Section", "addedKey", "GHI", tmp.getCanonicalPath());
+        Kernel32Util.writePrivateProfileString("Section", "removedKey", null, tmp.getCanonicalPath());
+        
+        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
+        assertEquals(reader.readLine(), "[Section]");
+        assertTrue(reader.readLine().matches("existingKey\\s*=\\s*DEF"));
+        assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
+        assertEquals(reader.readLine(), null);
+        reader.close();
     }
 }

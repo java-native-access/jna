@@ -2,17 +2,15 @@ package com.sun.jna.platform.win32;
 
 import java.awt.Frame;
 
+import com.sun.jna.Native;
 import junit.framework.TestCase;
-import sun.awt.windows.WComponentPeer;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 public class Wtsapi32Test extends TestCase {
 
-	private long peer = 0;
-
-	private HWND hwnd;
+    private final HWND hwnd;
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(Wtsapi32Test.class);
@@ -21,8 +19,7 @@ public class Wtsapi32Test extends TestCase {
 	public Wtsapi32Test() {
 		Frame frame = new Frame();
 		frame.setVisible(true);
-		this.peer = ((WComponentPeer) frame.getPeer()).getHWnd();
-		this.hwnd = new HWND(new Pointer(peer));
+		this.hwnd = new HWND(Native.getWindowPointer(frame));
 	}
 
 	public void testWTSRegisterSessionNotification() {

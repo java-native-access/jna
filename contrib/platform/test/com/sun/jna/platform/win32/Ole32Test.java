@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+/* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +18,11 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.IUnknown;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
  * @author dblock[at]dblock[dot]org
+ * @author markus[at]headcrashing[dot]eu
  */
 public class Ole32Test extends TestCase {
 
@@ -100,5 +100,11 @@ public class Ole32Test extends TestCase {
 		// here to wrap the native iUnknown pointer and call iUnknown.release()
 		if (W32Errors.SUCCEEDED(hrCI.intValue()))
 			Ole32.INSTANCE.CoUninitialize();
+	}
+
+	public final void testCLSIDFromProgID() {
+	    final Guid.CLSID.ByReference clsid = new Guid.CLSID.ByReference();  
+	    assertEquals(WinError.S_OK, Ole32.INSTANCE.CLSIDFromProgID("jpegfile", clsid));
+	    assertEquals("{25336920-03F9-11CF-8FD0-00AA00686F13}", clsid.toGuidString());
 	}
 }

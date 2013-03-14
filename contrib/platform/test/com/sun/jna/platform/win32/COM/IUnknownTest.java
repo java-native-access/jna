@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.  
  */
-package com.sun.jna.win32;
+package com.sun.jna.platform.win32.COM;
 
 import junit.framework.TestCase;
 
@@ -24,7 +24,7 @@ import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.ptr.PointerByReference;
 
-public class IUknownTest extends TestCase {
+public class IUnknownTest extends TestCase {
 
 	private IDispatch iDispatch = new IDispatch();
 
@@ -98,6 +98,6 @@ public class IUknownTest extends TestCase {
 	}
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(IUknownTest.class);
+		junit.textui.TestRunner.run(IUnknownTest.class);
 	}
 }

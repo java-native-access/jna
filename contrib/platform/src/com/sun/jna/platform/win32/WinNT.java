@@ -470,6 +470,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return Arrays.asList(new String[] { "PrivilegeCount", "Privileges" });
         }
 
+        /** Creates an empty instance with no privileges. */
+        public TOKEN_PRIVILEGES() {
+            this(0);
+        }
         /**
          * @param nbOfPrivileges
          *            Desired size of the Privileges array
@@ -477,6 +481,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public TOKEN_PRIVILEGES(int nbOfPrivileges) {
             PrivilegeCount = new DWORD(nbOfPrivileges);
             Privileges = new LUID_AND_ATTRIBUTES[nbOfPrivileges];
+        }
+
+        /** Initialize a TOKEN_PRIVILEGES instance from initialized memory. */
+        public TOKEN_PRIVILEGES(Pointer p) {
+            super(p);
+            int count = p.getInt(0);
+            PrivilegeCount = new DWORD(count);
+            Privileges = new LUID_AND_ATTRIBUTES[count];
+            read();
         }
     }
 
@@ -1994,7 +2007,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public short AceCount;
         public short Sbz2;
 
-        ACCESS_ACEStructure[] ACEs;
+        private ACCESS_ACEStructure[] ACEs;
 
         public ACCESS_ACEStructure[] getACEStructures() {
             return ACEs;
@@ -2029,8 +2042,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             setDacl();
         }
 
-        public SECURITY_DESCRIPTOR_RELATIVE(Memory memory) {
-            super(memory);
+        public SECURITY_DESCRIPTOR_RELATIVE(Pointer p) {
+            super(p);
             setDacl();
         }
 
@@ -2053,6 +2066,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         PSID psid;
 
+        public ACEStructure() { }
         public ACEStructure(Pointer p) {
             super(p);
         }
@@ -2072,6 +2086,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     /* ACE header */
     public static class ACE_HEADER extends ACEStructure {
+        public ACE_HEADER() { }
         public ACE_HEADER(Pointer p) {
             super(p);
             read();
@@ -2087,6 +2102,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             list.addAll(Arrays.asList(new String[] { "Mask", "SidStart"}));
             return list;
         }
+        public ACCESS_ACEStructure() { }
         public ACCESS_ACEStructure(Pointer p) {
             super(p);
             read();
@@ -2109,6 +2125,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     /* Access allowed ACE */
     public static class ACCESS_ALLOWED_ACE extends ACCESS_ACEStructure {
+        public ACCESS_ALLOWED_ACE() { }
         public ACCESS_ALLOWED_ACE(Pointer p) {
             super(p);
         }
@@ -2116,6 +2133,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     /* Access denied ACE */
     public static class ACCESS_DENIED_ACE extends ACCESS_ACEStructure {
+        public ACCESS_DENIED_ACE() { }
         public ACCESS_DENIED_ACE(Pointer p) {
             super(p);
         }

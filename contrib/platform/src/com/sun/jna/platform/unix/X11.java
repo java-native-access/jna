@@ -1598,7 +1598,7 @@ public interface X11 extends Library {
         public Window event;
         public Window window;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window" }); }
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "event", "window" }); }
     }
 
     class XUnmapEvent extends Structure {
@@ -1610,7 +1610,7 @@ public interface X11 extends Library {
         public Window window;
         public int from_configure;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window", "from_configure" }); 
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "event", "window", "from_configure" });
         }
     }
 
@@ -1623,7 +1623,7 @@ public interface X11 extends Library {
         public Window window;
         public int override_redirect; // boolean, is override set...
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window", "override_redirect" }); 
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "event", "window", "override_redirect" });
         }
     }
 
@@ -1635,7 +1635,7 @@ public interface X11 extends Library {
         public Window parent;
         public Window window;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window" }); 
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "parent", "window" });
         }
     }
 
@@ -1650,7 +1650,7 @@ public interface X11 extends Library {
         public int x, y;
         public int override_redirect;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window", "x", "y", "override_redirect" }); 
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "event", "window", "parent", "x", "y", "override_redirect" });
         }
     }
 
@@ -1667,7 +1667,7 @@ public interface X11 extends Library {
         public Window above;
         public int override_redirect;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window", "x", "y", "width", "height", "border_width", "above", "override_redirect" }); 
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "event", "window", "x", "y", "width", "height", "border_width", "above", "override_redirect" });
         }
     }
 
@@ -1680,7 +1680,7 @@ public interface X11 extends Library {
         public Window window;
         public int x, y;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window", "x", "y" }); 
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "event", "window", "x", "y" });
         }
     }
 
@@ -1710,7 +1710,7 @@ public interface X11 extends Library {
         public int detail;          // Above, Below, TopIf, BottomIf, Opposite
         public NativeLong value_mask;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window", "x", "y", "width", "height", "above", "detail", "value_mask" }); 
+            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "parent", "window", "x", "y", "width", "height", "border_width", "above", "detail", "value_mask" });
         }
     }
 

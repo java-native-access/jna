@@ -149,8 +149,10 @@ public class Netapi32Test extends TestCase {
     	userInfo.usri1_name = new WString("JNANetapi32TestUser");
     	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
-    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
-    			Kernel32Util.getComputerName(), 1, userInfo, null));
+        // ignore test if not able to add user (need to be administrator to do this).
+        if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
+            return;
+        }
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
     			Kernel32Util.getComputerName(), userInfo.usri1_name.toString()));
     }
@@ -160,8 +162,10 @@ public class Netapi32Test extends TestCase {
     	userInfo.usri1_name = new WString("JNANetapi32TestUser");
     	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
-    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserAdd(
-    			Kernel32Util.getComputerName(), 1, userInfo, null));
+        // ignore test if not able to add user (need to be administrator to do this).
+        if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
+            return;
+        }
     	try {
 	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserChangePassword(
 	    			Kernel32Util.getComputerName(), userInfo.usri1_name.toString(), userInfo.usri1_password.toString(),

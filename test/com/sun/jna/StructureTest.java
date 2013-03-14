@@ -825,6 +825,41 @@ public class StructureTest extends TestCase {
         assertEquals("String field should not be overwritten", m2, s.getPointer().getPointer(Pointer.SIZE));
     }
 
+    // Ensure string cacheing doesn't interfere with wrapped structure writes. 
+    public static class StructureFromNative extends Structure {
+        public String s;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "s" });
+        }
+        public StructureFromNative(Pointer p) {
+            super(p);
+            read();
+        }
+        public StructureFromNative() {
+        }
+    }
+    
+    public void testInitializeStructureFieldWithStrings() {
+        class ContainingStructure extends Structure {
+            public StructureFromNative inner;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "inner" });
+            }
+        }
+        StructureFromNative o = new StructureFromNative();
+        o.s = getName();
+        o.write();
+        StructureFromNative t = new StructureFromNative(o.getPointer());
+        assertEquals("String field not initialized", getName(), t.s);
+
+        ContainingStructure outer = new ContainingStructure();
+        outer.inner = t;
+        outer.write();
+        assertEquals("Inner String field corrupted", getName(), outer.inner.s);
+        outer.inner.read();
+        assertEquals("Native memory behind Inner String field not updated", getName(), outer.inner.s);
+    }
+
     public void testOverwriteStructureByReferenceFieldOnRead() {
         StructureWithPointers s = new StructureWithPointers();
         PublicTestStructure.ByReference inner =

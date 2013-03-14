@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+/* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
+ * @author markus[at]headcrashing[dot]eu
  */
 public class Shell32UtilTest extends TestCase {
 
@@ -24,9 +25,14 @@ public class Shell32UtilTest extends TestCase {
         System.out.println("Windows: " + Shell32Util.getFolderPath(ShlObj.CSIDL_WINDOWS));
         System.out.println(" System: " + Shell32Util.getFolderPath(ShlObj.CSIDL_SYSTEM));
         System.out.println("AppData: " + Shell32Util.getFolderPath(ShlObj.CSIDL_APPDATA));
+        System.out.println("AppData: " + Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_APPDATA, false));
     }
     
 	public void testGetFolderPath() {
 		assertTrue(Shell32Util.getFolderPath(ShlObj.CSIDL_WINDOWS).length() > 0);
 	}
+
+	public final void testGetSpecialFolderPath() {
+        assertFalse(Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_APPDATA, false).isEmpty());
+    }
 }

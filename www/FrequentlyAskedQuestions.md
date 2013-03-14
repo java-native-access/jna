@@ -46,13 +46,15 @@ Find your corresponding native declaration below:
     // Field is a pointer to an array of struct
     typedef struct _outerstruct5 {
       simplestruct* ptr_to_array; // use Structure.ByReference, and use
-                                  // Structure.toArray() to allocate the array
+                                  // Structure.toArray() to allocate the array, 
+                                  // then assign the first array element to the field
     } outerstruct5;
 
     // struct pointers as return value or argument
-    // use Structure
-    outerstruct *myfunc(); 
-    void myfunc(outerstruct* data);
+    simplestruct *myfunc(); // use Structure
+    void myfunc(simplestruct* data); // use Structure
+    void myfunc(simplestruct* data_array, int count); // use Structure[], and use Structure.toArray() to generate the array
+    void myfunc(simplestruct** data_array, int count); // use Structure.ByReference[]
 
     // struct (by value) as return value or argument
     // use Structure.ByValue
@@ -167,3 +169,6 @@ The calling overhead for a single native call using JNA interface mapping can be
 
 You might expect a speedup of about an order of magnitude moving to JNA direct mapping, and a factor of two or three moving from there to custom JNI. The actual difference will vary depending on usage and function signatures. As with any optimization process, you should determine first where you need a speed increase, and then see how much difference there is by performing targeted optimizations. The ease of programming everything in Java usually outweighs small performance gains when using custom JNI.
 
+JNA COM support
+---------------
+There is a new implementation to support COM in conjunction with JNA directly. The development is relatively young, honestly the development has been finished just end of February '13. Please note that fact if you use the COM support in JNA, there could be things missing or not absolutely tested or still not working. Please use the jna user group to report your experience with the JNA Com support. 

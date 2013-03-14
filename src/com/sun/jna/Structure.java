@@ -145,7 +145,8 @@ public abstract class Structure {
     private int actualAlignType;
     private int structAlignment;
     private Map structFields;
-    // Keep track of java strings which have been converted to C strings
+    // Keep track of native C strings which have been allocated,
+    // corresponding to String fields of this Structure
     private final Map nativeStrings = new HashMap();
     private TypeMapper typeMapper;
     // This field is accessed by native code
@@ -289,6 +290,9 @@ public abstract class Structure {
      */
     protected void useMemory(Pointer m, int offset) {
         try {
+            // Clear any local cache
+            nativeStrings.clear();
+
             // Ensure our memory pointer is initialized, even if we can't
             // yet figure out a proper size/layout
             this.memory = m.share(offset);
@@ -726,6 +730,8 @@ public abstract class Structure {
             // Allocate a new string in memory
             boolean wide = fieldType == WString.class;
             if (value != null) {
+                // If we've already allocated a native string here, and the
+                // string value is unchanged, leave it alone
                 if (nativeStrings.containsKey(structField.name + ".ptr")
                     && value.equals(nativeStrings.get(structField.name + ".val"))) {
                     return;
@@ -1527,7 +1533,7 @@ public abstract class Structure {
     static class FFIType extends Structure {
         public static class size_t extends IntegerType {
             public size_t() { this(0); }
-            public size_t(long value) { super(Native.POINTER_SIZE, value); }
+            public size_t(long value) { super(Native.SIZE_T_SIZE, value); }
         }
         private static Map typeInfoMap = new WeakHashMap();
         // Native.initIDs initializes these fields to their appropriate

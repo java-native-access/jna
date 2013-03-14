@@ -1,36 +1,42 @@
 Next Release (3.5.2)
 ====================
 
-Features
---------
-[#163]
-* Now the java guid structure can be used directly as alternative to
-'Ole32Util.getGUIDFromString()'. @wolftobias
-* The listening for usb devices is now working also with filter usage. @wolftobias
-* Extension for listening to windows devices (usb). @wolftobias
-* Code extension for creating and registering win32 native windows. @wolftobias
-* Create new code for registering new win32 window classes and created a window
-demo. Listening for win32 window events. Listening for logoff/logon events. @wolftobias
-* Created new api for 'Wtsapi32.dll'. @wolftobias
-
 Bug Fixes
 ---------
+* [#183](https://github.com/twall/jna/pull/183): Fix `LMAccess.GROUP_INFO_3.getFieldOrder()` to return correct fields names - [@bhamail](https://github.com/bhamail).
+* [#187](https://github.com/twall/jna/pull/187): Fix `getFieldOrder()` to return correct field names for some X11 structures - [@bhamail](https://github.com/bhamail).
 
+Features
+--------
+* [#163](https://github.com/twall/jna/pull/163): The Java `GUID` structure can be used directly as alternative to `Ole32Util.getGUIDFromString()` - [@wolftobias](https://github.com/wolftobias).
+* [#163](https://github.com/twall/jna/pull/163): Ported Win32 `dbt.h` - [@wolftobias](https://github.com/wolftobias).
+* [#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification()` and `WTSUnRegisterSessionNotification()` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
+* [#163](https://github.com/twall/jna/pull/163): Added Win32 `native_window_msg` that creates windows, registers for USB device and logon/logoff notifications - [@wolftobias](https://github.com/wolftobias).
+* [#178](https://github.com/twall/jna/pull/178): Added Win32 `USER_INFO_10` structure from `LMAccess.h` - [@davidmc24](https://github.com/davidmc24).
+* [#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
+* [#180](https://github.com/twall/jna/pull/180): Fix: added missing fields in `XEvents.getFieldOrder()` - [@xwizard](https://github.com/xwizard).
+* [#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
+* [#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
+* [#192](https://github.com/twall/jna/pull/192): Added Win32 `SHGetSpecialFolderPath()` and initialization file (.ini) API functions from `kernel32.dll` - [@headcrashing](https://github.com/headcrashing).
+* [#194](https://github.com/twall/jna/pull/194): Added Unit Test for `CLSIDFromProgID()` - [@headcrashing](https://github.com/headcrashing).
+* [#196](https://github.com/twall/jna/pull/196): Added Win32 `RegisterWindowMessage()` and new wrapper `User32Util` for convenient use of `RegisterWindowMessage`, `CreateWindow` and `CreateWindowEx` - [@headcrashing](https://github.com/headcrashing).
 
 Release 3.5.1
 ====================
 
 Bug Fixes
 ---------
+* Fix bug where string fields sometimes failed to be writtern - [@twall](https://github.com/twall) (roman kisluhin).
 * [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32Util.getDomainTrusts()` returns "empty" domain object - [@aikidojohn](https://github.com/aikidojohn).
 * [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32.getDC()` - added missing fields in `DOMAIN_CONTROLLER_INFO` - [@aikidojohn](https://github.com/aikidojohn).
-* [#151] 'platform.jar' in the dist directory was not updated for release 3.5.0. (The 'platform.jar' published to maven central was correct.)
+* [#151](https://github.com/twall/jna/pull/151): 'platform.jar' in the dist directory was not updated for release 3.5.0. (The 'platform.jar' published to maven central was correct.)
 
 Release 3.5.0
 =============
 
 Features
 --------
+* [#62](https://github.com/twall/jna/issues/62) If a callback is required to reside in a DLL, use [`DLLCallback`](http://twall.github.com/jna/3.5.1/javadoc/com/sun/jna/win32/DLLCallback.html) to tag your Callback object - [@twall](https://github.com/twall).
 * `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
 * Search `~/Library/Frameworks` and `/Library/Frameworks` on OSX - [@shaneholloway](https://github.com/shaneholloway).
 * Automatic cleanup of native threads (based on suggestions from neil smith) - [@twall](https://github.com/twall).

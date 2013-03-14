@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Todd Fast, todd.fast@sun.com
  * @author twalljava@dev.java.net
  * @author Tobias Wolf, wolf.tobias@gmx.net
+ * @auhtor Markus KARG (markus[at]headcrashing[dot]eu)
  */
 public interface User32 extends StdCallLibrary, WinUser {
 
@@ -38,7 +39,12 @@ public interface User32 extends StdCallLibrary, WinUser {
 	User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class,
 			W32APIOptions.DEFAULT_OPTIONS);
 
-	/** The cs globalclass. */
+	/**
+	 * Handle for message-only window.
+	 */
+    public static final HWND HWND_MESSAGE = new HWND(Pointer.createConstant(-3));
+
+    /** The cs globalclass. */
 	int CS_GLOBALCLASS = 0x4000;
 
 	/** The ws ex topmost. */
@@ -1508,12 +1514,12 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 *         If the function fails, the return value is NULL. To get extended
 	 *         error information, call GetLastError.
 	 * 
-	 *         This function typically fails for one of the following reasons: •
-	 *         an invalid parameter value • the system class was registered by a
-	 *         different module • The WH_CBT hook is installed and returns a
-	 *         failure code • if one of the controls in the dialog template is
-	 *         not registered, or its window window procedure fails WM_CREATE or
-	 *         WM_NCCREATE
+	 *         This function typically fails for one of the following reasons:<p/>
+     *         - an invalid parameter value<p/>
+     *         - the system class was registered by a different module<p/>
+     *         - The WH_CBT hook is installed and returns a failure code<p/>
+     *         - if one of the controls in the dialog template is not registered,
+     *          or its window window procedure fails WM_CREATE or WM_NCCREATE
 	 */
 	public HWND CreateWindowEx(int dwExStyle, WString lpClassName,
 			String lpWindowName, int dwStyle, int x, int y, int nWidth,
@@ -1625,7 +1631,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 * Registers the device or type of device for which a window will receive
 	 * notifications.
 	 * 
-	 * @hRecipient [in] A handle to the window or service that will receive
+	 * @param hRecipient [in] A handle to the window or service that will receive
 	 *             device events for the devices specified in the
 	 *             NotificationFilter parameter. The same window handle can be
 	 *             used in multiple calls to RegisterDeviceNotification.
@@ -1633,7 +1639,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 *             Services can specify either a window handle or service status
 	 *             handle.
 	 * 
-	 * @param NotificationFilter
+	 * @param notificationFilter
 	 *            [in] A pointer to a block of data that specifies the type of
 	 *            device for which notifications should be sent. This block
 	 *            always begins with the DEV_BROADCAST_HDR structure. The data
@@ -1673,7 +1679,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	/**
 	 * Closes the specified device notification handle.
 	 * 
-	 * @Handle [in] Device notification handle returned by the
+	 * @param Handle [in] Device notification handle returned by the
 	 *         RegisterDeviceNotification function.
 	 * 
 	 * @return Return value
@@ -1684,4 +1690,17 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 *         error information, call GetLastError.
 	 */
 	boolean UnregisterDeviceNotification(HDEVNOTIFY Handle);
+
+    /**
+     * Defines a new window message that is guaranteed to be unique throughout the system. The message value can be used when sending or posting messages.
+     * 
+     * @param string
+     *            The message to be registered.
+     * 
+     * @return If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.
+     *         <p>
+     *         If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     *         </p>
+     */
+    int RegisterWindowMessage(String string);
 }

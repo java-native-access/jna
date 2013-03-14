@@ -47,6 +47,9 @@ public interface WinGDI extends StdCallLibrary {
             return Arrays.asList(new String[] { "rdh", "Buffer" });
         }
 
+        public RGNDATA() { 
+            this(1); 
+        }
         public RGNDATA(int bufferSize) {
             Buffer = new byte[bufferSize];
             allocateMemory();

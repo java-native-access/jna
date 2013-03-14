@@ -42,23 +42,6 @@ public class COMException extends RuntimeException {
 	 *            the message
 	 * @param cause
 	 *            the cause
-	 * @param enableSuppression
-	 *            the enable suppression
-	 * @param writableStackTrace
-	 *            the writable stack trace
-	 */
-	public COMException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	/**
-	 * Instantiates a new automation exception.
-	 * 
-	 * @param message
-	 *            the message
-	 * @param cause
-	 *            the cause
 	 */
 	public COMException(String message, Throwable cause) {
 		super(message, cause);
