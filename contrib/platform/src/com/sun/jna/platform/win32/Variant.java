@@ -8,7 +8,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.OaIdl.CURRENCY;
 import com.sun.jna.platform.win32.OaIdl.DATE;
-import com.sun.jna.platform.win32.OaIdl.DATEbyReference;
 import com.sun.jna.platform.win32.OaIdl.DECIMAL;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
@@ -143,6 +142,11 @@ public interface Variant {
 			this.setValue(VT_I2, value);
 		}
 
+		public VARIANT(DATE value) {
+			this();
+			this.setValue(VT_DATE, value);
+		}
+
 		public VARTYPE getVarType() {
 			this.read();
 			return _variant.vt;
@@ -164,14 +168,32 @@ public interface Variant {
 			case VT_I4:
 				this._variant.__variant.writeField("lVal", value);
 				break;
+			case VT_I8:
+				this._variant.__variant.writeField("llVal", value);
+				break;
+			case VT_R4:
+				this._variant.__variant.writeField("fltVal", value);
+				break;
+			case VT_R8:
+				this._variant.__variant.writeField("dblVal", value);
+				break;
+			case VT_BOOL:
+				this._variant.__variant.writeField("boolVal", value);
+				break;
+			case VT_ERROR:
+				this._variant.__variant.writeField("scode", value);
+				break;
+			case VT_CY:
+				this._variant.__variant.writeField("cyVal", value);
+				break;
+			case VT_DATE:
+				this._variant.__variant.writeField("date", value);
+				break;
 			case VT_BSTR:
 				this._variant.__variant.writeField("bstrVal", value);
 				break;
 			case VT_DISPATCH:
 				this._variant.__variant.writeField("pdispVal", value);
-				break;
-			case VT_BOOL:
-				this._variant.__variant.writeField("boolVal", value);
 				break;
 			case VT_SAFEARRAY:
 				this._variant.__variant.writeField("parray", value);
@@ -192,13 +214,27 @@ public interface Variant {
 				return this._variant.__variant.readField("iVal");
 			case VT_I4:
 				return this._variant.__variant.readField("lVal");
+			case VT_I8:
+				return this._variant.__variant.readField("llVal");
+			case VT_R4:
+				return this._variant.__variant.readField("fltVal");
+			case VT_R8:
+				return this._variant.__variant.readField("dblVal");
+			case VT_BOOL:
+				return this._variant.__variant.readField("boolVal");
+			case VT_ERROR:
+				return this._variant.__variant.readField("scode");
+			case VT_CY:
+				return this._variant.__variant.readField("cyVal");
+			case VT_DATE:
+				return this._variant.__variant.readField("date");
 			case VT_BSTR:
 				return this._variant.__variant.readField("bstrVal");
 			case VT_DISPATCH:
 				return this._variant.__variant.readField("pdispVal");
-			case VT_BOOL:
-				return this._variant.__variant.readField("boolVal");
 			case VT_SAFEARRAY:
+				return this._variant.__variant.readField("parray");
+			case VT_ARRAY:
 				return this._variant.__variant.readField("parray");
 			default:
 				return null;
@@ -271,9 +307,9 @@ public interface Variant {
 				// CY * VT_BYREF|VT_CY
 				public CURRENCY.ByReference pcyVal;
 				// DATE * VT_BYREF|VT_DATE
-				public DATEbyReference pdate;
+				public DATE.ByReference pdate;
 				// BSTR * VT_BYREF|VT_BSTR
-				public BSTR.ByReference pbstrVal;
+				public BSTR pbstrVal;
 				// IUnknown ** VT_BYREF|VT_UNKNOWN
 				public IUnknown.ByReference ppunkVal;
 				// IDispatch ** VT_BYREF|VT_DISPATCH

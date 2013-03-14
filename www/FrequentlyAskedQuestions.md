@@ -169,3 +169,6 @@ The calling overhead for a single native call using JNA interface mapping can be
 
 You might expect a speedup of about an order of magnitude moving to JNA direct mapping, and a factor of two or three moving from there to custom JNI. The actual difference will vary depending on usage and function signatures. As with any optimization process, you should determine first where you need a speed increase, and then see how much difference there is by performing targeted optimizations. The ease of programming everything in Java usually outweighs small performance gains when using custom JNI.
 
+JNA COM support
+---------------
+There is a new implementation to support COM in conjunction with JNA directly. The development is relatively young, honestly the development has been finished just end of February '13. Please note that fact if you use the COM support in JNA, there could be things missing or not absolutely tested or still not working. Please use the jna user group to report your experience with the JNA Com support. 

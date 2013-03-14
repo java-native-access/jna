@@ -38,3 +38,23 @@ Every Time
 * Follow steps from [release it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt)
 * Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
 * After the release is finished, increment the version in build.xml for the next development iteration. Typically, this means increment "jna.revision" by one, and append "-SNAPSHOT" to the "jna.version" property. Create new section in CHANGES.md for 'Next Release (x.y.z)'. Commit and push.
+
+
+Publish SNAPSHOT - In Between and in preparation for a Release
+--------------------------------------------------------------
+
+Before doing a full jna release, we can publish a development SNAPSHOT of the "next" release for people to test. The
+SNAPSHOT will be published in the staging repository:
+
+   https://maven.java.net/content/repositories/snapshots/
+
+see: https://maven.java.net/content/repositories/snapshots/net/java/dev/jna/ for the various jars.
+
+To publish a development SNAPSHOT do the following:
+
+        git checkout -- .
+        ant deploy -DskipNative=true
+
+Note: Unlike stable, unchanging releases, a SNAPSHOT may be re-published at any time (and is typically deleted after a
+full release is performed).
+

@@ -86,7 +86,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new excepinfo.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -96,7 +96,7 @@ public interface OaIdl {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override
@@ -160,34 +160,28 @@ public interface OaIdl {
 		}
 	}
 
-	public static class DATE extends IntegerType {
-		public static final int SIZE = 8;
+	public static class DATE extends Structure {
+		public static class ByReference extends DATE implements
+				Structure.ByReference {
+		}
+
+		public double date;
 
 		public DATE() {
-			this(0);
 		}
 
-		public DATE(long value) {
-			super(8, value, true);
-		}
-	}
-
-	public class DATEbyReference extends ByReference {
-		public DATEbyReference() {
-			this(new DATE(0));
+		public DATE(double date) {
+			this.date = date;
 		}
 
-		public DATEbyReference(DATE value) {
-			super(DATE.SIZE);
-			setValue(value);
-		}
-
-		public void setValue(DATE value) {
-			getPointer().setLong(0, value.longValue());
-		}
-
-		public DATE getValue() {
-			return new DATE(getPointer().getLong(0));
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.sun.jna.Structure#getFieldOrder()
+		 */
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "date" });
 		}
 	}
 
@@ -852,7 +846,11 @@ public interface OaIdl {
 		}
 	}
 
-	public static class FUNCKIND {
+	public static class FUNCKIND extends Structure {
+		public static class ByReference extends FUNCKIND implements
+				Structure.ByReference {
+		};
+
 		// / <i>native declaration : line 20</i>
 		public static final int FUNC_VIRTUAL = 0;
 		// / <i>native declaration : line 21</i>
@@ -863,6 +861,21 @@ public interface OaIdl {
 		public static final int FUNC_STATIC = FUNC_NONVIRTUAL + 1;
 		// / <i>native declaration : line 24</i>
 		public static final int FUNC_DISPATCH = FUNC_STATIC + 1;
+
+		public int value;
+
+		public FUNCKIND() {
+		}
+
+		public FUNCKIND(int value) {
+			this.value = value;
+
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
+		}
 	};
 
 	public static class INVOKEKIND extends Structure {
@@ -895,7 +908,11 @@ public interface OaIdl {
 		}
 	};
 
-	public static class CALLCONV {
+	public static class CALLCONV extends Structure {
+		public static class ByReference extends CALLCONV implements
+				Structure.ByReference {
+		};
+
 		// / <i>native declaration : line 4</i>
 		public static final int CC_FASTCALL = 0;
 		// / <i>native declaration : line 5</i>
@@ -918,9 +935,27 @@ public interface OaIdl {
 		public static final int CC_MPWPASCAL = CALLCONV.CC_MPWCDECL + 1;
 		// / <i>native declaration : line 14</i>
 		public static final int CC_MAX = CALLCONV.CC_MPWPASCAL + 1;
+
+		public int value;
+
+		public CALLCONV() {
+		}
+
+		public CALLCONV(int value) {
+			this.value = value;
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
+		}
 	};
 
-	public static class VARKIND {
+	public static class VARKIND extends Structure {
+		public static class ByReference extends VARKIND implements
+				Structure.ByReference {
+		};
+
 		// / <i>native declaration : line 4</i>
 		public static final int VAR_PERINSTANCE = 0;
 		// / <i>native declaration : line 5</i>
@@ -929,6 +964,20 @@ public interface OaIdl {
 		public static final int VAR_CONST = VAR_STATIC + 1;
 		// / <i>native declaration : line 7</i>
 		public static final int VAR_DISPATCH = VAR_CONST + 1;
+
+		public int value;
+
+		public VARKIND() {
+		}
+
+		public VARKIND(int value) {
+			this.value = value;
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
+		}
 	};
 
 	public class TYPEDESC extends Structure {
