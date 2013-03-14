@@ -912,7 +912,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            receive the value, the function returns ERROR_MORE_DATA.
 	 */
 	public int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
-			int dwFlags, IntByReference pdwType, byte[] lpData,
+			int dwFlags, IntByReference pdwType, byte[] pvData,
 			IntByReference pcbData);
 
 	/**

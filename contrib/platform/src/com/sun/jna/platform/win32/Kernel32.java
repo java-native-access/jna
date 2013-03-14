@@ -1743,7 +1743,7 @@ public interface Kernel32 extends WinNT {
      * @param appName
      *            The name of the section in the initialization file.
      * @param keyName
-     *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link GetPrivateProfileInt} function converts
+     *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link #GetPrivateProfileInt} function converts
      *            the string into an integer and returns the integer.
      * @param defaultValue
      *            The default value to return if the key name cannot be found in the initialization file.
@@ -1759,13 +1759,13 @@ public interface Kernel32 extends WinNT {
      * Retrieves a string from the specified section in an initialization file.
      * 
      * @param lpAppName
-     *            The name of the section containing the key name. If this parameter is {@code null}, the {@link GetPrivateProfileString} function copies all
+     *            The name of the section containing the key name. If this parameter is {@code null}, the {@link #GetPrivateProfileString} function copies all
      *            section names in the file to the supplied buffer.
      * @param lpKeyName
      *            The name of the key whose associated string is to be retrieved. If this parameter is {@code null}, all key names in the section specified by
      *            the {@code lpAppName} parameter are copied to the buffer specified by the {@code lpReturnedString} parameter.
      * @param lpDefault
-     *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link GetPrivateProfileString} copies the default
+     *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link #GetPrivateProfileString} copies the default
      *            string to the {@code lpReturnedString} buffer. If this parameter is {@code null}, the default is an empty string, {@code ""}.
      *            <p>
      *            Avoid specifying a default string with trailing blank characters. The function inserts a {@code null} character in the

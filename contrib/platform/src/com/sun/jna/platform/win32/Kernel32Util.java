@@ -233,7 +233,7 @@ public abstract class Kernel32Util implements WinDef {
      * @param appName
      *            The name of the section in the initialization file.
      * @param keyName
-     *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link #GetPrivateProfileInt} function converts
+     *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link Kernel32#GetPrivateProfileInt} function converts
      *            the string into an integer and returns the integer.
      * @param defaultValue
      *            The default value to return if the key name cannot be found in the initialization file.
@@ -250,13 +250,13 @@ public abstract class Kernel32Util implements WinDef {
      * Retrieves a string from the specified section in an initialization file.
      * 
      * @param lpAppName
-     *            The name of the section containing the key name. If this parameter is {@code null}, the {@link GetPrivateProfileString} function copies all
+     *            The name of the section containing the key name. If this parameter is {@code null}, the {@link Kernel32#GetPrivateProfileString} function copies all
      *            section names in the file to the supplied buffer.
      * @param lpKeyName
      *            The name of the key whose associated string is to be retrieved. If this parameter is {@code null}, all key names in the section specified by
      *            the {@code lpAppName} parameter are returned.
      * @param lpDefault
-     *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link GetPrivateProfileString} returns the
+     *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link Kernel32#GetPrivateProfileString} returns the
      *            default. If this parameter is {@code null}, the default is an empty string, {@code ""}.
      *            <p>
      *            Avoid specifying a default string with trailing blank characters. The function inserts a {@code null} character in the
@@ -275,10 +275,10 @@ public abstract class Kernel32Util implements WinDef {
      *         </p>
      *         <p>
      *         In the event the initialization file specified by {@code lpFileName} is not found, or contains invalid values, this function will set errorno
-     *         with a value of '0x2' (File Not Found). To retrieve extended error information, call {@link #GetLastError}.
+     *         with a value of '0x2' (File Not Found). To retrieve extended error information, call {@link Kernel32#GetLastError}.
      *         </p>
      */
-    public static final String getPrivateProfileString(final String appName, final String keyName, final String defaultValue, final String fileName) {
+    public static final String getPrivateProfileString(final String lpAppName, final String lpKeyName, final String lpDefault, final String lpFileName) {
         final char buffer[] = new char[1024];
         Kernel32.INSTANCE.GetPrivateProfileString(appName, keyName, defaultValue, buffer, new DWORD(buffer.length), fileName);
         return Native.toString(buffer);
