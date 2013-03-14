@@ -280,7 +280,7 @@ public abstract class Kernel32Util implements WinDef {
      */
     public static final String getPrivateProfileString(final String lpAppName, final String lpKeyName, final String lpDefault, final String lpFileName) {
         final char buffer[] = new char[1024];
-        Kernel32.INSTANCE.GetPrivateProfileString(appName, keyName, defaultValue, buffer, new DWORD(buffer.length), fileName);
+        Kernel32.INSTANCE.GetPrivateProfileString(lpAppName, lpKeyName, lpDefault, buffer, new DWORD(buffer.length), lpFileName);
         return Native.toString(buffer);
     }
 

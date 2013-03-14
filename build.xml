@@ -429,7 +429,7 @@ osname=macos
     </zip>
   </target>
 
-  <target name="platform-jar" depends="jar">
+  <target name="platform-jar" depends="jar,javadoc">
     <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
