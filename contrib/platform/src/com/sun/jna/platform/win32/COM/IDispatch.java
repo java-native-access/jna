@@ -66,21 +66,6 @@ public class IDispatch extends IUnknown {
 	}
 
 	/**
-	 * Gets the type info count.
-	 * 
-	 * @param pctinfo
-	 *            the pctinfo
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(12));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), pctinfo });
-
-		return new HRESULT(hr);
-	}
-
-	/**
 	 * Gets the type info.
 	 * 
 	 * @param iTInfo
@@ -94,15 +79,29 @@ public class IDispatch extends IUnknown {
 	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
 			PointerByReference ppTInfo) {
 		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(16));
+		Function func = Function.getFunction(vptr.getPointer(12));
 		int hr = func.invokeInt(new Object[] { this.getPointer(), iTInfo, lcid,
 				ppTInfo });
-
+		Pointer value = ppTInfo.getValue();
 		return new HRESULT(hr);
 	}
 
 	/**
-	 * Gets the i ds of names.
+	 * Gets the type info count.
+	 * 
+	 * @param pctinfo
+	 *            the pctinfo
+	 * @return the hresult
+	 */
+	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
+		Pointer vptr = this.getPointer().getPointer(0);
+		Function func = Function.getFunction(vptr.getPointer(16));
+		int hr = func.invokeInt(new Object[] { this.getPointer(), pctinfo });
+		return new HRESULT(hr);
+	}
+
+	/**
+	 * Gets the ids of names.
 	 * 
 	 * @param riid
 	 *            the riid

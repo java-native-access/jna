@@ -469,5 +469,5 @@ public interface OleAuto extends StdCallLibrary {
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
 	 */
-	HRESULT LoadTypeLib(WString szFile, ITypeLib pptlib);
+	HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
 }

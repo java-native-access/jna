@@ -21,11 +21,9 @@ import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
-import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -59,7 +57,8 @@ public class ITypeInfoTest extends TestCase {
 	protected void setUp() throws Exception {
 		if (this.comObj == null) {
 			// create a shell COM object
-			this.comObj = new COMObject("Shell.Application", false);
+			this.comObj = new COMObject("Excel.Application", false);
+			this.getTypeInfoCount();
 		}
 	}
 
@@ -70,14 +69,20 @@ public class ITypeInfoTest extends TestCase {
 		}
 	}
 
+	public int getTypeInfoCount() {
+		IntByReference pctinfo = new IntByReference();
+		HRESULT hr = comObj.getIDispatch().GetTypeInfoCount(pctinfo);
+
+		if (pctinfo.getValue() == 0)
+			throw new RuntimeException("No type information found!");
+
+		return pctinfo.getValue();
+	}
+
 	public ITypeInfo getTypeInfo() {
-		// get user default lcid
-		LCID lcid = Kernel32.INSTANCE.GetUserDefaultLCID();
 		// create a IUnknown pointer
 		PointerByReference ppTInfo = new PointerByReference();
-
-		comObj.getIDispatch().GetTypeInfo(new UINT(0), lcid, ppTInfo);
-
+		comObj.getIDispatch().GetTypeInfo(new UINT(0), new LCID(0), ppTInfo);
 		return new ITypeInfo(ppTInfo.getValue());
 	}
 

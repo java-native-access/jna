@@ -47,10 +47,6 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class ITypeInfo extends IUnknown {
 
-	public static class ByReference extends ITypeInfo implements
-			Structure.ByReference {
-	}
-
 	public ITypeInfo() {
 	}
 
