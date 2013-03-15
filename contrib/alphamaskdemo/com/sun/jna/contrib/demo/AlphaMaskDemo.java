@@ -154,7 +154,7 @@ public class AlphaMaskDemo implements Runnable {
                 int w = image.getWidth(null);
                 int h = image.getHeight(null);
                 alphaWindow.setSize(w, h);
-                if (buffer == null || buffer.getSize() != w*h*4) {
+                if (buffer == null || buffer.size() != w*h*4) {
                     buffer = new com.sun.jna.Memory(w*h*4);
                     pixels = new int[w*h];
                 }
