@@ -1,3 +1,7 @@
+2013-03-16  Alex Gaynor <alex.gaynor@gmail.com>
+
+	* src/x86/ffi.c (ffi_prep_cif_machdep): Always align stack.
+
 2013-02-11  Anthony Green <green@moxielogic.com>
 
 	* configure.ac: Update release number to 3.0.12.
