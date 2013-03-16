@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.13 was released on March 16, 2013.  Check the libffi web
+libffi-3.0.13 was released on March ??, 2013.  Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -43,7 +43,7 @@ Libffi has been ported to many different platforms.
 For specific configuration details and testing status, please
 refer to the wiki page here:
 
- http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.12
+ http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.13
 
 At the time of release, the following basic configurations have been
 tested:
@@ -163,7 +163,7 @@ History
 
 See the ChangeLog files for details.
 
-3.0.13 Mar-16-13
+3.0.13 Mar-??-13
 	Add Meta support.
 	Add missing Moxie bits.
 	Fix stack alignment bug on 32-bit x86.
