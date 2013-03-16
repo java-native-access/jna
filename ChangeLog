@@ -16,6 +16,11 @@
 	* src/metag/ffitarget.h: Likewise.
 	* src/metag/sysv.S: Likewise.
 
+2013-02-24  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* doc/libffi.texi (Structures): Fix missing category argument of
+	@deftp.
+
 2013-02-11  Anthony Green <green@moxielogic.com>
 
 	* configure.ac: Update release number to 3.0.12.
