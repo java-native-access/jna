@@ -164,11 +164,11 @@ History
 See the ChangeLog files for details.
 
 3.0.13 Mar-16-13
-       
 	Add Meta support.
 	Add missing Moxie bits.
 	Fix stack alignment bug on 32-bit x86.
 	Build fix for m68000 targets.
+	Build fix for soft-float Power targets.
 
 3.0.12 Feb-11-13
         Add Moxie support.

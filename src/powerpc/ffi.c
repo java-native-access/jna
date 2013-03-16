@@ -376,9 +376,9 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
      with the number found in ffi_prep_cif_machdep().  However, intarg_count
      is incremeneted whenever we place an FP arg on the stack, so account for
      that before our assert test.  */
+#ifndef __NO_FPRS__
   if (fparg_count > NUM_FPR_ARG_REGISTERS)
     intarg_count -= fparg_count - NUM_FPR_ARG_REGISTERS;
-#ifndef __NO_FPRS__
   FFI_ASSERT (fpr_base.u
 	      <= stacktop.u - ASM_NEEDS_REGISTERS - NUM_GPR_ARG_REGISTERS);
 #endif

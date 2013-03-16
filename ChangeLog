@@ -1,6 +1,11 @@
+2013-03-16  Gilles Talis  <gilles.talis@gmail.com>
+
+	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Don't use
+	fparg_count,etc on __NO_FPRS__ targets.
+
 2013-03-16  Alan Hourihane  <alanh@fairlite.co.uk>
 
-	* src/m68k/sysv.S (epilogue): Don't user extb instruction on
+	* src/m68k/sysv.S (epilogue): Don't use extb instruction on
 	m680000 machines.
 
 2013-03-16  Alex Gaynor <alex.gaynor@gmail.com>
