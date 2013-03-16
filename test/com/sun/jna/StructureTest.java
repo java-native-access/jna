@@ -296,6 +296,35 @@ public class StructureTest extends TestCase {
         testAlignStruct(5);
     }
 
+    public void testStructureWithNoFields() {
+        class TestStructure extends Structure {
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] {});
+            }
+        }
+        try {
+            new TestStructure();
+            fail("Structure should not be instantiable if it has no public member fields");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    public void testStructureWithOnlyNonPublicMemberFields() {
+        class TestStructure extends Structure {
+            int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] {"field"});
+            }
+        }
+        try {
+            new TestStructure();
+            fail("Structure should not be instantiable if it has no public member fields");
+        }
+        catch(Error e) {
+        }
+    }
+
     // must be publicly accessible in order to create array elements
     public static class PublicTestStructure extends Structure {
         public static class ByReference extends PublicTestStructure implements Structure.ByReference {

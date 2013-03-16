@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2012 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,10 @@ import java.util.zip.Adler32;
  * constructor.
  * <p/>
  * Structure fields corresponding to native struct fields <em>must</em> be
- * public.  You <em>must</em> define {@link #getFieldOrder} to return a List of
+ * public.  If your structure is to have no fields of its own, it must be
+ * declared abstract.
+ * <p/>
+ * You <em>must</em> define {@link #getFieldOrder} to return a List of
  * field names (Strings) indicating the proper order of the fields.  When
  * dealing with multiple levels of subclasses of Structure, you must add to
  * the list provided by the superclass {@link #getFieldOrder}
@@ -1146,7 +1149,7 @@ public abstract class Structure {
         }
 
         throw new IllegalArgumentException("Structure " + getClass()
-                                           + " has unknown size (ensure "
+                                           + " has unknown or zero size (ensure "
                                            + "all fields are public)");
     }
 
