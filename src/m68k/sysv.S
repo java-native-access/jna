@@ -176,7 +176,13 @@ retstruct2:
 retsint8:
 	btst	#8,%d2
 	jbeq	retsint16
+	| NOTE: On the mc68000, extb is not supported. 8->16, then 16->32.
+#if !defined(__mc68020__) && !defined(__mc68030__) && !defined(__mc68040__) && !defined(__mc68060__) && !defined(__mcoldfire__)
+	ext.w	%d0
+	ext.l	%d0
+#else
 	extb.l	%d0
+#endif
 	move.l	%d0,(%a1)
 	jbra	epilogue
 
@@ -279,7 +285,13 @@ CALLFUNC(ffi_closure_SYSV):
 	jra	.Lcls_epilogue
 .Lcls_ret_sint8:
 	move.l	(%a0),%d0
+	| NOTE: On the mc68000, extb is not supported. 8->16, then 16->32.
+#if !defined(__mc68020__) && !defined(__mc68030__) && !defined(__mc68040__) && !defined(__mc68060__) && !defined(__mcoldfire__)
+	ext.w	%d0
+	ext.l	%d0
+#else
 	extb.l	%d0
+#endif
 	jra	.Lcls_epilogue
 1:
 	| CIF_FLAGS_SINT16

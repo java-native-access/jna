@@ -1,3 +1,8 @@
+2013-03-16  Alan Hourihane  <alanh@fairlite.co.uk>
+
+	* src/m68k/sysv.S (epilogue): Don't user extb instruction on
+	m680000 machines.
+
 2013-03-16  Alex Gaynor <alex.gaynor@gmail.com>
 
 	* src/x86/ffi.c (ffi_prep_cif_machdep): Always align stack.
