@@ -521,7 +521,7 @@ class CallbackReference extends WeakReference {
                     }
                     else {
                         Structure s = Structure.newInstance(dstType, (Pointer)value);
-                        s.conditionalRead();
+                        s.conditionalAutoRead();
                         value = s;
                     }
                 }

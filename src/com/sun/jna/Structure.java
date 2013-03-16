@@ -482,10 +482,10 @@ public abstract class Structure {
         return (Map)reads.get();
     }
 
-    /** Reads only if uninitialized. */
-    void conditionalRead() {
+    /** Performs auto-read only if uninitialized. */
+    void conditionalAutoRead() {
         if (!readCalled) {
-            read();
+            autoRead();
         }
     }
 
@@ -1384,7 +1384,7 @@ public abstract class Structure {
         int size = size();
         for (int i=1;i < array.length;i++) {
             array[i] = newInstance(getClass(), memory.share(i*size, size));
-            array[i].conditionalRead();
+            array[i].conditionalAutoRead();
         }
 
         if (!(this instanceof ByValue)) {
@@ -1485,6 +1485,18 @@ public abstract class Structure {
         setAutoRead(auto);
         setAutoWrite(auto);
         </code></pre>
+        For extremely large or complex structures where you only need to
+        access a small number of fields, you may see a significant performance
+        benefit by avoiding automatic structure reads and writes.  If
+        auto-read and -write are disabled, it is up to you to ensure that the
+        Java fields of interest are synched before and after native function
+        calls via {@link #readField(String)} and {@link
+        #writeField(String,Object)}.
+        <p/>
+        This is typically most effective when a native call populates a large
+        structure and you only need a few fields out of it.  After the native
+        call you can call {@link #readField(String)} on only the fields of
+        interest. 
     */
     public void setAutoSynch(boolean auto) {
         setAutoRead(auto);

@@ -518,7 +518,7 @@ public class Pointer {
                 Structure first = sarray[0];
                 if (first == null) {
                     first = Structure.newInstance(cls, share(offset));
-                    first.conditionalRead();
+                    first.conditionalAutoRead();
                     sarray[0] = first;
                 }
                 else {
